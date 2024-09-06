@@ -16,6 +16,7 @@ import axios from "axios";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import Documents from "../Leases/Documents";
+import WaiverForm from "../Leases/WaiverForm";
 
 export default function TenantApplication(props) {
   console.log("In Tenant Application", props);
@@ -41,11 +42,28 @@ export default function TenantApplication(props) {
 
   const [tenantDocuments, setTenantDocuments] = useState([]);
   const [formattedAddress, setFormattedAddress] = useState("");
+  const [isWaiverSigned, setIsWaiverSigned] = useState(false);
+  const [openWaiverDialog, setOpenWaiverDialog] = useState(false); // State for dialog open/close
+
+  const handleWaiverSubmit = () => {
+    setIsWaiverSigned(true);
+    setOpenWaiverDialog(false); // Close the dialog after waiver is signed
+    console.log("Waiver form signed");
+  };
+
+  const handleOpenWaiverDialog = () => {
+    setOpenWaiverDialog(true); // Open the dialog
+  };
+
+  const handleCloseWaiverDialog = () => {
+    setOpenWaiverDialog(false); // Close the dialog
+  };
+
+
 
   // useEffect(() => {
   //     console.log("tenantDocuments - ", tenantDocuments);
   // }, [tenantDocuments])
-  
 
   useEffect(() => {
     const updateData = () => {
@@ -1017,6 +1035,12 @@ export default function TenantApplication(props) {
                 <Documents documents={tenantDocuments} setDocuments={setTenantDocuments} isEditable={false} isAccord={false} customName={"Your Documents"}/>
               </Grid>
 
+      {showSpinner && (
+        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      )}
+
               <Box
                 sx={{
                   display: "flex",
@@ -1031,28 +1055,30 @@ export default function TenantApplication(props) {
               >
                 {(status == null || status === "" || status === "REJECTED" || status === "RESCIND") &&
                   <Button
-                    variant='contained'
+                  variant='contained'
+                  sx={{
+                    backgroundColor: isWaiverSigned ? "#9EAED6" : "#d3d3d3", // Change color if disabled
+                    textTransform: "none",
+                    borderRadius: "5px",
+                    display: "flex",
+                    width: "45%",
+                    marginRight: "10px"
+                  }}
+                  onClick={() => handleApplicationSubmit()}
+                  disabled={!isWaiverSigned} // Disable button if waiver not signed
+                >
+                  <Typography
                     sx={{
-                      backgroundColor: "#9EAED6",
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: "14px",
+                      color: "#FFFFFF",
                       textTransform: "none",
-                      borderRadius: "5px",
-                      display: "flex",
-                      width: "45%",
-                      marginRight: "10px"
                     }}
-                    onClick={() => handleApplicationSubmit()}
                   >
-                    <Typography
-                      sx={{
-                        fontWeight: theme.typography.primary.fontWeight,
-                        fontSize: "14px",
-                        color: "#FFFFFF",
-                        textTransform: "none",
-                      }}
-                    >
-                      Submit
-                    </Typography>
-                  </Button>}
+                    Submit
+                  </Typography>
+                </Button>
+                  }
                 {(status == null || status === "" || status === "NEW" || status === "REJECTED" || status === "RESCIND") &&
                 <Button
                   variant='contained'
@@ -1078,6 +1104,59 @@ export default function TenantApplication(props) {
                 </Button>
                 }
               </Box>
+             <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center", // Center horizontally
+                alignItems: "center", // Center vertically inside the parent box
+                marginTop: "20px", // Spacing from the elements above
+                width: "100%", // Full width to ensure proper centering
+              }}
+            >
+              {(status == null || status === "" || status === "REJECTED" || status === "RESCIND") && !isWaiverSigned && (
+                <Button
+                  sx={{
+                    backgroundColor: "#FFD700",
+                    textTransform: "none",
+                    borderRadius: "5px", 
+                    width: "50%", // Button width for centering effect
+                    maxWidth: "300px", // Limit max width for aesthetic purpose
+                  }}
+                  onClick={handleOpenWaiverDialog}  // Open the dialog instead of submitting the waiver
+                >
+                  <Typography
+                    sx={{
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: "14px",
+                      color: "#FFFFFF",
+                      textTransform: "none",
+                    }}
+                  >
+                    Sign Waiver
+                  </Typography>
+                </Button>
+              )}
+            </Box>
+
+            {/* Waiver Form Dialog */}
+            <Dialog
+              open={openWaiverDialog}
+              onClose={handleCloseWaiverDialog} // Close when clicking outside or cancel
+              maxWidth="md" // Maximum width for the dialog
+              fullWidth // Ensure dialog takes full width
+            >
+              <DialogTitle>Waiver Form</DialogTitle>
+              <DialogContent>
+                <WaiverForm onSubmit={handleWaiverSubmit} /> {/* Pass the onSubmit handler */}
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleCloseWaiverDialog} color="secondary">
+                  Cancel
+                </Button>
+              </DialogActions>
+            </Dialog>
+
+
               {status && status === "NEW" ? (
                 <>
                   <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>

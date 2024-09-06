@@ -1,212 +1,125 @@
-import React, { useState } from 'react';
-import { TextField, Typography, Button, Checkbox, FormControlLabel, Container, Grid, Paper, Stack } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import TenantDashboard from '../TenantDashboard/TenantDashboard';
+import React, { useRef, useState } from "react";
+import { Box, Button, Typography, TextField, Paper, Grid } from "@mui/material";
+import SignatureCanvas from "react-signature-canvas";
 
-const WaiverForm = () => {
-    const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        consent: false,
-        initialsProperty: '',
-        initialsLeaseTerms: '',
-        initialsRentPayment: '',
-        initialsSecurityDeposit: '',
-        initialsMaintenance: '',
-      });
-    
-      const [formErrors, setFormErrors] = useState({});
-      const navigate = useNavigate();
-    
-      const handleInputChange = (e) => {
-        const { name, value, checked, type } = e.target;
-        setFormData({
-          ...formData,
-          [name]: type === 'checkbox' ? checked : value
-        });
-      };
-    
-      const validateForm = () => {
-        let errors = {};
-        if (!formData.firstName) {
-          errors.firstName = 'First name is required';
-        }
-        if (!formData.lastName) {
-          errors.lastName = 'Last name is required';
-        }
-        if (!formData.email) {
-          errors.email = 'Email is required';
-        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-          errors.email = 'Email is invalid';
-        }
-        if (!formData.initialsProperty || !formData.initialsLeaseTerms || !formData.initialsRentPayment ||
-            !formData.initialsSecurityDeposit || !formData.initialsMaintenance) {
-          errors.initials = 'Please initial all sections';
-        }
-        setFormErrors(errors);
-        return Object.keys(errors).length === 0;
-      };
-    
-      const handleSubmit = (e) => {
-        e.preventDefault();
-        if (validateForm()) {
-          // Process form submission (send data to backend)
-          console.log('Form submitted', formData);
-          navigate('/confirmation');
-        }
-      };
-    
-      return (
-        <Container maxWidth="sm" sx={{ mt: 4 }}>
-          <Paper elevation={3} sx={{ p: 4 }}>
-            <Typography variant="h4" gutterBottom align="center">
-              Lease Agreement Form
-            </Typography>
-    
-            <Typography variant="body1" gutterBottom>
-              Please carefully read and initial each section of the lease agreement below.
-            </Typography>
-    
-            <form onSubmit={handleSubmit} noValidate>
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <TextField
-                    name="firstName"
-                    label="First Name"
-                    fullWidth
-                    value={formData.firstName}
-                    onChange={handleInputChange}
-                    error={!!formErrors.firstName}
-                    helperText={formErrors.firstName}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    name="lastName"
-                    label="Last Name"
-                    fullWidth
-                    value={formData.lastName}
-                    onChange={handleInputChange}
-                    error={!!formErrors.lastName}
-                    helperText={formErrors.lastName}
-                  />
-                </Grid>
-    
-                {/* Property Section */}
-                <Grid item xs={12}>
-                  <Typography variant="body1" gutterBottom>
-                    I acknowledge that I have inspected the property and agree to its condition.
-                  </Typography>
-                  <TextField
-                    name="initialsProperty"
-                    label="Initials"
-                    fullWidth
-                    value={formData.initialsProperty}
-                    onChange={handleInputChange}
-                    error={!!formErrors.initialsProperty}
-                    helperText={formErrors.initialsProperty}
-                  />
-                </Grid>
-    
-                {/* Lease Terms Section */}
-                <Grid item xs={12}>
-                  <Typography variant="body1" gutterBottom>
-                    I agree to the terms of the lease as outlined in the lease document.
-                  </Typography>
-                  <TextField
-                    name="initialsLeaseTerms"
-                    label="Initials"
-                    fullWidth
-                    value={formData.initialsLeaseTerms}
-                    onChange={handleInputChange}
-                    error={!!formErrors.initialsLeaseTerms}
-                    helperText={formErrors.initialsLeaseTerms}
-                  />
-                </Grid>
-    
-                {/* Rent Payment Section */}
-                <Grid item xs={12}>
-                  <Typography variant="body1" gutterBottom>
-                    I agree to the rent payment terms and understand the due dates.
-                  </Typography>
-                  <TextField
-                    name="initialsRentPayment"
-                    label="Initials"
-                    fullWidth
-                    value={formData.initialsRentPayment}
-                    onChange={handleInputChange}
-                    error={!!formErrors.initialsRentPayment}
-                    helperText={formErrors.initialsRentPayment}
-                  />
-                </Grid>
-    
-                {/* Security Deposit Section */}
-                <Grid item xs={12}>
-                  <Typography variant="body1" gutterBottom>
-                    I agree to the terms related to the security deposit.
-                  </Typography>
-                  <TextField
-                    name="initialsSecurityDeposit"
-                    label="Initials"
-                    fullWidth
-                    value={formData.initialsSecurityDeposit}
-                    onChange={handleInputChange}
-                    error={!!formErrors.initialsSecurityDeposit}
-                    helperText={formErrors.initialsSecurityDeposit}
-                  />
-                </Grid>
-    
-                {/* Maintenance and Repairs Section */}
-                <Grid item xs={12}>
-                  <Typography variant="body1" gutterBottom>
-                    I understand the policies related to maintenance and repairs.
-                  </Typography>
-                  <TextField
-                    name="initialsMaintenance"
-                    label="Initials"
-                    fullWidth
-                    value={formData.initialsMaintenance}
-                    onChange={handleInputChange}
-                    error={!!formErrors.initialsMaintenance}
-                    helperText={formErrors.initialsMaintenance}
-                  />
-                </Grid>
-    
-                {/* Consent Section */}
-                <Grid item xs={12}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        name="consent"
-                        checked={formData.consent}
-                        onChange={handleInputChange}
-                      />
-                    }
-                    label="I agree to the terms of the lease agreement"
-                  />
-                  {formErrors.consent && (
-                    <Typography color="error" variant="body2">
-                      {formErrors.consent}
-                    </Typography>
-                  )}
-                </Grid>
-    
-                <Grid item xs={12}>
-                  <Stack direction="row" justifyContent="center" spacing={2}>
-                    <Button variant="contained" color="primary" type="submit">
-                      Submit
-                    </Button>
-                    <Button variant="outlined" onClick={() => navigate('/tenantDashboard')}>
-                      Cancel
-                    </Button>
-                  </Stack>
-                </Grid>
-              </Grid>
-            </form>
-          </Paper>
-        </Container>
-      );
-    };
+export default function WaiverForm({ onSubmit }) { // Accept onSubmit as prop
+  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
+  const [initials1, setInitials1] = useState("");
+  const [initials2, setInitials2] = useState("");
+  const [initials3, setInitials3] = useState("");
+  const sigCanvas = useRef({});
 
-export default WaiverForm;
+  const clearSignature = () => sigCanvas.current.clear();
+  const saveSignature = () => sigCanvas.current.getTrimmedCanvas().toDataURL("image/png");
+
+  const handleSubmit = () => {
+    const signature = saveSignature();
+    console.log("Signature data:", signature);
+    onSubmit(); // Call onSubmit prop after saving the form
+  };
+
+  return (
+    <Paper sx={{ padding: "20px", backgroundColor: "#f4f4f4" }}>
+      <Typography variant="h4" gutterBottom>
+        Waiver Form
+      </Typography>
+
+      <Box sx={{ marginBottom: "20px" }}>
+        <TextField
+          label="Full Name"
+          fullWidth
+          variant="outlined"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+      </Box>
+
+      <Box sx={{ marginBottom: "20px" }}>
+        <TextField
+          label="Address"
+          fullWidth
+          variant="outlined"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+        />
+      </Box>
+
+      <Typography variant="h6" gutterBottom>
+        By initialing below, you agree to the following:
+      </Typography>
+
+      <Grid container spacing={2} alignItems="center">
+        <Grid item xs={10}>
+          <Typography>
+            I authorize the manager to perform a background check, credit check, and verification of all provided information.
+          </Typography>
+        </Grid>
+        <Grid item xs={2}>
+          <TextField
+            label="Initials"
+            variant="outlined"
+            value={initials1}
+            onChange={(e) => setInitials1(e.target.value)}
+          />
+        </Grid>
+
+        <Grid item xs={10}>
+          <Typography>
+            I acknowledge that the provided information is accurate to the best of my knowledge.
+          </Typography>
+        </Grid>
+        <Grid item xs={2}>
+          <TextField
+            label="Initials"
+            variant="outlined"
+            value={initials2}
+            onChange={(e) => setInitials2(e.target.value)}
+          />
+        </Grid>
+
+        <Grid item xs={10}>
+          <Typography>
+            I agree to the terms of the lease agreement as discussed and provided.
+          </Typography>
+        </Grid>
+        <Grid item xs={2}>
+          <TextField
+            label="Initials"
+            variant="outlined"
+            value={initials3}
+            onChange={(e) => setInitials3(e.target.value)}
+          />
+        </Grid>
+      </Grid>
+
+      <Box sx={{ marginTop: "30px", textAlign: "center" }}>
+        <Typography variant="h6" gutterBottom>
+          Please provide your signature below:
+        </Typography>
+
+        <Box sx={{ display: "flex", justifyContent: "center", position: "relative", marginBottom: "20px" }}>
+          <Box sx={{ position: "absolute", top: "-30px", right: "-10px", zIndex: 1 }}>
+            <Button variant="outlined" onClick={clearSignature}>
+              Clear
+            </Button>
+          </Box>
+
+          <SignatureCanvas
+            ref={sigCanvas}
+            canvasProps={{ width: 500, height: 200, className: "sigCanvas" }}
+            backgroundColor="white"
+            penColor="black"
+            style={{ border: "1px solid black", width: "100%" }}
+          />
+        </Box>
+      </Box>
+
+      <Box sx={{ marginTop: "30px", textAlign: "center" }}>
+        <Button variant="contained" color="primary" onClick={handleSubmit}>
+          Submit Waiver
+        </Button>
+      </Box>
+    </Paper>
+  );
+}
