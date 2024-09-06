@@ -39,6 +39,7 @@ const EditLease = (props) => {
     const [moveIn, setMoveIn] = useState(leaseData.lease_move_in_date)
     const [noOfOcc, setNoOfOcc] = useState("")
     const [contentTypes, setContentTypes] = useState([]);
+    const [deletedDocsUrl, setDeletedDocsUrl] = useState([]);
 
     const rentDataFromLease = JSON.parse(leaseData.lease_fees).filter((lease) => lease.fee_name === "Rent");
 
@@ -122,15 +123,8 @@ const EditLease = (props) => {
     }
 
     const handleCloseButton = () => {
-        navigate('/tenantDashboard',{
-            state:{
-                viewLeaseState : {
-                    lease_id : leaseData.lease_uid,
-                    property_uid: leaseData.property_uid,
-                    isDesktop: true,
-                }
-            } 
-        });
+        navigate(-1);
+        // navigate('/managerDashboard'); // change according to from which role call this function
     };
 
     const handleRemoveFile = (index) => {
@@ -183,6 +177,7 @@ const EditLease = (props) => {
         leaseApplicationFormData.append('lease_vehicles', leaseData?.lease_vehicles)  
         leaseApplicationFormData.append('lease_application_date', formatDate(date)) // change date format
         leaseApplicationFormData.append('tenant_uid', getTenantsUid(leaseData))
+        leaseApplicationFormData.append("delete_documents", JSON.stringify(deletedDocsUrl));
 
         // leaseApplicationFormData.append("contract_name",leaseData.contract_name)
         leaseApplicationFormData.append("lease_start",leaseData.lease_start)
@@ -247,6 +242,7 @@ const EditLease = (props) => {
         
         const leaseFees = [{"charge": rent, "due_by": rentDue, "late_by": lateFeeAfter, "fee_name": "Rent", "fee_type": "$", "late_fee": lateFeePerDay, "frequency": rentFreq, "due_by_date": null, "leaseFees_uid": rentDataFromLease[0].leaseFees_uid, "available_topay": availablePay, "perDay_late_fee":rentDataFromLease[0].perDay_late_fee, "id": rentDataFromLease[0].id}];
         leaseApplicationFormData.append("lease_fees", JSON.stringify(leaseFees))
+        leaseApplicationFormData.append("delete_documents", JSON.stringify(deletedDocsUrl));
 
         // leaseApplicationFormData.append("property_listed_rent",leaseData.property_listed_rent)
         // leaseApplicationFormData.append("frequency",leaseData.frequency)
@@ -753,9 +749,9 @@ const EditLease = (props) => {
                                 </TableCell>
                             </TableRow>
                             <TableRow>
-                                <Documents isEditable={true} documents={leaseDocuments} isAccord={false} setDocuments={setLeaseDocuments} contractFileTypes={contractFileTypes} setContractFileTypes={setContractFileTypes} contractFiles={contractFiles} setContractFiles={setContractFiles}/>
+                                <Documents isEditable={true} documents={leaseDocuments} deletedDocsUrl={deletedDocsUrl} setDeleteDocsUrl={setDeletedDocsUrl} isAccord={false} setDocuments={setLeaseDocuments} contractFileTypes={contractFileTypes} setContractFileTypes={setContractFileTypes} contractFiles={contractFiles} setContractFiles={setContractFiles}/>
                             </TableRow>
-                            <TableRow>
+                            {/* <TableRow>
                                 <TableCell>
                                     <Button
                                         width='100px'
@@ -782,7 +778,7 @@ const EditLease = (props) => {
                                         />
                                     </Button>
                                 </TableCell>
-                            </TableRow>
+                            </TableRow> */}
                         </TableBody>
                     </Table>
                     <Stack

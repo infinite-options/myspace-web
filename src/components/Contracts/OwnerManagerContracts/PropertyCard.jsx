@@ -49,6 +49,7 @@ import Documents from '../../Leases/Documents';
 import { FeesDataGrid } from '../../Property/PMQuotesRequested';
 import ManagementContractContext from '../../../contexts/ManagementContractContext';
 // import { gridColumnsTotalWidthSelector } from '@mui/x-data-grid';
+// dhyey
 
 function TextInputField(props) {
 	const inputStyle = {
@@ -125,7 +126,7 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 	// 	console.log('FEE FREQUENCY: ', feeFrequency);
 	// }, [feeFrequency]);
 
-	const [feeAppliedTo, setFeeAppliedTo] = useState('Gross Rent');
+	const [feeAppliedTo, setFeeAppliedTo] = useState('');
 	// useEffect(() => {
 	// 	console.log('FEE APPLIED TO: ', feeAppliedTo);
 	// }, [feeAppliedTo]);
@@ -390,8 +391,8 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 									<MenuItem value={'Utility Bill'}>Utility Bill</MenuItem>
 									<MenuItem value={'Maintenance Bill'}>Maintenance Bill</MenuItem> */}
 									{
-										feeBases?.map( basis => (
-											<MenuItem value={basis.list_item}>{basis.list_item}</MenuItem>
+										feeBases?.map( (basis, id) => (
+											<MenuItem key={id} value={basis.list_item}>{basis.list_item}</MenuItem>
 										))
 									}
 								</Select>
@@ -916,7 +917,14 @@ const PropertyCard = (props) => {
 			}
 	
 			const fees = JSON.parse(contractData["contract_fees"])? JSON.parse(contractData["contract_fees"]) : [];
-			setContractFees(fees);
+			// setContractFees(fees);
+
+			// console.log("---dhyey--- contract fees - ", contractFees, "fees is - ", fees);
+			if(fees.length === 0 && contractData["contract_status"] === "NEW"){
+				setContractFees([...defaultContractFees]);
+			}else{
+				setContractFees(fees);
+			}
 			// } else {
 			// 	setContractFees(defaultContractFees);
 			// }
@@ -968,17 +976,17 @@ const PropertyCard = (props) => {
     // console.log("CONTRACT ASSIGNED CONTACTS - ", contractAssignedContacts);
   }, [contractAssignedContacts]);
 
-  useEffect(() => {
+//   useEffect(() => {
     // console.log("DEFAULT CONTRACT FEES - ", defaultContractFees);
     // let JSONstring = JSON.stringify(defaultContractFees);
     // console.log("DEFAULT CONTRACT FEES JSON string- ", JSONstring);
 	
 	// console.log("contractFees.length - ", contractFees.length);
 	// console.log("contractFees - ", contractFees);
-    if (!contractFees.length) {
-      setContractFees([...defaultContractFees]);
-    }	
-  }, [defaultContractFees, currentContractUID]);
+//     if (!contractFees.length) {
+//       setContractFees([...defaultContractFees]);
+//     }	
+//   }, [defaultContractFees, currentContractUID]);
 
   useEffect(() => {
 	setImages(
@@ -1237,14 +1245,14 @@ const PropertyCard = (props) => {
 
 	formData.append("delete_documents", JSON.stringify(deletedDocsUrl));
 
-    formData.append("contract_uid", contractUID);
+    formData.append("contract_uid", currentContractUID);
     formData.append("contract_name", contractName);
     formData.append("contract_start_date", contractStartDate.format("MM-DD-YYYY"));
     formData.append("contract_end_date", contractEndDate.format("MM-DD-YYYY"));
     formData.append("contract_fees", contractFeesJSONString);
     formData.append("contract_status", "SENT");
     formData.append("contract_assigned_contacts", contractContactsJSONString);
-    formData.append("contract_documents", JSON.stringify(previouslyUploadedDocs));
+    // formData.append("contract_documents", JSON.stringify(previouslyUploadedDocs));
 	// formData.append("contract_documents_details", JSON.stringify(contractFileTypes));
 
     const endDateIsValid = isValidDate(contractEndDate.format("MM-DD-YYYY"));
@@ -2014,7 +2022,7 @@ return (
 					<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
 				</Box>
 			</Box>
-			{contractFees.length !== 0 ? <FeesDataGrid data={contractFees} isDeleteable={true} handleDeleteFee={handleDeleteFee}/> : 
+			{contractFees?.length !== 0 ? <FeesDataGrid data={contractFees} isDeleteable={true} handleDeleteFee={handleDeleteFee}/> : 
 				<>
 						<Box
 							sx={{
@@ -2133,18 +2141,33 @@ return (
 							width: '100%',
 						}}
 					>
-						<Typography
+						<Box
 							sx={{
-								color: "#160449",
-								fontWeight: theme.typography.primary.fontWeight,
-								fontSize: "18px",
-								paddingBottom: "5px",
-								paddingTop: "5px",
-								marginY:"10px"
+								display: 'flex',
+								flexDirection: 'row',
+								justifyContent: 'space-between',
+								fontSize: '15px',
+								fontWeight: 'bold',
+								// padding: '5px',
+								color: '#3D5CAC',
 							}}
 						>
-							{"Contract Assigned Contacts: "}
-						</Typography>
+							<Typography
+								sx={{
+									color: "#160449",
+									fontWeight: theme.typography.primary.fontWeight,
+									fontSize: "18px",
+									paddingBottom: "5px",
+									paddingTop: "5px",
+									marginY:"10px"
+								}}
+							>
+								{"Contract Assigned Contacts: "}
+							</Typography>
+							<Box onClick={()=>{setShowAddContactDialog(true)}} marginTop={"10px"} paddingTop={"5px"} paddingRight={"5px"}>
+								<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
+							</Box>
+						</Box>
 						<Grid container sx={{ color: 'black' }} marginY={"13px"}>
 							<Grid item xs={3}>
 								Name
@@ -2170,7 +2193,7 @@ return (
 			) : (
 				<></>
 			)}
-			<Box
+			{/* <Box
 				sx={{
 					display: 'flex',
 					flexDirection: 'row',
@@ -2181,35 +2204,8 @@ return (
 					width: '100%',
 				}}
 			>
-				<Box
-					onClick={() => {
-						setShowAddContactDialog(true);
-					}}
-				>
-					<Box
-						sx={{
-							display: 'flex',
-							flexDirection: 'row',
-							fontSize: '16px',
-							fontWeight: 'bold',
-							padding: '5px',
-							color: '#3D5CAC',
-						}}
-					>
-						<PersonIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
-						Add Contact
-					</Box>
-				</Box>
-				<Box>
-					<Box
-						sx={{
-							fontSize: '15px',
-							fontWeight: 'bold',
-							padding: '5px',
-							color: '#3D5CAC',
-						}}
-					></Box>
-					<Box
+				<Box> */}
+					{/* <Box
 						sx={{
 							display: 'flex',
 							flexDirection: 'row',
@@ -2231,9 +2227,9 @@ return (
 							onChange={(e) => setContractFiles((prevFiles) => [...prevFiles, ...e.target.files])}
 							multiple
 						/>
-					</Box>
-				</Box>
-			</Box>
+					</Box> */}
+				{/* </Box>
+			</Box> */}
 
 			<Box
 				sx={{
