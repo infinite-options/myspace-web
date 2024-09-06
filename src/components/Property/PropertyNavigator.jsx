@@ -291,7 +291,18 @@ export default function PropertyNavigator({
     const parsedPropertyImages = propertyList && propertyList[nextIndex] && propertyList[nextIndex].property_images ? JSON.parse(propertyList[nextIndex].property_images) : [];
     setImages(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
     setContractsData(contracts);
-    setActiveStep(0);
+    console.log("ROHIT - 294 - parsedPropertyImages - ", parsedPropertyImages);
+    console.log("ROHIT - 294 - propertyList[nextIndex].property_favorite_image - ", propertyList[nextIndex].property_favorite_image);
+    let favImageIndex =  null;
+    if(propertyList && propertyList[nextIndex] && propertyList[nextIndex].property_favorite_image){
+      favImageIndex = parsedPropertyImages.findIndex( url => url === propertyList[nextIndex].property_favorite_image )      
+    }
+    if(favImageIndex){
+      setActiveStep(favImageIndex);  
+    } else{
+      setActiveStep(0);
+    }
+    
   }, [index, propertyList]);
 
   useEffect(() => {
