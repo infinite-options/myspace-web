@@ -28,6 +28,9 @@ import { ManageHistory } from "@mui/icons-material";
 import AddListing from "./AddListing";
 import ManagerDetails from "./ManagerDetails";
 
+// import PropertiesContext from "../../contexts/PropertiesContext";
+import { PropertiesProvider } from "../../contexts/PropertiesContext";
+
 function Properties() {
   const location = useLocation();
   // console.log("In Properties");
@@ -455,159 +458,161 @@ function Properties() {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-       {showSpinner ? (
-        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
-          <CircularProgress color='inherit' />
-        </Backdrop>
-      ) : (
-      <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
-        <Grid container spacing={4}>
-          <Grid item xs={12} md={4}>
-            {/* {LHS === "List" && (
+    <PropertiesProvider>
+      <ThemeProvider theme={theme}>
+        {showSpinner ? (
+          <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+            <CircularProgress color='inherit' />
+          </Backdrop>
+        ) : (
+        <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
+          <Grid container spacing={4}>
+            <Grid item xs={12} md={4}>
+              {/* {LHS === "List" && (
+                <PropertiesList
+                  index={propertyIndex}
+                  propertyList={propertyList}
+                  allRentStatus={allRentStatus}
+                  isDesktop={isDesktop}
+                  contracts={allContracts}
+                  setPropertyIndex={setPropertyIndex}
+                />
+              )} */}
               <PropertiesList
-                index={propertyIndex}
+                index={returnIndex}
+                LHS={LHS}
                 propertyList={propertyList}
                 allRentStatus={allRentStatus}
                 isDesktop={isDesktop}
                 contracts={allContracts}
-                setPropertyIndex={setPropertyIndex}
+                onDataChange={handleListClick}
+                onAddPropertyClick={handleAddPropertyClick}
+                handleSorting={handleSorting}
               />
-            )} */}
-            <PropertiesList
-              index={returnIndex}
-              LHS={LHS}
-              propertyList={propertyList}
-              allRentStatus={allRentStatus}
-              isDesktop={isDesktop}
-              contracts={allContracts}
-              onDataChange={handleListClick}
-              onAddPropertyClick={handleAddPropertyClick}
-              handleSorting={handleSorting}
-            />
-          </Grid>
+            </Grid>
 
-          <Grid item xs={12} md={8}>
-          {(RHS === "AddProperty" || propertyList.length === 0) ? (
-              <PropertyForm
-                onBack={handleBackClick}
-                // onSubmit={handleBackClick}
-                showNewContract={showNewContract}
-                property_endpoint_resp={rawPropertyData}
-                setNewContractUID={setNewContractUID}
-                setNewContractPropertyUID={setNewContractPropertyUID}
-                setReloadPropertyList={setReloadPropertyList}
-                // showNewContract={showNewContract}
-                refreshProperties={refreshProperties}
-                setNewPropertyUid={setNewPropertyUid}
-              />
-            ) : (
-            <>
-              {RHS === "PropertyNavigator" && (
-                <PropertyNavigator
-                  // index={propertyIndex}
-                  index={returnIndex}
-                  propertyList={propertyList} // will change later - maybe
-                  allRentStatus={allRentStatus}
-                  isDesktop={isDesktop}
-                  contracts={allContracts}
-                  onEditClick={handleEditClick}
-                  onViewLeaseClick={handleViewLeaseClick}
-                  onViewContractClick={handleViewContractClick}
-                  handleViewApplication={handleViewApplication}
-                  handleViewPMQuotesRequested={handleViewPMQuotesRequested}
-                  onShowSearchManager={handleShowSearchManager}
-                  handleShowRequestQuotes={handleShowRequestQuotes}
-                  onAddListingClick={handleAddListingClick}
-                  setManagerDetailsState={setManagerDetailsState}
-                  handleViewManagerDetailsClick={handleViewManagerDetailsClick}
+            <Grid item xs={12} md={8}>
+            {(RHS === "AddProperty" || propertyList.length === 0) ? (
+                <PropertyForm
+                  onBack={handleBackClick}
+                  // onSubmit={handleBackClick}
+                  showNewContract={showNewContract}
+                  property_endpoint_resp={rawPropertyData}
+                  setNewContractUID={setNewContractUID}
+                  setNewContractPropertyUID={setNewContractPropertyUID}
+                  setReloadPropertyList={setReloadPropertyList}
+                  // showNewContract={showNewContract}
+                  refreshProperties={refreshProperties}
+                  setNewPropertyUid={setNewPropertyUid}
                 />
-              )}
-              {RHS === "EditProperty" && (
-                <EditProperty
-                  currentId={propertyList[returnIndex].property_uid}
-                  property={propertyList[returnIndex]}
-                  index={returnIndex}
-                  propertyList={propertyList}
-                  setPropertyList={setPropertyList}
-                  page={page}
-                  isDesktop={isDesktop}
-                  allRentStatus={allRentStatus}
-                  rawPropertyData={propertyList}
-                  onBackClick={handleBackClick}
-                  setRHS={setRHS}                
-                />
-              )}
-              {RHS === "ViewLease" && (
-                <ViewLease lease_id={propertyList[0].lease_uid} propertyList={propertyList} index={returnIndex} isDesktop={isDesktop} onBackClick={handleBackClick} />
-              )}
-              {RHS === "ViewContract" && <ViewManagementContract index={returnIndex} propertyList={propertyList} isDesktop={isDesktop} onBackClick={handleBackClick} />}
-              {RHS === "Applications" && (
-                <TenantApplicationNav index={applicationIndex} propertyIndex={applicationIndex} property={propertyList[returnIndex]} isDesktop={isDesktop} onBackClick={handleBackClick} />
-              )}
-              {RHS === "CreateContract" && (
-                <ManagementContractDetails contractUID={newContractUID} contractPropertyUID={newContractPropertyUID} properties={rawPropertyData?.NewPMRequests?.result} />
-              )}
-              {RHS === "ViewPMQuotesRequested" && (
-                <PMQuotesRequested
-                  index={returnIndex}
-                  propertyData={propertyList}
-                  contracts={allContracts}
-                  refreshContracts={refreshContracts}                
-                  handleBackClick={handleBackClick}
-
-                  // pmQuoteRequestedState={pmQuoteRequestedState}
-                  // setCurrentView={setCurrentView}
-                />
-              )}
-              {RHS === "SearchManager" && (
-                <SearchManager 
+              ) : (
+              <>
+                {RHS === "PropertyNavigator" && (
+                  <PropertyNavigator
+                    // index={propertyIndex}
                     index={returnIndex}
-                    propertyData={propertyList}                  
-                    setManagersList={setManagersList}
-                    handleBackClick={handleBackClick}
-                    handleRequestQuotes={handleRequestQuotes}
+                    propertyList={propertyList} // will change later - maybe
+                    allRentStatus={allRentStatus}
+                    isDesktop={isDesktop}
                     contracts={allContracts}
-                    propertyId={propertyList[returnIndex].property_uid}
+                    onEditClick={handleEditClick}
+                    onViewLeaseClick={handleViewLeaseClick}
+                    onViewContractClick={handleViewContractClick}
+                    handleViewApplication={handleViewApplication}
+                    handleViewPMQuotesRequested={handleViewPMQuotesRequested}
+                    onShowSearchManager={handleShowSearchManager}
+                    handleShowRequestQuotes={handleShowRequestQuotes}
+                    onAddListingClick={handleAddListingClick}
+                    setManagerDetailsState={setManagerDetailsState}
+                    handleViewManagerDetailsClick={handleViewManagerDetailsClick}
                   />
+                )}
+                {RHS === "EditProperty" && (
+                  <EditProperty
+                    currentId={propertyList[returnIndex].property_uid}
+                    property={propertyList[returnIndex]}
+                    index={returnIndex}
+                    propertyList={propertyList}
+                    setPropertyList={setPropertyList}
+                    page={page}
+                    isDesktop={isDesktop}
+                    allRentStatus={allRentStatus}
+                    rawPropertyData={propertyList}
+                    onBackClick={handleBackClick}
+                    setRHS={setRHS}                
+                  />
+                )}
+                {RHS === "ViewLease" && (
+                  <ViewLease lease_id={propertyList[0].lease_uid} propertyList={propertyList} index={returnIndex} isDesktop={isDesktop} onBackClick={handleBackClick} />
+                )}
+                {RHS === "ViewContract" && <ViewManagementContract index={returnIndex} propertyList={propertyList} isDesktop={isDesktop} onBackClick={handleBackClick} />}
+                {RHS === "Applications" && (
+                  <TenantApplicationNav index={applicationIndex} propertyIndex={applicationIndex} property={propertyList[returnIndex]} isDesktop={isDesktop} onBackClick={handleBackClick} />
+                )}
+                {RHS === "CreateContract" && (
+                  <ManagementContractDetails contractUID={newContractUID} contractPropertyUID={newContractPropertyUID} properties={rawPropertyData?.NewPMRequests?.result} />
+                )}
+                {RHS === "ViewPMQuotesRequested" && (
+                  <PMQuotesRequested
+                    index={returnIndex}
+                    propertyData={propertyList}
+                    contracts={allContracts}
+                    refreshContracts={refreshContracts}                
+                    handleBackClick={handleBackClick}
+
+                    // pmQuoteRequestedState={pmQuoteRequestedState}
+                    // setCurrentView={setCurrentView}
+                  />
+                )}
+                {RHS === "SearchManager" && (
+                  <SearchManager 
+                      index={returnIndex}
+                      propertyData={propertyList}                  
+                      setManagersList={setManagersList}
+                      handleBackClick={handleBackClick}
+                      handleRequestQuotes={handleRequestQuotes}
+                      contracts={allContracts}
+                      propertyId={propertyList[returnIndex].property_uid}
+                    />
+                )}
+                {RHS === "RequestQuotes" && (
+                  <RequestQuotes
+                    // requestQuotesState={requestQuotesState}
+                    // setCurrentView={setCurrentView}
+                    index={returnIndex}
+                    propertyData={propertyList}
+                    managerData={managerData}
+                    onShowSearchManager={handleShowSearchManager}
+                    refreshContracts={refreshContracts}
+                  />
+                )}
+                {RHS === "AddListing" && (
+                  <AddListing 
+                    propertyList={propertyList}
+                    index={returnIndex}
+                    page={page}
+                    propertyId={propertyList[returnIndex]?.property_uid} 
+                    onBackClick={handleBackClick}
+                    setRHS={setRHS}     
+                    refreshProperties={refreshProperties}  
+                    showPropertyNavigator={updateNavPage}
+                  />
+                )}
+                { RHS === "ManagerDetails" && (
+                  <ManagerDetails 
+                    managerDetailsState={managerDetailsState}
+                    handleBackClick={handleBackClick} 
+                    handleShowSearchManager={handleShowSearchManager}
+                    setReturnIndexByProperty={setReturnIndexByProperty}
+                  />
+                )}
+              </>
               )}
-              {RHS === "RequestQuotes" && (
-                <RequestQuotes
-                  // requestQuotesState={requestQuotesState}
-                  // setCurrentView={setCurrentView}
-                  index={returnIndex}
-                  propertyData={propertyList}
-                  managerData={managerData}
-                  onShowSearchManager={handleShowSearchManager}
-                  refreshContracts={refreshContracts}
-                />
-              )}
-              {RHS === "AddListing" && (
-                <AddListing 
-                  propertyList={propertyList}
-                  index={returnIndex}
-                  page={page}
-                  propertyId={propertyList[returnIndex]?.property_uid} 
-                  onBackClick={handleBackClick}
-                  setRHS={setRHS}     
-                  refreshProperties={refreshProperties}  
-                  showPropertyNavigator={updateNavPage}
-                />
-              )}
-              { RHS === "ManagerDetails" && (
-                <ManagerDetails 
-                  managerDetailsState={managerDetailsState}
-                  handleBackClick={handleBackClick} 
-                  handleShowSearchManager={handleShowSearchManager}
-                  setReturnIndexByProperty={setReturnIndexByProperty}
-                />
-              )}
-            </>
-            )}
+            </Grid>
           </Grid>
-        </Grid>
-      </Container> )}
-    </ThemeProvider>
+        </Container> )}
+      </ThemeProvider>
+    </PropertiesProvider>
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Typography, Box, Stack, Paper, Button, ThemeProvider, Grid, Container, InputBase, IconButton, Avatar, Badge } from "@mui/material";
 import theme from "../../theme/theme";
@@ -20,8 +20,12 @@ import PropertyForm from "../Property/PropertyForm";
 import PropertiesSearch from "./PropertiesSearch";
 import PMRent from "../Rent/PMRent/PMRent";
 
+import PropertiesContext from '../../contexts/PropertiesContext';
+
 export default function PropertiesList(props) {
   // console.log("In Property List: ", props.propertyList);
+  const { properties } = useContext(PropertiesContext); 
+	console.log("ROHIT - properties from PropertiesContext - ", properties);
   const location = useLocation();
   let navigate = useNavigate();
   const { getProfileId, selectedRole } = useUser();
