@@ -3,7 +3,7 @@ import MaintenanceWidget from "../Dashboard-Components/Maintenance/MaintenanceWi
 import RevenueWidget from "../Dashboard-Components/Revenue/RevenueWidget";
 import "../../css/maintenance.css";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { makeStyles } from "@material-ui/core";
 import theme from "../../theme/theme";
 import { useUser } from "../../contexts/UserContext";
@@ -14,6 +14,9 @@ import CircularProgress from "@mui/material/CircularProgress";
 import HappinessMatrixWidget from "../Dashboard-Components/HappinessMatrix/HappinessMatrixWidget";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import APIConfig from "../../utils/APIConfig";
+
+import ManagerDashboardContext, { ManagerDashboardProvider } from "../../contexts/ManagerDashboardContext";
+
 
 const useStyles = makeStyles({
   button: {
@@ -34,9 +37,18 @@ const useStyles = makeStyles({
   },
 });
 
+export default function MainComponent() {
+  return (
+    <ManagerDashboardProvider>
+      <ManagerDashboard />
+    </ManagerDashboardProvider>
+  );  
+}
+
 function ManagerDashboard() {
   // console.log("In Manager Dashboard function");
-
+  const { dataLoaded, setDataLoaded } = useContext(ManagerDashboardContext);
+  console.log("ROHIT - setDataLoaded from context - ", setDataLoaded);
   const navigate = useNavigate();
   const { getProfileId, user, selectedRole } = useUser();
   const [rentStatus, setRentStatus] = useState([]);
@@ -52,7 +64,7 @@ function ManagerDashboard() {
   const sliceColors = ["#A52A2A", "#FF8A00", "#FFC85C", "#160449", "#3D5CAC"];
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isMedium = useMediaQuery(theme.breakpoints.down("md"));
-
+  
   //
   //
   // Check if No Profile ID or if Employee Profile ID or if some other Role
@@ -68,30 +80,34 @@ function ManagerDashboard() {
 
   // This should be done at User Login and Not on the Dashboard
   // Employee Verification useEffect
-  useEffect(() => {
-    setShowSpinner(true);
-    if (selectedRole === "PM_EMPLOYEE" && getProfileId() != null) {
-      const emp_verification = async () => {
-        try {
-          const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
-          // const response = await fetch(`${APIConfig.baseURL.dev}/profile/600-000003`);
-          if (!response.ok) {
-            throw new Error("Failed to fetch data");
-          }
-          const data = await response.json();
-          console.log("ROHIT - data - ", data)
-          const employee = data?.profile?.result[0]; // Assuming there's only one employee
-          console.log("ROHIT - employee?.employee_verification - ", employee?.employee_verification)
-          if (employee?.employee_verification == null) {
-            navigate("/emp_waiting");
-          }
-        } catch (error) {
-          console.error(error);
-        }
-      };
 
-      emp_verification();
-      setShowSpinner(false);
+  const emp_verification = async () => {
+    console.log("ROHIT - 19 - fetchData - emp_verification  - dataLoaded ", dataLoaded)        
+    setShowSpinner(true);
+    setDataLoaded(true);
+    try {
+      const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
+      // const response = await fetch(`${APIConfig.baseURL.dev}/profile/600-000003`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+      const data = await response.json();
+      console.log("ROHIT - data - ", data)
+      const employee = data?.profile?.result[0]; // Assuming there's only one employee
+      console.log("ROHIT - employee?.employee_verification - ", employee?.employee_verification)
+      if (employee?.employee_verification == null) {
+        navigate("/emp_waiting");
+      }
+    } catch (error) {
+      console.error(error);
+      setDataLoaded(false);
+    }
+    setShowSpinner(false);
+  };
+  useEffect(() => {  
+    // fetchData();  
+    if (selectedRole === "PM_EMPLOYEE" && getProfileId() != null) {            
+      emp_verification();      
     }
     const signedUpWithReferral = localStorage.getItem("signedUpWithReferral");
     if (signedUpWithReferral && signedUpWithReferral === "true") {
@@ -100,29 +116,22 @@ function ManagerDashboard() {
     }
   }, []);
 
+    useEffect(() => {
+    // const dataObject = {};
+    // console.log("In UseEffect");
+    // console.log(getProfileId());
+
+    // console.log("In UseEffect after if");    
+    fetchData();    
+    
+  }, []);
+
   useEffect(() => {
     setShowSpinner(true);
     if (selectedRole === "PM_EMPLOYEE") dashboard_id = user.businesses?.MANAGEMENT?.business_uid || user?.pm_supervisor;
     if (selectedRole === "PM_EMPLOYEE" && getProfileId() != null) {
-      const emp_verification = async () => {
-        try {
-          const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
-          // const response = await fetch(`${APIConfig.baseURL.dev}/profile/600-000003`);
-          if (!response.ok) {
-            throw new Error("Failed to fetch data");
-          }
-          const data = await response.json();
-          const employee = data?.profile?.result[0]; // Assuming there's only one employee
-          console.log("ROHIT - employee?.employee_verification - ", employee?.employee_verification)
-          if (employee?.employee_verification == null) {
-            navigate("/emp_waiting");
-          }
-        } catch (error) {
-          console.error(error);
-        }
-      };
-
-      emp_verification();
+      emp_verification();      
+      fetchData();      
       setShowSpinner(false);
     }
     const signedUpWithReferral = localStorage.getItem("signedUpWithReferral");
@@ -130,30 +139,31 @@ function ManagerDashboard() {
       setShowReferralWelcomeDialog(true);
       localStorage.removeItem("signedUpWithReferral");
     }
-    fetchData();
+    
   }, [user]);
 
   //
   //
   // Console Logs for useState variables
-  useEffect(() => {
-    // console.log("RentStatus check --", rentStatus);
-  }, [rentStatus]);
+  // useEffect(() => {
+  //   // console.log("RentStatus check --", rentStatus);
+  // }, [rentStatus]);
 
-  useEffect(() => {
-    // console.log("Contract requests - ", contractRequests);
-  }, [contractRequests]);
+  // useEffect(() => {
+  //   // console.log("Contract requests - ", contractRequests);
+  // }, [contractRequests]);
 
-  useEffect(() => {
-    // console.log("Happiness Matrix Info - ", happinessData);
-  }, [happinessData]);
+  // useEffect(() => {
+  //   // console.log("Happiness Matrix Info - ", happinessData);
+  // }, [happinessData]);
 
-  const fetchData = async () => {
-    setShowSpinner(true);
-    if(dashboard_id == null){
+  const fetchData = async () => { 
+    console.log("ROHIT - 169 - fetchData - dataLoaded - ", dataLoaded)        
+    if(dashboard_id == null || dataLoaded === true){
       return;
     }
-
+    setShowSpinner(true);
+    setDataLoaded(true);
     const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${dashboard_id}`);
     // const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000003`);
 
@@ -181,24 +191,19 @@ function ManagerDashboard() {
       setPropertyData(jsonData.Properties.result);
 
       // NEW PM REQUESTS
-      setContractRequests(jsonData.NewPMRequests.result);
+      setContractRequests(jsonData.NewPMRequests.result);      
     } catch (error) {
       console.error(error);
+      setDataLoaded(false);
     }
 
     setShowSpinner(false);
   };
 
 
-  useEffect(() => {
-    // const dataObject = {};
-    // console.log("In UseEffect");
-    // console.log(getProfileId());
 
-    // console.log("In UseEffect after if");
-    
-    fetchData();
-  }, []);
+
+  
 
   
 
@@ -367,5 +372,3 @@ const ShimmerUI = () => {
     </ThemeProvider>
   );
 };
-
-export default ManagerDashboard;
