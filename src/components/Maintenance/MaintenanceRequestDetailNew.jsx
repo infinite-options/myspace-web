@@ -49,7 +49,7 @@ function a11yProps(index) {
   };
 }
 
-export default function MaintenanceRequestDetailNew() {
+export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData }) {
   const {
     selectedRequestIndex,
     selectedStatus,
@@ -77,7 +77,7 @@ export default function MaintenanceRequestDetailNew() {
   const [year, setYear] = useState(new Date().getFullYear());
   const [filteredQuotes, setFilteredQuotes] = useState([]);
   const [navParams, setNavParams] = useState({});
-  const allData = isMobile ? location.state.allMaintenanceData : allMaintenanceData;
+  const allData = isMobile ? location.state.allMaintenanceData : allMaintenancefilteredData;
   const isDesktop = location.state?.isDesktop || false;
   const propertyIndex = location.state?.index || -1;
 
@@ -120,7 +120,6 @@ export default function MaintenanceRequestDetailNew() {
   useEffect(() => {
     const handleMaintenanceRequestSelected = () => {
 
-      console.log("---is event heard-----", selectedStatus, selectedRequestIndex);
       // Update state with the new values
       //setMaintenanceRequestIndex(selectedRequestIndex);
       //setCurrentStatus(selectedStatus);
@@ -377,7 +376,7 @@ export default function MaintenanceRequestDetailNew() {
                         paddingBottom: "0px",
                       }}
                     >
-                      {allData[item.mapping]?.[selectedRequestIndex] ? (
+                      {allData[item.mapping] && allData[item.mapping][selectedRequestIndex] ? (
                         <MaintenanceRequestNavigatorNew
                           requestIndex={selectedRequestIndex}
                           backward_active_status={selectedRequestIndex === 0 && value === tabs.firstTab}

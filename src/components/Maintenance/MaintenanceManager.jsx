@@ -509,14 +509,13 @@ export default function MaintenanceManager() {
               >
                 {colorStatus.map((item, index) => {
                   let mappingKey = item.mapping;
-
                   let maintenanceArray = maintenanceData[mappingKey] || [];
-
                   let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList);
-
+                  
                   for (const item of filteredArray) {
                     newDataObject[mappingKey].push(item);
                   }
+                  
 
                   return (
                     <MaintenanceStatusTable
@@ -569,7 +568,7 @@ export default function MaintenanceManager() {
                     maintenance_request_index={selectedRequestIndex}
                     status={selectedStatus}
                     maintenanceItemsForStatus={maintenanceData[selectedStatus]}
-                    allMaintenanceData={newDataObject}
+                    allMaintenancefilteredData={newDataObject}
                   />
                 )
               )}
