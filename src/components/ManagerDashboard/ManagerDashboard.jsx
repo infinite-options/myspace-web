@@ -15,7 +15,6 @@ import HappinessMatrixWidget from "../Dashboard-Components/HappinessMatrix/Happi
 import useMediaQuery from "@mui/material/useMediaQuery";
 import APIConfig from "../../utils/APIConfig";
 
-import ManagerDashboardContext, { ManagerDashboardProvider } from "../../contexts/ManagerDashboardContext";
 
 
 const useStyles = makeStyles({
@@ -37,17 +36,11 @@ const useStyles = makeStyles({
   },
 });
 
-export default function MainComponent() {
-  return (
-    <ManagerDashboardProvider>
-      <ManagerDashboard />
-    </ManagerDashboardProvider>
-  );  
-}
 
-function ManagerDashboard() {
+
+export default function ManagerDashboard() {
   // console.log("In Manager Dashboard function");
-  const { dataLoaded, setDataLoaded } = useContext(ManagerDashboardContext);
+  const [ dataLoaded, setDataLoaded ] = useState(false);
   console.log("ROHIT - setDataLoaded from context - ", setDataLoaded);
   const navigate = useNavigate();
   const { getProfileId, user, selectedRole } = useUser();
