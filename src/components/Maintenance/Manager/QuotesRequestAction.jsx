@@ -171,20 +171,6 @@ export default function QuotesRequestAction({ maintenanceItem, navigateParams, q
 		} else {
 			if (maintenanceItem && navigateParams) {
 				try {
-					const maintenanceItemStr = JSON.stringify(maintenanceItem);
-					const navigateParamsStr = JSON.stringify(navigateParams);
-					const quotesStr = JSON.stringify(quotes);
-					console.log('Storing data in sessionStorage: ', navigateParams);
-
-					// Save data to sessionStorage
-					// sessionStorage.setItem('maintenanceItem', maintenanceItemStr);
-					// sessionStorage.setItem('navigateParams', navigateParamsStr);
-					// sessionStorage.setItem('quotes', quotesStr);
-					// sessionStorage.setItem('selectedRequestIndex', navigateParams.maintenanceRequestIndex);
-					// sessionStorage.setItem('selectedStatus', navigateParams.status);
-					// sessionStorage.setItem('desktopView', 'true');
-
-
                     setMaintenanceData(maintenanceItem);
                     setNavigateParams(navigateParams);
 					setMaintenanceQuotes(quotes);
