@@ -23,6 +23,7 @@ import theme from "../../theme/theme";
 import refundIcon from "./refundIcon.png";
 import SearchIcon from "@mui/icons-material/Search";
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import axios from "axios";
 import { useUser } from "../../contexts/UserContext";
 import APIConfig from "../../utils/APIConfig";
@@ -815,7 +816,7 @@ function DocumentCard(props) {
   );
 }
 
-export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee}) => {
+export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee, handleEditFee}) => {
   const columns = isDeleteable ? [
     {
       field: "frequency",
@@ -857,7 +858,19 @@ export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee}) => {
       },
     },
     {
-      field: "actions",
+      field: "editactions",
+      headerName: "",
+      flex: 0.5,
+      renderCell: (params) => (
+        <Box>
+          <IconButton onClick={(e) => handleEditFee(params.row.id)}>
+            <EditIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
+          </IconButton>
+        </Box>
+      ),
+    },
+    {
+      field: "deleteactions",
       headerName: "",
       flex: 0.5,
       renderCell: (params) => (
@@ -867,7 +880,7 @@ export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee}) => {
           </IconButton>
         </Box>
       ),
-    },
+    }
   ] : [
     {
       field: "frequency",
@@ -906,7 +919,7 @@ export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee}) => {
         const feeType = params.row?.fee_type;
         const of = params.value;
 
-        return <Typography>{of === null || of === undefined ? feeType === "FLATE-RATE" ? "FLATE-RATE" : `-` : `${of}`}</Typography>;
+        return <Typography>{of === null || of === undefined || of === "" ? feeType === "FLAT-RATE" ? "FLAT-RATE" : `-` : `${of}`}</Typography>;
       },
     },
   ];
