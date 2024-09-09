@@ -722,7 +722,7 @@ export default function PropertyNavigator({
     },
     {
       field: "latest_date_formatted",
-      headerName: "Paid",
+      headerName: "Date Paid",
       sortable: isDesktop,
       // flex: 1,
       renderCell: (params) => {
@@ -776,14 +776,33 @@ export default function PropertyNavigator({
       },
     },
     {
-      field: "pur_description",
-      headerName: "pur_description",
+      field: "purchase_type",
+      headerName: "Type",
       sortable: isDesktop,
       flex: 2,
       renderCell: (params) => {
         return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
       },
     },
+    {
+      field: "pur_notes",
+      headerName: "Notes",
+      sortable: isDesktop,
+      flex: 2,
+      renderCell: (params) => {
+        return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
+      },
+    },
+    // {
+    //   field: "pur_description",
+    //   headerName: "pur_description",
+    //   sortable: isDesktop,
+    //   flex: 2,
+    //   renderCell: (params) => {
+    //     return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
+    //   },
+    // },
+
     // {
     //   field: "rent_detail_index",
     //   headerName: "rent_detail_index",
@@ -793,15 +812,16 @@ export default function PropertyNavigator({
     //     return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
     //   },
     // },
-    {
-      field: "property_uid",
-      headerName: "property_uid",
-      sortable: isDesktop,
-      flex: 1,
-      renderCell: (params) => {
-        return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
-      },
-    },
+
+    // {
+    //   field: "property_uid",
+    //   headerName: "property_uid",
+    //   sortable: isDesktop,
+    //   flex: 1,
+    //   renderCell: (params) => {
+    //     return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
+    //   },
+    // },
   ];
 
   const handleEditClick = async (row) => {
@@ -2495,7 +2515,7 @@ export default function PropertyNavigator({
                   marginTop: "10px",
                 }}
               >
-                Rent History
+                Rent History 31
               </Typography>
               <CardContent
                 sx={{
