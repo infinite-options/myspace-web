@@ -10,11 +10,13 @@ export const MaintenanceProvider = ({ children }) => {
   const [selectedStatus, setSelectedStatus] = useState('NEW REQUEST');
   const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState([]);
   const [allMaintenanceData, setAllMaintenanceData] = useState({});
+  const [quoteRequestView, setQuoteRequestView] = useState(false);
   const [quoteAcceptView, setQuoteAcceptView] = useState(false);
   const [editMaintenanceView, setEditMaintenanceView] = useState(false);
   const [rescheduleView, setRescheduleView] = useState(false);
   const [payMaintenanceView, setPayMaintenanceView] = useState(false);
   const [maintenanceQuotes, setMaintenanceQuotes] = useState([]);
+  const [navigateParams, setNavigateParams] = useState({});
 
   return (
     <MaintenanceContext.Provider
@@ -29,6 +31,8 @@ export const MaintenanceProvider = ({ children }) => {
         setMaintenanceItemsForStatus,
         allMaintenanceData,
         setAllMaintenanceData,
+        quoteRequestView,
+        setQuoteRequestView,
         quoteAcceptView,
         setQuoteAcceptView,
         editMaintenanceView,
@@ -39,6 +43,8 @@ export const MaintenanceProvider = ({ children }) => {
         setPayMaintenanceView,
         maintenanceQuotes,
         setMaintenanceQuotes,
+        navigateParams,
+        setNavigateParams,
       }}
     >
       {children}

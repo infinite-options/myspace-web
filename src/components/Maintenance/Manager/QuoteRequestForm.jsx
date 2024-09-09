@@ -32,6 +32,8 @@ import IconButton from '@mui/material/IconButton';
 import ClearIcon from '@mui/icons-material/Clear';
 import APIConfig from '../../../utils/APIConfig';
 
+import { useMaintenance } from "../../../contexts/MaintenanceContext";
+
 export default function QuoteRequestForm() {
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const location = useLocation();
@@ -39,10 +41,13 @@ export default function QuoteRequestForm() {
 	const { roleName, maintenanceRoutingBasedOnSelectedRole, getProfileId } = useUser();
 	let maintenanceItem;
 	let navigationParams;
+	const { quoteRequestView, setQuoteRequestView ,    maintenanceData: contextMaintenanceItem, 
+		navigateParams: contextNavigateParams,  maintenanceQuotes, setMaintenanceQuotes, setMaintenanceItemsForStatus,setSelectedStatus, setSelectedRequestIndex, setAllMaintenanceData } = useMaintenance();
+    
 
-	if (!isMobile && sessionStorage.getItem('desktopView') === 'true') {
-		maintenanceItem = JSON.parse(sessionStorage.getItem('maintenanceItem'));
-		navigationParams = JSON.parse(sessionStorage.getItem('navigateParams'));
+	if (!isMobile && quoteRequestView) {
+		maintenanceItem = contextMaintenanceItem;
+		navigationParams = contextNavigateParams;
 	} else {
 		maintenanceItem = location.state.maintenanceItem;
 		navigationParams = location.state.navigateParams;
@@ -84,10 +89,16 @@ export default function QuoteRequestForm() {
 		let allMaintenanceData = navigationParams.allData;
 
 		// Set the necessary session storage items
-		sessionStorage.setItem('selectedRequestIndex', maintenance_request_index);
-		sessionStorage.setItem('selectedStatus', status);
-		sessionStorage.setItem('maintenanceItemsForStatus', JSON.stringify(maintenanceItemsForStatus));
-		sessionStorage.setItem('allMaintenanceData', JSON.stringify(allMaintenanceData));
+		// sessionStorage.setItem('selectedRequestIndex', maintenance_request_index);
+		// sessionStorage.setItem('selectedStatus', status);
+		// sessionStorage.setItem('maintenanceItemsForStatus', JSON.stringify(maintenanceItemsForStatus));
+		// sessionStorage.setItem('allMaintenanceData', JSON.stringify(allMaintenanceData));
+
+		
+		setMaintenanceItemsForStatus(maintenanceItemsForStatus);
+                    setAllMaintenanceData(allMaintenanceData);
+                    setSelectedRequestIndex(maintenance_request_index);
+                    setSelectedStatus(status);
 
 		if (isMobile) {
 			navigate('/maintenance/detail', {
@@ -99,9 +110,11 @@ export default function QuoteRequestForm() {
 				},
 			});
 		} else {
-			sessionStorage.removeItem('maintenanceItem');
-			sessionStorage.removeItem('navigateParams');
-			sessionStorage.removeItem('desktopView');
+			// sessionStorage.removeItem('maintenanceItem');
+			// sessionStorage.removeItem('navigateParams');
+			// sessionStorage.removeItem('desktopView');
+
+			setQuoteRequestView(true);
 
 			window.dispatchEvent(new Event('storage'));
 			// Dispatch the custom event

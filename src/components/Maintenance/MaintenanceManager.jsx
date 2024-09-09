@@ -167,11 +167,13 @@ export default function MaintenanceManager() {
   const [cookies] = useCookies(["selectedRole"]);
   const selectedRole = cookies.selectedRole;
 
-  const [desktopView] = useSessionStorage("desktopView", false);
-  const [quoteAcceptView] = useSessionStorage("quoteAcceptView", false);
-  const [rescheduleView] = useSessionStorage("rescheduleView", false);
-  const [payMaintenanceView] = useSessionStorage("payMaintenanceView", false);
-  const [editMaintenanceView] = useSessionStorage("editMaintenanceView", false);
+  // const [desktopView] = useSessionStorage("desktopView", false);
+  // const [quoteAcceptView] = useSessionStorage("quoteAcceptView", false);
+  // const [rescheduleView] = useSessionStorage("rescheduleView", false);
+  // const [payMaintenanceView] = useSessionStorage("payMaintenanceView", false);
+  // const [editMaintenanceView] = useSessionStorage("editMaintenanceView", false);
+  
+  const { quoteRequestView, quoteAcceptView, rescheduleView, payMaintenanceView, editMaintenanceView } = useMaintenance();
 
   const [isAddingNewMaintenance, setIsAddingNewMaintenance] = useState(false);
   const [showNewMaintenance, setshowNewMaintenance] = useState(false);
@@ -539,7 +541,7 @@ export default function MaintenanceManager() {
                 <EditMaintenanceItem />
               ) : showNewMaintenance || isAddingNewMaintenance ? (
                 <AddMaintenanceItem onBack={() => {setshowNewMaintenance(false); setIsAddingNewMaintenance(false);}} />
-              ) : desktopView && selectedRole === "MANAGER" ? (
+              ) : quoteRequestView && selectedRole === "MANAGER" ? (
                 <>
                   <QuoteRequestForm maintenanceItem={JSON.parse(sessionStorage.getItem("maintenanceItem"))} navigateParams={JSON.parse(sessionStorage.getItem("navigateParams"))} />
                 </>
