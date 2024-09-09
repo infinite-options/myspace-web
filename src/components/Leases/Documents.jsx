@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isAccord=false, contractFiles=[], setContractFiles, contractFileTypes=[], setContractFileTypes, isEditable=true, customName }) => {
+const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFileChange, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isAccord=false, contractFiles=[], setContractFiles, contractFileTypes=[], setContractFileTypes, isEditable=true, customName }) => {
   const [open, setOpen] = useState(false);
   const [currentRow, setcurrentRow] = useState(null);
   const color = theme.palette.form.main;
@@ -120,10 +120,14 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLeas
       // console.log("current row is", currentRow);
       
       if(!isAccord){
-        
+      
         setDocuments((prevFiles)=>{
           return prevFiles.map((file) => file.link === currentRow.link? currentRow : file);
         });
+        
+        if(setIsPreviousFileChange){
+          setIsPreviousFileChange(true)
+        }
         handleClose();
 
       }else{
@@ -411,7 +415,7 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLeas
                 },
               }}
             /> */}
-            {documents.length ? (
+            {documents && documents.length ? (
               <Box
                 sx={{
                   display: 'flex',
@@ -824,20 +828,55 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLeas
   }else{
     return(
       <>
-        <Typography
+        <Box
           sx={{
-            color: "#160449",
-            fontWeight: theme.typography.primary.fontWeight,
-            fontSize: "18px",
-            paddingBottom: "5px",
-            paddingTop: "5px",
-            marginTop:"10px"
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            fontSize: '15px',
+            fontWeight: 'bold',
+            color: '#3D5CAC',
           }}
         >
-          {customName ? customName : "Documents: "}
-        </Typography>
+          <Typography
+            sx={{
+              color: "#160449",
+              fontWeight: theme.typography.primary.fontWeight,
+              fontSize: "18px",
+              paddingBottom: "5px",
+              paddingTop: "5px",
+              marginTop:"10px"
+            }}
+          >
+            {customName ? customName : "Documents: "}
+          </Typography>
+          {isEditable && <Box
+						sx={{
+							display: 'flex',
+							flexDirection: 'row',
+							fontSize: '18px',
+							fontWeight: 'bold',
+							paddingTop: '5px',
+              marginTop:"10px",
+							color: '#3D5CAC',
+						}}
+					>
+						<label htmlFor="file-upload" style={{ cursor: 'pointer' }}>
+              <AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
+						</label>
+						<input
+							id="file-upload"
+							type="file"
+							accept=".doc,.docx,.txt,.pdf"
+							hidden
+							// onChange={(e) => setContractFiles(e.target.files)}
+							onChange={(e) => setContractFiles((prevFiles) => [...prevFiles, ...e.target.files])}
+							multiple
+						/>
+					</Box>}
+        </Box>
 
-        {documents.length ? (
+        {documents && documents.length ? (
 				<Box
 					sx={{
 						display: 'flex',
@@ -1213,6 +1252,8 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLeas
                     value={(currentRow && currentRow?.contentType) || ""}
                     onChange={(e) => {
                       setcurrentRow({ ...currentRow, contentType: e.target.value });
+
+                      // if new file uplopad then
                       if (newFiles) {
                         //update document type
                         let newArr = [...newFiles];

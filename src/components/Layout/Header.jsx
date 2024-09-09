@@ -43,6 +43,7 @@ function Header(props) {
   };
 
   const handleButtonClick = (role) => {
+    console.log("In handle Button Click: ", role);
     selectRole(role);
     const { dashboardUrl } = roleMap[role];
     if (role === "MAINTENANCE") {
@@ -69,6 +70,7 @@ function Header(props) {
   };
 
   const handleClick = (event) => {
+    console.log("In handle Click: ", event);
     setAnchorEl(event.currentTarget);
     setIsMenuOpen(true);
   };
@@ -206,7 +208,7 @@ function Header(props) {
                     </Button>
                   </Box>
                   <IconButton size='large' edge='end' color='inherit' aria-label='menu' sx={{ ml: 2, display: { xs: "flex", md: "none" } }} onClick={handleClick}>
-                    <MenuIcon  />
+                    <MenuIcon />
                   </IconButton>
                 </div>
               </Toolbar>

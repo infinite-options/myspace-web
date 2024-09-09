@@ -132,7 +132,6 @@ export default function PropertyNavigator({
 
   // console.log("PropertyNavigator - location state allRentStatus - ", allRentStatus);
 
-
   const getDataFromAPI = async () => {
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
     // const url = `${APIConfig.baseURL.dev}/contacts/600-000003`;
@@ -222,17 +221,17 @@ export default function PropertyNavigator({
 
   // console.log('MaxSteps: ', maxSteps); // Log maxSteps outside of useEffect
 
-  const [ activeStep, setActiveStep ] = useState(0);
-  const [ showSpinner, setShowSpinner ] = useState(false);
-  const [ contractsData, setContractsData ] = useState(contracts);
-  const [ activeContracts, setActiveContracts ] = useState([]);
-  const [ contractsNewSent, setContractsNewSent ] = useState(0);
-  const [ maintenanceReqData, setMaintenanceReqData ] = useState([{}]);
+  const [activeStep, setActiveStep] = useState(0);
+  const [showSpinner, setShowSpinner] = useState(false);
+  const [contractsData, setContractsData] = useState(contracts);
+  const [activeContracts, setActiveContracts] = useState([]);
+  const [contractsNewSent, setContractsNewSent] = useState(0);
+  const [maintenanceReqData, setMaintenanceReqData] = useState([{}]);
   // console.log('Maintenance Request Data1: ', maintenanceReqData);
-  const [ displayMaintenanceData, setDisplayMaintenanceData ] = useState([{}]);
+  const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
 
   const color = theme.palette.form.main;
-  const [ propertyId, setPropertyId ] = useState(propertyData && propertyData[currentIndex] ? propertyData[currentIndex].property_uid : null);
+  const [propertyId, setPropertyId] = useState(propertyData && propertyData[currentIndex] ? propertyData[currentIndex].property_uid : null);
   let data = "";
   const role = roleName();
   if (role === "Manager") {
@@ -291,7 +290,17 @@ export default function PropertyNavigator({
     const parsedPropertyImages = propertyList && propertyList[nextIndex] && propertyList[nextIndex].property_images ? JSON.parse(propertyList[nextIndex].property_images) : [];
     setImages(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
     setContractsData(contracts);
-    setActiveStep(0);
+    console.log("ROHIT - 294 - parsedPropertyImages - ", parsedPropertyImages);
+    console.log("ROHIT - 294 - propertyList[nextIndex].property_favorite_image - ", propertyList[nextIndex]?.property_favorite_image);
+    let favImageIndex = null;
+    if (propertyList && propertyList[nextIndex] && propertyList[nextIndex].property_favorite_image) {
+      favImageIndex = parsedPropertyImages.findIndex((url) => url === propertyList[nextIndex].property_favorite_image);
+    }
+    if (favImageIndex) {
+      setActiveStep(favImageIndex);
+    } else {
+      setActiveStep(0);
+    }
   }, [index, propertyList]);
 
   useEffect(() => {
@@ -325,7 +334,7 @@ export default function PropertyNavigator({
       //   getContractsForOwner();
       var count = 0;
       const filtered = contracts?.filter((contract) => contract.property_id === propertyId);
-      const active = filtered?.filter(contract => contract.contract_status === "ACTIVE");
+      const active = filtered?.filter((contract) => contract.contract_status === "ACTIVE");
       // console.log("322 - PropertyNavigator - filtered contracts - ", filtered);
       filtered.forEach((contract) => {
         if (contract.contract_status == "SENT" || contract.contract_status == "NEW") {
@@ -636,7 +645,7 @@ export default function PropertyNavigator({
     if (property && property.business_uid) {
       navigate("/ContactsPM", {
         state: {
-          contactsTab: "Manager", 
+          contactsTab: "Manager",
           managerId: property.business_uid,
         },
       });
@@ -818,7 +827,7 @@ export default function PropertyNavigator({
   const handleDeleteClick = async (id) => {
     try {
       const response = await axios.delete(`${APIConfig.baseURL.dev}/appliances/${id}`);
-  
+
       if (response.status === 200) {
         setAppliances(appliances.filter((appliance) => appliance.appliance_uid !== id));
       } else {
@@ -842,16 +851,16 @@ export default function PropertyNavigator({
         "Access-Control-Allow-Headers": "*",
         "Access-Control-Allow-Credentials": "*",
       };
-  
+
       const applianceFormData = new FormData();
-  
+
       Object.keys(appliance).forEach((key) => {
         // console.log(`Key: ${key}`);
 
         applianceFormData.append(key, appliance[key]);
       });
       // applianceFormData.append('appiliance_uid', appliance.uid);
-  
+
       // console.log(" editOrUpdateProfile - profileFormData - ");
       // for (var pair of profileFormData.entries()) {
       //   console.log(pair[0]+ ', ' + pair[1]);
@@ -859,13 +868,13 @@ export default function PropertyNavigator({
       let i = 0;
       if (selectedImageList.length > 0) {
         for (const file of selectedImageList) {
-        // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+          // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
           let key = `img_${i++}`;
           if (file.file !== null) {
-          // newProperty[key] = file.file;
+            // newProperty[key] = file.file;
             applianceFormData.append(key, file.file);
           } else {
-          // newProperty[key] = file.image;
+            // newProperty[key] = file.image;
             applianceFormData.append(key, file.image);
           }
           if (file.coverPhoto) {
@@ -876,30 +885,29 @@ export default function PropertyNavigator({
       axios
         .post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
         .then((response) => {
-        // Check if the response contains the `appliance_uid`
+          // Check if the response contains the `appliance_uid`
           const newApplianceUID = response?.data?.appliance_uid;
           if (newApplianceUID) {
-
-          // console.log("Data updated successfully", response);
-          // showSnackbar("Your profile has been successfully updated.", "success");
-          // handleUpdate();
-          console.log("Appliance befor", appliance);
-          console.log("applianceUIDToCategoryMap is %%", applianceUIDToCategoryMap);
-          const applianceCategory = applianceUIDToCategoryMap[appliance.appliance_type];
-          console.log("Appliance is $$", applianceCategory);
-          setAppliances([...appliances, { ...appliance, appliance_uid: newApplianceUID }]);
-        }
-            setShowSpinner(false);
-            setSelectedImageList([]);
-            handleClose();
-            window.location.reload(); //change here for alt referesh
+            // console.log("Data updated successfully", response);
+            // showSnackbar("Your profile has been successfully updated.", "success");
+            // handleUpdate();
+            console.log("Appliance befor", appliance);
+            console.log("applianceUIDToCategoryMap is %%", applianceUIDToCategoryMap);
+            const applianceCategory = applianceUIDToCategoryMap[appliance.appliance_type];
+            console.log("Appliance is $$", applianceCategory);
+            setAppliances([...appliances, { ...appliance, appliance_uid: newApplianceUID }]);
+          }
+          setShowSpinner(false);
+          setSelectedImageList([]);
+          handleClose();
+          window.location.reload(); //change here for alt referesh
         })
         .catch((error) => {
           setShowSpinner(false);
           console.error(error.response?.data || error.message);
         });
     } catch (error) {
-    console.error("Cannot Update Appliances", error);
+      console.error("Cannot Update Appliances", error);
       setShowSpinner(false);
     }
   };
@@ -953,7 +961,7 @@ export default function PropertyNavigator({
     });
 
     if (initialApplData.appliance_favorite_image !== favImage) {
-      changes['appliance_favorite_image'] = favImage;
+      changes["appliance_favorite_image"] = favImage;
     }
 
     return changes;
@@ -1022,33 +1030,33 @@ export default function PropertyNavigator({
       }
 
       for (let [key, value] of applianceFormData.entries()) {
-        console.log("check here:",key, value);
+        console.log("check here:", key, value);
       }
 
       if (appliance.appliance_uid) {
         applianceFormData.append("appliance_uid", appliance.appliance_uid);
       }
 
-    axios
-      .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
-      .then((response) => {
-        // Update the appliance in the state directly after successful edit
-        setAppliances((prevAppliances) => {
-          const index = prevAppliances.findIndex((item) => item.appliance_uid === appliance.appliance_uid);
-          if (index !== -1) {
-            const updatedAppliances = [...prevAppliances];
-            updatedAppliances[index] = { ...appliance, appliance_favorite_image: favImage };
-            return updatedAppliances;
-          } else {
-            return prevAppliances;
-          }
-        });
+      axios
+        .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
+        .then((response) => {
+          // Update the appliance in the state directly after successful edit
+          setAppliances((prevAppliances) => {
+            const index = prevAppliances.findIndex((item) => item.appliance_uid === appliance.appliance_uid);
+            if (index !== -1) {
+              const updatedAppliances = [...prevAppliances];
+              updatedAppliances[index] = { ...appliance, appliance_favorite_image: favImage };
+              return updatedAppliances;
+            } else {
+              return prevAppliances;
+            }
+          });
 
-        // Optionally close the dialog and reset states
-        setShowSpinner(false);
-        setSelectedImageList([]);
-        handleClose(); // Close the dialog after successful edit
-      })
+          // Optionally close the dialog and reset states
+          setShowSpinner(false);
+          setSelectedImageList([]);
+          handleClose(); // Close the dialog after successful edit
+        })
         .catch((error) => {
           setShowSpinner(false);
           // showSnackbar("Cannot update your profile. Please try again", "error");
@@ -1115,7 +1123,7 @@ export default function PropertyNavigator({
         return acc;
       }, {});
       // console.log("appliance UIDs to categories- ", listUidToItemMapping);
-      setApplianceUIDToCategoryMap(listUidToItemMapping); 
+      setApplianceUIDToCategoryMap(listUidToItemMapping);
     } catch (error) {
       console.log(error);
     }
@@ -1267,21 +1275,21 @@ export default function PropertyNavigator({
 
   const handleTenantClick = (tenantId) => {
     if (selectedRole === "MANAGER" || selectedRole === "OWNER") {
-        if (tenant_detail === "No Tenant") {
-          console.log("There is no tenant");
-        } else {
-          console.log("Else statement for if there is a tenant");
-          navigate("/ContactsPM", {
-            state: {
-              contactsTab: "Tenant",
-              tenantId: tenantId,
-            },
-          });
-        }
+      if (tenant_detail === "No Tenant") {
+        console.log("There is no tenant");
+      } else {
+        console.log("Else statement for if there is a tenant");
+        navigate("/ContactsPM", {
+          state: {
+            contactsTab: "Tenant",
+            tenantId: tenantId,
+          },
+        });
       }
+    }
   };
 
-  appliances.forEach(row => {
+  appliances.forEach((row) => {
     if (!row.appliance_uid) {
       console.error("Missing appliance_uid for row:", row);
     }
@@ -1626,7 +1634,7 @@ export default function PropertyNavigator({
                             fontSize: theme.typography.smallFont,
                           }}
                         >
-                          {(property && property.property_value_year) ? `${property.property_value_year}` : "-"}
+                          {property && property.property_value_year ? `${property.property_value_year}` : "-"}
                         </Typography>
                       </Grid>
                       <Grid item xs={6}>
@@ -2174,7 +2182,7 @@ export default function PropertyNavigator({
                               }}
                             >
                               {/* {property && property.business_uid ? `${property.business_name}` : "No Manager Selected"} */}
-                              {activeContracts?.length > 0? activeContracts[0]?.business_name : "No Manager Selected"}
+                              {activeContracts?.length > 0 ? activeContracts[0]?.business_name : "No Manager Selected"}
                             </Typography>
                             <KeyboardArrowRightIcon
                               sx={{
@@ -2242,7 +2250,6 @@ export default function PropertyNavigator({
                       </Grid>
                     )}
 
-                    
                     {contractsData && contractsData.length > 0 && selectedRole !== "MANAGER" ? (
                       <>
                         <Grid item xs={10.7} md={10.7}>
@@ -2631,35 +2638,33 @@ export default function PropertyNavigator({
                 <Dialog open={open} onClose={handleClose}>
                   <DialogTitle>{isEditing ? "Edit Appliance" : "Add New Appliance"}</DialogTitle>
                   <DialogContent>
-                  <FormControl margin='dense' fullWidth variant='outlined' sx={{ marginTop: "10px" }}>
-                  <InputLabel required>Appliance Type</InputLabel>
-                  <Select
-                    margin='dense'
-                    label='Appliance Type'
-                    fullWidth
-                    required
-                    variant='outlined'
-                    value={applianceUIDToCategoryMap[currentApplRow?.appliance_type] || ""}
-                    onChange={(e) => {
-                      const selectedItem = applianceCategories.find(
-                        (appln) => appln.list_item === e.target.value
-                      );
-                      if (selectedItem) {
-                        setcurrentApplRow({
-                          ...currentApplRow,
-                          appliance_type: selectedItem.list_uid,
-                        });
-                      }
-                    }}
-                  >
-                    {applianceCategories &&
-                      applianceCategories.map((appln) => (
-                        <MenuItem key={appln.list_uid} value={appln.list_item}>
-                          {appln.list_item}
-                        </MenuItem>
-                      ))}
-                  </Select>
-                </FormControl>
+                    <FormControl margin='dense' fullWidth variant='outlined' sx={{ marginTop: "10px" }}>
+                      <InputLabel required>Appliance Type</InputLabel>
+                      <Select
+                        margin='dense'
+                        label='Appliance Type'
+                        fullWidth
+                        required
+                        variant='outlined'
+                        value={applianceUIDToCategoryMap[currentApplRow?.appliance_type] || ""}
+                        onChange={(e) => {
+                          const selectedItem = applianceCategories.find((appln) => appln.list_item === e.target.value);
+                          if (selectedItem) {
+                            setcurrentApplRow({
+                              ...currentApplRow,
+                              appliance_type: selectedItem.list_uid,
+                            });
+                          }
+                        }}
+                      >
+                        {applianceCategories &&
+                          applianceCategories.map((appln) => (
+                            <MenuItem key={appln.list_uid} value={appln.list_item}>
+                              {appln.list_item}
+                            </MenuItem>
+                          ))}
+                      </Select>
+                    </FormControl>
                     {isEditing && (
                       <Box
                         sx={{
@@ -2695,60 +2700,61 @@ export default function PropertyNavigator({
                             }}
                           >
                             <ImageList ref={scrollRef} sx={{ display: "flex", flexWrap: "nowrap" }} cols={5}>
-                              {currentApplRow.appliance_images ? currentApplRow.appliance_images.map((image, index) => (
-                                <ImageListItem
-                                  key={index}
-                                  sx={{
-                                    width: "auto",
-                                    flex: "0 0 auto",
-                                    border: "1px solid #ccc",
-                                    margin: "0 2px",
-                                    position: "relative", // Added to position icons
-                                  }}
-                                >
-                                  <img
-                                    src={image}
-                                    alt={`maintenance-${index}`}
-                                    style={{
-                                      height: "150px",
-                                      width: "150px",
-                                      objectFit: "cover",
+                              {currentApplRow.appliance_images ? (
+                                currentApplRow.appliance_images.map((image, index) => (
+                                  <ImageListItem
+                                    key={index}
+                                    sx={{
+                                      width: "auto",
+                                      flex: "0 0 auto",
+                                      border: "1px solid #ccc",
+                                      margin: "0 2px",
+                                      position: "relative", // Added to position icons
                                     }}
-                                  />
-                                  <Box sx={{ position: "absolute", top: 0, right: 0 }}>
-                                    <IconButton
-                                      onClick={() => handleDelete(index)}
-                                      sx={{
-                                        color: deletedIcons[index] ? "red" : "black",
-                                        backgroundColor: "rgba(255, 255, 255, 0.7)",
-                                        "&:hover": {
-                                          backgroundColor: "rgba(255, 255, 255, 0.9)",
-                                        },
-                                        margin: "2px",
+                                  >
+                                    <img
+                                      src={image}
+                                      alt={`maintenance-${index}`}
+                                      style={{
+                                        height: "150px",
+                                        width: "150px",
+                                        objectFit: "cover",
                                       }}
-                                    >
-                                      <DeleteIcon />
-                                    </IconButton>
-                                  </Box>
-                                  <Box sx={{ position: "absolute", bottom: 0, left: 0 }}>
-                                    <IconButton
-                                      onClick={() => handleFavorite(index)}
-                                      sx={{
-                                        color: favoriteIcons[index] ? "red" : "black",
-                                        backgroundColor: "rgba(255, 255, 255, 0.7)",
-                                        "&:hover": {
-                                          backgroundColor: "rgba(255, 255, 255, 0.9)",
-                                        },
-                                        margin: "2px",
-                                      }}
-                                    >
-                                      {favoriteIcons[index] ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-                                    </IconButton>
-                                  </Box>
-                                </ImageListItem>
-                              )) : (
-                                <>
-                                </>
+                                    />
+                                    <Box sx={{ position: "absolute", top: 0, right: 0 }}>
+                                      <IconButton
+                                        onClick={() => handleDelete(index)}
+                                        sx={{
+                                          color: deletedIcons[index] ? "red" : "black",
+                                          backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                          "&:hover": {
+                                            backgroundColor: "rgba(255, 255, 255, 0.9)",
+                                          },
+                                          margin: "2px",
+                                        }}
+                                      >
+                                        <DeleteIcon />
+                                      </IconButton>
+                                    </Box>
+                                    <Box sx={{ position: "absolute", bottom: 0, left: 0 }}>
+                                      <IconButton
+                                        onClick={() => handleFavorite(index)}
+                                        sx={{
+                                          color: favoriteIcons[index] ? "red" : "black",
+                                          backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                          "&:hover": {
+                                            backgroundColor: "rgba(255, 255, 255, 0.9)",
+                                          },
+                                          margin: "2px",
+                                        }}
+                                      >
+                                        {favoriteIcons[index] ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                                      </IconButton>
+                                    </Box>
+                                  </ImageListItem>
+                                ))
+                              ) : (
+                                <></>
                               )}
                             </ImageList>
                           </Box>
