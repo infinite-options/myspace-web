@@ -35,12 +35,16 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import DateTimePickerModal from '../../../components/DateTimePicker';
 import { useMediaQuery } from '@mui/material';
 import APIConfig from "../../../utils/APIConfig";
+import { useMaintenance } from "../../../contexts/MaintenanceContext";
 
 export default function RescheduleMaintenance(){
 
     // console.log("RescheduleMaintenance")
     const location = useLocation();
     const navigate = useNavigate();
+    const { setMaintenanceItemsForStatus , maintenanceData: contextMaintenanceItem, 
+		navigateParams: contextNavigateParams,  rescheduleView, setRescheduleView, setMaintenanceQuotes, setNavigateParams, setMaintenanceData,setSelectedStatus, setSelectedRequestIndex, setAllMaintenanceData } = useMaintenance();
+    
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     let maintenanceItem;
     let navigationParams;
@@ -49,8 +53,8 @@ export default function RescheduleMaintenance(){
         navigationParams = location.state.navigateParams;
     
     } else {
-        maintenanceItem = JSON.parse(sessionStorage.getItem('maintenanceItem'));
-		navigationParams = JSON.parse(sessionStorage.getItem('navigateParams'));
+        maintenanceItem = contextMaintenanceItem;
+		navigationParams = contextNavigateParams;
     }
     // console.log("maintenanceItem", maintenanceItem)
     const [month, setMonth] = useState(new Date().getMonth());
@@ -149,10 +153,12 @@ export default function RescheduleMaintenance(){
 
     function handleBackButton(){
         console.log("handleBackButton");
-        sessionStorage.setItem('selectedRequestIndex', maintenance_request_index);
-		sessionStorage.setItem('selectedStatus', status);
-		sessionStorage.setItem('maintenanceItemsForStatus', JSON.stringify(maintenanceItemsForStatus));
-		sessionStorage.setItem('allMaintenanceData', JSON.stringify(allMaintenanceData));
+
+        setSelectedRequestIndex(maintenance_request_index);
+        setSelectedStatus(status);
+        setAllMaintenanceData(allMaintenanceData);
+        setMaintenanceItemsForStatus(maintenanceItemsForStatus);
+        
 
         if (isMobile) {navigate("/maintenance/detail", {
             state: {
@@ -163,19 +169,7 @@ export default function RescheduleMaintenance(){
             }
         }); 
     }else {
-        sessionStorage.removeItem('maintenanceItem');
-        sessionStorage.removeItem('navigateParams');
-        sessionStorage.removeItem('quotes');
-        sessionStorage.removeItem('rescheduleView');
-
-        window.dispatchEvent(new Event('storage'));
-        // Dispatch the custom event
-        setTimeout(() => {
-            window.dispatchEvent(new Event('maintenanceRequestSelected'));
-        }, 0);
-        setTimeout(() => {
-            window.dispatchEvent(new Event('maintenanceUpdate'));
-        }, 0);
+        setRescheduleView(false);
     }
     }
 

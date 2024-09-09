@@ -166,13 +166,6 @@ export default function MaintenanceManager() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [cookies] = useCookies(["selectedRole"]);
   const selectedRole = cookies.selectedRole;
-
-  // const [desktopView] = useSessionStorage("desktopView", false);
-  // const [quoteAcceptView] = useSessionStorage("quoteAcceptView", false);
-  // const [rescheduleView] = useSessionStorage("rescheduleView", false);
-  // const [payMaintenanceView] = useSessionStorage("payMaintenanceView", false);
-  // const [editMaintenanceView] = useSessionStorage("editMaintenanceView", false);
-  
   const { quoteRequestView, quoteAcceptView, rescheduleView, payMaintenanceView, editMaintenanceView } = useMaintenance();
 
   const [isAddingNewMaintenance, setIsAddingNewMaintenance] = useState(false);
@@ -329,15 +322,8 @@ export default function MaintenanceManager() {
         },
       });
     } else {
-    //   // Save data to session storage
-    //   sessionStorage.setItem("selectedRequestIndex", index);
-    //   sessionStorage.setItem("selectedStatus", row.maintenance_status);
-    //   sessionStorage.setItem("maintenanceItemsForStatus", JSON.stringify(maintenanceData[row.maintenance_status]));
-    //   sessionStorage.setItem("allMaintenanceData", JSON.stringify(maintenanceData));
-    console.log('--is it here to set things---', index, row);
       await setSelectedRequestIndex(index);
       await setSelectedStatus(row.maintenance_status);
-      console.log('before setting----', maintenanceData);
       setMaintenanceItemsForStatus(maintenanceData[row.maintenance_status]);
       setAllMaintenanceData(maintenanceData);
 
@@ -543,18 +529,15 @@ export default function MaintenanceManager() {
                 <AddMaintenanceItem onBack={() => {setshowNewMaintenance(false); setIsAddingNewMaintenance(false);}} />
               ) : quoteRequestView && selectedRole === "MANAGER" ? (
                 <>
-                  <QuoteRequestForm maintenanceItem={JSON.parse(sessionStorage.getItem("maintenanceItem"))} navigateParams={JSON.parse(sessionStorage.getItem("navigateParams"))} />
+                  <QuoteRequestForm />
                 </>
               ) : quoteAcceptView && selectedRole === "MANAGER" ? (
                 <>
-                  <QuoteAcceptForm maintenanceItem={JSON.parse(sessionStorage.getItem("maintenanceItem"))} navigateParams={JSON.parse(sessionStorage.getItem("navigateParams"))} />
+                  <QuoteAcceptForm  />
                 </>
               ) : rescheduleView && selectedRole === "MANAGER" ? (
                 <>
                   <RescheduleMaintenance
-                    maintenanceItem={JSON.parse(sessionStorage.getItem("maintenanceItem"))}
-                    navigateParams={JSON.parse(sessionStorage.getItem("navigateParams"))}
-                    quotes={JSON.parse(sessionStorage.getItem("quotes"))}
                   />
                 </>
               ) : payMaintenanceView && selectedRole === "MANAGER" ? (

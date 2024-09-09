@@ -114,16 +114,8 @@ export default function QuoteRequestForm() {
 			// sessionStorage.removeItem('navigateParams');
 			// sessionStorage.removeItem('desktopView');
 
-			setQuoteRequestView(true);
+			setQuoteRequestView(false);
 
-			window.dispatchEvent(new Event('storage'));
-			// Dispatch the custom event
-			setTimeout(() => {
-				window.dispatchEvent(new Event('maintenanceRequestSelected'));
-			}, 0);
-			setTimeout(() => {
-				window.dispatchEvent(new Event('maintenanceUpdate'));
-			}, 0);
 		}
 	}
 
