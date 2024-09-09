@@ -263,12 +263,12 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 								}}
 							>
 								<MenuItem value={'One Time'}>One Time</MenuItem>
-								<MenuItem value={'hourly'}>hourly</MenuItem>
-								<MenuItem value={'daily'}>daily</MenuItem>
-								<MenuItem value={'weekly'}>weekly</MenuItem>
-								<MenuItem value={'biweekly'}>biweekly</MenuItem>
-								<MenuItem value={'monthly'}>monthly</MenuItem>
-								<MenuItem value={'annually'}>annually</MenuItem>
+								<MenuItem value={'Hourly'}>hourly</MenuItem>
+								<MenuItem value={'Daily'}>daily</MenuItem>
+								<MenuItem value={'Weekly'}>weekly</MenuItem>
+								<MenuItem value={'Biweekly'}>biweekly</MenuItem>
+								<MenuItem value={'Monthly'}>monthly</MenuItem>
+								<MenuItem value={'Annually'}>annually</MenuItem>
 							</Select>
 						</Box>
 					</Box>
@@ -514,12 +514,20 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 		//     isFlatRate: isFlatRate,
 		//     ...(isFlatRate && { charge: feeAmount }),
 		// }
+		// const newFee = {
+		// 	fee_name: feeName,
+		// 	fee_type: feeType,
+		// 	frequency: feeFrequency,
+		// 	...(feeType === 'PERCENT' && { charge: percentage }),
+		// 	...(feeType === 'PERCENT' && { of: feeAppliedTo }),
+		// 	...(feeType === 'FLAT-RATE' && { charge: feeAmount }),
+		// };
 		const newFee = {
 			fee_name: feeName,
 			fee_type: feeType,
 			frequency: feeFrequency,
+			of: feeAppliedTo,
 			...(feeType === 'PERCENT' && { charge: percentage }),
-			...(feeType === 'PERCENT' && { of: feeAppliedTo }),
 			...(feeType === 'FLAT-RATE' && { charge: feeAmount }),
 		};
 		onEditFee(newFee, feeIndex); // pass index also
@@ -885,6 +893,7 @@ const PropertyCard = (props) => {
   const [propertyOwnerName, setPropertyOwnerName] = useState("");
   const [deletedDocsUrl, setDeletedDocsUrl] = useState([]);
   const [documentDetails, setDocumentDetails] = useState([]);
+  const [isPreviousFileChange, setIsPreviousFileChange] = useState(false)
 
 
 
@@ -1243,7 +1252,9 @@ const PropertyCard = (props) => {
 
 	//Check here -- Abhinav
 
-	formData.append("delete_documents", JSON.stringify(deletedDocsUrl));
+	if(deletedDocsUrl && deletedDocsUrl?.length !== 0){
+		formData.append("delete_documents", JSON.stringify(deletedDocsUrl));
+	}
 
     formData.append("contract_uid", currentContractUID);
     formData.append("contract_name", contractName);
@@ -1252,7 +1263,11 @@ const PropertyCard = (props) => {
     formData.append("contract_fees", contractFeesJSONString);
     formData.append("contract_status", "SENT");
     formData.append("contract_assigned_contacts", contractContactsJSONString);
-    // formData.append("contract_documents", JSON.stringify(previouslyUploadedDocs));
+
+	if(isPreviousFileChange){
+		formData.append("contract_documents", JSON.stringify(previouslyUploadedDocs));
+	}
+
 	// formData.append("contract_documents_details", JSON.stringify(contractFileTypes));
 
     const endDateIsValid = isValidDate(contractEndDate.format("MM-DD-YYYY"));
@@ -1267,7 +1282,7 @@ const PropertyCard = (props) => {
       return;
     }
 
-    if (contractFiles.length) {
+    if (contractFiles && contractFiles?.length) {
 
       const documentsDetails = [];
       [...contractFiles].forEach((file, i) => {
@@ -1504,7 +1519,7 @@ return (
 				>
 					{/* {getProperties(propertyStatus).length > 0 ? (`${getProperties(propertyStatus)[index].property_address}, ${(getProperties(propertyStatus)[index].property_unit !== null && getProperties(propertyStatus)[index].property_unit !== '' ? (getProperties(propertyStatus)[index].property_unit + ',') : (''))} ${getProperties(propertyStatus)[index].property_city} ${getProperties(propertyStatus)[index].property_state} ${getProperties(propertyStatus)[index].property_zip}`) : (<></>)} */}
 					{/* 789 Maple Lane, San Diego, CA 92101, USA */}
-					{propertyData.property_unit ? (
+					{propertyData?.property_unit ? (
 						<span>
 							{propertyData.property_address}
 							{', Unit - '}
@@ -2022,7 +2037,7 @@ return (
 					<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
 				</Box>
 			</Box>
-			{contractFees?.length !== 0 ? <FeesDataGrid data={contractFees} isDeleteable={true} handleDeleteFee={handleDeleteFee}/> : 
+			{contractFees?.length !== 0 ? <FeesDataGrid data={contractFees} isDeleteable={true} handleEditFee={handleOpenEditFee} handleDeleteFee={handleDeleteFee}/> : 
 				<>
 						<Box
 							sx={{
@@ -2116,7 +2131,7 @@ return (
 
 			{/* previously Uploaded docs */}
 			<Box padding={"5px"}>
-				<Documents isEditable={true} isAccord={false} documents={previouslyUploadedDocs} setDocuments={setPreviouslyUploadedDocs} setDeleteDocsUrl={setDeletedDocsUrl} contractFiles={contractFiles} contractFileTypes={contractFileTypes} setContractFiles={setContractFiles} setContractFileTypes={setContractFileTypes}/>
+				<Documents isEditable={true} setIsPreviousFileChange={setIsPreviousFileChange} isAccord={false} documents={previouslyUploadedDocs} setDocuments={setPreviouslyUploadedDocs} setDeleteDocsUrl={setDeletedDocsUrl} contractFiles={contractFiles} contractFileTypes={contractFileTypes} setContractFiles={setContractFiles} setContractFileTypes={setContractFileTypes}/>
 			</Box>
 
 			{/* Contact details */}

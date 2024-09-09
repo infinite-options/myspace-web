@@ -784,7 +784,11 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
               profileFormData.append("tenant_documents_details", JSON.stringify(documentsDetails));
             }
           } else {
-            profileFormData.append(item.key, JSON.stringify(item.value));
+            if(item.key !== "tenant_ssn"){
+              profileFormData.append(item.key, JSON.stringify(item.value));
+            }else{
+              profileFormData.append(item.key, item.value);
+            }
           }
         });
         profileFormData.append("tenant_uid", profileData.tenant_uid);

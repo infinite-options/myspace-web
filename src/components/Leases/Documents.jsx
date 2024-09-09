@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isAccord=false, contractFiles=[], setContractFiles, contractFileTypes=[], setContractFileTypes, isEditable=true, customName }) => {
+const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFileChange, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isAccord=false, contractFiles=[], setContractFiles, contractFileTypes=[], setContractFileTypes, isEditable=true, customName }) => {
   const [open, setOpen] = useState(false);
   const [currentRow, setcurrentRow] = useState(null);
   const color = theme.palette.form.main;
@@ -120,10 +120,14 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLeas
       // console.log("current row is", currentRow);
       
       if(!isAccord){
-        
+      
         setDocuments((prevFiles)=>{
           return prevFiles.map((file) => file.link === currentRow.link? currentRow : file);
         });
+        
+        if(setIsPreviousFileChange){
+          setIsPreviousFileChange(true)
+        }
         handleClose();
 
       }else{
@@ -1248,6 +1252,8 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, editOrUpdateLeas
                     value={(currentRow && currentRow?.contentType) || ""}
                     onChange={(e) => {
                       setcurrentRow({ ...currentRow, contentType: e.target.value });
+
+                      // if new file uplopad then
                       if (newFiles) {
                         //update document type
                         let newArr = [...newFiles];

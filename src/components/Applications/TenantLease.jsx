@@ -131,6 +131,7 @@ const TenantLease = () => {
   const [leasePets, setLeasePets ] = useState([]);
   const [leaseVehicles, setLeaseVehicles ] = useState([]);
   const [deletedDocsUrl, setDeletedDocsUrl] = useState([])
+  const [isPreviousFileChange, setIsPreviousFileChange] = useState(false)
 
 
   // console.log("# of Occupants", noOfOccupants);
@@ -534,8 +535,13 @@ const TenantLease = () => {
       leaseApplicationFormData.append("lease_fees", JSON.stringify(fees));
       leaseApplicationFormData.append("lease_move_in_date", moveInDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_end_notice_period", endLeaseNoticePeriod);
-      leaseApplicationFormData.append("delete_documents", JSON.stringify(deletedDocsUrl));
-      // leaseApplicationFormData.append("documents", leaseFiles);
+      if(deletedDocsUrl && deletedDocsUrl?.length !== 0){
+        leaseApplicationFormData.append("delete_documents", JSON.stringify(deletedDocsUrl));
+      }
+
+      if(isPreviousFileChange){
+        leaseApplicationFormData.append("lease_documents", JSON.stringify(leaseDocuments));
+      }
 
       const hasMissingType = !checkFileTypeSelected();
       // console.log("HAS MISSING TYPE", hasMissingType);
@@ -1448,7 +1454,7 @@ const TenantLease = () => {
             <></>
           )} */}
           <Box marginLeft={'20px'} width={'100%'}>
-            <Documents documents={leaseDocuments} setDocuments={setLeaseDocuments} deletedDocsUrl={deletedDocsUrl} setDeleteDocsUrl={setDeletedDocsUrl} contractFiles={leaseFiles} setContractFiles={setLeaseFiles} contractFileTypes={leaseFileTypes} setContractFileTypes={setLeaseFileTypes} isAccord={false} isEditable={true}/>
+            <Documents setIsPreviousFileChange={setIsPreviousFileChange} documents={leaseDocuments} setDocuments={setLeaseDocuments} deletedDocsUrl={deletedDocsUrl} setDeleteDocsUrl={setDeletedDocsUrl} contractFiles={leaseFiles} setContractFiles={setLeaseFiles} contractFileTypes={leaseFileTypes} setContractFileTypes={setLeaseFileTypes} isAccord={false} isEditable={true}/>
           </Box>
           {/* <Grid item xs={12}>
             <Box>
