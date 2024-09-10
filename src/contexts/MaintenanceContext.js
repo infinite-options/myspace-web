@@ -18,6 +18,21 @@ export const MaintenanceProvider = ({ children }) => {
   const [maintenanceQuotes, setMaintenanceQuotes] = useState([]);
   const [navigateParams, setNavigateParams] = useState({});
 
+  // New states that replace sessionStorage for other details
+  const [testIssue, setTestIssue] = useState('');
+  const [testProperty, setTestProperty] = useState('');
+  const [testIssueItem, setTestIssueItem] = useState('');
+  const [testCost, setTestCost] = useState('');
+  const [testTitle, setTestTitle] = useState('');
+  const [testPriority, setTestPriority] = useState('');
+  const [completionStatus, setCompletionStatus] = useState('');
+  const [requestUid, setRequestUid] = useState('');
+  const [propID, setPropID] = useState('');
+  const [maintainanceImages, setMaintainanceImages] = useState([]);
+  const [maintainanceFavImage, setMaintainanceFavImage] = useState('');
+  const [month, setMonth] = useState(new Date().getMonth());
+  const [year, setYear] = useState(new Date().getFullYear());
+
   return (
     <MaintenanceContext.Provider
       value={{
@@ -45,6 +60,32 @@ export const MaintenanceProvider = ({ children }) => {
         setMaintenanceQuotes,
         navigateParams,
         setNavigateParams,
+        testIssue,
+        setTestIssue,
+        testProperty,
+        setTestProperty,
+        testIssueItem,
+        setTestIssueItem,
+        testCost,
+        setTestCost,
+        testTitle,
+        setTestTitle,
+        testPriority,
+        setTestPriority,
+        completionStatus,
+        setCompletionStatus,
+        requestUid,
+        setRequestUid,
+        propID,
+        setPropID,
+        maintainanceImages,
+        setMaintainanceImages,
+        maintainanceFavImage,
+        setMaintainanceFavImage,
+        month,
+        setMonth,
+        year,
+        setYear,
       }}
     >
       {children}

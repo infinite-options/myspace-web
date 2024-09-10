@@ -66,7 +66,20 @@ export default function MaintenanceRequestNavigatorNew({
 	navigateParams,
 	fetchAndUpdateQuotes,
 }) {
-	const { setEditMaintenanceView } = useMaintenance(); // Use the context
+	const { setEditMaintenanceView,  setTestIssue,
+		setTestProperty,
+		setTestIssueItem,
+		setTestCost,
+		setTestTitle,
+		setTestPriority,
+		setCompletionStatus,
+		setRequestUid,
+		setPropID,
+		setMaintainanceImages,
+		setMaintainanceFavImage,
+		setSelectedRequestIndex,
+		setSelectedStatus,
+	 } = useMaintenance(); // Use the context
 
 	const [currentIndex, setCurrentIndex] = useState(requestIndex);
 
@@ -122,48 +135,47 @@ export default function MaintenanceRequestNavigatorNew({
 		requestUid,
 		propID,
 		maintainanceImages,
-		maintainanceFavImage,
-	) {
+		maintainanceFavImage
+	  ) {
 		if (isMobile) {
-			navigate('/editMaintenanceItem', {
-				state: {
-					testIssue,
-					testProperty,
-					testIssueItem,
-					testCost,
-					testTitle,
-					testPriority,
-					completionStatus,
-					requestUid,
-					propID,
-					month,
-					year,
-				},
-			});
+		  navigate('/editMaintenanceItem', {
+			state: {
+			  testIssue,
+			  testProperty,
+			  testIssueItem,
+			  testCost,
+			  testTitle,
+			  testPriority,
+			  completionStatus,
+			  requestUid,
+			  propID,
+			  month,
+			  year,
+			},
+		  });
 		} else {
-			// Setting properties into sessionStorage
-			sessionStorage.setItem('testIssue', testIssue);
-			sessionStorage.setItem('testProperty', testProperty);
-			sessionStorage.setItem('testIssueItem', testIssueItem);
-			sessionStorage.setItem('testCost', testCost);
-			sessionStorage.setItem('testTitle', testTitle);
-			sessionStorage.setItem('testPriority', testPriority);
-			sessionStorage.setItem('completionStatus', completionStatus);
-			sessionStorage.setItem('requestUid', requestUid);
-			sessionStorage.setItem('propID', propID);
-			sessionStorage.setItem('month', month);
-			sessionStorage.setItem('year', year);
-			sessionStorage.setItem('editMaintenanceView', true);
-			sessionStorage.setItem('selectedRequestIndex', requestIndex);
-			sessionStorage.setItem('selectedStatus', status);
-			sessionStorage.setItem('maintainanceImages', maintainanceImages);
-			sessionStorage.setItem('maintainanceFavImage', maintainanceFavImage);
-			window.dispatchEvent(new Event('storage'));
-			setTimeout(() => {
-				window.dispatchEvent(new Event('maintenanceRequestSelected'));
-			}, 0);
+		  // Use context setters instead of sessionStorage
+		  setTestIssue(testIssue);
+		  setTestProperty(testProperty);
+		  setTestIssueItem(testIssueItem);
+		  setTestCost(testCost);
+		  setTestTitle(testTitle);
+		  setTestPriority(testPriority);
+		  setCompletionStatus(completionStatus);
+		  setRequestUid(requestUid);
+		  setPropID(propID);
+		  setMaintainanceImages(maintainanceImages);
+		  setMaintainanceFavImage(maintainanceFavImage);
+	  
+		  // Use these context setters for selectedRequestIndex and selectedStatus
+		  setSelectedRequestIndex(requestIndex);
+		  setSelectedStatus(status);
+		  
+		  // Use this context setter for the view
+		  setEditMaintenanceView(true);
 		}
-	}
+	  }
+	  
 
 	// Display scheduled date logic
 	function displayScheduledDate(data) {
@@ -237,6 +249,26 @@ export default function MaintenanceRequestNavigatorNew({
 			}
 		}
 	};
+
+	useEffect(() => {
+		const initialImages = getInitialImages(requestData, currentIndex);
+		setImages(initialImages);
+		setActiveStep(0);
+
+		if (requestData[currentIndex] && requestData[currentIndex].maintenance_request_created_date !== 'null') {
+			let formattedDate = dayjs(requestData[currentIndex].maintenance_request_created_date).format('MM-DD-YYYY');
+			setFormattedDate(formattedDate);
+			const today = dayjs();
+			let diff = today.diff(formattedDate, 'day');
+			setNumOpenRequestDays(diff);
+		} else {
+			setFormattedDate('N/A');
+			setNumOpenRequestDays('N/A');
+		}
+	}, [currentIndex]);
+
+	const maxSteps = images.length;
+
 	const handleNextCard = () => {
 		setCurrentIndex((prevIndex) => {
 			let newIndex = prevIndex + 1;
