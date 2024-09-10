@@ -93,20 +93,15 @@ const ViewLease = (props) => {
   const [confirmEndLeaseDialogOpen, setConfirmEndLeaseDialogOpen] = useState(false);
   const [renewLeaseDialogOpen, setRenewLeaseDialogOpen] = useState(false);
   const [endLeaseAnnouncement, setEndLeaseAnnouncement] = useState("");
-  // const [moveOutDate, setMoveOutDate] = useState(dayjs(new Date()));
   const [moveOutDate, setMoveOutDate] = useState(new Date());
   const [expanded, setExpanded] = useState(false);
-
-  // const [index, setIndex] = useState(props.index ? props.index : 0);
-  const [index, setIndex] = useState(returnIndex ? returnIndex : 0);
   
-  const [allLeases, setAllLeases] = useState([]);
+  const [index, setIndex] = useState(returnIndex ? returnIndex : 0);  
+  const [allLeases, setAllLeases] = useState([]);  
 
-  // const [leaseID, setLeaseID] = useState("");
-
-  useEffect(() => {
-    console.log("leaseData - ", leaseData);
-  }, [leaseData]);
+  // useEffect(() => {
+  //   console.log("leaseData - ", leaseData);
+  // }, [leaseData]);
 
   useEffect(() => {
     setMoveOut(formatDate(moveOutDate));
@@ -118,12 +113,7 @@ const ViewLease = (props) => {
 
   const closeRenewLeaseDialog = () => {
     setRenewLeaseDialogOpen(false);
-  };
-
-  const handleViewButton = (link) => {
-    // console.log("LEASE DATA - documents: ", JSON.parse(leaseData.lease_documents));
-    window.open(link, "_blank", "rel=noopener noreferrer");
-  };
+  };  
 
   const handleEndLease = () => {
     const headers = {
@@ -160,12 +150,10 @@ const ViewLease = (props) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            announcement_title: "End Lease Request from Tenant",
-            // announcement_msg: `Tenant for ${leaseData.property_address}, Unit -${leaseData.property_unit} has requested to end the Lease.`,
+            announcement_title: "End Lease Request from Tenant",            
             announcement_msg: endLeaseAnnouncement ? endLeaseAnnouncement : "",
             announcement_sender: getProfileId(),
-            announcement_date: new Date().toDateString(),
-            // announcement_properties: property.property_uid,
+            announcement_date: new Date().toDateString(),            
             announcement_properties: JSON.stringify(receiverPropertyMapping),
             announcement_mode: "LEASE",
             announcement_receiver: [leaseData.business_uid],
@@ -184,18 +172,12 @@ const ViewLease = (props) => {
   };
   // console.log(location.state)
   // console.log("leaseID", leaseID)
-  // console.log("propertyUID", propertyUID)
-
-  // const propertyUID = props.lease_id ? props.property_uid : location.state.property_uid;
-  // const isDesktop = props.lease_id ? props.isDesktop : location.state.isDesktop;
-
-  // const propertyList = props.propertyList ? props.propertyList : [];
+  // console.log("propertyUID", propertyUID)  
 
   const getLeaseDetails = async () => {
     axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`).then((res) => {
       const data = res.data["Lease_Details"].result;
-      // console.log("FETCHING THE DATA ", data);
-      // setFetchData(data);
+      // console.log("getLeaseDetails - data -  ", data);      
       setAllLeases(data);
       setShowSpinner(false);
     });
@@ -203,21 +185,7 @@ const ViewLease = (props) => {
 
   useEffect(() => {
     setShowSpinner(true);
-    getLeaseDetails();
-
-    // axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`).then((res) => {
-    //   const data = res.data["Lease_Details"].result;
-    //   // console.log("FETCHING THE DATA ", data);
-    //   // setFetchData(data);
-    //   setAllLeases(data);
-    //   setShowSpinner(false);
-    // });
-
-    // const leaseID = propertyList[index]?.lease_uid;
-
-    // console.log("main useEffect -  const leaseID - ", leaseID);
-
-    
+    getLeaseDetails();        
   }, []);
 
   useEffect(() => {
@@ -257,21 +225,7 @@ const ViewLease = (props) => {
       console.log(" index useEffect - Setting lease data to null.");
       setLeaseData(null);
     }
-  }, [returnIndex, props.propertyList, allLeases]);
-
-
-  function getDayText(day) {
-    switch (day % 10) {
-      case 1:
-        return day + "st";
-      case 2:
-        return day + "nd";
-      case 3:
-        return day + "rd";
-      default:
-        return day + "th";
-    }
-  }
+  }, [returnIndex, props.propertyList, allLeases]);  
 
   const handleRenewLease = () => {
     navigate("/editLease", {
@@ -291,8 +245,7 @@ const ViewLease = (props) => {
     setExpanded(!expanded);
   };
 
-  const ConfirmEndLeaseDialog = ({ leaseData, dialogOpen, setDialogOpen, handleEndLease, setEndLeaseAnnouncement }) => {
-    // const [endLeaseAnnouncement, setEndLeaseAnnouncement] = useState('');
+  const ConfirmEndLeaseDialog = ({ leaseData, dialogOpen, setDialogOpen, handleEndLease, setEndLeaseAnnouncement }) => {    
 
     const getConfirmEndLeaseDialogText = (leaseData) => {
       const currentDate = new Date();
@@ -305,8 +258,7 @@ const ViewLease = (props) => {
       console.log("Notice Period: ", noticePeriod);
       console.log("Lease End Date: ", leaseEndDate);
 
-      console.log("MoveOutDate In: ", moveOutDate.$d);
-      // moveOutDate = new Date(moveOutDate)
+      console.log("MoveOutDate In: ", moveOutDate.$d);      
       // console.log("MoveOutDate Out: ", moveOutDate);
 
       const noticeDate = new Date(leaseEndDate);
@@ -589,13 +541,7 @@ const ViewLease = (props) => {
                           {" "}
                           {leaseData ? CountNoOfVehicles(leaseData) || "None" : "Null"}{" "}
                         </Typography>
-                      </Grid>
-                      {/* <Grid>
-                      <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700, cursor: "pointer" }} onClick={handleToggleAccordion}>
-                        Show All Tenant Details
-                      </Typography>
-                    </Grid> */}
-                      {/* <Accordion expanded={expanded} onChange={handleToggleAccordion}> */}
+                      </Grid>                                            
                       <Accordion expanded={expanded} onChange={handleToggleAccordion} sx={{ backgroundColor: "#F2F2F2" }}>
                         <AccordionSummary expandIcon={<ExpandMore />} aria-controls='panel1a-content' id='panel1a-header'>
                           <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700, cursor: "pointer" }} onClick={handleToggleAccordion}>
@@ -653,14 +599,7 @@ const ViewLease = (props) => {
 
                 {/* documents */}
                 <Grid item xs={12}>
-                  <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>
-                    {/* <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Lease Documents</Typography>
-                    {leaseDocuments.map((document, index) => (
-                      <Box key={index} sx={{ cursor: "pointer", display: "flex", alignContent: "center", alignItems: "center" }} onClick={() => handleViewButton(document.link)}>
-                        <img src={documentIcon} style={{ width: "20px", height: "25px", margin: "5px", paddingRight: "5px" }} />
-                        <Typography sx={{ fontSize: "18px", fontWeight: "bold", color: "#3D5CAC" }}>{document.filename}</Typography>
-                      </Box>
-                    ))} */}
+                  <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>                    
                     <Documents customName={"Lease Documents:"} documents={leaseDocuments} setDocuments={setLeaseDocuments} isEditable={false} />
                   </Box>
                 </Grid>

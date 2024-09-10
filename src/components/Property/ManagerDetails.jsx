@@ -22,8 +22,7 @@ import { useUser } from "../../contexts/UserContext";
 
 const ManagerDetails = ({managerDetailsState, handleBackClick, handleShowSearchManager, setReturnIndexByProperty}) => {
   const navigate = useNavigate();
-  const location = useLocation();
-  // const { ownerId, managerBusinessId, managerData, propertyData, index, isDesktop } = location.state || managerDetailsState;
+  const location = useLocation();  
   const { ownerId, managerBusinessId, managerData, propertyData, index, isDesktop } = managerDetailsState;
   const { user, selectedRole } = useUser();
 
@@ -95,27 +94,17 @@ const ManagerDetails = ({managerDetailsState, handleBackClick, handleShowSearchM
   };
 
   const getManagerProperties = async () => {
-    // setShowSpinner(true);
-    // const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${managerBusinessId}`;
-    // const response = await axios.get(url);
-    // console.log("Properties endpoint results: ", response);
-    
-    // sortProperties(propertyData);
-    // const propertyList = propertyData
-    // sortProperties(propertyList);
-
+    // setShowSpinner(true);    
     const managedProperties = propertyData?.filter( property => property.contract_business_id === managerBusinessId);
-    console.log("managedProperties - ", managedProperties);
+    // console.log("managedProperties - ", managedProperties);
     setProperties(managedProperties);
     setShowSpinner(false);
   };
-  useEffect(() => {
-    // fetchManagerProperties();
+  useEffect(() => {    
     getManagerProperties();
   }, []);
 
-  useEffect(() => {
-    // fetchManagerProperties();
+  useEffect(() => {    
     getManagerProperties();
   }, [index]);
 
@@ -216,7 +205,7 @@ const ManagerDetails = ({managerDetailsState, handleBackClick, handleShowSearchM
                 flexDirection: "row",
                 alignItems: "center",
               }}
-              onClick={navigateToPrev} // need to pass in the index and the propertyData
+              onClick={navigateToPrev}
             >
               <img src={ReturnArrow} style={{ verticalAlign: "middle", paddingRight: "5px" }} alt="back" />
               <Box>
@@ -290,7 +279,7 @@ const ManagerDetails = ({managerDetailsState, handleBackClick, handleShowSearchM
                 flexDirection: "row",
                 alignItems: "center",
               }}
-              onClick={navigateToPrev} // need to pass in the index and the propertyData
+              onClick={navigateToPrev}
             >
               <img src={ReturnArrow} style={{ verticalAlign: "middle", paddingRight: "5px" }} alt="back" />
               <Box>
@@ -519,60 +508,7 @@ const ManagerDetails = ({managerDetailsState, handleBackClick, handleShowSearchM
                       </Grid>
                     </>
                   );
-                })}
-              {/* {(propertyData.filter((property) => property.business_uid === managerData.business_uid)).map((p) => { 
-                                let index=propertyData.findIndex((property)=>property.property_uid===p.property_uid);
-                                let docList = JSON.parse(p.contract_documents);
-                                const doc =docList && docList.find(
-                                    (document) => document.type === "contract"
-                                );
-                                const contractDocumentLink = doc ? doc.link : '';
-                                return (
-                                        <>
-                                            <Grid container direction="row" onClick={() => navigate("/propertyDetail", {state: {index, propertyList: propertyData}})}>
-                                                <Typography
-                                                    sx={{
-                                                    paddingLeft: "15px",
-                                                    fontFamily: "Source Sans Pro, sans-serif",
-                                                    fontWeight: 600,
-                                                    color: "#160449",
-                                                    textDecoration: "underline",
-                                                    }}
-                                                >
-                                                    {`${p.property_address}, ${p.property_unit && p.property_unit+ ', ' } ${p.property_city}, ${p.property_state} ${p.property_zip}`}
-                                                </Typography>
-                                                <Typography
-                                                    sx={{
-                                                    fontWeight: 800,
-                                                    paddingLeft: "10px",
-                                                    fontFamily: "Source Sans Pro, sans-serif",
-                                                    color: "#160449",
-                                                    }}
-                                                >
-                                                    {p.contract_status === "NEW" ? "New" : p.contract_status === "ACTIVE" ? "Active" : "Inactive"} {`, contract_uid: ${p.contract_uid}`} {`, contract_name: ${p.contract_name}`}
-                                                    
-                                                </Typography>
-                                                {
-                                                    contractDocumentLink!=="" ? <Box onClick={()=>{
-                                                        window.open(contractDocumentLink, "_blank");
-                                                        // console.log("we should show a document here")
-                                                    }}>
-                                                        <Typography
-                                                            sx={{
-                                                                fontWeight: 800,
-                                                                paddingLeft: "10px",
-                                                                fontFamily: "Source Sans Pro, sans-serif",
-                                                                color: "#160449",
-                                                            }}
-                                                        >
-                                                            , contract_document: <img src={documentIcon} alt="document-icon" style={{width: '12px', height: '15px', margin:'0px', paddingLeft: "15px"}}/>
-                                                        </Typography>
-                                                    </Box>:<div></div>
-                                                }
-                                            </Grid>
-                                        </>
-                                    )}
-                        )} */}
+                })}             
               {managerData.contract_status === "ACTIVE" && selectedRole !== "MANAGER" ? (
                 <>
                   <Button

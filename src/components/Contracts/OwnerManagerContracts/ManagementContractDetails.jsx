@@ -19,15 +19,9 @@ import PropertyCard from "./PropertyCard";
 import ManagementContractContext from "../../../contexts/ManagementContractContext";
 import PropertiesContext from "../../../contexts/PropertiesContext";
 
-// import { isValidDate } from "../../../utils/dates";
 
 function ManagementContractDetails(props) {
-  // console.log("In ManagementContractDetails.jsx - props - ", props);
-  
-  
-  // const { currentContractUID, currentContractPropertyUID, contractRequests, } = useContext(ManagementContractContext);
-  // const { rawPropertyData, } = useContext(PropertiesContext);
-  
+  // console.log("In ManagementContractDetails.jsx - props - ", props);    
   const managementContractContext = useContext(ManagementContractContext);
   const propertiesContext = useContext(PropertiesContext);
 
@@ -49,8 +43,7 @@ function ManagementContractDetails(props) {
   
   
   console.log("ManagementContractDetails - currentContractUID from context - ", currentContractUID);
-  console.log("ManagementContractDetails - currentContractPropertyUID from context - ", currentContractPropertyUID);
-  // const { getProfileId } = useUser();
+  console.log("ManagementContractDetails - currentContractPropertyUID from context - ", currentContractPropertyUID);  
   const navigate = useNavigate();
   
 

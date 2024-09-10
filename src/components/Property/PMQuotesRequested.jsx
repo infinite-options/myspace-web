@@ -59,12 +59,9 @@ export default function PMQuotesRequested(props) {
   const [contracts, setContracts] = useState([]);
   const refreshContracts = fetchContracts;  
   const [refresh, setRefresh] = useState(false);
-  const [loading, setLoading] = useState(true); // New loading state
-  // const property = PMQuotesDetails.propertyData;
-  const property = propertyList;
-  // const propertyId = property[PMQuotesDetails.index]?.property_uid;
-  const propertyId = property[returnIndex]?.property_uid;
-  // const index = PMQuotesDetails.index;
+  const [loading, setLoading] = useState(true); // New loading state  
+  const property = propertyList;  
+  const propertyId = property[returnIndex]?.property_uid;  
   const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
 
   const statusColor = ["#3D5CAC", "#160449"];
@@ -195,10 +192,7 @@ export default function PMQuotesRequested(props) {
                         fontSize: "10px",
                       }}
                       onClick={async () => {
-                        await handleStatusChange(contract, "CANCELLED");
-                        // setTimeout(() => {
-                        //   setRefresh(!refresh);
-                        // }, 100);
+                        await handleStatusChange(contract, "CANCELLED");                        
                       }}
                     >
                       Cancel
@@ -222,8 +216,7 @@ export default function PMQuotesRequested(props) {
         {activeContracts?.length > 0 ? (
           activeContracts.map((contract, index) => (
             <div key={index}>
-              <DocumentCard data={contract} />
-              {/* <p>{contract.contract_uid}</p> */}
+              <DocumentCard data={contract} />              
             </div>
           ))
         ) : (
@@ -280,8 +273,7 @@ export default function PMQuotesRequested(props) {
         });
     } catch (error) {
       console.error(error);
-    }
-    // setRefresh(!refresh);
+    }    
     setTabStatus(1);    
   }
 
@@ -769,23 +761,10 @@ function DocumentCard(props) {
         data.contract_status === "NEW" ? (
           fees?.map((fee, index) => <FeesTextCard key={index} fee={fee} />)
         ) : fees.length !== 0 ? (
-          <>
-          {/* <Box sx={{marginLeft: '10px', }}>
-            {
-              JSON.parse(data.contract_fees)?.map((fee, index) => (
-                <Typography sx={textStyle}>
-                  <FeesTextCard key={index} fee={fee} />
-                </Typography>
-              ))}
-          </Box> */}
+          <>          
             <FeesDataGrid data={JSON.parse(data?.contract_fees)} />
           </>
-        ) : (
-          // <Box width={'100%'} height={'100px'}>
-          //     <Typography sx={textStyle}>
-          //       <b>No fees</b>
-          //     </Typography>
-          // </Box>
+        ) : (          
           <Box
               sx={{
                 display: 'flex',
@@ -942,10 +921,7 @@ export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee, handle
     <DataGrid
       rows={rowsWithId}
       columns={columns}
-      sx={{
-        // minHeight:"100px",
-        // height:"100px",
-        // maxHeight:"100%",
+      sx={{        
         marginTop: "10px",
       }}
       autoHeight

@@ -59,27 +59,24 @@ export const PropertiesProvider = ({ children }) => {
     setPropertyList(propertyList);
   };
 
-  useEffect(() => {
-    console.log("ROHIT - PropertiesProvider - propertyList - ",propertyList);
-  }, [propertyList]);
+//   useEffect(() => {
+//     console.log("PropertiesProvider - propertyList - ",propertyList);
+//   }, [propertyList]);
 
-  useEffect(() => {
-    console.log("ROHIT - PropertiesProvider - returnIndex - ",returnIndex);
-  }, [returnIndex]);
+//   useEffect(() => {
+//     console.log("PropertiesProvider - returnIndex - ",returnIndex);
+//   }, [returnIndex]);
 
-  useEffect(() => {
-    console.log("ROHIT - PropertiesProvider - currentPropertyID - ",currentPropertyID);
-  }, [currentPropertyID]);
+//   useEffect(() => {
+//     console.log("PropertiesProvider - currentPropertyID - ",currentPropertyID);
+//   }, [currentPropertyID]);
 
-  useEffect(() => {
-    console.log("ROHIT - PropertiesProvider - currentProperty - ",currentProperty);
-  }, [currentProperty]);
-
-  
+//   useEffect(() => {
+//     console.log("PropertiesProvider - currentProperty - ",currentProperty);
+//   }, [currentProperty]);
 
   const fetchProperties = async () => {        
-    const property_response = await fetch(`${APIConfig.baseURL.dev}/properties/${getProfileId()}`);
-    //const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000003`)
+    const property_response = await fetch(`${APIConfig.baseURL.dev}/properties/${getProfileId()}`);    
     if (!property_response.ok) {
       console.error("Error fetching Property Details data");
     }
@@ -103,10 +100,9 @@ export const PropertiesProvider = ({ children }) => {
   };
 
   const fetchRentStatus = async () => {          
-    const rent_response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`);
-    //const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
+    const rent_response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`);    
     if (!rent_response.ok) {
-    // console.log("Error fetching Rent Details data");
+        console.error("Error fetching Rent Details data");
     }
     const rentResponse = await rent_response.json();
     // console.log("In Properties > Rent Endpoint: ", rentResponse.RentStatus.result);
@@ -114,10 +110,9 @@ export const PropertiesProvider = ({ children }) => {
 }
 
 const fetchContracts = async () => {
-    const contract_response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
-    // const response = await fetch(`${APIConfig.baseURL.dev}/contracts/600-000003`);
+    const contract_response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);    
     if (!contract_response.ok) {
-    // console.log("Error fetching Contract Details data");
+        console.error("Error fetching Contract Details data");
     }
     const contractsResponse = await contract_response.json();
     // console.log("In Properties > Contract Endpoint: ", contractsResponse.result);

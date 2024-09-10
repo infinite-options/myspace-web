@@ -26,29 +26,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-// const RequestQuotes = ({requestQuotesState, setCurrentView}) => {
 const RequestQuotes = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { getProfileId } = useUser();
   const profileId = getProfileId();
-  const { propertyList, allContracts, fetchContracts, returnIndex,  } = useContext(PropertiesContext); 
+  const { propertyList, fetchContracts, returnIndex,  } = useContext(PropertiesContext); 
 
   const [ownerId, setOwnerId] = useState(getProfileId());
   const [properties, setProperties] = useState([]);
   const [selectedProperties, setSelectedProperties] = useState([]);
   const [announcementTitle, setAnnouncementTitle] = useState("");
-  const [announcementMsg, setAnnouncementMsg] = useState("");
-
-  const { propertyData, index } = location.state || props;
+  const [announcementMsg, setAnnouncementMsg] = useState("");  
   const [managerData, setManagerData] = useState(props.managerData);
   const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
   const onShowSearchManager = props.onShowSearchManager;
   const refreshContracts = fetchContracts;
 
   useEffect(() => {
-    const propertyData = propertyList;
-    // const index = props.index;
+    const propertyData = propertyList;    
     const index = returnIndex;
     // console.log("RequestQuotes - props.index - ", props.index);
     if (propertyData && index !== undefined) {

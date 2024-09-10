@@ -118,13 +118,11 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 
 	const { setNewContractUID, setNewContractPropertyUID, fetchProperties} = useContext(PropertiesContext);
 
-	const [readOnlyNotes, setReadOnlyNotes] = useState(selectedRole === "MANAGER" ? true : false);
-	//const [readOnlyNotes, setReadOnlyNotes] = useState(false);
+	const [readOnlyNotes, setReadOnlyNotes] = useState(selectedRole === "MANAGER" ? true : false);	
 	const [selectedImageList, setSelectedImageList] = useState([]);
 	const [referedUser, setReferedUser]=useState(false);
 
-	const location = useLocation();
-	//const { property_endpoint_resp } = location.state;
+	const location = useLocation();	
 
 	const [address, setAddress] = useState('');
 	const [unit, setUnit] = useState('');
@@ -150,7 +148,6 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 	const [coordinates, setCoordinates] = useState(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
-	const [detailsSaved, setDetailsSaved ] = useState(false);
 
 	const [showGoBackDialog, setShowGoBackDialog ] = useState(false);
 
@@ -172,21 +169,10 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 	// 	console.log("Address city set to 23", city)
 	// }, [address, unit, city, state, zip]);
 
-
-	// const handleAddressSelect = async (address) => {
-	// 	setAddress(address.street ? address.street : '');
-	// 	setCity(address.city ? address.city : '');
-	// 	setState(address.state ? address.state : '');
-	// 	setZip(address.zip ? address.zip : '');
-
-	// const fullAddress = `${address.street}, ${address.city}, ${address.state}, ${address.zip}`;
-	// const coords = await getLatLongFromAddress(fullAddress);
-	// setCoordinates(coords);
-	// };
-
-	useEffect(() => {
-		console.log("ROHIT - assessmentYear - ", assessmentYear);
-	}, [assessmentYear]);
+	
+	// useEffect(() => {
+	// 	console.log("assessmentYear - ", assessmentYear);
+	// }, [assessmentYear]);
 
 	const handleUnitChange = (event) => {
 		setUnit(event.target.value);
@@ -222,11 +208,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 
 	const handleCostChange = (event) => {
 		setCost(event.target.value);
-	};
-
-	const handleBackButton = () => {
-		navigate(-1);
-	};
+	};	
 
 	const handleOwnerChange = (event) => {
 		if (event.target.value === 'referOwner') {
@@ -299,8 +281,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		setShowSpinner(true);
 		const formData = new FormData();
 
-		const currentDate = new Date();
-		// const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}`;
+		const currentDate = new Date();		
 		const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}-${currentDate.getFullYear()}`;
 
 		const fullAddress = `${address}, ${city}, ${state}, ${zip}`;
@@ -330,13 +311,9 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		formData.append("property_value_year", assessmentYear);
 		formData.append("property_area", squareFootage);
 		formData.append("property_listed", 0);
-		formData.append("property_notes", notes);
-		// Add selected appliances in the correct format
+		formData.append("property_notes", notes);		
 
-		console.log("----selectedAppliances---", JSON.stringify(selectedAppliances));
-		/*selectedAppliances.forEach(appliance => {
-			formData.append("appliances[]", JSON.stringify(appliance));
-		}); */
+		console.log("----selectedAppliances---", JSON.stringify(selectedAppliances));		
 		formData.append("appliances", JSON.stringify(selectedAppliances));
 		console.log("Formdata:", formData);
 
@@ -347,14 +324,11 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 
 		const files = selectedImageList;
 		let i = 0;
-		for (const file of selectedImageList) {
-			// let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+		for (const file of selectedImageList) {			
 			let key = `img_${i++}`;
-			if (file.file !== null) {
-				// newProperty[key] = file.file;
+			if (file.file !== null) {				
 				formData.append(key, file.file);
-			} else {
-				// newProperty[key] = file.image;
+			} else {				
 				formData.append(key, file.image);
 			}
 			if (file.coverPhoto) {
@@ -390,8 +364,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 
 			const currentDate = new Date();
 			const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}-${currentDate.getFullYear()}`;
-
-			// responsePropertyUID = [responsePropertyUID];  // This doesn't work since it returns the string in single quotes
+			
 			responsePropertyUID = '["' + responsePropertyUID + '"]';
 			console.log("Reformated property data: ", responsePropertyUID);
 			contractFormData.append("contract_property_ids", responsePropertyUID);
@@ -424,15 +397,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 				console.log("response data - contract UID: ", responseContractUID);
 
 				console.log('navigating to /managementContractDetails', responseContractUID, getProfileId(), responsePropertyUID);
-
-				// navigate("/managementContractDetails", {
-				//   state: {
-				//     contract_uid: responseContractUID,
-				//     contract_business_id: getProfileId(),
-				//     contract_property_id: responsePropertyUID,
-				//     property_endpoint_resp: property_endpoint_resp,
-				//   },
-				// });			
+				
 				navigate("/pmQuotesList", {
 				  state: {
 				    selected_contract_uid: responseContractUID,				    
@@ -875,20 +840,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 											Assessment Year
 										</Typography>
 									</Grid>
-									<Grid item xs={9.5}>
-										{/* <TextField
-											size="small"
-											fullWidth
-											sx={{
-												backgroundColor: 'white',
-												borderColor: 'black',
-												borderRadius: '3px',
-												height: '40px', // Consistent height for all text fields
-												marginTop: '4px', // Add space above the text field
-											}}
-											placeholder="$"
-											onChange={handleAssessmentYearChange}
-										/> */}
+									<Grid item xs={9.5}>										
 										<LocalizationProvider dateAdapter={AdapterDayjs}>
 											<DatePicker
 												// label="Year"

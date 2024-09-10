@@ -57,27 +57,12 @@ export default function PropertiesList(props) {
   // console.log("In Property List - rentStatus outside: ", allRentStatus);
   // console.log("In Property List - LHS outside: ", LHS);
 
-  useEffect(() => {
-    // setPropertyList(props.propertyList);
-    // setDisplayedItems(props.propertyList);
+  useEffect(() => {    
     setDisplayedItems(propertyList);
-    setPropertyIndex(returnIndex || 0);
-    // setAllRentStatus(props.allRentStatus);
+    setPropertyIndex(returnIndex || 0);    
     setLHS(props.LHS);
     setIsDataReady(true);
   }, [props.LHS, returnIndex, propertyList]);  
-
-  // useEffect(() => {
-  //   console.log("props.propertyList changed - ", props.propertyList);    
-  // }, [props.propertyList]);
-
-  // useEffect(() => {
-  //   console.log("In Property List - propertyList: ", propertyList);
-  //   console.log("In Property List - displayList: ", displayedItems);
-  //   console.log("In Property List - propertyIndex: ", propertyIndex);
-  //   console.log("In Property List - allRentStatus: ", allRentStatus);
-  //   console.log("In Property List - LHS: ", LHS);
-  // }, [LHS, allRentStatus, displayedItems, propertyIndex, propertyList]);
 
   useEffect(() => {
     console.log("displayedItems changed - ", displayedItems);
@@ -89,11 +74,8 @@ export default function PropertiesList(props) {
   const onPropertyClick = (params) => {
     const property = params.row;
     const i = displayedItems.findIndex((p) => p.property_uid === property.property_uid);
-    // console.log("List Item Clicked", property, i, displayedItems);
-    handlePropertyDetailNavigation(i, displayedItems);
-    // setSelectedPropertyIndex(i);
-    setPropertyIndex(i);
-    // props.onDataChange(i);
+    // console.log("List Item Clicked", property, i, displayedItems);    
+    setPropertyIndex(i);    
     setReturnIndex(i);
     setCurrentPropertyID(property.property_uid);
     setCurrentProperty(property);
@@ -104,25 +86,12 @@ export default function PropertiesList(props) {
     if (displayedItems.length > 0) {
       const i = displayedItems.findIndex((p) => p.property_uid === property_uid);
       // console.log("onPropertyInRentWidgetClicked Clicked", property_uid, i, displayedItems);
-      setPropertyIndex(i);
-      // props.onDataChange(i);
+      setPropertyIndex(i);      
       setReturnIndex(i)
       setCurrentPropertyID(property_uid);
       setCurrentProperty(displayedItems[i]);
     }
-  };
-
-  function handlePropertyDetailNavigation(index, propertyList) {
-    // console.log("In Property List >> Index: ", index);
-    // console.log("In Property List >> propertyList: ", propertyList);
-    // console.log("theoretically property", property)
-    // console.log("handlePropertyDetailNavigation");
-    // navigate(`/propertyDetail`, { state: { index, propertyList, contracts } });
-    // setPropertyIndex(index);
-    //   if (!isDesktop) {
-    //     navigate(`/propertyDetail`, { state: { index, propertyList: displayedItems, allRentStatus, rawPropertyData: rawPropertyData, isDesktop } });
-    //   }
-  }
+  };  
 
   const getRowSpacing = React.useCallback((params) => {
     return {
@@ -176,11 +145,11 @@ export default function PropertiesList(props) {
             color: theme.typography.common.blue,
             fontWeight: theme.typography.primary.fontWeight,
             fontSize: "11px",
-            margin: "0px", // Ensure no margin
-            padding: "0px", // Ensure no padding
-            textAlign: "center", // Ensure text is centered within itself
-            verticalAlign: "middle", // Vertically align text in the middle
-            alignItems: "center", // vertically align items to the center
+            margin: "0px", 
+            padding: "0px",
+            textAlign: "center",
+            verticalAlign: "middle",
+            alignItems: "center",
           }}
         >
           {property.property_address} #{property.property_unit}
@@ -195,11 +164,11 @@ export default function PropertiesList(props) {
             color: theme.typography.common.blue,
             fontWeight: theme.typography.primary.fontWeight,
             fontSize: "11px",
-            margin: "0px", // Ensure no margin
-            padding: "0px", // Ensure no padding
-            textAlign: "center", // Ensure text is centered within itself
-            verticalAlign: "middle", // Vertically align text in the middle
-            alignItems: "center", // vertically align items to the center
+            margin: "0px",
+            padding: "0px",
+            textAlign: "center",
+            verticalAlign: "middle",
+            alignItems: "center",
           }}
         >
           {property.property_address} <br />

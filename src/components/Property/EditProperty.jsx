@@ -62,8 +62,7 @@ function EditProperty(props) {
 	let navigate = useNavigate();
 	const { getProfileId } = useUser();
 	const { propertyList, allRentStatus, setPropertyList, returnIndex  } = useContext(PropertiesContext); 
-	// const propertyData = location.state.item
-	// const propertyId = location.state.propertyId;
+	
 
 	// Check with Laysa
 	// replaced with line below
@@ -84,60 +83,8 @@ function EditProperty(props) {
 	// console.log("Property propertyData---", propertyData)
 	// console.log("Property Data in Edit Property", propertyData);
 	const { user, selectedRole, selectRole, Name } = useUser();
-	const [showSpinner, setShowSpinner] = useState(false);
-	const [ownerId, setOwnerId] = useState(getProfileId());
-	const us_states = [
-		'AL',
-		'AK',
-		'AZ',
-		'AR',
-		'CA',
-		'CO',
-		'CT',
-		'DE',
-		'FL',
-		'GA',
-		'HI',
-		'ID',
-		'IL',
-		'IN',
-		'IA',
-		'KS',
-		'KY',
-		'LA',
-		'ME',
-		'MD',
-		'MA',
-		'MI',
-		'MN',
-		'MS',
-		'MO',
-		'MT',
-		'NE',
-		'NV',
-		'NH',
-		'NJ',
-		'NM',
-		'NY',
-		'NC',
-		'ND',
-		'OH',
-		'OK',
-		'OR',
-		'PA',
-		'RI',
-		'SC',
-		'SD',
-		'TN',
-		'TX',
-		'UT',
-		'VT',
-		'VA',
-		'WA',
-		'WV',
-		'WI',
-		'WY',
-	];
+	const [showSpinner, setShowSpinner] = useState(false);	
+	
 	const [address, setAddress] = useState('');
 	const [city, setCity] = useState('');
 	const [propertyState, setPropertyState] = useState('');
@@ -253,10 +200,7 @@ function EditProperty(props) {
 	}, [index]);
 
 	const getChangedFields = () => {
-		const changes = {};
-		// if (bedrooms === initialData.property_num_beds) {
-		//   console.log("Nothing has changed");
-		// }
+		const changes = {};		
 		if (bedrooms !== initialData.property_num_beds) changes.property_num_beds = bedrooms;
 		if (address !== initialData.property_address) changes.property_address = address;
 		if (city !== initialData.property_city) changes.property_city = city;
@@ -331,13 +275,6 @@ function EditProperty(props) {
 		event.preventDefault();
 		console.log('handleSubmit');
 
-		// setIsSaveDisabled(true);
-		// setSaveButtonText('Return to Dashboard');
-
-		// if (stayOnPage) {
-		// 	setSavedClicked(true);
-		// }
-
 		if (!hasChanges) {
 			navigateBackToDashboard();
 			return;
@@ -360,8 +297,7 @@ function EditProperty(props) {
 			formData.append(key, value);
 		}
 
-		const currentDate = new Date();
-		// const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}`;
+		const currentDate = new Date();		
 		const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(
 			currentDate.getDate()
 		).padStart(2, '0')}-${currentDate.getFullYear()}`;
@@ -395,14 +331,11 @@ function EditProperty(props) {
     	formData.append('property_favorite_image', favImage);
 		// const files = imageState;
 		let i = 0;
-		for (const file of imageState) {
-			// let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+		for (const file of imageState) {			
 			let key = `img_${i++}`;
-			if (file.file !== null) {
-				// newProperty[key] = file.file;
+			if (file.file !== null) {				
 				formData.append(key, file.file);
-			} else {
-				// newProperty[key] = file.image;
+			} else {				
 				formData.append(key, file.image);
 			 }
 			if (file.coverPhoto) {
@@ -428,12 +361,9 @@ function EditProperty(props) {
 					method: 'PUT',
 					body: formData,
 				})
-			);
-			// promises_added.push("putData");
+			);			
 			setShowSpinner(false);
-			setImageState([])
-
-			// navigate("/propertyDetail", { state: { index, propertyList }});
+			setImageState([]);			
 		};
 
 		const autoUpdate = async () => {
@@ -489,22 +419,7 @@ function EditProperty(props) {
 			return true;
 		}
 		return false;
-	};
-
-	const loadImages = async () => {
-		const files = [];
-		const images = JSON.parse(propertyData.property_images);
-		for (let i = 0; i < images.length; i++) {
-			files.push({
-				index: i,
-				image: images[i],
-				file: null,
-				coverPhoto: isCoverPhoto(images[i]),
-			});
-		}
-		setImageState(files);
-		setActiveStep(files.findIndex((file) => file.coverPhoto));
-	};
+	};	
 
 	const handleAddressSelect = (address) => {
 		console.log('handleAddressSelect', address);
@@ -987,18 +902,7 @@ function EditProperty(props) {
 									}}
 								>
 									Assessment Year
-								</Typography>
-								{/* <TextField
-									fullWidth
-									sx={{
-										backgroundColor: 'white',
-										borderColor: 'black',
-										borderRadius: '7px',
-									}}
-									size="small"
-									onChange={(e) => setAssessmentYear(e.target.value)}
-									value={assessmentYear}
-								/> */}
+								</Typography>								
 								<LocalizationProvider dateAdapter={AdapterDayjs}>
 									<DatePicker
 										// label="Year"
