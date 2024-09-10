@@ -69,9 +69,26 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
   let profileId = getProfileId();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const colorStatus = roleName() === "Manager" ? theme.colorStatusPMO : theme.colorStatusMM;
+  function getColorStatusBasedOnSelectedRole() {
+    const role = roleName();
+    if (role === "Manager") {
+      return theme.colorStatusPMO;
+    } else if (role === "Owner") {
+      return theme.colorStatusO;
+    } else if (role === "Maintenance") {
+      return theme.colorStatusMM;
+    } else if (role === "PM Employee") {
+      return theme.colorStatusPMO;
+    } else if (role === "Maintenance Employee") {
+      return theme.colorStatusMM;
+    } else if (role === "Tenant") {
+      return theme.colorStatusTenant;
+    }
+  }
 
+  const colorStatus = getColorStatusBasedOnSelectedRole();
   const [fromProperty, setFromProperty] = useState(location.state?.fromProperty || false);
+  
   const [value, setValue] = useState(colorStatus.findIndex((item) => item.status === (isMobile ? location.state.status : selectedStatus)));
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
@@ -404,7 +421,6 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
                   paddingTop: "0px",
                 }}
               >
-                {console.log('----return in maintenanceItemsForStatus---', maintenanceItemsForStatus)}
                 {colorStatus[value]?.status === "New Requests" && maintenanceItemsForStatus[selectedRequestIndex] ? (
                   <NewRequestAction maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} />
                 ) : null}

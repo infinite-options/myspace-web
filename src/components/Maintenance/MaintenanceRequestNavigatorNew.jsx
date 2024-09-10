@@ -288,7 +288,7 @@ export default function MaintenanceRequestNavigatorNew({
 				body: editFormData,
 			});
 			const priorityData = await response.json();
-			console.log('data response handlePriorityChange', priorityData);
+			// console.log('data response handlePriorityChange', priorityData);
 			window.location.reload();
 		} catch (err) {
 			console.error('Error: ', err.message);

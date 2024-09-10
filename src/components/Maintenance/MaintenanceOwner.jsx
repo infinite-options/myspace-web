@@ -510,7 +510,7 @@ export function MaintenanceOwner() {
                     maintenance_request_index={selectedRequestIndex}
                     status={selectedStatus}
                     maintenanceItemsForStatus={maintenanceData[selectedStatus]}
-                    allMaintenanceData={newDataObject}
+                    allMaintenancefilteredData={newDataObject}
                   />
                 )
               )}

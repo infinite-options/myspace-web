@@ -311,7 +311,6 @@ export default function MaintenanceManager() {
   }, []);
 
   const handleRowClick = async (index, row) => {
-    console.log('is it coming here');
     if (isMobile) {
       navigate(`/maintenance/detail`, {
         state: {
