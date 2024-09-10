@@ -29,19 +29,21 @@ import CreateChargeModal from "../../CreateChargeModal";
 import { useMediaQuery } from "@mui/material";
 import APIConfig from "../../../utils/APIConfig";
 import { useUser } from "../../../contexts/UserContext";
+import { useMaintenance } from "../../../contexts/MaintenanceContext";
 
 export default function PayMaintenanceForm() {
-  console.log("--payment maintenance form--");
   const navigate = useNavigate();
   const location = useLocation();
+  const { setMaintenanceItemsForStatus, setPayMaintenanceView, maintenanceData: contextMaintenanceItem, 
+		navigateParams: contextNavigateParams,  maintenanceQuotes, setMaintenanceQuotes, setNavigateParams, setMaintenanceData,setSelectedStatus, setSelectedRequestIndex, setAllMaintenanceData } = useMaintenance();
+    
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   let maintenanceItem;
   let navigationParams;
 
   if (!isMobile) {
-    maintenanceItem = JSON.parse(sessionStorage.getItem("maintenanceItem"));
-    console.log("---inside pay form maintenanceItem", maintenanceItem);
-    navigationParams = JSON.parse(sessionStorage.getItem("navigateParams"));
+    maintenanceItem = contextMaintenanceItem;
+    navigationParams = contextNavigateParams;
   } else {
     maintenanceItem = location.state.maintenanceItem;
     navigationParams = location.state.navigateParams;
@@ -63,13 +65,12 @@ export default function PayMaintenanceForm() {
   // console.log("[DEBUG] maintenance item with payment info?", maintenanceItem)
 
   useEffect(() => {
-    console.log("--inside pay form useEffect--", maintenanceItem);
     const getBusinessProfile = async (profileId) => {
       // const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/businessProfile/${profileId}`);
       const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/businessProfile`);
       const data2 = await businessProfileResult.json();
       const businessProfileData = data2["result"][0];
-      console.log("businessProfileData", businessProfileData);
+      //console.log("businessProfileData", businessProfileData);
       setBusinessProfile(businessProfileData);
     };
     if (maintenanceItem.bill_uid !== null) {
@@ -171,11 +172,10 @@ export default function PayMaintenanceForm() {
   }
 
   function handleBackButton() {
-    console.log("handleBackButton");
-    sessionStorage.setItem("selectedRequestIndex", maintenance_request_index);
-    sessionStorage.setItem("selectedStatus", status);
-    sessionStorage.setItem("maintenanceItemsForStatus", JSON.stringify(maintenanceItemsForStatus));
-    sessionStorage.setItem("allMaintenanceData", JSON.stringify(allMaintenanceData));
+    setMaintenanceItemsForStatus(maintenanceItemsForStatus);
+                    setAllMaintenanceData(allMaintenanceData);
+                    setSelectedRequestIndex(maintenance_request_index);
+                    setSelectedStatus(status);
 
     if (isMobile) {
       navigate("/maintenance/detail", {
@@ -187,18 +187,7 @@ export default function PayMaintenanceForm() {
         },
       });
     } else {
-      sessionStorage.removeItem("maintenanceItem");
-      sessionStorage.removeItem("navigateParams");
-      sessionStorage.removeItem("payMaintenanceView");
-
-      window.dispatchEvent(new Event("storage"));
-      // Dispatch the custom event
-      setTimeout(() => {
-        window.dispatchEvent(new Event("maintenanceRequestSelected"));
-      }, 0);
-      setTimeout(() => {
-        window.dispatchEvent(new Event("maintenanceUpdate"));
-      }, 0);
+      setPayMaintenanceView(false);
     }
   }
 

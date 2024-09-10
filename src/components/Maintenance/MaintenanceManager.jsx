@@ -25,10 +25,12 @@ import AddMaintenanceItem from "./AddMaintenanceItem";
 import EditMaintenanceItem from "./EditMaintenanceItem";
 import { gridColumnsTotalWidthSelector } from "@mui/x-data-grid";
 
-export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, setSelectedStatus) {
-  
-  const dataObject = {};
+import { useMaintenance } from "../../contexts/MaintenanceContext";
 
+export async function maintenanceManagerDataCollectAndProcess(maintenanceData, setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData) {
+  console.log('is it in maintenanceManagerDataCollectAndProcess----');
+  const dataObject = {};
+  
   function dedupeQuotes(array) {
     const mapping = {};
     const dedupeArray = [];
@@ -65,7 +67,7 @@ export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData
 
   const getMaintenanceData = async () => {
     setShowSpinner(true);
-
+    console.log('is it in getMaintenanceData----');
     const maintenanceRequests = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${profileId}`);
     const maintenanceRequestsData = await maintenanceRequests.json();
 
@@ -87,11 +89,11 @@ export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData
     dataObject["COMPLETED"] = array5 || [];
     dataObject["PAID"] = array6 || [];
 
-    setMaintenanceData((prevData) => ({
+    await setMaintenanceData((prevData) => ({
       ...prevData,
       ...dataObject,
     }));
-    setDisplayMaintenanceData((prevData) => ({
+    await setDisplayMaintenanceData((prevData) => ({
       ...prevData,
       ...dataObject,
     }));
@@ -99,6 +101,9 @@ export async function maintenanceManagerDataCollectAndProcess(setMaintenanceData
     // Determine the initial status based on the arrays
     const initialStatus = determineInitialStatus(array1, array2, array3, array4, array5, array6);
     setSelectedStatus(initialStatus);
+    // console.log('---what is set here---', maintenanceData);
+    setMaintenanceItemsForStatus(dataObject[initialStatus]);
+    setAllMaintenanceData(dataObject);
 
     setShowSpinner(false);
   };
@@ -156,20 +161,15 @@ export default function MaintenanceManager() {
 
   const businessId = user.businesses.MAINTENANCE.business_uid;
 
-  const [selectedRequestIndex, setSelectedRequestIndex] = useState(0);
-  const [selectedStatus, setSelectedStatus] = useState("NEW REQUEST");
+  const { selectedRequestIndex, setSelectedRequestIndex, selectedStatus, setSelectedStatus, maintenanceItemsForStatus, setMaintenanceItemsForStatus, allMaintenanceData, setAllMaintenanceData } = useMaintenance();
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const [desktopView] = useSessionStorage("desktopView", false);
-
   const [cookies] = useCookies(["selectedRole"]);
   const selectedRole = cookies.selectedRole;
-  const [quoteAcceptView] = useSessionStorage("quoteAcceptView", false);
-  const [rescheduleView] = useSessionStorage("rescheduleView", false);
-  const [payMaintenanceView] = useSessionStorage("payMaintenanceView", false);
-  const [showNewMaintenance, setshowNewMaintenance] = useState(false);
-  const [editMaintenanceView] = useSessionStorage("editMaintenanceView", false);
+  const { quoteRequestView, quoteAcceptView, rescheduleView, payMaintenanceView, editMaintenanceView } = useMaintenance();
+
   const [isAddingNewMaintenance, setIsAddingNewMaintenance] = useState(false);
+  const [showNewMaintenance, setshowNewMaintenance] = useState(false);
 
   useEffect(() => {
     if (location.state?.showAddMaintenance) {
@@ -297,26 +297,21 @@ export default function MaintenanceManager() {
     setFilterPropertyList([]);
   }
 
+
   useEffect(() => {
     let profileId = getProfileId();
-    maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, setSelectedStatus);
+    maintenanceManagerDataCollectAndProcess(maintenanceData, setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData);
     setRefresh(false);
   }, [refresh]);
 
   useEffect(() => {
     const handleMaintenanceUpdate = () => {
       let profileId = getProfileId();
-      maintenanceManagerDataCollectAndProcess(setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, setSelectedStatus);
-    };
-
-    window.addEventListener("maintenanceUpdate", handleMaintenanceUpdate);
-
-    return () => {
-      window.removeEventListener("maintenanceUpdate", handleMaintenanceUpdate);
+      maintenanceManagerDataCollectAndProcess(maintenanceData, setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData);
     };
   }, []);
 
-  const handleRowClick = (index, row) => {
+  const handleRowClick = async (index, row) => {
     if (isMobile) {
       navigate(`/maintenance/detail`, {
         state: {
@@ -327,17 +322,11 @@ export default function MaintenanceManager() {
         },
       });
     } else {
-      // Save data to session storage
-      sessionStorage.setItem("selectedRequestIndex", index);
-      sessionStorage.setItem("selectedStatus", row.maintenance_status);
-      sessionStorage.setItem("maintenanceItemsForStatus", JSON.stringify(maintenanceData[row.maintenance_status]));
-      sessionStorage.setItem("allMaintenanceData", JSON.stringify(maintenanceData));
+      await setSelectedRequestIndex(index);
+      await setSelectedStatus(row.maintenance_status);
+      setMaintenanceItemsForStatus(maintenanceData[row.maintenance_status]);
+      setAllMaintenanceData(maintenanceData);
 
-      setSelectedRequestIndex(index);
-      setSelectedStatus(row.maintenance_status);
-
-      // Trigger the custom event
-      window.dispatchEvent(new Event("maintenanceRequestSelected"));
     }
   };
   
@@ -508,14 +497,13 @@ export default function MaintenanceManager() {
               >
                 {colorStatus.map((item, index) => {
                   let mappingKey = item.mapping;
-
                   let maintenanceArray = maintenanceData[mappingKey] || [];
-
                   let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList);
-
+                  
                   for (const item of filteredArray) {
                     newDataObject[mappingKey].push(item);
                   }
+                  
 
                   return (
                     <MaintenanceStatusTable
@@ -536,31 +524,26 @@ export default function MaintenanceManager() {
           {!isMobile && (
             <Grid item xs={12} md={8}>
               {editMaintenanceView && selectedRole === "MANAGER" ? (
-                <EditMaintenanceItem />
+                <EditMaintenanceItem setRefersh = {setRefresh}/>
               ) : showNewMaintenance || isAddingNewMaintenance ? (
-                <AddMaintenanceItem onBack={() => {setshowNewMaintenance(false); setIsAddingNewMaintenance(false);}} />
-              ) : desktopView && selectedRole === "MANAGER" ? (
+                <AddMaintenanceItem setRefersh = {setRefresh} onBack={() => {setshowNewMaintenance(false); setIsAddingNewMaintenance(false);}} />
+              ) : quoteRequestView && selectedRole === "MANAGER" ? (
                 <>
-                  <QuoteRequestForm maintenanceItem={JSON.parse(sessionStorage.getItem("maintenanceItem"))} navigateParams={JSON.parse(sessionStorage.getItem("navigateParams"))} />
+                  <QuoteRequestForm />
                 </>
               ) : quoteAcceptView && selectedRole === "MANAGER" ? (
                 <>
-                  <QuoteAcceptForm maintenanceItem={JSON.parse(sessionStorage.getItem("maintenanceItem"))} navigateParams={JSON.parse(sessionStorage.getItem("navigateParams"))} />
+                  <QuoteAcceptForm  />
                 </>
               ) : rescheduleView && selectedRole === "MANAGER" ? (
                 <>
                   <RescheduleMaintenance
-                    maintenanceItem={JSON.parse(sessionStorage.getItem("maintenanceItem"))}
-                    navigateParams={JSON.parse(sessionStorage.getItem("navigateParams"))}
-                    quotes={JSON.parse(sessionStorage.getItem("quotes"))}
                   />
                 </>
               ) : payMaintenanceView && selectedRole === "MANAGER" ? (
                 <>
                   <PayMaintenanceForm
-                    maintenanceItem={JSON.parse(sessionStorage.getItem("maintenanceItem"))}
-                    navigateParams={JSON.parse(sessionStorage.getItem("navigateParams"))}
-                  />
+                    />
                 </>
               ) : (
                 Object.keys(maintenanceData).length > 0 && (
@@ -568,7 +551,7 @@ export default function MaintenanceManager() {
                     maintenance_request_index={selectedRequestIndex}
                     status={selectedStatus}
                     maintenanceItemsForStatus={maintenanceData[selectedStatus]}
-                    allMaintenanceData={newDataObject}
+                    allMaintenancefilteredData={newDataObject}
                   />
                 )
               )}

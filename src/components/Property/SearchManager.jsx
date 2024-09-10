@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, } from "react";
 import axios from "axios";
 import { Box, ThemeProvider } from "@mui/system";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -17,7 +17,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { DataGrid } from '@mui/x-data-grid';
 
-// Styles
+import PropertiesContext from '../../contexts/PropertiesContext';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiFilledInput-root": {
@@ -32,16 +33,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-// SearchManager Component
-// const SearchManager = ({ searchManagerState, onShowRequestQuotes, setCurrentView }) => {
 const SearchManager = (props) => {
   // State declarations
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
+  const { propertyList, allContracts, fetchContracts, returnIndex } = useContext(PropertiesContext); 
   //console.log('----search manager searchManagerState---', searchManagerState)
-  const managerState = location.state || props;
-  const { index, propertyData } = managerState || {};
+    
+  const index = returnIndex || location.state?.index;
+
+  const [ propertyData, setPropertyData ] = useState(propertyList)
   const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
   //console.log('---propertyData searchmanager---', propertyData, index);
   const [displayed_managers, set_displayed_managers] = useState([]);
@@ -56,7 +58,7 @@ const SearchManager = (props) => {
 
   const handleRequestQuotes = props.handleRequestQuotes;
   
-  const contracts = props.contracts;
+  const contracts = allContracts;
   const property_ID = props.propertyId;
   console.log("contracts is ^^^", contracts)
   console.log("property_ID is ^^^", property_ID)
@@ -67,13 +69,11 @@ const SearchManager = (props) => {
      contract.contract_status === "ACTIVE" || 
      contract.contract_status === "SENT")
   );
-  
-  // Extract the contract_business_id from the filtered contracts
+    
   const contractBusinessIds = filteredContracts.map(contract => contract.contract_business_id);
   
   console.log(" contractBusinessIds @@", contractBusinessIds);
-
-  // Function to fetch manager information
+  
   const get_manager_info = async () => {
     setShowSpinner(true);
     const url = "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/searchManager";
@@ -85,13 +85,17 @@ const SearchManager = (props) => {
     setManagersList(managers);
     setShowSpinner(false);
   };
-
-  // useEffect to fetch manager information on component mount
+  
   useEffect(() => {
     get_manager_info();
   }, []);
 
-  // Function to handle search
+  useEffect(() => {
+    setPropertyData(propertyList);
+  }, [propertyList]);
+
+  
+  
   const handleSearch = (search_string) => {
     const managers = all_managers.filter((manager) =>
       manager.business_name.toLowerCase().includes(search_string.toLowerCase())
@@ -101,16 +105,12 @@ const SearchManager = (props) => {
   };
 
   const navigateToPrev = () => {
-    if(isDesktop === true){
-      //navigate('/properties', {state:{index:index}});
-      // setCurrentView('defaultview');
+    if(isDesktop === true){      
       handleBackClick();
     }else{
       navigate(-1);
     }
   }
-
-  // ... (Rest of the component code)
 
   return (
     <ThemeProvider theme={theme}>
@@ -180,7 +180,7 @@ const SearchManager = (props) => {
                 <Box
                   sx={{
                     display: 'flex',
-                    alignItems: 'center', // This ensures vertical alignment with the image
+                    alignItems: 'center',
                     paddingLeft: "5px",
                   }}
                   onClick={navigateToPrev}
@@ -246,7 +246,7 @@ const SearchManager = (props) => {
                     propertyData={propertyData} 
                     index={index} 
                     onRequestQuotes={handleRequestQuotes}
-                    contractBusinessIds={contractBusinessIds} // Pass contractBusinessIds as a prop
+                    contractBusinessIds={contractBusinessIds}
                   />
                 ))}
               </Box>
@@ -258,9 +258,6 @@ const SearchManager = (props) => {
   );
 };
 
-// ... (Other components and exports)
-
-
 function DocumentCard(props) {
   const obj = props.data;
   const ownerId = props.ownerId;
@@ -269,12 +266,12 @@ function DocumentCard(props) {
   const isDesktop = props.isDesktop;
   const onRequestQuotes = props.onRequestQuotes;
   const navigate = useNavigate();
-  const contractBusinessIds = props.contractBusinessIds; // Get contractBusinessIds from props
+  const contractBusinessIds = props.contractBusinessIds;
 
-  console.log("BUSINESS Locations - ", obj.business_locations);
+  // console.log("BUSINESS Locations - ", obj.business_locations);
   let location1 = "";
   if(obj.business_locations !== null && obj.business_locations.length > 2){
-    console.log("Valid business location");
+    // console.log("Valid business location");
     location1 = JSON.parse(obj.business_locations);
   }  
   let city = "";
@@ -286,7 +283,7 @@ function DocumentCard(props) {
   let locationsArray = JSON.parse(obj.business_locations);
 
   const handleRequestQuotes = async (obj) => {
-    console.log('---handle request quotes---', propertyData, index);
+    // console.log('---handle request quotes---', propertyData, index);
 
     navigate("/requestQuotes",{
       state:{
@@ -385,10 +382,7 @@ function DocumentCard(props) {
                         Estimated Fees
                     </Typography>
                 </AccordionSummary>
-                <AccordionDetails>
-                    {/* {feesArray && feesArray?.map((fee) =>{
-                        return( <FeesTextCard key={fee.fee_name} fee={fee}/>)
-                    })} */}
+                <AccordionDetails>                    
                     {
                       feesArray && (
                         <>
@@ -401,15 +395,6 @@ function DocumentCard(props) {
         </Box>
     </Box>
   );
-}
-
-function FeesTextCard(props) {
-    let fee = props.fee;
-    return(
-        <Typography>
-            {fee.fee_name}:{fee.charge}{fee.fee_type}
-        </Typography>
-    )
 }
 
 const FeesDataGrid = ({ data }) => {

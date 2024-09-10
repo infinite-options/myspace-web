@@ -32,6 +32,8 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { IconButton } from '@mui/material';
 import APIConfig from '../../utils/APIConfig';
 
+import { useMaintenance } from '../../contexts/MaintenanceContext'; // Added useMaintenance context
+
 function getInitialImages(requestData, currentIndex) {
 	try {
 		if (
@@ -64,7 +66,21 @@ export default function MaintenanceRequestNavigatorNew({
 	navigateParams,
 	fetchAndUpdateQuotes,
 }) {
-	//console.log('----inside maintainance navigator---', maintenanceQuotes);
+	const { setEditMaintenanceView,  setTestIssue,
+		setTestProperty,
+		setTestIssueItem,
+		setTestCost,
+		setTestTitle,
+		setTestPriority,
+		setCompletionStatus,
+		setRequestUid,
+		setPropID,
+		setMaintainanceImages,
+		setMaintainanceFavImage,
+		setSelectedRequestIndex,
+		setSelectedStatus,
+	 } = useMaintenance(); // Use the context
+
 	const [currentIndex, setCurrentIndex] = useState(requestIndex);
 
 	const [activeStep, setActiveStep] = useState(0);
@@ -82,6 +98,10 @@ export default function MaintenanceRequestNavigatorNew({
 	const [priorities, setPriorities] = useState(
 		requestData.map((request) => request.maintenance_priority || 'Medium')
 	);
+
+	useEffect(() => {
+		setCurrentIndex(requestIndex);
+	}, [requestIndex]);
 
 	const maintenancePrimary = {
 		color: '#FFFFFF',
@@ -115,52 +135,120 @@ export default function MaintenanceRequestNavigatorNew({
 		requestUid,
 		propID,
 		maintainanceImages,
-		maintainanceFavImage,
-	) {
+		maintainanceFavImage
+	  ) {
 		if (isMobile) {
-			navigate('/editMaintenanceItem', {
-				state: {
-					testIssue,
-					testProperty,
-					testIssueItem,
-					testCost,
-					testTitle,
-					testPriority,
-					completionStatus,
-					requestUid,
-					propID,
-					month,
-					year,
-				},
-			});
+		  navigate('/editMaintenanceItem', {
+			state: {
+			  testIssue,
+			  testProperty,
+			  testIssueItem,
+			  testCost,
+			  testTitle,
+			  testPriority,
+			  completionStatus,
+			  requestUid,
+			  propID,
+			  month,
+			  year,
+			},
+		  });
 		} else {
-			// Setting properties into sessionStorage
-			sessionStorage.setItem('testIssue', testIssue);
-			sessionStorage.setItem('testProperty', testProperty);
-			sessionStorage.setItem('testIssueItem', testIssueItem);
-			sessionStorage.setItem('testCost', testCost);
-			sessionStorage.setItem('testTitle', testTitle);
-			sessionStorage.setItem('testPriority', testPriority);
-			sessionStorage.setItem('completionStatus', completionStatus);
-			sessionStorage.setItem('requestUid', requestUid);
-			sessionStorage.setItem('propID', propID);
-			sessionStorage.setItem('month', month);
-			sessionStorage.setItem('year', year);
-			sessionStorage.setItem('editMaintenanceView', true);
-			sessionStorage.setItem('selectedRequestIndex', requestIndex);
-			sessionStorage.setItem('selectedStatus', status);
-			sessionStorage.setItem('maintainanceImages', maintainanceImages);
-			sessionStorage.setItem('maintainanceFavImage', maintainanceFavImage);
-			window.dispatchEvent(new Event('storage'));
-			setTimeout(() => {
-				window.dispatchEvent(new Event('maintenanceRequestSelected'));
-			}, 0);
+		  // Use context setters instead of sessionStorage
+		  setTestIssue(testIssue);
+		  setTestProperty(testProperty);
+		  setTestIssueItem(testIssueItem);
+		  setTestCost(testCost);
+		  setTestTitle(testTitle);
+		  setTestPriority(testPriority);
+		  setCompletionStatus(completionStatus);
+		  setRequestUid(requestUid);
+		  setPropID(propID);
+		  setMaintainanceImages(maintainanceImages);
+		  setMaintainanceFavImage(maintainanceFavImage);
+	  
+		  // Use these context setters for selectedRequestIndex and selectedStatus
+		  setSelectedRequestIndex(requestIndex);
+		  setSelectedStatus(status);
+		  
+		  // Use this context setter for the view
+		  setEditMaintenanceView(true);
+		}
+	  }
+	  
+
+	// Display scheduled date logic
+	function displayScheduledDate(data) {
+		if (data.maintenance_request_closed_date) {
+			return data.maintenance_request_closed_date !== 'null'
+				? `Closed: ${data.maintenance_request_closed_date}`
+				: `Closed: `;
+		}
+		if (
+			!data.maintenance_scheduled_date ||
+			!data.maintenance_scheduled_time ||
+			data.maintenance_scheduled_time === 'null' ||
+			data.maintenance_scheduled_date === 'null'
+		) {
+			return 'Not Scheduled';
+		} else {
+			const formattedTime = dayjs(data.maintenance_scheduled_time, 'HH:mm').format('h:mm A');
+			return `Scheduled for ${data.maintenance_scheduled_date} ${formattedTime}`;
 		}
 	}
 
+	const data = requestData[currentIndex];
+	let propertyAddress = ' ';
+	propertyAddress = propertyAddress.concat(
+		' ',
+		data?.property_address,
+		' ',
+		data?.property_unit,
+		' ',
+		data?.property_city,
+		' ',
+		data?.property_state,
+		' ',
+		data?.property_zip
+	);
+
+	let estimatedCost = ' ';
+	estimatedCost = estimatedCost.concat(
+		' ',
+		data?.maintenance_estimated_cost ? data?.maintenance_estimated_cost : 'Not reported'
+	);
+
+	let completionStatus = 'no';
+	if (data?.maintenance_request_status === 'Completed' || data?.maintenance_request_status === 'Closed') {
+		completionStatus = 'yes';
+	} else {
+		completionStatus = 'no';
+	}
+
+	// Handle scrolling of images
+	const [scrollPosition, setScrollPosition] = useState(0);
+	const scrollRef = useRef(null);
+
 	useEffect(() => {
-		setCurrentIndex(requestIndex);
-	}, [requestIndex]);
+		if (scrollRef.current) {
+			scrollRef.current.scrollLeft = scrollPosition;
+		}
+	}, [scrollPosition]);
+
+	const handleScroll = (direction) => {
+		if (scrollRef.current) {
+			const scrollAmount = 200;
+			const currentScrollPosition = scrollRef.current.scrollLeft;
+
+			if (direction === 'left') {
+				const newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
+				setScrollPosition(newScrollPosition);
+			} else {
+				const newScrollPosition = currentScrollPosition + scrollAmount;
+				setScrollPosition(newScrollPosition);
+			}
+		}
+	};
 
 	useEffect(() => {
 		const initialImages = getInitialImages(requestData, currentIndex);
@@ -209,89 +297,6 @@ export default function MaintenanceRequestNavigatorNew({
 			}
 		});
 	};
-
-	const handleNext = () => {
-		setActiveStep((prevActiveStep) => prevActiveStep + 1);
-	};
-
-	const handleBack = () => {
-		setActiveStep((prevActiveStep) => prevActiveStep - 1);
-	};
-
-	function displayScheduledDate(data) {
-
-		//console.log('displayScheduledDate from this one:', data);
-		if (data.maintenance_request_closed_date) {
-			return data.maintenance_request_closed_date !== 'null'
-				? `Closed: ${data.maintenance_request_closed_date}`
-				: `Closed: `;
-		}
-		if (
-			!data.maintenance_scheduled_date ||
-			!data.maintenance_scheduled_time ||
-			data.maintenance_scheduled_time === 'null' ||
-			data.maintenance_scheduled_date === 'null'
-		) {
-			return 'Not Scheduled';
-		} else {
-			const formattedTime = dayjs(data.maintenance_scheduled_time, 'HH:mm').format('h:mm A');
-			return `Scheduled for ${data.maintenance_scheduled_date} ${formattedTime}`;
-		}
-	}
-	const data = requestData[currentIndex];
-	//console.log('---editmaintenance data---', data);
-
-	let propertyAddress = ' ';
-	propertyAddress = propertyAddress.concat(
-		' ',
-		data?.property_address,
-		' ',
-		data?.property_unit,
-		' ',
-		data?.property_city,
-		' ',
-		data?.property_state,
-		' ',
-		data?.property_zip
-	);
-
-	let estimatedCost = ' ';
-	estimatedCost = estimatedCost.concat(
-		' ',
-		data?.maintenance_estimated_cost ? data?.maintenance_estimated_cost : 'Not reported'
-	);
-
-	let completionStatus = 'no';
-	if (data?.maintenance_request_status === 'Completed' || data?.maintenance_request_status === 'Closed') {
-		completionStatus = 'yes';
-	} else {
-		completionStatus = 'no';
-	}
-
-	const [scrollPosition, setScrollPosition] = useState(0);
-	const scrollRef = useRef(null);
-
-	useEffect(() => {
-		if (scrollRef.current) {
-			scrollRef.current.scrollLeft = scrollPosition;
-		}
-	}, [scrollPosition]);
-
-	const handleScroll = (direction) => {
-		if (scrollRef.current) {
-			const scrollAmount = 200;
-			const currentScrollPosition = scrollRef.current.scrollLeft;
-
-			if (direction === 'left') {
-				const newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
-				setScrollPosition(newScrollPosition);
-			} else {
-				const newScrollPosition = currentScrollPosition + scrollAmount;
-				setScrollPosition(newScrollPosition);
-			}
-		}
-	};
-
 	const tenantName = `${data?.tenant_first_name ? data?.tenant_first_name : ''} ${
 		data?.tenant_last_name ? data?.tenant_last_name : ''
 	}`.trim();
@@ -315,7 +320,7 @@ export default function MaintenanceRequestNavigatorNew({
 				body: editFormData,
 			});
 			const priorityData = await response.json();
-			console.log('data response handlePriorityChange', priorityData);
+			// console.log('data response handlePriorityChange', priorityData);
 			window.location.reload();
 		} catch (err) {
 			console.error('Error: ', err.message);
