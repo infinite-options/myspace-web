@@ -170,6 +170,7 @@ export default function QuotesRequestAction({ maintenanceItem, navigateParams, q
 			});
 		} else {
 			if (maintenanceItem && navigateParams) {
+
 				try {
                     setMaintenanceData(maintenanceItem);
                     setNavigateParams(navigateParams);

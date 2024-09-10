@@ -39,8 +39,9 @@ import { useCookies, Cookies } from "react-cookie";
 import AddMaintenanceItem from "./AddMaintenanceItem";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditMaintenanceItem from "./EditMaintenanceItem";
+import { useMaintenance } from "../../contexts/MaintenanceContext";
 
-export async function maintenanceOwnerDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId, setSelectedStatus) {
+export async function maintenanceOwnerDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId, setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData) {
   const dataObject = {};
 
   const getMaintenanceData = async () => {
@@ -48,12 +49,12 @@ export async function maintenanceOwnerDataCollectAndProcess(setMaintenanceData, 
     const maintenanceRequests = await fetch(`${APIConfig.baseURL.dev}/maintenanceReq/${profileId}`);
     const maintenanceRequestsData = await maintenanceRequests.json();
 
-    let array1 = maintenanceRequestsData.result["NEW REQUEST"].maintenance_items;
-    let array2 = maintenanceRequestsData.result["INFO REQUESTED"].maintenance_items;
-    let array3 = maintenanceRequestsData.result["PROCESSING"].maintenance_items;
-    let array4 = maintenanceRequestsData.result["SCHEDULED"].maintenance_items;
-    let array5 = maintenanceRequestsData.result["COMPLETED"].maintenance_items;
-    let array6 = maintenanceRequestsData.result["CANCELLED"].maintenance_items;
+    let array1 = maintenanceRequestsData.result["NEW REQUEST"]?.maintenance_items;
+    let array2 = maintenanceRequestsData.result["INFO REQUESTED"]?.maintenance_items;
+    let array3 = maintenanceRequestsData.result["PROCESSING"]?.maintenance_items;
+    let array4 = maintenanceRequestsData.result["SCHEDULED"]?.maintenance_items;
+    let array5 = maintenanceRequestsData.result["COMPLETED"]?.maintenance_items;
+    let array6 = maintenanceRequestsData.result["CANCELLED"]?.maintenance_items;
 
     dataObject["NEW REQUEST"] = [];
     dataObject["INFO REQUESTED"] = [];
@@ -88,6 +89,8 @@ export async function maintenanceOwnerDataCollectAndProcess(setMaintenanceData, 
 
     const initialStatus = determineInitialStatus(array1, array2, array3, array4, array5, array6);
     setSelectedStatus(initialStatus);
+    setMaintenanceItemsForStatus(dataObject[initialStatus]);
+    setAllMaintenanceData(dataObject);
 
     setShowSpinner(false);
   };
@@ -128,22 +131,26 @@ export function MaintenanceOwner() {
   const [showSpinner, setShowSpinner] = useState(false);
   const [filterPropertyList, setFilterPropertyList] = useState([]);
 
-  const [selectedRequestIndex, setSelectedRequestIndex] = useState(0);
-  const [selectedStatus, setSelectedStatus] = useState("NEW REQUEST");
+  // const [selectedRequestIndex, setSelectedRequestIndex] = useState(0);
+  // const [selectedStatus, setSelectedStatus] = useState("NEW REQUEST");
 
   const businessId = user.businesses.MAINTENANCE.business_uid;
   const propertyIdFromPropertyDetail = location.state?.propertyId || null;
   let profileId = getProfileId();
 
+  const { selectedRequestIndex, setSelectedRequestIndex, selectedStatus, setSelectedStatus, maintenanceItemsForStatus, setMaintenanceItemsForStatus, allMaintenanceData, setAllMaintenanceData } = useMaintenance();
+  const { quoteRequestView, quoteAcceptView, rescheduleView, payMaintenanceView, editMaintenanceView } = useMaintenance();
+
+
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const [desktopView] = useSessionStorage("desktopView", false);
   const [cookies] = useCookies(["selectedRole"]);
   const selectedRole = cookies.selectedRole;
-  const [quoteAcceptView] = useSessionStorage("quoteAcceptView", false);
-  const [rescheduleView] = useSessionStorage("rescheduleView", false);
-  const [payMaintenanceView] = useSessionStorage("payMaintenanceView", false);
 
-  const [editMaintenanceView] = useSessionStorage("editMaintenanceView", false);
+  // const [desktopView] = useSessionStorage("desktopView", false);
+  // const [quoteAcceptView] = useSessionStorage("quoteAcceptView", false);
+  // const [rescheduleView] = useSessionStorage("rescheduleView", false);
+  // const [payMaintenanceView] = useSessionStorage("payMaintenanceView", false);
+  // const [editMaintenanceView] = useSessionStorage("editMaintenanceView", false);
   const [showNewMaintenance, setshowNewMaintenance] = useState(false);
 
   const newDataObject = {};
@@ -273,24 +280,19 @@ export function MaintenanceOwner() {
   }
 
   useEffect(() => {
-    maintenanceOwnerDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId, setSelectedStatus);
+    maintenanceOwnerDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId, setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData);
   }, []);
 
   useEffect(() => {
     const handleMaintenanceUpdate = () => {
       // Using a closure to capture the current profileId when the effect runs
       const currentProfileId = profileId;
-      maintenanceOwnerDataCollectAndProcess(setMaintenanceData, setShowSpinner, currentProfileId, setSelectedStatus);
+      maintenanceOwnerDataCollectAndProcess(setMaintenanceData, setShowSpinner, currentProfileId, setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData);
     };
 
-    window.addEventListener("maintenanceUpdate", handleMaintenanceUpdate);
-
-    return () => {
-      window.removeEventListener("maintenanceUpdate", handleMaintenanceUpdate);
-    };
   }, []); // Empty dependency array ensures this runs only once when the component mounts
 
-  const handleRowClick = (index, row) => {
+  const handleRowClick = async (index, row) => {
     if (isMobile) {
       navigate(`/maintenance/detail`, {
         state: {
@@ -302,16 +304,12 @@ export function MaintenanceOwner() {
       });
     } else {
       // Save data to session storage
-      sessionStorage.setItem("selectedRequestIndex", index);
-      sessionStorage.setItem("selectedStatus", row.maintenance_status);
-      sessionStorage.setItem("maintenanceItemsForStatus", JSON.stringify(maintenanceData[row.maintenance_status]));
-      sessionStorage.setItem("allMaintenanceData", JSON.stringify(maintenanceData));
 
-      setSelectedRequestIndex(index);
-      setSelectedStatus(row.maintenance_status);
+      await setSelectedRequestIndex(index);
+      await setSelectedStatus(row.maintenance_status);
+      setMaintenanceItemsForStatus(maintenanceData[row.maintenance_status]);
+      setAllMaintenanceData(maintenanceData);
 
-      // Trigger the custom event
-      window.dispatchEvent(new Event("maintenanceRequestSelected"));
     }
   };
 
@@ -488,28 +486,23 @@ export function MaintenanceOwner() {
                 <EditMaintenanceItem />
               ) : showNewMaintenance && selectedRole === "OWNER" ? (
                 <AddMaintenanceItem onBack={() => setshowNewMaintenance(false)} />
-              ) : desktopView && selectedRole === "OWNER" ? (
+              ) : quoteRequestView && selectedRole === "OWNER" ? (
                 <>
-                  <QuoteRequestForm maintenanceItem={JSON.parse(sessionStorage.getItem("maintenanceItem"))} navigateParams={JSON.parse(sessionStorage.getItem("navigateParams"))} />
+                  <QuoteRequestForm />
                 </>
               ) : quoteAcceptView && selectedRole === "OWNER" ? (
                 <>
-                  <QuoteAcceptForm maintenanceItem={JSON.parse(sessionStorage.getItem("maintenanceItem"))} navigateParams={JSON.parse(sessionStorage.getItem("navigateParams"))} />
+                  <QuoteAcceptForm />
                 </>
               ) : rescheduleView && selectedRole === "OWNER" ? (
                 <>
                   <RescheduleMaintenance
-                    maintenanceItem={JSON.parse(sessionStorage.getItem("maintenanceItem"))}
-                    navigateParams={JSON.parse(sessionStorage.getItem("navigateParams"))}
-                    quotes={JSON.parse(sessionStorage.getItem("quotes"))}
                   />
                 </>
               ) : payMaintenanceView && selectedRole === "OWNER" ? (
                 <>
                   <PayMaintenanceForm
-                    maintenanceItem={JSON.parse(sessionStorage.getItem("maintenanceItem"))}
-                    navigateParams={JSON.parse(sessionStorage.getItem("navigateParams"))}
-                  />
+                     />
                 </>
               ) : (
                 Object.keys(maintenanceData).length > 0 && (

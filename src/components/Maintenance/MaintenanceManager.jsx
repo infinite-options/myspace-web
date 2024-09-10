@@ -543,9 +543,7 @@ export default function MaintenanceManager() {
               ) : payMaintenanceView && selectedRole === "MANAGER" ? (
                 <>
                   <PayMaintenanceForm
-                    maintenanceItem={JSON.parse(sessionStorage.getItem("maintenanceItem"))}
-                    navigateParams={JSON.parse(sessionStorage.getItem("navigateParams"))}
-                  />
+                    />
                 </>
               ) : (
                 Object.keys(maintenanceData).length > 0 && (
