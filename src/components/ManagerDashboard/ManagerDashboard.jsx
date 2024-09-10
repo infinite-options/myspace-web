@@ -55,8 +55,9 @@ function ManagerDashboard() {
 
   //
   //
-  // Check if No Profile ID or if Employee Profile ID or if some other Role
-  // console.log("User Info: ", getProfileId(), selectedRole, user);
+  // Check if No Profile ID
+  // Want Manager or Employee Id to load ManagerDashboard
+  console.log("User Info: ", getProfileId(), selectedRole, user);
 
   let dashboard_id = getProfileId();
   if (selectedRole === "PM_EMPLOYEE") dashboard_id = user.businesses?.MANAGEMENT?.business_uid || user?.pm_supervisor;
@@ -66,91 +67,9 @@ function ManagerDashboard() {
     navigate("/addNewRole", { state: { user_uid: user.user_uid, newRole } });
   }
 
-  // This should be done at User Login and Not on the Dashboard
-  // Employee Verification useEffect
-  useEffect(() => {
-    setShowSpinner(true);
-    if (selectedRole === "PM_EMPLOYEE" && getProfileId() != null) {
-      const emp_verification = async () => {
-        try {
-          const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
-          // const response = await fetch(`${APIConfig.baseURL.dev}/profile/600-000003`);
-          if (!response.ok) {
-            throw new Error("Failed to fetch data");
-          }
-          const data = await response.json();
-          console.log("ROHIT - data - ", data)
-          const employee = data?.profile?.result[0]; // Assuming there's only one employee
-          console.log("ROHIT - employee?.employee_verification - ", employee?.employee_verification)
-          if (employee?.employee_verification == null) {
-            navigate("/emp_waiting");
-          }
-        } catch (error) {
-          console.error(error);
-        }
-      };
-
-      emp_verification();
-      setShowSpinner(false);
-    }
-    const signedUpWithReferral = localStorage.getItem("signedUpWithReferral");
-    if (signedUpWithReferral && signedUpWithReferral === "true") {
-      setShowReferralWelcomeDialog(true);
-      localStorage.removeItem("signedUpWithReferral");
-    }
-  }, []);
-
-  useEffect(() => {
-    setShowSpinner(true);
-    if (selectedRole === "PM_EMPLOYEE") dashboard_id = user.businesses?.MANAGEMENT?.business_uid || user?.pm_supervisor;
-    if (selectedRole === "PM_EMPLOYEE" && getProfileId() != null) {
-      const emp_verification = async () => {
-        try {
-          const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
-          // const response = await fetch(`${APIConfig.baseURL.dev}/profile/600-000003`);
-          if (!response.ok) {
-            throw new Error("Failed to fetch data");
-          }
-          const data = await response.json();
-          const employee = data?.profile?.result[0]; // Assuming there's only one employee
-          console.log("ROHIT - employee?.employee_verification - ", employee?.employee_verification)
-          if (employee?.employee_verification == null) {
-            navigate("/emp_waiting");
-          }
-        } catch (error) {
-          console.error(error);
-        }
-      };
-
-      emp_verification();
-      setShowSpinner(false);
-    }
-    const signedUpWithReferral = localStorage.getItem("signedUpWithReferral");
-    if (signedUpWithReferral && signedUpWithReferral === "true") {
-      setShowReferralWelcomeDialog(true);
-      localStorage.removeItem("signedUpWithReferral");
-    }
-    fetchData();
-  }, [user]);
-
-  //
-  //
-  // Console Logs for useState variables
-  useEffect(() => {
-    // console.log("RentStatus check --", rentStatus);
-  }, [rentStatus]);
-
-  useEffect(() => {
-    // console.log("Contract requests - ", contractRequests);
-  }, [contractRequests]);
-
-  useEffect(() => {
-    // console.log("Happiness Matrix Info - ", happinessData);
-  }, [happinessData]);
-
   const fetchData = async () => {
     setShowSpinner(true);
-    if(dashboard_id == null){
+    if (dashboard_id == null) {
       return;
     }
 
@@ -189,65 +108,145 @@ function ManagerDashboard() {
     setShowSpinner(false);
   };
 
+  // This should be done at User Login and Not on the Dashboard
+  // Employee Verification useEffect
+  useEffect(() => {
+    setShowSpinner(true);
+    if (selectedRole === "PM_EMPLOYEE" && getProfileId() != null) {
+      const emp_verification = async () => {
+        try {
+          const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
+          // const response = await fetch(`${APIConfig.baseURL.dev}/profile/600-000003`);
+          if (!response.ok) {
+            throw new Error("Failed to fetch data");
+          }
+          const data = await response.json();
+          console.log("ROHIT - data - ", data);
+          const employee = data?.profile?.result[0]; // Assuming there's only one employee
+          console.log("ROHIT - employee?.employee_verification - ", employee?.employee_verification);
+          if (employee?.employee_verification == null) {
+            navigate("/emp_waiting");
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      emp_verification();
+      setShowSpinner(false);
+    }
+    const signedUpWithReferral = localStorage.getItem("signedUpWithReferral");
+    if (signedUpWithReferral && signedUpWithReferral === "true") {
+      setShowReferralWelcomeDialog(true);
+      localStorage.removeItem("signedUpWithReferral");
+    }
+    fetchData();
+  }, [getProfileId, selectedRole]);
+
+  // useEffect(() => {
+  //   setShowSpinner(true);
+  //   if (selectedRole === "PM_EMPLOYEE") dashboard_id = user.businesses?.MANAGEMENT?.business_uid || user?.pm_supervisor;
+  //   if (selectedRole === "PM_EMPLOYEE" && getProfileId() != null) {
+  //     const emp_verification = async () => {
+  //       try {
+  //         const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
+  //         // const response = await fetch(`${APIConfig.baseURL.dev}/profile/600-000003`);
+  //         if (!response.ok) {
+  //           throw new Error("Failed to fetch data");
+  //         }
+  //         const data = await response.json();
+  //         const employee = data?.profile?.result[0]; // Assuming there's only one employee
+  //         console.log("ROHIT - employee?.employee_verification - ", employee?.employee_verification)
+  //         if (employee?.employee_verification == null) {
+  //           navigate("/emp_waiting");
+  //         }
+  //       } catch (error) {
+  //         console.error(error);
+  //       }
+  //     };
+
+  //     emp_verification();
+  //     setShowSpinner(false);
+  //   }
+  //   const signedUpWithReferral = localStorage.getItem("signedUpWithReferral");
+  //   if (signedUpWithReferral && signedUpWithReferral === "true") {
+  //     setShowReferralWelcomeDialog(true);
+  //     localStorage.removeItem("signedUpWithReferral");
+  //   }
+  //   fetchData();
+  // }, [user]);
+
+  //
+  //
+  // Console Logs for useState variables
+  useEffect(() => {
+    // console.log("RentStatus check --", rentStatus);
+  }, [rentStatus]);
 
   useEffect(() => {
-    // const dataObject = {};
-    // console.log("In UseEffect");
-    // console.log(getProfileId());
+    // console.log("Contract requests - ", contractRequests);
+  }, [contractRequests]);
 
-    // console.log("In UseEffect after if");
-    
-    fetchData();
-  }, []);
+  useEffect(() => {
+    // console.log("Happiness Matrix Info - ", happinessData);
+  }, [happinessData]);
 
-  
+  // useEffect(() => {
+  //   // const dataObject = {};
+  //   // console.log("In UseEffect");
+  //   // console.log(getProfileId());
+
+  //   // console.log("In UseEffect after if");
+
+  //   fetchData();
+  // }, []);
 
   return (
     <ThemeProvider theme={theme}>
-        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-          <CircularProgress color='inherit' />
-        </Backdrop>
-        <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
-          <Grid container spacing={6}>
-            <Grid item xs={12}>
-              <Box
+      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+        <CircularProgress color='inherit' />
+      </Backdrop>
+      <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
+        <Grid container spacing={6}>
+          <Grid item xs={12}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: isMobile ? "column" : "row",
+                justifyContent: isMobile ? "center" : "left",
+                paddingLeft: "10px",
+                paddingRight: "10px",
+                alignText: "center",
+                alignContent: "center",
+              }}
+            >
+              <Typography
                 sx={{
-                  display: "flex",
-                  flexDirection: isMobile ? "column" : "row",
-                  justifyContent: isMobile ? "center" : "left",
-                  paddingLeft: "10px",
-                  paddingRight: "10px",
-                  alignText: "center",
-                  alignContent: "center",
+                  fontSize: { xs: "22px", sm: "28px", md: "32px" },
+                  fontWeight: "600",
                 }}
               >
-                <Typography
-                  sx={{
-                    fontSize: { xs: "22px", sm: "28px", md: "32px" },
-                    fontWeight: "600",
-                  }}
-                >
-                  Welcome, {user.first_name}!
-                </Typography>
-              </Box>
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <PropertyRentWidget rentData={rentStatus} contractRequests={contractRequests} propertyData={propertyData} />
-            </Grid>
-            <Grid item xs={12} md={9}>
-              <RevenueWidget revenueData={revenueData} />
-              <LeaseWidget leaseData={leaseStatus} />
-              <Grid container item xs={12} spacing={6}>
-                <Grid item xs={12} md={6}>
-                  <HappinessMatrixWidget happinessData={happinessData}  page={"ManagerDashBoard"}/>
-                </Grid>
-                <Grid item xs={12} md={6} style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end" }}>
-                  <MaintenanceWidget maintenanceData={maintenanceStatusData} />
-                </Grid>
+                Welcome, {user.first_name}!
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <PropertyRentWidget rentData={rentStatus} contractRequests={contractRequests} propertyData={propertyData} />
+          </Grid>
+          <Grid item xs={12} md={9}>
+            <RevenueWidget revenueData={revenueData} />
+            <LeaseWidget leaseData={leaseStatus} />
+            <Grid container item xs={12} spacing={6}>
+              <Grid item xs={12} md={6}>
+                <HappinessMatrixWidget happinessData={happinessData} page={"ManagerDashBoard"} />
+              </Grid>
+              <Grid item xs={12} md={6} style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end" }}>
+                <MaintenanceWidget maintenanceData={maintenanceStatusData} />
               </Grid>
             </Grid>
           </Grid>
-        </Container>      
+        </Grid>
+      </Container>
     </ThemeProvider>
   );
 }

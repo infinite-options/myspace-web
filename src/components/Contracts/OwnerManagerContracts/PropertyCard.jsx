@@ -49,6 +49,7 @@ import Documents from '../../Leases/Documents';
 import { FeesDataGrid } from '../../Property/PMQuotesRequested';
 import ManagementContractContext from '../../../contexts/ManagementContractContext';
 // import { gridColumnsTotalWidthSelector } from '@mui/x-data-grid';
+// dhyey
 
 function TextInputField(props) {
 	const inputStyle = {
@@ -125,7 +126,7 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 	// 	console.log('FEE FREQUENCY: ', feeFrequency);
 	// }, [feeFrequency]);
 
-	const [feeAppliedTo, setFeeAppliedTo] = useState('Gross Rent');
+	const [feeAppliedTo, setFeeAppliedTo] = useState('');
 	// useEffect(() => {
 	// 	console.log('FEE APPLIED TO: ', feeAppliedTo);
 	// }, [feeAppliedTo]);
@@ -262,12 +263,12 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 								}}
 							>
 								<MenuItem value={'One Time'}>One Time</MenuItem>
-								<MenuItem value={'hourly'}>hourly</MenuItem>
-								<MenuItem value={'daily'}>daily</MenuItem>
-								<MenuItem value={'weekly'}>weekly</MenuItem>
-								<MenuItem value={'biweekly'}>biweekly</MenuItem>
-								<MenuItem value={'monthly'}>monthly</MenuItem>
-								<MenuItem value={'annually'}>annually</MenuItem>
+								<MenuItem value={'Hourly'}>hourly</MenuItem>
+								<MenuItem value={'Daily'}>daily</MenuItem>
+								<MenuItem value={'Weekly'}>weekly</MenuItem>
+								<MenuItem value={'Biweekly'}>biweekly</MenuItem>
+								<MenuItem value={'Monthly'}>monthly</MenuItem>
+								<MenuItem value={'Annually'}>annually</MenuItem>
 							</Select>
 						</Box>
 					</Box>
@@ -390,8 +391,8 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 									<MenuItem value={'Utility Bill'}>Utility Bill</MenuItem>
 									<MenuItem value={'Maintenance Bill'}>Maintenance Bill</MenuItem> */}
 									{
-										feeBases?.map( basis => (
-											<MenuItem value={basis.list_item}>{basis.list_item}</MenuItem>
+										feeBases?.map( (basis, id) => (
+											<MenuItem key={id} value={basis.list_item}>{basis.list_item}</MenuItem>
 										))
 									}
 								</Select>
@@ -513,12 +514,20 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 		//     isFlatRate: isFlatRate,
 		//     ...(isFlatRate && { charge: feeAmount }),
 		// }
+		// const newFee = {
+		// 	fee_name: feeName,
+		// 	fee_type: feeType,
+		// 	frequency: feeFrequency,
+		// 	...(feeType === 'PERCENT' && { charge: percentage }),
+		// 	...(feeType === 'PERCENT' && { of: feeAppliedTo }),
+		// 	...(feeType === 'FLAT-RATE' && { charge: feeAmount }),
+		// };
 		const newFee = {
 			fee_name: feeName,
 			fee_type: feeType,
 			frequency: feeFrequency,
+			of: feeAppliedTo,
 			...(feeType === 'PERCENT' && { charge: percentage }),
-			...(feeType === 'PERCENT' && { of: feeAppliedTo }),
 			...(feeType === 'FLAT-RATE' && { charge: feeAmount }),
 		};
 		onEditFee(newFee, feeIndex); // pass index also
@@ -884,6 +893,7 @@ const PropertyCard = (props) => {
   const [propertyOwnerName, setPropertyOwnerName] = useState("");
   const [deletedDocsUrl, setDeletedDocsUrl] = useState([]);
   const [documentDetails, setDocumentDetails] = useState([]);
+  const [isPreviousFileChange, setIsPreviousFileChange] = useState(false)
 
 
 
@@ -915,12 +925,18 @@ const PropertyCard = (props) => {
 			  setContractAssignedContacts(defaultContacts);
 			}
 	
-			const fees = JSON.parse(contractData["contract_fees"])? JSON.parse(contractData["contract_fees"]) : [];			
-			if(fees?.length > 0 ){
+			const fees = JSON.parse(contractData["contract_fees"])? JSON.parse(contractData["contract_fees"]) : [];
+			// setContractFees(fees);
+
+			// console.log("---dhyey--- contract fees - ", contractFees, "fees is - ", fees);
+			if(fees?.length === 0 && contractData["contract_status"] === "NEW"){
+				setContractFees([...defaultContractFees]);
+			}else{
 				setContractFees(fees);
-			} else {
-				setContractFees(defaultContractFees);
 			}
+			// } else {
+			// 	setContractFees(defaultContractFees);
+			// }
 			
 			const oldDocs = contractData["contract_documents"] ? JSON.parse(contractData["contract_documents"]) : [];
 			setPreviouslyUploadedDocs(oldDocs);
@@ -969,17 +985,17 @@ const PropertyCard = (props) => {
     // console.log("CONTRACT ASSIGNED CONTACTS - ", contractAssignedContacts);
   }, [contractAssignedContacts]);
 
-  useEffect(() => {
+//   useEffect(() => {
     // console.log("DEFAULT CONTRACT FEES - ", defaultContractFees);
     // let JSONstring = JSON.stringify(defaultContractFees);
     // console.log("DEFAULT CONTRACT FEES JSON string- ", JSONstring);
 	
 	// console.log("contractFees.length - ", contractFees.length);
 	// console.log("contractFees - ", contractFees);
-    if (!contractFees.length) {
-      setContractFees([...defaultContractFees]);
-    }	
-  }, [defaultContractFees, currentContractUID]);
+//     if (!contractFees.length) {
+//       setContractFees([...defaultContractFees]);
+//     }	
+//   }, [defaultContractFees, currentContractUID]);
 
   useEffect(() => {
 	setImages(
@@ -1236,16 +1252,22 @@ const PropertyCard = (props) => {
 
 	//Check here -- Abhinav
 
-	formData.append("delete_documents", JSON.stringify(deletedDocsUrl));
+	if(deletedDocsUrl && deletedDocsUrl?.length !== 0){
+		formData.append("delete_documents", JSON.stringify(deletedDocsUrl));
+	}
 
-    formData.append("contract_uid", contractUID);
+    formData.append("contract_uid", currentContractUID);
     formData.append("contract_name", contractName);
     formData.append("contract_start_date", contractStartDate.format("MM-DD-YYYY"));
     formData.append("contract_end_date", contractEndDate.format("MM-DD-YYYY"));
     formData.append("contract_fees", contractFeesJSONString);
     formData.append("contract_status", "SENT");
     formData.append("contract_assigned_contacts", contractContactsJSONString);
-    formData.append("contract_documents", JSON.stringify(previouslyUploadedDocs));
+
+	if(isPreviousFileChange){
+		formData.append("contract_documents", JSON.stringify(previouslyUploadedDocs));
+	}
+
 	// formData.append("contract_documents_details", JSON.stringify(contractFileTypes));
 
     const endDateIsValid = isValidDate(contractEndDate.format("MM-DD-YYYY"));
@@ -1260,7 +1282,7 @@ const PropertyCard = (props) => {
       return;
     }
 
-    if (contractFiles.length) {
+    if (contractFiles && contractFiles?.length) {
 
       const documentsDetails = [];
       [...contractFiles].forEach((file, i) => {
@@ -1497,7 +1519,7 @@ return (
 				>
 					{/* {getProperties(propertyStatus).length > 0 ? (`${getProperties(propertyStatus)[index].property_address}, ${(getProperties(propertyStatus)[index].property_unit !== null && getProperties(propertyStatus)[index].property_unit !== '' ? (getProperties(propertyStatus)[index].property_unit + ',') : (''))} ${getProperties(propertyStatus)[index].property_city} ${getProperties(propertyStatus)[index].property_state} ${getProperties(propertyStatus)[index].property_zip}`) : (<></>)} */}
 					{/* 789 Maple Lane, San Diego, CA 92101, USA */}
-					{propertyData.property_unit ? (
+					{propertyData?.property_unit ? (
 						<span>
 							{propertyData.property_address}
 							{', Unit - '}
@@ -2015,7 +2037,7 @@ return (
 					<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
 				</Box>
 			</Box>
-			{contractFees.length !== 0 ? <FeesDataGrid data={contractFees} isDeleteable={true} handleDeleteFee={handleDeleteFee}/> : 
+			{contractFees?.length !== 0 ? <FeesDataGrid data={contractFees} isDeleteable={true} handleEditFee={handleOpenEditFee} handleDeleteFee={handleDeleteFee}/> : 
 				<>
 						<Box
 							sx={{
@@ -2109,7 +2131,7 @@ return (
 
 			{/* previously Uploaded docs */}
 			<Box padding={"5px"}>
-				<Documents isEditable={true} isAccord={false} documents={previouslyUploadedDocs} setDocuments={setPreviouslyUploadedDocs} setDeleteDocsUrl={setDeletedDocsUrl} contractFiles={contractFiles} contractFileTypes={contractFileTypes} setContractFiles={setContractFiles} setContractFileTypes={setContractFileTypes}/>
+				<Documents isEditable={true} setIsPreviousFileChange={setIsPreviousFileChange} isAccord={false} documents={previouslyUploadedDocs} setDocuments={setPreviouslyUploadedDocs} setDeleteDocsUrl={setDeletedDocsUrl} contractFiles={contractFiles} contractFileTypes={contractFileTypes} setContractFiles={setContractFiles} setContractFileTypes={setContractFileTypes}/>
 			</Box>
 
 			{/* Contact details */}
@@ -2134,18 +2156,33 @@ return (
 							width: '100%',
 						}}
 					>
-						<Typography
+						<Box
 							sx={{
-								color: "#160449",
-								fontWeight: theme.typography.primary.fontWeight,
-								fontSize: "18px",
-								paddingBottom: "5px",
-								paddingTop: "5px",
-								marginY:"10px"
+								display: 'flex',
+								flexDirection: 'row',
+								justifyContent: 'space-between',
+								fontSize: '15px',
+								fontWeight: 'bold',
+								// padding: '5px',
+								color: '#3D5CAC',
 							}}
 						>
-							{"Contract Assigned Contacts: "}
-						</Typography>
+							<Typography
+								sx={{
+									color: "#160449",
+									fontWeight: theme.typography.primary.fontWeight,
+									fontSize: "18px",
+									paddingBottom: "5px",
+									paddingTop: "5px",
+									marginY:"10px"
+								}}
+							>
+								{"Contract Assigned Contacts: "}
+							</Typography>
+							<Box onClick={()=>{setShowAddContactDialog(true)}} marginTop={"10px"} paddingTop={"5px"} paddingRight={"5px"}>
+								<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
+							</Box>
+						</Box>
 						<Grid container sx={{ color: 'black' }} marginY={"13px"}>
 							<Grid item xs={3}>
 								Name
@@ -2171,7 +2208,7 @@ return (
 			) : (
 				<></>
 			)}
-			<Box
+			{/* <Box
 				sx={{
 					display: 'flex',
 					flexDirection: 'row',
@@ -2182,35 +2219,8 @@ return (
 					width: '100%',
 				}}
 			>
-				<Box
-					onClick={() => {
-						setShowAddContactDialog(true);
-					}}
-				>
-					<Box
-						sx={{
-							display: 'flex',
-							flexDirection: 'row',
-							fontSize: '16px',
-							fontWeight: 'bold',
-							padding: '5px',
-							color: '#3D5CAC',
-						}}
-					>
-						<PersonIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
-						Add Contact
-					</Box>
-				</Box>
-				<Box>
-					<Box
-						sx={{
-							fontSize: '15px',
-							fontWeight: 'bold',
-							padding: '5px',
-							color: '#3D5CAC',
-						}}
-					></Box>
-					<Box
+				<Box> */}
+					{/* <Box
 						sx={{
 							display: 'flex',
 							flexDirection: 'row',
@@ -2232,9 +2242,9 @@ return (
 							onChange={(e) => setContractFiles((prevFiles) => [...prevFiles, ...e.target.files])}
 							multiple
 						/>
-					</Box>
-				</Box>
-			</Box>
+					</Box> */}
+				{/* </Box>
+			</Box> */}
 
 			<Box
 				sx={{

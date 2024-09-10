@@ -198,7 +198,7 @@ function TenantDashboard(props) {
     };
 
     getTenantData();
-    setRefresh(false);
+    setReload(false);
 
     // List all dependencies in the dependency array
   }, [reload]);
@@ -206,6 +206,7 @@ function TenantDashboard(props) {
   // End Main UseEffect
 
   useEffect(() => {
+    // console.log(" --- dhyey --- property data - ", propertyData)
     if (propertyData && propertyData.length === 0) {
       const activeLeases = propertyData?.filter((property) => property.lease_status === "ACTIVE");
       // console.log("activeLeases - ", activeLeases)
@@ -216,9 +217,16 @@ function TenantDashboard(props) {
         setRightPane("");
       }
     } else {
+      // console.log(" --- dhyey --- ok here we go for null ")
       setRightPane("");
     }
   }, [propertyData]);
+
+  // When we click Header "Tenant", it will lead to tenantDashboard
+  // In header.jsx, we pass state, when we click on "Tenant" it will help us to identify we have to show default page
+  useEffect(() => {
+    setRightPane("")
+  }, [location]);
 
   useEffect(() => {
     if (tenantMaintenanceItemDetailState) {

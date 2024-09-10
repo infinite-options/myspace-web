@@ -1167,7 +1167,12 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
               profileFormData.append("business_documents_details", JSON.stringify(documentsDetails));
             }
           } else {
-            profileFormData.append(item.key, JSON.stringify(item.value));
+            // If key is ein_number then we should have to pass value directly instead of converting into string
+            if(item.key !== "business_ein_number"){
+              profileFormData.append(item.key, JSON.stringify(item.value));
+            }else{
+              profileFormData.append(item.key, item.value);
+            }
           }
         });
         profileFormData.append("business_uid", profileData.business_uid);

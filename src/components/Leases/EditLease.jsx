@@ -39,6 +39,8 @@ const EditLease = (props) => {
     const [moveIn, setMoveIn] = useState(leaseData.lease_move_in_date)
     const [noOfOcc, setNoOfOcc] = useState("")
     const [contentTypes, setContentTypes] = useState([]);
+    const [deletedDocsUrl, setDeletedDocsUrl] = useState([]);
+    const [isPreviousFileChange, setIsPreviousFileChange] = useState(false)
 
     const rentDataFromLease = JSON.parse(leaseData.lease_fees).filter((lease) => lease.fee_name === "Rent");
 
@@ -122,15 +124,8 @@ const EditLease = (props) => {
     }
 
     const handleCloseButton = () => {
-        navigate('/tenantDashboard',{
-            state:{
-                viewLeaseState : {
-                    lease_id : leaseData.lease_uid,
-                    property_uid: leaseData.property_uid,
-                    isDesktop: true,
-                }
-            } 
-        });
+        navigate(-1);
+        // navigate('/managerDashboard'); // change according to from which role call this function
     };
 
     const handleRemoveFile = (index) => {
@@ -176,13 +171,16 @@ const EditLease = (props) => {
         leaseApplicationFormData.append('lease_property_id', leaseData.property_uid)
         leaseApplicationFormData.append('lease_status', "NEW")
         leaseApplicationFormData.append('lease_assigned_contacts', leaseData.lease_assigned_contacts)
-        leaseApplicationFormData.append('lease_documents', leaseData.lease_documents)
+        // leaseApplicationFormData.append('lease_documents', leaseData.lease_documents)
         leaseApplicationFormData.append('lease_adults', leaseData?.lease_adults)
         leaseApplicationFormData.append('lease_children', leaseData?.lease_children) 
         leaseApplicationFormData.append('lease_pets', leaseData?.lease_pets)    
         leaseApplicationFormData.append('lease_vehicles', leaseData?.lease_vehicles)  
         leaseApplicationFormData.append('lease_application_date', formatDate(date)) // change date format
         leaseApplicationFormData.append('tenant_uid', getTenantsUid(leaseData))
+        if(deletedDocsUrl && deletedDocsUrl?.length !== 0){
+            leaseApplicationFormData.append("delete_documents", JSON.stringify(deletedDocsUrl));
+        }
 
         // leaseApplicationFormData.append("contract_name",leaseData.contract_name)
         leaseApplicationFormData.append("lease_start",leaseData.lease_start)
@@ -219,7 +217,7 @@ const EditLease = (props) => {
         axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
         .then((response) => {
             console.log('Data updated successfully');
-            navigate('/tenantDashboard',{ 
+            navigate('/managerDashboard',{ 
             });
         })
         .catch((error) => {
@@ -248,6 +246,14 @@ const EditLease = (props) => {
         const leaseFees = [{"charge": rent, "due_by": rentDue, "late_by": lateFeeAfter, "fee_name": "Rent", "fee_type": "$", "late_fee": lateFeePerDay, "frequency": rentFreq, "due_by_date": null, "leaseFees_uid": rentDataFromLease[0].leaseFees_uid, "available_topay": availablePay, "perDay_late_fee":rentDataFromLease[0].perDay_late_fee, "id": rentDataFromLease[0].id}];
         leaseApplicationFormData.append("lease_fees", JSON.stringify(leaseFees))
 
+        if(deletedDocsUrl && deletedDocsUrl?.length !== 0){
+            leaseApplicationFormData.append("delete_documents", JSON.stringify(deletedDocsUrl));
+        }
+
+        if(isPreviousFileChange){
+            leaseApplicationFormData.append("lease_documents", JSON.stringify(leaseDocuments));
+        }
+
         // leaseApplicationFormData.append("property_listed_rent",leaseData.property_listed_rent)
         // leaseApplicationFormData.append("frequency",leaseData.frequency)
         // leaseApplicationFormData.append("lease_rent_late_by",leaseData.lease_rent_late_by)
@@ -255,7 +261,7 @@ const EditLease = (props) => {
         // leaseApplicationFormData.append("lease_rent_due_by",leaseData.lease_rent_due_by)
         // leaseApplicationFormData.append("lease_rent_available_topay",leaseData.lease_rent_available_topay)
 
-        if(contractFiles.length){
+        if(contractFiles && contractFiles?.length){
             const documentsDetails = [];
             [...contractFiles].forEach((file, i) => {
                 leaseApplicationFormData.append(`file_${i}`, file, file.name);
@@ -753,9 +759,9 @@ const EditLease = (props) => {
                                 </TableCell>
                             </TableRow>
                             <TableRow>
-                                <Documents isEditable={true} documents={leaseDocuments} isAccord={false} setDocuments={setLeaseDocuments} contractFileTypes={contractFileTypes} setContractFileTypes={setContractFileTypes} contractFiles={contractFiles} setContractFiles={setContractFiles}/>
+                                <Documents isEditable={true} setIsPreviousFileChange={setIsPreviousFileChange} documents={leaseDocuments} deletedDocsUrl={deletedDocsUrl} setDeleteDocsUrl={setDeletedDocsUrl} isAccord={false} setDocuments={setLeaseDocuments} contractFileTypes={contractFileTypes} setContractFileTypes={setContractFileTypes} contractFiles={contractFiles} setContractFiles={setContractFiles}/>
                             </TableRow>
-                            <TableRow>
+                            {/* <TableRow>
                                 <TableCell>
                                     <Button
                                         width='100px'
@@ -782,7 +788,7 @@ const EditLease = (props) => {
                                         />
                                     </Button>
                                 </TableCell>
-                            </TableRow>
+                            </TableRow> */}
                         </TableBody>
                     </Table>
                     <Stack
