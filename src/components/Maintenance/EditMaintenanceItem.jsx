@@ -52,6 +52,7 @@ import ImageListItem from '@mui/material/ImageListItem';
 
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { useMaintenance } from '../../contexts/MaintenanceContext';
 
 export default function EditMaintenanceItem({setRightPane}) {
 	console.log("inside edit component");
@@ -62,30 +63,48 @@ export default function EditMaintenanceItem({setRightPane}) {
     let testTitle1, testPriority1, completionStatus1;
     let requestUid1, propID1, maintainanceImages, maintainanceFavImage;
 
-	if (isMobile) {
+	const {
+		testIssue,
+		testProperty,
+		testIssueItem,
+		testCost,
+		testTitle,
+		testPriority,
+		completionStatus,
+		requestUid,
+		propID,
+		maintainanceImages: contextmaintainanceImages,
+		maintainanceFavImage: contextmaintainanceFavImage,
+		setEditMaintenanceView,
+	  } = useMaintenance();
+
+	  if (isMobile) {
+		// Use location state in mobile
 		testIssue1 = location.state.testIssue;
 		testProperty1 = location.state.testProperty;
 		testIssueItem1 = location.state.testIssueItem;
 		testCost1 = location.state.testCost;
 		testTitle1 = location.state.testTitle;
-	    testPriority1 = location.state.testPriority;
-        completionStatus1 = location.state.completionStatus;
-        requestUid1 = location.state.requestUid;
-        propID1 = location.state.propID;
-	} else {
-		testIssue1 = sessionStorage.getItem('testIssue');
-		testProperty1 = sessionStorage.getItem('testProperty');
-		testIssueItem1 = sessionStorage.getItem('testIssueItem');
-		testCost1 = sessionStorage.getItem('testCost');
-		testTitle1 = sessionStorage.getItem('testTitle');
-		testPriority1 = sessionStorage.getItem('testPriority');
-		completionStatus1 = sessionStorage.getItem('completionStatus');
-		requestUid1 = sessionStorage.getItem('requestUid');
-		propID1 = sessionStorage.getItem('propID');
-
-		maintainanceImages = sessionStorage.getItem('maintainanceImages');
-		maintainanceFavImage = sessionStorage.getItem('maintainanceFavImage');
-	}
+		testPriority1 = location.state.testPriority;
+		completionStatus1 = location.state.completionStatus;
+		requestUid1 = location.state.requestUid;
+		propID1 = location.state.propID;
+		maintainanceImages = location.state.maintainanceImages;
+		maintainanceFavImage= location.state.maintainanceFavImage;
+	  } else {
+		// Use context state in desktop view
+		testIssue1 = testIssue;
+		testProperty1 = testProperty;
+		testIssueItem1 = testIssueItem;
+		testCost1 = testCost;
+		testTitle1 = testTitle;
+		testPriority1 = testPriority;
+		completionStatus1 = completionStatus;
+		requestUid1 = requestUid;
+		propID1 = propID;
+		maintainanceImages = contextmaintainanceImages;
+		maintainanceFavImage = contextmaintainanceFavImage;
+	  }
 
 	// setCost(testCost1);
 	// cost = testCost1;
@@ -194,33 +213,12 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 		console.log('handleBackButton');
 		if(isMobile){navigate(-1);
         } else {
-            sessionStorage.removeItem('testIssue');
-			sessionStorage.removeItem('testProperty');
-			sessionStorage.removeItem('testIssueItem');
-			sessionStorage.removeItem('testCost');
-			sessionStorage.removeItem('testTitle');
-			sessionStorage.removeItem('testPriority');
-			sessionStorage.removeItem('completionStatus');
-			sessionStorage.removeItem('requestUid');
-			sessionStorage.removeItem('propID');
-			sessionStorage.removeItem('month');
-			sessionStorage.removeItem('year');
-			sessionStorage.removeItem('editMaintenanceView');
-			sessionStorage.removeItem('maintainanceImages');
-		sessionStorage.removeItem('maintainanceFavImage');
-
-			window.dispatchEvent(new Event('storage'));
-			// Dispatch the custom event
-            setTimeout(() => {
-				window.dispatchEvent(new Event('maintenanceRequestSelected'));
-			}, 0);
-			setTimeout(() => {
-				window.dispatchEvent(new Event('maintenanceUpdate'));
-			}, 0);
 			if(selectedRole === "TENANT"){
 
 				setRightPane({type: "tenantmaintenanceitem"})
 			}
+
+			setEditMaintenanceView(false);
         }
 	};
 
@@ -373,7 +371,7 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 
 			handleBackButton();
 		} else {
-
+			setEditMaintenanceView(false);
 			navigate(maintenanceRoutingBasedOnSelectedRole());
 		}
 	};
