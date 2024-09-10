@@ -2,13 +2,14 @@ import React, { useRef, useState } from "react";
 import { Box, Button, Typography, TextField, Paper, Grid } from "@mui/material";
 import SignatureCanvas from "react-signature-canvas";
 
-export default function WaiverForm({ onSubmit }) { // Accept onSubmit as prop
+export default function WaiverForm({ lease_uid, onSubmit }) { // Accept onSubmit as prop
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [initials1, setInitials1] = useState("");
   const [initials2, setInitials2] = useState("");
   const [initials3, setInitials3] = useState("");
   const sigCanvas = useRef({});
+  console.log("LEASE UID", lease_uid);
 
   const clearSignature = () => sigCanvas.current.clear();
   const saveSignature = () => sigCanvas.current.getTrimmedCanvas().toDataURL("image/png");

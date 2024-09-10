@@ -1147,7 +1147,9 @@ export default function TenantApplication(props) {
             >
               <DialogTitle>Waiver Form</DialogTitle>
               <DialogContent>
-                <WaiverForm onSubmit={handleWaiverSubmit} /> {/* Pass the onSubmit handler */}
+                <WaiverForm 
+                lease_uid = {lease[0]?.lease_uid}
+                onSubmit={handleWaiverSubmit} /> {/* Pass the onSubmit handler */}
               </DialogContent>
               <DialogActions>
                 <Button onClick={handleCloseWaiverDialog} color="secondary">
