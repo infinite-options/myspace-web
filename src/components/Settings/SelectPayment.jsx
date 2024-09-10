@@ -523,7 +523,16 @@ export default function SelectPayment(props) {
                   <RadioGroup aria-label='Number' name='number' value={selectedMethod} onChange={handleChange}>
                     <FormControlLabel
                       value='Bank Transfer'
-                      control={<Radio />}
+                      control={
+                        <Radio
+                          sx={{
+                            color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000", // Blue when selected, black otherwise
+                            "&.Mui-checked": {
+                              color: "#3D5CAC", // Blue color for the selected state
+                            },
+                          }}
+                        />
+                      }
                       label={
                         <>
                           <div style={{ display: "flex", alignItems: "center", paddingTop: "10px" }}>
@@ -540,7 +549,16 @@ export default function SelectPayment(props) {
                     />
                     <FormControlLabel
                       value='Credit Card'
-                      control={<Radio />}
+                      control={
+                        <Radio
+                          sx={{
+                            color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000", // Blue when selected, black otherwise
+                            "&.Mui-checked": {
+                              color: "#3D5CAC", // Blue color for the selected state
+                            },
+                          }}
+                        />
+                      }
                       label={
                         <>
                           <div style={{ display: "flex", alignItems: "center" }}>
@@ -568,7 +586,16 @@ export default function SelectPayment(props) {
                   <RadioGroup aria-label='Number' name='number' value={selectedMethod} onChange={handleChange}>
                     <FormControlLabel
                       value='PayPal'
-                      control={<Radio />}
+                      control={
+                        <Radio
+                          sx={{
+                            color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000", // Blue when selected, black otherwise
+                            "&.Mui-checked": {
+                              color: "#3D5CAC", // Blue color for the selected state
+                            },
+                          }}
+                        />
+                      }
                       label={
                         <div style={{ display: "flex", alignItems: "center" }}>
                           <img src={PayPal} alt='PayPal' style={{ marginRight: "8px", height: "24px" }} />
@@ -578,7 +605,16 @@ export default function SelectPayment(props) {
                     />
                     <FormControlLabel
                       value='Apple Pay'
-                      control={<Radio />}
+                      control={
+                        <Radio
+                          sx={{
+                            color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000", // Blue when selected, black otherwise
+                            "&.Mui-checked": {
+                              color: "#3D5CAC", // Blue color for the selected state
+                            },
+                          }}
+                        />
+                      }
                       label={
                         <div style={{ display: "flex", alignItems: "center" }}>
                           <img src={ApplePay} alt='Apple Pay' style={{ marginRight: "8px", height: "24px" }} />
@@ -587,29 +623,65 @@ export default function SelectPayment(props) {
                       }
                     />
                     <FormControlLabel
-                      value='Zelle'
-                      control={<Radio />}
+                      value="Zelle"
+                      control={
+                        <Radio
+                          sx={{
+                            color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000", // Blue when selected, black otherwise
+                            "&.Mui-checked": {
+                              color: "#3D5CAC", // Blue color for the selected state
+                            },
+                          }}
+                        />
+                      }
                       label={
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          <img src={Zelle} alt='Zelle' style={{ marginRight: "8px", height: "24px" }} />
-                          Zelle {paymentMethodInfo.zelle ? paymentMethodInfo.zelle : "No Payment Info"}
+                        <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
+                          <img src={Zelle} alt="Zelle" style={{ marginRight: "8px", height: "24px" }} />
+                          <Typography sx={{ color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000" }}>
+                            Zelle {paymentMethodInfo.zelle ? paymentMethodInfo.zelle : "No Payment Info"}
+                          </Typography>
                           <TextField
-                            id='confirmation-number'
-                            label='Confirmation Number'
-                            variant='outlined'
-                            size='small'
+                            id="confirmation-number"
+                            label="Confirmation Number"
+                            variant="outlined"
+                            size="small"
                             value={confirmationNumber}
-                            sx={{ marginLeft: "10px" }} // Add some spacing between the image and the textfield
-                            disabled={selectedMethod !== "Zelle"}
+                            sx={{
+                              marginLeft: "10px",
+                              input: {
+                                color: "#000000", // Keep the input text black
+                              },
+                              "& .MuiOutlinedInput-root": {
+                                "& fieldset": {
+                                  borderColor: "#000000", // Black border when not focused
+                                },
+                                "&.Mui-focused fieldset": {
+                                  borderColor: "#3D5CAC", // Blue border when focused
+                                },
+                              },
+                            }}
+                            InputLabelProps={{
+                              shrink: true, // Keeps the label always visible
+                              style: { color: "#000000" }, // Label text color
+                            }}
+                            disabled={selectedMethod !== "Zelle"} // Keeps the field disabled if another method is selected
                             onChange={(e) => setConfirmationNumber(e.target.value)}
                           />
                         </div>
                       }
                     />
-
                     <FormControlLabel
                       value='Venmo'
-                      control={<Radio />}
+                      control={
+                        <Radio
+                          sx={{
+                            color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000", // Blue when selected, black otherwise
+                            "&.Mui-checked": {
+                              color: "#3D5CAC", // Blue color for the selected state
+                            },
+                          }}
+                        />
+                      }
                       label={
                         <div style={{ display: "flex", alignItems: "center" }}>
                           <img src={Venmo} alt='Venmo' style={{ marginRight: "8px", height: "24px" }} />
@@ -620,7 +692,16 @@ export default function SelectPayment(props) {
 
                     <FormControlLabel
                       value='Stripe'
-                      control={<Radio />}
+                      control={
+                        <Radio
+                          sx={{
+                            color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000", // Blue when selected, black otherwise
+                            "&.Mui-checked": {
+                              color: "#3D5CAC", // Blue color for the selected state
+                            },
+                          }}
+                        />
+                      }
                       label={
                         <div style={{ display: "flex", alignItems: "center" }}>
                           <img src={Stripe} alt='Stripe' style={{ marginRight: "8px", height: "24px" }} />

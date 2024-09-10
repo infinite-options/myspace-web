@@ -31,10 +31,13 @@ import TenantProfileLink from '../../Maintenance/MaintenanceComponents/TenantPro
 import OwnerProfileLink from '../../Maintenance/MaintenanceComponents/OwnerProfileLink';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import APIConfig from '../../../utils/APIConfig';
+import { useMaintenance } from "../../../contexts/MaintenanceContext";
 
 export default function NewRequestAction({ maintenanceItem, navigateParams, quotes }) {
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole, getProfileId } = useUser();
+    const { setMaintenanceData, setSelectedRequestIndex, setSelectedStatus, setQuoteRequestView, setMaintenanceItem, setNavigateParams } = useMaintenance();
+    
     const [schedulerDate, setSchedulerDate] = useState();
     const [showRequestMoreInfo, setShowRequestMoreInfo] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -54,21 +57,12 @@ export default function NewRequestAction({ maintenanceItem, navigateParams, quot
         } else {
             if (maintenanceItem && navigateParams) {
                 try {
-                    const maintenanceItemStr = JSON.stringify(maintenanceItem);
-                    const navigateParamsStr = JSON.stringify(navigateParams);
+                    setQuoteRequestView(true);
+                    setMaintenanceData(maintenanceItem);
+                    setNavigateParams(navigateParams);
+                    setSelectedRequestIndex(navigateParams.maintenanceRequestIndex);
+                    setSelectedStatus(navigateParams.status);
 
-                    console.log('Storing data in sessionStorage: ', navigateParams);
-
-                    // Save data to sessionStorage
-                    sessionStorage.setItem('maintenanceItem', maintenanceItemStr);
-                    sessionStorage.setItem('navigateParams', navigateParamsStr);
-                    sessionStorage.setItem('selectedRequestIndex', navigateParams.maintenanceRequestIndex);
-                    sessionStorage.setItem('selectedStatus', navigateParams.status);
-                    sessionStorage.setItem('desktopView', 'true');
-                    window.dispatchEvent(new Event('storage'));
-                    setTimeout(() => {
-                        window.dispatchEvent(new Event('maintenanceRequestSelected'));
-                    }, 0);
                 } catch (error) {
                     console.error('Error setting sessionStorage: ', error);
                 }

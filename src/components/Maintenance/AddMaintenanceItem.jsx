@@ -42,7 +42,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import useSessionStorage from './useSessionStorage';
 import APIConfig from '../../utils/APIConfig';
 
-export default function AddMaintenanceItem({onBack}) {
+export default function AddMaintenanceItem({setRefersh, onBack}) {
 	let navigate = useNavigate();
 	const { user, getProfileId, maintenanceRoutingBasedOnSelectedRole } = useUser();
 	const [propertyId, setPropertyId] = useState('');
@@ -163,7 +163,7 @@ export default function AddMaintenanceItem({onBack}) {
 		getProperties();
 	}, []);
 
-	const handleSubmit = (event) => {
+	const handleSubmit = async (event) => {
 		event.preventDefault();
 
 		const formData = new FormData();
@@ -239,6 +239,7 @@ export default function AddMaintenanceItem({onBack}) {
 		setCost('');
 		setTitle('');
 		setDescription('');
+		await setRefersh(true);
         if (onBack) {
             onBack(); // Call the onBack function if it is provided
         } else {

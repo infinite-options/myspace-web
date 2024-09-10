@@ -31,6 +31,7 @@ import handleScheduleStatusChange from './QuotesAccepted';
 import APIConfig from '../../../utils/APIConfig';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import AlertMessage from "../AlertMessage";
+import { useMaintenance } from "../../../contexts/MaintenanceContext";
 
 export default function QuotesRequestAction({ maintenanceItem, navigateParams, quotes }) {
 	const navigate = useNavigate();
@@ -43,6 +44,9 @@ export default function QuotesRequestAction({ maintenanceItem, navigateParams, q
 	const [time, setTime] = useState(maintenanceItem.earliest_available_time || '');
 	const [showSpinner, setShowSpinner] = useState(false);
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+	const { quoteRequestView, setQuoteRequestView ,    maintenanceData: contextMaintenanceItem, 
+		navigateParams: contextNavigateParams,  maintenanceQuotes, setMaintenanceQuotes, setNavigateParams, setMaintenanceData,setSelectedStatus, setSelectedRequestIndex, setAllMaintenanceData } = useMaintenance();
+    
 
 	useEffect(() => {
 		setMaintenanceItemQuotes(quotes);
@@ -166,23 +170,14 @@ export default function QuotesRequestAction({ maintenanceItem, navigateParams, q
 			});
 		} else {
 			if (maintenanceItem && navigateParams) {
-				try {
-					const maintenanceItemStr = JSON.stringify(maintenanceItem);
-					const navigateParamsStr = JSON.stringify(navigateParams);
-					const quotesStr = JSON.stringify(quotes);
-					console.log('Storing data in sessionStorage: ', navigateParams);
 
-					// Save data to sessionStorage
-					sessionStorage.setItem('maintenanceItem', maintenanceItemStr);
-					sessionStorage.setItem('navigateParams', navigateParamsStr);
-					sessionStorage.setItem('quotes', quotesStr);
-					sessionStorage.setItem('selectedRequestIndex', navigateParams.maintenanceRequestIndex);
-					sessionStorage.setItem('selectedStatus', navigateParams.status);
-					sessionStorage.setItem('desktopView', 'true');
-					window.dispatchEvent(new Event('storage'));
-					setTimeout(() => {
-						window.dispatchEvent(new Event('maintenanceRequestSelected'));
-					}, 0);
+				try {
+                    setMaintenanceData(maintenanceItem);
+                    setNavigateParams(navigateParams);
+					setMaintenanceQuotes(quotes);
+                    setSelectedRequestIndex(navigateParams.maintenanceRequestIndex);
+                    setSelectedStatus(navigateParams.status);
+					setQuoteRequestView(true);
 				} catch (error) {
 					console.error('Error setting sessionStorage: ', error);
 				}
