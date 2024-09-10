@@ -60,7 +60,12 @@ function Header(props) {
         window.dispatchEvent(new Event("removeworkermaintenanceRequestSelected"));
       }, 0);
     }
-    navigate(dashboardUrl);
+    if(role === "TENANT"){
+      navigate(dashboardUrl, {state: {from:"tenantHeader"}})
+    }else{
+      navigate(dashboardUrl);
+    }
+
     handleClose();
   };
 
