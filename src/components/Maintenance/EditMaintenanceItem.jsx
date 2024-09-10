@@ -54,7 +54,7 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { useMaintenance } from '../../contexts/MaintenanceContext';
 
-export default function EditMaintenanceItem({setRightPane}) {
+export default function EditMaintenanceItem({setRefersh, setRightPane}) {
 	console.log("inside edit component");
 	const location = useLocation();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -367,6 +367,9 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 		// setCost('')
 		// setTitle('')
 		// setDescription('')
+		if(setRefersh){
+			setRefersh(true);
+		}
 		if (selectedRole === "TENANT"){
 
 			handleBackButton();

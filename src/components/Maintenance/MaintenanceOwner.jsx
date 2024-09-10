@@ -124,6 +124,7 @@ export function MaintenanceOwner() {
   const [propertyId, setPropertyId] = useState("200-000029");
   const colorStatus = theme.colorStatusO;
 
+  const [refresh, setRefresh] = useState(false || location.state?.refresh);
   const [showSelectMonth, setShowSelectMonth] = useState(false);
   const [showPropertyFilter, setShowPropertyFilter] = useState(false);
   const [month, setMonth] = useState(null);
@@ -282,6 +283,12 @@ export function MaintenanceOwner() {
   useEffect(() => {
     maintenanceOwnerDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId, setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData);
   }, []);
+
+  useEffect(() => {
+    let profileId = getProfileId();
+    maintenanceOwnerDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId, setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData);
+    setRefresh(false);
+  }, [refresh]);
 
   useEffect(() => {
     const handleMaintenanceUpdate = () => {
@@ -483,9 +490,9 @@ export function MaintenanceOwner() {
           {!isMobile && (
             <Grid item xs={7}>
               {editMaintenanceView && selectedRole === "OWNER" ? (
-                <EditMaintenanceItem />
+                <EditMaintenanceItem setRefersh = {setRefresh} />
               ) : showNewMaintenance && selectedRole === "OWNER" ? (
-                <AddMaintenanceItem onBack={() => setshowNewMaintenance(false)} />
+                <AddMaintenanceItem setRefersh = {setRefresh}  onBack={() => setshowNewMaintenance(false)} />
               ) : quoteRequestView && selectedRole === "OWNER" ? (
                 <>
                   <QuoteRequestForm />
