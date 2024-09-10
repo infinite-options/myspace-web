@@ -43,63 +43,92 @@ import APIConfig from "../../../utils/APIConfig";
 const PropertiesInformation = ({ owner }) => {  
   
   const { selectedRole, getProfileId } = useUser();  
-  const activeProperties = owner?.properties != null ? JSON.parse(owner?.properties).filter( property => property.contract_status === "ACTIVE") : [];
+  const activeProperties = owner?.properties != null ? JSON.parse(owner?.properties).filter(property => property.contract_status === "ACTIVE") : [];
+  const newProperties = owner?.properties != null ? JSON.parse(owner?.properties).filter(property => property.contract_status === "NEW") : [];
+  const sentProperties = owner?.properties != null ? JSON.parse(owner?.properties).filter(property => property.contract_status === "SENT") : [];
   
   
   return (
-    <Container disableGutters sx={{height: '100%', }}>
-      <Grid container sx={{paddingLeft: '10px', }}>
+    <Container disableGutters sx={{ height: '100%' }}>
+      <Grid container sx={{ padding: '10px' }}>
         <Grid item xs={12}>
-          <Typography sx={{ fontSize: '18px', fontWeight: 'bold', color: '#160449', marginTop: '10px', }}>
+          <Typography sx={{ fontSize: '18px', fontWeight: 'bold', color: '#160449' }}>
             {selectedRole === "MANAGER" && `YOU MANAGE ${activeProperties?.length} OF THEIR PROPERTIES`}
             {selectedRole === "OWNER" && `THEY MANAGE ${activeProperties?.length} OF YOUR PROPERTIES`}
           </Typography>
         </Grid>
-      </Grid>
+
+      {/* Active Properties */}
       <Grid item xs={12}>
-          <Typography sx={{ fontSize: '15px', fontWeight: 'bold', color: '#160449', marginTop: '10px', marginLeft: '20px', }}>
-            Active {`(${activeProperties?.length})`}
+        <Typography sx={{ fontSize: '15px', fontWeight: 'bold', color: '#160449', marginTop: '10px' }}>
+          Active ({activeProperties?.length})
+        </Typography>
+      </Grid>
+
+      {activeProperties.length === 0 ? (
+        <Grid item xs={12}>
+          <Typography sx={{ fontSize: '12px', color: '#9E9E9E', paddingLeft: '10px', marginTop: '10px' }}>
+            No active properties
           </Typography>
-      </Grid>
-      <Grid container sx={{padding: '10px', maxHeight: '250px', overflow: 'auto',}}>                
-        <Grid item xs={12} sx={{height: '180px', minHeight: '200px'}}>        
-          <PropertiesDataGrid data={activeProperties}/>
-        </Grid>        
-      </Grid>
-      <Grid container direction='row' sx={{padding: '10px', }}>
-        <Grid container item xs={6}  justifyContent='center'>
-          <Button 
-            sx={{ 
-              textTransform: 'none', 
-              '&:hover': {
-                backgroundColor: '#9EAED6',
-              }             
-            }}
-          >
-            <Typography sx={{ fontSize: '15px', fontWeight: 'bold', color: '#160449', }}>
-              New  {`(${owner?.NEW_count})`}
-            </Typography>
-          </Button>
-        </Grid>      
-        <Grid container item xs={6}  justifyContent='center'>
-          <Button 
-            sx={{ 
-              textTransform: 'none', 
-              '&:hover': {
-                backgroundColor: '#9EAED6',
-              }, 
-            }}
-          >
-            <Typography sx={{ fontSize: '15px', fontWeight: 'bold', color: '#160449', }}>
-              Sent  {`(${owner?.SENT_count})`}
-            </Typography>
-          </Button>          
-        </Grid>      
+        </Grid>
+      ) : (
+        <Grid container sx={{ padding: '10px 0', maxHeight: '150px', overflow: 'auto' }}>
+          <Grid item xs={12} sx={{ height: 'auto' }}>
+            <PropertiesDataGrid data={activeProperties} />
+          </Grid>
+        </Grid>
+      )}
+
+        {/* New Properties */}
+        <Grid item xs={12}>
+          <Typography sx={{ fontSize: '15px', fontWeight: 'bold', color: '#160449', mt: 2 }}>
+            New ({newProperties?.length})
+          </Typography>
+        </Grid>
+        <Grid container sx={{ maxHeight: '150px', overflow: 'auto' }}>
+          {newProperties?.map((property, index) => (
+            <Grid key={index} item xs={12} sx={{ padding: '5px 0' }}>
+              <Typography sx={{ fontSize: '12px', color: '#160449' }}>
+                {`${property.property_address}${property.property_unit ? `, Unit - ${property.property_unit}` : ''}`}
+              </Typography>
+            </Grid>
+          ))}
+        </Grid>
+
+        {/* Sent Properties */}
+        <Grid item xs={12}>
+          <Typography sx={{ fontSize: '15px', fontWeight: 'bold', color: '#160449', mt: 2 }}>
+            Sent ({sentProperties?.length})
+          </Typography>
+        </Grid>
+        <Grid container sx={{ maxHeight: '150px', overflow: 'auto' }}>
+          {sentProperties?.map((property, index) => (
+            <Grid key={index} item xs={12} sx={{ padding: '5px 0' }}>
+              <Typography sx={{ fontSize: '12px', color: '#160449' }}>
+                {`${property.property_address}${property.property_unit ? `, Unit - ${property.property_unit}` : ''}`}
+              </Typography>
+            </Grid>
+          ))}
+        </Grid>
       </Grid>
     </Container>
-  )
-  
-  }
+  );
+}
+
+const PropertiesList = ({ data }) => {
+  return (
+    <Grid container direction="column" spacing={2}>
+      {data.map((property) => (
+        <Grid item key={property.property_uid}>
+          <Typography sx={{ fontSize: '14px', color: '#160449' }}>
+            {property.property_address}{property.property_unit ? `, Unit - ${property.property_unit}` : ''}
+          </Typography>
+        </Grid>
+      ))}
+    </Grid>
+  );
+};
+
 
   const PropertiesDataGrid = ({ data }) => {
     const navigate = useNavigate();

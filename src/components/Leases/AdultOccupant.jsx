@@ -15,6 +15,7 @@ import dayjs from "dayjs";
 import { makeStyles } from '@material-ui/core/styles';
 import { Close } from '@mui/icons-material';
 import DataValidator from "../DataValidator";
+import { formatPhoneNumber, formatSSN, formatEIN, identifyTaxIdType, maskNumber, } from '../Onboarding/helper.js';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -105,6 +106,8 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
     };
 
     const handleSave = () => {
+        const numericPhone = currentRow.phone_number.replace(/\D/g, '');
+
         if (isEditing) {
             if (isRowModified(adults[currentRow['id']], currentRow)===true){
                 const updatedRow = adults.map(adult => (adult.id === currentRow.id ? currentRow : adult));
@@ -148,6 +151,23 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
         handleDelete();
         setOpenDeleteConfirmation(false);
     }
+
+    const handlePhoneNumberChange = (e) => {
+        let input = e.target.value;
+        const formattedPhone = formatPhoneNumber(input);
+        const numericPhone = formattedPhone.replace(/\D/g, '');
+
+        if (numericPhone.length <= 10) {
+            setCurrentRow({ ...currentRow, phone_number: formattedPhone });
+        }
+    };
+
+    const handleSSNChange = (e) => {
+        const input = e.target.value;
+        const formattedSSN = formatSSN(input); // Format SSN
+        setCurrentRow({ ...currentRow, tenant_ssn: formattedSSN }); // Update with formatted SSN
+    };
+
 
     const columns = [
         { field: 'dob', headerName: 'Date of Birth', flex: 1, editable: true },
@@ -232,7 +252,7 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
                         fontSize: theme.typography.small,
                     }}
                 >
-                    <span style={{ flexGrow: 1, textAlign: 'center' }}>Occupancy Details</span>
+                    <span style={{ flexGrow: 1, textAlign: 'center' }}>Occupancy Details 1</span>
                     <Button onClick={handleClose} sx={{ ml: 'auto' }}>
                         <Close sx={{
                             color: theme.typography.primary.black,
@@ -300,17 +320,17 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
                             />
                         </Grid>
                         <Grid item md={6}>
-                            <TextField
-                                className={classes.textField}
-                                margin="dense"
-                                label="Phone Number"
-                                fullWidth
-                                required
-                                variant="outlined"
-                                value={currentRow?.phone_number || ''}
-                                onChange={(e) => setCurrentRow({ ...currentRow, phone_number: e.target.value })}
-                                 sx={{backgroundColor: '#D6D5DA',}}
-                            />
+                        <TextField
+                            className={classes.textField}
+                            margin="dense"
+                            label="Phone Number"
+                            fullWidth
+                            required
+                            variant="outlined"
+                            value={currentRow?.phone_number || ''}
+                            onChange={handlePhoneNumberChange} // Updated
+                            sx={{backgroundColor: '#D6D5DA',}}
+                        />
                         </Grid>
 
                         <Grid item md={12} sx={{ marginTop: '20px' }}>
@@ -331,16 +351,16 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
                             />
                         </Grid>
                         <Grid item md={6}>
-                            <TextField
-                                className={classes.textField}
-                                margin="dense"
-                                label="Social Security Number"
-                                fullWidth
-                                variant="outlined"
-                                value={currentRow?.tenant_ssn || ''}
-                                onChange={(e) => setCurrentRow({ ...currentRow, tenant_ssn: e.target.value })}
-                                sx={{backgroundColor: '#D6D5DA',}}
-                            />
+                        <TextField
+                            className={classes.textField}
+                            margin="dense"
+                            label="Social Security Number"
+                            fullWidth
+                            variant="outlined"
+                            value={currentRow?.tenant_ssn || ''}
+                            onChange={handleSSNChange} // Updated
+                            sx={{backgroundColor: '#D6D5DA',}}
+                        />
                         </Grid>
                         <Grid item md={6}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
