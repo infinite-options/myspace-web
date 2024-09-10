@@ -864,7 +864,7 @@ export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee, handle
       renderCell: (params) => (
         <Box>
           <IconButton onClick={(e) => handleEditFee(params.row.id)}>
-            <EditIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
+            <EditIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
           </IconButton>
         </Box>
       ),
@@ -876,7 +876,7 @@ export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee, handle
       renderCell: (params) => (
         <Box>
           <IconButton onClick={(e) => handleDeleteFee(params.row.id, e)}>
-            <DeleteIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
+            <DeleteIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
           </IconButton>
         </Box>
       ),

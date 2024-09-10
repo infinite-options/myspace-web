@@ -25,6 +25,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import { useUser } from '../../../contexts/UserContext';
 import theme from '../../../theme/theme';
+import { DataGrid } from "@mui/x-data-grid";
 
 // import ImageCarousel from '../../ImageCarousel';
 import defaultHouseImage from '../../Property/defaultHouseImage.png';
@@ -894,7 +895,7 @@ const PropertyCard = (props) => {
   const [deletedDocsUrl, setDeletedDocsUrl] = useState([]);
   const [documentDetails, setDocumentDetails] = useState([]);
   const [isPreviousFileChange, setIsPreviousFileChange] = useState(false)
-
+  const[contactRowsWithId, setContactRowsWithId] = useState([]);
 
 
   useEffect(() => {
@@ -1005,6 +1006,16 @@ const PropertyCard = (props) => {
 	)
   }, [propertyData]); 
 
+//   When contacts change reassign contacts to contacts array
+  useEffect(()=>{
+	const temp = contractAssignedContacts.map((row, index) => ({
+		...row,
+		id: row.id ? index : index,
+	  }));
+
+	setContactRowsWithId(temp);
+
+  },[contractAssignedContacts])
 //   useEffect(() => {
 //     // console.log("CONTRACT FEES - ", contractFees);
 //     // let JSONstring = JSON.stringify(contractFees);
@@ -1378,21 +1389,21 @@ const PropertyCard = (props) => {
     return freq;
   };
 // Parse property images or use the default image if none are available
-const [images, setImages] = useState(
-propertyData.property_images && JSON.parse(propertyData.property_images).length > 0
-	? JSON.parse(propertyData.property_images)
-	: [defaultHouseImage]);
+	const [images, setImages] = useState(
+	propertyData.property_images && JSON.parse(propertyData.property_images).length > 0
+		? JSON.parse(propertyData.property_images)
+		: [defaultHouseImage]);
 
-const [scrollPosition, setScrollPosition] = useState(0);
-const scrollRef = useRef(null);
+	const [scrollPosition, setScrollPosition] = useState(0);
+	const scrollRef = useRef(null);
 
-useEffect(() => {
-if (scrollRef.current) {
-	scrollRef.current.scrollLeft = scrollPosition;
-}
-}, [scrollPosition]);
+	useEffect(() => {
+	if (scrollRef.current) {
+		scrollRef.current.scrollLeft = scrollPosition;
+	}
+	}, [scrollPosition]);
 
-const handleScroll = (direction) => {
+	const handleScroll = (direction) => {
 if (scrollRef.current) {
 	const scrollAmount = 200;
 	const currentScrollPosition = scrollRef.current.scrollLeft;
@@ -1405,7 +1416,56 @@ if (scrollRef.current) {
 		setScrollPosition(newScrollPosition);
 	}
 }
-};
+	};
+
+	const ContactColumns = [
+		{
+		  field: "contact_first_name",
+		  headerName: "Name",
+		  flex:1,
+		  renderCell : (params) => {
+			return(
+				<Box
+          			sx={{
+          				cursor: 'pointer', // Change cursor to indicate clickability
+          				color: '#3D5CAC',
+          			}}
+                  	onClick={() => handleOpenEditContact(params.row.id)}
+          		>
+          			{params.row.contact_first_name} {params.row.contact_last_name}
+          		</Box>
+			);
+		  },
+		  renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+		},
+		{
+		  field: "contact_email",
+		  headerName: "Email",
+		  flex:1.5,
+		  renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+		},
+		{
+		  field: "contact_phone_number",
+		  headerName: "Phone Number",
+		  flex:1,
+		  renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+		},
+		{
+		  field: "deleteactions",
+		  headerName: "",
+		  flex: 0.5,
+		  renderCell: (params) => (
+			<Box>
+			  <IconButton onClick={(e) => handleDeleteContact(params.row.id, e)}>
+				<DeleteIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
+			  </IconButton>
+			</Box>
+		  ),
+		}
+	];
+
+	
+
 
 return (
     <>
@@ -2135,76 +2195,91 @@ return (
 			</Box>
 
 			{/* Contact details */}
-			{contractAssignedContacts.length ? (
-				<Box
+			<Box
+				sx={{
+					display: 'flex',
+					flexDirection: 'row',
+					justifyContent: 'space-between',
+					fontSize: '15px',
+					fontWeight: 'bold',
+					padding: '5px',
+					color: '#3D5CAC',
+				}}
+			>
+				<Typography
 					sx={{
-						display: 'flex',
-						flexDirection: 'row',
-						justifyContent: 'space-between',
-						alignItems: 'center',
-						marginBottom: '7px',
-						width: '100%',
+						color: "#160449",
+						fontWeight: theme.typography.primary.fontWeight,
+						fontSize: "18px",
+						paddingBottom: "5px",
+						paddingTop: "5px",
+						marginY:"10px"
 					}}
 				>
-					<Box
-						sx={{
-							fontSize: '15px',
-							fontWeight: 'bold',
-							paddingTop: '10px',
-							paddingLeft: '5px',
-							color: '#3D5CAC',
-							width: '100%',
-						}}
-					>
-						<Box
-							sx={{
-								display: 'flex',
-								flexDirection: 'row',
-								justifyContent: 'space-between',
-								fontSize: '15px',
-								fontWeight: 'bold',
-								// padding: '5px',
-								color: '#3D5CAC',
-							}}
-						>
-							<Typography
-								sx={{
-									color: "#160449",
-									fontWeight: theme.typography.primary.fontWeight,
-									fontSize: "18px",
-									paddingBottom: "5px",
-									paddingTop: "5px",
-									marginY:"10px"
-								}}
-							>
-								{"Contract Assigned Contacts: "}
-							</Typography>
-							<Box onClick={()=>{setShowAddContactDialog(true)}} marginTop={"10px"} paddingTop={"5px"} paddingRight={"5px"}>
-								<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
-							</Box>
-						</Box>
-						<Grid container sx={{ color: 'black' }} marginY={"13px"}>
-							<Grid item xs={3}>
-								Name
-							</Grid>
-							<Grid item xs={4}>
-								Email
-							</Grid>
-							<Grid item xs={3}>
-								Phone Number
-							</Grid>
-						</Grid>
-						{[...contractAssignedContacts].map((contact, i) => (
-							<React.Fragment key={i}>
-								<ContactListItem
-									contact={contact}
-									handleOpenEditContact={handleOpenEditContact}
-									handleDeleteContact={handleDeleteContact}
-								/>
-							</React.Fragment>
-						))}
-					</Box>
+					{"Contract Assigned Contacts: "}
+				</Typography>
+				<Box onClick={()=>{setShowAddContactDialog(true)}} marginTop={"10px"} paddingTop={"5px"} paddingRight={"5px"}>
+					<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
 				</Box>
+			</Box>
+			{contractAssignedContacts?.length !== 0 ? (
+				// <Box
+				// 	sx={{
+				// 		display: 'flex',
+				// 		flexDirection: 'row',
+				// 		justifyContent: 'space-between',
+				// 		alignItems: 'center',
+				// 		marginBottom: '7px',
+				// 		width: '100%',
+				// 	}}
+				// >
+				// 	<Box
+				// 		sx={{
+				// 			fontSize: '15px',
+				// 			fontWeight: 'bold',
+				// 			paddingTop: '10px',
+				// 			paddingLeft: '5px',
+				// 			color: '#3D5CAC',
+				// 			width: '100%',
+				// 		}}
+				// 	>
+						
+				// 		<Grid container sx={{ color: 'black' }} marginY={"13px"}>
+				// 			<Grid item xs={3}>
+				// 				Name
+				// 			</Grid>
+				// 			<Grid item xs={4}>
+				// 				Email
+				// 			</Grid>
+				// 			<Grid item xs={3}>
+				// 				Phone Number
+				// 			</Grid>
+				// 		</Grid>
+				// 		{[...contractAssignedContacts].map((contact, i) => (
+				// 			<React.Fragment key={i}>
+				// 				<ContactListItem
+				// 					contact={contact}
+				// 					handleOpenEditContact={handleOpenEditContact}
+				// 					handleDeleteContact={handleDeleteContact}
+				// 				/>
+				// 			</React.Fragment>
+				// 		))}
+				// 	</Box>
+				// </Box>
+
+				<DataGrid
+					rows={contactRowsWithId}
+					columns={ContactColumns}
+					sx={{
+					// minHeight:"100px",
+					// height:"100px",
+					// maxHeight:"100%",
+					marginTop: "10px",
+					}}
+					autoHeight
+					rowHeight={50} 
+					hideFooter={true}
+				/>
 			) : (
 				<></>
 			)}
@@ -2254,6 +2329,7 @@ return (
 					alignItems: 'center',
 					paddingTop: '10px',
 					marginBottom: '7px',
+					marginTop:"10px",
 					width: '100%',
 				}}
 			>
