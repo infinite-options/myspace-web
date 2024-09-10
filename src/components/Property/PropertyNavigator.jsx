@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext, } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -71,14 +71,14 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { CollectionsBookmarkRounded } from "@mui/icons-material";
+import PropertiesContext from '../../contexts/PropertiesContext';
 //const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_status !== "REFUSED" ? "#778DC5" : "#874499") : "#A52A2A");
 
 const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_status !== "REFUSED" ? "#778DC5" : "#874499") : "#A52A2A");
 
 export default function PropertyNavigator({
-  index,
-  propertyList,
-  allRentStatus,
+  // index,
+  // propertyList,  
   rawPropertyData,
   contracts,
   isDesktop = true,
@@ -101,9 +101,10 @@ export default function PropertyNavigator({
   // console.log("props contracts", contracts);
   const navigate = useNavigate();
   const { getProfileId, isManager, roleName, selectedRole } = useUser();
+  const { propertyList, allRentStatus, allContracts, returnIndex, setReturnIndex  } = useContext(PropertiesContext); 
 
   const [propertyData, setPropertyData] = useState(propertyList || []);
-  const [currentIndex, setCurrentIndex] = useState(index !== undefined ? index : 0);
+  const [currentIndex, setCurrentIndex] = useState(returnIndex !== undefined ? returnIndex : 0);
   const [property, setProperty] = useState(propertyList ? propertyList[currentIndex] : null);
   const { property_uid } = property || { property_uid: null };
   const [currentId, setCurrentId] = useState(property_uid);
@@ -160,8 +161,14 @@ export default function PropertyNavigator({
   // };
 
   useEffect(() => {
-    console.log("PropertyNavigator - props.contracts - ", contracts);
-  }, [contracts]);
+    console.log("PropertyNavigator - allContracts - ", allContracts);
+  }, [allContracts]);
+
+  // useEffect(() => {
+  //   setCurrentIndex(returnIndex !== undefined ? returnIndex : 0);
+  // }, [returnIndex]);
+
+  
 
   useEffect(() => {
     getDataFromAPI();
@@ -223,7 +230,7 @@ export default function PropertyNavigator({
 
   const [activeStep, setActiveStep] = useState(0);
   const [showSpinner, setShowSpinner] = useState(false);
-  const [contractsData, setContractsData] = useState(contracts);
+  const [contractsData, setContractsData] = useState(allContracts);
   const [activeContracts, setActiveContracts] = useState([]);
   const [contractsNewSent, setContractsNewSent] = useState(0);
   const [maintenanceReqData, setMaintenanceReqData] = useState([{}]);
@@ -282,14 +289,14 @@ export default function PropertyNavigator({
 
   useEffect(() => {
     setPropertyData(propertyList || []);
-    const nextIndex = index !== undefined ? index : 0;
+    const nextIndex = returnIndex !== undefined ? returnIndex : 0;
     setCurrentIndex(nextIndex);
     const nextId = propertyList && propertyList[nextIndex] ? propertyList[nextIndex].property_uid : null;
     setCurrentId(nextId);
     setProperty(propertyList && propertyList[nextIndex]);
     const parsedPropertyImages = propertyList && propertyList[nextIndex] && propertyList[nextIndex].property_images ? JSON.parse(propertyList[nextIndex].property_images) : [];
     setImages(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
-    setContractsData(contracts);
+    setContractsData(allContracts);
     console.log("ROHIT - 294 - parsedPropertyImages - ", parsedPropertyImages);
     console.log("ROHIT - 294 - propertyList[nextIndex].property_favorite_image - ", propertyList[nextIndex]?.property_favorite_image);
     let favImageIndex = null;
@@ -301,7 +308,7 @@ export default function PropertyNavigator({
     } else {
       setActiveStep(0);
     }
-  }, [index, propertyList]);
+  }, [returnIndex, propertyList]);
 
   useEffect(() => {
     if (propertyData && propertyData[currentIndex]) {
@@ -333,7 +340,7 @@ export default function PropertyNavigator({
       //   };
       //   getContractsForOwner();
       var count = 0;
-      const filtered = contracts?.filter((contract) => contract.property_id === propertyId);
+      const filtered = allContracts?.filter((contract) => contract.property_id === propertyId);
       const active = filtered?.filter((contract) => contract.contract_status === "ACTIVE");
       // console.log("322 - PropertyNavigator - filtered contracts - ", filtered);
       filtered.forEach((contract) => {
@@ -343,7 +350,7 @@ export default function PropertyNavigator({
       });
       // console.log("PropertyNavigator - contract count - ", count);
       setContractsNewSent(count);
-      setContractsData(contracts);
+      setContractsData(allContracts);
       setActiveContracts(active);
 
       const rentDetails = getRentStatus();
@@ -369,7 +376,7 @@ export default function PropertyNavigator({
         setAppliances([]);
       }
     }
-  }, [currentIndex, propertyId, allRentStatus, index, propertyList, contracts, propertyData]);
+  }, [currentIndex, propertyId, allRentStatus, returnIndex, propertyList, allContracts, propertyData]);
   // }, [currentIndex, propertyId, allRentStatus]);
 
   const tenant_detail = property && property.lease_start && property.tenant_uid ? `${property.tenant_first_name} ${property.tenant_last_name}` : "No Tenant";

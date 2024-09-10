@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useContext, } from "react";
 import theme from "../../theme/theme";
 import {
   Accordion,
@@ -45,6 +45,8 @@ import { DataGrid } from "@mui/x-data-grid";
 import CloseIcon from "@mui/icons-material/Close";
 import Documents from "./Documents";
 
+import PropertiesContext from "../../contexts/PropertiesContext";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiOutlinedInput-input": {
@@ -69,11 +71,12 @@ function formatDate(date) {
 }
 
 const ViewLease = (props) => {
-  // console.log("---props in viewlease---", props);
+  console.log("---props in viewlease---", props);
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
   const { getProfileId, selectedRole } = useUser();
+  const { propertyList, returnIndex, } = useContext(PropertiesContext); 
 
   const [moveOut, setMoveOut] = useState("");
   const [showSpinner, setShowSpinner] = useState(false);
@@ -94,7 +97,9 @@ const ViewLease = (props) => {
   const [moveOutDate, setMoveOutDate] = useState(new Date());
   const [expanded, setExpanded] = useState(false);
 
-  const [index, setIndex] = useState(props.index ? props.index : 0);
+  // const [index, setIndex] = useState(props.index ? props.index : 0);
+  const [index, setIndex] = useState(returnIndex ? returnIndex : 0);
+  
   const [allLeases, setAllLeases] = useState([]);
 
   // const [leaseID, setLeaseID] = useState("");
@@ -184,7 +189,7 @@ const ViewLease = (props) => {
   // const propertyUID = props.lease_id ? props.property_uid : location.state.property_uid;
   // const isDesktop = props.lease_id ? props.isDesktop : location.state.isDesktop;
 
-  const propertyList = props.propertyList ? props.propertyList : [];
+  // const propertyList = props.propertyList ? props.propertyList : [];
 
   const getLeaseDetails = async () => {
     axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`).then((res) => {
@@ -216,7 +221,7 @@ const ViewLease = (props) => {
   }, []);
 
   useEffect(() => {
-    const index = props.index ? props.index : 0;
+    const index = returnIndex ? returnIndex : 0;
     setIndex(index);
 
     const leaseID = propertyList[index]?.lease_uid || props.lease_id;
@@ -252,7 +257,7 @@ const ViewLease = (props) => {
       console.log(" index useEffect - Setting lease data to null.");
       setLeaseData(null);
     }
-  }, [props.index, props.propertyList, allLeases]);
+  }, [returnIndex, props.propertyList, allLeases]);
 
 
   function getDayText(day) {

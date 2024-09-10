@@ -17,7 +17,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext, } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from "../../theme/theme";
 import refundIcon from "./refundIcon.png";
@@ -31,6 +31,8 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { makeStyles } from "@material-ui/core/styles";
 import Backdrop from "@mui/material/Backdrop";
 import Documents from "../Leases/Documents";
+
+import PropertiesContext from '../../contexts/PropertiesContext';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -52,14 +54,17 @@ export default function PMQuotesRequested(props) {
   const PMQuotesDetails = props;
   const handleBackClick = props.handleBackClick;
   const classes = useStyles();
+  const { propertyList, allContracts, fetchContracts, returnIndex,  } = useContext(PropertiesContext); 
   
   const [contracts, setContracts] = useState([]);
-  const refreshContracts = props.refreshContracts;  
+  const refreshContracts = fetchContracts;  
   const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(true); // New loading state
-  const property = PMQuotesDetails.propertyData;
-  const propertyId = property[PMQuotesDetails.index]?.property_uid;
-  const index = PMQuotesDetails.index;
+  // const property = PMQuotesDetails.propertyData;
+  const property = propertyList;
+  // const propertyId = property[PMQuotesDetails.index]?.property_uid;
+  const propertyId = property[returnIndex]?.property_uid;
+  // const index = PMQuotesDetails.index;
   const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
 
   const statusColor = ["#3D5CAC", "#160449"];
@@ -80,11 +85,11 @@ export default function PMQuotesRequested(props) {
 
   useEffect(() => {    
     
-    const contractsData = props.contracts?.filter(
+    const contractsData = allContracts?.filter(
       (contract) => contract.property_id === propertyId
     );
     setContracts(contractsData);
-  }, [props.contracts]);
+  }, [allContracts]);
 
   function getActiveContracts(contracts) {
     return contracts?.filter((contract) => contract.contract_status === "ACTIVE");

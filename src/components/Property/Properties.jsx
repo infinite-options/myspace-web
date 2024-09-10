@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Typography, Box, Stack, Paper, Button, ThemeProvider, Grid, Container, InputBase, IconButton, Avatar, Badge } from "@mui/material";
 import theme from "../../theme/theme";
@@ -28,19 +28,33 @@ import { ManageHistory } from "@mui/icons-material";
 import AddListing from "./AddListing";
 import ManagerDetails from "./ManagerDetails";
 
+
+import PropertiesContext from "../../contexts/PropertiesContext";
+import { PropertiesProvider } from "../../contexts/PropertiesContext";
+
+function PropertiesPM() {
+  return (
+    <PropertiesProvider>
+      <Properties />
+    </PropertiesProvider>
+
+  );
+}
+
 function Properties() {
   const location = useLocation();
   // console.log("In Properties");
   // console.log("In Properties LHS: ", location.state?.showLHS);
   // console.log("In Properties RHS: ", location.state?.showRHS);
   console.log("location", location.state);
+  const { propertyList, setPropertyList, returnIndex, setReturnIndex  } = useContext(PropertiesContext); 
 
   const [dataReady, setDataReady] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
 
   let navigate = useNavigate();
   const { getProfileId, selectedRole } = useUser();
-  const [propertyList, setPropertyList] = useState([]);
+  // const [propertyList, setPropertyList] = useState([]);
   const [displayedItems, setDisplayedItems] = useState([]);
   const [propertyIndex, setPropertyIndex] = useState(0);
   const [allRentStatus, setAllRentStatus] = useState([]);
@@ -49,10 +63,13 @@ function Properties() {
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 950);
   const [showPropertyForm, setShowPropertyForm] = useState(location.state?.showPropertyForm || false);
   const [showRentForm, setShowRentForm] = useState(location.state?.showRentForm || false);
-  const [allContracts, setAllContracts] = useState([]);
+  // const [allContracts, setAllContracts] = useState([]);
   const profileId = getProfileId();
   const [rawPropertyData, setRawPropertyData] = useState([]);
-  const [returnIndex, setReturnIndex] = useState(location.state?.index || 0);
+  // const [returnIndex, setReturnIndex] = useState(location.state?.index || 0);
+  if(location.state?.index){
+    setReturnIndex(location.state?.index || 0);
+  }  
   const [returnIndexTest, setReturnIndexTest] = useState(location.state?.index || 0);
   const [returnIndexByProp, setReturnIndexByProperty]=useState("");
   const [applicationIndex, setApplicationIndex] = useState(0);
@@ -196,26 +213,26 @@ function Properties() {
       setPropertyIndex(0);
 
       // RENT ENDPOINT
-      const rent_response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${profileId}`);
-      //const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
-      if (!rent_response.ok) {
-        // console.log("Error fetching Rent Details data");
-      }
-      const rentResponse = await rent_response.json();
-      // console.log("In Properties > Rent Endpoint: ", rentResponse.RentStatus.result);
-      setAllRentStatus(rentResponse.RentStatus.result);
+      // const rent_response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${profileId}`);
+      // //const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
+      // if (!rent_response.ok) {
+      //   // console.log("Error fetching Rent Details data");
+      // }
+      // const rentResponse = await rent_response.json();
+      // // console.log("In Properties > Rent Endpoint: ", rentResponse.RentStatus.result);
+      // setAllRentStatus(rentResponse.RentStatus.result);
 
-      // CONTRACTS ENDPOINT
-      const contract_response = await fetch(`${APIConfig.baseURL.dev}/contracts/${profileId}`);
-      // const response = await fetch(`${APIConfig.baseURL.dev}/contracts/600-000003`);
-      if (!contract_response.ok) {
-        // console.log("Error fetching Contract Details data");
-      }
-      const contractsResponse = await contract_response.json();
-      // console.log("In Properties > Contract Endpoint: ", contractsResponse.result);
-      setAllContracts(contractsResponse.result);
+      // // CONTRACTS ENDPOINT
+      // const contract_response = await fetch(`${APIConfig.baseURL.dev}/contracts/${profileId}`);
+      // // const response = await fetch(`${APIConfig.baseURL.dev}/contracts/600-000003`);
+      // if (!contract_response.ok) {
+      //   // console.log("Error fetching Contract Details data");
+      // }
+      // const contractsResponse = await contract_response.json();
+      // // console.log("In Properties > Contract Endpoint: ", contractsResponse.result);
+      // setAllContracts(contractsResponse.result);
 
-      if (propertyData.Property.code === 200 && rentResponse.RentStatus.code === 200 && contractsResponse.code === 200) {
+      if (propertyData.Property.code === 200) {
         // console.log("Endpoint Data is Ready");
         setDataReady(true);
       }
@@ -287,25 +304,25 @@ function Properties() {
     setShowSpinner(false);
   };
 
-  const fetchContracts = async () => {
-    const contract_response = await fetch(`${APIConfig.baseURL.dev}/contracts/${profileId}`);
-      // const response = await fetch(`${APIConfig.baseURL.dev}/contracts/600-000003`);
-      if (!contract_response.ok) {
-        // console.log("Error fetching Contract Details data");
-      }
-      const contractsResponse = await contract_response.json();
-      // console.log("In Properties > Contract Endpoint: ", contractsResponse.result);
-      setAllContracts(contractsResponse.result);
-  }
+  // const fetchContracts = async () => {
+  //   const contract_response = await fetch(`${APIConfig.baseURL.dev}/contracts/${profileId}`);
+  //     // const response = await fetch(`${APIConfig.baseURL.dev}/contracts/600-000003`);
+  //     if (!contract_response.ok) {
+  //       // console.log("Error fetching Contract Details data");
+  //     }
+  //     const contractsResponse = await contract_response.json();
+  //     // console.log("In Properties > Contract Endpoint: ", contractsResponse.result);
+  //     setAllContracts(contractsResponse.result);
+  // }
   
   const refreshProperties = () => {
     fetchProperties();
   };
 
-  const refreshContracts = () => {
-    console.log("Refresh Contracts called");
-    fetchContracts();
-  };
+  // const refreshContracts = () => {
+  //   console.log("Refresh Contracts called");
+  //   fetchContracts();
+  // };
 
 
   // const updatePropertyData = async (propertyUID) => {
@@ -378,7 +395,7 @@ function Properties() {
   };
 
   const handleListClick = (newData) => {
-    // console.log("View leases New Data : ", newData);
+    console.log("ROHIT - handleListClick - newData - ", newData);
     setReturnIndex(newData);
     // console.log("View leases RETURN INDEX : ", returnIndex);
   };
@@ -454,9 +471,9 @@ function Properties() {
     setRHS("ManagerDetails");
   };
 
-  return (
+  return (    
     <ThemeProvider theme={theme}>
-       {showSpinner ? (
+      {showSpinner ? (
         <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
           <CircularProgress color='inherit' />
         </Backdrop>
@@ -475,12 +492,12 @@ function Properties() {
               />
             )} */}
             <PropertiesList
-              index={returnIndex}
+              // index={returnIndex}
               LHS={LHS}
-              propertyList={propertyList}
-              allRentStatus={allRentStatus}
+              // propertyList={propertyList}
+              // allRentStatus={allRentStatus}
               isDesktop={isDesktop}
-              contracts={allContracts}
+              // contracts={allContracts}
               onDataChange={handleListClick}
               onAddPropertyClick={handleAddPropertyClick}
               handleSorting={handleSorting}
@@ -493,12 +510,12 @@ function Properties() {
                 onBack={handleBackClick}
                 // onSubmit={handleBackClick}
                 showNewContract={showNewContract}
-                property_endpoint_resp={rawPropertyData}
-                setNewContractUID={setNewContractUID}
-                setNewContractPropertyUID={setNewContractPropertyUID}
+                // property_endpoint_resp={rawPropertyData}
+                // setNewContractUID={setNewContractUID}
+                // setNewContractPropertyUID={setNewContractPropertyUID}
                 setReloadPropertyList={setReloadPropertyList}
                 // showNewContract={showNewContract}
-                refreshProperties={refreshProperties}
+                // refreshProperties={refreshProperties}
                 setNewPropertyUid={setNewPropertyUid}
               />
             ) : (
@@ -506,11 +523,11 @@ function Properties() {
               {RHS === "PropertyNavigator" && (
                 <PropertyNavigator
                   // index={propertyIndex}
-                  index={returnIndex}
-                  propertyList={propertyList} // will change later - maybe
-                  allRentStatus={allRentStatus}
+                  // index={returnIndex}
+                  // propertyList={propertyList} // will change later - maybe
+                  // allRentStatus={allRentStatus}
                   isDesktop={isDesktop}
-                  contracts={allContracts}
+                  // contracts={allContracts}
                   onEditClick={handleEditClick}
                   onViewLeaseClick={handleViewLeaseClick}
                   onViewContractClick={handleViewContractClick}
@@ -527,33 +544,55 @@ function Properties() {
                 <EditProperty
                   currentId={propertyList[returnIndex].property_uid}
                   property={propertyList[returnIndex]}
-                  index={returnIndex}
-                  propertyList={propertyList}
-                  setPropertyList={setPropertyList}
+                  // index={returnIndex}
+                  // propertyList={propertyList}
+                  // setPropertyList={setPropertyList}
                   page={page}
                   isDesktop={isDesktop}
-                  allRentStatus={allRentStatus}
-                  rawPropertyData={propertyList}
+                  // allRentStatus={allRentStatus}
+                  // rawPropertyData={propertyList}
                   onBackClick={handleBackClick}
                   setRHS={setRHS}                
                 />
               )}
               {RHS === "ViewLease" && (
-                <ViewLease lease_id={propertyList[0].lease_uid} propertyList={propertyList} index={returnIndex} isDesktop={isDesktop} onBackClick={handleBackClick} />
+                <ViewLease 
+                  lease_id={propertyList[0].lease_uid}
+                  // propertyList={propertyList}
+                  // index={returnIndex}
+                  isDesktop={isDesktop}
+                  onBackClick={handleBackClick} 
+                />
               )}
-              {RHS === "ViewContract" && <ViewManagementContract index={returnIndex} propertyList={propertyList} isDesktop={isDesktop} onBackClick={handleBackClick} />}
+              {RHS === "ViewContract" && 
+                <ViewManagementContract
+                  // index={returnIndex}
+                  // propertyList={propertyList}
+                  isDesktop={isDesktop}
+                  onBackClick={handleBackClick} 
+                />}
               {RHS === "Applications" && (
-                <TenantApplicationNav index={applicationIndex} propertyIndex={applicationIndex} property={propertyList[returnIndex]} isDesktop={isDesktop} onBackClick={handleBackClick} />
+                <TenantApplicationNav
+                  index={applicationIndex}
+                  propertyIndex={applicationIndex}
+                  property={propertyList[returnIndex]}
+                  isDesktop={isDesktop}
+                  onBackClick={handleBackClick} 
+                />
               )}
               {RHS === "CreateContract" && (
-                <ManagementContractDetails contractUID={newContractUID} contractPropertyUID={newContractPropertyUID} properties={rawPropertyData?.NewPMRequests?.result} />
+                <ManagementContractDetails
+                  // contractUID={newContractUID}
+                  // contractPropertyUID={newContractPropertyUID}
+                  // properties={rawPropertyData?.NewPMRequests?.result} 
+                />
               )}
               {RHS === "ViewPMQuotesRequested" && (
                 <PMQuotesRequested
-                  index={returnIndex}
-                  propertyData={propertyList}
-                  contracts={allContracts}
-                  refreshContracts={refreshContracts}                
+                  // index={returnIndex}
+                  // propertyData={propertyList}
+                  // contracts={allContracts}
+                  // refreshContracts={refreshContracts}                
                   handleBackClick={handleBackClick}
 
                   // pmQuoteRequestedState={pmQuoteRequestedState}
@@ -562,12 +601,12 @@ function Properties() {
               )}
               {RHS === "SearchManager" && (
                 <SearchManager 
-                    index={returnIndex}
-                    propertyData={propertyList}                  
+                    // index={returnIndex}
+                    // propertyData={propertyList}                  
                     setManagersList={setManagersList}
                     handleBackClick={handleBackClick}
                     handleRequestQuotes={handleRequestQuotes}
-                    contracts={allContracts}
+                    // contracts={allContracts}
                     propertyId={propertyList[returnIndex].property_uid}
                   />
               )}
@@ -575,22 +614,22 @@ function Properties() {
                 <RequestQuotes
                   // requestQuotesState={requestQuotesState}
                   // setCurrentView={setCurrentView}
-                  index={returnIndex}
-                  propertyData={propertyList}
+                  // index={returnIndex}
+                  // propertyData={propertyList}
                   managerData={managerData}
                   onShowSearchManager={handleShowSearchManager}
-                  refreshContracts={refreshContracts}
+                  // refreshContracts={refreshContracts}
                 />
               )}
               {RHS === "AddListing" && (
                 <AddListing 
-                  propertyList={propertyList}
-                  index={returnIndex}
+                  // propertyList={propertyList}
+                  // index={returnIndex}
                   page={page}
                   propertyId={propertyList[returnIndex]?.property_uid} 
                   onBackClick={handleBackClick}
                   setRHS={setRHS}     
-                  refreshProperties={refreshProperties}  
+                  // refreshProperties={refreshProperties}  
                   showPropertyNavigator={updateNavPage}
                 />
               )}
@@ -607,8 +646,8 @@ function Properties() {
           </Grid>
         </Grid>
       </Container> )}
-    </ThemeProvider>
+    </ThemeProvider>    
   );
 }
 
-export default Properties;
+export default PropertiesPM;

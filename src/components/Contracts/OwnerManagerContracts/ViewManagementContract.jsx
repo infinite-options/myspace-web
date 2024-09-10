@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useContext,} from "react";
 import theme from "../../../theme/theme";
 import {
   Accordion,
@@ -45,6 +45,8 @@ import { DataGrid } from "@mui/x-data-grid";
 import CloseIcon from "@mui/icons-material/Close";
 import Documents from "../../Leases/Documents";
 
+import PropertiesContext from "../../../contexts/PropertiesContext";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiOutlinedInput-input": {
@@ -69,10 +71,12 @@ function formatDate(date) {
 }
 
 const ViewManagementContract = (props) => {
+  console.log("In ViewManagementContract ");
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
   const { getProfileId, selectedRole } = useUser();
+  const { propertyList, returnIndex, } = useContext(PropertiesContext); 
 
   const [moveOut, setMoveOut] = useState("");
   const [showSpinner, setShowSpinner] = useState(false);
@@ -93,7 +97,8 @@ const ViewManagementContract = (props) => {
   const [moveOutDate, setMoveOutDate] = useState(new Date());
   const [expanded, setExpanded] = useState(false);
 
-  const [index, setIndex] = useState(props.index);
+  // const [index, setIndex] = useState(props.index);
+  const [index, setIndex] = useState(returnIndex);
   const [contractFees, setContractFees] = useState([]);
   const [contractDocuments, setContractDocuments] = useState([]);
 
@@ -113,9 +118,10 @@ const ViewManagementContract = (props) => {
   //   const isDesktop = props.lease_id ? props.isDesktop : location.state.isDesktop;
   //   const index = props.lease_id ? props.index : location.state.index;
 
-  const propertyList = props.propertyList ? props.propertyList : [];
+  // const propertyList = props.propertyList ? props.propertyList : [];
   useEffect(() => {
-    const index = props.index;
+    // const index = props.index;
+    const index = returnIndex;
     setIndex(index);
     // console.log("propertyList - ", propertyList);
     // console.log("index - ", index);
@@ -126,7 +132,7 @@ const ViewManagementContract = (props) => {
     const contractDocuments = propertyList[index]?.contract_documents ? JSON.parse(propertyList[index]?.contract_documents) : [];
     // console.log("--dhyey-- inside view manager lease - ", propertyList[index])
     setContractDocuments(contractDocuments);
-  }, [props.index]);
+  }, [ returnIndex ]);
 
   function getDayText(day) {
     switch (day % 10) {

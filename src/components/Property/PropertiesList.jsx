@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Typography, Box, Stack, Paper, Button, ThemeProvider, Grid, Container, InputBase, IconButton, Avatar, Badge } from "@mui/material";
 import theme from "../../theme/theme";
@@ -20,12 +20,17 @@ import PropertyForm from "../Property/PropertyForm";
 import PropertiesSearch from "./PropertiesSearch";
 import PMRent from "../Rent/PMRent/PMRent";
 
+import PropertiesContext from '../../contexts/PropertiesContext';
+
 export default function PropertiesList(props) {
-  // console.log("In Property List: ", props.propertyList);
+  // console.log("In Property List: ", props.propertyList);  
   const location = useLocation();
   let navigate = useNavigate();
   const { getProfileId, selectedRole } = useUser();
-  const [propertyList, setPropertyList] = useState([]);
+  const { propertyList, returnIndex, setReturnIndex, setCurrentPropertyID, setCurrentProperty  } = useContext(PropertiesContext); 
+	console.log("ROHIT - properties from PropertiesContext - ", propertyList);
+
+  // const [propertyList, setPropertyList] = useState([]);
   const [displayedItems, setDisplayedItems] = useState([]);
   const [citySortOrder, setCitySortOrder] = useState("asc");
   const [stateSortOrder, setStateSortOrder] = useState("asc");
@@ -33,13 +38,13 @@ export default function PropertiesList(props) {
   const [statusSortOrder, setStatusSortOrder] = useState("asc");
   const [zipSortOrder, setZipSortOrder] = useState("asc");
   const [propertyIndex, setPropertyIndex] = useState(0);
-  const [allRentStatus, setAllRentStatus] = useState([]);
+  // const [allRentStatus, setAllRentStatus] = useState([]);
   const [LHS, setLHS] = useState("Rent");
   const [isFromRentWidget, setFromRentWidget] = useState(false);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 950);
   const [showPropertyForm, setShowPropertyForm] = useState(location.state?.showPropertyForm || false);
   const [showRentForm, setShowRentForm] = useState(location.state?.showRentForm || false);
-  const [allContracts, setAllContracts] = useState([]);
+  // const [allContracts, setAllContracts] = useState([]);
   const profileId = getProfileId();
   // const [returnIndex, setReturnIndex] = useState(0);
   const [initialPropInRent, setInitialPropInRent] = useState("");
@@ -53,17 +58,18 @@ export default function PropertiesList(props) {
   // console.log("In Property List - LHS outside: ", LHS);
 
   useEffect(() => {
-    setPropertyList(props.propertyList);
-    setDisplayedItems(props.propertyList);
-    setPropertyIndex(props.index || 0);
-    setAllRentStatus(props.allRentStatus);
+    // setPropertyList(props.propertyList);
+    // setDisplayedItems(props.propertyList);
+    setDisplayedItems(propertyList);
+    setPropertyIndex(returnIndex || 0);
+    // setAllRentStatus(props.allRentStatus);
     setLHS(props.LHS);
     setIsDataReady(true);
-  }, [props.LHS, props.allRentStatus, props.index, props.propertyList]);
+  }, [props.LHS, returnIndex, propertyList]);  
 
-  useEffect(() => {
-    console.log("props.propertyList changed - ", props.propertyList);    
-  }, [props.propertyList]);
+  // useEffect(() => {
+  //   console.log("props.propertyList changed - ", props.propertyList);    
+  // }, [props.propertyList]);
 
   // useEffect(() => {
   //   console.log("In Property List - propertyList: ", propertyList);
@@ -87,7 +93,10 @@ export default function PropertiesList(props) {
     handlePropertyDetailNavigation(i, displayedItems);
     // setSelectedPropertyIndex(i);
     setPropertyIndex(i);
-    props.onDataChange(i);
+    // props.onDataChange(i);
+    setReturnIndex(i);
+    setCurrentPropertyID(property.property_uid);
+    setCurrentProperty(property);
   };
 
   const onPropertyInRentWidgetClicked = (property_uid) => {
@@ -96,7 +105,10 @@ export default function PropertiesList(props) {
       const i = displayedItems.findIndex((p) => p.property_uid === property_uid);
       // console.log("onPropertyInRentWidgetClicked Clicked", property_uid, i, displayedItems);
       setPropertyIndex(i);
-      props.onDataChange(i);
+      // props.onDataChange(i);
+      setReturnIndex(i)
+      setCurrentPropertyID(property_uid);
+      setCurrentProperty(displayedItems[i]);
     }
   };
 
@@ -136,7 +148,7 @@ export default function PropertiesList(props) {
   }
 
   function getCoverPhoto(property) {
-    console.log("In Property List >> In getCoverPhoto");
+    // console.log("In Property List >> In getCoverPhoto");
     // console.log(property.property_images);
     const imageArray = JSON.parse(property.property_images);
     // console.log("getCoverPhoto - imageArray - ", imageArray);
@@ -379,7 +391,11 @@ export default function PropertiesList(props) {
     setDisplayedItems(sortedList);
     setAddressSortOrder(addressSortOrder === "asc" ? "desc" : "asc");
     props.handleSorting(sortedList);
-    props.onDataChange(0);
+    // props.onDataChange(0);
+    setReturnIndex(0)
+    setCurrentPropertyID(null);
+    setCurrentProperty(null);
+    
   }
 
   function sortByZip() {
@@ -389,7 +405,10 @@ export default function PropertiesList(props) {
     setDisplayedItems(sortedList);
     setZipSortOrder(zipSortOrder === "asc" ? "desc" : "asc");
     props.handleSorting(sortedList);
-    props.onDataChange(0);
+    // props.onDataChange(0);
+    setReturnIndex(0)
+    setCurrentPropertyID(null);
+    setCurrentProperty(null);
   }
 
   function sortByStatus() {
@@ -407,7 +426,10 @@ export default function PropertiesList(props) {
     setDisplayedItems(sortedList);
     setStatusSortOrder(statusSortOrder === "asc" ? "desc" : "asc");
     props.handleSorting(sortedList);
-    props.onDataChange(0);
+    // props.onDataChange(0);
+    setReturnIndex(0);
+    setCurrentPropertyID(null);
+    setCurrentProperty(null);
   }
 
   return (

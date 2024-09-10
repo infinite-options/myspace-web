@@ -17,14 +17,39 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 import PropertyCard from "./PropertyCard";
 import ManagementContractContext from "../../../contexts/ManagementContractContext";
+import PropertiesContext from "../../../contexts/PropertiesContext";
 
 // import { isValidDate } from "../../../utils/dates";
 
 function ManagementContractDetails(props) {
   // console.log("In ManagementContractDetails.jsx - props - ", props);
-  const { currentContractUID, currentContractPropertyUID, contractRequests, } = useContext(ManagementContractContext);
-  // console.log("ManagementContractDetails - currentContractUID from context - ", currentContractUID);
-  // console.log("ManagementContractDetails - currentContractPropertyUID from context - ", currentContractPropertyUID);
+  
+  
+  // const { currentContractUID, currentContractPropertyUID, contractRequests, } = useContext(ManagementContractContext);
+  // const { rawPropertyData, } = useContext(PropertiesContext);
+  
+  const managementContractContext = useContext(ManagementContractContext);
+  const propertiesContext = useContext(PropertiesContext);
+
+  const {
+    currentContractUID: contractUIDFromManagement,
+    currentContractPropertyUID: contractPropertyUIDFromManagement,
+    contractRequests,
+  } = managementContractContext || {};
+
+  const {
+    newContractUID: contractUIDFromProperties,
+    newContractPropertyUID: contractPropertyUIDFromProperties,    
+  } = propertiesContext || {};
+
+  const currentContractUID = contractUIDFromManagement || contractUIDFromProperties;
+  const currentContractPropertyUID = contractPropertyUIDFromManagement || contractPropertyUIDFromProperties;
+  
+  
+  
+  
+  console.log("ManagementContractDetails - currentContractUID from context - ", currentContractUID);
+  console.log("ManagementContractDetails - currentContractPropertyUID from context - ", currentContractPropertyUID);
   // const { getProfileId } = useUser();
   const navigate = useNavigate();
   

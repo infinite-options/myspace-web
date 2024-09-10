@@ -1,5 +1,5 @@
 import { Box, ThemeProvider } from "@mui/system";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext, } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from "../../theme/theme";
 import axios from "axios";
@@ -9,6 +9,8 @@ import { useUser } from "../../contexts/UserContext";
 import ReturnArrow from "../../images/refund_back.png";
 import APIConfig from "../../utils/APIConfig";
 import useMediaQuery from "@mui/material/useMediaQuery";
+
+import PropertiesContext from '../../contexts/PropertiesContext';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,6 +32,8 @@ const RequestQuotes = (props) => {
   const location = useLocation();
   const { getProfileId } = useUser();
   const profileId = getProfileId();
+  const { propertyList, allContracts, fetchContracts, returnIndex,  } = useContext(PropertiesContext); 
+
   const [ownerId, setOwnerId] = useState(getProfileId());
   const [properties, setProperties] = useState([]);
   const [selectedProperties, setSelectedProperties] = useState([]);
@@ -40,16 +44,17 @@ const RequestQuotes = (props) => {
   const [managerData, setManagerData] = useState(props.managerData);
   const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
   const onShowSearchManager = props.onShowSearchManager;
-  const refreshContracts = props.refreshContracts;
+  const refreshContracts = fetchContracts;
 
   useEffect(() => {
-    const propertyData = props.propertyData;
-    const index = props.index;
+    const propertyData = propertyList;
+    // const index = props.index;
+    const index = returnIndex;
     // console.log("RequestQuotes - props.index - ", props.index);
     if (propertyData && index !== undefined) {
       setSelectedProperties([propertyData[index].property_uid]);
     }
-  }, [props.propertyData, props.index]);
+  }, [propertyList, returnIndex]);
 
   useEffect(() => {
     const fetchData = async () => {

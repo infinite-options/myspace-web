@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, useRef } from 'react';
+import React, { useState, useEffect, Fragment, useRef, useContext, } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
 	Typography,
@@ -54,18 +54,24 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 
+import PropertiesContext from '../../contexts/PropertiesContext';
+
 function EditProperty(props) {
 	// console.log("In Edit Property");
 	const { state } = useLocation();
 	let navigate = useNavigate();
 	const { getProfileId } = useUser();
+	const { propertyList, allRentStatus, setPropertyList, returnIndex  } = useContext(PropertiesContext); 
 	// const propertyData = location.state.item
 	// const propertyId = location.state.propertyId;
 
 	// Check with Laysa
 	// replaced with line below
 	// let { index, propertyList, page, isDesktop, allRentStatus,rawPropertyData } = state || editPropertyState;
-	let { index, propertyList, setPropertyList, page, isDesktop, allRentStatus, rawPropertyData, onBackClick, } = props;
+	// let { index, page, isDesktop, onBackClick, } = props;
+	let { page, isDesktop, onBackClick, } = props;
+
+	let index = returnIndex;
 
 	const [isSaveDisabled, setIsSaveDisabled] = useState(true);
 	const [isReturnDisabled, setIsReturnDisabled] = useState(false);
@@ -471,7 +477,8 @@ function EditProperty(props) {
 			navigate('/propertiesPM', { state: { index, propertyList } });
 		} else {
 			navigate('/propertiesPM', {
-				state: { index, propertyList, allRentStatus, isDesktop, rawPropertyData },
+				// state: { index, propertyList, allRentStatus, isDesktop, rawPropertyData },
+				state: { index, propertyList, allRentStatus, isDesktop, propertyList },
 			});
 		}
 	};

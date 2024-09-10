@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, useRef } from "react";
+import React, { useState, useEffect, Fragment, useRef, useContext, } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Typography,
@@ -58,16 +58,20 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 import APIConfig from "../../utils/APIConfig";
 
+import PropertiesContext from '../../contexts/PropertiesContext';
+
 export default function AddListing(props) {
   const location = useLocation();
   let navigate = useNavigate();
   const { getProfileId } = useUser();
   const { state } = useLocation();
-  let { index, propertyList, page, onBackClick } = props;
-  const refreshProperties = props.refreshProperties;
+  const { propertyList, fetchProperties, allContracts, fetchContracts, returnIndex,  } = useContext(PropertiesContext); 
+
+  let { page, onBackClick } = props;
+  const refreshProperties = fetchProperties;
   const showPropertyNavigator = props.showPropertyNavigator;
   // const propertyData = location.state.item;
-  const [propertyData, setPropertyData] = useState(propertyList[index]);
+  const [propertyData, setPropertyData] = useState(propertyList[returnIndex]);
   const { user, selectedRole, selectRole, Name } = useUser();
   const [showSpinner, setShowSpinner] = useState(false);
   const [ownerId, setOwnerId] = useState(getProfileId());

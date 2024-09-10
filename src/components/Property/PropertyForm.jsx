@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext,  } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import {
 	TextField,
@@ -36,6 +36,8 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+
+import PropertiesContext from '../../contexts/PropertiesContext';
 
 const useStyles = makeStyles({
 	card: {
@@ -108,11 +110,14 @@ const useStyles = makeStyles({
 	},
 });
 
-const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewContractUID, setNewContractPropertyUID, refreshProperties, setReloadPropertyList,setNewPropertyUid}) => {
+const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setReloadPropertyList,setNewPropertyUid}) => {
 	const classes = useStyles();
 	let navigate = useNavigate();
 	const { getProfileId } = useUser();
 	const { user, selectedRole, selectRole, Name } = useUser();
+
+	const { setNewContractUID, setNewContractPropertyUID, fetchProperties} = useContext(PropertiesContext);
+
 	const [readOnlyNotes, setReadOnlyNotes] = useState(selectedRole === "MANAGER" ? true : false);
 	//const [readOnlyNotes, setReadOnlyNotes] = useState(false);
 	const [selectedImageList, setSelectedImageList] = useState([]);
@@ -451,7 +456,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setNewC
 		setActiveStep(0);
 		setShowSpinner(false);
 
-		refreshProperties();
+		fetchProperties();
 		
 		if (selectedRole === "OWNER") {
 			onBack();

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, } from "react";
 import axios from "axios";
 import { Box, ThemeProvider } from "@mui/system";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -16,6 +16,8 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { DataGrid } from '@mui/x-data-grid';
+
+import PropertiesContext from '../../contexts/PropertiesContext';
 
 // Styles
 const useStyles = makeStyles((theme) => ({
@@ -39,9 +41,14 @@ const SearchManager = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
+  const { propertyList, allContracts, fetchContracts, returnIndex } = useContext(PropertiesContext); 
   //console.log('----search manager searchManagerState---', searchManagerState)
-  const managerState = location.state || props;
-  const { index, propertyData } = managerState || {};
+  
+  // const managerState = location.state || props;
+  // const { index, } = managerState || {};  
+  const index = returnIndex || location.state?.index;
+
+  const [ propertyData, setPropertyData ] = useState(propertyList)
   const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
   //console.log('---propertyData searchmanager---', propertyData, index);
   const [displayed_managers, set_displayed_managers] = useState([]);
@@ -56,7 +63,7 @@ const SearchManager = (props) => {
 
   const handleRequestQuotes = props.handleRequestQuotes;
   
-  const contracts = props.contracts;
+  const contracts = allContracts;
   const property_ID = props.propertyId;
   console.log("contracts is ^^^", contracts)
   console.log("property_ID is ^^^", property_ID)
@@ -90,6 +97,12 @@ const SearchManager = (props) => {
   useEffect(() => {
     get_manager_info();
   }, []);
+
+  useEffect(() => {
+    setPropertyData(propertyList);
+  }, [propertyList]);
+
+  
 
   // Function to handle search
   const handleSearch = (search_string) => {
