@@ -176,12 +176,12 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
 
 
     const columns = [
-        { field: 'dob', headerName: 'Date of Birth', flex: 1, editable: true },
         { field: 'name', headerName: 'First Name', flex: 1, editable: true },
         { field: 'last_name', headerName: 'Last Name', flex: 1, editable: true },
         { field: 'email', headerName: 'Email', flex: 1, editable: true },
         { field: 'phone_number', headerName: 'Phone Number', flex: 1, editable: true },
         { field: 'relationship', headerName: 'Relationship', flex: 1, editable: true },
+        { field: 'dob', headerName: 'DoB', flex: 1, editable: true },
         {
             field: 'actions',
             headerName: 'Actions',

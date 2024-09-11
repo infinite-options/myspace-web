@@ -313,6 +313,9 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
 
                 // Now set pets, adult, document, children all fields if they change
 
+                console.log("lease_Adults - ", adults)
+                console.log("lease_children - ", children)
+                console.log("uploaded documents - ", documents)
 
                 // modifiedData.forEach(item => {
                 //     // console.log(`Key: ${item.key}`);
