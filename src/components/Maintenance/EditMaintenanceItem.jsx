@@ -271,7 +271,7 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 		editFormData.append('maintenance_scheduled_time', null);
 		editFormData.append('maintenance_frequency', 'One Time');
 		editFormData.append('maintenance_notes', null);
-		editFormData.append('maintenance_request_created_date', formattedDate); // Convert to ISO string format
+		// editFormData.append('maintenance_request_created_date', formattedDate); // Convert to ISO string format
 		editFormData.append('maintenance_request_closed_date', null);
 		editFormData.append('maintenance_request_adjustment_date', null);
 
