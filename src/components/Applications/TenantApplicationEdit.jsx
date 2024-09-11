@@ -387,7 +387,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                       documentsDetails.push(documentObject);
                     });
               
-                    leaseApplicationFormData.append("tenant_documents_details", JSON.stringify(documentsDetails));
+                    leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
                 }
 
                 leaseApplicationFormData.append("lease_adults", JSON.stringify(adults));

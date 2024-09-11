@@ -12,6 +12,7 @@ import {
 	DialogTitle,
 	DialogContent,
 	DialogActions,
+	DialogContentText,
 	TextField,
 	Radio,
 	RadioGroup,
@@ -852,7 +853,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 const PropertyCard = (props) => {
   const navigate = useNavigate();
   const { getProfileId } = useUser();
-  const { defaultContractFees, allContracts, currentContractUID, } = useContext(ManagementContractContext);  
+  const { defaultContractFees, allContracts, currentContractUID, setIsChange} = useContext(ManagementContractContext);  
 //   console.log("PropertyCard - props - ", props);
   
 
@@ -874,6 +875,7 @@ const PropertyCard = (props) => {
 
   const [indexForEditFeeDialog, setIndexForEditFeeDialog] = useState(false);
   const [indexForEditContactDialog, setIndexForEditContactDialog] = useState(false);
+  
 
 //   const [allContracts, setAllContracts] = useState(contracts); //from context
 //   const [businessProfile, setBusinessProfile] = useState(null);
@@ -897,8 +899,11 @@ const PropertyCard = (props) => {
   const [isPreviousFileChange, setIsPreviousFileChange] = useState(false)
   const[contactRowsWithId, setContactRowsWithId] = useState([]);
 
-
   useEffect(() => {
+	setContractFiles([])
+	setContractFileTypes([])
+	setIsPreviousFileChange(false)
+	
 	const setContractDetails = () => {
 		if (allContracts !== null && allContracts !== undefined) {
 		  const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
@@ -948,8 +953,11 @@ const PropertyCard = (props) => {
 			setPropertyOwnerName(`${contractData["owner_first_name"]} ${contractData["owner_last_name"]}`);
 		  }
 		}
-	  };	
+	};	
     setContractDetails();
+	console.log("contract files - ", contractFiles, " isPReviousChange - ", isPreviousFileChange);
+	
+
   }, [currentContractUID]);
 
   useEffect(() => {
@@ -985,6 +993,15 @@ const PropertyCard = (props) => {
   useEffect(() => {
     // console.log("CONTRACT ASSIGNED CONTACTS - ", contractAssignedContacts);
   }, [contractAssignedContacts]);
+
+  useEffect(()=>{
+	// console.log("yess here ---- dhyey ---- ")
+		if(isPreviousFileChange || contractFiles?.length > 0){
+			setIsChange(true)
+		}
+  }, [isPreviousFileChange, contractFiles])
+
+
 
 //   useEffect(() => {
     // console.log("DEFAULT CONTRACT FEES - ", defaultContractFees);
@@ -1041,6 +1058,7 @@ const PropertyCard = (props) => {
     //     feeAmount: 0,
     // };
 	// console.log("---dhyey--- inside adding fee old fee - ", contractFees, " new fee - ", newFee)
+	setIsChange(true)
     setContractFees((prevContractFees) => [...prevContractFees, newFee]);
   };
 
@@ -1053,6 +1071,7 @@ const PropertyCard = (props) => {
     // setContractFees((prevContractFees) => [...prevContractFees, newFee]);
     // console.log("IN handleEditFee of PropertyCard");
     // console.log(newFee, index);
+	setIsChange(true)
     setContractFees((prevContractFees) => {
       const updatedContractFees = prevContractFees.map((fee, i) => {
         if (i === index) {
@@ -1066,6 +1085,7 @@ const PropertyCard = (props) => {
 
   const handleDeleteFee = (index, event) => {
     // console.log("Contract Fees", contractFees);
+	setIsChange(true)
     setContractFees((prevFees) => {
       const feesArray = Array.from(prevFees);
       feesArray.splice(index, 1);
@@ -1107,15 +1127,18 @@ const PropertyCard = (props) => {
   };
 
   const handleContractNameChange = (event) => {
+	setIsChange(true)
     setContractName(event.target.value);
   };
 
   const handleStartDateChange = (v) => {
+	setIsChange(true)
     setContractStartDate(v);
     if (contractEndDate < v) setContractEndDate(v);
   };
 
   const handleEndDateChange = (v) => {
+	setIsChange(true)
 	if (v.isBefore(contractStartDate)) {
 		setShowInvalidEndDatePrompt(true);
 	}
@@ -1133,12 +1156,14 @@ const PropertyCard = (props) => {
 
   const handleAddContact = (newContact) => {
     // console.log("newContact - ", newContact);
+	setIsChange(true)
     setContractAssignedContacts((prevContractContacts) => [...prevContractContacts, newContact]);
   };
 
   const handleEditContact = (newContact, index) => {
     // console.log("In handleEditContact of PropertyCard");
     // console.log(newContact, index);
+	setIsChange(true)
     setContractAssignedContacts((prevContacts) => {
       const updatedContacts = prevContacts.map((contact, i) => {
         if (i === index) {
@@ -1152,6 +1177,7 @@ const PropertyCard = (props) => {
 
   const handleDeleteContact = (index, event) => {
     // console.log("Contract Assigned Contacts", contractAssignedContacts);
+	setIsChange(true)
     setContractAssignedContacts((prevContacts) => {
       const contactsArray = Array.from(prevContacts);
       contactsArray.splice(index, 1);
@@ -1338,6 +1364,7 @@ const PropertyCard = (props) => {
           throw new Error("Network response was not ok");
         } else {
           // console.log("Data updated successfully");
+		  setIsChange(false)
           navigate("/managerDashboard");
         }
       })
@@ -2425,6 +2452,8 @@ return (
 					/>
 				</Box>
 			)}
+
+			
 		</>
 	);
 };

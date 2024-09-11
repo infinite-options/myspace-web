@@ -949,7 +949,7 @@ export default function TenantApplication(props) {
                       }}
                       key={index}
                     >
-                      {occupant.name} {occupant.last_name} | {occupant.relationship} | DOB: {occupant.dob}
+                      {occupant.name} {occupant.last_name} | {occupant.relationship} | DoB: {occupant.dob}
                     </Typography>
                   ))}
               </Grid>

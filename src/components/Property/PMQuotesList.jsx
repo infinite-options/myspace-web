@@ -1,4 +1,8 @@
-import { ThemeProvider, Typography, Box, Tabs, Tab, Card, CardHeader, Slider, Stack, Button, Grid, Container } from "@mui/material";
+import { ThemeProvider, Typography, Box, Tabs, Tab, Card, CardHeader, Slider, Stack, Button, Grid, Container, Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogActions,
+	DialogContentText } from "@mui/material";
 // import documentIcon from "../../images/Subtract.png";
 import Bell_fill from "../../images/Bell_fill.png";
 import { useEffect, useState, useContext, } from "react";
@@ -114,13 +118,14 @@ const QuotesList = (props) => {
 
 function ContractCard(props) {
   let navigate = useNavigate();
-  const { currentContractUID, setCurrentContractUID, setCurrentContractPropertyUID, } = useContext(ManagementContractContext);
+  const { currentContractUID, setCurrentContractUID, setCurrentContractPropertyUID, isChange, setIsChange} = useContext(ManagementContractContext);
+  const [showGoBackDialog, setShowGoBackDialog] = useState(false)
 
   // console.log("props for contract card", props);
   const contract = props.contract;
   // console.log("ContractCard - contract", contract);  
 
-
+  
   // Define a dictionary to map contract_status to text color
   const statusTextColorMap = {
     REJECTED: "#A52A2A",
@@ -135,6 +140,7 @@ function ContractCard(props) {
   if (Array.isArray(announcements)) announcements.sort((a, b) => new Date(b.announcement_date) - new Date(a.announcement_date));
 
   return (
+    <>
       <Grid
         container
         item
@@ -148,9 +154,14 @@ function ContractCard(props) {
           cursor: "pointer",
           border: contract.contract_uid === currentContractUID ? "2px solid #4CAF50" : "none", 
         }}
-        onClick={() => {          
-          setCurrentContractUID(contract.contract_uid);
-          setCurrentContractPropertyUID(contract.contract_property_id);          
+        onClick={() => {
+          console.log("inside pmquote.js - isChange - ", isChange);
+          if(isChange){
+            setShowGoBackDialog(true)
+          }else{
+            setCurrentContractUID(contract.contract_uid);
+            setCurrentContractPropertyUID(contract.contract_property_id);          
+          }
         }}
       >
       <Grid container alignItems='center'>
@@ -232,6 +243,71 @@ function ContractCard(props) {
           {contract.property_num_baths}
         </Typography>
       </Grid>
-    </Grid>
+      </Grid>
+
+      <Dialog
+					open={showGoBackDialog}
+					onClose={() => setShowGoBackDialog(false)}
+					aria-labelledby='alert-dialog-title'
+					aria-describedby='alert-dialog-description'
+				>
+					<DialogContent>
+						<DialogContentText
+							id='alert-dialog-description'
+							sx={{
+							fontWeight: theme.typography.common.fontWeight,
+							paddingTop: "10px",
+							}}
+						>
+							Are you sure you want to leave without saving the your changes?
+						</DialogContentText>
+					</DialogContent>
+					<DialogActions>
+					<Box
+						sx={{
+						width: "100%",
+						display: "flex",
+						flexDirection: "row",
+						justifyContent: "center",
+						}}
+					>
+						<Button
+							onClick={() => {
+                setCurrentContractUID(contract.contract_uid);
+                setCurrentContractPropertyUID(contract.contract_property_id);  
+                setShowGoBackDialog(false)
+                setIsChange(false)
+              }}
+							sx={{
+								color: "white",
+								backgroundColor: "#3D5CAC80",
+								":hover": {
+								backgroundColor: "#3D5CAC",
+								},
+								marginRight: "10px",
+							}}
+							autoFocus
+						>
+							Yes
+						</Button>
+						<Button
+						onClick={() => {
+              setShowGoBackDialog(false)
+            }}
+						sx={{
+							color: "white",
+							backgroundColor: "#3D5CAC80",
+							":hover": {
+							backgroundColor: "#3D5CAC",
+							},
+							marginLeft: "10px",
+						}}
+						>
+						No
+						</Button>
+					</Box>
+					</DialogActions>
+			</Dialog>
+    </>
   );
 }
