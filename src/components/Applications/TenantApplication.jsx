@@ -50,28 +50,28 @@ export default function TenantApplication(props) {
   // }, [tenantDocuments])
   
 
-  useEffect(() => {
-    const updateData = () => {
-        setShowSpinner(true);
+  // useEffect(() => {
+  //   const updateData = () => {
+  //       setShowSpinner(true);
   
-        // First, set the property state
-        setProperty(props.data);
+  //       // First, set the property state
+  //       setProperty(props.data);
   
-        // Then, set the status state
-        setStatus(props.status);
+  //       // Then, set the status state
+  //       setStatus(props.status);
   
-        // Once the address is formatted, update the address state
-        const address = formatAddress();
-        setFormattedAddress(address);
+  //       // Once the address is formatted, update the address state
+  //       const address = formatAddress();
+  //       setFormattedAddress(address);
   
-        // Finally, set the spinner to false after a 2-second delay
-        setTimeout(() => {
-          setShowSpinner(false);
-        }, 2000); // 2 seconds delay
-    };
+  //       // Finally, set the spinner to false after a 2-second delay
+  //       setTimeout(() => {
+  //         setShowSpinner(false);
+  //       }, 2000); // 2 seconds delay
+  //   };
   
-    updateData();
-  }, [props.data]);
+  //   updateData();
+  // }, [props.data]);
   
   useEffect(() => {
     const fetchData = async () => {
@@ -82,10 +82,11 @@ export default function TenantApplication(props) {
         const leaseResponse = await axios.get(
           `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`
         );
+        
         const fetchedLease = leaseResponse.data["Lease_Details"].result.filter(
           (lease) => lease.lease_uid === props.lease.lease_uid
         );
-        // console.log("----dhyey---- fetchedLease - ", fetchedLease)
+        
         setLease(fetchedLease);
   
         // Fetch tenant profile information asynchronously
@@ -248,8 +249,8 @@ export default function TenantApplication(props) {
 
   useEffect(() => {
 
-    console.log("---dhyey---- did it here - ", props)
-
+    // console.log("---dhyey--- props data for property - ", props.lease)
+    
     if(props?.vehicles){
       setVehicles(props.vehicles)
     }else{

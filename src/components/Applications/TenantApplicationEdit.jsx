@@ -20,15 +20,15 @@ import CloseIcon from "@mui/icons-material/Close";
 
 export default function TenantApplicationEdit({ profileData, lease, lease_uid, setRightPane, property, from, tenantDocuments, setTenantDocuments, oldVehicles, setOldVehicles, adultOccupants, setAdultOccupants, petOccupants, setPetOccupants, childOccupants, setChildOccupants, extraUploadDocument, setExtraUploadDocument, extraUploadDocumentType, setExtraUploadDocumentType, deleteDocuments }) {
     console.log('Inside TenantApplicationEdit', profileData, lease_uid, from);
-    const [adults, setAdults] = useState(adultOccupants? adultOccupants : [{ id: 1, name: "", lastName: "", relation: "", dob: "" }]);
-    const [children, setChildren] = useState(childOccupants? childOccupants : [{ id: 1, name: "", lastName: "", relation: "", dob: "" }]);
-    const [pets, setPets] = useState(petOccupants? petOccupants : [{ id: 1, name: "", breed: "", type: "", weight: "" }]);
-    const [vehicles, setVehicles] = useState(oldVehicles ? oldVehicles : [{ id: 1, make: "", model: "", year: "", license: "", state: "" }]);
-    const [documents, setDocuments] = useState([]);
+    const [adults, setAdults] = useState(adultOccupants? adultOccupants : []);
+    const [children, setChildren] = useState(childOccupants? childOccupants : []);
+    const [pets, setPets] = useState(petOccupants? petOccupants : []);
+    const [vehicles, setVehicles] = useState(oldVehicles ? oldVehicles : []);
+    const [documents, setDocuments] = useState(tenantDocuments? tenantDocuments : []);
     const documentsRef = useRef([]);
-    const [uploadedFiles, setuploadedFiles] = useState([]);
-    const [uploadedFileTypes, setUploadedFileTypes] = useState([]);
-    const [deletedFiles, setDeletedFiles] = useState([]);
+    const [uploadedFiles, setuploadedFiles] = useState(extraUploadDocument? extraUploadDocument : []);
+    const [uploadedFileTypes, setUploadedFileTypes] = useState(extraUploadDocumentType? extraUploadDocumentType : []);
+    const [deletedFiles, setDeletedFiles] = useState(deleteDocuments? deleteDocuments : []);
     const [relationships, setRelationships] = useState([]);
     const [states, setStates] = useState([]);
     const [modifiedData, setModifiedData] = useState([]);
@@ -119,17 +119,17 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
         setSnackbarOpen(false);
     };
 
-    useEffect(() => {
-        // getListDetails();
-        const docs = tenantDocuments? tenantDocuments.map((doc, index) => ({
-                        ...doc,
-                        id: index,
-                    }))
-                    : [];
-        setDocuments(docs);
-        documentsRef.current = tenantDocuments;
+    // useEffect(() => {
+    //     // getListDetails();
+    //     const docs = tenantDocuments? tenantDocuments.map((doc, index) => ({
+    //                     ...doc,
+    //                     id: index,
+    //                 }))
+    //                 : [];
+    //     setDocuments(docs);
+    //     documentsRef.current = tenantDocuments;
 
-    }, []);
+    // }, []);
 
     useEffect(() => {
         console.log("calling profileData useEffect");
@@ -139,7 +139,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
     }, [lease_uid, isReload]);
 
     const editOrUpdateLease = async () => {
-        console.log('--dhyey-- inside edit lease - ', modifiedData);
+        // console.log('--dhyey-- inside edit lease - ', modifiedData);
         try {
             if (modifiedData.length > 0) {
                 setShowSpinner(true);
@@ -179,22 +179,22 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                     // }
                     
                     if(item.key === "lease_adults"){
-                        setAdultOccupants(item.value)
+                        // setAdultOccupants(item.value)
                         setAdults(item.value)
                     }
                     
                     if(item.key === "lease_children" ){
-                        setChildOccupants(item.value)
+                        // setChildOccupants(item.value)
                         setChildren(item.value)
                     }
                     
                     if(item.key === "lease_pets"){
-                        setPetOccupants(item.value)
+                        // setPetOccupants(item.value)
                         setPets(item.value)
                     }
                     
                     if(item.key === "lease_vehicles"){
-                        setOldVehicles(item.value)
+                        // setOldVehicles(item.value)
                         setVehicles(item.value)
                     }
 
@@ -231,76 +231,76 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
         }
     }
 
-    const editOrUpdateTenant = async () => {
-        console.log("inside editOrUpdateTenant", modifiedData);
-        try {
-            if (modifiedData.length > 0) {
-                setShowSpinner(true);
-                const headers = {
-                    "Access-Control-Allow-Origin": "*",
-                    "Access-Control-Allow-Methods": "*",
-                    "Access-Control-Allow-Headers": "*",
-                    "Access-Control-Allow-Credentials": "*",
-                };
+    // const editOrUpdateTenant = async () => {
+    //     console.log("inside editOrUpdateTenant", modifiedData);
+    //     try {
+    //         if (modifiedData.length > 0) {
+    //             setShowSpinner(true);
+    //             const headers = {
+    //                 "Access-Control-Allow-Origin": "*",
+    //                 "Access-Control-Allow-Methods": "*",
+    //                 "Access-Control-Allow-Headers": "*",
+    //                 "Access-Control-Allow-Credentials": "*",
+    //             };
 
-                const profileFormData = new FormData();
+    //             const profileFormData = new FormData();
 
-                modifiedData.forEach((item) => {
-                    console.log(`Key: ${item.key}`);
-                    if (item.key === "uploadedFiles") {
-                        console.log("uploadedFiles", item.value);
-                        if (item.value.length) {
-                            const documentsDetails = [];
-                            [...item.value].forEach((file, i) => {
-                                profileFormData.append(`file_${i}`, file.file, file.name);
-                                const fileType = "pdf";
-                                const documentObject = {
-                                    // file: file,
-                                    fileIndex: i,
-                                    fileName: file.name,
-                                    contentType: file.contentType,
-                                    // type: file.type,
-                                };
-                                documentsDetails.push(documentObject);
-                            });
-                            profileFormData.append("tenant_documents_details", JSON.stringify(documentsDetails));
-                        }
-                    } else {
-                        profileFormData.append(item.key, JSON.stringify(item.value));
-                    }
-                });
-                profileFormData.append("tenant_uid", profileData.tenant_uid);
+    //             modifiedData.forEach((item) => {
+    //                 console.log(`Key: ${item.key}`);
+    //                 if (item.key === "uploadedFiles") {
+    //                     console.log("uploadedFiles", item.value);
+    //                     if (item.value.length) {
+    //                         const documentsDetails = [];
+    //                         [...item.value].forEach((file, i) => {
+    //                             profileFormData.append(`file_${i}`, file.file, file.name);
+    //                             const fileType = "pdf";
+    //                             const documentObject = {
+    //                                 // file: file,
+    //                                 fileIndex: i,
+    //                                 fileName: file.name,
+    //                                 contentType: file.contentType,
+    //                                 // type: file.type,
+    //                             };
+    //                             documentsDetails.push(documentObject);
+    //                         });
+    //                         profileFormData.append("tenant_documents_details", JSON.stringify(documentsDetails));
+    //                     }
+    //                 } else {
+    //                     profileFormData.append(item.key, JSON.stringify(item.value));
+    //                 }
+    //             });
+    //             profileFormData.append("tenant_uid", profileData.tenant_uid);
 
-                axios
-                    .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, headers)
-                    .then((response) => {
-                        console.log("Data updated successfully", response);
-                        showSnackbar("Your profile has been successfully updated.", "success");
-                        setIsReload((prev) => !prev);
-                        setShowSpinner(false);
-                    })
-                    .catch((error) => {
-                        setShowSpinner(false);
-                        showSnackbar("Cannot update your profile. Please try again", "error");
-                        if (error.response) {
-                            console.log(error.response.data);
-                        }
-                    });
-                setShowSpinner(false);
-                setModifiedData([]);
-            } else {
-                showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
-            }
-        } catch (error) {
-            showSnackbar("Cannot update the lease!!. Please try again", "error");
-            console.log("Cannot Update the lease", error);
-            setShowSpinner(false);
-        }
-    };
+    //             axios
+    //                 .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, headers)
+    //                 .then((response) => {
+    //                     console.log("Data updated successfully", response);
+    //                     showSnackbar("Your profile has been successfully updated.", "success");
+    //                     setIsReload((prev) => !prev);
+    //                     setShowSpinner(false);
+    //                 })
+    //                 .catch((error) => {
+    //                     setShowSpinner(false);
+    //                     showSnackbar("Cannot update your profile. Please try again", "error");
+    //                     if (error.response) {
+    //                         console.log(error.response.data);
+    //                     }
+    //                 });
+    //             setShowSpinner(false);
+    //             setModifiedData([]);
+    //         } else {
+    //             showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
+    //         }
+    //     } catch (error) {
+    //         showSnackbar("Cannot update the lease!!. Please try again", "error");
+    //         console.log("Cannot Update the lease", error);
+    //         setShowSpinner(false);
+    //     }
+    // };
 
     const updateLeaseData = async () => {
         try {
-            if (modifiedData.length > 0 || isPreviousFileChange || deletedFiles?.length > 0 || uploadedFiles?.length > 0) {
+            if (adults?.length > 0 || pets?.length > 0 || children?.length > 0 || vehicles?.length > 0 || isPreviousFileChange || deletedFiles?.length > 0 || uploadedFiles?.length > 0) {
                 setShowSpinner(true);
                 const headers = {
                     "Access-Control-Allow-Origin": "*",
@@ -313,9 +313,6 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
 
                 // Now set pets, adult, document, children all fields if they change
 
-                console.log("lease_Adults - ", adults)
-                console.log("lease_children - ", children)
-                console.log("uploaded documents - ", documents)
 
                 // modifiedData.forEach(item => {
                 //     // console.log(`Key: ${item.key}`);
@@ -397,6 +394,8 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                 leaseApplicationFormData.append("lease_children", JSON.stringify(children));
                 leaseApplicationFormData.append("lease_pets", JSON.stringify(pets));
                 leaseApplicationFormData.append("lease_vehicles", JSON.stringify(vehicles));
+
+                // console.log(lease_uid)
                 leaseApplicationFormData.append('lease_uid', lease_uid); // Here is the problem when upload new docs because there is no lease right now and it require lease_uid
 
                 axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
@@ -434,13 +433,13 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
         if(lease_uid !== null){
             updateLeaseData().then(() => {
                 const state = {
-                    data: property, status: lease_uid === null ? "" : lease[0].lease_status, lease: lease_uid === null ? [] : lease , from: from
+                    data: property, status: lease_uid === null ? "" : lease[0].lease_status, lease: lease_uid === null ? [] : lease[0] , from: from
                 }
                 setRightPane?.({ type: "tenantApplication", state: state });
             });
         }else{
             const state = {
-                data: property, status: lease_uid === null ? "" : lease[0].lease_status, lease: lease_uid === null ? [] : lease , from: from, tenantDocuments : documents, vehicles : oldVehicles, adultOccupants: adultOccupants, petOccupants : petOccupants, childOccupants : childOccupants,  extraUploadDocument : uploadedFiles, extraUploadDocumentType : uploadedFileTypes, deleteDocuments : deletedFiles
+                data: property, status: lease_uid === null ? "" : lease[0].lease_status, lease: lease_uid === null ? [] : lease[0] , from: from, tenantDocuments : documents, vehicles : vehicles, adultOccupants: adults, petOccupants : pets, childOccupants : children,  extraUploadDocument : uploadedFiles, extraUploadDocumentType : uploadedFileTypes, deleteDocuments : deletedFiles
             }
             setRightPane?.({ type: "tenantApplication", state: state });
         }

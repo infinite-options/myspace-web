@@ -324,14 +324,14 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
 
       const parsedDocs = JSON.parse(profileData.business_documents);
       // console.log("parsedDocs - ", parsedDocs);
-      const docs = parsedDocs
-        ? parsedDocs.map((doc, index) => ({
-            ...doc,
-            id: index,
-          }))
-        : [];
+      // const docs = parsedDocs
+      //   ? parsedDocs.map((doc, index) => ({
+      //       ...doc,
+      //       id: index,
+      //     }))
+      //   : [];
       // console.log('initial docs', docs);
-      setDocuments(docs || []);
+      setDocuments(parsedDocs || []);
 
       const paymentMethodsData = JSON.parse(profileData.paymentMethods);
       const updatedPaymentMethods = {
@@ -1095,24 +1095,18 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
           }
         });
 
-        if (hasBusinessKey) {
-          profileFormData.append("business_uid", profileData.business_uid);
-        }
-
-        if (hasEmployeeKey) {
-          profileFormData.append("employee_uid", profileData.employee_uid);
-        }
-
         if(isPreviousFileChange){
+          hasBusinessKey = true
           profileFormData.append("business_documents", JSON.stringify(documents));
         }
 
         if(deletedFiles && deletedFiles?.length !== 0){
+          hasBusinessKey = true
           profileFormData.append("delete_documents", JSON.stringify(deletedFiles));
         }
 
         if (uploadedFiles && uploadedFiles?.length) {
-
+          hasBusinessKey = true
           const documentsDetails = [];
           [...uploadedFiles].forEach((file, i) => {
     
@@ -1128,6 +1122,14 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
           });
     
           profileFormData.append("business_documents_details", JSON.stringify(documentsDetails));
+        }
+
+        if (hasBusinessKey) {
+          profileFormData.append("business_uid", profileData.business_uid);
+        }
+
+        if (hasEmployeeKey) {
+          profileFormData.append("employee_uid", profileData.employee_uid);
         }
 
         axios
@@ -1151,6 +1153,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
         setuploadedFiles([]);
         setUploadedFileTypes([]);
         setDeletedFiles([]);
+        setIsPreviousFileChange(false)
       }
       // else {
       //     showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");

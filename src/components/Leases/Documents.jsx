@@ -120,8 +120,11 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
     if (isEditing === true) {
       // console.log("current row is", currentRow);
       
+      // remove id of currentRow before adding to it
+      // const docswithoutid = currentRow.map(({ id, ...rest }) => rest);
+      const { id, ...docswithoutid} = currentRow;
       setDocuments((prevFiles)=>{
-        return prevFiles.map((file) => file.link === currentRow.link? currentRow : file);
+        return prevFiles.map((file) => file.link === docswithoutid.link? docswithoutid : file);
       });
 
       if(setIsPreviousFileChange){

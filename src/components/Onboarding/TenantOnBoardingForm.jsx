@@ -321,14 +321,14 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
 
       const parsedDocs = JSON.parse(profileData.tenant_documents);
       // console.log("parsedDocs - ", parsedDocs);
-      const docs = parsedDocs
-        ? parsedDocs.map((doc, index) => ({
-            ...doc,
-            id: index,
-          }))
-        : [];
+      // const docs = parsedDocs
+      //   ? parsedDocs.map((doc, index) => ({
+      //       ...doc,
+      //       id: index,
+      //     }))
+      //   : [];
       // console.log('initial docs', docs);
-      setDocuments(docs);
+      setDocuments(parsedDocs);
       documentsRef.current = parsedDocs;
 
       const paymentMethods = JSON.parse(profileData.paymentMethods);
@@ -897,6 +897,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
         setuploadedFiles([]);
         setUploadedFileTypes([]);
         setDeletedFiles([]);
+        setIsPreviousFileChange(false)
       } else {
         showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
       }
