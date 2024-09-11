@@ -20,7 +20,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 import { useUser } from '../../../contexts/UserContext';
 
-export default function RequestMoreInfo({showRequestMoreInfo, setShowRequestMoreInfo, maintenanceItem}){
+export default function RequestMoreInfo({fromQuote, showRequestMoreInfo, setShowRequestMoreInfo, maintenanceItem}){
     
     const { user, getProfileId, roleName } = useUser();
     const [pmNotes, setPmNotes] = useState();
@@ -42,9 +42,19 @@ export default function RequestMoreInfo({showRequestMoreInfo, setShowRequestMore
     };
 
         const formData = new FormData();
-        formData.append("maintenance_quote_uid", maintenanceItem.maintenance_quote_uid);
-        formData.append("quote_notes", pmNotes);
-        formData.append("quote_status", "MORE INFO");
+        let toBeCalledAPI = "";
+        if(fromQuote){
+            formData.append("maintenance_quote_uid", maintenanceItem.maintenance_quote_uid);
+            formData.append("quote_mm_notes", pmNotes);
+            formData.append("quote_status", "MORE INFO");
+            toBeCalledAPI = "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes";
+        
+        } else {
+            formData.append("maintenance_request_uid", maintenanceItem.maintenance_request_uid);
+            formData.append("maintenance_pm_notes", pmNotes);
+            formData.append("maintenance_request_status","INFO");
+            toBeCalledAPI = "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests";
+        }
 
         // console.log('formData>>>>>> in request more info');
 		// for (let [key, value] of formData.entries()) {
@@ -62,7 +72,7 @@ export default function RequestMoreInfo({showRequestMoreInfo, setShowRequestMore
         // console.log(input.maintenance_pm_notes);
         // console.log(input.maintenance_request_status);
         setShowSpinner(true);
-        axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests",
+        axios.put(toBeCalledAPI,
         formData,
         headers)
         .then(response => {

@@ -111,7 +111,7 @@ export default function WorkerQuotesRequestedAction({maintenanceItem}){
                             Request more info
                         </Typography>
                     </Button>
-                    <RequestMoreInfo showRequestMoreInfo={showRequestMoreInfo} setShowRequestMoreInfo={setShowRequestMoreInfo} maintenanceItem={maintenanceItem}/>
+                    <RequestMoreInfo fromQuote={true} showRequestMoreInfo={showRequestMoreInfo} setShowRequestMoreInfo={setShowRequestMoreInfo} maintenanceItem={maintenanceItem}/>
                 </Grid> 
                 <Grid item xs={4} sx={{
                     alignItems: "center",
