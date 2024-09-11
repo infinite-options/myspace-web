@@ -303,16 +303,7 @@ const TenantApplicationNav = (props) => {
                         </Typography>
                       </Grid>
                       <Grid item xs={4}></Grid>
-                      <Grid item xs={12}>
-                        {/* <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#3D5CAC",
-                            }}
-                          >
-                            {"Current Address"}
-                          </Typography> */}
+                      <Grid item xs={12}>                        
                         <Typography
                           sx={{
                             fontSize: 15,
@@ -375,62 +366,7 @@ const TenantApplicationNav = (props) => {
                             {"License Number/ State"}
                           </Typography>
                         </Stack>
-                      </Grid>
-                      {/* <Grid item xs={6}>
-                        <Stack sx={{
-                            marginLeft: '20px',
-                          }}>                          
-                            <Typography
-                              sx={{
-                                fontSize: 13,
-                                fontFamily: "Source Sans Pro, sans-serif",
-                                color: "#160449",
-                              }}
-                            >
-                              {"***-**-" +
-                                AES.decrypt(
-                                  application.tenant_ssn,
-                                  process.env.REACT_APP_ENKEY
-                                )
-                                  .toString()
-                                  .slice(-4)}
-                            </Typography>
-                            <Typography
-                              sx={{
-                                fontSize: 13,
-                                fontFamily: "Source Sans Pro, sans-serif",
-                                color: "#160449",                              
-                              }}
-                            >
-                              {"SSN"}
-                            </Typography>
-                            
-                        </Stack>
-                      </Grid>
-                      
-                      <Grid item xs={6}>
-                        <Stack sx={{marginRight: '40px',}}>                                                    
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#160449",
-                            }}
-                          >
-                            {application.tenant_drivers_license_number? application.tenant_drivers_license_number : "<LICENSE_NUM>"}/
-                            {application.tenant_drivers_license_state? application.tenant_drivers_license_state : "<LICENSE/STATE>"}
-                          </Typography>
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#160449",
-                            }}
-                          >
-                            {"License Number/ State"}
-                          </Typography>
-                        </Stack>
-                      </Grid> */}
+                      </Grid>                      
                       <Grid item xs={6}>
                         <Stack>
                           <Typography
@@ -710,59 +646,7 @@ const TenantApplicationNav = (props) => {
                           marginRight: "30px",
                         }}
                       >
-                        <Documents documents={applicationDocuments} setDocuments={setApplicationDocuments} isEditable={false} isAccord={false} customName={"Application Documents: 1"}/>
-                        {/* <Typography
-                          sx={{
-                            justifySelf: "center",
-                            color: theme.typography.common.blue,
-                            fontSize: 13,
-                          }}
-                        >
-                          Application Documents:
-                        </Typography>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            flexDirection: "row",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            paddingTop: "5px",
-                            color: theme.typography.common.blue,
-                            fontSize: 13,
-                          }}
-                        >
-                          <Box>Filename</Box>
-                          <Box>Type</Box>
-                        </Box>
-                        {applicationDocuments &&
-                          [...applicationDocuments].map((doc, i) => (
-                            <>
-                              <Box
-                                key={i}
-                                sx={{
-                                  display: "flex",
-                                  flexDirection: "row",
-                                  alignItems: "center",
-                                  justifyContent: "space-between",
-                                  fontSize: 13,
-                                }}
-                              >
-                                <a href={doc.link} target='_blank' rel='noopener noreferrer'>
-                                  <Box
-                                    sx={{
-                                      // height: '16px',
-                                      width: "100%",
-                                      cursor: "pointer", // Change cursor to indicate clickability
-                                      color: "#160449",
-                                    }}
-                                  >
-                                    {doc.filename}
-                                  </Box>
-                                </a>
-                                <Box sx={{ color: "#160449" }}>{doc.contentType}</Box>
-                              </Box>
-                            </>
-                          ))} */}
+                        <Documents documents={applicationDocuments} setDocuments={setApplicationDocuments} isEditable={false} isAccord={false} customName={"Application Documents: 1"}/>                        
                       </Grid>
                     </Grid>
                     <Stack direction='row' alignItems='center' justifyContent='space-around' sx={{ padding: "30px 0", paddingRight: "15px" }}>
@@ -790,10 +674,10 @@ const TenantApplicationNav = (props) => {
                               backgroundColor: "#CB8E8E",
                               color: "#FFFFFF",
                               textTransform: "none",
-                              width: "160px", // Adjusted width to accommodate the text on one line
-                              marginRight: "10px", // Add space between buttons
-                              marginRight: "30px", // Add space between buttons
-                              whiteSpace: "nowrap", // Prevent line breaks
+                              width: "160px",
+                              marginRight: "10px",
+                              marginRight: "30px",
+                              whiteSpace: "nowrap",
                               "&:hover, &:focus, &:active": {
                                 backgroundColor: "#bb6b6b",
                               },

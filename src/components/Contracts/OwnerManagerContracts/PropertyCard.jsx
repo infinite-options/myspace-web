@@ -12,6 +12,7 @@ import {
 	DialogTitle,
 	DialogContent,
 	DialogActions,
+	DialogContentText,
 	TextField,
 	Radio,
 	RadioGroup,
@@ -25,6 +26,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import { useUser } from '../../../contexts/UserContext';
 import theme from '../../../theme/theme';
+import { DataGrid } from "@mui/x-data-grid";
 
 // import ImageCarousel from '../../ImageCarousel';
 import defaultHouseImage from '../../Property/defaultHouseImage.png';
@@ -851,7 +853,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 const PropertyCard = (props) => {
   const navigate = useNavigate();
   const { getProfileId } = useUser();
-  const { defaultContractFees, allContracts, currentContractUID, } = useContext(ManagementContractContext);  
+  const { defaultContractFees, allContracts, currentContractUID, setIsChange} = useContext(ManagementContractContext);  
 //   console.log("PropertyCard - props - ", props);
   
 
@@ -873,6 +875,7 @@ const PropertyCard = (props) => {
 
   const [indexForEditFeeDialog, setIndexForEditFeeDialog] = useState(false);
   const [indexForEditContactDialog, setIndexForEditContactDialog] = useState(false);
+  
 
 //   const [allContracts, setAllContracts] = useState(contracts); //from context
 //   const [businessProfile, setBusinessProfile] = useState(null);
@@ -894,10 +897,13 @@ const PropertyCard = (props) => {
   const [deletedDocsUrl, setDeletedDocsUrl] = useState([]);
   const [documentDetails, setDocumentDetails] = useState([]);
   const [isPreviousFileChange, setIsPreviousFileChange] = useState(false)
-
-
+  const[contactRowsWithId, setContactRowsWithId] = useState([]);
 
   useEffect(() => {
+	setContractFiles([])
+	setContractFileTypes([])
+	setIsPreviousFileChange(false)
+	
 	const setContractDetails = () => {
 		if (allContracts !== null && allContracts !== undefined) {
 		  const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
@@ -947,8 +953,11 @@ const PropertyCard = (props) => {
 			setPropertyOwnerName(`${contractData["owner_first_name"]} ${contractData["owner_last_name"]}`);
 		  }
 		}
-	  };	
+	};	
     setContractDetails();
+	console.log("contract files - ", contractFiles, " isPReviousChange - ", isPreviousFileChange);
+	
+
   }, [currentContractUID]);
 
   useEffect(() => {
@@ -985,6 +994,15 @@ const PropertyCard = (props) => {
     // console.log("CONTRACT ASSIGNED CONTACTS - ", contractAssignedContacts);
   }, [contractAssignedContacts]);
 
+  useEffect(()=>{
+	// console.log("yess here ---- dhyey ---- ")
+		if(isPreviousFileChange || contractFiles?.length > 0){
+			setIsChange(true)
+		}
+  }, [isPreviousFileChange, contractFiles])
+
+
+
 //   useEffect(() => {
     // console.log("DEFAULT CONTRACT FEES - ", defaultContractFees);
     // let JSONstring = JSON.stringify(defaultContractFees);
@@ -1005,6 +1023,16 @@ const PropertyCard = (props) => {
 	)
   }, [propertyData]); 
 
+//   When contacts change reassign contacts to contacts array
+  useEffect(()=>{
+	const temp = contractAssignedContacts.map((row, index) => ({
+		...row,
+		id: row.id ? index : index,
+	  }));
+
+	setContactRowsWithId(temp);
+
+  },[contractAssignedContacts])
 //   useEffect(() => {
 //     // console.log("CONTRACT FEES - ", contractFees);
 //     // let JSONstring = JSON.stringify(contractFees);
@@ -1030,6 +1058,7 @@ const PropertyCard = (props) => {
     //     feeAmount: 0,
     // };
 	// console.log("---dhyey--- inside adding fee old fee - ", contractFees, " new fee - ", newFee)
+	setIsChange(true)
     setContractFees((prevContractFees) => [...prevContractFees, newFee]);
   };
 
@@ -1042,6 +1071,7 @@ const PropertyCard = (props) => {
     // setContractFees((prevContractFees) => [...prevContractFees, newFee]);
     // console.log("IN handleEditFee of PropertyCard");
     // console.log(newFee, index);
+	setIsChange(true)
     setContractFees((prevContractFees) => {
       const updatedContractFees = prevContractFees.map((fee, i) => {
         if (i === index) {
@@ -1055,6 +1085,7 @@ const PropertyCard = (props) => {
 
   const handleDeleteFee = (index, event) => {
     // console.log("Contract Fees", contractFees);
+	setIsChange(true)
     setContractFees((prevFees) => {
       const feesArray = Array.from(prevFees);
       feesArray.splice(index, 1);
@@ -1096,15 +1127,18 @@ const PropertyCard = (props) => {
   };
 
   const handleContractNameChange = (event) => {
+	setIsChange(true)
     setContractName(event.target.value);
   };
 
   const handleStartDateChange = (v) => {
+	setIsChange(true)
     setContractStartDate(v);
     if (contractEndDate < v) setContractEndDate(v);
   };
 
   const handleEndDateChange = (v) => {
+	setIsChange(true)
 	if (v.isBefore(contractStartDate)) {
 		setShowInvalidEndDatePrompt(true);
 	}
@@ -1122,12 +1156,14 @@ const PropertyCard = (props) => {
 
   const handleAddContact = (newContact) => {
     // console.log("newContact - ", newContact);
+	setIsChange(true)
     setContractAssignedContacts((prevContractContacts) => [...prevContractContacts, newContact]);
   };
 
   const handleEditContact = (newContact, index) => {
     // console.log("In handleEditContact of PropertyCard");
     // console.log(newContact, index);
+	setIsChange(true)
     setContractAssignedContacts((prevContacts) => {
       const updatedContacts = prevContacts.map((contact, i) => {
         if (i === index) {
@@ -1141,6 +1177,7 @@ const PropertyCard = (props) => {
 
   const handleDeleteContact = (index, event) => {
     // console.log("Contract Assigned Contacts", contractAssignedContacts);
+	setIsChange(true)
     setContractAssignedContacts((prevContacts) => {
       const contactsArray = Array.from(prevContacts);
       contactsArray.splice(index, 1);
@@ -1327,6 +1364,7 @@ const PropertyCard = (props) => {
           throw new Error("Network response was not ok");
         } else {
           // console.log("Data updated successfully");
+		  setIsChange(false)
           navigate("/managerDashboard");
         }
       })
@@ -1378,21 +1416,21 @@ const PropertyCard = (props) => {
     return freq;
   };
 // Parse property images or use the default image if none are available
-const [images, setImages] = useState(
-propertyData.property_images && JSON.parse(propertyData.property_images).length > 0
-	? JSON.parse(propertyData.property_images)
-	: [defaultHouseImage]);
+	const [images, setImages] = useState(
+	propertyData.property_images && JSON.parse(propertyData.property_images).length > 0
+		? JSON.parse(propertyData.property_images)
+		: [defaultHouseImage]);
 
-const [scrollPosition, setScrollPosition] = useState(0);
-const scrollRef = useRef(null);
+	const [scrollPosition, setScrollPosition] = useState(0);
+	const scrollRef = useRef(null);
 
-useEffect(() => {
-if (scrollRef.current) {
-	scrollRef.current.scrollLeft = scrollPosition;
-}
-}, [scrollPosition]);
+	useEffect(() => {
+	if (scrollRef.current) {
+		scrollRef.current.scrollLeft = scrollPosition;
+	}
+	}, [scrollPosition]);
 
-const handleScroll = (direction) => {
+	const handleScroll = (direction) => {
 if (scrollRef.current) {
 	const scrollAmount = 200;
 	const currentScrollPosition = scrollRef.current.scrollLeft;
@@ -1405,7 +1443,56 @@ if (scrollRef.current) {
 		setScrollPosition(newScrollPosition);
 	}
 }
-};
+	};
+
+	const ContactColumns = [
+		{
+		  field: "contact_first_name",
+		  headerName: "Name",
+		  flex:1,
+		  renderCell : (params) => {
+			return(
+				<Box
+          			sx={{
+          				cursor: 'pointer', // Change cursor to indicate clickability
+          				color: '#3D5CAC',
+          			}}
+                  	onClick={() => handleOpenEditContact(params.row.id)}
+          		>
+          			{params.row.contact_first_name} {params.row.contact_last_name}
+          		</Box>
+			);
+		  },
+		  renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+		},
+		{
+		  field: "contact_email",
+		  headerName: "Email",
+		  flex:1.5,
+		  renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+		},
+		{
+		  field: "contact_phone_number",
+		  headerName: "Phone Number",
+		  flex:1,
+		  renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+		},
+		{
+		  field: "deleteactions",
+		  headerName: "",
+		  flex: 0.5,
+		  renderCell: (params) => (
+			<Box>
+			  <IconButton onClick={(e) => handleDeleteContact(params.row.id, e)}>
+				<DeleteIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
+			  </IconButton>
+			</Box>
+		  ),
+		}
+	];
+
+	
+
 
 return (
     <>
@@ -2135,76 +2222,91 @@ return (
 			</Box>
 
 			{/* Contact details */}
-			{contractAssignedContacts.length ? (
-				<Box
+			<Box
+				sx={{
+					display: 'flex',
+					flexDirection: 'row',
+					justifyContent: 'space-between',
+					fontSize: '15px',
+					fontWeight: 'bold',
+					padding: '5px',
+					color: '#3D5CAC',
+				}}
+			>
+				<Typography
 					sx={{
-						display: 'flex',
-						flexDirection: 'row',
-						justifyContent: 'space-between',
-						alignItems: 'center',
-						marginBottom: '7px',
-						width: '100%',
+						color: "#160449",
+						fontWeight: theme.typography.primary.fontWeight,
+						fontSize: "18px",
+						paddingBottom: "5px",
+						paddingTop: "5px",
+						marginY:"10px"
 					}}
 				>
-					<Box
-						sx={{
-							fontSize: '15px',
-							fontWeight: 'bold',
-							paddingTop: '10px',
-							paddingLeft: '5px',
-							color: '#3D5CAC',
-							width: '100%',
-						}}
-					>
-						<Box
-							sx={{
-								display: 'flex',
-								flexDirection: 'row',
-								justifyContent: 'space-between',
-								fontSize: '15px',
-								fontWeight: 'bold',
-								// padding: '5px',
-								color: '#3D5CAC',
-							}}
-						>
-							<Typography
-								sx={{
-									color: "#160449",
-									fontWeight: theme.typography.primary.fontWeight,
-									fontSize: "18px",
-									paddingBottom: "5px",
-									paddingTop: "5px",
-									marginY:"10px"
-								}}
-							>
-								{"Contract Assigned Contacts: "}
-							</Typography>
-							<Box onClick={()=>{setShowAddContactDialog(true)}} marginTop={"10px"} paddingTop={"5px"} paddingRight={"5px"}>
-								<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
-							</Box>
-						</Box>
-						<Grid container sx={{ color: 'black' }} marginY={"13px"}>
-							<Grid item xs={3}>
-								Name
-							</Grid>
-							<Grid item xs={4}>
-								Email
-							</Grid>
-							<Grid item xs={3}>
-								Phone Number
-							</Grid>
-						</Grid>
-						{[...contractAssignedContacts].map((contact, i) => (
-							<React.Fragment key={i}>
-								<ContactListItem
-									contact={contact}
-									handleOpenEditContact={handleOpenEditContact}
-									handleDeleteContact={handleDeleteContact}
-								/>
-							</React.Fragment>
-						))}
-					</Box>
+					{"Contract Assigned Contacts: "}
+				</Typography>
+				<Box onClick={()=>{setShowAddContactDialog(true)}} marginTop={"10px"} paddingTop={"5px"} paddingRight={"5px"}>
+					<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
 				</Box>
+			</Box>
+			{contractAssignedContacts?.length !== 0 ? (
+				// <Box
+				// 	sx={{
+				// 		display: 'flex',
+				// 		flexDirection: 'row',
+				// 		justifyContent: 'space-between',
+				// 		alignItems: 'center',
+				// 		marginBottom: '7px',
+				// 		width: '100%',
+				// 	}}
+				// >
+				// 	<Box
+				// 		sx={{
+				// 			fontSize: '15px',
+				// 			fontWeight: 'bold',
+				// 			paddingTop: '10px',
+				// 			paddingLeft: '5px',
+				// 			color: '#3D5CAC',
+				// 			width: '100%',
+				// 		}}
+				// 	>
+						
+				// 		<Grid container sx={{ color: 'black' }} marginY={"13px"}>
+				// 			<Grid item xs={3}>
+				// 				Name
+				// 			</Grid>
+				// 			<Grid item xs={4}>
+				// 				Email
+				// 			</Grid>
+				// 			<Grid item xs={3}>
+				// 				Phone Number
+				// 			</Grid>
+				// 		</Grid>
+				// 		{[...contractAssignedContacts].map((contact, i) => (
+				// 			<React.Fragment key={i}>
+				// 				<ContactListItem
+				// 					contact={contact}
+				// 					handleOpenEditContact={handleOpenEditContact}
+				// 					handleDeleteContact={handleDeleteContact}
+				// 				/>
+				// 			</React.Fragment>
+				// 		))}
+				// 	</Box>
+				// </Box>
+
+				<DataGrid
+					rows={contactRowsWithId}
+					columns={ContactColumns}
+					sx={{
+					// minHeight:"100px",
+					// height:"100px",
+					// maxHeight:"100%",
+					marginTop: "10px",
+					}}
+					autoHeight
+					rowHeight={50} 
+					hideFooter={true}
+				/>
 			) : (
 				<></>
 			)}
@@ -2254,6 +2356,7 @@ return (
 					alignItems: 'center',
 					paddingTop: '10px',
 					marginBottom: '7px',
+					marginTop:"10px",
 					width: '100%',
 				}}
 			>
@@ -2349,6 +2452,8 @@ return (
 					/>
 				</Box>
 			)}
+
+			
 		</>
 	);
 };

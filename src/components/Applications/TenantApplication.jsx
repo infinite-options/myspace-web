@@ -41,6 +41,9 @@ export default function TenantApplication(props) {
 
   const [tenantDocuments, setTenantDocuments] = useState([]);
   const [formattedAddress, setFormattedAddress] = useState("");
+  const [extraUploadDocument, setExtraUploadDocument] = useState([])
+  const [extraUploadDocumentType, setExtraUploadDocumentType] = useState([])
+  const [deleteDocuments, setDeleteDocuments] = useState([])
 
   // useEffect(() => {
   //     console.log("tenantDocuments - ", tenantDocuments);
@@ -82,7 +85,7 @@ export default function TenantApplication(props) {
         const fetchedLease = leaseResponse.data["Lease_Details"].result.filter(
           (lease) => lease.lease_uid === props.lease.lease_uid
         );
-        console.log("----dhyey---- fetchedLease - ", fetchedLease)
+        // console.log("----dhyey---- fetchedLease - ", fetchedLease)
         setLease(fetchedLease);
   
         // Fetch tenant profile information asynchronously
@@ -244,15 +247,55 @@ export default function TenantApplication(props) {
   }, []);
 
   useEffect(() => {
-    formatTenantVehicleInfo();
-    formatTenantAdultOccupants();
-    formatTenantPetOccupants();
-    formatTenantChildOccupants();
-    if (lease.length === 0) {
-      setTenantDocuments(tenantProfile ? JSON.parse(tenantProfile.tenant_documents) : []);
-    } else {
-      setTenantDocuments(lease && lease.length > 0 ? JSON.parse(lease[0]?.lease_documents) : []);
+
+    console.log("---dhyey---- did it here - ", props)
+
+    if(props?.vehicles){
+      setVehicles(props.vehicles)
+    }else{
+      formatTenantVehicleInfo();
     }
+
+    if(props?.adultOccupants){
+      setAdultOccupants(props.adultOccupants)
+    }else{
+      formatTenantAdultOccupants();
+    }
+
+    if(props?.petOccupants){
+      setPetOccupants(props.petOccupants)
+    }else{
+      formatTenantPetOccupants();
+    }
+
+    if(props?.childOccupants){
+      setChildOccupants(props.childOccupants)
+    }else{
+      formatTenantChildOccupants();
+    }
+
+    if(props?.extraUploadDocument){
+      setExtraUploadDocument(props.extraUploadDocument)
+    }
+
+    if(props?.extraUploadDocumentType){
+      setExtraUploadDocumentType(props.extraUploadDocumentType)
+    }
+
+    if(props?.deleteDocuments){
+      setDeleteDocuments(props.deleteDocuments)
+    }
+
+    if(props?.tenantDocuments){
+      setTenantDocuments(props.tenantDocuments)
+    }else{
+      if (lease.length === 0) {
+        setTenantDocuments(tenantProfile ? JSON.parse(tenantProfile.tenant_documents) : []);
+      } else {
+        setTenantDocuments(lease && lease.length > 0 ? JSON.parse(lease[0]?.lease_documents) : []);
+      }
+    }
+
   }, [lease, tenantProfile]);
 
   function getApplicationDate() {
@@ -310,26 +353,91 @@ export default function TenantApplication(props) {
       };
 
       const leaseApplicationData = new FormData();
+
       leaseApplicationData.append("lease_property_id", property.property_uid);
       leaseApplicationData.append("lease_status", "NEW");
       leaseApplicationData.append("lease_assigned_contacts", JSON.stringify([getProfileId()]));
-      leaseApplicationData.append("lease_documents", JSON.stringify(tenantDocuments));
-      if (status === "") {
-        leaseApplicationData.append("lease_adults", tenantProfile?.tenant_adult_occupants);
-        leaseApplicationData.append("lease_children", tenantProfile?.tenant_children_occupants);
-        leaseApplicationData.append("lease_pets", tenantProfile?.tenant_pet_occupants);
-        leaseApplicationData.append("lease_vehicles", tenantProfile?.tenant_vehicle_info);
-      } else {
-        leaseApplicationData.append("lease_adults", lease[0]?.lease_adults);
-        leaseApplicationData.append("lease_children", lease[0]?.lease_children);
-        leaseApplicationData.append("lease_pets", lease[0]?.lease_pets);
-        leaseApplicationData.append("lease_vehicles", lease[0]?.lease_vehicles);
+      const documentsDetails = [];
+      let index = -1
+
+      if(extraUploadDocument && extraUploadDocument?.length !== 0){
+        [...extraUploadDocument].forEach((file, i) => {
+            index++;
+            leaseApplicationData.append(`file_${index}`, file, file.name);
+            const contentType = extraUploadDocumentType[i]?extraUploadDocumentType[i] : "" 
+            const documentObject = {
+                // file: file,
+                fileIndex: index,
+                fileName: file.name,
+                contentType: contentType,
+                // type: file.type,
+            };
+            documentsDetails.push(documentObject);
+        });
+        
       }
+
+      leaseApplicationData.append("lease_documents_details", JSON.stringify(documentsDetails));
+      
+      // console.log("----dhyey ---- leaseApplication payload before passing- ", leaseApplicationData)
+
+      if(tenantDocuments && tenantDocuments.length !== 0){
+        [...tenantDocuments].forEach((file, i) => {
+          index++;
+          // const details = []
+          // console.log(`file_${index}`,file.link)
+          
+          // https://s3-us-west-1.amazonaws.com/io-pm/tenants/350-000010/file_0_20240910221710Z
+
+          // [{"link": "https://s3-us-west-1.amazonaws.com/io-pm/leases/300-000049/file_0_20240910200747Z", "fileType": "application/pdf", "filename": "Sample Document 1.pdf", "contentType": "Drivers License"}]
+         
+          // leaseApplicationData.append(`file_${index}`, file.link);
+          const documentObject = {
+              // file: file,
+              link : file.link,
+              fileType: file.fileType,
+              filename: file.filename,
+              contentType: file.contentType,
+              // type: file.type,
+          };
+          // details.push(documentObject);
+          leaseApplicationData.append(`file_${index}`, JSON.stringify(documentObject));
+      });
+      }
+
+      // console.log("----dhyey ---- leaseApplication payload after passing - ", leaseApplicationData)
+
+      if(deleteDocuments && deleteDocuments?.length !== 0){
+        leaseApplicationData.append("delete_documents", JSON.stringify(deleteDocuments));
+      }
+
+      // leaseApplicationData.append("lease_documents", JSON.stringify(tenantDocuments));
+
+      leaseApplicationData.append("lease_adults", JSON.stringify(adultOccupants));
+      leaseApplicationData.append("lease_children", JSON.stringify(childOccupants));
+      leaseApplicationData.append("lease_pets", JSON.stringify(petOccupants));
+      leaseApplicationData.append("lease_vehicles", JSON.stringify(vehicles));
+
+      // if (status === "") {
+      //   leaseApplicationData.append("lease_adults", tenantProfile?.tenant_adult_occupants);
+      //   leaseApplicationData.append("lease_children", tenantProfile?.tenant_children_occupants);
+      //   leaseApplicationData.append("lease_pets", tenantProfile?.tenant_pet_occupants);
+      //   leaseApplicationData.append("lease_vehicles", tenantProfile?.tenant_vehicle_info);
+      // } else {
+      //   leaseApplicationData.append("lease_adults", lease[0]?.lease_adults);
+      //   leaseApplicationData.append("lease_children", lease[0]?.lease_children);
+      //   leaseApplicationData.append("lease_pets", lease[0]?.lease_pets);
+      //   leaseApplicationData.append("lease_vehicles", lease[0]?.lease_vehicles);
+      // }
 
       leaseApplicationData.append("lease_referred", "[]");
       leaseApplicationData.append("lease_fees", "[]");
       leaseApplicationData.append("lease_application_date", formatDate(date.toLocaleDateString()));
       leaseApplicationData.append("tenant_uid", getProfileId());
+
+      // console.log("----dhyey ---- leaseApplication payload - ", leaseApplicationData)
+      
+
       const leaseApplicationResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "POST",
         body: leaseApplicationData,
@@ -369,13 +477,13 @@ export default function TenantApplication(props) {
       alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
 
       // navigate("/listings");
-      if (props.from === "PropertyInfo") {
-        props.setRightPane({ type: "listings" });
-        props.setReload(prev => !prev);
-      } else {
-        props.setRightPane("");
-        props.setReload(prev => !prev);
-      }
+      // if (props.from === "PropertyInfo") {
+      //   props.setRightPane({ type: "listings" });
+      //   props.setReload(prev => !prev);
+      // } else {
+      //   props.setRightPane("");
+      //   props.setReload(prev => !prev);
+      // }
     }
   }
 
@@ -841,7 +949,7 @@ export default function TenantApplication(props) {
                       }}
                       key={index}
                     >
-                      {occupant.name} {occupant.last_name} | {occupant.relationship} | DOB: {occupant.dob}
+                      {occupant.name} {occupant.last_name} | {occupant.relationship} | DoB: {occupant.dob}
                     </Typography>
                   ))}
               </Grid>
@@ -1014,7 +1122,7 @@ export default function TenantApplication(props) {
                     </Box>
                   </>
                 ))} */}
-                <Documents documents={tenantDocuments} setDocuments={setTenantDocuments} isEditable={false} isAccord={false} customName={"Your Documents"}/>
+                <Documents documents={tenantDocuments} setDocuments={setTenantDocuments} isEditable={false} isAccord={false} customName={"Your Documents"} contractFiles={extraUploadDocument} contractFileTypes={extraUploadDocumentType}/>
               </Grid>
 
               <Box
@@ -1063,7 +1171,7 @@ export default function TenantApplication(props) {
                     display: "flex",
                     width: "45%",
                   }}
-                  onClick={() => props.setRightPane({ type: "tenantApplicationEdit", state: { profileData: tenantProfile, lease_uid: lease.length > 0 ? lease[0].lease_uid : null, setRightPane: props.setRightPane, property: property, from: props.from }, })}
+                  onClick={() => props.setRightPane({ type: "tenantApplicationEdit", state: { profileData: tenantProfile, lease: lease?lease : [], lease_uid: lease.length > 0 ? lease[0].lease_uid : null, setRightPane: props.setRightPane, property: property, from: props.from, tenantDocuments : tenantDocuments, setTenantDocuments : setTenantDocuments, oldVehicles : vehicles, setOldVehicles : setVehicles, adultOccupants : adultOccupants, setAdultOccupants, setAdultOccupants, petOccupants : petOccupants, setPetOccupants : setPetOccupants, childOccupants : childOccupants, setChildOccupants : setChildOccupants, extraUploadDocument : extraUploadDocument, setExtraUploadDocument : setExtraUploadDocument, extraUploadDocumentType : extraUploadDocumentType, setExtraUploadDocumentType : setExtraUploadDocumentType, deleteDocuments : deleteDocuments },})}
                 >
                   <Typography
                     sx={{

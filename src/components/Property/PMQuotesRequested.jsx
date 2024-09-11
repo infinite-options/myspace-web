@@ -17,7 +17,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext, } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from "../../theme/theme";
 import refundIcon from "./refundIcon.png";
@@ -31,6 +31,8 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { makeStyles } from "@material-ui/core/styles";
 import Backdrop from "@mui/material/Backdrop";
 import Documents from "../Leases/Documents";
+
+import PropertiesContext from '../../contexts/PropertiesContext';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -52,14 +54,14 @@ export default function PMQuotesRequested(props) {
   const PMQuotesDetails = props;
   const handleBackClick = props.handleBackClick;
   const classes = useStyles();
+  const { propertyList, allContracts, fetchContracts, returnIndex,  } = useContext(PropertiesContext); 
   
   const [contracts, setContracts] = useState([]);
-  const refreshContracts = props.refreshContracts;  
+  const refreshContracts = fetchContracts;  
   const [refresh, setRefresh] = useState(false);
-  const [loading, setLoading] = useState(true); // New loading state
-  const property = PMQuotesDetails.propertyData;
-  const propertyId = property[PMQuotesDetails.index]?.property_uid;
-  const index = PMQuotesDetails.index;
+  const [loading, setLoading] = useState(true); // New loading state  
+  const property = propertyList;  
+  const propertyId = property[returnIndex]?.property_uid;  
   const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
 
   const statusColor = ["#3D5CAC", "#160449"];
@@ -80,11 +82,11 @@ export default function PMQuotesRequested(props) {
 
   useEffect(() => {    
     
-    const contractsData = props.contracts?.filter(
+    const contractsData = allContracts?.filter(
       (contract) => contract.property_id === propertyId
     );
     setContracts(contractsData);
-  }, [props.contracts]);
+  }, [allContracts]);
 
   function getActiveContracts(contracts) {
     return contracts?.filter((contract) => contract.contract_status === "ACTIVE");
@@ -190,10 +192,7 @@ export default function PMQuotesRequested(props) {
                         fontSize: "10px",
                       }}
                       onClick={async () => {
-                        await handleStatusChange(contract, "CANCELLED");
-                        // setTimeout(() => {
-                        //   setRefresh(!refresh);
-                        // }, 100);
+                        await handleStatusChange(contract, "CANCELLED");                        
                       }}
                     >
                       Cancel
@@ -217,8 +216,7 @@ export default function PMQuotesRequested(props) {
         {activeContracts?.length > 0 ? (
           activeContracts.map((contract, index) => (
             <div key={index}>
-              <DocumentCard data={contract} />
-              {/* <p>{contract.contract_uid}</p> */}
+              <DocumentCard data={contract} />              
             </div>
           ))
         ) : (
@@ -275,8 +273,7 @@ export default function PMQuotesRequested(props) {
         });
     } catch (error) {
       console.error(error);
-    }
-    // setRefresh(!refresh);
+    }    
     setTabStatus(1);    
   }
 
@@ -764,23 +761,10 @@ function DocumentCard(props) {
         data.contract_status === "NEW" ? (
           fees?.map((fee, index) => <FeesTextCard key={index} fee={fee} />)
         ) : fees.length !== 0 ? (
-          <>
-          {/* <Box sx={{marginLeft: '10px', }}>
-            {
-              JSON.parse(data.contract_fees)?.map((fee, index) => (
-                <Typography sx={textStyle}>
-                  <FeesTextCard key={index} fee={fee} />
-                </Typography>
-              ))}
-          </Box> */}
+          <>          
             <FeesDataGrid data={JSON.parse(data?.contract_fees)} />
           </>
-        ) : (
-          // <Box width={'100%'} height={'100px'}>
-          //     <Typography sx={textStyle}>
-          //       <b>No fees</b>
-          //     </Typography>
-          // </Box>
+        ) : (          
           <Box
               sx={{
                 display: 'flex',
@@ -864,7 +848,7 @@ export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee, handle
       renderCell: (params) => (
         <Box>
           <IconButton onClick={(e) => handleEditFee(params.row.id)}>
-            <EditIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
+            <EditIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
           </IconButton>
         </Box>
       ),
@@ -876,7 +860,7 @@ export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee, handle
       renderCell: (params) => (
         <Box>
           <IconButton onClick={(e) => handleDeleteFee(params.row.id, e)}>
-            <DeleteIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
+            <DeleteIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
           </IconButton>
         </Box>
       ),
@@ -937,10 +921,7 @@ export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee, handle
     <DataGrid
       rows={rowsWithId}
       columns={columns}
-      sx={{
-        // minHeight:"100px",
-        // height:"100px",
-        // maxHeight:"100%",
+      sx={{        
         marginTop: "10px",
       }}
       autoHeight
