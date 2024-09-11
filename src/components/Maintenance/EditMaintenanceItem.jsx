@@ -76,6 +76,7 @@ export default function EditMaintenanceItem({setRefersh, setRightPane}) {
 		maintainanceImages: contextmaintainanceImages,
 		maintainanceFavImage: contextmaintainanceFavImage,
 		setEditMaintenanceView,
+		setMaintainanceImages,
 	  } = useMaintenance();
 
 	  if (isMobile) {
@@ -416,6 +417,8 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 
 		console.log('Delete image at index:', JSON.stringify(deletedIcons));
 	};
+
+	
 
 	const handleFavorite = (index) => {
     const updatedFavoriteIcons = new Array(favoriteIcons.length).fill(false);
