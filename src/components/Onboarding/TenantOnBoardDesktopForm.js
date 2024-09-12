@@ -144,6 +144,10 @@ const TenantOnBoardDesktopForm = ({ profileData, setIsSave }) => {
     fetchProfileData();
   }, []);
 
+  useEffect(() => {
+    console.log("ROHIT - 148 - ssn - ", ssn);
+  }, [ssn]);
+
   const saveProfile = async (form) => {
     const profileApi = "/profile";
     const { data } = await axios.put(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`, form, headers);

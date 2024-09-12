@@ -27,8 +27,20 @@ export default function PropertiesList(props) {
   const location = useLocation();
   let navigate = useNavigate();
   const { getProfileId, selectedRole } = useUser();
-  const { propertyList, returnIndex, setReturnIndex, setCurrentPropertyID, setCurrentProperty  } = useContext(PropertiesContext); 
-	console.log("ROHIT - properties from PropertiesContext - ", propertyList);
+  // const { propertyList, returnIndex, setReturnIndex, setCurrentPropertyID, setCurrentProperty  } = useContext(PropertiesContext); 
+
+  const propertiesContext = useContext(PropertiesContext);
+	const {
+	  propertyList: propertyListFromContext,	  
+    returnIndex: returnIndexFromContext,
+    setReturnIndex,
+    setCurrentPropertyID,
+    setCurrentProperty,    	  
+	} = propertiesContext || {};
+  
+	const propertyList = propertyListFromContext || [];		  
+	const returnIndex = returnIndexFromContext || 0;  
+	
 
   // const [propertyList, setPropertyList] = useState([]);
   const [displayedItems, setDisplayedItems] = useState([]);

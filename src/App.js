@@ -6,7 +6,7 @@ import { UserProvider } from "./contexts/UserContext";
 import { OnboardingProvider } from "./contexts/OnboardingContext";
 import { CookiesProvider } from "react-cookie";
 import { MaintenanceProvider } from "./contexts/MaintenanceContext";  // Import the MaintenanceProvider
-
+import { ListsProvider } from "./contexts/ListsContext";
 function App() {
   return (
     <CookiesProvider defaultSetOptions={{ path: "/" }}>
@@ -14,9 +14,11 @@ function App() {
         <OnboardingProvider>
           <SettingsACHContextProvider>
             <MaintenanceProvider> 
-              <BrowserRouter>
-                <Main />
-              </BrowserRouter>
+              <ListsProvider>
+                <BrowserRouter>
+                  <Main />
+                </BrowserRouter>
+              </ListsProvider>
             </MaintenanceProvider>
           </SettingsACHContextProvider>
         </OnboardingProvider>

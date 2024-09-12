@@ -18,11 +18,22 @@ import { ManagementContractProvider } from "../../contexts/ManagementContractCon
 import ManagementContractContext from "../../contexts/ManagementContractContext";
 
 
+
+
 export default function PMQuotesList() {
   // let navigate = useNavigate();  
   const location = useLocation();
+  const { contractRequests, setCurrentContractUID, setCurrentContractPropertyUID, } = useContext(ManagementContractContext); 
   // console.log("In PMQuoteList");
   // console.log("In PMQuoteList property_endpoint_resp: ", location.state?.property_endpoint_resp);
+  console.log("ROHIT - contractRequests from context - ", contractRequests)
+
+  
+  if(location.state?.selectedContractUID && location.state?.selectedContractPropertyUID ){
+    console.log("ROHIT - location.state - ",location.state);
+    setCurrentContractUID(location.state?.selectedContractUID);
+    setCurrentContractPropertyUID(location.state?.selectedContractPropertyUID)
+  }
 
   return (
     <ManagementContractProvider>

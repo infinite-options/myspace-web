@@ -6,24 +6,12 @@ const ManagementContractContext = createContext();
 
 export const ManagementContractProvider = ({ children }) => {
   const { getProfileId } = useUser();
-  const [ dataLoaded, setDataLoaded ] = useState(false);
-  const [ feeBases, setFeeBases ] = useState(null);
+  const [ dataLoaded, setDataLoaded ] = useState(false);  
   const [ defaultContractFees, setDefaultContractFees ] = useState([]);
   const [ allContracts, setAllContracts ] = useState([]);
   const [ currentContractUID, setCurrentContractUID  ] = useState("");
   const [ currentContractPropertyUID, setCurrentContractPropertyUID ] = useState("");
   const [ contractRequests, setContractRequests ] = useState([]);
-
-  const fetchFeeBases = async () => {
-    try {
-        const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
-        const data = await response.json();
-        const bases = data.result.filter( item => item.list_category === "basis").filter(item => (item.list_item != null && item.list_item.trim() !== ""));
-        setFeeBases(bases);
-    } catch (error) {
-        console.error("Error fetching fee bases:", error);
-    }
-  };
 
   const fetchDefaultContractFees = async () => {
     try {
@@ -45,10 +33,7 @@ export const ManagementContractProvider = ({ children }) => {
 
   const fetchContracts = async () => {						
 		  const result = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
-		  const data = await result.json();
-		  // console.log("--debug--", data);
-		  // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === "NEW");
-		  // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === ("NEW"||"SENT"));
+		  const data = await result.json();		  
 	
 		  if (data !== "No records for this Uid") {
 			  setAllContracts(data["result"]);
@@ -65,13 +50,9 @@ export const ManagementContractProvider = ({ children }) => {
     // const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000003`);
 
     try {
-      const jsonData = await response.json();
-      // console.log("Manager Dashboard jsonData: ", jsonData);
-      // NEW PM REQUESTS
+      const jsonData = await response.json();      
       const requests = jsonData?.NewPMRequests?.result;
-      setContractRequests(requests);
-      // setCurrentContractUID(requests[0]?.contract_uid)
-      // setCurrentContractPropertyUID(requests[0]?.property_uid)
+      setContractRequests(requests);      
     } catch (error) {
       console.error(error);
     }
@@ -80,8 +61,7 @@ export const ManagementContractProvider = ({ children }) => {
   useEffect(() => {
     if (!dataLoaded) {
       setDataLoaded(true);      
-      
-      fetchFeeBases();
+            
       fetchDefaultContractFees();
       fetchContracts();
       fetchContractRequests();
@@ -90,8 +70,7 @@ export const ManagementContractProvider = ({ children }) => {
 
   return (
     <ManagementContractContext.Provider 
-      value={{ 
-        feeBases,
+      value={{         
         defaultContractFees,
         allContracts,
         contractRequests,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext, } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import AES from "crypto-js/aes";
@@ -54,6 +54,7 @@ import ChildrenOccupant from "../Leases/ChildrenOccupant";
 import PetsOccupant from "../Leases/PetsOccupant";
 import VehiclesOccupant from "../Leases/VehiclesOccupant";
 import Documents from "../Leases/Documents";
+import ListsContext from "../../contexts/ListsContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -84,6 +85,8 @@ const useStyles = makeStyles((theme) => ({
 export default function TenantOnBoardingForm({ profileData, setIsSave }) {
   console.log("In TenenatOnBoardingForm  - profileData", profileData);
 
+  const { getList, } = useContext(ListsContext)
+  const salaryFrequencies = getList("frequency");	
   const classes = useStyles();
   const [cookies, setCookie] = useCookies(["default_form_vals"]);
   const cookiesData = cookies["default_form_vals"];
@@ -155,20 +158,11 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
 
   const [ errors, setErrors ] = useState({})
 
-  const getListDetails = async () => {
-    try {
-      const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
-      if (!response.ok) {
-        console.log("Error fetching lists data");
-      }
-      const responseJson = await response.json();
-      const relationships = responseJson.result.filter((res) => res.list_category === "relationships");
-      const states = responseJson.result.filter((res) => res.list_category === "states");
-      setRelationships(relationships);
-      setStates(states);
-    } catch (error) {
-      console.log(error);
-    }
+  const getListDetails = () => {    
+    const relationships = getList("relationships");
+    const states = getList("states");
+    setRelationships(relationships);
+    setStates(states);    		
   };
 
   // useEffect(() => {
@@ -182,6 +176,12 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
   // useEffect(() => {
   //   console.log("modifiedData - ", modifiedData);
   // }, [modifiedData]);
+
+  useEffect(() => {
+    console.log("ROHIT - 148 - ssn - ", ssn);
+    console.log("ROHIT - 148 - profileData.tenant_ssn - ", profileData.tenant_ssn);
+    
+  }, [ssn]);
 
   const updateModifiedData = (updatedItem) => {
     setModifiedData((prev) => {
@@ -1388,13 +1388,11 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                   },
                 }}
               >
-                <MenuItem value='Bi-weekly'>Bi-weekly</MenuItem>
-                <MenuItem value='Semi-monthly'>Semi-monthly</MenuItem>
-                <MenuItem value='Hourly'>Hourly</MenuItem>
-                <MenuItem value='Daily'>Daily</MenuItem>
-                <MenuItem value='Weekly'>Weekly</MenuItem>
-                <MenuItem value='Monthly'>Monthly</MenuItem>
-                <MenuItem value='Yearly'>Yearly</MenuItem>
+                {
+									salaryFrequencies?.map( (freq, index) => (
+										<MenuItem key={index} value={freq.list_item}>{freq.list_item}</MenuItem>
+									) )
+								}
               </Select>
             </Grid>
           </Grid>

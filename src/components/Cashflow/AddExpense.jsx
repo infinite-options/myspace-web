@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Paper, Box, Stack, ThemeProvider, FormControl, Select, MenuItem, FormControlLabel, Typography, TextField, IconButton, Checkbox, Button } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import theme from "../../theme/theme";
@@ -12,6 +12,7 @@ import { useUser } from "../../contexts/UserContext";
 // import PropertyData from "../Property/PropertyData";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import ListsContext from "../../contexts/ListsContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,6 +34,9 @@ const AddExpense = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { getProfileId, selectedRole } = useUser();
+  const { getList, } = useContext(ListsContext);	
+	const feeFrequencies = getList("frequency");
+
   const [category, setCategory] = useState("Insurance");
   const [frequency, setFrequency] = useState("Monthly"); // TODO: Monthly and Yearly fees need to be added to the lease in lease_fees
   const [amount, setAmount] = useState("");
@@ -360,10 +364,12 @@ const AddExpense = (props) => {
             <Stack spacing={-2}>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Frequency</Typography>
               <FormControl variant="filled" fullWidth className={classes.root}>
-                <Select defaultValue="One Time" value={frequency} onChange={handleFrequencyChange}>
-                  <MenuItem value="One Time">One Time</MenuItem>
-                  <MenuItem value="Monthly">Monthly</MenuItem>
-                  <MenuItem value="Yearly">Yearly</MenuItem>
+                <Select defaultValue="One Time" value={frequency} onChange={handleFrequencyChange}>                  
+                  {
+                    feeFrequencies?.map( (freq ) => (
+                      <MenuItem key={freq.list_uid} value={freq.list_item}>{freq.list_item}</MenuItem>
+                    ))
+                  }
                 </Select>
               </FormControl>
             </Stack>

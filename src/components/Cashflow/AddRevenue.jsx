@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Paper, Box, Stack, ThemeProvider, FormControl, Select, MenuItem, FormControlLabel, Typography, TextField, IconButton, DialogTitle, Checkbox, Button } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import PropertyListData from "../Property/PropertyListData";
@@ -12,6 +12,7 @@ import axios from "axios";
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import ListsContext from "../../contexts/ListsContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,6 +33,10 @@ const AddRevenue = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const { getProfileId, selectedRole } = useUser();
+  const { getList, } = useContext(ListsContext);	
+	const feeFrequencies = getList("frequency");
+
+
   const [category, setCategory] = useState("Deposits");
   const [frequency, setFrequency] = useState("Monthly");
   const [amount, setAmount] = useState("");
@@ -338,9 +343,11 @@ const AddRevenue = (props) => {
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Frequency</Typography>
               <FormControl variant='filled' fullWidth className={classes.root}>
                 <Select defaultValue='One Time' value={frequency} onChange={handleFrequencyChange}>
-                  <MenuItem value='One Time'>One Time</MenuItem>
-                  <MenuItem value='Monthly'>Monthly</MenuItem>
-                  <MenuItem value='Yearly'>Yearly</MenuItem>
+                  {
+                    feeFrequencies?.map( (freq ) => (
+                      <MenuItem key={freq.list_uid} value={freq.list_item}>{freq.list_item}</MenuItem>
+                    ))
+                  }
                 </Select>
               </FormControl>
             </Stack>

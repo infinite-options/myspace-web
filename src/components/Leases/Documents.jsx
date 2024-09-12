@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Accordion,
   AccordionSummary,
@@ -36,6 +36,8 @@ import { Close } from "@mui/icons-material";
 import axios from 'axios';
 import FilePreviewDialog from "./FilePreviewDialog";
 
+import ListsContext from "../../contexts/ListsContext";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiOutlinedInput-input": {
@@ -48,6 +50,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFileChange, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isAccord=false, contractFiles=[], setContractFiles, contractFileTypes=[], setContractFileTypes, isEditable=true, customName }) => {
+
+  const { getList, } = useContext(ListsContext);	
+
   const [open, setOpen] = useState(false);
   const [currentRow, setcurrentRow] = useState(null);
   const color = theme.palette.form.main;
@@ -82,14 +87,10 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
     fetchContentTypes();
   }, []);
 
-  const fetchContentTypes = async()=>{
-    try {
-      const response = await axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/lists?list_category=content');
-      // console.log(response.data.result)
-      setContentTypes(response.data.result);
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
+  const fetchContentTypes = async()=>{    
+    const contentTypesList = getList("content");    
+    setContentTypes(contentTypesList);
+    
   }
 
   // Handle close 'X' or 'cancle' button

@@ -30,24 +30,16 @@ import {
   Menu,
 } from "@mui/material";
 import theme from "../../theme/theme";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CloseIcon from "@mui/icons-material/Close";
-import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ImageUploader from "../ImageUploader";
-import dataURItoBlob from "../utils/dataURItoBlob";
 import defaultHouseImage from "./defaultHouseImage.png";
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { useUser } from "../../contexts/UserContext";
 import IconButton from "@mui/material/IconButton";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import StateMenuItems from "../StateMenuItems";
-import UtilitySelection from "../UtilitySelector";
-import { DragHandleOutlined } from "@mui/icons-material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 import ImageList from "@mui/material/ImageList";
@@ -59,13 +51,33 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import APIConfig from "../../utils/APIConfig";
 
 import PropertiesContext from '../../contexts/PropertiesContext';
+import ListsContext from "../../contexts/ListsContext";
 
 export default function AddListing(props) {
   const location = useLocation();
   let navigate = useNavigate();
   const { getProfileId } = useUser();
+  const { getList, } = useContext(ListsContext);		
   const { state } = useLocation();
-  const { propertyList, fetchProperties, allContracts, fetchContracts, returnIndex,  } = useContext(PropertiesContext); 
+  // const { propertyList, fetchProperties, allContracts, fetchContracts, returnIndex,  } = useContext(PropertiesContext); 
+  
+  const propertiesContext = useContext(PropertiesContext);
+  const {
+    propertyList: propertyListFromContext,
+    fetchProperties: fetchPropertiesFromContext,
+    allContracts: allContractsFromContext,
+    fetchContracts: fetchContractsFromContext,
+    returnIndex: returnIndexFromContext,
+  } = propertiesContext || {};
+
+  const propertyList = propertyListFromContext || [];
+  const fetchProperties = fetchPropertiesFromContext;  
+  const allContracts = allContractsFromContext || [];
+  const fetchContracts = fetchContractsFromContext;  
+  const returnIndex = returnIndexFromContext || 0;
+  
+
+
 
   let { page, onBackClick } = props;
   const refreshProperties = fetchProperties;
@@ -75,59 +87,7 @@ export default function AddListing(props) {
   const { user, selectedRole, selectRole, Name } = useUser();
   const [showSpinner, setShowSpinner] = useState(false);
   const [ownerId, setOwnerId] = useState(getProfileId());
-  const statesList = [
-    "AL",
-    "AK",
-    "AZ",
-    "AR",
-    "CA",
-    "CO",
-    "CT",
-    "DE",
-    "FL",
-    "GA",
-    "HI",
-    "ID",
-    "IL",
-    "IN",
-    "IA",
-    "KS",
-    "KY",
-    "LA",
-    "ME",
-    "MD",
-    "MA",
-    "MI",
-    "MN",
-    "MS",
-    "MO",
-    "MT",
-    "NE",
-    "NV",
-    "NH",
-    "NJ",
-    "NM",
-    "NY",
-    "NC",
-    "ND",
-    "OH",
-    "OK",
-    "OR",
-    "PA",
-    "RI",
-    "SC",
-    "SD",
-    "TN",
-    "TX",
-    "UT",
-    "VT",
-    "VA",
-    "WA",
-    "WV",
-    "WI",
-    "WY",
-  ];
-
+  const statesList = getList("states");  
   const [address, setAddress] = useState(propertyData.property_address);
   const [city, setCity] = useState(propertyData.property_city);
   const [propertyState, setPropertyState] = useState(propertyData.property_state);
@@ -918,12 +878,11 @@ export default function AddListing(props) {
                   onChange={(e) => setPropertyState(e.target.value)}
                   value={propertyState}
                   renderValue={(value) => (value ? `${value}` : "")}
-                >
-                  {/* <StateMenuItems /> */}
-                  {statesList.map((item) => {
+                >                  
+                  {statesList?.map((item) => {
                     return (
-                      <MenuItem value={item}>
-                        <li>{item}</li>
+                      <MenuItem  key={item.list_uid} value={item.list_item}>
+                        <li>{item.list_item}</li>
                       </MenuItem>
                     );
                   })}

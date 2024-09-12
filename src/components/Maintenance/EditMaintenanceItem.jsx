@@ -647,7 +647,7 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 												},
 											}}
 										>
-											{properties.map((property) => (
+											{properties?.map((property) => (
 												<MenuItem key={property.property_uid} value={property.property_uid}>
 													{property.property_address} {property?.property_unit}
 												</MenuItem>

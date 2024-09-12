@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext, } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import AES from "crypto-js/aes";
@@ -57,6 +57,8 @@ import APIConfig from "../../utils/APIConfig";
 import Documents from "../Leases/Documents";
 // import { add } from "date-fns";
 
+import ListsContext from "../../contexts/ListsContext";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiFilledInput-root": {
@@ -78,6 +80,7 @@ const useStyles = makeStyles((theme) => ({
 export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   console.log("In MaintenanceOnboardingForm  - profileData", profileData);
 
+  const { getList, } = useContext(ListsContext);	
   const classes = useStyles();
   const [cookies, setCookie] = useCookies(["default_form_vals"]);
   const cookiesData = cookies["default_form_vals"];
@@ -146,18 +149,9 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
 
   const [ errors, setErrors ] = useState({})
 
-  const getListDetails = async () => {
-    try {
-      const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
-      if (!response.ok) {
-        console.log("Error fetching lists data");
-      }
-      const responseJson = await response.json();
-      const states = responseJson.result.filter((res) => res.list_category === "states");
-      setStates(states);
-    } catch (error) {
-      console.log(error);
-    }
+  const getListDetails = async () => {        
+    const states = getList("states");
+    setStates(states);    
   };
 
   // useEffect(() => {
@@ -1449,12 +1443,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                       {"Tax ID (EIN or SSN)"}
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
-                  {/* <Select name='tax_id_type' value={taxIDType} size='small' fullWidth onChange={(e) => setTaxIDType(e.target.value)} placeholder='Select Tax ID Type' className={classes.select}>
-                    <MenuItem value='SSN'>SSN</MenuItem>
-                    <MenuItem value='EIN'>EIN</MenuItem>
-                  </Select> */}
-
+                  <Grid item xs={6}>                  
                   <RadioGroup aria-label='taxIDType' name='announctax_id_typeementType' value={taxIDType} onChange={(e) => setTaxIDType(e.target.value)} row>
                     <FormControlLabel 
                       value='SSN'

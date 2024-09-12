@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext, } from 'react';
 import theme from '../../theme/theme';
 import axios from "axios";
 import {
@@ -24,8 +24,11 @@ import { useNavigate, useLocation} from 'react-router-dom';
 import { useUser } from "../../contexts/UserContext";
 import Documents from './Documents';
 
+import ListsContext from '../../contexts/ListsContext';
+
 const EditLease = (props) => {
     const { user, getProfileId } = useUser();
+    const { getList, } = useContext(ListsContext);	
     const navigate = useNavigate();
     const location = useLocation();
     const [contractFileTypes, setContractFileTypes] = useState([]);
@@ -145,15 +148,10 @@ const EditLease = (props) => {
         fetchContentTypes();
     }, []);
     
-    const fetchContentTypes = async()=>{
-        try {
-          const response = await axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/lists?list_category=content');
-          // console.log(response.data.result)
-          setContentTypes(response.data.result);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    }
+  const fetchContentTypes = async()=>{    
+    const contentTypesList = getList("content");    
+    setContentTypes(contentTypesList);    
+  }
 
     const handleNewLease = () => {
 

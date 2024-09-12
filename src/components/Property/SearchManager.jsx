@@ -38,7 +38,18 @@ const SearchManager = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
-  const { propertyList, allContracts, fetchContracts, returnIndex } = useContext(PropertiesContext); 
+  // const { propertyList, allContracts, fetchContracts, returnIndex } = useContext(PropertiesContext); 
+  const propertiesContext = useContext(PropertiesContext);
+	const {
+	  propertyList: propertyListFromContext,	  
+    allContracts: allContractsFromContext,
+    fetchContracts,	  
+	  returnIndex: returnIndexFromContext,
+	} = propertiesContext || {};
+  
+	const propertyList = propertyListFromContext || [];		
+  const allContracts = allContractsFromContext || [];	  
+	const returnIndex = returnIndexFromContext || 0;
   //console.log('----search manager searchManagerState---', searchManagerState)
     
   const index = returnIndex || location.state?.index;
