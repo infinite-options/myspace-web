@@ -32,7 +32,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import defaultHouseImage from '../../Property/defaultHouseImage.png';
 import ChatIcon from '@mui/icons-material/Chat';
 import DescriptionIcon from '@mui/icons-material/Description';
-// import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { isValidDate } from '../../../utils/dates';
@@ -1449,20 +1449,10 @@ if (scrollRef.current) {
 		{
 		  field: "contact_first_name",
 		  headerName: "Name",
-		  flex:1,
-		  renderCell : (params) => {
-			return(
-				<Box
-          			sx={{
-          				cursor: 'pointer', // Change cursor to indicate clickability
-          				color: '#3D5CAC',
-          			}}
-                  	onClick={() => handleOpenEditContact(params.row.id)}
-          		>
-          			{params.row.contact_first_name} {params.row.contact_last_name}
-          		</Box>
-			);
-		  },
+		  flex:1.5,
+		  renderCell : (params) => (
+			<Typography fontSize={"14px"}>{params.row.contact_first_name} {params.row.contact_last_name}</Typography>
+		  ),
 		  renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
 		},
 		{
@@ -1478,13 +1468,25 @@ if (scrollRef.current) {
 		  renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
 		},
 		{
+			field: "editactions",
+			headerName: "",
+			flex: 0.5,
+			renderCell: (params) => (
+			  <Box>
+				<IconButton onClick={() => handleOpenEditContact(params.row.id)}>
+				  <EditIcon sx={{ fontSize: '19px', color: '#3D5CAC'}} />
+				</IconButton>
+			  </Box>
+			),
+		},
+		{
 		  field: "deleteactions",
 		  headerName: "",
 		  flex: 0.5,
 		  renderCell: (params) => (
 			<Box>
 			  <IconButton onClick={(e) => handleDeleteContact(params.row.id, e)}>
-				<DeleteIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
+				<DeleteIcon sx={{ fontSize: '19px', color: '#3D5CAC' }} />
 			  </IconButton>
 			</Box>
 		  ),
@@ -2663,7 +2665,7 @@ function AddContactDialog({ open, handleClose, onAddContact }) {
 }
 
 function EditContactDialog({ open, handleClose, onEditContact, contactIndex, contacts }) {
-	// console.log("contactIndex - ", contactIndex);
+	// console.log("--dhyey-- contactIndex - ", contactIndex, "contacts - ", contacts);
 	const [contactFirstName, setContactFirstName] = useState(contacts[contactIndex].contact_first_name);
 	const [contactLastName, setContactLastName] = useState(contacts[contactIndex].contact_last_name);
 	const [contactEmail, setContactEmail] = useState(contacts[contactIndex].contact_email);
