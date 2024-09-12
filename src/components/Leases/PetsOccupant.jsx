@@ -138,7 +138,8 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
             }
 
         } else {
-            setModifiedData((prev) => [...prev, { key: dataKey, value: [...leasePets, { ...currentRow }] }])
+            const {id, ...newRowwithoutid} = currentRow
+            setModifiedData((prev) => [...prev, { key: dataKey, value: [...leasePets, { ...newRowwithoutid }] }])
             setIsUpdated(true);
         }
     };

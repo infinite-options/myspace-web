@@ -249,7 +249,7 @@ export default function TenantApplication(props) {
 
   useEffect(() => {
 
-    // console.log("---dhyey--- props data for property - ", props.lease)
+    // console.log("---dhyey--- props data for property - ", lease)
     
     if(props?.vehicles){
       setVehicles(props.vehicles)
@@ -950,7 +950,7 @@ export default function TenantApplication(props) {
                       }}
                       key={index}
                     >
-                      {occupant.name} {occupant.last_name} | {occupant.relationship} | DoB: {occupant.dob}
+                      {occupant.name} {occupant.last_name} | {occupant.relationship} | DOB: {occupant.dob}
                     </Typography>
                   ))}
               </Grid>
