@@ -32,6 +32,7 @@ import EditMaintenanceItem from "../Maintenance/EditMaintenanceItem";
 import defaultHouseImage from "../Property/defaultHouseImage.png";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
+import SelectPayment from "../Settings/SelectPayment";
 
 function TenantDashboard(props) {
   // console.log("In Tenant Dashboard");

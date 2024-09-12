@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Box, ThemeProvider, Paper, Button, Typography, Stack, Grid, TextField, IconButton, Divider, Checkbox, Container } from "@mui/material";
+import { Paper, TextField, Radio, RadioGroup, Button, Box, Stack, Typography, FormControlLabel, Grid, FormControl, Divider, Container, ThemeProvider } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import theme from "../../theme/theme";
 import { alpha, makeStyles } from "@material-ui/core/styles";
@@ -20,6 +20,16 @@ import { AccountBalance } from "@mui/icons-material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import CircleIcon from "@mui/icons-material/Circle";
 import documentIcon from "../../images/Subtract.png";
+
+// Payment Icons
+import PayPal from "../../images/PayPal.png";
+import Zelle from "../../images/Zelle.png";
+import Venmo from "../../images/Venmo.png";
+import Chase from "../../images/Chase.png";
+import CreditCardIcon from "../../images/ion_card.png";
+import BankIcon from "../../images/mdi_bank.png";
+import Stripe from "../../images/Stripe.png";
+import ApplePay from "../../images/ApplePay.png";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -50,6 +60,13 @@ export default function Payments(props) {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, getProfileId, roleName, selectedRole } = useUser();
+
+  const [showPaymentMethod, setShowPaymentMethod] = useState(false);
+  const [paymentMethods, setPaymentMethods] = useState([]); 
+
+  const [selectedMethod, setSelectedMethod] = useState('');
+  const [confirmationNumber, setConfirmationNumber] = useState('');
+
 
   const managerCashflowWidgetData = location.state?.managerCashflowWidgetData;
   // const accountBalanceWidgetData = location.state?.accountBalanceWidgetData;
@@ -108,6 +125,10 @@ export default function Payments(props) {
   //   setTotalPaid(total);
   // }
 
+  const handleSelectPaymentClick = () => {
+    setShowPaymentMethod(true);
+  };
+
   function totalMoneyPaidUpdate(moneyPaid) {
     var total = 0;
     for (const item of moneyPaid) {
@@ -157,6 +178,21 @@ export default function Payments(props) {
     setTotalToBeReceived(total);
   }
 
+  useEffect(() => {
+    const fetchPaymentMethods = async () => {
+      try {
+        const response = await axios.get(`${APIConfig.baseURL.dev}/paymentMethod/${getProfileId()}`);
+        const availableMethods = response.data.result; 
+        console.log("testing:",availableMethods);
+        setPaymentMethods(availableMethods);
+      } catch (error) {
+        console.error('Error fetching payment methods:', error);
+      }
+    };
+
+    fetchPaymentMethods();
+  }, []);
+
   const fetchPaymentsData = async () => {
     console.log("In fetchPaymensData");
     setShowSpinner(true);
@@ -200,6 +236,8 @@ export default function Payments(props) {
   const handlePaymentNotesChange = (event) => {
     setPaymentNotes(event.target.value);
   };
+
+  const [showPaymentMethods, setShowPaymentMethods] = useState(false); // New state to control payment methods visibility
 
   // const API_CALL = "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createEasyACHPaymentIntent";
 
@@ -245,6 +283,118 @@ export default function Payments(props) {
   //   },
   // };
 
+  const [balance, setBalance] = useState(parseFloat(paymentData?.balance) || 0);
+  const [convenience_fee, setFee] = useState(0); // Initial fee is 0
+  const [totalBalance, setTotalBalance] = useState(balance + convenience_fee);
+
+  useEffect(() => {
+    setTotalBalance(balance + convenience_fee); // Update total balance whenever balance or fee changes
+  }, [balance, convenience_fee]);
+
+
+  const update_fee = (e) => {
+    let fee = 0;
+    if (e.target.value === "Bank Transfer") {
+      fee = Math.max(parseFloat((balance * 0.008).toFixed(2)), 5);
+    } else if (e.target.value === "Credit Card") {
+      fee = parseFloat((balance * 0.03).toFixed(2));
+    }
+    setFee(fee);
+    setTotalBalance(balance + fee); // Update the total balance
+  };
+  
+  const [stripeDialogShow, setStripeDialogShow] = useState(false);
+  const payment_url = {
+    "Credit Card": "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createPaymentIntent", // Try this first
+    "Bank Transfer": "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createEasyACHPaymentIntent", //WON'T WORK NOW
+    "Zelle": "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/makePayment",
+  };
+  
+  const handleSubmit = async (e) => {
+    // Ensure that totalBalance is correctly used
+    const updatedTotal = parseFloat(totalBalance.toFixed(2));
+    setPaymentData({ ...paymentData, total: updatedTotal });
+  
+    if (selectedMethod === "Bank Transfer") {
+      bank_transfer_handler(); // Handles bank transfer
+    } else if (selectedMethod === "Credit Card") {
+      setStripeDialogShow(true); // Opens stripe dialog for credit card payment
+    } else if (selectedMethod === "Zelle") {
+      submit("Zelle", "Zelle"); // Calls submit function for Zelle payment
+    }
+  };
+  
+
+  const submit = async (paymentIntent, paymentMethod) => {
+    setShowSpinner(true);
+    
+    let payment_request_payload = {
+      pay_purchase_id: paymentData.purchase_uids,
+      pay_fee: convenience_fee,
+      pay_total: totalBalance,
+      payment_notes: paymentData.business_code,
+      pay_charge_id: "stripe transaction key",
+      payment_type: selectedMethod,
+      payment_verify: "Unverified",
+      paid_by: getProfileId(),
+      payment_intent: paymentIntent,
+      payment_method: paymentMethod,
+    };
+  
+    if (paymentMethod === "Zelle") {
+      payment_request_payload.confirmation_number = confirmationNumber;
+    }
+  
+    await fetch(`${APIConfig.baseURL.dev}/makePayment`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payment_request_payload),
+    });
+  
+    navigate('/tenantDashboard');
+    setShowSpinner(false);
+  };
+
+  async function bank_transfer_handler() {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+  
+    setShowSpinner(true);
+    
+    try {
+      const response = await fetch(payment_url[selectedMethod], {
+        method: "POST",
+        headers,
+        body: JSON.stringify(paymentData),
+      });
+  
+      if (response.ok) {
+        navigate("/PaymentConfirmation", { state: { paymentData } });
+      } else {
+        console.error("Post request failed");
+      }
+    } catch (error) {
+      console.error("An error occurred while making the POST request", error);
+    }
+    
+    setShowSpinner(false);
+  }
+
+  const handleChange = (event) => {
+    const selectedValue = event.target.value;
+    setSelectedMethod(selectedValue);
+  
+    // Clear confirmation number if not Zelle
+    if (selectedValue !== "Zelle") {
+      setConfirmationNumber("");
+    }
+  
+    update_fee(event);  // Call to update the convenience fee based on selected method
+  };
+  
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -254,21 +404,6 @@ export default function Payments(props) {
 
         <Container maxWidth='lg' sx={{ paddingTop: "10px", height: "90vh" }}>
           <Grid container spacing={6} sx={{ height: "90%" }}>
-            {/* <Grid item xs={12} md={4}>
-              {
-                selectedRole === "MANAGER" && (
-                  <ManagerCashflowWidget propsMonth={managerCashflowWidgetData?.propsMonth} propsYear={managerCashflowWidgetData?.propsYear} profitsTotal={managerCashflowWidgetData?.profitsTotal} rentsTotal={managerCashflowWidgetData?.rentsTotal} payoutsTotal={managerCashflowWidgetData?.payoutsTotal} graphData={managerCashflowWidgetData?.graphData}/>
-                )
-              }
-
-              {
-                selectedRole === "TENANT" && (
-                  <AccountBalanceWidget selectedProperty={accountBalanceWidgetData?.selectedProperty} selectedLease={accountBalanceWidgetData?.selectedLease} propertyAddr={accountBalanceWidgetData?.propertyAddr} propertyData={accountBalanceWidgetData?.propertyData} total={accountBalanceWidgetData?.total} rentFees={accountBalanceWidgetData?.rentFees} lateFees={accountBalanceWidgetData?.lateFees} utilityFees={accountBalanceWidgetData?.utilityFees} />
-                )
-              }
-              
-            </Grid> */}
-
             <Grid container item xs={12} md={12} columnSpacing={6}>
               <Paper
                 component={Stack}
@@ -276,8 +411,7 @@ export default function Payments(props) {
                 justifyContent='center'
                 style={{
                   justifyContent: "center",
-                  width: "100%", // Take up full screen width
-                  // marginTop: "20px", // Set the margin to 20px
+                  width: "100%",
                   marginBottom: "40px",
                   boxShadow: "none",
                 }}
@@ -344,57 +478,40 @@ export default function Payments(props) {
                       Balance
                     </Typography>
                   </Stack>
-                  <Stack direction='row' justifyContent='center' m={2}>
-                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                      <Grid item xs={6}>
-                        <Typography sx={{ marginLeft: "20px", color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: "26px" }}>
-                          ${total.toFixed(2)}
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Button
-                          disabled={total <= 0}
-                          sx={{
-                            backgroundColor: "#3D5CAC",
-                            borderRadius: "10px",
-                            color: "#FFFFFF",
-                            width: "100%",
-                          }}
-                          onClick={() => {
-                            // paymentData.business_code = paymentNotes;
-                            const updatedPaymentData = { ...paymentData, business_code: paymentNotes };
-                            // console.log("In Payments.jsx and passing paymentData to SelectPayment.jsx: ", paymentData);
-                            // console.log("In Payments.jsx and passing paymentMethodInfo to SelectPayment.jsx: ", paymentMethodInfo);
-
-                            // console.log("navigating to SelectPayment.jsx - accountBalanceWidgetData -  ", accountBalanceWidgetData);
-                            navigate("/selectPayment", {
-                              state: {
-                                paymentData: updatedPaymentData,
-                                total: total,
-                                selectedItems: selectedItems,
-                                paymentMethodInfo: paymentMethodInfo,
-                                managerCashflowWidgetData: managerCashflowWidgetData,
-                                accountBalanceWidgetData: accountBalanceWidgetData,
-                              },
-                            });
-                          }}
-                        >
-                          <Typography
-                            variant='outlined'
-                            style={{
-                              textTransform: "none",
-                              color: "#FFFFFF",
-                              fontSize: "18px",
-                              fontFamily: "Source Sans Pro",
-                              fontWeight: "600",
-                            }}
-                          >
-                            Select Payment
+                    <Stack direction='row' justifyContent='center' m={2}>
+                      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                        <Grid item xs={6}>
+                          <Typography sx={{ marginLeft: "20px", color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: "26px" }}>
+                            ${total.toFixed(2)}
                           </Typography>
-                        </Button>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Button
+                            disabled={total <= 0}
+                            sx={{
+                              backgroundColor: "#3D5CAC",
+                              borderRadius: "10px",
+                              color: "#FFFFFF",
+                              width: "100%",
+                            }}
+                            onClick={() => {setShowPaymentMethod(true);}}
+                          >
+                            <Typography
+                              variant='outlined'
+                              style={{
+                                textTransform: "none",
+                                color: "#FFFFFF",
+                                fontSize: "18px",
+                                fontFamily: "Source Sans Pro",
+                                fontWeight: "600",
+                              }}
+                            >
+                              Select Payment
+                            </Typography>
+                          </Button>
+                        </Grid>
                       </Grid>
-                    </Grid>
-                  </Stack>
+                    </Stack>
 
                   <Stack
                     direction='row'
@@ -409,6 +526,18 @@ export default function Payments(props) {
                   </Stack>
                 </Paper>
 
+                {showPaymentMethod && (
+                  <PaymentMethodSelector
+                  selectedMethod={selectedMethod}
+                  handleChange={handleChange}
+                  confirmationNumber={confirmationNumber}
+                  setConfirmationNumber={setConfirmationNumber}
+                  paymentMethods={paymentMethods}
+                  updateFee={update_fee} 
+                  handleSubmit={handleSubmit}
+                />
+              )}
+
                 {/* What is shown in Balance Details Depends on Role */}
                 {customer_role === "350" ? (
                   <Paper
@@ -422,7 +551,7 @@ export default function Payments(props) {
                     <Stack direction='row' justifyContent='space-between'>
                       <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
                         Balance Details - Money Payable
-                      </Typography>
+                    </Typography>
                       <Typography
                         sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
                       >
@@ -436,7 +565,7 @@ export default function Payments(props) {
                   </Paper>
                 ) : (
                   <Paper
-                    sx={{
+                              sx={{
                       margin: "25px",
                       padding: 20,
                       backgroundColor: theme.palette.primary.main,
@@ -446,7 +575,7 @@ export default function Payments(props) {
                     <Stack direction='row' justifyContent='space-between'>
                       <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
                         Balance Details - Money Payable
-                      </Typography>
+                              </Typography>
                       <Typography
                         sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
                       >
@@ -463,7 +592,7 @@ export default function Payments(props) {
                 {/* Conditional rendering for Money To Be Paid section */}
                 {customer_role !== "350" && (
                   <Paper
-                    sx={{
+                              sx={{
                       margin: "25px",
                       padding: 20,
                       backgroundColor: theme.palette.primary.main,
@@ -473,7 +602,7 @@ export default function Payments(props) {
                     <Stack direction='row' justifyContent='space-between'>
                       <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
                         Money To Be Paid
-                      </Typography>
+                              </Typography>
                       <Typography
                         sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
                       >
@@ -489,7 +618,7 @@ export default function Payments(props) {
 
                 {/* All Roles show Money Paid */}
                 <Paper
-                  sx={{
+                              sx={{
                     margin: "25px",
                     padding: 20,
                     backgroundColor: theme.palette.primary.main,
@@ -515,7 +644,7 @@ export default function Payments(props) {
                 {/* Conditional rendering for Money Received section */}
                 {paymentData.customer_uid.substring(0, 3) !== "350" && (
                   <Paper
-                    sx={{
+                              sx={{
                       margin: "25px",
                       padding: 20,
                       backgroundColor: theme.palette.primary.main,
@@ -525,7 +654,7 @@ export default function Payments(props) {
                     <Stack direction='row' justifyContent='space-between'>
                       <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
                         Money Received
-                      </Typography>
+                              </Typography>
                       <Typography
                         sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
                       >
@@ -542,7 +671,7 @@ export default function Payments(props) {
                 {/* Conditional rendering for Money To Be Received section */}
                 {paymentData.customer_uid.substring(0, 3) !== "350" && (
                   <Paper
-                    sx={{
+                      sx={{
                       margin: "25px",
                       padding: 20,
                       backgroundColor: theme.palette.primary.main,
@@ -573,6 +702,162 @@ export default function Payments(props) {
     </>
   );
 }
+
+function PaymentMethodSelector({
+  selectedMethod,
+  handleChange,
+  confirmationNumber,
+  setConfirmationNumber,
+  paymentMethods,
+  handleSubmit,
+
+}) {
+  return (
+    <Paper
+      style={{
+        margin: "25px",
+        padding: "20px",
+        backgroundColor: "#FFFFFF",
+      }}
+    >
+      <Typography sx={{ color: "#3D5CAC", fontWeight: 800, fontSize: "24px" }}>
+        Payment Methods
+      </Typography>
+      <Divider light />
+      <FormControl component="fieldset">
+        <RadioGroup aria-label="paymentMethod" name="paymentMethod" value={selectedMethod} onChange={handleChange}>
+          {/* Bank Transfer */}
+          <FormControlLabel
+            value="Bank Transfer"
+            control={
+              <Radio
+                sx={{
+                  color: selectedMethod === "Bank Transfer" ? "#3D5CAC" : "#000000",
+                  "&.Mui-checked": {
+                    color: "#3D5CAC",
+                  },
+                }}
+              />
+            }
+            label={
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <img src={BankIcon} alt="Bank Transfer" style={{ marginRight: "8px", height: "24px" }} />
+                Bank Transfer
+              </div>
+            }
+          />
+
+          {/* Credit Card */}
+          <FormControlLabel
+            value="Credit Card"
+            control={
+              <Radio
+                sx={{
+                  color: selectedMethod === "Credit Card" ? "#3D5CAC" : "#000000",
+                  "&.Mui-checked": {
+                    color: "#3D5CAC",
+                  },
+                }}
+              />
+            }
+            label={
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <img src={CreditCardIcon} alt="Credit Card" style={{ marginRight: "8px", height: "24px" }} />
+                Credit Card
+              </div>
+            }
+          />
+
+          {/* Zelle with Confirmation Number */}
+          <FormControlLabel
+            value="Zelle"
+            control={
+              <Radio
+                sx={{
+                  color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000",
+                  "&.Mui-checked": {
+                    color: "#3D5CAC",
+                  },
+                }}
+              />
+            }
+            label={
+              <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
+                <img src={Zelle} alt="Zelle" style={{ marginRight: "8px", height: "24px" }} />
+                <Typography sx={{ color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000" }}>
+                  Zelle
+                </Typography>
+                {selectedMethod === "Zelle" && (
+                  <TextField
+                    id="confirmation-number"
+                    label="Confirmation Number"
+                    variant="outlined"
+                    size="small"
+                    value={confirmationNumber}
+                    onChange={(e) => setConfirmationNumber(e.target.value)}
+                    sx={{
+                      marginLeft: "10px",
+                      input: { color: "#000000" },
+                      "& .MuiOutlinedInput-root": {
+                        "& fieldset": { borderColor: "#000000" },
+                        "&.Mui-focused fieldset": { borderColor: "#3D5CAC" },
+                      },
+                    }}
+                    InputLabelProps={{
+                      shrink: true,
+                      style: { color: "#000000" },
+                    }}
+                  />
+                )}
+              </div>
+            }
+          />
+
+          {/* Venmo */}
+          <FormControlLabel
+            value="Venmo"
+            control={
+              <Radio
+                sx={{
+                  color: selectedMethod === "Venmo" ? "#3D5CAC" : "#000000",
+                  "&.Mui-checked": {
+                    color: "#3D5CAC",
+                  },
+                }}
+              />
+            }
+            label={
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <img src={Venmo} alt="Venmo" style={{ marginRight: "8px", height: "24px" }} />
+                Venmo
+              </div>
+            }
+          />
+          {/* Add other payment methods similarly */}
+        </RadioGroup>
+      </FormControl>
+      {selectedMethod && (
+        <Box sx={{ textAlign: "center", marginTop: "20px" }}>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: "#3D5CAC",
+              color: "#FFFFFF",
+              "&:hover": {
+                backgroundColor: "#2B4A94",
+              },
+            }}
+            onClick={handleSubmit}
+            disabled={selectedMethod === "Zelle" && !confirmationNumber}
+          >
+            Make Payment
+          </Button>
+        </Box>
+      )}
+    </Paper>
+  );
+}
+
 
 function BalanceDetailsTable(props) {
   // console.log("In BalanceDetailTable", props);
