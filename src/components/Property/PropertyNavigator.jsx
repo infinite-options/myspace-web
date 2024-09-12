@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext, } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -71,14 +71,11 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { CollectionsBookmarkRounded } from "@mui/icons-material";
-//const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_status !== "REFUSED" ? "#778DC5" : "#874499") : "#A52A2A");
+import PropertiesContext from '../../contexts/PropertiesContext';
 
 const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_status !== "REFUSED" ? "#778DC5" : "#874499") : "#A52A2A");
 
-export default function PropertyNavigator({
-  index,
-  propertyList,
-  allRentStatus,
+export default function PropertyNavigator({  
   rawPropertyData,
   contracts,
   isDesktop = true,
@@ -101,9 +98,10 @@ export default function PropertyNavigator({
   // console.log("props contracts", contracts);
   const navigate = useNavigate();
   const { getProfileId, isManager, roleName, selectedRole } = useUser();
+  const { propertyList, allRentStatus, allContracts, returnIndex, setReturnIndex  } = useContext(PropertiesContext); 
 
   const [propertyData, setPropertyData] = useState(propertyList || []);
-  const [currentIndex, setCurrentIndex] = useState(index !== undefined ? index : 0);
+  const [currentIndex, setCurrentIndex] = useState(returnIndex !== undefined ? returnIndex : 0);
   const [property, setProperty] = useState(propertyList ? propertyList[currentIndex] : null);
   const { property_uid } = property || { property_uid: null };
   const [currentId, setCurrentId] = useState(property_uid);
@@ -147,21 +145,17 @@ export default function PropertyNavigator({
       // console.log("Error fetching owner contacts: ", error);
     }
   };
+  
 
-  //   const fetchApplianceList = async () => {
-  //     try {
-  //         const response = await fetch(`${APIConfig.baseURL.dev}/lists?list_category=appliances`);
-  //         const data = await response.json();
-  //         const validAppliances = data.result.filter(item => item.list_item.trim() !== "");
-  //         setApplianceList(validAppliances);
-  //     } catch (error) {
-  //         console.error("Error fetching appliances:", error);
-  //     }
-  // };
+  // useEffect(() => {
+  //   console.log("PropertyNavigator - allContracts - ", allContracts);
+  // }, [allContracts]);
 
-  useEffect(() => {
-    console.log("PropertyNavigator - props.contracts - ", contracts);
-  }, [contracts]);
+  // useEffect(() => {
+  //   setCurrentIndex(returnIndex !== undefined ? returnIndex : 0);
+  // }, [returnIndex]);
+
+  
 
   useEffect(() => {
     getDataFromAPI();
@@ -169,33 +163,25 @@ export default function PropertyNavigator({
     getApplianceCategories();
   }, []);
 
-  useEffect(() => {
-    //console.log("appliances - ", appliances);
-  }, [appliances]);
+  // useEffect(() => {
+  //   console.log("appliances - ", appliances);
+  // }, [appliances]);
 
-  useEffect(() => {
-    // console.log("currentApplRow - ", currentApplRow);
-  }, [currentApplRow]);
+  // useEffect(() => {
+  //   console.log("currentApplRow - ", currentApplRow);
+  // }, [currentApplRow]);
 
-  useEffect(() => {
-    // console.log("modifiedApplRow - ", modifiedApplRow);
-  }, [modifiedApplRow]);
+  // useEffect(() => {
+  //   console.log("modifiedApplRow - ", modifiedApplRow);
+  // }, [modifiedApplRow]);
 
-  useEffect(() => {
-    // console.log("PropertyNavigator - propertyRentStatus - ", propertyRentStatus);
-  }, [propertyRentStatus]);
+  // useEffect(() => {
+  //   console.log("PropertyNavigator - propertyRentStatus - ", propertyRentStatus);
+  // }, [propertyRentStatus]);
 
-  useEffect(() => {
-    // console.log("PropertyNavigator - currentId - ", currentId);
-  }, [currentId]);
-
-  //const handleOpen = () => setOpen(true);
-  //const handleClose = () => setOpen(false);
-
-  // Parse property images once outside the component
-  //const parsedPropertyImages = propertyData[currentIndex].property_images ? JSON.parse(propertyData[currentIndex].property_images) : [];
-  // console.log('parsedImages:', parsedPropertyImages);
-  // console.log('parsedImages.length:', parsedPropertyImages.length);
+  // useEffect(() => {
+  //   console.log("PropertyNavigator - currentId - ", currentId);
+  // }, [currentId]);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -223,7 +209,7 @@ export default function PropertyNavigator({
 
   const [activeStep, setActiveStep] = useState(0);
   const [showSpinner, setShowSpinner] = useState(false);
-  const [contractsData, setContractsData] = useState(contracts);
+  const [contractsData, setContractsData] = useState(allContracts);
   const [activeContracts, setActiveContracts] = useState([]);
   const [contractsNewSent, setContractsNewSent] = useState(0);
   const [maintenanceReqData, setMaintenanceReqData] = useState([{}]);
@@ -262,36 +248,20 @@ export default function PropertyNavigator({
       headerName: "Status",
       flex: 1,
     },
-  ];
-
-  // function getPropertyList(data) {
-  //   const propertyList = data["Property"].result;
-  //   const applications = data["Applications"].result;
-  //   const appsMap = new Map();
-  //   applications.forEach((a) => {
-  //     const appsByProperty = appsMap.get(a.property_uid) || [];
-  //     appsByProperty.push(a);
-  //     appsMap.set(a.property_uid, appsByProperty);
-  //   });
-  //   return propertyList.map((p) => {
-  //     p.applications = appsMap.get(p.property_uid) || [];
-  //     p.applicationsCount = [...p.applications].filter((a) => a.lease_status === "NEW").length;
-  //     return p;
-  //   });
-  // }
+  ];  
 
   useEffect(() => {
     setPropertyData(propertyList || []);
-    const nextIndex = index !== undefined ? index : 0;
+    const nextIndex = returnIndex !== undefined ? returnIndex : 0;
     setCurrentIndex(nextIndex);
     const nextId = propertyList && propertyList[nextIndex] ? propertyList[nextIndex].property_uid : null;
     setCurrentId(nextId);
     setProperty(propertyList && propertyList[nextIndex]);
     const parsedPropertyImages = propertyList && propertyList[nextIndex] && propertyList[nextIndex].property_images ? JSON.parse(propertyList[nextIndex].property_images) : [];
     setImages(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
-    setContractsData(contracts);
-    console.log("ROHIT - 294 - parsedPropertyImages - ", parsedPropertyImages);
-    console.log("ROHIT - 294 - propertyList[nextIndex].property_favorite_image - ", propertyList[nextIndex]?.property_favorite_image);
+    setContractsData(allContracts);
+    console.log("parsedPropertyImages - ", parsedPropertyImages);
+    console.log("propertyList[nextIndex].property_favorite_image - ", propertyList[nextIndex]?.property_favorite_image);
     let favImageIndex = null;
     if (propertyList && propertyList[nextIndex] && propertyList[nextIndex].property_favorite_image) {
       favImageIndex = parsedPropertyImages.findIndex((url) => url === propertyList[nextIndex].property_favorite_image);
@@ -301,7 +271,7 @@ export default function PropertyNavigator({
     } else {
       setActiveStep(0);
     }
-  }, [index, propertyList]);
+  }, [returnIndex, propertyList]);
 
   useEffect(() => {
     if (propertyData && propertyData[currentIndex]) {
@@ -309,31 +279,9 @@ export default function PropertyNavigator({
       // console.log("setting propertyId - ", propertyData[currentIndex]);
       // console.log("setting propertyId - ", propertyData[currentIndex].property_uid);
       setPropertyId(propertyData[currentIndex].property_uid);
-
-      //   const getContractsForOwner = async () => {
-      //     try {
-      //       const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
-      //       // const response = await fetch(`${APIConfig.baseURL.dev}/contracts/600-000003`);
-      //       if (!response.ok) {
-      //         console.log('Error fetching contracts data');
-      //       }
-      //       const contractsResponse = await response.json();
-      //       var count = 0;
-      //       const contracts = contractsResponse.result.filter((contract) => contract.property_id === propertyId);
-      //       contracts.forEach((contract) => {
-      //         if (contract.contract_status === 'SENT' || contract.contract_status === 'NEW') {
-      //           count++;
-      //         }
-      //       });
-      //       setContractsNewSent(count);
-      //       setContractsData(contracts);
-      //     } catch (error) {
-      //       console.log(error);
-      //     }
-      //   };
-      //   getContractsForOwner();
+      
       var count = 0;
-      const filtered = contracts?.filter((contract) => contract.property_id === propertyId);
+      const filtered = allContracts?.filter((contract) => contract.property_id === propertyId);
       const active = filtered?.filter((contract) => contract.contract_status === "ACTIVE");
       // console.log("322 - PropertyNavigator - filtered contracts - ", filtered);
       filtered.forEach((contract) => {
@@ -343,7 +291,7 @@ export default function PropertyNavigator({
       });
       // console.log("PropertyNavigator - contract count - ", count);
       setContractsNewSent(count);
-      setContractsData(contracts);
+      setContractsData(allContracts);
       setActiveContracts(active);
 
       const rentDetails = getRentStatus();
@@ -369,7 +317,7 @@ export default function PropertyNavigator({
         setAppliances([]);
       }
     }
-  }, [currentIndex, propertyId, allRentStatus, index, propertyList, contracts, propertyData]);
+  }, [currentIndex, propertyId, allRentStatus, returnIndex, propertyList, allContracts, propertyData]);
   // }, [currentIndex, propertyId, allRentStatus]);
 
   const tenant_detail = property && property.lease_start && property.tenant_uid ? `${property.tenant_first_name} ${property.tenant_last_name}` : "No Tenant";
@@ -378,22 +326,6 @@ export default function PropertyNavigator({
     tenant_detail === "No Tenant" && manager_detail === "No Manager" ? theme.typography.common.gray : theme.typography.common.blue
   );
 
-  //   useEffect(() => {
-  //     let profileId = getProfileId();
-  //     // console.log('getProfileID', getProfileId());
-  //     if (profileId.startsWith('600')) {
-  //       maintenanceManagerDataCollectAndProcess(
-  //         setMaintenanceReqData,
-  //         setShowSpinner,
-  //         setDisplayMaintenanceData,
-  //         profileId
-  //       );
-  //     } else if (profileId.startsWith('110')) {
-  //       maintenanceOwnerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, profileId);
-  //     } else if (profileId.startsWith('200')) {
-  //       maintenanceOwnerDataCollectAndProcess(setMaintenanceReqData, setShowSpinner, profileId);
-  //     }
-  //   }, [currentIndex, propertyId]);
 
   let dashboard_id = getProfileId();
   useEffect(() => {
@@ -415,155 +347,9 @@ export default function PropertyNavigator({
     };
     fetchDashboardData();
   }, [dashboard_id]);
+ 
 
-  // function getColorStatusBasedOnSelectedRole() {
-  //   if (role === "Manager") {
-  //     return theme.colorStatusPMO;
-  //   } else if (role === "Owner") {
-  //     return theme.colorStatusO;
-  //   } else if (role === "Maintenance") {
-  //     return theme.colorStatusMM;
-  //   } else if (role === "PM Employee") {
-  //     return theme.colorStatusPMO;
-  //   } else if (role === "Maintenance Employee") {
-  //     return theme.colorStatusMM;
-  //   } else if (role === "Tenant") {
-  //     return theme.colorStatusTenant;
-  //   }
-  // }
-
-  // const handleOwnerClick = (ownerData) => {
-  //   navigate("/ownerContactDetailsHappinessMatrix", {
-  //     // navigate(`/ownerContactTest`, {
-  //     state: {
-  //       ownerUID: ownerData,
-  //       navigatingFrom: "PropertyNavigator",
-  //       index: index,
-  //       happinessMatrixData: dataforhappiness,
-  //       happinessData: happinessData,
-  //       contactDetail: contactDetails,
-  //     },
-  //   });
-  // };
-
-  // function handleOnClickNavigateToMaintenance(row) {
-  //   const role = roleName();
-  //   // console.log(role);
-  //   let status = "NEW REQUEST";
-  //   // console.log('initial Status: ', status);
-  //   // console.log('handleOnClickNavigateToMaintenance');
-  //   // console.log('row', row);
-  //   // console.log('New data: ', property.maintenance);
-  //   // console.log(
-  //   //  'maintenance_request_index_new',
-  //   //  property.maintenance.findIndex((item) => item.maintenance_request_uid === row.id)
-  //   // );
-
-  //   // console.log('Row: ', row);
-  //   // console.log('Row1: ', row.row);
-  //   // console.log('Row2: ', row.row.maintenance_status);
-
-  //   if (role === "Manager") {
-  //     // These maitenance_status fields work for a Property Manager.  Need to make this Role Specific
-  //     status = row.row.maintenance_status;
-  //     // console.log('Manager status', status);
-
-  //     if (status === "NEW" || status === "INFO") {
-  //       status = "NEW REQUEST";
-  //     } else if (status === "PROCESSING") {
-  //       status = "QUOTES REQUESTED";
-  //     } else if (status === "CANCELLED") {
-  //       status = "COMPLETED";
-  //     }
-  //   }
-
-  //   if (role === "Owner") {
-  //     // Owner Status
-  //     status = row.row.maintenance_request_status;
-  //     // console.log('Owner status', status);
-
-  //     if (status === "NEW") {
-  //       status = "NEW REQUEST";
-  //     } else if (status === "INFO") {
-  //       status = "INFO REQUESTED";
-  //     }
-  //   }
-
-  //   try {
-  //     if (!isDesktop) {
-  //       navigate("/maintenance/detail", {
-  //         state: {
-  //           maintenance_request_index: maintenanceReqData[status].findIndex((item) => item.maintenance_request_uid === row.id), // index in the status array
-  //           status: status,
-  //           maintenanceItemsForStatus: maintenanceReqData[status],
-  //           allMaintenanceData: maintenanceReqData,
-  //           fromProperty: true,
-  //           index: currentIndex,
-  //           isDesktop: isDesktop,
-  //         },
-  //       });
-  //     } else {
-  //       navigate("/ownerMaintenance", {
-  //         state: {
-  //           maintenance_request_index: maintenanceReqData[status].findIndex((item) => item.maintenance_request_uid === row.id), // index in the status array
-  //           status: status,
-  //           maintenanceItemsForStatus: maintenanceReqData[status],
-  //           allMaintenanceData: maintenanceReqData,
-  //           fromProperty: true,
-  //           index: currentIndex,
-  //           propertyId: propertyId,
-  //         },
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //     alert("Error navigating to maintenance detail", error);
-  //   }
-  // }
-
-  // function displayTopMaintenanceItem() {
-  //   const colorStatus = getColorStatusBasedOnSelectedRole();
-  //   if (property && property.maintenanceCount > 0) {
-  //     // console.log("Passed Data ", property.maintenance); // This is the same as maintenanceData
-  //     return (
-  //       <DataGrid
-  //         rows={property.maintenance}
-  //         columns={maintenanceColumns}
-  //         disableColumnMenu={!isDesktop}
-  //         initialState={{
-  //           pagination: {
-  //             paginationModel: {
-  //               pageSize: 5,
-  //             },
-  //           },
-  //         }}
-  //         getRowId={(row) => row.maintenance_request_uid}
-  //         pageSizeOptions={[5]}
-  //         onRowClick={(row) => {
-  //           // console.log("Row =", row);
-  //           handleOnClickNavigateToMaintenance(row);
-  //         }}
-  //       />
-  //     );
-  //   } else {
-  //     return "No Open Maintenance Tickets";
-  //   }
-  // }
-
-  //   function numberOfMaintenanceItems(maintenanceItems) {
-  //     if (maintenanceItems && maintenanceItems.length > 0) {
-  //       return maintenanceItems.filter((mi) => !!mi.maintenance_request_uid).length;
-  //     } else {
-  //       return 0;
-  //     }
-  //   }
-
-  function navigateToMaintenanceAccordion() {
-    // console.log("click to maintenance accordion for property")
-    navigate("/maintenance");
-
-    // TODO: Need to send props to /maintenance to navigate to correct tab and item
-  }
+  
 
   const handleNextCard = () => {
     let nextIndex = (currentIndex + 1) % (propertyData ? propertyData.length : 1);
@@ -602,44 +388,7 @@ export default function PropertyNavigator({
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  // const handleTenantChange = (index) => {
-  //   if (property) {
-
-  //   }
-  // }
-
-  // const handleManagerChange = (index) => {
-  //   if (property && property.business_uid) {
-  //     /* navigate('/managerDetails', {
-  //       state: {
-  //         ownerId: property.owner_uid,
-  //         managerBusinessId: property.business_uid,
-  //         managerData: property,
-  //         propertyData: propertyData,
-  //         index: currentIndex,
-  //         isDesktop: isDesktop,
-  //       },
-  //     }); */
-  //     const state = {
-  //       ownerId: property.owner_uid,
-  //       managerBusinessId: property.business_uid,
-  //       managerData: property,
-  //       propertyData: propertyData,
-  //       index: currentIndex,
-  //       isDesktop: isDesktop,
-  //     };
-  //     //console.log("---inside prop nav state---", state);
-  //     setManagerDetailsState(state);
-  //     handleViewManagerDetailsClick();
-  //   } else {
-  //     // navigate('/searchManager', { state: { index: currentIndex, propertyData, isDesktop } });
-  //     const state = { index: currentIndex, propertyData, isDesktop };
-  //     //console.log('inside prop nav----', state);
-  //     onShowSearchManager(state);
-  //   }
-  // };
+  };  
 
   const handleManagerChange = (index) => {
     if (property && property.business_uid) {
@@ -655,11 +404,7 @@ export default function PropertyNavigator({
     }
   };
 
-  const handleAppClick = (index) => {
-    /* navigate('/tenantApplicationNav', {
-			state: { index: index, propertyIndex: currentIndex, property: property, isDesktop: isDesktop },
-		}); */
-
+  const handleAppClick = (index) => {    
     handleViewApplication(index);
     const state = { index: index, propertyIndex: currentIndex, property: property, isDesktop: isDesktop };
     // setTenantAppNavState(state);
@@ -769,9 +514,7 @@ export default function PropertyNavigator({
       headerName: "Late Fees",
       sortable: isDesktop,
       flex: 1,
-      renderCell: (params) => {
-        // return <Box sx={{ width: '100%', color: '#3D5CAC' }}>{params.value}</Box>;
-        // return <Box sx={{ width: '100%', color: '#3D5CAC' }}>{params.row.lf_pur_amount_due}</Box>;
+      renderCell: (params) => {        
         return <Box sx={{ width: "100%", color: getLateFeesColor(params.row) }}>{params.row.lf_pur_amount_due}</Box>;
       },
     },
@@ -792,36 +535,7 @@ export default function PropertyNavigator({
       renderCell: (params) => {
         return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
       },
-    },
-    // {
-    //   field: "pur_description",
-    //   headerName: "pur_description",
-    //   sortable: isDesktop,
-    //   flex: 2,
-    //   renderCell: (params) => {
-    //     return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
-    //   },
-    // },
-
-    // {
-    //   field: "rent_detail_index",
-    //   headerName: "rent_detail_index",
-    //   sortable: isDesktop,
-    //   flex: 3,
-    //   renderCell: (params) => {
-    //     return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
-    //   },
-    // },
-
-    // {
-    //   field: "property_uid",
-    //   headerName: "property_uid",
-    //   sortable: isDesktop,
-    //   flex: 1,
-    //   renderCell: (params) => {
-    //     return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
-    //   },
-    // },
+    },    
   ];
 
   const handleEditClick = async (row) => {
@@ -878,9 +592,7 @@ export default function PropertyNavigator({
         // console.log(`Key: ${key}`);
 
         applianceFormData.append(key, appliance[key]);
-      });
-      // applianceFormData.append('appiliance_uid', appliance.uid);
-
+      });      
       // console.log(" editOrUpdateProfile - profileFormData - ");
       // for (var pair of profileFormData.entries()) {
       //   console.log(pair[0]+ ', ' + pair[1]);
@@ -932,41 +644,6 @@ export default function PropertyNavigator({
     }
   };
 
-  //     axios
-  //       .post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
-  //       .then((response) => {
-  //         // console.log("Data updated successfully", response);
-  //         // showSnackbar("Your profile has been successfully updated.", "success");
-  //         // handleUpdate();
-  //         console.log("Appliance befor", appliance);
-  //         console.log("applianceUIDToCategoryMap is %%", applianceUIDToCategoryMap);
-  //         const applianceCategory = applianceUIDToCategoryMap[appliance.appliance_type];
-  //         console.log("Appliance is $$", applianceCategory);
-  //         const newApplianceUID = response?.data?.appliance_uid;
-  //         if (newApplianceUID) {
-  //           setAppliances([...appliances, { ...appliance, appliance_uid: newApplianceUID }]);
-  //         }
-
-  //         setShowSpinner(false);
-  //         console.log("Appliance after", appliance);
-  //       })
-  //       .catch((error) => {
-  //         setShowSpinner(false);
-  //         // showSnackbar("Cannot update your profile. Please try again", "error");
-  //         if (error.response) {
-  //           console.log(error.response.data);
-  //         }
-  //       });
-  //     setShowSpinner(false);
-  //     setSelectedImageList([]);
-  //     // setModifiedData([]);
-  //   } catch (error) {
-  //     // showSnackbar("Cannot update the lease. Please try again", "error");
-  //     console.log("Cannot Update Appliances", error);
-  //     setShowSpinner(false);
-  //   }
-  // };
-
   const getAppliancesChanges = () => {
     const changes = {};
 
@@ -1007,18 +684,7 @@ export default function PropertyNavigator({
       }
 
       const applianceFormData = new FormData();
-
-      // Object.keys(appliance).forEach((key) => {
-      //   // console.log(`Key: ${key}`);
-
-      //   applianceFormData.append(key, changedFields[key]);
-      // });
-      // applianceFormData.append('appiliance_uid', appliance.uid);
-
-      // console.log(" editOrUpdateProfile - profileFormData - ");
-      // for (var pair of profileFormData.entries()) {
-      //   console.log(pair[0]+ ', ' + pair[1]);
-      // }
+      
       if (imagesTobeDeleted.length > 0) {
         let updatedImages = currentApplRow.appliance_images;
         updatedImages = updatedImages.filter((image) => !imagesTobeDeleted.includes(image));
@@ -1030,14 +696,11 @@ export default function PropertyNavigator({
       applianceFormData.append("appliance_favorite_image", favImage);
       console.log(favImage);
       let i = 0;
-      for (const file of selectedImageList) {
-        // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+      for (const file of selectedImageList) {        
         let key = `img_${i++}`;
-        if (file.file !== null) {
-          // newProperty[key] = file.file;
+        if (file.file !== null) {          
           applianceFormData.append(key, file.file);
-        } else {
-          // newProperty[key] = file.image;
+        } else {          
           applianceFormData.append(key, file.image);
         }
         if (file.coverPhoto) {
@@ -1059,8 +722,7 @@ export default function PropertyNavigator({
 
       axios
         .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
-        .then((response) => {
-          // Update the appliance in the state directly after successful edit
+        .then((response) => {          
           setAppliances((prevAppliances) => {
             const index = prevAppliances.findIndex((item) => item.appliance_uid === appliance.appliance_uid);
             if (index !== -1) {
@@ -1071,11 +733,10 @@ export default function PropertyNavigator({
               return prevAppliances;
             }
           });
-
-          // Optionally close the dialog and reset states
+          
           setShowSpinner(false);
           setSelectedImageList([]);
-          handleClose(); // Close the dialog after successful edit
+          handleClose(); 
         })
         .catch((error) => {
           setShowSpinner(false);
@@ -1090,8 +751,7 @@ export default function PropertyNavigator({
       // showSnackbar("Cannot update the lease. Please try again", "error");
       // console.log("Cannot Update Appliances", error);
       setShowSpinner(false);
-    }
-    // window.location.reload();
+    }    
   };
 
   const handleAddAppln = () => {
@@ -1100,15 +760,10 @@ export default function PropertyNavigator({
 
     setError(newError);
     if (Object.keys(newError).length === 0) {
-      if (isEditing) {
-        // setAppliances(appliances.map((appliance) => (appliance.appliance_uid === currentApplRow.appliance_uid ? currentApplRow : appliance)));
-        // editOrUpdateAppliance(currentApplRow)
-
-        // editAppliance(modifiedApplRow)
+      if (isEditing) {        
         editAppliance(currentApplRow);
-      } else {
-        // setAppliances([...appliances, { ...currentApplRow, appliance_uid: uuidv4() }]);
-        console.log("---currentApplRow---", currentApplRow);
+      } else {        
+        // console.log("---currentApplRow---", currentApplRow);
         addAppliance(currentApplRow);
       }
       handleClose();
@@ -1123,8 +778,7 @@ export default function PropertyNavigator({
 
   const getApplianceCategories = async () => {
     try {
-      const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
-      //const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
+      const response = await fetch(`${APIConfig.baseURL.dev}/lists`);      
       if (!response.ok) {
         console.log("Error fetching lists data");
       }
@@ -1257,8 +911,7 @@ export default function PropertyNavigator({
       console.log("Favorite Icons Updated:", newFavoriteIcons);
     }
   }, [currentApplRow, propertyData, currentIndex]);
-
-  // Logging to ensure the correct values are being set
+  
   console.log("Favorite Icons:", favoriteIcons);
 
   const handleDelete = (index) => {
@@ -1893,16 +1546,7 @@ export default function PropertyNavigator({
                         },
                       }}
                       className='.MuiButton-icon'
-                      onClick={handleViewLeaseClick}
-                      // onClick={() =>
-                      //   navigate('/viewLease', {
-                      //     state: {
-                      //       lease_id: property.lease_uid,
-                      //       index: currentIndex,
-                      //       isDesktop: isDesktop,
-                      //     },
-                      //   })
-                      // }
+                      onClick={handleViewLeaseClick}                      
                     >
                       <img src={LeaseIcon} />
                     </Button>
@@ -2147,16 +1791,7 @@ export default function PropertyNavigator({
                         },
                       }}
                       className='.MuiButton-icon'
-                      onClick={handleViewContractClick}
-                      // onClick={() =>
-                      //   navigate('/viewLease', {
-                      //     state: {
-                      //       lease_id: property.lease_uid,
-                      //       index: currentIndex,
-                      //       isDesktop: isDesktop,
-                      //     },
-                      //   })
-                      // }
+                      onClick={handleViewContractClick}                      
                     >
                       <img src={LeaseIcon} />
                     </Button>
@@ -2309,22 +1944,7 @@ export default function PropertyNavigator({
                             >
                               <KeyboardArrowRightIcon
                                 sx={{ color: arrowButton1_color, cursor: "pointer" }}
-                                onClick={() => {
-                                  /* navigate('/pmQuotesRequested', {
-                                      state: {
-                                        index: currentIndex,
-                                        propertyData: propertyData,
-                                        contracts: contractsData,
-                                        isDesktop: isDesktop,
-                                      },
-                                    }); */
-                                  // const state = {
-                                  //   index: currentIndex,
-                                  //   propertyData: propertyData,
-                                  //   contracts: contractsData,
-                                  //   isDesktop: isDesktop,
-                                  // };
-                                  // setPmQuoteRequestedState(state);
+                                onClick={() => {                                  
                                   handleViewPMQuotesRequested();
                                 }}
                               />
@@ -2830,13 +2450,7 @@ export default function PropertyNavigator({
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker
                         label='Purchased On'
-                        value={currentApplRow?.appliance_purchased ? dayjs(currentApplRow.appliance_purchased) : null}
-                        // onChange={(e) =>
-                        //   setcurrentApplRow({
-                        //     ...currentApplRow,
-                        //     appliance_purchased: e.target.value,
-                        //   })
-                        // }
+                        value={currentApplRow?.appliance_purchased ? dayjs(currentApplRow.appliance_purchased) : null}                        
                         onChange={(date) => {
                           const formattedDate = dayjs(date).format("MM-DD-YYYY");
                           setcurrentApplRow({
@@ -3026,22 +2640,5 @@ export default function PropertyNavigator({
         {/* End Property Detail Cards */}
       </Box>
     </Paper>
-  );
-}
-
-function Contract(props) {
-  const textStyle = {
-    textTransform: "none",
-    color: theme.typography.propertyPage.color,
-    fontWeight: theme.typography.light.fontWeight,
-    fontSize: theme.typography.smallFont,
-  };
-
-  let contract = props.contract;
-
-  return (
-    <Typography sx={textStyle}>
-      {contract.contract_business_id} {contract.business_name} {contract.contract_uid}{" "}
-    </Typography>
   );
 }

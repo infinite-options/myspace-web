@@ -28,7 +28,7 @@ import { gridColumnsTotalWidthSelector } from "@mui/x-data-grid";
 import { useMaintenance } from "../../contexts/MaintenanceContext";
 
 export async function maintenanceManagerDataCollectAndProcess(maintenanceData, setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData) {
-  
+  console.log('is it in maintenanceManagerDataCollectAndProcess----');
   const dataObject = {};
   
   function dedupeQuotes(array) {
@@ -67,7 +67,7 @@ export async function maintenanceManagerDataCollectAndProcess(maintenanceData, s
 
   const getMaintenanceData = async () => {
     setShowSpinner(true);
-
+    console.log('is it in getMaintenanceData----');
     const maintenanceRequests = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${profileId}`);
     const maintenanceRequestsData = await maintenanceRequests.json();
 
@@ -297,6 +297,7 @@ export default function MaintenanceManager() {
     setFilterPropertyList([]);
   }
 
+
   useEffect(() => {
     let profileId = getProfileId();
     maintenanceManagerDataCollectAndProcess(maintenanceData, setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData);
@@ -523,9 +524,9 @@ export default function MaintenanceManager() {
           {!isMobile && (
             <Grid item xs={12} md={8}>
               {editMaintenanceView && selectedRole === "MANAGER" ? (
-                <EditMaintenanceItem />
+                <EditMaintenanceItem setRefersh = {setRefresh}/>
               ) : showNewMaintenance || isAddingNewMaintenance ? (
-                <AddMaintenanceItem onBack={() => {setshowNewMaintenance(false); setIsAddingNewMaintenance(false);}} />
+                <AddMaintenanceItem setRefersh = {setRefresh} onBack={() => {setshowNewMaintenance(false); setIsAddingNewMaintenance(false);}} />
               ) : quoteRequestView && selectedRole === "MANAGER" ? (
                 <>
                   <QuoteRequestForm />

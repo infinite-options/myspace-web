@@ -123,6 +123,8 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
   const [documents, setDocuments] = useState([]);
   const [uploadedFiles, setuploadedFiles] = useState([]);
   const [deletedFiles, setDeletedFiles] = useState([]);
+  const [isPreviousFileChange, setIsPreviousFileChange] = useState(false)
+  const [uploadedFileTypes, setUploadedFileTypes] = useState([]);
 
   const adultsRef = useRef(adults);
   const childrenRef = useRef(children);
@@ -319,14 +321,14 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
 
       const parsedDocs = JSON.parse(profileData.tenant_documents);
       // console.log("parsedDocs - ", parsedDocs);
-      const docs = parsedDocs
-        ? parsedDocs.map((doc, index) => ({
-            ...doc,
-            id: index,
-          }))
-        : [];
+      // const docs = parsedDocs
+      //   ? parsedDocs.map((doc, index) => ({
+      //       ...doc,
+      //       id: index,
+      //     }))
+      //   : [];
       // console.log('initial docs', docs);
-      setDocuments(docs);
+      setDocuments(parsedDocs);
       documentsRef.current = parsedDocs;
 
       const paymentMethods = JSON.parse(profileData.paymentMethods);
@@ -766,30 +768,30 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
         // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
         modifiedData.forEach((item) => {
           console.log(`Key: ${item.key}`);
-          if (item.key === "uploadedFiles") {
-            console.log("uploadedFiles", item.value);
-            if (item.value.length) {
-              const documentsDetails = [];
-              [...item.value].forEach((file, i) => {
-                profileFormData.append(`file_${i}`, file.file, file.name);
-                const fileType = "pdf";
-                const documentObject = {
-                  // file: file,
-                  fileIndex: i,
-                  fileName: file.name,
-                  contentType: file.contentType
-                };
-                documentsDetails.push(documentObject);
-              });
-              profileFormData.append("tenant_documents_details", JSON.stringify(documentsDetails));
-            }
-          } else {
-            if(item.key !== "tenant_ssn"){
-              profileFormData.append(item.key, JSON.stringify(item.value));
-            }else{
-              profileFormData.append(item.key, item.value);
-            }
+          // if (item.key === "uploadedFiles") {
+          //   console.log("uploadedFiles", item.value);
+          //   if (item.value.length) {
+          //     const documentsDetails = [];
+          //     [...item.value].forEach((file, i) => {
+          //       profileFormData.append(`file_${i}`, file.file, file.name);
+          //       const fileType = "pdf";
+          //       const documentObject = {
+          //         // file: file,
+          //         fileIndex: i,
+          //         fileName: file.name,
+          //         contentType: file.contentType
+          //       };
+          //       documentsDetails.push(documentObject);
+          //     });
+          //     profileFormData.append("tenant_documents_details", JSON.stringify(documentsDetails));
+          //   }
+          // } else {
+          if(item.key !== "tenant_ssn"){
+            profileFormData.append(item.key, JSON.stringify(item.value));
+          }else{
+            profileFormData.append(item.key, item.value);
           }
+          // }
         });
         profileFormData.append("tenant_uid", profileData.tenant_uid);
 
@@ -823,7 +825,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
   const saveProfile = async () => {
     console.log("inside saveProfile", modifiedData);
     try {
-      if (modifiedData.length > 0) {
+      if (modifiedData.length > 0 || isPreviousFileChange || deletedFiles?.length > 0 || uploadedFiles?.length > 0) {
         setShowSpinner(true);
         const headers = {
           "Access-Control-Allow-Origin": "*",
@@ -837,10 +839,42 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
         // const feesJSON = JSON.stringify(leaseFees)
         // leaseApplicationFormData.append("lease_fees", feesJSON);
         // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
-        modifiedData.forEach((item) => {
+        modifiedData?.forEach((item) => {
           console.log(`Key: ${item.key}`);
-          profileFormData.append(item.key, item.value);
+          if(item.key !== "tenant_ssn"){
+            profileFormData.append(item.key, JSON.stringify(item.value));
+          }else{
+            profileFormData.append(item.key, item.value);
+          }
         });
+
+        if(isPreviousFileChange){
+          profileFormData.append("tenant_documents", JSON.stringify(documents));
+        }
+
+        if(deletedFiles && deletedFiles?.length !== 0){
+          profileFormData.append("delete_documents", JSON.stringify(deletedFiles));
+        }
+
+        if (uploadedFiles && uploadedFiles?.length) {
+
+          const documentsDetails = [];
+          [...uploadedFiles].forEach((file, i) => {
+    
+            profileFormData.append(`file_${i}`, file);
+            const fileType = uploadedFileTypes[i] || "";
+            const documentObject = {
+              // file: file,
+              fileIndex: i, //may not need fileIndex - will files be appended in the same order?
+              fileName: file.name, //may not need filename
+              contentType: fileType, // contentType = "contract or lease",  fileType = "pdf, doc"
+            };
+            documentsDetails.push(documentObject);
+          });
+    
+          profileFormData.append("tenant_documents_details", JSON.stringify(documentsDetails));
+        }
+
         profileFormData.append("tenant_uid", profileData.tenant_uid);
 
         axios
@@ -860,6 +894,10 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
           });
         setShowSpinner(false);
         setModifiedData([]);
+        setuploadedFiles([]);
+        setUploadedFileTypes([]);
+        setDeletedFiles([]);
+        setIsPreviousFileChange(false)
       } else {
         showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
       }
@@ -1449,14 +1487,19 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
           <Documents
             documents={documents}
             setDocuments={setDocuments}
-            setuploadedFiles={setuploadedFiles}
-            editOrUpdateLease={editOrUpdateTenant}
-            documentsRef={documentsRef}
-            setDeletedFiles={setDeletedFiles}
-            modifiedData={modifiedData}
+            setContractFiles={setuploadedFiles}
+            // editOrUpdateLease={editOrUpdateTenant}
+            // documentsRef={documentsRef}
+            setDeleteDocsUrl={setDeletedFiles}
+            // setDeletedFiles={setDeletedFiles}
+            // modifiedData={modifiedData}
             isAccord={true}
-            setModifiedData={setModifiedData}
-            dataKey={"tenant_documents"}
+            contractFiles={uploadedFiles}
+            contractFileTypes={uploadedFileTypes}
+            setContractFileTypes={setUploadedFileTypes}
+            setIsPreviousFileChange={setIsPreviousFileChange}
+            // setModifiedData={setModifiedData}
+            // dataKey={"tenant_documents"}
           />
         </Grid>
       </Grid>

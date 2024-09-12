@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Accordion,
   AccordionSummary,
@@ -33,6 +33,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import LeaseIcon from "../Property/leaseIcon.png";
 import { Close } from "@mui/icons-material";
 
+import ManagementContractContext from "../../contexts/ManagementContractContext";
 import axios from 'axios';
 import FilePreviewDialog from "./FilePreviewDialog";
 
@@ -47,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFileChange, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isAccord=false, contractFiles=[], setContractFiles, contractFileTypes=[], setContractFileTypes, isEditable=true, customName }) => {
+const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFileChange, isAccord=false, contractFiles=[], setContractFiles, contractFileTypes=[], setContractFileTypes, isEditable=true, customName }) => {
   const [open, setOpen] = useState(false);
   const [currentRow, setcurrentRow] = useState(null);
   const color = theme.palette.form.main;
@@ -65,17 +66,17 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
   const [ expanded, setExpanded ] = useState(true);
   // const [preview, setPreview] = useState(null)
   const [selectedPreviewFile, setSelectedPreviewFile] = useState(null)
-  const [previewDialogOpen, setPreviewDialogOpen] = useState(false)
+  const [previewDialogOpen, setPreviewDialogOpen] = useState(false) 
 
-  useEffect(() => {
-    console.log("inside documents mod", modifiedData);
-    if (modifiedData && modifiedData?.length > 0) {
-      editOrUpdateLease();
-      handleClose();
-      setIsUpdated(false);
-      setuploadedFiles([]);
-    }
-  }, [isUpdated]);
+  // useEffect(() => {
+  //   console.log("inside documents mod", modifiedData);
+  //   if (modifiedData && modifiedData?.length > 0) {
+  //     // editOrUpdateLease();
+  //     handleClose();
+  //     setIsUpdated(false);
+  //     setuploadedFiles([]);
+  //   }
+  // }, [isUpdated]);
 
   // Fetch contentTypes from endpoint
   useEffect(() =>{
@@ -102,8 +103,8 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
 
   const checkRequiredFields = () => {
     let retVal = true;
-    console.log("name", currentRow.filename, currentRow.name);
-    console.log("type", currentRow.contentType);
+    // console.log("name", currentRow.filename, currentRow.name);
+    // console.log("type", currentRow.contentType);
 
     if (!currentRow.filename && !currentRow.name) {
       console.error("Filename is either empty, null, or undefined.");
@@ -119,33 +120,35 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
     if (isEditing === true) {
       // console.log("current row is", currentRow);
       
-      if(!isAccord){
-      
-        setDocuments((prevFiles)=>{
-          return prevFiles.map((file) => file.link === currentRow.link? currentRow : file);
-        });
-        
-        if(setIsPreviousFileChange){
-          setIsPreviousFileChange(true)
-        }
-        handleClose();
+      // remove id of currentRow before adding to it
+      // const docswithoutid = currentRow.map(({ id, ...rest }) => rest);
+      const { id, ...docswithoutid} = currentRow;
+      setDocuments((prevFiles)=>{
+        return prevFiles.map((file) => file.link === docswithoutid.link? docswithoutid : file);
+      });
 
-      }else{
-        
-        const updatedDocuments = documents.map((doc) => (doc.id === currentRow.id ? currentRow : doc));
-        // console.log("---Dhyey--- updateDocs", updatedDocuments)
-        const updatedDocsWithoutId = updatedDocuments.map(({ id, ...rest }) => rest);
-        
-        setModifiedData((prev) => [...prev, { key: dataKey, value: updatedDocsWithoutId }]);
-        setIsUpdated(true);
+      if(setIsPreviousFileChange){
+        setIsPreviousFileChange(true)
       }
+      handleClose();
+
     } else {
       // console.log("---dhyey--- arr", uploadedFiles);
-      const updatedDocsWithoutId = documents.map(({ id, ...rest }) => rest);
+      // const updatedDocsWithoutId = documents.map(({ id, ...rest }) => rest);
 
-      setModifiedData((prev) => [...prev, { key: dataKey, value: updatedDocsWithoutId }]);
-      setModifiedData((prev) => [...prev, { key: "uploadedFiles", value: uploadedFiles }]);
-      setIsUpdated(true);
+      // setModifiedData((prev) => [...prev, { key: dataKey, value: updatedDocsWithoutId }]);
+      // setModifiedData((prev) => [...prev, { key: "uploadedFiles", value: uploadedFiles }]);
+      // setIsUpdated(true);
+
+      uploadedFiles?.map((file, i) => {
+        setContractFiles((prevFiles) => [...prevFiles, file.file])
+        setContractFileTypes((prevFiles) => [...prevFiles, file.contentType])
+      })
+      
+      
+      handleClose();
+      setuploadedFiles([]);
+
     }
     return retVal;
   };
@@ -202,26 +205,21 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
   };
 
   const handleDelete = async () => {
-    if(!isAccord){
-      setDeleteDocsUrl(prevList => [...prevList, currentRow.link])
-      setDocuments((prevFiles) => {
-        console.log("deleted - ", currentRow.link);
+    setDeleteDocsUrl(prevList => [...prevList, currentRow.link])
+    setDocuments((prevFiles) => {
+        // console.log("deleted - ", currentRow.link);
         return prevFiles.filter((f)=> f.link !== currentRow.link);
-      });
-      
-    }else{
-      console.log("currentRow.id", currentRow.id);
-      const updatedDocuments = documents.filter((doc) => doc.id !== currentRow.id);
-      const updatedDocsWithoutId = updatedDocuments.map(({ id, ...rest }) => rest);
-      setModifiedData((prev) => [...prev, { key: dataKey, value: updatedDocsWithoutId }]);
-      setModifiedData((prev) => [...prev, { key: "delete_documents", value: [currentRow.link] }]);
-      setIsUpdated(true);
-    }
+    });
+      // console.log("currentRow.id", currentRow.id);
+      // const updatedDocuments = documents.filter((doc) => doc.id !== currentRow.id);
+      // const updatedDocsWithoutId = updatedDocuments.map(({ id, ...rest }) => rest);
+      // setModifiedData((prev) => [...prev, { key: dataKey, value: updatedDocsWithoutId }]);
+      // setModifiedData((prev) => [...prev, { key: "delete_documents", value: [currentRow.link] }]);
+      // setIsUpdated(true);
   };
 
   const handleDeleteClick = () => {
     setOpenDeleteConfirmation(true);
-    console.log("yesss click on delete")
   };
 
   const handleDeleteClose = () => {
@@ -238,6 +236,7 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
   };
 
   const handleRemoveFile = (index) => {
+
     setContractFiles((prevFiles) => {
       const filesArray = Array.from(prevFiles);
       filesArray.splice(index, 1);
@@ -250,66 +249,194 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
     });
   };
 
-  const docsColumns = [
-    // {
-    //   field: "id",
-    //   headerName: "UID",
-    //   flex: 0.5,
-    // },
+  const docsColumns = isEditable?[
     {
       field: "filename",
       headerName: "Filename",
-      valueGetter: (params) => {
-        const { filename, name } = params.row;
-        return `${filename || ""} ${name || ""}`.trim();
+      renderCell:(params)=>{
+        return (<Box
+          				sx={{
+          					cursor: 'pointer', // Change cursor to indicate clickability
+          					color: '#3D5CAC',
+          				}}
+                  onClick={() => handleFileClick(params.row)}
+          			>
+          				{params.row.filename}
+          			</Box>
+              );
       },
+      flex: 2,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "contentType",
+      headerName: "Content Type",
       flex: 1,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
       field: "fileType",
-      headerName: "Content Type",
-      flex: 1,
-    },
-    {
-      field: "type",
       headerName: "File Type",
       flex: 1,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
-      field: "link",
-      headerName: "Link",
-      flex: 0.5,
-      renderCell: (params) => {
-        // console.log('params', params);
-        return (
-          <Button
-            sx={{
-              padding: "0px",
-              "&:hover": {
-                backgroundColor: theme.palette.form.main,
-              },
-            }}
-            className=".MuiButton-icon"
-            onClick={() => window.open(params.value, "_blank", "rel=noopener noreferrer")}
-          >
-            <img src={LeaseIcon} />
-          </Button>
-        );
-      },
-    },
-    {
-      field: "actions",
+      field: "editactions",
       headerName: "",
-      flex: 1,
+      flex: 0.5,
       renderCell: (params) => (
         <Box>
           <IconButton onClick={() => handleEditClick(params.row)}>
-            <EditIcon sx={{ color: "#3D5CAC" }} />
+            <EditIcon sx={{ fontSize: '19px', color: '#3D5CAC'}} />
           </IconButton>
         </Box>
       ),
     },
+    {
+      field: "deleteactions",
+      headerName: "",
+      flex: 0.5,
+      renderCell: (params) => (
+        <Box>
+          <IconButton onClick={() => {
+              setcurrentRow({...params.row})
+              handleDeleteClick()
+          }}>
+            <DeleteIcon sx={{ fontSize: '19px', color: '#3D5CAC'}} />
+          </IconButton>
+        </Box>
+      ),
+    },
+  ]:[
+    {
+      field: "filename",
+      headerName: "Filename",
+      renderCell:(params)=>{
+        return (<Box
+          				sx={{
+          					cursor: 'pointer', // Change cursor to indicate clickability
+          					color: '#3D5CAC',
+          				}}
+                  onClick={() => handleFileClick(params.row)}
+          			>
+          				{params.row.filename}
+          			</Box>
+              );
+      },
+      flex: 2,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "contentType",
+      headerName: "Content Type",
+      flex: 1,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "fileType",
+      headerName: "File Type",
+      flex: 1,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
   ];
+
+  const uploadDocsColumns = isEditable? [
+    {
+      field: "name",
+      headerName: "Filename",
+      flex: 2,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "contentType",
+      headerName: "Content Type",
+      flex: 2,
+      renderCell: (params) => (
+        <Select
+          value={contractFileTypes[params.row.id]? contractFileTypes[params.row.id] : ""}
+          label="Document Type"
+          onChange={(e) => {
+            const updatedTypes = [...contractFileTypes];
+            updatedTypes[params.row.id] = e.target.value;
+            setContractFileTypes(updatedTypes);
+          }}
+          required
+          sx={{
+            backgroundColor: '#D6D5DA',
+            height: '40px',
+            width: '90%', // Adjust the width as needed
+            padding: '8px', // Adjust the padding as needed
+          }}
+        >
+          {contentTypes.map((item, index) => {
+            if (item.list_item != null) {
+                return (
+                  <MenuItem key={index} value={item.list_item}>
+                      {item.list_item}
+                  </MenuItem>
+                );
+            }
+            return null;
+          })}
+        </Select>
+      ),
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "deleteactions",
+      headerName: "",
+      flex: 0.5,
+      renderCell: (params) => (
+        <Box>
+          <IconButton onClick={() => {
+              handleRemoveFile(params.row.id)
+          }}>
+            <DeleteIcon sx={{ fontSize: '19px', color: '#3D5CAC'}} />
+          </IconButton>
+        </Box>
+      ),
+    },
+
+  ]:[
+    {
+      field: "name",
+      headerName: "Filename",
+      flex: 2,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "contentType",
+      headerName: "Content Type",
+      flex: 2,
+      renderCell: (params) => (
+        <Typography>{contractFileTypes[params.row.id]}</Typography>
+      ),
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    }
+  ];
+
+  let rowsWithId = []
+  let uploadRowsWithId = []
+
+  if(documents && documents?.length !== 0){
+    rowsWithId = documents.map((row, index) => ({
+      ...row,
+      id: row.id ? index : index,
+    }));
+  }
+
+  if(contractFiles && contractFiles?.length !== 0){
+    uploadRowsWithId = contractFiles.map((row, index) => ({
+      name: row.name,
+      fileType: row.type,
+      id: row.id ? index : index,
+    }));
+
+    // setUploadRowsWithId(temp);
+  }
+ 
+
+
 
   // const handleFileClick = (file)=>{
   //   setPreview(file);
@@ -390,148 +517,180 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
             </Grid>
           </AccordionSummary>
           <AccordionDetails>
-            {/* <DataGrid
-              rows={documents}
-              columns={docsColumns}
-              hideFooter={true}
-              getRowId={(row) => row.id}
-              autoHeight
-              sx={{
-                "& .MuiDataGrid-columnHeader": {
-                  justifyContent: "center",
-                  alignItems: "center",
-                  color: "#160449",
-                },
-                "& .MuiDataGrid-columnHeaderTitle": {
-                  font: "bold",
-                  width: "100%",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  fontWeight: "bold",
-                },
-                "& .MuiDataGrid-cell": {
-                  color: "#160449",
-                  fontWeight: "bold",
-                },
-              }}
-            /> */}
+            {/*  */}
             {documents && documents.length ? (
+              // <Box
+              //   sx={{
+              //     display: 'flex',
+              //     flexDirection: 'row',
+              //     justifyContent: 'space-between',
+              //     alignItems: 'center',
+              //     marginBottom: '7px',
+              //     width: '100%',
+              //   }}
+              // >
+              //   <Box
+              //     sx={{
+              //       fontSize: '15px',
+              //       fontWeight: 'bold',
+              //       paddingTop: '10px',
+              //       paddingLeft: '5px',
+              //       color: '#3D5CAC',
+              //       width: '100%',
+              //     }}
+              //   >
+              //     {/* Previously Uploaded Documents: */}
+              //     <Box
+              //       sx={{
+              //         display: 'flex',
+              //         flexDirection: 'row',
+              //         alignItems: 'center',
+              //         justifyContent: 'space-between',
+              //         paddingTop: '5px',
+              //         marginY:"7px",
+              //         color: 'black',
+              //       }}
+              //     >
+              //       <Box sx={{width:"30%"}}>Filename</Box>
+              //       <Box sx={{width:"20%"}}>Content Type</Box>
+              //       <Box sx={{width:"20%"}}>File Type</Box>
+              //       <Box sx={{width:"15%"}}></Box>
+              //     </Box>
+              //     {[...documents].map((doc, i) => (
+              //       <>
+              //       {/* {console.log("details of doc-", doc)} */}
+              //         <Box
+              //           key={i}
+              //           sx={{
+              //             display: 'flex',
+              //             flexDirection: 'row',
+              //             alignItems: 'center',
+              //             justifyContent: 'space-between',
+              //           }}
+              //         >
+              //           <Box sx={{width:"30%"}}>
+              //             {/* <a href={doc.link} target="_blank" rel="noopener noreferrer"> */}
+              //               <Box
+              //                 sx={{
+              //                   // height: '40px',
+              //                   width: '100%',
+              //                   cursor: 'pointer', // Change cursor to indicate clickability
+              //                   color: '#3D5CAC',
+              //                 }}
+              //                 onClick={()=>{handleFileClick(doc)}}
+              //               >
+              //                 {doc.filename}
+              //               </Box>
+              //             {/* </a> */}
+              //           </Box>
+              //           <Box sx={{width:"20%"}}>{doc.contentType ? doc.contentType : ""}</Box>
+              //           <Box sx={{width:"20%"}}>{doc.fileType}</Box>
+              //           <Box sx={{width:"15%", display: 'flex', justifyContent: 'center'}}>
+              //             {/* Edit icon */}
+              //             <Button
+              //                 variant="text"
+              //                 onClick={(event) => {
+              //                   // setcurrentRow({...doc})
+              //                   handleEditClick({...doc})
+              //                   // handleDeletePrevUploadedFile(doc.link, i);
+              //                 }}
+              //                 sx={{
+              //                   // width: '120px',
+              //                   cursor: 'pointer',
+              //                   fontSize: '14px',
+              //                   fontWeight: 'bold',
+              //                   color: '#3D5CAC',
+              //                   '&:hover': {
+              //                     backgroundColor: 'transparent', // Set to the same color as the default state
+              //                   },
+              //                 }}
+              //               >
+              //                 <EditIcon sx={{ fontSize: '19px', color: '#3D5CAC'}} />
+              //             </Button>
+  
+              //             {/* Delete icon */}
+              //             <Button
+              //               variant="text"
+              //               onClick={(event) => {
+              //                 setcurrentRow({...doc})
+              //                 handleDeleteClick()
+              //                 // handleDeletePrevUploadedFile(doc.link, i);
+              //               }}
+              //               sx={{
+              //                 // width: '120px',
+              //                 cursor: 'pointer',
+              //                 fontSize: '14px',
+              //                 fontWeight: 'bold',
+              //                 color: '#3D5CAC',
+              //                 '&:hover': {
+              //                   backgroundColor: 'transparent', // Set to the same color as the default state
+              //                 },
+              //               }}
+              //             >
+              //               <DeleteIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
+              //             </Button>
+              //           </Box>
+              //         </Box>
+              //       </>
+              //     ))}
+              //   </Box>
+              // </Box>
+              <DataGrid
+                rows={rowsWithId}
+                columns={docsColumns}
+                hideFooter={true}
+                autoHeight
+                rowHeight={50}
+                sx={{
+                  marginTop:"10px"
+                }}
+              />
+            ) : (
+              <></>
+            )}
+
+            {/* contract files section */}
+            {contractFiles && contractFiles?.length? (
               <Box
                 sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: '7px',
+                  fontSize: '15px',
+                  fontWeight: 'bold',
+                  padding: '5px',
+                  color: '#3D5CAC',
                   width: '100%',
                 }}
               >
-                <Box
-                  sx={{
-                    fontSize: '15px',
-                    fontWeight: 'bold',
-                    paddingTop: '10px',
-                    paddingLeft: '5px',
-                    color: '#3D5CAC',
-                    width: '100%',
-                  }}
-                >
-                  {/* Previously Uploaded Documents: */}
-                  <Box
+                <Typography
                     sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      paddingTop: '5px',
-                      marginY:"7px",
-                      color: 'black',
+                      color: "#160449",
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: "18px",
+                      paddingBottom: "5px",
+                      paddingTop: "5px",
+                      marginTop:"10px"
                     }}
                   >
-                    <Box sx={{width:"30%"}}>Filename</Box>
-                    <Box sx={{width:"20%"}}>Content Type</Box>
-                    <Box sx={{width:"20%"}}>File Type</Box>
-                    <Box sx={{width:"15%"}}></Box>
-                  </Box>
-                  {[...documents].map((doc, i) => (
-                    <>
-                    {/* {console.log("details of doc-", doc)} */}
-                      <Box
-                        key={i}
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                        }}
-                      >
-                        <Box sx={{width:"30%"}}>
-                          {/* <a href={doc.link} target="_blank" rel="noopener noreferrer"> */}
-                            <Box
-                              sx={{
-                                // height: '40px',
-                                width: '100%',
-                                cursor: 'pointer', // Change cursor to indicate clickability
-                                color: '#3D5CAC',
-                              }}
-                              onClick={()=>{handleFileClick(doc)}}
-                            >
-                              {doc.filename}
-                            </Box>
-                          {/* </a> */}
-                        </Box>
-                        <Box sx={{width:"20%"}}>{doc.contentType ? doc.contentType : ""}</Box>
-                        <Box sx={{width:"20%"}}>{doc.fileType}</Box>
-                        <Box sx={{width:"15%", display: 'flex', justifyContent: 'center'}}>
-                          {/* Edit icon */}
-                          <Button
-                              variant="text"
-                              onClick={(event) => {
-                                // setcurrentRow({...doc})
-                                handleEditClick({...doc})
-                                // handleDeletePrevUploadedFile(doc.link, i);
-                              }}
-                              sx={{
-                                // width: '120px',
-                                cursor: 'pointer',
-                                fontSize: '14px',
-                                fontWeight: 'bold',
-                                color: '#3D5CAC',
-                                '&:hover': {
-                                  backgroundColor: 'transparent', // Set to the same color as the default state
-                                },
-                              }}
-                            >
-                              <EditIcon sx={{ fontSize: '19px', color: '#3D5CAC'}} />
-                          </Button>
-  
-                          {/* Delete icon */}
-                          <Button
-                            variant="text"
-                            onClick={(event) => {
-                              setcurrentRow({...doc})
-                              handleDeleteClick()
-                              // handleDeletePrevUploadedFile(doc.link, i);
-                            }}
-                            sx={{
-                              // width: '120px',
-                              cursor: 'pointer',
-                              fontSize: '14px',
-                              fontWeight: 'bold',
-                              color: '#3D5CAC',
-                              '&:hover': {
-                                backgroundColor: 'transparent', // Set to the same color as the default state
-                              },
-                            }}
-                          >
-                            <DeleteIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
-                          </Button>
-                        </Box>
-                      </Box>
-                    </>
-                  ))}
-                </Box>
+                    Uploading Documents:
+                </Typography>
               </Box>
+            ):(
+              <></>
+            )}
+
+            {contractFiles?.length ? (
+              <DataGrid
+              rows={uploadRowsWithId}
+              columns={uploadDocsColumns}
+              sx={{
+                // minHeight:"100px",
+                // height:"100px",
+                // maxHeight:"100%",
+                marginTop: "10px",
+              }}
+              autoHeight
+              rowHeight={50} 
+              hideFooter={true}
+            />
             ) : (
               <></>
             )}
@@ -602,7 +761,6 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
                   <span style={{ color: "red" }}>*</span>
                 </Typography>
   
-                {/* document type */}
                 <TextField
                   sx={{ marginTop: "5px" }}
                   name="file_name"
@@ -624,6 +782,8 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
                     },
                   }}
                 />
+
+                {/* document type */}
                 <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", marginTop: "10px" }}>
                   {"Document Type  "}
                   <span style={{ color: "red" }}>*</span>
@@ -877,141 +1037,155 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
         </Box>
 
         {documents && documents.length ? (
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'row',
-						justifyContent: 'space-between',
-						alignItems: 'center',
-						marginBottom: '7px',
-						width: '100%',
-					}}
-				>
-					<Box
-						sx={{
-							fontSize: '15px',
-							fontWeight: 'bold',
-							paddingTop: '10px',
-							paddingLeft: '5px',
-							color: '#3D5CAC',
-							width: '100%',
-						}}
-					>
-						{/* {customName ? customName : "Previously Uploaded Documents:"}  */}
-						<Box
-							sx={{
-								display: 'flex',
-								flexDirection: 'row',
-								alignItems: 'center',
-								justifyContent: 'space-between',
-								paddingTop: '5px',
-								marginY:"7px",
-								color: 'black',
-							}}
-						>
-							<Box sx={{width:"30%"}}>Filename</Box>
-							<Box sx={{width:"20%"}}>Content Type</Box>
-							<Box sx={{width:"20%"}}>File Type</Box>
-							{isEditable && <Box sx={{width:"15%"}}></Box>}
-						</Box>
-						{[...documents].map((doc, i) => (
-							<React.Fragment key={i}>
-							{/* {console.log("details of doc-", doc)} */}
-								<Box
-									// key={i}
-									sx={{
-										display: 'flex',
-										flexDirection: 'row',
-										alignItems: 'center',
-										justifyContent: 'space-between',
-									}}
-								>
-									<Box sx={{width:"30%"}}>
-										{/* <a href={doc.link} target="_blank" rel="noopener noreferrer"> */}
-											<Box
-												sx={{
-													// height: '40px',
-													width: '100%',
-													cursor: 'pointer', // Change cursor to indicate clickability
-													color: '#3D5CAC',
-												}}
-                        onClick={() => handleFileClick(doc)}
-											>
-												{doc.filename}
-											</Box>
-										{/* </a> */}
-									</Box>
-									<Box sx={{width:"20%"}}>{doc.contentType ? doc.contentType : ""}</Box>
-									<Box sx={{width:"20%"}}>{doc.fileType}</Box>
-									{/* <Box sx={{width:"10%", display: 'flex', justifyContent: 'center' }}>
-										<Button
-												variant="text"
-												onClick={(event) => {
-													// handleDeletePrevUploadedFile(doc.link, i);
-												}}
-												sx={{
-													// width: '120px',
-													cursor: 'pointer',
-													fontSize: '14px',
-													fontWeight: 'bold',
-													color: '#3D5CAC',
-													'&:hover': {
-														backgroundColor: 'transparent', // Set to the same color as the default state
-													},
-												}}
-											>
+				// <Box
+				// 	sx={{
+				// 		display: 'flex',
+				// 		flexDirection: 'row',
+				// 		justifyContent: 'space-between',
+				// 		alignItems: 'center',
+				// 		marginBottom: '7px',
+				// 		width: '100%',
+				// 	}}
+				// >
+				// 	<Box
+				// 		sx={{
+				// 			fontSize: '15px',
+				// 			fontWeight: 'bold',
+				// 			paddingTop: '10px',
+				// 			paddingLeft: '5px',
+				// 			color: '#3D5CAC',
+				// 			width: '100%',
+				// 		}}
+				// 	>
+				// 		{/* {customName ? customName : "Previously Uploaded Documents:"}  */}
+				// 		<Box
+				// 			sx={{
+				// 				display: 'flex',
+				// 				flexDirection: 'row',
+				// 				alignItems: 'center',
+				// 				justifyContent: 'space-between',
+				// 				paddingTop: '5px',
+				// 				marginY:"7px",
+				// 				color: 'black',
+				// 			}}
+				// 		>
+				// 			<Box sx={{width:"30%"}}>Filename</Box>
+				// 			<Box sx={{width:"20%"}}>Content Type</Box>
+				// 			<Box sx={{width:"20%"}}>File Type</Box>
+				// 			{isEditable && <Box sx={{width:"15%"}}></Box>}
+				// 		</Box>
+				// 		{[...documents].map((doc, i) => (
+				// 			<React.Fragment key={i}>
+				// 			{/* {console.log("details of doc-", doc)} */}
+				// 				<Box
+				// 					// key={i}
+				// 					sx={{
+				// 						display: 'flex',
+				// 						flexDirection: 'row',
+				// 						alignItems: 'center',
+				// 						justifyContent: 'space-between',
+				// 					}}
+				// 				>
+				// 					<Box sx={{width:"30%"}}>
+				// 						{/* <a href={doc.link} target="_blank" rel="noopener noreferrer"> */}
+				// 							<Box
+				// 								sx={{
+				// 									// height: '40px',
+				// 									width: '100%',
+				// 									cursor: 'pointer', // Change cursor to indicate clickability
+				// 									color: '#3D5CAC',
+				// 								}}
+        //                 onClick={() => handleFileClick(doc)}
+				// 							>
+				// 								{doc.filename}
+				// 							</Box>
+				// 						{/* </a> */}
+				// 					</Box>
+				// 					<Box sx={{width:"20%"}}>{doc.contentType ? doc.contentType : ""}</Box>
+				// 					<Box sx={{width:"20%"}}>{doc.fileType}</Box>
+				// 					{/* <Box sx={{width:"10%", display: 'flex', justifyContent: 'center' }}>
+				// 						<Button
+				// 								variant="text"
+				// 								onClick={(event) => {
+				// 									// handleDeletePrevUploadedFile(doc.link, i);
+				// 								}}
+				// 								sx={{
+				// 									// width: '120px',
+				// 									cursor: 'pointer',
+				// 									fontSize: '14px',
+				// 									fontWeight: 'bold',
+				// 									color: '#3D5CAC',
+				// 									'&:hover': {
+				// 										backgroundColor: 'transparent', // Set to the same color as the default state
+				// 									},
+				// 								}}
+				// 							>
 												
-										</Button>
-									</Box> */}
-									{isEditable && <Box sx={{width:"15%", display: 'flex', justifyContent: 'center'}}>
-										{/* Edit icon */}
-										<Button
-												variant="text"
-												onClick={(event) => {
-                          handleEditClick({...doc});
-													// handleDeleteClick(i);
-												}}
-												sx={{
-													// width: '120px',
-													cursor: 'pointer',
-													fontSize: '14px',
-													fontWeight: 'bold',
-													color: '#3D5CAC',
-													'&:hover': {
-														backgroundColor: 'transparent', // Set to the same color as the default state
-													},
-												}}
-											>
-												<EditIcon sx={{ fontSize: '19px', color: '#3D5CAC'}} />
-										</Button>
+				// 						</Button>
+				// 					</Box> */}
+				// 					{isEditable && <Box sx={{width:"15%", display: 'flex', justifyContent: 'center'}}>
+				// 						{/* Edit icon */}
+				// 						<Button
+				// 								variant="text"
+				// 								onClick={(event) => {
+        //                   handleEditClick({...doc});
+				// 									// handleDeleteClick(i);
+				// 								}}
+				// 								sx={{
+				// 									// width: '120px',
+				// 									cursor: 'pointer',
+				// 									fontSize: '14px',
+				// 									fontWeight: 'bold',
+				// 									color: '#3D5CAC',
+				// 									'&:hover': {
+				// 										backgroundColor: 'transparent', // Set to the same color as the default state
+				// 									},
+				// 								}}
+				// 							>
+				// 								<EditIcon sx={{ fontSize: '19px', color: '#3D5CAC'}} />
+				// 						</Button>
 
-										{/* Delete icon */}
-										<Button
-											variant="text"
-											onClick={(event) => {
-												// handleDeletePrevUploadedFile(doc.link, i);
-                        setcurrentRow({...doc})
-                        handleDeleteClick()
-											}}
-											sx={{
-												// width: '120px',
-												cursor: 'pointer',
-												fontSize: '14px',
-												fontWeight: 'bold',
-												color: '#3D5CAC',
-												'&:hover': {
-													backgroundColor: 'transparent', // Set to the same color as the default state
-												},
-											}}
-										>
-											<DeleteIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
-										</Button>
-									</Box>}
-								</Box>
-							</React.Fragment>
-						))}
-					</Box>
-				</Box>
+				// 						{/* Delete icon */}
+				// 						<Button
+				// 							variant="text"
+				// 							onClick={(event) => {
+				// 								// handleDeletePrevUploadedFile(doc.link, i);
+        //                 setcurrentRow({...doc})
+        //                 handleDeleteClick()
+				// 							}}
+				// 							sx={{
+				// 								// width: '120px',
+				// 								cursor: 'pointer',
+				// 								fontSize: '14px',
+				// 								fontWeight: 'bold',
+				// 								color: '#3D5CAC',
+				// 								'&:hover': {
+				// 									backgroundColor: 'transparent', // Set to the same color as the default state
+				// 								},
+				// 							}}
+				// 						>
+				// 							<DeleteIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
+				// 						</Button>
+				// 					</Box>}
+				// 				</Box>
+				// 			</React.Fragment>
+				// 		))}
+				// 	</Box>
+				// </Box>
+
+          <DataGrid
+            rows={rowsWithId}
+            columns={docsColumns}
+            sx={{
+              // minHeight:"100px",
+              // height:"100px",
+              // maxHeight:"100%",
+              marginTop: "10px",
+            }}
+            autoHeight
+            rowHeight={50} 
+            hideFooter={true}
+          />
         ) : (
           <>
             <Box
@@ -1037,27 +1211,19 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
             </Box>
           </>
         )}
-        {contractFiles.length ? (
+
+        {/* contract files section */}
+        {contractFiles && contractFiles?.length? (
           <Box
             sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '7px',
+              fontSize: '15px',
+              fontWeight: 'bold',
+              padding: '5px',
+              color: '#3D5CAC',
               width: '100%',
             }}
           >
-            <Box
-              sx={{
-                fontSize: '15px',
-                fontWeight: 'bold',
-                padding: '5px',
-                color: '#3D5CAC',
-                width: '100%',
-              }}
-            >
-              <Typography
+            <Typography
                 sx={{
                   color: "#160449",
                   fontWeight: theme.typography.primary.fontWeight,
@@ -1067,89 +1233,27 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
                   marginTop:"10px"
                 }}
               >
-                Added Documents:
-              </Typography>
-
-              {[...contractFiles].map((f, i) => {
-                
-                return (
-                  <Box
-                    key={i}
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      marginY:"10px",
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        // height: '40px',
-                        width: '50%', // Adjust the width as needed
-                        padding: '8px', // Adjust the padding as needed
-                      }}
-                    >
-                      {f.name}
-                    </Box>
-                    <Select
-                      value={contractFileTypes[i]? contractFileTypes[i] : ""}
-                      label="Document Type"
-                      onChange={(e) => {
-                        const updatedTypes = [...contractFileTypes];
-                        updatedTypes[i] = e.target.value;
-                        setContractFileTypes(updatedTypes);
-                      }}
-                      required
-                      sx={{
-                        backgroundColor: '#D6D5DA',
-                        height: '40px',
-                        width: '40%', // Adjust the width as needed
-                        padding: '8px', // Adjust the padding as needed
-                      }}
-                    >
-                      {contentTypes.map((item, index) => {
-                        if (item.list_item != null) {
-                            return (
-                              <MenuItem key={index} value={item.list_item}>
-                                  {item.list_item}
-                              </MenuItem>
-                            );
-                        }
-                        return null;
-                      })}
-                    </Select>
-                    <Button
-                      variant="text"
-                      onClick={() => {
-                        // setContractFiles(prevFiles => prevFiles.filter((file, index) => index !== i));
-                        handleRemoveFile(i);
-                      }}
-                      sx={{
-                        width: '10%',
-                        cursor: 'pointer',
-                        fontSize: '14px',
-                        fontWeight: 'bold',
-                        color: '#3D5CAC',
-                      }}
-                    >
-                      <DeleteIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
-                    </Button>
-                  </Box>
-                )
-              })}
-              {/* {showMissingFileTypePrompt && (
-                <Box
-                  sx={{
-                    color: 'red',
-                    fontSize: '13px',
-                  }}
-                >
-                  Please select document types for all documents before proceeding.
-                </Box>
-              )} */}
-            </Box>
+                Uploading Documents:
+            </Typography>
           </Box>
+        ):(
+          <></>
+        )}
+
+        {contractFiles?.length ? (
+          <DataGrid
+          rows={uploadRowsWithId}
+          columns={uploadDocsColumns}
+          sx={{
+            // minHeight:"100px",
+            // height:"100px",
+            // maxHeight:"100%",
+            marginTop: "10px",
+          }}
+          autoHeight
+          rowHeight={50} 
+          hideFooter={true}
+        />
         ) : (
           <></>
         )}

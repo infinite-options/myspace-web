@@ -1,17 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Typography, Box, Stack, Paper, Button, ThemeProvider, Grid, Container, InputBase, IconButton, Avatar, Badge } from "@mui/material";
 import theme from "../../theme/theme";
-import AddIcon from "@mui/icons-material/Add";
-import SearchIcon from "@mui/icons-material/Search";
-import CloseIcon from "@mui/icons-material/Close";
-import propertyImage from "./propertyImage.png";
-import maintenanceIcon from "./maintenanceIcon.png";
 import { useUser } from "../../contexts/UserContext";
-import { get } from "../utils/api";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import { DataGrid, gridClasses } from "@mui/x-data-grid";
 import APIConfig from "../../utils/APIConfig";
 import PropertiesList from "./PropertiesList";
 import PropertyNavigator from "./PropertyNavigator";
@@ -24,9 +17,21 @@ import ManagementContractDetails from "../Contracts/OwnerManagerContracts/Manage
 import PMQuotesRequested from "./PMQuotesRequested";
 import SearchManager from "./SearchManager";
 import RequestQuotes from "./RequestQuotes";
-import { ManageHistory } from "@mui/icons-material";
 import AddListing from "./AddListing";
 import ManagerDetails from "./ManagerDetails";
+
+
+import PropertiesContext from "../../contexts/PropertiesContext";
+import { PropertiesProvider } from "../../contexts/PropertiesContext";
+
+function PropertiesPM() {
+  return (
+    <PropertiesProvider>
+      <Properties />
+    </PropertiesProvider>
+
+  );
+}
 
 function Properties() {
   const location = useLocation();
@@ -34,25 +39,26 @@ function Properties() {
   // console.log("In Properties LHS: ", location.state?.showLHS);
   // console.log("In Properties RHS: ", location.state?.showRHS);
   console.log("location", location.state);
+  const { propertyList, setPropertyList, returnIndex, setReturnIndex  } = useContext(PropertiesContext); 
 
   const [dataReady, setDataReady] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
 
   let navigate = useNavigate();
   const { getProfileId, selectedRole } = useUser();
-  const [propertyList, setPropertyList] = useState([]);
+  // const [propertyList, setPropertyList] = useState([]);
   const [displayedItems, setDisplayedItems] = useState([]);
-  const [propertyIndex, setPropertyIndex] = useState(0);
-  const [allRentStatus, setAllRentStatus] = useState([]);
+  const [propertyIndex, setPropertyIndex] = useState(0);  
   const [isFromRentWidget, setFromRentWidget] = useState(false);
   const [reloadPropertyList, setReloadPropertyList]=useState(false);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 950);
-  const [showPropertyForm, setShowPropertyForm] = useState(location.state?.showPropertyForm || false);
-  const [showRentForm, setShowRentForm] = useState(location.state?.showRentForm || false);
-  const [allContracts, setAllContracts] = useState([]);
+    
   const profileId = getProfileId();
   const [rawPropertyData, setRawPropertyData] = useState([]);
-  const [returnIndex, setReturnIndex] = useState(location.state?.index || 0);
+  
+  if(location.state?.index){
+    setReturnIndex(location.state?.index || 0);
+  }  
   const [returnIndexTest, setReturnIndexTest] = useState(location.state?.index || 0);
   const [returnIndexByProp, setReturnIndexByProperty]=useState("");
   const [applicationIndex, setApplicationIndex] = useState(0);
@@ -140,9 +146,9 @@ function Properties() {
   //   console.log("Properties - newContractPropertyUID - ", newContractPropertyUID);
   // }, [newContractPropertyUID]);
 
-  useEffect(() => {
-    // console.log("Properties - managersList - ", managersList);
-  }, [managersList]);
+  // useEffect(() => {
+  //   console.log("Properties - managersList - ", managersList);
+  // }, [managersList]);
 
  
   // LHS , RHS
@@ -154,10 +160,7 @@ function Properties() {
   // console.log("propertyIndex at the beginning 1: ", propertyIndex);
 
   // console.log("LEASE", propertyList[propertyIndex].lease_id)
-  // useEffect(() => {
-  //   setLHS(props.showLHS);
-  //   setRHS(props.showRHS);
-  // }, []);
+  
 
   // useEffect(() => {
   //   console.log("In Properties - LHS: ", LHS);
@@ -193,29 +196,9 @@ function Properties() {
       setRawPropertyData(propertyData); // Sets rawPropertyData to be based into Edit Properties Function      
       setPropertyList([...propertyList]);
       setDisplayedItems([...propertyList]);
-      setPropertyIndex(0);
+      setPropertyIndex(0);      
 
-      // RENT ENDPOINT
-      const rent_response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${profileId}`);
-      //const response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/110-000003`);
-      if (!rent_response.ok) {
-        // console.log("Error fetching Rent Details data");
-      }
-      const rentResponse = await rent_response.json();
-      // console.log("In Properties > Rent Endpoint: ", rentResponse.RentStatus.result);
-      setAllRentStatus(rentResponse.RentStatus.result);
-
-      // CONTRACTS ENDPOINT
-      const contract_response = await fetch(`${APIConfig.baseURL.dev}/contracts/${profileId}`);
-      // const response = await fetch(`${APIConfig.baseURL.dev}/contracts/600-000003`);
-      if (!contract_response.ok) {
-        // console.log("Error fetching Contract Details data");
-      }
-      const contractsResponse = await contract_response.json();
-      // console.log("In Properties > Contract Endpoint: ", contractsResponse.result);
-      setAllContracts(contractsResponse.result);
-
-      if (propertyData.Property.code === 200 && rentResponse.RentStatus.code === 200 && contractsResponse.code === 200) {
+      if (propertyData.Property.code === 200) {
         // console.log("Endpoint Data is Ready");
         setDataReady(true);
       }
@@ -285,59 +268,7 @@ function Properties() {
       setDataReady(true);
     }
     setShowSpinner(false);
-  };
-
-  const fetchContracts = async () => {
-    const contract_response = await fetch(`${APIConfig.baseURL.dev}/contracts/${profileId}`);
-      // const response = await fetch(`${APIConfig.baseURL.dev}/contracts/600-000003`);
-      if (!contract_response.ok) {
-        // console.log("Error fetching Contract Details data");
-      }
-      const contractsResponse = await contract_response.json();
-      // console.log("In Properties > Contract Endpoint: ", contractsResponse.result);
-      setAllContracts(contractsResponse.result);
-  }
-  
-  const refreshProperties = () => {
-    fetchProperties();
-  };
-
-  const refreshContracts = () => {
-    console.log("Refresh Contracts called");
-    fetchContracts();
-  };
-
-
-  // const updatePropertyData = async (propertyUID) => {
-  //   setShowSpinner(true);
-
-  //   // PROPERTIES ENDPOINT
-  //   const property_response = await fetch(`${APIConfig.baseURL.dev}/properties/${propertyUID}`);
-  //   //const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000003`)
-  //   if (!property_response.ok) {
-  //     // console.log("Error fetching Property Details data");
-  //   }
-  //   const propertyData = await property_response.json();
-  //   const updatedProperty = propertyData["Property"]?.result; 
-    
-  //   const newPropertyList = propertyList?.map( (property) => {
-  //     if (property.property_uid === propertyUID) {
-  //       return updatedProperty
-  //     } else{
-  //       return property
-  //     }
-  //   })
-    
-  //   setPropertyList([...newPropertyList]);
-  //   setDisplayedItems([...newPropertyList]);
-  //   // setPropertyIndex(0);
-
-  //   if (propertyData.Property.code === 200) {
-  //     // console.log("Endpoint Data is Ready");
-  //     setDataReady(true);
-  //   }
-  //   setShowSpinner(false);
-  // };
+  };  
 
   function getPropertyList(data) {
     const propertyList = data["Property"]?.result;
@@ -378,7 +309,7 @@ function Properties() {
   };
 
   const handleListClick = (newData) => {
-    // console.log("View leases New Data : ", newData);
+    // console.log("handleListClick - newData - ", newData);
     setReturnIndex(newData);
     // console.log("View leases RETURN INDEX : ", returnIndex);
   };
@@ -454,33 +385,19 @@ function Properties() {
     setRHS("ManagerDetails");
   };
 
-  return (
+  return (    
     <ThemeProvider theme={theme}>
-       {showSpinner ? (
+      {showSpinner ? (
         <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
           <CircularProgress color='inherit' />
         </Backdrop>
       ) : (
       <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
         <Grid container spacing={4}>
-          <Grid item xs={12} md={4}>
-            {/* {LHS === "List" && (
-              <PropertiesList
-                index={propertyIndex}
-                propertyList={propertyList}
-                allRentStatus={allRentStatus}
-                isDesktop={isDesktop}
-                contracts={allContracts}
-                setPropertyIndex={setPropertyIndex}
-              />
-            )} */}
-            <PropertiesList
-              index={returnIndex}
-              LHS={LHS}
-              propertyList={propertyList}
-              allRentStatus={allRentStatus}
-              isDesktop={isDesktop}
-              contracts={allContracts}
+          <Grid item xs={12} md={4}>            
+            <PropertiesList              
+              LHS={LHS}              
+              isDesktop={isDesktop}              
               onDataChange={handleListClick}
               onAddPropertyClick={handleAddPropertyClick}
               handleSorting={handleSorting}
@@ -490,27 +407,16 @@ function Properties() {
           <Grid item xs={12} md={8}>
           {(RHS === "AddProperty" || propertyList.length === 0) ? (
               <PropertyForm
-                onBack={handleBackClick}
-                // onSubmit={handleBackClick}
-                showNewContract={showNewContract}
-                property_endpoint_resp={rawPropertyData}
-                setNewContractUID={setNewContractUID}
-                setNewContractPropertyUID={setNewContractPropertyUID}
-                setReloadPropertyList={setReloadPropertyList}
-                // showNewContract={showNewContract}
-                refreshProperties={refreshProperties}
+                onBack={handleBackClick}                
+                showNewContract={showNewContract}                
+                setReloadPropertyList={setReloadPropertyList}                
                 setNewPropertyUid={setNewPropertyUid}
               />
             ) : (
             <>
               {RHS === "PropertyNavigator" && (
-                <PropertyNavigator
-                  // index={propertyIndex}
-                  index={returnIndex}
-                  propertyList={propertyList} // will change later - maybe
-                  allRentStatus={allRentStatus}
-                  isDesktop={isDesktop}
-                  contracts={allContracts}
+                <PropertyNavigator                  
+                  isDesktop={isDesktop}                  
                   onEditClick={handleEditClick}
                   onViewLeaseClick={handleViewLeaseClick}
                   onViewContractClick={handleViewContractClick}
@@ -526,71 +432,63 @@ function Properties() {
               {RHS === "EditProperty" && (
                 <EditProperty
                   currentId={propertyList[returnIndex].property_uid}
-                  property={propertyList[returnIndex]}
-                  index={returnIndex}
-                  propertyList={propertyList}
-                  setPropertyList={setPropertyList}
+                  property={propertyList[returnIndex]}                  
                   page={page}
-                  isDesktop={isDesktop}
-                  allRentStatus={allRentStatus}
-                  rawPropertyData={propertyList}
+                  isDesktop={isDesktop} 
                   onBackClick={handleBackClick}
                   setRHS={setRHS}                
                 />
               )}
               {RHS === "ViewLease" && (
-                <ViewLease lease_id={propertyList[0].lease_uid} propertyList={propertyList} index={returnIndex} isDesktop={isDesktop} onBackClick={handleBackClick} />
+                <ViewLease 
+                  lease_id={propertyList[0].lease_uid}                  
+                  isDesktop={isDesktop}
+                  onBackClick={handleBackClick} 
+                />
               )}
-              {RHS === "ViewContract" && <ViewManagementContract index={returnIndex} propertyList={propertyList} isDesktop={isDesktop} onBackClick={handleBackClick} />}
+              {RHS === "ViewContract" && 
+                <ViewManagementContract                  
+                  isDesktop={isDesktop}
+                  onBackClick={handleBackClick} 
+                />}
               {RHS === "Applications" && (
-                <TenantApplicationNav index={applicationIndex} propertyIndex={applicationIndex} property={propertyList[returnIndex]} isDesktop={isDesktop} onBackClick={handleBackClick} />
+                <TenantApplicationNav
+                  index={applicationIndex}
+                  propertyIndex={applicationIndex}
+                  property={propertyList[returnIndex]}
+                  isDesktop={isDesktop}
+                  onBackClick={handleBackClick} 
+                />
               )}
               {RHS === "CreateContract" && (
-                <ManagementContractDetails contractUID={newContractUID} contractPropertyUID={newContractPropertyUID} properties={rawPropertyData?.NewPMRequests?.result} />
+                <ManagementContractDetails                  
+                />
               )}
               {RHS === "ViewPMQuotesRequested" && (
-                <PMQuotesRequested
-                  index={returnIndex}
-                  propertyData={propertyList}
-                  contracts={allContracts}
-                  refreshContracts={refreshContracts}                
-                  handleBackClick={handleBackClick}
-
-                  // pmQuoteRequestedState={pmQuoteRequestedState}
-                  // setCurrentView={setCurrentView}
+                <PMQuotesRequested                  
+                  handleBackClick={handleBackClick}                  
                 />
               )}
               {RHS === "SearchManager" && (
-                <SearchManager 
-                    index={returnIndex}
-                    propertyData={propertyList}                  
+                <SearchManager                     
                     setManagersList={setManagersList}
                     handleBackClick={handleBackClick}
-                    handleRequestQuotes={handleRequestQuotes}
-                    contracts={allContracts}
+                    handleRequestQuotes={handleRequestQuotes}                    
                     propertyId={propertyList[returnIndex].property_uid}
                   />
               )}
               {RHS === "RequestQuotes" && (
-                <RequestQuotes
-                  // requestQuotesState={requestQuotesState}
-                  // setCurrentView={setCurrentView}
-                  index={returnIndex}
-                  propertyData={propertyList}
+                <RequestQuotes                  
                   managerData={managerData}
-                  onShowSearchManager={handleShowSearchManager}
-                  refreshContracts={refreshContracts}
+                  onShowSearchManager={handleShowSearchManager}                  
                 />
               )}
               {RHS === "AddListing" && (
-                <AddListing 
-                  propertyList={propertyList}
-                  index={returnIndex}
+                <AddListing                   
                   page={page}
                   propertyId={propertyList[returnIndex]?.property_uid} 
                   onBackClick={handleBackClick}
-                  setRHS={setRHS}     
-                  refreshProperties={refreshProperties}  
+                  setRHS={setRHS}                       
                   showPropertyNavigator={updateNavPage}
                 />
               )}
@@ -607,8 +505,8 @@ function Properties() {
           </Grid>
         </Grid>
       </Container> )}
-    </ThemeProvider>
+    </ThemeProvider>    
   );
 }
 
-export default Properties;
+export default PropertiesPM;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, useRef } from "react";
+import React, { useState, useEffect, Fragment, useRef, useContext, } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Typography,
@@ -58,16 +58,20 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 import APIConfig from "../../utils/APIConfig";
 
+import PropertiesContext from '../../contexts/PropertiesContext';
+
 export default function AddListing(props) {
   const location = useLocation();
   let navigate = useNavigate();
   const { getProfileId } = useUser();
   const { state } = useLocation();
-  let { index, propertyList, page, onBackClick } = props;
-  const refreshProperties = props.refreshProperties;
+  const { propertyList, fetchProperties, allContracts, fetchContracts, returnIndex,  } = useContext(PropertiesContext); 
+
+  let { page, onBackClick } = props;
+  const refreshProperties = fetchProperties;
   const showPropertyNavigator = props.showPropertyNavigator;
   // const propertyData = location.state.item;
-  const [propertyData, setPropertyData] = useState(propertyList[index]);
+  const [propertyData, setPropertyData] = useState(propertyList[returnIndex]);
   const { user, selectedRole, selectRole, Name } = useUser();
   const [showSpinner, setShowSpinner] = useState(false);
   const [ownerId, setOwnerId] = useState(getProfileId());
@@ -134,8 +138,7 @@ export default function AddListing(props) {
   const [bathrooms, setBathrooms] = useState(propertyData.property_num_baths);
 
   const [description, setDescription] = useState(propertyData.property_description);
-  const [selectedImageList, setSelectedImageList] = useState(JSON.parse(propertyData.property_images));
-  // const [selectedImageList, setSelectedImageList] = useState([]);
+  const [selectedImageList, setSelectedImageList] = useState(JSON.parse(propertyData.property_images));  
   const [deletedImageList, setDeletedImageList] = useState([]);
   const [favImage, setFavImage] = useState(propertyData.property_favorite_image);
   const [activeStep, setActiveStep] = useState(0);
@@ -155,10 +158,7 @@ export default function AddListing(props) {
   const [communityAmenities, setCommunityAmenities] = useState(propertyData.property_amenities_community);
   const [apartmentAmenities, setApartmentAmenities] = useState(propertyData.property_amenities_unit);
   const [nearbyAmenities, setNearbyAmenities] = useState(propertyData.property_amenities_nearby);
-  // const [isDepositLastMonth, setIsDepositLastMonth] = useState(propertyData.property_deposit_for_rent);
-
-  const [activeDate, setActiveDate] = useState(propertyData.property_active_date);
-  // const [isListed, setListed] = useState(propertyData.property_available_to_rent === 1 ? true : false);
+  const [activeDate, setActiveDate] = useState(propertyData.property_active_date);  
   const [isListed, setListed] = useState(true);
   const [hasUtilitiesChanges, setHasUtilitiesChanges] = useState(false);
   const [changedSaved, setChangedSaved] = useState(false);
@@ -166,25 +166,23 @@ export default function AddListing(props) {
   const [imageState, setImageState] = useState([]);
   const [imagesTobeDeleted, setImagesTobeDeleted] = useState([]);
   const [deletedIcons, setDeletedIcons] = useState(new Array(JSON.parse(propertyData.property_images).length).fill(false));
-  const [favoriteIcons, setFavoriteIcons] = useState(JSON.parse(propertyData.property_images).map((image) => image === propertyData.property_favorite_image));
-  const profileId = getProfileId();
+  const [favoriteIcons, setFavoriteIcons] = useState(JSON.parse(propertyData.property_images).map((image) => image === propertyData.property_favorite_image));  
 
-  useEffect(() => {
-    console.log("deletedImageList - ", deletedImageList);
-  }, [deletedImageList]);
-
-  //const [utilitiesPaidBy, setUtilitiesPaidBy] = useState(null);
+  // useEffect(() => {
+  //   console.log("deletedImageList - ", deletedImageList);
+  // }, [deletedImageList]);
+  
   const [isDefaultUtilities, setIsDefaultUtilities] = useState(false);
   const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
   const [newUtilitiesPaidBy, setNewUtilitiesPaidBy] = useState({});
 
-  useEffect(() => {
-    console.log("newUtilitiesPaidBy - ", newUtilitiesPaidBy);
-  }, [newUtilitiesPaidBy]);
+  // useEffect(() => {
+  //   console.log("newUtilitiesPaidBy - ", newUtilitiesPaidBy);
+  // }, [newUtilitiesPaidBy]);
 
-  useEffect(() => {
-    console.log("mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
-  }, [mappedUtilitiesPaidBy]);
+  // useEffect(() => {
+  //   console.log("mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
+  // }, [mappedUtilitiesPaidBy]);
 
   const utilitiesMap = new Map([
     ["050-000001", "electricity"],
@@ -211,8 +209,7 @@ export default function AddListing(props) {
   const reverseUtilitiesMap = new Map(Array.from(utilitiesMap, ([key, value]) => [value, key]));
   const reverseEntitiesMap = new Map(Array.from(entitiesMap, ([key, value]) => [value, key]));
 
-  const mapUIDsToUtilities = (propertyUtilities) => {
-    // let propertyUtilities = JSON.parse(utilities)
+  const mapUIDsToUtilities = (propertyUtilities) => {    
     if (!propertyUtilities) {
       return {};
     }
@@ -236,25 +233,22 @@ export default function AddListing(props) {
   let mappedUtilities2 = {};
   useEffect(() => {
     if (utilitiesObject) {
-      console.log("*****************************************AddListing useEffect*******************************************");
+      // console.log("*****************************************AddListing useEffect*******************************************");
       for (const utility of utilitiesObject) {
         console.log(utility.utility_type_id, utility.utility_payer_id);
         utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
       }
-      console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
-
-      // setUtilitiesPaidBy(utilitiesInUIDForm)
+      // console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
+      
       mappedUtilities2 = mapUIDsToUtilities(utilitiesInUIDForm);
-      console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
-      console.log("   ", mappedUtilities2);
-      // setMappedUtilitiesPaidBy(mappedUtilities2);
+      // console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
+      // console.log("   ", mappedUtilities2);      
       setMappedUtilitiesPaidBy(mappedUtilities2);
     } else {
       setMappedUtilitiesPaidBy(defaultUtilities);
       setIsDefaultUtilities(true);
-    }
-    //loadImages();
-    console.log("************************************************AddListing useEffect***********************************");
+    }    
+    // console.log("************************************************AddListing useEffect***********************************");
   }, []);
 
   const mapUtilitiesAndEntitiesToUIDs = (utilitiesObject) => {
@@ -275,22 +269,18 @@ export default function AddListing(props) {
   const handleUtilityChange = (utility, entity) => {
     const utilityObject = { [utility]: `${entity}` };
     setHasUtilitiesChanges(true);
-    console.log("----- handleUtilityChange called - ", utilityObject);
-    // setMappedUtilitiesPaidBy((prevState)=> ({...prevState, ...utility}))
+    // console.log("----- handleUtilityChange called - ", utilityObject);    
 
     setMappedUtilitiesPaidBy((prevState) => ({
       ...prevState,
       [utility]: prevState.hasOwnProperty(utility) ? entity : prevState[utility],
-    }));
-    // setUtilitiesPaidBy(utilities);
-    // setMappedUtilitiesPaidBy(utilities);
+    }));    
     setNewUtilitiesPaidBy((prevState) => ({
       ...(prevState.hasOwnProperty(utility) ? { ...prevState, [utility]: entity } : prevState),
     }));
   };
 
-  const [addUtilityAnchorElement, setAddUtilityAnchorElement] = useState(null);
-  // const [keysNotInUtilitiesMap] = useState(getKeysNotInUtilitiesMap());
+  const [addUtilityAnchorElement, setAddUtilityAnchorElement] = useState(null);  
   const keysNotInUtilitiesMap = Array.from(utilitiesMap.values()).filter((utility) => !(utility in mappedUtilitiesPaidBy));
 
   const handleAddUtilityButtonClick = (event) => {
@@ -302,7 +292,7 @@ export default function AddListing(props) {
   };
 
   const handleAddUtility = (utility) => {
-    const updatedMappedUtilities = { ...mappedUtilitiesPaidBy }; // Create a copy of mappedUtilitiesPaidBy
+    const updatedMappedUtilities = { ...mappedUtilitiesPaidBy };
     updatedMappedUtilities[utility] = "owner";
     setMappedUtilitiesPaidBy(updatedMappedUtilities);
 
@@ -316,25 +306,12 @@ export default function AddListing(props) {
 
   const handleListedChange = (event) => {
     setListed(event.target.checked);
-  };
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
+  };  
 
   useEffect(() => {
     console.log("useEffect");
     setCoverImage(selectedImageList[0] || coverImage);
-  }, [selectedImageList]);
-
-  const handleUnitChange = (event) => {
-    console.log("handleUnitChange", event.target.value);
-    setUnit(event.target.value);
-  };
+  }, [selectedImageList]);  
 
   useEffect(() => {
     console.log("propertyState", propertyState);
@@ -408,418 +385,11 @@ export default function AddListing(props) {
     }
   };
 
-
-  // const handleSubmit = async (event) => {
-  //   event.preventDefault();
-  //   console.log("handleSubmit");
-  //   const formData = new FormData();
-  //   const utilitiesFormData = new FormData();
-  //   const currentDate = new Date();
-  //   // const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
-  //   const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}-${currentDate.getFullYear()}`;
-  //   const promises = [];
-  //   const promises_added = []; // debug
-
-  //   formData.append("property_uid", propertyData.property_uid);
-  //   let hasPropertyChanges = false;
-
-  //   if (propertyData.property_address !== address) {
-  //     formData.append("property_address", address);
-  //     hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_unit !== unit) {
-  //       formData.append("property_unit", unit);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_city !== city) {
-  //       formData.append("property_city", city);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_state !== propertyState) {
-  //       formData.append("property_state", propertyState);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_zip !== zip) {
-  //       formData.append("property_zip", zip);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_type !== propertyType) {
-  //       formData.append("property_type", propertyType);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_num_beds !== bedrooms) {
-  //       formData.append("property_num_beds", bedrooms);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_num_baths !== bathrooms) {
-  //       formData.append("property_num_baths", bathrooms);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_area !== squareFootage) {
-  //       formData.append("property_area", squareFootage);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_listed_rent !== rent) {
-  //       formData.append("property_listed_rent", rent);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_deposit !== deposit) {
-  //       formData.append("property_deposit", deposit);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_pets_allowed !== (petsAllowed ? 1 : 0)) {
-  //       formData.append("property_pets_allowed", petsAllowed ? 1 : 0);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_deposit_for_rent !== (depositForRent ? 1 : 0)) {
-  //       formData.append("property_deposit_for_rent", depositForRent ? 1 : 0);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_taxes !== taxes) {
-  //       formData.append("property_taxes", taxes ? taxes : "null");
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_mortgages !== mortgages) {
-  //       formData.append("property_mortgages", mortgages ? mortgages : "null");
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_insurance !== insurance) {
-  //       formData.append("property_insurance", insurance ? insurance : "null");
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_description !== description) {
-  //       formData.append("property_description", description);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_notes !== notes) {
-  //       formData.append("property_notes", notes);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_available_to_rent !== (isListed ? 1 : 0)) {
-  //       formData.append("property_available_to_rent", isListed ? 1 : 0);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_amenities_community !== communityAmenities) {
-  //       formData.append("property_amenities_community", communityAmenities);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_amenities_unit !== apartmentAmenities) {
-  //       formData.append("property_amenities_unit", apartmentAmenities);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_amenities_nearby !== nearbyAmenities) {
-  //       formData.append("property_amenities_nearby", nearbyAmenities);
-  //       hasPropertyChanges = true;
-  //   }
-
-  //   //utilities data
-  //   // const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(utilitiesPaidBy));
-  //   // const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
-  //   // console.log("----- Submitted uitilitiesPaidBy JSON string");
-  //   // console.log(utilitiesJSONString);
-  //   // formData.append('property_utilities', utilitiesJSONString)
-
-  //   const updatedUtilities = mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy);
-  //   // const currentUtilities = utilitiesInUIDForm;
-  //   // const utilitiesToUpdate = {};
-
-  //   const files = selectedImageList;
-  //   let i = 0;
-  //   for (const file of selectedImageList) {
-  //     // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
-  //     let key = `img_${i++}`;
-  //     if (file.file !== null) {
-  //       // newProperty[key] = file.file;
-  //       formData.append(key, file.file);
-  //     } else {
-  //       // newProperty[key] = file.image;
-  //       formData.append(key, file.image);
-  //     }
-  //     if (file.coverPhoto) {
-  //       formData.append("img_favorite", key);
-  //     }
-  //   }
-
-  //   if (deletedImageList.length > 0) {
-  //     formData.append("deleted_images", JSON.stringify(deletedImageList));
-  //   }
-
-  //   // utilitiesFormData.append("property_uid", propertyData.property_uid);
-  //   // utilitiesFormData.append("property_utility", utilitiesJSONString);
-
-  //       // for (let [key, value] of formData.entries()) {
-  //   //   console.log(key, value);
-  //   // }
-
-  //   const putData = async () => {
-  //     if (hasPropertyChanges) {
-  //         setShowSpinner(true);
-  //         promises.push(
-  //             fetch(`${APIConfig.baseURL.dev}/properties`, {
-  //                 method: "PUT",
-  //                 body: formData,
-  //             })
-  //         );
-  //         setShowSpinner(false);
-  //     } else {
-  //         console.log("No changes for properties");
-  //     }
-  //   };
-
-  //   const postUtilitiesData = async () => {
-  //     setShowSpinner(true);
-
-  //     promises.push(
-  //       fetch(`${APIConfig.baseURL.dev}/utilities`, {
-  //         method: "POST",
-  //         body: utilitiesFormData,
-  //       })
-  //     );
-  //     promises_added.push("postUtilitiesData");
-
-  //     setShowSpinner(false);
-  //   };
-
-  //   // const putUtilitiesData = async () => {
-  //   //   setShowSpinner(true);
-
-  //   //   promises.push(
-  //   //     fetch(`${APIConfig.baseURL.dev}/utilities`, {
-  //   //       method: "PUT",
-  //   //       body: utilitiesFormData,
-  //   //     })
-  //   //   );
-  //   //   promises_added.push("putUtilitiesData - PUT");
-
-  //   //   setShowSpinner(false);
-
-  //   //   const addedUtilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(newUtilitiesPaidBy));
-  //   //   console.log("----- addedUtilitiesJSONString");
-  //   //   console.log(addedUtilitiesJSONString);
-
-  //   //   const addedUtilitiesFormData = new FormData();
-  //   //   addedUtilitiesFormData.append("property_uid", propertyData.property_uid);
-  //   //   addedUtilitiesFormData.append("property_utility", addedUtilitiesJSONString);
-
-  //   //   const numberOfAddedUtilities = Object.keys(newUtilitiesPaidBy).length;
-  //   //   if (numberOfAddedUtilities > 0) {
-  //   //     promises.push(
-  //   //       fetch(`${APIConfig.baseURL.dev}/utilities`, {
-  //   //         method: "POST",
-  //   //         body: addedUtilitiesFormData,
-  //   //       })
-  //   //     );
-  //   //     promises_added.push("putUtilitiesData - POST");
-
-  //   //     setShowSpinner(false);
-  //   //   }
-  //   // };
-
-  //   const putUtilitiesData = async () => {
-  //     if (hasUtilitiesChanges) {
-  //         const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
-  //         const utilitiesFormData = new FormData();
-
-  //         utilitiesFormData.append("property_uid", propertyData.property_uid);
-  //         utilitiesFormData.append("property_utility", utilitiesJSONString);
-
-  //         setShowSpinner(true);
-  //         await fetch(`${APIConfig.baseURL.dev}/utilities`, {
-  //             method: "PUT",
-  //             body: utilitiesFormData,
-  //         });
-  //         setShowSpinner(false);
-
-  //         console.log("Utilities changes saved.");
-  //     } else {
-  //         console.log("No changes for utilities.");
-  //     }
-  //   };
-
-  //   // Take care of this later - Abhinav
-  //   // const autoUpdate = async () => {
-  //   //   const updateResponse = await fetch(`${APIConfig.baseURL.dev}/properties/${propertyData.property_uid}`);
-  //   //   // const updateResponse = await fetch(`http://localhost:4000/properties/${propertyData.property_uid}`);
-  //   //   const updatedJson = await updateResponse.json();
-  //   //   const updatedProperty = updatedJson?.Property?.result[0];
-  //   //   propertyList = propertyList.map((property) => {
-  //   //     if (property.property_uid === updatedProperty.property_uid) return { ...property, ...updatedProperty };
-  //   //     return property;
-  //   //   });
-  //   //   // console.log("updatedPropertyList - ", propertyList);
-  //   //   setPropertyData(propertyList[index]);
-  //   // };
-
-  //   putData();
-  //   if (page === "create_listing") {
-  //     postUtilitiesData();
-  //   } else if (page === "edit_listing") {
-  //     putUtilitiesData();
-  //   }
-
-  //   try {
-  //     // console.log("promises added - ", promises_added);
-  //     await Promise.all(promises);
-  //     console.log("All Changes saved to the Database", promises);
-  //     // await autoUpdate();
-
-  //     console.log("propertyList after autoUpdate - ", propertyList);
-
-  //     refreshProperties();
-  //     showPropertyNavigator();
-  //     // navigate("/propertiesPM", { state: { index, propertyList } });
-
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //   }
-  // };
-
-  // const handleUpdateAndStay = async () => {
-  //   const formData = new FormData();
-  //   formData.append("property_uid", propertyData.property_uid);
-  //   let hasPropertyChanges = false;
-
-  //   if (propertyData.property_address !== address) {
-  //     formData.append("property_address", address);
-  //     hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_unit !== unit) {
-  //       formData.append("property_unit", unit);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_city !== city) {
-  //       formData.append("property_city", city);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_state !== propertyState) {
-  //       formData.append("property_state", propertyState);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_zip !== zip) {
-  //       formData.append("property_zip", zip);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_type !== propertyType) {
-  //       formData.append("property_type", propertyType);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_num_beds !== bedrooms) {
-  //       formData.append("property_num_beds", bedrooms);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_num_baths !== bathrooms) {
-  //       formData.append("property_num_baths", bathrooms);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_area !== squareFootage) {
-  //       formData.append("property_area", squareFootage);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_listed_rent !== rent) {
-  //       formData.append("property_listed_rent", rent);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_deposit !== deposit) {
-  //       formData.append("property_deposit", deposit);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_pets_allowed !== (petsAllowed ? 1 : 0)) {
-  //       formData.append("property_pets_allowed", petsAllowed ? 1 : 0);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_deposit_for_rent !== (depositForRent ? 1 : 0)) {
-  //       formData.append("property_deposit_for_rent", depositForRent ? 1 : 0);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_taxes !== taxes) {
-  //       formData.append("property_taxes", taxes ? taxes : "null");
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_mortgages !== mortgages) {
-  //       formData.append("property_mortgages", mortgages ? mortgages : "null");
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_insurance !== insurance) {
-  //       formData.append("property_insurance", insurance ? insurance : "null");
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_description !== description) {
-  //       formData.append("property_description", description);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_notes !== notes) {
-  //       formData.append("property_notes", notes);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_available_to_rent !== (isListed ? 1 : 0)) {
-  //       formData.append("property_available_to_rent", isListed ? 1 : 0);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_amenities_community !== communityAmenities) {
-  //       formData.append("property_amenities_community", communityAmenities);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_amenities_unit !== apartmentAmenities) {
-  //       formData.append("property_amenities_unit", apartmentAmenities);
-  //       hasPropertyChanges = true;
-  //   }
-  //   if (propertyData.property_amenities_nearby !== nearbyAmenities) {
-  //       formData.append("property_amenities_nearby", nearbyAmenities);
-  //       hasPropertyChanges = true;
-  //   }
-
-  //   const putUtilitiesData = async () => {
-  //     if (hasUtilitiesChanges) {
-  //         const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
-  //         const utilitiesFormData = new FormData();
-
-  //         utilitiesFormData.append("property_uid", propertyData.property_uid);
-  //         utilitiesFormData.append("property_utility", utilitiesJSONString);
-
-  //         setShowSpinner(true);
-  //         await fetch(`${APIConfig.baseURL.dev}/utilities`, {
-  //             method: "PUT",
-  //             body: utilitiesFormData,
-  //         });
-  //         setShowSpinner(false);
-
-  //         console.log("Utilities changes saved.");
-  //     } else {
-  //         console.log("No changes for utilities.");
-  //     }
-  //   };
-
-  //   if (hasPropertyChanges || hasUtilitiesChanges) {
-  //     try {
-  //       setShowSpinner(true);
-  //       if (hasPropertyChanges) {
-  //         await fetch(`${APIConfig.baseURL.dev}/properties`, {
-  //           method: "PUT",
-  //           body: formData,
-  //         });
-  //       }
-
-  //       if (hasUtilitiesChanges) {
-  //         await putUtilitiesData();
-  //       }
-
-  //       setShowSpinner(false);
-  //       console.log("Changes saved successfully.");
-  //     } catch (error) {
-  //       setShowSpinner(false);
-  //       console.error("Error saving changes:", error);
-  //     }
-  //   } else {
-  //     console.log("No changes detected.");
-  //   }
-  // };
-
   const saveChanges = async (navigateAfterSave = true) => {
     const formData = new FormData();
     formData.append("property_uid", propertyData.property_uid);
     let hasPropertyChanges = false;
-  
-    // Check for property changes and append to formData
+      
     if (propertyData.property_address !== address) {
       formData.append("property_address", address);
       hasPropertyChanges = true;
@@ -930,18 +500,14 @@ export default function AddListing(props) {
     if (favImage !== propertyData.property_favorite_image) {
       formData.append("property_favorite_image", favImage);
       hasPropertyChanges = true;
-    }
-    // const files = imageState;
+    }    
     let i = 0;
-    for (const file of imageState) {
-      // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+    for (const file of imageState) {      
       let key = `img_${i++}`;
-      if (file.file !== null) {
-        // newProperty[key] = file.file;
+      if (file.file !== null) {        
         formData.append(key, file.file);
         hasPropertyChanges = true;
-      } else {
-        // newProperty[key] = file.image;
+      } else {        
         formData.append(key, file.image);
         hasPropertyChanges = true;
       }
@@ -974,16 +540,14 @@ export default function AddListing(props) {
     if (hasPropertyChanges || hasUtilitiesChanges) {
       try {
         setShowSpinner(true);
-    
-        // Only send the request if there are property changes
+            
         if (hasPropertyChanges) {
           await fetch(`${APIConfig.baseURL.dev}/properties`, {
             method: "PUT",
             body: formData,
           });
         }
-    
-        // Only send the request if there are utility changes
+        
         if (hasUtilitiesChanges) {
           await putUtilitiesData();
         }
@@ -1057,25 +621,25 @@ export default function AddListing(props) {
     return false;
   };
 
-  const loadImages = async () => {
-    const files = [];
-    const images = JSON.parse(propertyData.property_images);
-    for (let i = 0; i < images.length; i++) {
-      files.push({
-        index: i,
-        image: images[i],
-        file: null,
-        coverPhoto: isCoverPhoto(images[i]),
-      });
-    }
-    setSelectedImageList(files);
-    // setActiveStep(files.findIndex(file => file.coverPhoto));
-    setActiveStep(() => {
-      const index = files.findIndex((file) => file.coverPhoto);
+  // const loadImages = async () => {
+  //   const files = [];
+  //   const images = JSON.parse(propertyData.property_images);
+  //   for (let i = 0; i < images.length; i++) {
+  //     files.push({
+  //       index: i,
+  //       image: images[i],
+  //       file: null,
+  //       coverPhoto: isCoverPhoto(images[i]),
+  //     });
+  //   }
+  //   setSelectedImageList(files);
+  //   // setActiveStep(files.findIndex(file => file.coverPhoto));
+  //   setActiveStep(() => {
+  //     const index = files.findIndex((file) => file.coverPhoto);
 
-      return index !== -1 ? index : 0;
-    });
-  };
+  //     return index !== -1 ? index : 0;
+  //   });
+  // };
 
   const [scrollPosition, setScrollPosition] = useState(0);
   const scrollRef = useRef(null);
@@ -1112,7 +676,7 @@ export default function AddListing(props) {
     const imageToDelete = JSON.parse(propertyData.property_images)[index];
     setImagesTobeDeleted((prev) => [...prev, imageToDelete]);
 
-    console.log("Delete image at index:", JSON.stringify(deletedIcons));
+    // console.log("Delete image at index:", JSON.stringify(deletedIcons));
   };
 
   const handleFavorite = (index) => {
@@ -1144,12 +708,12 @@ export default function AddListing(props) {
       <Stack
         style={{
           display: "flex",
-          flexDirection: "column", // Stack the content vertically
-          justifyContent: "flex-start", // Start content at the top
-          alignItems: "center", // Center content horizontally
+          flexDirection: "column",
+          justifyContent: "flex-start",
+          alignItems: "center",
           width: "100%",
           minHeight: "100vh",
-          marginTop: theme.spacing(2), // Adjust this for desired distance from the top
+          marginTop: theme.spacing(2),
           paddingBottom: "25px",
         }}
       >
@@ -1158,7 +722,7 @@ export default function AddListing(props) {
             margin: "30px",
             padding: theme.spacing(2),
             backgroundColor: theme.palette.form.main,
-            width: "85%", // Occupy full width with 25px margins on each side
+            width: "85%",
             [theme.breakpoints.down("sm")]: {
               width: "80%",
             },
@@ -1182,8 +746,7 @@ export default function AddListing(props) {
           </Stack>
 
           <Box component='form' onSubmit={handleSubmit} noValidate autoComplete='off' id='editPropertyForm'>
-            <Grid container columnSpacing={12} rowSpacing={6}>
-              {/* Select Field for Property */}
+            <Grid container columnSpacing={12} rowSpacing={6}>              
               <Grid item xs={12}>
                 <Box
                   sx={{
@@ -1227,7 +790,7 @@ export default function AddListing(props) {
                               flex: "0 0 auto",
                               border: "1px solid #ccc",
                               margin: "0 2px",
-                              position: "relative", // Added to position icons
+                              position: "relative",
                             }}
                           >
                             <img
@@ -1291,8 +854,7 @@ export default function AddListing(props) {
                   updateFavoriteIcons={handleUpdateFavoriteIcons}
                 />
               </Grid>
-
-              {/* Text Field for Title */}
+              
               <Grid item xs={12}>
                 <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                   Address
@@ -1310,8 +872,7 @@ export default function AddListing(props) {
                   fullWidth
                 />
               </Grid>
-
-              {/* Select Field for Issue and Cost Estimate */}
+              
               <Grid item xs={6}>
                 <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Unit</Typography>
                 <TextField
@@ -1681,46 +1242,7 @@ export default function AddListing(props) {
                       </Fragment>
                     ))}
               </Grid>
-            </Box>
-
-            {/* Default utilities
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    paddingBottom: "20px"
-                                }}
-                                noValidate
-                                autoComplete="off"
-                            >
-                                
-                                <UtilitySelection existingSelection={null} onChangeUtilities={() => console.log("utility changed")}/>
-                                
-                            </Box> */}
-            {/* <Grid item xs={12} xl={3}>
-                                <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                    Add Utility
-                                </Typography>
-                                    <Select 
-                                        sx={{
-                                            backgroundColor: 'white',
-                                            borderColor: 'black',
-                                            borderRadius: '7px',
-                                        }}
-                                        size="small"
-                                        // fullWidth
-                                        onChange={(e) => setUtilityToBeAdded(e.target.value)}
-                                        value={""}
-                                        renderValue={(value) => (value ? `${value}` : '')}
-                                    >                                        
-                                        {listOfUtilities.map(item => {
-                                            return (
-                                                <MenuItem value={item}>
-                                                    <li>{item}</li>
-                                                </MenuItem>
-                                            );
-                                        })}
-                                    </Select>
-                            </Grid> */}
+            </Box>           
             <Grid item xs={12}>
               <Button
                 variant='outlined'
@@ -1853,9 +1375,7 @@ export default function AddListing(props) {
               </Grid>
             </Box>
           </Stack>
-        </Paper>
-
-        {/* Submit Button */}
+        </Paper>        
         <Stack
           direction='column'
           justifyContent='center'
@@ -1872,18 +1392,12 @@ export default function AddListing(props) {
             }}
           >
             <Grid container>
-              <Grid item xs={12}>
-                {/* <Button variant="contained" onClick={() => testButton()} sx={{ width: '100%', backgroundColor: theme.typography.formButton.background }}> */}
+              <Grid item xs={12}>                
                 <Button variant='contained' type='submit' form='editPropertyForm' sx={{ width: "100%", backgroundColor: theme.typography.formButton.background }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                     {propertyData.property_available_to_rent !== 1 ? "Create Listing" : "Update Listing"}
                   </Typography>
-                </Button>
-                {/* {propertyData.property_available_to_rent === 1 && (
-                  <Button variant='outlined' onClick={handleUpdateAndStay} sx={{ width: "100%", backgroundColor: theme.typography.formButton.background, marginTop: "10px" }}>
-                    <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Save Changes and Stay</Typography>
-                  </Button>
-                )} */}
+                </Button>                
               </Grid>
             </Grid>
           </Box>
