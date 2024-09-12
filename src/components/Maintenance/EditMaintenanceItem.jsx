@@ -26,7 +26,7 @@ import {
 
 import { darken } from '@mui/system';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import FormHelperText from '@mui/material/FormHelperText';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -53,10 +53,14 @@ import ImageListItem from '@mui/material/ImageListItem';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { useMaintenance } from '../../contexts/MaintenanceContext';
+import ListsContext from '../../contexts/ListsContext';
 
 export default function EditMaintenanceItem({setRefersh, setRightPane}) {
 	console.log("inside edit component");
 	const location = useLocation();
+	const { getList, } = useContext(ListsContext);	
+	
+    const maintenanceIssues = getList("maintenance");
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
 	let testIssue1, testProperty1, testIssueItem1, testCost1;
@@ -139,7 +143,16 @@ export default function EditMaintenanceItem({setRefersh, setRightPane}) {
 	const profileId = getProfileId();
 
 	const [imagesTobeDeleted, setImagesTobeDeleted] = useState([]);
-	const parsedMaintainanceImages = maintainanceImages ? JSON.parse(maintainanceImages) : [];
+	// const parsedMaintainanceImages = maintainanceImages ? JSON.parse(maintainanceImages) : [];
+	let parsedMaintainanceImages = [];
+	if (maintainanceImages) {
+		try {
+			parsedMaintainanceImages = JSON.parse(maintainanceImages);
+		} catch (error) {
+			console.error("Error parsing maintainanceImages:", error);
+			parsedMaintainanceImages = [];
+		}
+	}
 
 const [deletedIcons, setDeletedIcons] = useState(
   parsedMaintainanceImages.length > 0 ? new Array(parsedMaintainanceImages.length).fill(false) : []
@@ -531,7 +544,7 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 											<ImageList 
 											ref={scrollRef}
 											sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
-												{JSON.parse(maintainanceImages)?.map((image, index) => (
+												{parsedMaintainanceImages?.map((image, index) => (
 													<ImageListItem
 														key={index}
 														sx={{
@@ -679,10 +692,11 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 										size="small"
 									>
 										<Select onChange={handleIssueChange} defaultValue={testIssueItem1}>
-											<MenuItem value={'Plumbing'}>Plumbing</MenuItem>
-											<MenuItem value={'Electrical'}>Electrical</MenuItem>
-											<MenuItem value={'Appliance'}>Appliance</MenuItem>
-											<MenuItem value={'HVAC'}>HVAC</MenuItem>
+										{
+											maintenanceIssues?.map( (freq ) => (
+												<MenuItem key={freq.list_uid} value={freq.list_item}>{freq.list_item}</MenuItem>
+											))
+										}
 										</Select>
 									</FormControl>
 								</Grid>

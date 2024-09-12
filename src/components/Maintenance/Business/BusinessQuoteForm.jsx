@@ -19,7 +19,7 @@ import {
     InputAdornment
 } from "@mui/material";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../../theme/theme';
 import ImageUploader from "../../ImageUploader";
@@ -45,6 +45,7 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import DocumentUploader from "../../DocumentUploader";
 
 import APIConfig from "../../../utils/APIConfig";
+import ListsContext from "../../../contexts/ListsContext";
 
 function CostPartsTable({parts, setParts}){
 
@@ -158,6 +159,8 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
     const navigate = useNavigate();
     const location = useLocation();
     const { getProfileId } = useUser();
+    const { getList, } = useContext(ListsContext);
+    const jobTypes = getList("bid")
     const maintenanceItem = location.state.maintenanceItem;
 
     //console.log("navigationParams", navigationParams)
@@ -605,9 +608,12 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
                                             Job Type
                                         </Typography>
-                                        <Select sx={{backgroundColor: 'white', borderColor: 'black', borderRadius: '7px'}} size="small" fullWidth onChange={(e) => setJobType(e.target.value)} value={jobType} placeholder="Job Type">
-                                            <MenuItem value={"Fixed Bid"}>Fixed Bid</MenuItem>
-                                            <MenuItem value={"Hourly"}>Hourly</MenuItem>
+                                        <Select sx={{backgroundColor: 'white', borderColor: 'black', borderRadius: '7px'}} size="small" fullWidth onChange={(e) => setJobType(e.target.value)} value={jobType} placeholder="Job Type">                                            
+                                            {
+										    	jobTypes?.map( (freq ) => (
+												    <MenuItem key={freq.list_uid} value={freq.list_item}>{freq.list_item}</MenuItem>
+											    ))
+										    }
                                         </Select>
                                     </Grid>
                                     {jobType === "Hourly" ? (

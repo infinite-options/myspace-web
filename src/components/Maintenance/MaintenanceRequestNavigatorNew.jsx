@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext, } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
 	Card,
@@ -33,6 +33,7 @@ import { IconButton } from '@mui/material';
 import APIConfig from '../../utils/APIConfig';
 
 import { useMaintenance } from '../../contexts/MaintenanceContext'; // Added useMaintenance context
+import ListsContext from '../../contexts/ListsContext';
 
 function getInitialImages(requestData, currentIndex) {
 	try {
@@ -80,6 +81,10 @@ export default function MaintenanceRequestNavigatorNew({
 		setSelectedRequestIndex,
 		setSelectedStatus,
 	 } = useMaintenance(); // Use the context
+
+	const { getList, } = useContext(ListsContext);	
+	
+    const priorityOptions = getList("priority");
 
 	const [currentIndex, setCurrentIndex] = useState(requestIndex);
 
@@ -299,9 +304,7 @@ export default function MaintenanceRequestNavigatorNew({
 	};
 	const tenantName = `${data?.tenant_first_name ? data?.tenant_first_name : ''} ${
 		data?.tenant_last_name ? data?.tenant_last_name : ''
-	}`.trim();
-
-	const priorityOptions = ['Low', 'Medium', 'High'];
+	}`.trim();	
 
 	const handlePriorityChange = async (event) => {
 		const newPriority = event.target.value;
@@ -567,10 +570,8 @@ export default function MaintenanceRequestNavigatorNew({
 													},
 												}}
 											>
-												{priorityOptions.map((option) => (
-													<MenuItem key={option} value={option}>
-														{option}
-													</MenuItem>
+												{priorityOptions.map((option) => (													
+													<MenuItem key={option.list_uid} value={option.list_item}>{option.list_item}</MenuItem>
 												))}
 											</Select>
 										</FormControl>

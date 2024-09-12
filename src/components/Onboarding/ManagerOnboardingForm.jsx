@@ -81,6 +81,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
   const [cookies, setCookie] = useCookies(["default_form_vals"]);
   const cookiesData = cookies["default_form_vals"];
   const navigate = useNavigate();
+  
   const [showSpinner, setShowSpinner] = useState(false);
   const [addPhotoImg, setAddPhotoImg] = useState();
   const [nextStepDisabled, setNextStepDisabled] = useState(false);
@@ -115,6 +116,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
 
   const [states, setStates] = useState([]);
   const [feeBases, setFeeBases] = useState([]);
+  const [feeTypes, setFeeTypes] = useState([]);
   const [feeFrequencies, setFeeFrequencies] = useState([]);
 
   const [fees, setFees] = useState([{ id: 1, fee_name: "", frequency: "", charge: "", of: "", fee_type: "" }]);
@@ -154,7 +156,22 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
 
     const feeFrequencies = getList("frequency");          
     setFeeFrequencies(feeFrequencies);
+
+    const types = getList("feeType");    
+    console.log("ROHIT - types - ", types);      
+    setFeeTypes(types);
   };
+
+  const getFeeTypeValue = (item) => {
+    switch(item){
+      case "Percentage":
+          return "PERCENT";          
+      case "Flat Rate":
+          return "FLAT-RATE";
+      default: 
+          return "INVALID FEE TYPE";
+    }
+  }
 
   // useEffect(() => {
   //   console.log("paymentMethods - ", paymentMethods);
@@ -536,8 +553,13 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                 placeholder='Select Type'
                 className={classes.select}                
               >
-                <MenuItem value='PERCENT'>Percentage</MenuItem>
-                <MenuItem value='FLAT-RATE'>Flat-Rate</MenuItem>
+                {/* <MenuItem value='PERCENT'>Percentage</MenuItem>
+                <MenuItem value='FLAT-RATE'>Flat-Rate</MenuItem> */}
+                {
+                  feeTypes?.map( type => (
+                    <MenuItem key={type.list_uid} value={getFeeTypeValue(type.list_item)}>{type.list_item}</MenuItem>
+                  ))
+                }
               </Select>
             </Stack>
           </Grid>

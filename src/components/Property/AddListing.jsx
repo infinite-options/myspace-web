@@ -88,6 +88,7 @@ export default function AddListing(props) {
   const [showSpinner, setShowSpinner] = useState(false);
   const [ownerId, setOwnerId] = useState(getProfileId());
   const statesList = getList("states");  
+  const propertyTypes = getList("propertyType");
   const [address, setAddress] = useState(propertyData.property_address);
   const [city, setCity] = useState(propertyData.property_city);
   const [propertyState, setPropertyState] = useState(propertyData.property_state);
@@ -918,12 +919,12 @@ export default function AddListing(props) {
                   fullWidth
                   onChange={(e) => setPropertyType(e.target.value)}
                   value={propertyType}
-                >
-                  <MenuItem value={"Single Family"}>Single Family</MenuItem>
-                  <MenuItem value={"Multi Family"}>Multi Family</MenuItem>
-                  <MenuItem value={"Condo"}>Condo</MenuItem>
-                  <MenuItem value={"Apartment"}>Apartment</MenuItem>
-                  <MenuItem value={"Tiny Home"}>Tiny Home</MenuItem>
+                >                  
+                  {
+                    propertyTypes?.map( type => (
+                      <MenuItem key={type.list_uid} value={type.list_item}>{type.list_item}</MenuItem>
+                    ))
+                  }
                 </Select>
               </Grid>
 

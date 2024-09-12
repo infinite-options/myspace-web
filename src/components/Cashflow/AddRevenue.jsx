@@ -35,6 +35,7 @@ const AddRevenue = (props) => {
   const { getProfileId, selectedRole } = useUser();
   const { getList, } = useContext(ListsContext);	
 	const feeFrequencies = getList("frequency");
+  const revenueCategories = getList("revenue");
 
 
   const [category, setCategory] = useState("Deposits");
@@ -274,14 +275,12 @@ const AddRevenue = (props) => {
             <Stack spacing={-2}>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Category</Typography>
               <FormControl variant='filled' fullWidth className={classes.root}>
-                <Select labelId='category-label' id='category' defaultValue='Deposits' value={category} onChange={handleCategoryChange}>
-                  <MenuItem value='Deposits'>Deposits</MenuItem>
-                  <MenuItem value='Extra Charges'>Extra Charges</MenuItem>
-                  <MenuItem value='Late Fee'>Late Fee</MenuItem>
-                  <MenuItem value='Maintenance'>Maintenance</MenuItem>
-                  <MenuItem value='Rent'>Rent</MenuItem>
-                  <MenuItem value='Repairs'>Repairs</MenuItem>
-                  <MenuItem value='Utilities'>Utilities</MenuItem>
+                <Select labelId='category-label' id='category' defaultValue='Deposits' value={category} onChange={handleCategoryChange}>                  
+                  {
+                    revenueCategories?.map( (freq ) => (
+                      <MenuItem key={freq.list_uid} value={freq.list_item}>{freq.list_item}</MenuItem>
+                    ))
+                  }
                 </Select>
               </FormControl>
             </Stack>

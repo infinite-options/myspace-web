@@ -36,6 +36,7 @@ const AddExpense = (props) => {
   const { getProfileId, selectedRole } = useUser();
   const { getList, } = useContext(ListsContext);	
 	const feeFrequencies = getList("frequency");
+  const expenseCategories = getList("expense");
 
   const [category, setCategory] = useState("Insurance");
   const [frequency, setFrequency] = useState("Monthly"); // TODO: Monthly and Yearly fees need to be added to the lease in lease_fees
@@ -282,7 +283,7 @@ const AddExpense = (props) => {
                   <MenuItem value="" disabled>
                     Select Property
                   </MenuItem>
-                  {propertyList.map((option, index) => (
+                  {propertyList?.map((option, index) => (
                     <MenuItem key={index} value={option}>
                       {option.property_address}
                       {", "}
@@ -299,14 +300,19 @@ const AddExpense = (props) => {
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Category</Typography>
               <FormControl variant="filled" fullWidth className={classes.root}>
                 <Select labelId="category-label" id="category" defaultValue="Insurance" value={category} onChange={handleCategoryChange}>
-                  <MenuItem value="Insurance">Insurance</MenuItem>
+                  {/* <MenuItem value="Insurance">Insurance</MenuItem>
                   <MenuItem value="Maintenance">Maintenance</MenuItem>
                   <MenuItem value="Management">Management</MenuItem>
                   <MenuItem value="Mortgage">Mortgage</MenuItem>
                   <MenuItem value="Repairs">Repairs</MenuItem>
                   <MenuItem value="Taxes">Taxes</MenuItem>
                   <MenuItem value="Utilities">Utilities</MenuItem>
-                  <MenuItem value="BILL POSTING">BILL POSTING</MenuItem>
+                  <MenuItem value="BILL POSTING">BILL POSTING</MenuItem> */}
+                  {
+                    expenseCategories?.map( (freq ) => (
+                      <MenuItem key={freq.list_uid} value={freq.list_item}>{freq.list_item}</MenuItem>
+                    ))
+                  }
                 </Select>
               </FormControl>
             </Stack>

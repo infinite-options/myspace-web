@@ -114,6 +114,7 @@ const useStyles = makeStyles({
 const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setReloadPropertyList,setNewPropertyUid}) => {
 	
 	const { getList, } = useContext(ListsContext);
+	const propertyTypes = getList("propertyType");
 	const classes = useStyles();
 	let navigate = useNavigate();
 	const { getProfileId } = useUser();
@@ -723,11 +724,11 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 											fullWidth
 											onChange={handleTypeChange}
 										>
-											<MenuItem value={'Single Family'}>Single Family</MenuItem>
-											<MenuItem value={'Multi Family'}>Multi Family</MenuItem>
-											<MenuItem value={'Condo'}>Condo</MenuItem>
-											<MenuItem value={'Apartment'}>Apartment</MenuItem>
-											<MenuItem value={'Tiny Home'}>Tiny Home</MenuItem>
+											{
+												propertyTypes?.map( type => (
+													<MenuItem key={type.list_uid} value={type.list_item}>{type.list_item}</MenuItem>
+												))
+											}
 										</Select>
 									</Grid>
 									<Grid item xs={2}>
