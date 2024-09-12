@@ -143,7 +143,8 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
             }
 
         } else {
-            setModifiedData((prev) => [...prev, { key: dataKey, value: [...leaseChildren, { ...currentRow }] }]);
+            const {id, ...newRowwithoutid} = currentRow
+            setModifiedData((prev) => [...prev, { key: dataKey, value: [...leaseChildren, { ...newRowwithoutid }] }]);
             setIsUpdated(true);
         }
     };
