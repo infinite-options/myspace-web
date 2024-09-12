@@ -1030,7 +1030,10 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
 							accept=".doc,.docx,.txt,.pdf"
 							hidden
 							// onChange={(e) => setContractFiles(e.target.files)}
-							onChange={(e) => setContractFiles((prevFiles) => [...prevFiles, ...e.target.files])}
+							onChange={(e) => {
+                // console.log("inside contract file upload --- dhyey")
+                setContractFiles((prevFiles) => [...prevFiles, ...e.target.files])}
+              }
 							multiple
 						/>
 					</Box>}
