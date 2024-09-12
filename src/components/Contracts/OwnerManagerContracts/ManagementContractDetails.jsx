@@ -22,29 +22,41 @@ import PropertiesContext from "../../../contexts/PropertiesContext";
 
 function ManagementContractDetails(props) {
   // console.log("In ManagementContractDetails.jsx - props - ", props);    
+  const navigate = useNavigate();
   const managementContractContext = useContext(ManagementContractContext);
   const propertiesContext = useContext(PropertiesContext);
 
-  const {
-    currentContractUID: contractUIDFromManagement,
-    currentContractPropertyUID: contractPropertyUIDFromManagement,
-    contractRequests,
-  } = managementContractContext || {};
+  const [ currentContractUID, setCurrentContractUID ] = useState(null);
+  const [ currentContractPropertyUID, setCurrentContractPropertyUID ] = useState(null);
+  const [ contractRequests, setContractRequests ] = useState([]);
 
-  const {
-    newContractUID: contractUIDFromProperties,
-    newContractPropertyUID: contractPropertyUIDFromProperties,    
-  } = propertiesContext || {};
+  useEffect(() => {
+    // Destructuring context values
+    const {
+      currentContractUID: contractUIDFromManagement,
+      currentContractPropertyUID: contractPropertyUIDFromManagement,
+      contractRequests,
+    } = managementContractContext || {};
 
-  const currentContractUID = contractUIDFromManagement || contractUIDFromProperties;
-  const currentContractPropertyUID = contractPropertyUIDFromManagement || contractPropertyUIDFromProperties;
+    const {
+      newContractUID: contractUIDFromProperties,
+      newContractPropertyUID: contractPropertyUIDFromProperties,
+    } = propertiesContext || {};
+
+    // Setting state with values from contexts
+    setCurrentContractUID(contractUIDFromManagement || contractUIDFromProperties);
+    setCurrentContractPropertyUID(contractPropertyUIDFromManagement || contractPropertyUIDFromProperties);
+    if(contractRequests){
+      setContractRequests(contractRequests)
+    }
+  }, [managementContractContext, propertiesContext]);
   
   
   
   
   console.log("ManagementContractDetails - currentContractUID from context - ", currentContractUID);
   console.log("ManagementContractDetails - currentContractPropertyUID from context - ", currentContractPropertyUID);  
-  const navigate = useNavigate();
+  
   
 
   useEffect(() => {

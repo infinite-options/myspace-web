@@ -76,7 +76,16 @@ const ViewLease = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { getProfileId, selectedRole } = useUser();
-  const { propertyList, returnIndex, } = useContext(PropertiesContext); 
+  // const { propertyList, returnIndex, } = useContext(PropertiesContext); 
+  const propertiesContext = useContext(PropertiesContext);
+  const {
+    propertyList: propertyListFromProperties,
+    returnIndex: returnIndexFromProperties,
+  } = propertiesContext || {};
+
+  const propertyList = propertyListFromProperties || [];
+  const returnIndex = returnIndexFromProperties || 0;
+
 
   const [moveOut, setMoveOut] = useState("");
   const [showSpinner, setShowSpinner] = useState(false);

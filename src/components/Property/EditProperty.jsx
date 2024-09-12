@@ -61,7 +61,21 @@ function EditProperty(props) {
 	const { state } = useLocation();
 	let navigate = useNavigate();
 	const { getProfileId } = useUser();
-	const { propertyList, allRentStatus, setPropertyList, returnIndex  } = useContext(PropertiesContext); 
+
+	const propertiesContext = useContext(PropertiesContext);
+	const {
+	  propertyList: propertyListFromContext,
+	  setPropertyList: setPropertyListFromContext,
+	  fetchProperties: fetchPropertiesFromContext,
+	  allRentStatus: allRentStatusFromContext,	  
+	  returnIndex: returnIndexFromContext,
+	} = propertiesContext || {};
+  
+	const propertyList = propertyListFromContext || [];
+	const setPropertyList = setPropertyListFromContext;
+	const fetchProperties = fetchPropertiesFromContext;  
+	const allRentStatus = allRentStatusFromContext || [];	
+	const returnIndex = returnIndexFromContext || 0;
 	
 
 	// Check with Laysa

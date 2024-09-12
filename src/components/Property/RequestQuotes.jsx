@@ -31,7 +31,16 @@ const RequestQuotes = (props) => {
   const location = useLocation();
   const { getProfileId } = useUser();
   const profileId = getProfileId();
-  const { propertyList, fetchContracts, returnIndex,  } = useContext(PropertiesContext); 
+  // const { propertyList, fetchContracts, returnIndex,  } = useContext(PropertiesContext); 
+  const propertiesContext = useContext(PropertiesContext);
+	const {
+	  propertyList: propertyListFromContext,	      
+    fetchContracts,	  
+	  returnIndex: returnIndexFromContext,
+	} = propertiesContext || {};
+  
+	const propertyList = propertyListFromContext || [];		  
+	const returnIndex = returnIndexFromContext || 0;
 
   const [ownerId, setOwnerId] = useState(getProfileId());
   const [properties, setProperties] = useState([]);

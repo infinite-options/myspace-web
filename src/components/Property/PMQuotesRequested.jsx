@@ -54,7 +54,20 @@ export default function PMQuotesRequested(props) {
   const PMQuotesDetails = props;
   const handleBackClick = props.handleBackClick;
   const classes = useStyles();
-  const { propertyList, allContracts, fetchContracts, returnIndex,  } = useContext(PropertiesContext); 
+  // const { propertyList, allContracts, fetchContracts, returnIndex,  } = useContext(PropertiesContext); 
+
+  const propertiesContext = useContext(PropertiesContext);
+	const {
+	  propertyList: propertyListFromContext,	  
+    allContracts: allContractsFromContext,
+    fetchContracts: fetchContractsFromContext,	  
+	  returnIndex: returnIndexFromContext,
+	} = propertiesContext || {};
+  
+	const propertyList = propertyListFromContext || [];		
+  const allContracts = allContractsFromContext || [];	
+  const fetchContracts = fetchContractsFromContext;  
+	const returnIndex = returnIndexFromContext || 0;
   
   const [contracts, setContracts] = useState([]);
   const refreshContracts = fetchContracts;  

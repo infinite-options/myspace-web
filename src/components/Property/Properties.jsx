@@ -39,7 +39,19 @@ function Properties() {
   // console.log("In Properties LHS: ", location.state?.showLHS);
   // console.log("In Properties RHS: ", location.state?.showRHS);
   console.log("location", location.state);
-  const { propertyList, setPropertyList, returnIndex, setReturnIndex  } = useContext(PropertiesContext); 
+  // const { propertyList, setPropertyList, returnIndex, setReturnIndex  } = useContext(PropertiesContext); 
+  const propertiesContext = useContext(PropertiesContext);
+	const {
+	  propertyList: propertyListFromContext,
+	  setPropertyList: setPropertyListFromContext,	  
+	  returnIndex: returnIndexFromContext,
+    setReturnIndex: setReturnIndexFromContext,
+	} = propertiesContext || {};
+  
+	const propertyList = propertyListFromContext || [];
+	const setPropertyList = setPropertyListFromContext;	
+	const returnIndex = returnIndexFromContext || 0;
+  const setReturnIndex = setReturnIndexFromContext;
 
   const [dataReady, setDataReady] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);

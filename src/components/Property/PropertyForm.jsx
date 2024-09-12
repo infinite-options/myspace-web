@@ -38,6 +38,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 
 import PropertiesContext from '../../contexts/PropertiesContext';
+import ListsContext from '../../contexts/ListsContext';
 
 const useStyles = makeStyles({
 	card: {
@@ -111,6 +112,9 @@ const useStyles = makeStyles({
 });
 
 const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setReloadPropertyList,setNewPropertyUid}) => {
+	
+	const { getList, } = useContext(ListsContext);
+	const propertyTypes = getList("propertyType");
 	const classes = useStyles();
 	let navigate = useNavigate();
 	const { getProfileId } = useUser();
@@ -357,6 +361,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		}
 
 		// create new contract if profile === manager
+		let responseContractUID = null;
 		if (selectedRole === "MANAGER") {
 			const contractFormData = new FormData();
 
@@ -365,9 +370,9 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 			const currentDate = new Date();
 			const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}-${currentDate.getFullYear()}`;
 			
-			responsePropertyUID = '["' + responsePropertyUID + '"]';
-			console.log("Reformated property data: ", responsePropertyUID);
-			contractFormData.append("contract_property_ids", responsePropertyUID);
+			const PropertyUID = '["' + responsePropertyUID + '"]';
+			console.log("Reformated property data: ", PropertyUID);
+			contractFormData.append("contract_property_ids", PropertyUID);
 			console.log("Immediately after: ", contractFormData);
 			contractFormData.append("contract_business_id", getProfileId());
 			contractFormData.append("contract_start_date", formattedDate);
@@ -377,7 +382,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 			console.log("In Create new contract - contractFormData = ", contractFormData);
 			const url = `${APIConfig.baseURL.dev}/contracts`;
 
-			let responseContractUID = null;
+			
 
 			try {
 				const response = await fetch(url, {
@@ -396,16 +401,27 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 				setNewContractUID(responseContractUID);
 				console.log("response data - contract UID: ", responseContractUID);
 
-				console.log('navigating to /managementContractDetails', responseContractUID, getProfileId(), responsePropertyUID);
+				console.log('navigating to /pmQuotesList', responseContractUID, getProfileId(), responsePropertyUID);
 				
-				navigate("/pmQuotesList", {
-				  state: {
-				    selected_contract_uid: responseContractUID,				    
-				  },
-				});			
+				// navigate("/pmQuotesList", {
+				//   state: {
+				//     selectedContractUID: responseContractUID,		
+				// 	selectedContractPropertyUID: responsePropertyUID[0],   
+				//   },
+				// });			
 			} catch (error) {
 				console.error("Error:", error);
 			}
+		}
+
+		
+		if( selectedRole === "MANAGER" && responseContractUID != null && responsePropertyUID != null){		
+			navigate("/pmQuotesList", {
+				state: {
+				selectedContractUID: responseContractUID,		
+				selectedContractPropertyUID: responsePropertyUID,   
+				},
+			});	
 		}
 
 		setAddress("");
@@ -461,17 +477,12 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		}
 	}, [setAddress, setUnit, setCity, setState, setZip,]);
 
-	useEffect(() => {
-		const fetchAppliances = async () => {
-			try {
-				const response = await fetch(`${APIConfig.baseURL.dev}/lists?list_category=appliances`);
-				const data = await response.json();
-				const validAppliances = data.result.filter(item => item.list_item.trim() !== "");
-				setApplianceList(validAppliances);
-			} catch (error) {
-				console.error("Error fetching appliances:", error);
-			}
-		};
+	const fetchAppliances = () => {				
+		const validAppliances = getList("appliances");		
+		setApplianceList(validAppliances);		
+	};
+
+	useEffect(() => {		
 		fetchAppliances();
 	}, []);
 
@@ -713,11 +724,11 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 											fullWidth
 											onChange={handleTypeChange}
 										>
-											<MenuItem value={'Single Family'}>Single Family</MenuItem>
-											<MenuItem value={'Multi Family'}>Multi Family</MenuItem>
-											<MenuItem value={'Condo'}>Condo</MenuItem>
-											<MenuItem value={'Apartment'}>Apartment</MenuItem>
-											<MenuItem value={'Tiny Home'}>Tiny Home</MenuItem>
+											{
+												propertyTypes?.map( type => (
+													<MenuItem key={type.list_uid} value={type.list_item}>{type.list_item}</MenuItem>
+												))
+											}
 										</Select>
 									</Grid>
 									<Grid item xs={2}>
@@ -968,7 +979,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 								Appliances Included
 							</Typography>
 							<Grid container spacing={0}>
-								{applianceList.map((appliance, index) => (
+								{applianceList?.map((appliance, index) => (
 									<Grid item xs={6} sm={4} key={index}>
 										<FormControlLabel
 											control={

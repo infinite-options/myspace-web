@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import AES from "crypto-js/aes";
@@ -47,6 +47,7 @@ import ChaseIcon from "../../images/Chase.png";
 // import CloseIcon from "@mui/icons-material/Close";
 import { useCookies } from "react-cookie";
 import APIConfig from "../../utils/APIConfig";
+import ListsContext from "../../contexts/ListsContext";
 
 // import AdultOccupant from "../Leases/AdultOccupant";
 // import ChildrenOccupant from "../Leases/ChildrenOccupant";
@@ -75,6 +76,7 @@ const useStyles = makeStyles((theme) => ({
 export default function OwnerOnboardingForm({ profileData, setIsSave }) {
   console.log("In TenenatOnBoardingForm  - profileData", profileData);
 
+  const { getList, } = useContext(ListsContext);
   const classes = useStyles();
   const [cookies, setCookie] = useCookies(["default_form_vals"]);
   const cookiesData = cookies["default_form_vals"];
@@ -143,20 +145,11 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
   const [ errors, setErrors ] = useState({})
   
 
-  const getListDetails = async () => {
-    try {
-      const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
-      if (!response.ok) {
-        console.log("Error fetching lists data");
-      }
-      const responseJson = await response.json();
-      const relationships = responseJson.result.filter((res) => res.list_category === "relationships");
-      const states = responseJson.result.filter((res) => res.list_category === "states");
+  const getListDetails = async () => {    
+      const relationships = getList("relationships");
+      const states = getList("states");
       setRelationships(relationships);
-      setStates(states);
-    } catch (error) {
-      console.log(error);
-    }
+      setStates(states);    
   };
 
   // useEffect(() => {
@@ -957,11 +950,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                       {"Tax ID (SSN or EIN)"}
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
-                  {/* <Select name='tax_id_type' value={taxIDType} size='small' fullWidth onChange={(e) => setTaxIDType(e.target.value)} placeholder='Select Tax ID Type' className={classes.select}>
-                    <MenuItem value='SSN'>SSN</MenuItem>
-                    <MenuItem value='EIN'>EIN</MenuItem>
-                  </Select> */}
+                  <Grid item xs={6}>                  
 
                   <RadioGroup aria-label='taxIDType' name='announctax_id_typeementType' value={taxIDType} onChange={(e) => setTaxIDType(e.target.value)} row>
                     <FormControlLabel 

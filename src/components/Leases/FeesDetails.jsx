@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useEffect, useState, useRef } from "react";
 import {
     Typography, Box, Paper, Grid, TextField, MenuItem, Button, FormControl, InputAdornment, Select, Dialog, DialogActions, DialogContentText,
@@ -16,6 +16,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Close } from '@mui/icons-material';
 import { makeStyles } from "@material-ui/core/styles";
 import { isValidDate } from "../../utils/dates";
+import ListsContext from "../../contexts/ListsContext";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -30,6 +31,10 @@ const useStyles = makeStyles((theme) => ({
 
 
 const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees }) => {
+    const { getList, } = useContext(ListsContext);	
+	const feeBases = getList("basis");
+	const feeFrequencies = getList("frequency");	
+
     const [currentFeeRow, setcurrentFeeRow] = useState(null);
     const [isEditing, setIsFeeEditing] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -497,11 +502,11 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees }) => {
                                                             backgroundColor: '#D6D5DA',
                                                         }}
                                                     >
-                                                        <MenuItem value="One-time">One-time</MenuItem>
-                                                        <MenuItem value="Weekly">Weekly</MenuItem>
-                                                        <MenuItem value="Bi-Weekly">Bi-Weekly</MenuItem>
-                                                        <MenuItem value="Monthly">Monthly</MenuItem>
-                                                        <MenuItem value="Annually">Annually</MenuItem>
+                                                        {
+                                                            feeFrequencies?.map( (freq, index) => (
+                                                                <MenuItem key={index} value={freq.list_item}>{freq.list_item}</MenuItem>
+                                                            ) )
+                                                        }
                                                     </Select>
                                                 </FormControl>
                                             </Grid>

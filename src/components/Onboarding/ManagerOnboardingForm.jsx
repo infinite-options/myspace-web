@@ -1,4 +1,4 @@
-import React, { useState, useEffect, } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AES from "crypto-js/aes";
@@ -43,6 +43,8 @@ import { useCookies } from "react-cookie";
 import APIConfig from "../../utils/APIConfig";
 import { BeachAccessOutlined } from "@mui/icons-material";
 
+import ListsContext from "../../contexts/ListsContext";
+
 // import AdultOccupant from "../Leases/AdultOccupant";
 // import ChildrenOccupant from "../Leases/ChildrenOccupant";
 // import PetsOccupant from "../Leases/PetsOccupant";
@@ -74,10 +76,12 @@ const useStyles = makeStyles((theme) => ({
 export default function ManagerOnboardingForm({ profileData, setIsSave }) {
   console.log("In ManagerOnboardingForm  - profileData", profileData);
 
+  const { getList, } = useContext(ListsContext);	
   const classes = useStyles();
   const [cookies, setCookie] = useCookies(["default_form_vals"]);
   const cookiesData = cookies["default_form_vals"];
   const navigate = useNavigate();
+  
   const [showSpinner, setShowSpinner] = useState(false);
   const [addPhotoImg, setAddPhotoImg] = useState();
   const [nextStepDisabled, setNextStepDisabled] = useState(false);
@@ -112,6 +116,8 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
 
   const [states, setStates] = useState([]);
   const [feeBases, setFeeBases] = useState([]);
+  const [feeTypes, setFeeTypes] = useState([]);
+  const [feeFrequencies, setFeeFrequencies] = useState([]);
 
   const [fees, setFees] = useState([{ id: 1, fee_name: "", frequency: "", charge: "", of: "", fee_type: "" }]);
   const [services, setServices] = useState([{ id: 1, service_name: "", hours: "", charge: "", total_cost: "" }]);
@@ -142,23 +148,30 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
 
   const [ errors, setErrors ] = useState({})
 
-  const getListDetails = async () => {
-    try {
-      const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
-      if (!response.ok) {
-        console.log("Error fetching lists data");
-      }
-      const responseJson = await response.json();
-      const states = responseJson.result.filter((res) => res.list_category === "states");
-      setStates(states);
+  const getListDetails = async () => {          
+    const states = getList("states");
+    setStates(states);
+    const bases = getList("basis");          
+    setFeeBases(bases);    
 
-      const bases = responseJson.result.filter((res) => res.list_category === "basis" && res.list_item != null);      
-      setFeeBases(bases);
+    const feeFrequencies = getList("frequency");          
+    setFeeFrequencies(feeFrequencies);
 
-    } catch (error) {
-      console.log(error);
-    }
+    const types = getList("feeType");    
+    console.log("ROHIT - types - ", types);      
+    setFeeTypes(types);
   };
+
+  const getFeeTypeValue = (item) => {
+    switch(item){
+      case "Percentage":
+          return "PERCENT";          
+      case "Flat Rate":
+          return "FLAT-RATE";
+      default: 
+          return "INVALID FEE TYPE";
+    }
+  }
 
   // useEffect(() => {
   //   console.log("paymentMethods - ", paymentMethods);
@@ -540,8 +553,13 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                 placeholder='Select Type'
                 className={classes.select}                
               >
-                <MenuItem value='PERCENT'>Percentage</MenuItem>
-                <MenuItem value='FLAT-RATE'>Flat-Rate</MenuItem>
+                {/* <MenuItem value='PERCENT'>Percentage</MenuItem>
+                <MenuItem value='FLAT-RATE'>Flat-Rate</MenuItem> */}
+                {
+                  feeTypes?.map( type => (
+                    <MenuItem key={type.list_uid} value={getFeeTypeValue(type.list_item)}>{type.list_item}</MenuItem>
+                  ))
+                }
               </Select>
             </Stack>
           </Grid>
@@ -564,12 +582,11 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                 placeholder='Select frequency'
                 className={classes.select}
               >
-                <MenuItem value='hourly'>Hourly</MenuItem>
-                <MenuItem value='daily'>Daily</MenuItem>
-                <MenuItem value='weekly'>Weekly</MenuItem>
-                <MenuItem value='bi-weekly'>Biweekly</MenuItem>
-                <MenuItem value='monthly'>Monthly</MenuItem>
-                <MenuItem value='annually'>Annually</MenuItem>
+                {
+									feeFrequencies?.map( (freq, index) => (
+										<MenuItem key={index} value={freq.list_item}>{freq.list_item}</MenuItem>
+									) )
+								}
               </Select>
             </Stack>
           </Grid>
@@ -1502,12 +1519,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                         {"Tax ID (EIN or SSN)"}
                       </Typography>
                     </Grid>
-                    <Grid item xs={6}>
-                    {/* <Select name='tax_id_type' value={taxIDType} size='small' fullWidth onChange={(e) => setTaxIDType(e.target.value)} placeholder='Select Tax ID Type' className={classes.select}>
-                      <MenuItem value='SSN'>SSN</MenuItem>
-                      <MenuItem value='EIN'>EIN</MenuItem>
-                    </Select> */}
-
+                    <Grid item xs={6}>                    
                     <RadioGroup aria-label='taxIDType' name='announctax_id_typeementType' value={taxIDType} onChange={(e) => setTaxIDType(e.target.value)} row>
                       <FormControlLabel 
                         value='SSN'

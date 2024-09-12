@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import theme from "../../theme/theme";
@@ -31,6 +31,8 @@ import { maskSSN, maskEIN, formattedPhoneNumber } from "../utils/privacyMasking"
 
 import APIConfig from "../../utils/APIConfig";
 import Documents from "../Leases/Documents";
+
+import ListsContext from "../../contexts/ListsContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -117,6 +119,8 @@ const TenantLease = () => {
   const { getProfileId } = useUser();
   const { state } = useLocation();
   const { application, property } = state;
+  const { getList, } = useContext(ListsContext);	
+	const feeFrequencies = getList("frequency");
   console.log("Application: ", application);
   const [showSpinner, setShowSpinner] = useState(false);
   const [startDate, setStartDate] = useState(application.lease_start ? dayjs(application.lease_start) : dayjs());
@@ -1038,11 +1042,16 @@ const TenantLease = () => {
                       placeholder='Select frequency'
                       className={classes.select}
                     >
-                      <MenuItem value='One-time'>One-time</MenuItem>
+                      {/* <MenuItem value='One-time'>One-time</MenuItem>
                       <MenuItem value='Weekly'>Weekly</MenuItem>
                       <MenuItem value='Bi-Weekly'>Bi-Weekly</MenuItem>
                       <MenuItem value='Monthly'>Monthly</MenuItem>
-                      <MenuItem value='Annually'>Annually</MenuItem>
+                      <MenuItem value='Annually'>Annually</MenuItem> */}                      
+                      {
+                        feeFrequencies?.map( (freq) => (
+                          <MenuItem key={freq.list_uid} value={freq.list_item}>{freq.list_item}</MenuItem>
+                        ))
+                      }
                     </Select>
                   </Stack>
                 </Grid>
