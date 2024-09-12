@@ -117,6 +117,8 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   const [documents, setDocuments] = useState([]);
   const [uploadedFiles, setuploadedFiles] = useState([]);
   const [deletedFiles, setDeletedFiles] = useState([]);
+  const [isPreviousFileChange, setIsPreviousFileChange] = useState(false)
+  const [uploadedFileTypes, setUploadedFileTypes] = useState([]);
 
   const [states, setStates] = useState([]);
 
@@ -316,14 +318,14 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
 
       const parsedDocs = JSON.parse(profileData.business_documents);
       // console.log("parsedDocs - ", parsedDocs);
-      const docs = parsedDocs
-        ? parsedDocs.map((doc, index) => ({
-            ...doc,
-            id: index,
-          }))
-        : [];
+      // const docs = parsedDocs
+      //   ? parsedDocs.map((doc, index) => ({
+      //       ...doc,
+      //       id: index,
+      //     }))
+      //   : [];
       // console.log('initial docs', docs);
-      setDocuments(docs || []);
+      setDocuments(parsedDocs || []);
 
       const paymentMethodsData = JSON.parse(profileData.paymentMethods);
       const updatedPaymentMethods = {
@@ -1059,7 +1061,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   const saveProfile = async () => {
     console.log("inside saveProfile", modifiedData);
     try {
-      if (modifiedData.length > 0) {
+      if (modifiedData.length > 0 || isPreviousFileChange || deletedFiles?.length > 0 || uploadedFiles?.length > 0) {
         setShowSpinner(true);
         const headers = {
           "Access-Control-Allow-Origin": "*",
@@ -1087,6 +1089,35 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
           }
         });
 
+        if(isPreviousFileChange){
+          hasBusinessKey = true
+          profileFormData.append("business_documents", JSON.stringify(documents));
+        }
+
+        if(deletedFiles && deletedFiles?.length !== 0){
+          hasBusinessKey = true
+          profileFormData.append("delete_documents", JSON.stringify(deletedFiles));
+        }
+
+        if (uploadedFiles && uploadedFiles?.length) {
+          hasBusinessKey = true
+          const documentsDetails = [];
+          [...uploadedFiles].forEach((file, i) => {
+    
+            profileFormData.append(`file_${i}`, file);
+            const fileType = uploadedFileTypes[i] || "";
+            const documentObject = {
+              // file: file,
+              fileIndex: i, //may not need fileIndex - will files be appended in the same order?
+              fileName: file.name, //may not need filename
+              contentType: fileType, // contentType = "contract or lease",  fileType = "pdf, doc"
+            };
+            documentsDetails.push(documentObject);
+          });
+    
+          profileFormData.append("business_documents_details", JSON.stringify(documentsDetails));
+        }
+
         if (hasBusinessKey) {
           profileFormData.append("business_uid", profileData.business_uid);
         }
@@ -1113,6 +1144,10 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
           });
         setShowSpinner(false);
         setModifiedData([]);
+        setuploadedFiles([]);
+        setUploadedFileTypes([]);
+        setDeletedFiles([]);
+        setIsPreviousFileChange(false)
       }
       // else {
       //     showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
@@ -1143,32 +1178,34 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
         // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
         modifiedData.forEach((item) => {
           console.log(`Key: ${item.key}`);
-          if (item.key === "uploadedFiles") {
-            console.log("uploadedFiles", item.value);
-            if (item.value.length) {
-              const documentsDetails = [];
-              [...item.value].forEach((fileItem, i) => {
-                profileFormData.append(`file_${i}`, fileItem.file, fileItem.name);
-                const fileType = "pdf";
-                const documentObject = {
-                  // file: file,
-                  fileIndex: i,
-                  fileName: fileItem.name,
-                  contentType: fileItem.contentType,
-                };
-                documentsDetails.push(documentObject);
-              });
-              profileFormData.append("business_documents_details", JSON.stringify(documentsDetails));
-            }
-          } else {
+          // if (item.key === "uploadedFiles") {
+          //   console.log("uploadedFiles", item.value);
+          //   if (item.value.length) {
+          //     const documentsDetails = [];
+          //     [...item.value].forEach((fileItem, i) => {
+          //       profileFormData.append(`file_${i}`, fileItem.file, fileItem.name);
+          //       const fileType = "pdf";
+          //       const documentObject = {
+          //         // file: file,
+          //         fileIndex: i,
+          //         fileName: fileItem.name,
+          //         contentType: fileItem.contentType,
+          //       };
+          //       documentsDetails.push(documentObject);
+          //     });
+          //     profileFormData.append("business_documents_details", JSON.stringify(documentsDetails));
+          //   }
+          // } else {
+
             // If key is ein_number then we should have to pass value directly instead of converting into string
             if(item.key !== "business_ein_number"){
               profileFormData.append(item.key, JSON.stringify(item.value));
             }else{
               profileFormData.append(item.key, item.value);
             }
-          }
+          // }
         });
+
         profileFormData.append("business_uid", profileData.business_uid);
 
         // console.log("editOrUpdateProfile - profileFormData - ");
@@ -1840,7 +1877,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
 
       <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
         <Grid item xs={12} md={12}>
-          <Documents
+          {/* <Documents
             documents={documents}
             setDocuments={setDocuments}
             setuploadedFiles={setuploadedFiles}
@@ -1850,6 +1887,23 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
             modifiedData={modifiedData}
             setModifiedData={setModifiedData}
             dataKey={"business_documents"}
+          /> */}
+          <Documents
+            documents={documents}
+            setDocuments={setDocuments}
+            setContractFiles={setuploadedFiles}
+            // editOrUpdateLease={editOrUpdateTenant}
+            // documentsRef={documentsRef}
+            setDeleteDocsUrl={setDeletedFiles}
+            // setDeletedFiles={setDeletedFiles}
+            // modifiedData={modifiedData}
+            isAccord={true}
+            contractFiles={uploadedFiles}
+            contractFileTypes={uploadedFileTypes}
+            setContractFileTypes={setUploadedFileTypes}
+            setIsPreviousFileChange={setIsPreviousFileChange}
+            // setModifiedData={setModifiedData}
+            // dataKey={"business_documents"}
           />
         </Grid>
       </Grid>

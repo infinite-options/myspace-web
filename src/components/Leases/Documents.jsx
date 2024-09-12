@@ -33,6 +33,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import LeaseIcon from "../Property/leaseIcon.png";
 import { Close } from "@mui/icons-material";
 
+import ManagementContractContext from "../../contexts/ManagementContractContext";
 import axios from 'axios';
 import FilePreviewDialog from "./FilePreviewDialog";
 
@@ -49,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFileChange, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isAccord=false, contractFiles=[], setContractFiles, contractFileTypes=[], setContractFileTypes, isEditable=true, customName }) => {
+const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFileChange, isAccord=false, contractFiles=[], setContractFiles, contractFileTypes=[], setContractFileTypes, isEditable=true, customName }) => {
 
   const { getList, } = useContext(ListsContext);	
 
@@ -70,7 +71,7 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
   const [ expanded, setExpanded ] = useState(true);
   // const [preview, setPreview] = useState(null)
   const [selectedPreviewFile, setSelectedPreviewFile] = useState(null)
-  const [previewDialogOpen, setPreviewDialogOpen] = useState(false)
+  const [previewDialogOpen, setPreviewDialogOpen] = useState(false) 
 
   // useEffect(() => {
   //   console.log("inside documents mod", modifiedData);
@@ -103,8 +104,8 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
 
   const checkRequiredFields = () => {
     let retVal = true;
-    console.log("name", currentRow.filename, currentRow.name);
-    console.log("type", currentRow.contentType);
+    // console.log("name", currentRow.filename, currentRow.name);
+    // console.log("type", currentRow.contentType);
 
     if (!currentRow.filename && !currentRow.name) {
       console.error("Filename is either empty, null, or undefined.");
@@ -120,36 +121,18 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
     if (isEditing === true) {
       // console.log("current row is", currentRow);
       
-      if(!isAccord){
-      
-        setDocuments((prevFiles)=>{
-          return prevFiles.map((file) => file.link === currentRow.link? currentRow : file);
-        });
-        
-        if(setIsPreviousFileChange){
-          setIsPreviousFileChange(true)
-        }
-        handleClose();
+      // remove id of currentRow before adding to it
+      // const docswithoutid = currentRow.map(({ id, ...rest }) => rest);
+      const { id, ...docswithoutid} = currentRow;
+      setDocuments((prevFiles)=>{
+        return prevFiles.map((file) => file.link === docswithoutid.link? docswithoutid : file);
+      });
 
-      }else{
-        
-        // const updatedDocuments = documents.map((doc) => (doc.id === currentRow.id ? currentRow : doc));
-        // // console.log("---Dhyey--- updateDocs", updatedDocuments)
-        // const updatedDocsWithoutId = updatedDocuments.map(({ id, ...rest }) => rest);
-        
-        // setModifiedData((prev) => [...prev, { key: dataKey, value: updatedDocsWithoutId }]);
-        setDocuments((prevFiles)=>{
-          return prevFiles.map((file) => file.link === currentRow.link? currentRow : file);
-        });
-        
-        if(setIsPreviousFileChange){
-          setIsPreviousFileChange(true)
-        }
-
-        handleClose();
-        
-        // setIsUpdated(true);
+      if(setIsPreviousFileChange){
+        setIsPreviousFileChange(true)
       }
+      handleClose();
+
     } else {
       // console.log("---dhyey--- arr", uploadedFiles);
       // const updatedDocsWithoutId = documents.map(({ id, ...rest }) => rest);
@@ -162,6 +145,7 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
         setContractFiles((prevFiles) => [...prevFiles, file.file])
         setContractFileTypes((prevFiles) => [...prevFiles, file.contentType])
       })
+      
       
       handleClose();
       setuploadedFiles([]);
@@ -222,31 +206,21 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
   };
 
   const handleDelete = async () => {
-    if(!isAccord){
-      setDeleteDocsUrl(prevList => [...prevList, currentRow.link])
-      setDocuments((prevFiles) => {
+    setDeleteDocsUrl(prevList => [...prevList, currentRow.link])
+    setDocuments((prevFiles) => {
         // console.log("deleted - ", currentRow.link);
         return prevFiles.filter((f)=> f.link !== currentRow.link);
-      });
-      
-    }else{
-      setDeleteDocsUrl(prevList => [...prevList, currentRow.link])
-      setDocuments((prevFiles) => {
-        // console.log("deleted - ", currentRow.link);
-        return prevFiles.filter((f)=> f.link !== currentRow.link);
-      });
+    });
       // console.log("currentRow.id", currentRow.id);
       // const updatedDocuments = documents.filter((doc) => doc.id !== currentRow.id);
       // const updatedDocsWithoutId = updatedDocuments.map(({ id, ...rest }) => rest);
       // setModifiedData((prev) => [...prev, { key: dataKey, value: updatedDocsWithoutId }]);
       // setModifiedData((prev) => [...prev, { key: "delete_documents", value: [currentRow.link] }]);
       // setIsUpdated(true);
-    }
   };
 
   const handleDeleteClick = () => {
     setOpenDeleteConfirmation(true);
-    console.log("yesss click on delete")
   };
 
   const handleDeleteClose = () => {
@@ -263,6 +237,7 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
   };
 
   const handleRemoveFile = (index) => {
+
     setContractFiles((prevFiles) => {
       const filesArray = Array.from(prevFiles);
       filesArray.splice(index, 1);

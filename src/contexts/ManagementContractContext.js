@@ -12,6 +12,7 @@ export const ManagementContractProvider = ({ children }) => {
   const [ currentContractUID, setCurrentContractUID  ] = useState("");
   const [ currentContractPropertyUID, setCurrentContractPropertyUID ] = useState("");
   const [ contractRequests, setContractRequests ] = useState([]);
+  const [isChange, setIsChange] = useState(false)
 
   const fetchDefaultContractFees = async () => {
     try {
@@ -78,6 +79,8 @@ export const ManagementContractProvider = ({ children }) => {
         setCurrentContractUID,
         currentContractPropertyUID,
         setCurrentContractPropertyUID,
+        isChange,
+        setIsChange,
         dataLoaded 
       }}
     >

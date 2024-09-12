@@ -150,7 +150,8 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
             }
 
         } else {
-            setModifiedData((prev) => [...prev, { key: dataKey, value: [...leaseVehicles, { ...currentRow }] }])
+            const {id, ...newRowwithoutid} = currentRow
+            setModifiedData((prev) => [...prev, { key: dataKey, value: [...leaseVehicles, { ...newRowwithoutid }] }])
             setIsUpdated(true);
         }
     };

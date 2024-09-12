@@ -150,7 +150,7 @@ export default function NewRequestAction({ maintenanceItem, navigateParams, quot
                         >
                             Ask For Details
                         </Button>
-                        <RequestMoreInfo showRequestMoreInfo={showRequestMoreInfo} setShowRequestMoreInfo={setShowRequestMoreInfo} maintenanceItem={maintenanceItem} />
+                        <RequestMoreInfo fromQuote={false} showRequestMoreInfo={showRequestMoreInfo} setShowRequestMoreInfo={setShowRequestMoreInfo} maintenanceItem={maintenanceItem} />
                     </Grid>
                     <Grid item>
                         <Button

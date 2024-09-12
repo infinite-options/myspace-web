@@ -203,6 +203,7 @@ export default function MaintenanceRequestNavigatorNew({
 	}
 
 	const data = requestData[currentIndex];
+	//const maintainanceImages = data?.maintenance_images ? JSON.parse(data.maintenance_images) : [maintenanceRequestImage];
 	let propertyAddress = ' ';
 	propertyAddress = propertyAddress.concat(
 		' ',
@@ -270,7 +271,7 @@ export default function MaintenanceRequestNavigatorNew({
 			setFormattedDate('N/A');
 			setNumOpenRequestDays('N/A');
 		}
-	}, [currentIndex]);
+	}, [currentIndex, requestData]);
 
 	const maxSteps = images.length;
 
@@ -453,7 +454,7 @@ export default function MaintenanceRequestNavigatorNew({
 								>
 									<ImageList 
 									ref={scrollRef} sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
-										{images.map((image, index) => (
+										{(images)?.map((image, index) => (
 											<ImageListItem
 												key={index}
 												sx={{

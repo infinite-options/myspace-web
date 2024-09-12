@@ -1222,6 +1222,14 @@ const AccountBalanceWidget = ({
             {" "}
             {selectedLease?.lease_uid}
           </Grid>
+          <Grid item xs={6} sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "50%" }}>
+            {" "}
+            Property UID{" "}
+          </Grid>
+          <Grid item xs={6} sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "50%", textAlign: "right" }}>
+            {" "}
+            {selectedLease?.property_uid}
+          </Grid>
         </Grid>
       </Box>
       
