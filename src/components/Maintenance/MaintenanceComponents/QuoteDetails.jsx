@@ -11,14 +11,15 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 import NoImageAvailable from '../../../images/NoImageAvailable.png';
+import Documents from '../../Leases/Documents';
 
 const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem, fetchAndUpdateQuotes}) => {
-    //console.log('----QuoteDetails maintenanceQuotesForItem----', initialIndex);
+    // console.log('----QuoteDetails maintenanceQuotesForItem----', maintenanceItem);
 
     const [currentIndex, setCurrentIndex] = useState(initialIndex);
     //console.log('currentIndex=----', currentIndex);
     const currentItem = maintenanceQuotesForItem && maintenanceQuotesForItem[initialIndex];
-    //console.log('currentItem=----', currentItem);
+    console.log('currentItem=----', currentItem);
     const [showSpinner, setShowSpinner] = useState(false);
 
     useEffect(() => {
@@ -192,7 +193,7 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                     Quotes Details
                 </Typography>
 
-                <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center', maxHeight: "500px", overflow: 'auto' }}>
                     
                     <Card
                         variant="outlined"
@@ -213,7 +214,7 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                             onChange={(now, previous) => setCurrentIndex(now)}
                             sx={{ width: '100%', 
                             height: '400px',  // Set the desired fixed height here
-                            overflow: 'hidden' // Ensure content doesn't overflow
+                            overflow: 'auto' // Ensure content doesn't overflow
                          }}
                         >
                             {maintenanceQuotesForItem.map((item, index) => (
@@ -254,14 +255,14 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                                                 Yes
                                             </Typography>
                                         </Grid>
-                                        <Grid item xs={6}>
+                                        {/* <Grid item xs={6}>
                                             <Typography variant="body2" sx={{ color: '#2c2a75' }}>
                                                 Written Quote:
                                             </Typography>
                                         </Grid>
                                         <Grid item xs={6}>
                                             <DescriptionIcon sx={{ color: '#2c2a75' }} />
-                                        </Grid>
+                                        </Grid> */}
                                         {item?.quote_services_expenses &&
                                         JSON.parse(item?.quote_services_expenses)?.event_type === 'Fixed Bid' ? (
                                             <Grid container sx={{ paddingTop: '10px' }}>
@@ -289,18 +290,18 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                                                 <strong>${item.quote_total_estimate}</strong>
                                             </Typography>
                                         </Grid>
-                                        {maintenanceItem?.maintenance_request_status === 'SCHEDULED' ? (
+                                        {item?.maintenance_request_status === 'SCHEDULED' ? (
                                             <>
                                                 <Grid item xs={6}>
                                                     <Typography variant="body2" gutterBottom sx={{ color: '#2c2a75' }}>
-                                                        Scheduled Date: {maintenanceItem?.maintenance_scheduled_date}
+                                                        Scheduled Date: {item?.maintenance_scheduled_date}
                                                     </Typography>
                                                 </Grid>
                                                 <Grid item xs={6}>
                                                     <Typography variant="body2" gutterBottom sx={{ color: '#2c2a75' }}>
                                                         Scheduled Time:{' '}
                                                         {dayjs(
-                                                            maintenanceItem?.maintenance_scheduled_time,
+                                                            item?.maintenance_scheduled_time,
                                                             'HH:mm'
                                                         ).format('h:mm A')}
                                                     </Typography>
@@ -308,6 +309,10 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                                             </>
                                         ) : null}
                                         <Grid item xs={12}>
+                                            <Documents isAccord={false} isEditable={false} documents={item?.quote_documents? JSON.parse(item?.quote_documents) : []} customName={"Quote Documents"}/>
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                        
 								<Box
 									sx={{
 										display: 'flex',
