@@ -381,7 +381,7 @@ function TenantDashboard(props) {
           />
         );
       case "payment":
-        return <Payments accountBalanceWidgetData={paymentState} setRightPane={setRightPane} />;
+        return <Payments accountBalanceWidgetData={paymentState} setRightPane={setRightPane} setReload={setReload}/>;
       case "editmaintenance":
         return <EditMaintenanceItem setRightPane={setRightPane} />;
       default:

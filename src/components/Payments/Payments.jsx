@@ -6,7 +6,6 @@ import theme from "../../theme/theme";
 import { alpha, makeStyles } from "@material-ui/core/styles";
 import axios, { all } from "axios";
 import { useUser } from "../../contexts/UserContext";
-import StripePayment from "../Settings/StripePayment";
 import BackIcon from "./backIcon.png";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -30,6 +29,11 @@ import CreditCardIcon from "../../images/ion_card.png";
 import BankIcon from "../../images/mdi_bank.png";
 import Stripe from "../../images/Stripe.png";
 import ApplePay from "../../images/ApplePay.png";
+
+import StripePayment from "../Settings/StripePayment";
+import StripeFeesDialog from "../Settings/StripeFeesDialog";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -55,7 +59,7 @@ function DashboardTab(props) {
 }
 
 export default function Payments(props) {
-  console.log("In Payments.jsx");
+  console.log("In Payments.jsx", props);
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
@@ -113,6 +117,14 @@ export default function Payments(props) {
   console.log("Profile Info: ", getProfileId());
   console.log("Customer UID: ", customer_uid);
   console.log("Customer Role: ", customer_role);
+  console.log("NOTES BUSINESS CODE", paymentData.business_code);
+
+  const [balance, setBalance] = useState(parseFloat(paymentData?.balance));
+  const [convenience_fee, setFee] = useState(0); // Initial fee is 0
+  const [totalBalance, setTotalBalance] = useState(balance + convenience_fee);
+  const [paymentConfirm, setPaymentConfirm] = useState(false);
+  const [stripePayment, setStripePayment] = useState(false);
+  const [stripePromise, setStripePromise] = useState(null);
   // console.log("Customer UID: ", paymentData);
   // console.log("Customer UID: ", paymentData.customer_uid);
   // console.log("User Info: ", user);
@@ -193,49 +205,41 @@ export default function Payments(props) {
     fetchPaymentMethods();
   }, []);
 
-  const fetchPaymentsData = async () => {
-    console.log("In fetchPaymensData");
-    setShowSpinner(true);
-    try {
-      const res = await axios.get(`${APIConfig.baseURL.dev}/paymentStatus/${getProfileId()}`);
-      // const paymentStatusData = res.data.PaymentStatus.result;
-      // const paidStatusData = res.data.PaidStatus.result;
-
-      const moneyPaidData = res.data.MoneyPaid.result;
-      const moneyReceivedData = res.data.MoneyReceived.result;
-      const moneyToBePaidData = res.data.MoneyToBePaid.result;
-      const moneyToBeReceivedData = res.data.MoneyToBeReceived.result;
-      const moneyPayableData = res.data.MoneyPayable.result;
-
-      setMoneyPaid(moneyPaidData);
-      setMoneyReceived(moneyReceivedData);
-      setMoneyToBePaid(moneyToBePaidData);
-      setMoneyToBeReceived(moneyToBeReceivedData);
-      setMoneyPayable(moneyPayableData);
-
-      // console.log("Money To Be Paid: ", moneyToBePaid);
-      // console.log("Money To Be Paid: ", moneyToBePaid[0].ps);
-
-      totalMoneyPaidUpdate(moneyPaidData);
-      totalMoneyReceivedUpdate(moneyReceivedData);
-      totalMoneyToBePaidUpdate(moneyToBePaidData);
-      totalMoneyToBeReceivedUpdate(moneyToBeReceivedData);
-      totalMoneyPayable(moneyPayableData);
-
-      // console.log("--> initialSelectedItems", initialSelectedItems);
-    } catch (error) {
-      console.error("Error fetching payment data:", error);
-    }
-    setShowSpinner(false);
-  };
-
   useEffect(() => {
+    const fetchPaymentsData = async () => {
+      setShowSpinner(true);
+      try {
+        const res = await axios.get(`${APIConfig.baseURL.dev}/paymentStatus/${getProfileId()}`);
+  
+        const moneyPaidData = res.data.MoneyPaid.result;
+        const moneyToBePaidData = res.data.MoneyToBePaid.result;
+  
+        setMoneyPaid(moneyPaidData);
+        setMoneyToBePaid(moneyToBePaidData);
+  
+        // Update total and balance for tenant
+        const totalToBePaid = moneyToBePaidData.reduce((total, item) => {
+          return item.pur_cf_type === "revenue" ? total + parseFloat(item.pur_amount_due) : total - parseFloat(item.pur_amount_due);
+        }, 0);
+        setTotalToBePaid(totalToBePaid);
+
+        console.log("IN HERE", totalToBePaid);
+
+        // Update balance in paymentData based on totalToBePaid
+        setPaymentData((prevPaymentData) => ({
+          ...prevPaymentData,
+          balance: totalToBePaid, // Update balance to match tenant's total due
+        }));
+        console.log("PAYMENT DARA", paymentData);
+      } catch (error) {
+        console.error("Error fetching payment data:", error);
+      }
+      setShowSpinner(false);
+    };
+  
     fetchPaymentsData();
   }, []);
 
-  const handlePaymentNotesChange = (event) => {
-    setPaymentNotes(event.target.value);
-  };
 
   const [showPaymentMethods, setShowPaymentMethods] = useState(false); // New state to control payment methods visibility
 
@@ -283,16 +287,8 @@ export default function Payments(props) {
   //   },
   // };
 
-  const [balance, setBalance] = useState(parseFloat(paymentData?.balance) || 0);
-  const [convenience_fee, setFee] = useState(0); // Initial fee is 0
-  const [totalBalance, setTotalBalance] = useState(balance + convenience_fee);
-
-  useEffect(() => {
-    setTotalBalance(balance + convenience_fee); // Update total balance whenever balance or fee changes
-  }, [balance, convenience_fee]);
-
-
   const update_fee = (e) => {
+    console.log("INSIDE FEE");
     let fee = 0;
     if (e.target.value === "Bank Transfer") {
       fee = Math.max(parseFloat((balance * 0.008).toFixed(2)), 5);
@@ -304,30 +300,69 @@ export default function Payments(props) {
   };
   
   const [stripeDialogShow, setStripeDialogShow] = useState(false);
+
+  const handlePaymentNotesChange = (event) => {
+    setPaymentNotes(event.target.value);
+  };
+
+
   const payment_url = {
     "Credit Card": "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createPaymentIntent", // Try this first
     "Bank Transfer": "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createEasyACHPaymentIntent", //WON'T WORK NOW
     "Zelle": "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/makePayment",
   };
-  
-  const handleSubmit = async (e) => {
-    // Ensure that totalBalance is correctly used
-    const updatedTotal = parseFloat(totalBalance.toFixed(2));
-    setPaymentData({ ...paymentData, total: updatedTotal });
-  
-    if (selectedMethod === "Bank Transfer") {
-      bank_transfer_handler(); // Handles bank transfer
-    } else if (selectedMethod === "Credit Card") {
-      setStripeDialogShow(true); // Opens stripe dialog for credit card payment
-    } else if (selectedMethod === "Zelle") {
-      submit("Zelle", "Zelle"); // Calls submit function for Zelle payment
-    }
-  };
-  
 
-  const submit = async (paymentIntent, paymentMethod) => {
+  const toggleKeys = async () => {
     setShowSpinner(true);
+    console.log("inside toggle keys");
+    const url =
+      paymentData.business_code === "PMTEST"
+        ? // ? "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
+          // : "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PM";
+          "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
+        : "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST";
+    // : "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PM";
+
+    let response = await fetch(url);
+    const responseData = await response.json();
+    console.log("--DEBUG-- response data from Stripe", responseData);
+    // setStripeResponse(responseData);
+    const stripePromise = loadStripe(responseData.publicKey);
+    setStripePromise(stripePromise);
+    // console.log("--DEBUG-- stripePromise", stripePromise);
+    setShowSpinner(false);
+  };
+
+  async function credit_card_handler(notes) {
+    setShowSpinner(true); // Start showing the spinner
     
+    let endpoint = "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/getCorrectKeys/PM";
+    if (notes === "PMTEST") {
+      endpoint = "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/getCorrectKeys/PMTEST";
+    }
+    
+    try {
+      const result = await axios.post(endpoint);
+      
+      if (result?.data?.publicKey) {
+        const stripeInstance = await loadStripe(result.data.publicKey);
+        setStripePromise(stripeInstance);  // Set Stripe promise for Elements provider
+        setStripePayment(true);  // Open Stripe payment dialog
+      } else {
+        console.error("Public key not found in response:", result);
+      }
+    } catch (error) {
+      console.error("Error fetching public key:", error);
+    } finally {
+      setShowSpinner(false);
+    }
+  }
+  
+  
+  
+  const submit = async (paymentIntent, paymentMethod, updatedPaymentData) => {
+    setPaymentConfirm(true);
+  
     let payment_request_payload = {
       pay_purchase_id: paymentData.purchase_uids,
       pay_fee: convenience_fee,
@@ -337,8 +372,8 @@ export default function Payments(props) {
       payment_type: selectedMethod,
       payment_verify: "Unverified",
       paid_by: getProfileId(),
-      payment_intent: paymentIntent,
-      payment_method: paymentMethod,
+      payment_intent: paymentIntent.paymentIntent,
+      payment_method: paymentIntent.paymentMethod,
     };
   
     if (paymentMethod === "Zelle") {
@@ -357,30 +392,68 @@ export default function Payments(props) {
     setShowSpinner(false);
   };
 
+  useEffect(() => {
+    // Whenever paymentNotes changes, update business_code in paymentData
+    setPaymentData(prevData => ({
+      ...prevData,
+      business_code: paymentNotes
+    }));
+  }, [paymentNotes]);
+  
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Ensure paymentData is updated with the latest business_code
+    const updatedPaymentData = {
+      ...paymentData,
+      business_code: paymentNotes, // Ensure business_code is updated with paymentNotes
+      total: parseFloat(totalToBePaid.toFixed(2)),
+    };
+  
+    if (selectedMethod === "Bank Transfer") {
+      bank_transfer_handler();
+    } else if (selectedMethod === "Credit Card") {
+      setStripeDialogShow(true);
+    } else if (selectedMethod === "Zelle") {
+      let payment_intent = "Zelle";
+      let payment_method = "Zelle";
+      submit(payment_intent, payment_method, updatedPaymentData); // Pass updated paymentData
+    }
+  };
+
+
   async function bank_transfer_handler() {
+    // console.log("In Bank Transfer Handler Function");
+    // Set the Content-Type header
     const headers = {
       "Content-Type": "application/json",
     };
-  
+
+    // Make the POST request
     setShowSpinner(true);
-    
     try {
       const response = await fetch(payment_url[selectedMethod], {
+        // Use http instead of https
         method: "POST",
         headers,
         body: JSON.stringify(paymentData),
       });
-  
+
       if (response.ok) {
-        navigate("/PaymentConfirmation", { state: { paymentData } });
+        // console.log("Post request was successful");
+        // Handle the successful response here
       } else {
-        console.error("Post request failed");
+        // console.error("Post request failed");
+        // Handle the error here
       }
     } catch (error) {
       console.error("An error occurred while making the POST request", error);
     }
-    
     setShowSpinner(false);
+    // console.log("Completed Bank Transfer Handler Function");
+    // navigate
+    navigate("/PaymentConfirmation", { state: { paymentData } });
   }
 
   const handleChange = (event) => {
@@ -536,6 +609,27 @@ export default function Payments(props) {
                   updateFee={update_fee} 
                   handleSubmit={handleSubmit}
                 />
+              )}
+
+              {stripeDialogShow && (
+                <StripeFeesDialog
+                  stripeDialogShow={stripeDialogShow}
+                  setStripeDialogShow={setStripeDialogShow}  // This will be called when the user closes the fees dialog
+                  toggleKeys={toggleKeys}  // This is likely to initialize the Stripe keys
+                  setStripePayment={setStripePayment} // This will be set to true when fees dialog is confirmed
+                />
+              )}
+              {stripePayment && (
+                <Elements stripe={stripePromise}>
+                  <StripePayment
+                    submit={submit}
+                    message={paymentData.business_code}
+                    amount={totalToBePaid}
+                    paidBy={paymentData.customer_uid}
+                    show={stripePayment}
+                    setShow={setStripePayment}
+                  />
+                </Elements>
               )}
 
                 {/* What is shown in Balance Details Depends on Role */}
@@ -710,8 +804,21 @@ function PaymentMethodSelector({
   setConfirmationNumber,
   paymentMethods,
   handleSubmit,
-
+  updateFee,
 }) {
+
+  const handlePaymentMethodChange = (event) => {
+    console.log("called here");
+    const selectedValue = event.target.value;
+    handleChange(event); // This will update the selectedMethod
+    updateFee(event); // This will calculate the fee based on the selected method
+    
+    // Clear confirmation number if not Zelle
+    if (selectedValue !== "Zelle") {
+      setConfirmationNumber("");
+    }
+  };
+
   return (
     <Paper
       style={{
@@ -725,48 +832,68 @@ function PaymentMethodSelector({
       </Typography>
       <Divider light />
       <FormControl component="fieldset">
-        <RadioGroup aria-label="paymentMethod" name="paymentMethod" value={selectedMethod} onChange={handleChange}>
+        <RadioGroup aria-label="paymentMethod" name="paymentMethod" value={selectedMethod} onChange={handlePaymentMethodChange}>
           {/* Bank Transfer */}
-          <FormControlLabel
-            value="Bank Transfer"
-            control={
-              <Radio
-                sx={{
-                  color: selectedMethod === "Bank Transfer" ? "#3D5CAC" : "#000000",
-                  "&.Mui-checked": {
-                    color: "#3D5CAC",
-                  },
-                }}
-              />
-            }
-            label={
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <img src={BankIcon} alt="Bank Transfer" style={{ marginRight: "8px", height: "24px" }} />
-                Bank Transfer
-              </div>
-            }
-          />
+          <FormControl component='fieldset'>
+                  <RadioGroup aria-label='Number' name='number' value={selectedMethod} onChange={handleChange}>
+                    <FormControlLabel
+                      value='Bank Transfer'
+                      control={
+                        <Radio
+                          sx={{
+                            color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000", // Blue when selected, black otherwise
+                            "&.Mui-checked": {
+                              color: "#3D5CAC", // Blue color for the selected state
+                            },
+                          }}
+                        />
+                      }
+                      label={
+                        <>
+                          <div style={{ display: "flex", alignItems: "center", paddingTop: "10px" }}>
+                            <img src={BankIcon} alt='Chase' style={{ marginRight: "8px", height: "24px" }} />
+                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.mediumFont }}>Bank Transfer</Typography>
+                          </div>
+                          <div sx={{ paddingTop: "10px", paddingLeft: "20px" }}>
+                            <Typography sx={{ color: theme.typography.common.gray, fontWeight: 400, fontSize: theme.typography.smallFont }}>
+                              .08% Convenience Fee - max $5
+                            </Typography>
+                          </div>
+                        </>
+                      }
+                    />
+                    <FormControlLabel
+                      value='Credit Card'
+                      control={
+                        <Radio
+                          sx={{
+                            color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000", // Blue when selected, black otherwise
+                            "&.Mui-checked": {
+                              color: "#3D5CAC", // Blue color for the selected state
+                            },
+                          }}
+                        />
+                      }
+                      label={
+                        <>
+                          <div style={{ display: "flex", alignItems: "center" }}>
+                            <img src={CreditCardIcon} alt='Chase' style={{ marginRight: "8px", height: "24px" }} />
+                            Credit Card
+                          </div>
+                          <div sx={{ paddingTop: "10px", paddingLeft: "20px" }}>
+                            <Typography sx={{ color: theme.typography.common.gray, fontWeight: 400, fontSize: theme.typography.smallFont }}>3% Convenience Fee</Typography>
+                          </div>
+                        </>
+                      }
+                    />
+                  </RadioGroup>
+                </FormControl>
 
-          {/* Credit Card */}
-          <FormControlLabel
-            value="Credit Card"
-            control={
-              <Radio
-                sx={{
-                  color: selectedMethod === "Credit Card" ? "#3D5CAC" : "#000000",
-                  "&.Mui-checked": {
-                    color: "#3D5CAC",
-                  },
-                }}
-              />
-            }
-            label={
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <img src={CreditCardIcon} alt="Credit Card" style={{ marginRight: "8px", height: "24px" }} />
-                Credit Card
-              </div>
-            }
-          />
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.secondaryFont }}>Other Payment Methods</Typography>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: 400, fontSize: "16px" }}>
+                  Payment Instructions for Paypal, Apple Pay Zelle, and Venmo: Please make payment via 3rd party app and record payment information here. If you are using Zelle,
+                  please include the transaction confirmation number.
+                </Typography>
 
           {/* Zelle with Confirmation Number */}
           <FormControlLabel
@@ -833,7 +960,6 @@ function PaymentMethodSelector({
               </div>
             }
           />
-          {/* Add other payment methods similarly */}
         </RadioGroup>
       </FormControl>
       {selectedMethod && (
