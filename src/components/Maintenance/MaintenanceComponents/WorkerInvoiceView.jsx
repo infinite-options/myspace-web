@@ -7,6 +7,7 @@ import {
 import theme from '../../../theme/theme';
 
 export default function WorkerInvoiceView({maintenanceItem}){
+    console.log('inside workerinvoice---', maintenanceItem);
 
     const purchaseKeys = Object.keys(maintenanceItem).filter(key => key.startsWith("pur"));
     const billKeys = Object.keys(maintenanceItem).filter(key => key.startsWith("bill"));
