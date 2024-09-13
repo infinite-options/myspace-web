@@ -119,6 +119,7 @@ import CardDetailsSettingsManager from "./Settings/CardDetailsSettingsManager";
 import CardDetailsSettingsTenant from "./Settings/CardDetailsSettingsTenant";
 import CardDetailsSettingsMaintenance from "./Settings/CardDetailsSettingsMaintenance";
 import SelectPayment from "./Settings/SelectPayment";
+import PaymentMethodSelector from "./Settings/PaymentMethodSelector";
 import PaymentConfirmation from "./Settings/PaymentConfirmation";
 import { Footer } from "./Layout/Footer";
 import ManagerDashboard from "./ManagerDashboard/ManagerDashboard";
@@ -285,6 +286,7 @@ function Main() {
             <Route path='pmRentDetail' element={<PMRentDetail />} />
             <Route path='addPaymentSettings' element={<AddPayment />} />
             <Route path='selectPayment' element={<SelectPayment />} />
+            <Route path='paymentMethodSelector' element={<PaymentMethodSelector />} />
             <Route path='PaymentConfirmation' element={<PaymentConfirmation />} />
             <Route path='transactionHistory' element={<TransactionHistory />} />
             <Route path='viewTransactionOwner' element={<ViewTransactionOwner />} />

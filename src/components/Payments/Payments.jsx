@@ -34,6 +34,8 @@ import StripePayment from "../Settings/StripePayment";
 import StripeFeesDialog from "../Settings/StripeFeesDialog";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
+import SelectPayment from "../Settings/SelectPayment";
+import PaymentMethodSelector from "../Settings/PaymentMethodSelector";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -194,13 +196,21 @@ export default function Payments(props) {
     const fetchPaymentMethods = async () => {
       try {
         const response = await axios.get(`${APIConfig.baseURL.dev}/paymentMethod/${getProfileId()}`);
-        const availableMethods = response.data.result; 
-        console.log("testing:",availableMethods);
+        const availableMethods = response.data.result;
+        console.log("Payment Methods:", availableMethods);
         setPaymentMethods(availableMethods);
       } catch (error) {
-        console.error('Error fetching payment methods:', error);
+        console.error("Error fetching payment methods:", error);
+        if (error.response) {
+          console.error("Response error:", error.response.status, error.response.data);
+        } else if (error.request) {
+          console.error("No response received:", error.request);
+        } else {
+          console.error("Request setup error:", error.message);
+        }
       }
     };
+    
 
     fetchPaymentMethods();
   }, []);
@@ -360,37 +370,63 @@ export default function Payments(props) {
   
   
   
-  const submit = async (paymentIntent, paymentMethod, updatedPaymentData) => {
+  const submit = async (paymentIntent, paymentMethod) => {
     setPaymentConfirm(true);
+  
+    // Prepare the default paymentIntent and paymentMethod for non-Zelle payments
+    let payment_intent = paymentIntent.paymentIntent;
+    let payment_method = paymentIntent.paymentMethod;
+  
+    // If the payment method is Zelle, use the values directly as they are
+    if (paymentMethod === "Zelle") {
+      payment_intent = paymentIntent;
+      payment_method = paymentMethod;
+    }
+  
+    console.log("Re-Setting PI and PM: ", payment_intent, payment_method);
   
     let payment_request_payload = {
       pay_purchase_id: paymentData.purchase_uids,
       pay_fee: convenience_fee,
       pay_total: totalBalance,
       payment_notes: paymentData.business_code,
-      pay_charge_id: "stripe transaction key",
+      pay_charge_id: "stripe transaction key", // Update this with the actual charge ID from Stripe
       payment_type: selectedMethod,
       payment_verify: "Unverified",
       paid_by: getProfileId(),
-      payment_intent: paymentIntent.paymentIntent,
-      payment_method: paymentIntent.paymentMethod,
+      payment_intent: payment_intent, // Use the appropriate value for payment_intent
+      payment_method: payment_method, // Use the appropriate value for payment_method
     };
   
+    // If Zelle is selected, add the confirmation number
     if (paymentMethod === "Zelle") {
       payment_request_payload.confirmation_number = confirmationNumber;
     }
   
-    await fetch(`${APIConfig.baseURL.dev}/makePayment`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payment_request_payload),
-    });
+    console.log("HERE CHECK ABHINAV");
   
-    navigate('/tenantDashboard');
+    try {
+      const response = await fetch(`${APIConfig.baseURL.dev}/makePayment`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payment_request_payload),
+      });
+  
+      if (response.ok) {
+        navigate("/tenantDashboard");
+      } else {
+        console.error("Payment failed", response);
+      }
+    } catch (error) {
+      console.error("Error making payment:", error);
+    }
+  
     setShowSpinner(false);
   };
+  
+  
 
   useEffect(() => {
     // Whenever paymentNotes changes, update business_code in paymentData
@@ -414,11 +450,13 @@ export default function Payments(props) {
     if (selectedMethod === "Bank Transfer") {
       bank_transfer_handler();
     } else if (selectedMethod === "Credit Card") {
+      console.log("Credit card")
       setStripeDialogShow(true);
     } else if (selectedMethod === "Zelle") {
+      console.log("Zelle ")
       let payment_intent = "Zelle";
       let payment_method = "Zelle";
-      submit(payment_intent, payment_method, updatedPaymentData); // Pass updated paymentData
+      submit(payment_intent, payment_method); // Pass updated paymentData
     }
   };
 
@@ -600,37 +638,18 @@ export default function Payments(props) {
                 </Paper>
 
                 {showPaymentMethod && (
-                  <PaymentMethodSelector
-                  selectedMethod={selectedMethod}
-                  handleChange={handleChange}
+                <PaymentMethodSelector
+                  paymentData={paymentData}
+                  stripePromise={stripePromise}
+                  convenience_fee={convenience_fee}
+                  totalBalance={totalBalance}
                   confirmationNumber={confirmationNumber}
+                  selectedMethod={selectedMethod}
                   setConfirmationNumber={setConfirmationNumber}
-                  paymentMethods={paymentMethods}
-                  updateFee={update_fee} 
-                  handleSubmit={handleSubmit}
-                />
-              )}
-
-              {stripeDialogShow && (
-                <StripeFeesDialog
-                  stripeDialogShow={stripeDialogShow}
-                  setStripeDialogShow={setStripeDialogShow}  // This will be called when the user closes the fees dialog
-                  toggleKeys={toggleKeys}  // This is likely to initialize the Stripe keys
-                  setStripePayment={setStripePayment} // This will be set to true when fees dialog is confirmed
-                />
-              )}
-              {stripePayment && (
-                <Elements stripe={stripePromise}>
-                  <StripePayment
-                    submit={submit}
-                    message={paymentData.business_code}
-                    amount={totalToBePaid}
-                    paidBy={paymentData.customer_uid}
-                    show={stripePayment}
-                    setShow={setStripePayment}
+                  handleChange={handleChange}
+                  handleSubmit={handleSubmit} // The function for submitting payments
                   />
-                </Elements>
-              )}
+                )}
 
                 {/* What is shown in Balance Details Depends on Role */}
                 {customer_role === "350" ? (
@@ -797,7 +816,7 @@ export default function Payments(props) {
   );
 }
 
-function PaymentMethodSelector({
+function PaymentMethodSelectorTest({
   selectedMethod,
   handleChange,
   confirmationNumber,
