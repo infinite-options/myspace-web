@@ -182,12 +182,11 @@ export default function PaymentMethodSelector(props) {
     navigate("/PaymentConfirmation", { state: { paymentData } });
   }
 
-  function update_fee(e) {
-    // console.log("--debug update_fee -->", selectedMethod);
+  function update_fee(selectedValue) {
     let fee = 0;
-    if (e.target.value === "Bank Transfer") {
+    if (selectedValue === "Bank Transfer") {
       fee = Math.max(parseFloat((balance * 0.008).toFixed(2)), 5);
-    } else if (e.target.value === "Credit Card") {
+    } else if (selectedValue === "Credit Card") {
       fee = parseFloat((balance * 0.03).toFixed(2));
     }
     setFee(fee);
@@ -197,16 +196,27 @@ export default function PaymentMethodSelector(props) {
   const handleChange = (event) => {
     const selectedValue = event.target.value;
     setSelectedMethod(selectedValue);
+
+    let fee = 0;
+    if (selectedValue === "Bank Transfer") {
+      fee = Math.max(parseFloat((balance * 0.008).toFixed(2)), 5);
+    } else if (selectedValue === "Credit Card") {
+      fee = parseFloat((balance * 0.03).toFixed(2));
+    }
+    setFee(fee);
+    setTotalBalance(balance + fee);
+
     // Clear confirmation number when a different payment method is selected
     if (selectedValue !== "Zelle") {
       setConfirmationNumber("");
     }
+    // update_fee(selectedValue);
   };
 
   const handleSubmit = async (e) => {
     // console.log("selectedMethod", selectedMethod);
     // console.log("Payment total", totalBalance);
-    // console.log("Convenience Fee", convenience_fee);
+    console.log("Convenience Fee", convenience_fee);
     // console.log("PaymentData: ", { ...paymentData, total: parseFloat(totalBalance.toFixed(2)) });
 
     // e.preventDefault();
