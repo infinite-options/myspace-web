@@ -19,6 +19,7 @@ import AES from "crypto-js/aes";
 import CloseIcon from "@mui/icons-material/Close";
 import Documents from "../Leases/Documents";
 import WaiverForm from "../Leases/WaiverForm";
+import { DataGrid } from '@mui/x-data-grid';
 
 const TenantApplicationNav = (props) => {
   const navigate = useNavigate();
@@ -32,13 +33,28 @@ const TenantApplicationNav = (props) => {
   //     console.log("application - ", application);
   // }, [application]);
 
-  // console.log("---dhyey--- in application view - ", application)
+  console.log("---dhyey--- in application view - ", application)
   const [showSpinner, setShowSpinner] = useState(false);
   const [vehicles, setVehicles] = useState(JSON.parse(application?.lease_vehicles || '["No Vehicle Information"]'));
   const [adultOccupants, setAdultOccupants] = useState(JSON.parse(application?.lease_adults || '["No Adult Occupants"]'));
   const [petOccupants, setPetOccupants] = useState(JSON.parse(application?.lease_pets || '["No Pet Occupants"]'));
   const [childOccupants, setChildOccupants] = useState(JSON.parse(application?.lease_children || '["No Child Occupants"]'));
   const [applicationDocuments, setApplicationDocuments] = useState(JSON.parse(application.lease_documents));
+  const [ leaseFees, setLeaseFees ] = useState([])
+
+  useEffect(() => {
+      // console.log("lease fees - ", application?.lease_fees);
+
+      let parsedFees = []
+      try {
+        parsedFees = JSON.parse(application?.lease_fees);        
+      } catch(error) {
+        console.error("TenantApplicationNav - Error Parsing Lease Fees");        
+      }
+      setLeaseFees(parsedFees);
+      // console.log("parsedFees - ", parsedFees);
+  }, [application]);
+  
   // useEffect(() => {
   //     console.log("applicationDocuments - ", applicationDocuments);
   // }, [applicationDocuments]);
@@ -649,7 +665,12 @@ const TenantApplicationNav = (props) => {
                           marginRight: "30px",
                         }}
                       >
-                        <Documents documents={applicationDocuments} setDocuments={setApplicationDocuments} isEditable={false} isAccord={false} customName={"Application Documents: 1"}/>                        
+                        {
+                          application?.lease_status === "PROCESSING" && (
+                            <LeaseFees leaseFees={leaseFees} />
+                          )
+                        }
+                        <Documents documents={applicationDocuments} setDocuments={setApplicationDocuments} isEditable={false} isAccord={false} customName={"Application Documents:"}/>                                                
                       </Grid>
                     </Grid>
                     <Stack direction='row' alignItems='center' justifyContent='space-around' sx={{ padding: "30px 0", paddingRight: "15px" }}>
@@ -731,5 +752,174 @@ const TenantApplicationNav = (props) => {
     </ThemeProvider>
   );
 };
+
+const LeaseFees = ({ leaseFees }) => {
+  const getDateAdornmentString = (d) => {
+    if (d === null || d === 0) return "";
+    if (d > 3 && d < 21) return "th";
+    switch (d % 10) {
+      case 1:
+        return "st";
+      case 2:
+        return "nd";
+      case 3:
+        return "rd";
+      default:
+        return "th";
+    }
+  };
+
+  const valueToDayMap = new Map([
+    [0, "Monday"],
+    [1, "Tuesday"],
+    [2, "Wednesday"],
+    [3, "Thursday"],
+    [4, "Friday"],
+    [5, "Saturday"],
+    [6, "Sunday"],
+    [7, "Monday - Week 2"],
+    [8, "Tuesday - Week 2"],
+    [9, "Wednesday - Week 2"],
+    [10, "Thursday - Week 2"],
+    [11, "Friday - Week 2"],
+    [12, "Saturday - Week 2"],
+    [13, "Sunday - Week 2"],
+  ]);
+
+  const columns = [
+    {
+      field: "fee_name",
+      headerName: "Name",
+      flex:1,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    }, 
+    {
+      field: "frequency",
+      headerName: "Frequency",
+      flex:1,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "charge",
+      headerName: "Amount",
+      flex:0.8,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => (
+        <Typography>
+          {params.row.fee_type === "$" && `$ ${params.row.charge}`}
+        </Typography>
+      )
+    },
+    {
+      field: "due_by",
+      headerName: "Due By",
+      flex: 1.5,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => (
+        <Typography>
+          {params.row.frequency === "Monthly" && `${params.row.due_by}${getDateAdornmentString(params.row.due_by)} of every month`}
+          {params.row.frequency === "One Time" && `${params.row.due_by_date}`}
+          {(params.row.frequency === "Weekly"  || params.row.frequency === "Bi-Weekly") && `${valueToDayMap.get(params.row.due_by)}`}
+        </Typography>
+      )
+    },
+    {
+      field: "available_topay",
+      headerName: "Available To Pay",
+      flex: 1.5,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => (
+        <Typography>
+          { (
+              params.row.frequency === "Monthly" || 
+              params.row.frequency === "Weekly" ||
+              params.row.frequency === "Bi-Weekly" ||
+              params.row.frequency === "One Time"
+            )
+            && `${params.row.available_topay} days before`}
+          {/* {(params.row.frequency === "Weekly"  || params.row.frequency === "Bi-Weekly") && `${valueToDayMap.get(params.row.available_topay)}`} */}
+        </Typography>
+      )
+    },
+    {
+      field: "late_by",
+      headerName: "Late By",
+      flex: 1.2,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => (
+        <Typography>
+          {(
+              params.row.frequency === "Monthly" || 
+              params.row.frequency === "Weekly" ||
+              params.row.frequency === "Bi-Weekly" ||
+              params.row.frequency === "One Time"
+            ) 
+          && `${params.row.available_topay} days after`}
+        </Typography>
+      )
+    },
+    {
+      field: "late_fee",
+      headerName: "Late Fee",
+      flex:0.7,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => (
+        <Typography>
+          {params.row.fee_type === "$" && `$ ${params.row.late_fee}`}
+        </Typography>
+      )
+    },
+    {
+      field: "perDay_late_fee",      
+      flex: 1,
+      renderHeader: (params) => (
+        <strong style={{ lineHeight: 1.2, display: "inline-block", textAlign: "center" }}>
+          Late Fee <br /> Per Day
+        </strong>
+      ),
+      renderCell: (params) => (
+        <Typography>
+          {params.row.fee_type === "$" && `$ ${params.row.perDay_late_fee}`}
+        </Typography>
+      )
+    },
+
+
+                   
+  ];
+
+  return (
+    <>
+      <Typography
+        sx={{
+          color: "#160449",
+          fontWeight: "bold",
+          fontSize: "18px",
+          paddingBottom: "5px",
+          paddingTop: "5px",
+          marginTop:"10px"
+        }}
+      >
+        Lease Fees:
+      </Typography>
+
+      <Grid item xs={12} sx={{overflowX: "auto",}}>
+        <DataGrid
+          rows={leaseFees}
+          columns={columns}
+          sx={{        
+            marginTop: "10px",
+            minWidth: '1000px',
+          }}
+          getRowId={ (row) => row.leaseFees_uid}
+          // autoHeight
+          rowHeight={30} 
+          hideFooter={true}
+        />
+      </Grid>          
+    </>
+  );
+
+}
 
 export default TenantApplicationNav;
