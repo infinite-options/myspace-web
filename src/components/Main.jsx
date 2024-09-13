@@ -190,10 +190,12 @@ import PublicProfile from "./Profile/PublicProfile";
 
 import OwnerFirstProperty from "./OwnerDashboard/OwnerFirstProperty";
 
+import { ManagementContractProvider } from "../contexts/ManagementContractContext";
+
 function Main() {
   // console.log("In Main Page");
   const { user, roleName, selectedRole } = useUser();
-  console.log("ROHIT - Main - user - ", user);
+  // console.log("Main - user - ", user);
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Box
@@ -371,7 +373,14 @@ function Main() {
             <Route path='workerMaintenance/detail' element={<WorkerMaintenanceRequestDetail />} />
 
             <Route path='pmQuotesRequested' element={<PMQuotesRequested />} />
-            <Route path='pmQuotesList' element={<PMQuotesList />} />
+            <Route 
+              path='pmQuotesList'
+              element={
+                <ManagementContractProvider>
+                  <PMQuotesList />
+                </ManagementContractProvider>
+              } 
+            />
             <Route path='newOwnerInquiry' element={<NewOwnerInquiry />} />
             <Route path='requestQuotes' element={<RequestQuotes />} />
             <Route path='viewDocument' element={<ViewDocument />} />

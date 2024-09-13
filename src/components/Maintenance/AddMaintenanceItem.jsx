@@ -26,7 +26,7 @@ import {
 
 import { darken } from '@mui/system';
 import CloseIcon from '@mui/icons-material/Close';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FormHelperText from '@mui/material/FormHelperText';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -41,10 +41,14 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import useSessionStorage from './useSessionStorage';
 import APIConfig from '../../utils/APIConfig';
+import ListsContext from '../../contexts/ListsContext';
 
 export default function AddMaintenanceItem({setRefersh, onBack}) {
 	let navigate = useNavigate();
 	const { user, getProfileId, maintenanceRoutingBasedOnSelectedRole } = useUser();
+	const { getList, } = useContext(ListsContext);	
+	
+	const maintenanceIssues = getList("maintenance");
 	const [propertyId, setPropertyId] = useState('');
 	const [properties, setProperties] = useState([]);
 	const [property, setProperty] = useState('');
@@ -334,7 +338,7 @@ export default function AddMaintenanceItem({setRefersh, onBack}) {
 											}}
 											value={property}
 										>
-											{properties.map((property) => (
+											{properties?.map((property) => (
 												<MenuItem key={property.property_uid} value={property.property_uid}>
 													{property.property_address} {property?.property_unit}
 												</MenuItem>
@@ -365,11 +369,11 @@ export default function AddMaintenanceItem({setRefersh, onBack}) {
 									>
 										{/* <InputLabel>Select Issue Category</InputLabel> */}
 										<Select onChange={handleIssueChange} value={issue}>
-											<MenuItem value={'Plumbing'}>Plumbing</MenuItem>
-											<MenuItem value={'Electrical'}>Electrical</MenuItem>
-											<MenuItem value={'Appliance'}>Appliance</MenuItem>
-											<MenuItem value={'HVAC'}>HVAC</MenuItem>
-											<MenuItem value={'Other'}>Other</MenuItem>
+										{
+											maintenanceIssues?.map( (freq ) => (
+											<MenuItem key={freq.list_uid} value={freq.list_item}>{freq.list_item}</MenuItem>
+											))
+										}
 										</Select>
 									</FormControl>
 								</Grid>

@@ -34,6 +34,7 @@ import ImageListItem from '@mui/material/ImageListItem';
 
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import Documents from "../../Leases/Documents";
 
 function LaborTableReadOnly({labor, setLabor}){
 
@@ -402,8 +403,8 @@ export default function QuoteDetailInfo({maintenanceItem}){
                       
 
                   </Grid>
-                        : 
-                        null
+                        // : 
+                        // null
                     )
                 : "No Images" }
             </Grid>
@@ -502,7 +503,7 @@ export default function QuoteDetailInfo({maintenanceItem}){
                 </Box>
             </Grid>
             <Grid item xs={12} sx={{paddingLeft: "0px"}}>
-                <Button sx={{
+                {/* <Button sx={{
                     color: "#3D5CAC",
                     textTransform: "none",
                     margin: "1px",
@@ -511,7 +512,8 @@ export default function QuoteDetailInfo({maintenanceItem}){
                     <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                         View Document
                     </Typography>
-                </Button>
+                </Button> */}
+                <Documents isAccord={false} isEditable={false} customName={"View Document"} documents={maintenanceItem?.quote_documents? JSON.parse(maintenanceItem?.quote_documents) : []}/>
             </Grid>
             {maintenanceItem.quote_status !== "REJECTED" && maintenanceItem.maintenance_request_status !== "COMPLETED" && maintenanceItem.quote_status !== "FINISHED" && (roleName == "Maintenance" || roleName === "Maintenance Employee") ? (
                 <Grid item xs={12} sx={{paddingLeft: "0px"}}>

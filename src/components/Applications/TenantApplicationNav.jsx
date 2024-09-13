@@ -31,11 +31,13 @@ const TenantApplicationNav = (props) => {
   //   useEffect(() => {
   //     console.log("application - ", application);
   // }, [application]);
+
+  // console.log("---dhyey--- in application view - ", application)
   const [showSpinner, setShowSpinner] = useState(false);
-  const [vehicles, setVehicles] = useState(JSON.parse(application?.tenant_vehicle_info || '["No Vehicle Information"]'));
-  const [adultOccupants, setAdultOccupants] = useState(JSON.parse(application?.tenant_adult_occupants || '["No Adult Occupants"]'));
-  const [petOccupants, setPetOccupants] = useState(JSON.parse(application?.tenant_pet_occupants || '["No Pet Occupants"]'));
-  const [childOccupants, setChildOccupants] = useState(JSON.parse(application?.tenant_children_occupants || '["No Child Occupants"]'));
+  const [vehicles, setVehicles] = useState(JSON.parse(application?.lease_vehicles || '["No Vehicle Information"]'));
+  const [adultOccupants, setAdultOccupants] = useState(JSON.parse(application?.lease_adults || '["No Adult Occupants"]'));
+  const [petOccupants, setPetOccupants] = useState(JSON.parse(application?.lease_pets || '["No Pet Occupants"]'));
+  const [childOccupants, setChildOccupants] = useState(JSON.parse(application?.lease_children || '["No Child Occupants"]'));
   const [applicationDocuments, setApplicationDocuments] = useState(JSON.parse(application.lease_documents));
   // useEffect(() => {
   //     console.log("applicationDocuments - ", applicationDocuments);
@@ -112,10 +114,11 @@ const TenantApplicationNav = (props) => {
   useEffect(() => {
     const currApp = applications[currentIndex];
     setApplication(currApp);
-    setVehicles(JSON.parse(currApp?.tenant_vehicle_info || '["No Vehicle Information"]'));
-    setAdultOccupants(JSON.parse(currApp?.tenant_adult_occupants || '["No Adult Occupants"]'));
-    setPetOccupants(JSON.parse(currApp?.tenant_pet_occupants || '["No Pet Occupants"]'));
-    setChildOccupants(JSON.parse(currApp?.tenant_children_occupants || '["No Child Occupants"]'));
+    setVehicles(JSON.parse(currApp?.lease_vehicles || '["No Vehicle Information"]'));
+    setAdultOccupants(JSON.parse(currApp?.lease_adults || '["No Adult Occupants"]'));
+    setPetOccupants(JSON.parse(currApp?.lease_pets || '["No Pet Occupants"]'));
+    setChildOccupants(JSON.parse(currApp?.lease_children || '["No Child Occupants"]'));
+    setApplicationDocuments(JSON.parse(currApp?.lease_documents));
   }, [currentIndex, applications]);
 
   const handleCloseButton = (e) => {

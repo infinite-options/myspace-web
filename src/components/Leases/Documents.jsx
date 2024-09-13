@@ -37,6 +37,8 @@ import ManagementContractContext from "../../contexts/ManagementContractContext"
 import axios from 'axios';
 import FilePreviewDialog from "./FilePreviewDialog";
 
+import ListsContext from "../../contexts/ListsContext";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiOutlinedInput-input": {
@@ -49,6 +51,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFileChange, isAccord=false, contractFiles=[], setContractFiles, contractFileTypes=[], setContractFileTypes, isEditable=true, customName }) => {
+
+  const { getList, } = useContext(ListsContext);	
+
   const [open, setOpen] = useState(false);
   const [currentRow, setcurrentRow] = useState(null);
   const color = theme.palette.form.main;
@@ -83,14 +88,10 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
     fetchContentTypes();
   }, []);
 
-  const fetchContentTypes = async()=>{
-    try {
-      const response = await axios.get('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/lists?list_category=content');
-      // console.log(response.data.result)
-      setContentTypes(response.data.result);
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
+  const fetchContentTypes = async()=>{    
+    const contentTypesList = getList("content");    
+    setContentTypes(contentTypesList);
+    
   }
 
   // Handle close 'X' or 'cancle' button
@@ -1030,7 +1031,10 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
 							accept=".doc,.docx,.txt,.pdf"
 							hidden
 							// onChange={(e) => setContractFiles(e.target.files)}
-							onChange={(e) => setContractFiles((prevFiles) => [...prevFiles, ...e.target.files])}
+							onChange={(e) => {
+                // console.log("inside contract file upload --- dhyey")
+                setContractFiles((prevFiles) => [...prevFiles, ...e.target.files])}
+              }
 							multiple
 						/>
 					</Box>}

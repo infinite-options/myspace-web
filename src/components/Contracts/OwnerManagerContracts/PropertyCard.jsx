@@ -32,7 +32,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import defaultHouseImage from '../../Property/defaultHouseImage.png';
 import ChatIcon from '@mui/icons-material/Chat';
 import DescriptionIcon from '@mui/icons-material/Description';
-// import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { isValidDate } from '../../../utils/dates';
@@ -50,6 +50,7 @@ import APIConfig from '../../../utils/APIConfig';
 import Documents from '../../Leases/Documents';
 import { FeesDataGrid } from '../../Property/PMQuotesRequested';
 import ManagementContractContext from '../../../contexts/ManagementContractContext';
+import ListsContext from '../../../contexts/ListsContext';
 // import { gridColumnsTotalWidthSelector } from '@mui/x-data-grid';
 // dhyey
 
@@ -89,8 +90,10 @@ function TextInputField(props) {
 }
 
 function AddFeeDialog({ open, handleClose, onAddFee, }) {	
-	const { feeBases, } = useContext(ManagementContractContext);	
-	const [feeName, setFeeName] = useState('');
+	const { getList, } = useContext(ListsContext);	
+	const feeBases = getList("basis");
+	const feeFrequencies = getList("frequency");	
+	const [feeName, setFeeName] = useState('');	  
 
 	// console.log("feeBases from Context - ", feeBases);
 
@@ -264,13 +267,11 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 									padding: '8px', // Adjust the padding as needed
 								}}
 							>
-								<MenuItem value={'One Time'}>One Time</MenuItem>
-								<MenuItem value={'Hourly'}>hourly</MenuItem>
-								<MenuItem value={'Daily'}>daily</MenuItem>
-								<MenuItem value={'Weekly'}>weekly</MenuItem>
-								<MenuItem value={'Biweekly'}>biweekly</MenuItem>
-								<MenuItem value={'Monthly'}>monthly</MenuItem>
-								<MenuItem value={'Annually'}>annually</MenuItem>
+								{
+									feeFrequencies?.map( (freq, index) => (
+										<MenuItem key={index} value={freq.list_item}>{freq.list_item}</MenuItem>
+									) )
+								}
 							</Select>
 						</Box>
 					</Box>
@@ -433,6 +434,9 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 }
 
 function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
+	const { getList, } = useContext(ListsContext);	
+	const feeBases = getList("basis");	
+	const feeFrequencies = getList("frequency");	
 	const [feeName, setFeeName] = useState(fees[feeIndex].fee_name);
 	// useEffect(() => {
 	// 	console.log('FEE Name: ', feeName);
@@ -652,14 +656,12 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 									width: '200px', // Adjust the width as needed
 									padding: '8px', // Adjust the padding as needed
 								}}
-							>
-								<MenuItem value={'one_time'}>One Time</MenuItem>
-								<MenuItem value={'hourly'}>Hourly</MenuItem>
-								<MenuItem value={'daily'}>Daily</MenuItem>
-								<MenuItem value={'weekly'}>Weekly</MenuItem>
-								<MenuItem value={'bi_weekly'}>Biweekly</MenuItem>
-								<MenuItem value={'monthly'}>Monthly</MenuItem>
-								<MenuItem value={'annually'}>Annually</MenuItem>
+							>								
+								{
+									feeFrequencies?.map( (freq, index) => (
+										<MenuItem key={index} value={freq.list_item}>{freq.list_item}</MenuItem>
+									) )
+								}
 							</Select>
 						</Box>
 					</Box>
@@ -773,30 +775,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 									paddingLeft: '20px',
 								}}
 							>
-								Applied To
-								{/* <TextField
-                                        name="flat-rate"
-                                        value={feeAmount}
-                                        placeholder=""
-                                        label=""
-                                        variant="outlined"
-                                        // sx={{
-                                        //     width: '45px',
-                                        //     height: '3px',
-                                        // }}
-
-                                        InputProps={{
-                                            sx: {
-                                                backgroundColor: '#D6D5DA',
-                                                width: '60px',
-                                                height: '20px',
-                                            },
-                                        }}
-
-                                        onChange={(event) => {
-                                            setFlatRate(event.target.value);
-                                        }}
-                                    /> */}
+								Applied To								
 								<Select
 									value={feeAppliedTo}
 									label="Applied To"
@@ -807,10 +786,12 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 										width: '200px', // Adjust the width as needed
 										padding: '8px', // Adjust the padding as needed
 									}}
-								>
-									<MenuItem value={'Gross Rent'}>Gross Rent</MenuItem>
-									<MenuItem value={'Utility Bill'}>Utility Bill</MenuItem>
-									<MenuItem value={'Maintenance Bill'}>Maintenance Bill</MenuItem>
+								>									
+									{
+										feeBases?.map( (basis, id) => (
+											<MenuItem key={id} value={basis.list_item}>{basis.list_item}</MenuItem>
+										))
+									}
 								</Select>
 							</Box>
 						)}
@@ -1449,20 +1430,10 @@ if (scrollRef.current) {
 		{
 		  field: "contact_first_name",
 		  headerName: "Name",
-		  flex:1,
-		  renderCell : (params) => {
-			return(
-				<Box
-          			sx={{
-          				cursor: 'pointer', // Change cursor to indicate clickability
-          				color: '#3D5CAC',
-          			}}
-                  	onClick={() => handleOpenEditContact(params.row.id)}
-          		>
-          			{params.row.contact_first_name} {params.row.contact_last_name}
-          		</Box>
-			);
-		  },
+		  flex:1.5,
+		  renderCell : (params) => (
+			<Typography fontSize={"14px"}>{params.row.contact_first_name} {params.row.contact_last_name}</Typography>
+		  ),
 		  renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
 		},
 		{
@@ -1478,13 +1449,25 @@ if (scrollRef.current) {
 		  renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
 		},
 		{
+			field: "editactions",
+			headerName: "",
+			flex: 0.5,
+			renderCell: (params) => (
+			  <Box>
+				<IconButton onClick={() => handleOpenEditContact(params.row.id)}>
+				  <EditIcon sx={{ fontSize: '19px', color: '#3D5CAC'}} />
+				</IconButton>
+			  </Box>
+			),
+		},
+		{
 		  field: "deleteactions",
 		  headerName: "",
 		  flex: 0.5,
 		  renderCell: (params) => (
 			<Box>
 			  <IconButton onClick={(e) => handleDeleteContact(params.row.id, e)}>
-				<DeleteIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
+				<DeleteIcon sx={{ fontSize: '19px', color: '#3D5CAC' }} />
 			  </IconButton>
 			</Box>
 		  ),
@@ -2663,7 +2646,7 @@ function AddContactDialog({ open, handleClose, onAddContact }) {
 }
 
 function EditContactDialog({ open, handleClose, onEditContact, contactIndex, contacts }) {
-	// console.log("contactIndex - ", contactIndex);
+	// console.log("--dhyey-- contactIndex - ", contactIndex, "contacts - ", contacts);
 	const [contactFirstName, setContactFirstName] = useState(contacts[contactIndex].contact_first_name);
 	const [contactLastName, setContactLastName] = useState(contacts[contactIndex].contact_last_name);
 	const [contactEmail, setContactEmail] = useState(contacts[contactIndex].contact_email);

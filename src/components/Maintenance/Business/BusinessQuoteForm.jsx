@@ -19,7 +19,7 @@ import {
     InputAdornment
 } from "@mui/material";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from '../../../theme/theme';
 import ImageUploader from "../../ImageUploader";
@@ -45,6 +45,8 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import DocumentUploader from "../../DocumentUploader";
 
 import APIConfig from "../../../utils/APIConfig";
+import ListsContext from "../../../contexts/ListsContext";
+import Documents from "../../Leases/Documents";
 
 function CostPartsTable({parts, setParts}){
 
@@ -158,6 +160,8 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
     const navigate = useNavigate();
     const location = useLocation();
     const { getProfileId } = useUser();
+    const { getList, } = useContext(ListsContext);
+    const jobTypes = getList("bid")
     const maintenanceItem = location.state.maintenanceItem;
 
     //console.log("navigationParams", navigationParams)
@@ -173,7 +177,11 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
     const [notes, setNotes] = useState(editBool ? maintenanceItem.quote_notes : "");
     const [jobType, setJobType] = useState("Fixed Bid");
     const [selectedImageList, setSelectedImageList] = useState([])
-    const [selectedDocumentList, setSelectedDocumentList] = useState([])
+    const [selectedDocumentList, setSelectedDocumentList] = useState(maintenanceItem?.quote_documents? JSON.parse(maintenanceItem?.quote_documents): [])
+    const [uploadedFiles, setuploadedFiles] = useState([])
+    const [uploadedFilesType, setuploadedFilesType] = useState([])
+    const [isPreviousFileChange, setIsPreviousFileChange] = useState(false)
+    const [deleteDocuments, setDeleteDocuments] = useState([])
     const [hours, setHours] = useState(0)
     const [total, setTotal] = useState(0)
     const [grandTotal, setGrandTotal] = useState(0)
@@ -348,40 +356,76 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                 formData.append("quote_earliest_available_time", availabilityTime)
 
                 const files = selectedImageList;
-    let i = 0;
-    for (const file of selectedImageList) {
-      // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
-      let key = `img_${i++}`;
-      if (file.file !== null) {
-        // newProperty[key] = file.file;
-        formData.append(key, file.file);
-      } else {
-        // newProperty[key] = file.image;
-        formData.append(key, file.image);
-      }
-      if (file.coverPhoto) {
-        formData.append("img_favorite", key);
-      }
-    }
-    formData.append("quote_documents", []);
-                //console.log('---business document---', selectedDocumentList);
+                let i = 0;
+                for (const file of selectedImageList) {
+                // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+                    let key = `img_${i++}`;
+                    if (file.file !== null) {
+                        // newProperty[key] = file.file;
+                        formData.append(key, file.file);
+                    } else {
+                        // newProperty[key] = file.image;
+                        formData.append(key, file.image);
+                    }
+                    
+                    if (file.coverPhoto) {
+                        formData.append("img_favorite", key);
+                    }
+                }
 
-                if (selectedDocumentList.length) {
+                // if already uploaded file change
+                if(isPreviousFileChange){
+                    formData.append("quote_documents", JSON.stringify(selectedDocumentList));
+                }
+
+                // if new file uploaded in documents
+                if (uploadedFiles && uploadedFiles?.length) {
+
                     const documentsDetails = [];
-                    [...selectedDocumentList].forEach((file, i) => {
-                      formData.append(`file_${i}`, file, file.name);
-                      //const fileType = contractFileTypes[i] || "";
+                    [...uploadedFiles].forEach((file, i) => {
+                      
+                      // console.log(JSON.stringify(file));
+                      
+              
+                      formData.append(`file_${i}`, file);
+                      const fileType = uploadedFilesType[i] || "";
+                      // formData.append("contract")
                       const documentObject = {
                         // file: file,
                         fileIndex: i, //may not need fileIndex - will files be appended in the same order?
                         fileName: file.name, //may not need filename
-                        fileType: file.type,
-                        contentType:"Quote",
+                        contentType: fileType, // contentType = "contract or lease",  fileType = "pdf, doc"
                       };
                       documentsDetails.push(documentObject);
                     });
+              
                     formData.append("quote_documents_details", JSON.stringify(documentsDetails));
-                  }
+                }
+
+                // if any previous document delete
+                if(deleteDocuments && deleteDocuments?.length !== 0){
+                    formData.append("delete_documents", JSON.stringify(deleteDocuments));
+                }
+
+                // formData.append("quote_documents", []);
+                //console.log('---business document---', selectedDocumentList);
+
+                // if (selectedDocumentList.length) {
+                //     const documentsDetails = [];
+                //     [...selectedDocumentList].forEach((file, i) => {
+                //       formData.append(`file_${i}`, file, file.name);
+                //       //const fileType = contractFileTypes[i] || "";
+                //       const documentObject = {
+                //         // file: file,
+                //         fileIndex: i, //may not need fileIndex - will files be appended in the same order?
+                //         fileName: file.name, //may not need filename
+                //         fileType: file.type,
+                //         contentType:"Quote",
+                //       };
+                //       documentsDetails.push(documentObject);
+                //     });
+                //     formData.append("quote_documents_details", JSON.stringify(documentsDetails));
+                // }
 
                 // var documentBinary = []
                 // if (selectedDocumentList.length > 0){
@@ -434,6 +478,7 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
 
         // changeMaintenanceRequestStatus(status)
         changeQuoteStatus(status)
+
         // uploadQuoteDocuments()
         navigate("/maintenanceDashboard2", {state: {refresh: true, key: Date.now()}})
     }
@@ -605,9 +650,12 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
                                             Job Type
                                         </Typography>
-                                        <Select sx={{backgroundColor: 'white', borderColor: 'black', borderRadius: '7px'}} size="small" fullWidth onChange={(e) => setJobType(e.target.value)} value={jobType} placeholder="Job Type">
-                                            <MenuItem value={"Fixed Bid"}>Fixed Bid</MenuItem>
-                                            <MenuItem value={"Hourly"}>Hourly</MenuItem>
+                                        <Select sx={{backgroundColor: 'white', borderColor: 'black', borderRadius: '7px'}} size="small" fullWidth onChange={(e) => setJobType(e.target.value)} value={jobType} placeholder="Job Type">                                            
+                                            {
+										    	jobTypes?.map( (freq ) => (
+												    <MenuItem key={freq.list_uid} value={freq.list_item}>{freq.list_item}</MenuItem>
+											    ))
+										    }
                                         </Select>
                                     </Grid>
                                     {jobType === "Hourly" ? (
@@ -770,11 +818,12 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                                             label="Diagnostic fees included"
                                         />
                                     </Grid>
-                                    <Grid item xs={12} sx={{paddingTop: "25px"}}>
-                                    <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                                    <Grid item xs={12} sx={{paddingTop: "25px", paddingBottom:"25px"}}>
+                                        {/* <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                                             Add Documents
                                         </Typography>
-                                        <DocumentUploader selectedDocumentList={selectedDocumentList} setSelectedDocumentList={setSelectedDocumentList}/>
+                                        <DocumentUploader selectedDocumentList={selectedDocumentList} setSelectedDocumentList={setSelectedDocumentList}/> */}
+                                        <Documents isAccord={false} isEditable={true} documents={selectedDocumentList} setDocuments={setSelectedDocumentList} contractFiles={uploadedFiles} setContractFiles={setuploadedFiles} contractFileTypes={uploadedFilesType} setContractFileTypes={setuploadedFilesType} setDeleteDocsUrl={setDeleteDocuments} setIsPreviousFileChange={setIsPreviousFileChange} customName={"Add Documents"}/>
                                     </Grid>
                                     <Grid item xs={12} sx={{paddingTop: "25px"}}>
                                         <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList}/>

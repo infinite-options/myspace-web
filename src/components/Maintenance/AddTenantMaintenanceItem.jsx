@@ -24,7 +24,7 @@ import {
     InputAdornment
 } from "@mui/material";
 import { useUser } from "../../contexts/UserContext";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
@@ -41,12 +41,16 @@ import { darken } from '@mui/system';
 import ReturnButtonIcon from '../Property/refundIcon.png';
 
 import APIConfig from '../../utils/APIConfig';
+import ListsContext from "../../contexts/ListsContext";
 
 export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem, newTenantMaintenanceState, setRightPane, setReload}){   
     console.log("---closeAddTenantMaintenanceItem---", closeAddTenantMaintenanceItem); 
     const location = useLocation();
     let navigate = useNavigate();
     const { user, getProfileId, dashboardRoutingBasedOnSelectedRole } = useUser();
+    const { getList, } = useContext(ListsContext);	
+	
+    const maintenanceIssues = getList("maintenance");
     const [selectedImageList, setSelectedImageList] = useState([]);
     const [property, setProperty] = useState(location.state?.propertyData || newTenantMaintenanceState?.propertyData);
     const [lease, setLease] = useState(location.state?.leaseData || newTenantMaintenanceState?.leaseData);
@@ -150,19 +154,21 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
         // formData.append("maintenance_request_closed_date", null);
         // formData.append("maintenance_request_adjustment_date", null);
 
-        for (let i = 0; i < selectedImageList.length; i++) {
-            try {
-                let key = i === 0 ? "img_cover" : `img_${i-1}`;
-
-                if(selectedImageList[i]?.image?.startsWith("data:image")){
-                    const imageBlob = dataURItoBlob(selectedImageList[i].image);
-                    formData.append(key, imageBlob)
-                } else {
-                    formData.append(key, selectedImageList[i])
-                }
-            } catch (error) {
-                console.log("Error uploading images", error)
-            }
+        const files = selectedImageList;
+        let i = 0;
+        for (const file of selectedImageList) {
+          // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+          let key = `img_${i++}`;
+          if (file.file !== null) {
+            // newProperty[key] = file.file;
+            formData.append(key, file.file);
+          } else {
+            // newProperty[key] = file.image;
+            formData.append(key, file.image);
+          }
+          if (file.coverPhoto) {
+            formData.append("img_favorite", key);
+          }
         }
 
 
@@ -313,12 +319,11 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
                             >
                                 {/* <InputLabel>Select Issue Category</InputLabel> */}
                                 <Select defaultValue="" onChange={handleIssueChange}>
-                                    <MenuItem value={"Plumbing"}>Plumbing</MenuItem>
-                                    <MenuItem value={"Electrical"}>Electrical</MenuItem>
-                                    <MenuItem value={"Appliance"}>Appliances</MenuItem>
-                                    <MenuItem value={"HVAC"}>HVAC</MenuItem>
-                                    <MenuItem value={"Landscaping"}>Landscaping</MenuItem>
-                                    <MenuItem value={"Other"}>Other</MenuItem>
+                                    {
+                                        maintenanceIssues?.map( (freq ) => (
+                                            <MenuItem key={freq.list_uid} value={freq.list_item}>{freq.list_item}</MenuItem>
+                                        ))
+                                    }
                                 </Select>
                             </FormControl>
                         </Grid>

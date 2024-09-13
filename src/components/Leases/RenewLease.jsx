@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext, } from "react";
 import {
     Typography, Box, Paper, Grid, Accordion, AccordionSummary, AccordionDetails, Button, Snackbar, Alert, AlertTitle
 } from "@mui/material";
@@ -24,6 +24,8 @@ import UtilitiesManager from "./Utilities";
 import FeesDetails from "./FeesDetails";
 import LeaseSummary from "./LeaseSummary";
 
+import ListsContext from "../../contexts/ListsContext";
+
 const useStyles = makeStyles((theme) => ({
     root: {
         "& .MuiOutlinedInput-input": {
@@ -36,6 +38,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClicked, handleUpdate }) {
+    const { getList, } = useContext(ListsContext);	
     const classes = useStyles();
     const [currentLease, setCurrentLease] = useState("");
     const [tenantWithId, setTenantWithId] = useState([]);
@@ -352,20 +355,12 @@ const showSnackbar = (message, severity) => {
     setSnackbarOpen(true);
 };
 
-const getListDetails = async () => {
-    try {
-        const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
-        if (!response.ok) {
-            console.log("Error fetching lists data");
-        }
-        const responseJson = await response.json();
-        const relationships = responseJson.result.filter(res => res.list_category === "relationships");
-        const states = responseJson.result.filter(res => res.list_category === "states");
-        setRelationships(relationships);
-        setStates(states);
-    } catch (error) {
-        console.log(error);
-    }
+const getListDetails = async () => {        
+    const relationships = getList("relationships");
+    const states = getList("states");
+    setRelationships(relationships);
+    setStates(states);
+    
 }
 
 const getDateAdornmentString = (d) => {

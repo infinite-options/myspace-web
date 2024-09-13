@@ -99,6 +99,14 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
     }, [isUpdated]);
 
     useEffect(() => {
+        console.log('ROHIT - vehicles - ', vehicles);        
+    }, [vehicles]);
+
+    useEffect(() => {
+        console.log('ROHIT - states - ', states);        
+    }, [states]);
+
+    useEffect(() => {
         if (leaseVehicles && leaseVehicles.length > 0) {
             //Need Id for datagrid
             const vehWithIds = leaseVehicles.map((veh, index) => ({ ...veh, id: index }));
@@ -142,7 +150,8 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
             }
 
         } else {
-            setModifiedData((prev) => [...prev, { key: dataKey, value: [...leaseVehicles, { ...currentRow }] }])
+            const {id, ...newRowwithoutid} = currentRow
+            setModifiedData((prev) => [...prev, { key: dataKey, value: [...leaseVehicles, { ...newRowwithoutid }] }])
             setIsUpdated(true);
         }
     };

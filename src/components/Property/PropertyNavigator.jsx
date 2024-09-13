@@ -72,6 +72,7 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { CollectionsBookmarkRounded } from "@mui/icons-material";
 import PropertiesContext from '../../contexts/PropertiesContext';
+import ListsContext from "../../contexts/ListsContext.js";
 
 const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_status !== "REFUSED" ? "#778DC5" : "#874499") : "#A52A2A");
 
@@ -97,8 +98,22 @@ export default function PropertyNavigator({
   // console.log(index, propertyList);
   // console.log("props contracts", contracts);
   const navigate = useNavigate();
+  const { getList, } = useContext(ListsContext);
   const { getProfileId, isManager, roleName, selectedRole } = useUser();
-  const { propertyList, allRentStatus, allContracts, returnIndex, setReturnIndex  } = useContext(PropertiesContext); 
+  // const { propertyList, allRentStatus, allContracts, returnIndex, setReturnIndex  } = useContext(PropertiesContext); 
+  const propertiesContext = useContext(PropertiesContext);
+	const {
+	  propertyList: propertyListFromContext,	  
+    allRentStatus: allRentStatusFromContext,	  
+    allContracts: allContractsFromContext,    
+	  returnIndex: returnIndexFromContext,
+    setReturnIndex,
+	} = propertiesContext || {};
+  
+	const propertyList = propertyListFromContext || [];	
+  const allRentStatus = allRentStatusFromContext || [];		
+  const allContracts = allContractsFromContext || [];	  
+	const returnIndex = returnIndexFromContext || 0;
 
   const [propertyData, setPropertyData] = useState(propertyList || []);
   const [currentIndex, setCurrentIndex] = useState(returnIndex !== undefined ? returnIndex : 0);
@@ -776,14 +791,8 @@ export default function PropertyNavigator({
     setSnackbarOpen(false);
   };
 
-  const getApplianceCategories = async () => {
-    try {
-      const response = await fetch(`${APIConfig.baseURL.dev}/lists`);      
-      if (!response.ok) {
-        console.log("Error fetching lists data");
-      }
-      const responseJson = await response.json();
-      const applnCategories = responseJson.result.filter((res) => res.list_category === "appliances" && res.list_item.trim() !== "");
+  const getApplianceCategories = () => {          
+      const applnCategories = getList("appliances");
       // console.log("appliance categories - ", applnCategories);
       setApplianceCategories(applnCategories);
       const listItemToUidMapping = applnCategories.reduce((acc, item) => {
@@ -797,10 +806,7 @@ export default function PropertyNavigator({
         return acc;
       }, {});
       // console.log("appliance UIDs to categories- ", listUidToItemMapping);
-      setApplianceUIDToCategoryMap(listUidToItemMapping);
-    } catch (error) {
-      console.log(error);
-    }
+      setApplianceUIDToCategoryMap(listUidToItemMapping);    
   };
 
   // Define the custom cell renderer for the appliance_images column

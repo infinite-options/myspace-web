@@ -330,8 +330,7 @@ function CashflowWidget({ data, setCurrentWindow, page, setSelectedProperty, set
                   open={Boolean(anchorEl)}
                   // onChange={handlePropertyChange}
                   onClose={handleClose}
-                >
-                  {/* <Select value={selectedProperty} onChange={handlePropertyChange} variant="filled" displayEmpty> */}
+                >                  
                   {propertyList?.map((property, index) => {
                     return (
                       <MenuItem
