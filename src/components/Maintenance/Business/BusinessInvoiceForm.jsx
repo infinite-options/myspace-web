@@ -38,6 +38,7 @@ import DocumentUploader from "../../DocumentUploader";
 import dayjs from "dayjs";
 
 import APIConfig from "../../../utils/APIConfig";
+import Documents from "../../Leases/Documents";
 
 function LaborTable({ labor, setLabor }) {
   const [indexToggle, setIndexToggle] = useState(-1);
@@ -395,10 +396,14 @@ export default function BusinessInvoiceForm() {
   const [profileInfo, setProfileInfo] = useState({});
   const [paymentMethods, setPaymentMethods] = useState([]);
   const [selectedDocumentList, setSelectedDocumentList] = useState([]);
+  const [uploadedFiles, setuploadedFiles] = useState([])
+  const [uploadedFilesType, setuploadedFilesType] = useState([])
+  const [isPreviousFileChange, setIsPreviousFileChange] = useState(false)
+  const [deleteDocuments, setDeleteDocuments] = useState([])
 
   const maintenanceItem = location.state.maintenanceItem;
 
-  console.log("maintenanceItem", maintenanceItem);
+  // console.log("maintenanceItem", maintenanceItem);
 
   const costData = JSON.parse(maintenanceItem?.quote_services_expenses);
 
@@ -573,6 +578,39 @@ export default function BusinessInvoiceForm() {
         formData.append("bill_maintenance_quote_id", maintenanceItem.maintenance_quote_uid);
         formData.append("bill_maintenance_request_id", maintenanceItem.maintenance_request_uid);
 
+        if(isPreviousFileChange){
+          formData.append("bill_documents", JSON.stringify(selectedDocumentList));
+      }
+
+      // if new file uploaded in documents
+      if (uploadedFiles && uploadedFiles?.length) {
+
+          const documentsDetails = [];
+          [...uploadedFiles].forEach((file, i) => {
+            
+            // console.log(JSON.stringify(file));
+            
+    
+            formData.append(`file_${i}`, file);
+            const fileType = uploadedFilesType[i] || "";
+            // formData.append("contract")
+            const documentObject = {
+              // file: file,
+              fileIndex: i, //may not need fileIndex - will files be appended in the same order?
+              fileName: file.name, //may not need filename
+              contentType: fileType, // contentType = "contract or lease",  fileType = "pdf, doc"
+            };
+            documentsDetails.push(documentObject);
+          });
+    
+          formData.append("bill_documents_details", JSON.stringify(documentsDetails));
+      }
+
+      // if any previous document delete
+      if(deleteDocuments && deleteDocuments?.length !== 0){
+          formData.append("delete_documents", JSON.stringify(deleteDocuments));
+      }
+
         // TODO: Change this to form data
         const response = await fetch(`${APIConfig.baseURL.dev}/bills`, {
           method: "POST",
@@ -583,7 +621,7 @@ export default function BusinessInvoiceForm() {
         console.log(responseData);
         if (response.status === 200) {
           console.log("success");
-          uploadBillDocuments();
+          // uploadBillDocuments();
           navigate("/workerMaintenance");
         } else {
           console.log("error setting status");
@@ -619,7 +657,7 @@ export default function BusinessInvoiceForm() {
         }}
       >
         <Paper
-          style={{
+          sx={{
             margin: "10px",
             backgroundColor: theme.palette.primary.main,
             width: "100%", // Occupy full width with 25px margins on each side
@@ -662,7 +700,7 @@ export default function BusinessInvoiceForm() {
 
             <PartsTable parts={parts} setParts={setParts} />
 
-            <Grid container direction="column" rowSpacing={2}>
+            <Grid container direction="row" rowSpacing={2}>
               <Grid item xs={12}>
                 <Typography sx={{ color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "14px" }}>
                   Estimated Time: {maintenanceItem.quote_event_type}
@@ -688,7 +726,7 @@ export default function BusinessInvoiceForm() {
                 </Box>
               </Grid>
               <Grid item xs={12}>
-                <Button
+                {/* <Button
                   sx={{
                     color: "#3D5CAC",
                     textTransform: "none",
@@ -697,7 +735,8 @@ export default function BusinessInvoiceForm() {
                 >
                   <img src={documentIcon} style={{ width: "20px", height: "25px", margin: "0px", paddingLeft: "0px", paddingRight: "15px" }} />
                   <Typography sx={{ color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px" }}>View Document</Typography>
-                </Button>
+                </Button> */}
+                <Documents isEditable={false} isAccord={false} documents={maintenanceItem?.quote_documents? JSON.parse(maintenanceItem?.quote_documents) : []} customName={"Quote Documents"}/>
               </Grid>
               <Grid item xs={12}>
                 <Typography sx={{ color: "#000000", fontWeight: theme.typography.medium.fontWeight, fontSize: "14px" }}>New Total</Typography>
@@ -759,8 +798,9 @@ export default function BusinessInvoiceForm() {
                 <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={"QuoteRequestForm"} />
               </Grid>
               <Grid item xs={12}>
-                <Typography sx={{ color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px" }}>Add Documents</Typography>
-                <DocumentUploader selectedDocumentList={selectedDocumentList} setSelectedDocumentList={setSelectedDocumentList} />
+                <Documents isAccord={false} isEditable={true} documents={selectedDocumentList} setDocuments={setSelectedDocumentList} contractFiles={uploadedFiles} setContractFiles={setuploadedFiles} contractFileTypes={uploadedFilesType} setContractFileTypes={setuploadedFilesType} setDeleteDocsUrl={setDeleteDocuments} setIsPreviousFileChange={setIsPreviousFileChange}/>
+                {/* <Typography sx={{ color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px" }}>Add Documents</Typography>
+                <DocumentUploader selectedDocumentList={selectedDocumentList} setSelectedDocumentList={setSelectedDocumentList} /> */}
               </Grid>
               <Grid item xs={12}>
                 <Button
