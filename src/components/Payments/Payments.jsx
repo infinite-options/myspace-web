@@ -72,6 +72,8 @@ export default function Payments(props) {
 
   const [selectedMethod, setSelectedMethod] = useState('');
   const [confirmationNumber, setConfirmationNumber] = useState('');
+  const [showPaymentHistory, setShowPaymentHistory] = useState(true);
+  const [isNotesDisabled, setIsNotesDisabled] = useState(false);
 
 
   const managerCashflowWidgetData = location.state?.managerCashflowWidgetData;
@@ -140,7 +142,8 @@ export default function Payments(props) {
   // }
 
   const handleSelectPaymentClick = () => {
-    setShowPaymentMethod(true);
+    setShowPaymentHistory(false); // Hide Payment History
+    setShowPaymentMethod(true);   // Show Payment Method Selector
   };
 
   function totalMoneyPaidUpdate(moneyPaid) {
@@ -231,11 +234,11 @@ export default function Payments(props) {
         const totalToBePaid = moneyToBePaidData.reduce((total, item) => {
           return item.pur_cf_type === "revenue" ? total + parseFloat(item.pur_amount_due) : total - parseFloat(item.pur_amount_due);
         }, 0);
+  
         setTotalToBePaid(totalToBePaid);
-
-        console.log("IN HERE", totalToBePaid);
-
-        // Update balance in paymentData based on totalToBePaid
+        setBalance(totalToBePaid); // Set initial balance
+        setTotalBalance(totalToBePaid); // Set initial total balance
+        setPaymentData(prevData => ({ ...prevData, balance: totalToBePaid })); // Update balance in paymentData based on totalToBePaid
         setPaymentData((prevPaymentData) => ({
           ...prevPaymentData,
           balance: totalToBePaid, // Update balance to match tenant's total due
@@ -246,7 +249,7 @@ export default function Payments(props) {
       }
       setShowSpinner(false);
     };
-  
+
     fetchPaymentsData();
   }, []);
 
@@ -296,136 +299,29 @@ export default function Payments(props) {
   //     borderColor: "black",
   //   },
   // };
-
-  const update_fee = (e) => {
-    console.log("INSIDE FEE");
-    let fee = 0;
-    if (e.target.value === "Bank Transfer") {
-      fee = Math.max(parseFloat((balance * 0.008).toFixed(2)), 5);
-    } else if (e.target.value === "Credit Card") {
-      fee = parseFloat((balance * 0.03).toFixed(2));
-    }
-    setFee(fee);
-    setTotalBalance(balance + fee); // Update the total balance
-  };
   
   const [stripeDialogShow, setStripeDialogShow] = useState(false);
 
   const handlePaymentNotesChange = (event) => {
-    setPaymentNotes(event.target.value);
+    const value = event.target.value;
+    setPaymentNotes(value);
+
+    if (value === "PMTEST") {
+      setIsNotesDisabled(true);
+    }
+    else {
+      setIsNotesDisabled(false);
+    }
   };
 
 
-  const payment_url = {
-    "Credit Card": "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createPaymentIntent", // Try this first
-    "Bank Transfer": "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createEasyACHPaymentIntent", //WON'T WORK NOW
-    "Zelle": "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/makePayment",
+const handleFeeUpdate = (newBalance, newFee) => {
+    setBalance(newBalance);
+    setFee(newFee);
+    setTotalBalance(newBalance + newFee);
+    console.log("BALANCE TOTAL", totalBalance, newFee)
   };
 
-  const toggleKeys = async () => {
-    setShowSpinner(true);
-    console.log("inside toggle keys");
-    const url =
-      paymentData.business_code === "PMTEST"
-        ? // ? "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
-          // : "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PM";
-          "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
-        : "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST";
-    // : "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PM";
-
-    let response = await fetch(url);
-    const responseData = await response.json();
-    console.log("--DEBUG-- response data from Stripe", responseData);
-    // setStripeResponse(responseData);
-    const stripePromise = loadStripe(responseData.publicKey);
-    setStripePromise(stripePromise);
-    // console.log("--DEBUG-- stripePromise", stripePromise);
-    setShowSpinner(false);
-  };
-
-  async function credit_card_handler(notes) {
-    setShowSpinner(true); // Start showing the spinner
-    
-    let endpoint = "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/getCorrectKeys/PM";
-    if (notes === "PMTEST") {
-      endpoint = "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/getCorrectKeys/PMTEST";
-    }
-    
-    try {
-      const result = await axios.post(endpoint);
-      
-      if (result?.data?.publicKey) {
-        const stripeInstance = await loadStripe(result.data.publicKey);
-        setStripePromise(stripeInstance);  // Set Stripe promise for Elements provider
-        setStripePayment(true);  // Open Stripe payment dialog
-      } else {
-        console.error("Public key not found in response:", result);
-      }
-    } catch (error) {
-      console.error("Error fetching public key:", error);
-    } finally {
-      setShowSpinner(false);
-    }
-  }
-  
-  
-  
-  const submit = async (paymentIntent, paymentMethod) => {
-    setPaymentConfirm(true);
-  
-    // Prepare the default paymentIntent and paymentMethod for non-Zelle payments
-    let payment_intent = paymentIntent.paymentIntent;
-    let payment_method = paymentIntent.paymentMethod;
-  
-    // If the payment method is Zelle, use the values directly as they are
-    if (paymentMethod === "Zelle") {
-      payment_intent = paymentIntent;
-      payment_method = paymentMethod;
-    }
-  
-    console.log("Re-Setting PI and PM: ", payment_intent, payment_method);
-  
-    let payment_request_payload = {
-      pay_purchase_id: paymentData.purchase_uids,
-      pay_fee: convenience_fee,
-      pay_total: totalBalance,
-      payment_notes: paymentData.business_code,
-      pay_charge_id: "stripe transaction key", // Update this with the actual charge ID from Stripe
-      payment_type: selectedMethod,
-      payment_verify: "Unverified",
-      paid_by: getProfileId(),
-      payment_intent: payment_intent, // Use the appropriate value for payment_intent
-      payment_method: payment_method, // Use the appropriate value for payment_method
-    };
-  
-    // If Zelle is selected, add the confirmation number
-    if (paymentMethod === "Zelle") {
-      payment_request_payload.confirmation_number = confirmationNumber;
-    }
-  
-    console.log("HERE CHECK ABHINAV");
-  
-    try {
-      const response = await fetch(`${APIConfig.baseURL.dev}/makePayment`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payment_request_payload),
-      });
-  
-      if (response.ok) {
-        navigate("/tenantDashboard");
-      } else {
-        console.error("Payment failed", response);
-      }
-    } catch (error) {
-      console.error("Error making payment:", error);
-    }
-  
-    setShowSpinner(false);
-  };
-  
   
 
   useEffect(() => {
@@ -435,76 +331,7 @@ export default function Payments(props) {
       business_code: paymentNotes
     }));
   }, [paymentNotes]);
-  
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    // Ensure paymentData is updated with the latest business_code
-    const updatedPaymentData = {
-      ...paymentData,
-      business_code: paymentNotes, // Ensure business_code is updated with paymentNotes
-      total: parseFloat(totalToBePaid.toFixed(2)),
-    };
-  
-    if (selectedMethod === "Bank Transfer") {
-      bank_transfer_handler();
-    } else if (selectedMethod === "Credit Card") {
-      console.log("Credit card")
-      setStripeDialogShow(true);
-    } else if (selectedMethod === "Zelle") {
-      console.log("Zelle ")
-      let payment_intent = "Zelle";
-      let payment_method = "Zelle";
-      submit(payment_intent, payment_method); // Pass updated paymentData
-    }
-  };
-
-
-  async function bank_transfer_handler() {
-    // console.log("In Bank Transfer Handler Function");
-    // Set the Content-Type header
-    const headers = {
-      "Content-Type": "application/json",
-    };
-
-    // Make the POST request
-    setShowSpinner(true);
-    try {
-      const response = await fetch(payment_url[selectedMethod], {
-        // Use http instead of https
-        method: "POST",
-        headers,
-        body: JSON.stringify(paymentData),
-      });
-
-      if (response.ok) {
-        // console.log("Post request was successful");
-        // Handle the successful response here
-      } else {
-        // console.error("Post request failed");
-        // Handle the error here
-      }
-    } catch (error) {
-      console.error("An error occurred while making the POST request", error);
-    }
-    setShowSpinner(false);
-    // console.log("Completed Bank Transfer Handler Function");
-    // navigate
-    navigate("/PaymentConfirmation", { state: { paymentData } });
-  }
-
-  const handleChange = (event) => {
-    const selectedValue = event.target.value;
-    setSelectedMethod(selectedValue);
-  
-    // Clear confirmation number if not Zelle
-    if (selectedValue !== "Zelle") {
-      setConfirmationNumber("");
-    }
-  
-    update_fee(event);  // Call to update the convenience fee based on selected method
-  };
   
   return (
     <>
@@ -593,19 +420,19 @@ export default function Payments(props) {
                       <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                         <Grid item xs={6}>
                           <Typography sx={{ marginLeft: "20px", color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: "26px" }}>
-                            ${total.toFixed(2)}
+                            ${totalBalance.toFixed(2)}
                           </Typography>
                         </Grid>
                         <Grid item xs={6}>
                           <Button
-                            disabled={total <= 0}
+                            disabled={totalBalance <= 0}
                             sx={{
                               backgroundColor: "#3D5CAC",
                               borderRadius: "10px",
                               color: "#FFFFFF",
                               width: "100%",
                             }}
-                            onClick={() => {setShowPaymentMethod(true);}}
+                            onClick={() => {handleSelectPaymentClick()}}
                           >
                             <Typography
                               variant='outlined'
@@ -633,21 +460,14 @@ export default function Payments(props) {
                       paddingBottom: "15px",
                     }}
                   >
-                    <TextField variant='filled' fullWidth={true} multiline={true} value={paymentNotes} onChange={handlePaymentNotesChange} label='Payment Notes' />
+                    <TextField variant='filled' fullWidth={true} multiline={true} value={paymentNotes} onChange={handlePaymentNotesChange} disabled={isNotesDisabled} label='Payment Notes' />
                   </Stack>
                 </Paper>
 
                 {showPaymentMethod && (
                 <PaymentMethodSelector
                   paymentData={paymentData}
-                  stripePromise={stripePromise}
-                  convenience_fee={convenience_fee}
-                  totalBalance={totalBalance}
-                  confirmationNumber={confirmationNumber}
-                  selectedMethod={selectedMethod}
-                  setConfirmationNumber={setConfirmationNumber}
-                  handleChange={handleChange}
-                  handleSubmit={handleSubmit} // The function for submitting payments
+                  handleFeeUpdate={handleFeeUpdate}
                   />
                 )}
 
@@ -663,7 +483,7 @@ export default function Payments(props) {
                   >
                     <Stack direction='row' justifyContent='space-between'>
                       <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                        Balance Details - Money Payable
+                        Balance Details - Money Payable Test
                     </Typography>
                       <Typography
                         sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
@@ -673,7 +493,15 @@ export default function Payments(props) {
                     </Stack>
 
                     <Stack>
-                      <TenantBalanceTable data={moneyToBePaid} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
+                    <TenantBalanceTable
+                      data={moneyToBePaid}      // Correct data for balance calculation
+                      total={totalBalance}      // Use totalBalance if that's the updated state
+                      setTotalBalance={setTotalBalance}       // Update the total balance if needed
+                      setPaymentData={setPaymentData}   // Handle payment data if necessary
+                      setSelectedItems={setSelectedItems}   // Update selected items if needed
+                      handleFeeUpdate={handleFeeUpdate} 
+                    />
+                      {/* <TenantBalanceTable data={moneyToBePaid} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} /> */}
                     </Stack>
                   </Paper>
                 ) : (
@@ -730,6 +558,7 @@ export default function Payments(props) {
                 )}
 
                 {/* All Roles show Money Paid */}
+                {showPaymentHistory && (
                 <Paper
                               sx={{
                     margin: "25px",
@@ -752,7 +581,7 @@ export default function Payments(props) {
                   <Stack>
                     <MoneyPaidTable data={moneyPaid} />
                   </Stack>
-                </Paper>
+                </Paper>)}
 
                 {/* Conditional rendering for Money Received section */}
                 {paymentData.customer_uid.substring(0, 3) !== "350" && (
@@ -1005,7 +834,7 @@ function PaymentMethodSelectorTest({
 
 
 function BalanceDetailsTable(props) {
-  // console.log("In BalanceDetailTable", props);
+  console.log("In BalanceDetailTable", props);
   const [data, setData] = useState(props.data);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedPayments, setSelectedPayments] = useState([]);
@@ -1029,17 +858,12 @@ function BalanceDetailsTable(props) {
 
   useEffect(() => {
     var total = 0;
-
     let purchase_uid_mapping = [];
-
+  
     for (const item of selectedRows) {
-      // console.log("item in loop", item)
-
       let paymentItemData = paymentDueResult.find((element) => element.purchase_uid === item);
       purchase_uid_mapping.push({ purchase_uid: item, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
-      // console.log("payment item data", paymentItemData);
-
-      // total += parseFloat(paymentItemData.pur_amount_due);
+  
       // Adjust total based on pur_cf_type
       if (paymentItemData.pur_cf_type === "revenue") {
         total += parseFloat(paymentItemData.pur_amount_due);
@@ -1047,14 +871,12 @@ function BalanceDetailsTable(props) {
         total -= parseFloat(paymentItemData.pur_amount_due);
       }
     }
-    // console.log("selectedRows useEffect - total - ", total);
-    // console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
-    props.setTotal(total);
-    props.setPaymentData((prevPaymentData) => ({
-      ...prevPaymentData,
-      balance: total.toFixed(2),
-      purchase_uids: purchase_uid_mapping,
-    }));
+  
+    // Set the totalBalance without the fee first
+    props.setTotalBalance(total);
+  
+    // Call handleFeeUpdate to update the total balance with the fee
+    props.handleFeeUpdate(total); // Pass the new balance to handle fee calculation
   }, [selectedRows]);
 
   useEffect(() => {
@@ -1296,8 +1118,9 @@ function BalanceDetailsTable(props) {
 }
 
 function TenantBalanceTable(props) {
-  // console.log("In BalanceDetailTable", props);
+  console.log("In BalanceDetailTable", props);
   const [data, setData] = useState(props.data);
+  const [selectedMethod, setSelectedMethod] = useState(props.selectedMethod);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedPayments, setSelectedPayments] = useState([]);
   const [paymentDueResult, setPaymentDueResult] = useState([]);
@@ -1320,17 +1143,13 @@ function TenantBalanceTable(props) {
 
   useEffect(() => {
     var total = 0;
-
+  
     let purchase_uid_mapping = [];
-
+  
     for (const item of selectedRows) {
-      // console.log("item in loop", item)
-
       let paymentItemData = paymentDueResult.find((element) => element.purchase_uid === item);
       purchase_uid_mapping.push({ purchase_uid: item, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
-      // console.log("payment item data", paymentItemData);
-
-      // total += parseFloat(paymentItemData.pur_amount_due);
+  
       // Adjust total based on pur_cf_type
       if (paymentItemData.pur_cf_type === "revenue") {
         total += parseFloat(paymentItemData.pur_amount_due);
@@ -1338,15 +1157,18 @@ function TenantBalanceTable(props) {
         total -= parseFloat(paymentItemData.pur_amount_due);
       }
     }
-    // console.log("selectedRows useEffect - total - ", total);
-    // console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
-    props.setTotal(total);
+
+    console.log("BLANAC", total);
+    
+    // If using totalBalance instead of total
+    props.setTotalBalance(total);
     props.setPaymentData((prevPaymentData) => ({
       ...prevPaymentData,
       balance: total.toFixed(2),
       purchase_uids: purchase_uid_mapping,
     }));
   }, [selectedRows]);
+  
 
   useEffect(() => {
     console.log("selectedPayments - ", selectedPayments);

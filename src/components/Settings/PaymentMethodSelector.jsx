@@ -182,29 +182,22 @@ export default function PaymentMethodSelector(props) {
     navigate("/PaymentConfirmation", { state: { paymentData } });
   }
 
-  function update_fee(selectedValue) {
-    let fee = 0;
-    if (selectedValue === "Bank Transfer") {
-      fee = Math.max(parseFloat((balance * 0.008).toFixed(2)), 5);
-    } else if (selectedValue === "Credit Card") {
-      fee = parseFloat((balance * 0.03).toFixed(2));
-    }
-    setFee(fee);
-    setTotalBalance(balance + fee);
-  }
-
   const handleChange = (event) => {
     const selectedValue = event.target.value;
     setSelectedMethod(selectedValue);
 
     let fee = 0;
     if (selectedValue === "Bank Transfer") {
-      fee = Math.max(parseFloat((balance * 0.008).toFixed(2)), 5);
+      fee = Math.min(parseFloat((balance * 0.008).toFixed(2)), 5);
     } else if (selectedValue === "Credit Card") {
       fee = parseFloat((balance * 0.03).toFixed(2));
     }
     setFee(fee);
-    setTotalBalance(balance + fee);
+
+    const newTotalBalance = balance + fee;
+    setTotalBalance(newTotalBalance);
+
+    props.handleFeeUpdate(balance, fee);
 
     // Clear confirmation number when a different payment method is selected
     if (selectedValue !== "Zelle") {
@@ -212,6 +205,7 @@ export default function PaymentMethodSelector(props) {
     }
     // update_fee(selectedValue);
   };
+
 
   const handleSubmit = async (e) => {
     // console.log("selectedMethod", selectedMethod);
