@@ -31,6 +31,7 @@ import { maskSSN, maskEIN, formattedPhoneNumber } from "../utils/privacyMasking"
 
 import APIConfig from "../../utils/APIConfig";
 import Documents from "../Leases/Documents";
+import { getDateAdornmentString } from "../../utils/dates";
 
 import ListsContext from "../../contexts/ListsContext";
 
@@ -459,21 +460,6 @@ const TenantLease = () => {
       }
     });
     return retVal;
-  };
-
-  const getDateAdornmentString = (d) => {
-    if (d === null || d === 0) return "";
-    if (d > 3 && d < 21) return "th";
-    switch (d % 10) {
-      case 1:
-        return "st";
-      case 2:
-        return "nd";
-      case 3:
-        return "rd";
-      default:
-        return "th";
-    }
   };
 
   useEffect(() => {
@@ -1063,7 +1049,7 @@ const TenantLease = () => {
                       {"Due By "}
                       <span style={{ color: "red" }}>*</span>
                     </Typography>
-                    {row.frequency === "Monthly" && (
+                    {(row.frequency === "Monthly" || row.frequency === "Semi-Annually" || row.frequency === "Quarterly") && (
                       <TextField
                         name='due_by'
                         value={row.due_by !== null && row.due_by !== "" ? row.due_by : ""}
@@ -1150,7 +1136,8 @@ const TenantLease = () => {
                       {"Available To Pay "}
                       <span style={{ color: "red" }}>*</span>
                     </Typography>
-                    {(row.frequency === "Monthly" || row.frequency === "One Time" || row.frequency === "Annually") && (
+                    
+                    {(row.frequency === "Monthly" || row.frequency === "One Time" || row.frequency === "Annually" || row.frequency === "Semi-Annually" || row.frequency === "Quarterly") && (
                       <TextField
                         name='available_topay'
                         value={row.available_topay !== null ? row.available_topay : ""}
@@ -1209,8 +1196,8 @@ const TenantLease = () => {
                     >
                       {"Late By "}
                       <span style={{ color: "red" }}>*</span>
-                    </Typography>
-                    {(row.frequency === "Monthly" || row.frequency === "One Time" || row.frequency === "Annually") && (
+                    </Typography>                    
+                    {(row.frequency === "Monthly" || row.frequency === "One Time" || row.frequency === "Annually" || row.frequency === "Semi-Annually" || row.frequency === "Quarterly") && (
                       <TextField
                         name='late_by'
                         value={row.late_by}

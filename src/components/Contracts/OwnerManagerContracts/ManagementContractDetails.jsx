@@ -21,59 +21,50 @@ import PropertiesContext from "../../../contexts/PropertiesContext";
 
 
 function ManagementContractDetails(props) {
-  // console.log("In ManagementContractDetails.jsx - props - ", props);    
-  const navigate = useNavigate();
-  const managementContractContext = useContext(ManagementContractContext);
-  const propertiesContext = useContext(PropertiesContext);
+  console.log("In ManagementContractDetails.jsx - props - ", props);    
+  const navigate = useNavigate();  
+  // const propertiesContext = useContext(PropertiesContext);
 
-  const [ currentContractUID, setCurrentContractUID ] = useState(null);
-  const [ currentContractPropertyUID, setCurrentContractPropertyUID ] = useState(null);
-  const [ contractRequests, setContractRequests ] = useState([]);
-
-  useEffect(() => {
-    // Destructuring context values
-    const {
-      currentContractUID: contractUIDFromManagement,
-      currentContractPropertyUID: contractPropertyUIDFromManagement,
-      contractRequests,
-    } = managementContractContext || {};
-
-    const {
-      newContractUID: contractUIDFromProperties,
-      newContractPropertyUID: contractPropertyUIDFromProperties,
-    } = propertiesContext || {};
-
-    // Setting state with values from contexts
-    setCurrentContractUID(contractUIDFromManagement || contractUIDFromProperties);
-    setCurrentContractPropertyUID(contractPropertyUIDFromManagement || contractPropertyUIDFromProperties);
-    if(contractRequests){
-      setContractRequests(contractRequests)
-    }
-  }, [managementContractContext, propertiesContext]);
-  
-  
-  
-  
-  console.log("ManagementContractDetails - currentContractUID from context - ", currentContractUID);
-  console.log("ManagementContractDetails - currentContractPropertyUID from context - ", currentContractPropertyUID);  
-  
-  
-
-  useEffect(() => {
-    fetchData();    
-  }, [currentContractPropertyUID]);
-
-  const property_endpoint_resp = contractRequests;
-
+  const {
+    currentContractUID,
+    currentContractPropertyUID,
+    contractRequests,
+  } = useContext(ManagementContractContext);
 
   const [isLoading, setIsLoading] = useState(true);
   const [filteredPropertiesData, setFilteredPropertiesData] = useState([]); // filter out the properties that aren't included in announcement_properties
 
   const [index, setIndex] = useState(0);
+
+  // const property_endpoint_resp = contractRequests;
+
+
+  
+  
+  
+  
+  console.log("ManagementContractDetails - currentContractUID - ", currentContractUID);  
+
+  
+  console.log("ManagementContractDetails - currentContractPropertyID - ", currentContractPropertyUID);    
+  
+  
+  
+  
+
+  useEffect(() => {
+    console.log("ManagementContractDetails - currentContractPropertyUID changed - ", currentContractPropertyUID);    
+    fetchData();    
+  }, [currentContractUID, currentContractPropertyUID, contractRequests]);
+
+  
+
+
+  
   // const [timeDiff, setTimeDiff] = useState(null);
 
   const fetchData = async () => {    
-    const properties = property_endpoint_resp ? property_endpoint_resp : [];
+    const properties = contractRequests ? contractRequests : [];
     // console.log("PROPERTIES", properties);
     // setPropertiesData(properties);
 

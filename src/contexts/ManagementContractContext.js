@@ -32,19 +32,20 @@ export const ManagementContractProvider = ({ children }) => {
     }
   };
 
-  const fetchContracts = async () => {						
-		  const result = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
-		  const data = await result.json();		  
-	
-		  if (data !== "No records for this Uid") {
-			  setAllContracts(data["result"]);
-        if(currentContractUID === "" && currentContractPropertyUID === ""){
-          setCurrentContractUID(data?.result[0]?.contract_uid)
-          setCurrentContractPropertyUID(data?.result[0]?.contract_property_id)
-        }
-		  }
-		
-	};
+  const fetchContracts = async () => {
+    const result = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
+    const data = await result.json();
+   
+    if (data !== "No records for this Uid") {
+      setAllContracts(data.result);
+      
+      // Set currentContractUID and currentContractPropertyUID after the fetch
+      // if (!currentContractUID && !currentContractPropertyUID && data.result.length > 0) {
+      //   setCurrentContractUID(data.result[0].contract_uid);
+      //   setCurrentContractPropertyUID(data.result[0].contract_property_id);
+      // }
+    }
+  };
 
   const fetchContractRequests = async () => {    
     const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
@@ -69,6 +70,24 @@ export const ManagementContractProvider = ({ children }) => {
     }
   }, [dataLoaded]);
 
+  useEffect(() => {
+    console.log("ManagementContractContext - currentContractUID - ", currentContractUID);
+  }, [currentContractUID]);
+
+  useEffect(() => {
+    console.log("ManagementContractContext - currentContractPropertyUID - ", currentContractPropertyUID);  
+  }, [currentContractPropertyUID]);
+
+  const updateContractUID = (uid) => {
+    setCurrentContractUID(uid);
+  }
+
+  const updateContractPropertyUID = (uid) => {
+    setCurrentContractPropertyUID(uid);
+  }
+  
+
+
   return (
     <ManagementContractContext.Provider 
       value={{         
@@ -76,9 +95,9 @@ export const ManagementContractProvider = ({ children }) => {
         allContracts,
         contractRequests,
         currentContractUID,
-        setCurrentContractUID,
+        updateContractUID,
         currentContractPropertyUID,
-        setCurrentContractPropertyUID,
+        updateContractPropertyUID,
         isChange,
         setIsChange,
         dataLoaded 

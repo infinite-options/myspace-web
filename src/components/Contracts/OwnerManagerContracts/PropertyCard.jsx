@@ -880,66 +880,68 @@ const PropertyCard = (props) => {
   const [isPreviousFileChange, setIsPreviousFileChange] = useState(false)
   const[contactRowsWithId, setContactRowsWithId] = useState([]);
 
+  const setContractDetails = () => {
+	if (allContracts !== null && allContracts !== undefined) {
+	  const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
+	  console.log("ROHIT - setContractDetails - contractData - ", contractData);
+	  // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
+	  if (contractData) {
+		setContractName(contractData["contract_name"] ? contractData["contract_name"] : "");
+		setContractStartDate(contractData["contract_start_date"] ? dayjs(contractData["contract_start_date"]) : dayjs());
+		// setContractEndDate(contractData["contract_end_date"] ? dayjs(contractData["contract_end_date"]) : contractStartDate.add(1, "year").subtract(1, "day"));
+		setContractStatus(contractData["contract_status"] ? contractData["contract_status"] : "");
+
+		// setContractAssignedContacts(contractData["contract_assigned_contacts"] ? JSON.parse(contractData["contract_assigned_contacts"]) : []);
+		const defaultContacts = [];
+		const managerContact = {
+		  contact_first_name: contractData["business_name"],
+		  contact_last_name: "",
+		  contact_email: contractData["business_email"],
+		  contact_phone_number: contractData["business_phone_number"],
+		};
+		defaultContacts.push(managerContact);
+		const assignedContacts = contractData["contract_assigned_contacts"];
+		if (assignedContacts && assignedContacts.length) {
+		  setContractAssignedContacts(JSON.parse(contractData["contract_assigned_contacts"]));
+		} else {
+		  setContractAssignedContacts(defaultContacts);
+		}
+
+		const fees = JSON.parse(contractData["contract_fees"])? JSON.parse(contractData["contract_fees"]) : [];
+		// setContractFees(fees);
+
+		// console.log("---dhyey--- contract fees - ", contractFees, "fees is - ", fees);
+		if(fees?.length === 0 && contractData["contract_status"] === "NEW"){
+			setContractFees([...defaultContractFees]);
+		}else{
+			setContractFees(fees);
+		}
+		// } else {
+		// 	setContractFees(defaultContractFees);
+		// }
+		
+		const oldDocs = contractData["contract_documents"] ? JSON.parse(contractData["contract_documents"]) : [];
+		setPreviouslyUploadedDocs(oldDocs);
+		const contractDoc = oldDocs?.find((doc) => doc.type === "contract");
+		if (contractDoc) {
+		  setContractDocument(contractDoc);
+		}
+		setPropertyOwnerName(`${contractData["owner_first_name"]} ${contractData["owner_last_name"]}`);
+	  }
+	}
+};	
+
   useEffect(() => {
 	setContractFiles([])
 	setContractFileTypes([])
 	setIsPreviousFileChange(false)
 	
-	const setContractDetails = () => {
-		if (allContracts !== null && allContracts !== undefined) {
-		  const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
-		  // console.log("setData - CONTRACT - ", contractData);
-		  // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
-		  if (contractData) {
-			setContractName(contractData["contract_name"] ? contractData["contract_name"] : "");
-			setContractStartDate(contractData["contract_start_date"] ? dayjs(contractData["contract_start_date"]) : dayjs());
-			// setContractEndDate(contractData["contract_end_date"] ? dayjs(contractData["contract_end_date"]) : contractStartDate.add(1, "year").subtract(1, "day"));
-			setContractStatus(contractData["contract_status"] ? contractData["contract_status"] : "");
 	
-			// setContractAssignedContacts(contractData["contract_assigned_contacts"] ? JSON.parse(contractData["contract_assigned_contacts"]) : []);
-			const defaultContacts = [];
-			const managerContact = {
-			  contact_first_name: contractData["business_name"],
-			  contact_last_name: "",
-			  contact_email: contractData["business_email"],
-			  contact_phone_number: contractData["business_phone_number"],
-			};
-			defaultContacts.push(managerContact);
-			const assignedContacts = contractData["contract_assigned_contacts"];
-			if (assignedContacts && assignedContacts.length) {
-			  setContractAssignedContacts(JSON.parse(contractData["contract_assigned_contacts"]));
-			} else {
-			  setContractAssignedContacts(defaultContacts);
-			}
-	
-			const fees = JSON.parse(contractData["contract_fees"])? JSON.parse(contractData["contract_fees"]) : [];
-			// setContractFees(fees);
-
-			// console.log("---dhyey--- contract fees - ", contractFees, "fees is - ", fees);
-			if(fees?.length === 0 && contractData["contract_status"] === "NEW"){
-				setContractFees([...defaultContractFees]);
-			}else{
-				setContractFees(fees);
-			}
-			// } else {
-			// 	setContractFees(defaultContractFees);
-			// }
-			
-			const oldDocs = contractData["contract_documents"] ? JSON.parse(contractData["contract_documents"]) : [];
-			setPreviouslyUploadedDocs(oldDocs);
-			const contractDoc = oldDocs?.find((doc) => doc.type === "contract");
-			if (contractDoc) {
-			  setContractDocument(contractDoc);
-			}
-			setPropertyOwnerName(`${contractData["owner_first_name"]} ${contractData["owner_last_name"]}`);
-		  }
-		}
-	};	
     setContractDetails();
 	console.log("contract files - ", contractFiles, " isPReviousChange - ", isPreviousFileChange);
 	
 
-  }, [currentContractUID]);
+  }, [currentContractUID, allContracts, defaultContractFees]);
 
   useEffect(() => {
 	const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
