@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFileChange, isAccord=false, contractFiles=[], setContractFiles, contractFileTypes=[], setContractFileTypes, isEditable=true, customName }) => {
+const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFileChange, isAccord=false, contractFiles=[], setContractFiles, contractFileTypes=[], setContractFileTypes, isEditable=true, customName, customUploadingName }) => {
 
   const { getList, } = useContext(ListsContext);	
 
@@ -481,7 +481,7 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
                     // paddingTop='5px'
                     // paddingBottom='10px'
                   >
-                    Documents
+                    {customName? customName : "Documents"}
                   </Typography>
                 </Grid>
   
@@ -671,7 +671,7 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
                       marginTop:"10px"
                     }}
                   >
-                    Uploading Documents:
+                    {customUploadingName? customUploadingName : "Uploading Documents:"}
                 </Typography>
               </Box>
             ):(
@@ -1237,7 +1237,7 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
                   marginTop:"10px"
                 }}
               >
-                Uploading Documents:
+                {customUploadingName? customUploadingName : "Uploading Documents:"}
             </Typography>
           </Box>
         ):(

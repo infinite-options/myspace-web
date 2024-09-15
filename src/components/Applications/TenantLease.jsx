@@ -85,7 +85,7 @@ const initialFees = (property, application) => {
       id: fees.length + 1,
       fee_name: "Deposit",
       fee_type: "$",
-      frequency: "One-time",
+      frequency: "One Time",
       charge: property.property_deposit,
       due_by: application.lease_rent_due_by,
       late_by: application.lease_rent_late_by,
@@ -272,7 +272,7 @@ const TenantLease = () => {
     let list = [...fees];
     list[index - 1].frequency = value;
     list[index - 1].available_topay = 1;
-    if (value === "One-time") {
+    if (value === "One Time") {
       list[index - 1].due_by = null;
       list[index - 1].due_by_date = "";
     } else {
@@ -479,7 +479,7 @@ const TenantLease = () => {
   useEffect(() => {
     let isValid = true;
     fees.forEach((fee) => {
-      if (fee.frequency === "One-time" || fee.frequency === "Annually") {
+      if (fee.frequency === "One Time" || fee.frequency === "Annually") {
         if (fee.due_by_date == null || fee.due_by_date === "" || !isValidDate(fee.due_by_date)) {
           isValid = false;
         }
@@ -1041,12 +1041,7 @@ const TenantLease = () => {
                       onChange={(e) => handleFrequencyChange(e, row.id)}
                       placeholder='Select frequency'
                       className={classes.select}
-                    >
-                      {/* <MenuItem value='One-time'>One-time</MenuItem>
-                      <MenuItem value='Weekly'>Weekly</MenuItem>
-                      <MenuItem value='Bi-Weekly'>Bi-Weekly</MenuItem>
-                      <MenuItem value='Monthly'>Monthly</MenuItem>
-                      <MenuItem value='Annually'>Annually</MenuItem> */}                      
+                    >                                         
                       {
                         feeFrequencies?.map( (freq) => (
                           <MenuItem key={freq.list_uid} value={freq.list_item}>{freq.list_item}</MenuItem>
@@ -1082,7 +1077,7 @@ const TenantLease = () => {
                       />
 
                     )}
-                    {(row.frequency === "One-time" || row.frequency === "Annually") && (
+                    {(row.frequency === "One Time" || row.frequency === "Annually") && (
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
                           value={row.due_by_date !== null && row.due_by_date !== "" ? dayjs(row.due_by_date) : dayjs()}
@@ -1155,7 +1150,7 @@ const TenantLease = () => {
                       {"Available To Pay "}
                       <span style={{ color: "red" }}>*</span>
                     </Typography>
-                    {(row.frequency === "Monthly" || row.frequency === "One-time" || row.frequency === "Annually") && (
+                    {(row.frequency === "Monthly" || row.frequency === "One Time" || row.frequency === "Annually") && (
                       <TextField
                         name='available_topay'
                         value={row.available_topay !== null ? row.available_topay : ""}
@@ -1215,7 +1210,7 @@ const TenantLease = () => {
                       {"Late By "}
                       <span style={{ color: "red" }}>*</span>
                     </Typography>
-                    {(row.frequency === "Monthly" || row.frequency === "One-time" || row.frequency === "Annually") && (
+                    {(row.frequency === "Monthly" || row.frequency === "One Time" || row.frequency === "Annually") && (
                       <TextField
                         name='late_by'
                         value={row.late_by}

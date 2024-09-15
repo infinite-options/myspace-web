@@ -925,10 +925,24 @@ const AccountBalanceWidget = ({
     if (selectedProperty) {
       // console.log("selectedProperty: ", selectedProperty);
       // console.log("property: ", property);
-      const selectedPropertyImages = propertyData.find((property) => property.property_uid === selectedProperty.property_uid)?.property_favorite_image;
+      const favouriteImage = propertyData.find((property) => property.property_uid === selectedProperty.property_uid)?.property_favorite_image;
       // console.log("selectedPropertyImages: ", selectedPropertyImages);
-      if (selectedPropertyImages) {
-        setImage(selectedPropertyImages);
+      let firstImage = null;
+      try {
+        const propImages = propertyData?.find((property) => property.property_uid === selectedProperty.property_uid)?.property_images;
+        const parsedImages = JSON.parse(propImages);
+        if(parsedImages?.length > 0){
+          firstImage = parsedImages[0];
+        }
+      } catch(error){
+        console.error("Error parsing property images - ", error);
+      }
+      if (favouriteImage) {
+        // console.log("favouriteImage - ", favouriteImage)
+        setImage(favouriteImage);
+      } else if (firstImage) {
+        // console.log("firstImage - ", firstImage)
+        setImage(firstImage);
       } else {
         setImage(defaultHouseImage);
       }
