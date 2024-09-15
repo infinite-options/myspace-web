@@ -24,21 +24,16 @@ import ManagerDetails from "./ManagerDetails";
 import PropertiesContext from "../../contexts/PropertiesContext";
 import { PropertiesProvider } from "../../contexts/PropertiesContext";
 
-function PropertiesPM() {
-  return (
-    <PropertiesProvider>
-      <Properties />
-    </PropertiesProvider>
 
-  );
-}
 
 function Properties() {
   const location = useLocation();
   // console.log("In Properties");
   // console.log("In Properties LHS: ", location.state?.showLHS);
   // console.log("In Properties RHS: ", location.state?.showRHS);
-  console.log("location", location.state);
+  console.log("location.state", location.state);
+  const [ showOnlyListings, setShowOnlyListings ] = useState(location.state?.showOnlyListings ? location.state?.showOnlyListings : false);
+  console.log("ROHIT - showOnlyListings", showOnlyListings);
   // const { propertyList, setPropertyList, returnIndex, setReturnIndex  } = useContext(PropertiesContext); 
   const propertiesContext = useContext(PropertiesContext);
 	const {
@@ -47,7 +42,7 @@ function Properties() {
 	  returnIndex: returnIndexFromContext,
     setReturnIndex: setReturnIndexFromContext,
 	} = propertiesContext || {};
-  
+
 	const propertyList = propertyListFromContext || [];
 	const setPropertyList = setPropertyListFromContext;	
 	const returnIndex = returnIndexFromContext || 0;
@@ -190,45 +185,49 @@ function Properties() {
   // }
 
   // ENDPOINT CALLS IN PROPERTIES
-  useEffect(() => {
-    setShowSpinner(true);
-    // console.log("In Properties Endpoint Call");
-    const fetchData = async () => {
-     
+  // useEffect(() => {
+  //     // if(true){
+  //     if(reloadPropertyList === true){
+  //       setShowSpinner(true);
+  //       // console.log("In Properties Endpoint Call");
+  //       console.log("location.state - reloadPropertyList useEffect");
+  //       const fetchData = async () => {
+        
 
-      // PROPERTIES ENDPOINT
-      const property_response = await fetch(`${APIConfig.baseURL.dev}/properties/${profileId}`);
-      //const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000003`)
-      if (!property_response.ok) {
-        // console.log("Error fetching Property Details data");
-      }
-      const propertyData = await property_response.json();
-      const propertyList = getPropertyList(propertyData); // This combines Properties with Applications and Maitenance Items to enable the LHS screen
-      // console.log("In Properties > Property Endpoint: ", propertyList);
-      setRawPropertyData(propertyData); // Sets rawPropertyData to be based into Edit Properties Function      
-      setPropertyList([...propertyList]);
-      setDisplayedItems([...propertyList]);
-      setPropertyIndex(0);      
+  //         // PROPERTIES ENDPOINT
+  //         const property_response = await fetch(`${APIConfig.baseURL.dev}/properties/${profileId}`);
+  //         //const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000003`)
+  //         if (!property_response.ok) {
+  //           // console.log("Error fetching Property Details data");
+  //         }
+  //         const propertyData = await property_response.json();
+  //         const propertyList = getPropertyList(propertyData); // This combines Properties with Applications and Maitenance Items to enable the LHS screen
+  //         // console.log("In Properties > Property Endpoint: ", propertyList);
+  //         setRawPropertyData(propertyData); // Sets rawPropertyData to be based into Edit Properties Function      
+  //         setPropertyList([...propertyList]);
+  //         setDisplayedItems([...propertyList]);
+  //         setPropertyIndex(0);      
 
-      if (propertyData.Property.code === 200) {
-        // console.log("Endpoint Data is Ready");
-        setDataReady(true);
-      }
-      if (selectedRole === "MANAGER" && sessionStorage.getItem("isrent") === "true") {
-        setFromRentWidget(true);
-      } else {
-        setFromRentWidget(false);
-        sessionStorage.removeItem("isrent");
-      }
-      navigate(location.pathname, { replace: true, state: {} });
-    };
-    fetchData();
-    
-    setReloadPropertyList(false)
-    setTimeout(() => {
-      setShowSpinner(false);
-    }, 2000); 
-  }, [reloadPropertyList]);
+  //         if (propertyData.Property.code === 200) {
+  //           // console.log("Endpoint Data is Ready");
+  //           setDataReady(true);
+  //         }
+  //         if (selectedRole === "MANAGER" && sessionStorage.getItem("isrent") === "true") {
+  //           setFromRentWidget(true);
+  //         } else {
+  //           setFromRentWidget(false);
+  //           sessionStorage.removeItem("isrent");
+  //         }
+  //         navigate(location.pathname, { replace: true, state: {} });
+  //       };
+  //       fetchData();
+        
+  //       setReloadPropertyList(false)
+  //       setTimeout(() => {
+  //         setShowSpinner(false);
+  //       }, 2000); 
+  //   }
+  // }, [reloadPropertyList]);
 
   function setPropertyTo(newPropertyUid){
     console.log("setPropertyTo - newPropertyUid - ", newPropertyUid);
@@ -413,6 +412,7 @@ function Properties() {
               onDataChange={handleListClick}
               onAddPropertyClick={handleAddPropertyClick}
               handleSorting={handleSorting}
+              showOnlyListings={showOnlyListings}
             />
           </Grid>
 
@@ -521,4 +521,4 @@ function Properties() {
   );
 }
 
-export default PropertiesPM;
+export default Properties;

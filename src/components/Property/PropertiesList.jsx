@@ -68,13 +68,20 @@ export default function PropertiesList(props) {
   // console.log("In Property List - returnIndex outside: ", );
   // console.log("In Property List - rentStatus outside: ", allRentStatus);
   // console.log("In Property List - LHS outside: ", LHS);
+  
 
-  useEffect(() => {    
-    setDisplayedItems(propertyList);
+  useEffect(() => { 
+    console.log("ROHIT - 74 - props.showOnlyListings - ", props.showOnlyListings)       
+    if(props.showOnlyListings && props.showOnlyListings === true){
+      const onlyListings = propertyList?.filter( property => property.rent_status === "VACANT")
+      setDisplayedItems(onlyListings);
+    } else {
+      setDisplayedItems(propertyList);
+    }
     setPropertyIndex(returnIndex || 0);    
     setLHS(props.LHS);
     setIsDataReady(true);
-  }, [props.LHS, returnIndex, propertyList]);  
+  }, [props.LHS, returnIndex, propertyList, props.showOnlyListings]);  
 
   useEffect(() => {
     console.log("displayedItems changed - ", displayedItems);
@@ -197,6 +204,7 @@ export default function PropertiesList(props) {
     "Not Paid": theme.palette.priority.high,
     Vacant: "#160449",
     "No Manager": theme.palette.priority.low,
+    "Not Listed": theme.palette.priority.medium,
   };
 
   const paymentStatusMap = {
@@ -205,28 +213,38 @@ export default function PropertiesList(props) {
     PAID: "Paid On Time",
     Partial: "Partially Paid",
     VACANT: "Vacant",
+    "NOT LISTED": "Not Listed",
     "NO MANAGER": "No Manager",
   };
 
-  function getPaymentStatusColor(paymentStatus) {
-    if (paymentStatus === null || paymentStatus === undefined) {
+  function getPaymentStatusColor(paymentStatus, property) {
+    console.log("ROHIT - 214 - property - ", property);
+    if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property.property_available_to_rent && property.property_available_to_rent === 1)) {
       return paymentStatusColorMap["Vacant"];
+    } else if((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property.property_available_to_rent == null || property.property_available_to_rent === 0)){
+      return paymentStatusColorMap["Not Listed"];
     } else {
       const status = paymentStatusMap[paymentStatus];
       return paymentStatusColorMap[status];
     }
   }
 
-  function getPaymentStatus(paymentStatus) {
-    if (paymentStatus === null || paymentStatus === undefined) {
+  function getPaymentStatus(paymentStatus, property) {    
+    if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property.property_available_to_rent && property.property_available_to_rent === 1)) {
       return paymentStatusMap["VACANT"];
+    } else if((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property.property_available_to_rent == null || property.property_available_to_rent === 0)){
+      return paymentStatusMap["NOT LISTED"];
     } else {
       const status = paymentStatusMap[paymentStatus];
       return status;
     }
   }
 
-  const rows = convertDataToRows(displayedItems);
+  const [rows, setRows ] = useState(convertDataToRows(displayedItems));
+
+  useEffect(() => {
+    setRows(displayedItems);
+  }, [displayedItems])
   const columns = [
     {
       field: "avatar",
@@ -261,7 +279,7 @@ export default function PropertiesList(props) {
       renderCell: (params) => (
         <Box
           sx={{
-            backgroundColor: getPaymentStatusColor(params.row.rent_status),
+            backgroundColor: getPaymentStatusColor(params.row.rent_status, params.row),
             width: "100%",
             height: "100%",
             display: "flex",
@@ -300,7 +318,7 @@ export default function PropertiesList(props) {
                 textAlign: "center",
               }}
             >
-              {getPaymentStatus(params.row.rent_status)}
+              {getPaymentStatus(params.row.rent_status, params.row)}
             </Typography>
           </Badge>
         </Box>
@@ -515,6 +533,7 @@ export default function PropertiesList(props) {
                   <Box sx={{ marginTop: "20px" }}>
                     <DataGrid
                       getRowHeight={() => "auto"}
+                      getRowId={(row) => row.property_uid}
                       rows={rows}
                       columns={columns}
                       autoHeight

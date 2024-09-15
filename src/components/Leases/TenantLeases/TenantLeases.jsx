@@ -30,6 +30,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import theme from "../../../theme/theme";
 import LeaseIcon from "../../Property/leaseIcon.png";
 import APIConfig from "../../../utils/APIConfig";
+import { getDateAdornmentString } from "../../../utils/dates";
+import LeaseFees from "../LeaseFees";
 
 function TenantLeases(props) {
   // console.log("In Tenant Leases", props);
@@ -305,21 +307,6 @@ function TenantLeases(props) {
     }
   }
 
-  const getDateAdornmentString = (d) => {
-    if (d === null || d === 0) return "";
-    if (d > 3 && d < 21) return "th";
-    switch (d % 10) {
-      case 1:
-        return "st";
-      case 2:
-        return "nd";
-      case 3:
-        return "rd";
-      default:
-        return "th";
-    }
-  };
-
   const biweeklyDueByValuetoDayMap = {
     0: "Monday - week 1",
     1: "Tuesday - week 1",
@@ -354,7 +341,7 @@ function TenantLeases(props) {
       return weeklyDueByValuetoDayMap[fee.due_by];
     } else if (fee.frequency === "Monthly") {
       return `${fee.due_by}${getDateAdornmentString(fee.due_by)} of the month`;
-    } else if (fee.frequency === "One-time" || fee.frequency === "Annually") {
+    } else if (fee.frequency === "One Time" || fee.frequency === "Annually") {
       return `${fee.due_by_date ?? "No Due Date"}`;
     } else {
       return "-";
@@ -362,7 +349,7 @@ function TenantLeases(props) {
   };
 
   const getFeesLateBy = (fee) => {
-    if (fee.frequency === "Bi-Weekly" || fee.frequency === "Weekly" || fee.frequency === "Monthly" || fee.frequency === "Annually" || fee.frequency === "One-time") {
+    if (fee.frequency === "Bi-Weekly" || fee.frequency === "Weekly" || fee.frequency === "Monthly" || fee.frequency === "Annually" || fee.frequency === "One Time") {
       return `${fee.late_by}${getDateAdornmentString(fee.late_by)} day after due`;
     } else {
       return "-";
@@ -374,7 +361,7 @@ function TenantLeases(props) {
       <Box
         sx={{
           fontFamily: "Source Sans Pro",
-          padding: "10px",
+          padding: "20px",
         }}
       >
         <Grid container>
@@ -426,18 +413,19 @@ function TenantLeases(props) {
           </Grid>
         </Grid>
         <Paper
+          elevation={0}
           style={{
-            margin: "30px",
+            // margin: "30px",
             backgroundColor: theme.palette.primary.main,
-            padding: "10px",
+            padding: "10px",              
           }}
         >
           <Grid
             container
             rowSpacing={2}
             sx={{
-              paddingLeft: "20px",
-              paddingRight: "20px",
+              // paddingLeft: "20px",
+              // paddingRight: "20px",
             }}
           >
             <Grid item xs={12}>
@@ -515,127 +503,10 @@ function TenantLeases(props) {
               </CenteringBox>
             </Grid>
 
-            <Grid container sx={{ marginTop: '20px' }}>
-              <Grid item xs={1}>
-                <CenteringBox>
-                  <Typography sx={{ fontWeight: "bold", fontSize: theme.typography.mediumFont }}>Fee</Typography>
-                </CenteringBox>
-              </Grid>
-              <Grid item xs={2}>
-                <CenteringBox>
-                  <Typography sx={{ fontWeight: "bold", fontSize: theme.typography.mediumFont }}>Amount</Typography>
-                </CenteringBox>
-              </Grid>
-              <Grid item xs={2}>
-                <CenteringBox>
-                  <Typography sx={{ fontWeight: "bold", fontSize: theme.typography.mediumFont }}>Frequency</Typography>
-                </CenteringBox>
-              </Grid>
-              <Grid item xs={2}>
-                <CenteringBox>
-                  <Typography sx={{ fontWeight: "bold", fontSize: theme.typography.mediumFont }}>Due By</Typography>
-                </CenteringBox>
-              </Grid>
-              <Grid item xs={2}>
-                <CenteringBox>
-                  <Typography sx={{ fontWeight: "bold", fontSize: theme.typography.mediumFont }}>Late By</Typography>
-                </CenteringBox>
-              </Grid>
-              <Grid item xs={1}>
-                <CenteringBox>
-                  <Typography sx={{ fontWeight: "bold", fontSize: theme.typography.mediumFont }}>Late Fee</Typography>
-                </CenteringBox>
-              </Grid>
-              <Grid item xs={2}>
-                <CenteringBox>
-                  <Typography sx={{ fontWeight: "bold", fontSize: theme.typography.mediumFont }}>Per Day Fee</Typography>
-                </CenteringBox>
-              </Grid>
+                        
+            <Grid item xs={12}>
+              <LeaseFees leaseFees={fees} />
             </Grid>
-            {fees &&
-              fees.map((fee, index) => (
-                <Grid container key={index} sx={{ marginTop: '10px' }}>
-                  <Divider sx={{ width: "100%", borderWidth: "1px", borderColor: "#D6D5DA" }} />
-                  <Grid item xs={1}>
-                    <Box>
-                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.mediumFont }}>
-                        {/* {lease.fees[key].fee_name} */}
-                        {fee.fee_name}
-                      </Typography>
-                    </Box>
-                  </Grid>
-                  <Grid item xs={2}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "flex-end",
-                        paddingRight: "40px",
-                      }}
-                    >
-                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize: theme.typography.mediumFont.fontSize }}>
-                        {/* {lease.fees[key] ? <> {lease.fees[key].fee_type}{lease.fees[key].charge} </> : "N/A"} */}
-                        {fee.charge}
-                      </Typography>
-                    </Box>
-                  </Grid>
-                  <Grid item xs={2}>
-                    <CenteringBox>
-                      {/* <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.largeFont}}>
-                                        Frequency
-                                    </Typography> */}
-                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize: theme.typography.mediumFont.fontSize }}>
-                        {/* {lease.fees[key] ? <> {lease.fees[key].frequency} </> : "N/A"} */}
-                        {fee.frequency}
-                      </Typography>
-                    </CenteringBox>
-                  </Grid>
-                  <Grid item xs={2}>
-                    <CenteringBox>
-                      {/* <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.largeFont}}>
-                                        Due By
-                                    </Typography> */}
-                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize: theme.typography.mediumFont.fontSize }}>
-                        {/* {lease.fees[key] && lease.fees[key].due_by ? <> {getDayText(lease.fees[key].due_by)} of the month </> : "N/A"} */}
-                        {getFeesDueBy(fee)}
-                      </Typography>
-                    </CenteringBox>
-                  </Grid>
-                  <Grid item xs={2}>
-                    <CenteringBox>
-                      {/* <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.largeFont}}>
-                                        Late By
-                                    </Typography> */}
-                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize: theme.typography.mediumFont.fontSize }}>
-                        {/* {lease.fees[key] && lease.fees[key].late_by ? <> {getDayText(lease.fees[key].late_by)} of the month</> : "N/A"} */}
-                        {getFeesLateBy(fee)}
-                      </Typography>
-                    </CenteringBox>
-                  </Grid>
-                  <Grid item xs={1}>
-                    <CenteringBox>
-                      {/* <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.largeFont}}>
-                                        Late Fee
-                                    </Typography> */}
-                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize: theme.typography.mediumFont.fontSize }}>
-                        {/* {lease.fees[key] ? <> {lease.fees[key].fee_type}{lease.fees[key].late_fee}</> : "N/A"} */}
-                        {fee.late_fee}
-                      </Typography>
-                    </CenteringBox>
-                  </Grid>
-                  <Grid item xs={2}>
-                    <CenteringBox>
-                      {/* <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize:theme.typography.largeFont}}>
-                                        Per Day Fee
-                                    </Typography> */}
-                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize: theme.typography.mediumFont.fontSize }}>
-                        {/* {lease.fees[key] ? <> {lease.fees[key].fee_type}{lease.fees[key].perDay_late_fee}</> : "N/A"} */}
-                        {fee.perDay_late_fee}
-                      </Typography>
-                    </CenteringBox>
-                  </Grid>
-                </Grid>
-              ))}
 
             <Grid item xs={6}>
               <CenteringBox justifyContent="flex-start">
