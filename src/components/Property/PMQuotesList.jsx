@@ -27,20 +27,36 @@ import ManagementContractContext from "../../contexts/ManagementContractContext"
 export default function PMQuotesList() {
   // let navigate = useNavigate();  
   const location = useLocation();
-  const { contractRequests, setCurrentContractUID, setCurrentContractPropertyUID, } = useContext(ManagementContractContext); 
+  const { contractRequests, updateContractUID, updateContractPropertyUID, } = useContext(ManagementContractContext); 
   // console.log("In PMQuoteList");
   // console.log("In PMQuoteList property_endpoint_resp: ", location.state?.property_endpoint_resp);
   console.log("ROHIT - contractRequests from context - ", contractRequests)
 
   
-  if(location.state?.selectedContractUID && location.state?.selectedContractPropertyUID ){
-    console.log("ROHIT - location.state - ",location.state);
-    setCurrentContractUID(location.state?.selectedContractUID);
-    setCurrentContractPropertyUID(location.state?.selectedContractPropertyUID)
-  }
+  useEffect(() => {
+    console.log("PMQuotesList - location.state - ",location.state);
+    if (location.state?.selectedContractUID && location.state?.selectedContractPropertyUID) {
+      updateContractUID(location.state.selectedContractUID);
+      updateContractPropertyUID(location.state.selectedContractPropertyUID);
+    } else if( contractRequests && contractRequests?.length > 0){
+      updateContractUID(contractRequests[0]?.contract_uid);
+      updateContractPropertyUID(contractRequests[0]?.contract_property_id);
+    }
+  // }, [location.state, updateContractUID, updateContractPropertyUID]);
+  }, []);
 
-  return (
-    <ManagementContractProvider>
+  useEffect(() => {
+    if (location.state?.selectedContractUID && location.state?.selectedContractPropertyUID) {
+      updateContractUID(location.state.selectedContractUID);
+      updateContractPropertyUID(location.state.selectedContractPropertyUID);
+    } else if( contractRequests && contractRequests?.length > 0){
+      updateContractUID(contractRequests[0]?.contract_uid);
+      updateContractPropertyUID(contractRequests[0]?.contract_property_id);
+    }    
+  }, [contractRequests]);
+  
+
+  return (    
       <ThemeProvider theme={theme}>
         {/* <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
           <CircularProgress color='inherit' />
@@ -56,8 +72,7 @@ export default function PMQuotesList() {
             </Grid>
           </Grid>
         </Container>
-      </ThemeProvider>
-    </ManagementContractProvider>
+      </ThemeProvider>    
   );
 }
 
@@ -129,7 +144,7 @@ const QuotesList = (props) => {
 
 function ContractCard(props) {
   let navigate = useNavigate();
-  const { currentContractUID, setCurrentContractUID, setCurrentContractPropertyUID, isChange, setIsChange} = useContext(ManagementContractContext);
+  const { currentContractUID, updateContractUID, updateContractPropertyUID, isChange, setIsChange} = useContext(ManagementContractContext);
   const [showGoBackDialog, setShowGoBackDialog] = useState(false)
 
   // console.log("props for contract card", props);
@@ -170,8 +185,8 @@ function ContractCard(props) {
           if(isChange){
             setShowGoBackDialog(true)
           }else{
-            setCurrentContractUID(contract.contract_uid);
-            setCurrentContractPropertyUID(contract.contract_property_id);          
+            updateContractUID(contract.contract_uid);
+            updateContractPropertyUID(contract.contract_property_id);          
           }
         }}
       >
@@ -284,8 +299,8 @@ function ContractCard(props) {
 					>
 						<Button
 							onClick={() => {
-                setCurrentContractUID(contract.contract_uid);
-                setCurrentContractPropertyUID(contract.contract_property_id);  
+                updateContractUID(contract.contract_uid);
+                updateContractPropertyUID(contract.contract_property_id);  
                 setShowGoBackDialog(false)
                 setIsChange(false)
               }}

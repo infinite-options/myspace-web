@@ -170,7 +170,9 @@ export default function PropertyNavigator({
   //   setCurrentIndex(returnIndex !== undefined ? returnIndex : 0);
   // }, [returnIndex]);
 
-  
+  useEffect(() => {
+    console.log("ROHIT - PropertyNavigator - property - ", property)
+  }, [property]);
 
   useEffect(() => {
     getDataFromAPI();
@@ -1347,7 +1349,75 @@ export default function PropertyNavigator({
                   <Grid item xs={12} md={3.5}>
                     <Grid container spacing={2}>
                       <Grid item xs={12}>
-                        {property && property.property_available_to_rent === 1 ? (
+                        {property && property.property_available_to_rent === 1 && (property.lease_status == null || property.lease_status !== "ACTIVE") && (
+                          // padding extra on the bottom
+                          <Box sx={{ pb: 40 }}>
+                            <Button
+                              variant='outlined'
+                              sx={{
+                                background: "#3D5CAC",
+                                backgroundColor: "#FFC85C",
+                                cursor: "pointer",
+                                textTransform: "none",
+                                minWidth: "150px", // Fixed width for the button
+                                minHeight: "35px",
+                                width: "100%",
+                                "&:hover": {
+                                  backgroundColor: theme.palette.success.dark,
+                                },
+                              }}
+                              size='small'
+                            >
+                              <CheckIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
+                              <Typography
+                                sx={{
+                                  textTransform: "none",
+                                  color: "#FFFFFF",
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                  whiteSpace: "nowrap",
+                                  marginLeft: "1%", // Adjusting margin for icon and text
+                                }}
+                              >
+                                {"Listed For Rent"}
+                              </Typography>
+                            </Button>
+                          </Box>
+                        )}
+                        {
+                          (property && (property.property_available_to_rent === 0 || property.property_available_to_rent == null) ) && 
+                        (
+                          <Box sx={{ pb: 40 }}>
+                            <Button
+                              variant='outlined'
+                              sx={{
+                                background: "#3D5CAC",
+                                backgroundColor: theme.palette.priority.high,
+                                cursor: "pointer",
+                                textTransform: "none",
+                                minWidth: "150px", // Fixed width for the button
+                                minHeight: "35px",
+                                width: "100%",
+                              }}
+                              size='small'
+                            >
+                              <CloseIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
+                              <Typography
+                                sx={{
+                                  textTransform: "none",
+                                  color: "#FFFFFF",
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                  whiteSpace: "nowrap",
+                                  marginLeft: "1%", // Adjusting margin for icon and text
+                                }}
+                              >
+                                {"Not Listed"}
+                              </Typography>
+                            </Button>
+                          </Box>
+                        )}
+                        {property && property.lease_status && property.lease_status === "ACTIVE" && (
                           // padding extra on the bottom
                           <Box sx={{ pb: 40 }}>
                             <Button
@@ -1377,37 +1447,7 @@ export default function PropertyNavigator({
                                   marginLeft: "1%", // Adjusting margin for icon and text
                                 }}
                               >
-                                {"Listed For Rent"}
-                              </Typography>
-                            </Button>
-                          </Box>
-                        ) : (
-                          <Box sx={{ pb: 40 }}>
-                            <Button
-                              variant='outlined'
-                              sx={{
-                                background: "#3D5CAC",
-                                backgroundColor: theme.palette.priority.high,
-                                cursor: "pointer",
-                                textTransform: "none",
-                                minWidth: "150px", // Fixed width for the button
-                                minHeight: "35px",
-                                width: "100%",
-                              }}
-                              size='small'
-                            >
-                              <CloseIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
-                              <Typography
-                                sx={{
-                                  textTransform: "none",
-                                  color: "#FFFFFF",
-                                  fontWeight: theme.typography.secondary.fontWeight,
-                                  fontSize: theme.typography.smallFont,
-                                  whiteSpace: "nowrap",
-                                  marginLeft: "1%", // Adjusting margin for icon and text
-                                }}
-                              >
-                                {"Not Listed"}
+                                {"Rented"}
                               </Typography>
                             </Button>
                           </Box>
