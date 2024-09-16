@@ -74,6 +74,7 @@ export default function Payments(props) {
   const [confirmationNumber, setConfirmationNumber] = useState('');
   const [showPaymentHistory, setShowPaymentHistory] = useState(true);
   const [isNotesDisabled, setIsNotesDisabled] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
 
 
   const managerCashflowWidgetData = location.state?.managerCashflowWidgetData;
@@ -98,8 +99,6 @@ export default function Payments(props) {
   const [totalToBePaid, setTotalToBePaid] = useState(0);
   const [totalToBeReceived, setTotalToBeReceived] = useState(0);
   const [totalPayable, setTotalPayable] = useState(0);
-  const [isHeaderChecked, setIsHeaderChecked] = useState(true);
-  const [paymentMethodInfo, setPaymentMethodInfo] = useState({});
 
   const [paymentData, setPaymentData] = useState({
     currency: "usd",
@@ -129,6 +128,8 @@ export default function Payments(props) {
   const [paymentConfirm, setPaymentConfirm] = useState(false);
   const [stripePayment, setStripePayment] = useState(false);
   const [stripePromise, setStripePromise] = useState(null);
+
+  const [newTotal, setnewTotal] = useState(balance + convenience_fee);
   // console.log("Customer UID: ", paymentData);
   // console.log("Customer UID: ", paymentData.customer_uid);
   // console.log("User Info: ", user);
@@ -145,6 +146,42 @@ export default function Payments(props) {
     setShowPaymentHistory(false); // Hide Payment History
     setShowPaymentMethod(true);   // Show Payment Method Selector
   };
+
+  const handlePaymentMethodChange = (method) => {
+    setSelectedPaymentMethod(method);
+    console.log("SelectedPayMenth", method);
+    console.log("SELECTPAYMENTH ", newTotal);
+    console.log("Balancesjkjs", balance);
+  };
+
+  useEffect(() => {
+    let fee = 0;
+    console.log("selctedpaymentmethod before calc", selectedPaymentMethod);
+
+    if (selectedPaymentMethod === "Bank Transfer") {
+      fee = Math.min(balance * 0.008, 5); // 0.8% fee, max $5
+    } else if (selectedPaymentMethod === "Credit Card") {
+      fee = balance * 0.03; // 3% fee
+    } else if (selectedPaymentMethod === "Zelle") {
+      fee = 0; // No fee for Zelle
+    }
+
+    console.log("fee after", fee);
+
+    setFee(fee);
+
+    // console.log("fee after", convenience_fee);
+    console.log("BLANAC", balance);
+    console.log("Pyament method", selectedPaymentMethod);
+
+    let newTotall = balance + fee;
+    setnewTotal(newTotall);
+
+    console.log("new total", selectedPaymentMethod, newTotall, balance, fee);
+  }, [selectedPaymentMethod, balance]);
+
+
+
 
   function totalMoneyPaidUpdate(moneyPaid) {
     var total = 0;
@@ -314,15 +351,14 @@ export default function Payments(props) {
     }
   };
 
+  const handleFeeUpdate = (selectedMethod) => {
+    // setBalance(newBalance);
+    // setFee(newFee);
+    // setTotalBalance(newBalance + newFee);
+    // console.log("BALANCE TOTAL", totalBalance, newFee)
+    console.log("PAYMENT METHOD", selectedMethod);
+  }
 
-const handleFeeUpdate = (newBalance, newFee) => {
-    setBalance(newBalance);
-    setFee(newFee);
-    setTotalBalance(newBalance + newFee);
-    console.log("BALANCE TOTAL", totalBalance, newFee)
-  };
-
-  
 
   useEffect(() => {
     // Whenever paymentNotes changes, update business_code in paymentData
@@ -331,6 +367,10 @@ const handleFeeUpdate = (newBalance, newFee) => {
       business_code: paymentNotes
     }));
   }, [paymentNotes]);
+
+  useEffect(() => {
+    console.log("FINAL", newTotal, balance, convenience_fee);
+  }, [newTotal, balance, convenience_fee]);
 
   
   return (
@@ -420,12 +460,12 @@ const handleFeeUpdate = (newBalance, newFee) => {
                       <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                         <Grid item xs={6}>
                           <Typography sx={{ marginLeft: "20px", color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: "26px" }}>
-                            ${totalBalance.toFixed(2)}
+                            ${newTotal}
                           </Typography>
                         </Grid>
                         <Grid item xs={6}>
                           <Button
-                            disabled={totalBalance <= 0}
+                            disabled={newTotal <= 0}
                             sx={{
                               backgroundColor: "#3D5CAC",
                               borderRadius: "10px",
@@ -468,6 +508,7 @@ const handleFeeUpdate = (newBalance, newFee) => {
                 <PaymentMethodSelector
                   paymentData={paymentData}
                   handleFeeUpdate={handleFeeUpdate}
+                  handlePaymentMethodChange={handlePaymentMethodChange}
                   />
                 )}
 
@@ -495,11 +536,11 @@ const handleFeeUpdate = (newBalance, newFee) => {
                     <Stack>
                     <TenantBalanceTable
                       data={moneyToBePaid}      // Correct data for balance calculation
-                      total={totalBalance}      // Use totalBalance if that's the updated state
-                      setTotalBalance={setTotalBalance}       // Update the total balance if needed
+                      total={totalBalance}
+                      setBalance={setBalance}      // Use totalBalance if that's the updated state
                       setPaymentData={setPaymentData}   // Handle payment data if necessary
                       setSelectedItems={setSelectedItems}   // Update selected items if needed
-                      handleFeeUpdate={handleFeeUpdate} 
+                      // handleFeeUpdate={handleFeeUpdate} 
                     />
                       {/* <TenantBalanceTable data={moneyToBePaid} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} /> */}
                     </Stack>
@@ -645,193 +686,6 @@ const handleFeeUpdate = (newBalance, newFee) => {
   );
 }
 
-function PaymentMethodSelectorTest({
-  selectedMethod,
-  handleChange,
-  confirmationNumber,
-  setConfirmationNumber,
-  paymentMethods,
-  handleSubmit,
-  updateFee,
-}) {
-
-  const handlePaymentMethodChange = (event) => {
-    console.log("called here");
-    const selectedValue = event.target.value;
-    handleChange(event); // This will update the selectedMethod
-    updateFee(event); // This will calculate the fee based on the selected method
-    
-    // Clear confirmation number if not Zelle
-    if (selectedValue !== "Zelle") {
-      setConfirmationNumber("");
-    }
-  };
-
-  return (
-    <Paper
-      style={{
-        margin: "25px",
-        padding: "20px",
-        backgroundColor: "#FFFFFF",
-      }}
-    >
-      <Typography sx={{ color: "#3D5CAC", fontWeight: 800, fontSize: "24px" }}>
-        Payment Methods
-      </Typography>
-      <Divider light />
-      <FormControl component="fieldset">
-        <RadioGroup aria-label="paymentMethod" name="paymentMethod" value={selectedMethod} onChange={handlePaymentMethodChange}>
-          {/* Bank Transfer */}
-          <FormControl component='fieldset'>
-                  <RadioGroup aria-label='Number' name='number' value={selectedMethod} onChange={handleChange}>
-                    <FormControlLabel
-                      value='Bank Transfer'
-                      control={
-                        <Radio
-                          sx={{
-                            color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000", // Blue when selected, black otherwise
-                            "&.Mui-checked": {
-                              color: "#3D5CAC", // Blue color for the selected state
-                            },
-                          }}
-                        />
-                      }
-                      label={
-                        <>
-                          <div style={{ display: "flex", alignItems: "center", paddingTop: "10px" }}>
-                            <img src={BankIcon} alt='Chase' style={{ marginRight: "8px", height: "24px" }} />
-                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.mediumFont }}>Bank Transfer</Typography>
-                          </div>
-                          <div sx={{ paddingTop: "10px", paddingLeft: "20px" }}>
-                            <Typography sx={{ color: theme.typography.common.gray, fontWeight: 400, fontSize: theme.typography.smallFont }}>
-                              .08% Convenience Fee - max $5
-                            </Typography>
-                          </div>
-                        </>
-                      }
-                    />
-                    <FormControlLabel
-                      value='Credit Card'
-                      control={
-                        <Radio
-                          sx={{
-                            color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000", // Blue when selected, black otherwise
-                            "&.Mui-checked": {
-                              color: "#3D5CAC", // Blue color for the selected state
-                            },
-                          }}
-                        />
-                      }
-                      label={
-                        <>
-                          <div style={{ display: "flex", alignItems: "center" }}>
-                            <img src={CreditCardIcon} alt='Chase' style={{ marginRight: "8px", height: "24px" }} />
-                            Credit Card
-                          </div>
-                          <div sx={{ paddingTop: "10px", paddingLeft: "20px" }}>
-                            <Typography sx={{ color: theme.typography.common.gray, fontWeight: 400, fontSize: theme.typography.smallFont }}>3% Convenience Fee</Typography>
-                          </div>
-                        </>
-                      }
-                    />
-                  </RadioGroup>
-                </FormControl>
-
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.secondaryFont }}>Other Payment Methods</Typography>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: 400, fontSize: "16px" }}>
-                  Payment Instructions for Paypal, Apple Pay Zelle, and Venmo: Please make payment via 3rd party app and record payment information here. If you are using Zelle,
-                  please include the transaction confirmation number.
-                </Typography>
-
-          {/* Zelle with Confirmation Number */}
-          <FormControlLabel
-            value="Zelle"
-            control={
-              <Radio
-                sx={{
-                  color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000",
-                  "&.Mui-checked": {
-                    color: "#3D5CAC",
-                  },
-                }}
-              />
-            }
-            label={
-              <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
-                <img src={Zelle} alt="Zelle" style={{ marginRight: "8px", height: "24px" }} />
-                <Typography sx={{ color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000" }}>
-                  Zelle
-                </Typography>
-                {selectedMethod === "Zelle" && (
-                  <TextField
-                    id="confirmation-number"
-                    label="Confirmation Number"
-                    variant="outlined"
-                    size="small"
-                    value={confirmationNumber}
-                    onChange={(e) => setConfirmationNumber(e.target.value)}
-                    sx={{
-                      marginLeft: "10px",
-                      input: { color: "#000000" },
-                      "& .MuiOutlinedInput-root": {
-                        "& fieldset": { borderColor: "#000000" },
-                        "&.Mui-focused fieldset": { borderColor: "#3D5CAC" },
-                      },
-                    }}
-                    InputLabelProps={{
-                      shrink: true,
-                      style: { color: "#000000" },
-                    }}
-                  />
-                )}
-              </div>
-            }
-          />
-
-          {/* Venmo */}
-          <FormControlLabel
-            value="Venmo"
-            control={
-              <Radio
-                sx={{
-                  color: selectedMethod === "Venmo" ? "#3D5CAC" : "#000000",
-                  "&.Mui-checked": {
-                    color: "#3D5CAC",
-                  },
-                }}
-              />
-            }
-            label={
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <img src={Venmo} alt="Venmo" style={{ marginRight: "8px", height: "24px" }} />
-                Venmo
-              </div>
-            }
-          />
-        </RadioGroup>
-      </FormControl>
-      {selectedMethod && (
-        <Box sx={{ textAlign: "center", marginTop: "20px" }}>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "#3D5CAC",
-              color: "#FFFFFF",
-              "&:hover": {
-                backgroundColor: "#2B4A94",
-              },
-            }}
-            onClick={handleSubmit}
-            disabled={selectedMethod === "Zelle" && !confirmationNumber}
-          >
-            Make Payment
-          </Button>
-        </Box>
-      )}
-    </Paper>
-  );
-}
-
 
 function BalanceDetailsTable(props) {
   console.log("In BalanceDetailTable", props);
@@ -876,7 +730,7 @@ function BalanceDetailsTable(props) {
     props.setTotalBalance(total);
   
     // Call handleFeeUpdate to update the total balance with the fee
-    props.handleFeeUpdate(total); // Pass the new balance to handle fee calculation
+    // props.handleFeeUpdate(total); // Pass the new balance to handle fee calculation
   }, [selectedRows]);
 
   useEffect(() => {
@@ -1157,11 +1011,10 @@ function TenantBalanceTable(props) {
         total -= parseFloat(paymentItemData.pur_amount_due);
       }
     }
-
-    console.log("BLANAC", total);
     
     // If using totalBalance instead of total
-    props.setTotalBalance(total);
+    console.log("toal here - child", total);
+    props.setBalance(total);
     props.setPaymentData((prevPaymentData) => ({
       ...prevPaymentData,
       balance: total.toFixed(2),

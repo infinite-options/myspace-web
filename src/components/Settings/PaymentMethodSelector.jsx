@@ -121,6 +121,8 @@ export default function PaymentMethodSelector(props) {
     // AT THIS POINT THE STRIPE TRANSACTION IS COMPLETE AND paymentIntent AND paymentMethod ARE KNOWN
     setShowSpinner(true);
 
+    console.log("stripe payload", totalBalance, convenience_fee);
+
     let payment_request_payload = {
       pay_purchase_id: paymentData.purchase_uids,
       pay_fee: convenience_fee,
@@ -186,18 +188,7 @@ export default function PaymentMethodSelector(props) {
     const selectedValue = event.target.value;
     setSelectedMethod(selectedValue);
 
-    let fee = 0;
-    if (selectedValue === "Bank Transfer") {
-      fee = Math.min(parseFloat((balance * 0.008).toFixed(2)), 5);
-    } else if (selectedValue === "Credit Card") {
-      fee = parseFloat((balance * 0.03).toFixed(2));
-    }
-    setFee(fee);
-
-    const newTotalBalance = balance + fee;
-    setTotalBalance(newTotalBalance);
-
-    props.handleFeeUpdate(balance, fee);
+    props.handlePaymentMethodChange(selectedValue);
 
     // Clear confirmation number when a different payment method is selected
     if (selectedValue !== "Zelle") {
@@ -205,6 +196,14 @@ export default function PaymentMethodSelector(props) {
     }
     // update_fee(selectedValue);
   };
+
+  useEffect(() => {
+    const updatedBalance = parseFloat(props.paymentData?.balance);
+    setBalance(parseFloat(updatedBalance));
+
+    const newTotalBalance = updatedBalance + convenience_fee;
+    setTotalBalance(newTotalBalance);
+  }, [props.paymentData, convenience_fee]);
 
 
   const handleSubmit = async (e) => {
@@ -294,7 +293,7 @@ export default function PaymentMethodSelector(props) {
                             <img src={BankIcon} alt='Chase' style={{ marginRight: "8px", height: "24px" }} />
                             <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.mediumFont }}>Bank Transfer</Typography>
                           </div>
-                          <Typography sx={{ color: theme.typography.common.gray, fontWeight: 400, fontSize: theme.typography.smallFont }}>0.08% Convenience Fee - max $5</Typography>
+                          <Typography sx={{ color: theme.typography.common.gray, fontWeight: 400, fontSize: theme.typography.smallFont }}>0.8% Convenience Fee - max $5</Typography>
                         </>
                       }
                     />
