@@ -73,10 +73,23 @@ export default function WorkerScheduledMaintenance({maintenanceItem}){
             
             <WorkerQuoteView maintenanceItem={maintenanceItem}/>
 
-            <Grid container direction="row" columnSpacing={6} rowSpacing={6} sx={{paddingTop: "15px"}}>
-                <RescheduleButton maintenanceItem={maintenanceItem}/>
-                <CompleteButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage}/>
-            </Grid>
+            <Grid 
+  container 
+  direction="row" 
+  columnSpacing={6} 
+  rowSpacing={6} 
+  sx={{ paddingTop: "15px" }} 
+  justifyContent="center" 
+  alignItems="center"
+>
+    <Grid item>
+      <RescheduleButton maintenanceItem={maintenanceItem} isWorkerMaintenance={true} />
+    </Grid>
+    <Grid item>
+      <CompleteButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage} />
+    </Grid>
+</Grid>
+
         </Box>
     )
 }
