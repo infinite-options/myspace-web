@@ -95,7 +95,7 @@ export default function RescheduleButton({ maintenanceItem, isWorkerMaintenance 
                         textTransform: 'none',
                         fontWeight: 'bold',
                         borderRadius: '8px',
-                        width: '160px',
+                        width: '200px',
                         height: '120px',
                         display: 'flex',
                         alignItems: 'center',

@@ -266,6 +266,7 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
           justifyContent: "center",
           width: "100%",
           minHeight: "100vh",
+          position: "relative",
         }}
       >
         <Paper
