@@ -45,20 +45,20 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                     return total + (cost * quantity);
                 }, 0);
                 return (
-                    <Grid container sx={{ paddingTop: '10px' }}>
+                    <Grid container sx={{ paddingTop: '10px' }} spacing={2}>
                         {expenses.parts.map((part, index) => (
                             <React.Fragment key={index}>
-                                <Grid item xs={3}>
+                                <Grid item xs={4}>
                                     <Typography variant="body2" sx={{ color: '#2c2a75' }}>
-                                        Parts: {part.part}
+                                        Part: {part.part}
                                     </Typography>
                                 </Grid>
-                                <Grid item xs={3}>
+                                <Grid item xs={4}>
                                     <Typography variant="body2" sx={{ color: '#2c2a75' }}>
                                         Quantity: {part.quantity}
                                     </Typography>
                                 </Grid>
-                                <Grid item xs={3}>
+                                <Grid item xs={4}>
                                     <Typography variant="body2" sx={{ color: '#2c2a75' }}>
                                         Cost: ${part.cost}
                                     </Typography>
@@ -66,12 +66,12 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                             </React.Fragment>
                         ))}
                         <Grid item xs={6}>
-                            <Typography variant="body2" sx={{ color: '#2c2a75' }}>
+                            <Typography variant="body2" sx={{ color: '#2c2a75'}}>
                                 Parts Total:
                             </Typography>
                         </Grid>
                         <Grid item xs={6}>
-                            <Typography variant="body2" sx={{ color: '#2c2a75' }}>
+                            <Typography variant="body2" sx={{ color: '#2c2a75'}}>
                                 ${partsTotal.toFixed(2)}
                             </Typography>
                         </Grid>
@@ -85,6 +85,7 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
         }
         return null;
     };
+    
 
     const handleSubmit = (quoteStatusParam) => {
         console.log("handleSubmit", quoteStatusParam);
@@ -264,7 +265,7 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                                             <DescriptionIcon sx={{ color: '#2c2a75' }} />
                                         </Grid> */}
                                         {item?.quote_services_expenses &&
-                                        JSON.parse(item?.quote_services_expenses)?.event_type === 'Fixed Bid' ? (
+                                        JSON.parse(item?.quote_services_expenses)?.event_type === 'Fixed' ? (
                                             <Grid container sx={{ paddingTop: '10px' }}>
                                                 <Grid item xs={6}>
                                                     <Typography variant="body2" sx={{ color: '#2c2a75' }}>
@@ -281,12 +282,12 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                                         ) : null}
                                         {item?.quote_services_expenses ? renderParts(item) : null}
                                         <Grid item xs={6}>
-                                            <Typography variant="body2" gutterBottom sx={{ color: '#2c2a75' }}>
+                                            <Typography variant="body2" gutterBottom sx={{ color: '#2c2a75' , fontWeight: 'bold' }}>
                                                 Quote Total:
                                             </Typography>
                                         </Grid>
                                         <Grid item xs={6}>
-                                            <Typography variant="body2" gutterBottom sx={{ color: '#2c2a75' }}>
+                                            <Typography variant="body2" gutterBottom sx={{ color: '#2c2a75', fontWeight: 'bold'  }}>
                                                 <strong>${item.quote_total_estimate}</strong>
                                             </Typography>
                                         </Grid>

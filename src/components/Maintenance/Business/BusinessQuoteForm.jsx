@@ -175,7 +175,7 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
     const [availabilityTime, setAvailabilityTime] = useState(maintenanceItem?.quote_earliest_availability ? dayjs(maintenanceItem?.quote_earliest_availability.split(" ")[1], "HH:mm").format("h:mm A") : '');
     const [rate, setRate] = useState(0);
     const [notes, setNotes] = useState(editBool ? maintenanceItem.quote_notes : "");
-    const [jobType, setJobType] = useState("Fixed Bid");
+    const [jobType, setJobType] = useState("Fixed");
     const [selectedImageList, setSelectedImageList] = useState([])
     const [selectedDocumentList, setSelectedDocumentList] = useState(maintenanceItem?.quote_documents? JSON.parse(maintenanceItem?.quote_documents): [])
     const [uploadedFiles, setuploadedFiles] = useState([])
@@ -232,7 +232,11 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
     }, [rate, hours, partsObject, jobType])
 
     function computeTotalCost({hours, rate}){
-        return hours * rate
+    if (!hours || hours === 0) {
+        return parseInt(rate || 0);
+    }
+
+    return parseInt(hours || 0) * parseInt(rate || 0);
     }
 
 
