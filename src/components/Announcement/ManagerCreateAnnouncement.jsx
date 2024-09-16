@@ -12,6 +12,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
+import backButton from "../Payments/backIcon.png";
 // import AnnouncementPopUp from "./AnnouncementPopUp";
 import theme from "../../theme/theme";
 // import TenantDoucments from "../Documents/TenantDocuments/TenantDocuments";
@@ -373,10 +374,26 @@ export default function ManagerCreateAnnouncement() {
           display: "flex",
           flexDirection: "row",
           justifyContent: "center",
+          position: "relative",
           width: "100%",
         }}
       >
-        <div className='announcement-title-text'>{"New Announcement"}</div>
+        <Button
+          // onClick={() => navigate("-1")}
+          onClick={() => navigate("/announcements")}
+          sx={{
+            textTransform: "none",
+            padding: "15px 10px 0px 10px",
+            textDecoration: "underline",
+            position: "absolute", 
+            left: 0, 
+            top: 0
+          }}
+          flex="1"
+        >
+          <img src={backButton} style={{ width: "20px", height: "20px", margin: "0 5px" }} />
+        </Button>
+        <div className='announcement-title-text' style={{ flex: 1, textAlign: "center" }}>{"New Announcement"}</div>
       </Box>
       <hr />
       <Box className='announcement-menu-container'>

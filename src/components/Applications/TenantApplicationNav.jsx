@@ -19,6 +19,7 @@ import AES from "crypto-js/aes";
 import CloseIcon from "@mui/icons-material/Close";
 import Documents from "../Leases/Documents";
 import WaiverForm from "../Leases/WaiverForm";
+import { AdultDataGrid, ChildDataGrid, PetDataGrid, VehicleDataGrid } from "./TenantApplication";
 
 const TenantApplicationNav = (props) => {
   const navigate = useNavigate();
@@ -546,102 +547,163 @@ const TenantApplicationNav = (props) => {
                           </Typography>
                         </Stack>
                       </Grid>
-                      <Grid item xs={12}>
+
+                      <Grid item xs={12} marginTop={"20px"}>
                         <Typography
                           sx={{
-                            fontSize: 13,
-                            fontFamily: "Source Sans Pro, sans-serif",
-                            color: "#3D5CAC",
+                            justifySelf: "center",
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.primary.fontWeight,
+                            fontSize: theme.typography.smallFont,
                           }}
                         >
-                          {adultOccupants?.length} {"Adults"}
+                          Adults
                         </Typography>
-                        {adultOccupants &&
-                          adultOccupants.map((occupant, index) => (
-                            <Typography
+                        {adultOccupants && adultOccupants?.length >0 ? <AdultDataGrid adults={adultOccupants}/> : 
+                          <>
+                            <Box
                               sx={{
-                                fontSize: 13,
-                                fontFamily: "Source Sans Pro, sans-serif",
-                                color: "#160449",
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginBottom: '7px',
+                                width: '100%',
+                                height:"70px"
                               }}
-                              key={index}
                             >
-                              {occupant.name} {occupant.last_name} | {occupant.relationship} | DOB: {occupant.dob}
-                            </Typography>
-                          ))}
+                              <Typography
+                                sx={{
+                                color: "#A9A9A9",
+                                fontWeight: theme.typography.primary.fontWeight,
+                                fontSize: "15px",
+                                }}
+                              >
+                                No Adults
+                              </Typography>
+                            </Box>
+                          </>
+                        }
                       </Grid>
-                      <Grid item xs={12}>
+
+                      {/* child section */}
+                      <Grid item xs={12} marginTop={"20px"}>
+                          <Typography
+                            sx={{
+                              justifySelf: "center",
+                              color: theme.typography.primary.black,
+                              fontWeight: theme.typography.primary.fontWeight,
+                              fontSize: theme.typography.smallFont,
+                            }}
+                          >
+                          Children
+                        </Typography>
+                        {childOccupants && childOccupants?.length >0 ? <ChildDataGrid children={childOccupants}/> : 
+                          <>
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginBottom: '7px',
+                                width: '100%',
+                                height:"70px"
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                color: "#A9A9A9",
+                                fontWeight: theme.typography.primary.fontWeight,
+                                fontSize: "15px",
+                                }}
+                              >
+                                No Child
+                              </Typography>
+                            </Box>
+                          </>
+                        }
+                      </Grid>
+
+                      {/* pet section */}
+                      <Grid item xs={12} marginTop={"20px"}>
                         <Typography
-                          sx={{
-                            fontSize: 13,
-                            fontFamily: "Source Sans Pro, sans-serif",
-                            color: "#3D5CAC",
-                          }}
-                        >
-                          {childOccupants?.length} {"Children"}
+                            sx={{
+                              justifySelf: "center",
+                              color: theme.typography.primary.black,
+                              fontWeight: theme.typography.primary.fontWeight,
+                              fontSize: theme.typography.smallFont,
+                            }}
+                          >
+                          Pets
                         </Typography>
-                        {childOccupants &&
-                          childOccupants.map((occupant, index) => (
-                            <Typography
+                        {petOccupants && petOccupants?.length >0 ? <PetDataGrid pets={petOccupants}/> : 
+                          <>
+                            <Box
                               sx={{
-                                fontSize: 13,
-                                fontFamily: "Source Sans Pro, sans-serif",
-                                color: "#160449",
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginBottom: '7px',
+                                width: '100%',
+                                height:"70px"
                               }}
-                              key={index}
                             >
-                              {occupant.name} {occupant.last_name} | {occupant.relationship} | DOB: {occupant.dob}
-                            </Typography>
-                          ))}
+                              <Typography
+                                sx={{
+                                color: "#A9A9A9",
+                                fontWeight: theme.typography.primary.fontWeight,
+                                fontSize: "15px",
+                                }}
+                              >
+                                No Pets
+                              </Typography>
+                            </Box>
+                          </>
+                        }
                       </Grid>
-                      <Grid item xs={12}>
+
+                      {/* vehicle section */}
+                      <Grid item xs={12} marginTop={"20px"}>
                         <Typography
-                          sx={{
-                            fontSize: 13,
-                            fontFamily: "Source Sans Pro, sans-serif",
-                            color: "#3D5CAC",
-                          }}
-                        >
-                          {petOccupants?.length} {"Pets"}
+                            sx={{
+                              justifySelf: "center",
+                              color: theme.typography.primary.black,
+                              fontWeight: theme.typography.primary.fontWeight,
+                              fontSize: theme.typography.smallFont,
+                            }}
+                          >
+                          Vehicles
                         </Typography>
-                        {petOccupants &&
-                          petOccupants.map((occupant, index) => (
-                            <Typography
+                        {vehicles && vehicles?.length >0 ? <VehicleDataGrid vehicles={vehicles}/> : 
+                          <>
+                            <Box
                               sx={{
-                                fontSize: 13,
-                                fontFamily: "Source Sans Pro, sans-serif",
-                                color: "#160449",
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginBottom: '7px',
+                                width: '100%',
+                                height:"70px"
                               }}
-                              key={index}
                             >
-                              {occupant.name} | {occupant.type} | {occupant.breed} | Weight: {occupant.weight}
-                            </Typography>
-                          ))}
+                              <Typography
+                                sx={{
+                                color: "#A9A9A9",
+                                fontWeight: theme.typography.primary.fontWeight,
+                                fontSize: "15px",
+                                }}
+                              >
+                                No Vehicles
+                              </Typography>
+                            </Box>
+                          </>
+                        }
                       </Grid>
-                      <Grid item xs={12}>
-                        <Typography
-                          sx={{
-                            fontSize: 13,
-                            fontFamily: "Source Sans Pro, sans-serif",
-                            color: "#3D5CAC",
-                          }}
-                        >
-                          {vehicles?.length} {"Vehicles"}
-                        </Typography>
-                        {vehicles &&
-                          vehicles.map((vehicle, index) => (
-                            <Typography
-                              sx={{
-                                fontSize: 13,
-                                fontFamily: "Source Sans Pro, sans-serif",
-                                color: "#160449",
-                              }}
-                              key={index}
-                            >
-                              {vehicle.make} {vehicle.model} | {vehicle.year} | {vehicle.license} | {vehicle.state}
-                            </Typography>
-                          ))}
-                      </Grid>
+
+                      {/* document section */}
                       <Grid
                         item
                         xs={12}
@@ -649,7 +711,7 @@ const TenantApplicationNav = (props) => {
                           marginRight: "30px",
                         }}
                       >
-                        <Documents documents={applicationDocuments} setDocuments={setApplicationDocuments} isEditable={false} isAccord={false} customName={"Application Documents: 1"}/>                        
+                        <Documents documents={applicationDocuments} setDocuments={setApplicationDocuments} isEditable={false} isAccord={false} customName={"Application Documents:"}/>                        
                       </Grid>
                     </Grid>
                     <Stack direction='row' alignItems='center' justifyContent='space-around' sx={{ padding: "30px 0", paddingRight: "15px" }}>

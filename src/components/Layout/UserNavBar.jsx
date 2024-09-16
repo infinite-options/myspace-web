@@ -178,7 +178,7 @@ const getPhoneButtonNav = () => {
             <Typography              
               style={{ cursor: 'pointer', marginLeft: '0px', fontWeight: 'bold', }}
             >
-              Alerts
+              Announcement
             </Typography>
           )}
         </Box>
