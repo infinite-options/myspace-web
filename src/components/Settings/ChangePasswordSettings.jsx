@@ -247,6 +247,15 @@ export default function ChangePasswordSettings(props) {
                   placeholder="Old Password"
                   type="password"
                   className={classes.root}
+                  InputProps={{
+                    style: { 
+                        textAlign: 'center',           // Center the text horizontally
+                        paddingTop: '15px',            // Adjust the padding to vertically center
+                        paddingBottom: '35px',         // Adjust bottom padding
+                        height: '50px',                // Adjust the height of the field
+                        boxSizing: 'border-box',       // Ensure padding doesn't mess with the height
+                    }
+                }}
                 ></TextField>
               </Stack>
               <hr />
@@ -262,6 +271,15 @@ export default function ChangePasswordSettings(props) {
                   placeholder="New Password"
                   type="password"
                   className={classes.root}
+                  InputProps={{
+                    style: { 
+                        textAlign: 'center',           // Center the text horizontally
+                        paddingTop: '15px',            // Adjust the padding to vertically center
+                        paddingBottom: '35px',         // Adjust bottom padding
+                        height: '50px',                // Adjust the height of the field
+                        boxSizing: 'border-box',       // Ensure padding doesn't mess with the height
+                    }
+                }}
                 ></TextField>
               </Stack>
 
@@ -276,6 +294,15 @@ export default function ChangePasswordSettings(props) {
                   placeholder="Confirm Password"
                   type="password"
                   className={classes.root}
+                  InputProps={{
+                    style: { 
+                        textAlign: 'center',           // Center the text horizontally
+                        paddingTop: '15px',            // Adjust the padding to vertically center
+                        paddingBottom: '35px',         // Adjust bottom padding
+                        height: '50px',                // Adjust the height of the field
+                        boxSizing: 'border-box',       // Ensure padding doesn't mess with the height
+                    }
+                }}
                 ></TextField>
               </Stack>
               <hr />
@@ -290,6 +317,15 @@ export default function ChangePasswordSettings(props) {
                   fullWidth
                   placeholder="Enter email address"
                   className={classes.root}
+                  InputProps={{
+                    style: { 
+                        textAlign: 'center',           // Center the text horizontally
+                        paddingTop: '15px',            // Adjust the padding to vertically center
+                        paddingBottom: '35px',         // Adjust bottom padding
+                        height: '50px',                // Adjust the height of the field
+                        boxSizing: 'border-box',       // Ensure padding doesn't mess with the height
+                    }
+                }}
                 ></TextField>
                 {/* <TextField name="email_address" value={(event) => console.log("EMAIL ADDRESS:", event.target.value)} onChange={handleInputChange} variant="filled" fullWidth placeholder="Enter email address" className={classes.root}></TextField> */}
               </Stack>

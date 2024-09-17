@@ -329,7 +329,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
         credit_card: { value: "", checked: false, uid: "", status: "Inactive" },
         bank_account: { account_number: "", routing_number: "", checked: false, uid: "", status: "Inactive" },
       };
-      paymentMethodsData.forEach((method) => {
+      paymentMethodsData?.forEach((method) => {
         const status = method.paymentMethod_status || "Inactive";
         if (method.paymentMethod_type === "bank_account") {
           updatedPaymentMethods.bank_account = {
