@@ -16,6 +16,7 @@ import axios from "axios";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import Documents from "../Leases/Documents";
+import { DataGrid } from "@mui/x-data-grid";
 
 export default function TenantApplication(props) {
   console.log("In Tenant Application", props);
@@ -928,7 +929,9 @@ export default function TenantApplication(props) {
                   Who plans to live in the unit <span style={{ color: "red" }}>*</span>
                 </Typography>
               </Grid>
-              <Grid item xs={12}>
+
+              {/* adult section */}
+              <Grid item xs={12} marginTop={"20px"}>
                 <Typography
                   sx={{
                     justifySelf: "center",
@@ -937,9 +940,34 @@ export default function TenantApplication(props) {
                     fontSize: theme.typography.smallFont,
                   }}
                 >
-                  {adultOccupants?.length} Adults
+                  Adults
                 </Typography>
-                {adultOccupants &&
+                {adultOccupants && adultOccupants?.length >0 ? <AdultDataGrid adults={adultOccupants}/> : 
+                  <>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginBottom: '7px',
+                        width: '100%',
+                        height:"70px"
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                        color: "#A9A9A9",
+                        fontWeight: theme.typography.primary.fontWeight,
+                        fontSize: "15px",
+                        }}
+                      >
+                        No Adults
+                      </Typography>
+                    </Box>
+                  </>
+                }
+                {/* {adultOccupants && 
                   adultOccupants.map((occupant, index) => (
                     <Typography
                       sx={{
@@ -952,10 +980,12 @@ export default function TenantApplication(props) {
                     >
                       {occupant.name} {occupant.last_name} | {occupant.relationship} | DOB: {occupant.dob}
                     </Typography>
-                  ))}
+                  ))} */}
               </Grid>
-              <Grid item xs={12}>
-                <Typography
+
+              {/* child section */}
+              <Grid item xs={12} marginTop={"20px"}>
+                {/* <Typography
                   sx={{
                     justifySelf: "center",
                     color: theme.typography.primary.black,
@@ -978,10 +1008,82 @@ export default function TenantApplication(props) {
                     >
                       {occupant.name} {occupant.last_name} | {occupant.relationship} | DOB: {occupant.dob}
                     </Typography>
-                  ))}
+                  ))} */}
+                  <Typography
+                    sx={{
+                      justifySelf: "center",
+                      color: theme.typography.primary.black,
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: theme.typography.smallFont,
+                    }}
+                  >
+                  Children
+                </Typography>
+                {childOccupants && childOccupants?.length >0 ? <ChildDataGrid children={childOccupants}/> : 
+                  <>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginBottom: '7px',
+                        width: '100%',
+                        height:"70px"
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                        color: "#A9A9A9",
+                        fontWeight: theme.typography.primary.fontWeight,
+                        fontSize: "15px",
+                        }}
+                      >
+                        No Child
+                      </Typography>
+                    </Box>
+                  </>
+                }
               </Grid>
-              <Grid item xs={12}>
+
+              {/* pet section */}
+              <Grid item xs={12} marginTop={"20px"}>
                 <Typography
+                    sx={{
+                      justifySelf: "center",
+                      color: theme.typography.primary.black,
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: theme.typography.smallFont,
+                    }}
+                  >
+                  Pets
+                </Typography>
+                {petOccupants && petOccupants?.length >0 ? <PetDataGrid pets={petOccupants}/> : 
+                  <>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginBottom: '7px',
+                        width: '100%',
+                        height:"70px"
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                        color: "#A9A9A9",
+                        fontWeight: theme.typography.primary.fontWeight,
+                        fontSize: "15px",
+                        }}
+                      >
+                        No Pets
+                      </Typography>
+                    </Box>
+                  </>
+                }
+                {/* <Typography
                   sx={{
                     justifySelf: "center",
                     color: theme.typography.primary.black,
@@ -990,7 +1092,7 @@ export default function TenantApplication(props) {
                   }}
                 >
                   {petOccupants?.length} Pets
-                </Typography>
+                </Typography> */}
                 {/* <Typography
                                     sx={{
                                         justifySelf: 'center',
@@ -1001,7 +1103,7 @@ export default function TenantApplication(props) {
                                 >
                                     Otto | Cat | 16 lbs | 2 years old
                                 </Typography> */}
-                {petOccupants &&
+                {/* {petOccupants &&
                   petOccupants.map((occupant, index) => (
                     <Typography
                       sx={{
@@ -1014,10 +1116,47 @@ export default function TenantApplication(props) {
                     >
                       {occupant.name} {occupant.type} | {occupant.relationship} | DOB: {occupant.dob}
                     </Typography>
-                  ))}
+                  ))} */}
               </Grid>
-              <Grid item xs={12}>
+
+              {/* vehicle section */}
+              <Grid item xs={12} marginTop={"20px"}>
                 <Typography
+                    sx={{
+                      justifySelf: "center",
+                      color: theme.typography.primary.black,
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: theme.typography.smallFont,
+                    }}
+                  >
+                  Vehicles
+                </Typography>
+                {vehicles && vehicles?.length >0 ? <VehicleDataGrid vehicles={vehicles}/> : 
+                  <>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginBottom: '7px',
+                        width: '100%',
+                        height:"70px"
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                        color: "#A9A9A9",
+                        fontWeight: theme.typography.primary.fontWeight,
+                        fontSize: "15px",
+                        }}
+                      >
+                        No Vehicles
+                      </Typography>
+                    </Box>
+                  </>
+                }
+                {/* <Typography
                   sx={{
                     justifySelf: "center",
                     color: theme.typography.primary.black,
@@ -1040,89 +1179,11 @@ export default function TenantApplication(props) {
                     >
                       {vehicle.make} {vehicle.model} | {vehicle.year} | {vehicle.license} | {vehicle.state}
                     </Typography>
-                  ))}
-                {/* <Typography
-                                sx={{
-                                    justifySelf: 'center',
-                                    color: theme.typography.primary.black,
-                                    fontWeight: theme.typography.light.fontWeight,
-                                    fontSize: theme.typography.smallFont
-                                }}
-                            >
-                                Porsche Cayenne S | SUV | ASD1235 | CA
-                            </Typography> */}
+                  ))} */}
               </Grid>
-              <Grid item xs={12}>
-                {/* <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.primary.fontWeight,
-                    fontSize: theme.typography.secondaryFont,
-                  }}
-                >
-                  Your Documents:
-                </Typography>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    paddingTop: "5px",
-                    color: theme.typography.common.blue,
-                  }}
-                >
-                  <Box>Filename</Box>
-                  <Box>Type</Box>
-                  <Box> </Box>
-                </Box>
-                {(Array.isArray(tenantDocuments) ? tenantDocuments : []).map((doc, i) => (
-                  <>
-                    <Box
-                      key={i}
-                      sx={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <a href={doc.link} target='_blank' rel='noopener noreferrer'>
-                        <Box
-                          sx={{
-                            // height: '16px',
-                            width: "100%",
 
-                            cursor: "pointer", // Change cursor to indicate clickability
-                            color: "#3D5CAC",
-                          }}
-                        >
-                          {doc.filename}
-                        </Box>
-                      </a>
-                      {doc.contentType}
-                      <Button
-                        variant='text'
-                        onClick={(event) => {
-                          deleteTenantDocument(i);
-                        }}
-                        sx={{
-                          width: "10%",
-                          cursor: "pointer",
-                          fontSize: "14px",
-                          fontWeight: "bold",
-                          color: "#3D5CAC",
-                          "&:hover": {
-                            backgroundColor: "transparent", // Set to the same color as the default state
-                          },
-                        }}
-                      >
-                        <DeleteIcon sx={{ fontSize: 19, color: "#3D5CAC" }} />
-                      </Button>
-                    </Box>
-                  </>
-                ))} */}
+              {/* document section */}
+              <Grid item xs={12}>
                 <Documents documents={tenantDocuments} setDocuments={setTenantDocuments} isEditable={false} isAccord={false} customName={"Your Documents"} contractFiles={extraUploadDocument} contractFileTypes={extraUploadDocumentType}/>
               </Grid>
 
@@ -1276,4 +1337,128 @@ export default function TenantApplication(props) {
       </Paper>)}
     </ThemeProvider>
   );
+}
+
+export const AdultDataGrid = ({ adults }) => {
+  const columns = [
+    { field: 'name', headerName: 'Name', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 2, renderCell : (params) => (<Typography>{params.row.name} {params.row.last_name}</Typography>)},
+    { field: 'relationship', headerName: 'Relationship', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+    { field: 'dob', headerName: 'DoB', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+  ];
+
+  let rowsWithId = []
+
+  if(adults && adults?.length !== 0){
+    rowsWithId = adults.map((row, index) => ({
+      ...row,
+      id: row.id ? index : index,
+    }));
+  }
+
+  return (
+    <DataGrid
+      rows={rowsWithId}
+      columns={columns}
+      sx={{        
+        marginTop: "10px",
+      }}
+      autoHeight
+      rowHeight={50} 
+      hideFooter={true}
+    />
+  );
+
+}
+
+export const ChildDataGrid = ({ children }) => {
+  const columns = [
+    { field: 'name', headerName: 'Name', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 2, renderCell : (params) => (<Typography>{params.row.name} {params.row.last_name}</Typography>)},
+    { field: 'relationship', headerName: 'Relationship', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+    { field: 'dob', headerName: 'DoB', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+  ];
+
+  let rowsWithId = []
+
+  if(children && children?.length !== 0){
+    rowsWithId = children.map((row, index) => ({
+      ...row,
+      id: row.id ? index : index,
+    }));
+  }
+
+  return (
+    <DataGrid
+      rows={rowsWithId}
+      columns={columns}
+      sx={{        
+        marginTop: "10px",
+      }}
+      autoHeight
+      rowHeight={50} 
+      hideFooter={true}
+    />
+  );
+
+}
+
+export const PetDataGrid = ({ pets }) => {
+  const columns = [
+    { field: 'name', headerName: 'Name', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 2, renderCell : (params) => (<Typography>{params.row.name} {params.row.last_name}</Typography>)},
+    { field: 'type', headerName: 'Type', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+    { field: 'dob', headerName: 'DoB', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+  ];
+
+  let rowsWithId = []
+
+  if(pets && pets?.length !== 0){
+    rowsWithId = pets.map((row, index) => ({
+      ...row,
+      id: row.id ? index : index,
+    }));
+  }
+
+  return (
+    <DataGrid
+      rows={rowsWithId}
+      columns={columns}
+      sx={{        
+        marginTop: "10px",
+      }}
+      autoHeight
+      rowHeight={50} 
+      hideFooter={true}
+    />
+  );
+
+}
+
+export const VehicleDataGrid = ({ vehicles }) => {
+  const columns = [
+    { field: 'name', headerName: 'Name', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 2, renderCell : (params) => (<Typography>{params.row.make} {params.row.model}</Typography>)},
+    { field: 'license', headerName: 'License', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1, renderCell : (params) => (<Typography>{params.row.license} {params.row.state}</Typography>)},
+    { field: 'year', headerName: 'Year', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+  ];
+
+  let rowsWithId = []
+
+  if(vehicles && vehicles?.length !== 0){
+    rowsWithId = vehicles.map((row, index) => ({
+      ...row,
+      id: row.id ? index : index,
+    }));
+  }
+
+  return (
+    <DataGrid
+      rows={rowsWithId}
+      columns={columns}
+      sx={{        
+        marginTop: "10px",
+      }}
+      autoHeight
+      rowHeight={50} 
+      hideFooter={true}
+    />
+  );
+
 }

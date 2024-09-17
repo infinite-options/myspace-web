@@ -35,11 +35,13 @@ export default function PropertiesList(props) {
     returnIndex: returnIndexFromContext,
     setReturnIndex,
     setCurrentPropertyID,
-    setCurrentProperty,    	  
+    setCurrentProperty,
+    allContracts: allContractsFromContext,    	  
 	} = propertiesContext || {};
   
 	const propertyList = propertyListFromContext || [];		  
 	const returnIndex = returnIndexFromContext || 0;  
+  const allcontracts = allContractsFromContext || []
 	
 
   // const [propertyList, setPropertyList] = useState([]);
@@ -78,9 +80,11 @@ export default function PropertiesList(props) {
     } else {
       setDisplayedItems(propertyList);
     }
+
     setPropertyIndex(returnIndex || 0);    
     setLHS(props.LHS);
     setIsDataReady(true);
+
   }, [props.LHS, returnIndex, propertyList, props.showOnlyListings]);  
 
   useEffect(() => {
@@ -132,7 +136,25 @@ export default function PropertiesList(props) {
   }
 
   function getNumOfApplications(property) {
-    return property.applicationsCount ?? 0;
+    if(property.rent_status === "NO MANAGER"){
+      var count = 0;
+
+      if(allcontracts){
+
+        const propertyId = property?.property_uid;
+        const filtered = allcontracts?.filter((contract) => contract.property_id === propertyId);
+        // console.log("--dhyey---322 - PropertyNavigator - filtered contracts - ", filtered);
+        filtered.forEach((contract) => {
+          if (contract.contract_status == "SENT") {
+            count++;
+          }
+        }); 
+      }
+
+      return count
+    }else{
+      return property.applicationsCount ?? 0;
+    }
   }
 
   function getCoverPhoto(property) {

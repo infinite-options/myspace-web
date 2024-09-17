@@ -415,6 +415,46 @@ export default function PropertyRentWidget(props) {
           </Box>
           New Requests
         </Button>
+
+        <Button
+          variant='contained'
+          id='revenue'
+          className={classes.button}
+          style={{
+            height: "100%",
+            width: "80%",
+            backgroundColor: "#ffffff",
+            color: "#160449",
+            fontSize: "15px",
+            borderRadius: "5px",
+            marginBottom: "10px",
+            marginTop: "10px",
+          }}
+          onClick={() => {
+            // console.log("New Request Clicked");
+            // navigate("/pmQuotesList", { state: { property_endpoint_resp: contractRequests } });
+            // navigate("/announcements")
+            navigate("/managerCreateAnnouncement");
+          }}
+        >
+          {/* <Box
+            sx={{
+              width: 7,
+              height: 7,
+              backgroundColor: "#160449",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#FFFFFF",
+              fontSize: "15px",
+              paddingRight: "20px",
+            }}
+          >
+            
+          </Box> */}
+          Send Announcement
+        </Button>
       </Box>
     </Box>
   );

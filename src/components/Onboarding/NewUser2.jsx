@@ -45,13 +45,14 @@ import DataValidator from "../DataValidator";
 const NewUser = () => {
   console.log("In NewUser2");
   const navigate = useNavigate();
+  const location = useLocation();
   const [role, setRole] = useState(null);
   const [showEmailSignup, setShowEmailSignup] = useState(false);
   const { setAuthData, selectRole, setLoggedIn } = useUser();
   const [cookies, setCookie] = useCookies(["user"]);
   const [showPassword, setShowPassword] = useState(false);
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(location.state?.user_email || "");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -189,8 +190,9 @@ const NewUser = () => {
                     console.log(response.data.message);
                     const { message, result } = response.data;
                     if (message === "Incorrect password") {
-                      alert(response.data.message);
-                      navigate("/userLogin", { state: { user_emai: email } });
+                      // alert(response.data.message);
+                      alert("User already exist")
+                      navigate("/userLogin", { state: { user_email: email } });
                       // setShowSpinner(false);
                     } else if (message === "Email doesn't exist") {
                       //setUserDoesntExist(true);
@@ -252,7 +254,7 @@ const NewUser = () => {
   const handleSignup = async () => {
     console.log("signup clicked");
     //confirmPassword password
-    if(confirmPassword!=password){
+    if(confirmPassword != password){
       alert("Passwords don't match. Please check and try again!");
       return ;
     }
