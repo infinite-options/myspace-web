@@ -842,7 +842,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
         modifiedData?.forEach((item) => {
           console.log(`Key: ${item.key}`);
           if(item.key !== "tenant_ssn"){
-            profileFormData.append(item.key, JSON.stringify(item.value));
+            profileFormData.append(item.key, item.value);
           }else{
             profileFormData.append(item.key, item.value);
           }
@@ -976,7 +976,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                     placeholder='First name'
                     className={classes.root}
                     InputProps={{
-                      className: errors.firstName ? classes.errorBorder : '',
+                      className: errors.firstName || !firstName ? classes.errorBorder : '',
                     }}
                     required
                   />
@@ -991,7 +991,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                     placeholder='Last name'
                     className={classes.root} 
                     InputProps={{
-                      className: errors.lastName ? classes.errorBorder : '',
+                      className: errors.lastName || !lastName ? classes.errorBorder : '',
                     }}
                     required
                   />
@@ -1115,7 +1115,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                       placeholder='Email'
                       className={classes.root}
                       InputProps={{
-                        className: errors.email ? classes.errorBorder : '',
+                        className: errors.email || !email ? classes.errorBorder : '',
                       }}
                       required
                     ></TextField>
@@ -1142,7 +1142,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                       placeholder='Phone Number'
                       className={classes.root}
                       InputProps={{
-                        className: errors.phoneNumber ? classes.errorBorder : '',
+                        className: errors.phoneNumber || !phoneNumber ? classes.errorBorder : '',
                       }}
                       required
                     ></TextField>
@@ -1261,7 +1261,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                       placeholder='SSN'
                       className={classes.root}
                       InputProps={{
-                        className: errors.ssn ? classes.errorBorder : '',
+                        className: errors.ssn || !ssn ? classes.errorBorder : '',
                       }}
                       required
                     ></TextField>

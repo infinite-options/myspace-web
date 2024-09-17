@@ -1308,7 +1308,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     placeholder='Business name'
                     className={classes.root}
                     InputProps={{
-                      className: errors.businessName ? classes.errorBorder : '',
+                      className: errors.businessName || !businessName ? classes.errorBorder : '',
                     }}
                     required
                   />
@@ -1432,7 +1432,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                       placeholder='Business Email'
                       className={classes.root}
                       InputProps={{
-                        className: errors.email ? classes.errorBorder : '',
+                        className: errors.email || !email ? classes.errorBorder : '',
                       }}
                       required
                     ></TextField>
@@ -1459,7 +1459,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                       placeholder='Business Phone Number'
                       className={classes.root}
                       InputProps={{
-                        className: errors.phoneNumber ? classes.errorBorder : '',
+                        className: errors.phoneNumber || !phoneNumber ? classes.errorBorder : '',
                       }}
                       required
                     ></TextField>
@@ -1522,7 +1522,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                       placeholder='SSN'
                       className={classes.root}
                       InputProps={{
-                        className: errors.ein ? classes.errorBorder : '',
+                        className: errors.ein || !ein ? classes.errorBorder : '',
                       }}
                       required
                     ></TextField>
@@ -1677,7 +1677,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                   placeholder='First name'
                   className={classes.root}
                   InputProps={{
-                    className: errors.empFirstName ? classes.errorBorder : '',
+                    className: errors.empFirstName || !empFirstName ? classes.errorBorder : '',
                   }}
                   required
                 />
@@ -1692,7 +1692,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                   placeholder='Last name'
                   className={classes.root}
                   InputProps={{
-                    className: errors.empLastName ? classes.errorBorder : '',
+                    className: errors.empLastName || !empLastName ? classes.errorBorder : '',
                   }}
                   required
                 />

@@ -8,7 +8,7 @@ import { useUser } from "../../contexts/UserContext";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
 import AddressAutocompleteInput from "../Property/AddressAutocompleteInput";
 import DataValidator from "../DataValidator";
-import { formatPhoneNumber, formatSSN, formatEIN, identifyTaxIdType, maskNumber, } from "./helper";
+import { formatPhoneNumber, formatSSN, formatEIN, identifyTaxIdType, maskNumber, newmaskNumber,} from "./helper";
 import { useOnboardingContext } from "../../contexts/OnboardingContext";
 import {
   Button,
@@ -242,6 +242,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     // updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
     updateModifiedData({ key: "business_ein_number", value: AES.encrypt(updatedTaxID, process.env.REACT_APP_ENKEY).toString() });
   };
+
 
   const handleEmpFirstNameChange = (event) => {
     setEmpFirstName(event.target.value);
@@ -1277,8 +1278,8 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     }
   };
 
-  const [showMasked, setShowMasked] = useState(false);
-  const displaySsn = showMasked ? maskNumber(ein) : formatSSN(ein);
+  const [showMasked, setShowMasked] = useState(true);
+  const displaySsn = showMasked ? newmaskNumber(ein) : formatSSN(ein);
 
   return (
     <>
@@ -1350,7 +1351,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                       placeholder='Business name'
                       className={classes.root}
                       InputProps={{
-                        className: errors.businessName ? classes.errorBorder : '',
+                        className: errors.businessName || !businessName ? classes.errorBorder : '',
                       }}
                       required
                     />
@@ -1474,7 +1475,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                         placeholder='Business Email'
                         className={classes.root}
                         InputProps={{
-                          className: errors.email ? classes.errorBorder : '',
+                          className: errors.email || !email ? classes.errorBorder : '',
                         }}
                         required
                       ></TextField>
@@ -1501,7 +1502,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                         placeholder='Business Phone Number'
                         className={classes.root}
                         InputProps={{
-                          className: errors.phoneNumber ? classes.errorBorder : '',
+                          className: errors.phoneNumber || !phoneNumber ? classes.errorBorder : '',
                         }}
                         required
                       ></TextField>
@@ -1556,14 +1557,19 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                       <TextField
                         fullWidth
                         // value={mask}
-                        value={ein}
+                        value={ein} 
                         // onChange={(e) => setSsn(e.target.value)}
-                        onChange={(e) => handleTaxIDChange(e.target.value)}
+                        onChange={(e) => handleTaxIDChange(e.target.value)} 
                         variant='filled'
                         placeholder='Enter numbers only'
                         className={classes.root}
                         InputProps={{
                           className: errors.ein || !ein ? classes.errorBorder : '',
+                          // endAdornment: (
+                          //   <IconButton onClick={() => setShowMasked(!showMasked)}>
+                          //     {showMasked ? "Show" : "Hide"}
+                          //   </IconButton>
+                          // ),
                         }}
                         required
                       ></TextField>
