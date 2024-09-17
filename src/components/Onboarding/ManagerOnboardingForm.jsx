@@ -1229,7 +1229,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
         let hasEmployeeKey = false;
         let hasBusinessKey = false;
         modifiedData.forEach((item) => {
-          console.log(`Key: ${item.key}`);
+          console.log(`profileFormData Key: ${item.key}`);
           profileFormData.append(item.key, item.value);
 
           if (item.key.startsWith("employee_")) {
@@ -1276,6 +1276,9 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
       setShowSpinner(false);
     }
   };
+
+  const [showMasked, setShowMasked] = useState(false);
+  const displaySsn = showMasked ? maskNumber(ein) : formatSSN(ein);
 
   return (
     <>
@@ -1560,7 +1563,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                         placeholder='Enter numbers only'
                         className={classes.root}
                         InputProps={{
-                          className: errors.ein ? classes.errorBorder : '',
+                          className: errors.ein || !ein ? classes.errorBorder : '',
                         }}
                         required
                       ></TextField>
@@ -1700,7 +1703,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                     className={classes.root}
                     // className={`${classes.root} ${errors.empFirstName ? classes.requiredField : ''}`}
                     InputProps={{
-                      className: errors.empFirstName ? classes.errorBorder : '',
+                      className: errors.empFirstName || !empFirstName ? classes.errorBorder : '',
                     }}
                     required
                   />                
@@ -1715,7 +1718,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                     placeholder='Last name'
                     className={classes.root}
                     InputProps={{
-                      className: errors.empLastName ? classes.errorBorder : '',
+                      className: errors.empLastName || !empLastName ? classes.errorBorder : '',
                     }}                  
                     required
                   />
