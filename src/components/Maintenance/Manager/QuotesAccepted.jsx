@@ -35,7 +35,7 @@ import APIConfig from "../../../utils/APIConfig";
 
 
 export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}){
-    // console.log("--debug-- maintenanceItem", maintenanceItem)
+    console.log("--debug-- maintenanceItem", maintenanceItem)
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
     const [showSpinner, setShowSpinner] = useState(false);
@@ -47,7 +47,9 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
 		maintenanceItem = JSON.parse(sessionStorage.getItem('maintenanceItem'));
 		quotes = JSON.parse(sessionStorage.getItem('quoteAcceptView'));
 	} 
-    let maintenanceQuoteInfo = JSON.parse(maintenanceItem.quote_info).find((quote) => quote.quote_status === maintenanceItem.quote_status_ranked)
+    console.log("---maintenanceItem", maintenanceItem);
+    console.log('---maintenanceItem?.quote_info--', maintenanceItem.quotes);
+    let maintenanceQuoteInfo = JSON.parse(maintenanceItem?.quote_info)?.find((quote) => quote.quote_status === maintenanceItem.quote_status_ranked)
     console.log(maintenanceQuoteInfo)
     const [date, setDate] = useState(maintenanceQuoteInfo.quote_earliest_available_date || "")
     const [time, setTime] = useState(maintenanceQuoteInfo.quote_earliest_available_time || "")
@@ -140,22 +142,17 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <Card
-                sx={{
-                    backgroundColor: theme.palette.primary.main,
-                    boxShadow: 'none',
-                    elevation: '0',
-                    width: '50%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '0px',
-                }}
-            >
-                <Grid container justifyContent="space-between" sx={{ marginTop: theme.spacing(2), padding: theme.spacing(0) }}>
-                    <Grid item>
-                        <Button
+            <Box
+  sx={{
+    display: 'flex',  // Flexbox for horizontal alignment
+    justifyContent: 'center',  // Centers the buttons horizontally
+    alignItems: 'center',  // Aligns the buttons vertically
+    flexWrap: 'nowrap',  // Prevents wrapping
+    gap: 5,  // Space between buttons
+    width: '100%',  // Ensures the buttons take up the full width of the container
+    padding: '20px',
+  }}
+> <Button
                             variant="contained"
                             sx={{
                                 backgroundColor: '#FFC614',
@@ -163,7 +160,7 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
                                 textTransform: 'none',
                                 fontWeight: 'bold',
                                 borderRadius: '8px',
-                                width: '160px',
+                                width: '200px',
                                 height: '120px',
                                 display: 'flex',
                                 alignItems: 'center',
@@ -180,11 +177,9 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
                         >
                             Schedule
                         </Button>
-                    </Grid> <Grid item>
                         <CompleteButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage} />
-                    </Grid>
-                </Grid>
-            </Card>
+                   
+                    </Box>
             <AlertMessage showMessage={showMessage} setShowMessage={setShowMessage} message={message} />
             
             <DateTimePickerModal 

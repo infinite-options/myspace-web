@@ -236,7 +236,7 @@ export default function PropertyRentWidget(props) {
                   //   console.log("navigating to propertyDetail - i, propertiesList - ", index, propertyList);
                   //   navigate(`/propertiesPM`, { state: { index, propertyList, rawPropertyData } });
                   // }}
-                  onClick={() => navigate("/propertiesPM", { state: { showLHS: "Rent", showRHS: "PropertyNavigator" } })}
+                  onClick={() => navigate("/propertiesPM", { state: { showLHS: "Rent", showRHS: "PropertyNavigator", showOnlyListings: false, } })}
                 >
                   {`${property.property_address}${property.property_unit ? `, Unit ${property.property_unit}` : ""}`}
                 </MenuItem>
@@ -281,7 +281,7 @@ export default function PropertyRentWidget(props) {
               paddingAngle={0}
               dataKey='number'
               filter='url(#shadow)'
-              onClick={() => navigate("/propertiesPM", { state: { showLHS: "List", showRHS: "PropertyNavigator" } })}
+              onClick={() => navigate("/propertiesPM", { state: { showLHS: "List", showRHS: "PropertyNavigator", showOnlyListings: false, } })}
             >
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
@@ -299,7 +299,7 @@ export default function PropertyRentWidget(props) {
                 fill: "#160449",
                 fontWeight: "bold",
               }}
-              onClick={() => navigate("/propertiesPM", { state: { showLHS: "List", showRHS: "PropertyNavigator" } })}
+              onClick={() => navigate("/propertiesPM", { state: { showLHS: "List", showRHS: "PropertyNavigator", showOnlyListings: false, } })}
             >
               View all {totalPropertiesCount}
               <tspan x={130} y={145}>
@@ -328,7 +328,7 @@ export default function PropertyRentWidget(props) {
               paddingAngle={0}
               dataKey='number'
               filter='url(#shadow)'
-              onClick={() => navigate("/propertiesPM", { state: { showLHS: "List", showRHS: "PropertyNavigator" } })}
+              onClick={() => navigate("/propertiesPM", { state: { showLHS: "List", showRHS: "PropertyNavigator", showOnlyListings: false, } })}
             >
               {defaultData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
@@ -347,7 +347,7 @@ export default function PropertyRentWidget(props) {
                 fontWeight: "bold",
               }}
               // onClick={() => navigate("/propertiesPM", { state: { showPropertyForm: true, rawPropertyData: rawPropertyData } })}
-              onClick={() => navigate("/propertiesPM", { state: { showLHS: "List", showRHS: "PropertyNavigator" } })}
+              onClick={() => navigate("/propertiesPM", { state: { showLHS: "List", showRHS: "PropertyNavigator", showOnlyListings: false } })}
             >
               Add your first
               <tspan x={130} y={145}>
@@ -376,7 +376,7 @@ export default function PropertyRentWidget(props) {
           //   navigate(propertyRoutingBasedOnSelectedRole());
           // }}
           // onClick={() => navigate("/propertiesPM", { state: { showLHS: "List", showRHS: "PropertyNavigator" } })}
-          onClick={() => navigate("/propertiesPM", { state: { showLHS: "List", showRHS: "PropertyNavigator" } })}
+          onClick={() => navigate("/propertiesPM", { state: { showLHS: "List", showRHS: "PropertyNavigator", showOnlyListings: true, } })}
         >
           View {vacantCount} Property Listings
         </Button>

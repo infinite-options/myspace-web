@@ -20,6 +20,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import Documents from "../Leases/Documents";
 import WaiverForm from "../Leases/WaiverForm";
 import { AdultDataGrid, ChildDataGrid, PetDataGrid, VehicleDataGrid } from "./TenantApplication";
+import { DataGrid } from '@mui/x-data-grid';
+import LeaseFees from "../Leases/LeaseFees";
 
 const TenantApplicationNav = (props) => {
   const navigate = useNavigate();
@@ -33,13 +35,28 @@ const TenantApplicationNav = (props) => {
   //     console.log("application - ", application);
   // }, [application]);
 
-  // console.log("---dhyey--- in application view - ", application)
+  console.log("---dhyey--- in application view - ", application)
   const [showSpinner, setShowSpinner] = useState(false);
   const [vehicles, setVehicles] = useState(JSON.parse(application?.lease_vehicles || '["No Vehicle Information"]'));
   const [adultOccupants, setAdultOccupants] = useState(JSON.parse(application?.lease_adults || '["No Adult Occupants"]'));
   const [petOccupants, setPetOccupants] = useState(JSON.parse(application?.lease_pets || '["No Pet Occupants"]'));
   const [childOccupants, setChildOccupants] = useState(JSON.parse(application?.lease_children || '["No Child Occupants"]'));
   const [applicationDocuments, setApplicationDocuments] = useState(JSON.parse(application.lease_documents));
+  const [ leaseFees, setLeaseFees ] = useState([])
+
+  useEffect(() => {
+      // console.log("lease fees - ", application?.lease_fees);
+
+      let parsedFees = []
+      try {
+        parsedFees = JSON.parse(application?.lease_fees);        
+      } catch(error) {
+        console.error("TenantApplicationNav - Error Parsing Lease Fees");        
+      }
+      setLeaseFees(parsedFees);
+      // console.log("parsedFees - ", parsedFees);
+  }, [application]);
+  
   // useEffect(() => {
   //     console.log("applicationDocuments - ", applicationDocuments);
   // }, [applicationDocuments]);
@@ -711,7 +728,12 @@ const TenantApplicationNav = (props) => {
                           marginRight: "30px",
                         }}
                       >
-                        <Documents documents={applicationDocuments} setDocuments={setApplicationDocuments} isEditable={false} isAccord={false} customName={"Application Documents:"}/>                        
+                        {
+                          application?.lease_status === "PROCESSING" && (
+                            <LeaseFees leaseFees={leaseFees} />
+                          )
+                        }
+                        <Documents documents={applicationDocuments} setDocuments={setApplicationDocuments} isEditable={false} isAccord={false} customName={"Application Documents:"}/>                                                
                       </Grid>
                     </Grid>
                     <Stack direction='row' alignItems='center' justifyContent='space-around' sx={{ padding: "30px 0", paddingRight: "15px" }}>
@@ -793,5 +815,7 @@ const TenantApplicationNav = (props) => {
     </ThemeProvider>
   );
 };
+
+
 
 export default TenantApplicationNav;

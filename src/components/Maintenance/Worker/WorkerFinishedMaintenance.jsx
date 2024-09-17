@@ -32,6 +32,7 @@ import MarkPaidButton from "../MaintenanceComponents/MarkPaidButton";
 import WorkerInvoiceView from "../MaintenanceComponents/WorkerInvoiceView";
 
 export default function WorkerFinishedMaintenance({maintenanceItem}){
+    console.log('---inside WorkerFinishedMaintenance---', maintenanceItem);
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
 

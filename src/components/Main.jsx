@@ -191,6 +191,7 @@ import PublicProfile from "./Profile/PublicProfile";
 import OwnerFirstProperty from "./OwnerDashboard/OwnerFirstProperty";
 
 import { ManagementContractProvider } from "../contexts/ManagementContractContext";
+import { PropertiesProvider } from "../contexts/PropertiesContext";
 
 function Main() {
   // console.log("In Main Page");
@@ -344,7 +345,14 @@ function Main() {
             <Route path='tenantMaintenance' element={<TenantMaintenance />} />
             <Route path='addTenantMaintenanceItem' element={<AddTenantMaintenanceItem />} />
             <Route path='myProperty' element={<TenantProperty />} />
-            <Route path='propertiesPM' element={<Properties />} />
+            <Route 
+              path='propertiesPM'
+              element={
+                <PropertiesProvider>
+                  <Properties />
+                </PropertiesProvider>
+              } 
+            />
             <Route path='properties' element={<PropertyList />} />
             {/* <Route path="PMProperties" element={<PMProperties />} /> */}
             <Route path='tenantMaintenanceItemDetail' element={<TenantMaintenanceItemDetail />} />

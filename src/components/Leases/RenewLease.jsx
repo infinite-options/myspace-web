@@ -23,6 +23,7 @@ import TenantDetails from "./TenantDetails";
 import UtilitiesManager from "./Utilities";
 import FeesDetails from "./FeesDetails";
 import LeaseSummary from "./LeaseSummary";
+import { getDateAdornmentString } from "../../utils/dates";
 
 import ListsContext from "../../contexts/ListsContext";
 
@@ -363,20 +364,6 @@ const getListDetails = async () => {
     
 }
 
-const getDateAdornmentString = (d) => {
-    if (d === null || d === 0) return "";
-    if (d > 3 && d < 21) return "th";
-    switch (d % 10) {
-        case 1:
-            return "st";
-        case 2:
-            return "nd";
-        case 3:
-            return "rd";
-        default:
-            return "th";
-    }
-};
 
 const handleDeleteButtonClick = () => {
     setIsEndClicked(true);

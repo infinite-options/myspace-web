@@ -10,6 +10,7 @@ import { Close } from '@mui/icons-material';
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { getDateAdornmentString } from '../../utils/dates';
 import dayjs from "dayjs";
 
 const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newStartDate, newEndDate }) => {
@@ -50,21 +51,6 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
         const year = date.getFullYear();
         return `${month}-${day}-${year}`;
     }
-
-    const getDateAdornmentString = (d) => {
-        if (d === null || d === 0) return "";
-        if (d > 3 && d < 21) return "th";
-        switch (d % 10) {
-            case 1:
-                return "st";
-            case 2:
-                return "nd";
-            case 3:
-                return "rd";
-            default:
-                return "th";
-        }
-    };
 
     return (
         <Paper sx={{ margin: "10px", backgroundColor: color, paddingBottom: "10px" }}>

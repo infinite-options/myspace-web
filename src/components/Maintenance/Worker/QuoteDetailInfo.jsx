@@ -69,6 +69,7 @@ function LaborTableReadOnly({labor, setLabor}){
                     Total
                 </Typography>
             </Grid>
+            
             {labor && labor.map((laborItem, index) => (
                 <Grid container key={index}>
                     <Grid item xs={3}>
@@ -158,7 +159,7 @@ function PartsTableReadOnly({parts, setParts}){
 }
 
 export default function QuoteDetailInfo({maintenanceItem}){
-    console.log('inside detailinfo----', maintenanceItem);
+    // console.log('inside detailinfo----', maintenanceItem);
     const { roleName } = useUser();
 
     const location = useLocation();
@@ -166,6 +167,7 @@ export default function QuoteDetailInfo({maintenanceItem}){
 
     let costData;
     try {
+        // console.log('----maintenanceItem in quotedetailinfo---', maintenanceItem);
         if (maintenanceItem?.quote_services_expenses) {
             costData = JSON.parse(maintenanceItem?.quote_services_expenses);
         } else {
@@ -193,19 +195,19 @@ export default function QuoteDetailInfo({maintenanceItem}){
     const time = maintenanceItem.maintenance_scheduled_time;
 
     useEffect(() => {
-        console.log("[DEBUG] QuoteDetailInfo", maintenanceItem)
+        // console.log("[DEBUG] QuoteDetailInfo", maintenanceItem)
     })
 
     const handleWithdraw = async () => {
         // PUT to withdraw request
 
-        console.log("handleWithdraw")
+        // console.log("handleWithdraw")
         var formData = new FormData();
         formData.append("maintenance_quote_uid",  maintenanceItem.maintenance_quote_uid);
         formData.append("quote_status", "WITHDRAW");
 
         try {
-            console.log("in try block")
+            // console.log("in try block")
             const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {
                 method: 'PUT',
                 body: formData
@@ -225,9 +227,21 @@ export default function QuoteDetailInfo({maintenanceItem}){
                 partsCost += parseInt(servicesObject.parts[item].cost) * parseInt(servicesObject.parts[item].quantity)
             }
 
-            for (const item in servicesObject?.labor){
-                laborCost += parseInt(servicesObject.labor[item].hours) * parseInt(servicesObject.labor[item].charge || servicesObject.labor[item].rate)
-            }
+            // for (const item in servicesObject?.labor){
+            //     laborCost += parseInt(servicesObject.labor[item].hours) * parseInt(servicesObject.labor[item].charge || servicesObject.labor[item].rate)
+            // }
+
+            if (servicesObject?.event_type === "Fixed") {
+    // For fixed event type, sum up the rates without multiplying by hours
+    for (const item in servicesObject?.labor) {
+        laborCost += parseInt(servicesObject.labor[item].rate || 0);
+    }
+} else if (servicesObject?.event_type === "Hourly") {
+    // For hourly event type, multiply rate by hours
+    for (const item in servicesObject?.labor) {
+        laborCost += parseInt(servicesObject.labor[item].hours || 0) * parseInt(servicesObject.labor[item].rate ||  0);
+    }
+}
 
 
             setEstimatedLaborCost(laborCost)
