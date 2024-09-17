@@ -53,7 +53,8 @@ const useStyles = makeStyles((theme) => ({
 const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFileChange, isAccord=false, contractFiles=[], setContractFiles, contractFileTypes=[], setContractFileTypes, isEditable=true, customName, customUploadingName }) => {
 
   const { getList, } = useContext(ListsContext);	
-
+  
+  const contentTypes = getList("content");
   const [open, setOpen] = useState(false);
   const [currentRow, setcurrentRow] = useState(null);
   const color = theme.palette.form.main;
@@ -67,7 +68,7 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [isUpdated, setIsUpdated] = useState(false);
-  const [contentTypes, setContentTypes] = useState([]);
+  // const [contentTypes, setContentTypes] = useState([]);
   const [ expanded, setExpanded ] = useState(true);
   // const [preview, setPreview] = useState(null)
   const [selectedPreviewFile, setSelectedPreviewFile] = useState(null)
@@ -89,8 +90,7 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
   }, []);
 
   const fetchContentTypes = async()=>{    
-    const contentTypesList = getList("content");    
-    setContentTypes(contentTypesList);
+    
     
   }
 

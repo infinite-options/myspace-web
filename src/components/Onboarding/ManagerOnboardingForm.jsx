@@ -63,6 +63,14 @@ const useStyles = makeStyles((theme) => ({
       marginBlock: 10,
       paddingBottom: "15px",
     },
+    '& input:-webkit-autofill': {
+      backgroundColor: '#D6D5DA !important',
+      color: '#000000 !important',
+      transition: 'background-color 0s 600000s, color 0s 600000s !important',
+    },
+    '& input:-webkit-autofill:focus': {
+      transition: 'background-color 0s 600000s, color 0s 600000s !important',
+    },
   },
   errorBorder: {
     border: '1px solid red',
@@ -114,10 +122,10 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
   const [uploadedFiles, setuploadedFiles] = useState([]);
   const [deletedFiles, setDeletedFiles] = useState([]);
 
-  const [states, setStates] = useState([]);
-  const [feeBases, setFeeBases] = useState([]);
-  const [feeTypes, setFeeTypes] = useState([]);
-  const [feeFrequencies, setFeeFrequencies] = useState([]);
+  const states = getList("states");
+  const feeBases = getList("basis");          
+  const feeFrequencies = getList("frequency");          
+  const feeTypes = getList("feeType");  
 
   const [fees, setFees] = useState([{ id: 1, fee_name: "", frequency: "", charge: "", of: "", fee_type: "" }]);
   const [services, setServices] = useState([{ id: 1, service_name: "", hours: "", charge: "", total_cost: "" }]);
@@ -148,19 +156,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
 
   const [ errors, setErrors ] = useState({})
 
-  const getListDetails = async () => {          
-    const states = getList("states");
-    setStates(states);
-    const bases = getList("basis");          
-    setFeeBases(bases);    
 
-    const feeFrequencies = getList("frequency");          
-    setFeeFrequencies(feeFrequencies);
-
-    const types = getList("feeType");    
-    console.log("ROHIT - types - ", types);      
-    setFeeTypes(types);
-  };
 
   const getFeeTypeValue = (item) => {
     switch(item){
@@ -386,9 +382,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     console.log("calling useeffect");
     setIsSave(false);
 
-    setProfileData();
-
-    getListDetails();
+    setProfileData();    
   }, []);
 
   useEffect(() => {
