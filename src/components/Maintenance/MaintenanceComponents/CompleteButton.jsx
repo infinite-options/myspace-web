@@ -122,37 +122,27 @@ export default function CompleteButton(props){
 
     return (
         <>
-        <Grid item xs={6} sx={{
-            alignItems: "flex-end",
-            justifyContent: "flex-end",
-        }}>
            
-            <Button
-						variant="contained"
-						sx={{
-							backgroundColor: '#FF8A00',
-							color: '#160449',
-							textTransform: 'none',
-							fontWeight: 'bold',
-							borderRadius: '8px',
-							width: '160px', // Set a fixed width
-							height: '120px', // Set a fixed height
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							textAlign: 'center',
-							padding: '10px', // Add padding to ensure text wrapping
-							boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
-							whiteSpace: 'normal', // Allow text to wrap
-							'&:hover': {
-								backgroundColor: '#FF8A00',
-							},
-						}}
-                        onClick={() => setShowModal(true)}
-					>
+                        <Button
+    variant="contained"
+    sx={{
+      backgroundColor: '#FF8A00',
+      color: '#160449',
+      textTransform: 'none',
+      fontWeight: 'bold',
+      borderRadius: '8px',
+      height: '120px',
+      width: '200px',    
+      padding: '10px',
+      '&:hover': {
+        backgroundColor: '#FF8A00',
+      },
+    }}
+    onClick={() => setShowModal(true)}
+  >
 						Close Ticket
 					</Button>
-        </Grid>
+        
         
         <DateTimePickerModal
             setOpenModal={setShowModal}

@@ -1484,7 +1484,7 @@ const TenantLease = () => {
                 Please fill out all required fields.
               </Box>
             )}
-            {showInvalidDueDatePrompt && (
+            {/* {showInvalidDueDatePrompt && (
               <Box
                 sx={{
                   color: "red",
@@ -1493,7 +1493,7 @@ const TenantLease = () => {
               >
                 Please enter valid due dates in "MM-DD-YYYY" format for all fees.
               </Box>
-            )}
+            )} */}
           </Grid>
           <Grid item xs={12} sx={{ textAlign: "center", paddingBottom: 5 }}>
             <Button

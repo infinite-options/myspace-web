@@ -28,9 +28,9 @@ function UserLogin() {
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user_emai } = location.state || ''; // Access passed state here
+  const { user_email } = location.state || ''; // Access passed state here
   const [passModal, setpassModal] = useState(false);
-  const [email, setEmail] = useState(user_emai);
+  const [email, setEmail] = useState(user_email);
   const [password, setPassword] = useState("");
   const [showSpinner, setShowSpinner] = useState(false);
   const { setAuthData, setLoggedIn, selectRole } = useUser();

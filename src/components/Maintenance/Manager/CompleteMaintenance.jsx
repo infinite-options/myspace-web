@@ -109,52 +109,10 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams, qu
                 alignItems: "center",
                 justifyContent: "center",
                 width: "100%",
+                padding: '20px',
             }}
         >
-              <Card
-                sx={{
-                    backgroundColor: theme.palette.primary.main,
-                    boxShadow: 'none',
-                    elevation: '0',
-                    width: '50%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '0px',
-                }}
-            >
-            <Grid container justifyContent="space-between" sx={{ marginTop: theme.spacing(2), padding: theme.spacing(2) }}>
-			{quotes.length > 0 ? (
-			<Grid item>
-				<Button
-					variant="contained"
-					sx={{
-						backgroundColor: '#a7b8e6',
-						color: '#160449',
-						textTransform: 'none',
-						fontWeight: 'bold',
-						borderRadius: '8px',
-						width: '160px',
-						height: '120px',
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						textAlign: 'center',
-						padding: '10px',
-						boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
-						whiteSpace: 'normal',
-						'&:hover': {
-							backgroundColor: '#a7b8e6',
-						},
-					}}
-					onClick={() => handleNavigateToQuotesAccept()}
-				>
-					View Quotes
-				</Button>
-			</Grid>
-			) : null}
-            <Grid item>
+              
 				<Button
 					variant="contained"
 					sx={{
@@ -180,9 +138,6 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams, qu
 				>
                         
 					  {finishedQuote && maintenanceItem.maintenance_status !== "CANCELLED" ? "Pay Maintenance" : "Charge Owner"}
-				</Button>
-			</Grid>
-			
-            </Grid> </Card></Box>
+				</Button></Box>
     )
 }

@@ -912,7 +912,8 @@ const PropertyCard = (props) => {
 
 		// console.log("---dhyey--- contract fees - ", contractFees, "fees is - ", fees);
 		if(fees?.length === 0 && contractData["contract_status"] === "NEW"){
-			setContractFees([...defaultContractFees]);
+			const feesWithoutId = defaultContractFees.map(({ id, ...rest }) => rest);
+			setContractFees([...feesWithoutId]);
 		}else{
 			setContractFees(fees);
 		}

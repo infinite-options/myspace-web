@@ -110,107 +110,79 @@ export default function NewRequestAction({ maintenanceItem, navigateParams, quot
             <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <Card
-                sx={{
-                    backgroundColor: theme.palette.primary.main,
-                    boxShadow: 'none',
-                    elevation: '0',
-                    width: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'left',
-                    justifyContent: 'left',
-                    padding: '0px',
-                }}
-            >
-                <Grid container justifyContent="space-between" sx={{ marginTop: theme.spacing(2), padding: theme.spacing(2) }}>
-                    <Grid item>
-                        <Button
-                            variant="contained"
-                            sx={{
-                                backgroundColor: '#a7b8e6',
-                                color: '#160449',
-                                textTransform: 'none',
-                                fontWeight: 'bold',
-                                borderRadius: '8px',
-                                width: '160px',
-                                height: '120px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                textAlign: 'center',
-                                padding: '10px',
-                                boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
-                                whiteSpace: 'normal',
-                                '&:hover': {
-                                    backgroundColor: '#a7b8e6',
-                                },
-                            }}
-                            onClick={() => setShowRequestMoreInfo(true)}
-                        >
-                            Ask For Details
-                        </Button>
-                        <RequestMoreInfo fromQuote={false} showRequestMoreInfo={showRequestMoreInfo} setShowRequestMoreInfo={setShowRequestMoreInfo} maintenanceItem={maintenanceItem} />
-                    </Grid>
-                    <Grid item>
-                        <Button
-                            variant="contained"
-                            sx={{
-                                backgroundColor: '#FFC614',
-                                color: '#160449',
-                                textTransform: 'none',
-                                fontWeight: 'bold',
-                                borderRadius: '8px',
-                                width: '160px',
-                                height: '120px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                textAlign: 'center',
-                                padding: '10px',
-                                boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
-                                whiteSpace: 'normal',
-                                '&:hover': {
-                                    backgroundColor: '#FFC614',
-                                },
-                            }}
-                            onClick={() => setShowModal(true)}
-                        >
-                            Schedule
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <Button
-                            variant="contained"
-                            sx={{
-                                backgroundColor: '#F87C7A',
-                                color: '#160449',
-                                textTransform: 'none',
-                                fontWeight: 'bold',
-                                borderRadius: '8px',
-                                width: '160px',
-                                height: '120px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                textAlign: 'center',
-                                padding: '10px',
-                                boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
-                                whiteSpace: 'normal',
-                                '&:hover': {
-                                    backgroundColor: '#F87C7A',
-                                },
-                            }}
-                            onClick={() => handleNavigateToQuotesRequested()}
-                        >
-                            Request Quotes
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <CompleteButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage} />
-                    </Grid>
-                </Grid>
-            </Card>
+                <Box
+  sx={{
+    display: 'flex',  // Flexbox for horizontal alignment
+    justifyContent: 'space-between',  // Ensures space between buttons
+    flexWrap: 'nowrap',  // Prevent wrapping on larger screens
+    gap: 5,  // Space between buttons
+    width: '100%',
+    padding: '20px',
+  }}
+>
+  <Button
+    variant="contained"
+    sx={{
+      backgroundColor: '#a7b8e6',
+      color: '#160449',
+      textTransform: 'none',
+      fontWeight: 'bold',
+      borderRadius: '8px',
+      height: '120px',
+      width: '200px', 
+      padding: '10px',
+      '&:hover': {
+        backgroundColor: '#a7b8e6',
+      },
+    }}
+    onClick={() => setShowRequestMoreInfo(true)}
+  >
+    Ask For Details
+  </Button>
+
+  <Button
+    variant="contained"
+    sx={{
+      backgroundColor: '#FFC614',
+      color: '#160449',
+      textTransform: 'none',
+      fontWeight: 'bold',
+      borderRadius: '8px',
+      height: '120px',
+      width: '200px',   
+      padding: '10px',
+      '&:hover': {
+        backgroundColor: '#FFC614',
+      },
+    }}
+    onClick={() => setShowModal(true)}
+  >
+    Schedule
+  </Button>
+
+  <Button
+    variant="contained"
+    sx={{
+      backgroundColor: '#F87C7A',
+      color: '#160449',
+      textTransform: 'none',
+      fontWeight: 'bold',
+      borderRadius: '8px',
+      height: '120px',
+      width: '200px',   
+      padding: '10px',
+      '&:hover': {
+        backgroundColor: '#F87C7A',
+      },
+    }}
+    onClick={() => handleNavigateToQuotesRequested()}
+  >
+    Request Quotes
+  </Button>
+
+  <CompleteButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage} />
+                    </Box>
+
             <AlertMessage showMessage={showMessage} setShowMessage={setShowMessage} message={message} />
             <DateTimePickerModal
                 setOpenModal={setShowModal}

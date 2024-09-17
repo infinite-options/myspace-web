@@ -215,37 +215,19 @@ export default function ScheduleMaintenance({ maintenanceItem,navigateParams, qu
 			<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
 				<CircularProgress color="inherit" />
 			</Backdrop>
-			<Grid container justifyContent="space-between" sx={{ marginTop: theme.spacing(2), padding: theme.spacing(2) }}>
-			{quotes.length > 0 ? (
-			<Grid item>
-				<Button
-					variant="contained"
-					sx={{
-						backgroundColor: '#a7b8e6',
-						color: '#160449',
-						textTransform: 'none',
-						fontWeight: 'bold',
-						borderRadius: '8px',
-						width: '160px',
-						height: '120px',
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						textAlign: 'center',
-						padding: '10px',
-						boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
-						whiteSpace: 'normal',
-						'&:hover': {
-							backgroundColor: '#a7b8e6',
-						},
-					}}
-					onClick={() => handleNavigateToQuotesAccept()}
-				>
-					View Quotes
-				</Button>
-			</Grid>
-			) : null}
-			<Grid item>
+		<Box
+  sx={{
+    display: 'flex', 
+    alignItems: 'center',  // Flexbox for horizontal alignment
+    justifyContent: 'center',  // Ensures space between buttons
+    flexWrap: 'nowrap',  // Prevent wrapping on larger screens
+    gap: 15,  // Space between buttons
+    width: '100%',
+    padding: '20px',
+  }}
+>
+			
+			
 				<Button
 					variant="contained"
 					sx={{
@@ -254,7 +236,7 @@ export default function ScheduleMaintenance({ maintenanceItem,navigateParams, qu
 						textTransform: 'none',
 						fontWeight: 'bold',
 						borderRadius: '8px',
-						width: '160px',
+						width: '200px',
 						height: '120px',
 						display: 'flex',
 						alignItems: 'center',
@@ -271,8 +253,6 @@ export default function ScheduleMaintenance({ maintenanceItem,navigateParams, qu
 				>
 					Reschedule
 				</Button>
-			</Grid>
-			<Grid item>
 				<Button
 					variant="contained"
 					sx={{
@@ -281,7 +261,7 @@ export default function ScheduleMaintenance({ maintenanceItem,navigateParams, qu
 						textTransform: 'none',
 						fontWeight: 'bold',
 						borderRadius: '8px',
-						width: '160px',
+						width: '200px',
 						height: '120px',
 						display: 'flex',
 						alignItems: 'center',
@@ -298,12 +278,11 @@ export default function ScheduleMaintenance({ maintenanceItem,navigateParams, qu
 				>
 					Request Quotes
 				</Button>
-			</Grid>
-			<Grid item>
+			
 				<CompleteButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage} />
-			</Grid>
-		</Grid>
-	
+			
+		
+		</Box>
 		</Box>
 	);
 }

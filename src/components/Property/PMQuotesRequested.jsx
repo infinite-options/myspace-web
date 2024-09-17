@@ -689,7 +689,7 @@ export default function PMQuotesRequested(props) {
 
 function DocumentCard(props) {
   const data = props.data;
-  console.log("---dhyey--- data -", data);
+  // console.log("---dhyey--- data -", data);
   const [fees, setFees] = useState(JSON.parse(data.contract_fees) ? JSON.parse(data.contract_fees) : []);
   const [contractDocuments, setContractDocuments] = useState(JSON.parse(data.contract_documents)?JSON.parse(data.contract_documents) : [])
 
@@ -765,7 +765,9 @@ function DocumentCard(props) {
       <Box>
         <Typography sx={textStyle}>Contract ID: {data.contract_uid}</Typography>
       </Box>
-
+      <Box>
+        <Typography sx={textStyle}>Contract Name: {data.contract_name}</Typography>
+      </Box>
       <Box>
         <Typography sx={textStyle}>Estimated Fees</Typography>
       </Box>
