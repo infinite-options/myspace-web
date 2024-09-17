@@ -1027,7 +1027,7 @@ export default function PropertyNavigator({
               paddingBottom='10px'
             >
               {property
-                ? `${property.property_address} ${property.property_unit}, ${property.property_city} ${property.property_state} ${property.property_zip}`
+                ? property.property_unit ? `${property.property_address} #${property.property_unit}, ${property.property_city} ${property.property_state} ${property.property_zip}` : `${property.property_address}, ${property.property_city} ${property.property_state} ${property.property_zip}`
                 : "No Property Selected"}
             </Typography>
             <Typography

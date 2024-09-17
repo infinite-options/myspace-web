@@ -22,7 +22,7 @@ export default function UserDoesNotExistModal(props) {
             Cancel
           </Button>
 
-          <Button type="submit" onClick={() => navigate("/newUser")}>
+          <Button type="submit" onClick={() => navigate("/newUser",  { state: { user_email: email } })}>
             Signup
           </Button>
         </DialogActions>

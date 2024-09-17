@@ -251,6 +251,7 @@ function Properties() {
   }
 
   useEffect(()=>{
+    // console.log("----dhyey --- now list is complete")
     if(newPropertyUid!=""){
        setPropertyTo(newPropertyUid)
         setNewPropertyUid("")
