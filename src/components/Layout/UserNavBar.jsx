@@ -15,7 +15,13 @@ export default function UserNavBar(props){
 
  const { selectedRole, isLoggedIn, getProfileId } = useUser();  
 
- let computedWidth = props.isMobile ? "100%" : "40%"
+ const isMediumScreen = useMediaQuery(theme.breakpoints.between('md', 'lg')); // medium screens
+ const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
+ let computedWidth = props.isMobile ? "100%" : isMediumScreen ? '55%'     // for medium screens (md)
+: isLargeScreen
+ ? '45%'     // for large screens (lg)
+ : '60%';
+ 
  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
  
  const getHomeButtonNav = () => {
@@ -133,7 +139,7 @@ const getPhoneButtonNav = () => {
             <img
               src={Home_fill}
               alt="Home Icon"
-              style={{ display: 'block', margin: '0 5px', cursor: 'pointer' }}
+              style={{ display: 'block', margin: '3px', cursor: 'pointer' }}
               
             />
             {isDesktop && (
@@ -153,7 +159,7 @@ const getPhoneButtonNav = () => {
           <img
             src={getProfileId() ? User_fill : dark_User_fill }
             alt="User Icon"
-            style={{ display: 'block', margin: '0 5px', cursor: 'pointer' }}                        
+            style={{ display: 'block', margin: '3px', cursor: 'pointer' }}                        
           />
           {isDesktop && (
             <Typography              
@@ -172,7 +178,7 @@ const getPhoneButtonNav = () => {
           <img
             src={Bell_fill}
             alt="Bell Icon"
-            style={{ display: 'block', margin: '0 5px', cursor: 'pointer' }}            
+            style={{ display: 'block', margin: '3px', cursor: 'pointer' }}            
           />
           {isDesktop && (
             <Typography              
@@ -182,10 +188,8 @@ const getPhoneButtonNav = () => {
             </Typography>
           )}
         </Box>
-      </Grid>      
-      {
-        (
-          <Grid item xs={3}>
+      </Grid> 
+      <Grid item xs={3}>
             <Box 
               onClick={() => {
                 const { pathname, state } = getPhoneButtonNav();
@@ -196,7 +200,7 @@ const getPhoneButtonNav = () => {
               <img
                 src={phone_fill}
                 alt="Phone Icon"
-                style={{ display: 'block', margin: '0 5px', cursor: 'pointer' }}                
+                style={{ display: 'block', margin: '3px', cursor: 'pointer' }}                
               />
               {isDesktop && (
                 <Typography              
@@ -206,8 +210,11 @@ const getPhoneButtonNav = () => {
                 </Typography>
               )}
             </Box>
-          </Grid>
-        )
+      </Grid>     
+      {
+        // (
+          
+        // )
         // : (
         //   <Grid item xs={3}>
         //     <img
