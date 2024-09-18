@@ -60,6 +60,7 @@ export default function PMQuotesRequested(props) {
 	const {
 	  propertyList: propertyListFromContext,	  
     allContracts: allContractsFromContext,
+    fetchProperties : fetchPropertiesFromContext,
     fetchContracts: fetchContractsFromContext,	  
 	  returnIndex: returnIndexFromContext,
 	} = propertiesContext || {};
@@ -67,6 +68,7 @@ export default function PMQuotesRequested(props) {
 	const propertyList = propertyListFromContext || [];		
   const allContracts = allContractsFromContext || [];	
   const fetchContracts = fetchContractsFromContext;  
+  const refreshProperties = fetchPropertiesFromContext;
 	const returnIndex = returnIndexFromContext || 0;
   
   const [contracts, setContracts] = useState([]);
@@ -278,7 +280,8 @@ export default function PMQuotesRequested(props) {
             throw new Error("Network response was not ok");
           } else {
             console.log("Data added successfully");
-            refreshContracts();            
+            refreshContracts();
+            refreshProperties();            
           }
         })
         .catch((error) => {
@@ -689,7 +692,7 @@ export default function PMQuotesRequested(props) {
 
 function DocumentCard(props) {
   const data = props.data;
-  // console.log("---dhyey--- data -", data);
+  console.log("---dhyey--- data -", data);
   const [fees, setFees] = useState(JSON.parse(data.contract_fees) ? JSON.parse(data.contract_fees) : []);
   const [contractDocuments, setContractDocuments] = useState(JSON.parse(data.contract_documents)?JSON.parse(data.contract_documents) : [])
 
@@ -711,11 +714,13 @@ function DocumentCard(props) {
           method: "GET",
         });
         const responseData = await response.json();
+        const filteredResult = responseData.result.filter(item => item.business_uid === data.business_uid);
+        // console.log("filteredResult - ", filteredResult)
         if (
-          responseData.result.business_services_fees !== null &&
-          responseData.result[0].business_services_fees !== undefined
+          filteredResult[0].business_services_fees !== null &&
+          filteredResult[0].business_services_fees !== undefined
         ) {
-          setFees(JSON.parse(responseData.result[0].business_services_fees));
+          setFees(JSON.parse(filteredResult[0].business_services_fees));
         }
       } catch (error) {
         console.log("error", error);
@@ -769,15 +774,12 @@ function DocumentCard(props) {
         <Typography sx={textStyle}>Contract Name: {data.contract_name}</Typography>
       </Box>
       <Box>
-        <Typography sx={textStyle}>Estimated Fees</Typography>
+        <Typography sx={textStyle}>{data.contract_status === "NEW" ? "Estimated Fees" : "Quoted Fees"}</Typography>
       </Box>
 
-      {data !== null ? (
-        data.contract_status === "NEW" ? (
-          fees?.map((fee, index) => <FeesTextCard key={index} fee={fee} />)
-        ) : fees.length !== 0 ? (
+      {data !== null ? fees.length !== 0 ? (
           <>          
-            <FeesDataGrid data={JSON.parse(data?.contract_fees)} />
+            <FeesDataGrid data={fees} />
           </>
         ) : (          
           <Box
@@ -802,7 +804,7 @@ function DocumentCard(props) {
               </Typography>
             </Box>
         )
-      ) : (
+      : (
         <Typography sx={textStyle}>No data available</Typography>
       )}
 
