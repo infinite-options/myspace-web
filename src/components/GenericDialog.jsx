@@ -17,7 +17,7 @@ export default function GenericDialog(props) {
       case "success":
         return { color: "blue" }; // Blue for success
       default:
-        return { color: "green" }; // Yellow for warnings and others
+        return { color: "orange" }; // Yellow for warnings and others
     }
   };
 
