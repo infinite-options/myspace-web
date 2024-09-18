@@ -105,7 +105,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
   }, [ssn])
 
   useEffect(()=> {        
-    handleTaxIDChange(ssn);    
+    handleTaxIDChange(ssn, false);    
   }, [taxIDType])
 
 
@@ -252,7 +252,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
   //   updateModifiedData({ key: "tenant_ssn", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
   // };
 
-  const handleTaxIDChange = (value) => {
+  const handleTaxIDChange = (value, onchangeflag) => {
     // let value = event.target.value;
     if (value?.length > 11) return;
 
@@ -263,9 +263,11 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
       updatedTaxID = formatSSN(value)      
     }
     setSsn(updatedTaxID);
-    
-    // updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
-    updateModifiedData({ key: "tenant_ssn", value: AES.encrypt(updatedTaxID, process.env.REACT_APP_ENKEY).toString() });
+    if(onchangeflag){
+  // updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
+  updateModifiedData({ key: "tenant_ssn", value: AES.encrypt(updatedTaxID, process.env.REACT_APP_ENKEY).toString() });
+  
+    }
   };
 
   const handleJobTitleChange = (event) => {
@@ -417,6 +419,8 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
     { name: "Bank Account", icon: ChaseIcon, state: paymentMethods.bank_account },
   ];
 
+  const [modifiedPayment, setModifiedPayment] = useState(false);
+
   const renderPaymentMethods = () => {
     return paymentMethodsArray.map((method, index) => (
       <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={index}>
@@ -496,6 +500,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
     //   }
     // }
     setPaymentMethods(map);
+    setModifiedPayment(true);
   };
 
   const handleChangeValue = (e) => {
@@ -514,6 +519,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
         [name]: { ...prevState[name], value },
       }));
     }
+    setModifiedPayment(true);
   };
 
   const getPayload = () => {
@@ -727,7 +733,9 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
 
     saveProfile();
 
-    const paymentSetup = await handlePaymentStep();
+    if(modifiedPayment){
+      const paymentSetup = await handlePaymentStep();
+    }
     setShowSpinner(false);
     return;
   };
@@ -842,7 +850,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
         modifiedData?.forEach((item) => {
           console.log(`Key: ${item.key}`);
           if(item.key !== "tenant_ssn"){
-            profileFormData.append(item.key, JSON.stringify(item.value));
+            profileFormData.append(item.key, item.value);
           }else{
             profileFormData.append(item.key, item.value);
           }
@@ -976,7 +984,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                     placeholder='First name'
                     className={classes.root}
                     InputProps={{
-                      className: errors.firstName ? classes.errorBorder : '',
+                      className: errors.firstName || !firstName ? classes.errorBorder : '',
                     }}
                     required
                   />
@@ -991,7 +999,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                     placeholder='Last name'
                     className={classes.root} 
                     InputProps={{
-                      className: errors.lastName ? classes.errorBorder : '',
+                      className: errors.lastName || !lastName ? classes.errorBorder : '',
                     }}
                     required
                   />
@@ -1115,7 +1123,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                       placeholder='Email'
                       className={classes.root}
                       InputProps={{
-                        className: errors.email ? classes.errorBorder : '',
+                        className: errors.email || !email ? classes.errorBorder : '',
                       }}
                       required
                     ></TextField>
@@ -1142,7 +1150,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                       placeholder='Phone Number'
                       className={classes.root}
                       InputProps={{
-                        className: errors.phoneNumber ? classes.errorBorder : '',
+                        className: errors.phoneNumber || !phoneNumber ? classes.errorBorder : '',
                       }}
                       required
                     ></TextField>
@@ -1256,12 +1264,12 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                       value={ssn}
                       // onChange={(e) => setSsn(e.target.value)}
                       // onChange={handleSSNChange}
-                      onChange={(e) => handleTaxIDChange(e.target.value)}
+                      onChange={(e) => handleTaxIDChange(e.target.value, true)}
                       variant='filled'
                       placeholder='SSN'
                       className={classes.root}
                       InputProps={{
-                        className: errors.ssn ? classes.errorBorder : '',
+                        className: errors.ssn || !ssn ? classes.errorBorder : '',
                       }}
                       required
                     ></TextField>

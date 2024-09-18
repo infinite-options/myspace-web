@@ -79,6 +79,23 @@ const maskNumber = (value) => {
   return mask.slice(0, len + 2);
 };
 
+const newmaskNumber = (value = '') => {
+  // Ensure the value is in the correct format by removing non-numeric characters
+  const formattedValue = value.replace(/[^0-9]/g, ''); // Removes dashes and non-numeric characters
+
+  // Define the mask pattern and length of formattedValue
+  const len = formattedValue.length;
+
+  // Handle various input lengths to return the appropriate masked value
+  if (len === 0) return "";
+  if (len <= 3) return "*".repeat(len); // Mask up to the first 3 digits
+  if (len <= 5) return "***-" + formattedValue.slice(3, len); // Mask for the first 3 digits and show the next 1 or 2
+  if (len <= 9) return "***-**-" + formattedValue.slice(5, len); // Mask the first 5 digits, show the rest
+
+  return "***-**-" + formattedValue.slice(-4); // If fully entered (9 digits), show the last 4 digits
+};
+
+
 const maskEin = (value) => {
   const len = value.length;
   const mask = "**-*******";
@@ -131,6 +148,7 @@ export {
   identifyTaxIdType,
   headers,
   maskNumber,
+  newmaskNumber,
   maskEin,
   roleMap,
   photoFields,

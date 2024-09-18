@@ -8,7 +8,7 @@ import { useUser } from "../../contexts/UserContext";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
 import AddressAutocompleteInput from "../Property/AddressAutocompleteInput";
 import DataValidator from "../DataValidator";
-import { formatPhoneNumber, formatSSN, formatEIN, identifyTaxIdType, maskNumber, } from "./helper";
+import { formatPhoneNumber, formatSSN, formatEIN, identifyTaxIdType, maskNumber, newmaskNumber,} from "./helper";
 import { useOnboardingContext } from "../../contexts/OnboardingContext";
 import {
   Button,
@@ -103,8 +103,8 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     if(ein && identifyTaxIdType(ein) === "EIN") setTaxIDType("EIN");
   }, [ein])
 
-  useEffect(()=> {        
-    handleTaxIDChange(ein);    
+  useEffect(()=> {      
+    handleTaxIDChange(ein, false);    
   }, [taxIDType])
 
   const [employeePhoto, setEmployeePhoto] = useState("");
@@ -223,7 +223,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     updateModifiedData({ key: "business_phone_number", value: formatPhoneNumber(event.target.value) });
   };
 
-  const handleTaxIDChange = (value) => {
+  const handleTaxIDChange = (value, onchangeflag) => {
     // let value = event.target.value;
     if (value?.length > 11) return;
 
@@ -236,8 +236,11 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     setEin(updatedTaxID);
     
     // updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
-    updateModifiedData({ key: "business_ein_number", value: AES.encrypt(updatedTaxID, process.env.REACT_APP_ENKEY).toString() });
-  };
+    if(onchangeflag) {
+      updateModifiedData({ key: "business_ein_number", value: AES.encrypt(updatedTaxID, process.env.REACT_APP_ENKEY).toString() });
+  }
+};
+
 
   const handleEmpFirstNameChange = (event) => {
     setEmpFirstName(event.target.value);
@@ -328,7 +331,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
         credit_card: { value: "", checked: false, uid: "", status: "Inactive" },
         bank_account: { account_number: "", routing_number: "", checked: false, uid: "", status: "Inactive" },
       };
-      paymentMethodsData.forEach((method) => {
+      paymentMethodsData?.forEach((method) => {
         const status = method.paymentMethod_status || "Inactive";
         if (method.paymentMethod_type === "bank_account") {
           updatedPaymentMethods.bank_account = {
@@ -872,6 +875,8 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     { name: "Bank Account", icon: ChaseIcon, state: paymentMethods.bank_account },
   ];
 
+  const [modifiedPayment, setModifiedPayment] = useState(false);
+
   const renderPaymentMethods = () => {
     return paymentMethodsArray.map((method, index) => (
       <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={index}>
@@ -959,6 +964,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     //   }
     // }
     setPaymentMethods(map);
+    setModifiedPayment(true);
   };
 
   const handleChangeValue = (e) => {
@@ -977,6 +983,8 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
         [name]: { ...prevState[name], value },
       }));
     }
+
+    setModifiedPayment(true);
   };
 
   const handlePaymentStep = async () => {
@@ -1111,7 +1119,9 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
 
     saveProfile();
 
-    const paymentSetup = await handlePaymentStep();
+    if(modifiedPayment){
+      const paymentSetup = await handlePaymentStep();
+    }
     setShowSpinner(false);
     return;
   };
@@ -1223,7 +1233,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
         let hasEmployeeKey = false;
         let hasBusinessKey = false;
         modifiedData.forEach((item) => {
-          console.log(`Key: ${item.key}`);
+          console.log(`profileFormData Key: ${item.key}`);
           profileFormData.append(item.key, item.value);
 
           if (item.key.startsWith("employee_")) {
@@ -1270,6 +1280,9 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
       setShowSpinner(false);
     }
   };
+
+  const [showMasked, setShowMasked] = useState(true);
+  const displaySsn = showMasked ? newmaskNumber(ein) : formatSSN(ein);
 
   return (
     <>
@@ -1341,7 +1354,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                       placeholder='Business name'
                       className={classes.root}
                       InputProps={{
-                        className: errors.businessName ? classes.errorBorder : '',
+                        className: errors.businessName || !businessName ? classes.errorBorder : '',
                       }}
                       required
                     />
@@ -1465,7 +1478,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                         placeholder='Business Email'
                         className={classes.root}
                         InputProps={{
-                          className: errors.email ? classes.errorBorder : '',
+                          className: errors.email || !email ? classes.errorBorder : '',
                         }}
                         required
                       ></TextField>
@@ -1492,7 +1505,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                         placeholder='Business Phone Number'
                         className={classes.root}
                         InputProps={{
-                          className: errors.phoneNumber ? classes.errorBorder : '',
+                          className: errors.phoneNumber || !phoneNumber ? classes.errorBorder : '',
                         }}
                         required
                       ></TextField>
@@ -1547,14 +1560,19 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                       <TextField
                         fullWidth
                         // value={mask}
-                        value={ein}
+                        value={ein} 
                         // onChange={(e) => setSsn(e.target.value)}
-                        onChange={(e) => handleTaxIDChange(e.target.value)}
+                        onChange={(e) => handleTaxIDChange(e.target.value, true)} 
                         variant='filled'
                         placeholder='Enter numbers only'
                         className={classes.root}
                         InputProps={{
-                          className: errors.ein ? classes.errorBorder : '',
+                          className: errors.ein || !ein ? classes.errorBorder : '',
+                          // endAdornment: (
+                          //   <IconButton onClick={() => setShowMasked(!showMasked)}>
+                          //     {showMasked ? "Show" : "Hide"}
+                          //   </IconButton>
+                          // ),
                         }}
                         required
                       ></TextField>
@@ -1694,7 +1712,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                     className={classes.root}
                     // className={`${classes.root} ${errors.empFirstName ? classes.requiredField : ''}`}
                     InputProps={{
-                      className: errors.empFirstName ? classes.errorBorder : '',
+                      className: errors.empFirstName || !empFirstName ? classes.errorBorder : '',
                     }}
                     required
                   />                
@@ -1709,7 +1727,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                     placeholder='Last name'
                     className={classes.root}
                     InputProps={{
-                      className: errors.empLastName ? classes.errorBorder : '',
+                      className: errors.empLastName || !empLastName ? classes.errorBorder : '',
                     }}                  
                     required
                   />
