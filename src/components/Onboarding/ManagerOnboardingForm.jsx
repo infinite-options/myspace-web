@@ -103,8 +103,8 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     if(ein && identifyTaxIdType(ein) === "EIN") setTaxIDType("EIN");
   }, [ein])
 
-  useEffect(()=> {        
-    handleTaxIDChange(ein);    
+  useEffect(()=> {      
+    handleTaxIDChange(ein, false);    
   }, [taxIDType])
 
   const [employeePhoto, setEmployeePhoto] = useState("");
@@ -223,7 +223,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     updateModifiedData({ key: "business_phone_number", value: formatPhoneNumber(event.target.value) });
   };
 
-  const handleTaxIDChange = (value) => {
+  const handleTaxIDChange = (value, onchangeflag) => {
     // let value = event.target.value;
     if (value?.length > 11) return;
 
@@ -236,8 +236,10 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     setEin(updatedTaxID);
     
     // updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
-    updateModifiedData({ key: "business_ein_number", value: AES.encrypt(updatedTaxID, process.env.REACT_APP_ENKEY).toString() });
-  };
+    if(onchangeflag) {
+      updateModifiedData({ key: "business_ein_number", value: AES.encrypt(updatedTaxID, process.env.REACT_APP_ENKEY).toString() });
+  }
+};
 
 
   const handleEmpFirstNameChange = (event) => {
@@ -873,6 +875,8 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     { name: "Bank Account", icon: ChaseIcon, state: paymentMethods.bank_account },
   ];
 
+  const [modifiedPayment, setModifiedPayment] = useState(false);
+
   const renderPaymentMethods = () => {
     return paymentMethodsArray.map((method, index) => (
       <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={index}>
@@ -960,6 +964,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
     //   }
     // }
     setPaymentMethods(map);
+    setModifiedPayment(true);
   };
 
   const handleChangeValue = (e) => {
@@ -978,6 +983,8 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
         [name]: { ...prevState[name], value },
       }));
     }
+
+    setModifiedPayment(true);
   };
 
   const handlePaymentStep = async () => {
@@ -1112,7 +1119,9 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
 
     saveProfile();
 
-    const paymentSetup = await handlePaymentStep();
+    if(modifiedPayment){
+      const paymentSetup = await handlePaymentStep();
+    }
     setShowSpinner(false);
     return;
   };
@@ -1553,7 +1562,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
                         // value={mask}
                         value={ein} 
                         // onChange={(e) => setSsn(e.target.value)}
-                        onChange={(e) => handleTaxIDChange(e.target.value)} 
+                        onChange={(e) => handleTaxIDChange(e.target.value, true)} 
                         variant='filled'
                         placeholder='Enter numbers only'
                         className={classes.root}

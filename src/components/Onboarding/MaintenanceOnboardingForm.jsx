@@ -99,7 +99,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   }, [ein])
 
   useEffect(()=> {        
-    handleTaxIDChange(ein);    
+    handleTaxIDChange(ein, false);    
   }, [taxIDType])
 
 
@@ -222,7 +222,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   //   updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
   // };
 
-  const handleTaxIDChange = (value) => {
+  const handleTaxIDChange = (value, onchangeflag) => {
     // let value = event.target.value;
     if (value?.length > 11) return;
 
@@ -233,9 +233,11 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
       updatedTaxID = formatSSN(value)      
     }
     setEin(updatedTaxID);
-    
-    // updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
-    updateModifiedData({ key: "business_ein_number", value: AES.encrypt(updatedTaxID, process.env.REACT_APP_ENKEY).toString() });
+    if(onchangeflag){
+  // updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
+  updateModifiedData({ key: "business_ein_number", value: AES.encrypt(updatedTaxID, process.env.REACT_APP_ENKEY).toString() });
+  
+    }
   };
 
   const handleEmpFirstNameChange = (event) => {
@@ -797,7 +799,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
     { name: "Credit Card", icon: ChaseIcon, state: paymentMethods.credit_card },
     { name: "Bank Account", icon: ChaseIcon, state: paymentMethods.bank_account },
   ];
-
+  const [modifiedPayment, setModifiedPayment] = useState(false);
   const renderPaymentMethods = () => {
     return paymentMethodsArray.map((method, index) => (
       <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={index}>
@@ -885,6 +887,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
     //   }
     // }
     setPaymentMethods(map);
+    setModifiedPayment(true);
   };
 
   const handleChangeValue = (e) => {
@@ -903,6 +906,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
         [name]: { ...prevState[name], value },
       }));
     }
+    setModifiedPayment(true);
   };
 
   const handlePaymentStep = async () => {
@@ -1036,7 +1040,9 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
 
     saveProfile();
 
-    const paymentSetup = await handlePaymentStep();
+    if(modifiedPayment){
+      const paymentSetup = await handlePaymentStep();
+    }
     setShowSpinner(false);
     return;
   };
@@ -1517,7 +1523,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                       value={ein}
                       // onChange={(e) => setSsn(e.target.value)}
                       // onChange={handleEINChange}
-                      onChange={(e) => handleTaxIDChange(e.target.value)}
+                      onChange={(e) => handleTaxIDChange(e.target.value, true)}
                       variant='filled'
                       placeholder='SSN'
                       className={classes.root}
