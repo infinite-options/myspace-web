@@ -210,13 +210,17 @@ function ProfileEditor() {
   const getPasswordChangeForm = () => {
     if (profileData) {
       if (selectedRole === "OWNER") {
-        return <ChangePasswordSettings owner_data={profileData} setRHS={setRHS} />;
+        // return <ChangePasswordSettings owner_data={profileData} setRHS={setRHS} />;
+        return <ChangePasswordSettingsManager manager_data={profileData} setRHS={setRHS} />;
+        
       } else if (selectedRole === "MANAGER") {
         return <ChangePasswordSettingsManager manager_data={profileData} setRHS={setRHS} />;
       } else if (selectedRole === "TENANT") {
-        return <ChangePasswordSettingsTenant tenant_data={profileData} setRHS={setRHS} />;
+        // return <ChangePasswordSettingsTenant tenant_data={profileData} setRHS={setRHS} />;
+        return <ChangePasswordSettingsManager manager_data={profileData} setRHS={setRHS} />;
       } else {
-        return <ChangePasswordSettingsMaintenance maintenance_data={profileData} setRHS={setRHS} />;
+        // return <ChangePasswordSettingsMaintenance maintenance_data={profileData} setRHS={setRHS} />;
+        return <ChangePasswordSettingsManager manager_data={profileData} setRHS={setRHS} />;
       }
     } else {
       console.log("Profile data is not loaded yet");
