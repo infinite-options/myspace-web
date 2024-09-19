@@ -98,13 +98,13 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
         }
     }, [isUpdated]);
 
-    useEffect(() => {
-        console.log('ROHIT - vehicles - ', vehicles);        
-    }, [vehicles]);
+    // useEffect(() => {
+    //     console.log('vehicles - ', vehicles);        
+    // }, [vehicles]);
 
-    useEffect(() => {
-        console.log('ROHIT - states - ', states);        
-    }, [states]);
+    // useEffect(() => {
+    //     console.log('states - ', states);        
+    // }, [states]);
 
     useEffect(() => {
         if (leaseVehicles && leaseVehicles.length > 0) {

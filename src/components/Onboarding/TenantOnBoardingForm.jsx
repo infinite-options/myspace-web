@@ -177,11 +177,11 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
   //   console.log("modifiedData - ", modifiedData);
   // }, [modifiedData]);
 
-  useEffect(() => {
-    console.log("ROHIT - 148 - ssn - ", ssn);
-    console.log("ROHIT - 148 - profileData.tenant_ssn - ", profileData.tenant_ssn);
+  // useEffect(() => {
+  //   console.log("148 - ssn - ", ssn);
+  //   console.log("148 - profileData.tenant_ssn - ", profileData.tenant_ssn);
     
-  }, [ssn]);
+  // }, [ssn]);
 
   const updateModifiedData = (updatedItem) => {
     setModifiedData((prev) => {

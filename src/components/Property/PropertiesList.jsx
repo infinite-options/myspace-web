@@ -73,7 +73,7 @@ export default function PropertiesList(props) {
   
 
   useEffect(() => { 
-    console.log("ROHIT - 74 - props.showOnlyListings - ", props.showOnlyListings)       
+    // console.log("74 - props.showOnlyListings - ", props.showOnlyListings)       
     if(props.showOnlyListings && props.showOnlyListings === true){
       const onlyListings = propertyList?.filter( property => property.rent_status === "VACANT")
       setDisplayedItems(onlyListings);
@@ -225,7 +225,7 @@ export default function PropertiesList(props) {
     "Paid Late": theme.palette.priority.low,
     "Not Paid": theme.palette.priority.high,
     Vacant: "#160449",
-    "No Manager": theme.palette.priority.low,
+    "No Manager": "#626264",
     "Not Listed": theme.palette.priority.medium,
   };
 
@@ -240,7 +240,7 @@ export default function PropertiesList(props) {
   };
 
   function getPaymentStatusColor(paymentStatus, property) {
-    console.log("ROHIT - 214 - property - ", property);
+    // console.log("214 - property - ", property);
     if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property.property_available_to_rent && property.property_available_to_rent === 1)) {
       return paymentStatusColorMap["Vacant"];
     } else if((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property.property_available_to_rent == null || property.property_available_to_rent === 0)){

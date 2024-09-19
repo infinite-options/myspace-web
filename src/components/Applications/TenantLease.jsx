@@ -592,7 +592,7 @@ const TenantLease = () => {
           announcement_properties: JSON.stringify(receiverPropertyMapping),
           announcement_mode: "LEASE",
           announcement_receiver: [application.tenant_uid],
-          announcement_type: ["Text", "Email"],
+          announcement_type: ["Email", "Text"],
         }),
       });
       navigate("/managerDashboard");

@@ -306,7 +306,7 @@ const EditLease = (props) => {
                   announcement_properties: JSON.stringify(receiverPropertyMapping),
                   announcement_mode: "LEASE",
                   announcement_receiver: [leaseData.business_uid],
-                  announcement_type: ["Text", "Email"],
+                  announcement_type: ["Email", "Text"],
                 }),
               });
             } catch (error) {
