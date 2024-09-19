@@ -117,7 +117,7 @@ const RequestQuotes = (props) => {
       announcement_properties: annProperties,
       announcement_mode: "CONTRACT",
       announcement_receiver: [managerData.business_uid],
-      announcement_type: ["App", "Text", "Email"],
+      announcement_type: ["App", "Email", "Text"],
     });
 
     let config = {

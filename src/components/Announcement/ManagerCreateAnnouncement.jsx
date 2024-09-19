@@ -222,12 +222,13 @@ export default function ManagerCreateAnnouncement() {
       // console.log("sendAnnouncement - announcement_properties - string - ", JSON.stringify(announcement_properties))
 
       const announcement_types_list = [];
-      if (announcementTypes.text) {
-        announcement_types_list.push("Text");
-      }
       if (announcementTypes.email) {
         announcement_types_list.push("Email");
       }
+      if (announcementTypes.text) {
+        announcement_types_list.push("Text");
+      }
+      
 
       promises.push(
         fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {

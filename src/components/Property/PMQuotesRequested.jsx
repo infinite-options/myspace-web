@@ -33,6 +33,7 @@ import Backdrop from "@mui/material/Backdrop";
 import Documents from "../Leases/Documents";
 
 import PropertiesContext from '../../contexts/PropertiesContext';
+import { KeyboardReturnOutlined } from "@mui/icons-material";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -241,7 +242,64 @@ export default function PMQuotesRequested(props) {
     );
   }
 
-  function handleAccept(obj) {
+  const sendAnnouncement = async (status, obj) => {    
+    // const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
+    // console.log("sendAnnouncement - obj - ", obj);
+    // console.log("sendAnnouncement - property - ", property[returnIndex]);
+
+    // console.log("sendAnnouncement - status - ", status);
+    
+    // return;
+
+    const contractProperty = property[returnIndex];    
+
+    const receiverPropertyMapping = {
+        [obj.business_uid]: [obj.contract_property_id],
+    };
+  
+    let announcementTitle;
+    let announcementMessage;
+    
+    if(status === "ACCEPTED"){
+      announcementTitle = `Management Contract Quote Accepted`;
+      announcementMessage = `Your quote for Management contract - ${obj.contract_name} (Property - ${contractProperty.property_address}${contractProperty.property_unit ? (", " + contractProperty.property_unit) : ""}) has been accepted by the Owner - ${obj.owner_first_name || ""} ${obj.owner_last_name || ""}.`;
+    } else if(status === "DECLINED") {
+      announcementTitle = `Management Contract Quote Declined`;
+      announcementMessage = `Your quote for Management contract - ${obj.contract_name} (Property - ${contractProperty.property_address}${contractProperty.property_unit ? (", " + contractProperty.property_unit) : ""}) has been declined by the Owner - ${obj.owner_first_name || ""} ${obj.owner_last_name || ""}.`;
+    }
+    
+  
+    try {
+      const response = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            announcement_title: announcementTitle,
+            announcement_msg: announcementMessage,
+            announcement_sender: getProfileId(),
+            announcement_date: new Date().toDateString(),			  
+            announcement_properties: JSON.stringify(receiverPropertyMapping),
+            announcement_mode: "CONTRACT",
+            announcement_receiver: [obj.business_uid],
+            announcement_type: ["App", "Email", "Text"],
+          }),
+        });
+  
+        if (response.ok) {
+        
+        // navigate("/managerDashboard"); 
+        } else {
+        throw new Error(`Failed to send the announcement: ${response.statusText}`);
+        }
+    } catch(error) {
+        alert("Error sending announcement to the Manager");
+        console.error("Error sending announcement to Property Manager - ", error);
+    }
+  };
+
+  function handleAccept(obj) {          
     try {
       const newContractStart = new Date(obj.contract_start_date);
       const newContractEnd = new Date(obj.contract_end_date);
@@ -280,6 +338,7 @@ export default function PMQuotesRequested(props) {
             throw new Error("Network response was not ok");
           } else {
             console.log("Data added successfully");
+            sendAnnouncement("ACCEPTED", obj);
             refreshContracts();
             refreshProperties();            
           }
@@ -293,8 +352,7 @@ export default function PMQuotesRequested(props) {
     setTabStatus(1);    
   }
 
-  function handleDecline(obj) {
-    
+  function handleDecline(obj) {        
     try {
       const formData = new FormData();
       formData.append("contract_uid", obj.contract_uid);
@@ -304,6 +362,7 @@ export default function PMQuotesRequested(props) {
         .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts", formData)
         .then((response) => {
           console.log("PUT result", response);
+          sendAnnouncement("DECLINED", obj);
           refreshContracts();
         })
         .catch((error) => {

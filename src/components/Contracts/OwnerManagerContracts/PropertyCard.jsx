@@ -883,7 +883,7 @@ const PropertyCard = (props) => {
   const setContractDetails = () => {
 	if (allContracts !== null && allContracts !== undefined) {
 	  const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
-	  console.log("ROHIT - setContractDetails - contractData - ", contractData);
+	//   console.log("setContractDetails - contractData - ", contractData);	  
 	  // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
 	  if (contractData) {
 		setContractName(contractData["contract_name"] ? contractData["contract_name"] : "");
@@ -940,6 +940,10 @@ const PropertyCard = (props) => {
 	
     setContractDetails();
 	console.log("contract files - ", contractFiles, " isPReviousChange - ", isPreviousFileChange);
+
+	//debug
+	const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
+	// console.log("946 - contractData - ", contractData);
 	
 
   }, [currentContractUID, allContracts, defaultContractFees]);
@@ -1349,12 +1353,60 @@ const PropertyCard = (props) => {
         } else {
           // console.log("Data updated successfully");
 		  setIsChange(false)
-          navigate("/managerDashboard");
+		  sendAnnouncement();
+        //   navigate("/managerDashboard");
         }
       })
       .catch((error) => {
         console.error("There was a problem with the fetch operation:", error);
       });
+  };
+
+  const sendAnnouncement = async () => {    
+	const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
+	// console.log("sendAnnouncement - contract - ", contractData)
+    const receiverPropertyMapping = {
+        [contractData.property_owner_id]: [contractData.property_id],
+    };
+
+	let announcementTitle;
+	let announcementMessage;
+	if(contractStatus === "NEW") {
+		announcementTitle = `New Quote for Management Contract`
+		announcementMessage = `You have received a new quote for a Management contract (Property - ${contractData.property_address}${contractData.property_unit ? (", " + contractData.property_unit) : ""}) from ${contractData.business_name}.`
+	} else if (contractStatus === "SENT") {
+		announcementTitle = "Quote Updated by Property Manager"
+		announcementMessage = `Quote for Management contract (Property - ${contractData.property_address}${contractData.property_unit ? (", " + contractData.property_unit) : ""}) has been updated by ${contractData.business_name}.`
+	}
+
+	try {
+		const response = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
+			method: "POST",
+			headers: {
+			  "Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+			  announcement_title: announcementTitle,
+			  announcement_msg: announcementMessage,
+			  announcement_sender: getProfileId(),
+			  announcement_date: new Date().toDateString(),			  
+			  announcement_properties: JSON.stringify(receiverPropertyMapping),
+			  announcement_mode: "CONTRACT",
+			  announcement_receiver: [contractData.property_owner_id],
+			  announcement_type: ["App", "Email", "Text"],
+			}),
+		  });
+
+		  if (response.ok) {
+			
+			navigate("/managerDashboard"); 
+		  } else {
+			throw new Error(`Failed to send the announcement: ${response.statusText}`);
+		  }
+	} catch(error) {
+		alert("Error sending announcement to Property Owner");
+		console.error("Error sending announcement to Property Owner - ", error);
+	}
   };
 
   const getFormattedFeeFrequency = (frequency) => {

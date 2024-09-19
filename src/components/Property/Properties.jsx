@@ -33,7 +33,7 @@ function Properties() {
   // console.log("In Properties RHS: ", location.state?.showRHS);
   console.log("location.state", location.state);
   const [ showOnlyListings, setShowOnlyListings ] = useState(location.state?.showOnlyListings ? location.state?.showOnlyListings : false);
-  console.log("ROHIT - showOnlyListings", showOnlyListings);
+  console.log("Properties - showOnlyListings", showOnlyListings);
   // const { propertyList, setPropertyList, returnIndex, setReturnIndex  } = useContext(PropertiesContext); 
   const propertiesContext = useContext(PropertiesContext);
 	const {

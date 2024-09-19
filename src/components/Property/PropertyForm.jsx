@@ -16,10 +16,19 @@ import {
 	ThemeProvider,
 	Modal,
 	Dialog,
+	DialogTitle,
 	DialogContent,
 	DialogContentText,
 	DialogActions,
+	Stack,
+	Paper,
+	Radio,
+	RadioGroup,
 } from '@mui/material';
+import { withStyles } from "@mui/styles";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
+import CloseIcon from "@mui/icons-material/Close";
 import { makeStyles } from '@mui/styles';
 // import MapIcon from '@mui/icons-material/Map';
 // import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
@@ -31,11 +40,13 @@ import { getLatLongFromAddress } from "../../utils/geocode";
 import StaticMap from "./StaticMap"
 import APIConfig from "../../utils/APIConfig";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ReferUser from '../../components/Referral/ReferUser';
+// import ReferUser from '../../components/Referral/ReferUser';
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import axios from "axios";
+import { formatPhoneNumber, headers, roleMap } from "../Onboarding/helper"
 
 import PropertiesContext from '../../contexts/PropertiesContext';
 import ListsContext from '../../contexts/ListsContext';
@@ -111,6 +122,8 @@ const useStyles = makeStyles({
 	},
 });
 
+
+
 const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setReloadPropertyList,setNewPropertyUid}) => {
 	
 	const { getList, } = useContext(ListsContext);
@@ -125,6 +138,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 	const [readOnlyNotes, setReadOnlyNotes] = useState(selectedRole === "MANAGER" ? true : false);	
 	const [selectedImageList, setSelectedImageList] = useState([]);
 	const [referedUser, setReferedUser]=useState(false);
+	const [referredOwner, setReferredOwner]=useState({});
 
 	const location = useLocation();	
 
@@ -141,7 +155,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 	const [cost, setCost] = useState('');
 	const [assessmentYear, setAssessmentYear] = useState('');
 	const [ownerId, setOwnerId] = useState(getProfileId());
-	const [selectedOwner, setSelectedOwner] = useState("");
+	const [selectedOwner, setSelectedOwner] = useState(null);
 	const [notes, setNotes] = useState('');
 	const [showSpinner, setShowSpinner] = useState(false);
 	const [activeStep, setActiveStep] = useState(0);
@@ -154,6 +168,9 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 
 
 	const [showGoBackDialog, setShowGoBackDialog ] = useState(false);
+
+	const [message, setMessage] = useState("");
+	const [showEmailSentDialog, setShowEmailSentDialog] = useState(false);
 
 	const handleCloseModal = () => {
 		setIsModalOpen(false);
@@ -173,10 +190,21 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 	// 	console.log("Address city set to 23", city)
 	// }, [address, unit, city, state, zip]);
 
+
 	
+
 	// useEffect(() => {
-	// 	console.log("assessmentYear - ", assessmentYear);
-	// }, [assessmentYear]);
+	// 	console.log("194 - referredOwner - ", referredOwner);		
+	// }, [referredOwner]);
+
+	
+	useEffect(() => {
+		console.log("selectedOwner - ", selectedOwner);
+		setReferredOwner({})
+		// if(selectedOwner == null){
+		// 	setIsModalOpen(false);
+		// }
+	}, [selectedOwner]);
 
 	const handleUnitChange = (event) => {
 		setUnit(event.target.value);
@@ -217,8 +245,10 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 	const handleOwnerChange = (event) => {
 		if (event.target.value === 'referOwner') {
 			setIsModalOpen(true);
+			setSelectedOwner(null);
 			setReferedUser(false);
 		} else {
+			setIsModalOpen(false);
 			setSelectedOwner(event.target.value);
 			setReferedUser(true);
 		}
@@ -227,6 +257,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 
 	const handleSetSelectedOwner = (userId) => {
 		setSelectedOwner(userId);
+		setReferedUser(true);
 		setIsModalOpen(false);
 	};
 
@@ -249,39 +280,10 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		});
 	};
 
-	const handleSubmit = async (event) => {
-		console.log("is it in handlesubmit");
+	//calls properties and contracts
+	const handleSaveProperty = async (ownerUID) => {
+		if(ownerUID == null) return;
 
-		if (!address) {
-			alert("Address should not be empty.");
-			return;
-		  }
-	      
-		  if (!type) {
-			alert("Type of the property should not be empty.");
-			return;
-		  }
-		  
-		  if (!squareFootage) {
-			alert("Area of the property should not be empty.");
-			return;
-		  }
-
-		  if (!bedrooms) {
-			alert("No of beds should not be empty.");
-			return;
-		  }
-		  if (!bathrooms) {
-			alert("No of bath should not be empty.");
-			return;
-		  }
-
-		  if(selectedRole === "MANAGER" && referedUser==false){
-			alert("Please refer an owner for the property");
-			return;
-		  }
-		  
-		event.preventDefault();
 		setShowSpinner(true);
 		const formData = new FormData();
 
@@ -300,7 +302,8 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 			formData.append("property_longitude", coordinates.longitude);
 		}
 
-		formData.append("property_owner_id", selectedOwner ? selectedOwner : ownerId);
+		// formData.append("property_owner_id", selectedOwner ? selectedOwner : ownerId);
+		formData.append("property_owner_id", ownerUID);
 
 		formData.append("property_active_date", formattedDate);
 		formData.append("property_address", address);
@@ -445,6 +448,291 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 
 	};
 
+	const handleExistingUser = async (createAccResponse) => {    
+		const userRolesList = createAccResponse.user_roles?.split(",");
+		const userUID = createAccResponse.user_uid;
+	
+		console.log("handleExistingUser - userRolesList - ", userRolesList);
+		console.log("handleExistingUser - userUID - ", userUID);
+	
+		if (userRolesList.includes('OWNER')) {		  			
+			//create property with user id
+			handleSaveProperty(userUID);
+		} else {        
+			  //add role
+			// create owner profile
+			setShowSpinner(true);
+			userRolesList.push("OWNER");
+			const updatedRoles = userRolesList.join(",");
+			// Send the update request to the server
+			const response = await axios.put("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateUserByUID/MYSPACE", {
+				user_uid: userUID,
+				role: updatedRoles,
+			});
+			// Check if the response is successful
+			if (response.status === 200) {				
+				console.log("Role - \"OWNER\" added to existing user successfully");				
+				const payload = {
+					owner_user_id: userUID,
+					// owner_first_name: response.data.result?.user?.first_name,
+					// owner_last_name: response.data.result?.user?.last_name,
+					// owner_phone_number: response.data.result?.user?.phone_number,
+					// owner_email: response.data.result?.user?.email
+					owner_first_name: referredOwner?.first_name,
+					owner_last_name: referredOwner?.last_name,
+					owner_phone_number: referredOwner?.phone_number,
+					owner_email: referredOwner?.email
+				};
+				
+				const form = new FormData();
+				for (let key in payload) {      
+					form.append(key, payload[key]);      
+				}
+
+				// for (var pair of form.entries()) {
+				//   console.log(pair[0]+ ', ' + pair[1]); 
+				// }
+				const { profileApi } = roleMap["OWNER"];
+
+				const { data } = await axios.post(
+					`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`,
+					form,
+					headers
+				);
+
+				// if (data.owner_uid) {
+				//   updateProfileUid({ owner_id: data.owner_uid });
+				// }
+				
+				// const userUID = response.data.result?.user?.user_uid;        
+				// const link = `http://localhost:3000/referralSignup/${userUID}`
+				const link = `https://iopropertymanagement.netlify.app/referralSignup/${userUID}`
+				
+				const emailPayload = {
+					"receiver": referredOwner.email,
+					"email_subject": `Owner Profile created for your account at ManifestMySpace`,
+					"email_body": message + `Please Login to your account and verify your profile information.`,
+				}
+				const emailResponse = await axios.post(
+					"https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/sendEmail",
+					emailPayload
+				);
+
+				if(emailResponse.status === 200){
+					setShowEmailSentDialog(true);
+				//   onReferralSuccess(data.owner_uid); 
+					handleSetSelectedOwner(data.owner_uid);
+					setReferedUser(true)
+				} else {
+					throw Error("Could not send an email to the new user.");
+				}
+
+				setShowSpinner(false);
+
+				// navigate(-1);
+
+				// console.log("data - ", data);
+				if (data.owner_uid) {
+					handleSaveProperty(data.owner_uid);
+				}	
+
+			} else {
+				alert("An error occurred while updating the roles for the new user.");
+			}
+		}
+	}
+
+	  const isEmptyObject = (obj) => {
+	    return obj && Object.keys(obj).length === 0 && obj.constructor === Object;
+	  };
+	
+	  const handleSubmitNew = async (event) => {
+	    event.preventDefault();
+
+		//checks for property fields
+		if (!address) {
+			alert("Address should not be empty.");
+			return;
+		}
+		
+		if (!type) {
+			alert("Type of the property should not be empty.");
+			return;
+		}
+		
+		if (!squareFootage) {
+			alert("Area of the property should not be empty.");
+			return;
+		}
+
+		if (!bedrooms) {
+			alert("No of beds should not be empty.");
+			return;
+		}
+		if (!bathrooms) {
+			alert("No of bath should not be empty.");
+			return;
+		}
+
+		if(selectedRole === "MANAGER" && selectedOwner == null && ( isEmptyObject(referredOwner) || referredOwner == null )){
+			alert("Please select an owner (or) refer a new owner for the property");
+			return;
+		}
+		console.log("handleSubmitNew - selectedOwner - ", selectedOwner);
+		console.log("handleSubmitNew - referredOwner - ", referredOwner);
+
+		if(selectedRole === "OWNER"){
+			handleSaveProperty(ownerId);
+			return;
+		}
+
+		if(selectedOwner != null){
+			// create property as usual
+			handleSaveProperty(selectedOwner)
+			return;
+		} else {
+			// referring a new owner
+
+			
+			
+			handleReferOwner()
+				.then(() => {
+					console.log("Successfully Referred Owner ");
+					//handleSaveProperty(ownerUID);
+				})
+				.catch(error => {
+					console.error("Error referring owner:", error);
+				});
+		}
+		  		    
+	  };
+
+	const handleNewUser = async (response) => {
+		console.log("---response before payload---", response);
+		setShowSpinner(true);
+		const payload = {
+			owner_user_id: response.data.result?.user?.user_uid,
+			owner_first_name: referredOwner?.first_name,
+			owner_last_name: referredOwner?.last_name,
+			owner_phone_number: referredOwner?.phone_number,
+			owner_email: referredOwner?.email
+		};
+		
+		const form = new FormData();
+		for (let key in payload) {      
+			form.append(key, payload[key]);      
+		}
+
+		// for (var pair of form.entries()) {
+		//   console.log(pair[0]+ ', ' + pair[1]); 
+		// }
+		const { profileApi } = roleMap["OWNER"];
+
+		const { data } = await axios.post(
+			`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`,
+			form,
+			headers
+		);
+
+		// if (data.owner_uid) {
+		//   updateProfileUid({ owner_id: data.owner_uid });
+		// }
+		
+		const userUID = response.data.result?.user?.user_uid;        
+		// const link = `http://localhost:3000/referralSignup/${userUID}`
+		const link = `https://iopropertymanagement.netlify.app/referralSignup/${userUID}`
+		
+		const emailPayload = {
+			"receiver": referredOwner.email,
+			"email_subject": `You have been invited to join ManifestMySpace`,
+			"email_body": message + ` Please sign up using the link - ${link}. Don't forget to verify your profile information and create a password to finish setting up your profile. You can also sign up using your Google Account.`,
+		}
+		const emailResponse = await axios.post(
+			"https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/sendEmail",
+			emailPayload
+		);
+
+		if(emailResponse.status === 200){
+			setShowEmailSentDialog(true);
+		//   onReferralSuccess(data.owner_uid); 
+			handleSetSelectedOwner(data.owner_uid);
+			setReferedUser(true)
+		} else {
+			throw Error("Could not send an email to the new user.");
+		}
+
+		setShowSpinner(false);
+
+		// navigate(-1);
+
+		console.log("handleNewUser - data - ", data);
+		if (data.owner_uid) {
+		  return data.owner_uid;
+		}
+	}
+
+	const handleReferOwner = async () => {
+		// 3 cases
+			//  a - new user - create account, profile - post, properties- post
+			// 	b - existing user without an owner role - createAccount, updateUserByUID, profile- post, properties - post
+			//  c - existing user with an owner role - createAccount, properties - post
+
+			setShowSpinner(true);
+			// const role = roles.join(",");
+			const payload = {
+			  "first_name" : referredOwner.first_name,
+			  "last_name" : referredOwner.last_name,
+			  "phone_number" : referredOwner.phone_number,
+			  "email": referredOwner.email,
+			  "password": `referred by ${getProfileId()}`,
+			  "role": "OWNER",
+			  "isEmailSignup": true,      
+			};
+
+			console.log("handleReferOwner - payload - ", payload)
+			// return;
+			
+			// setOnboardingState({
+			//   ...onboardingState,
+			//   roles,
+			// });
+			const isEmailSignup = true
+			if (isEmailSignup) {
+			  const response = await axios.post(
+				"https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/CreateAccount/MYSPACE",
+				payload
+			  );
+			  if (response.data.message === "User already exists") {
+				// alert(response.data.message);
+				// handleExistingUser(response.data);
+				handleExistingUser(response.data)
+					// .then(ownerUID => {
+					// 	handleSaveProperty(ownerUID); // Use the resolved value
+					// })
+					.then(() => {
+						console.log("handleExistingUser successful.")
+					})
+					.catch(error => {
+						console.error("Error handling refer owner:", error);
+					});
+				setShowSpinner(false);
+				return;
+			  } else {
+				// setAuthData(response.data.result); 
+				handleNewUser(response)
+					.then(ownerUID => {
+						// console.log("ownerUID from handleNewUser - ", ownerUID)
+						handleSaveProperty(ownerUID); 
+					})
+					.catch(error => {
+						console.error("Error handling refer owner:", error);
+					});
+				setShowSpinner(false);				
+			  }
+			}
+
+	}
+
 	useEffect(() => {
 		//This runs for a manager who wants to select an owner while adding a property
 		if (selectedRole === "MANAGER") {
@@ -507,6 +795,9 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 
 	return (
 		<ThemeProvider theme={theme}>
+			<Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+				<CircularProgress color="inherit" />
+			</Backdrop>
 			<Container maxWidth="md" style={{ backgroundColor: '#F2F2F2', padding: '16px', borderRadius: '8px', marginTop: '15px', }}>
 				<Grid container spacing={8}>
 					<Grid item xs={2}>
@@ -943,6 +1234,13 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 									<div></div>
 								)}
 							</Grid>
+							{
+								isModalOpen && (
+									<Grid item xs={12}>
+										<ReferOwner onClose={handleCloseModal} setReferredOwner={setReferredOwner} setSelectedOwner={setSelectedOwner} setMessage={setMessage}/>
+									</Grid>
+								)
+							}
 
 						</Grid>
 					</CardContent>
@@ -1012,18 +1310,13 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 								fontWeight: 'bold',
 								textTransform: 'none',
 							}}
-							onClick={handleSubmit}
+							// onClick={handleSubmit}
+							onClick={handleSubmitNew}
 						>
 							Save Property
 						</Button>
 					</Grid>
-				</Grid>
-				<Modal open={isModalOpen} onClose={handleCloseModal}>
-					<Box>
-						<ReferUser onClose={handleCloseModal} onReferralSuccess={handleSetSelectedOwner} setReferedUser={setReferedUser}/>
-					</Box>
-				</Modal>
-				
+				</Grid>								
 				<Dialog
 					open={showGoBackDialog}
 					onClose={() => setShowGoBackDialog(false)}
@@ -1080,9 +1373,250 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 					</Box>
 					</DialogActions>
 				</Dialog>
+
+				<Dialog open={showEmailSentDialog} onClose={() => setShowEmailSentDialog(false)} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+					<DialogTitle id="alert-dialog-title">Referral Sent</DialogTitle>
+					<DialogContent>                
+					<DialogContentText
+						id="alert-dialog-description"
+						sx={{
+						color: theme.typography.common.blue,
+						fontWeight: theme.typography.common.fontWeight,
+						paddingTop: "10px",
+						}}
+					>
+						Thank you for referring a new user to ManifestMySpace. An email has been sent to the user with a link to Sign Up.
+					</DialogContentText>
+					</DialogContent>
+					<DialogActions>
+					{/* <Button onClick={() => handleCancel(managerData)} color="primary" autoFocus> */}
+					<Button
+						onClick={() => setShowEmailSentDialog(false)}
+						sx={{
+						color: "white",
+						backgroundColor: "#3D5CAC80",
+						":hover": {
+							backgroundColor: "#3D5CAC",
+						},
+						}}
+						autoFocus
+					>
+						OK
+					</Button>          
+					</DialogActions>
+				</Dialog>
 				
 			</Container>
 		</ThemeProvider>);
 };
+
+const CustomTextField = withStyles({
+    root: {
+      '& .MuiOutlinedInput-root': {
+        border: "none",
+        '&.Mui-focused fieldset': {
+          borderColor: 'transparent', 
+        },
+        '&:hover fieldset': {
+            borderColor: 'transparent', 
+          },
+      },
+    },
+})(TextField);
+
+function ReferOwner({ onClose, onReferralSuccess, setReferedUser, setReferredOwner, setSelectedOwner, setMessage}) {	
+		
+	const { getProfileId, } = useUser();
+	// const [showSpinner, setShowSpinner] = useState(false);
+  
+	
+	
+	const [email, setEmail] = useState("");
+	const [firstName, setFirstName] = useState("");
+	const [lastName, setLastName] = useState("");
+	const [phoneNumber, setPhoneNumber] = useState("");	
+	// const [role, setRole] = useState("");
+
+	useEffect(() => {		
+		setReferredOwner( prevState => ({
+			...prevState,
+			"email": email? email : "",
+			"first_name": firstName? firstName : "",
+			"last_name": lastName? lastName : "",
+			"phone_number": phoneNumber? phoneNumber : "",
+			"password": `referred by ${getProfileId()}`,
+			"role": "OWNER",
+			"isEmailSignup": true,    
+		}));
+	}, [email, firstName, lastName, phoneNumber]); 
+	  
+	return (
+	  // <ThemeProvider theme={theme}>
+	  <>
+		
+		<Stack
+		  style={{
+			display: "flex",
+			flexDirection: "column", // Stack the content vertically
+			justifyContent: "flex-start", // Start content at the top
+			alignItems: "center", // Center content horizontally
+			width: "100%",
+			// minHeight: "100vh",
+			marginTop: theme.spacing(2), // Adjust this for desired distance from the top
+			// paddingBottom: "50px",
+		  }}
+		>
+		  <Paper
+			style={{
+			  margin: "10px",
+			  padding: theme.spacing(2),
+			  backgroundColor: "#F2F2F2",
+			  width: "100%", // Occupy full width with 25px margins on each side
+			//   [theme.breakpoints.down("sm")]: {
+			// 	width: "80%",
+			//   },
+			//   [theme.breakpoints.up("sm")]: {
+			// 	width: "50%",
+			//   },
+			  paddingTop: "10px",
+			}}
+		  >
+			<Stack direction="row" justifyContent="center" alignItems="center" position="relative">
+			  <Box direction="row" justifyContent="center" alignItems="center">
+				<Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+				  Refer an Owner
+				</Typography>
+			  </Box>
+			  {/* <Box position="absolute" right={0}>
+				<Button onClick={onClose}>
+				  <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px", margin: "5px" }} />
+				</Button>
+			  </Box> */}
+			</Stack>
+  
+			<Stack direction="column" justifyContent="center" alignItems="center" padding="25px">
+			  <Box
+				// component="form"
+				sx={
+				  {
+					// '& .MuiTextField-root': { m: 1, width: '25ch' },
+				  }
+				}
+				// noValidate
+				autoComplete="off"
+				id="addPropertyForm"
+			  >
+				<Grid container columnSpacing={12} rowSpacing={6}>                                                
+				  <Grid item xs={12}>
+					<Typography sx={{ color: theme.typography.common.blue, fontSize: theme.typography.mediumFont }}>
+					  First Name
+					</Typography>
+					<CustomTextField
+					  onChange={(e) => setFirstName(e.target.value)}
+					  sx={{
+						backgroundColor: "#D9D9D9",
+						border: "none",
+						outline: "none",
+					  //   borderColor: "black",
+						borderRadius: "10px",
+						"&:focus-within": {
+						  outline: "none",
+						  borderColor: "transparent",
+						  boxShadow: "none",
+						},
+					  }}
+					  size="small"
+					  fullWidth
+					/>
+				  </Grid>
+  
+				  <Grid item xs={12}>
+					<Typography sx={{ color: theme.typography.common.blue, fontSize: theme.typography.mediumFont }}>
+					  Last Name
+					</Typography>
+					<CustomTextField
+					  onChange={(e) => setLastName(e.target.value)}
+					  sx={{
+						backgroundColor: "#D9D9D9",
+						border: "none",
+						outline: "none",
+					  //   borderColor: "black",
+						borderRadius: "10px",
+						"&:focus-within": {
+						  outline: "none",
+						  borderColor: "transparent",
+						  boxShadow: "none",
+						},
+					  }}
+					  size="small"
+					  fullWidth
+					/>
+				  </Grid>
+  
+				  <Grid item xs={12}>
+					<Typography sx={{ color: theme.typography.common.blue, fontSize: theme.typography.mediumFont }}>
+					  Email
+					</Typography>
+					<CustomTextField
+					  onChange={(e) => setEmail(e.target.value)}
+					  sx={{
+						backgroundColor: "#D9D9D9",
+						borderColor: "black",
+						borderRadius: "7px",
+					  }}                    
+					  size="small"
+					  fullWidth                    
+					/>
+				  </Grid>
+  
+				  <Grid item xs={12}>
+					<Typography sx={{ color: theme.typography.common.blue, fontSize: theme.typography.mediumFont }}>
+					  {"Phone Number (Optional)"}
+					</Typography>					
+					<CustomTextField
+					  type="tel"
+					  pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+					  value={phoneNumber}
+					  onChange={(e) =>
+						setPhoneNumber(formatPhoneNumber(e.target.value))
+					  }
+					  // placeholder="Phone Number"
+					  sx={{
+						backgroundColor: "#D9D9D9",
+						borderColor: "black",
+						borderRadius: "7px",
+					  }}
+					  size="small"
+					  fullWidth                    
+					/>
+				  </Grid>
+  
+				  <Grid item xs={12}>
+					  <Typography sx={{ color: theme.typography.common.blue, fontSize: theme.typography.mediumFont }}>
+						  Message
+					  </Typography>
+					  <CustomTextField
+						  onChange={(e) => setMessage(e.target.value)}
+						  sx={{
+							  backgroundColor: "#D9D9D9",
+							  borderColor: "black",
+							  borderRadius: "7px",
+						  }}
+						  size="small"
+						  fullWidth
+						  multiline   // Set multiline to true
+						  rows={4}    // Set the number of rows you want
+					  />
+				  </Grid>				       
+				</Grid>
+			  </Box>
+			</Stack>
+		  </Paper>
+		  
+		</Stack>		
+		</>
+	  // </ThemeProvider>
+	);
+  }
 
 export default PropertyForm;

@@ -144,9 +144,9 @@ const TenantOnBoardDesktopForm = ({ profileData, setIsSave }) => {
     fetchProfileData();
   }, []);
 
-  useEffect(() => {
-    console.log("ROHIT - 148 - ssn - ", ssn);
-  }, [ssn]);
+  // useEffect(() => {
+  //   console.log("148 - ssn - ", ssn);
+  // }, [ssn]);
 
   const saveProfile = async (form) => {
     const profileApi = "/profile";

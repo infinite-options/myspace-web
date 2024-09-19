@@ -217,7 +217,7 @@ export default function QuoteRequestForm({ setRefresh }) {
 					announcement_mode: "MAINTENANCE",
 					// announcement_receiver: [maintenanceItem?.tenant_uid],
 					announcement_receiver: annReceivers,
-					announcement_type: ["Text", "Email"],
+					announcement_type: ["Email", "Text"],
 				})
 
 				// console.log("QuoteRequestForm - receiverPropertyMapping - ", receiverPropertyMapping);
