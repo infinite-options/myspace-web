@@ -43,3 +43,73 @@ export default function GenericDialog(props) {
     </div>
   );
 }
+
+// Copy the lines below and add in file where GenericDialog is called
+
+// import GenericDialog from "../GenericDialog";
+
+// const [isDialogOpen, setIsDialogOpen] = useState(false);
+// const [dialogTitle, setDialogTitle] = useState("");
+// const [dialogMessage, setDialogMessage] = useState("");
+// const [dialogSeverity, setDialogSeverity] = useState("info");
+
+// const openDialog = (title, message, severity) => {
+//   setDialogTitle(title); // Set custom title
+//   setDialogMessage(message); // Set custom message
+//   setDialogSeverity(severity); // Can use this if needed to control styles
+//   setIsDialogOpen(true);
+// };
+
+// const closeDialog = () => {
+//   setIsDialogOpen(false);
+// };
+
+// Replace all alert line with openDialog line
+
+// alert(`Your file size is too large (${file_size} MB)`);
+// openDialog("Alert",`Your file size is too large (${file_size} MB)`,"info");
+// openDialog("Success",`Your file size is too large (${file_size} MB)`,"success");
+// openDialog("Error",`Your file size is too large (${file_size} MB)`,"error");
+
+// showSnackbar("Your profile has been successfully updated.", "success");
+// openDialog("Success",`Your file size is too large (${file_size} MB)`,"success");
+
+// showSnackbar("Cannot update your profile. Please try again", "error");
+// openDialog("Error",`Your file size is too large (${file_size} MB)`,"error");
+        
+// need to replace Snackbar componet with Genericdialog component
+
+/* <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
+            <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
+            {snackbarMessage}
+        </Alert>
+  </Snackbar> */
+
+
+
+
+
+/* <GenericDialog
+      isOpen={isDialogOpen}
+      title={dialogTitle}
+      contextText={dialogMessage}
+      actions={[
+        {
+          label: "OK",
+          onClick: closeDialog,
+        }
+      ]}
+      severity={dialogSeverity}
+    /> */
+
+    // actions={[
+    //   {
+    //     label: "Yes",
+    //     onClick: yesAction,
+    //   },
+    //   {
+    //     label: "No",
+    //     onClick: NoAction,
+    //   }
+    // ]}

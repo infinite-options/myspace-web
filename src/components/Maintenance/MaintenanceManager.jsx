@@ -529,7 +529,7 @@ export default function MaintenanceManager() {
                 <AddMaintenanceItem setRefersh = {setRefresh} onBack={() => {setshowNewMaintenance(false); setIsAddingNewMaintenance(false);}} />
               ) : quoteRequestView && selectedRole === "MANAGER" ? (
                 <>
-                  <QuoteRequestForm />
+                  <QuoteRequestForm setRefersh = {setRefresh}/>
                 </>
               ) : quoteAcceptView && selectedRole === "MANAGER" ? (
                 <>

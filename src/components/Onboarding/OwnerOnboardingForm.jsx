@@ -89,6 +89,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
   const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
   const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
   const [ taxIDType, setTaxIDType ] = useState("SSN");  
+  
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 const [dialogTitle, setDialogTitle] = useState("");
 const [dialogMessage, setDialogMessage] = useState("");
