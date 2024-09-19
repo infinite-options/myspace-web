@@ -28,7 +28,7 @@ import { gridColumnsTotalWidthSelector } from "@mui/x-data-grid";
 import { useMaintenance } from "../../contexts/MaintenanceContext";
 
 export async function maintenanceManagerDataCollectAndProcess(maintenanceData, setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData) {
-  console.log('is it in maintenanceManagerDataCollectAndProcess----');
+  // console.log('is it in maintenanceManagerDataCollectAndProcess----');
   const dataObject = {};
   
   function dedupeQuotes(array) {
@@ -67,7 +67,7 @@ export async function maintenanceManagerDataCollectAndProcess(maintenanceData, s
 
   const getMaintenanceData = async () => {
     setShowSpinner(true);
-    console.log('is it in getMaintenanceData----');
+    // console.log('is it in getMaintenanceData----');
     const maintenanceRequests = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${profileId}`);
     const maintenanceRequestsData = await maintenanceRequests.json();
 
@@ -498,6 +498,7 @@ export default function MaintenanceManager() {
                 {colorStatus.map((item, index) => {
                   let mappingKey = item.mapping;
                   let maintenanceArray = maintenanceData[mappingKey] || [];
+                  
                   let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList);
                   
                   for (const item of filteredArray) {
@@ -529,20 +530,20 @@ export default function MaintenanceManager() {
                 <AddMaintenanceItem setRefersh = {setRefresh} onBack={() => {setshowNewMaintenance(false); setIsAddingNewMaintenance(false);}} />
               ) : quoteRequestView && selectedRole === "MANAGER" ? (
                 <>
-                  <QuoteRequestForm setRefersh = {setRefresh}/>
+                  <QuoteRequestForm setRefresh = {setRefresh}/>
                 </>
               ) : quoteAcceptView && selectedRole === "MANAGER" ? (
                 <>
-                  <QuoteAcceptForm  />
+                  <QuoteAcceptForm  setRefresh = {setRefresh}/>
                 </>
               ) : rescheduleView && selectedRole === "MANAGER" ? (
                 <>
-                  <RescheduleMaintenance
+                  <RescheduleMaintenance setRefresh = {setRefresh}
                   />
                 </>
               ) : payMaintenanceView && selectedRole === "MANAGER" ? (
                 <>
-                  <PayMaintenanceForm
+                  <PayMaintenanceForm setRefresh = {setRefresh}
                     />
                 </>
               ) : (
@@ -552,6 +553,7 @@ export default function MaintenanceManager() {
                     status={selectedStatus}
                     maintenanceItemsForStatus={maintenanceData[selectedStatus]}
                     allMaintenancefilteredData={newDataObject}
+                    setRefresh = {setRefresh}
                   />
                 )
               )}

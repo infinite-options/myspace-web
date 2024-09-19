@@ -73,6 +73,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { CollectionsBookmarkRounded } from "@mui/icons-material";
 import PropertiesContext from '../../contexts/PropertiesContext';
 import ListsContext from "../../contexts/ListsContext.js";
+import ManagementDetailsComponent from "./ManagementDetailsComponent.jsx";
 
 const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_status !== "REFUSED" ? "#778DC5" : "#874499") : "#A52A2A");
 
@@ -235,6 +236,8 @@ export default function PropertyNavigator({
   const [maintenanceReqData, setMaintenanceReqData] = useState([{}]);
   // console.log('Maintenance Request Data1: ', maintenanceReqData);
   const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
+  const [newContractCount, setNewContractCount] = useState(0)
+  const [sentContractCount, setSentContractCount] = useState(0)
 
   const color = theme.palette.form.main;
   const [propertyId, setPropertyId] = useState(propertyData && propertyData[currentIndex] ? propertyData[currentIndex].property_uid : null);
@@ -301,18 +304,27 @@ export default function PropertyNavigator({
       setPropertyId(propertyData[currentIndex].property_uid);
       
       var count = 0;
+      var newContractCount = 0
+      var sentContractCount = 0
       const filtered = allContracts?.filter((contract) => contract.property_id === propertyId);
       const active = filtered?.filter((contract) => contract.contract_status === "ACTIVE");
       // console.log("322 - PropertyNavigator - filtered contracts - ", filtered);
       filtered.forEach((contract) => {
-        if (contract.contract_status == "SENT" || contract.contract_status == "NEW") {
+        if (contract.contract_status === "SENT") {
           count++;
+          sentContractCount++;
+        }
+        if(contract.contract_status === "NEW"){
+          count++;
+          newContractCount++;
         }
       });
-      // console.log("PropertyNavigator - contract count - ", count);
+      // console.log("PropertyNavigator - Active contract - ", active);
       setContractsNewSent(count);
       setContractsData(allContracts);
       setActiveContracts(active);
+      setNewContractCount(newContractCount)
+      setSentContractCount(sentContractCount)
 
       const rentDetails = getRentStatus();
       // console.log("rentDetails - ", rentDetails);
@@ -410,19 +422,41 @@ export default function PropertyNavigator({
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };  
 
-  const handleManagerChange = (index) => {
-    if (property && property.business_uid) {
-      navigate("/ContactsPM", {
-        state: {
-          contactsTab: "Manager",
-          managerId: property.business_uid,
-        },
-      });
-    } else {
+  const handleManagerChange = () => {
+    // if (property && property.business_uid) {
+    //   navigate("/ContactsPM", {
+    //     state: {
+    //       contactsTab: "Manager",
+    //       managerId: property.business_uid,
+    //     },
+    //   });
+    // } else {
       const state = { index: currentIndex, propertyData, isDesktop };
       onShowSearchManager(state);
-    }
+    // }
   };
+
+  const handleOpenMaintenancePage = () => {
+    if (property && property.maintenance?.length > 0) {
+      if (selectedRole === "OWNER") {
+        navigate("/ownerMaintenance", {
+          state: {
+            propertyId: propertyId,
+            fromProperty: true,
+            index: currentIndex,
+          },
+        });
+      } else {
+        navigate("/managerMaintenance", {
+          state: {
+            propertyId: propertyId,
+            fromProperty: true,
+            index: currentIndex,
+          },
+        });
+      }
+    }
+  }
 
   const handleAppClick = (index) => {    
     handleViewApplication(index);
@@ -1875,6 +1909,115 @@ export default function PropertyNavigator({
                         {rentFee ? rentFee.perDay_late_fee : "-"}
                       </Typography>
                     </Grid>
+
+                    {property && property.applications.length > 0 && (
+                      <>
+                        <Grid item xs={12} md={12}>
+                          <Box sx={{ display: "flex", alignItems: "center" }}>
+                            <Typography
+                              sx={{
+                                textTransform: "none",
+                                color: theme.typography.primary.black,
+                                fontWeight: theme.typography.secondary.fontWeight,
+                                fontSize: theme.typography.smallFont,
+                                paddingRight: "103px",
+                              }}
+                            >
+                              Applications:
+                            </Typography>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                cursor: "pointer",
+                              }}
+                            >
+                              <Badge
+                                color='success'
+                                badgeContent={property.applications.filter((app) => app.lease_status === "NEW" || app.lease_status === "PROCESSING").length}
+                                showZero
+                                sx={{
+                                  paddingRight: "50px",
+                                }}
+                              />
+                            </Box>
+                          </Box>
+                        </Grid>
+                        <Grid item xs={12} md={12}>
+                          <Accordion theme={theme} sx={{ backgroundColor: "#e6e6e6", marginLeft: "-5px" }}>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='panel1-content' id='panel1-header'>
+                              <Typography
+                                sx={{
+                                  textTransform: "none",
+                                  color: theme.typography.primary.black,
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                }}
+                              >
+                                View All Applications
+                              </Typography>
+                            </AccordionSummary>
+                            <AccordionDetails
+                              sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                                padding: "0px 5px 5px 5px",
+                              }}
+                            >
+                              {property.applications.map((app, index) => (
+                                <Button
+                                  key={index}
+                                  onClick={() => handleAppClick(index)}
+                                  sx={{
+                                    backgroundColor: getAppColor(app),
+                                    color: "#FFFFFF",
+                                    textTransform: "none",
+                                    width: "100%",
+                                    height: "70px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    marginBottom: 2,
+                                    "&:hover, &:focus, &:active": {
+                                      backgroundColor: getAppColor(app),
+                                    },
+                                  }}
+                                >
+                                  <Box sx={{ display: "flex" }}>
+                                    <Typography
+                                      sx={{
+                                        fontSize: theme.typography.smallFont,
+                                        mr: 1,
+                                      }}
+                                    >
+                                      {app.tenant_first_name + " " + app.tenant_last_name + " "}
+                                    </Typography>
+                                    <Typography
+                                      sx={{
+                                        fontWeight: "bold",
+                                        fontSize: theme.typography.smallFont,
+                                        mr: 1,
+                                      }}
+                                    >
+                                      {app.lease_status + " "}
+                                    </Typography>
+                                    <Typography
+                                      sx={{
+                                        fontWeight: "bold",
+                                        fontSize: theme.typography.smallFont,
+                                      }}
+                                    >
+                                      {app.lease_application_date}
+                                    </Typography>
+                                  </Box>
+                                </Button>
+                              ))}
+                            </AccordionDetails>
+                          </Accordion>
+                        </Grid>
+                      </>
+                    )}
                   </Grid>
                 </CardContent>
               </Card>
@@ -1882,7 +2025,8 @@ export default function PropertyNavigator({
 
             {/* Right component */}
             <Grid item xs={12} md={6}>
-              <Card sx={{ backgroundColor: color, height: "100%" }}>
+              <ManagementDetailsComponent activeContract={activeContracts[0]} currentProperty={property} selectedRole={selectedRole} showSearchManager={handleManagerChange} handleViewPMQuotesRequested={handleViewPMQuotesRequested} newContractCount={newContractCount} sentContractCount={sentContractCount} handleOpenMaintenancePage={handleOpenMaintenancePage}/>
+              {/* <Card sx={{ backgroundColor: color, height: "100%" }}>
                 <Box
                   sx={{
                     display: "flex",
@@ -1954,9 +2098,9 @@ export default function PropertyNavigator({
                                 fontWeight: theme.typography.light.fontWeight,
                                 fontSize: theme.typography.smallFont,
                               }}
-                            >
+                            > */}
                               {/* {property && property.business_uid ? `${property.business_name}` : "No Manager Selected"} */}
-                              {activeContracts?.length > 0 ? activeContracts[0]?.business_name : "No Manager Selected"}
+                              {/* {activeContracts?.length > 0 ? activeContracts[0]?.business_name : "No Manager Selected"}
                             </Typography>
                             <KeyboardArrowRightIcon
                               sx={{
@@ -2237,7 +2381,7 @@ export default function PropertyNavigator({
                     )}
                   </Grid>
                 </CardContent>
-              </Card>
+              </Card> */}
             </Grid>
             {/* End Lease Details and Management Details Cards */}
           </Grid>

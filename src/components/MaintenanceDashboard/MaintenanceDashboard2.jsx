@@ -70,8 +70,7 @@ export default function MaintenanceDashboard2() {
 	let dashboard_id = getProfileId();
   	if (selectedRole === "MAINT_EMPLOYEE") dashboard_id = user.businesses?.MAINTENANCE?.business_uid || user?.maint_supervisor;
 
-	const getMaintenanceData = async () => {		
-		console.log('---in get----');
+	const getMaintenanceData = async () => {
 		if(dashboard_id == null){
 			return;
 		}
