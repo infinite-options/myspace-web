@@ -192,7 +192,7 @@ function TenantLeases(props) {
             announcement_properties: JSON.stringify(receiverPropertyMapping),
             announcement_mode: "LEASE",
             announcement_receiver: [managerID],
-            announcement_type: ["Text", "Email"],
+            announcement_type: ["Email", "Text"],
           }),
         });
       } catch (error) {
@@ -258,7 +258,7 @@ function TenantLeases(props) {
             announcement_properties: JSON.stringify(receiverPropertyMapping),
             announcement_mode: "LEASE",
             announcement_receiver: [managerID],
-            announcement_type: ["Text", "Email"],
+            announcement_type: ["Email", "Text"],
           }),
         });
       } catch (error) {

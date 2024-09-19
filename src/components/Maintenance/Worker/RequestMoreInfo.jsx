@@ -26,7 +26,7 @@ export default function RequestMoreInfo({fromQuote, showRequestMoreInfo, setShow
     const [pmNotes, setPmNotes] = useState();
     const [showSpinner, setShowSpinner] = useState(false);
 
-    console.log("ROHIT - RequestMoreInfo - props.maintenanceItem - ", maintenanceItem)
+    // console.log("RequestMoreInfo - props.maintenanceItem - ", maintenanceItem)
 
     const handleChange1 = (event) => {
         setPmNotes(event.target.value);
@@ -114,7 +114,7 @@ export default function RequestMoreInfo({fromQuote, showRequestMoreInfo, setShow
             announcement_mode: "MAINTENANCE",
             // announcement_receiver: [maintenanceItem?.tenant_uid],
             announcement_receiver: [maintenanceItem?.business_uid],
-            announcement_type: ["Text", "Email"],
+            announcement_type: ["Email", "Text"],
         }),
         });
     } catch (error) {

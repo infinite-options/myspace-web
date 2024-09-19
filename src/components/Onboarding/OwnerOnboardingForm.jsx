@@ -48,7 +48,7 @@ import ChaseIcon from "../../images/Chase.png";
 import { useCookies } from "react-cookie";
 import APIConfig from "../../utils/APIConfig";
 import ListsContext from "../../contexts/ListsContext";
-
+import GenericDialog from "../GenericDialog";
 // import AdultOccupant from "../Leases/AdultOccupant";
 // import ChildrenOccupant from "../Leases/ChildrenOccupant";
 // import PetsOccupant from "../Leases/PetsOccupant";
@@ -89,7 +89,24 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
   const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
   const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
   const [ taxIDType, setTaxIDType ] = useState("SSN");  
-  useEffect(()=> {    
+  
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+const [dialogTitle, setDialogTitle] = useState("");
+const [dialogMessage, setDialogMessage] = useState("");
+const [dialogSeverity, setDialogSeverity] = useState("info");
+
+const openDialog = (title, message, severity) => {
+  setDialogTitle(title); // Set custom title
+  setDialogMessage(message); // Set custom message
+  setDialogSeverity(severity); // Can use this if needed to control styles
+  setIsDialogOpen(true);
+};
+
+const closeDialog = () => {
+  setIsDialogOpen(false);
+};
+
+useEffect(()=> {    
     if(ssn && identifyTaxIdType(ssn) === "EIN") setTaxIDType("EIN");
   }, [ssn])
 
@@ -323,7 +340,7 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
     let isLarge = file.file.size > 5000000;
     let file_size = (file.file.size / 1000000).toFixed(1);
     if (isLarge) {
-      alert(`Your file size is too large (${file_size} MB)`);
+      openDialog("Alert",`Your file size is too large (${file_size} MB)`,"info");
       return;
     }
     updateModifiedData({ key: "owner_photo_url", value: e.target.files[0] });
@@ -515,19 +532,19 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
 
     if(!atleaseOneActive){
       newErrors.paymentMethods = 'Atleast one active payment method is required';
-      alert('Atleast one active payment method is required');
+      openDialog("Alert",'Atleast one active payment method is required',"info");
       return;
     }
 
     if(paymentMethodsError){
       newErrors.paymentMethods = 'Please check payment method details';
-      alert('Please check payment method details');
+      openDialog("Alert",'Please check payment method details',"info");
       return;
     }
   
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors); 
-      alert("Please enter all required fields");
+      openDialog("Alert","Please enter all required fields","info");
       return;
     }
 
@@ -535,17 +552,17 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
 
 
     if (!DataValidator.email_validate(email)) {
-      alert("Please enter a valid email");
+      openDialog("Alert","Please enter a valid email","info");
       return false;
     }
 
     if (!DataValidator.phone_validate(phoneNumber)) {
-      alert("Please enter a valid phone number");
+      openDialog("Alert","Please enter a valid phone number","info");
       return false;
     }
 
     if (!DataValidator.zipCode_validate(zip)) {
-      alert("Please enter a valid zip code");
+      openDialog("Alert","Please enter a valid zip code","info");
       return false;
     }
 
@@ -554,7 +571,7 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
     //   return false;
     // }
     if((taxIDType === "EIN" && !DataValidator.ein_validate(ssn)) || (taxIDType === "SSN" && !DataValidator.ssn_validate(ssn))){
-      alert("Please enter a valid Tax ID");
+      openDialog("Alert","Please enter a valid Tax ID","info");
       return false;
     }
 
@@ -617,13 +634,13 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
           .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, headers)
           .then((response) => {
             console.log("Data updated successfully", response);
-            showSnackbar("Your profile has been successfully updated.", "success");
+            openDialog("Success","Your profile has been successfully updated.", "success");
             handleUpdate();
             setShowSpinner(false);
           })
           .catch((error) => {
             setShowSpinner(false);
-            showSnackbar("Cannot update your profile. Please try again", "error");
+            openDialog("Error","Cannot update your profile. Please try again", "error");
             if (error.response) {
               console.log(error.response.data);
             }
@@ -631,10 +648,10 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
         setShowSpinner(false);
         setModifiedData([]);
       } else {
-        showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
+        openDialog("Warning","You haven't made any changes to the form. Please save after changing the data.", "error");
       }
     } catch (error) {
-      showSnackbar("Cannot update the lease. Please try again", "error");
+      openDialog("Error","Cannot update the lease. Please try again", "error");
       console.log("Cannot Update the lease", error);
       setShowSpinner(false);
     }
@@ -667,13 +684,13 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
           .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, headers)
           .then((response) => {
             console.log("Data updated successfully", response);
-            showSnackbar("Your profile has been successfully updated.", "success");
+            openDialog("Success","Your profile has been successfully updated.", "success");
             handleUpdate();
             setShowSpinner(false);
           })
           .catch((error) => {
             setShowSpinner(false);
-            showSnackbar("Cannot update your profile. Please try again", "error");
+            openDialog("Error","Cannot update your profile. Please try again", "error");
             if (error.response) {
               console.log(error.response.data);
             }
@@ -681,10 +698,10 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
         setShowSpinner(false);
         setModifiedData([]);
       } else {
-        showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
+        openDialog("Warning","You haven't made any changes to the form. Please save after changing the data.", "error");
       }
     } catch (error) {
-      showSnackbar("Cannot update the lease. Please try again", "error");
+      openDialog("Error","Cannot update the lease. Please try again", "error");
       console.log("Cannot Update the lease", error);
       setShowSpinner(false);
     }
@@ -1028,12 +1045,18 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
         </Button>
       </Grid>
 
-      <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "100%", height: "100%" }}>
-          <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+      <GenericDialog
+      isOpen={isDialogOpen}
+      title={dialogTitle}
+      contextText={dialogMessage}
+      actions={[
+        {
+          label: "OK",
+          onClick: closeDialog,
+        }
+      ]}
+      severity={dialogSeverity}
+    />
     </>
   );
 }

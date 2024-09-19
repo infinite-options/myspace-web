@@ -220,7 +220,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
                     "announcement_properties": JSON.stringify(receiverPropertyMapping),
                     "announcement_mode": "LEASE",
                     "announcement_receiver": [lease.business_uid],
-                    "announcement_type": ["Text", "Email", "App"]
+                    "announcement_type": ["App", "Email", "Text"],
                 })
             })
        

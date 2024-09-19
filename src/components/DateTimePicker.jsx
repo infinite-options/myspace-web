@@ -44,8 +44,8 @@ function DateTimePickerModal(props) {
     //     }        
     // }
     // console.log("props.maintenanceItem - ", props.maintenanceItem);
-    const scheduledDate = props.maintenanceItem.maintenance_scheduled_date;
-    const scheduledTime = props.maintenanceItem.maintenance_scheduled_time;
+    const scheduledDate = props.maintenanceItem?.maintenance_scheduled_date;
+    const scheduledTime = props.maintenanceItem?.maintenance_scheduled_time;
     setAvailabilityDate((scheduledDate !== "" && scheduledDate !== null && scheduledDate !== undefined && scheduledDate !== "null")  ? props.maintenanceItem.maintenance_scheduled_date : props.maintenanceItem.quote_earliest_available_date);
     setAvailabilityTime((scheduledTime !== "" && scheduledTime !== null && scheduledTime !== undefined && scheduledTime !== "null") ? props.maintenanceItem.maintenance_scheduled_time : props.maintenanceItem.quote_earliest_available_time);
     // setAvailabilityDate(props.maintenanceItem.maintenance_scheduled_date ? props.maintenanceItem.maintenance_scheduled_date : props.date)

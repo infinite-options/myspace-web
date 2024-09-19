@@ -14,7 +14,7 @@ import QuoteDetailInfo from "../Worker/QuoteDetailInfo";
 import { useMediaQuery } from '@mui/material';
 import APIConfig from "../../../utils/APIConfig";
 
-export default function QuoteAcceptForm() {
+export default function QuoteAcceptForm({ setRefresh }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { maintenanceRoutingBasedOnSelectedRole } = useUser();
@@ -177,6 +177,9 @@ export default function QuoteAcceptForm() {
         if (response.status === 200) {
           console.log("success");
           if (isMobile){
+            if (setRefresh) {
+              setRefresh(true);
+            }
             navigate(maintenanceRoutingBasedOnSelectedRole(), { state: { refresh: true } });
           }else{
             handleBackButton();

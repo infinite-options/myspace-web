@@ -67,20 +67,20 @@ const NewUser = () => {
     setConfirmPassword("")
   }
 
-  useEffect(() => {
-    console.log("ROHIT - role -  ", role);
-  }, [role]);
+  // useEffect(() => {
+  //   console.log("role -  ", role);
+  // }, [role]);
 
   // useEffect(() => {
   //   console.log("email -  ", email);
   // }, [email]);
 
-  useEffect(() => {
-    console.log("ROHIT - businesses -  ", businesses);
-  }, [businesses]);
+  // useEffect(() => {
+  //   console.log("businesses -  ", businesses);
+  // }, [businesses]);
 
   useEffect(() => {
-    console.log("ROHIT - selectedBusiness -  ", selectedBusiness);
+    // console.log("selectedBusiness -  ", selectedBusiness);
     if( selectedBusiness?.business_type === "MANAGEMENT"){
       setRole("PM_EMPLOYEE")
     } else if( selectedBusiness?.business_type === "MAINTENANCE"){
@@ -99,7 +99,7 @@ const NewUser = () => {
   };
 
   const handleRoleChange = (event, newRole) => {
-    console.log("ROHIT - newRole - ", newRole);
+    // console.log("handleRoleChange - newRole - ", newRole);
     if (newRole !== null) {
       setRole(newRole);
       if( newRole === "EMPLOYEE"){

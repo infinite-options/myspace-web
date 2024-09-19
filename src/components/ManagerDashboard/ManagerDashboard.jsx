@@ -121,9 +121,9 @@ function ManagerDashboard() {
             throw new Error("Failed to fetch data");
           }
           const data = await response.json();
-          console.log("ROHIT - data - ", data);
+          // console.log("data - ", data);
           const employee = data?.profile?.result[0]; // Assuming there's only one employee
-          console.log("ROHIT - employee?.employee_verification - ", employee?.employee_verification);
+          // console.log("employee?.employee_verification - ", employee?.employee_verification);
           if (employee?.employee_verification == null) {
             navigate("/emp_waiting");
           }
@@ -143,41 +143,6 @@ function ManagerDashboard() {
     fetchData();
   }, [getProfileId, selectedRole]);
 
-  // useEffect(() => {
-  //   setShowSpinner(true);
-  //   if (selectedRole === "PM_EMPLOYEE") dashboard_id = user.businesses?.MANAGEMENT?.business_uid || user?.pm_supervisor;
-  //   if (selectedRole === "PM_EMPLOYEE" && getProfileId() != null) {
-  //     const emp_verification = async () => {
-  //       try {
-  //         const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
-  //         // const response = await fetch(`${APIConfig.baseURL.dev}/profile/600-000003`);
-  //         if (!response.ok) {
-  //           throw new Error("Failed to fetch data");
-  //         }
-  //         const data = await response.json();
-  //         const employee = data?.profile?.result[0]; // Assuming there's only one employee
-  //         console.log("ROHIT - employee?.employee_verification - ", employee?.employee_verification)
-  //         if (employee?.employee_verification == null) {
-  //           navigate("/emp_waiting");
-  //         }
-  //       } catch (error) {
-  //         console.error(error);
-  //       }
-  //     };
-
-  //     emp_verification();
-  //     setShowSpinner(false);
-  //   }
-  //   const signedUpWithReferral = localStorage.getItem("signedUpWithReferral");
-  //   if (signedUpWithReferral && signedUpWithReferral === "true") {
-  //     setShowReferralWelcomeDialog(true);
-  //     localStorage.removeItem("signedUpWithReferral");
-  //   }
-  //   fetchData();
-  // }, [user]);
-
-  //
-  //
   // Console Logs for useState variables
   useEffect(() => {
     // console.log("RentStatus check --", rentStatus);
@@ -190,16 +155,6 @@ function ManagerDashboard() {
   useEffect(() => {
     // console.log("Happiness Matrix Info - ", happinessData);
   }, [happinessData]);
-
-  // useEffect(() => {
-  //   // const dataObject = {};
-  //   // console.log("In UseEffect");
-  //   // console.log(getProfileId());
-
-  //   // console.log("In UseEffect after if");
-
-  //   fetchData();
-  // }, []);
 
   return (
     <ThemeProvider theme={theme}>

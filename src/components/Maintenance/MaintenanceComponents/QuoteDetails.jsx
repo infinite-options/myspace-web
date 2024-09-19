@@ -13,7 +13,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import NoImageAvailable from '../../../images/NoImageAvailable.png';
 import Documents from '../../Leases/Documents';
 
-const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem, fetchAndUpdateQuotes}) => {
+const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem, fetchAndUpdateQuotes, setRefresh}) => {
     // console.log('----QuoteDetails maintenanceQuotesForItem----', maintenanceItem);
 
     const [currentIndex, setCurrentIndex] = useState(initialIndex);
@@ -91,60 +91,67 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
         console.log("handleSubmit", quoteStatusParam);
     
         const changeMaintenanceQuoteStatus = async (quoteStatusParam) => {
-          setShowSpinner(true);
-          var formData = new FormData();
+            setShowSpinner(true);
+            var formData = new FormData();
     
-          formData.append("maintenance_quote_uid", currentItem?.maintenance_quote_uid);
-          formData.append("quote_status", quoteStatusParam);
+            formData.append("maintenance_quote_uid", currentItem?.maintenance_quote_uid);
+            formData.append("quote_status", quoteStatusParam);
     
-          try {
-            const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {
-              method: "PUT",
-              body: formData,
-            });
-            let responseData = await response.json();
-            console.log(responseData);
-            if (response.status === 200) {
-              console.log("success");
-              assignMaintenanceRequest(currentItem?.quote_business_id, maintenanceItem.maintenance_request_uid);
+            try {
+                const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {
+                    method: "PUT",
+                    body: formData,
+                });
+                let responseData = await response.json();
+                console.log(responseData);
+                if (response.status === 200) {
+                    console.log("success");
+                    
+                    // Assign the maintenance request to the business
+                    await assignMaintenanceRequest(currentItem?.quote_business_id, maintenanceItem.maintenance_request_uid);
+    
+                    // Trigger a refresh of the maintenance manager after successful acceptance
+                    if (setRefresh) {
+                        setRefresh(true);  // This will trigger the refresh in Maintenance Manager
+                    }
+                }
+            } catch (error) {
+                console.log("error", error);
             }
-          } catch (error) {
-            console.log("error", error);
-          }
-          setShowSpinner(false);
+            setShowSpinner(false);
         };
     
         const assignMaintenanceRequest = async (assigned_business, request_uid) => {
-          setShowSpinner(true);
-          var formData = new FormData();
-          formData.append("maintenance_assigned_business", assigned_business);
-          formData.append("maintenance_request_uid", request_uid);
-          formData.append("maintenance_request_status", "PROCESSING");
+            setShowSpinner(true);
+            var formData = new FormData();
+            formData.append("maintenance_assigned_business", assigned_business);
+            formData.append("maintenance_request_uid", request_uid);
+            formData.append("maintenance_request_status", "PROCESSING");
     
-          try {
-            console.log("trying to put maintenance assigned business", formData);
-            const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
-              method: "PUT",
-              body: formData,
-            });
-            let responseData = await response.json();
-            console.log(responseData);
-            if (response.status === 200) {
-              console.log("success");
-                //handleBackButton();
-                fetchAndUpdateQuotes();
-              
-            } else {
-              console.log("error changing maintenance assigned business");
+            try {
+                console.log("trying to put maintenance assigned business", formData);
+                const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
+                    method: "PUT",
+                    body: formData,
+                });
+                let responseData = await response.json();
+                console.log(responseData);
+                if (response.status === 200) {
+                    console.log("success");
+                    // Call the fetch and update quotes method
+                    fetchAndUpdateQuotes();
+                } else {
+                    console.log("error changing maintenance assigned business");
+                }
+            } catch (error) {
+                console.log("error", error);
             }
-          } catch (error) {
-            console.log("error", error);
-          }
-          setShowSpinner(false);
+            setShowSpinner(false);
         };
     
         changeMaintenanceQuoteStatus(quoteStatusParam);
-      };
+    };
+    
 
       const [scrollPosition, setScrollPosition] = useState(0);
 	const scrollRef = useRef(null);

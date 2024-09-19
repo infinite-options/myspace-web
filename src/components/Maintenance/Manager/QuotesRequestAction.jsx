@@ -33,15 +33,15 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import AlertMessage from "../AlertMessage";
 import { useMaintenance } from "../../../contexts/MaintenanceContext";
 
-export default function QuotesRequestAction({ maintenanceItem, navigateParams, quotes }) {
+export default function QuotesRequestAction({ maintenanceItem, navigateParams, quotes, setRefresh }) {
 	const navigate = useNavigate();
 	const { maintenanceRoutingBasedOnSelectedRole } = useUser();
 	const [showMessage, setShowMessage] = useState(false);
 	const [maintenanceItemQuotes, setMaintenanceItemQuotes] = useState([]);
 	const [message, setMessage] = useState('');
 	const [showModal, setShowModal] = useState(false);
-	const [date, setDate] = useState(maintenanceItem.earliest_available_date || '');
-	const [time, setTime] = useState(maintenanceItem.earliest_available_time || '');
+	const [date, setDate] = useState(maintenanceItem?.earliest_available_date || '');
+	const [time, setTime] = useState(maintenanceItem?.earliest_available_time || '');
 	const [showSpinner, setShowSpinner] = useState(false);
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const { quoteRequestView, setQuoteRequestView ,    maintenanceData: contextMaintenanceItem, 
@@ -267,7 +267,7 @@ export default function QuotesRequestAction({ maintenanceItem, navigateParams, q
     Request Quotes
   </Button>
 
-  <CompleteButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage} />
+  <CompleteButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage} setRefresh = {setRefresh}/>
                     </Box>
 
             <AlertMessage showMessage={showMessage} setShowMessage={setShowMessage} message={message} />

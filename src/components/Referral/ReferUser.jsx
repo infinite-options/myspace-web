@@ -92,6 +92,26 @@ export default function ReferUser({ onClose, onReferralSuccess, setReferedUser})
     navigate(-1);
   };
 
+  const handleExistingUser = async (createAccResponse) => {    
+    const userRolesList = createAccResponse.user_roles?.split(",");
+    const userUID = createAccResponse.user_uid;
+
+    // console.log("handleExistingUser - userRolesList - ", userRolesList);
+    // console.log("handleExistingUser - userUID - ", userUID);
+
+    if (userRolesList.includes('OWNER')) {
+      //create property with user id
+      onReferralSuccess(userUID);
+    } else {        
+        // create owner profile
+    }
+
+
+
+
+
+  }
+
   
 
   const handleSubmit = async (event) => {
@@ -139,7 +159,8 @@ export default function ReferUser({ onClose, onReferralSuccess, setReferedUser})
         payload
       );
       if (response.data.message === "User already exists") {
-        alert(response.data.message);
+        // alert(response.data.message);
+        handleExistingUser(response.data);
         setShowSpinner(false);
         return;
       } else {
@@ -152,24 +173,24 @@ export default function ReferUser({ onClose, onReferralSuccess, setReferedUser})
         owner_email: response.data.result?.user?.email};
         
         const form = new FormData();
-    for (let key in payload) {      
-      form.append(key, payload[key]);      
-    }
+        for (let key in payload) {      
+          form.append(key, payload[key]);      
+        }
 
-    for (var pair of form.entries()) {
-      console.log(pair[0]+ ', ' + pair[1]); 
-    }
-    const { profileApi } = roleMap["OWNER"];
+        // for (var pair of form.entries()) {
+        //   console.log(pair[0]+ ', ' + pair[1]); 
+        // }
+        const { profileApi } = roleMap["OWNER"];
 
-    const { data } = await axios.post(
-      `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`,
-      form,
-      headers
-    );
+        const { data } = await axios.post(
+          `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`,
+          form,
+          headers
+        );
 
-    if (data.owner_uid) {
-      updateProfileUid({ owner_id: data.owner_uid });
-    }
+        if (data.owner_uid) {
+          updateProfileUid({ owner_id: data.owner_uid });
+        }
         
         const userUID = response.data.result?.user?.user_uid;        
         // const link = `http://localhost:3000/referralSignup/${userUID}`

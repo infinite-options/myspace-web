@@ -162,6 +162,9 @@ export default function PropertyNavigator({
     }
   };
   
+  // useEffect(() => {
+  //   console.log("PropertyNavigator - property - ", property);
+  // }, [property]);
 
   // useEffect(() => {
   //   console.log("PropertyNavigator - allContracts - ", allContracts);
@@ -171,9 +174,9 @@ export default function PropertyNavigator({
   //   setCurrentIndex(returnIndex !== undefined ? returnIndex : 0);
   // }, [returnIndex]);
 
-  useEffect(() => {
-    console.log("ROHIT - PropertyNavigator - property - ", property)
-  }, [property]);
+  // useEffect(() => {
+  //   console.log("PropertyNavigator - property - ", property)
+  // }, [property]);
 
   useEffect(() => {
     getDataFromAPI();
@@ -1419,7 +1422,40 @@ export default function PropertyNavigator({
                           </Box>
                         )}
                         {
-                          (property && (property.property_available_to_rent === 0 || property.property_available_to_rent == null) ) && 
+                          (property && (property.property_available_to_rent === 0 || property.property_available_to_rent == null) && (property.business_uid == null || property.business_uid == "") ) && 
+                        (
+                          <Box sx={{ pb: 40 }}>
+                            <Button
+                              variant='outlined'
+                              sx={{
+                                background: "#3D5CAC",
+                                backgroundColor: "#626264",
+                                cursor: "pointer",
+                                textTransform: "none",
+                                minWidth: "150px", // Fixed width for the button
+                                minHeight: "35px",
+                                width: "100%",
+                              }}
+                              size='small'
+                            >
+                              <CloseIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
+                              <Typography
+                                sx={{
+                                  textTransform: "none",
+                                  color: "#FFFFFF",
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                  whiteSpace: "nowrap",
+                                  marginLeft: "1%", // Adjusting margin for icon and text
+                                }}
+                              >
+                                {"No Manager"}
+                              </Typography>
+                            </Button>
+                          </Box>
+                        )}
+                        {
+                          (property && (property.property_available_to_rent === 0 || property.property_available_to_rent == null) && (property.business_uid != null && property.business_uid !== "") ) && 
                         (
                           <Box sx={{ pb: 40 }}>
                             <Button

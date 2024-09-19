@@ -70,8 +70,7 @@ export default function MaintenanceDashboard2() {
 	let dashboard_id = getProfileId();
   	if (selectedRole === "MAINT_EMPLOYEE") dashboard_id = user.businesses?.MAINTENANCE?.business_uid || user?.maint_supervisor;
 
-	const getMaintenanceData = async () => {		
-		console.log('---in get----');
+	const getMaintenanceData = async () => {
 		if(dashboard_id == null){
 			return;
 		}
@@ -199,7 +198,7 @@ export default function MaintenanceDashboard2() {
 		  }
 		  const data = await response.json();
 		  const employee = data?.profile?.result[0]; // Assuming there's only one employee
-		  console.log("ROHIT - employee?.employee_verification - ", employee?.employee_verification)
+		//   console.log("employee?.employee_verification - ", employee?.employee_verification)
 		  if (employee?.employee_verification == null) {
 			navigate("/emp_waiting");
 		  }
@@ -238,8 +237,8 @@ export default function MaintenanceDashboard2() {
 	}, [user]);
 
 	useEffect(() => {
-		console.log("ROHIT - dataLoaded - ", dataLoaded);
-		console.log("ROHIT - user - ", user);
+		// console.log("dataLoaded - ", dataLoaded);
+		// console.log("user - ", user);
 		if (prevUserStateRef.current !== userState) {
 			prevUserStateRef.current = userState;
 			console.log('User state has deeply changed:', userState);
