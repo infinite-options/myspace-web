@@ -21,6 +21,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import axios from "axios";
 import PasswordModal from "./PasswordModal";
 import UserDoesNotExistModal from "./UserDoesNotExistModal";
+import { set } from "date-fns";
 
 export default function LandingPage() {
   // console.log("In Landing Page");
@@ -46,12 +47,19 @@ export default function LandingPage() {
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
 
   useEffect(() => {
-    if (location.state && typeof location.state.showLogin !== "undefined") {
-      setShowLogin(location.state.showLogin);
-    } else {
-      setShowLogin(false);
+    if(location.state && typeof location.state?.showEmail !== "undefined"){
+      setShowEmailLogin(true)
+      setShowLogin(true)
+      setEmail(location.state?.user_email? location.state?.user_email : "")
+    }else{
+      if (location.state && typeof location.state.showLogin !== "undefined") {
+        setShowLogin(location.state.showLogin);
+      } else {
+        setShowLogin(false);
+      }
+      setShowEmailLogin(false);
+      setEmail("")
     }
-    setShowEmailLogin(false);
   }, [location.state]);
 
   const handleLogin = async () => {

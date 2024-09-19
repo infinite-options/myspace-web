@@ -34,7 +34,7 @@ import APIConfig from '../../../utils/APIConfig';
 
 import { useMaintenance } from "../../../contexts/MaintenanceContext";
 
-export default function QuoteRequestForm() {
+export default function QuoteRequestForm({ setRefresh }) {
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const location = useLocation();
 	const navigate = useNavigate();
@@ -192,6 +192,9 @@ export default function QuoteRequestForm() {
 					if (isMobile) {
 						navigate(maintenanceRoutingBasedOnSelectedRole(), { state: { refresh: true } });
 					} else {
+						if(setRefresh){
+							setRefresh(true);
+						}
 						handleBackButton();
 					}
 				} else {
@@ -257,7 +260,8 @@ export default function QuoteRequestForm() {
 
 		// for (let contact of maintenanceContactIds)
 		
-		submitQuoteRequest(maintenanceContactIds); 		 
+		submitQuoteRequest(maintenanceContactIds); 	
+			 
 	};
 
 	function numImages() {
