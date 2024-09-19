@@ -37,7 +37,7 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight"; // 
 
 import LeaseIcon from "./leaseIcon.png";
 import CreateIcon from "@mui/icons-material/Create";
-import { getPaymentStatusColor, getPaymentStatus } from "./PropertyList.jsx";
+import { getPaymentStatusColor, getPaymentStatus } from "./PropertiesList.jsx";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import PostAddIcon from "@mui/icons-material/PostAdd";
@@ -1354,22 +1354,21 @@ export default function PropertyNavigator({
                       <Grid item xs={12}>
                         {property && property.property_available_to_rent === 1 && (property.lease_status == null || property.lease_status !== "ACTIVE") && (
                           // padding extra on the bottom
-                          <Box sx={{ pb: 40 }}>
-                            <Button
-                              variant='outlined'
+                          <Box sx={{ pb: 5 }}>                            
+                            <Box                              
                               sx={{
-                                background: "#3D5CAC",
-                                backgroundColor: "#FFC85C",
-                                cursor: "pointer",
+                                display: 'flex',
+                                flexDirection: 'row',
+                                flexWrap: 'wrap',
+                                alignContent: 'center',
+                                justifyContent: 'center',                                
+                                backgroundColor: "#76B148",
+                                borderRadius: '5px',                                
                                 textTransform: "none",
-                                minWidth: "150px", // Fixed width for the button
+                                minWidth: "150px",
                                 minHeight: "35px",
-                                width: "100%",
-                                "&:hover": {
-                                  backgroundColor: theme.palette.success.dark,
-                                },
-                              }}
-                              size='small'
+                                width: "100%",                                
+                              }}                              
                             >
                               <CheckIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
                               <Typography
@@ -1384,27 +1383,29 @@ export default function PropertyNavigator({
                               >
                                 {"Listed For Rent"}
                               </Typography>
-                            </Button>
+                            </Box>
                           </Box>
                         )}
                         {
                           (property && (property.property_available_to_rent === 0 || property.property_available_to_rent == null) && (property.business_uid == null || property.business_uid == "") ) && 
                         (
-                          <Box sx={{ pb: 40 }}>
-                            <Button
-                              variant='outlined'
+                          <Box sx={{ pb: 5 }}>                            
+                            <Box                              
                               sx={{
-                                background: "#3D5CAC",
-                                backgroundColor: "#626264",
-                                cursor: "pointer",
+                                display: 'flex',
+                                flexDirection: 'row',
+                                flexWrap: 'wrap',
+                                alignContent: 'center',
+                                justifyContent: 'center',                                
+                                backgroundColor: "none",
+                                borderRadius: '5px',                                
                                 textTransform: "none",
-                                minWidth: "150px", // Fixed width for the button
+                                minWidth: "150px",
                                 minHeight: "35px",
-                                width: "100%",
-                              }}
-                              size='small'
+                                width: "100%",                                
+                              }}                              
                             >
-                              <CloseIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
+                              {/* <CloseIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
                               <Typography
                                 sx={{
                                   textTransform: "none",
@@ -1416,26 +1417,28 @@ export default function PropertyNavigator({
                                 }}
                               >
                                 {"No Manager"}
-                              </Typography>
-                            </Button>
+                              </Typography> */}
+                            </Box>
                           </Box>
                         )}
                         {
                           (property && (property.property_available_to_rent === 0 || property.property_available_to_rent == null) && (property.business_uid != null && property.business_uid !== "") ) && 
                         (
-                          <Box sx={{ pb: 40 }}>
-                            <Button
-                              variant='outlined'
+                          <Box sx={{ pb: 5 }}>                            
+                            <Box                              
                               sx={{
-                                background: "#3D5CAC",
-                                backgroundColor: theme.palette.priority.high,
-                                cursor: "pointer",
+                                display: 'flex',
+                                flexDirection: 'row',
+                                flexWrap: 'wrap',
+                                alignContent: 'center',
+                                justifyContent: 'center',                                
+                                backgroundColor: "#A52A2A",
+                                borderRadius: '5px',                                
                                 textTransform: "none",
-                                minWidth: "150px", // Fixed width for the button
+                                minWidth: "150px",
                                 minHeight: "35px",
-                                width: "100%",
-                              }}
-                              size='small'
+                                width: "100%",                                
+                              }}                              
                             >
                               <CloseIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
                               <Typography
@@ -1450,27 +1453,25 @@ export default function PropertyNavigator({
                               >
                                 {"Not Listed"}
                               </Typography>
-                            </Button>
+                            </Box>
                           </Box>
                         )}
-                        {property && property.lease_status && property.lease_status === "ACTIVE" && (
-                          // padding extra on the bottom
-                          <Box sx={{ pb: 40 }}>
-                            <Button
-                              variant='outlined'
+                        {property && property.lease_status && property.lease_status === "ACTIVE" && (                          
+                          <Box sx={{ pb: 5 }}>
+                            <Box                              
                               sx={{
-                                background: "#3D5CAC",
-                                backgroundColor: theme.palette.success.main,
-                                cursor: "pointer",
+                                display: 'flex',
+                                flexDirection: 'row',
+                                flexWrap: 'wrap',
+                                alignContent: 'center',
+                                justifyContent: 'center',                                
+                                backgroundColor: "#3D5CAC",
+                                borderRadius: '5px',                                
                                 textTransform: "none",
-                                minWidth: "150px", // Fixed width for the button
+                                minWidth: "150px",
                                 minHeight: "35px",
-                                width: "100%",
-                                "&:hover": {
-                                  backgroundColor: theme.palette.success.dark,
-                                },
-                              }}
-                              size='small'
+                                width: "100%",                                
+                              }}                              
                             >
                               <CheckIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
                               <Typography
@@ -1485,9 +1486,45 @@ export default function PropertyNavigator({
                               >
                                 {"Rented"}
                               </Typography>
-                            </Button>
+                            </Box>
                           </Box>
                         )}
+                      </Grid>
+                      <Grid item xs={12}>
+                                                  
+                          <Box sx={{ pb: 40 }}>
+                            
+                            <Box                              
+                              sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                flexWrap: 'wrap',
+                                alignContent: 'center',
+                                justifyContent: 'center',                                
+                                backgroundColor: getPaymentStatusColor(property.rent_status, property),
+                                borderRadius: '5px',                                
+                                textTransform: "none",
+                                minWidth: "150px",
+                                minHeight: "35px",
+                                width: "100%",                                
+                              }}                              
+                            >
+                              {/* <CheckIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} /> */}
+                              <Typography
+                                sx={{
+                                  textTransform: "none",
+                                  color: "#FFFFFF",
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                  whiteSpace: "nowrap",
+                                  marginLeft: "1%", // Adjusting margin for icon and text
+                                }}
+                              >
+                                {getPaymentStatus(property.rent_status, property)}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        
                       </Grid>
                       <Grid item xs={12}>
                         <Box>
