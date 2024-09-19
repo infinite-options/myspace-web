@@ -49,7 +49,7 @@ function a11yProps(index) {
   };
 }
 
-export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData }) {
+export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData, setRefresh }) {
   const {
     selectedRequestIndex,
     selectedStatus,
@@ -410,6 +410,7 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
                           tabs={tabs}
                           navigateParams={navParams}
                           fetchAndUpdateQuotes={fetchAndUpdateQuotes}
+                          setRefresh={setRefresh}
                         />
                       ) : null}
                     </Grid>
@@ -423,22 +424,22 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
                 }}
               >
                 {colorStatus[value]?.status === "New Requests" && maintenanceItemsForStatus[selectedRequestIndex] ? (
-                  <NewRequestAction maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} />
+                  <NewRequestAction maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} setRefresh = {setRefresh}/>
                 ) : null}
                 {colorStatus[value]?.status === "Quotes Requested" ? (
-                  <QuotesRequestAction maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
+                  <QuotesRequestAction maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh = {setRefresh}/>
                 ) : null}
                 {colorStatus[value]?.status === "Quotes Accepted" ? (
-                  <QuotesAccepted maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
+                  <QuotesAccepted maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh={setRefresh}/>
                 ) : null}
                 {colorStatus[value]?.status === "Scheduled" ? (
-                  <ScheduleMaintenance maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
+                  <ScheduleMaintenance maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh = {setRefresh}/>
                 ) : null}
                 {colorStatus[value]?.status === "Completed" && maintenanceItemsForStatus[selectedRequestIndex]?.maintenance_request_status !== "CANCELLED" ? (
-                  <CompleteMaintenance maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
+                  <CompleteMaintenance maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh = {setRefresh}/>
                 ) : null}
                 {colorStatus[value]?.status === "Paid" ? (
-                  <PaidMaintenance maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} />
+                  <PaidMaintenance maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh = {setRefresh}/>
                 ) : null}
               </Box>
             </Box>

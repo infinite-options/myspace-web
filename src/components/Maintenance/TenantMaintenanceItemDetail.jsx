@@ -16,6 +16,7 @@ import ReturnButtonIcon from "../Property/refundIcon.png";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import EditIcon from "@mui/icons-material/Edit";
+import { useMaintenance } from '../../contexts/MaintenanceContext';
 
 export default function TenantMaintenanceItemDetail({ tenantMaintenanceItemDetailState, setRightPane }) {
   console.log("In Tenant Maintenance Item Detail");
@@ -36,6 +37,21 @@ export default function TenantMaintenanceItemDetail({ tenantMaintenanceItemDetai
     const daysDifference = Math.floor(timeDifferenceMs / (1000 * 60 * 60 * 24));
     return daysDifference;
   }
+
+  const { setEditMaintenanceView,  setTestIssue,
+		setTestProperty,
+		setTestIssueItem,
+		setTestCost,
+		setTestTitle,
+		setTestPriority,
+		setCompletionStatus,
+		setRequestUid,
+		setPropID,
+		setMaintainanceImages,
+		setMaintainanceFavImage,
+		setSelectedRequestIndex,
+		setSelectedStatus,
+	 } = useMaintenance(); // Use the context
 
   const [scrollPosition, setScrollPosition] = useState(0);
   const scrollRef = useRef(null);
@@ -107,10 +123,25 @@ export default function TenantMaintenanceItemDetail({ tenantMaintenanceItemDetai
 			sessionStorage.setItem('maintainanceImages', maintainanceImages);
 			sessionStorage.setItem('maintainanceFavImage', maintainanceFavImage);
 			window.dispatchEvent(new Event('storage'));
+
+      setTestIssue(testIssue);
+		  setTestProperty(tenantMaintenanceItemDetailState.property);
+		  setTestIssueItem(testIssueItem);
+		  setTestCost(testCost);
+		  setTestTitle(testTitle);
+		  setTestPriority(testPriority);
+		  setCompletionStatus(completionStatus);
+		  setRequestUid(requestUid);
+		  setPropID(propID);
+		  setMaintainanceImages(maintainanceImages);
+		  setMaintainanceFavImage(maintainanceFavImage);
+	  
+		  // Use these context setters for selectedRequestIndex and selectedStatus
+		  //setSelectedRequestIndex(requestIndex);
+		  //setSelectedStatus(status);
+		  
 setRightPane({ type: "editmaintenance" });
-			setTimeout(() => {
-				window.dispatchEvent(new Event('maintenanceRequestSelected'));
-			}, 0);
+			
 	}
 
   return (

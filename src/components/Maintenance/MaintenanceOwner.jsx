@@ -495,20 +495,20 @@ export function MaintenanceOwner() {
                 <AddMaintenanceItem setRefersh = {setRefresh}  onBack={() => setshowNewMaintenance(false)} />
               ) : quoteRequestView && selectedRole === "OWNER" ? (
                 <>
-                  <QuoteRequestForm />
+                  <QuoteRequestForm setRefresh = {setRefresh}/>
                 </>
               ) : quoteAcceptView && selectedRole === "OWNER" ? (
                 <>
-                  <QuoteAcceptForm />
+                  <QuoteAcceptForm setRefresh = {setRefresh}/>
                 </>
               ) : rescheduleView && selectedRole === "OWNER" ? (
                 <>
-                  <RescheduleMaintenance
+                  <RescheduleMaintenance setRefresh = {setRefresh}
                   />
                 </>
               ) : payMaintenanceView && selectedRole === "OWNER" ? (
                 <>
-                  <PayMaintenanceForm
+                  <PayMaintenanceForm setRefresh = {setRefresh}
                      />
                 </>
               ) : (
@@ -518,6 +518,7 @@ export function MaintenanceOwner() {
                     status={selectedStatus}
                     maintenanceItemsForStatus={maintenanceData[selectedStatus]}
                     allMaintenancefilteredData={newDataObject}
+                    setRefresh = {setRefresh}
                   />
                 )
               )}
