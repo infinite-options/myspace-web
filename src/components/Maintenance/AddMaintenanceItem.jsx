@@ -248,8 +248,8 @@ export default function AddMaintenanceItem({setRefersh, onBack}) {
             onBack(); // Call the onBack function if it is provided
         } else {
             navigate(maintenanceRoutingBasedOnSelectedRole(), { state: { refresh: true } });
-	}
-		};
+		}
+	};
 
 	return (
 		<ThemeProvider theme={theme}>

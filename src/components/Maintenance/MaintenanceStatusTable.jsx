@@ -167,13 +167,13 @@ export default function MaintenanceStatusTable({ status, color, maintenanceItems
                             rows={maintenanceItemsForStatus}
                             columns={columns}
                             rowHeight={50}
-                            initialState={{
-                                pagination: {
-                                    paginationModel: {
-                                        pageSize: maintenanceItemsForStatus.length,
-                                    },
-                                },
-                            }}
+                            // initialState={{
+                            //     pagination: {
+                            //         paginationModel: {
+                            //             pageSize: maintenanceItemsForStatus.length,
+                            //         },
+                            //     },
+                            // }}
                             hideFooter={true}
                             sx={{
                                 '& .MuiDataGrid-cell': {
@@ -202,7 +202,7 @@ export default function MaintenanceStatusTable({ status, color, maintenanceItems
                             }}
                             disableExtendRowFullWidth={true}
                             getRowId={(row) => row.maintenance_request_uid}
-                            pageSizeOptions={[5]}
+                            // pageSizeOptions={[5]}
                             onRowClick={(params) => {
                                 const index = maintenanceItemsForStatus.findIndex(row => row.maintenance_request_uid === params.row.maintenance_request_uid);
                                 onRowClick(index, params.row);
