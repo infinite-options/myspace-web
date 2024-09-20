@@ -68,7 +68,7 @@ import axios from "axios";
 //   getExpenseList,
 // } from "../Cashflow/CashflowFetchData2";
 
-export default function ManagerCashflow() {
+export default function PaymentVerification() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, getProfileId } = useUser(); // Access the user object from UserContext
@@ -87,7 +87,6 @@ export default function ManagerCashflow() {
 
   const [month, setMonth] = useState(location.state?.month || currentMonth);
   const [year, setYear] = useState(location.state?.year || currentYear);  
-  const cashflowWidgetData = location.state?.cashflowWidgetData;
 
   const [cashflowData, setCashflowData] = useState(null); // Cashflow data from API
 
