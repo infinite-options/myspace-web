@@ -139,7 +139,7 @@ const ManagerContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
               </Grid>
           </Grid>
           <Grid container item xs={12} columnSpacing={1} rowSpacing={1} sx={{ }}>
-              <Grid item xs={12}>
+              <Grid item xs={12} md={6}>
                   <Paper
                       elevation={0}
                       style={{
@@ -174,36 +174,6 @@ const ManagerContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
                           // margin: '50p', // Add margin here
                           borderRadius: "10px",
                           backgroundColor: "#D6D5DA",
-                          minHeight: 370,
-  
-                          // [theme.breakpoints.down("sm")]: {
-                          //     width: "80%",
-                          // },
-                          // [theme.breakpoints.up("sm")]: {
-                          //     width: "50%",
-                          // },
-                          // width: "100%",
-                          padding: '10px',
-                      }}
-                  >
-                      {
-                        contactDetails && typeof currentIndex === 'number' && currentIndex >=0 ? (
-                          <PaymentsInformation                                                       
-                            data={contactDetails[currentIndex]?.payments}
-                          />
-                        ) :
-                        <></>
-                      }
-                      
-                  </Paper>
-              </Grid>   
-              <Grid item xs={12} md={6}>
-                  <Paper
-                      elevation={0}
-                      style={{
-                          // margin: '50p', // Add margin here
-                          borderRadius: "10px",
-                          backgroundColor: "#D6D5DA",
                           minHeight: 360,
   
                           // [theme.breakpoints.down("sm")]: {
@@ -228,7 +198,37 @@ const ManagerContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
                       }
                       
                   </Paper>
-              </Grid>                     
+              </Grid> 
+              <Grid item xs={12}>
+                  <Paper
+                      elevation={0}
+                      style={{
+                          // margin: '50p', // Add margin here
+                          borderRadius: "10px",
+                          backgroundColor: "#D6D5DA",
+                          minHeight: 370,
+  
+                          // [theme.breakpoints.down("sm")]: {
+                          //     width: "80%",
+                          // },
+                          // [theme.breakpoints.up("sm")]: {
+                          //     width: "50%",
+                          // },
+                          // width: "100%",
+                          padding: '10px',
+                      }}
+                  >
+                      {
+                        contactDetails && typeof currentIndex === 'number' && currentIndex >=0 ? (
+                          <PaymentsInformation                                                       
+                            data={contactDetails[currentIndex]?.payments}
+                          />
+                        ) :
+                        <></>
+                      }
+                      
+                  </Paper>
+              </Grid>               
           </Grid>                     
       </Grid>    
     

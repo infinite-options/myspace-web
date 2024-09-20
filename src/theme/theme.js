@@ -132,6 +132,7 @@ const theme = createTheme({
     },
     priority: {
       high: "#A52A2A",
+      high2: "red",
       medium: "#FF8A00",
       low: "#FFC614",
       clear: "#3D5CAC",

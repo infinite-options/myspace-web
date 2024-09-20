@@ -5,11 +5,13 @@ import { DataGrid } from "@mui/x-data-grid";
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import theme from '../../theme/theme';
 import FilePreviewDialog from '../Leases/FilePreviewDialog';
+import { useNavigate } from "react-router-dom";
 
-export default function ManagementDetailsComponent({activeContract, currentProperty, selectedRole, showSearchManager, handleViewPMQuotesRequested, newContractCount, sentContractCount, handleOpenMaintenancePage}){
-    console.log("---dhyey-- inside new component -", currentProperty)
+export default function ManagementDetailsComponent({activeContract, currentProperty, selectedRole, handleViewPMQuotesRequested, newContractCount, sentContractCount, handleOpenMaintenancePage}){
+    console.log("---dhyey-- inside new component -", activeContract)
     const [selectedPreviewFile, setSelectedPreviewFile] = useState(null)
     const [previewDialogOpen, setPreviewDialogOpen] = useState(false) 
+    const navigate = useNavigate();
 
     const handleFileClick = (file)=>{
         setSelectedPreviewFile(file)
@@ -32,22 +34,22 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
                         fontSize: theme.typography.largeFont,
                         textAlign: "center",
                         paddingLeft: "100px",
-                        flexGrow: 1
+                        // flexGrow: 1
                     }}
                 >
                     Management Details
                 </Typography>
-                <Box sx={{display: "flex", justifyContent: "space-evenly", alignItems: "center"}}>
-                <IconButton onClick={() => {showSearchManager()}}>
-                    <SearchIcon />
-                </IconButton>
-                <IconButton onClick={()=>{handleViewPMQuotesRequested()}} sx={{marginRight: "10px"}}>
-                    <Badge badgeContent={newContractCount || 0} color="error" showZero/>
-                </IconButton>
-                <IconButton onClick={()=>{handleViewPMQuotesRequested()}} sx={{marginRight: "10px"}}>
-                    <Badge badgeContent={sentContractCount || 0} color="success" showZero/>
-                </IconButton>
-                </Box>
+                {selectedRole === "OWNER" && (<Box sx={{display: "flex", justifyContent: "space-evenly", alignItems: "center"}}>
+                    <IconButton onClick={() => {handleViewPMQuotesRequested(1)}}>
+                        <SearchIcon />
+                    </IconButton>
+                    <IconButton onClick={()=>{handleViewPMQuotesRequested(0)}} sx={{marginRight: "10px"}}>
+                        <Badge badgeContent={newContractCount || 0} color="error" showZero/>
+                    </IconButton>
+                    <IconButton onClick={()=>{handleViewPMQuotesRequested(0)}} sx={{marginRight: "10px"}}>
+                        <Badge badgeContent={sentContractCount || 0} color="warning" showZero/>
+                    </IconButton>
+                </Box>)}
             </Box>
             <CardContent>
                 <Grid container spacing={3}>
@@ -79,7 +81,16 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
                                     </Typography>
                                     <KeyboardArrowRightIcon
                                         sx={{ color: "blue", cursor: "pointer" }}
-                                        onClick={() => {}}
+                                        onClick={() => {
+                                            if (activeContract && activeContract.business_uid) {
+                                                navigate("/ContactsPM", {
+                                                    state: {
+                                                        contactsTab: "Manager",
+                                                        managerId: activeContract.business_uid,
+                                                    },
+                                                });
+                                            }
+                                        }}
                                     />
                                 </Box>
                             ) : (
@@ -126,7 +137,15 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
                             </Typography>
                             <KeyboardArrowRightIcon
                                 sx={{ color: "blue", cursor: "pointer" }}
-                                onClick={()=>{}}
+                                onClick={()=>{
+                                    if (activeContract && activeContract.business_uid) {
+                                        navigate("/ContactsPM", {
+                                            state: {
+                                                contactsTab: "Owner"
+                                            },
+                                        });
+                                    }
+                                }}
                             />
                             </Box>
                         </Grid>
@@ -150,7 +169,7 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
                         <Box display="flex" alignItems="center" justifyContent={"space-between"}>
                             {currentProperty?.contract_status === "ACTIVE" ? (<Typography
                                 sx={{
-                                    color: "#0CAA25",
+                                    color: theme.palette.success.main,
                                     fontWeight: theme.typography.secondary.fontWeight,
                                     fontSize: theme.typography.smallFont,
                                 }}
@@ -164,7 +183,7 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
                                         fontSize: theme.typography.smallFont,
                                     }}
                                 >
-                                    NEW
+                                    No Contract
                                 </Typography>)}
                             {currentProperty?.contract_status === "ACTIVE" && <Button
                             variant='outlined'

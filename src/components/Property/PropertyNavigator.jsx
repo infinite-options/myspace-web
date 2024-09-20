@@ -422,19 +422,19 @@ export default function PropertyNavigator({
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };  
 
-  const handleManagerChange = () => {
-    // if (property && property.business_uid) {
-    //   navigate("/ContactsPM", {
-    //     state: {
-    //       contactsTab: "Manager",
-    //       managerId: property.business_uid,
-    //     },
-    //   });
-    // } else {
-      const state = { index: currentIndex, propertyData, isDesktop };
-      onShowSearchManager(state);
-    // }
-  };
+  // const handleManagerChange = () => {
+  //   // if (property && property.business_uid) {
+  //   //   navigate("/ContactsPM", {
+  //   //     state: {
+  //   //       contactsTab: "Manager",
+  //   //       managerId: property.business_uid,
+  //   //     },
+  //   //   });
+  //   // } else {
+  //     // const state = { index: currentIndex, propertyData, isDesktop };
+  //     // onShowSearchManager(state);
+  //   // }
+  // };
 
   const handleOpenMaintenancePage = () => {
     if (property && property.maintenance?.length > 0) {
@@ -1988,7 +1988,7 @@ export default function PropertyNavigator({
 
             {/* Right component */}
             <Grid item xs={12} md={6}>
-              <ManagementDetailsComponent activeContract={activeContracts[0]} currentProperty={property} selectedRole={selectedRole} showSearchManager={handleManagerChange} handleViewPMQuotesRequested={handleViewPMQuotesRequested} newContractCount={newContractCount} sentContractCount={sentContractCount} handleOpenMaintenancePage={handleOpenMaintenancePage}/>
+              <ManagementDetailsComponent activeContract={activeContracts[0]} currentProperty={property} selectedRole={selectedRole} handleViewPMQuotesRequested={handleViewPMQuotesRequested} newContractCount={newContractCount} sentContractCount={sentContractCount} handleOpenMaintenancePage={handleOpenMaintenancePage}/>
               {/* <Card sx={{ backgroundColor: color, height: "100%" }}>
                 <Box
                   sx={{

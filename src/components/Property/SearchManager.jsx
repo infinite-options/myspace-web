@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
       width: "90%",
       marginBlock: 10,
       paddingBottom: "15px",
-      marginLeft: "5%",
+      marginLeft: "5%"
     },
   },
 }));
