@@ -22,6 +22,52 @@ import PMRent from "../Rent/PMRent/PMRent";
 
 import PropertiesContext from '../../contexts/PropertiesContext';
 
+
+const paymentStatusColorMap = {
+  "Paid On Time": theme.palette.priority.clear,
+  "Partially Paid": theme.palette.priority.medium,
+  "Paid Late": theme.palette.priority.low,
+  "Not Paid": theme.palette.priority.high,
+  Vacant: "#160449",
+  "No Manager": "#626264",
+  // "Not Listed": theme.palette.priority.medium,
+  "Not Listed": "#000000",
+};
+
+const paymentStatusMap = {
+  UNPAID: "Not Paid",
+  "PAID LATE": "Paid Late",
+  PAID: "Paid On Time",
+  Partial: "Partially Paid",
+  VACANT: "Vacant",
+  "NOT LISTED": " Vacant - Not Listed",
+  "NO MANAGER": "No Manager",
+};
+
+
+export function getPaymentStatusColor(paymentStatus, property) {
+  // console.log("214 - property - ", property);
+  if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property.property_available_to_rent && property.property_available_to_rent === 1)) {
+    return paymentStatusColorMap["Vacant"];
+  } else if((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property.property_available_to_rent == null || property.property_available_to_rent === 0)){
+    return paymentStatusColorMap["Not Listed"];
+  } else {
+    const status = paymentStatusMap[paymentStatus];
+    return paymentStatusColorMap[status];
+  }
+}
+
+export function getPaymentStatus(paymentStatus, property) {    
+  if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property.property_available_to_rent && property.property_available_to_rent === 1)) {
+    return paymentStatusMap["VACANT"];
+  } else if((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property.property_available_to_rent == null || property.property_available_to_rent === 0)){
+    return paymentStatusMap["NOT LISTED"];
+  } else {
+    const status = paymentStatusMap[paymentStatus];
+    return status;
+  }
+}
+
 export default function PropertiesList(props) {
   // console.log("In Property List: ", props.propertyList);  
   const location = useLocation();
@@ -219,48 +265,6 @@ export default function PropertiesList(props) {
     }
   }
 
-  const paymentStatusColorMap = {
-    "Paid On Time": theme.palette.priority.clear,
-    "Partially Paid": theme.palette.priority.medium,
-    "Paid Late": theme.palette.priority.low,
-    "Not Paid": theme.palette.priority.high,
-    Vacant: "#160449",
-    "No Manager": "#626264",
-    "Not Listed": theme.palette.priority.medium,
-  };
-
-  const paymentStatusMap = {
-    UNPAID: "Not Paid",
-    "PAID LATE": "Paid Late",
-    PAID: "Paid On Time",
-    Partial: "Partially Paid",
-    VACANT: "Vacant",
-    "NOT LISTED": "Not Listed",
-    "NO MANAGER": "No Manager",
-  };
-
-  function getPaymentStatusColor(paymentStatus, property) {
-    // console.log("214 - property - ", property);
-    if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property.property_available_to_rent && property.property_available_to_rent === 1)) {
-      return paymentStatusColorMap["Vacant"];
-    } else if((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property.property_available_to_rent == null || property.property_available_to_rent === 0)){
-      return paymentStatusColorMap["Not Listed"];
-    } else {
-      const status = paymentStatusMap[paymentStatus];
-      return paymentStatusColorMap[status];
-    }
-  }
-
-  function getPaymentStatus(paymentStatus, property) {    
-    if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property.property_available_to_rent && property.property_available_to_rent === 1)) {
-      return paymentStatusMap["VACANT"];
-    } else if((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property.property_available_to_rent == null || property.property_available_to_rent === 0)){
-      return paymentStatusMap["NOT LISTED"];
-    } else {
-      const status = paymentStatusMap[paymentStatus];
-      return status;
-    }
-  }
 
   const [rows, setRows ] = useState(convertDataToRows(displayedItems));
 
