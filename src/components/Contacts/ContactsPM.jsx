@@ -55,7 +55,7 @@ const ContactsPM = () => {
 
   useEffect(() => {
     if (location.state && contactsData.length > 0) {
-      const { contactsTab, managerId, tenantId } = location.state;
+      const { contactsTab, managerId, tenantId, ownerId } = location.state;
   
       let newTab = contactsTab;
       let newIndex = 0;
@@ -70,6 +70,11 @@ const ContactsPM = () => {
           (tenant) => tenant.tenant_uid === tenantId
         );
         newIndex = tenantIndex >= 0 ? tenantIndex : 0; 
+      }else if(newTab === "Owner" && ownerId){
+        const ownerIndex = contactsData?.owners?.findIndex(
+          (owner) => owner.owner_uid === ownerId
+        );
+        newIndex = ownerIndex >= 0? ownerIndex : 0
       }
   
       setContactsTab(newTab);
