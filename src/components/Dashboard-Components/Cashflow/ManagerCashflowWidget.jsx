@@ -37,13 +37,13 @@ const useStyles = makeStyles({
 });
 
 function getTotalRevenueByMonthYear(data, month, year) {
-  console.log("In getTotalRevenueByMonthYear: ", data, month, year);
+  // console.log("In getTotalRevenueByMonthYear: ", data, month, year);
   let revenueItems = data?.filter((item) => item.cf_month === month && item.cf_year === year && item.pur_cf_type === "revenue");
-  console.log("After filter revenueItems: ", revenueItems);
+  // console.log("After filter revenueItems: ", revenueItems);
   let totalRevenue = revenueItems?.reduce((acc, item) => {
     return acc + parseFloat(item["total_paid_total"] ? item["total_paid_total"] : 0.0);
   }, 0.0);
-  console.log("Cashflow Fetch Data total Revenue: ", totalRevenue);
+  // console.log("Cashflow Fetch Data total Revenue: ", totalRevenue);
   return totalRevenue;
 }
 
@@ -76,7 +76,7 @@ function getTotalExpectedExpenseByMonthYear(data, month, year) {
 function getTotalExpectedProfitByMonthYear(data, month, year) {
   // console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
   let profitItems = data?.filter((item) => item.pur_payer?.startsWith("110") && item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
-  console.log(`270 - profitItems - ${month}, ${year} - `, profitItems);
+  // console.log(`270 - profitItems - ${month}, ${year} - `, profitItems);
   let totalProfit = profitItems?.reduce((acc, item) => {
     return acc + parseFloat(item["pur_amount_due_total"] ? item["pur_amount_due_total"] : 0.0);
   }, 0.0);
@@ -155,7 +155,7 @@ function getPast12MonthsCashflow(data, month, year) {
     let expectedMonthPayouts = getTotalExpectedPayoutsByMonthYear(data, currentMonth, currentYear);
     let currentMonthPayouts = getTotalPayoutsByMonthYear(data, currentMonth, currentYear);
 
-    console.log("getPast12MonthsCashflow - expectedMonthProfit, currentMonthProfit", expectedMonthProfit, currentMonthProfit);
+    // console.log("getPast12MonthsCashflow - expectedMonthProfit, currentMonthProfit", expectedMonthProfit, currentMonthProfit);
 
     // console.log("expectedMonthRevenue", expectedMonthRevenue);
     // console.log("expectedMonthExpense", expectedMonthExpense);
@@ -212,8 +212,8 @@ function ManagerCashflowWidget({
   selectedProperty,
   setSelectedProperty,
 }) {
-  console.log("In ManagerCashflow Widget ");
-  console.log("ManagerCashflow widget - propertyList - ", propertyList);
+  // console.log("In ManagerCashflow Widget ");
+  // console.log("ManagerCashflow widget - propertyList - ", propertyList);
   const navigate = useNavigate();
   const classes = useStyles();
 
@@ -234,8 +234,8 @@ function ManagerCashflowWidget({
   //   let currentYear = date.getFullYear().toString();
   let currentMonth = propsMonth;
   let currentYear = propsYear;
-  console.log("ManagerCashflowWidget Current Month: ", currentMonth);
-  console.log("ManagerCashflowWidget Current Year: ", currentYear);
+  // console.log("ManagerCashflowWidget Current Month: ", currentMonth);
+  // console.log("ManagerCashflowWidget Current Year: ", currentYear);
 
   const [month, setMonth] = useState(currentMonth);
   const [year, setYear] = useState(currentYear);
@@ -269,7 +269,7 @@ function ManagerCashflowWidget({
   const [ cfPeriodButtonName, setCfPeriodButtonName ] = useState("Last 12 Months")
 
     useEffect(() => {
-      console.log("270 - last12Months - ", last12Months);
+      // console.log("270 - last12Months - ", last12Months);
 
       const totals = last12Months?.reduce((acc, month) => {
         acc.totalExpectedProfit += month.expected_profit;
@@ -295,7 +295,7 @@ function ManagerCashflowWidget({
       // console.log("Total Expected Payouts:", totals.totalExpectedPayouts);
       // console.log("Total Actual Payouts:", totals.totalActualPayouts);
 
-      console.log("270 - totals - ", totals);
+      // console.log("270 - totals - ", totals);
       setLast12MonthsTotals(totals);
 
 
@@ -328,13 +328,13 @@ function ManagerCashflowWidget({
   // }, []);
 
   const getCashflowData = (data) => {
-    console.log("getCashflowData - data - ", data);
+    // console.log("getCashflowData - data - ", data);
     if (data === null || data === undefined) return [];
 
     // const past12Months = getPast12MonthsCashflow(data, month, year)
     const past12Months = getPast12MonthsCashflow(data, month, year);
 
-    console.log("getCashflowData - past12Months - ", past12Months);
+    // console.log("getCashflowData - past12Months - ", past12Months);
 
     return past12Months;
   };

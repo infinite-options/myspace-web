@@ -51,6 +51,8 @@ import PaymentsManager from "../Payments/PaymentsManager";
 import MakePayment from "./MakePayment";
 import AddRevenue from "./AddRevenue";
 import AddExpense from "./AddExpense";
+import VerifyPayments from "../Payments/VerifyPayments";
+
 
 import axios from "axios";
 
@@ -116,7 +118,7 @@ export default function PaymentVerification() {
       // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/${userProfileId}/TTM`);
       // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/110-000003/TTM`);
       const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowRevised/${userProfileId}`);
-      console.log("Manager Cashflow Data: ", cashflow.data);
+    //   console.log("Manager Cashflow Data: ", cashflow.data);
       setShowSpinner(false);
       return cashflow.data;
     } catch (error) {
@@ -133,7 +135,7 @@ export default function PaymentVerification() {
       // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/${userProfileId}/TTM`);
       // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/110-000003/TTM`);
       const properties = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${userProfileId}`);
-      console.log("Manager Properties: ", properties.data);
+    //   console.log("Manager Properties: ", properties.data);
       setShowSpinner(false);
       return properties.data;
     } catch (error) {
@@ -344,7 +346,7 @@ export default function PaymentVerification() {
     }, {});
 
     setRentsByProperty(rentsDataByProperty);
-    console.log("rentsDataByProperty - ", rentsDataByProperty);
+    // console.log("rentsDataByProperty - ", rentsDataByProperty);
     const totalRents = rentsDataByProperty
       ? Object.values(rentsDataByProperty).reduce(
           (acc, property) => {
@@ -355,7 +357,7 @@ export default function PaymentVerification() {
           { totalExpected: 0, totalActual: 0 }
         )
       : { totalExpected: 0, totalActual: 0 };
-    console.log("totalRents - ", totalRents);
+    // console.log("totalRents - ", totalRents);
     setRentsTotal(totalRents);
   }, [month, year, cashflowData, selectedProperty]);
 
@@ -363,6 +365,15 @@ export default function PaymentVerification() {
   //     console.log("revenueByType", revenueByType)
   //     console.log("expenseByType", expenseByType)
   // }, [revenueByType, expenseByType])
+
+  const propsForPayments = {
+    profitsTotal,
+    rentsTotal,
+    payoutsTotal,
+    propsMonth : month,
+    propsYear: year,
+    graphData: profitabilityData?.result,
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -372,6 +383,9 @@ export default function PaymentVerification() {
 
       <Container maxWidth='lg' sx={{ paddingTop: "10px", height: "90vh" }}>
         <Grid container spacing={6} sx={{ height: "90%" }}>
+          <Grid container item xs={12} md={12} columnSpacing={6}>
+            <VerifyPayments managerCashflowWidgetData={propsForPayments}/>
+          </Grid>
           <Grid item xs={12} md={4}>
             <ManagerCashflowWidget
               propsMonth={month}
@@ -387,332 +401,11 @@ export default function PaymentVerification() {
             />
           </Grid>
 
-          <Grid container item xs={12} md={8} columnSpacing={6}>
-            {currentWindow === "PROFITABILITY" && (
-              <ManagerProfitability
-                propsMonth={month}
-                propsYear={year}
-                profitsTotal={profitsTotal}
-                profits={profits}
-                rentsTotal={rentsTotal}
-                rentsByProperty={rentsByProperty}
-                payoutsTotal={payoutsTotal}
-                payouts={payouts}
-                setMonth={setMonth}
-                setYear={setYear}
-              />
-            )}
-            {currentWindow === "TRANSACTIONS" && (
-              <ManagerTransactions
-                propsMonth={month}
-                propsYear={year}
-                setMonth={setMonth}
-                setYear={setYear}
-                transactionsData={transactionsData}
-                setSelectedPayment={setSelectedPayment}
-                setCurrentWindow={setCurrentWindow}
-                selectedProperty={selectedProperty}
-              />
-            )}
-            {currentWindow === "PAYMENTS" && <PaymentsManager />}
-            {currentWindow === "MAKE_PAYMENT" && <MakePayment selectedPayment={selectedPayment} refreshCashflowData={refreshCashflowData} setCurrentWindow={setCurrentWindow} />}
-            {currentWindow === "ADD_REVENUE" && <AddRevenue propertyList={propertyList} setCurrentWindow={setCurrentWindow} />}
-            {currentWindow === "ADD_EXPENSE" && <AddExpense propertyList={propertyList} setCurrentWindow={setCurrentWindow} />}
-          </Grid>
+          {/* <Grid container item xs={12} md={12} columnSpacing={6}>
+            <VerifyPayments managerCashflowWidgetData={propsForPayments}/>
+          </Grid> */}
         </Grid>
       </Container>
     </ThemeProvider>
-  );
-}
-
-// This is the function that controls what and how the cashflow data is displayed
-function StatementTable(props) {
-  console.log("In Statement Table: ", props);
-  const navigate = useNavigate();
-
-  const activeView = props.activeView;
-  const tableType = props.tableType;
-
-  const month = props.month;
-  const year = props.year;
-
-  const categoryTotalMapping = props.categoryTotalMapping;
-  const allItems = props.allItems;
-
-  const categoryExpectedTotalMapping = props.categoryExpectedTotalMapping;
-  const allExpectedItems = [];
-
-  const navigateType = "/edit" + tableType;
-
-  function handleNavigation(type, item) {
-    console.log(item);
-    navigate(type, { state: { itemToEdit: item, edit: true } });
-  }
-
-  // console.log("--debug-- tableType categoryTotalMapping", tableType, categoryTotalMapping)
-  // console.log("activeView", activeView)
-  // console.log("statement table year/month", year, month)
-
-  function getCategoryCount(category) {
-    console.log("getCategoryCount - allItems - ", allItems);
-    let items = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
-    return "(" + items.length + ")";
-  }
-
-  function getCategoryItems(category, type) {
-    let filteredIitems = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
-    let items = filteredIitems?.map((item) => ({ ...item, property: JSON.parse(item.property) }));
-
-    console.log("getCategoryItems", items);
-    var key = "total_paid";
-    if (activeView === "Cashflow") {
-      key = "total_paid";
-    } else {
-      key = "pur_amount_due";
-    }
-    return (
-      <>
-        {items.map((item, index) => {
-          return activeView === "Cashflow" ? (
-            <TableRow key={index} onClick={() => handleNavigation(type, item)}>
-              <TableCell></TableCell>
-              <TableCell>
-                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-                  {" "}
-                  {item.property_address} {item.property_unit}{" "}
-                </Typography>
-              </TableCell>
-              {/* <TableCell>
-                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${item[key] ? item[key] : 0}</Typography>
-              </TableCell> */}
-              <TableCell>
-                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-                  ${item["pur_amount_due"] ? item["pur_amount_due"] : 0}
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-                  ${item["total_paid"] ? item["total_paid"] : 0}
-                </Typography>
-              </TableCell>
-              {/* <TableCell align="right">
-                <DeleteIcon />
-              </TableCell> */}
-            </TableRow>
-          ) : (
-            //   <>
-            //   <Accordion
-            //       sx={{
-            //         backgroundColor: theme.palette.custom.pink,
-            //         boxShadow: "none",
-            //       }}
-            //       key={category}
-            //     >
-            //       <AccordionSummary sx={{ flexDirection: "space-between" }} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
-            //         <TableRow key={index}>
-            //           <TableCell>{item.purchase_uid}</TableCell>
-            //           <TableCell>{item.pur_property_id}</TableCell>
-            //           <TableCell>{item.pur_payer}</TableCell>
-            //           <TableCell>
-            //             <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-            //               {" "}
-            //               {item.property_address} {item.property_unit}{" "}
-            //             </Typography>
-            //           </TableCell>
-            //           <TableCell>{item.pur_notes}</TableCell>
-            //           <TableCell>{item.pur_description}</TableCell>
-            //           <TableCell>
-            //             <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-            //               ${item["pur_amount_due"] ? item["pur_amount_due"] : 0}
-            //             </Typography>
-            //           </TableCell>
-            //           <TableCell>
-            //             <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-            //               ${item["total_paid"] ? item["total_paid"] : 0}
-            //             </Typography>
-            //           </TableCell>
-            //           {/* <TableCell align="right">
-            //             <EditIcon />
-            //           </TableCell> */}
-            //         </TableRow>
-            //       </AccordionSummary>
-            //       <AccordionDetails>
-            //           {
-            //             item?.property?.map( property => {
-            //               return (
-            //                 <TableRow>
-            //                   <TableCell>
-            //                     <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-            //                       {property.property_uid}
-            //                     </Typography>
-            //                   </TableCell>
-            //                   <TableCell>
-            //                     <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-            //                       {property.property_address}
-            //                     </Typography>
-            //                   </TableCell>
-            //                   <TableCell>
-            //                     <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-            //                       {property.property_unit}
-            //                     </Typography>
-            //                   </TableCell>
-            //                   <TableCell>
-            //                     <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-            //                       ${property.individual_purchase[0]?.pur_amount_due? property.individual_purchase[0]?.pur_amount_due : 0}
-            //                     </Typography>
-            //                   </TableCell>
-            //                   <TableCell>
-            //                     <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-            //                       ${property.individual_purchase[0]?.total_paid? property.individual_purchase[0]?.total_paid : 0}
-            //                     </Typography>
-            //                   </TableCell>
-
-            //                 </TableRow>
-            //               );
-            //             })
-            //           }
-            //       </AccordionDetails>
-            //     </Accordion>
-
-            // </>
-            <>
-              <TableRow>
-                <TableCell>
-                  <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, marginLeft: "25px" }}>Property UID</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>Property Address</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>Property Unit</Typography>
-                </TableCell>
-                <TableCell align='right'>
-                  <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>Expected</Typography>
-                </TableCell>
-                <TableCell align='right'>
-                  <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, marginRight: "25px" }}>Actual</Typography>
-                </TableCell>
-              </TableRow>
-
-              {item?.property?.map((property) => {
-                return (
-                  <TableRow sx={{}}>
-                    <TableCell>
-                      <Typography sx={{ fontSize: theme.typography.smallFont, marginLeft: "25px" }}>{property.property_uid}</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography sx={{ fontSize: theme.typography.smallFont }}>{property.property_address}</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography sx={{ fontSize: theme.typography.smallFont }}>{property.property_unit}</Typography>
-                    </TableCell>
-                    <TableCell align='right'>
-                      <Typography sx={{ fontSize: theme.typography.smallFont }}>
-                        ${property.individual_purchase[0]?.pur_amount_due ? property.individual_purchase[0]?.pur_amount_due : 0}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align='right'>
-                      <Typography sx={{ fontSize: theme.typography.smallFont, marginRight: "25px" }}>
-                        ${property.individual_purchase[0]?.total_paid ? property.individual_purchase[0]?.total_paid : 0}
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </>
-          );
-        })}
-      </>
-    );
-  }
-
-  return (
-    <>
-      {activeView === "Cashflow" ? (
-        <>
-          {Object.entries(categoryTotalMapping).map(([category, value]) => {
-            return (
-              <Accordion
-                sx={{
-                  backgroundColor: theme.palette.custom.pink,
-                  boxShadow: "none",
-                }}
-                key={category}
-              >
-                <AccordionSummary sx={{ flexDirection: "row-reverse" }} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-                            {" "}
-                            {category} {getCategoryCount(category)}{" "}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? value : 0}</Typography>
-                        </TableCell>
-                        <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? value : 0}</Typography>
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                  </Table>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Table>
-                    <TableBody>{getCategoryItems(category, navigateType)}</TableBody>
-                  </Table>
-                </AccordionDetails>
-              </Accordion>
-            );
-          })}
-        </>
-      ) : (
-        <>
-          {Object.entries(categoryExpectedTotalMapping).map(([category, value]) => {
-            return (
-              <Accordion
-                sx={{
-                  backgroundColor: theme.palette.custom.pink,
-                  boxShadow: "none",
-                }}
-                key={category}
-              >
-                <AccordionSummary sx={{ flexDirection: "space-between" }} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell sx={{ width: "150px" }}>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-                            {" "}
-                            {category} {getCategoryCount(category)}{" "}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, width: "250px" }}>
-                            ${value ? value : 0}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-                            ${categoryTotalMapping[category] ? categoryTotalMapping[category] : 0}
-                          </Typography>
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                  </Table>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Table>
-                    <TableBody>{getCategoryItems(category)}</TableBody>
-                  </Table>
-                </AccordionDetails>
-              </Accordion>
-            );
-          })}
-        </>
-      )}
-    </>
   );
 }
