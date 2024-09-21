@@ -81,8 +81,12 @@ export default function ManagerCashflow() {
 
   const [showChart, setShowChart] = useState("Current");
 
-  const [month, setMonth] = useState(location.state?.month || "July"); //fix
-  const [year, setYear] = useState(location.state?.year || "2024");
+  const currentDate = new Date();
+  const currentMonth = currentDate.toLocaleString('default', { month: 'long' });
+  const currentYear = currentDate.getFullYear().toString();
+
+  const [month, setMonth] = useState(location.state?.month || currentMonth);
+  const [year, setYear] = useState(location.state?.year || currentYear);  
   const cashflowWidgetData = location.state?.cashflowWidgetData;
 
   const [cashflowData, setCashflowData] = useState(null); // Cashflow data from API
