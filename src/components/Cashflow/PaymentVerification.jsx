@@ -53,7 +53,6 @@ import AddRevenue from "./AddRevenue";
 import AddExpense from "./AddExpense";
 import VerifyPayments from "../Payments/VerifyPayments";
 
-
 import axios from "axios";
 
 // import {
@@ -84,11 +83,11 @@ export default function PaymentVerification() {
   const [showChart, setShowChart] = useState("Current");
 
   const currentDate = new Date();
-  const currentMonth = currentDate.toLocaleString('default', { month: 'long' });
+  const currentMonth = currentDate.toLocaleString("default", { month: "long" });
   const currentYear = currentDate.getFullYear().toString();
 
   const [month, setMonth] = useState(location.state?.month || currentMonth);
-  const [year, setYear] = useState(location.state?.year || currentYear);  
+  const [year, setYear] = useState(location.state?.year || currentYear);
 
   const [cashflowData, setCashflowData] = useState(null); // Cashflow data from API
 
@@ -118,7 +117,7 @@ export default function PaymentVerification() {
       // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/${userProfileId}/TTM`);
       // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/110-000003/TTM`);
       const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowRevised/${userProfileId}`);
-    //   console.log("Manager Cashflow Data: ", cashflow.data);
+      //   console.log("Manager Cashflow Data: ", cashflow.data);
       setShowSpinner(false);
       return cashflow.data;
     } catch (error) {
@@ -135,7 +134,7 @@ export default function PaymentVerification() {
       // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/${userProfileId}/TTM`);
       // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/110-000003/TTM`);
       const properties = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${userProfileId}`);
-    //   console.log("Manager Properties: ", properties.data);
+      //   console.log("Manager Properties: ", properties.data);
       setShowSpinner(false);
       return properties.data;
     } catch (error) {
@@ -212,23 +211,20 @@ export default function PaymentVerification() {
       filteredProfitData = allProfitData?.filter((item) => item.property_id === selectedProperty);
       // console.log("filteredProfitData - ", filteredProfitData);
     }
-    
+
     // const profitDatacurrentMonth = filteredProfitData;
-    const profitDatacurrentMonth = filteredProfitData?.filter((item) => item.cf_month === month && item.cf_year === year); 
+    const profitDatacurrentMonth = filteredProfitData?.filter((item) => item.cf_month === month && item.cf_year === year);
     // const profitDatacurrentMonth = filteredProfitData?.filter( item => item.cf_month != null && item.cf_year != null); // testing - uncomment to test last 12 months
 
     // console.table("226 - profitDatacurrentMonth - ", profitDatacurrentMonth)
-    
-    
+
     // const rentDataCurrentMonth = filteredProfitData?.filter((item) => (item.purchase_type === "Rent" || item.purchase_type === "Late Fee") && item.pur_cf_type === "revenue");
     // const rentDataCurrentMonth = profitDatacurrentMonth?.filter((item) => (item.purchase_type === "Rent" || item.purchase_type === "Late Fee") && item.pur_cf_type === "revenue");
     const rentDataCurrentMonth = profitDatacurrentMonth?.filter((item) => item.pur_payer?.startsWith("350") && item.pur_receiver?.startsWith("600"));
 
-    
-    // const payoutsCurrentMonth = filteredProfitData?.filter((item) => (item.purchase_type === "Rent" || item.purchase_type === "Late Fee") && item.pur_cf_type === "expense");    
+    // const payoutsCurrentMonth = filteredProfitData?.filter((item) => (item.purchase_type === "Rent" || item.purchase_type === "Late Fee") && item.pur_cf_type === "expense");
     // const payoutsCurrentMonth = profitDatacurrentMonth?.filter((item) => (item.purchase_type === "Rent" || item.purchase_type === "Late Fee") && item.pur_cf_type === "expense");
     const payoutsCurrentMonth = profitDatacurrentMonth?.filter((item) => item.pur_payer?.startsWith("600") && item.pur_receiver?.startsWith("110"));
-
 
     const payoutsByProperty = payoutsCurrentMonth?.reduce((acc, item) => {
       const propertyUID = item.property_id;
@@ -274,7 +270,6 @@ export default function PaymentVerification() {
     // const profitsCurrentMonth = profitDatacurrentMonth?.filter(item => item.purchase_type === "Management" || item.purchase_type === "Management - Late Fees");
     const profitsCurrentMonth = profitDatacurrentMonth?.filter((item) => item.pur_payer?.startsWith("110") && item.pur_receiver?.startsWith("600"));
     // const profitsCurrentMonth = filteredProfitData?.filter((item) => item.pur_payer?.startsWith("110") && item.pur_receiver?.startsWith("600"));
-    
 
     const profitsByProperty = profitsCurrentMonth?.reduce((acc, item) => {
       const propertyUID = item.property_id;
@@ -370,10 +365,10 @@ export default function PaymentVerification() {
     profitsTotal,
     rentsTotal,
     payoutsTotal,
-    propsMonth : month,
+    propsMonth: month,
     propsYear: year,
     graphData: profitabilityData?.result,
-  }
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -384,9 +379,9 @@ export default function PaymentVerification() {
       <Container maxWidth='lg' sx={{ paddingTop: "10px", height: "90vh" }}>
         <Grid container spacing={6} sx={{ height: "90%" }}>
           <Grid container item xs={12} md={12} columnSpacing={6}>
-            <VerifyPayments managerCashflowWidgetData={propsForPayments}/>
+            <VerifyPayments managerCashflowWidgetData={propsForPayments} />
           </Grid>
-          <Grid item xs={12} md={4}>
+          {/* <Grid item xs={12} md={4}>
             <ManagerCashflowWidget
               propsMonth={month}
               propsYear={year}
@@ -399,7 +394,7 @@ export default function PaymentVerification() {
               selectedProperty={selectedProperty}
               setSelectedProperty={setSelectedProperty}
             />
-          </Grid>
+          </Grid> */}
 
           {/* <Grid container item xs={12} md={12} columnSpacing={6}>
             <VerifyPayments managerCashflowWidgetData={propsForPayments}/>

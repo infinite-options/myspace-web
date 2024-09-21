@@ -45,7 +45,7 @@ function DashboardTab(props) {
 }
 
 export default function VerifyPayments(props) {
-//   console.log("In VerifyPayments.jsx");
+  //   console.log("In VerifyPayments.jsx");
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
@@ -92,14 +92,14 @@ export default function VerifyPayments(props) {
   });
 
   useEffect(() => {
-    console.log("Payments", moneyPayable)    
-  }, [moneyPayable]); 
+    console.log("Payments", moneyPayable);
+  }, [moneyPayable]);
 
   let customer_uid = getProfileId();
   let customer_role = customer_uid.substring(0, 3);
-//   console.log("Profile Info: ", getProfileId());
-//   console.log("Customer UID: ", customer_uid);
-//   console.log("Customer Role: ", customer_role);
+  //   console.log("Profile Info: ", getProfileId());
+  //   console.log("Customer UID: ", customer_uid);
+  //   console.log("Customer Role: ", customer_role);
   // console.log("Customer UID: ", paymentData);
   // console.log("Customer UID: ", paymentData.customer_uid);
   // console.log("User Info: ", user);
@@ -169,25 +169,25 @@ export default function VerifyPayments(props) {
       // const paymentStatusData = res.data.PaymentStatus.result;
       // const paidStatusData = res.data.PaidStatus.result;
 
-    //   const moneyPaidData = res.data.MoneyPaid.result;
-    //   const moneyReceivedData = res.data.MoneyReceived.result;
-    //   const moneyToBePaidData = res.data.MoneyToBePaid.result;
-    //   const moneyToBeReceivedData = res.data.MoneyToBeReceived.result;
+      //   const moneyPaidData = res.data.MoneyPaid.result;
+      //   const moneyReceivedData = res.data.MoneyReceived.result;
+      //   const moneyToBePaidData = res.data.MoneyToBePaid.result;
+      //   const moneyToBeReceivedData = res.data.MoneyToBeReceived.result;
       const moneyPayableData = res.data.result;
 
-    //   setMoneyPaid(moneyPaidData);
-    //   setMoneyReceived(moneyReceivedData);
-    //   setMoneyToBePaid(moneyToBePaidData);
-    //   setMoneyToBeReceived(moneyToBeReceivedData);
+      //   setMoneyPaid(moneyPaidData);
+      //   setMoneyReceived(moneyReceivedData);
+      //   setMoneyToBePaid(moneyToBePaidData);
+      //   setMoneyToBeReceived(moneyToBeReceivedData);
       setMoneyPayable(moneyPayableData);
 
       // console.log("Money To Be Paid: ", moneyToBePaid);
       // console.log("Money To Be Paid: ", moneyToBePaid[0].ps);
 
-    //   totalMoneyPaidUpdate(moneyPaidData);
-    //   totalMoneyReceivedUpdate(moneyReceivedData);
-    //   totalMoneyToBePaidUpdate(moneyToBePaidData);
-    //   totalMoneyToBeReceivedUpdate(moneyToBeReceivedData);
+      //   totalMoneyPaidUpdate(moneyPaidData);
+      //   totalMoneyReceivedUpdate(moneyReceivedData);
+      //   totalMoneyToBePaidUpdate(moneyToBePaidData);
+      //   totalMoneyToBeReceivedUpdate(moneyToBeReceivedData);
       totalMoneyPayable(moneyPayableData);
 
       // console.log("--> initialSelectedItems", initialSelectedItems);
@@ -285,30 +285,30 @@ export default function VerifyPayments(props) {
                   marginBottom: "40px",
                   boxShadow: "none",
                 }}
-              >                                                
+              >
                 <Paper
-                sx={{
+                  sx={{
                     margin: "25px",
                     padding: 20,
                     backgroundColor: theme.palette.primary.main,
                     // height: "25%",
-                }}
+                  }}
                 >
-                    <Stack direction='row' justifyContent='space-between'>
-                        <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                        Verify Payments
-                        </Typography>
-                        <Typography
-                        sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
-                        >
-                        ${totalPayable.toFixed(2)}
-                        </Typography>
-                    </Stack>
+                  <Stack direction='row' justifyContent='space-between'>
+                    <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                      Verify Payments
+                    </Typography>
+                    <Typography
+                      sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
+                    >
+                      ${totalPayable.toFixed(2)}
+                    </Typography>
+                  </Stack>
 
-                    <Stack>
-                        <BalanceDetailsTable data={moneyPayable} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
-                    </Stack>
-                </Paper>                                                                        
+                  <Stack>
+                    <BalanceDetailsTable data={moneyPayable} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
+                  </Stack>
+                </Paper>
               </Paper>
             </Grid>
           </Grid>
@@ -325,7 +325,7 @@ function BalanceDetailsTable(props) {
   const [selectedPayments, setSelectedPayments] = useState([]);
   const [paymentDueResult, setPaymentDueResult] = useState([]);
 
-  const [totalVerified, setTotalVerified ] = useState(0);
+  const [totalVerified, setTotalVerified] = useState(0);
 
   useEffect(() => {
     setData(props.data);
@@ -345,15 +345,15 @@ function BalanceDetailsTable(props) {
 
   useEffect(() => {
     const total = selectedRows?.reduce((total, rowId) => {
-        const payment = paymentDueResult.find((row) => row.purchase_uid === rowId);
-        const amountDue = payment.pur_amount_due;
-        const isExpense = payment.pur_cf_type === "expense";
+      const payment = paymentDueResult.find((row) => row.purchase_uid === rowId);
+      const amountDue = payment.pur_amount_due;
+      const isExpense = payment.pur_cf_type === "expense";
 
-        // Adjust the total based on whether the payment is an expense or revenue
-        return total + (isExpense ? -amountDue : amountDue);
-    }, 0)
-    setTotalVerified(total)
-  }, [selectedRows])
+      // Adjust the total based on whether the payment is an expense or revenue
+      return total + (isExpense ? -amountDue : amountDue);
+    }, 0);
+    setTotalVerified(total);
+  }, [selectedRows]);
 
   useEffect(() => {
     var total = 0;
@@ -407,32 +407,32 @@ function BalanceDetailsTable(props) {
     },
   ];
 
-//   , purchase_uid, pur_property_id
-// , purchase_type, pur_description, pur_notes
-// , payment_date
-// , paid_by, payment_intent, payment_method
-// , pur_amount_due, pay_amount, total_paid
+  //   , purchase_uid, pur_property_id
+  // , purchase_type, pur_description, pur_notes
+  // , payment_date
+  // , paid_by, payment_intent, payment_method
+  // , pur_amount_due, pay_amount, total_paid
 
-// , payment_verify, pur_group, pur_leaseFees_id, pur_bill_id
+  // , payment_verify, pur_group, pur_leaseFees_id, pur_bill_id
 
   const columnsList = [
     {
-        field: "purchase_uid",
-        headerName: "Purchase UID",
-        flex: 2,
-        renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+      field: "purchase_uid",
+      headerName: "Purchase UID",
+      flex: 2,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
-        field: "pur_property_id",
-        headerName: "Property UID",
-        flex: 1,
-        renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+      field: "pur_property_id",
+      headerName: "Property UID",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
-        field: "purchase_type",
-        headerName: "Purchase Type",
-        flex: 2,
-        renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+      field: "purchase_type",
+      headerName: "Purchase Type",
+      flex: 2,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
       field: "pur_description",
@@ -441,52 +441,52 @@ function BalanceDetailsTable(props) {
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
-        field: "pur_notes",
-        headerName: "Notes",
-        flex: 2,
-        renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+      field: "pur_notes",
+      headerName: "Notes",
+      flex: 2,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
-        field: "payment_date",
-        headerName: "Payment Date",
-        flex: 2,
-        renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+      field: "payment_date",
+      headerName: "Payment Date",
+      flex: 2,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
-        field: "paid_by",
-        headerName: "Paid By",
-        flex: 2,
-        renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+      field: "paid_by",
+      headerName: "Paid By",
+      flex: 2,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
-        field: "payment_intent",
-        headerName: "Payment Intent",
-        flex: 2,
-        renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+      field: "payment_intent",
+      headerName: "Payment Intent",
+      flex: 2,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
-        field: "payment_method",
-        headerName: "Payment Method",
-        flex: 2,
-        renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+      field: "payment_method",
+      headerName: "Payment Method",
+      flex: 2,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
-        field: "pur_amount_due",
-        headerName: "Amount Due",
-        flex: 2,
-        renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+      field: "pur_amount_due",
+      headerName: "Amount Due",
+      flex: 2,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
-        field: "pay_amount",
-        headerName: "Pay Amount",
-        flex: 2,
-        renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+      field: "pay_amount",
+      headerName: "Pay Amount",
+      flex: 2,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
-        field: "total_paid",
-        headerName: "Total Paid",
-        flex: 2,
-        renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+      field: "total_paid",
+      headerName: "Total Paid",
+      flex: 2,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     // {
     //     field: "payment_verify",
@@ -512,9 +512,6 @@ function BalanceDetailsTable(props) {
     //     flex: 2,
     //     renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     // },
-
-
-
   ];
 
   const handleSelectionModelChange = (newRowSelectionModel) => {
@@ -530,14 +527,14 @@ function BalanceDetailsTable(props) {
       let newPayments = [];
       addedRows.forEach((item, index) => {
         const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
-        
-        if(addedPayment){
-            const relatedPayments = paymentDueResult.filter((row) => row.payment_intent === addedPayment.payment_intent);
 
-            newPayments = [...newPayments, ...relatedPayments];
-            const relatedRowIds = relatedPayments.map(payment => payment.purchase_uid);
-            updatedRowSelectionModel = [...new Set([...updatedRowSelectionModel, ...relatedRowIds])]; 
-        }        
+        if (addedPayment) {
+          const relatedPayments = paymentDueResult.filter((row) => row.payment_intent === addedPayment.payment_intent);
+
+          newPayments = [...newPayments, ...relatedPayments];
+          const relatedRowIds = relatedPayments.map((payment) => payment.purchase_uid);
+          updatedRowSelectionModel = [...new Set([...updatedRowSelectionModel, ...relatedRowIds])];
+        }
       });
 
       // console.log("newPayments - ", newPayments);
@@ -545,52 +542,50 @@ function BalanceDetailsTable(props) {
         return [...prevState, ...newPayments];
       });
     }
-    
 
     if (removedRows.length > 0) {
       // console.log("Removed rows: ", removedRows);
       let removedPayments = [];
       removedRows.forEach((item, index) => {
         let removedPayment = paymentDueResult.find((row) => row.purchase_uid === removedRows[index]);
-        
+
         removedPayments.push(removedPayment);
       });
       // console.log("removedPayments - ", removedPayments);
       setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.purchase_uid)));
     }
-    // setSelectedRows(newRowSelectionModel);    
+    // setSelectedRows(newRowSelectionModel);
     setSelectedRows(updatedRowSelectionModel);
-
   };
 
   const handleVerifyPayments = async () => {
-    console.log("In handleVerifyPayments");    
+    console.log("In handleVerifyPayments");
 
     const formData = new FormData();
-    const verifiedList = selectedPayments?.map( payment => payment.payment_uid);
-    console.log("ROHIT - verifiedList - ", verifiedList);    
-    formData.append("payment_uid",  JSON.stringify(verifiedList));
-    formData.append("payment_verify",  "Verified");
-    
+    const verifiedList = selectedPayments?.map((payment) => payment.payment_uid);
+    console.log("ROHIT - verifiedList - ", verifiedList);
+    formData.append("payment_uid", JSON.stringify(verifiedList));
+    formData.append("payment_verify", "Verified");
+
     // return;
 
     try {
-        const response = await fetch(`${APIConfig.baseURL.dev}/paymentVerification`, {
-            method: 'PUT',
-            body: formData,
-        });
+      const response = await fetch(`${APIConfig.baseURL.dev}/paymentVerification`, {
+        method: "PUT",
+        body: formData,
+      });
 
-        const responseData = await response.json();
-        console.log(responseData);
-        if (response.status === 200) {
-            console.log("successfuly verified selected payments");            
-        } else{
-            console.error("Could not update verification for selected payments ")
-        }
-    } catch (error){
-        console.log("error", error)
-    }    
-  }
+      const responseData = await response.json();
+      console.log(responseData);
+      if (response.status === 200) {
+        console.log("successfuly verified selected payments");
+      } else {
+        console.error("Could not update verification for selected payments ");
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
 
   if (paymentDueResult.length > 0) {
     // console.log("Passed Data ", paymentDueResult);
@@ -645,7 +640,7 @@ function BalanceDetailsTable(props) {
                 fontFamily: "Source Sans Pro",
               }}
             >
-              Total Verified              
+              Total Verified
             </Typography>
           </Grid>
 
@@ -658,43 +653,42 @@ function BalanceDetailsTable(props) {
                 fontFamily: "Source Sans Pro",
               }}
             >
-              {/* $ {selectedRows.reduce((total, rowId) => total + paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due, 0)} */}${" "}
-              {totalVerified}
+              {/* $ {selectedRows.reduce((total, rowId) => total + paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due, 0)} */}$ {totalVerified}
             </Typography>
           </Grid>
         </Grid>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems='center' sx={{ paddingTop: "15px" }}>
-            <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}></Grid>
-            <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
-              <Button
-                variant='outlined'
-                id='complete_verification'
-                // className={classes.button}
-                sx={{
-                  // height: "100%",
-                  width: "60%",
-                  backgroundColor: "#3D5CAC",
-                  color: "#FFFFFF",
-                  fontSize: "15px",
-                  fontWeight: 'bold',
-                  textTransform: 'none',
-                  marginBottom: "10px",
-                  borderRadius: "5px",         
-                  '&:hover': {
-                    backgroundColor: "#160449",
-                  }         
-                }}
-                // sx={{
-                    
-                // }}
-                onClick={(e) => {
-                //   e.stopPropagation();                  
-                  handleVerifyPayments();                  
-                }}
-              >
-                Complete Verification
-              </Button>
-            </Grid>
+          <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}></Grid>
+          <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
+            <Button
+              variant='outlined'
+              id='complete_verification'
+              // className={classes.button}
+              sx={{
+                // height: "100%",
+                width: "60%",
+                backgroundColor: "#3D5CAC",
+                color: "#FFFFFF",
+                fontSize: "15px",
+                fontWeight: "bold",
+                textTransform: "none",
+                marginBottom: "10px",
+                borderRadius: "5px",
+                "&:hover": {
+                  backgroundColor: "#160449",
+                },
+              }}
+              // sx={{
+
+              // }}
+              onClick={(e) => {
+                //   e.stopPropagation();
+                handleVerifyPayments();
+              }}
+            >
+              Complete Verification
+            </Button>
+          </Grid>
         </Grid>
       </>
     );
