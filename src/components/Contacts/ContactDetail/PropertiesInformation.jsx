@@ -49,12 +49,13 @@ const PropertiesInformation = ({ owner }) => {
   
   
   return (
-    <Container disableGutters sx={{ height: '100%' }}>
+    <Container disableGutters sx={{ height: '100%', width:"100%" }}>
       <Grid container sx={{ padding: '10px' }}>
         <Grid item xs={12}>
-          <Typography sx={{ fontSize: '18px', fontWeight: 'bold', color: '#160449' }}>
-            {selectedRole === "MANAGER" && `YOU MANAGE ${activeProperties?.length} OF THEIR PROPERTIES`}
-            {selectedRole === "OWNER" && `THEY MANAGE ${activeProperties?.length} OF YOUR PROPERTIES`}
+          <Typography sx={{ fontSize: '20px', fontWeight: 'bold', color: '#160449', }} textAlign={"center"}>
+            PROPERTY INFORMATION
+            {/* {selectedRole === "MANAGER" && `YOU MANAGE ${activeProperties?.length} OF THEIR PROPERTIES`}
+            {selectedRole === "OWNER" && `THEY MANAGE ${activeProperties?.length} OF YOUR PROPERTIES`} */}
           </Typography>
         </Grid>
 
@@ -66,14 +67,14 @@ const PropertiesInformation = ({ owner }) => {
       </Grid>
 
       {activeProperties.length === 0 ? (
-        <Grid item xs={12}>
+        <Grid item xs={12} sx={{ padding: '5px 0' }}>
           <Typography sx={{ fontSize: '12px', color: '#9E9E9E', paddingLeft: '10px', marginTop: '10px' }}>
             No active properties
           </Typography>
         </Grid>
       ) : (
-        <Grid container sx={{ padding: '10px 0', maxHeight: '150px', overflow: 'auto' }}>
-          <Grid item xs={12} sx={{ height: 'auto' }}>
+        <Grid container sx={{ padding: '10px 0', maxHeight: '220px', overflow: 'auto' }}>
+          <Grid item xs={12} sx={{ height: 'auto', padding: '5px 0'}}>
             <PropertiesDataGrid data={activeProperties} />
           </Grid>
         </Grid>
@@ -163,7 +164,7 @@ const PropertiesList = ({ data }) => {
     const columns = [
       { 
         field: 'property_address',      
-        flex: 0.6,
+        flex: 1,
         renderCell: (params) => (
           <Typography
             sx={{ fontSize: '12px', color: '#160449', cursor: 'pointer' }}
@@ -213,7 +214,7 @@ const PropertiesList = ({ data }) => {
                 sx={{
                   color: theme.palette.primary.main,
                   fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: "12px",
+                  fontSize: "10px",
                   margin: "0px",
                   padding: "0px",
                   height: "35px",
@@ -233,7 +234,7 @@ const PropertiesList = ({ data }) => {
       {
         field: "maintenance",      
         // width: 100,
-        flex: 0.3,
+        flex: 0.5,
         renderCell: (params) => (
           <Box sx={{ margin: "0px" }}
             onClick = {() =>
@@ -283,21 +284,12 @@ const PropertiesList = ({ data }) => {
     
     
     return (    
-        <Grid
-          container
-          item
-          xs={12}
-          sx={{
-            width: '100%', // Adjust based on your layout
-            height: '100%', // Adjust based on your layout
-            overflowY: 'auto',
-            overflowX: 'hidden',
-          }}
-        >
-          <DataGrid
+      <>
+        <DataGrid
             rows={data}
             columns={columns}
-            getRowHeight={() => 'auto'}
+            autoHeight
+            // getRowHeight={() => 'auto'}
             slots={{
               columnHeaders: () => null,
             }}      
@@ -313,9 +305,26 @@ const PropertiesList = ({ data }) => {
             sx={{          
               border: '0px',            
             }}
-            hideFooter={true}               
+            hideFooter={true}
+            getRowSpacing={(params) => ({
+              top: 3, // Space above each row
+              bottom: 3, // Space below each row
+            })}               
           />
-        </Grid>    
+      </>
+        // <Grid
+        //   container
+        //   item
+        //   xs={12}
+        //   sx={{
+        //     width: '100%', // Adjust based on your layout
+        //     height: '100%', // Adjust based on your layout
+        //     overflowY: 'auto',
+        //     overflowX: 'hidden',
+        //   }}
+        // >
+          
+        // </Grid>    
     );
   }
 

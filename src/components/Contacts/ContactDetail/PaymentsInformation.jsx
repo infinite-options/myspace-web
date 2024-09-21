@@ -70,7 +70,7 @@ const PaymentsInformation = ({ data }) => {
         </Grid>
       </Grid>    
       <Grid container sx={{padding: '10px', maxHeight: '250px', overflow: 'auto',}}>                    
-        <Grid item xs={12} sx={{height: '180px', minHeight: '200px'}}>
+        <Grid item xs={12} sx={{minHeight: '100px'}}>
           <PaymentsDataGrid data={mappedPayments} />
         </Grid>        
       </Grid>    
