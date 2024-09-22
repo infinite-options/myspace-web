@@ -32,7 +32,7 @@ export default function UserNavBar(props){
     case 'MANAGER':
         return '/managerDashboard';
     case 'TENANT':
-        return '/tenantDashboard';
+        return '/tenantDashboardPM';
     case 'MAINTENANCE':
         return '/maintenanceDashboard2';
     case 'PM_EMPLOYEE':

@@ -48,28 +48,14 @@ const TenantDashboardPM = () => {
     const [filteredMaintenanceRequests, setFilteredMaintenanceRequests] = useState([]);
     const [allBalanceDetails, setAllBalanceDetails] = useState([]);
 
-    // const fetchBalanceDetails = async (propertyUid) => {
-    //     try {
-    //         const response = await fetch(`${APIConfig.baseURL.dev}/cashflowRevised/${getProfileId()}`);
-    //         const data = await response.json();
-            
-    //         const balanceBreakdown = data.result.flatMap(item => {
-    //             const properties = JSON.parse(item.property);
-    //             return properties
-    //                 .filter(prop => prop.property_uid === propertyUid) 
-    //                 .flatMap(prop => prop.individual_purchase.map(purchase => ({
-    //                     purchaseType: item.purchase_type,
-    //                     amountDue: parseFloat(purchase.pur_amount_due || 0),
-    //                     totalPaid: parseFloat(purchase.total_paid || 0),
-    //                     description: purchase.pur_description
-    //                 })));
-    //         });
-    
-    //         setBalanceDetails(balanceBreakdown);
-    //     } catch (error) {
-    //         console.error("Error fetching balance details: ", error);
-    //     }
-    // };
+    const fetchCashflowDetails = async () => {
+        try {
+            const response = await fetch(`${APIConfig.baseURL.dev}/cashflowTransactions/${getProfileId()}/all`);
+            const data = await response.json();
+        } catch (error) {
+            console.error("Error fetching balance details: ", error);
+        }
+    };
     
     const fetchData = async () => {
         try {
@@ -97,7 +83,7 @@ const TenantDashboardPM = () => {
                 //     setSelectedProperty(firstProperty.property_uid);
                 //     handleSelectProperty(firstProperty.property_uid);
                 // }
-                const allBalanceDetails = dashboardData.tenantPayments?.result.map(payment => ({
+                const allBalanceDetails = dashboardData.tenantTransactions?.result.map(payment => ({ //here
                     purchase_uid: payment.purchase_uid,
                     propertyUid: payment.pur_property_id,
                     purchaseType: payment.purchase_type,
@@ -133,6 +119,7 @@ const TenantDashboardPM = () => {
     const handleSelectProperty = (property) => {
         setSelectedProperty(property); 
         updateLeaseDetails(property.property_uid);
+        fetchCashflowDetails();
         // fetchPaymentHistory(property.property_uid);
         // fetchBalanceDetails(property.property_uid);
 
@@ -836,7 +823,7 @@ const Announcements = ({ announcements }) => {
                 variant="caption"
                 sx={{ color: '#999', marginTop: 1, textAlign: 'left' }}
               >
-                {new Date(announcements[currentIndex]?.announcement_date).toLocaleString()}
+                {new Date(announcements[currentIndex]?.announcement_date).toLocaleString()}{" announcement_uid : "}{announcements[currentIndex].announcement_uid}
               </Typography>
             </Paper>
   
