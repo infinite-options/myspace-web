@@ -54,9 +54,9 @@ const ContactsPM = () => {
   }, []);
 
   useEffect(() => {
-    if (location.state && contactsData.length > 0) {
-      const { contactsTab, managerId, tenantId } = location.state;
-  
+    if (location.state && contactsData) {
+      const { contactsTab, managerId, tenantId, ownerId } = location.state;
+
       let newTab = contactsTab;
       let newIndex = 0;
   
@@ -64,12 +64,19 @@ const ContactsPM = () => {
         const managerIndex = contactsData?.managers?.findIndex(
           (manager) => manager.business_uid === managerId
         );
+
+        
         newIndex = managerIndex >= 0 ? managerIndex : 0;
       } else if (newTab === "Tenant" && tenantId && selectedRole !== "TENANT") {
         const tenantIndex = contactsData?.tenants?.findIndex(
           (tenant) => tenant.tenant_uid === tenantId
         );
         newIndex = tenantIndex >= 0 ? tenantIndex : 0; 
+      }else if(newTab === "Owner" && ownerId){
+        const ownerIndex = contactsData?.owners?.findIndex(
+          (owner) => owner.owner_uid === ownerId
+        );
+        newIndex = ownerIndex >= 0? ownerIndex : 0
       }
   
       setContactsTab(newTab);
@@ -82,9 +89,6 @@ const ContactsPM = () => {
       setCurrentIndex(0); // Reset to the first item whenever the tab changes
     }
   }, [contactsTab]);
-  
-
-
 
   const renderContactDetail = () => {
     switch (contactsTab) {

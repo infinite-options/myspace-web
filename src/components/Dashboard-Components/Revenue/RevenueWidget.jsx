@@ -105,6 +105,7 @@ export default function RevenueWidget({ revenueData }) {
                 backgroundColor: "#A9AAAB",
                 color: "#19084B",
                 fontWeight: "bold",
+                fontSize: '12px',
                 textTransform: "none",
                 "&:hover": {
                   backgroundColor: "#A9AAAB",
@@ -132,6 +133,7 @@ export default function RevenueWidget({ revenueData }) {
                 backgroundColor: "#A9AAAB",
                 color: "#19084B",
                 fontWeight: "bold",
+                fontSize: '12px',
                 textTransform: "none",
                 "&:hover": {
                   backgroundColor: "#A9AAAB",
@@ -139,6 +141,30 @@ export default function RevenueWidget({ revenueData }) {
               }}
             >
               Transactions!
+            </Button>
+          </Grid>
+          <Grid item xs={6} md={12} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                // navigate("/managerCashflow", { state: { currentWindow: "TRANSACTIONS" } });
+                navigate("/paymentVerification");                
+              }}
+              variant='contained'
+              sx={{
+                width: "60%",
+                // marginTop: '10px',
+                backgroundColor: "#A9AAAB",
+                color: "#19084B",
+                fontWeight: "bold",
+                fontSize: '12px',
+                textTransform: "none",
+                "&:hover": {
+                  backgroundColor: "#A9AAAB",
+                },
+              }}
+            >
+              Verify Payments
             </Button>
           </Grid>
         </Grid>

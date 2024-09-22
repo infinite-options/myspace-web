@@ -60,7 +60,7 @@ const ManagerContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
     }, [contactDetails, currentIndex]);
   
     return (
-      <Grid container sx={{backgroundColor: theme.palette.primary.main,  borderRadius: '10px', padding: '10px', }}>                
+      <Grid container sx={{backgroundColor: theme.palette.primary.main,  borderRadius: '10px', padding: '10px'}}>                
           <Grid item xs={12} container justifyContent="center" sx={{ height: '50px',  }}>
               <Typography sx={{fontSize: '35px', fontWeight: 'bold', color: '#160449' }}>
                   Manager Contact
@@ -138,23 +138,17 @@ const ManagerContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
                   </Box>
               </Grid>
           </Grid>
-          <Grid container item xs={12} columnSpacing={1} rowSpacing={1} sx={{ }}>
-              <Grid item xs={12}>
+          <Grid container item xs={12} columnSpacing={1} rowSpacing={3.3}>
+            {/* contact information */}
+              <Grid item xs={12} md={6} >
                   <Paper
                       elevation={0}
                       style={{
                           // margin: '50p', // Add margin here
                           borderRadius: "10px",
                           backgroundColor: "#D6D5DA",
-                          minHeight: 230,
-                          // maxHeight: 230, 
-                          // [theme.breakpoints.down("sm")]: {
-                          //     width: "80%",
-                          // },
-                          // [theme.breakpoints.up("sm")]: {
-                          //     width: "50%",
-                          // },
-                          // width: "100%",
+                          minHeight: "200px",
+                          height:"100%",
                           padding: '10px',
                       }}
                   >
@@ -167,52 +161,17 @@ const ManagerContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
                       
                   </Paper>
               </Grid>
-              <Grid item xs={12} md={6}>
+
+              {/* property information */}
+              <Grid item xs={12} md={6} >
                   <Paper
                       elevation={0}
                       style={{
                           // margin: '50p', // Add margin here
                           borderRadius: "10px",
                           backgroundColor: "#D6D5DA",
-                          minHeight: 370,
-  
-                          // [theme.breakpoints.down("sm")]: {
-                          //     width: "80%",
-                          // },
-                          // [theme.breakpoints.up("sm")]: {
-                          //     width: "50%",
-                          // },
-                          // width: "100%",
-                          padding: '10px',
-                      }}
-                  >
-                      {
-                        contactDetails && typeof currentIndex === 'number' && currentIndex >=0 ? (
-                          <PaymentsInformation                                                       
-                            data={contactDetails[currentIndex]?.payments}
-                          />
-                        ) :
-                        <></>
-                      }
-                      
-                  </Paper>
-              </Grid>   
-              <Grid item xs={12} md={6}>
-                  <Paper
-                      elevation={0}
-                      style={{
-                          // margin: '50p', // Add margin here
-                          borderRadius: "10px",
-                          backgroundColor: "#D6D5DA",
-                          minHeight: 360,
-  
-                          // [theme.breakpoints.down("sm")]: {
-                          //     width: "80%",
-                          // },
-                          // [theme.breakpoints.up("sm")]: {
-                          //     width: "50%",
-                          // },
-                          // width: "100%",
+                          height:"100%", 
+                          minHeight: "200px",
                           padding: '10px',
                       }}
                   >
@@ -228,7 +187,31 @@ const ManagerContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
                       }
                       
                   </Paper>
-              </Grid>                     
+              </Grid> 
+
+              <Grid item xs={12}>
+                  <Paper
+                      elevation={0}
+                      style={{
+                          // margin: '50p', // Add margin here
+                          borderRadius: "10px",
+                          backgroundColor: "#D6D5DA",
+                          minHeight: 170,
+                          padding: '10px',
+                          // height: "100%"
+                      }}
+                  >
+                      {
+                        contactDetails && typeof currentIndex === 'number' && currentIndex >=0 ? (
+                          <PaymentsInformation                                                       
+                            data={contactDetails[currentIndex]?.payments}
+                          />
+                        ) :
+                        <></>
+                      }
+                      
+                  </Paper>
+              </Grid>               
           </Grid>                     
       </Grid>    
     

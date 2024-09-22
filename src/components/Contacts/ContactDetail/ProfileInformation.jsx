@@ -9,6 +9,7 @@ import { ThemeProvider, Box, Paper, Stack, Typography, Button, InputAdornment, T
 // import { useUser } from "../../../contexts/UserContext";
 // import Backdrop from "@mui/material/Backdrop";
 // import CircularProgress from "@mui/material/CircularProgress";
+import CryptoJS from "crypto-js";
 import {
   Container,
   Grid,
@@ -62,7 +63,7 @@ const ProfileInformation = ({ contactDetails, type }) => {
   
     const getDecryptedSSN = (encryptedSSN) => {
       try {
-        const decrypted = AES.decrypt(encryptedSSN, process.env.REACT_APP_ENKEY).toString();
+        const decrypted = AES.decrypt(encryptedSSN, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8);
         // console.log("getDecryptedSSN - decrypted - ", decrypted.toString());
         return "***-**-" + decrypted.toString().slice(-4);
       } catch (error) {
@@ -72,25 +73,29 @@ const ProfileInformation = ({ contactDetails, type }) => {
     };
     
     return (
-      <Grid container>
-        <Grid container item xs={12} md={6}>      
+      <Container disableGutters sx={{ height: '100%' }}>
+        <Grid container xs={12} sx={{ padding: '10px' }}>      
           <Grid item xs={12}>
-            <Typography sx={{ fontSize: '20px', fontWeight: 'bold', color: '#160449', }}>
+            <Typography sx={{ fontSize: '20px', fontWeight: 'bold', color: '#160449', }} textAlign={"center"}>
               CONTACT INFORMATION
             </Typography>
           </Grid>
-          <Grid container direction='row' item xs={12} alignContent='center' >
+
+          {/* email section */}
+          <Grid container direction='row' item xs={12} alignContent='center' marginTop={"10px"}>
             <img src={EmailIcon} alt="email" />        
-            <Typography sx={{color: '#160449', }}>
+            <Typography sx={{color: '#160449', fontSize: "15px"}} paddingLeft={"5px"}>
               {type == "owner" && contactDetails?.owner_email}
               {type == "tenant" && contactDetails?.tenant_email}
               {(type === "maintenance" || type === "manager") && contactDetails?.business_email}
               {type == "employee" && contactDetails?.employee_email}
             </Typography>
           </Grid>
-          <Grid container direction='row' item xs={12} alignContent='center' >
+
+          {/* phone number */}
+          <Grid container direction='row' item xs={12} alignContent='center' marginTop={"5px"}>
             <img src={PhoneIcon} alt="phone" />        
-            <Typography sx={{color: '#160449', }}>
+            <Typography sx={{color: '#160449', fontSize:"15px"}} paddingLeft={"5px"}>
               {/* { contactDetails?.owner_phone_number} */}
               {type == "owner" && contactDetails?.owner_phone_number}
               {type == "tenant" && contactDetails?.tenant_phone_number}
@@ -99,65 +104,85 @@ const ProfileInformation = ({ contactDetails, type }) => {
               
             </Typography>
           </Grid>
-          <Grid container direction='row' item xs={12} alignItems='center' >
-            <img src={AddressIcon} alt="address" />
+
+          {/* address section */}
+          <Grid container direction='row' item xs={12} alignItems='center' wrap="nowrap" marginTop={"5px"}>
+              <img src={AddressIcon} alt="address" />
               
-            <Typography sx={{ color: '#160449', }}>
-            {type === "owner" &&
-              (contactDetails?.owner_address && contactDetails?.owner_city && contactDetails?.owner_state && contactDetails?.owner_zip
-                ? `${contactDetails.owner_address}, ${contactDetails.owner_city}, ${contactDetails.owner_state}, ${contactDetails.owner_zip}`
-                : "No address provided")}
+              <Typography sx={{ color: '#160449', fontSize:"15px"}} paddingLeft={"5px"}>
+              {type === "owner" &&
+                (contactDetails?.owner_address && contactDetails?.owner_city && contactDetails?.owner_state && contactDetails?.owner_zip
+                  ? `${contactDetails.owner_address}, ${contactDetails.owner_city}, ${contactDetails.owner_state}, ${contactDetails.owner_zip}`
+                  : "No address provided")}
 
-            {type === "tenant" &&
-              (contactDetails?.tenant_address && contactDetails?.tenant_city && contactDetails?.tenant_state && contactDetails?.tenant_zip
-                ? `${contactDetails.tenant_address}, ${contactDetails.tenant_city}, ${contactDetails.tenant_state}, ${contactDetails.tenant_zip}`
-                : "No address provided")}
+              {type === "tenant" &&
+                (contactDetails?.tenant_address && contactDetails?.tenant_city && contactDetails?.tenant_state && contactDetails?.tenant_zip
+                  ? `${contactDetails.tenant_address}, ${contactDetails.tenant_city}, ${contactDetails.tenant_state}, ${contactDetails.tenant_zip}`
+                  : "No address provided")}
 
-            {(type === "maintenance" || type === "manager") &&
-              (contactDetails?.business_address && contactDetails?.business_city && contactDetails?.business_state && contactDetails?.business_zip
-                ? `${contactDetails.business_address}, ${contactDetails.business_city}, ${contactDetails.business_state}, ${contactDetails.business_zip}`
-                : "No address provided")}
+              {(type === "maintenance" || type === "manager") &&
+                (contactDetails?.business_address && contactDetails?.business_city && contactDetails?.business_state && contactDetails?.business_zip
+                  ? `${contactDetails.business_address}, ${contactDetails.business_city}, ${contactDetails.business_state}, ${contactDetails.business_zip}`
+                  : "No address provided")}
 
-            {type === "employee" &&
-              (contactDetails?.employee_address || contactDetails?.employee_city || contactDetails?.employee_state || contactDetails?.employee_zip
-                ? `${contactDetails.employee_address || '-'}, ${contactDetails.employee_city || '-'}, ${contactDetails.employee_state || '-'}, ${contactDetails.employee_zip || '-'}`
-                : "No address provided")}
-          </Typography>
+              {type === "employee" &&
+                (contactDetails?.employee_address || contactDetails?.employee_city || contactDetails?.employee_state || contactDetails?.employee_zip
+                  ? `${contactDetails.employee_address || '-'}, ${contactDetails.employee_city || '-'}, ${contactDetails.employee_state || '-'}, ${contactDetails.employee_zip || '-'}`
+                  : "No address provided")}
+            </Typography>
 
           </Grid>
         </Grid>
-        <Grid container item xs={12} md={6}>      
+
+        <Grid container item xs={12} sx={{ marginTop: '10px', paddingLeft: '10px' }}>      
           <Grid item xs={12}>
-            <Typography sx={{ fontSize: '20px', fontWeight: 'bold', color: '#160449', padding: '0px', }}>
+            <Typography sx={{ fontSize: '20px', fontWeight: 'bold', color: '#160449', }}>
               CONFIDENTIAL INFORMATION
             </Typography>
           </Grid>
-          <Grid container item xs={12}>
+          <Grid container item xs={12} marginTop={"10px"}>
+            <Grid item xs={6}>
+                  <Typography sx={{ fontSize: "15px", fontWeight: "600", color: "#160449" }}>SSN</Typography>
+                  <Typography sx={{ fontSize: "15px", color: "#160449" }}>
+                    {/* {contactDetails && contactDetails[index]?.owner_ssn ? maskSSN(contactDetails[index]?.owner_ssn) : "No SSN provided"} */}
+                    {type == "owner" && (contactDetails?.owner_ssn ? (getDecryptedSSN(contactDetails?.owner_ssn)) : "No SSN provided")}
+                    {type == "tenant" && (contactDetails?.tenant_ssn ? (getDecryptedSSN(contactDetails?.tenant_ssn)) : "No SSN provided")}                
+                    {type == "employee" && (contactDetails?.employee_ssn ? (getDecryptedSSN(contactDetails?.employee_ssn)) : "No SSN provided")}
+                    {type == "manager" && "No SSN"}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography sx={{ color: "#160449", fontWeight: "600" }}>EIN</Typography>
+                  <Typography sx={{ fontSize: "15px", color: "#160449" }}>
+                    {contactDetails?.business_ein_number? getDecryptedSSN(contactDetails?.business_ein_number) : "No EIN provided"} 
+                  </Typography>
+                </Grid>
+          
             
-              {
+              {/* {
                 (type != "maintenance" && type != "manager")  && (
-                  <>
+                  <Grid container item xs={12} md={6}>
                     <Grid item xs={5} sx={{padding: '0px',}}>
-                      <Typography sx={{fontSize: '15px', fontWeight: '600', color: '#160449', }}>
+                      <Typography sx={{fontSize: '15px', fontWeight: "bold", color: '#160449', }} textAlign={"center"}>
                         SSN
                       </Typography>
                     </Grid>
                     <Grid item xs={6} md={4}>
-                      <Typography sx={{ fontSize: '15px', color: '#160449' }}>
+                      <Typography sx={{ fontSize: '15px', color: '#160449' }}> */}
                         {/* {contactDetails?.owner_ssn ? (getDecryptedSSN(contactDetails?.owner_ssn)) : "No SSN provided"} */}
   
-                        {type == "owner" && (contactDetails?.owner_ssn ? (getDecryptedSSN(contactDetails?.owner_ssn)) : "No SSN provided")}
+                        {/* {type == "owner" && (contactDetails?.owner_ssn ? (getDecryptedSSN(contactDetails?.owner_ssn)) : "No SSN provided")}
                         {type == "tenant" && (contactDetails?.tenant_ssn ? (getDecryptedSSN(contactDetails?.tenant_ssn)) : "No SSN provided")}                
                         {type == "employee" && (contactDetails?.employee_ssn ? (getDecryptedSSN(contactDetails?.employee_ssn)) : "No SSN provided")}                
                         
                       </Typography>
                     </Grid>            
-                  </>
+                  </Grid>
                 )
-              }                        
+              }                         */}
             
   
-            <Grid container item xs={12}>
+            {/* <Grid container item xs={12} md={6}>
               <Grid item xs={5}>
                 <Typography sx={{color: '#160449', fontWeight: '600', }}>
                   EIN
@@ -168,17 +193,20 @@ const ProfileInformation = ({ contactDetails, type }) => {
                   {contactDetails?.owner_ein_number? maskEIN(contactDetails?.owner_ein_number) : "No EIN provided"}                
                 </Typography>
               </Grid>
-            </Grid>
+            </Grid> */}
   
             
           </Grid>
-        </Grid>      
-        <Grid item xs={12} sx={{ marginTop: '15px', }}>
+        </Grid>  
+        
+        {/* payment section */}
+        <Grid item xs={12} sx={{ marginTop: '15px', paddingLeft: '10px' }}>
           <Typography sx={{ fontSize: '20px', fontWeight: 'bold', color: '#160449', }}>
             PAYMENT METHODS
           </Typography>
         </Grid>
-        <Grid container item xs={12}>
+
+        <Grid container item xs={12}  marginTop={"10px"} paddingLeft={"10px"}>
           <Grid item xs={6}>
             <Typography sx={{fontSize: '15px', fontWeight: '600', color: '#160449', }}>
               Active {`(${paymentMethods.filter( method => method.paymentMethod_status === "Active").length})`}
@@ -214,7 +242,7 @@ const ProfileInformation = ({ contactDetails, type }) => {
         
         </Grid>
   
-      </Grid>
+      </Container>
     )
   
   }

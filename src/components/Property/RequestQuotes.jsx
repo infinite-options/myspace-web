@@ -177,7 +177,7 @@ const RequestQuotes = (props) => {
 
   const navigateToPrev = () => {
     if (isDesktop === true) {
-      onShowSearchManager();
+      onShowSearchManager(1);
     } else {
       navigate(-1);
     }
