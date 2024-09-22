@@ -498,19 +498,16 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees}) => {
         return false
       }
 
-      if(!currentRow.due_by && !currentRow.due_by_date){
-        alert("Enter all required fields")
-        return false;
-      }
 
-      if(currentRow.due_by && isNaN(currentRow.due_by)){
+
+      if((currentRow.frequency === "One Time" || currentRow.frequency === "Annually")){
+        if(currentRow.due_by_date && isNaN(Date.parse(currentRow.due_by_date))){
+          alert("Wrong due_by date ");
+          return false;
+        }
+      }else if(!currentRow.due_by || isNaN(currentRow.due_by)){
         alert("Enter due_by in number format");
         return false;
-      }
-
-      if(currentRow.due_by_date && isNaN(Date.parse(currentRow.due_by_date))){
-        alert("enter proper due by value")
-        return false
       }
 
       if(isNaN(currentRow.late_by) || isNaN(currentRow.available_topay)){
@@ -527,11 +524,33 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees}) => {
 
       if(check){
         const {id, ...newFees} = currentRow;
-        const newFee = {
-          ...newFees,
-          due_by : parseInt(currentRow.due_by),
-          late_by : parseInt(currentRow.late_by),
-          available_topay : parseInt(currentRow.available_topay)
+        let newFee;
+
+        if((currentRow.frequency === "One Time" || currentRow.frequency === "Annually")){
+          if(!currentRow.due_by_date){
+            newFee = {
+              ...newFees,
+              due_by : "",
+              due_by_date : dayjs().format('MM-DD-YYYY'),
+              late_by : parseInt(currentRow.late_by),
+              available_topay : parseInt(currentRow.available_topay)
+            }    
+          }else{
+            newFee = {
+              ...newFees,
+              due_by : "",
+              late_by : parseInt(currentRow.late_by),
+              available_topay : parseInt(currentRow.available_topay)
+            }
+          }
+        }else{
+          newFee = {
+            ...newFees,
+            due_by : parseInt(currentRow.due_by),
+            due_by_date:"",
+            late_by : parseInt(currentRow.late_by),
+            available_topay : parseInt(currentRow.available_topay)
+          }
         }
 
         setLeaseFees((prev) => [
@@ -575,11 +594,34 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees}) => {
 
       if(check){
         const {id, ...newFees} = currentRow;
-        const newFee = {
-          ...newFees,
-          due_by : parseInt(currentRow.due_by),
-          late_by : parseInt(currentRow.late_by),
-          available_topay : parseInt(currentRow.available_topay)
+
+        let newFee;
+
+        if((currentRow.frequency === "One Time" || currentRow.frequency === "Annually")){
+          if(!currentRow.due_by_date){
+            newFee = {
+              ...newFees,
+              due_by : "",
+              due_by_date : dayjs().format('MM-DD-YYYY'),
+              late_by : parseInt(currentRow.late_by),
+              available_topay : parseInt(currentRow.available_topay)
+            }    
+          }else{
+            newFee = {
+              ...newFees,
+              due_by : "",
+              late_by : parseInt(currentRow.late_by),
+              available_topay : parseInt(currentRow.available_topay)
+            }
+          }
+        }else{
+          newFee = {
+            ...newFees,
+            due_by : parseInt(currentRow.due_by),
+            due_by_date:"",
+            late_by : parseInt(currentRow.late_by),
+            available_topay : parseInt(currentRow.available_topay)
+          }
         }
 
         setLeaseFees((prev) =>
