@@ -52,8 +52,8 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
 	
     const maintenanceIssues = getList("maintenance");
     const [selectedImageList, setSelectedImageList] = useState([]);
-    const [property, setProperty] = useState(location.state?.propertyData || newTenantMaintenanceState?.propertyData);
-    const [lease, setLease] = useState(location.state?.leaseData || newTenantMaintenanceState?.leaseData);
+    const [property, setProperty] = useState(location.state?.propertyData || newTenantMaintenanceState?.propertyData || {});
+    const [lease, setLease] = useState(location.state?.leaseData || newTenantMaintenanceState?.leaseData || {});
     const [issue, setIssue] = useState('');
     const [toggleGroupValue, setToggleGroupValue] = useState('tenant');
     const [toggleAlignment, setToggleAlignment] = useState('');
@@ -68,9 +68,9 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
     //     console.log(selectedImageList)
     // }, [selectedImageList])
 
-    // useEffect(() => {
-    //     console.log("property - ", property);
-    // }, [property])
+    useEffect(() => {
+        console.log("property - ", property, lease);
+    }, [property])
 
     const handlePropertyChange = (event) => {
         setProperty(event.target.value);

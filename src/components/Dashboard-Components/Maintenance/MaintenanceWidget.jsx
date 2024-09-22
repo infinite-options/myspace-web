@@ -7,8 +7,8 @@ import { Button, Box, ThemeProvider, Grid, List, ListItem, Typography } from "@m
 import { ReactComponent as HomeIcon } from "../../../images/home_icon.svg";
 import { ReactComponent as CalendarIcon } from "../../../images/calendar_icon.svg";
 
-export default function MaintenanceWidget({ maintenanceData }) {
-  // console.log("In MaintenanceWidget");
+export default function MaintenanceWidget({ maintenanceData, onMaintenanceClick }) {
+  console.log("In MaintenanceWidget", maintenanceData);
   const navigate = useNavigate();
   const { maintenanceRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
   const [isAddingNewMaintenance, setIsAddingNewMaintenance] = useState(false);
@@ -23,7 +23,7 @@ export default function MaintenanceWidget({ maintenanceData }) {
   // TODO: We need to make the /maintenanceRequests endpoint return the data in the format we need for the Status component
   useEffect(() => {
     const dataObject = {};
-    // console.log("maintenanceData", maintenanceData);
+    console.log("maintenanceData", maintenanceData);
     for (const item of maintenanceData) {
       // console.log(item)
       if (!dataObject[item.maintenance_status]) {
@@ -47,7 +47,7 @@ export default function MaintenanceWidget({ maintenanceData }) {
     // console.log("selectColorStatus selectedRole", selectedRole)
     if (selectedRole === "MANAGER" || selectedRole === "PM_EMPLOYEE") {
       return theme.colorStatusPMO;
-    } else if (selectedRole === "OWNER") {
+    } else if (selectedRole === "OWNER" || selectedRole === "TENANT") {
       return theme.colorStatusO;
     }
   }
@@ -60,12 +60,13 @@ export default function MaintenanceWidget({ maintenanceData }) {
       style={{ padding: "15px" }}
       sx={{
         height: "100%",
-        backgroundColor: "#F2F2F2",
+        backgroundColor: "#f0f0f0",
         borderRadius: "10px",
         cursor: "pointer",
         padding: "20px",
         // marginBottom: '30px',
       }}
+      // onClick={onMaintenanceClick}
       onClick={() => navigate(maintenanceRoutingBasedOnSelectedRole(), { state: { colorStatus, maintenanceRequestCounts } })}
     >
       <Grid item container xs={12}>

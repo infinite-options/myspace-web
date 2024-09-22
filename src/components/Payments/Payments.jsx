@@ -45,7 +45,7 @@ function DashboardTab(props) {
 }
 
 export default function Payments(props) {
-  console.log("In Payments.jsx");
+  console.log("In Payments.jsx", props);
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
