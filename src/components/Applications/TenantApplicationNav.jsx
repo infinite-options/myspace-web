@@ -49,7 +49,8 @@ const TenantApplicationNav = (props) => {
 
       let parsedFees = []
       try {
-        parsedFees = JSON.parse(application?.lease_fees);        
+        parsedFees = JSON.parse(application?.lease_fees);
+        // console.log("lease fees - ", application?.lease_fees);        
       } catch(error) {
         console.error("TenantApplicationNav - Error Parsing Lease Fees");        
       }
@@ -730,7 +731,7 @@ const TenantApplicationNav = (props) => {
                       >
                         {
                           application?.lease_status === "PROCESSING" && (
-                            <LeaseFees leaseFees={leaseFees} />
+                            <LeaseFees leaseFees={leaseFees} isEditable={false}/>
                           )
                         }
                         <Documents documents={applicationDocuments} setDocuments={setApplicationDocuments} isEditable={false} isAccord={false} customName={"Application Documents:"}/>                                                
