@@ -493,16 +493,24 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees}) => {
 
     const checkRequiredField = () => {
 
-      if(!currentRow.fee_name || !currentRow.charge || !currentRow.late_fee || !currentRow.perDay_late_fee || !currentRow.due_by || !currentRow.late_by || !currentRow.available_topay){
+      if(!currentRow.fee_name || !currentRow.charge || !currentRow.late_fee || !currentRow.perDay_late_fee || !currentRow.late_by || !currentRow.available_topay){
         alert("enter all required fields");
         return false
       }
 
-      if(isNaN(currentRow.due_by)){
-        if(isNaN(Date.parse(currentRow.due_by))){
-          alert("enter proper due by value")
-          return false
-        }
+      if(!currentRow.due_by && !currentRow.due_by_date){
+        alert("Enter all required fields")
+        return false;
+      }
+
+      if(currentRow.due_by && isNaN(currentRow.due_by)){
+        alert("Enter due_by in number format");
+        return false;
+      }
+
+      if(currentRow.due_by_date && isNaN(Date.parse(currentRow.due_by_date))){
+        alert("enter proper due by value")
+        return false
       }
 
       if(isNaN(currentRow.late_by) || isNaN(currentRow.available_topay)){
