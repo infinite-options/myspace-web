@@ -33,7 +33,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import APIConfig from '../../../utils/APIConfig';
 import { useMaintenance } from "../../../contexts/MaintenanceContext";
 
-export default function NewRequestAction({ maintenanceItem, navigateParams, quotes }) {
+export default function NewRequestAction({ setRefresh, maintenanceItem, navigateParams, quotes }) {
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole, getProfileId } = useUser();
     const { setMaintenanceData, setSelectedRequestIndex, setSelectedStatus, setQuoteRequestView, setMaintenanceItem, setNavigateParams } = useMaintenance();
@@ -180,7 +180,7 @@ export default function NewRequestAction({ maintenanceItem, navigateParams, quot
     Request Quotes
   </Button>
 
-  <CompleteButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage} />
+  <CompleteButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage} setRefresh = {setRefresh}/>
                     </Box>
 
             <AlertMessage showMessage={showMessage} setShowMessage={setShowMessage} message={message} />

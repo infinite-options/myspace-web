@@ -30,11 +30,11 @@ export default function PMQuotesList() {
   const { contractRequests, updateContractUID, updateContractPropertyUID, } = useContext(ManagementContractContext); 
   // console.log("In PMQuoteList");
   // console.log("In PMQuoteList property_endpoint_resp: ", location.state?.property_endpoint_resp);
-  console.log("ROHIT - contractRequests from context - ", contractRequests)
+  // console.log("contractRequests from context - ", contractRequests)
 
   
   useEffect(() => {
-    console.log("PMQuotesList - location.state - ",location.state);
+    // console.log("PMQuotesList - location.state - ",location.state);
     if (location.state?.selectedContractUID && location.state?.selectedContractPropertyUID) {
       updateContractUID(location.state.selectedContractUID);
       updateContractPropertyUID(location.state.selectedContractPropertyUID);

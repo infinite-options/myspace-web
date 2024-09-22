@@ -19,6 +19,7 @@ const AddNewRole = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user_uid, newRole } = location.state; // Access passed state here
+  console.log("----dhyey--- , from addnewrole file newRole - ", newRole)
   const { user, setUser, setAuthData, updateProfileUid, selectRole, setLoggedIn } = useUser();
   const [cookie, setCookie] = useCookies(["default_form_vals"]);
   const cookiesData = cookie["default_form_vals"];

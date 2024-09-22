@@ -48,7 +48,7 @@ import ChaseIcon from "../../images/Chase.png";
 import { useCookies } from "react-cookie";
 import APIConfig from "../../utils/APIConfig";
 import ListsContext from "../../contexts/ListsContext";
-
+import GenericDialog from "../GenericDialog";
 // import AdultOccupant from "../Leases/AdultOccupant";
 // import ChildrenOccupant from "../Leases/ChildrenOccupant";
 // import PetsOccupant from "../Leases/PetsOccupant";
@@ -89,12 +89,29 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
   const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
   const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
   const [ taxIDType, setTaxIDType ] = useState("SSN");  
-  useEffect(()=> {    
+  
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+const [dialogTitle, setDialogTitle] = useState("");
+const [dialogMessage, setDialogMessage] = useState("");
+const [dialogSeverity, setDialogSeverity] = useState("info");
+
+const openDialog = (title, message, severity) => {
+  setDialogTitle(title); // Set custom title
+  setDialogMessage(message); // Set custom message
+  setDialogSeverity(severity); // Can use this if needed to control styles
+  setIsDialogOpen(true);
+};
+
+const closeDialog = () => {
+  setIsDialogOpen(false);
+};
+
+useEffect(()=> {    
     if(ssn && identifyTaxIdType(ssn) === "EIN") setTaxIDType("EIN");
   }, [ssn])
 
   useEffect(()=> {        
-    handleTaxIDChange(ssn);    
+    handleTaxIDChange(ssn, false);    
   }, [taxIDType])
 
   const [paymentMethods, setPaymentMethods] = useState({
@@ -218,7 +235,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
   //   updateModifiedData({ key: "owner_ssn", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
   // };
 
-  const handleTaxIDChange = (value) => {
+  const handleTaxIDChange = (value, onchangeflag) => {
     // let value = event.target.value;
     if (value?.length > 11) return;
 
@@ -229,10 +246,12 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
       updatedTaxID = formatSSN(value)      
     }
     setSsn(updatedTaxID);
-    
-    // updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
-    updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.env.REACT_APP_ENKEY).toString() });
-  };
+    if(onchangeflag){
+// updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
+updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.env.REACT_APP_ENKEY).toString() });
+  
+    }
+    };
 
   const setProfileData = async () => {
     setShowSpinner(true);
@@ -321,7 +340,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
     let isLarge = file.file.size > 5000000;
     let file_size = (file.file.size / 1000000).toFixed(1);
     if (isLarge) {
-      alert(`Your file size is too large (${file_size} MB)`);
+      openDialog("Alert",`Your file size is too large (${file_size} MB)`,"info");
       return;
     }
     updateModifiedData({ key: "owner_photo_url", value: e.target.files[0] });
@@ -337,7 +356,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
     { name: "Credit Card", icon: ChaseIcon, state: paymentMethods.credit_card },
     { name: "Bank Account", icon: ChaseIcon, state: paymentMethods.bank_account },
   ];
-
+  const [modifiedPayment, setModifiedPayment] = useState(false);
   const renderPaymentMethods = () => {
     return paymentMethodsArray.map((method, index) => (
       <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={index}>
@@ -416,7 +435,8 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
     //     map[name].value = "";
     //   }
     // }
-    setPaymentMethods(map);       
+    setPaymentMethods(map);   
+    setModifiedPayment(true);    
   };
 
   const handleChangeValue = (e) => {
@@ -435,6 +455,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
         [name]: { ...prevState[name], value },
       }));
     }    
+    setModifiedPayment(true); 
   };
 
   const handlePaymentStep = async () => {
@@ -511,19 +532,19 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
 
     if(!atleaseOneActive){
       newErrors.paymentMethods = 'Atleast one active payment method is required';
-      alert('Atleast one active payment method is required');
+      openDialog("Alert",'Atleast one active payment method is required',"info");
       return;
     }
 
     if(paymentMethodsError){
       newErrors.paymentMethods = 'Please check payment method details';
-      alert('Please check payment method details');
+      openDialog("Alert",'Please check payment method details',"info");
       return;
     }
   
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors); 
-      alert("Please enter all required fields");
+      openDialog("Alert","Please enter all required fields","info");
       return;
     }
 
@@ -531,17 +552,17 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
 
 
     if (!DataValidator.email_validate(email)) {
-      alert("Please enter a valid email");
+      openDialog("Alert","Please enter a valid email","info");
       return false;
     }
 
     if (!DataValidator.phone_validate(phoneNumber)) {
-      alert("Please enter a valid phone number");
+      openDialog("Alert","Please enter a valid phone number","info");
       return false;
     }
 
     if (!DataValidator.zipCode_validate(zip)) {
-      alert("Please enter a valid zip code");
+      openDialog("Alert","Please enter a valid zip code","info");
       return false;
     }
 
@@ -550,7 +571,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
     //   return false;
     // }
     if((taxIDType === "EIN" && !DataValidator.ein_validate(ssn)) || (taxIDType === "SSN" && !DataValidator.ssn_validate(ssn))){
-      alert("Please enter a valid Tax ID");
+      openDialog("Alert","Please enter a valid Tax ID","info");
       return false;
     }
 
@@ -562,7 +583,9 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
 
     saveProfile();
 
-    const paymentSetup = await handlePaymentStep();
+    if(modifiedPayment){
+      const paymentSetup = await handlePaymentStep();
+    }
     setShowSpinner(false);
     return;
   };
@@ -611,13 +634,13 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
           .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, headers)
           .then((response) => {
             console.log("Data updated successfully", response);
-            showSnackbar("Your profile has been successfully updated.", "success");
+            openDialog("Success","Your profile has been successfully updated.", "success");
             handleUpdate();
             setShowSpinner(false);
           })
           .catch((error) => {
             setShowSpinner(false);
-            showSnackbar("Cannot update your profile. Please try again", "error");
+            openDialog("Error","Cannot update your profile. Please try again", "error");
             if (error.response) {
               console.log(error.response.data);
             }
@@ -625,10 +648,10 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
         setShowSpinner(false);
         setModifiedData([]);
       } else {
-        showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
+        openDialog("Warning","You haven't made any changes to the form. Please save after changing the data.", "error");
       }
     } catch (error) {
-      showSnackbar("Cannot update the lease. Please try again", "error");
+      openDialog("Error","Cannot update the lease. Please try again", "error");
       console.log("Cannot Update the lease", error);
       setShowSpinner(false);
     }
@@ -661,13 +684,13 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
           .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, headers)
           .then((response) => {
             console.log("Data updated successfully", response);
-            showSnackbar("Your profile has been successfully updated.", "success");
+            openDialog("Success","Your profile has been successfully updated.", "success");
             handleUpdate();
             setShowSpinner(false);
           })
           .catch((error) => {
             setShowSpinner(false);
-            showSnackbar("Cannot update your profile. Please try again", "error");
+            openDialog("Error","Cannot update your profile. Please try again", "error");
             if (error.response) {
               console.log(error.response.data);
             }
@@ -675,10 +698,10 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
         setShowSpinner(false);
         setModifiedData([]);
       } else {
-        showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
+        openDialog("Warning","You haven't made any changes to the form. Please save after changing the data.", "error");
       }
     } catch (error) {
-      showSnackbar("Cannot update the lease. Please try again", "error");
+      openDialog("Error","Cannot update the lease. Please try again", "error");
       console.log("Cannot Update the lease", error);
       setShowSpinner(false);
     }
@@ -763,7 +786,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                     placeholder='First name'
                     className={classes.root}
                     InputProps={{
-                      className: errors.firstName ? classes.errorBorder : '',
+                      className: errors.firstName || !firstName ? classes.errorBorder : '',
                     }}
                     required
                   />
@@ -778,7 +801,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                     placeholder='Last name'
                     className={classes.root}
                     InputProps={{
-                      className: errors.lastName ? classes.errorBorder : '',
+                      className: errors.lastName || !lastName ? classes.errorBorder : '',
                     }}
                     required
                   />
@@ -902,7 +925,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                       placeholder='Email'
                       className={classes.root}
                       InputProps={{
-                        className: errors.email ? classes.errorBorder : '',
+                        className: errors.email || !email ? classes.errorBorder : '',
                       }}
                       required
                     ></TextField>
@@ -929,7 +952,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                       placeholder='Phone Number'
                       className={classes.root}
                       InputProps={{
-                        className: errors.phoneNumber ? classes.errorBorder : '',
+                        className: errors.phoneNumber || !phoneNumber ? classes.errorBorder : '',
                       }}
                       required
                     ></TextField>
@@ -988,12 +1011,12 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                       value={ssn}
                       // onChange={(e) => setSsn(e.target.value)}
                       // onChange={handleSSNChange}
-                      onChange={(e) => handleTaxIDChange(e.target.value)}
+                      onChange={(e) => handleTaxIDChange(e.target.value, true)}
                       variant='filled'
                       placeholder='SSN'
                       className={classes.root}
                       InputProps={{
-                        className: errors.ssn ? classes.errorBorder : '',
+                        className: errors.ssn  || !ssn ? classes.errorBorder : '',
                       }}
                       required
                     ></TextField>
@@ -1022,12 +1045,18 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
         </Button>
       </Grid>
 
-      <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "100%", height: "100%" }}>
-          <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+      <GenericDialog
+      isOpen={isDialogOpen}
+      title={dialogTitle}
+      contextText={dialogMessage}
+      actions={[
+        {
+          label: "OK",
+          onClick: closeDialog,
+        }
+      ]}
+      severity={dialogSeverity}
+    />
     </>
   );
 }

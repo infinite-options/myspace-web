@@ -407,14 +407,14 @@ export default function BusinessInvoiceForm() {
 
   const costData = JSON.parse(maintenanceItem?.quote_services_expenses);
 
-  console.log(costData);
+  
 
   const [parts, setParts] = useState(costData.parts);
   const [labor, setLabor] = useState([
     {
       description: "",
       // hours: costData.event_type,
-      hours: costData.event_type === "Fixed Bid" ? 1 : costData.event_type,
+      hours: costData.event_type === "Fixed Bid" ? 1 : costData.labor[0].hours,
       charge: costData["per Hour Charge"],
     },
   ]);
@@ -427,7 +427,7 @@ export default function BusinessInvoiceForm() {
   const [diagnosticToggle, setDiagnosticToggle] = useState(false);
 
   const handleNotesChange = (e) => {
-    console.log("handleNotesChange", e.target.value);
+    // console.log("handleNotesChange", e.target.value);
     setNotes(e.target.value);
   };
 
@@ -486,6 +486,7 @@ export default function BusinessInvoiceForm() {
       partsTotal += parseInt(parts[i].cost) * parseInt(parts[i].quantity);
     }
 
+
     for (let i = 0; i < labor.length; i++) {
       laborTotal += parseInt(labor[i].hours) * parseInt(labor[i].charge);
     }
@@ -493,10 +494,10 @@ export default function BusinessInvoiceForm() {
   }, [parts, labor]);
 
   const handleSendInvoice = () => {
-    console.log("handleSendInvoice");
-    console.log("selectedImageList", selectedImageList);
-    console.log("parts", parts);
-    console.log("total", total);
+    // console.log("handleSendInvoice");
+    // console.log("selectedImageList", selectedImageList);
+    // console.log("parts", parts);
+    // console.log("total", total);
 
     const updateMaintenanceQuote = async () => {
       var formData = new FormData();

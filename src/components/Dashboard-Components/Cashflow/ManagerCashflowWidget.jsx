@@ -37,13 +37,13 @@ const useStyles = makeStyles({
 });
 
 function getTotalRevenueByMonthYear(data, month, year) {
-  console.log("In getTotalRevenueByMonthYear: ", data, month, year);
+  // console.log("In getTotalRevenueByMonthYear: ", data, month, year);
   let revenueItems = data?.filter((item) => item.cf_month === month && item.cf_year === year && item.pur_cf_type === "revenue");
-  console.log("After filter revenueItems: ", revenueItems);
+  // console.log("After filter revenueItems: ", revenueItems);
   let totalRevenue = revenueItems?.reduce((acc, item) => {
     return acc + parseFloat(item["total_paid_total"] ? item["total_paid_total"] : 0.0);
   }, 0.0);
-  console.log("Cashflow Fetch Data total Revenue: ", totalRevenue);
+  // console.log("Cashflow Fetch Data total Revenue: ", totalRevenue);
   return totalRevenue;
 }
 
@@ -76,7 +76,7 @@ function getTotalExpectedExpenseByMonthYear(data, month, year) {
 function getTotalExpectedProfitByMonthYear(data, month, year) {
   // console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
   let profitItems = data?.filter((item) => item.pur_payer?.startsWith("110") && item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
-  console.log(`270 - profitItems - ${month}, ${year} - `, profitItems);
+  // console.log(`270 - profitItems - ${month}, ${year} - `, profitItems);
   let totalProfit = profitItems?.reduce((acc, item) => {
     return acc + parseFloat(item["pur_amount_due_total"] ? item["pur_amount_due_total"] : 0.0);
   }, 0.0);
@@ -155,7 +155,7 @@ function getPast12MonthsCashflow(data, month, year) {
     let expectedMonthPayouts = getTotalExpectedPayoutsByMonthYear(data, currentMonth, currentYear);
     let currentMonthPayouts = getTotalPayoutsByMonthYear(data, currentMonth, currentYear);
 
-    console.log("getPast12MonthsCashflow - expectedMonthProfit, currentMonthProfit", expectedMonthProfit, currentMonthProfit);
+    // console.log("getPast12MonthsCashflow - expectedMonthProfit, currentMonthProfit", expectedMonthProfit, currentMonthProfit);
 
     // console.log("expectedMonthRevenue", expectedMonthRevenue);
     // console.log("expectedMonthExpense", expectedMonthExpense);
@@ -193,7 +193,6 @@ function getPast12MonthsCashflow(data, month, year) {
     }
   }
   // console.log("170 getPast12MonthsCashflow - Past 12 months: ", pastTwelveMonths);
-  
 
   pastTwelveMonths.reverse();
 
@@ -212,8 +211,8 @@ function ManagerCashflowWidget({
   selectedProperty,
   setSelectedProperty,
 }) {
-  console.log("In ManagerCashflow Widget ");
-  console.log("ManagerCashflow widget - propertyList - ", propertyList);
+  // console.log("In ManagerCashflow Widget ");
+  // console.log("ManagerCashflow widget - propertyList - ", propertyList);
   const navigate = useNavigate();
   const classes = useStyles();
 
@@ -234,8 +233,8 @@ function ManagerCashflowWidget({
   //   let currentYear = date.getFullYear().toString();
   let currentMonth = propsMonth;
   let currentYear = propsYear;
-  console.log("ManagerCashflowWidget Current Month: ", currentMonth);
-  console.log("ManagerCashflowWidget Current Year: ", currentYear);
+  // console.log("ManagerCashflowWidget Current Month: ", currentMonth);
+  // console.log("ManagerCashflowWidget Current Year: ", currentYear);
 
   const [month, setMonth] = useState(currentMonth);
   const [year, setYear] = useState(currentYear);
@@ -260,18 +259,19 @@ function ManagerCashflowWidget({
   const [cashflowData, setCashflowData] = useState(null);
   const [revenueData, setRevenueData] = useState(null);
 
-  const [ last12Months, setLast12Months ] = useState([]);
-  const [ last12MonthsTotals, setLast12MonthsTotals] = useState({});
+  const [last12Months, setLast12Months] = useState([]);
+  const [last12MonthsTotals, setLast12MonthsTotals] = useState({});
 
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const [ propertyButtonName, setPropertyButtonName ] = useState("Select Property")
-  const [ cfPeriodButtonName, setCfPeriodButtonName ] = useState("Last 12 Months")
+  const [propertyButtonName, setPropertyButtonName] = useState("Select Property");
+  const [cfPeriodButtonName, setCfPeriodButtonName] = useState("Last 12 Months");
 
-    useEffect(() => {
-      console.log("270 - last12Months - ", last12Months);
+  useEffect(() => {
+    // console.log("270 - last12Months - ", last12Months);
 
-      const totals = last12Months?.reduce((acc, month) => {
+    const totals = last12Months?.reduce(
+      (acc, month) => {
         acc.totalExpectedProfit += month.expected_profit;
         acc.totalProfit += month.profit;
         acc.totalExpectedRent += month.expected_rent;
@@ -279,27 +279,27 @@ function ManagerCashflowWidget({
         acc.totalExpectedPayouts += month.expected_payouts;
         acc.totalPayouts += month.payouts;
         return acc;
-      }, {
+      },
+      {
         totalExpectedProfit: 0,
         totalProfit: 0,
         totalExpectedRent: 0,
         totalRent: 0,
         totalExpectedPayouts: 0,
         totalPayouts: 0,
-      });
-    
-      // console.log("Total Expected Profit:", totals.totalExpectedProfit);
-      // console.log("Total Actual Profit:", totals.totalActualProfit);
-      // console.log("Total Expected Rent:", totals.totalExpectedRent);
-      // console.log("Total Actual Rent:", totals.totalActualRent);
-      // console.log("Total Expected Payouts:", totals.totalExpectedPayouts);
-      // console.log("Total Actual Payouts:", totals.totalActualPayouts);
+      }
+    );
 
-      console.log("270 - totals - ", totals);
-      setLast12MonthsTotals(totals);
+    // console.log("Total Expected Profit:", totals.totalExpectedProfit);
+    // console.log("Total Actual Profit:", totals.totalActualProfit);
+    // console.log("Total Expected Rent:", totals.totalExpectedRent);
+    // console.log("Total Actual Rent:", totals.totalActualRent);
+    // console.log("Total Expected Payouts:", totals.totalExpectedPayouts);
+    // console.log("Total Actual Payouts:", totals.totalActualPayouts);
 
-
-    }, [last12Months]);
+    // console.log("270 - totals - ", totals);
+    setLast12MonthsTotals(totals);
+  }, [last12Months]);
 
   // useEffect(() => {
   //   fetchCashflow(profileId)
@@ -328,13 +328,13 @@ function ManagerCashflowWidget({
   // }, []);
 
   const getCashflowData = (data) => {
-    console.log("getCashflowData - data - ", data);
+    // console.log("getCashflowData - data - ", data);
     if (data === null || data === undefined) return [];
 
     // const past12Months = getPast12MonthsCashflow(data, month, year)
     const past12Months = getPast12MonthsCashflow(data, month, year);
 
-    console.log("getCashflowData - past12Months - ", past12Months);
+    // console.log("getCashflowData - past12Months - ", past12Months);
 
     return past12Months;
   };
@@ -382,7 +382,7 @@ function ManagerCashflowWidget({
   const handlePropertyChange = (propertyUID) => {
     // console.log("ManagerCashflowWidget - handlePropertyChange - value - ", propertyUID);
     setSelectedProperty(propertyUID);
-    setPropertyButtonName('View all Properties');
+    setPropertyButtonName("View all Properties");
     setAnchorEl(null);
   };
 
@@ -395,34 +395,31 @@ function ManagerCashflowWidget({
   // };
 
   const handleSelectProperty = (event) => {
-    if(propertyButtonName === 'View all Properties'){
+    if (propertyButtonName === "View all Properties") {
       setSelectedProperty("ALL");
-      setPropertyButtonName('Select Property');
-    } else if(propertyButtonName === 'Select Property') {
+      setPropertyButtonName("Select Property");
+    } else if (propertyButtonName === "Select Property") {
       setAnchorEl(event.currentTarget);
-      
     }
-  }
+  };
 
   const handleClose = () => {
     setAnchorEl(null);
   };
 
   const getSelectedPropertyName = () => {
-    const property = propertyList?.find(
-      (property) => property.property_uid === selectedProperty
-    );
+    const property = propertyList?.find((property) => property.property_uid === selectedProperty);
 
     return property ? property?.property_address : "Address not found";
-  }
+  };
 
   const handleChangeCashflowPeriod = (e) => {
-    if(cfPeriodButtonName === "Last 12 Months") {
+    if (cfPeriodButtonName === "Last 12 Months") {
       setCfPeriodButtonName("Current Month");
-    } else if(cfPeriodButtonName === "Current Month") {
+    } else if (cfPeriodButtonName === "Current Month") {
       setCfPeriodButtonName("Last 12 Months");
     }
-  }
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -458,21 +455,16 @@ function ManagerCashflowWidget({
           <Grid container item xs={12} rowSpacing={0} sx={{ marginTop: "15px" }}>
             <Stack direction='row' justifyContent='center' width='100%' sx={{ marginBottom: "0px" }}>
               {/* <Typography sx={{ color: theme.typography.primary.black, fontWeight: "800", fontSize: "24px", }}> */}
-              {
-                cfPeriodButtonName === "Last 12 Months" && (
-                  <Typography variant='h5' sx={{ fontWeight: "bold", color: "#160449" }}>
-                    {month} {year} Cashflow
-                  </Typography>
-                )
-              }
-              {
-                cfPeriodButtonName === "Current Month" && (
-                  <Typography variant='h5' sx={{ fontWeight: "bold", color: "#160449" }}>
-                    Last 12 Months Cashflow
-                  </Typography>
-                )
-              }
-              
+              {cfPeriodButtonName === "Last 12 Months" && (
+                <Typography variant='h5' sx={{ fontWeight: "bold", color: "#160449" }}>
+                  {month} {year} Cashflow
+                </Typography>
+              )}
+              {cfPeriodButtonName === "Current Month" && (
+                <Typography variant='h5' sx={{ fontWeight: "bold", color: "#160449" }}>
+                  Last 12 Months Cashflow
+                </Typography>
+              )}
             </Stack>
             <Grid item container xs={12} sx={{ marginBottom: "10px" }}>
               <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", alignItems: "flex-start" }}>
@@ -522,7 +514,7 @@ function ManagerCashflowWidget({
                   open={Boolean(anchorEl)}
                   // onChange={handlePropertyChange}
                   onClose={handleClose}
-                >                  
+                >
                   {propertyList?.map((property, index) => {
                     return (
                       <MenuItem
@@ -560,13 +552,15 @@ function ManagerCashflowWidget({
                 >                  
                   All Properties
                 </Button> */}
-                <Typography sx={{fontWeight: 'bold', textTransform: 'uppercase', }}>
-                  {propertyButtonName === 'Select Property'?  `All Properties, ${cfPeriodButtonName === 'Last 12 Months'? 'Current Month' : 'Last 12 Months'}` : ''}
-                  {propertyButtonName === 'View all Properties'?  `Property: ${getSelectedPropertyName()}, ${cfPeriodButtonName === 'Last 12 Months'? 'Current Month' : 'Last 12 Months'}` : ''}
+                <Typography sx={{ fontWeight: "bold", textTransform: "uppercase" }}>
+                  {propertyButtonName === "Select Property" ? `All Properties, ${cfPeriodButtonName === "Last 12 Months" ? "Current Month" : "Last 12 Months"}` : ""}
+                  {propertyButtonName === "View all Properties"
+                    ? `Property: ${getSelectedPropertyName()}, ${cfPeriodButtonName === "Last 12 Months" ? "Current Month" : "Last 12 Months"}`
+                    : ""}
                 </Typography>
               </Grid>
             </Grid>
-            
+
             <Grid container direction='row' item xs={12} columnSpacing={3}>
               <Grid item xs={5}></Grid>
               <Grid item xs={3} sx={{ backgroundColor: "#FFE3AD", borderRadius: "5px", padding: "5px", display: "flex", justifyContent: "center" }}>
@@ -601,15 +595,17 @@ function ManagerCashflowWidget({
                 <Grid item xs={3} sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
                     {/* ${(profits?.pur_amount_due != null && revenueCurrentMonth?.pur_amount_due != null ) ? (parseFloat(revenueCurrentMonth.pur_amount_due) - parseFloat(expenseCurrentMonth.pur_amount_due)).toFixed(2) : 0} */}
-                    {cfPeriodButtonName === "Last 12 Months" &&  <>${profits?.totalExpected ? parseFloat(profits?.totalExpected).toFixed(2) : "0.00"}</>}
-                    {cfPeriodButtonName === "Current Month" &&  <>${last12MonthsTotals?.totalExpectedProfit ? parseFloat(last12MonthsTotals?.totalExpectedProfit).toFixed(2) : "0.00"}</>}
+                    {cfPeriodButtonName === "Last 12 Months" && <>${profits?.totalExpected ? parseFloat(profits?.totalExpected).toFixed(2) : "0.00"}</>}
+                    {cfPeriodButtonName === "Current Month" && (
+                      <>${last12MonthsTotals?.totalExpectedProfit ? parseFloat(last12MonthsTotals?.totalExpectedProfit).toFixed(2) : "0.00"}</>
+                    )}
                   </Typography>
                 </Grid>
                 <Grid item xs={1}></Grid>
                 <Grid container item xs={3} justifyContent='center' sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
-                  <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>                    
-                    {cfPeriodButtonName === "Last 12 Months" &&  <>${profits?.totalActual ? parseFloat(profits?.totalActual).toFixed(2) : "0.00"}</>}
-                    {cfPeriodButtonName === "Current Month" &&  <>${last12MonthsTotals?.totalProfit ? parseFloat(last12MonthsTotals?.totalProfit).toFixed(2) : "0.00"}</>}
+                  <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
+                    {cfPeriodButtonName === "Last 12 Months" && <>${profits?.totalActual ? parseFloat(profits?.totalActual).toFixed(2) : "0.00"}</>}
+                    {cfPeriodButtonName === "Current Month" && <>${last12MonthsTotals?.totalProfit ? parseFloat(last12MonthsTotals?.totalProfit).toFixed(2) : "0.00"}</>}
                   </Typography>
                 </Grid>
               </Grid>
@@ -621,17 +617,18 @@ function ManagerCashflowWidget({
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
                     {/* ${rents?.totalExpected ? parseFloat(rents?.totalExpected).toFixed(2) : "0.00"} */}
 
-                    {cfPeriodButtonName === "Last 12 Months" &&  <>${rents?.totalExpected ? parseFloat(rents?.totalExpected).toFixed(2) : "0.00"}</>}
-                    {cfPeriodButtonName === "Current Month" &&  <>${last12MonthsTotals?.totalExpectedRent ? parseFloat(last12MonthsTotals?.totalExpectedRent).toFixed(2) : "0.00"}</>}
-                    
+                    {cfPeriodButtonName === "Last 12 Months" && <>${rents?.totalExpected ? parseFloat(rents?.totalExpected).toFixed(2) : "0.00"}</>}
+                    {cfPeriodButtonName === "Current Month" && (
+                      <>${last12MonthsTotals?.totalExpectedRent ? parseFloat(last12MonthsTotals?.totalExpectedRent).toFixed(2) : "0.00"}</>
+                    )}
                   </Typography>
                 </Grid>
                 <Grid item xs={1}></Grid>
                 <Grid container item xs={3} justifyContent='center' sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
                     {/* ${rents?.totalActual ? parseFloat(rents?.totalActual).toFixed(2) : "0.00"} */}
-                    {cfPeriodButtonName === "Last 12 Months" &&  <>${rents?.totalActual ? parseFloat(rents?.totalActual).toFixed(2) : "0.00"}</>}
-                    {cfPeriodButtonName === "Current Month" &&  <>${last12MonthsTotals?.totalRent ? parseFloat(last12MonthsTotals?.totalRent).toFixed(2) : "0.00"}</>}
+                    {cfPeriodButtonName === "Last 12 Months" && <>${rents?.totalActual ? parseFloat(rents?.totalActual).toFixed(2) : "0.00"}</>}
+                    {cfPeriodButtonName === "Current Month" && <>${last12MonthsTotals?.totalRent ? parseFloat(last12MonthsTotals?.totalRent).toFixed(2) : "0.00"}</>}
                   </Typography>
                 </Grid>
               </Grid>
@@ -643,8 +640,10 @@ function ManagerCashflowWidget({
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
                     {/* ${payouts?.totalExpected ? parseFloat(payouts?.totalExpected).toFixed(2) : "0.00"} */}
 
-                    {cfPeriodButtonName === "Last 12 Months" &&  <>${payouts?.totalExpected ? parseFloat(payouts?.totalExpected).toFixed(2) : "0.00"}</>}
-                    {cfPeriodButtonName === "Current Month" &&  <>${last12MonthsTotals?.totalExpectedPayouts ? parseFloat(last12MonthsTotals?.totalExpectedPayouts).toFixed(2) : "0.00"}</>}
+                    {cfPeriodButtonName === "Last 12 Months" && <>${payouts?.totalExpected ? parseFloat(payouts?.totalExpected).toFixed(2) : "0.00"}</>}
+                    {cfPeriodButtonName === "Current Month" && (
+                      <>${last12MonthsTotals?.totalExpectedPayouts ? parseFloat(last12MonthsTotals?.totalExpectedPayouts).toFixed(2) : "0.00"}</>
+                    )}
                   </Typography>
                 </Grid>
                 <Grid item xs={1}></Grid>
@@ -652,8 +651,8 @@ function ManagerCashflowWidget({
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
                     {/* ${payouts?.totalActual ? parseFloat(payouts?.totalActual).toFixed(2) : "0.00"} */}
 
-                    {cfPeriodButtonName === "Last 12 Months" &&  <>${payouts?.totalActual ? parseFloat(payouts?.totalActual).toFixed(2) : "0.00"}</>}
-                    {cfPeriodButtonName === "Current Month" &&  <>${last12MonthsTotals?.totalPayouts ? parseFloat(last12MonthsTotals?.totalPayouts).toFixed(2) : "0.00"}</>}
+                    {cfPeriodButtonName === "Last 12 Months" && <>${payouts?.totalActual ? parseFloat(payouts?.totalActual).toFixed(2) : "0.00"}</>}
+                    {cfPeriodButtonName === "Current Month" && <>${last12MonthsTotals?.totalPayouts ? parseFloat(last12MonthsTotals?.totalPayouts).toFixed(2) : "0.00"}</>}
                   </Typography>
                 </Grid>
               </Grid>
@@ -741,66 +740,66 @@ function ManagerCashflowWidget({
 
           <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
             <Typography variant='h5' sx={{ fontWeight: "bold", color: "#160449" }}>
-              Cashflow and Revenue
+              Cashflow and Revenue 1
             </Typography>
           </Grid>
 
           <Grid item xs={12} sx={{ height: "350px" }}>
             <DashboardChart revenueCashflowByMonth={last12Months} activeButton={"Cashflow"} />
           </Grid>
-          <Grid item container xs={12} sx={{ marginTop: '30px', marginBottom: "10px" }}>
-              <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
-                <Button
-                  variant='outlined'
-                  id='revenue'
-                  // className={classes.button}
-                  style={{
-                    // height: "100%",
-                    // width: '80%',
-                    backgroundColor: "#D0D0D0",
-                    color: "#160449",
-                    fontSize: "13px",
-                    marginBottom: "10px",
-                    borderRadius: "5px",
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    // navigate("/addRevenue", { state: { edit: false, itemToEdit: null } });
-                    setCurrentWindow("ADD_REVENUE");
-                  }}
-                >
-                  {/* <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: '4px' }}/> */}
-                  <img src={AddRevenueIcon}></img>
-                  Revenue
-                </Button>
-              </Grid>
-
-              <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
-                <Button
-                  variant='outlined'
-                  id='revenue'
-                  // className={classes.button}
-                  style={{
-                    // height: "100%",
-                    // width: '80%',
-                    backgroundColor: "#D0D0D0",
-                    color: "#160449",
-                    fontSize: "13px",
-                    marginBottom: "10px",
-                    borderRadius: "5px",
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    // navigate("/addExpense", { state: { edit: false, itemToEdit: null } });
-                    setCurrentWindow("ADD_EXPENSE");
-                  }}
-                >
-                  {/* <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: '4px' }}/> */}
-                  <img src={AddRevenueIcon}></img>
-                  Expense
-                </Button>
-              </Grid>
+          <Grid item container xs={12} sx={{ marginTop: "30px", marginBottom: "10px" }}>
+            <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+              <Button
+                variant='outlined'
+                id='revenue'
+                // className={classes.button}
+                style={{
+                  // height: "100%",
+                  // width: '80%',
+                  backgroundColor: "#D0D0D0",
+                  color: "#160449",
+                  fontSize: "13px",
+                  marginBottom: "10px",
+                  borderRadius: "5px",
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // navigate("/addRevenue", { state: { edit: false, itemToEdit: null } });
+                  setCurrentWindow("ADD_REVENUE");
+                }}
+              >
+                {/* <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: '4px' }}/> */}
+                <img src={AddRevenueIcon}></img>
+                Revenue
+              </Button>
             </Grid>
+
+            <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+              <Button
+                variant='outlined'
+                id='revenue'
+                // className={classes.button}
+                style={{
+                  // height: "100%",
+                  // width: '80%',
+                  backgroundColor: "#D0D0D0",
+                  color: "#160449",
+                  fontSize: "13px",
+                  marginBottom: "10px",
+                  borderRadius: "5px",
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // navigate("/addExpense", { state: { edit: false, itemToEdit: null } });
+                  setCurrentWindow("ADD_EXPENSE");
+                }}
+              >
+                {/* <HomeIcon fill="#3D5CAC" width="15" height="15" style={{ marginRight: '4px' }}/> */}
+                <img src={AddRevenueIcon}></img>
+                Expense
+              </Button>
+            </Grid>
+          </Grid>
         </Grid>
       </Container>
       {/* </div> */}

@@ -34,7 +34,7 @@ import APIConfig from '../../../utils/APIConfig';
 
 import { useMaintenance } from "../../../contexts/MaintenanceContext";
 
-export default function QuoteRequestForm() {
+export default function QuoteRequestForm({ setRefresh }) {
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const location = useLocation();
 	const navigate = useNavigate();
@@ -119,25 +119,23 @@ export default function QuoteRequestForm() {
 		}
 	}
 
-	const handleSubmit = () => {
-		// TODO FIX ME
-		// console.log("handleSubmit")
-		// console.log("need to implement navigation")
-
+	const handleSubmit = async () => {
+		// Change the maintenance request status to "PROCESSING"
 		const changeMaintenanceRequestStatus = async () => {
-			setShowSpinner(true);
-			var formData = new FormData();
-			formData.append('maintenance_request_uid', maintenanceItem.maintenance_request_uid);
-			formData.append('maintenance_request_status', 'PROCESSING');
-			try {
-				const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
-					method: 'PUT',
-					body: formData,
-				});
-			} catch (error) {
-				console.log('error', error);
-			}
-			setShowSpinner(false);
+		  setShowSpinner(true);
+		  const formData = new FormData();
+		  formData.append('maintenance_request_uid', maintenanceItem.maintenance_request_uid);
+		  formData.append('maintenance_request_status', 'PROCESSING');
+		  
+		  try {
+			await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
+			  method: 'PUT',
+			  body: formData,
+			});
+		  } catch (error) {
+			console.log('error', error);
+		  }
+		  setShowSpinner(false);
 		};
 
 		// Creates a list of business_uids from the maintenanceContacts set.
@@ -146,68 +144,52 @@ export default function QuoteRequestForm() {
 			// console.log("maintenanceContacts[i].maintenance_contact_uid", contact.business_uid);
 			maintenanceContactIds.push(contact.contact_uid);
 		}
-
+	  
+		// Submit the quote request to vendors
 		const submitQuoteRequest = async (maintenanceContactIds) => {
-			setShowSpinner(true);
-			const formData = new FormData();
-
-			formData.append('quote_maintenance_request_id', maintenanceItem.maintenance_request_uid);
-			formData.append('quote_pm_notes', additionalInfo);
-			formData.append('quote_business_id', maintenanceContactIds); // maintenanceContactIds
-			// formData.append("quote_maintenance_images", additionalInfo);
-
-			const files = selectedImageList;
-			let i = 0;
-			for (const file of selectedImageList) {
-			// let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
-			let key = `img_${i++}`;
-			if (file.file !== null) {
-				// newProperty[key] = file.file;
-				formData.append(key, file.file);
-			} else {
-				// newProperty[key] = file.image;
-				formData.append(key, file.image);
-			}
-			}
-
-
-			for (let [key, value] of formData.entries()) {
-				console.log(key, value);
-			}
-
-			try {
-				// console.log("right before call");
-				const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {
-					method: 'POST',
-					body: formData,
-				});
-
-				const responseData = await response.json();
-				// console.log("responseData", responseData);
-
-				if (response.status === 200) {
-					// console.log("success");
-					changeMaintenanceRequestStatus();
-					sendAnnouncement(maintenanceContactIds);					
-					if (isMobile) {
-						navigate(maintenanceRoutingBasedOnSelectedRole(), { state: { refresh: true } });
-					} else {
-						handleBackButton();
-					}
-				} else {
-					console.error(`Request failed with status: ${response.status}`);
+		  setShowSpinner(true);
+		  const formData = new FormData();
+		  formData.append('quote_maintenance_request_id', maintenanceItem.maintenance_request_uid);
+		  formData.append('quote_pm_notes', additionalInfo);
+		  formData.append('quote_business_id', maintenanceContactIds); // maintenanceContactIds
+	  
+		  // Attach selected images to the request
+		  selectedImageList.forEach((file, index) => {
+			formData.append(`img_${index}`, file.file || file.image);
+		  });
+	  
+		  try {
+			const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {
+			  method: 'POST',
+			  body: formData,
+			});
+	  
+			if (response.status === 200) {
+			  console.log("Quote request sent successfully");
+			  
+			  // Call the function to change the maintenance request status
+			  await changeMaintenanceRequestStatus();
+	  
+			  // Refresh Manager Maintenance view
+			  if (isMobile) {
+				navigate(maintenanceRoutingBasedOnSelectedRole(), { state: { refresh: true } });
+			  } else {
+				// Call setRefresh to update the Manager Maintenance view
+				if (setRefresh) {
+				  setRefresh(true);
 				}
-			} catch (error) {
-				console.log('An error occurred while submitting the quote:', error);
+				handleBackButton(); // Navigate back to the Manager Maintenance view
+			  }
+			} else {
+			  console.error(`Request failed with status: ${response.status}`);
 			}
-
-			// for (let [key, value] of formData.entries()) {
-			//     console.log(key, value);
-			// }
-
-			setShowSpinner(false);
+		  } catch (error) {
+			console.log('An error occurred while submitting the quote:', error);
+		  }
+	  
+		  setShowSpinner(false);
 		};
-
+	  
 		const sendAnnouncement = async (maintenanceContactIds) => {
 			// console.log("sendAnnouncement - maintenanceContactIds - ", maintenanceContactIds);
 			// console.log("sendAnnouncement - maintenanceItem - ", maintenanceItem);			
@@ -235,7 +217,7 @@ export default function QuoteRequestForm() {
 					announcement_mode: "MAINTENANCE",
 					// announcement_receiver: [maintenanceItem?.tenant_uid],
 					announcement_receiver: annReceivers,
-					announcement_type: ["Text", "Email"],
+					announcement_type: ["Email", "Text"],
 				})
 
 				// console.log("QuoteRequestForm - receiverPropertyMapping - ", receiverPropertyMapping);
@@ -257,8 +239,10 @@ export default function QuoteRequestForm() {
 
 		// for (let contact of maintenanceContactIds)
 		
-		submitQuoteRequest(maintenanceContactIds); 		 
-	};
+		submitQuoteRequest(maintenanceContactIds); 	
+		
+	  };
+	  
 
 	function numImages() {
 		if (displayImages == null || displayImages.length == 0) {

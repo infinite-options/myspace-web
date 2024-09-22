@@ -66,6 +66,7 @@ export default function MaintenanceRequestNavigatorNew({
 	tabs,
 	navigateParams,
 	fetchAndUpdateQuotes,
+	setRefresh,
 }) {
 	const { setEditMaintenanceView,  setTestIssue,
 		setTestProperty,
@@ -616,14 +617,15 @@ export default function MaintenanceRequestNavigatorNew({
 									/>
 									<Grid container sx={{ padding: '0px' }}>
 									{data.maintenance_request_status !== 'NEW' && maintenanceQuotes.length > 0? (
-  <QuoteDetails
-    maintenanceItem={data}
-    navigateParams={navigateParams}
-	initialIndex={selectedQuoteIndex}
-    maintenanceQuotesForItem={maintenanceQuotes}
-	fetchAndUpdateQuotes={fetchAndUpdateQuotes}
-  />
-) : null}
+										<QuoteDetails
+											maintenanceItem={data}
+											navigateParams={navigateParams}
+											initialIndex={selectedQuoteIndex}
+											maintenanceQuotesForItem={maintenanceQuotes}
+											fetchAndUpdateQuotes={fetchAndUpdateQuotes}
+											setRefresh={setRefresh}
+										/>
+									) : null}
 									</Grid>
 									
 								</Grid>

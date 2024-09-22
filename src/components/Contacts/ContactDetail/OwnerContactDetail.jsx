@@ -139,23 +139,16 @@ const OwnerContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
                   </Box>
               </Grid>
           </Grid>
-          <Grid container item xs={12} columnSpacing={1} rowSpacing={1} sx={{ }}>
-              <Grid item xs={12}>
+          <Grid container item xs={12} columnSpacing={1} rowSpacing={3.3}>
+              <Grid item xs={12} md={6}>
                   <Paper
                       elevation={0}
                       style={{
                           // margin: '50p', // Add margin here
                           borderRadius: "10px",
                           backgroundColor: "#D6D5DA",
-                          minHeight: 230,
-                          // maxHeight: 230, 
-                          // [theme.breakpoints.down("sm")]: {
-                          //     width: "80%",
-                          // },
-                          // [theme.breakpoints.up("sm")]: {
-                          //     width: "50%",
-                          // },
-                          // width: "100%",
+                          minHeight: 200,
+                          height:"100%",
                           padding: '10px',
                       }}
                   >
@@ -168,6 +161,7 @@ const OwnerContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
                       
                   </Paper>
               </Grid>
+
               <Grid item xs={12} md={6}>
                   <Paper
                       elevation={0}
@@ -175,45 +169,8 @@ const OwnerContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
                           // margin: '50p', // Add margin here
                           borderRadius: "10px",
                           backgroundColor: "#D6D5DA",
-                          minHeight: 370,
-  
-                          // [theme.breakpoints.down("sm")]: {
-                          //     width: "80%",
-                          // },
-                          // [theme.breakpoints.up("sm")]: {
-                          //     width: "50%",
-                          // },
-                          // width: "100%",
-                          padding: '10px',
-                      }}
-                  >
-                      {
-                        contactDetails && typeof currentIndex === 'number' && currentIndex >=0 ? (
-                          <PaymentsInformation                                                       
-                            data={contactDetails[currentIndex]?.total_paid}
-                          />
-                        ) :
-                        <></>
-                      }
-                      
-                  </Paper>
-              </Grid>   
-              <Grid item xs={12} md={6}>
-                  <Paper
-                      elevation={0}
-                      style={{
-                          // margin: '50p', // Add margin here
-                          borderRadius: "10px",
-                          backgroundColor: "#D6D5DA",
-                          minHeight: 360,
-  
-                          // [theme.breakpoints.down("sm")]: {
-                          //     width: "80%",
-                          // },
-                          // [theme.breakpoints.up("sm")]: {
-                          //     width: "50%",
-                          // },
-                          // width: "100%",
+                          minHeight: 200,
+                          height:"100%",
                           padding: '10px',
                       }}
                   >
@@ -229,7 +186,32 @@ const OwnerContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
                       }
                       
                   </Paper>
-              </Grid>                     
+              </Grid>
+
+              <Grid item xs={12}>
+                  <Paper
+                      elevation={0}
+                      style={{
+                          // margin: '50p', // Add margin here
+                          borderRadius: "10px",
+                          backgroundColor: "#D6D5DA",
+                          minHeight: 170,
+                          padding: '10px',
+                      }}
+                  >
+                      {
+                        contactDetails && typeof currentIndex === 'number' && currentIndex >=0 ? (
+                          <PaymentsInformation                                                       
+                            data={contactDetails[currentIndex]?.total_paid}
+                          />
+                        ) :
+                        <></>
+                      }
+                      
+                  </Paper>
+              </Grid>   
+
+                                   
           </Grid>                     
       </Grid>    
     

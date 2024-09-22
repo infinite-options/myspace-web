@@ -105,7 +105,11 @@ const RequestQuotes = (props) => {
     }
 
     const currentDate = new Date();
-    const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}-${currentDate.getFullYear()}`;
+    // const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}-${currentDate.getFullYear()}`;
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    const formattedDate = `${days[currentDate.getDay()]} ${months[currentDate.getMonth()]} ${currentDate.getDate()} ${currentDate.getFullYear()}`;
 
     let annProperties = JSON.stringify({[managerData.business_uid] : selectedProperties})
 
@@ -117,7 +121,7 @@ const RequestQuotes = (props) => {
       announcement_properties: annProperties,
       announcement_mode: "CONTRACT",
       announcement_receiver: [managerData.business_uid],
-      announcement_type: ["App", "Text", "Email"],
+      announcement_type: ["App", "Email", "Text"],
     });
 
     let config = {
@@ -173,7 +177,7 @@ const RequestQuotes = (props) => {
 
   const navigateToPrev = () => {
     if (isDesktop === true) {
-      onShowSearchManager();
+      onShowSearchManager(1);
     } else {
       navigate(-1);
     }

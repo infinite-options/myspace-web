@@ -37,7 +37,7 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight"; // 
 
 import LeaseIcon from "./leaseIcon.png";
 import CreateIcon from "@mui/icons-material/Create";
-import { getPaymentStatusColor, getPaymentStatus } from "./PropertyList.jsx";
+import { getPaymentStatusColor, getPaymentStatus } from "./PropertiesList.jsx";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import PostAddIcon from "@mui/icons-material/PostAdd";
@@ -73,6 +73,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { CollectionsBookmarkRounded } from "@mui/icons-material";
 import PropertiesContext from '../../contexts/PropertiesContext';
 import ListsContext from "../../contexts/ListsContext.js";
+import ManagementDetailsComponent from "./ManagementDetailsComponent.jsx";
 
 const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_status !== "REFUSED" ? "#778DC5" : "#874499") : "#A52A2A");
 
@@ -161,6 +162,9 @@ export default function PropertyNavigator({
     }
   };
   
+  // useEffect(() => {
+  //   console.log("PropertyNavigator - property - ", property);
+  // }, [property]);
 
   // useEffect(() => {
   //   console.log("PropertyNavigator - allContracts - ", allContracts);
@@ -170,9 +174,9 @@ export default function PropertyNavigator({
   //   setCurrentIndex(returnIndex !== undefined ? returnIndex : 0);
   // }, [returnIndex]);
 
-  useEffect(() => {
-    console.log("ROHIT - PropertyNavigator - property - ", property)
-  }, [property]);
+  // useEffect(() => {
+  //   console.log("PropertyNavigator - property - ", property)
+  // }, [property]);
 
   useEffect(() => {
     getDataFromAPI();
@@ -232,6 +236,8 @@ export default function PropertyNavigator({
   const [maintenanceReqData, setMaintenanceReqData] = useState([{}]);
   // console.log('Maintenance Request Data1: ', maintenanceReqData);
   const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
+  const [newContractCount, setNewContractCount] = useState(0)
+  const [sentContractCount, setSentContractCount] = useState(0)
 
   const color = theme.palette.form.main;
   const [propertyId, setPropertyId] = useState(propertyData && propertyData[currentIndex] ? propertyData[currentIndex].property_uid : null);
@@ -298,18 +304,27 @@ export default function PropertyNavigator({
       setPropertyId(propertyData[currentIndex].property_uid);
       
       var count = 0;
+      var newContractCount = 0
+      var sentContractCount = 0
       const filtered = allContracts?.filter((contract) => contract.property_id === propertyId);
       const active = filtered?.filter((contract) => contract.contract_status === "ACTIVE");
       // console.log("322 - PropertyNavigator - filtered contracts - ", filtered);
       filtered.forEach((contract) => {
-        if (contract.contract_status == "SENT" || contract.contract_status == "NEW") {
+        if (contract.contract_status === "SENT") {
           count++;
+          sentContractCount++;
+        }
+        if(contract.contract_status === "NEW"){
+          count++;
+          newContractCount++;
         }
       });
-      // console.log("PropertyNavigator - contract count - ", count);
+      // console.log("PropertyNavigator - Active contract - ", active);
       setContractsNewSent(count);
       setContractsData(allContracts);
       setActiveContracts(active);
+      setNewContractCount(newContractCount)
+      setSentContractCount(sentContractCount)
 
       const rentDetails = getRentStatus();
       // console.log("rentDetails - ", rentDetails);
@@ -407,19 +422,41 @@ export default function PropertyNavigator({
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };  
 
-  const handleManagerChange = (index) => {
-    if (property && property.business_uid) {
-      navigate("/ContactsPM", {
-        state: {
-          contactsTab: "Manager",
-          managerId: property.business_uid,
-        },
-      });
-    } else {
-      const state = { index: currentIndex, propertyData, isDesktop };
-      onShowSearchManager(state);
+  // const handleManagerChange = () => {
+  //   // if (property && property.business_uid) {
+  //   //   navigate("/ContactsPM", {
+  //   //     state: {
+  //   //       contactsTab: "Manager",
+  //   //       managerId: property.business_uid,
+  //   //     },
+  //   //   });
+  //   // } else {
+  //     // const state = { index: currentIndex, propertyData, isDesktop };
+  //     // onShowSearchManager(state);
+  //   // }
+  // };
+
+  const handleOpenMaintenancePage = () => {
+    if (property && property.maintenance?.length > 0) {
+      if (selectedRole === "OWNER") {
+        navigate("/ownerMaintenance", {
+          state: {
+            propertyId: propertyId,
+            fromProperty: true,
+            index: currentIndex,
+          },
+        });
+      } else {
+        navigate("/managerMaintenance", {
+          state: {
+            propertyId: propertyId,
+            fromProperty: true,
+            index: currentIndex,
+          },
+        });
+      }
     }
-  };
+  }
 
   const handleAppClick = (index) => {    
     handleViewApplication(index);
@@ -1351,22 +1388,21 @@ export default function PropertyNavigator({
                       <Grid item xs={12}>
                         {property && property.property_available_to_rent === 1 && (property.lease_status == null || property.lease_status !== "ACTIVE") && (
                           // padding extra on the bottom
-                          <Box sx={{ pb: 40 }}>
-                            <Button
-                              variant='outlined'
+                          <Box sx={{ pb: 5 }}>                            
+                            <Box                              
                               sx={{
-                                background: "#3D5CAC",
-                                backgroundColor: "#FFC85C",
-                                cursor: "pointer",
+                                display: 'flex',
+                                flexDirection: 'row',
+                                flexWrap: 'wrap',
+                                alignContent: 'center',
+                                justifyContent: 'center',                                
+                                backgroundColor: "#76B148",
+                                borderRadius: '5px',                                
                                 textTransform: "none",
-                                minWidth: "150px", // Fixed width for the button
+                                minWidth: "150px",
                                 minHeight: "35px",
-                                width: "100%",
-                                "&:hover": {
-                                  backgroundColor: theme.palette.success.dark,
-                                },
-                              }}
-                              size='small'
+                                width: "100%",                                
+                              }}                              
                             >
                               <CheckIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
                               <Typography
@@ -1381,25 +1417,62 @@ export default function PropertyNavigator({
                               >
                                 {"Listed For Rent"}
                               </Typography>
-                            </Button>
+                            </Box>
                           </Box>
                         )}
                         {
-                          (property && (property.property_available_to_rent === 0 || property.property_available_to_rent == null) ) && 
+                          (property && (property.property_available_to_rent === 0 || property.property_available_to_rent == null) && (property.business_uid == null || property.business_uid == "") ) && 
                         (
-                          <Box sx={{ pb: 40 }}>
-                            <Button
-                              variant='outlined'
+                          <Box sx={{ pb: 5 }}>                            
+                            <Box                              
                               sx={{
-                                background: "#3D5CAC",
-                                backgroundColor: theme.palette.priority.high,
-                                cursor: "pointer",
+                                display: 'flex',
+                                flexDirection: 'row',
+                                flexWrap: 'wrap',
+                                alignContent: 'center',
+                                justifyContent: 'center',                                
+                                backgroundColor: "none",
+                                borderRadius: '5px',                                
                                 textTransform: "none",
-                                minWidth: "150px", // Fixed width for the button
+                                minWidth: "150px",
                                 minHeight: "35px",
-                                width: "100%",
-                              }}
-                              size='small'
+                                width: "100%",                                
+                              }}                              
+                            >
+                              {/* <CloseIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
+                              <Typography
+                                sx={{
+                                  textTransform: "none",
+                                  color: "#FFFFFF",
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                  whiteSpace: "nowrap",
+                                  marginLeft: "1%", // Adjusting margin for icon and text
+                                }}
+                              >
+                                {"No Manager"}
+                              </Typography> */}
+                            </Box>
+                          </Box>
+                        )}
+                        {
+                          (property && (property.property_available_to_rent === 0 || property.property_available_to_rent == null) && (property.business_uid != null && property.business_uid !== "") ) && 
+                        (
+                          <Box sx={{ pb: 5 }}>                            
+                            <Box                              
+                              sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                flexWrap: 'wrap',
+                                alignContent: 'center',
+                                justifyContent: 'center',                                
+                                backgroundColor: "#A52A2A",
+                                borderRadius: '5px',                                
+                                textTransform: "none",
+                                minWidth: "150px",
+                                minHeight: "35px",
+                                width: "100%",                                
+                              }}                              
                             >
                               <CloseIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
                               <Typography
@@ -1414,27 +1487,25 @@ export default function PropertyNavigator({
                               >
                                 {"Not Listed"}
                               </Typography>
-                            </Button>
+                            </Box>
                           </Box>
                         )}
-                        {property && property.lease_status && property.lease_status === "ACTIVE" && (
-                          // padding extra on the bottom
-                          <Box sx={{ pb: 40 }}>
-                            <Button
-                              variant='outlined'
+                        {property && property.lease_status && property.lease_status === "ACTIVE" && (                          
+                          <Box sx={{ pb: 5 }}>
+                            <Box                              
                               sx={{
-                                background: "#3D5CAC",
-                                backgroundColor: theme.palette.success.main,
-                                cursor: "pointer",
+                                display: 'flex',
+                                flexDirection: 'row',
+                                flexWrap: 'wrap',
+                                alignContent: 'center',
+                                justifyContent: 'center',                                
+                                backgroundColor: "#3D5CAC",
+                                borderRadius: '5px',                                
                                 textTransform: "none",
-                                minWidth: "150px", // Fixed width for the button
+                                minWidth: "150px",
                                 minHeight: "35px",
-                                width: "100%",
-                                "&:hover": {
-                                  backgroundColor: theme.palette.success.dark,
-                                },
-                              }}
-                              size='small'
+                                width: "100%",                                
+                              }}                              
                             >
                               <CheckIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
                               <Typography
@@ -1449,9 +1520,45 @@ export default function PropertyNavigator({
                               >
                                 {"Rented"}
                               </Typography>
-                            </Button>
+                            </Box>
                           </Box>
                         )}
+                      </Grid>
+                      <Grid item xs={12}>
+                                                  
+                          <Box sx={{ pb: 40 }}>
+                            
+                            <Box                              
+                              sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                flexWrap: 'wrap',
+                                alignContent: 'center',
+                                justifyContent: 'center',                                
+                                backgroundColor: getPaymentStatusColor(property.rent_status, property),
+                                borderRadius: '5px',                                
+                                textTransform: "none",
+                                minWidth: "150px",
+                                minHeight: "35px",
+                                width: "100%",                                
+                              }}                              
+                            >
+                              {/* <CheckIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} /> */}
+                              <Typography
+                                sx={{
+                                  textTransform: "none",
+                                  color: "#FFFFFF",
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                  whiteSpace: "nowrap",
+                                  marginLeft: "1%", // Adjusting margin for icon and text
+                                }}
+                              >
+                                {getPaymentStatus(property.rent_status, property)}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        
                       </Grid>
                       <Grid item xs={12}>
                         <Box>
@@ -1802,6 +1909,115 @@ export default function PropertyNavigator({
                         {rentFee ? rentFee.perDay_late_fee : "-"}
                       </Typography>
                     </Grid>
+
+                    {property && property.applications.length > 0 && (
+                      <>
+                        <Grid item xs={12} md={12}>
+                          <Box sx={{ display: "flex", alignItems: "center" }}>
+                            <Typography
+                              sx={{
+                                textTransform: "none",
+                                color: theme.typography.primary.black,
+                                fontWeight: theme.typography.secondary.fontWeight,
+                                fontSize: theme.typography.smallFont,
+                                paddingRight: "103px",
+                              }}
+                            >
+                              Applications:
+                            </Typography>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                cursor: "pointer",
+                              }}
+                            >
+                              <Badge
+                                color='success'
+                                badgeContent={property.applications.filter((app) => app.lease_status === "NEW" || app.lease_status === "PROCESSING").length}
+                                showZero
+                                sx={{
+                                  paddingRight: "50px",
+                                }}
+                              />
+                            </Box>
+                          </Box>
+                        </Grid>
+                        <Grid item xs={12} md={12}>
+                          <Accordion theme={theme} sx={{ backgroundColor: "#e6e6e6", marginLeft: "-5px" }}>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='panel1-content' id='panel1-header'>
+                              <Typography
+                                sx={{
+                                  textTransform: "none",
+                                  color: theme.typography.primary.black,
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                }}
+                              >
+                                View All Applications
+                              </Typography>
+                            </AccordionSummary>
+                            <AccordionDetails
+                              sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                                padding: "0px 5px 5px 5px",
+                              }}
+                            >
+                              {property.applications.map((app, index) => (
+                                <Button
+                                  key={index}
+                                  onClick={() => handleAppClick(index)}
+                                  sx={{
+                                    backgroundColor: getAppColor(app),
+                                    color: "#FFFFFF",
+                                    textTransform: "none",
+                                    width: "100%",
+                                    height: "70px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    marginBottom: 2,
+                                    "&:hover, &:focus, &:active": {
+                                      backgroundColor: getAppColor(app),
+                                    },
+                                  }}
+                                >
+                                  <Box sx={{ display: "flex" }}>
+                                    <Typography
+                                      sx={{
+                                        fontSize: theme.typography.smallFont,
+                                        mr: 1,
+                                      }}
+                                    >
+                                      {app.tenant_first_name + " " + app.tenant_last_name + " "}
+                                    </Typography>
+                                    <Typography
+                                      sx={{
+                                        fontWeight: "bold",
+                                        fontSize: theme.typography.smallFont,
+                                        mr: 1,
+                                      }}
+                                    >
+                                      {app.lease_status + " "}
+                                    </Typography>
+                                    <Typography
+                                      sx={{
+                                        fontWeight: "bold",
+                                        fontSize: theme.typography.smallFont,
+                                      }}
+                                    >
+                                      {app.lease_application_date}
+                                    </Typography>
+                                  </Box>
+                                </Button>
+                              ))}
+                            </AccordionDetails>
+                          </Accordion>
+                        </Grid>
+                      </>
+                    )}
                   </Grid>
                 </CardContent>
               </Card>
@@ -1809,7 +2025,8 @@ export default function PropertyNavigator({
 
             {/* Right component */}
             <Grid item xs={12} md={6}>
-              <Card sx={{ backgroundColor: color, height: "100%" }}>
+              <ManagementDetailsComponent activeContract={activeContracts[0]} currentProperty={property} selectedRole={selectedRole} handleViewPMQuotesRequested={handleViewPMQuotesRequested} newContractCount={newContractCount} sentContractCount={sentContractCount} handleOpenMaintenancePage={handleOpenMaintenancePage}/>
+              {/* <Card sx={{ backgroundColor: color, height: "100%" }}>
                 <Box
                   sx={{
                     display: "flex",
@@ -1881,9 +2098,9 @@ export default function PropertyNavigator({
                                 fontWeight: theme.typography.light.fontWeight,
                                 fontSize: theme.typography.smallFont,
                               }}
-                            >
+                            > */}
                               {/* {property && property.business_uid ? `${property.business_name}` : "No Manager Selected"} */}
-                              {activeContracts?.length > 0 ? activeContracts[0]?.business_name : "No Manager Selected"}
+                              {/* {activeContracts?.length > 0 ? activeContracts[0]?.business_name : "No Manager Selected"}
                             </Typography>
                             <KeyboardArrowRightIcon
                               sx={{
@@ -2164,7 +2381,7 @@ export default function PropertyNavigator({
                     )}
                   </Grid>
                 </CardContent>
-              </Card>
+              </Card> */}
             </Grid>
             {/* End Lease Details and Management Details Cards */}
           </Grid>

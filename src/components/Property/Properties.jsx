@@ -33,7 +33,7 @@ function Properties() {
   // console.log("In Properties RHS: ", location.state?.showRHS);
   console.log("location.state", location.state);
   const [ showOnlyListings, setShowOnlyListings ] = useState(location.state?.showOnlyListings ? location.state?.showOnlyListings : false);
-  console.log("ROHIT - showOnlyListings", showOnlyListings);
+  console.log("Properties - showOnlyListings", showOnlyListings);
   // const { propertyList, setPropertyList, returnIndex, setReturnIndex  } = useContext(PropertiesContext); 
   const propertiesContext = useContext(PropertiesContext);
 	const {
@@ -162,6 +162,7 @@ function Properties() {
   const [LHS, setLHS] = useState(location.state?.showLHS || "List");
   const [RHS, setRHS] = useState(location.state?.showRHS || "PropertyNavigator");
   const [page, setPage] = useState("");
+  const [tabStatus, SetTabStatus] = useState(0)
   // console.log("View RETURN INDEX : ", returnIndex);
 
   // console.log("propertyIndex at the beginning 1: ", propertyIndex);
@@ -366,7 +367,8 @@ function Properties() {
     setRHS("Applications");
   };
 
-  const handleViewPMQuotesRequested = () => {
+  const handleViewPMQuotesRequested = (tab) => {
+    SetTabStatus(tab)
     setRHS("ViewPMQuotesRequested");
   };
 
@@ -435,7 +437,7 @@ function Properties() {
                   onViewContractClick={handleViewContractClick}
                   handleViewApplication={handleViewApplication}
                   handleViewPMQuotesRequested={handleViewPMQuotesRequested}
-                  onShowSearchManager={handleShowSearchManager}
+                  // onShowSearchManager={handleShowSearchManager}
                   handleShowRequestQuotes={handleShowRequestQuotes}
                   onAddListingClick={handleAddListingClick}
                   setManagerDetailsState={setManagerDetailsState}
@@ -478,8 +480,11 @@ function Properties() {
                 />
               )}
               {RHS === "ViewPMQuotesRequested" && (
-                <PMQuotesRequested                  
-                  handleBackClick={handleBackClick}                  
+                <PMQuotesRequested
+                  tabStatus = {tabStatus}                  
+                  handleBackClick={handleBackClick}
+                  setManagersList={setManagersList}
+                  handleRequestQuotes={handleRequestQuotes}                  
                 />
               )}
               {RHS === "SearchManager" && (
@@ -493,7 +498,7 @@ function Properties() {
               {RHS === "RequestQuotes" && (
                 <RequestQuotes                  
                   managerData={managerData}
-                  onShowSearchManager={handleShowSearchManager}                  
+                  onShowSearchManager={handleViewPMQuotesRequested}                  
                 />
               )}
               {RHS === "AddListing" && (

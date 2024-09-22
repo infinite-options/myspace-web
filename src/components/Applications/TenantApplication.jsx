@@ -460,7 +460,7 @@ export default function TenantApplication(props) {
           announcement_properties: JSON.stringify(receiverPropertyMapping),
           announcement_mode: "LEASE",
           announcement_receiver: [property.contract_business_id],
-          announcement_type: ["Text", "Email"],
+          announcement_type: ["Email", "Text"],
         }),
       });
 

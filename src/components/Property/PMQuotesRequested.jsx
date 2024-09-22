@@ -14,6 +14,7 @@ import {
   IconButton,
   DialogTitle,
   TextField,
+  InputAdornment,
   CircularProgress,
 } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
@@ -30,20 +31,25 @@ import APIConfig from "../../utils/APIConfig";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { makeStyles } from "@material-ui/core/styles";
 import Backdrop from "@mui/material/Backdrop";
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import AccordionDetails from '@mui/material/AccordionDetails';
 import Documents from "../Leases/Documents";
 
 import PropertiesContext from '../../contexts/PropertiesContext';
+import { KeyboardReturnOutlined } from "@mui/icons-material";
 
 
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiFilledInput-root": {
-      backgroundColor: "#D6D5DA",
+      backgroundColor: "#F2F2F2",
       borderRadius: 10,
       height: 30,
       marginBlock: 10,
       paddingBottom: "15px",
-    },
+    }
   },
 }));
 
@@ -51,7 +57,7 @@ export default function PMQuotesRequested(props) {
   const location = useLocation();
   let navigate = useNavigate();
   const { getProfileId } = useUser();
-  const PMQuotesDetails = props;
+  // const PMQuotesDetails = props;
   const handleBackClick = props.handleBackClick;
   const classes = useStyles();
   // const { propertyList, allContracts, fetchContracts, returnIndex,  } = useContext(PropertiesContext); 
@@ -60,6 +66,7 @@ export default function PMQuotesRequested(props) {
 	const {
 	  propertyList: propertyListFromContext,	  
     allContracts: allContractsFromContext,
+    fetchProperties : fetchPropertiesFromContext,
     fetchContracts: fetchContractsFromContext,	  
 	  returnIndex: returnIndexFromContext,
 	} = propertiesContext || {};
@@ -67,8 +74,11 @@ export default function PMQuotesRequested(props) {
 	const propertyList = propertyListFromContext || [];		
   const allContracts = allContractsFromContext || [];	
   const fetchContracts = fetchContractsFromContext;  
+  const refreshProperties = fetchPropertiesFromContext;
 	const returnIndex = returnIndexFromContext || 0;
   
+  const index = returnIndex || location.state?.index;
+
   const [contracts, setContracts] = useState([]);
   const refreshContracts = fetchContracts;  
   const [refresh, setRefresh] = useState(false);
@@ -78,15 +88,69 @@ export default function PMQuotesRequested(props) {
   const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
 
   const statusColor = ["#3D5CAC", "#160449"];
-  const [tabStatus, setTabStatus] = useState(0);
+  const [tabStatus, setTabStatus] = useState(props?.tabStatus || 0);
   const [activeContracts, setActiveContracts] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [conflictingContract, setConflictingContract] = useState(null);
   const [newContract, setNewContract] = useState(null);
 
+  const [displayed_managers, set_displayed_managers] = useState([]);
+  const [all_managers, set_all_managers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [ownerId, setOwnerId] = useState(getProfileId());
+
+  const setManagersList = props.setManagersList;
+
+  const handleRequestQuotes = props.handleRequestQuotes;
+
+  const filteredContracts = contracts.filter(contract => 
+    contract.property_id === propertyId && 
+    (contract.contract_status === "NEW" || 
+     contract.contract_status === "ACTIVE" || 
+     contract.contract_status === "SENT")
+  );
+    
+  // const contractBusinessIds = filteredContracts.map(contract => contract.contract_business_id);
+
+  const sentContractsIds = filteredContracts
+  .filter(contract => contract.contract_status === "SENT")
+  .map(contract => contract.contract_business_id);
+
+  const newContractsIds = filteredContracts
+  .filter(contract => contract.contract_status === "NEW")
+  .map(contract => contract.contract_business_id);
+
+  const activeContractsIds = filteredContracts
+  .filter(contract => contract.contract_status === "ACTIVE")
+  .map(contract => contract.contract_business_id);
+
   function getColor(status) {
     return statusColor[status];
   }
+
+  const get_manager_info = async () => {
+    setLoading(true);
+    const url = "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/searchManager";
+    const args = {};
+    const response = await axios.get(url);
+    const managers = response.data.result;
+    set_all_managers(managers);
+    set_displayed_managers(managers);
+    setManagersList(managers);
+    setLoading(false);
+  };
+
+  const handleSearch = (search_string) => {
+    const managers = all_managers.filter((manager) =>
+      manager.business_name.toLowerCase().includes(search_string.toLowerCase())
+    );
+    set_displayed_managers(managers);
+
+  };
+  
+  useEffect(() => {
+    get_manager_info();
+  }, []);
 
   useEffect(() => {
     const validContracts = getActiveContracts(contracts);
@@ -127,7 +191,7 @@ export default function PMQuotesRequested(props) {
   function displayPMQuotesRequested() {
     return (
       <div>
-        {contracts?.length > 0 ? (
+        {contracts?.length > 0 ? activeContractsIds?.length !== contracts?.length ?(
           contracts.map((contract) => {
             if (contract.contract_status === "SENT") {
               return (
@@ -216,30 +280,166 @@ export default function PMQuotesRequested(props) {
             }
             return null;
           })
-        ) : (
-          <div>No Requested Contract Quotes</div>
+        ): (
+          <>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: '7px',
+                width: '100%',
+                height:"50px"
+              }}
+            >
+              <Typography
+                sx={{
+                  color: "#A9A9A9",
+                  fontWeight: theme.typography.primary.fontWeight,
+                  fontSize: "15px",
+                }}
+              >
+                No Contract Quotes Requested
+              </Typography>
+            </Box>
+          </>) : (
+          <div>No Contract Quotes Requested</div>
         )}
       </div>
     );
   }
 
-  function displayActiveContracts() {
+  function displaySearchManager() {
     return (
-      <div>
-        {activeContracts?.length > 0 ? (
-          activeContracts.map((contract, index) => (
-            <div key={index}>
-              <DocumentCard data={contract} />              
-            </div>
-          ))
-        ) : (
-          <div>No active contracts</div>
-        )}
-      </div>
+      // <div>
+      //   {activeContracts?.length > 0 ? (
+      //     activeContracts.map((contract, index) => (
+      //       <div key={index}>
+      //         <DocumentCard data={contract} />              
+      //       </div>
+      //     ))
+      //   ) : (
+      //     <div>No active contracts</div>
+      //   )}
+      // </div>
+
+      <Box
+        sx={{
+          position: "relative",
+          backgroundColor: "#FFFFFF",
+          borderRadius: "10px",
+          // top: "10px",
+        }}
+      >
+        <Box
+          sx={{
+            padding: "13px",
+            backgroundColor: "#D6D5DA",
+            borderRadius: "10px",
+          }}
+        >
+          <TextField
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              handleSearch(e.target.value);
+            }}
+            variant="filled"
+            fullWidth
+            placeholder="Search for new Property Manager"
+            className={classes.root}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment
+                  position="end"
+                  sx={{
+                    alignItems: "baseline",
+                    paddingBottom: "5px",
+                    cursor: "pointer",
+                  }}
+                >
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+          {displayed_managers.map((m) => (
+            <SearchManagerDocumentCard
+              key={m.business_uid} 
+              data={m} 
+              ownerId={ownerId} 
+              propertyData={property} 
+              index={index} 
+              onRequestQuotes={handleRequestQuotes}
+              sentContractsIds={sentContractsIds}
+              newContractsIds={newContractsIds}
+              activeContractsIds={activeContractsIds}
+            />
+          ))}
+        </Box>
+      </Box>
     );
   }
 
-  function handleAccept(obj) {
+  const sendAnnouncement = async (status, obj) => {    
+    // const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
+    // console.log("sendAnnouncement - obj - ", obj);
+    // console.log("sendAnnouncement - property - ", property[returnIndex]);
+
+    // console.log("sendAnnouncement - status - ", status);
+    
+    // return;
+
+    const contractProperty = property[returnIndex];    
+
+    const receiverPropertyMapping = {
+        [obj.business_uid]: [obj.contract_property_id],
+    };
+  
+    let announcementTitle;
+    let announcementMessage;
+    
+    if(status === "ACCEPTED"){
+      announcementTitle = `Management Contract Quote Accepted`;
+      announcementMessage = `Your quote for Management contract - ${obj.contract_name} (Property - ${contractProperty.property_address}${contractProperty.property_unit ? (", " + contractProperty.property_unit) : ""}) has been accepted by the Owner - ${obj.owner_first_name || ""} ${obj.owner_last_name || ""}.`;
+    } else if(status === "DECLINED") {
+      announcementTitle = `Management Contract Quote Declined`;
+      announcementMessage = `Your quote for Management contract - ${obj.contract_name} (Property - ${contractProperty.property_address}${contractProperty.property_unit ? (", " + contractProperty.property_unit) : ""}) has been declined by the Owner - ${obj.owner_first_name || ""} ${obj.owner_last_name || ""}.`;
+    }
+    
+  
+    try {
+      const response = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            announcement_title: announcementTitle,
+            announcement_msg: announcementMessage,
+            announcement_sender: getProfileId(),
+            announcement_date: new Date().toDateString(),			  
+            announcement_properties: JSON.stringify(receiverPropertyMapping),
+            announcement_mode: "CONTRACT",
+            announcement_receiver: [obj.business_uid],
+            announcement_type: ["App", "Email", "Text"],
+          }),
+        });
+  
+        if (response.ok) {
+        
+        // navigate("/managerDashboard"); 
+        } else {
+        throw new Error(`Failed to send the announcement: ${response.statusText}`);
+        }
+    } catch(error) {
+        alert("Error sending announcement to the Manager");
+        console.error("Error sending announcement to Property Manager - ", error);
+    }
+  };
+
+  function handleAccept(obj) {          
     try {
       const newContractStart = new Date(obj.contract_start_date);
       const newContractEnd = new Date(obj.contract_end_date);
@@ -278,7 +478,9 @@ export default function PMQuotesRequested(props) {
             throw new Error("Network response was not ok");
           } else {
             console.log("Data added successfully");
-            refreshContracts();            
+            sendAnnouncement("ACCEPTED", obj);
+            refreshContracts();
+            refreshProperties();            
           }
         })
         .catch((error) => {
@@ -290,8 +492,7 @@ export default function PMQuotesRequested(props) {
     setTabStatus(1);    
   }
 
-  function handleDecline(obj) {
-    
+  function handleDecline(obj) {        
     try {
       const formData = new FormData();
       formData.append("contract_uid", obj.contract_uid);
@@ -301,6 +502,7 @@ export default function PMQuotesRequested(props) {
         .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts", formData)
         .then((response) => {
           console.log("PUT result", response);
+          sendAnnouncement("DECLINED", obj);
           refreshContracts();
         })
         .catch((error) => {
@@ -369,6 +571,7 @@ export default function PMQuotesRequested(props) {
             paddingTop: "10px",
           }}
         >
+          {/* Search for property manager section */}
           <Stack direction="column" justifyContent="center" alignItems="center" sx={{ paddingBottom: "0px" }}>
             <Box direction="row" justifyContent="center" alignItems="center">
               <Typography
@@ -378,15 +581,17 @@ export default function PMQuotesRequested(props) {
                   fontSize: theme.typography.largeFont,
                 }}
               >
-                Search for Properties Manager
+                {tabStatus === 0? "All Requested Quotes" : "Search for Properties Manager"}
               </Typography>
             </Box>
-            <Box position="absolute" right={30}>
+            {/* <Box position="absolute" right={30}>
               <Button>
                 <SearchIcon />
               </Button>
-            </Box>
+            </Box> */}
           </Stack>
+
+          {/* return to all property section */}
           <Stack direction="column" justifyContent="center" alignItems="center">
             <Box onClick={viewAllProperties}>
               <Button
@@ -399,10 +604,12 @@ export default function PMQuotesRequested(props) {
                 }}
               >
                 <img src={refundIcon} style={{ width: "25px", height: "25px", margin: "5px" }} />
-                <Typography>Return to Viewing All Properties</Typography>
+                <Typography>Return to All Properties</Typography>
               </Button>
             </Box>
           </Stack>
+
+          {/* tab section */}
           <Stack
             sx={{
               justifyContent: "center",
@@ -470,7 +677,7 @@ export default function PMQuotesRequested(props) {
                     textTransform: "none",
                   }}
                   onClick={() => setTabStatus(1)}
-                  label="Active Contracts"
+                  label="Search Manager"
                 />
               </Tabs>
               <Box
@@ -481,6 +688,7 @@ export default function PMQuotesRequested(props) {
               ></Box>
             </Box>
           </Stack>
+
           <Stack direction="column" justifyContent="center" alignItems="center">
             <Box
               sx={{
@@ -505,7 +713,7 @@ export default function PMQuotesRequested(props) {
                   ) : tabStatus === 0 ? (
                     displayPMQuotesRequested()
                   ) : (
-                    displayActiveContracts()
+                    displaySearchManager()
                   )}
                 </Box>
               </Box>
@@ -711,11 +919,13 @@ function DocumentCard(props) {
           method: "GET",
         });
         const responseData = await response.json();
+        const filteredResult = responseData.result.filter(item => item.business_uid === data.business_uid);
+        // console.log("filteredResult - ", filteredResult)
         if (
-          responseData.result.business_services_fees !== null &&
-          responseData.result[0].business_services_fees !== undefined
+          filteredResult[0].business_services_fees !== null &&
+          filteredResult[0].business_services_fees !== undefined
         ) {
-          setFees(JSON.parse(responseData.result[0].business_services_fees));
+          setFees(JSON.parse(filteredResult[0].business_services_fees));
         }
       } catch (error) {
         console.log("error", error);
@@ -769,15 +979,12 @@ function DocumentCard(props) {
         <Typography sx={textStyle}>Contract Name: {data.contract_name}</Typography>
       </Box>
       <Box>
-        <Typography sx={textStyle}>Estimated Fees</Typography>
+        <Typography sx={textStyle}>{data.contract_status === "NEW" ? "Estimated Fees" : "Quoted Fees"}</Typography>
       </Box>
 
-      {data !== null ? (
-        data.contract_status === "NEW" ? (
-          fees?.map((fee, index) => <FeesTextCard key={index} fee={fee} />)
-        ) : fees.length !== 0 ? (
+      {data !== null ? fees.length !== 0 ? (
           <>          
-            <FeesDataGrid data={JSON.parse(data?.contract_fees)} />
+            <FeesDataGrid data={fees} />
           </>
         ) : (          
           <Box
@@ -802,7 +1009,7 @@ function DocumentCard(props) {
               </Typography>
             </Box>
         )
-      ) : (
+      : (
         <Typography sx={textStyle}>No data available</Typography>
       )}
 
@@ -811,6 +1018,166 @@ function DocumentCard(props) {
         <Documents isEditable={false} isAccord={false} documents={contractDocuments} setDocuments={setContractDocuments} customName={"Attached Documents"}/>
       </Box>) : <></>}
 
+    </Box>
+  );
+}
+
+function SearchManagerDocumentCard(props){
+  const obj = props.data;
+  const ownerId = props.ownerId;
+  const propertyData = props.propertyData;
+  const index = props.index;
+  const isDesktop = props.isDesktop;
+  const onRequestQuotes = props.onRequestQuotes;
+  const navigate = useNavigate();
+  // const contractBusinessIds = props.contractBusinessIds;
+  const sentContractsIds = props.sentContractsIds;
+  const newContractsIds = props.newContractsIds;
+  const activeContractsIds = props.activeContractsIds;
+
+  // console.log("BUSINESS Locations - ", obj.business_locations);
+  let location1 = "";
+  if(obj.business_locations !== null && obj.business_locations.length > 2){
+    // console.log("Valid business location");
+    location1 = JSON.parse(obj.business_locations);
+  }  
+  let city = "";
+  if(location1.length > 0){
+    city = (location1[0]!==undefined && location1[0]!==null) ? location1[0]?.location : "";
+  }  
+  let distance = location1[0]!==undefined ? location1[0]?.distance : "";
+  let feesArray = JSON.parse(obj.business_services_fees);
+  let locationsArray = JSON.parse(obj.business_locations);
+
+  const handleRequestQuotes = async (obj) => {
+    // console.log('---handle request quotes---', propertyData, index);
+
+    navigate("/requestQuotes",{
+      state:{
+        managerData: obj,
+        propertyData: propertyData,
+        index: index,
+        isDesktop: isDesktop,
+      }
+    }
+    );    
+  };
+
+  return (
+    <Box
+      sx={{
+        backgroundColor: "#FFFFFF",
+        borderRadius: "10px",
+        padding: "10px",
+        marginBottom: "10px",
+        fontSize: "13px",
+      }}
+    >
+        <Grid container>
+            <Grid item xs={8}>
+                <Box
+                    sx={{
+                        fontWeight: "bold",
+                    }}
+                >
+                    <Typography>{obj.business_name}</Typography>
+                </Box>                
+            </Grid>
+            <Grid item xs={4}>
+                <Box
+                    sx={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                    }}
+                >
+                  {newContractsIds.includes(obj.business_uid) ? (
+                    <Typography
+                      sx={{
+                        color: theme.palette.priority.high2,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Quote Requested
+                    </Typography>
+                  ) : sentContractsIds.includes(obj.business_uid) ? (
+                    <Typography
+                      sx={{
+                        color: theme.palette.priority.medium,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Quote Received 
+                    </Typography>
+                  ) : activeContractsIds.includes(obj.business_uid) ? (
+                    <Typography
+                      sx={{
+                        color: theme.palette.success.main,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Active
+                    </Typography>
+                  ) :(
+                    <Button
+                      variant="contained"
+                      sx={{
+                        textTransform: "none",
+                        background: "#3D5CAC",
+                        color: theme.palette.background.default,
+                        borderRadius: "10px 10px 10px 10px",
+                      }}
+                      onClick={() => onRequestQuotes(obj)}
+                    >
+                      Request Quote
+                    </Button>
+                  )}
+                </Box>
+            </Grid>
+        </Grid>
+        <Box sx={{paddingTop: "10px", paddingBottom: "10px"}}>
+          <Accordion>
+            <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+            >
+                <Typography>
+                    Service Locations
+                </Typography>
+            </AccordionSummary>
+            <AccordionDetails>                        
+                {
+                  locationsArray && (
+                    <>
+                      <LocationsDataGrid data={locationsArray} />
+                    </>
+                  )
+                }
+            </AccordionDetails>
+          </Accordion>
+        </Box>
+        <Box sx={{paddingTop: "10px", paddingBottom: "10px"}}>
+            <Accordion>
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                >
+                    <Typography>
+                        Estimated Fees
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>                    
+                    {
+                      feesArray && (
+                        <>
+                          <FeesDataGrid data={feesArray} />
+                        </>
+                      )
+                    }
+                </AccordionDetails>
+            </Accordion>
+        </Box>
     </Box>
   );
 }
@@ -946,45 +1313,103 @@ export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee, handle
   );
 };
 
-function FeesTextCard(props) {
-  const textStyle = {
-    textTransform: "none",
-    color: theme.typography.propertyPage.color,
-    fontWeight: theme.typography.light.fontWeight,
-    fontSize: theme.typography.mediumFont,
-  };
+// function FeesTextCard(props) {
+//   const textStyle = {
+//     textTransform: "none",
+//     color: theme.typography.propertyPage.color,
+//     fontWeight: theme.typography.light.fontWeight,
+//     fontSize: theme.typography.mediumFont,
+//   };
 
-  let fee = props.fee;
+//   let fee = props.fee;
 
-  function displayFee() {
-    if (fee.fee_type === "%" || fee.fee_type === "PERCENT") {
-      return (
-        <Typography sx={textStyle}>
-          <b>{fee.frequency}</b> - {fee.fee_name}: {fee.charge} % of {fee.of}           
-        </Typography>
-      );
-    } else if (fee.fee_type === "$") {
-      return (
-        <Typography sx={textStyle}>
-          {fee.fee_name} : {fee.fee_type}
-          {fee.charge} of {fee.of} <b>{fee.frequency}</b>
-        </Typography>
-      );
-    } else if (fee.fee_type === "FLAT-RATE") {
-      const type = "$";
-      return (
-        <Typography sx={textStyle}>
-          <b>{fee.frequency}</b> - {fee.fee_name} : {type} {fee.charge}           
-        </Typography>
-      );
-    } else {
-      return (
-        <Typography sx={textStyle}>
-          {fee.fee_name}: {fee.charge} of {fee.of} <b>{fee.frequency}</b>
-        </Typography>
-      );
-    }
-  }
+//   function displayFee() {
+//     if (fee.fee_type === "%" || fee.fee_type === "PERCENT") {
+//       return (
+//         <Typography sx={textStyle}>
+//           <b>{fee.frequency}</b> - {fee.fee_name}: {fee.charge} % of {fee.of}           
+//         </Typography>
+//       );
+//     } else if (fee.fee_type === "$") {
+//       return (
+//         <Typography sx={textStyle}>
+//           {fee.fee_name} : {fee.fee_type}
+//           {fee.charge} of {fee.of} <b>{fee.frequency}</b>
+//         </Typography>
+//       );
+//     } else if (fee.fee_type === "FLAT-RATE") {
+//       const type = "$";
+//       return (
+//         <Typography sx={textStyle}>
+//           <b>{fee.frequency}</b> - {fee.fee_name} : {type} {fee.charge}           
+//         </Typography>
+//       );
+//     } else {
+//       return (
+//         <Typography sx={textStyle}>
+//           {fee.fee_name}: {fee.charge} of {fee.of} <b>{fee.frequency}</b>
+//         </Typography>
+//       );
+//     }
+//   }
 
-  return displayFee();
-}
+//   return displayFee();
+// }
+
+const LocationsDataGrid = ({ data }) => {
+  const columns = [
+    { 
+      field: "address",
+      headerName: "Address",
+      width: 200,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    { field: "city",
+      headerName: "City",
+      width: 150,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),
+    },
+    {
+      field: "state",
+      headerName: "State",
+      width: 100,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),      
+    },    
+    {
+      field: "miles",
+      headerName: "Area of Service",
+      width: 150,
+      renderHeader: (params) => (
+        <strong>{params.colDef.headerName}</strong>
+      ),      
+      renderCell: (params) => (
+        <Typography>
+          +- {params.row.miles} miles
+        </Typography>
+      ),      
+    },
+  ];
+
+  // console.log("FeesDataGrid - props.data - ", data);
+
+  return (
+    <>
+      <DataGrid
+        rows={data}
+        getRowId={(fee) => fee.id}
+        columns={columns}
+        sx={{
+          // border: "0px",
+          marginTop: '10px',
+        }}
+        hideFooter={true}
+      />
+    </>
+  );
+};

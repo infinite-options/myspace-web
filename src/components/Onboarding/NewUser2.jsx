@@ -41,6 +41,7 @@ import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import { roleMap } from "./helper";
 import DataValidator from "../DataValidator";
+import UserExistsModal from "./UserExistsModal";
 
 const NewUser = () => {
   console.log("In NewUser2");
@@ -58,21 +59,28 @@ const NewUser = () => {
 
   const [businesses, setBusinesses] = useState([]);
   const [selectedBusiness, setSelectedBusiness] = useState();
+  const [userExists, setUserExists] = useState(false)
 
-  useEffect(() => {
-    console.log("ROHIT - role -  ", role);
-  }, [role]);
+  const onSignupModal = () => {
+    setUserExists(false)
+    setPassword("")
+    setConfirmPassword("")
+  }
+
+  // useEffect(() => {
+  //   console.log("role -  ", role);
+  // }, [role]);
 
   // useEffect(() => {
   //   console.log("email -  ", email);
   // }, [email]);
 
-  useEffect(() => {
-    console.log("ROHIT - businesses -  ", businesses);
-  }, [businesses]);
+  // useEffect(() => {
+  //   console.log("businesses -  ", businesses);
+  // }, [businesses]);
 
   useEffect(() => {
-    console.log("ROHIT - selectedBusiness -  ", selectedBusiness);
+    // console.log("selectedBusiness -  ", selectedBusiness);
     if( selectedBusiness?.business_type === "MANAGEMENT"){
       setRole("PM_EMPLOYEE")
     } else if( selectedBusiness?.business_type === "MAINTENANCE"){
@@ -91,7 +99,7 @@ const NewUser = () => {
   };
 
   const handleRoleChange = (event, newRole) => {
-    console.log("ROHIT - newRole - ", newRole);
+    // console.log("handleRoleChange - newRole - ", newRole);
     if (newRole !== null) {
       setRole(newRole);
       if( newRole === "EMPLOYEE"){
@@ -183,27 +191,31 @@ const NewUser = () => {
                   email: email,
                   password: hashedPassword,
                 };
-                console.log(JSON.stringify(loginObject));
+
                 axios
                   .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/Login/MYSPACE", loginObject)
                   .then(async (response) => {
-                    console.log(response.data.message);
+                    // console.log(response.data.message);
                     const { message, result } = response.data;
                     if (message === "Incorrect password") {
                       // alert(response.data.message);
-                      alert("User already exist")
-                      navigate("/userLogin", { state: { user_email: email } });
+                      // alert("User already exist")
+                      setUserExists(true)
+                      // navigate("/userLogin", { state: { user_email: email } });
                       // setShowSpinner(false);
                     } else if (message === "Email doesn't exist") {
                       //setUserDoesntExist(true);
                       // setShowSpinner(false);
                     } else if (message === "Login successful") {
                       console.log("Login successfull moving to dashboard");
-                      setAuthData(result);
-                      setLoggedIn(true);
+                      
                       const { role } = result.user;
 
                       const existingRoles = role.split(",");
+                      // console.log("----dhyey---- exisiting role for current user - ", existingRoles)
+
+                      
+                      setLoggedIn(true);
                       // Check if the new role already exists
                       if (!existingRoles.includes(newRole)) {
                         // Add the new role
@@ -220,8 +232,9 @@ const NewUser = () => {
                           updatedUser.user.role = updatedRole;
                           setAuthData(updatedUser);
                           //setCookie("user", { ...cookies.user, role: updatedRole }, { path: "/" });
+                          // console.log("----dhyey---- before navigating addNewRole updateduser- ", updatedUser, " --- user_id - ", result.user.user_uid, " -- newRole - ", newRole)
                           alert("Role updated successfully");
-                          navigate("/addNewRole", { state: { user_uid: result.user.user_uid, newRole } });
+                          navigate("/addNewRole", { state: { user_uid: result.user.user_uid, newRole : newRole } });
                           return;
                         } else {
                           alert("An error occurred while updating the role.");
@@ -229,9 +242,13 @@ const NewUser = () => {
                       }
                       const openingRole = role.split(",")[0];
                       selectRole(openingRole);
+                      setAuthData(result);
+                      // setTimeout(() => {
+                        //   setAuthData(result); // Delay the context update to avoid the rendering issue
+                        // }, 0);
                       setLoggedIn(true);
                       const { dashboardUrl } = roleMap[openingRole];
-                      console.log("Login successfull moving to dashboard ", dashboardUrl);
+                      // console.log("---after if condition of exisitingRole Login successfull moving to dashboard ", dashboardUrl);
                       navigate(dashboardUrl);
                     }
                   })
@@ -461,6 +478,7 @@ const NewUser = () => {
           </Grid>
         </Grid>
       </Container>
+      <UserExistsModal isOpen={userExists} onSignup={onSignupModal} email={email} />
     </ThemeProvider>
   );
 };

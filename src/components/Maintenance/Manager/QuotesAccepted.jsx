@@ -34,7 +34,7 @@ import AlertMessage from '../AlertMessage';
 import APIConfig from "../../../utils/APIConfig";
 
 
-export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}){
+export default function QuotesAccepted({setRefresh, maintenanceItem, navigateParams, quotes}){
     console.log("--debug-- maintenanceItem", maintenanceItem)
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
@@ -51,8 +51,8 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
     console.log('---maintenanceItem?.quote_info--', maintenanceItem.quotes);
     let maintenanceQuoteInfo = JSON.parse(maintenanceItem?.quote_info)?.find((quote) => quote.quote_status === maintenanceItem.quote_status_ranked)
     console.log(maintenanceQuoteInfo)
-    const [date, setDate] = useState(maintenanceQuoteInfo.quote_earliest_available_date || "")
-    const [time, setTime] = useState(maintenanceQuoteInfo.quote_earliest_available_time || "")
+    const [date, setDate] = useState(maintenanceQuoteInfo?.quote_earliest_available_date || "")
+    const [time, setTime] = useState(maintenanceQuoteInfo?.quote_earliest_available_time || "")
 
     const [showModal, setShowModal] = useState(false);
 
@@ -79,6 +79,9 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
                 console.log(responseData);
                 if (response.status === 200) {
                     console.log("success")
+                    if(setRefresh){
+                        setRefresh(true);
+                    }
                 } else{
                     console.log("error setting status")
                 }
@@ -177,7 +180,7 @@ export default function QuotesAccepted({maintenanceItem, navigateParams, quotes}
                         >
                             Schedule
                         </Button>
-                        <CompleteButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage} />
+                        <CompleteButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage} setRefresh = {setRefresh} />
                    
                     </Box>
             <AlertMessage showMessage={showMessage} setShowMessage={setShowMessage} message={message} />
