@@ -263,6 +263,12 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees }) => {
           renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
         },
         {
+          field: "fee_type",
+          headerName: "Type",
+          flex: 1,
+          renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+        },
+        {
           field: "frequency",
           headerName: "Frequency",
           flex: 1,
@@ -383,6 +389,12 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees }) => {
           renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
         },
         {
+          field: "fee_type",
+          headerName: "Type",
+          flex: 1,
+          renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+        },
+        {
           field: "frequency",
           headerName: "Frequency",
           flex: 1,
@@ -470,7 +482,16 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees }) => {
   }));
 
   const checkRequiredField = () => {
-    if (!currentRow.fee_name || !currentRow.charge || !currentRow.late_fee || !currentRow.perDay_late_fee || !currentRow.late_by || !currentRow.available_topay) {
+    if (
+      !currentRow.fee_name ||
+      !currentRow.fee_type ||
+      !currentRow.charge ||
+      !currentRow.charge ||
+      !currentRow.late_fee ||
+      !currentRow.perDay_late_fee ||
+      !currentRow.late_by ||
+      !currentRow.available_topay
+    ) {
       alert("enter all required fields");
       return false;
     }
@@ -728,31 +749,37 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees }) => {
 
           {/* Container with all fields */}
           <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-            {/* <Grid item xs={6}>
-                  <Stack spacing={-2} m={2}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.propertyPage.color,
-                        fontFamily: "Source Sans Pro",
-                        fontWeight: theme.typography.common.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      {"Fee Name "}
-                      <span style={{ color: "red" }}>*</span>
-                    </Typography>
-                    <TextField name='fee_name' value={currentRow.fee_name} variant='filled' fullWidth className={classes.root} onChange={(e) => {
-                      setCurrentRow((prev)=>{
-                        return(
-                          {
-                            ...prev,
-                            "fee_name" : e.target.value
-                          }
-                        );
-                      })
-                    }} />
-                  </Stack>
-                </Grid> */}
+            <Grid item xs={6}>
+              <Stack spacing={-2} m={2}>
+                <Typography
+                  sx={{
+                    color: theme.typography.propertyPage.color,
+                    fontFamily: "Source Sans Pro",
+                    fontWeight: theme.typography.common.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  {"Fee Name "}
+                  <span style={{ color: "red" }}>*</span>
+                </Typography>
+                <TextField
+                  name='fee_name'
+                  value={currentRow.fee_name}
+                  variant='filled'
+                  fullWidth
+                  className={classes.root}
+                  onChange={(e) => {
+                    setCurrentRow((prev) => {
+                      return {
+                        ...prev,
+                        fee_name: e.target.value,
+                      };
+                    });
+                  }}
+                />
+              </Stack>
+            </Grid>
+
             <Grid item xs={6}>
               <Stack spacing={-2} m={2}>
                 <Typography
@@ -768,14 +795,14 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees }) => {
                   <span style={{ color: "red" }}>*</span>
                 </Typography>
                 <Select
-                  value={currentRow.fee_name}
+                  value={currentRow.fee_type}
                   size='small'
                   fullWidth
                   onChange={(e) => {
                     setCurrentRow((prev) => {
                       return {
                         ...prev,
-                        fee_name: e.target.value,
+                        fee_type: e.target.value,
                       };
                     });
                   }}
@@ -790,6 +817,7 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees }) => {
                 </Select>
               </Stack>
             </Grid>
+
             <Grid item xs={6}>
               <Stack spacing={-2} m={2}>
                 <Typography
