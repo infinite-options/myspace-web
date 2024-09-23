@@ -1236,7 +1236,7 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees }) => {
                 },
               }}
             >
-              {isEditing ? "Edit Fee" : "Add Fee"}
+              {isEditing ? "Return" : "Add Fee"}
             </Button>
           </Box>
         </Box>
