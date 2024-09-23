@@ -225,9 +225,15 @@ function BalanceDetailsTable(props) {
 
   const columnsList = [
     {
+        field: "payment_uid",
+        headerName: "Payment UID",
+        flex: 3,
+        renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
       field: "purchase_uid",
       headerName: "Purchase UID",
-      flex: 2,
+      flex: 3,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
@@ -411,7 +417,7 @@ function BalanceDetailsTable(props) {
           }}
           // getRowId={(row) => row.purchase_uid}
           getRowId={(row) => {
-            const rowId = row.purchase_uid;
+            const rowId = row.payment_uid;
             // console.log("Hello Globe");
             // console.log("Row ID:", rowId);
             // console.log("Row Data:", row); // Log the entire row data
