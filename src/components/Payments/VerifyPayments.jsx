@@ -122,7 +122,7 @@ export default function VerifyPayments(props) {
                   </Stack>
 
                   <Stack>
-                    <BalanceDetailsTable data={moneyPayable} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
+                    <BalanceDetailsTable data={moneyPayable} setPaymentData={setPaymentData}/>
                   </Stack>
                 </Paper>
               </Paper>
@@ -149,7 +149,7 @@ function BalanceDetailsTable(props) {
 
   useEffect(() => {
     if (data && data.length > 0) {
-      setSelectedRows(data.map((row) => row.purchase_uid));
+      setSelectedRows(data.map((row) => row.payment_uid));
       setPaymentDueResult(
         data.map((item) => ({
           ...item,
@@ -159,52 +159,23 @@ function BalanceDetailsTable(props) {
     }
   }, [data]);
 
-  useEffect(() => {
+  useEffect(() => {  
+    console.log("ROHIT - selectedRows - ", selectedRows);
     const total = selectedRows?.reduce((total, rowId) => {
-      const payment = paymentDueResult.find((row) => row.purchase_uid === rowId);
-      const amountDue = payment.pur_amount_due;
-      const isExpense = payment.pur_cf_type === "expense";
+      const payment = paymentDueResult.find((row) => row.payment_uid === rowId);
+      console.log("ROHIT - payment - ", payment);
+      if(payment){
+        const payAmount = parseFloat(payment.pay_amount);
+        // const isExpense = payment.pur_cf_type === "expense";
 
-      // Adjust the total based on whether the payment is an expense or revenue
-      return total + (isExpense ? -amountDue : amountDue);
+        // Adjust the total based on whether the payment is an expense or revenue
+        return total + payAmount;
+      } else {
+        return total + 0
+      }
     }, 0);
     setTotalVerified(total);
   }, [selectedRows]);
-
-  useEffect(() => {
-    var total = 0;
-
-    let purchase_uid_mapping = [];
-
-    for (const item of selectedRows) {
-      // console.log("item in loop", item)
-
-      let paymentItemData = paymentDueResult.find((element) => element.purchase_uid === item);
-      purchase_uid_mapping.push({ purchase_uid: item, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
-      // console.log("payment item data", paymentItemData);
-
-      // total += parseFloat(paymentItemData.pur_amount_due);
-      // Adjust total based on pur_cf_type
-      if (paymentItemData.pur_cf_type === "revenue") {
-        total += parseFloat(paymentItemData.pur_amount_due);
-      } else if (paymentItemData.pur_cf_type === "expense") {
-        total -= parseFloat(paymentItemData.pur_amount_due);
-      }
-    }
-    // console.log("selectedRows useEffect - total - ", total);
-    // console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
-    props.setTotal(total);
-    props.setPaymentData((prevPaymentData) => ({
-      ...prevPaymentData,
-      balance: total.toFixed(2),
-      purchase_uids: purchase_uid_mapping,
-    }));
-  }, [selectedRows]);
-
-  useEffect(() => {
-    console.log("selectedPayments - ", selectedPayments);
-    props.setSelectedItems(selectedPayments);
-  }, [selectedPayments]);
 
   const getFontColor = (ps_value) => {
     if (ps_value === "PAID") {
@@ -216,12 +187,12 @@ function BalanceDetailsTable(props) {
     }
   };
 
-  const sortModel = [
-    {
-      field: "pgps", // Specify the field to sort by
-      sort: "asc", // Specify the sort order, 'asc' for ascending
-    },
-  ];
+//   const sortModel = [
+//     {
+//       field: "pgps", // Specify the field to sort by
+//       sort: "asc", // Specify the sort order, 'asc' for ascending
+//     },
+//   ];
 
   const columnsList = [
     {
@@ -339,14 +310,17 @@ function BalanceDetailsTable(props) {
     if (addedRows.length > 0) {
       // console.log("Added rows: ", addedRows);
       let newPayments = [];
+      
       addedRows.forEach((item, index) => {
-        const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
+        console.log("ROHIT - item - ", item)
+        // const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
+        const addedPayment = paymentDueResult.find((row) => row.payment_uid === item);
 
         if (addedPayment) {
           const relatedPayments = paymentDueResult.filter((row) => row.payment_intent === addedPayment.payment_intent);
 
           newPayments = [...newPayments, ...relatedPayments];
-          const relatedRowIds = relatedPayments.map((payment) => payment.purchase_uid);
+          const relatedRowIds = relatedPayments.map((payment) => payment.payment_uid);
           updatedRowSelectionModel = [...new Set([...updatedRowSelectionModel, ...relatedRowIds])];
         }
       });
@@ -361,12 +335,12 @@ function BalanceDetailsTable(props) {
       // console.log("Removed rows: ", removedRows);
       let removedPayments = [];
       removedRows.forEach((item, index) => {
-        let removedPayment = paymentDueResult.find((row) => row.purchase_uid === removedRows[index]);
+        let removedPayment = paymentDueResult.find((row) => row.payment_uid === item);
 
         removedPayments.push(removedPayment);
       });
       // console.log("removedPayments - ", removedPayments);
-      setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.purchase_uid)));
+      setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.payment_uid)));
     }
     // setSelectedRows(newRowSelectionModel);
     setSelectedRows(updatedRowSelectionModel);
@@ -435,7 +409,7 @@ function BalanceDetailsTable(props) {
             }
             // handleOnClickNavigateToMaintenance(row);
           }}
-          sortModel={sortModel} // Set the sortModel prop
+        //   sortModel={sortModel} // Set the sortModel prop
 
           //   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
         />
