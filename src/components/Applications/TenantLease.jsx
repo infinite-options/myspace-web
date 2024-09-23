@@ -66,13 +66,13 @@ const useStyles = makeStyles((theme) => ({
 
 const initialFees = (property, application) => {
   const fees = [];
-  // console.log("--debug-- property", property);
-  // console.log("--debug-- application", application);
+  console.log("--debug-- property", property);
+  console.log("--debug-- application", application);
   if (property.property_listed_rent) {
     fees.push({
       id: fees.length + 1,
       fee_name: "Rent",
-      fee_type: "$",
+      fee_type: "Rent",
       frequency: "Monthly",
       charge: property.property_listed_rent,
       due_by: application.lease_rent_due_by,
@@ -86,7 +86,7 @@ const initialFees = (property, application) => {
     fees.push({
       id: fees.length + 1,
       fee_name: "Deposit",
-      fee_type: "$",
+      fee_type: "Deposit",
       frequency: "One Time",
       charge: property.property_deposit,
       due_by: application.lease_rent_due_by,
@@ -138,6 +138,7 @@ const TenantLease = () => {
   const [leaseVehicles, setLeaseVehicles ] = useState([]);
   const [deletedDocsUrl, setDeletedDocsUrl] = useState([])
   const [isPreviousFileChange, setIsPreviousFileChange] = useState(false)
+  const [deleteFees, setDeleteFees] = useState([])
 
 
   // console.log("# of Occupants", noOfOccupants);
@@ -527,6 +528,10 @@ const TenantLease = () => {
       leaseApplicationFormData.append("lease_fees", JSON.stringify(fees));
       leaseApplicationFormData.append("lease_move_in_date", moveInDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_end_notice_period", endLeaseNoticePeriod);
+      if(deleteFees?.length > 0){
+        leaseApplicationFormData.append("delete_fees", JSON.stringify(deleteFees));
+      }
+
       if(deletedDocsUrl && deletedDocsUrl?.length !== 0){
         leaseApplicationFormData.append("delete_documents", JSON.stringify(deletedDocsUrl));
       }
@@ -607,6 +612,7 @@ const TenantLease = () => {
       setShowSpinner(false);
     }
   };
+
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -975,7 +981,7 @@ const TenantLease = () => {
           {/* {console.log("Fees right before we loop through it", fees)} */}
 
           <Grid item xs={12}>
-            {fees?.length > 0 ? (<LeaseFees leaseFees={fees} isEditable={true} setLeaseFees={setFees}/>) : (<></>)}
+            {fees?.length > 0 ? (<LeaseFees leaseFees={fees} isEditable={true} setLeaseFees={setFees} setDeleteFees={setDeleteFees} />) : (<></>)}
           </Grid>
 
           

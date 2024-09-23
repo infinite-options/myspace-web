@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const LeaseFees = ({ leaseFees, isEditable, setLeaseFees }) => {
+const LeaseFees = ({ leaseFees, isEditable, setLeaseFees, setDeleteFees }) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -126,29 +126,29 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees }) => {
 
   const getFeesDueBy = (fee) => {
     if (fee.frequency === "Bi-Weekly") {
-      return biweeklyDueByValuetoDayMap[fee.due_by];
+      return fee.due_by ? biweeklyDueByValuetoDayMap[fee.due_by] : "-";
     } else if (fee.frequency === "Weekly") {
-      return weeklyDueByValuetoDayMap[fee.due_by];
-    } else if (fee.frequency === "Monthly") {
-      return `${fee.due_by}${getDateAdornmentString(fee.due_by)} of the month`;
-    } else if (fee.frequency === "One Time" || fee.frequency === "Annually") {
+      return fee.due_by? weeklyDueByValuetoDayMap[fee.due_by] : "-";
+    } else if (fee.frequency === "Monthly" || fee.frequency === "Quarterly" || fee.frequency === "Semi-Monthly") {
+      return fee.due_by ? `${fee.due_by}${getDateAdornmentString(fee.due_by)} of the month` : "-";
+    } else if (fee.frequency === "One Time" || fee.frequency === "Annually" || fee.frequency === "Semi-Annually") {
       return `${fee.due_by_date ?? "No Due Date"}`;
-    } else {
+    } else{
       return "-";
     }
   };
 
   const getFeesLateBy = (fee) => {
-    if (fee.frequency === "Bi-Weekly" || fee.frequency === "Weekly" || fee.frequency === "Monthly" || fee.frequency === "Annually" || fee.frequency === "One Time") {
-      return `${fee.late_by}${getDateAdornmentString(fee.late_by)} day after due`;
+    if (fee.frequency === "Bi-Weekly" || fee.frequency === "Weekly" || fee.frequency === "Monthly" || fee.frequency === "Annually" || fee.frequency === "One Time" || fee.frequency === "Semi-Annually" || fee.frequency === "Quarterly" || fee.frequency === "Semi-Monthly") {
+      return fee.late_by ? `${fee.late_by}${getDateAdornmentString(fee.late_by)} day after due` : "-";
     } else {
       return "-";
     }
   };
 
   const getFeesAvailableToPay = (fee) => {
-    if (fee.frequency === "Bi-Weekly" || fee.frequency === "Weekly" || fee.frequency === "Monthly" || fee.frequency === "Annually" || fee.frequency === "One Time") {
-      return `${fee.available_topay} days before due`;
+    if (fee.frequency === "Bi-Weekly" || fee.frequency === "Weekly" || fee.frequency === "Monthly" || fee.frequency === "Annually" || fee.frequency === "One Time" || fee.frequency === "Semi-Annually" || fee.frequency === "Quarterly" || fee.frequency === "Semi-Monthly") {
+      return fee.available_topay? `${fee.available_topay} days before due` : "-";
     } else {
       return "-";
     }
@@ -279,7 +279,7 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees }) => {
           headerName: "Amount",
           flex: 0.8,
           renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
-          renderCell: (params) => <Typography>{params.row.fee_type === "$" && `$ ${params.row.charge}`}</Typography>,
+          renderCell: (params) => <Typography>{`$ ${params.row.charge}`}</Typography>,
         },
         {
           field: "due_by",
@@ -336,7 +336,7 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees }) => {
           headerName: "Late Fee",
           flex: 0.7,
           renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
-          renderCell: (params) => <Typography>{params.row.fee_type === "$" && `$ ${params.row.late_fee}`}</Typography>,
+          renderCell: (params) => <Typography>{params.row.late_fee ? `$ ${params.row.late_fee}` : "-"}</Typography>,
         },
         {
           field: "perDay_late_fee",
@@ -346,7 +346,7 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees }) => {
               Late Fee <br /> Per Day
             </strong>
           ),
-          renderCell: (params) => <Typography>{params.row.fee_type === "$" && `$ ${params.row.perDay_late_fee}`}</Typography>,
+          renderCell: (params) => <Typography>{params.row.perDay_late_fee ? `$ ${params.row.perDay_late_fee}` : "-"}</Typography>,
         },
         {
           field: "editactions",
@@ -405,7 +405,7 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees }) => {
           headerName: "Amount",
           flex: 0.8,
           renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
-          renderCell: (params) => <Typography>{params.row.fee_type === "$" && `$ ${params.row.charge}`}</Typography>,
+          renderCell: (params) => <Typography>{`$ ${params.row.charge}`}</Typography>,
         },
         {
           field: "due_by",
@@ -462,7 +462,7 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees }) => {
           headerName: "Late Fee",
           flex: 0.7,
           renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
-          renderCell: (params) => <Typography>{params.row.fee_type === "$" && `$ ${params.row.late_fee}`}</Typography>,
+          renderCell: (params) => <Typography>{`$ ${params.row.late_fee}`}</Typography>,
         },
         {
           field: "perDay_late_fee",
@@ -472,7 +472,7 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees }) => {
               Late Fee <br /> Per Day
             </strong>
           ),
-          renderCell: (params) => <Typography>{params.row.fee_type === "$" && `$ ${params.row.perDay_late_fee}`}</Typography>,
+          renderCell: (params) => <Typography>{`$ ${params.row.perDay_late_fee}`}</Typography>,
         },
       ];
 
@@ -496,7 +496,7 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees }) => {
       return false;
     }
 
-    if (currentRow.frequency === "One Time" || currentRow.frequency === "Annually") {
+    if (currentRow.frequency === "One Time" || currentRow.frequency === "Annually" || currentRow.frequency === "Semi-Annually") {
       if (currentRow.due_by_date && isNaN(Date.parse(currentRow.due_by_date))) {
         alert("Wrong due_by date ");
         return false;
@@ -521,7 +521,7 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees }) => {
       const { id, ...newFees } = currentRow;
       let newFee;
 
-      if (currentRow.frequency === "One Time" || currentRow.frequency === "Annually") {
+      if (currentRow.frequency === "One Time" || currentRow.frequency === "Annually" || currentRow.frequency === "Semi-Annually") {
         if (!currentRow.due_by_date) {
           newFee = {
             ...newFees,
@@ -576,6 +576,10 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees }) => {
   };
 
   const handleDeleteClickFee = (index) => {
+    if(leaseFees[index].leaseFees_uid){
+      // console.log(leaseFees[index].leaseFees_uid)
+      setDeleteFees((prev)=> [...prev, leaseFees[index].leaseFees_uid]);
+    }
     const list = [...leaseFees];
     list.splice(index, 1);
     setLeaseFees(list);
@@ -589,7 +593,7 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees }) => {
 
       let newFee;
 
-      if (currentRow.frequency === "One Time" || currentRow.frequency === "Annually") {
+      if (currentRow.frequency === "One Time" || currentRow.frequency === "Annually" || currentRow.frequency === "Semi-Annually") {
         if (!currentRow.due_by_date) {
           newFee = {
             ...newFees,
@@ -848,6 +852,7 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees }) => {
                 />
               </Stack>
             </Grid>
+            <Grid item xs={6}></Grid>
             <Grid item xs={6}>
               <Stack spacing={-2} m={2}>
                 <Typography
@@ -900,7 +905,6 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees }) => {
                 </Typography>
                 {(currentRow.frequency === "Monthly" ||
                   currentRow.frequency === "Semi-Monthly" ||
-                  currentRow.frequency === "Semi-Annually" ||
                   currentRow.frequency === "Quarterly") && (
                   <TextField
                     name='due_by'
@@ -921,7 +925,7 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees }) => {
                     }}
                   />
                 )}
-                {(currentRow.frequency === "One Time" || currentRow.frequency === "Annually") && (
+                {(currentRow.frequency === "One Time" || currentRow.frequency === "Annually" || currentRow.frequency === "Semi-Annually") && (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       value={currentRow.due_by_date !== null && currentRow.due_by_date !== "" ? dayjs(currentRow.due_by_date) : dayjs()}
