@@ -1,25 +1,15 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { Box, ThemeProvider, Paper, Button, Typography, Stack, Grid, TextField, IconButton, Divider, Checkbox, Container } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import React, { useState, useEffect } from "react";
+import { Box, ThemeProvider, Paper, Button, Typography, Stack, Grid, Container } from "@mui/material";
 import theme from "../../theme/theme";
-import { alpha, makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import axios, { all } from "axios";
 import { useUser } from "../../contexts/UserContext";
-import StripePayment from "../Settings/StripePayment";
-import BackIcon from "./backIcon.png";
+
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { DataGrid } from "@mui/x-data-grid";
 
 import APIConfig from "../../utils/APIConfig";
-
-import ManagerCashflowWidget from "../Dashboard-Components/Cashflow/ManagerCashflowWidget";
-import AccountBalanceWidget from "./AccountBalanceWidget";
-import { AccountBalance } from "@mui/icons-material";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import CircleIcon from "@mui/icons-material/Circle";
-import documentIcon from "../../images/Subtract.png";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -27,41 +17,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function DashboardTab(props) {
-  return (
-    <Box
-      sx={{
-        backgroundColor: "#F2F2F2",
-        borderRadius: "10px",
-        marginTop: "7px",
-        marginBottom: "7px",
-        boxShadow: "0px 2px 4px #00000040",
-        height: props.fullHeight ? "90%" : "auto",
-      }}
-    >
-      {props.children}
-    </Box>
-  );
-}
-
 export default function VerifyPayments(props) {
   //   console.log("In VerifyPayments.jsx");
-  const classes = useStyles();
-  const navigate = useNavigate();
-  const location = useLocation();
+
   const { user, getProfileId, roleName, selectedRole } = useUser();
 
-  const managerCashflowWidgetData = location.state?.managerCashflowWidgetData || props.managerCashflowWidgetData;
-  // const accountBalanceWidgetData = location.state?.accountBalanceWidgetData;
-  const accountBalanceWidgetData = props?.accountBalanceWidgetData;
-  // console.log("managerCashflowWidgetData - ", managerCashflowWidgetData);
-
-  // console.log("selectedRole - ", selectedRole);
-
-  const [moneyPaid, setMoneyPaid] = useState([]);
-  const [moneyReceived, setMoneyReceived] = useState([]);
-  const [moneyToBePaid, setMoneyToBePaid] = useState([]);
-  const [moneyToBeReceived, setMoneyToBeReceived] = useState([]);
   const [moneyPayable, setMoneyPayable] = useState([]);
 
   const [showSpinner, setShowSpinner] = useState(false);
@@ -73,20 +33,12 @@ export default function VerifyPayments(props) {
   const [totalToBePaid, setTotalToBePaid] = useState(0);
   const [totalToBeReceived, setTotalToBeReceived] = useState(0);
   const [totalPayable, setTotalPayable] = useState(0);
-  const [isHeaderChecked, setIsHeaderChecked] = useState(true);
-  const [paymentMethodInfo, setPaymentMethodInfo] = useState({});
 
   const [paymentData, setPaymentData] = useState({
     currency: "usd",
-    //customer_uid: '100-000125', // customer_uid: user.user_uid currently gives error of undefined
     customer_uid: getProfileId(),
-    // customer_uid: user.user_uid,
-    // business_code: "IOTEST",
     business_code: paymentNotes,
     item_uid: "320-000054",
-    // payment_summary: {
-    //     total: "0.0"
-    // },
     balance: "0.0",
     purchase_uids: [],
   });
@@ -94,51 +46,6 @@ export default function VerifyPayments(props) {
   useEffect(() => {
     console.log("Payments", moneyPayable);
   }, [moneyPayable]);
-
-  let customer_uid = getProfileId();
-  let customer_role = customer_uid.substring(0, 3);
-  //   console.log("Profile Info: ", getProfileId());
-  //   console.log("Customer UID: ", customer_uid);
-  //   console.log("Customer Role: ", customer_role);
-  // console.log("Customer UID: ", paymentData);
-  // console.log("Customer UID: ", paymentData.customer_uid);
-  // console.log("User Info: ", user);
-
-  // function totalPaidUpdate(paidItems) {
-  //   var total = 0;
-  //   for (const item of paidItems) {
-  //     total += parseFloat(item.pur_amount_due);
-  //   }
-  //   setTotalPaid(total);
-  // }
-
-  function totalMoneyPaidUpdate(moneyPaid) {
-    var total = 0;
-    for (const item of moneyPaid) {
-      total += parseFloat(item.total_paid);
-    }
-    setTotalPaid(total);
-  }
-
-  function totalMoneyReceivedUpdate(moneyReceived) {
-    var total = 0;
-    for (const item of moneyReceived) {
-      total += parseFloat(item.total_paid);
-    }
-    setTotalReceived(total);
-  }
-
-  function totalMoneyToBePaidUpdate(moneyToBePaid) {
-    var total = 0;
-    for (const item of moneyToBePaid) {
-      if (item.pur_cf_type === "revenue") {
-        total += parseFloat(item.pur_amount_due);
-      } else if (item.pur_cf_type === "expense") {
-        total -= parseFloat(item.pur_amount_due);
-      }
-    }
-    setTotalToBePaid(total);
-  }
 
   function totalMoneyPayable(moneyPayable) {
     // console.log("In totalMoneyPayable: ", moneyPayable);
@@ -153,44 +60,16 @@ export default function VerifyPayments(props) {
     setTotalPayable(total);
   }
 
-  function totalMoneyToBeReceivedUpdate(moneyToBeReceived) {
-    var total = 0;
-    for (const item of moneyToBeReceived) {
-      total += parseFloat(item.pur_amount_due);
-    }
-    setTotalToBeReceived(total);
-  }
-
   const fetchPaymentsData = async () => {
     console.log("In fetchPaymensData");
     setShowSpinner(true);
     try {
       const res = await axios.get(`${APIConfig.baseURL.dev}/paymentVerification/${getProfileId()}`);
-      // const paymentStatusData = res.data.PaymentStatus.result;
-      // const paidStatusData = res.data.PaidStatus.result;
-
-      //   const moneyPaidData = res.data.MoneyPaid.result;
-      //   const moneyReceivedData = res.data.MoneyReceived.result;
-      //   const moneyToBePaidData = res.data.MoneyToBePaid.result;
-      //   const moneyToBeReceivedData = res.data.MoneyToBeReceived.result;
       const moneyPayableData = res.data.result;
+      console.log("Verfiy Payment GET Results: ", moneyPayableData);
 
-      //   setMoneyPaid(moneyPaidData);
-      //   setMoneyReceived(moneyReceivedData);
-      //   setMoneyToBePaid(moneyToBePaidData);
-      //   setMoneyToBeReceived(moneyToBeReceivedData);
       setMoneyPayable(moneyPayableData);
-
-      // console.log("Money To Be Paid: ", moneyToBePaid);
-      // console.log("Money To Be Paid: ", moneyToBePaid[0].ps);
-
-      //   totalMoneyPaidUpdate(moneyPaidData);
-      //   totalMoneyReceivedUpdate(moneyReceivedData);
-      //   totalMoneyToBePaidUpdate(moneyToBePaidData);
-      //   totalMoneyToBeReceivedUpdate(moneyToBeReceivedData);
       totalMoneyPayable(moneyPayableData);
-
-      // console.log("--> initialSelectedItems", initialSelectedItems);
     } catch (error) {
       console.error("Error fetching payment data:", error);
     }
@@ -201,54 +80,6 @@ export default function VerifyPayments(props) {
     fetchPaymentsData();
   }, []);
 
-  const handlePaymentNotesChange = (event) => {
-    setPaymentNotes(event.target.value);
-  };
-
-  // const API_CALL = "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createEasyACHPaymentIntent";
-
-  // const handleStripePayment = async (e) => {
-  //   setShowSpinner(true);
-  //   console.log("Stripe Payment");
-  //   try {
-  //     // Update paymentData with the latest total value
-  //     const updatedPaymentData = {
-  //       ...paymentData,
-  //       business_code: paymentNotes,
-  //       payment_summary: {
-  //         total: total.toFixed(2), // Format the total as a string with 2 decimal places
-  //       },
-  //     };
-
-  //     console.log("Updated Payment Data: ", updatedPaymentData);
-
-  //     //const stripe = await stripePromise;
-  //     const response = await fetch(API_CALL, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(updatedPaymentData),
-  //     });
-  //     const checkoutURL = await response.text();
-  //     //console.log(response.text());
-  //     window.location.href = checkoutURL;
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  //   setShowSpinner(false);
-  // };
-
-  // Define the CSS style for the selected checkbox
-  // const selectedCheckboxStyle = {
-  //   color: theme.palette.custom.bgBlue, // Change the color of the tick (checked icon)
-  //   borderColor: "black", // Change the border color
-  //   "&.Mui-checked": {
-  //     color: "gray",
-  //     borderColor: "black",
-  //   },
-  // };
-
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -258,21 +89,6 @@ export default function VerifyPayments(props) {
 
         <Container maxWidth='lg' sx={{ paddingTop: "10px", height: "90vh" }}>
           <Grid container spacing={6} sx={{ height: "90%" }}>
-            {/* <Grid item xs={12} md={4}>
-              {
-                selectedRole === "MANAGER" && (
-                  <ManagerCashflowWidget propsMonth={managerCashflowWidgetData?.propsMonth} propsYear={managerCashflowWidgetData?.propsYear} profitsTotal={managerCashflowWidgetData?.profitsTotal} rentsTotal={managerCashflowWidgetData?.rentsTotal} payoutsTotal={managerCashflowWidgetData?.payoutsTotal} graphData={managerCashflowWidgetData?.graphData}/>
-                )
-              }
-
-              {
-                selectedRole === "TENANT" && (
-                  <AccountBalanceWidget selectedProperty={accountBalanceWidgetData?.selectedProperty} selectedLease={accountBalanceWidgetData?.selectedLease} propertyAddr={accountBalanceWidgetData?.propertyAddr} propertyData={accountBalanceWidgetData?.propertyData} total={accountBalanceWidgetData?.total} rentFees={accountBalanceWidgetData?.rentFees} lateFees={accountBalanceWidgetData?.lateFees} utilityFees={accountBalanceWidgetData?.utilityFees} />
-                )
-              }
-              
-            </Grid> */}
-
             <Grid container item xs={12} md={12} columnSpacing={6}>
               <Paper
                 component={Stack}
@@ -306,7 +122,7 @@ export default function VerifyPayments(props) {
                   </Stack>
 
                   <Stack>
-                    <BalanceDetailsTable data={moneyPayable} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
+                    <BalanceDetailsTable data={moneyPayable} setPaymentData={setPaymentData}/>
                   </Stack>
                 </Paper>
               </Paper>
@@ -333,7 +149,7 @@ function BalanceDetailsTable(props) {
 
   useEffect(() => {
     if (data && data.length > 0) {
-      setSelectedRows(data.map((row) => row.purchase_uid));
+      setSelectedRows(data.map((row) => row.payment_uid));
       setPaymentDueResult(
         data.map((item) => ({
           ...item,
@@ -343,52 +159,23 @@ function BalanceDetailsTable(props) {
     }
   }, [data]);
 
-  useEffect(() => {
+  useEffect(() => {  
+    console.log("ROHIT - selectedRows - ", selectedRows);
     const total = selectedRows?.reduce((total, rowId) => {
-      const payment = paymentDueResult.find((row) => row.purchase_uid === rowId);
-      const amountDue = payment.pur_amount_due;
-      const isExpense = payment.pur_cf_type === "expense";
+      const payment = paymentDueResult.find((row) => row.payment_uid === rowId);
+      console.log("ROHIT - payment - ", payment);
+      if(payment){
+        const payAmount = parseFloat(payment.pay_amount);
+        // const isExpense = payment.pur_cf_type === "expense";
 
-      // Adjust the total based on whether the payment is an expense or revenue
-      return total + (isExpense ? -amountDue : amountDue);
+        // Adjust the total based on whether the payment is an expense or revenue
+        return total + payAmount;
+      } else {
+        return total + 0
+      }
     }, 0);
     setTotalVerified(total);
   }, [selectedRows]);
-
-  useEffect(() => {
-    var total = 0;
-
-    let purchase_uid_mapping = [];
-
-    for (const item of selectedRows) {
-      // console.log("item in loop", item)
-
-      let paymentItemData = paymentDueResult.find((element) => element.purchase_uid === item);
-      purchase_uid_mapping.push({ purchase_uid: item, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
-      // console.log("payment item data", paymentItemData);
-
-      // total += parseFloat(paymentItemData.pur_amount_due);
-      // Adjust total based on pur_cf_type
-      if (paymentItemData.pur_cf_type === "revenue") {
-        total += parseFloat(paymentItemData.pur_amount_due);
-      } else if (paymentItemData.pur_cf_type === "expense") {
-        total -= parseFloat(paymentItemData.pur_amount_due);
-      }
-    }
-    // console.log("selectedRows useEffect - total - ", total);
-    // console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
-    props.setTotal(total);
-    props.setPaymentData((prevPaymentData) => ({
-      ...prevPaymentData,
-      balance: total.toFixed(2),
-      purchase_uids: purchase_uid_mapping,
-    }));
-  }, [selectedRows]);
-
-  useEffect(() => {
-    console.log("selectedPayments - ", selectedPayments);
-    props.setSelectedItems(selectedPayments);
-  }, [selectedPayments]);
 
   const getFontColor = (ps_value) => {
     if (ps_value === "PAID") {
@@ -400,26 +187,24 @@ function BalanceDetailsTable(props) {
     }
   };
 
-  const sortModel = [
-    {
-      field: "pgps", // Specify the field to sort by
-      sort: "asc", // Specify the sort order, 'asc' for ascending
-    },
-  ];
-
-  //   , purchase_uid, pur_property_id
-  // , purchase_type, pur_description, pur_notes
-  // , payment_date
-  // , paid_by, payment_intent, payment_method
-  // , pur_amount_due, pay_amount, total_paid
-
-  // , payment_verify, pur_group, pur_leaseFees_id, pur_bill_id
+//   const sortModel = [
+//     {
+//       field: "pgps", // Specify the field to sort by
+//       sort: "asc", // Specify the sort order, 'asc' for ascending
+//     },
+//   ];
 
   const columnsList = [
     {
+        field: "payment_uid",
+        headerName: "Payment UID",
+        flex: 3,
+        renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
       field: "purchase_uid",
       headerName: "Purchase UID",
-      flex: 2,
+      flex: 3,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
@@ -525,14 +310,17 @@ function BalanceDetailsTable(props) {
     if (addedRows.length > 0) {
       // console.log("Added rows: ", addedRows);
       let newPayments = [];
+      
       addedRows.forEach((item, index) => {
-        const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
+        console.log("ROHIT - item - ", item)
+        // const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
+        const addedPayment = paymentDueResult.find((row) => row.payment_uid === item);
 
         if (addedPayment) {
           const relatedPayments = paymentDueResult.filter((row) => row.payment_intent === addedPayment.payment_intent);
 
           newPayments = [...newPayments, ...relatedPayments];
-          const relatedRowIds = relatedPayments.map((payment) => payment.purchase_uid);
+          const relatedRowIds = relatedPayments.map((payment) => payment.payment_uid);
           updatedRowSelectionModel = [...new Set([...updatedRowSelectionModel, ...relatedRowIds])];
         }
       });
@@ -547,12 +335,12 @@ function BalanceDetailsTable(props) {
       // console.log("Removed rows: ", removedRows);
       let removedPayments = [];
       removedRows.forEach((item, index) => {
-        let removedPayment = paymentDueResult.find((row) => row.purchase_uid === removedRows[index]);
+        let removedPayment = paymentDueResult.find((row) => row.payment_uid === item);
 
         removedPayments.push(removedPayment);
       });
       // console.log("removedPayments - ", removedPayments);
-      setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.purchase_uid)));
+      setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.payment_uid)));
     }
     // setSelectedRows(newRowSelectionModel);
     setSelectedRows(updatedRowSelectionModel);
@@ -603,7 +391,7 @@ function BalanceDetailsTable(props) {
           }}
           // getRowId={(row) => row.purchase_uid}
           getRowId={(row) => {
-            const rowId = row.purchase_uid;
+            const rowId = row.payment_uid;
             // console.log("Hello Globe");
             // console.log("Row ID:", rowId);
             // console.log("Row Data:", row); // Log the entire row data
@@ -621,7 +409,7 @@ function BalanceDetailsTable(props) {
             }
             // handleOnClickNavigateToMaintenance(row);
           }}
-          sortModel={sortModel} // Set the sortModel prop
+        //   sortModel={sortModel} // Set the sortModel prop
 
           //   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
         />
