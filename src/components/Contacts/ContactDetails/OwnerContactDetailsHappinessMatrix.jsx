@@ -191,6 +191,20 @@ const OwnerContactDetailsHappinessMatrix = () => {
   const [cashflowDataByPropertyByMonth, setCashflowDataByPropertyByMonth ] = useState([]);
 
 
+   useEffect(() => {
+    console.log("ROHIT - index - ", index);
+    if(contactDetails){
+      console.log("ROHIT - contactDetails - ", contactDetails);
+      console.log("ROHIT - contactDetails[index] - ", contactDetails[index]);
+    }
+  }, [index]);
+
+  // useEffect(() => {
+  //   console.log("ROHIT - contactDetails - ", contactDetails);
+  //   console.log("ROHIT - contactDetails[index] - ", contactDetails[index]);
+  // }, [contactDetails]);
+
+
 
 
   // Effect for logging changes
@@ -283,7 +297,10 @@ const OwnerContactDetailsHappinessMatrix = () => {
           // console.log("Set Contact Details 1", ownerContacts);
         const index = ownerContacts.findIndex((contact) => contact.owner_uid === ownerUID);
           // console.log("Owner Index: ", index);
-        setIndex(index);
+        
+        if(index >= 0){
+          setIndex(index);
+        }
       } catch (e) {
         console.error(e);
       }
@@ -453,6 +470,14 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
   const [filteredContactsData, setFilteredContactsData] = useState([]);
 
   useEffect(() => {
+    console.log("ROHIT - AllContacts - contactsData - ", contactsData);
+  }, [contactsData]);
+
+  useEffect(() => {
+    console.log("ROHIT - AllContacts - filteredContactsData - ", filteredContactsData);
+  }, [filteredContactsData]);
+
+  useEffect(() => {
     const processedData = data?.map((contact) => {
       return {
         ...contact,
@@ -465,11 +490,14 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
   }, [data]);
 
   useEffect(() => {
-    const filteredValues = contactsData?.filter((item) => {
-      return item?.owner_first_name?.toLowerCase().includes(searchTerm.toLowerCase()) || item?.owner_last_name?.toLowerCase().includes(searchTerm.toLowerCase());
-    });
-    // console.log("Set FilteredContactsData 2");
-    setFilteredContactsData(filteredValues);
+    console.log("ROHIT - searchTerm - ", searchTerm);
+    if(searchTerm && searchTerm !== "") {
+      const filteredValues = contactsData?.filter((item) => {
+        return item?.owner_first_name?.toLowerCase().includes(searchTerm.toLowerCase()) || item?.owner_last_name?.toLowerCase().includes(searchTerm.toLowerCase());
+      });
+      // console.log("Set FilteredContactsData 2");
+      setFilteredContactsData(filteredValues);
+    }
   }, [searchTerm, contactsData]);
 
   return (
