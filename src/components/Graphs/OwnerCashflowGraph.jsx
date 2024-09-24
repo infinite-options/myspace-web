@@ -9,6 +9,7 @@ const MixedChart = (props) => {
 
   const data = props.revenueCashflowByMonth; // In the future Change <ComposedChart data={data1} --> <ComposedChart data={data}
   const activeButton = props.activeButton;
+  const chart = props.showChart;
   // console.log("Input data to graph: ", data);
   // console.log("Active button: ", activeButton);
 
@@ -55,7 +56,22 @@ const MixedChart = (props) => {
           />
           <ReferenceLine yAxisId="left" y={0} stroke="#000000" strokeWidth={1} />
           <YAxis yAxisId="right" orientation="right" />
-          <Legend />
+          <Legend 
+            payload={[
+              {
+                value: chart === "Expected" ? "Expected Cashflow" : "Actual Cashflow",
+                type: "square",
+                id: "cashflow",
+                color: theme.typography.common.blue,
+              },
+              {
+                value: chart === "Expected" ? "Expected Revenue" : "Actual Revenue",
+                type: "line",
+                id: "revenue",
+                color: theme.palette.primary.mustardYellow,
+              },
+            ]}
+          />
           <Bar
             yAxisId="left"
             dataKey={activeButton === "ExpectedCashflow" ? "expectedCashflow" : "cashflow"}

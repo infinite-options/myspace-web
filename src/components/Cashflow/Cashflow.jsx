@@ -78,7 +78,7 @@ export default function Cashflow() {
   const [year, setYear] = useState(location.state.year || "2024");
 
   const [cashflowData, setCashflowData] = useState(null); // Cashflow data from API
-  const [cashflowData2, setCashflowData2] = useState(location.state?.cashFlowData); // Cashflow data from API
+  const [cashflowData2, setCashflowData2] = useState(location.state?.cashFlowData?location.state?.cashFlowData : null); // Cashflow data from API
   // console.log(location.state?.cashFlowData);
 
   const [expectedRevenueByMonth, setExpectedRevenueByMonth] = useState(0);
@@ -136,7 +136,7 @@ export default function Cashflow() {
     if(currentWindow === "CASHFLOW_DETAILS"){
       fetchCashflow2(profileId)
       .then((data) => {
-        // console.log("yes window is change")
+        console.log("yes window is change")
         if(selectedProperty === "All Properties"){
           setCashflowData2(data);
     
@@ -237,6 +237,7 @@ export default function Cashflow() {
               setData={setCashflowData2}
               setCurrentWindow={setCurrentWindow}
               page='OwnerCashflow'
+              allProperties={propertyList}
               // propertyList={propertyList}
               selectedProperty={selectedProperty}
               setSelectedProperty={setSelectedProperty}
@@ -542,9 +543,9 @@ const CashflowDetails = ({
 
           <Stack direction='row' justifyContent='center' height={300}>
             {showChart === "Current" ? (
-              <MixedChart revenueCashflowByMonth={last12Months} activeButton={activeButton}></MixedChart>
+              <MixedChart revenueCashflowByMonth={last12Months} activeButton={activeButton} showChart={showChart}></MixedChart>
             ) : (
-              <MixedChart revenueCashflowByMonth={next12Months} activeButton={activeButton}></MixedChart>
+              <MixedChart revenueCashflowByMonth={next12Months} activeButton={activeButton} showChart={showChart}></MixedChart>
             )}
           </Stack>
 

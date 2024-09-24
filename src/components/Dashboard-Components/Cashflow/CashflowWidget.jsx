@@ -41,7 +41,7 @@ import AddRevenueIcon from "../../../images/AddRevenueIcon.png";
 
 // "../../images/AddRevenueIcon.png"
 
-function CashflowWidget({ data, setCurrentWindow, page, setSelectedProperty, setData, selectedProperty }) {
+function CashflowWidget({ data, originalData, setCurrentWindow, page, setSelectedProperty, setData, selectedProperty, allProperties }) {
   // console.log("In Cashflow Widget ");
   // console.log("Cashflow Widget - data - ", data);
   const navigate = useNavigate();
@@ -62,8 +62,8 @@ function CashflowWidget({ data, setCurrentWindow, page, setSelectedProperty, set
   const [last12Months, setLast12Months] = useState([]);
   const profileId = getProfileId();
   const [cashflowData, setCashflowData] = useState(data?data:null);
-  const [originalCashFlowData, setOriginalCashFlowData] = useState(null);
-  const [propertyList, setPropertyList] = useState([]);
+  const [originalCashFlowData, setOriginalCashFlowData] = useState(originalData ? originalData : null);
+  const [propertyList, setPropertyList] = useState(allProperties ? allProperties : []);
   const[widgetselectedProperty, setWidgetSelectedProperty] = useState(selectedProperty ? selectedProperty : "All Properties");
   const [propertyButtonName, setPropertyButtonName ] = useState(selectedProperty? (selectedProperty !== "All Properties"? "View all Properties" : "Select Property") : "Select Property")
   const [cfPeriodButtonName, setCfPeriodButtonName ] = useState("Last 12 Months")
@@ -142,54 +142,79 @@ function CashflowWidget({ data, setCurrentWindow, page, setSelectedProperty, set
       setCashflowData(data)
     }
 
-    fetchCashflow2(profileId)
-      .then((data) => {
-        setOriginalCashFlowData(data);
-        // let currentMonthYearRevenueExpected = get
-      })
-      .catch((error) => {
-        console.error("Error fetching cashflow data:", error);
-      });
+    if(page !== "OwnerDashboard"){
+      fetchCashflow2(profileId)
+        .then((data) => {
+          setOriginalCashFlowData(data);
+          // let currentMonthYearRevenueExpected = get
+        })
+        .catch((error) => {
+          console.error("Error fetching cashflow data:", error);
+        });
+    }
 
   },[data])
 
   useEffect(()=>{
-    fetchCashflow2(profileId)
-      .then((data) => {
-        if(cashflowData == null || cashflowData == undefined){
-          setCashflowData(data);
-        }
-        setOriginalCashFlowData(data);
-        // let currentMonthYearRevenueExpected = get
-      })
-      .catch((error) => {
-        console.error("Error fetching cashflow data:", error);
-      });
+    // if(originalCashFlowData == null || originalCashFlowData == undefined){
+    //   fetchCashflow2(profileId)
+    //     .then((data) => {
+    //       if(cashflowData == null || cashflowData == undefined){
+    //         setCashflowData(data);
+    //       }
+    //       setOriginalCashFlowData(data);
+    //       // let currentMonthYearRevenueExpected = get
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error fetching cashflow data:", error);
+    //     });
+    // }
 
-    fetchProperties(profileId)
-      .then((data) => {
-        setPropertyList(data?.Property?.result);
-      })
-      .catch((error) => {
-        console.error("Error fetching PropertyList:", error);
-      });
+    // fetchProperties(profileId)
+    //   .then((data) => {
+    //     setPropertyList(data?.Property?.result);
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error fetching PropertyList:", error);
+    //   });
 
   }, [])
   
   const handlePropertyChange = (propertyUID) => {
-    const dataByProperty = getDataByProperty(originalCashFlowData, propertyUID);
-    setCashflowData(dataByProperty);
-    if(setData != undefined){
-      setData(dataByProperty);
-    }
+    
+    if(page === "OwnerDashboard"){
+      navigate("/cashflow", {
+        state: {
+          month,
+          year,
+          // cashFlowData: cashflowData,
+          propertyList : propertyList,
+          selectedProperty : propertyUID
+        },
+      })
+    }else{
+      setWidgetSelectedProperty(propertyUID);
+      setPropertyButtonName('View all Properties');
+      
+      const dataByProperty = getDataByProperty(originalCashFlowData, propertyUID);
+      setCashflowData(dataByProperty);
+      
+      if(setData !== undefined){
+        setData(dataByProperty);
+      }
 
-    setWidgetSelectedProperty(propertyUID);
-    setPropertyButtonName('View all Properties');
+      if(setSelectedProperty !== undefined || setSelectedProperty !== null){
+          setSelectedProperty(propertyUID);
+      }
+
+    }
+    
+    // 
+
+    
     // console.log("from cashflowwidget - ", widgetselectedProperty);
 
-    if(setSelectedProperty != undefined || setSelectedProperty != null){
-      setSelectedProperty(propertyUID);
-    }
+    // 
 
     setAnchorEl(null);
   
@@ -261,7 +286,7 @@ function CashflowWidget({ data, setCurrentWindow, page, setSelectedProperty, set
               state: {
                 month,
                 year,
-                cashFlowData: cashflowData,
+                // cashFlowData: cashflowData,
                 propertyList : propertyList,
                 selectedProperty : widgetselectedProperty
               },
