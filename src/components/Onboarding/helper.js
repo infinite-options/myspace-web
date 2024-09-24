@@ -121,7 +121,7 @@ const roleMap = {
     profileApi: "/profile",
   },
   TENANT: {
-    dashboardUrl: "/tenantDashboardPM", //change here to revert back to tenantDashboard
+    dashboardUrl: "/tenantDashboard", //change here to revert back to tenantDashboard
     profileApi: "/profile",
   },
   MAINTENANCE: {
