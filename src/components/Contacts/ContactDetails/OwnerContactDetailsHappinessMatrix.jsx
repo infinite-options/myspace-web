@@ -28,6 +28,18 @@ import maintenanceIcon from "../../Property/maintenanceIcon.png";
 import { maskSSN, maskEIN } from "../../utils/privacyMasking";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
+
+function groupByProperty(array, property) {
+  return array.reduce((acc, item) => {
+    const propertyId = item[property];
+    if (!acc[propertyId]) {
+      acc[propertyId] = [];
+    }
+    acc[propertyId].push(item);
+    return acc;
+  }, {});
+}
+
 const OwnerContactDetailsHappinessMatrix = () => {
   // Context and hooks
   const { getProfileId } = useUser();
@@ -47,6 +59,14 @@ const OwnerContactDetailsHappinessMatrix = () => {
   const [filteredCashflowDetailsByPropertyByMonth, setFilteredCashflowDetailsByPropertyByMonth] = useState(cashflowDetailsByPropertyByMonth);
   const [contactDetails, setContactDetails] = useState();
   const [index, setIndex] = useState(0);
+
+  const [cashflowData, setCashflowData ] = useState([]);
+  const [cashflowDataByProperty, setCashflowDataByProperty ] = useState([]);
+  const [cashflowDataByMonth, setCashflowDataByMonth ] = useState([]);
+  const [cashflowDataByPropertyByMonth, setCashflowDataByPropertyByMonth ] = useState([]);
+
+
+
 
   // Effect for logging changes
   // useEffect(() => {
@@ -79,6 +99,26 @@ const OwnerContactDetailsHappinessMatrix = () => {
   // }, [filteredCashflowDetailsByPropertyByMonth]);
 
   useEffect(() => {
+    console.log("ROHIT - cashflowData - ", cashflowData);
+    const groupedByProperty = groupByProperty(cashflowData, 'pur_property_id');
+    console.log("ROHIT - groupedByProperty - ", groupedByProperty);
+  }, [cashflowData]);
+
+  const fetchCashflowData = async () => {
+    // const url = `http://localhost:4000/contacts/${getProfileId()}`;
+    // console.log("Calling contacts endpoint");
+    const url = `${APIConfig.baseURL.dev}/cashflowTransactions/${getProfileId()}/all`;
+    try {
+      const resp = await axios.get(url);
+      const data = resp.data["result"];
+      
+      setCashflowData(data);              
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
     const getDataFromAPI = async () => {
       // const url = `http://localhost:4000/contacts/${getProfileId()}`;
       // console.log("Calling contacts endpoint");
@@ -87,7 +127,7 @@ const OwnerContactDetailsHappinessMatrix = () => {
         const resp = await axios.get(url);
         const data = resp.data["management_contacts"];
         const ownerContacts = data["owners"];
-          // console.log("Owner Contact info in OwnerContactDetailsHappinessMatrix", ownerContacts);
+          console.log("Owner Contact info in OwnerContactDetailsHappinessMatrix", ownerContacts);
         setContactDetails(ownerContacts);
           // console.log("Set Contact Details 1", ownerContacts);
         const index = ownerContacts.findIndex((contact) => contact.owner_uid === ownerUID);
@@ -106,14 +146,15 @@ const OwnerContactDetailsHappinessMatrix = () => {
       // console.log("Set Contact Details 2");
       // setContactsTab(location.state.tab);
     }
+    fetchCashflowData();
   }, [getProfileId, navigatingFrom, ownerUID, location.state]);
 
   // Effect to filter cashflow details when contactDetails or index changes
   useEffect(() => {
     if (contactDetails) {
-      setFilteredCashflowDetails(contactDetails ? cashflowDetails.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
-      setFilteredCashflowDetailsByProperty(contactDetails ? cashflowDetailsByProperty.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
-      setFilteredCashflowDetailsByPropertyByMonth(contactDetails ? cashflowDetailsByPropertyByMonth.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
+      setFilteredCashflowDetails(contactDetails ? cashflowDetails?.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
+      setFilteredCashflowDetailsByProperty(contactDetails ? cashflowDetailsByProperty?.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
+      setFilteredCashflowDetailsByPropertyByMonth(contactDetails ? cashflowDetailsByPropertyByMonth?.filter((item) => item.owner_uid === contactDetails[index]?.owner_uid) : []);
     }
   }, [contactDetails, index, cashflowDetails, cashflowDetailsByProperty, cashflowDetailsByPropertyByMonth]);
 
@@ -274,7 +315,7 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
 
   useEffect(() => {
     const filteredValues = contactsData?.filter((item) => {
-      return item.owner_first_name.toLowerCase().includes(searchTerm.toLowerCase()) || item.owner_last_name.toLowerCase().includes(searchTerm.toLowerCase());
+      return item?.owner_first_name?.toLowerCase().includes(searchTerm.toLowerCase()) || item?.owner_last_name?.toLowerCase().includes(searchTerm.toLowerCase());
     });
     // console.log("Set FilteredContactsData 2");
     setFilteredContactsData(filteredValues);
@@ -519,11 +560,11 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
               width: "100%",
             }}
           >
-            <CashflowDataGrid
+            {/* <CashflowDataGrid
               cashflowDetails={filteredCashflowDetails} //by month
               cashflowDetailsByProperty={filteredCashflowDetailsByProperty}
               cashflowDetailsByPropertyByMonth={filteredCashflowDetailsByPropertyByMonth}
-            />
+            /> */}
           </Paper>
         </Grid>
       </Grid>

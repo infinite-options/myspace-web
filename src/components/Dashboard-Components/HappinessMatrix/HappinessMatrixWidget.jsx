@@ -10,7 +10,7 @@ function HappinessMatrixWidget(props) {
   const navigate = useNavigate();
   // const chartWidth = 400;
   // const chartHeight = 350;
-  const chartMargin = { top: 20, right: 30, bottom: 0, left: 0 };
+  const chartMargin = { top: 20, right: 30, bottom: 10, left: 0 };
   const { happinessData, contactDetails, page, setHappinessData, setOwnerUID, currentOwnerUID } = props;
   const [data, setData] = useState([]);
 
@@ -60,9 +60,9 @@ function HappinessMatrixWidget(props) {
 
   useEffect(() => {
     // console.log("In UseEffect: ", happinessData.matrix_data.result);
-    setData(happinessData?.matrix_data?.result);
+    setData(happinessData?.result);
 
-    const matrixData = happinessData?.matrix_data?.result;
+    const matrixData = happinessData?.result;
 
     const points = [];
     matrixData?.forEach((owner) => {
@@ -71,7 +71,7 @@ function HappinessMatrixWidget(props) {
       let y = Number(owner.percent_delta_cashflow);
 
       let pointObject = {
-        x: x,
+        x: -x,
         y: -y,
         ...owner,
         color: getBorderColor(x, -y),
@@ -88,7 +88,13 @@ function HappinessMatrixWidget(props) {
     setPointsToPlot(adjustedPoints);
   }, [props.happinessData]);
 
+  
+
   const [pointsToPlot, setPointsToPlot] = useState([]);
+
+  useEffect(() => {
+    console.log("ROHIT - pointsToPlot - ", pointsToPlot);
+  }, [pointsToPlot]);
 
   const axisLabelStyle = {
     fontFamily: "Source Sans Pro",
@@ -160,7 +166,7 @@ function HappinessMatrixWidget(props) {
                   // domain={[-1.1, 0.1]}
                   domain={[-100, 0]}
                   // ticks={[-1.1, -0.5, 0.1]}
-                  tick={false} 
+                  // tick={false} 
                   label={{
                     value: "Revenue", 
                     angle: -90,  
@@ -181,11 +187,11 @@ function HappinessMatrixWidget(props) {
                   tickLine={false}
                   style={axisLabelStyle}
                   domain={[-100, 0]}
-                  tick={false} 
+                  // tick={false} 
                   label={{
                     value: "Vacancies",
                     position: "insideBottom",
-                    offset: 10,
+                    offset: -10,
                     fill: "#160449",
                     fontSize: 14,
                     fontWeight: "bold",
@@ -250,7 +256,7 @@ function HappinessMatrixWidget(props) {
                 <ReferenceLine
                   segment={[
                     { x: -100, y: -100 },
-                    { x: 100, y: 100 },
+                    { x: 0, y: 0 },
                   ]}
                   stroke='#000000'
                   strokeWidth={1}

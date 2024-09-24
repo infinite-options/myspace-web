@@ -1,19 +1,40 @@
 import { Box, Typography, Button, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect} from "react";
 
-export default function RevenueWidget({ revenueData }) {
+export default function RevenueWidget({ revenueData, cashflowStatusData }) {
   // console.log("In Revenue Widget ", revenueData);
 
-  const navigate = useNavigate();
-  const revenue = revenueData?.revenue?.result[0]?.received_expected;
-  const expenses = revenueData?.expense?.result[0]?.paid_expected;
-  const profit = revenue - expenses;
-  const revenueReceived = revenueData?.revenue?.result[0]?.received_actual;
-  const expensesReceived = revenueData?.expense?.result[0]?.paid_actual;
-  const profitReceived = revenueReceived - expensesReceived;
+  const navigate = useNavigate();  
   let currentDate = new Date();
   let currentMonth = currentDate.toLocaleString("default", { month: "long" });  
   let currentYear = currentDate.getFullYear().toString();
+
+  const [currentMonthExpense, setCurrentMonthExpense] = useState(null);
+  const [currentMonthRevenue, setCurrentMonthRevenue] = useState(null);
+  const [currentMonthProfit, setCurrentMonthProfit] = useState(null);
+
+
+
+  useEffect(() => {
+    console.log("ROHIT - cashflowStatusData",cashflowStatusData);
+    const expenseCurrentMonth = cashflowStatusData?.find((item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "expense");
+    const revenueCurrentMonth = cashflowStatusData?.find((item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "revenue");
+    const profitCurrentMonth = {
+      pur_amount_due: revenueCurrentMonth?.pur_amount_due - expenseCurrentMonth?.pur_amount_due,
+      total_paid: revenueCurrentMonth?.total_paid - expenseCurrentMonth?.total_paid,
+    }
+  
+    console.log("ROHIT - expenseCurrentMonth", expenseCurrentMonth);
+    console.log("ROHIT - revenueCurrentMonth", revenueCurrentMonth);
+    console.log("ROHIT - profitCurrentMonth", profitCurrentMonth);
+    
+    setCurrentMonthExpense(expenseCurrentMonth);
+    setCurrentMonthRevenue(revenueCurrentMonth);
+    setCurrentMonthProfit(profitCurrentMonth);
+
+    
+  }, [cashflowStatusData]);
 
   return (
     <>
@@ -41,10 +62,12 @@ export default function RevenueWidget({ revenueData }) {
                 <Typography sx={{ fontWeight: "bold" }}>{currentMonth} Profit (Expected vs Actual)</Typography>
               </Grid>
               <Grid item xs={2}>
-                <Typography sx={{ fontWeight: "bold" }}>{profit? profit.toFixed(2) : '0.00'}</Typography>
+                {/* <Typography sx={{ fontWeight: "bold" }}>{profit? profit.toFixed(2) : '0.00'}</Typography> */}
+                <Typography sx={{ fontWeight: "bold" }}>{currentMonthProfit?.pur_amount_due?.toFixed(2) || '0.00'}</Typography>
               </Grid>
               <Grid item xs={2}>
-                <Typography sx={{ fontWeight: "bold" }}>{profitReceived? profitReceived.toFixed(2) : '0.00'}</Typography>
+                {/* <Typography sx={{ fontWeight: "bold" }}>{profitReceived? profitReceived.toFixed(2) : '0.00'}</Typography> */}
+                <Typography sx={{ fontWeight: "bold" }}>{currentMonthProfit?.total_paid?.toFixed(2) || '0.00'}</Typography>
               </Grid>
             </Grid>
           </Grid>
@@ -64,10 +87,12 @@ export default function RevenueWidget({ revenueData }) {
                 <Typography sx={{ fontWeight: "bold" }}>{currentMonth} Revenue (Expected vs Actual)</Typography>
               </Grid>
               <Grid item xs={2}>
-                <Typography sx={{ fontWeight: "bold" }}>{revenue ? revenue : '0.00'}</Typography>
+                {/* <Typography sx={{ fontWeight: "bold" }}>{revenue ? revenue : '0.00'}</Typography> */}
+                <Typography sx={{ fontWeight: "bold" }}>{currentMonthRevenue?.pur_amount_due || '0.00'}</Typography>
               </Grid>
               <Grid item xs={2}>
-                <Typography sx={{ fontWeight: "bold" }}>{revenueReceived ? revenueReceived : '0.00'}</Typography>
+                {/* <Typography sx={{ fontWeight: "bold" }}>{revenueReceived ? revenueReceived : '0.00'}</Typography> */}
+                <Typography sx={{ fontWeight: "bold" }}>{currentMonthRevenue?.total_paid || '0.00'}</Typography>
               </Grid>
             </Grid>
           </Grid>
@@ -86,10 +111,12 @@ export default function RevenueWidget({ revenueData }) {
                 <Typography sx={{ fontWeight: "bold" }}>{currentMonth} Expenses (Expected vs Actual)</Typography>
               </Grid>
               <Grid item xs={2}>
-                <Typography sx={{ fontWeight: "bold" }}>{expenses ? expenses : '0.00'}</Typography>
+                {/* <Typography sx={{ fontWeight: "bold" }}>{expenses ? expenses : '0.00'}</Typography> */}
+                <Typography sx={{ fontWeight: "bold" }}>{currentMonthExpense?.pur_amount_due || '0.00'}</Typography>
               </Grid>
               <Grid item xs={2}>
-                <Typography sx={{ fontWeight: "bold" }}>{expensesReceived ? expensesReceived : '0.00'}</Typography>
+                {/* <Typography sx={{ fontWeight: "bold" }}>{expensesReceived ? expensesReceived : '0.00'}</Typography> */}
+                <Typography sx={{ fontWeight: "bold" }}>{currentMonthExpense?.total_paid || '0.00'}</Typography>
               </Grid>
             </Grid>
           </Grid>
