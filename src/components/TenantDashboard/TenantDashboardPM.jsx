@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Grid, Container, Paper, Typography, Button, Stack, Divider, IconButton, Box, Menu, MenuItem, CardMedia, CircularProgress } from '@mui/material';
+import { useNavigate, useLocation } from "react-router-dom";
+import { ThemeProvider, Grid, Container, Paper, Typography, Button, Stack, Divider, IconButton, Box, Menu, MenuItem, CardMedia, Backdrop, CircularProgress, TextField } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import { alpha, makeStyles } from "@material-ui/core/styles";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import CircleIcon from '@mui/icons-material/Circle';
 import PlaceholderImage from "./MaintenanceIcon.png";
@@ -25,7 +27,11 @@ import FlipIcon from './FlipImage.png'
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-
+const useStyles = makeStyles((theme) => ({
+  input: {
+    background: "#000000",
+  },
+}));
 
 const TenantDashboardPM = () => {
     const { user } = useUser(); 
@@ -74,7 +80,7 @@ const TenantDashboardPM = () => {
                 setLeaseDetailsData(dashboardData.leaseDetails?.result);
                 setMaintenanceRequestsNew(dashboardData.maintenanceRequestsNew?.result);
                 setMaintenanceStatus(dashboardData.maintenanceStatus?.result);
-                setAnnouncements(dashboardData.announcements?.result); 
+                setAnnouncements(dashboardData.announcementsReceived?.result); 
 
                 // Set first property as selected, if available
                 // const firstProperty = dashboardData.property?.result[0];
@@ -92,6 +98,7 @@ const TenantDashboardPM = () => {
                     description: payment.pur_description || 'N/A',
                     purchaseStatus: payment.purchase_status,
                     purchaseDate: payment.pur_due_date,
+                    pur_cf_type: payment.pur_cf_type,
                 }));
     
                 // Save all balance details to state
@@ -183,6 +190,20 @@ const TenantDashboardPM = () => {
         setRightPane({ type: 'paymentHistory', state: { data: paymentHistoryForProperty } });
     };
 
+    const handleMakePayment = () => {
+        const paymentHistoryForProperty = allBalanceDetails.filter(
+            (detail) => detail.propertyUid === selectedProperty.property_uid
+        );
+
+        console.log("Payment History for Make Payment:", paymentHistoryForProperty);
+        setRightPane({
+            type: "payment",
+            state: {
+                data: paymentHistoryForProperty,
+            },
+        });
+    };
+
     const handleMaintenanceLegendClick = () => {
         setRightPane({
             type: 'propertyMaintenanceRequests',
@@ -210,7 +231,7 @@ const TenantDashboardPM = () => {
                 case "tenantLeases":
                     return <TenantLeases {...rightPane.state} setRightPane={setRightPane} />;
                 case "payment":
-                    return <Payments {...rightPane.state} setRightPane={setRightPane} />;
+                    return <PaymentsPM data={rightPane.state.data} setRightPane={setRightPane} />;
                 case "propertyMaintenanceRequests":
                     return (
                     <PropertyMaintenanceRequests
@@ -258,9 +279,9 @@ const TenantDashboardPM = () => {
                         </Button>
                     </Grid>
     
-                    <Grid container spacing={3} sx={{ height: 'calc(100vh - 100px)' }}>
+                    <Grid container spacing={3} sx={{ height: 'calc(100vh - 100px)', alignItems: 'stretch'}}>
                         {/* Left-hand side: Account Balance */}
-                        <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', height: '95%' }}>
+                        <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column'}}>
                             <TenantAccountBalance
                             propertyData={propertyListingData}
                             selectedProperty={selectedProperty}
@@ -270,29 +291,30 @@ const TenantDashboardPM = () => {
                             onPaymentHistoryNavigate={handlePaymentHistoryNavigate}
                             setRightPane={setRightPane}
                             balanceDetails={balanceDetails}
+                            handleMakePayment={handleMakePayment}
                             sx={{ flex: 1 }} // Ensures this grows to match the height of the right-hand side
                             />
                         </Grid>
 
                         {/* Right-hand side */}
-                        <Grid item xs={12} md={8}>
+                        <Grid item xs={12} md={8} x={{ display: 'flex', flexDirection: 'column'}}>
                             {/* Top section: Announcements */}
                             <Grid item xs={12}>
                             <Announcements announcements={announcements}/>
                             </Grid>
 
                             {/* Bottom section containing Lease, Maintenance, and Management Details */}
-                            <Grid container spacing={3} sx={{ marginTop: '20px', flex: 1 }}>
+                            <Grid container spacing={3} sx={{ marginTop: '5px'}}>
                             {rightPane?.type ? (
                                 /* Render the rightPane component if available */
-                                <Grid item xs={12} sx={{ height: '100%' }}>
+                                <Grid item xs={12} sx={{ flex:1}}>
                                 {renderRightPane()}
                                 </Grid>
                             ) : (
                                 <>
                                 {/* Lease Details: Aligns with Account Balance */}
-                                <Grid item xs={12} md={6}>
-                                    <LeaseDetails leaseDetails={leaseDetails} sx={{ flex: 1 }} />
+                                <Grid item xs={12} md={6} sx={{flex:1}}>
+                                    <LeaseDetails leaseDetails={leaseDetails}/>
                                 </Grid>
 
                                 {/* Maintenance and Management Details: Match height with Lease Details */}
@@ -323,7 +345,7 @@ const TenantDashboardPM = () => {
     );
 }    
   
-const TenantAccountBalance = ({ propertyData, selectedProperty, setSelectedProperty, leaseDetails, leaseDetailsData, balanceDetails, onPaymentHistoryNavigate, setRightPane }) => {
+const TenantAccountBalance = ({ propertyData, selectedProperty, setSelectedProperty, leaseDetails, leaseDetailsData, balanceDetails, onPaymentHistoryNavigate, handleMakePayment, setRightPane }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const balanceDue = parseFloat(selectedProperty?.balance || 0);
@@ -362,16 +384,6 @@ const TenantAccountBalance = ({ propertyData, selectedProperty, setSelectedPrope
         });
     };
 
-    const handleMakePayment = () => {
-        console.log("selectedProperty in handlemakepayment", selectedProperty);
-        setRightPane({
-            type: "payment",
-            state: {
-                data: selectedProperty,
-            },
-        });
-    };
-
     const getButtonColor = () => {
         if (leaseDetails?.lease_status === 'NEW') return '#FAD102'; // Green for NEW
         if (leaseDetails?.lease_status === 'PROCESSING') return '#76B148'; // Yellow for PROCESSING
@@ -379,7 +391,7 @@ const TenantAccountBalance = ({ propertyData, selectedProperty, setSelectedPrope
     };
 
     return (
-        <Paper sx={{ padding: '20px', flex: 1, backgroundColor: '#f0f0f0', borderRadius: '8px' }}>
+        <Paper sx={{ padding: '30px', backgroundColor: '#f0f0f0', borderRadius: '8px' }}>
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#160449' }}>
                     Account Balance
@@ -607,7 +619,6 @@ const TenantAccountBalance = ({ propertyData, selectedProperty, setSelectedPrope
     );
 };
 
-
 function TenantPaymentHistoryTable({ data, onBack }) {
     console.log("data tenantpaymenthistorytable", data);
     const columns = [
@@ -729,9 +740,6 @@ function TenantPaymentHistoryTable({ data, onBack }) {
     );
 }
 
-
-
-
 const Announcements = ({ announcements }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
   
@@ -842,7 +850,7 @@ const Announcements = ({ announcements }) => {
         )}
       </Paper>
     );
-  };
+};
 
 const LeaseDetails = ({ leaseDetails }) => {
     console.log("Lease Details", leaseDetails);
@@ -1271,5 +1279,314 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, propertyId, onBack }) 
       </Paper>
     );
 };
+
+function PaymentsPM({ data, setRightPane }) {
+  const classes = useStyles();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user, getProfileId, roleName, selectedRole } = useUser();
+
+  // Log incoming data
+  useEffect(() => {
+    console.log('Received payment history:', data);
+  }, [data]);
+
+  const [showSpinner, setShowSpinner] = useState(false);
+  const [paymentNotes, setPaymentNotes] = useState("");
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [totalPaid, setTotalPaid] = useState(0);
+  const [totalToBePaid, setTotalToBePaid] = useState(0);
+  const [totalPayable, setTotalPayable] = useState(0);
+  const [totalToBeReceived, setTotalToBeReceived] = useState(0);
+  const [paymentMethodInfo, setPaymentMethodInfo] = useState({});
+  const managerCashflowWidgetData = location.state?.managerCashflowWidgetData || {};
+
+  const [paymentData, setPaymentData] = useState({
+    currency: "usd",
+    customer_uid: getProfileId(),
+    business_code: paymentNotes,
+    item_uid: "320-000054",
+    balance: "0.0",
+    purchase_uids: [],
+  });
+
+  const [unpaidData, setUnpaidData] = useState([]);
+
+  // Calculate totals from the filtered unpaid data
+  useEffect(() => {
+    const filteredUnpaidData = data.filter(item => item.purchaseStatus === 'UNPAID');
+    setUnpaidData(filteredUnpaidData);
+
+    const moneyToBePaidData = filteredUnpaidData.filter(item => item.purchaseType === 'Rent');
+    const moneyPayableData = filteredUnpaidData.filter(item => item.purchaseType === 'Deposit');
+
+    setTotalToBePaid(moneyToBePaidData.reduce((acc, item) => acc + parseFloat(item.amountDue || 0), 0));
+    setTotalPayable(moneyPayableData.reduce((acc, item) => acc + parseFloat(item.amountDue || 0), 0));
+    setTotal(unpaidData.reduce((acc, item) => acc + parseFloat(item.amountDue || 0), 0));
+  }, [data]);
+
+  const handlePaymentNotesChange = (event) => {
+    setPaymentNotes(event.target.value);
+  };
+
+  return (
+    <>
+      <ThemeProvider theme={theme}>
+        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
+
+        <Container>
+          <Grid container spacing={6} sx={{ height: "90%" }}>
+            <Grid container>
+              <Paper
+                component={Stack}
+                direction="column"
+                justifyContent="center"
+                style={{
+                  justifyContent: "center",
+                  width: "100%",
+                  boxShadow: "none",
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    color: "#160449",
+                    padding: "5px",
+                  }}
+                >
+                </Box>
+
+                <Paper
+                  sx={{
+                    margin: "10px",
+                    padding: 20,
+                    backgroundColor: theme.palette.primary.main,
+                  }}
+                >
+                  <Stack direction="row" justifyContent="left" m={2}>
+                    <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                      Balance
+                    </Typography>
+                  </Stack>
+                  <Stack direction="row" justifyContent="center" m={2}>
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                      <Grid item xs={6}>
+                        <Typography sx={{ marginLeft: "20px", color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: "26px" }}>
+                          ${total.toFixed(2)}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Button
+                          disabled={total <= 0}
+                          sx={{
+                            backgroundColor: "#3D5CAC",
+                            borderRadius: "10px",
+                            color: "#FFFFFF",
+                            width: "100%",
+                          }}
+                          onClick={() => {
+                            const updatedPaymentData = { ...paymentData, business_code: paymentNotes };
+                            navigate("/selectPayment", {
+                              state: {
+                                paymentData: updatedPaymentData,
+                                total: total,
+                                selectedItems: selectedItems,
+                                paymentMethodInfo: paymentMethodInfo,
+                                managerCashflowWidgetData: managerCashflowWidgetData,
+                              },
+                            });
+                          }}
+                        >
+                          <Typography
+                            variant="outlined"
+                            style={{
+                              textTransform: "none",
+                              color: "#FFFFFF",
+                              fontSize: "18px",
+                              fontFamily: "Source Sans Pro",
+                              fontWeight: "600",
+                            }}
+                          >
+                            Select Payment
+                          </Typography>
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </Stack>
+
+                  <Stack direction="row" justifyContent="center" m={2} sx={{ paddingTop: "25px", paddingBottom: "15px" }}>
+                    <TextField variant="filled" fullWidth={true} multiline={true} value={paymentNotes} onChange={handlePaymentNotesChange} label="Payment Notes" />
+                  </Stack>
+                </Paper>
+
+                {/* Balance Details */}
+                <Paper
+                  sx={{
+                    margin: "10px",
+                    padding: 20,
+                    backgroundColor: theme.palette.primary.main,
+                  }}
+                >
+                  <Stack direction="row" justifyContent="space-between">
+                    <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                      Balance Details - Money Payable
+                    </Typography>
+                  </Stack>
+
+                  <Stack>
+                    {/* Pass only the filtered unpaid data */}
+                    <TenantBalanceTablePM data={unpaidData} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
+                  </Stack>
+                </Paper>
+              </Paper>
+            </Grid>
+          </Grid>
+        </Container>
+      </ThemeProvider>
+    </>
+  );
+}
+
+function TenantBalanceTablePM(props) {
+  const [data, setData] = useState(props.data);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedPayments, setSelectedPayments] = useState([]);
+  const [paymentDueResult, setPaymentDueResult] = useState([]);
+
+  useEffect(() => {
+    setData(props.data);
+  }, [props.data]);
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      setSelectedRows(data.map((row) => row.purchase_uid));
+      setPaymentDueResult(
+        data.map((item) => ({
+          ...item,
+          pur_amount_due: parseFloat(item.amountDue),
+        }))
+      );
+    }
+  }, [data]);
+
+  useEffect(() => {
+    let total = 0;
+    let purchase_uid_mapping = [];
+
+    for (const item of selectedRows) {
+      let paymentItemData = paymentDueResult.find((element) => element.purchase_uid === item);
+      purchase_uid_mapping.push({ purchase_uid: item, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
+
+      // Adjust total based on pur_cf_type
+      if (paymentItemData.pur_cf_type === "revenue") {
+        total += parseFloat(paymentItemData.pur_amount_due);
+      } else if (paymentItemData.pur_cf_type === "expense") {
+        total -= parseFloat(paymentItemData.pur_amount_due);
+      }
+    }
+
+    props.setTotal(total);
+    props.setPaymentData((prevPaymentData) => ({
+      ...prevPaymentData,
+      balance: total.toFixed(2),
+      purchase_uids: purchase_uid_mapping,
+    }));
+  }, [selectedRows, paymentDueResult, props]);
+
+  useEffect(() => {
+    props.setSelectedItems(selectedPayments);
+  }, [selectedPayments, props]);
+
+  const handleSelectionModelChange = (newRowSelectionModel) => {
+    const addedRows = newRowSelectionModel.filter((rowId) => !selectedRows.includes(rowId));
+    const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
+
+    if (addedRows.length > 0) {
+      let newPayments = [];
+      addedRows.forEach((item) => {
+        const addedPayment = paymentDueResult.find((row) => row.purchase_uid === item);
+        newPayments.push(addedPayment);
+      });
+
+      setSelectedPayments((prevState) => [...prevState, ...newPayments]);
+    }
+
+    if (removedRows.length > 0) {
+      setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.purchase_uid)));
+    }
+
+    setSelectedRows(newRowSelectionModel);
+  };
+
+  const columnsList = [
+    {
+      field: "description",
+      headerName: "Description",
+      flex: 2,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "propertyUid",
+      headerName: "Property UID",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "purchaseStatus",
+      headerName: "Status",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "purchaseDate",
+      headerName: "Due Date",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "pur_amount_due",
+      headerName: "Amount Due",
+      flex: 1,
+      renderCell: (params) => (
+        <Box
+          sx={{
+            fontWeight: "bold",
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+          }}
+        >
+          {params.row.pur_cf_type === "revenue"
+            ? `$ ${parseFloat(params.value).toFixed(2)}`
+            : `($ ${parseFloat(params.value).toFixed(2)})`}
+        </Box>
+      ),
+    },
+  ];
+
+  return (
+    <>
+      {paymentDueResult.length > 0 && (
+        <DataGrid
+          rows={paymentDueResult}
+          columns={columnsList}
+          pageSizeOptions={[10, 50, 100]}
+          checkboxSelection
+          disableRowSelectionOnClick
+          rowSelectionModel={selectedRows}
+          onRowSelectionModelChange={handleSelectionModelChange}
+          getRowId={(row) => row.purchase_uid}
+        />
+      )}
+    </>
+  );
+}
 
 export default TenantDashboardPM;
