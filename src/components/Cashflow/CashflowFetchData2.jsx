@@ -89,6 +89,8 @@ function getPast12MonthsCashflow(data, month, year) {
 
     // let expectedMonthRevenue = getTotalExpectedRevenueByMonthYear(data, currentMonth, currentYear)
     // let expectedMonthExpense = getTotalExpectedExpenseByMonthYear(data, currentMonth, currentYear)
+    let expectedMonthRevenue = getTotalExpectedRevenueByMonthYear(data, currentMonth, currentYear)
+    let expectedMonthExpense = getTotalExpectedExpenseByMonthYear(data, currentMonth, currentYear)
     let currentMonthRevenue = getTotalRevenueByMonthYear(data, currentMonth, currentYear);
     let currentMonthExpense = getTotalExpenseByMonthYear(data, currentMonth, currentYear);
 
@@ -103,8 +105,10 @@ function getPast12MonthsCashflow(data, month, year) {
       revenue: currentMonthRevenue,
       cashflow: currentMonthRevenue - currentMonthExpense,
       monthYear: currentMonth.slice(0, 3) + " " + currentYear.slice(2, 4),
-      // "expected_revenue": expectedMonthRevenue,
-      // "expected_cashflow": expectedMonthRevenue - expectedMonthExpense,
+      // expected_revenue: expectedMonthRevenue,
+      // expected_cashflow: expectedMonthRevenue - expectedMonthExpense,
+      expectedRevenue: expectedMonthRevenue,
+      expectedCashflow: expectedMonthRevenue - expectedMonthExpense,
     });
     if (currentMonth === "January") {
       currentMonth = "December";

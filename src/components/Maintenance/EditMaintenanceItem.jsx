@@ -55,61 +55,105 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { useMaintenance } from '../../contexts/MaintenanceContext';
 import ListsContext from '../../contexts/ListsContext';
 
-export default function EditMaintenanceItem({setRefersh, setRightPane}) {
+export default function EditMaintenanceItem({setRefersh, setRightPane, maintenanceRequest, propertyAddress}) {
 	console.log("inside edit component");
 	const location = useLocation();
 	const { getList, } = useContext(ListsContext);	
+	console.log("location state", maintenanceRequest);
 	
     const maintenanceIssues = getList("maintenance");
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-	let testIssue1, testProperty1, testIssueItem1, testCost1;
-    let testTitle1, testPriority1, completionStatus1;
-    let requestUid1, propID1, maintainanceImages, maintainanceFavImage;
+	// let testIssue1, testProperty1, testIssueItem1, testCost1;
+    // let testTitle1, testPriority1, completionStatus1;
+    // let requestUid1, propID1, maintainanceImages, maintainanceFavImage;
 
-	const {
-		testIssue,
-		testProperty,
-		testIssueItem,
-		testCost,
-		testTitle,
-		testPriority,
-		completionStatus,
-		requestUid,
-		propID,
-		maintainanceImages: contextmaintainanceImages,
-		maintainanceFavImage: contextmaintainanceFavImage,
-		setEditMaintenanceView,
-		setMaintainanceImages,
-	  } = useMaintenance();
+	// const {
+	// 	testIssue,
+	// 	testProperty,
+	// 	testIssueItem,
+	// 	testCost,
+	// 	testTitle,
+	// 	testPriority,
+	// 	completionStatus,
+	// 	requestUid,
+	// 	propID,
+	// 	maintainanceImages: contextmaintainanceImages,
+	// 	maintainanceFavImage: contextmaintainanceFavImage,
+	// 	setEditMaintenanceView,
+	// 	setMaintainanceImages,
+	//   } = useMaintenance();
 
-	  if (isMobile) {
-		// Use location state in mobile
-		testIssue1 = location.state.testIssue;
-		testProperty1 = location.state.testProperty;
-		testIssueItem1 = location.state.testIssueItem;
-		testCost1 = location.state.testCost;
-		testTitle1 = location.state.testTitle;
-		testPriority1 = location.state.testPriority;
-		completionStatus1 = location.state.completionStatus;
-		requestUid1 = location.state.requestUid;
-		propID1 = location.state.propID;
-		maintainanceImages = location.state.maintainanceImages;
-		maintainanceFavImage= location.state.maintainanceFavImage;
-	  } else {
-		// Use context state in desktop view
-		testIssue1 = testIssue;
-		testProperty1 = testProperty;
-		testIssueItem1 = testIssueItem;
-		testCost1 = testCost;
-		testTitle1 = testTitle;
-		testPriority1 = testPriority;
-		completionStatus1 = completionStatus;
-		requestUid1 = requestUid;
-		propID1 = propID;
-		maintainanceImages = contextmaintainanceImages;
-		maintainanceFavImage = contextmaintainanceFavImage;
-	  }
+	//   if (isMobile) {
+	// 	// Use location state in mobile
+	// 	testIssue1 = location.state.testIssue;
+	// 	testProperty1 = location.state.testProperty;
+	// 	testIssueItem1 = location.state.testIssueItem;
+	// 	testCost1 = location.state.testCost;
+	// 	testTitle1 = location.state.testTitle;
+	// 	testPriority1 = location.state.testPriority;
+	// 	completionStatus1 = location.state.completionStatus;
+	// 	requestUid1 = location.state.requestUid;
+	// 	propID1 = location.state.propID;
+	// 	maintainanceImages = location.state.maintainanceImages;
+	// 	maintainanceFavImage= location.state.maintainanceFavImage;
+	//   } else {
+	// 	// Use context state in desktop view
+	// 	testIssue1 = testIssue;
+	// 	testProperty1 = testProperty;
+	// 	testIssueItem1 = testIssueItem;
+	// 	testCost1 = testCost;
+	// 	testTitle1 = testTitle;
+	// 	testPriority1 = testPriority;
+	// 	completionStatus1 = completionStatus;
+	// 	requestUid1 = requestUid;
+	// 	propID1 = propID;
+	// 	maintainanceImages = contextmaintainanceImages;
+	// 	maintainanceFavImage = contextmaintainanceFavImage;
+	//   }
+
+	let testIssue1 = maintenanceRequest?.maintenance_desc || location.state?.testIssue || '';
+    let testProperty1 = propertyAddress || location.state?.testProperty || '';
+    let testIssueItem1 = maintenanceRequest?.maintenance_request_type || location.state?.testIssueItem || '';
+    let testCost1 = maintenanceRequest?.maintenance_estimated_cost || location.state?.testCost || '';
+    let testTitle1 = maintenanceRequest?.maintenance_title || location.state?.testTitle || '';
+    let testPriority1 = maintenanceRequest?.maintenance_priority || location.state?.testPriority || '';
+    let completionStatus1 = maintenanceRequest?.maintenance_request_status || location.state?.completionStatus || '';
+    let requestUid1 = maintenanceRequest?.maintenance_request_uid || location.state?.requestUid || '';
+    let propID1 = maintenanceRequest?.maintenance_property_id || location.state?.propID || '';
+    let maintainanceImages = maintenanceRequest?.maintenance_images || location.state?.maintainanceImages || '[]';
+    let maintainanceFavImage = maintenanceRequest?.maintenance_favorite_image || location.state?.maintainanceFavImage || '';
+
+    const {
+        testIssue,
+        testProperty,
+        testIssueItem,
+        testCost,
+        testTitle,
+        testPriority,
+        completionStatus,
+        requestUid,
+        propID,
+        maintainanceImages: contextmaintainanceImages,
+        maintainanceFavImage: contextmaintainanceFavImage,
+        setEditMaintenanceView,
+        setMaintainanceImages,
+    } = useMaintenance();
+
+    if (!isMobile && !maintenanceRequest) {
+        // Use context state in desktop view when maintenanceRequest is not provided
+        testIssue1 = testIssue;
+        testProperty1 = testProperty;
+        testIssueItem1 = testIssueItem;
+        testCost1 = testCost;
+        testTitle1 = testTitle;
+        testPriority1 = testPriority;
+        completionStatus1 = completionStatus;
+        requestUid1 = requestUid;
+        propID1 = propID;
+        maintainanceImages = contextmaintainanceImages;
+        maintainanceFavImage = contextmaintainanceFavImage;
+    }
 
 	// setCost(testCost1);
 	// cost = testCost1;
@@ -229,7 +273,7 @@ const [favoriteIcons, setFavoriteIcons] = useState(
         } else {
 			if(selectedRole === "TENANT"){
 
-				setRightPane({type: "tenantmaintenanceitem"})
+				setRightPane({type: ""})
 			}
 
 			setEditMaintenanceView(false);
@@ -654,6 +698,7 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 											// display={" "}
 											// onFocus={true}
 											onChange={handlePropertyChange}
+											disabled={selectedRole === "TENANT"}
 											MenuProps={{
 												PaperProps: {
 													style: {

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
-import { ThemeProvider, Grid, Container, Paper, Typography, Button, Stack, Divider, IconButton, Box, Menu, MenuItem, CardMedia, Backdrop, CircularProgress, TextField } from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails, Collapse, ThemeProvider, Grid, Container, Paper, Typography, Button, Stack, Divider, IconButton, Box, Menu, MenuItem, CardMedia, Backdrop, CircularProgress, TextField } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { alpha, makeStyles } from "@material-ui/core/styles";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -8,13 +8,15 @@ import CircleIcon from '@mui/icons-material/Circle';
 import PlaceholderImage from "./MaintenanceIcon.png";
 import { List, ListItem } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
+import { Table, TableHead, TableBody, TableRow, TableCell, TableContainer } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import defaultHouseImage from "../Property/defaultHouseImage.png";
 import { useUser } from '../../contexts/UserContext'; 
 import APIConfig from "../../utils/APIConfig";
 import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
 import theme from "../../theme/theme";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridRow } from "@mui/x-data-grid";
 import MaintenanceWidget from '../Dashboard-Components/Maintenance/MaintenanceWidget';
 import { PropertyListings } from '../Property/PropertyListings';
 import PropertyInfo from '../Property/PropertyInfo';
@@ -26,6 +28,10 @@ import AddTenantMaintenanceItem from '../Maintenance/AddTenantMaintenanceItem';
 import FlipIcon from './FlipImage.png'
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import Announcements from "../Announcement/Announcements";
+import EditMaintenanceItem from "../Maintenance/EditMaintenanceItem";
+import EditIcon from '@mui/icons-material/Edit';
+import TenantMaintenanceItemDetail from '../Maintenance/TenantMaintenanceItemDetail';
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -54,14 +60,14 @@ const TenantDashboard = () => {
     const [filteredMaintenanceRequests, setFilteredMaintenanceRequests] = useState([]);
     const [allBalanceDetails, setAllBalanceDetails] = useState([]);
 
-    const fetchCashflowDetails = async () => {
-        try {
-            const response = await fetch(`${APIConfig.baseURL.dev}/cashflowTransactions/${getProfileId()}/all`);
-            const data = await response.json();
-        } catch (error) {
-            console.error("Error fetching balance details: ", error);
-        }
-    };
+    // const fetchCashflowDetails = async () => {
+    //     try {
+    //         const response = await fetch(`${APIConfig.baseURL.dev}/cashflowTransactions/${getProfileId()}/all`);
+    //         const data = await response.json();
+    //     } catch (error) {
+    //         console.error("Error fetching balance details: ", error);
+    //     }
+    // };
     
     const fetchData = async () => {
         try {
@@ -72,10 +78,10 @@ const TenantDashboard = () => {
             const dashboardResponse = await fetch(`${APIConfig.baseURL.dev}/dashboard/${profileId}`);
             const dashboardData = await dashboardResponse.json();
 
-            console.log("Dashboard data", dashboardData);
+            // console.log("Dashboard data", dashboardData);
 
             if (dashboardData) {
-                console.log("Dashboard inside check", dashboardData);
+                // console.log("Dashboard inside check", dashboardData);
                 setPropertyListingData(dashboardData.property?.result);
                 setLeaseDetailsData(dashboardData.leaseDetails?.result);
                 setMaintenanceRequestsNew(dashboardData.maintenanceRequestsNew?.result);
@@ -126,7 +132,7 @@ const TenantDashboard = () => {
     const handleSelectProperty = (property) => {
         setSelectedProperty(property); 
         updateLeaseDetails(property.property_uid);
-        fetchCashflowDetails();
+        // fetchCashflowDetails();
         // fetchPaymentHistory(property.property_uid);
         // fetchBalanceDetails(property.property_uid);
 
@@ -139,6 +145,16 @@ const TenantDashboard = () => {
             (request) => request.lease_property_id === property.property_uid
         );
         setFilteredMaintenanceRequests(filteredRequests);
+
+        if (rightPane?.type === 'paymentHistory') {
+          const updatedPaymentHistory = allBalanceDetails.filter(
+            (detail) => detail.propertyUid === property.property_uid
+          );
+          setRightPane({
+            type: 'paymentHistory',
+            state: { data: updatedPaymentHistory },
+          });
+        }
     };
 
     const updateLeaseDetails = (propertyUid) => {
@@ -186,7 +202,7 @@ const TenantDashboard = () => {
         const paymentHistoryForProperty = allBalanceDetails.filter(
             (detail) => detail.propertyUid === selectedProperty.property_uid
         );
-        console.log("testing", paymentHistoryForProperty);
+        // console.log("testing", paymentHistoryForProperty);
         setRightPane({ type: 'paymentHistory', state: { data: paymentHistoryForProperty } });
     };
 
@@ -195,13 +211,25 @@ const TenantDashboard = () => {
             (detail) => detail.propertyUid === selectedProperty.property_uid
         );
 
-        console.log("Payment History for Make Payment:", paymentHistoryForProperty);
+        // console.log("Payment History for Make Payment:", paymentHistoryForProperty);
         setRightPane({
             type: "payment",
             state: {
                 data: paymentHistoryForProperty,
             },
         });
+    };
+
+    const handleAddMaintenanceClick = () => {
+      setRightPane({
+        type: 'addtenantmaintenance',
+        state: {
+          newTenantMaintenanceState: {
+          propertyData: selectedProperty,
+          leaseData: leaseDetails,
+          },
+        },
+      });
     };
 
     const handleMaintenanceLegendClick = () => {
@@ -219,7 +247,7 @@ const TenantDashboard = () => {
         if (rightPane?.type) {
             switch (rightPane.type) {
                 case "paymentHistory":
-                    return <TenantPaymentHistoryTable data={rightPane.state.data} onBack={handleBack} />;
+                    return <TenantPaymentHistoryTable data={rightPane.state.data} setRightPane={setRightPane} onBack={handleBack} />;
                 case "listings":
                     return <PropertyListings setRightPane={setRightPane} />;
                 case "propertyInfo":
@@ -232,16 +260,29 @@ const TenantDashboard = () => {
                     return <TenantLeases {...rightPane.state} setRightPane={setRightPane} />;
                 case "payment":
                     return <PaymentsPM data={rightPane.state.data} setRightPane={setRightPane} />;
+                case "addtenantmaintenance":
+                    return <AddTenantMaintenanceItem {...rightPane.state} setRightPane={setRightPane}/>;
                 case "propertyMaintenanceRequests":
                     return (
                     <PropertyMaintenanceRequests
                         maintenanceStatus={rightPane.state.data}
                         propertyId={rightPane.state.propertyId}
-                        onBack={handleBack}
+                        onAdd={handleAddMaintenanceClick}
+                        setRightPane={setRightPane}
+                        selectedProperty={selectedProperty}
                     />
                 );
-                case "addtenantmaintenance":
-                    return <AddTenantMaintenanceItem {...rightPane.state} setRightPane={setRightPane}/>;
+                case "editmaintenance":
+                  return (
+                    <EditMaintenanceItem
+                      setRightPane={setRightPane}
+                      maintenanceRequest={rightPane.state.maintenanceRequest}
+                      currentPropertyId={rightPane.state.currentPropertyId}
+                      propertyAddress={rightPane.state.propertyAddress}
+                    />
+                  );
+                case "announcements":
+                    return <Announcements setRightPane={setRightPane} />;
                 default:
                     return null;
             }
@@ -307,7 +348,7 @@ const TenantDashboard = () => {
                         <Grid item xs={12} md={8} x={{ display: 'flex', flexDirection: 'column'}}>
                             {/* Top section: Announcements */}
                             <Grid item xs={12}>
-                            <Announcements announcements={announcements}/>
+                            <AnnouncementsPM announcements={announcements} setRightPane={setRightPane}/>
                             </Grid>
 
                             {/* Bottom section containing Lease, Maintenance, and Management Details */}
@@ -626,8 +667,8 @@ const TenantAccountBalance = ({ propertyData, selectedProperty, setSelectedPrope
     );
 };
 
-function TenantPaymentHistoryTable({ data, onBack }) {
-    console.log("data tenantpaymenthistorytable", data);
+function TenantPaymentHistoryTable({ data, setRightPane, onBack }) {
+    // console.log("data tenantpaymenthistorytable", data);
     const columns = [
         {
             field: "description",
@@ -747,7 +788,7 @@ function TenantPaymentHistoryTable({ data, onBack }) {
     );
 }
 
-const Announcements = ({ announcements }) => {
+const AnnouncementsPM = ({ announcements, setRightPane }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
   
     // Handle previous announcement
@@ -762,6 +803,10 @@ const Announcements = ({ announcements }) => {
       setCurrentIndex((prevIndex) =>
         prevIndex < announcements.length - 1 ? prevIndex + 1 : 0
       );
+    };
+
+    const handleViewAllClick = () => {
+      setRightPane({ type: 'announcements', state: { data: announcements } });
     };
   
     // Check if there are announcements
@@ -786,7 +831,10 @@ const Announcements = ({ announcements }) => {
           <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#160449' }}>
             Announcements
           </Typography>
-          <Button sx={{ color: '#3D5CAC', fontSize: '14px' }}>
+          <Button 
+            sx={{ color: '#3D5CAC', fontSize: '14px'}}
+            onClick={handleViewAllClick}
+          >
             View All [{announcements?.length || 0}]
           </Button>
         </Stack>
@@ -860,7 +908,7 @@ const Announcements = ({ announcements }) => {
 };
 
 const LeaseDetails = ({ leaseDetails }) => {
-    console.log("Lease Details", leaseDetails);
+    // console.log("Lease Details", leaseDetails);
     const [isFlipped, setIsFlipped] = useState(false);
 
     const handleFlip = () => {
@@ -989,7 +1037,7 @@ const LeaseDetails = ({ leaseDetails }) => {
 };
 
 const MaintenanceDetails = ({ maintenanceRequests, onPropertyClick, selectedProperty, leaseDetails, setRightPane }) => {
-    console.log("Maintenance Requests:", maintenanceRequests);
+    // console.log("Maintenance Requests:", maintenanceRequests);
     const maintenanceStatusCounts = {
         "New Requests": maintenanceRequests
             ?.filter(item => item.maintenance_status.trim().toUpperCase() === "NEW REQUEST")
@@ -1033,7 +1081,7 @@ const MaintenanceDetails = ({ maintenanceRequests, onPropertyClick, selectedProp
         });
       };
 
-    console.log("selected property", selectedProperty, leaseDetails);
+    // console.log("selected property", selectedProperty, leaseDetails);
 
     return (
         <Paper 
@@ -1142,149 +1190,140 @@ const ManagementDetails = ({ leaseDetails }) => {
     );
 };
 
-const PropertyMaintenanceRequests = ({ maintenanceStatus, propertyId, onBack }) => {
-    const filteredRequests = maintenanceStatus.filter(
-      (request) => request.maintenance_property_id === propertyId
-    );
+const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, propertyId, onAdd, setRightPane }) => {
+  // console.log("maintenancestatus", maintenanceStatus);
+  const [expandedRows, setExpandedRows] = useState({});
 
-  function formatTime(time) {
-    if (!time || !time.includes(':')) return '-';
-    const [hours, minutes] = time.split(':').map(Number);
-    const period = hours >= 12 ? 'PM' : 'AM';
-    const formattedHours = hours % 12 || 12;
-    return `${formattedHours}:${minutes.toString().padStart(2, '0')} ${period}`;
-  }
+  const filteredRequests = maintenanceStatus.filter(
+    (request) => request.maintenance_property_id === propertyId
+  );
 
-  function getValidDate(date) {
-    if (!date || !date.includes('-')) {
-      return '-';
-    }
-    return date;
-  }
-
-
-  const getColorForStatus = (status) => {
-    switch (status) {
-      case 'NEW':
-        return '#B62C2A';
-      case 'INFO REQUESTED':
-        return '#D4736D';
-      case 'PROCESSING':
-        return '#DEA19C';
-      case 'SCHEDULED':
-        return '#99CCFF';
-      case 'COMPLETED':
-        return '#6699FF';
-      case 'CANCELLED':
-        return '#0000FF';
-      default:
-        return '#000000';
-    }
+  const toggleAccordion = (rowId) => {
+    setExpandedRows((prev) => ({
+      ...prev,
+      [rowId]: !prev[rowId],
+    }));
   };
 
   const getColorForPriority = (priority) => {
     switch (priority) {
       case 'Low':
-        return '#FFFF00'; // Yellow
+        return '#FFFF00';
       case 'Medium':
-        return '#FFA500'; // Orange
+        return '#FFA500';
       case 'High':
-        return '#FF0000'; // Red
+        return '#FF0000';
       default:
-        return '#FFFFFF'; // Default
+        return '#FFFFFF';
     }
   };
 
-  const columns = [
-    {
-      field: 'maintenance_title',
-      headerName: 'Title',
-      flex: 1,
-      renderCell: (params) => (
-        <Box
-          sx={{
-            fontWeight: 'bold',
-            background: getColorForPriority(params.row.maintenance_priority),
-            padding: '5px',
-            color: '#000000',
-            borderRadius: '4px',
-          }}
-        >
-          {params.value}
-        </Box>
-      ),
-      headerAlign: 'left', 
-    },
-    {
-      field: 'maintenance_request_created_date',
-      headerName: 'Created Date',
-      flex: 1,
-      renderCell: (params) => (
-        <Box sx={{ width: '100%', fontWeight: 'bold', textAlign: 'center' }}>
-          {params.value ? getValidDate(params.value) : '-'}
-        </Box>
-      ),
-      headerAlign: 'center',
-    },
-    {
-        field: "maintenance_favorite_image",
-        headerName: "Images",
-        flex: 0.5,
-        renderCell: (params) => {
-          const imageUrl = params.value ? params.value : PlaceholderImage;
-          return <img src={imageUrl} alt='Maintenance' style={{ width: "60px", height: "55px" }} />;
-        },
-        headerAlign: "center",
-      },
-    {
-      field: 'scheduledDateTime',
-      headerName: 'Scheduled Date & Time',
-      flex: 1,
-      renderCell: (params) => (
-        <Box sx={{ width: '100%', fontWeight: 'bold', textAlign: 'center' }}>
-          {params.row.maintenance_scheduled_date
-            ? `${getValidDate(params.row.maintenance_scheduled_date)} ${formatTime(params.row.maintenance_scheduled_time)}`
-            : '-'}
-        </Box>
-      ),
-      headerAlign: 'center',
-    },
-  ];
-  
-    return (
-      <Paper
-        elevation={3}
-        sx={{
-          padding: '20px',
-          backgroundColor: '#f0f0f0',
-          borderRadius: '12px',
-          width: '95%', 
-          margin: 'auto',
-        }}
-      >
-        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
-          <Typography variant="h6">
-            Maintenance Requests for Property {propertyId}
-          </Typography>
-          <Button variant="outlined" onClick={onBack}>
-            Back
-          </Button>
-        </Stack>
-        <Paper elevation={3} sx={{ padding: 2 }}>
-          {filteredRequests.length > 0 ? (
-            <DataGrid
-              rows={filteredRequests}
-              columns={columns}
-              pageSize={5}
-              getRowId={(row) => row.maintenance_request_uid}
-              autoHeight
-            />
-          ) : (
-            <Typography>No Maintenance Requests Available for this Property</Typography>
-          )}
-        </Paper>
-      </Paper>
-    );
+  const handleEditClick = (request) => {
+    // Placeholder function - add your logic here
+    // console.log("edit clicked", request.maintenance_request_type);
+    setRightPane({
+      type: "editmaintenance",
+      state: {
+        maintenanceRequest: request,
+        currentPropertyId: propertyId,
+        propertyAddress: selectedProperty.property_address,
+      }
+    })
+    // console.log('Edit clicked for:', request);
+  };
+
+  return (
+    <Paper
+      elevation={3}
+      sx={{
+        padding: '20px',
+        backgroundColor: '#f0f0f0',
+        borderRadius: '12px',
+        width: '95%',
+        margin: 'auto',
+      }}
+    >
+      <Stack direction='row' justifyContent='space-between' alignItems='center' mb={2}>
+        <Typography variant='h6'>Maintenance Requests for Property {propertyId}</Typography>
+        <Button variant='outlined' onClick={onAdd}>
+          +
+        </Button>
+      </Stack>
+      <TableContainer component={Paper}>
+        <Table aria-label="maintenance requests table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Title</TableCell>
+              <TableCell align="center">Created Date</TableCell>
+              <TableCell align="center">Images</TableCell>
+              <TableCell align="center">Scheduled Date & Time</TableCell>
+              <TableCell align="center">Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredRequests.map((request) => (
+              <React.Fragment key={request.maintenance_request_uid}>
+                <TableRow>
+                  <TableCell>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        cursor: 'pointer',
+                        background: getColorForPriority(request.maintenance_priority),
+                        padding: '5px',
+                        color: '#000',
+                        borderRadius: '4px',
+                      }}
+                      onClick={() => toggleAccordion(request.maintenance_request_uid)}
+                    >
+                      {request.maintenance_title}
+                    </Box>
+                  </TableCell>
+                  <TableCell align="center">{request.maintenance_request_created_date || '-'}</TableCell>
+                  <TableCell align="center">
+                    <img src={request.maintenance_favorite_image || PlaceholderImage} alt='Maintenance' style={{ width: '60px', height: '55px' }} />
+                  </TableCell>
+                  <TableCell align="center">
+                    {request.maintenance_scheduled_date
+                      ? `${request.maintenance_scheduled_date} ${request.maintenance_scheduled_time || '--'}`
+                      : '--'}
+                  </TableCell>
+                  <TableCell align="center">
+                    <Stack direction="row" spacing={1}>
+                      <IconButton onClick={() => toggleAccordion(request.maintenance_request_uid)}>
+                        {expandedRows[request.maintenance_request_uid] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                      </IconButton>
+                      <IconButton onClick={() => handleEditClick(request)}>
+                        <EditIcon />
+                      </IconButton>
+                    </Stack>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5}>
+                    <Collapse in={expandedRows[request.maintenance_request_uid]} timeout="auto" unmountOnExit>
+                      <Box margin={1}>
+                        <Typography variant="subtitle1" gutterBottom component="div">
+                          <strong>Frequency:</strong> {request.maintenance_frequency || 'N/A'}
+                        </Typography>
+                        <Typography variant="subtitle1" gutterBottom component="div">
+                          <strong>Status:</strong> {request.maintenance_request_status || 'N/A'}
+                        </Typography>
+                        <Typography variant="subtitle1" gutterBottom component="div">
+                          <strong>Type:</strong> {request.maintenance_request_type || 'N/A'}
+                        </Typography>
+                      </Box>
+                    </Collapse>
+                  </TableCell>
+                </TableRow>
+              </React.Fragment>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Paper>
+  );
 };
 
 function PaymentsPM({ data, setRightPane }) {
@@ -1294,9 +1333,9 @@ function PaymentsPM({ data, setRightPane }) {
   const { user, getProfileId, roleName, selectedRole } = useUser();
 
   // Log incoming data
-  useEffect(() => {
-    console.log('Received payment history:', data);
-  }, [data]);
+  // useEffect(() => {
+  //   console.log('Received payment history:', data);
+  // }, [data]);
 
   const [showSpinner, setShowSpinner] = useState(false);
   const [paymentNotes, setPaymentNotes] = useState("");
