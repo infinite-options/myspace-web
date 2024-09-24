@@ -44,6 +44,7 @@ function ManagerDashboard() {
   const [revenueData, setRevenueData] = useState([]);
   const [happinessData, setHappinessData] = useState([]);
   const [maintenanceStatusData, setMaintenanceStatusData] = useState([]);
+  const [cashflowStatusData, setCashflowStatusData] = useState([]);
   const [contractRequests, setContractRequests] = useState([]);
   const [propertyData, setPropertyData] = useState([]);
 
@@ -53,11 +54,15 @@ function ManagerDashboard() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isMedium = useMediaQuery(theme.breakpoints.down("md"));
 
+  let date = new Date();
+  let currentMonth = date.toLocaleString("default", { month: "long" });
+  let currentYear = date.getFullYear().toString();
+
   //
   //
   // Check if No Profile ID
   // Want Manager or Employee Id to load ManagerDashboard
-  console.log("User Info: ", getProfileId(), selectedRole, user);
+  // console.log("User Info: ", getProfileId(), selectedRole, user);
 
   let dashboard_id = getProfileId();
   if (selectedRole === "PM_EMPLOYEE") dashboard_id = user.businesses?.MANAGEMENT?.business_uid || user?.pm_supervisor;
@@ -81,26 +86,28 @@ function ManagerDashboard() {
       // console.log("Manager Dashboard jsonData: ", jsonData);
 
       // RENT Status
-      setRentStatus(jsonData.RentStatus.result);
+      setRentStatus(jsonData.rentStatus.result);
 
       // LEASE Status
-      setLeaseStatus(jsonData.LeaseStatus.result);
+      setLeaseStatus(jsonData.leaseStatus.result);
 
       // REVENUE DATA
-      setRevenueData(jsonData.Profitability);
+      // setRevenueData(jsonData.Profitability);
 
       // HAPPINESS MATRIX
-      setHappinessData(jsonData.HappinessMatrix);
+      setHappinessData(jsonData.happinessMatrix);
       // setMatrixData(jsonData.matrix_data);
 
       // MAINTENANCE Status
-      setMaintenanceStatusData(jsonData.MaintenanceStatus.result);
+      setMaintenanceStatusData(jsonData.maintenanceStatus.result);
 
       // PROPERTY DAYA
-      setPropertyData(jsonData.Properties.result);
+      setPropertyData(jsonData.properties.result);
 
       // NEW PM REQUESTS
-      setContractRequests(jsonData.NewPMRequests.result);
+      setContractRequests(jsonData.newPMRequests.result);
+
+      setCashflowStatusData(jsonData.cashflowStatus.result);
     } catch (error) {
       console.error(error);
     }
@@ -189,7 +196,8 @@ function ManagerDashboard() {
             <PropertyRentWidget rentData={rentStatus} contractRequests={contractRequests} propertyData={propertyData} />
           </Grid>
           <Grid item xs={12} md={9}>
-            <RevenueWidget revenueData={revenueData} />
+            {/* <RevenueWidget revenueData={revenueData} cashflowStatusData={cashflowStatusData} /> */}
+            <RevenueWidget cashflowStatusData={cashflowStatusData} />
             <LeaseWidget leaseData={leaseStatus} />
             <Grid container item xs={12} spacing={6}>
               <Grid item xs={12} md={6}>

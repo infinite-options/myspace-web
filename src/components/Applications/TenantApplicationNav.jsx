@@ -730,7 +730,7 @@ const TenantApplicationNav = (props) => {
                       >
                         {
                           application?.lease_status === "PROCESSING" && (
-                            <LeaseFees leaseFees={leaseFees} />
+                            <LeaseFees leaseFees={leaseFees} isEditable={false}/>
                           )
                         }
                         <Documents documents={applicationDocuments} setDocuments={setApplicationDocuments} isEditable={false} isAccord={false} customName={"Application Documents:"}/>                                                

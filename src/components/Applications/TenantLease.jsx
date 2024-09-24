@@ -34,6 +34,7 @@ import Documents from "../Leases/Documents";
 import { getDateAdornmentString } from "../../utils/dates";
 
 import ListsContext from "../../contexts/ListsContext";
+import LeaseFees from "../Leases/LeaseFees";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -65,13 +66,13 @@ const useStyles = makeStyles((theme) => ({
 
 const initialFees = (property, application) => {
   const fees = [];
-  // console.log("--debug-- property", property);
-  // console.log("--debug-- application", application);
+  console.log("--debug-- property", property);
+  console.log("--debug-- application", application);
   if (property.property_listed_rent) {
     fees.push({
       id: fees.length + 1,
       fee_name: "Rent",
-      fee_type: "$",
+      fee_type: "Rent",
       frequency: "Monthly",
       charge: property.property_listed_rent,
       due_by: application.lease_rent_due_by,
@@ -85,7 +86,7 @@ const initialFees = (property, application) => {
     fees.push({
       id: fees.length + 1,
       fee_name: "Deposit",
-      fee_type: "$",
+      fee_type: "Deposit",
       frequency: "One Time",
       charge: property.property_deposit,
       due_by: application.lease_rent_due_by,
@@ -137,6 +138,7 @@ const TenantLease = () => {
   const [leaseVehicles, setLeaseVehicles ] = useState([]);
   const [deletedDocsUrl, setDeletedDocsUrl] = useState([])
   const [isPreviousFileChange, setIsPreviousFileChange] = useState(false)
+  const [deleteFees, setDeleteFees] = useState([])
 
 
   // console.log("# of Occupants", noOfOccupants);
@@ -179,11 +181,11 @@ const TenantLease = () => {
       }
       // console.log("Fees: ", feesList);
 
-      let i = 0;
-      feesList.forEach((fee) => {
-        fee.id = i + 1;
-        i += 1;
-      });
+      // let i = 0;
+      // feesList.forEach((fee) => {
+      //   fee.id = i + 1;
+      //   i += 1;
+      // });
 
       setFees(feesList);
     };
@@ -228,29 +230,29 @@ const TenantLease = () => {
     getOccupants();
   }, []);
 
-  const addFeeRow = () => {
-    setFees((prev) => [
-      ...prev,
-      {
-        id: prev.length + 1,
-        fee_name: "",
-        fee_type: "$",
-        frequency: "Monthly",
-        charge: "",
-        due_by: 1,
-        late_by: 2,
-        late_fee: "",
-        perDay_late_fee: "",
-        available_topay: 1,
-      },
-    ]);
-  };
+  // const addFeeRow = () => {
+  //   setFees((prev) => [
+  //     ...prev,
+  //     {
+  //       id: prev.length + 1,
+  //       fee_name: "",
+  //       fee_type: "$",
+  //       frequency: "Monthly",
+  //       charge: "",
+  //       due_by: 1,
+  //       late_by: 2,
+  //       late_fee: "",
+  //       perDay_late_fee: "",
+  //       available_topay: 1,
+  //     },
+  //   ]);
+  // };
 
-  const deleteFeeRow = (index) => {
-    const list = [...fees];
-    list.splice(index - 1, 1);
-    setFees(list);
-  };
+  // const deleteFeeRow = (index) => {
+  //   const list = [...fees];
+  //   list.splice(index - 1, 1);
+  //   setFees(list);
+  // };
 
   const handleFeeChange = (e, index) => {
     const { name, value } = e.target;
@@ -305,6 +307,7 @@ const TenantLease = () => {
     list[index - 1].available_topay = value;
     setFees(list);
   };
+  
   const handleStartDateChange = (v) => {
     setStartDate(v);
     if (endDate < v) setEndDate(v);
@@ -525,6 +528,10 @@ const TenantLease = () => {
       leaseApplicationFormData.append("lease_fees", JSON.stringify(fees));
       leaseApplicationFormData.append("lease_move_in_date", moveInDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_end_notice_period", endLeaseNoticePeriod);
+      if(deleteFees?.length > 0){
+        leaseApplicationFormData.append("delete_fees", JSON.stringify(deleteFees));
+      }
+
       if(deletedDocsUrl && deletedDocsUrl?.length !== 0){
         leaseApplicationFormData.append("delete_documents", JSON.stringify(deletedDocsUrl));
       }
@@ -605,6 +612,7 @@ const TenantLease = () => {
       setShowSpinner(false);
     }
   };
+
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -971,7 +979,13 @@ const TenantLease = () => {
             <hr />
           </Grid>
           {/* {console.log("Fees right before we loop through it", fees)} */}
-          {fees.map((row) => (
+
+          <Grid item xs={12}>
+            {fees?.length > 0 ? (<LeaseFees leaseFees={fees} isEditable={true} setLeaseFees={setFees} setDeleteFees={setDeleteFees} />) : (<></>)}
+          </Grid>
+
+          
+          {/* {fees.map((row) => (
             <Grid item xs={12} key={row.id}>
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={6}>
@@ -1302,7 +1316,7 @@ const TenantLease = () => {
                     </Button>
                   </Box>
                 </Grid>
-              </Grid>
+              </Grid> */}
               {/* {row.id === fees.length ? (
                 <Stack
                   direction="row"
@@ -1329,9 +1343,9 @@ const TenantLease = () => {
               ) : (
                 <hr />
               )} */}
-            </Grid>
-          ))}
-          <Grid item xs={12}>
+            {/* </Grid>
+          ))} */}
+          {/* <Grid item xs={12}>
             <Box
               sx={{
                 display: "flex",
@@ -1349,7 +1363,7 @@ const TenantLease = () => {
                 Add Fee
               </Button>
             </Box>
-          </Grid>
+          </Grid> */}
           {/* {leaseFiles.length ? (
             <Grid item xs={12}>
               <Box
@@ -1444,7 +1458,7 @@ const TenantLease = () => {
           ) : (
             <></>
           )} */}
-          <Box marginLeft={'20px'} width={'100%'}>
+          <Box marginLeft={'20px'} marginTop={"10px"} width={'100%'}>
             <Documents setIsPreviousFileChange={setIsPreviousFileChange} documents={leaseDocuments} setDocuments={setLeaseDocuments} deletedDocsUrl={deletedDocsUrl} setDeleteDocsUrl={setDeletedDocsUrl} contractFiles={leaseFiles} setContractFiles={setLeaseFiles} contractFileTypes={leaseFileTypes} setContractFileTypes={setLeaseFileTypes} isAccord={false} isEditable={true}/>
           </Box>
           {/* <Grid item xs={12}>

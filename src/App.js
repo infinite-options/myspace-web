@@ -12,15 +12,15 @@ function App() {
     <CookiesProvider defaultSetOptions={{ path: "/" }}>
       <UserProvider>
         <OnboardingProvider>
-          <SettingsACHContextProvider>
-            <MaintenanceProvider> 
-              <ListsProvider>
+          <ListsProvider>
+            <SettingsACHContextProvider>
+              <MaintenanceProvider>               
                 <BrowserRouter>
                   <Main />
-                </BrowserRouter>
-              </ListsProvider>
-            </MaintenanceProvider>
-          </SettingsACHContextProvider>
+                </BrowserRouter>              
+              </MaintenanceProvider>
+            </SettingsACHContextProvider>
+          </ListsProvider>
         </OnboardingProvider>
       </UserProvider>
     </CookiesProvider>

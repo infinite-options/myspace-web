@@ -12,7 +12,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
-import APIConfig from "../../../utils/APIConfig"
+import APIConfig from "../../../utils/APIConfig";
 
 export default function MaintenanceWorkerDashboardWidget(props) {
   const navigate = useNavigate();
@@ -25,60 +25,59 @@ export default function MaintenanceWorkerDashboardWidget(props) {
   const [maintenanceRequests, setMaintenanceRequests] = useState({});
   const [query, setQuery] = useState("");
 
-
   useEffect(() => {
     const dataObject = {};
     // const fetchMaintenanceDashboardData = async () => {
     //   setShowSpinner(true);
     //   const jsonData = props.dashboard_data;
     //   console.log("DEBUG jsonData", jsonData);
-    //   setWorkOrders(jsonData.WorkOrders.result);
-    //   setCurrentActivities(jsonData.CurrentActivities.result);
+    //   setWorkOrders(jsonData.workOrders.result);
+    //   setCurrentActivities(jsonData.currentActivities.result);
     //   setShowSpinner(false);
     // };
 
     const getMaintenanceData = async () => {
-        setShowSpinner(true);
-        const maintenanceRequests1 = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${getProfileId()}`);
-        const maintenanceRequestsData1 = await maintenanceRequests1.json();
+      setShowSpinner(true);
+      const maintenanceRequests1 = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${getProfileId()}`);
+      const maintenanceRequestsData1 = await maintenanceRequests1.json();
 
-        let array1 = maintenanceRequestsData1.result?.REQUESTED?.maintenance_items ?? [];
-        let array2 = maintenanceRequestsData1.result?.SUBMITTED?.maintenance_items ?? [];
-        
-        // This removes rejected quotes and adds it to another array.
-        // let rejectedQuotes = [];
-        // for (let i = 0; i < array2.length; i++) {
-        //     let item = array2[i];
-        //     if (item.quote_status === "REJECTED") {
-        //         rejectedQuotes.push(item);
-        //         array2.splice(i, 1);
-        //         i--;
-        //     }
-        // }
-        let array3 = maintenanceRequestsData1.result?.ACCEPTED?.maintenance_items ?? [];
-        let array4 = maintenanceRequestsData1.result?.SCHEDULED?.maintenance_items ?? [];
-        let array5 = maintenanceRequestsData1.result?.FINISHED?.maintenance_items ?? [];
-        let array6 = maintenanceRequestsData1.result?.PAID?.maintenance_items ?? [];
+      let array1 = maintenanceRequestsData1.result?.REQUESTED?.maintenance_items ?? [];
+      let array2 = maintenanceRequestsData1.result?.SUBMITTED?.maintenance_items ?? [];
 
-        dataObject["REQUESTED"] = [...array1];
-        dataObject["SUBMITTED"] = [...array2];
-        dataObject["ACCEPTED"] = [...array3];
-        dataObject["SCHEDULED"] = [...array4];
-        dataObject["FINISHED"] = [...array5];
-        dataObject["PAID"] = [...array6];
+      // This removes rejected quotes and adds it to another array.
+      // let rejectedQuotes = [];
+      // for (let i = 0; i < array2.length; i++) {
+      //     let item = array2[i];
+      //     if (item.quote_status === "REJECTED") {
+      //         rejectedQuotes.push(item);
+      //         array2.splice(i, 1);
+      //         i--;
+      //     }
+      // }
+      let array3 = maintenanceRequestsData1.result?.ACCEPTED?.maintenance_items ?? [];
+      let array4 = maintenanceRequestsData1.result?.SCHEDULED?.maintenance_items ?? [];
+      let array5 = maintenanceRequestsData1.result?.FINISHED?.maintenance_items ?? [];
+      let array6 = maintenanceRequestsData1.result?.PAID?.maintenance_items ?? [];
 
-        // dataObject["REJECTED"] = [...rejectedQuotes];
+      dataObject["REQUESTED"] = [...array1];
+      dataObject["SUBMITTED"] = [...array2];
+      dataObject["ACCEPTED"] = [...array3];
+      dataObject["SCHEDULED"] = [...array4];
+      dataObject["FINISHED"] = [...array5];
+      dataObject["PAID"] = [...array6];
 
-        // console.log("dataObject from new api call", dataObject)
-        setMaintenanceRequests((prevData) => ({
-            ...prevData,
-            ...dataObject,
-        }));
-        setShowSpinner(false);
+      // dataObject["REJECTED"] = [...rejectedQuotes];
+
+      // console.log("dataObject from new api call", dataObject)
+      setMaintenanceRequests((prevData) => ({
+        ...prevData,
+        ...dataObject,
+      }));
+      setShowSpinner(false);
     };
-        getMaintenanceData();
+    getMaintenanceData();
 
-        // fetchMaintenanceDashboardData();
+    // fetchMaintenanceDashboardData();
   }, []);
 
   function handleFilter(filterString, searchArray) {
@@ -103,7 +102,7 @@ export default function MaintenanceWorkerDashboardWidget(props) {
       }}
     >
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color="inherit" />
+        <CircularProgress color='inherit' />
       </Backdrop>
       <Grid container spacing={4} sx={{ paddingLeft: "5px" }}>
         <Grid item xs={12}>
@@ -114,7 +113,7 @@ export default function MaintenanceWorkerDashboardWidget(props) {
         <Grid item xs={2}>
           <Box sx={{ paddingLeft: "5px", alignContent: "center", alignItems: "center" }}>
             <Button
-              variant="contained"
+              variant='contained'
               sx={{
                 backgroundColor: "darkgrey", // Set the dark grey background
                 borderRadius: "25px", // Set border radius to half of the height to create an oval shape
@@ -133,9 +132,9 @@ export default function MaintenanceWorkerDashboardWidget(props) {
           </Box>
         </Grid>
         <Grid item xs={10} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <Paper component="form" style={{ padding: "2px 4px", display: "flex", alignItems: "center", width: 400, alignContent: "center" }}>
-            <InputBase style={{ marginLeft: "8px", flex: 1 }} placeholder="Search" inputProps={{ "aria-label": "search" }} value={query} onChange={handleInputChange} />
-            <IconButton type="submit" style={{ padding: "10px" }} onClick={() => console.log("test")} aria-label="search">
+          <Paper component='form' style={{ padding: "2px 4px", display: "flex", alignItems: "center", width: 400, alignContent: "center" }}>
+            <InputBase style={{ marginLeft: "8px", flex: 1 }} placeholder='Search' inputProps={{ "aria-label": "search" }} value={query} onChange={handleInputChange} />
+            <IconButton type='submit' style={{ padding: "10px" }} onClick={() => console.log("test")} aria-label='search'>
               <SearchIcon />
             </IconButton>
           </Paper>
