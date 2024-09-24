@@ -29,13 +29,26 @@ import { maskSSN, maskEIN } from "../../utils/privacyMasking";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 
-function groupByProperty(array, property) {
+function groupByProperty(array) {
+  const key = 'pur_property_id'
   return array.reduce((acc, item) => {
-    const propertyId = item[property];
-    if (!acc[propertyId]) {
-      acc[propertyId] = [];
+    const propertyID = item[key];
+    if (!acc[propertyID]) {
+      acc[propertyID] = [];
     }
-    acc[propertyId].push(item);
+    acc[propertyID].push(item);
+    return acc;
+  }, {});
+}
+
+function groupByMonth(array) {  
+  return array.reduce((acc, item) => {
+    const month = item['cf_month_num'];
+    const year = item['cf_year'];
+    if (!acc[month+year]) {
+      acc[month+year] = [];
+    }
+    acc[month+year].push(item);
     return acc;
   }, {});
 }
@@ -100,8 +113,10 @@ const OwnerContactDetailsHappinessMatrix = () => {
 
   useEffect(() => {
     console.log("ROHIT - cashflowData - ", cashflowData);
-    const groupedByProperty = groupByProperty(cashflowData, 'pur_property_id');
+    const groupedByProperty = groupByProperty(cashflowData);
+    const groupedByMonth = groupByMonth(cashflowData);
     console.log("ROHIT - groupedByProperty - ", groupedByProperty);
+    console.log("ROHIT - groupedByMonth - ", groupedByMonth);
   }, [cashflowData]);
 
   const fetchCashflowData = async () => {
