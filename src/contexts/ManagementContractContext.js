@@ -53,7 +53,7 @@ export const ManagementContractProvider = ({ children }) => {
 
     try {
       const jsonData = await response.json();      
-      const requests = jsonData?.NewPMRequests?.result;
+      const requests = jsonData?.newPMRequests?.result;
       setContractRequests(requests);      
     } catch (error) {
       console.error(error);

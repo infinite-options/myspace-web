@@ -125,7 +125,7 @@ const QuotesList = (props) => {
                     gap: "10px",  
                   }}
                 >
-                {contractRequests.map((contract, index) => (
+                {contractRequests?.map((contract, index) => (
                   <Grid item xs={12} key={index} sx={{marginBottom: 0}} >
                     <ContractCard 
                       key={index}
