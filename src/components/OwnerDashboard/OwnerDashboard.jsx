@@ -57,6 +57,8 @@ export default function OwnerDashboard() {
   const [leaseStatus, setLeaseStatus] = useState([]);
   const [maintenanceStatusData, setMaintenanceStatusData] = useState([]);
   const [cashflowStatusData, setCashflowStatusData] = useState([]);
+  const [propertList, setPropertyList] = useState([]);
+
   const [showSpinner, setShowSpinner] = useState(true); // Initially set to true
   const [currentMonth, setCurrentMonth] = useState(date.getMonth() + 1);
 
@@ -66,7 +68,9 @@ export default function OwnerDashboard() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isMedium = useMediaQuery(theme.breakpoints.down("md"));
 
-  const [announcementsData, setAnnouncementsData] = useState([]);
+  const [announcementSentData, setAnnouncementSentData] = useState([])
+  const [announcementRecvData, setAnnouncementRecvData] = useState([])
+
   const [view, setView] = useState("dashboard");
   const [showReferralWelcomeDialog, setShowReferralWelcomeDialog] = useState(false);
   // console.log("getProfileId()", getProfileId());
@@ -85,11 +89,14 @@ export default function OwnerDashboard() {
       const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
       const jsonData = await response.json();
 
-      const announcementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`);
-      const announcementsResponseData = await announcementsResponse.json();
+      // const announcementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`);
+      // const announcementsResponseData = await announcementsResponse.json();
 
-      let announcementsReceivedData = announcementsResponseData?.received?.result;
-      setAnnouncementsData(announcementsReceivedData || ["Card 1", "Card 2", "Card 3", "Card 4", "Card 5"]);
+      let announcementsReceivedData = jsonData?.announcementsReceived?.result;
+      setAnnouncementRecvData(announcementsReceivedData || ["Card 1", "Card 2", "Card 3", "Card 4", "Card 5"]);
+
+      setAnnouncementSentData(jsonData?.announcementsSent?.result);
+      setPropertyList(jsonData?.properties?.result);
 
       setMaintenanceStatusData(jsonData.maintenanceStatus.result);
       setCashflowStatusData(jsonData.cashflowStatus);
@@ -139,7 +146,7 @@ export default function OwnerDashboard() {
                   </Box>
                 </Grid>
                 <Grid item xs={12} md={4}>
-                  <CashflowWidget page={"OwnerDashboard"}/>
+                  <CashflowWidget page={"OwnerDashboard"} allProperties={propertList} data={cashflowStatusData} originalData={cashflowStatusData}/>
                 </Grid>
                 <Grid container item xs={12} md={8} columnSpacing={6}>
                   <Grid item xs={12} md={6} sx={{ marginBottom: isMobile ? "10px" : "1px" }}>
@@ -201,13 +208,13 @@ export default function OwnerDashboard() {
                               }}
                               onClick={() => setView("announcements")}
                             >
-                              {isMobile ? `(${announcementsData.length})` : `View all (${announcementsData.length})`}
+                              {isMobile ? `(${announcementRecvData.length + announcementSentData.length})` : `View all (${announcementRecvData.length + announcementSentData.length})`}
                             </Box>
                           </Box>
                         </Grid>
                       </Grid>
-                      {announcementsData.length > 0 ? (
-                        <NewCardSlider announcementList={announcementsData} isMobile={isMobile} />
+                      {announcementRecvData.length > 0 ? (
+                        <NewCardSlider announcementList={announcementRecvData} isMobile={isMobile} />
                       ) : (
                         <Box sx={{ display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "235px" }}>
                           <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" } }}>No Announcements</Typography>
@@ -220,7 +227,7 @@ export default function OwnerDashboard() {
             ) : (
               <>
                 <Grid item xs={12} md={4}>
-                  <CashflowWidget data={cashflowStatusData} />
+                  <CashflowWidget page={"OwnerDashboard"} data={cashflowStatusData} allProperties={propertList} originalData={cashflowStatusData}/>
                 </Grid>
                 <Grid item xs={12} md={8}>
                   <Box sx={{ display: "flex", alignItems: "center", paddingTop: "10px" }}>
@@ -229,7 +236,7 @@ export default function OwnerDashboard() {
                     </IconButton>
                   </Box>
                   <Box sx={{ paddingTop: "10px" }}>
-                    <Announcements />
+                    <Announcements sentAnnouncementData={announcementSentData} recvAnnouncementData={announcementRecvData}/>
                   </Box>
                 </Grid>
               </>

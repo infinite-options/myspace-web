@@ -14,12 +14,12 @@ import Button from "@mui/material/Button";
 
 import APIConfig from "../../utils/APIConfig";
 
-export default function Announcements() {
+export default function Announcements({sentAnnouncementData, recvAnnouncementData}) {
   // console.log("intial commit");
   const { user, getProfileId, selectedRole, selectRole, Name } = useUser();
   const [announcementData, setAnnouncementData] = useState([]);
-  const [sentData, setSentData] = useState([]);
-  const [receivedData, setReceivedData] = useState([]);
+  const [sentData, setSentData] = useState(sentAnnouncementData ? sentAnnouncementData : []);
+  const [receivedData, setReceivedData] = useState(recvAnnouncementData ? recvAnnouncementData : []);
   const [filteredSentData, setFilteredSentData] = useState([]);
   const [filteredReceivedData, setFilteredReceivedData] = useState([]);
   const [showSpinner, setShowSpinner] = useState(false);
