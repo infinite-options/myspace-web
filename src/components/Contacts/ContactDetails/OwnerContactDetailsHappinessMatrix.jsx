@@ -191,19 +191,13 @@ const OwnerContactDetailsHappinessMatrix = () => {
   const [cashflowDataByPropertyByMonth, setCashflowDataByPropertyByMonth ] = useState([]);
 
 
-   useEffect(() => {
-    console.log("ROHIT - index - ", index);
-    if(contactDetails){
-      console.log("ROHIT - contactDetails - ", contactDetails);
-      console.log("ROHIT - contactDetails[index] - ", contactDetails[index]);
-    }
-  }, [index]);
-
   // useEffect(() => {
-  //   console.log("ROHIT - contactDetails - ", contactDetails);
-  //   console.log("ROHIT - contactDetails[index] - ", contactDetails[index]);
-  // }, [contactDetails]);
-
+  //   console.log("index - ", index);
+  //   if(contactDetails){
+  //     console.log("contactDetails - ", contactDetails);
+  //     console.log("contactDetails[index] - ", contactDetails[index]);
+  //   }
+  // }, [index]);
 
 
 
@@ -469,13 +463,13 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
   const [contactsData, setContactsData] = useState([]);
   const [filteredContactsData, setFilteredContactsData] = useState([]);
 
-  useEffect(() => {
-    console.log("ROHIT - AllContacts - contactsData - ", contactsData);
-  }, [contactsData]);
+  // useEffect(() => {
+  //   console.log("AllContacts - contactsData - ", contactsData);
+  // }, [contactsData]);
 
-  useEffect(() => {
-    console.log("ROHIT - AllContacts - filteredContactsData - ", filteredContactsData);
-  }, [filteredContactsData]);
+  // useEffect(() => {
+  //   console.log("AllContacts - filteredContactsData - ", filteredContactsData);
+  // }, [filteredContactsData]);
 
   useEffect(() => {
     const processedData = data?.map((contact) => {
@@ -490,7 +484,7 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
   }, [data]);
 
   useEffect(() => {
-    console.log("ROHIT - searchTerm - ", searchTerm);
+    // console.log("searchTerm - ", searchTerm);
     if(searchTerm && searchTerm !== "") {
       const filteredValues = contactsData?.filter((item) => {
         return item?.owner_first_name?.toLowerCase().includes(searchTerm.toLowerCase()) || item?.owner_last_name?.toLowerCase().includes(searchTerm.toLowerCase());
