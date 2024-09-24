@@ -175,6 +175,8 @@ export default function Cashflow() {
       setTotalExpenseByMonth(currentMonthYearTotalExpense); // currently using sum(total_paid)
       setExpectedRevenueByMonth(currentMonthYearExpectedRevenue);
       setExpectedExpenseByMonth(currentMonthYearExpectedExpense);
+      // setExpectedRevenueByMonth(currentMonthYearExpectedRevenue);
+      // setExpectedExpenseByMonth(currentMonthYearExpectedExpense);
       setRevenueList(getRevenueList(cashflowData2));
       setExpenseList(getExpenseList(cashflowData2));
       // console.log("--debug-- expenseList", revenueList)
@@ -552,7 +554,7 @@ const CashflowDetails = ({
           <Stack sx={{marginTop : "10px"}} direction='row' justifyContent='center' textTransform={"none"}>
             <Button onClick={() => setShowChart(showChart === "Current" ? "Expected" : "Current")} variant='outlined'>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>
-                {showChart === "Current" ? "Show Expected Cashflow" : "Show Current Cashflow"}
+                {showChart === "Current" ? "Show Future Cashflow" : "Show Current Cashflow"}
               </Typography>
             </Button>
           </Stack>
