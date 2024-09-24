@@ -163,6 +163,83 @@ function groupByMonth(array) {
   return cashflowByOwnerByMonth;  
 }
 
+function groupByPropertyByMonth(array) {
+  const ownermonthPropertyList = [];
+  let cashflowByPropertyByMonth = {};  
+
+  const cashflowByOwnerByMonth = []
+  const cashflowByOwnerByPropertyByMonth =[]
+
+  array?.forEach( item => {
+    const key = item.property_owner_id + item.cf_month_num + item.cf_year + item.property_uid;
+    if (!ownermonthPropertyList.includes(key)){
+      ownermonthPropertyList.push(key);
+    }
+  })
+
+  
+  // console.log("groupByPropertyByMonth - ownermonthPropertyList - ", ownermonthPropertyList);
+
+  
+  ownermonthPropertyList?.forEach( ownerMonthProperty => {
+    const filteredTransactions = array.filter( item => (item.property_owner_id + item.cf_month_num + item.cf_year + item.property_uid) === ownerMonthProperty);
+    // console.log("groupByMonth - filteredTransactions - ", filteredTransactions);
+    
+
+
+    const cashflowMonthPropertyItem = {      
+      [`${ownerMonthProperty}`]:  filteredTransactions,
+    }
+  
+    // console.log("cashflowMonthItem - ", cashflowMonthItem);
+    cashflowByPropertyByMonth = {
+      ...cashflowByPropertyByMonth,
+      ...cashflowMonthPropertyItem,
+    };
+  })  
+  // console.log("cashflowByPropertyByMonth - ", cashflowByPropertyByMonth);
+
+  Object.keys(cashflowByPropertyByMonth)?.forEach( ownerMonthProperty => {
+    const filteredTransactions = cashflowByPropertyByMonth[ownerMonthProperty];     
+    // console.log("277 - filteredTransactions - ", filteredTransactions);
+    const totalPurAmountDue = filteredTransactions?.reduce((acc, transaction) => {
+      const purAmountDue =  parseFloat(transaction.pur_amount_due)
+      return acc + purAmountDue;
+    }, 0);
+
+    const totalPaid = filteredTransactions?.reduce((acc, transaction) => {
+      const totalPaid =  parseFloat(transaction.total_paid? transaction.total_paid : "0")
+      return acc + totalPaid;
+    }, 0);
+
+    // console.log("277 - totalPurAmountDue - ", totalPurAmountDue);
+    // console.log("277 - totalPaid - ", totalPaid);
+
+    const deltaCashflow = totalPurAmountDue - totalPaid;
+    const percentDeltaCashflow = (deltaCashflow / totalPurAmountDue) * 100;
+
+
+    const cashflowItem = {
+      ...filteredTransactions[0],
+      actual_cashflow: totalPaid,
+      expected_cashflow: totalPurAmountDue,
+      delta_cashflow: deltaCashflow,
+      percent_delta_cashflow: percentDeltaCashflow.toFixed(2),
+
+    }
+  
+    // console.log("cashflowItem - ", cashflowItem);
+    cashflowByOwnerByPropertyByMonth.push(cashflowItem);
+  })
+
+  // console.log("235 - cashflowByOwnerByPropertyByMonth - ", cashflowByOwnerByPropertyByMonth);
+  
+
+
+  
+  return cashflowByOwnerByPropertyByMonth;  
+}
+
 
 const OwnerContactDetailsHappinessMatrix = () => {
   // Context and hooks
@@ -235,6 +312,7 @@ const OwnerContactDetailsHappinessMatrix = () => {
     // console.log("cashflowData - ", cashflowData);
     const groupedByProperty = groupByProperty(cashflowData);
     const groupedByMonth = groupByMonth(cashflowData);
+    const groupedByPropertyByMonth = groupByPropertyByMonth(cashflowData);
     // const groupedByOwner = groupByOwner(groupedByMonth)
     // console.log("groupedByProperty - ", groupedByProperty);
     // console.log("groupedByMonth - ", groupedByMonth);
@@ -242,7 +320,7 @@ const OwnerContactDetailsHappinessMatrix = () => {
     // const groupedByOwner = groupByOwner(cashflowData);
     // setCashflowDataByOwner(groupedByOwner);
     setCashflowDataByMonth(groupedByMonth);
-    setCashflowDataByPropertyByMonth([]);
+    setCashflowDataByPropertyByMonth(groupedByPropertyByMonth);
     
   }, [cashflowData, contactDetails, index]);
 
@@ -258,10 +336,10 @@ const OwnerContactDetailsHappinessMatrix = () => {
       
       // console.log("272 - groupedByMonth - ", groupedByMonth);
       // setFilteredCashflowDetails(groupedByMonth); //by month
-      setFilteredCashflowDetailsByPropertyByMonth([]);
+      setFilteredCashflowDetailsByPropertyByMonth(contactDetails ? cashflowDataByPropertyByMonth?.filter((item) => item.property_owner_id === currentOwnerID) : []);
     }
     
-  }, [cashflowDataByProperty, cashflowDataByMonth, contactDetails, index]);
+  }, [cashflowDataByProperty, cashflowDataByMonth, cashflowDataByPropertyByMonth, contactDetails, index]);
 
   const fetchCashflowData = async () => {
     // const url = `http://localhost:4000/contacts/${getProfileId()}`;
@@ -1190,15 +1268,15 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
             renderCell: (params) => <span>{params.row.cf_year !== null ? params.row.cf_year : "-"}</span>,
           },
         ]
-      : []),
-    {
-      field: "actual_cashflow",
-      headerName: "Actual Cashflow",
-      width: 100,
-    },
+      : []),    
     {
       field: "expected_cashflow",
       headerName: "Expected Cashflow",
+      width: 100,
+    },
+    {
+      field: "actual_cashflow",
+      headerName: "Actual Cashflow",
       width: 100,
     },
     {
