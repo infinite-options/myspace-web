@@ -91,10 +91,10 @@ export default function OwnerDashboard() {
       let announcementsReceivedData = announcementsResponseData?.received?.result;
       setAnnouncementsData(announcementsReceivedData || ["Card 1", "Card 2", "Card 3", "Card 4", "Card 5"]);
 
-      setMaintenanceStatusData(jsonData.MaintenanceStatus.result);
-      setCashflowStatusData(jsonData.CashflowStatus);
-      setRentStatus(jsonData.RentStatus.result);
-      setLeaseStatus(jsonData.LeaseStatus.result);
+      setMaintenanceStatusData(jsonData.maintenanceStatus.result);
+      setCashflowStatusData(jsonData.cashflowStatus);
+      setRentStatus(jsonData.rentStatus.result);
+      setLeaseStatus(jsonData.leaseStatus.result);
       setShowSpinner(false); // Hide spinner when data is loaded
     };
     fetchData();
