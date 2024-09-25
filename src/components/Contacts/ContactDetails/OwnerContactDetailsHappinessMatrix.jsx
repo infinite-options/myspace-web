@@ -27,6 +27,7 @@ import AddressIcon from "../../Property/addressIconDark.png";
 import maintenanceIcon from "../../Property/maintenanceIcon.png";
 import { maskSSN, maskEIN } from "../../utils/privacyMasking";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import ReturningUser from "../../Onboarding/ReturningUser";
 
 
 function groupByProperty(array) {
@@ -48,17 +49,29 @@ function groupByProperty(array) {
     }
   })
 
+  // console.log("propertyList - ", propertyList);
+
   propertyList?.forEach( propertyID => {
     const filteredTransactions = array.filter( item => item.pur_property_id === propertyID);
     // console.log("filteredTransactions - ", filteredTransactions);
     const totalPurAmountDue = filteredTransactions?.reduce((acc, transaction) => {
-      const purAmountDue =  parseFloat(transaction.pur_amount_due)
-      return acc + purAmountDue;
+      const purAmountDue =  parseFloat(transaction.expected)
+      if(transaction.pur_payer.startsWith("110")){
+        return acc - purAmountDue;  
+      } else if(transaction.pur_receiver.startsWith("110")){
+        return acc + purAmountDue;  
+      }
+      return acc + 0;
     }, 0);
 
     const totalPaid = filteredTransactions?.reduce((acc, transaction) => {
-      const totalPaid =  parseFloat(transaction.total_paid? transaction.total_paid : "0")
-      return acc + totalPaid;
+      const totalPaid =  parseFloat(transaction.total_paid? transaction.actual : "0")
+      if(transaction.pur_payer.startsWith("110")){
+        return acc - totalPaid;  
+      } else if(transaction.pur_receiver.startsWith("110")){
+        return acc + totalPaid;  
+      }
+      return acc + 0;
     }, 0);
 
     // console.log("totalPurAmountDue - ", totalPurAmountDue);
@@ -80,7 +93,7 @@ function groupByProperty(array) {
     // console.log("ashflowItem - ", cashflowItem);
     cashflowByProperty.push(cashflowItem);
   })
-  // console.log("propertyList - ", propertyList);
+  
   // console.log("cashflowByProperty - ", cashflowByProperty);
 
   
@@ -94,8 +107,16 @@ function groupByMonth(array) {
   const cashflowByOwnerByMonth = []
 
   array?.forEach( item => {
-    if (!monthOwnerList.includes(item.cf_month_num + item.cf_year + item.property_owner_id)){
-      monthOwnerList.push(item.cf_month_num + item.cf_year + item.property_owner_id);
+    let ownerID = null;
+    if(item.pur_payer.startsWith("110")){
+      ownerID = item.pur_payer;
+    }else if(item.pur_receiver.startsWith("110")){
+      ownerID = item.pur_receiver;
+    } else {
+      return;
+    }
+    if (!monthOwnerList.includes(item.cf_month_num + item.cf_year + ownerID)){
+      monthOwnerList.push(item.cf_month_num + item.cf_year + ownerID);
     }
   })
 
@@ -104,7 +125,11 @@ function groupByMonth(array) {
 
   
   monthOwnerList?.forEach( monthYearOwner => {
+
     const filteredTransactions = array.filter( item => (item.cf_month_num + item.cf_year + item.property_owner_id) === monthYearOwner);
+
+    
+    // const filteredTransactions = array.filter( item => (item.cf_month_num + item.cf_year + item.pur_payer) === monthYearOwner || (item.cf_month_num + item.cf_year + item.pur_receiver) === monthYearOwner);
     // console.log("groupByMonth - filteredTransactions - ", filteredTransactions);
     
 
@@ -126,13 +151,23 @@ function groupByMonth(array) {
     const filteredTransactions = array;
     // console.log("277 - filteredTransactions - ", filteredTransactions);
     const totalPurAmountDue = filteredTransactions?.reduce((acc, transaction) => {
-      const purAmountDue =  parseFloat(transaction.pur_amount_due)
-      return acc + purAmountDue;
+      const purAmountDue =  parseFloat(transaction.expected)
+      if(transaction.pur_payer.startsWith("110")){
+        return acc - purAmountDue;  
+      } else if(transaction.pur_receiver.startsWith("110")){
+        return acc + purAmountDue;  
+      }
+      return acc + 0;
     }, 0);
 
     const totalPaid = filteredTransactions?.reduce((acc, transaction) => {
-      const totalPaid =  parseFloat(transaction.total_paid? transaction.total_paid : "0")
-      return acc + totalPaid;
+      const totalPaid =  parseFloat(transaction.actual? transaction.actual : "0")
+      if(transaction.pur_payer.startsWith("110")){
+        return acc - totalPaid;  
+      } else if(transaction.pur_receiver.startsWith("110")){
+        return acc + totalPaid;  
+      }      
+      return acc + 0;
     }, 0);
 
     // console.log("277 - totalPurAmountDue - ", totalPurAmountDue);
@@ -166,12 +201,11 @@ function groupByMonth(array) {
 function groupByPropertyByMonth(array) {
   const ownermonthPropertyList = [];
   let cashflowByPropertyByMonth = {};  
-
-  const cashflowByOwnerByMonth = []
+  
   const cashflowByOwnerByPropertyByMonth =[]
 
   array?.forEach( item => {
-    const key = item.property_owner_id + item.cf_month_num + item.cf_year + item.property_uid;
+    const key = item.property_owner_id + item.cf_month_num + item.cf_year + item.pur_property_id;
     if (!ownermonthPropertyList.includes(key)){
       ownermonthPropertyList.push(key);
     }
@@ -182,7 +216,7 @@ function groupByPropertyByMonth(array) {
 
   
   ownermonthPropertyList?.forEach( ownerMonthProperty => {
-    const filteredTransactions = array.filter( item => (item.property_owner_id + item.cf_month_num + item.cf_year + item.property_uid) === ownerMonthProperty);
+    const filteredTransactions = array.filter( item => (item.property_owner_id + item.cf_month_num + item.cf_year + item.pur_property_id) === ownerMonthProperty);
     // console.log("groupByMonth - filteredTransactions - ", filteredTransactions);
     
 
@@ -203,13 +237,23 @@ function groupByPropertyByMonth(array) {
     const filteredTransactions = cashflowByPropertyByMonth[ownerMonthProperty];     
     // console.log("277 - filteredTransactions - ", filteredTransactions);
     const totalPurAmountDue = filteredTransactions?.reduce((acc, transaction) => {
-      const purAmountDue =  parseFloat(transaction.pur_amount_due)
-      return acc + purAmountDue;
+      const purAmountDue =  parseFloat(transaction.expected)
+      if(transaction.pur_payer.startsWith("110")){
+        return acc - purAmountDue;  
+      } else if(transaction.pur_receiver.startsWith("110")){
+        return acc + purAmountDue;  
+      }
+      return acc + 0;
     }, 0);
 
     const totalPaid = filteredTransactions?.reduce((acc, transaction) => {
       const totalPaid =  parseFloat(transaction.total_paid? transaction.total_paid : "0")
-      return acc + totalPaid;
+      if(transaction.pur_payer.startsWith("110")){
+        return acc - totalPaid;  
+      } else if(transaction.pur_receiver.startsWith("110")){
+        return acc + totalPaid;  
+      }
+      return acc + 0;
     }, 0);
 
     // console.log("277 - totalPurAmountDue - ", totalPurAmountDue);
@@ -344,7 +388,7 @@ const OwnerContactDetailsHappinessMatrix = () => {
   const fetchCashflowData = async () => {
     // const url = `http://localhost:4000/contacts/${getProfileId()}`;
     // console.log("Calling contacts endpoint");
-    const url = `${APIConfig.baseURL.dev}/cashflowTransactions/${getProfileId()}/all`;
+    const url = `${APIConfig.baseURL.dev}/cashflowTransactions/${getProfileId()}/new`;
     try {
       const resp = await axios.get(url);
       const data = resp.data["result"];
@@ -729,6 +773,13 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
               {`
                 ${contactDetails && contactDetails[index]?.owner_first_name ? contactDetails[index]?.owner_first_name : "<FIRST_NAME>"}
                 ${contactDetails && contactDetails[index]?.owner_last_name ? contactDetails[index]?.owner_last_name : "<LAST_NAME>"}
+              `}
+            </Typography>
+          </Grid>
+          <Grid item xs={12} container justifyContent='center'>
+            <Typography sx={{ fontSize: "25px", fontWeight: "bold", color: "#F2F2F2" }}>
+              {`
+                ${contactDetails && contactDetails[index]?.owner_first_name ? contactDetails[index]?.owner_uid : "<OWNER_UID>"}                
               `}
             </Typography>
           </Grid>
@@ -1370,6 +1421,10 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
             border: "0px",
             "& .MuiDataGrid-columnHeaderTitle": {
               fontWeight: "bold",
+            },
+            "& .MuiDataGrid-footerContainer": {
+              height: "30px",
+              minHeight: "30px",
             },
           }}
         />
