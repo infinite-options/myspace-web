@@ -170,8 +170,8 @@ function groupByMonth(array) {
       return acc + 0;
     }, 0);
 
-    // console.log("277 - totalPurAmountDue - ", totalPurAmountDue);
-    // console.log("277 - totalPaid - ", totalPaid);
+    console.log("ROHIT - 277 - totalPurAmountDue - ", totalPurAmountDue);
+    console.log("ROHIT - 277 - totalPaid - ", totalPaid);
 
     const deltaCashflow = totalPurAmountDue - totalPaid;
     const percentDeltaCashflow = (deltaCashflow / totalPurAmountDue) * 100;
@@ -1344,7 +1344,7 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
       field: "delta_cashflow",
       headerName: "Delta Cashflow",
       width: 100,
-      renderCell: (params) => <span>{parseFloat(params.row.actual_cashflow) - parseFloat(params.row.expected_cashflow)}</span>,
+      renderCell: (params) => <span>{parseFloat(params.row.delta_cashflow)}</span>,
     },
     {
       field: "percent_delta_cashflow",
