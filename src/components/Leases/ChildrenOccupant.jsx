@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, setModifiedData, modifiedData, dataKey }) => {
+const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isEditable }) => {
     console.log('Inside Children occupants', leaseChildren);
     const [children, setChildren] = useState([]);
     const [open, setOpen] = useState(false);
@@ -176,7 +176,7 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
     }
 
 
-    const columns = [
+    const columns = isEditable ? [
         { field: 'name', headerName: 'First Name', flex: 1, editable: true },
         { field: 'last_name', headerName: 'Last Name', flex: 1, editable: true },
         { field: 'email', headerName: 'Email', flex: 1, editable: true },
@@ -193,13 +193,20 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
                 // <GridActionsCellItem icon={<DeleteIcon sx={{color:"#3D5CAC"}}/>} label="Delete" onClick={() => handleDeleteClick(params.id)} />,
             ],
         },
+    ] : [
+        { field: 'name', headerName: 'First Name', flex: 1, editable: true },
+        { field: 'last_name', headerName: 'Last Name', flex: 1, editable: true },
+        { field: 'email', headerName: 'Email', flex: 1, editable: true },
+        { field: 'phone_number', headerName: 'Phone Number', flex: 1, editable: true },
+        { field: 'relationship', headerName: 'Relationship', flex: 1, editable: true },
+        { field: 'dob', headerName: 'DoB', flex: 1, editable: true },
     ];
 
     return (
         <Box sx={{ width: '100%', }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
                 <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", marginLeft: '5px' }}>Children ({leaseChildren.length})</Typography>
-                <Button
+                {isEditable && <Button
                     sx={{
                         "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
                         cursor: "pointer",
@@ -219,7 +226,7 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
                         handleOpen();
                     }}>
                     <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
-                </Button>
+                </Button>}
             </Box>
             {leaseChildren && leaseChildren.length > 0 &&
                 <DataGrid

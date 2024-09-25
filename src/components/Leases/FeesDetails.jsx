@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees }) => {
+const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditable }) => {
     const { getList, } = useContext(ListsContext);	
 	const feeBases = getList("basis");
 	const feeFrequencies = getList("frequency");	
@@ -45,7 +45,7 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees }) => {
     const classes = useStyles();
     const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
 
-    const feesColumns = [
+    const feesColumns = isEditable ? [
         {
             field: "leaseFees_uid",
             headerName: "UID",
@@ -100,7 +100,48 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees }) => {
                 </Box>
             )
         }
-    ]
+    ] : [
+        {
+            field: "leaseFees_uid",
+            headerName: "UID",
+            flex: 1,
+        },
+        {
+            field: "fee_name",
+            headerName: "Type",
+            flex: 1,
+        },
+        {
+            field: "frequency",
+            headerName: "Frequency",
+            flex: 1,
+        },
+        {
+            field: "-",
+            headerName: "Description",
+            flex: 1,
+        },
+        {
+            field: "available_topay",
+            headerName: "In Advance",
+            flex: 1,
+        },
+        {
+            field: "charge",
+            headerName: "Amount",
+            flex: 1,
+        },
+        {
+            field: "late_by",
+            headerName: "Late",
+            flex: 1,
+        },
+        {
+            field: "late_fee",
+            headerName: "Late Fee",
+            flex: 1,
+        },
+    ];
 
     const handleEditFeeClick = (row) => {
         setcurrentFeeRow(row);
@@ -322,7 +363,7 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees }) => {
                                 Fee Details
                             </Typography>
                         </Grid>
-                        <Grid item md={0.5}>
+                        {isEditable && <Grid item md={0.5}>
                             <Button
                                 sx={{
                                     "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
@@ -353,7 +394,7 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees }) => {
                                 }}>
                                 <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
                             </Button>
-                        </Grid>
+                        </Grid>}
                     </Grid>
                 </AccordionSummary>
                 <AccordionDetails>
