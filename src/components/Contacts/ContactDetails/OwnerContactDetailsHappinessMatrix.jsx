@@ -286,6 +286,7 @@ function groupByPropertyByMonth(array) {
 
 
 const OwnerContactDetailsHappinessMatrix = () => {
+  console.log("ROHIT - RENDERING OCDHM");
   // Context and hooks
   const { getProfileId } = useUser();
   const navigate = useNavigate();
@@ -295,7 +296,8 @@ const OwnerContactDetailsHappinessMatrix = () => {
   // State variables
   const [happinessData, setHappinessData] = useState(location.state?.happinessData);
   const [ownerUID, setOwnerUID] = useState(location.state?.ownerUID);
-  const navigatingFrom = location.state.navigatingFrom;
+  const navigatingFrom = location.state.navigatingFrom;  
+  console.log("ROHIT - navigatingFrom - ", navigatingFrom);
   const cashflowDetails = happinessData?.delta_cashflow_details?.result;
   const cashflowDetailsByProperty = happinessData?.delta_cashflow_details_by_property?.result;
   const cashflowDetailsByPropertyByMonth = happinessData?.delta_cashflow_details_by_property_by_month?.result;
@@ -385,7 +387,7 @@ const OwnerContactDetailsHappinessMatrix = () => {
     
   }, [cashflowDataByProperty, cashflowDataByMonth, cashflowDataByPropertyByMonth, contactDetails, index]);
 
-  const fetchCashflowData = async () => {
+  const fetchCashflowData = async () => {    
     // const url = `http://localhost:4000/contacts/${getProfileId()}`;
     // console.log("Calling contacts endpoint");
     const url = `${APIConfig.baseURL.dev}/cashflowTransactions/${getProfileId()}/new`;
@@ -399,28 +401,36 @@ const OwnerContactDetailsHappinessMatrix = () => {
     }
   };
 
-  useEffect(() => {
-    const getDataFromAPI = async () => {
-      // const url = `http://localhost:4000/contacts/${getProfileId()}`;
-      // console.log("Calling contacts endpoint");
-      const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
-      try {
-        const resp = await axios.get(url);
-        const data = resp.data["management_contacts"];
-        const ownerContacts = data["owners"];
-          console.log("Owner Contact info in OwnerContactDetailsHappinessMatrix", ownerContacts);
-        setContactDetails(ownerContacts);
-          // console.log("Set Contact Details 1", ownerContacts);
-        const index = ownerContacts.findIndex((contact) => contact.owner_uid === ownerUID);
-          // console.log("Owner Index: ", index);
+  const getDataFromAPI = async () => {
+    // const url = `http://localhost:4000/contacts/${getProfileId()}`;
+    // console.log("Calling contacts endpoint");
+    const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
+    try {
+      const resp = await axios.get(url);
+      const data = resp.data["management_contacts"];
+      const ownerContacts = data["owners"];
+        console.log("ROHIT - ownerContacts - ", ownerContacts);
+      setContactDetails(ownerContacts);
+        // console.log("Set Contact Details 1", ownerContacts);
         
-        if(index >= 0){
-          setIndex(index);
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    };
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    console.log("ROHIT - location.state.ownerUID - ", ownerUID);
+    const index = contactDetails?.findIndex((contact) => contact.owner_uid === ownerUID);
+    console.log("ROHIT - setting Owner Index: ", index);
+      
+    if(index >= 0){
+      setIndex(index);
+    }
+  }, [ownerUID, contactDetails]);
+
+  useEffect(() => {
+
+
 
     if (navigatingFrom === "HappinessMatrixWidget" || navigatingFrom === "PropertyNavigator") {
       getDataFromAPI();
@@ -431,7 +441,7 @@ const OwnerContactDetailsHappinessMatrix = () => {
       // setContactsTab(location.state.tab);
     }
     fetchCashflowData();
-  }, [getProfileId, navigatingFrom, ownerUID, location.state]);
+  }, [getProfileId, navigatingFrom,]);
 
   // Effect to filter cashflow details when contactDetails or index changes
   // useEffect(() => {
