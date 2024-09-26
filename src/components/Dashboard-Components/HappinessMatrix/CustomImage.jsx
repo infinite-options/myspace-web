@@ -22,11 +22,12 @@ function CustomImage(props) {
     }
     if (page === "OwnerContactDetails") {
       setHappinessData(happinessData);
-      setOwnerUID(payload.owner_uid);
+      setOwnerUID(payload.property_owner_id);
     }
+    console.log("ROHIT - payload - ", payload);
     navigate(`/ownerContactDetailsHappinessMatrix`, {
       state: {
-        ownerUID: payload.owner_uid,
+        ownerUID: payload.property_owner_id,
         navigatingFrom: "HappinessMatrixWidget",
         happinessData: happinessData,
       },

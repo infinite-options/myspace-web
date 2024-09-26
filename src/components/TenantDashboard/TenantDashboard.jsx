@@ -59,6 +59,7 @@ const TenantDashboard = () => {
     const [balanceDetails, setBalanceDetails] = useState([]); 
     const [filteredMaintenanceRequests, setFilteredMaintenanceRequests] = useState([]);
     const [allBalanceDetails, setAllBalanceDetails] = useState([]);
+    const [reload, setReload] = useState(false);
 
     // const fetchCashflowDetails = async () => {
     //     try {
@@ -119,7 +120,8 @@ const TenantDashboard = () => {
 
     useEffect(() => {
         fetchData();
-    }, [getProfileId]);
+        setReload(false);
+    }, [reload]);
 
     useEffect(() => {
         if (propertyListingData.length > 0 && !selectedProperty) {
@@ -253,15 +255,15 @@ const TenantDashboard = () => {
                 case "propertyInfo":
                     return <PropertyInfo {...rightPane.state} setRightPane={setRightPane} />;
                 case "tenantApplication":
-                    return <TenantApplication {...rightPane.state} setRightPane={setRightPane} />;
+                    return <TenantApplication {...rightPane.state} setRightPane={setRightPane} setReload={setReload}/>;
                 case "tenantApplicationEdit":
                     return <TenantApplicationEdit {...rightPane.state} setRightPane={setRightPane} />;
                 case "tenantLeases":
-                    return <TenantLeases {...rightPane.state} setRightPane={setRightPane} />;
+                    return <TenantLeases {...rightPane.state} setRightPane={setRightPane} setReload={setReload}/>;
                 case "payment":
-                    return <PaymentsPM data={rightPane.state.data} setRightPane={setRightPane} />;
+                    return <PaymentsPM data={rightPane.state.data} setRightPane={setRightPane} selectedProperty={selectedProperty} leaseDetails={leaseDetails} balanceDetails={balanceDetails}/>;
                 case "addtenantmaintenance":
-                    return <AddTenantMaintenanceItem {...rightPane.state} setRightPane={setRightPane}/>;
+                    return <AddTenantMaintenanceItem {...rightPane.state} setRightPane={setRightPane} setReload={setReload}/>;
                 case "propertyMaintenanceRequests":
                     return (
                     <PropertyMaintenanceRequests
@@ -303,7 +305,7 @@ const TenantDashboard = () => {
             <Container>
                 <Grid container spacing={3} sx={{height: '100vh'}}>
                     {/* Top Section: Welcome Message and Search Icon */}
-                    <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '20px' }}>
+                    <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                       <Typography
                         sx={{
                           fontSize: { xs: "22px", sm: "28px", md: "32px" },
@@ -397,6 +399,8 @@ const TenantAccountBalance = ({ propertyData, selectedProperty, setSelectedPrope
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const balanceDue = parseFloat(selectedProperty?.balance || 0);
+    // console.log("propertyData", propertyData);
+    // console.log(selectedProperty);
 
     const handleOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -1326,7 +1330,7 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
   );
 };
 
-function PaymentsPM({ data, setRightPane }) {
+function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanceDetails }) {
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
@@ -1443,8 +1447,9 @@ function PaymentsPM({ data, setRightPane }) {
                                 paymentData: updatedPaymentData,
                                 total: total,
                                 selectedItems: selectedItems,
-                                paymentMethodInfo: paymentMethodInfo,
-                                managerCashflowWidgetData: managerCashflowWidgetData,
+                                selectedProperty: selectedProperty,
+                                leaseDetails: leaseDetails,
+                                balanceDetails: balanceDetails,
                               },
                             });
                           }}

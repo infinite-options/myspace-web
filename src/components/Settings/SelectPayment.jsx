@@ -31,7 +31,8 @@ import ApplePay from "../../images/ApplePay.png";
 import APIConfig from "../../utils/APIConfig";
 
 import ManagerCashflowWidget from "../Dashboard-Components/Cashflow/ManagerCashflowWidget";
-import AccountBalanceWidget from "../Payments/AccountBalanceWidget";
+import AccountBalanceWidget from "../Payments/TenantAccountBalance";
+import TenantAccountBalance from "../Payments/TenantAccountBalance";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -69,6 +70,7 @@ export default function SelectPayment(props) {
   // const [balance, setBalance] = useState(parseFloat(location.state.paymentData?.balance));
   const [paymentData, setPaymentData] = useState(location.state.paymentData);
   const [paymentMethodInfo, setPaymentMethodInfo] = useState(location.state.paymentMethodInfo || {});
+  const [paymentMethods, setPaymentMethods] = useState([]);
   // console.log("--DEBUG-- paymentData", paymentData);
   const [balance, setBalance] = useState(parseFloat(location.state.paymentData?.balance));
   const [purchaseUID, setPurchaseUID] = useState(location.state.paymentData.purchase_uids[0]?.purchase_uid);
@@ -88,9 +90,42 @@ export default function SelectPayment(props) {
   // console.log("--debug-- location.state", location.state);
   // console.log("---debug--- convenience_fee", convenience_fee);
 
+    useEffect(() => {
+      // Fetch the profile data and set payment methods
+      const fetchProfileData = async () => {
+        try {
+          const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
+          if (!response.ok) {
+            throw new Error("Failed to fetch profile data");
+          }
+          const profileData = await response.json();
+    
+          console.log("profile data", profileData.profile.result);
+    
+          // Initialize an array to hold all parsed payment methods
+          let allPaymentMethods = [];
+    
+          // Iterate over each object in the result array
+          profileData.profile.result.forEach((item) => {
+            // Parse the paymentMethods string in each object and add to the array
+            const parsedMethods = JSON.parse(item.paymentMethods);
+            allPaymentMethods = [...allPaymentMethods, ...parsedMethods];
+          });
+    
+          // Set the combined payment methods array
+          setPaymentMethods(allPaymentMethods);
+        } catch (error) {
+          console.error("Error fetching profile data:", error);
+        }
+      };
+    
+      fetchProfileData();
+    }, [getProfileId]);
+    
+
   useEffect(() => {
-    console.log("In new UseEffect Current Convenience Fee is: ", convenience_fee);
-  }, [convenience_fee]);
+    console.log("test", location.state.leaseDetails);
+  }, []);
 
   useEffect(() => {
     console.log("In new UseEffect Current Balance is: ", totalBalance);
@@ -346,15 +381,19 @@ export default function SelectPayment(props) {
               )}
 
               {selectedRole === "TENANT" && (
-                <AccountBalanceWidget
-                  selectedProperty={accountBalanceWidgetData?.selectedProperty}
-                  selectedLease={accountBalanceWidgetData?.selectedLease}
-                  propertyAddr={accountBalanceWidgetData?.propertyAddr}
-                  propertyData={accountBalanceWidgetData?.propertyData}
-                  total={accountBalanceWidgetData?.total}
-                  rentFees={accountBalanceWidgetData?.rentFees}
-                  lateFees={accountBalanceWidgetData?.lateFees}
-                  utilityFees={accountBalanceWidgetData?.utilityFees}
+                <TenantAccountBalance
+                  selectedProperty={location.state.selectedProperty}
+                  leaseDetails={location.state.leaseDetails}
+                  balanceDetails={location.state.balanceDetails}
+                  from={"selectPayment"}
+                  // selectedProperty={location.state.selectedProperty}
+                  // selectedLease={location.state.leaseDetails}
+                  // propertyAddr={location.state.selectedProperty.property_address}
+                  // propertyData={location.state.selectedProperty}
+                  // total={accountBalanceWidgetData?.total}
+                  // rentFees={accountBalanceWidgetData?.rentFees}
+                  // lateFees={accountBalanceWidgetData?.lateFees}
+                  // utilityFees={accountBalanceWidgetData?.utilityFees}
                 />
               )}
             </Grid>
@@ -589,131 +628,70 @@ export default function SelectPayment(props) {
 
                 <FormControl component='fieldset'>
                   <RadioGroup aria-label='Number' name='number' value={selectedMethod} onChange={handleChange}>
-                    <FormControlLabel
-                      value='PayPal'
-                      control={
-                        <Radio
-                          sx={{
-                            color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000", // Blue when selected, black otherwise
-                            "&.Mui-checked": {
-                              color: "#3D5CAC", // Blue color for the selected state
-                            },
-                          }}
-                        />
-                      }
-                      label={
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          <img src={PayPal} alt='PayPal' style={{ marginRight: "8px", height: "24px" }} />
-                          Paypal {paymentMethodInfo.paypal ? paymentMethodInfo.paypal : "No Payment Info"}
-                        </div>
-                      }
-                    />
-                    <FormControlLabel
-                      value='Apple Pay'
-                      control={
-                        <Radio
-                          sx={{
-                            color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000", // Blue when selected, black otherwise
-                            "&.Mui-checked": {
-                              color: "#3D5CAC", // Blue color for the selected state
-                            },
-                          }}
-                        />
-                      }
-                      label={
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          <img src={ApplePay} alt='Apple Pay' style={{ marginRight: "8px", height: "24px" }} />
-                          Apple Pay {paymentMethodInfo.apple_pay ? `Make payment to: ${paymentMethodInfo.apple_pay}` : "No Payment Info"}
-                        </div>
-                      }
-                    />
-                    <FormControlLabel
-                      value="Zelle"
-                      control={
-                        <Radio
-                          sx={{
-                            color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000", // Blue when selected, black otherwise
-                            "&.Mui-checked": {
-                              color: "#3D5CAC", // Blue color for the selected state
-                            },
-                          }}
-                        />
-                      }
-                      label={
-                        <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
-                          <img src={Zelle} alt="Zelle" style={{ marginRight: "8px", height: "24px" }} />
-                          <Typography sx={{ color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000" }}>
-                            Zelle {paymentMethodInfo.zelle ? paymentMethodInfo.zelle : "No Payment Info"}
-                          </Typography>
-                          <TextField
-                            id="confirmation-number"
-                            label="Confirmation Number"
-                            variant="outlined"
-                            size="small"
-                            value={confirmationNumber}
+                    {paymentMethods.map((method) => (
+                      <FormControlLabel
+                        key={method.paymentMethod_uid}
+                        value={method.paymentMethod_type + method.paymentMethod_uid} // Combine type and UID for unique selection
+                        control={
+                          <Radio
                             sx={{
-                              marginLeft: "10px",
-                              input: {
-                                color: "#000000", // Keep the input text black
-                              },
-                              "& .MuiOutlinedInput-root": {
-                                "& fieldset": {
-                                  borderColor: "#000000", // Black border when not focused
-                                },
-                                "&.Mui-focused fieldset": {
-                                  borderColor: "#3D5CAC", // Blue border when focused
-                                },
+                              color: selectedMethod === method.paymentMethod_type + method.paymentMethod_uid ? "#3D5CAC" : "#000000",
+                              "&.Mui-checked": {
+                                color: "#3D5CAC",
                               },
                             }}
-                            InputLabelProps={{
-                              shrink: true, // Keeps the label always visible
-                              style: { color: "#000000" }, // Label text color
-                            }}
-                            disabled={selectedMethod !== "Zelle"} // Keeps the field disabled if another method is selected
-                            onChange={(e) => setConfirmationNumber(e.target.value)}
                           />
-                        </div>
-                      }
-                    />
-                    <FormControlLabel
-                      value='Venmo'
-                      control={
-                        <Radio
-                          sx={{
-                            color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000", // Blue when selected, black otherwise
-                            "&.Mui-checked": {
-                              color: "#3D5CAC", // Blue color for the selected state
-                            },
-                          }}
-                        />
-                      }
-                      label={
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          <img src={Venmo} alt='Venmo' style={{ marginRight: "8px", height: "24px" }} />
-                          Venmo {paymentMethodInfo.venmo ? paymentMethodInfo.venmo : "No Payment Info"}
-                        </div>
-                      }
-                    />
-
-                    <FormControlLabel
-                      value='Stripe'
-                      control={
-                        <Radio
-                          sx={{
-                            color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000", // Blue when selected, black otherwise
-                            "&.Mui-checked": {
-                              color: "#3D5CAC", // Blue color for the selected state
-                            },
-                          }}
-                        />
-                      }
-                      label={
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          <img src={Stripe} alt='Stripe' style={{ marginRight: "8px", height: "24px" }} />
-                          Stripe
-                        </div>
-                      }
-                    />
+                        }
+                        label={
+                          <div style={{ display: "flex", alignItems: "center" }}>
+                            <img
+                              src={
+                                method.paymentMethod_type === 'zelle' ? Zelle :
+                                method.paymentMethod_type === 'credit_card' ? CreditCardIcon :
+                                method.paymentMethod_type === 'paypal' ? PayPal :
+                                method.paymentMethod_type === 'venmo' ? Venmo :
+                                method.paymentMethod_type === 'apple_pay' ? ApplePay :
+                                BankIcon // Default icon if none match
+                              }
+                              alt={method.paymentMethod_type}
+                              style={{ marginRight: "8px", height: "24px" }}
+                            />
+                            <Typography sx={{ color: selectedMethod === method.paymentMethod_type + method.paymentMethod_uid ? "#3D5CAC" : "#000000" }}>
+                              {method.paymentMethod_name}
+                            </Typography>
+                            {/* Show confirmation number only for the selected Zelle method */}
+                            {method.paymentMethod_type === "zelle" && selectedMethod === method.paymentMethod_type + method.paymentMethod_uid && (
+                              <TextField
+                                id="confirmation-number"
+                                label="Confirmation Number"
+                                variant="outlined"
+                                size="small"
+                                value={confirmationNumber}
+                                sx={{
+                                  marginLeft: "10px",
+                                  input: {
+                                    color: "#000000",
+                                  },
+                                  "& .MuiOutlinedInput-root": {
+                                    "& fieldset": {
+                                      borderColor: "#000000",
+                                    },
+                                    "&.Mui-focused fieldset": {
+                                      borderColor: "#3D5CAC",
+                                    },
+                                  },
+                                }}
+                                InputLabelProps={{
+                                  shrink: true,
+                                  style: { color: "#000000" },
+                                }}
+                                onChange={(e) => setConfirmationNumber(e.target.value)}
+                              />
+                            )}
+                          </div>
+                        }
+                      />
+                    ))}
                   </RadioGroup>
                 </FormControl>
 
