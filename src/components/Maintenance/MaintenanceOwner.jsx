@@ -332,6 +332,11 @@ export function MaintenanceOwner() {
 
   return (
     <ThemeProvider theme={theme}>
+      {showSpinner ? (
+        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+          <CircularProgress color='inherit' />
+        </Backdrop>
+      ): (
       <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
         <Grid container sx={{ padding: "10px" }}>
           <Grid
@@ -525,7 +530,7 @@ export function MaintenanceOwner() {
             </Grid>
           )}
         </Grid>
-      </Container>
+      </Container>)}
     </ThemeProvider>
   );
 }

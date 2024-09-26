@@ -149,7 +149,7 @@ export default function OwnerDashboard() {
                         fontWeight: "600",
                       }}
                     >
-                      Welcome, {user.first_name}.
+                      Welcome, {user.first_name}
                     </Typography>
                   </Box>
                 </Grid>
