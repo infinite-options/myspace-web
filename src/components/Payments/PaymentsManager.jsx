@@ -15,7 +15,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import APIConfig from "../../utils/APIConfig";
 
 import ManagerCashflowWidget from "../Dashboard-Components/Cashflow/ManagerCashflowWidget";
-import AccountBalanceWidget from "./AccountBalanceWidget";
+import AccountBalanceWidget from "./TenantAccountBalance";
 import { AccountBalance } from "@mui/icons-material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import CircleIcon from "@mui/icons-material/Circle";

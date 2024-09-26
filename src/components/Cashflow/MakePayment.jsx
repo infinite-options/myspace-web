@@ -32,7 +32,7 @@ import ApplePay from "../../images/ApplePay.png";
 import APIConfig from "../../utils/APIConfig";
 
 import ManagerCashflowWidget from "../Dashboard-Components/Cashflow/ManagerCashflowWidget";
-import AccountBalanceWidget from "../Payments/AccountBalanceWidget";
+import AccountBalanceWidget from "../Payments/TenantAccountBalance";
 
 const useStyles = makeStyles((theme) => ({
   root: {
