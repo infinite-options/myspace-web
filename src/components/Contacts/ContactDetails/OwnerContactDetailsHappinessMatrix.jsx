@@ -170,8 +170,8 @@ function groupByMonth(array) {
       return acc + 0;
     }, 0);
 
-    // console.log("277 - totalPurAmountDue - ", totalPurAmountDue);
-    // console.log("277 - totalPaid - ", totalPaid);
+    console.log("277 - totalPurAmountDue - ", totalPurAmountDue);
+    console.log("277 - totalPaid - ", totalPaid);
 
     const deltaCashflow = totalPurAmountDue - totalPaid;
     const percentDeltaCashflow = (deltaCashflow / totalPurAmountDue) * 100;
@@ -285,8 +285,7 @@ function groupByPropertyByMonth(array) {
 }
 
 
-const OwnerContactDetailsHappinessMatrix = () => {
-  console.log("ROHIT - RENDERING OCDHM");
+const OwnerContactDetailsHappinessMatrix = () => {  
   // Context and hooks
   const { getProfileId } = useUser();
   const navigate = useNavigate();
@@ -297,7 +296,7 @@ const OwnerContactDetailsHappinessMatrix = () => {
   const [happinessData, setHappinessData] = useState(location.state?.happinessData);
   const [ownerUID, setOwnerUID] = useState(location.state?.ownerUID);
   const navigatingFrom = location.state.navigatingFrom;  
-  console.log("ROHIT - navigatingFrom - ", navigatingFrom);
+  // console.log("navigatingFrom - ", navigatingFrom);
   const cashflowDetails = happinessData?.delta_cashflow_details?.result;
   const cashflowDetailsByProperty = happinessData?.delta_cashflow_details_by_property?.result;
   const cashflowDetailsByPropertyByMonth = happinessData?.delta_cashflow_details_by_property_by_month?.result;
@@ -409,7 +408,7 @@ const OwnerContactDetailsHappinessMatrix = () => {
       const resp = await axios.get(url);
       const data = resp.data["management_contacts"];
       const ownerContacts = data["owners"];
-        console.log("ROHIT - ownerContacts - ", ownerContacts);
+        // console.log("ownerContacts - ", ownerContacts);
       setContactDetails(ownerContacts);
         // console.log("Set Contact Details 1", ownerContacts);
         
@@ -419,9 +418,9 @@ const OwnerContactDetailsHappinessMatrix = () => {
   };
 
   useEffect(() => {
-    console.log("ROHIT - location.state.ownerUID - ", ownerUID);
+    // console.log("ownerUID - ", ownerUID);
     const index = contactDetails?.findIndex((contact) => contact.owner_uid === ownerUID);
-    console.log("ROHIT - setting Owner Index: ", index);
+    // console.log("setting Owner Index: ", index);
       
     if(index >= 0){
       setIndex(index);
@@ -1344,7 +1343,7 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
       field: "delta_cashflow",
       headerName: "Delta Cashflow",
       width: 100,
-      renderCell: (params) => <span>{parseFloat(params.row.actual_cashflow) - parseFloat(params.row.expected_cashflow)}</span>,
+      renderCell: (params) => <span>{parseFloat(params.row.delta_cashflow)}</span>,
     },
     {
       field: "percent_delta_cashflow",
