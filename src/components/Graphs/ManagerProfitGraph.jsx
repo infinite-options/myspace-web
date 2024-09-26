@@ -39,17 +39,20 @@ const ProfitChart = (props) => {
   const data = props.revenueCashflowByMonth;
   const activeButton = props.activeButton;
 
+  const allValues = data?.flatMap(o => [
+    o.profit, 
+    o.expected_profit, 
+    o.rent, 
+    o.payouts
+  ]);
+
   const max = Math.max.apply(
     Math,
-    data?.map(function (o) {
-      return o.cashflow;
-    })
+    allValues
   );
   const min = Math.min.apply(
     Math,
-    data?.map(function (o) {
-      return o.cashflow;
-    })
+    allValues
   );
 
   return (

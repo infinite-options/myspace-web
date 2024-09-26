@@ -98,6 +98,8 @@ export default function ManagerCashflow() {
   const [profitsTotal, setProfitsTotal] = useState({}); //current month
   const [rentsTotal, setRentsTotal] = useState({}); //current month
   const [payoutsTotal, setPayoutsTotal] = useState({}); //current month
+  const [unsortedPayouts, setUnsortedPayouts] = useState([])
+  const [unsortedRentsData, setUnsortedRentsData] = useState([])
 
   const [profitabilityData, setProfitabilityData] = useState([]);
   const [transactionsData, setTransactionsData] = useState([]);
@@ -257,7 +259,9 @@ export default function ManagerCashflow() {
       acc[propertyUID].totalActual += totalActual;
       return acc;
     }, {});
-    setPayouts(payoutsByProperty);
+
+    // setPayouts(payoutsByProperty);
+    setUnsortedPayouts(payoutsByProperty)
 
     const totalPayouts = payoutsByProperty
       ? Object.values(payoutsByProperty).reduce(
@@ -269,59 +273,14 @@ export default function ManagerCashflow() {
           { totalExpected: 0, totalActual: 0 }
         )
       : { totalExpected: 0, totalActual: 0 };
-    // console.log("totalPayouts - ", totalPayouts);
+
     setPayoutsTotal(totalPayouts);
 
     // const profitsCurrentMonth = profitDatacurrentMonth?.filter(item => item.purchase_type === "Management" || item.purchase_type === "Management - Late Fees");
     // const profitsCurrentMonth = profitDatacurrentMonth?.filter(item => item.purchase_type === "Management" || item.purchase_type === "Management - Late Fees");
     // const profitsCurrentMonth = profitDatacurrentMonth?.filter((item) => item.pur_payer?.startsWith("110") && item.pur_receiver?.startsWith("600"));
     // // const profitsCurrentMonth = filteredProfitData?.filter((item) => item.pur_payer?.startsWith("110") && item.pur_receiver?.startsWith("600"));
-    
-
-    // const profitsByProperty = profitsCurrentMonth?.reduce((acc, item) => {
-    //   const propertyUID = item.pur_property_id;
-    //   const propertyInfo = {
-    //     property_id: item.pur_property_id,
-    //     property_address: item.property_address,
-    //     property_unit: item.property_unit,
-    //   };
-
-    //   const totalExpected = parseFloat(item.expected) || 0;
-    //   const totalActual = parseFloat(item.actual) || 0;
-
-    //   if (!acc[propertyUID]) {
-    //     // acc[propertyUID] = [];
-    //     acc[propertyUID] = {
-    //       propertyInfo: propertyInfo,
-    //       profitItems: [],
-    //       totalExpected: 0,
-    //       totalActual: 0,
-    //     };
-    //   }
-
-    //   acc[propertyUID].profitItems.push(item);
-    //   acc[propertyUID].totalExpected += totalExpected;
-    //   acc[propertyUID].totalActual += totalActual;
-    //   return acc;
-    // }, {});
-
-      
-  // Step 3: Set profit data in state
-    
-
-    // console.log("profitsByProperty - ", profitsByProperty);
-    
-    // const totalProfits = profitsByProperty
-    //   ? Object.values(profitsByProperty).reduce(
-    //       (acc, property) => {
-    //         acc.totalExpected += property.totalExpected;
-    //         acc.totalActual += property.totalActual;
-    //         return acc;
-    //       },
-    //       { totalExpected: 0, totalActual: 0 }
-    //     )
-    //   : { totalExpected: 0, totalActual: 0 };
-    // console.log("totalProfits - ", totalProfits);
+  
     
 
     const rentsDataByProperty = rentDataCurrentMonth?.reduce((acc, item) => {
@@ -351,8 +310,8 @@ export default function ManagerCashflow() {
       return acc;
     }, {});
 
-    setRentsByProperty(rentsDataByProperty);
-    // console.log("rentsDataByProperty - ", rentsDataByProperty);
+    setUnsortedRentsData(rentsDataByProperty)
+
     const totalRents = rentsDataByProperty
       ? Object.values(rentsDataByProperty).reduce(
           (acc, property) => {
@@ -363,7 +322,7 @@ export default function ManagerCashflow() {
           { totalExpected: 0, totalActual: 0 }
         )
       : { totalExpected: 0, totalActual: 0 };
-    // console.log("totalRents - ", totalRents);
+
     setRentsTotal(totalRents);
 
     // console.log(rentsDataByProperty)
@@ -371,9 +330,31 @@ export default function ManagerCashflow() {
   }, [month, year, cashflowData, selectedProperty]);
 
   useEffect(() => {
-    if(rentsByProperty && payouts){
+    if(unsortedPayouts && unsortedRentsData){
+
+      // sort payouts
+
+      const payoutsArray = Object.entries(unsortedPayouts);
+      const sortedPayoutsArray = payoutsArray.sort((a, b) => {
+        return a[0].localeCompare(b[0]);  // a[0] and b[0] represent propertyUID keys
+      });
+
+      const sortedPayoutsByProperty = Object.fromEntries(sortedPayoutsArray);
+      setPayouts(sortedPayoutsByProperty);
+
+
+      // sort rent data
+
+      const rentArray = Object.entries(unsortedRentsData);
+
+      const sortedRentArray = rentArray.sort((a, b) => {
+        return a[0].localeCompare(b[0]);  // a[0] and b[0] represent propertyUID keys
+      });
+
+      const sortedRentData = Object.fromEntries(sortedRentArray);
+      setRentsByProperty(sortedRentData)
+
       const profitDataByProperty = calculateProfitsByProperty(rentsByProperty, payouts);
-      console.log("profit data - ", profitDataByProperty)
       setProfits(profitDataByProperty);
 
       const totalProfits = Object.values(profitDataByProperty).reduce(
@@ -384,10 +365,10 @@ export default function ManagerCashflow() {
         },
         { totalExpectedProfit: 0, totalActualProfit: 0 }
       );
-      console.log("Total profit data - ", totalProfits)
+
       setProfitsTotal(totalProfits);
     }
-  }, [rentsByProperty, payouts])
+  }, [unsortedPayouts, unsortedRentsData])
 
   const calculateProfitsByProperty = (rentsDataByProperty, payoutsByProperty) => {
     const profitDataByProperty = {};
