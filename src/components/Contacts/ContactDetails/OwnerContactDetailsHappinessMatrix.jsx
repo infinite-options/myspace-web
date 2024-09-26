@@ -53,7 +53,7 @@ function groupByProperty(array) {
 
   propertyList?.forEach( propertyID => {
     const filteredTransactions = array.filter( item => item.pur_property_id === propertyID);
-    // console.log("filteredTransactions - ", filteredTransactions);
+    // console.log("ROHIT - 56 - filteredTransactions - ", filteredTransactions);
     const totalPurAmountDue = filteredTransactions?.reduce((acc, transaction) => {
       const purAmountDue =  parseFloat(transaction.expected)
       if(transaction.pur_payer.startsWith("110")){
@@ -64,8 +64,10 @@ function groupByProperty(array) {
       return acc + 0;
     }, 0);
 
+
+
     const totalPaid = filteredTransactions?.reduce((acc, transaction) => {
-      const totalPaid =  parseFloat(transaction.total_paid? transaction.actual : "0")
+      const totalPaid =  parseFloat(transaction.actual? transaction.actual : "0")
       if(transaction.pur_payer.startsWith("110")){
         return acc - totalPaid;  
       } else if(transaction.pur_receiver.startsWith("110")){
@@ -89,6 +91,7 @@ function groupByProperty(array) {
       percent_delta_cashflow: percentDeltaCashflow.toFixed(2),
 
     }
+    console.log("ROHIT - 56 - cashflowItem - ", cashflowItem);
   
     // console.log("ashflowItem - ", cashflowItem);
     cashflowByProperty.push(cashflowItem);
@@ -247,7 +250,7 @@ function groupByPropertyByMonth(array) {
     }, 0);
 
     const totalPaid = filteredTransactions?.reduce((acc, transaction) => {
-      const totalPaid =  parseFloat(transaction.total_paid? transaction.total_paid : "0")
+      const totalPaid =  parseFloat(transaction.actual? transaction.actual : "0")
       if(transaction.pur_payer.startsWith("110")){
         return acc - totalPaid;  
       } else if(transaction.pur_receiver.startsWith("110")){

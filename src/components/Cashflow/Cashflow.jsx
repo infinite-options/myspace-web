@@ -72,7 +72,7 @@ export default function Cashflow() {
   const { user, getProfileId } = useUser(); // Access the user object from UserContext
 
   const profileId = getProfileId();
-  const [showSpinner, setShowSpinner] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(true);
 
   const [month, setMonth] = useState(location.state.month || "January");
   const [year, setYear] = useState(location.state.year || "2024");
@@ -102,7 +102,7 @@ export default function Cashflow() {
   const displays = ["Cashflow", "ExpectedCashflow"];
 
   const [currentWindow, setCurrentWindow] = useState(location.state?.currentWindow || "CASHFLOW_DETAILS");
-
+  const [originalCashFlowData, setOriginalCashFlowData] = useState(null)
   const [propertyList, setPropertyList] = useState(location.state.propertyList? location.state.propertyList : []);
   const [selectedProperty, setSelectedProperty] = useState(location.state.selectedProperty ? location.state.selectedProperty : "All Properties");
 
@@ -133,10 +133,14 @@ export default function Cashflow() {
   
   // Again fetch data when change window from expense to cashFlow
   useEffect(()=>{
+    // setShowSpinner(true)
     if(currentWindow === "CASHFLOW_DETAILS"){
       fetchCashflow2(profileId)
       .then((data) => {
-        console.log("yes window is change")
+        // console.log("yes window is change")
+
+        setOriginalCashFlowData(data)
+
         if(selectedProperty === "All Properties"){
           setCashflowData2(data);
     
@@ -151,6 +155,7 @@ export default function Cashflow() {
         console.error("Error fetching cashflow data:", error);
       });
     }
+    setShowSpinner(false)
     
   }, [currentWindow])
 
@@ -166,6 +171,7 @@ export default function Cashflow() {
   // }, []);
 
   useEffect(() => {
+    setShowSpinner(true)
     if (cashflowData2 !== null && cashflowData2 !== undefined) {
       let currentMonthYearTotalRevenue = getTotalRevenueByMonthYear(cashflowData2, month, year);
       let currentMonthYearTotalExpense = getTotalExpenseByMonthYear(cashflowData2, month, year);
@@ -184,8 +190,8 @@ export default function Cashflow() {
 
       let revenueMapping = getTotalRevenueByType(cashflowData2, month, year, false);
       let expenseMapping = getTotalExpenseByType(cashflowData2, month, year, false);
-      // console.log("revenueMapping", revenueMapping)
-      // console.log("expenseMapping", expenseMapping)
+      console.log("revenueMapping", revenueMapping)
+      console.log("expenseMapping", expenseMapping)
       setRevenueByType(revenueMapping);
       setExpenseByType(expenseMapping);
 
@@ -202,6 +208,7 @@ export default function Cashflow() {
       setLast12Months(last12months);
       setNext12Months(next12Months);
     }
+    setShowSpinner(false)
   }, [month, year, cashflowData2]);
 
   const getPropertyName = (propertyUID) => {
@@ -240,6 +247,8 @@ export default function Cashflow() {
               setCurrentWindow={setCurrentWindow}
               page='OwnerCashflow'
               allProperties={propertyList}
+              originalData={originalCashFlowData}
+              window={currentWindow}
               // propertyList={propertyList}
               selectedProperty={selectedProperty}
               setSelectedProperty={setSelectedProperty}
@@ -685,13 +694,11 @@ function StatementTable(props) {
   function getCategoryCount(category) {
     // console.log("getCategoryCount - allItems - ", allItems);
     let filteredItems = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
-    let items = filteredItems?.map((item) => ({ ...item, property: JSON.parse(item.property) }));
+    // let items = filteredItems?.map((item) => ({ ...item, property: JSON.parse(item.property) }));
     let count = 0
 
-    items.map((i) => {
-      i.property.map(p => {
-        count += p.individual_purchase.length;
-      })
+    filteredItems.map((i) => {
+      count += 1
     })
 
     return "(" + count + ")";
@@ -699,21 +706,29 @@ function StatementTable(props) {
 
   function getCategoryItems(category, type) {
     let filteredIitems = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
-    let items = filteredIitems?.map((item) => ({ ...item, property: JSON.parse(item.property) }));
-    // let total_amount_due = 0
-    // let total_amount_paid = 0
-
-    // console.log("getCategoryItems for - ", category, "ietms are ", items)
-    // var key = "total_paid";
-    // if (activeView === "Cashflow") {
-    //   key = "total_paid";
-    // } else {
-    //   key = "pur_amount_due";
-    // }
+    // let items = filteredIitems?.map((item) => ({ ...item, property: JSON.parse(item.property) }));
 
     return (
       <>
-        {items.map((item, index) => {
+        {activeView !== "Cashflow" && (<TableRow>
+          <TableCell>
+            <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, marginLeft: "25px" }}>Property UID</Typography>
+          </TableCell>
+          <TableCell>
+            <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>Property Address</Typography>
+          </TableCell>
+          <TableCell>
+            <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>Property Unit</Typography>
+          </TableCell>
+          <TableCell align='right'>
+            <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>Expected</Typography>
+          </TableCell>
+          <TableCell align='right'>
+            <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, marginRight: "25px" }}>Actual</Typography>
+          </TableCell>
+        </TableRow>)}
+
+        {filteredIitems.map((item, index) => {
           return activeView === "Cashflow" ? (
             <TableRow key={index} onClick={() => handleNavigation(type, item)}>
               <TableCell></TableCell>
@@ -725,74 +740,45 @@ function StatementTable(props) {
               </TableCell>
               <TableCell>
                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-                  ${item["pur_amount_due"] ? item["pur_amount_due"] : 0}
+                  ${item["expected"] ? item["expected"] : 0}
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-                  ${item["total_paid"] ? item["total_paid"] : 0}
+                  ${item["actual"] ? item["actual"] : 0}
                 </Typography>
               </TableCell>
             </TableRow>
           ) : (
             <React.Fragment key={index}>
-              <TableRow>
+
+              <TableRow key={`${item.property_uid}-${index}`} sx={{}}>
                 <TableCell>
-                  <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, marginLeft: "25px" }}>Property UID</Typography>
+                  <Typography sx={{ fontSize: theme.typography.smallFont, marginLeft: "25px" }}>{item.pur_property_id ? item.pur_property_id : ""}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>Property Address</Typography>
+                  <Typography sx={{ fontSize: theme.typography.smallFont }}>{item.property_address? item.property_address : ""}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>Property Unit</Typography>
+                  <Typography sx={{ fontSize: theme.typography.smallFont }}>{item.property_unit ? item.property_unit : ""}</Typography>
                 </TableCell>
                 <TableCell align='right'>
-                  <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>Expected</Typography>
+                  {/* {property.individual_purchase.map((p) => {
+                      total_amount_due += (p.pur_amount_due? p.pur_amount_due : 0)
+                  })} */}
+                  <Typography sx={{ fontSize: theme.typography.smallFont }}>
+                    ${item.expected ? item.expected : 0}
+                  </Typography>
                 </TableCell>
                 <TableCell align='right'>
-                  <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, marginRight: "25px" }}>Actual</Typography>
+                  {/* {property.individual_purchase.map((p) => {
+                      total_amount_paid += (p.total_paid ? p.total_paid : 0)
+                  })} */}
+                  <Typography sx={{ fontSize: theme.typography.smallFont, marginRight: "25px" }}>
+                    ${item.actual?item.actual:0}
+                  </Typography>
                 </TableCell>
               </TableRow>
-
-              {item?.property?.map((property, index) => {
-                // total_amount_due = 0
-                // total_amount_paid = 0
-                return (
-                  <React.Fragment key={index}>
-                    {property.individual_purchase.map((p, i) => {
-                    return (
-                      <TableRow key={`${property.property_uid}-${i}`} sx={{}}>
-                        <TableCell>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, marginLeft: "25px" }}>{property.property_uid ? property.property_uid : ""}</Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography sx={{ fontSize: theme.typography.smallFont }}>{property.property_address? property.property_address : ""}</Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography sx={{ fontSize: theme.typography.smallFont }}>{property.property_unit ? property.property_unit : ""}</Typography>
-                        </TableCell>
-                        <TableCell align='right'>
-                          {/* {property.individual_purchase.map((p) => {
-                              total_amount_due += (p.pur_amount_due? p.pur_amount_due : 0)
-                          })} */}
-                          <Typography sx={{ fontSize: theme.typography.smallFont }}>
-                            ${p.pur_amount_due ? p.pur_amount_due : 0}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align='right'>
-                          {/* {property.individual_purchase.map((p) => {
-                              total_amount_paid += (p.total_paid ? p.total_paid : 0)
-                          })} */}
-                          <Typography sx={{ fontSize: theme.typography.smallFont, marginRight: "25px" }}>
-                            ${p.total_paid?p.total_paid:0}
-                          </Typography>
-                        </TableCell>
-                      </TableRow>
-                    );
-                    })}
-                  </React.Fragment>
-                );
-              })}
             </React.Fragment>
           );
         })}

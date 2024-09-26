@@ -41,12 +41,15 @@ function Properties() {
 	  setPropertyList: setPropertyListFromContext,	  
 	  returnIndex: returnIndexFromContext,
     setReturnIndex: setReturnIndexFromContext,
+    dataLoaded : dataload
 	} = propertiesContext || {};
 
-	const propertyList = propertyListFromContext || [];
+	const propertyList = propertyListFromContext;
 	const setPropertyList = setPropertyListFromContext;	
 	const returnIndex = returnIndexFromContext || 0;
   const setReturnIndex = setReturnIndexFromContext;
+
+  console.log("----loading issue - propertyList - ", dataload)
 
   const [dataReady, setDataReady] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
@@ -252,8 +255,8 @@ function Properties() {
   }
 
   useEffect(()=>{
-    // console.log("----dhyey --- now list is complete")
-    if(newPropertyUid!=""){
+    console.log("----dhyey --- now list is complete")
+    if(newPropertyUid!== ""){
        setPropertyTo(newPropertyUid)
         setNewPropertyUid("")
     }
@@ -420,7 +423,7 @@ function Properties() {
           </Grid>
 
           <Grid item xs={12} md={8}>
-          {(RHS === "AddProperty" || propertyList.length === 0) ? (
+          {(RHS === "AddProperty" || (dataload && propertyList.length === 0)) ? (
               <PropertyForm
                 onBack={handleBackClick}                
                 showNewContract={showNewContract}                

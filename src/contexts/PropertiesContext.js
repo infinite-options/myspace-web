@@ -121,11 +121,12 @@ const fetchContracts = async () => {
 
   useEffect(() => {
     if (!dataLoaded) {
-      setDataLoaded(true);      
+           
       
       fetchProperties();
       fetchRentStatus();
       fetchContracts();
+      setDataLoaded(true); 
       
     }
   }, [dataLoaded]);

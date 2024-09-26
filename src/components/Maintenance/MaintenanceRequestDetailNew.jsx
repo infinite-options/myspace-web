@@ -64,7 +64,7 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
 
 
   const location = useLocation();
-  const { user, getProfileId, roleName, maintenanceRoutingBasedOnSelectedRole } = useUser();
+  const { user, getProfileId, roleName, maintenanceRoutingBasedOnSelectedRole, selectedRole } = useUser();
   let navigate = useNavigate();
   let profileId = getProfileId();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -423,7 +423,7 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
                   paddingTop: "0px",
                 }}
               >
-                {colorStatus[value]?.status === "New Requests" && maintenanceItemsForStatus[selectedRequestIndex] ? (
+                {selectedRole !== "OWNER" && colorStatus[value]?.status === "New Requests" && maintenanceItemsForStatus[selectedRequestIndex] ? (
                   <NewRequestAction maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} setRefresh = {setRefresh}/>
                 ) : null}
                 {colorStatus[value]?.status === "Quotes Requested" ? (

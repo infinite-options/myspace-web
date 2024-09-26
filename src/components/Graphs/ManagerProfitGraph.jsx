@@ -39,17 +39,20 @@ const ProfitChart = (props) => {
   const data = props.revenueCashflowByMonth;
   const activeButton = props.activeButton;
 
+  const allValues = data?.flatMap(o => [
+    o.profit, 
+    o.expected_profit, 
+    o.rent, 
+    o.payouts
+  ]);
+
   const max = Math.max.apply(
     Math,
-    data?.map(function (o) {
-      return o.cashflow;
-    })
+    allValues
   );
   const min = Math.min.apply(
     Math,
-    data?.map(function (o) {
-      return o.cashflow;
-    })
+    allValues
   );
 
   return (
@@ -69,11 +72,11 @@ const ProfitChart = (props) => {
             dataKey="expected_rent"
             stroke={theme.palette.custom.red}
             strokeWidth={5}
-            name="Expected Rent"
+            name="Expected Revenue"
             dot={{ stroke: theme.palette.custom.red }}
           />
 
-          <Line yAxisId="left" type="monotone" dataKey="rent" stroke="#000000" strokeWidth={5} name="Actual Rent" dot={{ stroke: "#000000" }} />
+          <Line yAxisId="left" type="monotone" dataKey="rent" stroke="#000000" strokeWidth={5} name="Actual Revenue" dot={{ stroke: "#000000" }} />
 
           <Bar yAxisId="left" dataKey="expected_profit" fill={theme.palette.primary.mustardYellow} barCategoryGap={10} barSize={15} name="Expected Profit">
             {data?.map((entry, index) => (

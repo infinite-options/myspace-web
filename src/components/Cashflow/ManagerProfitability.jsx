@@ -54,6 +54,8 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
     const [ showSelectMonth, setShowSelectMonth ] = useState(false);
     const [ openSelectProperty, setOpenSelectProperty ] = useState(false);
     const [ profitsExpanded, setProfitsExpanded ] = useState(true);
+    const [ revenueExpanded, setRevenueExpanded ] = useState(true);
+    const [ expenseExpanded, setExpenseExpanded ] = useState(true);
   
     const month = propsMonth || "July"; //fix
     const year = propsYear || "2024";
@@ -155,7 +157,7 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                         
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                 <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                                Profit
+                                {month} Profit
                                 </Typography>
                             </AccordionSummary>
                         
@@ -163,17 +165,17 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                 </Grid>
                 {/* <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}> */}
                 <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                  <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
                     $                        
                     {
-                        (profitsTotal && profitsTotal?.totalExpected) ? profitsTotal?.totalExpected?.toFixed(2) : "0.00"
+                        (profitsTotal && profitsTotal?.totalExpectedProfit) ? profitsTotal?.totalExpectedProfit?.toFixed(2) : "0.00"
                     }
                   </Typography>
                 </Grid>
                 <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
                     $
-                    { (profitsTotal && profitsTotal?.totalActual) ? profitsTotal?.totalActual?.toFixed(2) : "0.00" }
+                    { (profitsTotal && profitsTotal?.totalActualProfit) ? profitsTotal?.totalActualProfit?.toFixed(2) : "0.00" }
                     </Typography>
                 </Grid>
               </Grid>
@@ -227,14 +229,14 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                                             <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
                                                 $                        
                                                 {
-                                                    (property?.totalExpected) ? property?.totalExpected?.toFixed(2) : "0.00"
+                                                    (property?.expectedProfit) ? property?.expectedProfit?.toFixed(2) : "0.00"
                                                 }
                                             </Typography>
                                         </Grid>
                                         <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
                                             <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
                                             $
-                                            { (property?.totalActual) ? property?.totalActual?.toFixed(2) : "0.00" }
+                                            { (property?.actualProfit) ? property?.actualProfit?.toFixed(2) : "0.00" }
                                             </Typography>
                                         </Grid>
                                     </Grid>
@@ -246,9 +248,9 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                                                 property?.profitItems?.map( (item, index) => {
                                                     return (
                                                         <Grid item container xs={12} key={index}>
-                                                            <Grid item xs={8}>{item.purchase_type}</Grid>
-                                                            <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.pur_amount_due_total? item.pur_amount_due_total : parseFloat(0).toFixed(2)}</Typography></Grid>
-                                                            <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.total_paid_total? item.total_paid_total : parseFloat(0).toFixed(2)}</Typography></Grid>
+                                                            <Grid item xs={8}>{item.purchase_type} __ {JSON.parse(item.purchase_ids).join(", ")}</Grid>
+                                                            <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.expected? item.expected : parseFloat(0).toFixed(2)}</Typography></Grid>
+                                                            <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.actual? item.actual : parseFloat(0).toFixed(2)}</Typography></Grid>
                                                             {/* <Grid item xs={2}>{item.pur_cf_type}</Grid> */}
                                                         </Grid>
   
@@ -270,19 +272,23 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                 backgroundColor: theme.palette.primary.main,
                 boxShadow: "none",
               }}
+              expanded={revenueExpanded}
+              onChange={ () => {
+                setRevenueExpanded( (prevState) => !prevState);
+              }}
             >                  
               <Grid container item xs={12}>
                 <Grid container justifyContent="flex-start" item xs={8}>
                     <Grid container direction="row" alignContent='center' sx={{ height: '35px',}}>
                         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                             <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                            Rents
+                            {month} Revenue
                             </Typography>
                         </AccordionSummary>
                     </Grid>
                 </Grid>
                 <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                  <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
                     $                        
                     {
                         (rentsTotal && rentsTotal?.totalExpected) ? rentsTotal?.totalExpected?.toFixed(2) : "0.00"
@@ -290,7 +296,7 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                   </Typography>
                 </Grid>
                 <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
                     $
                     { (rentsTotal && rentsTotal?.totalActual) ? rentsTotal?.totalActual?.toFixed(2) : "0.00" }
                     </Typography>
@@ -357,9 +363,9 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                                                 property?.rentItems?.map( (item, index) => {
                                                     return (
                                                         <Grid item container xs={12} key={index}>
-                                                            <Grid item xs={8}>{item.purchase_type}</Grid>
-                                                            <Grid container justifyContent='flex-end' item xs={2}>${item.pur_amount_due_total? item.pur_amount_due_total : parseFloat(0).toFixed(2)}</Grid>
-                                                            <Grid container justifyContent='flex-end' item xs={2}>${item.total_paid_total? item.total_paid_total : parseFloat(0).toFixed(2)}</Grid>
+                                                            <Grid item xs={8}>{item.purchase_type} __ {JSON.parse(item.purchase_ids).join(", ")}</Grid>
+                                                            <Grid container justifyContent='flex-end' item xs={2}>${item.expected? item.expected : parseFloat(0).toFixed(2)}</Grid>
+                                                            <Grid container justifyContent='flex-end' item xs={2}>${item.actual? item.actual : parseFloat(0).toFixed(2)}</Grid>
                                                             {/* <Grid item xs={2}>{item.pur_cf_type}</Grid> */}
                                                         </Grid>
   
@@ -381,19 +387,23 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                 backgroundColor: theme.palette.primary.main,
                 boxShadow: "none",
               }}
+              expanded={expenseExpanded}
+              onChange={ () => {
+                setExpenseExpanded( (prevState) => !prevState);
+              }}
             >                  
               <Grid container item xs={12}>
                 <Grid container justifyContent="flex-start" item xs={8}>
                     <Grid container direction="row" alignContent='center' sx={{ height: '35px',}}>
                         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                             <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                            Payouts
+                            {month} Expense
                             </Typography>
                         </AccordionSummary>
                     </Grid>
                 </Grid>
                 <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                  <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
                     $                        
                     {
                         (payoutsTotal && payoutsTotal?.totalExpected) ? payoutsTotal?.totalExpected?.toFixed(2) : "0.00"
@@ -401,7 +411,7 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                   </Typography>
                 </Grid>
                 <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
                     $
                     { (payoutsTotal && payoutsTotal?.totalActual) ? payoutsTotal?.totalActual?.toFixed(2) : "0.00" }
                     </Typography>
@@ -457,9 +467,9 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                                                 property?.payoutItems?.map( (item, index) => {
                                                     return (
                                                         <Grid item container xs={12} key={index}>
-                                                            <Grid item xs={8}>{item.purchase_type}</Grid>
-                                                            <Grid container justifyContent='flex-end' item xs={2}>${item.pur_amount_due_total? item.pur_amount_due_total : parseFloat(0).toFixed(2)}</Grid>
-                                                            <Grid container justifyContent='flex-end' item xs={2}>${item.total_paid_total? item.total_paid_total : parseFloat(0).toFixed(2)}</Grid>
+                                                            <Grid item xs={8}>{item.purchase_type} __ {JSON.parse(item.purchase_ids).join(", ")}</Grid>
+                                                            <Grid container justifyContent='flex-end' item xs={2}>${item.expected? item.expected : parseFloat(0).toFixed(2)}</Grid>
+                                                            <Grid container justifyContent='flex-end' item xs={2}>${item.actual? item.actual : parseFloat(0).toFixed(2)}</Grid>
                                                             {/* <Grid item xs={2}>{item.pur_cf_type}</Grid> */}
                                                         </Grid>
   

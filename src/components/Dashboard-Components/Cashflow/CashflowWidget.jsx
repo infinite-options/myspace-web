@@ -29,6 +29,11 @@ import {
   getPast12MonthsExpectedCashflow,
   fetchCashflow2,
   getDataByProperty,
+  getTotalExpectedExpenseByMonthYearWidget,
+  getTotalExpenseByMonthYearWidget,
+  getTotalExpectedRevenueByMonthYearWidget,
+  getTotalRevenueByMonthYearWidget,
+  getPast12MonthsExpectedCashflowWidget
   // getPast12MonthsCashflow,
   // getNext12MonthsCashflow,
   // getRevenueList,
@@ -41,7 +46,7 @@ import AddRevenueIcon from "../../../images/AddRevenueIcon.png";
 
 // "../../images/AddRevenueIcon.png"
 
-function CashflowWidget({ data, originalData, setCurrentWindow, page, setSelectedProperty, setData, selectedProperty, allProperties }) {
+function CashflowWidget({ data, originalData, setCurrentWindow, page, setSelectedProperty, setData, selectedProperty, allProperties, window }) {
   // console.log("In Cashflow Widget ");
   // console.log("Cashflow Widget - data - ", data);
   const navigate = useNavigate();
@@ -116,21 +121,42 @@ function CashflowWidget({ data, originalData, setCurrentWindow, page, setSelecte
   }
 
   useEffect(() => {
-    if(cashflowData != null){
-      let currentMonthYearRevenue = getTotalRevenueByMonthYear(cashflowData, currentMonth, currentYear);
-      let currentMonthYearExpense = getTotalExpenseByMonthYear(cashflowData, currentMonth, currentYear);
+    if(page === "OwnerDashboard"){
+      if(cashflowData != null){
+        let currentMonthYearRevenue = getTotalRevenueByMonthYearWidget(cashflowData, currentMonth, currentYear);
+        let currentMonthYearExpense = getTotalExpenseByMonthYearWidget(cashflowData, currentMonth, currentYear);
+  
+        let currentMonthYearExpectedRevenue = getTotalExpectedRevenueByMonthYearWidget(cashflowData, currentMonth, currentYear);
+        let currentMonthYearExpectedExpense = getTotalExpectedExpenseByMonthYearWidget(cashflowData, currentMonth, currentYear);
+  
+        // let last12months = getPast12MonthsCashflow(data, currentMonth, currentYear);
+        let last12months = getPast12MonthsExpectedCashflowWidget(cashflowData, currentMonth, currentYear);
+  
+        setTotalRevenueByMonth(currentMonthYearRevenue); // currently useing sum(total_paid)
+        setTotalExpenseByMonth(currentMonthYearExpense); // currently using sum(total_paid)
+        setExpectedRevenueByMonth(currentMonthYearExpectedRevenue);
+        setExpectedExpenseByMonth(currentMonthYearExpectedExpense);
+        setLast12Months(last12months);
+      }
 
-      let currentMonthYearExpectedRevenue = getTotalExpectedRevenueByMonthYear(cashflowData, currentMonth, currentYear);
-      let currentMonthYearExpectedExpense = getTotalExpectedExpenseByMonthYear(cashflowData, currentMonth, currentYear);
+    }else{
 
-      // let last12months = getPast12MonthsCashflow(data, currentMonth, currentYear);
-      let last12months = getPast12MonthsExpectedCashflow(cashflowData, currentMonth, currentYear);
-
-      setTotalRevenueByMonth(currentMonthYearRevenue); // currently useing sum(total_paid)
-      setTotalExpenseByMonth(currentMonthYearExpense); // currently using sum(total_paid)
-      setExpectedRevenueByMonth(currentMonthYearExpectedRevenue);
-      setExpectedExpenseByMonth(currentMonthYearExpectedExpense);
-      setLast12Months(last12months);
+      if(cashflowData != null){
+        let currentMonthYearRevenue = getTotalRevenueByMonthYear(cashflowData, currentMonth, currentYear);
+        let currentMonthYearExpense = getTotalExpenseByMonthYear(cashflowData, currentMonth, currentYear);
+  
+        let currentMonthYearExpectedRevenue = getTotalExpectedRevenueByMonthYear(cashflowData, currentMonth, currentYear);
+        let currentMonthYearExpectedExpense = getTotalExpectedExpenseByMonthYear(cashflowData, currentMonth, currentYear);
+  
+        // let last12months = getPast12MonthsCashflow(data, currentMonth, currentYear);
+        let last12months = getPast12MonthsExpectedCashflow(cashflowData, currentMonth, currentYear);
+  
+        setTotalRevenueByMonth(currentMonthYearRevenue); // currently useing sum(total_paid)
+        setTotalExpenseByMonth(currentMonthYearExpense); // currently using sum(total_paid)
+        setExpectedRevenueByMonth(currentMonthYearExpectedRevenue);
+        setExpectedExpenseByMonth(currentMonthYearExpectedExpense);
+        setLast12Months(last12months);
+      }
     }
     
     // setTotalRevenueByMonth(50);  // This works.  Problem:  currentMonthYearRevenue is returning 0
@@ -142,18 +168,35 @@ function CashflowWidget({ data, originalData, setCurrentWindow, page, setSelecte
       setCashflowData(data)
     }
 
-    if(page !== "OwnerDashboard"){
-      fetchCashflow2(profileId)
-        .then((data) => {
-          setOriginalCashFlowData(data);
-          // let currentMonthYearRevenueExpected = get
-        })
-        .catch((error) => {
-          console.error("Error fetching cashflow data:", error);
-        });
+    if(originalData != null || originalData !== undefined){
+      setOriginalCashFlowData(originalData)
     }
+    // if(currentWindow === "CASHFLOW_DETAILS"){
+      
+    if((data === null || data === undefined) && (originalData === null || originalData === undefined) && (window === "ADD_REVENUE" || window === "ADD_EXPENSE")){
+      fetchCashflow2(profileId)
+          .then((data) => {
+            setOriginalCashFlowData(data);
+            setCashflowData(data)
+            // let currentMonthYearRevenueExpected = get
+          })
+          .catch((error) => {
+            console.error("Error fetching cashflow data:", error);
+          });
+    }
+    //   if(page !== "OwnerDashboard"){
+    //     fetchCashflow2(profileId)
+    //       .then((data) => {
+    //         setOriginalCashFlowData(data);
+    //         // let currentMonthYearRevenueExpected = get
+    //       })
+    //       .catch((error) => {
+    //         console.error("Error fetching cashflow data:", error);
+    //       });
+    //   }
+    // }
 
-  },[data])
+  },[data, originalData])
 
   useEffect(()=>{
     // if(originalCashFlowData == null || originalCashFlowData == undefined){
@@ -585,7 +628,7 @@ function CashflowWidget({ data, originalData, setCurrentWindow, page, setSelecte
                     if (page === "OwnerCashflow") {
                       setCurrentWindow("ADD_REVENUE");
                     } else if (page === "OwnerDashboard") {
-                      navigate("/cashflow", { state: { currentWindow: "ADD_REVENUE", month, year, cashFlowData: cashflowData,
+                      navigate("/cashflow", { state: { currentWindow: "ADD_REVENUE", month, year,
                         propertyList : propertyList,
                         selectedProperty : widgetselectedProperty } });
                     }
@@ -618,7 +661,7 @@ function CashflowWidget({ data, originalData, setCurrentWindow, page, setSelecte
                     if (page === "OwnerCashflow") {
                       setCurrentWindow("ADD_EXPENSE");
                     } else if (page === "OwnerDashboard") {
-                      navigate("/cashflow", { state: { currentWindow: "ADD_EXPENSE", month, year, cashFlowData: cashflowData,
+                      navigate("/cashflow", { state: { currentWindow: "ADD_EXPENSE", month, year,
                         propertyList : propertyList,
                         selectedProperty : widgetselectedProperty } });
                     }
