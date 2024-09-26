@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedData, dataKey }) => {
+const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isEditable }) => {
     console.log('Inside Pets occupants', leasePets);
     const [pets, setPets] = useState([]);
     const [open, setOpen] = useState(false);
@@ -171,7 +171,7 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
     }
 
 
-    const columns = [
+    const columns = isEditable ? [
         { field: 'type', headerName: 'Type', flex: 1, editable: true },
         { field: 'name', headerName: 'First Name', flex: 1, editable: true },
         { field: 'last_name', headerName: 'Last Name', flex: 1, editable: true },
@@ -188,13 +188,20 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
                 // <GridActionsCellItem icon={<DeleteIcon sx={{color:"#3D5CAC"}}/>} label="Delete" onClick={() => handleDeleteClick(params.id)} />,
             ],
         },
+    ] : [
+        { field: 'type', headerName: 'Type', flex: 1, editable: true },
+        { field: 'name', headerName: 'First Name', flex: 1, editable: true },
+        { field: 'last_name', headerName: 'Last Name', flex: 1, editable: true },
+        { field: 'breed', headerName: 'Breed', flex: 1, editable: true },
+        { field: 'weight', headerName: 'Weight', flex: 1, editable: true },
+        { field: 'owner', headerName: 'Owner', flex: 1, editable: true },
     ];
 
     return (
         <Box sx={{ width: '100%' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
                 <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", marginLeft: '5px' }}>Pets ({leasePets.length})</Typography>
-                <Button
+                {isEditable && <Button
                     sx={{
                         "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
                         cursor: "pointer",
@@ -208,7 +215,7 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
                     }}
                     onClick={() => { setCurrentRow({ id: null, name: '', last_name: '', type: '', breed: '', weight: '', owner: '' }); handleOpen(); }}>
                     <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
-                </Button>
+                </Button>}
             </Box>
             {leasePets && leasePets.length > 0 &&
                 <DataGrid

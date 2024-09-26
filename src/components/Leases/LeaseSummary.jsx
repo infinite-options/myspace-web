@@ -13,7 +13,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { getDateAdornmentString } from '../../utils/dates';
 import dayjs from "dayjs";
 
-const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newStartDate, newEndDate }) => {
+const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newStartDate, newEndDate, isEditable }) => {
     const color = theme.palette.form.main;
     //image slider
     const [image, setImage] = useState("");
@@ -54,7 +54,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
 
     return (
         <Paper sx={{ margin: "10px", backgroundColor: color, paddingBottom: "10px" }}>
-            <Box sx={{ display: 'flex', flexDirection: 'row-reverse', height: '20px' }}>
+            {isEditable && <Box sx={{ display: 'flex', flexDirection: 'row-reverse', height: '20px' }}>
                 <Button
                     sx={{
                         "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
@@ -185,7 +185,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                     </Box>
 
                 </Dialog>
-            </Box>
+            </Box>}
             <Grid container spacing={2} sx={{ marginBottom: '15px' }}>
                 <Grid item md={0.4} />
                 <Grid item xs={12} md={2.5}>

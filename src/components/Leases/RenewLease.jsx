@@ -51,6 +51,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
     const [signedLease, setSignedLease] = useState(null);
     const [remainingUtils, setRemainingUtils] = useState([]);
     const { selectedRole } = useUser();
+    // console.log("---in renewlease page - selected role ", selectedRole)
     //New contract states
     const [newRent, setNewRent] = useState(null);
     const [newFreq, setNewFreq] = useState(null);
@@ -443,8 +444,10 @@ return (
                 </Grid>
                 {/* Start */}
                 <Grid item xs={12} md={12}>
-                    <LeaseSummary currentLease={currentLease} rent={rent} setNewStartDate={setNewStartDate} setNewEndDate={setNewEndDate}
-                        newStartDate={newStartDate} newEndDate={newEndDate} />
+                    {selectedRole === "OWNER" && <LeaseSummary currentLease={currentLease} rent={rent} setNewStartDate={setNewStartDate} setNewEndDate={setNewEndDate}
+                        newStartDate={newStartDate} newEndDate={newEndDate} isEditable={false}/>}
+                    {selectedRole !== "OWNER" && <LeaseSummary currentLease={currentLease} rent={rent} setNewStartDate={setNewStartDate} setNewEndDate={setNewEndDate}
+                        newStartDate={newStartDate} newEndDate={newEndDate} isEditable={true}/>}
                 </Grid>
                 {/* End */}
 
@@ -457,9 +460,12 @@ return (
                 )}
                 <Grid item xs={12} md={12}>
                     <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                        {leaseFees &&
-                            <FeesDetails getDateAdornmentString={getDateAdornmentString} leaseFees={leaseFees} setLeaseFees={setLeaseFees} />
+                        {selectedRole === "OWNER" && leaseFees &&
+                            <FeesDetails isEditable={false} getDateAdornmentString={getDateAdornmentString} leaseFees={leaseFees} setLeaseFees={setLeaseFees} />
                         }
+                        {selectedRole !== "OWNER" && leaseFees &&
+                            <FeesDetails isEditable={true} getDateAdornmentString={getDateAdornmentString} leaseFees={leaseFees} setLeaseFees={setLeaseFees} />
+                        } 
                     </Paper>
                 </Grid>
                 <Grid item xs={12} md={12}>
@@ -494,17 +500,29 @@ return (
 
                             </AccordionSummary>
                             <AccordionDetails>
-                                {leaseAdults &&
-                                    <AdultOccupant leaseAdults={leaseAdults} relationships={relationships} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_adults"}/>
+                                {selectedRole === "OWNER" && leaseAdults &&
+                                    <AdultOccupant isEditable={false} leaseAdults={leaseAdults} relationships={relationships} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_adults"}/>
                                 }
-                                {leaseChildren &&
-                                    <ChildrenOccupant leaseChildren={leaseChildren} relationships={relationships} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData}  dataKey={"lease_children"}/>
+                                {selectedRole !== "OWNER" && leaseAdults &&
+                                    <AdultOccupant isEditable={true} leaseAdults={leaseAdults} relationships={relationships} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_adults"}/>
                                 }
-                                {leasePets &&
-                                    <PetsOccupant leasePets={leasePets} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_pets"}/>
+                                {selectedRole === "OWNER" && leaseChildren &&
+                                    <ChildrenOccupant isEditable={false} leaseChildren={leaseChildren} relationships={relationships} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData}  dataKey={"lease_children"}/>
                                 }
-                                {leaseVehicles &&
-                                    <VehiclesOccupant leaseVehicles={leaseVehicles} states={states} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_vehicles"}/>
+                                {selectedRole !== "OWNER" && leaseChildren &&
+                                    <ChildrenOccupant isEditable={true} leaseChildren={leaseChildren} relationships={relationships} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData}  dataKey={"lease_children"}/>
+                                }
+                                {selectedRole === "OWNER" && leasePets &&
+                                    <PetsOccupant isEditable={false} leasePets={leasePets} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_pets"}/>
+                                }
+                                {selectedRole !== "OWNER" && leasePets &&
+                                    <PetsOccupant isEditable={true} leasePets={leasePets} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_pets"}/>
+                                }
+                                {selectedRole === "OWNER" && leaseVehicles &&
+                                    <VehiclesOccupant isEditable={false} leaseVehicles={leaseVehicles} states={states} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_vehicles"}/>
+                                }
+                                {selectedRole !== "OWNER" && leaseVehicles &&
+                                    <VehiclesOccupant isEditable={true} leaseVehicles={leaseVehicles} states={states} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_vehicles"}/>
                                 }
                             </AccordionDetails>
                         </Accordion>
@@ -512,7 +530,8 @@ return (
                 </Grid>
                 <Grid item xs={12} md={12}>
                     <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                        <Documents documents={documents} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_documents"} />
+                        {selectedRole === "OWNER" && <Documents isEditable={false} documents={documents} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_documents"} />}
+                        {selectedRole !== "OWNER" && <Documents isEditable={true} documents={documents} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_documents"} />}
                     </Paper>
                 </Grid>
 
@@ -532,7 +551,7 @@ return (
                     </Alert>
                 </Snackbar>
 
-                <Grid item xs={12} md={12}>
+                {selectedRole !== "OWNER" && <Grid item xs={12} md={12}>
                     <Grid container sx={{ alignItems: "center", justifyContent: "center" }} spacing={2}>
                         <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
                             <Button
@@ -633,7 +652,7 @@ return (
                             </Button>
                         </Grid>
                     </Grid>
-                </Grid>
+                </Grid>}
             </Grid>
         </Paper>
     </Box >

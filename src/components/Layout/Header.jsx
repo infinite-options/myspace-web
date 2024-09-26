@@ -43,7 +43,7 @@ function Header(props) {
   };
 
   const handleButtonClick = (role) => {
-    console.log("In handle Button Click: ", role);
+    // console.log("In handle Button Click: ", role);
     selectRole(role);
     const { dashboardUrl } = roleMap[role];
     if (role === "MAINTENANCE") {
@@ -62,6 +62,10 @@ function Header(props) {
     }
     if(role === "TENANT"){
       navigate(dashboardUrl, {state: {from:"tenantHeader"}})
+    }
+    if(role === "OWNER"){
+      navigate(dashboardUrl, {state : {from : "ownerHeader"}})
+
     }else{
       navigate(dashboardUrl);
     }

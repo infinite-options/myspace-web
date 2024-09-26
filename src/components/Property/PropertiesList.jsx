@@ -127,7 +127,8 @@ export default function PropertiesList(props) {
       setDisplayedItems(propertyList);
     }
 
-    setPropertyIndex(returnIndex || 0);    
+    setPropertyIndex(returnIndex || 0); 
+    // setCurrentRowIndex(propertyList[0].property_uid)   
     setLHS(props.LHS);
     setIsDataReady(true);
 
@@ -138,13 +139,14 @@ export default function PropertiesList(props) {
     if (LHS === "Rent") {
       onPropertyInRentWidgetClicked(initialPropInRent);
     }
+
   }, [displayedItems]);
 
   const onPropertyClick = (params) => {
     const property = params.row;
     const i = displayedItems.findIndex((p) => p.property_uid === property.property_uid);
     // console.log("List Item Clicked", property, i, displayedItems);    
-    setPropertyIndex(i);    
+    setPropertyIndex(property.id);  
     setReturnIndex(i);
     setCurrentPropertyID(property.property_uid);
     setCurrentProperty(property);
@@ -172,8 +174,8 @@ export default function PropertiesList(props) {
   function convertDataToRows(displayedItems) {
     // console.log("In convertDataToRows: ", displayedItems);
     return displayedItems.map((property, index) => ({
-      id: index,
       ...property,
+      id: index,
     }));
   }
 
@@ -269,8 +271,9 @@ export default function PropertiesList(props) {
   const [rows, setRows ] = useState(convertDataToRows(displayedItems));
 
   useEffect(() => {
-    setRows(displayedItems);
+    setRows(convertDataToRows(displayedItems));
   }, [displayedItems])
+
   const columns = [
     {
       field: "avatar",
@@ -357,6 +360,7 @@ export default function PropertiesList(props) {
       flex: 0.5,
       renderCell: (params) => {
         const numOfMaintenanceReqs = getNumOfMaintenanceReqs(params.row);
+        // console.log("params -- ", params)
         return (
           <Box
             sx={{
@@ -385,16 +389,16 @@ export default function PropertiesList(props) {
                     navigate("/ownerMaintenance", {
                       state: {
                         fromProperty: true,
-                        index: params.id,
-                        propertyId: displayedItems[params.id].property_uid,
+                        index: params.row.id,
+                        propertyId: displayedItems[params.row.id].property_uid,
                       },
                     });
                   } else {
                     navigate("/managerMaintenance", {
                       state: {
                         fromProperty: true,
-                        index: params.id,
-                        propertyId: displayedItems[params.id].property_uid,
+                        index: params.row.id,
+                        propertyId: displayedItems[params.row.id].property_uid,
                       },
                     });
                   }
@@ -559,7 +563,7 @@ export default function PropertiesList(props) {
                   <Box sx={{ marginTop: "20px" }}>
                     <DataGrid
                       getRowHeight={() => "auto"}
-                      getRowId={(row) => row.property_uid}
+                      // getRowId={(row) => row.property_uid}
                       rows={rows}
                       columns={columns}
                       autoHeight
@@ -591,10 +595,10 @@ export default function PropertiesList(props) {
                           justifyContent: "center",
                         },
                         "& .MuiDataGrid-row.Mui-selected": {
-                          backgroundColor: "#949494",
+                          backgroundColor: "#ffffff !important",
                         },
                         [`& .${gridClasses.row}`]: {
-                          bgcolor: theme.palette.form.main,
+                          bgcolor: (row) => row.id === propertyIndex ? "#ffffff" : theme.palette.form.main, // White for selected row,
                           "&:before": {
                             content: '""',
                             display: "block",
@@ -604,7 +608,7 @@ export default function PropertiesList(props) {
                             left: "0",
                             right: "0",
                             zIndex: "-1",
-                          },
+                          }
                         },
                       }}
                     />

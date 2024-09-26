@@ -52,6 +52,8 @@ export default function OwnerDashboard() {
   const { user, getProfileId } = useUser();
   const classes = useStyles();
   const navigate = useNavigate();
+  const location = useLocation();
+
   let date = new Date();
   const [rentStatus, setRentStatus] = useState([]);
   const [leaseStatus, setLeaseStatus] = useState([]);
@@ -111,6 +113,12 @@ export default function OwnerDashboard() {
       localStorage.removeItem("signedUpWithReferral");
     }
   }, []);
+
+  useEffect(() => {
+    if(location?.state?.from){
+      setView("dashboard")
+    }
+  }, [location?.state])
 
   return (
     <ThemeProvider theme={theme}>
@@ -205,6 +213,7 @@ export default function OwnerDashboard() {
                                 fontSize: "15px",
                                 paddingRight: "25px",
                                 fontWeight: "bold",
+                                cursor: "pointer"
                               }}
                               onClick={() => setView("announcements")}
                             >

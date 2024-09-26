@@ -98,7 +98,7 @@ const UtilityComponent = ({ newUtilities, utilities, utilitiesMap, handleNewUtil
     );
 };
 
-const UtilitiesManager = ({ newUtilities, setNewUtilities, utils, utilitiesMap, remainingUtils, setRemainingUtils }) => {
+const UtilitiesManager = ({ newUtilities, setNewUtilities, utils, utilitiesMap, remainingUtils, setRemainingUtils, isEditable }) => {
     const color = theme.palette.form.main;
     const [open, setOpen] = useState(false);
     const [newUtilList, setNewUtilList] = useState([]);
@@ -209,7 +209,7 @@ const UtilitiesManager = ({ newUtilities, setNewUtilities, utils, utilitiesMap, 
                                 Utilities
                             </Typography>
                         </Grid>
-                        <Grid item md={0.5}>
+                        {isEditable && <Grid item md={0.5}>
                             <Button
                                 sx={{
                                     "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
@@ -226,7 +226,7 @@ const UtilitiesManager = ({ newUtilities, setNewUtilities, utils, utilitiesMap, 
                             >
                                 <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
                             </Button>
-                        </Grid>
+                        </Grid>}
                     </Grid>
                 </AccordionSummary>
                 {newUtilList && newUtilList.length > 0 &&

@@ -65,21 +65,21 @@ export default function NewCardSlider(props) {
       </Button>
       <Box sx={{ overflow: "hidden", display: "flex", width: "auto", alignItems: "center", justifyContent: "center", flexGrow: 1 }}>
         {prevCard && !props.isMobile && (
-          <Card sx={{ minWidth: 300, padding: 2, margin: 2, opacity: "50%" }}>
-            <Typography sx={{ color: "#000000", fontSize: "20px", fontWeight: 700 }}>{announcementList[prevCardIndex].announcement_title}</Typography>
-            <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "50%" }}>{announcementList[prevCardIndex].announcement_msg}</Typography>
+          <Card sx={{ width: 500, padding: 5, margin: 2, opacity: "50%" }}>
+            <Typography sx={{ color: "#000000", fontSize: "18px", fontWeight: 700, marginBottom : "10px" }}>{announcementList[prevCardIndex].announcement_title}</Typography>
+            <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "50%", marginBottom: "5px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", }}>{announcementList[prevCardIndex].announcement_msg}</Typography>
             <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "50%" }}>{announcementList[prevCardIndex].announcement_uid}</Typography>
           </Card>
         )}
-        <Card sx={{ minWidth: props.isMobile ? 150 : 300, padding: 2, margin: 2 }}>
-          <Typography sx={{ color: "#000000", fontSize: "20px", fontWeight: 700 }}>{announcementList[currentIndex].announcement_title}</Typography>
-          <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "50%" }}>{announcementList[currentIndex].announcement_msg}</Typography>
+        <Card sx={{ width: props.isMobile ? 250 : 500, padding: 5, margin: 2, border: "1px solid #000" }}>
+          <Typography sx={{ color: "#000000", fontSize: "18px", fontWeight: 700, marginBottom : "10px" }}>{announcementList[currentIndex].announcement_title}</Typography>
+          <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "50%", marginBottom: "5px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", }}>{announcementList[currentIndex].announcement_msg}</Typography>
           <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "50%" }}>{announcementList[currentIndex].announcement_uid}</Typography>
         </Card>
-        {nextCard && !props.isMobile && (
-          <Card sx={{ minWidth: 300, padding: 2, margin: 2, opacity: "50%" }}>
-            <Typography sx={{ color: "#000000", fontSize: "20px", fontWeight: 700 }}>{announcementList[nextCardIndex].announcement_title}</Typography>
-            <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "50%" }}>{announcementList[nextCardIndex].announcement_msg}</Typography>
+        {!prevCard && nextCard && !props.isMobile && (
+          <Card sx={{ width: 500, padding: 5, margin: 2, opacity: "50%" }}>
+            <Typography sx={{ color: "#000000", fontSize: "18px", fontWeight: 700, marginBottom : "10px" }}>{announcementList[nextCardIndex].announcement_title}</Typography>
+            <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, marginBottom: "5px", opacity: "50%", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", }}>{announcementList[nextCardIndex].announcement_msg}</Typography>
             <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "50%" }}>{announcementList[nextCardIndex].announcement_uid}</Typography>
           </Card>
         )}

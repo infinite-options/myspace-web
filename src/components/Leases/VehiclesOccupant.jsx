@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdateLease, setModifiedData, modifiedData, dataKey, ownerOptions }) => {
+const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdateLease, setModifiedData, modifiedData, dataKey, ownerOptions, isEditable }) => {
     // console.log('Inside vehicles occupants', leaseVehicles);
     // console.log('VehiclesOccupant - ownerOptions', ownerOptions);
     const [vehicles, setVehicles] = useState([]);
@@ -182,7 +182,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
         setOpenDeleteConfirmation(false);
     }
 
-    const columns = [
+    const columns = isEditable ? [
         { field: 'year', headerName: 'Year', flex: 1, editable: true },
         { field: 'make', headerName: 'Company', flex: 1, editable: true },
         { field: 'model', headerName: 'Model', flex: 1, editable: true },
@@ -199,6 +199,13 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                 // <GridActionsCellItem icon={<DeleteIcon sx={{color:"#3D5CAC"}}/>} label="Delete" onClick={() => handleDeleteClick(params.id)} />,
             ],
         },
+    ] : [
+        { field: 'year', headerName: 'Year', flex: 1, editable: true },
+        { field: 'make', headerName: 'Company', flex: 1, editable: true },
+        { field: 'model', headerName: 'Model', flex: 1, editable: true },
+        { field: 'license', headerName: 'License Plate', flex: 1, editable: true },
+        { field: 'state', headerName: 'State', flex: 1, editable: true },
+        { field: 'owner', headerName: 'Owner', flex: 1, editable: true },
     ];
 
     return (
@@ -206,7 +213,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
                 <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", marginLeft: '5px' }}>
                     Vehicles ({leaseVehicles.length})</Typography>
-                <Button
+                {isEditable && <Button
                     sx={{
                         "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
                         cursor: "pointer",
@@ -220,7 +227,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                     }}
                     onClick={() => { setCurrentRow({ id: null, year: '', make: '', model: '', license: '', state: '', owner: '' }); handleOpen(); }}>
                     <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
-                </Button>
+                </Button>}
             </Box>
             {leaseVehicles && leaseVehicles.length > 0 &&
                 <DataGrid
