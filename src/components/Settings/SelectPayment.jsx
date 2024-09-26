@@ -199,9 +199,9 @@ export default function SelectPayment(props) {
   }
 
   const submit = async ({ paymentIntent, paymentMethod }) => {
-    // console.log("In Submit Function");
-    // console.log("paymentData", paymentData);
-    // console.log("in submit in SelectPayment.jsx", convenience_fee);
+    console.log("In Submit Function");
+    console.log("paymentData", paymentData);
+    console.log("in submit in SelectPayment.jsx", convenience_fee);
     setPaymentConfirm(true);
 
     // console.log("--DEBUG-- in submit in SelectPayment.jsx paymentIntent output", paymentIntent);
@@ -308,10 +308,10 @@ export default function SelectPayment(props) {
   };
 
   const handleSubmit = async (e) => {
-    // console.log("selectedMethod", selectedMethod);
-    // console.log("Payment total", totalBalance);
-    // console.log("Convenience Fee", convenience_fee);
-    // console.log("PaymentData: ", { ...paymentData, total: parseFloat(totalBalance.toFixed(2)) });
+    console.log("selectedMethod", selectedMethod);
+    console.log("Payment total", totalBalance);
+    console.log("Convenience Fee", convenience_fee);
+    console.log("PaymentData: ", { ...paymentData, total: parseFloat(totalBalance.toFixed(2)) });
 
     // e.preventDefault();
     setPaymentData({ ...paymentData, total: parseFloat(totalBalance.toFixed(2)) });
@@ -325,11 +325,11 @@ export default function SelectPayment(props) {
       setStripeDialogShow(true);
     }
     // credit_card_handler(paymentData.business_code);
-    else if (selectedMethod === "Zelle") {
+    else if (selectedMethod === "zelle") {
       // console.log("Zelle Selected");
       let payment_intent = "Zelle";
       let payment_method = "Zelle";
-      // console.log("Setting PI and PM: ", payment_intent, payment_method);
+      console.log("Setting PI and PM: ", payment_intent, payment_method);
       submit(payment_intent, payment_method);
       // toggleKeys();
     }
@@ -627,40 +627,39 @@ export default function SelectPayment(props) {
                 <Divider light />
 
                 <FormControl component='fieldset'>
-                  <RadioGroup aria-label='Number' name='number' value={selectedMethod} onChange={handleChange}>
-                    {paymentMethods.map((method) => (
-                      <FormControlLabel
-                        key={method.paymentMethod_uid}
-                        value={method.paymentMethod_type + method.paymentMethod_uid} // Combine type and UID for unique selection
-                        control={
-                          <Radio
-                            sx={{
-                              color: selectedMethod === method.paymentMethod_type + method.paymentMethod_uid ? "#3D5CAC" : "#000000",
-                              "&.Mui-checked": {
-                                color: "#3D5CAC",
-                              },
-                            }}
-                          />
-                        }
-                        label={
-                          <div style={{ display: "flex", alignItems: "center" }}>
-                            <img
-                              src={
-                                method.paymentMethod_type === 'zelle' ? Zelle :
-                                method.paymentMethod_type === 'credit_card' ? CreditCardIcon :
-                                method.paymentMethod_type === 'paypal' ? PayPal :
-                                method.paymentMethod_type === 'venmo' ? Venmo :
-                                method.paymentMethod_type === 'apple_pay' ? ApplePay :
-                                BankIcon // Default icon if none match
-                              }
-                              alt={method.paymentMethod_type}
-                              style={{ marginRight: "8px", height: "24px" }}
+                <RadioGroup aria-label='Number' name='number' value={selectedMethod} onChange={handleChange}>
+                  {paymentMethods.map((method) => (
+                    <FormControlLabel
+                      key={method.paymentMethod_uid}
+                      value={method.paymentMethod_type}
+                      control={
+                        <Radio
+                          sx={{
+                            color: selectedMethod === method.paymentMethod_type ? "#3D5CAC" : "#000000", 
+                            "&.Mui-checked": {
+                              color: "#3D5CAC",
+                            },
+                          }}
+                        />
+                      }
+                      label={
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <img
+                            src={
+                              method.paymentMethod_type === 'zelle' ? Zelle : 
+                              method.paymentMethod_type === 'credit_card' ? CreditCardIcon : 
+                              method.paymentMethod_type === 'paypal' ? PayPal :
+                              method.paymentMethod_type === 'venmo' ? Venmo :
+                              method.paymentMethod_type === 'apple_pay' ? ApplePay :
+                              BankIcon // Default icon if none match
+                            }
+                            alt={method.paymentMethod_type}
+                            style={{ marginRight: "8px", height: "24px" }}
                             />
-                            <Typography sx={{ color: selectedMethod === method.paymentMethod_type + method.paymentMethod_uid ? "#3D5CAC" : "#000000" }}>
+                            <Typography sx={{ color: selectedMethod === method.paymentMethod_type ? "#3D5CAC" : "#000000" }}>
                               {method.paymentMethod_name}
                             </Typography>
-                            {/* Show confirmation number only for the selected Zelle method */}
-                            {method.paymentMethod_type === "zelle" && selectedMethod === method.paymentMethod_type + method.paymentMethod_uid && (
+                            {method.paymentMethod_type === "zelle" && selectedMethod === "zelle" && (
                               <TextField
                                 id="confirmation-number"
                                 label="Confirmation Number"
@@ -692,7 +691,7 @@ export default function SelectPayment(props) {
                         }
                       />
                     ))}
-                  </RadioGroup>
+                    </RadioGroup>
                 </FormControl>
 
                 <Button

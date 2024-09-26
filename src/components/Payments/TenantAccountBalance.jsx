@@ -9,8 +9,7 @@ const TenantAccountBalance = ({ propertyData, selectedProperty, setSelectedPrope
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const balanceDue = parseFloat(selectedProperty?.balance || 0);
-  // console.log("propertyData", propertyData);
-  // console.log(selectedProperty);
+  console.log("balance details", balanceDetails);
 
   const handleOpen = (event) => {
       setAnchorEl(event.currentTarget);
@@ -125,9 +124,13 @@ const TenantAccountBalance = ({ propertyData, selectedProperty, setSelectedPrope
                   ${balanceDue.toFixed(2)}
               </Typography>
 
-              <Typography>
+              {/* <Typography>
                   {`${selectedProperty?.property_uid}`}
-              </Typography>
+              </Typography> */}
+
+              <Box sx={{ fontSize: "20px", fontWeight: "600", color: "#160449", marginLeft: "5px", opacity: "50%", alignItems: "center", alignContent: "center" }}>
+                        Due: {selectedProperty?.earliest_due_date ? selectedProperty.earliest_due_date : "No Data"}
+                </Box>
 
               {/* Payment or Application Button */}
               {from !== "selectPayment" && (
@@ -206,31 +209,35 @@ const TenantAccountBalance = ({ propertyData, selectedProperty, setSelectedPrope
 
               {/* Balance Details */}
               {balanceDue > 0 && !(leaseDetails?.lease_status === 'NEW' || leaseDetails?.lease_status === 'PROCESSING') && (
-              <Box sx={{ padding: '10px', height: '250px', overflowY: 'auto' }}>
-                  <Typography sx={{ fontSize: '18px', fontWeight: 'bold', color: '#160449' }}>
+                <>
+                <Typography sx={{ fontSize: '18px', fontWeight: 'bold', color: '#160449', padding: '3px' }}>
                   Balance Details
-                  </Typography>
-                  <Table sx={{ '& .MuiTableCell-root': { padding: '10px' } }}>
-                  <TableHead>
-                      <TableRow>
-                      <TableCell sx={{ padding: '4px' }}>Type</TableCell>
-                      <TableCell align="right" sx={{ padding: '4px' }}>Amount</TableCell>
-                      <TableCell sx={{ padding: '4px' }}>Description</TableCell>
-                      </TableRow>
-                  </TableHead>
-                  <TableBody>
-                      {balanceDetails.map((detail, index) => (
-                      <TableRow key={index}>
-                          <TableCell sx={{ padding: '4px' }}>{detail.purchaseType}</TableCell>
-                          <TableCell align="right" sx={{ padding: '4px' }}>
-                          ${detail.amountDue.toFixed(2)}
-                          </TableCell>
-                          <TableCell sx={{ padding: '4px' }}>{detail.description}</TableCell>
-                      </TableRow>
-                      ))}
-                  </TableBody>
-                  </Table>
-              </Box>
+                </Typography>
+                <Box sx={{ padding: '10px', maxHeight: '250px', overflowY: 'auto', backgroundColor: '#f0f0f0'}}>
+                    <Table sx={{ '& .MuiTableCell-root': { padding: '8px', fontSize: '14px'} }}>
+                        <TableHead>
+                        <TableRow sx={{ backgroundColor: '#f0f0f0' }}>
+                            <TableCell sx={{ padding: '8px', fontWeight: 'bold', color: '#160449' }}>Type</TableCell>
+                            <TableCell align="right" sx={{ padding: '8px', fontWeight: 'bold', color: '#160449' }}>Amount</TableCell>
+                            <TableCell sx={{ padding: '8px', fontWeight: 'bold', color: '#160449' }}>Description</TableCell>
+                            <TableCell sx={{ padding: '8px', fontWeight: 'bold', color: '#160449' }}>Due</TableCell>
+                        </TableRow>
+                        </TableHead>
+                        <TableBody>
+                        {balanceDetails.map((detail, index) => (
+                            <TableRow key={index}>
+                            <TableCell sx={{ padding: '8px' }}>{detail.purchaseType}</TableCell>
+                            <TableCell align="right" sx={{ padding: '8px' }}>
+                                ${detail.amountDue.toFixed(2)}
+                            </TableCell>
+                            <TableCell sx={{ padding: '8px' }}>{detail.description}</TableCell>
+                            <TableCell sx={{ padding: '8px' }}>{new Date(detail.dueDate).toLocaleDateString()}</TableCell>
+                            </TableRow>
+                        ))}
+                        </TableBody>
+                    </Table>
+                </Box>
+                </>
               )}
 
 
