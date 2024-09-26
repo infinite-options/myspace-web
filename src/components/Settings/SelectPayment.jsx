@@ -628,69 +628,70 @@ export default function SelectPayment(props) {
 
                 <FormControl component='fieldset'>
                   <RadioGroup aria-label='Number' name='number' value={selectedMethod} onChange={handleChange}>
-                  {paymentMethods.map((method) => (
-                    <FormControlLabel
-                      key={method.paymentMethod_uid}
-                      value={method.paymentMethod_type}
-                      control={
-                        <Radio
-                          sx={{
-                            color: selectedMethod === method.paymentMethod_type ? "#3D5CAC" : "#000000", 
-                            "&.Mui-checked": {
-                              color: "#3D5CAC",
-                            },
-                          }}
-                        />
-                      }
-                      label={
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          <img
-                            src={
-                              method.paymentMethod_type === 'zelle' ? Zelle : 
-                              method.paymentMethod_type === 'credit_card' ? CreditCardIcon : 
-                              method.paymentMethod_type === 'paypal' ? PayPal :
-                              method.paymentMethod_type === 'venmo' ? Venmo :
-                              method.paymentMethod_type === 'apple_pay' ? ApplePay :
-                              BankIcon // Default icon if none match
-                            }
-                            alt={method.paymentMethod_type}
-                            style={{ marginRight: "8px", height: "24px" }}
+                    {paymentMethods.map((method) => (
+                      <FormControlLabel
+                        key={method.paymentMethod_uid}
+                        value={method.paymentMethod_type + method.paymentMethod_uid} // Combine type and UID for unique selection
+                        control={
+                          <Radio
+                            sx={{
+                              color: selectedMethod === method.paymentMethod_type + method.paymentMethod_uid ? "#3D5CAC" : "#000000",
+                              "&.Mui-checked": {
+                                color: "#3D5CAC",
+                              },
+                            }}
                           />
-                          <Typography sx={{ color: selectedMethod === method.paymentMethod_type ? "#3D5CAC" : "#000000" }}>
-                            {method.paymentMethod_name}
-                          </Typography>
-                          {method.paymentMethod_type === "zelle" && selectedMethod === "zelle" && (
-                            <TextField
-                              id="confirmation-number"
-                              label="Confirmation Number"
-                              variant="outlined"
-                              size="small"
-                              value={confirmationNumber}
-                              sx={{
-                                marginLeft: "10px",
-                                input: {
-                                  color: "#000000",
-                                },
-                                "& .MuiOutlinedInput-root": {
-                                  "& fieldset": {
-                                    borderColor: "#000000",
-                                  },
-                                  "&.Mui-focused fieldset": {
-                                    borderColor: "#3D5CAC",
-                                  },
-                                },
-                              }}
-                              InputLabelProps={{
-                                shrink: true,
-                                style: { color: "#000000" },
-                              }}
-                              onChange={(e) => setConfirmationNumber(e.target.value)}
+                        }
+                        label={
+                          <div style={{ display: "flex", alignItems: "center" }}>
+                            <img
+                              src={
+                                method.paymentMethod_type === 'zelle' ? Zelle :
+                                method.paymentMethod_type === 'credit_card' ? CreditCardIcon :
+                                method.paymentMethod_type === 'paypal' ? PayPal :
+                                method.paymentMethod_type === 'venmo' ? Venmo :
+                                method.paymentMethod_type === 'apple_pay' ? ApplePay :
+                                BankIcon // Default icon if none match
+                              }
+                              alt={method.paymentMethod_type}
+                              style={{ marginRight: "8px", height: "24px" }}
                             />
-                          )}
-                        </div>
-                      }
-                    />
-                  ))}
+                            <Typography sx={{ color: selectedMethod === method.paymentMethod_type + method.paymentMethod_uid ? "#3D5CAC" : "#000000" }}>
+                              {method.paymentMethod_name}
+                            </Typography>
+                            {/* Show confirmation number only for the selected Zelle method */}
+                            {method.paymentMethod_type === "zelle" && selectedMethod === method.paymentMethod_type + method.paymentMethod_uid && (
+                              <TextField
+                                id="confirmation-number"
+                                label="Confirmation Number"
+                                variant="outlined"
+                                size="small"
+                                value={confirmationNumber}
+                                sx={{
+                                  marginLeft: "10px",
+                                  input: {
+                                    color: "#000000",
+                                  },
+                                  "& .MuiOutlinedInput-root": {
+                                    "& fieldset": {
+                                      borderColor: "#000000",
+                                    },
+                                    "&.Mui-focused fieldset": {
+                                      borderColor: "#3D5CAC",
+                                    },
+                                  },
+                                }}
+                                InputLabelProps={{
+                                  shrink: true,
+                                  style: { color: "#000000" },
+                                }}
+                                onChange={(e) => setConfirmationNumber(e.target.value)}
+                              />
+                            )}
+                          </div>
+                        }
+                      />
+                    ))}
                   </RadioGroup>
                 </FormControl>
 

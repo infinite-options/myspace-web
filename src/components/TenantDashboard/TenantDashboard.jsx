@@ -263,7 +263,7 @@ const TenantDashboard = () => {
                 case "payment":
                     return <PaymentsPM data={rightPane.state.data} setRightPane={setRightPane} selectedProperty={selectedProperty} leaseDetails={leaseDetails} balanceDetails={balanceDetails}/>;
                 case "addtenantmaintenance":
-                    return <AddTenantMaintenanceItem {...rightPane.state} setRightPane={setRightPane}/>;
+                    return <AddTenantMaintenanceItem {...rightPane.state} setRightPane={setRightPane} setReload={setReload}/>;
                 case "propertyMaintenanceRequests":
                     return (
                     <PropertyMaintenanceRequests
