@@ -340,6 +340,7 @@ export default function ManagerCashflow() {
       });
 
       const sortedPayoutsByProperty = Object.fromEntries(sortedPayoutsArray);
+      console.log("payouts - ", sortedPayoutsByProperty)
       setPayouts(sortedPayoutsByProperty);
 
 
@@ -352,6 +353,7 @@ export default function ManagerCashflow() {
       });
 
       const sortedRentData = Object.fromEntries(sortedRentArray);
+      console.log("rent data - ", sortedRentData)
       setRentsByProperty(sortedRentData)
 
       const profitDataByProperty = calculateProfitsByProperty(rentsByProperty, payouts);

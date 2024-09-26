@@ -248,7 +248,7 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                                                 property?.profitItems?.map( (item, index) => {
                                                     return (
                                                         <Grid item container xs={12} key={index}>
-                                                            <Grid item xs={8}>{item.purchase_type}</Grid>
+                                                            <Grid item xs={8}>{item.purchase_type} __ {JSON.parse(item.purchase_ids).join(", ")}</Grid>
                                                             <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.expected? item.expected : parseFloat(0).toFixed(2)}</Typography></Grid>
                                                             <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.actual? item.actual : parseFloat(0).toFixed(2)}</Typography></Grid>
                                                             {/* <Grid item xs={2}>{item.pur_cf_type}</Grid> */}
@@ -363,7 +363,7 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                                                 property?.rentItems?.map( (item, index) => {
                                                     return (
                                                         <Grid item container xs={12} key={index}>
-                                                            <Grid item xs={8}>{item.purchase_type}</Grid>
+                                                            <Grid item xs={8}>{item.purchase_type} __ {JSON.parse(item.purchase_ids).join(", ")}</Grid>
                                                             <Grid container justifyContent='flex-end' item xs={2}>${item.expected? item.expected : parseFloat(0).toFixed(2)}</Grid>
                                                             <Grid container justifyContent='flex-end' item xs={2}>${item.actual? item.actual : parseFloat(0).toFixed(2)}</Grid>
                                                             {/* <Grid item xs={2}>{item.pur_cf_type}</Grid> */}
@@ -467,7 +467,7 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                                                 property?.payoutItems?.map( (item, index) => {
                                                     return (
                                                         <Grid item container xs={12} key={index}>
-                                                            <Grid item xs={8}>{item.purchase_type}</Grid>
+                                                            <Grid item xs={8}>{item.purchase_type} __ {JSON.parse(item.purchase_ids).join(", ")}</Grid>
                                                             <Grid container justifyContent='flex-end' item xs={2}>${item.expected? item.expected : parseFloat(0).toFixed(2)}</Grid>
                                                             <Grid container justifyContent='flex-end' item xs={2}>${item.actual? item.actual : parseFloat(0).toFixed(2)}</Grid>
                                                             {/* <Grid item xs={2}>{item.pur_cf_type}</Grid> */}
