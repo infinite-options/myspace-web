@@ -91,6 +91,8 @@ export default function ManagerCashflow() {
 
   const [cashflowData, setCashflowData] = useState(null); // Cashflow data from API
 
+  const [cashflowTransactionsData, setCashflowTransactionsData] = useState(null); // Cashflow data from API
+
   const [rentsByProperty, setRentsByProperty] = useState([]); //current month
   const [profits, setProfits] = useState([]); //current month
   const [payouts, setPayouts] = useState([]); //current month
@@ -109,14 +111,29 @@ export default function ManagerCashflow() {
   const [propertyList, setPropertyList] = useState([]);
   const [selectedProperty, setSelectedProperty] = useState("ALL");
 
-  async function fetchCashflow(userProfileId, month, year) {
+  //ROHIT - remove this function
+  // async function fetchCashflow(userProfileId, month, year) {
+  //   setShowSpinner(true);
+  //   try {
+  //     // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
+  //     // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
+  //     // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/${userProfileId}/TTM`);
+  //     // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/110-000003/TTM`);
+  //     const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowRevised/${userProfileId}`);
+  //     console.log("Manager Cashflow Data: ", cashflow.data);
+  //     setShowSpinner(false);
+  //     return cashflow.data;
+  //   } catch (error) {
+  //     console.error("Error fetching cashflow data:", error);
+  //     setShowSpinner(false);
+  //   }
+  // }
+
+  async function fetchCashflowTransactions(userProfileId, month, year) {
     setShowSpinner(true);
     try {
-      // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
-      // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
-      // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/${userProfileId}/TTM`);
-      // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/110-000003/TTM`);
-      const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowRevised/${userProfileId}`);
+
+      const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowTransactions/${userProfileId}/new`);
       console.log("Manager Cashflow Data: ", cashflow.data);
       setShowSpinner(false);
       return cashflow.data;
@@ -155,6 +172,11 @@ export default function ManagerCashflow() {
     // console.log("ManagerCashflow - selectedProperty - ", selectedProperty);
   }, [selectedProperty]);
 
+  useEffect(() => {
+    console.log("ROHIT - cashflowTransactionsData - ", cashflowTransactionsData);
+  }, [cashflowTransactionsData]);
+  
+
   //   useEffect(() => {
   //     console.log("rentsByProperty - ", rentsByProperty);
   //   }, [rentsByProperty]);
@@ -167,16 +189,29 @@ export default function ManagerCashflow() {
   //   }, [payouts]);
 
   useEffect(() => {
-    fetchCashflow(profileId)
-      .then((data) => {
-        setCashflowData(data);
-        setProfitabilityData(data?.Profit);
-        setTransactionsData(data?.Transactions);
+    // fetchCashflow(profileId)
+    //   .then((data) => {
+    //     setCashflowData(data);
+    //     setProfitabilityData(data?.Profit);
+    //     setTransactionsData(data?.Transactions);
+    //     // let currentMonthYearRevenueExpected = get
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error fetching cashflow data:", error);
+    //   });
+
+      fetchCashflowTransactions(profileId)
+      .then((data) => {        
+        setCashflowTransactionsData(data);
+        // setProfitabilityData(data?.Profit);
+        // setTransactionsData(data?.Transactions);
         // let currentMonthYearRevenueExpected = get
       })
       .catch((error) => {
         console.error("Error fetching cashflow data:", error);
       });
+
+    
 
     fetchProperties(profileId)
       .then((data) => {
@@ -188,15 +223,23 @@ export default function ManagerCashflow() {
   }, []);
 
   const refreshCashflowData = () => {
-    fetchCashflow(profileId)
+    // fetchCashflow(profileId)
+    //   .then((data) => {
+    //     setCashflowData(data);
+    //     setProfitabilityData(data?.Profit);
+    //     setTransactionsData(data?.Transactions);
+    //     // let currentMonthYearRevenueExpected = get
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error fetching cashflow data:", error);
+    //   });
+    fetchCashflowTransactions(profileId)
       .then((data) => {
-        setCashflowData(data);
-        setProfitabilityData(data?.Profit);
-        setTransactionsData(data?.Transactions);
-        // let currentMonthYearRevenueExpected = get
+        
+        setCashflowTransactionsData(data?.Transactions);        
       })
       .catch((error) => {
-        console.error("Error fetching cashflow data:", error);
+        console.error("Error fetching cashflow transactions data:", error);
       });
   };
 
@@ -409,7 +452,8 @@ export default function ManagerCashflow() {
                 propsYear={year}
                 setMonth={setMonth}
                 setYear={setYear}
-                transactionsData={transactionsData}
+                // transactionsData={transactionsData}
+                transactionsData={cashflowTransactionsData}
                 setSelectedPayment={setSelectedPayment}
                 setCurrentWindow={setCurrentWindow}
                 selectedProperty={selectedProperty}

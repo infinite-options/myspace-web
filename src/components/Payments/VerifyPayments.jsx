@@ -203,7 +203,13 @@ function BalanceDetailsTable(props) {
     },
     {
       field: "purchase_uid",
-      headerName: "Purchase UID",
+      headerName: "Pur UID",
+      flex: 3,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "pur_group",
+      headerName: "Pur Group",
       flex: 3,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },

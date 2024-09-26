@@ -87,29 +87,25 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
 
   const [transactionsNew, setTransactionsNew] = useState([]);
 
-  async function fetchCashflow(userProfileId, month, year) {
-    try {
-      // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
-      // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
-      // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/${userProfileId}/TTM`);
-      // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/110-000003/TTM`);
-      const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowRevised/${userProfileId}`);
-      console.log("Manager Cashflow Data: ", cashflow.data);
-      return cashflow.data;
-    } catch (error) {
-      console.error("Error fetching cashflow data:", error);
-    }
-  }
-
   const getPurchaseGroupStatus = (purchaseGroup) => {
     if (purchaseGroup.pur_amount_due_total === purchaseGroup.total_paid_total) {
       return "fully_paid";
-    } else if (purchaseGroup.total_paid_total === null) {
+    } else if (purchaseGroup.total_paid_total === null || purchaseGroup.total_paid_total === 0) {
       return "not_paid";
     } else {
       return "partially_paid";
     }
   };
+
+  const getPurGroupVerificationStatus = (purchaseGroup) => {
+    const tenantPayment = purchaseGroup.transactions?.find( transaction => transaction.pur_payer?.startsWith("350"));
+
+    if(!tenantPayment){
+      return null;
+    } 
+
+    return tenantPayment.verified? tenantPayment.verified : "unverified";
+  }
 
   //   useEffect(() => {
   //     console.log("rentsByProperty - ", rentsByProperty);
@@ -131,6 +127,43 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
   //   console.log("transactionsNew - ", transactionsNew);
   // }, [transactionsNew]);
 
+  const getSortOrder = (transaction) => {
+    const { pur_payer, pur_receiver } = transaction;
+
+    if (pur_payer.startsWith("350") && pur_receiver.startsWith("600")) {
+      return 1;
+    } else if (pur_payer.startsWith("600") && pur_receiver.startsWith("110")) {
+      return 2;
+    } else if (pur_payer.startsWith("110") && pur_receiver.startsWith("600")) {
+      return 3;
+    } else {
+      return 4; // Default sort order for unspecified conditions
+    }
+  };
+
+  const getTotalsForPurGroup = (group) => {
+
+    // console.log("ROHIT - 234 - group.transactions - ", group.transactions)
+
+    const purAmountDueTotal = group.transactions.reduce((acc, transaction) => {
+      // if(transaction.pur_payer.startsWith("600")){
+      //   return acc - parseFloat(transaction.expected)  
+      // } else if(transaction.pur_payer.startsWith("110")){
+      //   return acc + parseFloat(transaction.expected)  
+      // }
+      return acc + parseFloat(transaction.expected)  
+    }, 0)
+    const totalPaidTotal = group.transactions.reduce((acc, transaction) => {
+      // if(transaction.pur_payer.startsWith("600")){
+      //   return acc - parseFloat(transaction.actual? transaction.actual : "0")
+      // } else if(transaction.pur_payer.startsWith("110")){
+      //   return acc + parseFloat(transaction.actual? transaction.actual : "0")
+      // }
+      return acc + parseFloat(transaction.actual? transaction.actual : "0");
+    }, 0)
+    return { purAmountDueTotal: purAmountDueTotal, totalPaidTotal: totalPaidTotal,};
+  }
+
   useEffect(() => {
     //TRANSACTIONS
     const allTransactionsData = transactionsData?.result;
@@ -141,24 +174,13 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
       filteredTransactionsData = allTransactionsData;
       // console.log("filteredTransactionsData - ", filteredTransactionsData);
     } else {
-      filteredTransactionsData = allTransactionsData?.filter((item) => item.property_id === selectedProperty);
+      filteredTransactionsData = allTransactionsData?.filter((item) => item.pur_property_id === selectedProperty);
       // console.log("filteredTransactionsData - ", filteredTransactionsData);
     }
     const transactionsCurrentMonth = filteredTransactionsData?.filter((item) => item.cf_month === month && item.cf_year === year);
+    
+    // console.log("ROHIT - filteredTransactionsData - ", filteredTransactionsData);
 
-    const getSortOrder = (transaction) => {
-      const { pur_payer, pur_receiver } = transaction;
-
-      if (pur_payer.startsWith("350") && pur_receiver.startsWith("600")) {
-        return 1;
-      } else if (pur_payer.startsWith("600") && pur_receiver.startsWith("110")) {
-        return 2;
-      } else if (pur_payer.startsWith("110") && pur_receiver.startsWith("600")) {
-        return 3;
-      } else {
-        return 4; // Default sort order for unspecified conditions
-      }
-    };
     const sortedTransactions = transactionsCurrentMonth?.map((transaction) => {
       return {
         ...transaction,
@@ -170,10 +192,12 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
 
     setTransactions(sortedTransactions);
 
+    // console.log("ROHIT - sortedTransactions - ", sortedTransactions);
+
     const transactionsByProperty = sortedTransactions?.reduce((acc, item) => {
-      const propertyUID = item.property_id;
+      const propertyUID = item.pur_property_id;
       const propertyInfo = {
-        property_id: item.property_id,
+        property_id: item.pur_property_id,
         property_address: item.property_address,
         property_unit: item.property_unit,
       };
@@ -188,33 +212,74 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
         // acc[propertyUID] = [];
         acc[propertyUID] = {
           propertyInfo: propertyInfo,
-          purchaseGroups: [],
+          purchaseGroups: {},
           // totalExpected: 0,
           // totalActual: 0,
         };
       }
 
       const groupStatus = getPurchaseGroupStatus(item);
-      acc[propertyUID].purchaseGroups.push({ ...item, purchaseGroupStatus: groupStatus });
+      if (!acc[propertyUID].purchaseGroups[item.pur_group]) {
+        // acc[propertyUID] = [];
+        acc[propertyUID].purchaseGroups[item.pur_group] = {         
+          pur_group: item.pur_group, 
+          transactions: [],
+        }
+      }
+      acc[propertyUID].purchaseGroups[item.pur_group].transactions.push(item);
       // acc[propertyUID].totalExpected += totalExpected;
       // acc[propertyUID].totalActual += totalActual;
 
       return acc;
     }, {});
 
+    //update pur group status for each pur group in each property
+
+
+
+    // console.log("ROHIT - 211 - transactionsByProperty - ", transactionsByProperty);
+
     if (transactionsByProperty && Object.keys(transactionsByProperty).length > 0) {
       Object.keys(transactionsByProperty)?.forEach((propertyUID) => {
         const purchaseGroups = transactionsByProperty[propertyUID].purchaseGroups;
+        // console.log("ROHIT - 212 - purchaseGroups - ", purchaseGroups);
+    
+        Object.keys(purchaseGroups)?.forEach((group) => {
+          const purGroup = purchaseGroups[group];
+          // console.log("ROHIT - 220 - purGroup - ", purGroup);
+          const { purAmountDueTotal, totalPaidTotal } = getTotalsForPurGroup(purGroup);          
+    
+          // Add totals to the current group object
+          purGroup.pur_amount_due_total = purAmountDueTotal;
+          purGroup.total_paid_total = totalPaidTotal;
+          purGroup.purchaseGroupStatus = getPurchaseGroupStatus(purGroup);
+          
+          const purGroupVerificationStatus = getPurGroupVerificationStatus(purGroup);
+          if(purGroupVerificationStatus){
+            purGroup.verified = purGroupVerificationStatus;
+          }
+        });
+      });
+    }
+    
+
+    // console.log("ROHIT - 234 - transactionsByProperty - ", transactionsByProperty);
+
+    if (transactionsByProperty && Object.keys(transactionsByProperty).length > 0) {
+      Object.keys(transactionsByProperty)?.forEach((propertyUID) => {
+        const purchaseGroups = Object.values(transactionsByProperty[propertyUID].purchaseGroups);
+
+        // console.log("ROHIT - 272 - purchaseGroups - ", purchaseGroups);
 
         const allFullyPaid = purchaseGroups.every((group) => group.purchaseGroupStatus === "fully_paid");
         const partiallyPaid = purchaseGroups.find((group) => group.purchaseGroupStatus === "partially_paid");
         const notPaid = purchaseGroups.find((group) => group.purchaseGroupStatus === "not_paid");
 
-        const totalExpected = transactionsByProperty[propertyUID].purchaseGroups?.reduce((acc, item) => {
+        const totalExpected = Object.values(transactionsByProperty[propertyUID].purchaseGroups)?.reduce((acc, item) => {
           return acc + parseFloat(item.pur_amount_due_total) || 0;
         }, 0);
 
-        const totalActual = transactionsByProperty[propertyUID].purchaseGroups?.reduce((acc, item) => {
+        const totalActual = Object.values(transactionsByProperty[propertyUID].purchaseGroups)?.reduce((acc, item) => {
           return acc + parseFloat(item.total_paid_total) || 0;
         }, 0);
 
@@ -234,7 +299,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
       });
     }
 
-    // console.log("transactionsByProperty - ", transactionsByProperty);
+    console.log(" ROHIT - 302 - transactionsByProperty - ", transactionsByProperty);
 
     setTransactionsNew(transactionsByProperty);
   }, [month, year, transactionsData, selectedProperty]);
@@ -247,7 +312,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
   const getCircleColor = (transaction) => {
     if (transaction.pur_amount_due_total === transaction.total_paid_total) {
       return "#76B148";
-    } else if (transaction.total_paid_total === null) {
+    } else if (transaction.total_paid_total === null || transaction.total_paid_total === 0) {
       return "#A52A2A";
     } else {
       return "#FFC614";
@@ -266,37 +331,58 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
     }
   };
 
-  const isTransactionPayable = (transaction) => {
-    if (transaction.pur_amount_due_total === transaction.total_paid_total) {
+  const isPurGroupPayable = (group) => {
+    // if (group.pur_amount_due_total === group.total_paid_total) {
+    //   return false;
+    // } else if (group.total_paid_total === null) {
+    //   return false;
+    // } else {
+    //   return true;
+    // }
+
+    if (group.total_paid_total == null || group.verified == null) {
       return false;
-    } else if (transaction.total_paid_total === null) {
-      return false;
-    } else {
+    }
+    else if(group.total_paid_total < group.pur_amount_due_total && group.verified === "verified"){
       return true;
+    } else{
+      return false;
     }
   };
 
-  const handlePayment = (transaction) => {
-    console.log("handlePayment - transactions - ", transaction.transactions);
+  const isPurGroupVerified = (purGroup) => {
+    if(purGroup.verified && purGroup.verified === "verified"){
+      return true;
+    }
+    return false;
+  }
+
+  const handlePayment = (purGroup) => {
+    console.log("ROHIT - 361 - handlePayment - transactions - ", purGroup.transactions);
     const purchaseUIDs = [];
-    const ownerPayments = transaction.transactions?.filter((item) => item.pur_payer === getProfileId()); //payments from 600 to 110
-    const managerPayments = transaction.transactions?.filter((item) => item.pur_receiver === getProfileId() && item.pur_payer?.startsWith("110")); //payments from 110 to 600
+    const ownerPayments = purGroup.transactions?.filter((item) => item.pur_payer === getProfileId()); //payments from 600 to 110
+    const managerPayments = purGroup.transactions?.filter((item) => item.pur_receiver === getProfileId() && item.pur_payer?.startsWith("110")); //payments from 110 to 600
     // transaction.transactions.forEach(transaction => purchaseUIDs.push({ purchase_uid: transaction.purchase_uid, pur_amount_due: parseFloat(transaction.pur_amount_due)?.toFixed(2)?.toString()}))
-    ownerPayments.forEach((transaction) =>
-      purchaseUIDs.push({ purchase_uid: transaction.purchase_uid, pur_amount_due: parseFloat(transaction.pur_amount_due)?.toFixed(2)?.toString() })
-    );
+    ownerPayments.forEach((transaction) => {
+      transaction.transactions.forEach( transaction => {
+        purchaseUIDs.push({ purchase_uid: transaction.purchase_uid, pur_amount_due: parseFloat(transaction.pur_amount_due)?.toFixed(2)?.toString() })      
+      })
+      
+    });
     managerPayments.forEach((transaction) =>
-      purchaseUIDs.push({ purchase_uid: transaction.purchase_uid, pur_amount_due: parseFloat(transaction.pur_amount_due)?.toFixed(2)?.toString() })
+      transaction.transactions.forEach( transaction => {
+        purchaseUIDs.push({ purchase_uid: transaction.purchase_uid, pur_amount_due: parseFloat(transaction.pur_amount_due)?.toFixed(2)?.toString() })
+      })
     );
 
     // console.log("handlePayment - purchaseUIDs - ", purchaseUIDs);
 
     const totalOwnerPayment = ownerPayments.reduce((acc, transaction) => {
-      return acc + transaction.pur_amount_due;
+      return acc + transaction.expected;
     }, 0);
 
     const totalManagerPayment = managerPayments.reduce((acc, transaction) => {
-      return acc + transaction.pur_amount_due;
+      return acc + transaction.expected;
     }, 0);
 
     const total = totalOwnerPayment - totalManagerPayment;
@@ -330,9 +416,14 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
     //     state: { paymentData: paymentData, total: parseFloat(total.toFixed(1)), selectedItems: [], paymentMethodInfo: {} },
     // });
 
+
+
+
     setSelectedPayment({ paymentData: paymentData, total: parseFloat(total.toFixed(1)), selectedItems: [], paymentMethodInfo: {} });
 
     setCurrentWindow("MAKE_PAYMENT");
+
+    
   };
 
   return (
@@ -395,7 +486,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
                 </Box>
 
                 <Grid container item xs={12}>
-                  <Grid item xs={6.5}></Grid>
+                  <Grid item xs={7}></Grid>
                   <Grid container justifyContent='flex-end' item xs={3}>
                     <Box sx={{ backgroundColor: "#FFE3AD", padding: "5px", borderRadius: "5px", width: "80px", display: "flex", justifyContent: "center" }}>
                       <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: "15px" }}>Expected</Typography>
@@ -422,7 +513,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
                         key={propertyID}
                       >
                         <Grid container item xs={12}>
-                          <Grid container justifyContent='flex-start' item xs={6.5}>
+                          <Grid container justifyContent='flex-start' item xs={7}>
                             <Grid container direction='row' sx={{ height: "35px" }}>
                               <Grid container alignContent='flex-start' item xs={10}>
                                 <AccordionSummary
@@ -465,8 +556,9 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
                         </Grid>
 
                         <AccordionDetails>
-                          {property.purchaseGroups?.map((purGroup, index) => {
-                            const isPayable = isTransactionPayable(purGroup);
+                          {Object.values(property.purchaseGroups)?.map((purGroup, index) => {
+                            const isPayable = isPurGroupPayable(purGroup);
+                            const isVerified = isPurGroupVerified(purGroup);
                             return (
                               <Accordion
                                 sx={{
@@ -478,9 +570,9 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
                                 key={purGroup.pur_group}
                               >
                                 <Grid container item xs={12}>
-                                  <Grid container justifyContent='flex-start' item xs={6.5}>
+                                  <Grid container justifyContent='flex-start' item xs={7}>
                                     <Grid container direction='row' sx={{ height: "35px" }}>
-                                      <Grid container alignContent='flex-start' item xs={10}>
+                                      <Grid container alignContent='flex-start' item xs={8}>
                                         <AccordionSummary
                                           sx={{
                                             "&.Mui-expanded": {
@@ -524,6 +616,30 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
                                           </Button>
                                         )}
                                       </Grid>
+                                      <Grid item xs={2}>   
+                                        {
+                                          purGroup.pur_amount_due_total !== purGroup.total_paid_total && (
+                                          <Button
+                                            onClick={() => {
+                                              if(!isVerified){
+                                                navigate("/paymentVerification");
+                                              }
+                                            }}
+                                            sx={{
+                                              backgroundColor: "#8696BE",
+                                              color: "#160449",
+                                              "&:hover": {
+                                                backgroundColor: "#160449",
+                                                color: "#FFFFFF",
+                                              },
+                                            }}
+                                          >
+                                            <Typography sx={{ color: "inherit", fontWeight: theme.typography.common.fontWeight, textTransform: "none", fontSize: "15px" }}>
+                                              {isVerified? "Verified" : "Unverified"}
+                                            </Typography>
+                                          </Button>  
+                                        )}
+                                      </Grid>
                                     </Grid>
                                   </Grid>
                                   <Grid container justifyContent='flex-end' alignItems='center' item xs={3}>
@@ -544,7 +660,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
                                     return (
                                       <>
                                         <Grid container item xs={12}>
-                                          <Grid container justifyContent='flex-start' item xs={6.5} sx={{ paddingLeft: "30px" }}>
+                                          <Grid container justifyContent='flex-start' item xs={7} sx={{ paddingLeft: "30px" }}>
                                             <Typography>
                                               {purchase.pur_payer?.startsWith("350") && purchase.pur_receiver?.startsWith("600") ? "Tenant Payment " : ""}
                                               {purchase.pur_payer?.startsWith("600") && purchase.pur_receiver?.startsWith("110") ? "Owner Payment " : ""}
@@ -554,13 +670,15 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
                                           </Grid>
                                           <Grid container justifyContent='flex-end' item xs={3}>
                                             <Typography sx={{ fontWeight: theme.typography.common.fontWeight }}>
-                                              ${purchase?.pur_amount_due ? purchase?.pur_amount_due?.toFixed(2) : "0"}
+                                              {/* ${purchase?.expected ? purchase?.expected?.toFixed(2) : "0"} */}
+                                              ${purchase?.expected ? purchase?.expected : "0"}
                                             </Typography>
                                           </Grid>
 
                                           <Grid container justifyContent='flex-end' item xs={2}>
                                             <Typography sx={{ fontWeight: theme.typography.common.fontWeight }}>
-                                              ${purchase?.total_paid ? purchase?.total_paid?.toFixed(2) : "0"}
+                                              {/* ${purchase?.actual ? purchase?.actual?.toFixed(2) : "0"} */}
+                                              ${purchase?.actual ? purchase?.actual : "0"}
                                             </Typography>
                                           </Grid>
                                         </Grid>
