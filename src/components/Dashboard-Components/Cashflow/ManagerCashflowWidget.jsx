@@ -78,7 +78,7 @@ function getTotalExpectedProfitByMonthYear(data, month, year) {
   let profitItems = data?.filter((item) => item.pur_payer?.startsWith("110") && item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
   // console.log(`270 - profitItems - ${month}, ${year} - `, profitItems);
   let totalProfit = profitItems?.reduce((acc, item) => {
-    return acc + parseFloat(item["pur_amount_due_total"] ? item["pur_amount_due_total"] : 0.0);
+    return acc + parseFloat(item["expected"] ? item["expected"] : 0.0);
   }, 0.0);
   return totalProfit;
 }
@@ -86,45 +86,49 @@ function getTotalExpectedProfitByMonthYear(data, month, year) {
 function getTotalProfitByMonthYear(data, month, year) {
   let profitItems = data?.filter((item) => item.pur_payer?.startsWith("110") && item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
   let totalProfit = profitItems?.reduce((acc, item) => {
-    return acc + parseFloat(item["total_paid_total"] ? item["total_paid_total"] : 0.0);
+    return acc + parseFloat(item["actual"] ? item["actual"] : 0.0);
   }, 0.0);
   return totalProfit;
 }
 
 function getTotalExpectedRentByMonthYear(data, month, year) {
   // console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
-  let revenueItems = data?.filter((item) => item.pur_cf_type === "revenue");
-  let rentItems = revenueItems?.filter((item) => item.pur_payer?.startsWith("350") && item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
+  // let revenueItems = data?.filter((item) => item.pur_cf_type === "revenue");
+  // let rentItems = data?.filter((item) => item.pur_payer?.startsWith("350") && item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
+  let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
   let totalRent = rentItems?.reduce((acc, item) => {
-    return acc + parseFloat(item["pur_amount_due_total"] ? item["pur_amount_due_total"] : 0.0);
+    return acc + parseFloat(item["expected"] ? item["expected"] : 0.0);
   }, 0.0);
   return totalRent;
 }
 
 function getTotalRentByMonthYear(data, month, year) {
-  let revenueItems = data?.filter((item) => item.pur_cf_type === "revenue");
-  let rentItems = revenueItems?.filter((item) => item.pur_payer?.startsWith("350") && item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
+  // let revenueItems = data?.filter((item) => item.pur_cf_type === "revenue");
+  // let rentItems = data?.filter((item) => item.pur_payer?.startsWith("350") && item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
+  let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
   let totalRent = rentItems?.reduce((acc, item) => {
-    return acc + parseFloat(item["total_paid_total"] ? item["total_paid_total"] : 0.0);
+    return acc + parseFloat(item["actual"] ? item["actual"] : 0.0);
   }, 0.0);
   return totalRent;
 }
 
 function getTotalExpectedPayoutsByMonthYear(data, month, year) {
   // console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
-  let expenseItems = data?.filter((item) => item.pur_cf_type === "expense");
-  let payoutItems = expenseItems?.filter((item) => item.pur_payer?.startsWith("600") && item.pur_receiver?.startsWith("110") && item.cf_month === month && item.cf_year === year);
+  // let expenseItems = data?.filter((item) => item.pur_cf_type === "expense");
+  // let payoutItems = data?.filter((item) => item.pur_payer?.startsWith("600") && item.pur_receiver?.startsWith("110") && item.cf_month === month && item.cf_year === year);
+  let payoutItems = data?.filter((item) => item.pur_payer?.startsWith("600") && item.cf_month === month && item.cf_year === year);
   let totalPayouts = payoutItems?.reduce((acc, item) => {
-    return acc + parseFloat(item["pur_amount_due_total"] ? item["pur_amount_due_total"] : 0.0);
+    return acc + parseFloat(item["expected"] ? item["expected"] : 0.0);
   }, 0.0);
   return totalPayouts;
 }
 
 function getTotalPayoutsByMonthYear(data, month, year) {
-  let expenseItems = data?.filter((item) => item.pur_cf_type === "expense");
-  let payoutItems = expenseItems?.filter((item) => item.pur_payer?.startsWith("600") && item.pur_receiver?.startsWith("110") && item.cf_month === month && item.cf_year === year);
+  // let expenseItems = data?.filter((item) => item.pur_cf_type === "expense");
+  // let payoutItems = data?.filter((item) => item.pur_payer?.startsWith("600") && item.pur_receiver?.startsWith("110") && item.cf_month === month && item.cf_year === year);
+  let payoutItems = data?.filter((item) => item.pur_payer?.startsWith("600") && item.cf_month === month && item.cf_year === year);
   let totalPayouts = payoutItems?.reduce((acc, item) => {
-    return acc + parseFloat(item["total_paid_total"] ? item["total_paid_total"] : 0.0);
+    return acc + parseFloat(item["actual"] ? item["actual"] : 0.0);
   }, 0.0);
   return totalPayouts;
 }
@@ -139,15 +143,6 @@ function getPast12MonthsCashflow(data, month, year) {
 
   // create a loop that goes back 12 months
   for (var i = 0; i < 12; i++) {
-    // console.log(currentMonth, currentYear)
-
-    // let expectedMonthRevenue = getTotalExpectedRevenueByMonthYear(data, currentMonth, currentYear);
-    // let expectedMonthExpense = getTotalExpectedExpenseByMonthYear(data, currentMonth, currentYear);
-    // let currentMonthRevenue = getTotalRevenueByMonthYear(data, currentMonth, currentYear);
-    // let currentMonthExpense = getTotalExpenseByMonthYear(data, currentMonth, currentYear);
-
-    let expectedMonthProfit = getTotalExpectedProfitByMonthYear(data, currentMonth, currentYear);
-    let currentMonthProfit = getTotalProfitByMonthYear(data, currentMonth, currentYear);
 
     let expectedMonthRent = getTotalExpectedRentByMonthYear(data, currentMonth, currentYear);
     let currentMonthRent = getTotalRentByMonthYear(data, currentMonth, currentYear);
@@ -155,26 +150,13 @@ function getPast12MonthsCashflow(data, month, year) {
     let expectedMonthPayouts = getTotalExpectedPayoutsByMonthYear(data, currentMonth, currentYear);
     let currentMonthPayouts = getTotalPayoutsByMonthYear(data, currentMonth, currentYear);
 
-    // console.log("getPast12MonthsCashflow - expectedMonthProfit, currentMonthProfit", expectedMonthProfit, currentMonthProfit);
-
-    // console.log("expectedMonthRevenue", expectedMonthRevenue);
-    // console.log("expectedMonthExpense", expectedMonthExpense);
-    // console.log("currentMonthRevenue", currentMonthRevenue);
-    // console.log("currentMonthExpense", currentMonthExpense);
 
     pastTwelveMonths.push({
       month: currentMonth,
       year: currentYear,
-      // expected_cashflow: expectedMonthRevenue - expectedMonthExpense,
-      // cashflow: currentMonthRevenue - currentMonthExpense,
 
-      // expected_revenue: expectedMonthRevenue,
-      // revenue:currentMonthRevenue,
-      // expected_expense: expectedMonthExpense,
-      // expense: currentMonthExpense,
-
-      expected_profit: expectedMonthProfit,
-      profit: currentMonthProfit,
+      expected_profit: expectedMonthRent - expectedMonthPayouts,
+      profit: currentMonthRent - currentMonthPayouts,
       expected_rent: expectedMonthRent,
       rent: currentMonthRent,
       expected_payouts: expectedMonthPayouts,
@@ -369,7 +351,7 @@ function ManagerCashflowWidget({
       filteredGraphdata = graphData;
       // console.log("filteredGraphdata - ", filteredGraphdata);
     } else {
-      filteredGraphdata = graphData?.filter((item) => item.property_id === selectedProperty);
+      filteredGraphdata = graphData?.filter((item) => item.pur_property_id === selectedProperty);
       // console.log("filteredGraphdata - ", filteredGraphdata);
     }
     let cashflowLast12Months = getCashflowData(filteredGraphdata);
@@ -595,7 +577,7 @@ function ManagerCashflowWidget({
                 <Grid item xs={3} sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
                     {/* ${(profits?.pur_amount_due != null && revenueCurrentMonth?.pur_amount_due != null ) ? (parseFloat(revenueCurrentMonth.pur_amount_due) - parseFloat(expenseCurrentMonth.pur_amount_due)).toFixed(2) : 0} */}
-                    {cfPeriodButtonName === "Last 12 Months" && <>${profits?.totalExpected ? parseFloat(profits?.totalExpected).toFixed(2) : "0.00"}</>}
+                    {cfPeriodButtonName === "Last 12 Months" && <>${profits?.totalExpectedProfit ? parseFloat(profits?.totalExpectedProfit).toFixed(2) : "0.00"}</>}
                     {cfPeriodButtonName === "Current Month" && (
                       <>${last12MonthsTotals?.totalExpectedProfit ? parseFloat(last12MonthsTotals?.totalExpectedProfit).toFixed(2) : "0.00"}</>
                     )}
@@ -604,14 +586,14 @@ function ManagerCashflowWidget({
                 <Grid item xs={1}></Grid>
                 <Grid container item xs={3} justifyContent='center' sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
-                    {cfPeriodButtonName === "Last 12 Months" && <>${profits?.totalActual ? parseFloat(profits?.totalActual).toFixed(2) : "0.00"}</>}
+                    {cfPeriodButtonName === "Last 12 Months" && <>${profits?.totalActualProfit ? parseFloat(profits?.totalActualProfit).toFixed(2) : "0.00"}</>}
                     {cfPeriodButtonName === "Current Month" && <>${last12MonthsTotals?.totalProfit ? parseFloat(last12MonthsTotals?.totalProfit).toFixed(2) : "0.00"}</>}
                   </Typography>
                 </Grid>
               </Grid>
               <Grid container direction='row' item xs={12} columnSpacing={3} sx={{ backgroundColor: "#9EAED6", borderRadius: "5px", marginTop: "5px" }}>
                 <Grid item xs={5} sx={{ padding: "5px", display: "flex" }}>
-                  <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>{`Rents`}</Typography>{" "}
+                  <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>{`Revenue`}</Typography>{" "}
                 </Grid>
                 <Grid item xs={3} sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
@@ -634,7 +616,7 @@ function ManagerCashflowWidget({
               </Grid>
               <Grid container direction='row' item xs={12} columnSpacing={3} sx={{ backgroundColor: "#979797", borderRadius: "5px", marginTop: "5px" }}>
                 <Grid item xs={5} sx={{ padding: "5px", display: "flex" }}>
-                  <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>{`Payouts`}</Typography>
+                  <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>{`Expense`}</Typography>
                 </Grid>
                 <Grid item xs={3} sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
