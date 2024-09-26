@@ -205,6 +205,7 @@ export default function ManagerCashflow() {
       fetchCashflowTransactions(profileId)
       .then((data) => {        
         setCashflowTransactionsData(data);
+        setCashflowData(data);
         // setProfitabilityData(data?.Profit);
         // setTransactionsData(data?.Transactions);
         // let currentMonthYearRevenueExpected = get
@@ -507,7 +508,7 @@ export default function ManagerCashflow() {
               profitsTotal={profitsTotal}
               rentsTotal={rentsTotal}
               payoutsTotal={payoutsTotal}
-              graphData={cashflowData?.result}
+              graphData={cashflowTransactionsData?.result}
               setCurrentWindow={setCurrentWindow}
               propertyList={propertyList}
               selectedProperty={selectedProperty}
