@@ -46,7 +46,7 @@ export async function maintenanceOwnerDataCollectAndProcess(setMaintenanceData, 
 
   const getMaintenanceData = async () => {
     setShowSpinner(true);
-    const maintenanceRequests = await fetch(`${APIConfig.baseURL.dev}/maintenanceReq/${profileId}`);
+    const maintenanceRequests = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${profileId}`);
     const maintenanceRequestsData = await maintenanceRequests.json();
 
     let array1 = maintenanceRequestsData.result["NEW REQUEST"]?.maintenance_items;
@@ -280,9 +280,9 @@ export function MaintenanceOwner() {
     setFilterPropertyList([]);
   }
 
-  useEffect(() => {
-    maintenanceOwnerDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId, setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData);
-  }, []);
+  // useEffect(() => {
+  //   maintenanceOwnerDataCollectAndProcess(setMaintenanceData, setShowSpinner, profileId, setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData);
+  // }, []);
 
   useEffect(() => {
     let profileId = getProfileId();

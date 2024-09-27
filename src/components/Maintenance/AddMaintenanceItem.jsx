@@ -156,9 +156,9 @@ export default function AddMaintenanceItem({setRefersh, onBack}) {
 			const response = await fetch(`${APIConfig.baseURL.dev}/properties/${getProfileId()}`);
 
 			const propertyData = await response.json();
-			// console.log("data", data)
+			// console.log("data----", propertyData)
 			// const propertyData = data.Property.result
-			console.log('properties', propertyData);
+			// console.log('properties', propertyData);
 			// setProperties(properties)
 			setProperties([...propertyData['Property'].result]);
 			// setShowSpinner(false);
