@@ -138,7 +138,7 @@ export default function SelectPayment(props) {
 
   useEffect(() => {
     // Check if selectedMethod is not empty and confirmationNumber is not empty for Zelle and method for payment is selected
-    if ((selectedMethod === "Zelle" && confirmationNumber === "") || !selectedMethod) {
+    if ((selectedMethod === "zelle" && confirmationNumber === "") || !selectedMethod || (selectedMethod === "paypal" && confirmationNumber === "") || (selectedMethod === "venmo" && confirmationNumber === "")) {
       setIsMakePaymentDisabled(true); // Disable button if conditions not met
     } else {
       setIsMakePaymentDisabled(false); // Enable button if conditions met
@@ -198,14 +198,14 @@ export default function SelectPayment(props) {
     }
   }
 
-  const submit = async ({ paymentIntent, paymentMethod }) => {
+  const submit = async (paymentIntent, paymentMethod) => {
     console.log("In Submit Function");
     console.log("paymentData", paymentData);
     console.log("in submit in SelectPayment.jsx", convenience_fee);
     setPaymentConfirm(true);
 
-    // console.log("--DEBUG-- in submit in SelectPayment.jsx paymentIntent output", paymentIntent);
-    // console.log("--DEBUG-- in submit in SelectPayment.jsx paymentMethod output", paymentMethod);
+    console.log("--DEBUG-- in submit in SelectPayment.jsx paymentIntent output", paymentIntent);
+    console.log("--DEBUG-- in submit in SelectPayment.jsx paymentMethod output", paymentMethod);
 
     paymentIntent = paymentIntent === undefined ? "Zelle" : paymentIntent;
     paymentMethod = paymentMethod === undefined ? "Zelle" : paymentMethod;
@@ -296,14 +296,24 @@ export default function SelectPayment(props) {
     setTotalBalance(balance + fee);
   }
 
+  const [selectedValue, setSelectedValue] = useState(""); // Holds the full value like "zelle-123"
+  const [selectedZelleId, setSelectedZelleId] = useState(null); 
+
   const handleChange = (event) => {
-    const selectedValue = event.target.value;
-    setSelectedMethod(selectedValue);
-    // Clear confirmation number when a different payment method is selected
-    if (selectedValue !== "Zelle") {
+    const selectedValue = event.target.value; // This could be "zelle-123"
+    const [methodType, methodId] = selectedValue.split("-"); // Extracts method type and unique ID
+  
+    setSelectedMethod(methodType); // Set the cleaned method type (e.g., "zelle")
+    setSelectedValue(selectedValue); // Set the exact value to ensure correct radio selection
+  
+    // Set the specific Zelle ID only if the method is Zelle
+    if (methodType === "zelle") {
+      setSelectedZelleId(methodId); // Set the selected Zelle ID
+    } else {
+      setSelectedZelleId(null);
       setConfirmationNumber("");
     }
-
+  
     update_fee(event);
   };
 
@@ -332,6 +342,12 @@ export default function SelectPayment(props) {
       console.log("Setting PI and PM: ", payment_intent, payment_method);
       submit(payment_intent, payment_method);
       // toggleKeys();
+    }
+    else if (selectedMethod === "paypal") {
+      let payment_intent = "Paypal";
+      let payment_method = "Paypal";
+      console.log("Setting PI and PM: (Paypal) ", payment_intent, payment_method);
+      submit(payment_intent, payment_method);
     }
     // credit_card_handler(paymentData.business_code);
   };
@@ -626,42 +642,62 @@ export default function SelectPayment(props) {
 
                 <Divider light />
 
-                <FormControl component='fieldset'>
-                <RadioGroup aria-label='Number' name='number' value={selectedMethod} onChange={handleChange}>
-                  {paymentMethods.map((method) => (
-                    <FormControlLabel
-                      key={method.paymentMethod_uid}
-                      value={method.paymentMethod_type}
-                      control={
-                        <Radio
-                          sx={{
-                            color: selectedMethod === method.paymentMethod_type ? "#3D5CAC" : "#000000", 
-                            "&.Mui-checked": {
-                              color: "#3D5CAC",
-                            },
-                          }}
-                        />
-                      }
-                      label={
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          <img
-                            src={
-                              method.paymentMethod_type === 'zelle' ? Zelle : 
-                              method.paymentMethod_type === 'credit_card' ? CreditCardIcon : 
-                              method.paymentMethod_type === 'paypal' ? PayPal :
-                              method.paymentMethod_type === 'venmo' ? Venmo :
-                              method.paymentMethod_type === 'apple_pay' ? ApplePay :
-                              BankIcon // Default icon if none match
-                            }
-                            alt={method.paymentMethod_type}
-                            style={{ marginRight: "8px", height: "24px" }}
+                <FormControl component="fieldset">
+                <RadioGroup
+                  aria-label="Number"
+                  name="number"
+                  value={selectedValue} // Binding this to selectedValue, not selectedMethod
+                  onChange={handleChange}
+                >
+                  {paymentMethods.map((method) => {
+                    const uniqueValue = `${method.paymentMethod_type}-${method.paymentMethod_uid}`; // Unique value for each, looks like zelle-123
+
+                    return (
+                      <FormControlLabel
+                        key={method.paymentMethod_uid}
+                        value={uniqueValue}
+                        control={
+                          <Radio
+                            sx={{
+                              color: selectedValue === uniqueValue ? "#3D5CAC" : "#000000",
+                              "&.Mui-checked": {
+                                color: "#3D5CAC",
+                              },
+                            }}
+                          />
+                        }
+                        label={
+                          <div style={{ display: "flex", alignItems: "center" }}>
+                            <img
+                              src={
+                                method.paymentMethod_type === "zelle"
+                                  ? Zelle
+                                  : method.paymentMethod_type === "credit_card"
+                                  ? CreditCardIcon
+                                  : method.paymentMethod_type === "paypal"
+                                  ? PayPal
+                                  : method.paymentMethod_type === "venmo"
+                                  ? Venmo
+                                  : method.paymentMethod_type === "apple_pay"
+                                  ? ApplePay
+                                  : method.paymentMethod_type === "stripe"
+                                  ? Stripe
+                                  : BankIcon
+                              }
+                              alt={method.paymentMethod_type}
+                              style={{ marginRight: "8px", height: "24px" }}
                             />
-                            <Typography sx={{ color: selectedMethod === method.paymentMethod_type ? "#3D5CAC" : "#000000" }}>
+                            <Typography
+                              sx={{
+                                color: selectedMethod === method.paymentMethod_type ? "#3D5CAC" : "#000000",
+                              }}
+                            >
                               {method.paymentMethod_name}
                             </Typography>
-                            {method.paymentMethod_type === "zelle" && selectedMethod === "zelle" && (
+                            {/* Show confirmation number input only for the selected non-Stripe method */}
+                            {selectedValue === uniqueValue && selectedMethod !== "stripe" && (
                               <TextField
-                                id="confirmation-number"
+                                id={`confirmation-number-${method.paymentMethod_uid}`} // Unique ID for each input
                                 label="Confirmation Number"
                                 variant="outlined"
                                 size="small"
@@ -690,9 +726,11 @@ export default function SelectPayment(props) {
                           </div>
                         }
                       />
-                    ))}
-                    </RadioGroup>
-                </FormControl>
+                    );
+                  })}
+                </RadioGroup>
+              </FormControl>
+
 
                 <Button
                   variant='contained'
