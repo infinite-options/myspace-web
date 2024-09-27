@@ -162,6 +162,10 @@ export default function ManagerCashflow() {
     }
   }
 
+  // useEffect(() => {
+  //   console.log("ROHIT - currentWindow - ", currentWindow);
+  // }, [currentWindow]);
+
   useEffect(() => {
     // console.log("cashflowData - ", cashflowData);
   }, [cashflowData]);
