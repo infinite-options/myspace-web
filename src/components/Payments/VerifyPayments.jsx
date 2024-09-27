@@ -144,11 +144,16 @@ function BalanceDetailsTable(props) {
   const [totalVerified, setTotalVerified] = useState(0);
 
   useEffect(() => {
+    console.log("ROHIT - selectedPayments - ",selectedPayments);
+  }, [selectedPayments]);
+
+  useEffect(() => {
     setData(props.data);
   }, [props.data]);
 
   useEffect(() => {
     if (data && data.length > 0) {
+      setSelectedPayments(data);
       setSelectedRows(data.map((row) => row.payment_uid));
       setPaymentDueResult(
         data.map((item) => ({
@@ -210,7 +215,7 @@ function BalanceDetailsTable(props) {
     {
       field: "pur_group",
       headerName: "Pur Group",
-      flex: 3,
+      flex: 4,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
@@ -306,7 +311,7 @@ function BalanceDetailsTable(props) {
   ];
 
   const handleSelectionModelChange = (newRowSelectionModel) => {
-    console.log("newRowSelectionModel - ", newRowSelectionModel);
+    console.log("ROHIT - newRowSelectionModel - ", newRowSelectionModel);
 
     const addedRows = newRowSelectionModel.filter((rowId) => !selectedRows.includes(rowId));
     const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
@@ -355,6 +360,7 @@ function BalanceDetailsTable(props) {
   const handleVerifyPayments = async () => {
     console.log("In handleVerifyPayments");
 
+    console.log("ROHIT - selectedPayments - ", selectedPayments);
     const formData = new FormData();
     const verifiedList = selectedPayments?.map((payment) => payment.payment_uid);
     console.log("ROHIT - verifiedList - ", verifiedList);

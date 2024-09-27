@@ -16,7 +16,7 @@ import APIConfig from "../../utils/APIConfig";
 
 import ManagerCashflowWidget from "../Dashboard-Components/Cashflow/ManagerCashflowWidget";
 import AccountBalanceWidget from "./TenantAccountBalance";
-import { AccountBalance } from "@mui/icons-material";
+import { AccountBalance, CollectionsBookmarkRounded } from "@mui/icons-material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import CircleIcon from "@mui/icons-material/Circle";
 import documentIcon from "../../images/Subtract.png";
@@ -64,6 +64,7 @@ export default function PaymentsManager(props) {
   const [moneyPayable, setMoneyPayable] = useState([]);
 
   const [transactionsData, setTransactionsData] = useState([]);
+  const [totalTransactions, setTotalTransactions] = useState(0);
 
   const [showSpinner, setShowSpinner] = useState(false);
   const [paymentNotes, setPaymentNotes] = useState("");
@@ -91,6 +92,10 @@ export default function PaymentsManager(props) {
     balance: "0.0",
     purchase_uids: [],
   });
+
+  useEffect(() => {
+    console.log("ROHIT - 96 - paymentData - ", paymentData);
+  }, [paymentData]);
 
   let customer_uid = getProfileId();
   let customer_role = customer_uid.substring(0, 3);
@@ -157,9 +162,45 @@ export default function PaymentsManager(props) {
   function totalMoneyToBeReceivedUpdate(moneyToBeReceived) {
     var total = 0;
     for (const item of moneyToBeReceived) {
-      total += parseFloat(item.pur_amount_due);
+      total += parseFloat(item.pur_amount_due);     
     }
     setTotalToBeReceived(total);
+  }
+
+  function getTransactionsTotal(data) {
+    const verifiedPurGroups = []
+
+    data.forEach(transaction => {
+      if(!verifiedPurGroups.includes(transaction.pur_group) && transaction.verified && transaction.verified.toLowerCase() === "verified" ){
+        verifiedPurGroups.push(transaction.pur_group);
+      }
+    })
+
+    // console.log("ROHIT - 179 - verifiedPurGroups - ", verifiedPurGroups);
+
+
+
+
+    const transactions =  data            
+            // .filter(item => (item.verified && item.verified.toLowerCase() === "verified"));
+            .filter(item => (verifiedPurGroups.includes(item.pur_group)))
+            .filter( item => (item.pur_payer.startsWith("600") || item.pur_payer.startsWith("110")))
+            .filter( item => {
+              const actual = parseFloat(item.actual? item.actual : "0");
+              const expected = parseFloat(item.expected? item.expected : "0");
+              
+              return actual !== expected;
+            });
+
+    var total = 0;
+    for (const item of transactions) {
+      if (item.pur_payer.startsWith("110")) {
+        total -= parseFloat(item.expected);
+      } else if (item.pur_payer.startsWith("600")) {
+        total += parseFloat(item.expected);
+      }
+    }
+    return total;
   }
 
   const fetchPaymentsData = async () => {
@@ -217,7 +258,9 @@ export default function PaymentsManager(props) {
       
 
         // console.log("setting transactions data - ", dataWithIndex);
-        setTransactionsData(dataWithIndex);            
+        setTransactionsData(dataWithIndex);
+        const total = getTransactionsTotal(dataWithIndex);
+        setTotalTransactions(total);
       // totalMoneyPaidUpdate(moneyPaidData);      
     } catch (error) {
       console.error("Error fetching transactions data:", error);
@@ -492,7 +535,7 @@ export default function PaymentsManager(props) {
                       <Typography
                         sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
                       >
-                        {`<TOTAL??>`}
+                        ${totalTransactions.toFixed(2)}
                       </Typography>
                     </Stack>
 
@@ -627,15 +670,45 @@ function TransactionsTable(props) {
     setData(props.data);
   }, [props.data]);
 
+  useEffect(() => {
+    console.log("ROHIT - selectedRows - ", selectedRows);
+  }, [selectedRows]);
+
   const filterTransactions = (data) => {
-    return data.filter( item => (item.pur_payer.startsWith("600") || item.pur_payer.startsWith("110")));
+    console.log("ROHIT - 631 - data - ", data);
+
+    const verifiedPurGroups = []
+
+    data.forEach(transaction => {
+      if(!verifiedPurGroups.includes(transaction.pur_group) && transaction.verified && transaction.verified.toLowerCase() === "verified" ){
+        verifiedPurGroups.push(transaction.pur_group);
+      }
+    })
+
+    console.log("ROHIT - 631 - verifiedPurGroups - ", verifiedPurGroups);
+
+
+
+
+    return data            
+            // .filter(item => (item.verified && item.verified.toLowerCase() === "verified"));
+            .filter(item => (verifiedPurGroups.includes(item.pur_group)))
+            .filter( item => (item.pur_payer.startsWith("600") || item.pur_payer.startsWith("110")))
+            .filter( item => {
+              const actual = parseFloat(item.actual? item.actual : "0");
+              const expected = parseFloat(item.expected? item.expected : "0");
+              
+              return actual !== expected;
+            });
+
   }
 
   useEffect(() => {
     if (data && data.length > 0) {
       const filteredData = filterTransactions(data);
-
-      setSelectedRows(filteredData.map((row) => row.purchase_uid));
+      console.log("ROHIT - 631 - filteredData - ", filteredData);
+      // setSelectedRows(filteredData.map((row) => row.index));
+      setSelectedRows([]);
       setPaymentDueResult(
         filteredData.map((item) => ({
           ...item,
@@ -653,17 +726,24 @@ function TransactionsTable(props) {
     for (const item of selectedRows) {
       // console.log("item in loop", item)
 
-      let paymentItemData = paymentDueResult.find((element) => element.purchase_uid === item);
-      purchase_uid_mapping.push({ purchase_uid: item, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
+      let paymentItemData = paymentDueResult.find((element) => element.index === item);
+      console.log("ROHIT - 687 - paymentItemData - ", paymentItemData);
+      const purchaseIDs = JSON.parse(paymentItemData.purchase_ids);
+      purchaseIDs.forEach( purID => {
+        purchase_uid_mapping.push({ purchase_uid: purID, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
+      });
+      
       // console.log("payment item data", paymentItemData);
 
       // total += parseFloat(paymentItemData.pur_amount_due);
       // Adjust total based on pur_cf_type
-      if (paymentItemData.pur_cf_type === "revenue") {
-        total += parseFloat(paymentItemData.pur_amount_due);
-      } else if (paymentItemData.pur_cf_type === "expense") {
+      if (paymentItemData.pur_payer.startsWith("110")) {
         total -= parseFloat(paymentItemData.pur_amount_due);
+      } else if (paymentItemData.pur_payer.startsWith("600")) {
+        total += parseFloat(paymentItemData.pur_amount_due);
       }
+
+      // total += parseFloat(paymentItemData.pur_amount_due)
     }
     // console.log("selectedRows useEffect - total - ", total);
     // console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
@@ -713,13 +793,13 @@ function TransactionsTable(props) {
     {
       field: "pur_group",
       headerName: "Pur Group",
-      flex: 1,
+      flex: 1.5,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
       field: "pur_property_id",
       headerName: "Property UID",
-      flex: 1,
+      flex: 1.5,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
@@ -734,16 +814,16 @@ function TransactionsTable(props) {
       flex: 1,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
-    {
-      field: "property_owner_id",
-      headerName: "Owner UID",
-      flex: 1,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    },
+    // {
+    //   field: "property_owner_id",
+    //   headerName: "Owner UID",
+    //   flex: 1,
+    //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    // },
     {
       field: "expected",
       headerName: "Expected",
-      flex: 1,
+      flex: 1.5,
       headerStyle: {
         fontWeight: "bold", // Apply inline style to the header cell
       },
@@ -757,7 +837,7 @@ function TransactionsTable(props) {
             justifyContent: "flex-end",
           }}
         >                    
-          {`${parseFloat(params.value).toFixed(2)}`}
+          { params.row.pur_payer.startsWith("600")? `${parseFloat(params.value).toFixed(2)}` : `(${parseFloat(params.value).toFixed(2)})`}
         </Box>
       ),
     },
@@ -785,18 +865,35 @@ function TransactionsTable(props) {
   ];
 
   const handleSelectionModelChange = (newRowSelectionModel) => {
-    console.log("newRowSelectionModel - ", newRowSelectionModel);
+    console.log("ROHIT - newRowSelectionModel - ", newRowSelectionModel);
+    console.log("ROHIT - paymentDueResult - ", paymentDueResult);
+    console.log("ROHIT -  selectedRows - ", selectedRows);
 
     const addedRows = newRowSelectionModel.filter((rowId) => !selectedRows.includes(rowId));
     const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
 
+    let updatedRowSelectionModel = [...newRowSelectionModel];
+
+    console.log("ROHIT -  addedRows - ", addedRows);
+
     if (addedRows.length > 0) {
       // console.log("Added rows: ", addedRows);
       let newPayments = [];
+      
       addedRows.forEach((item, index) => {
-        const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
-        // setCurrentTotal(prevTotal => prevTotal + addedPayment.pur_amount_due);
-        newPayments.push(addedPayment);
+        console.log("ROHIT - item - ", item)
+        // const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
+        const addedPayment = paymentDueResult.find((row) => row.index === item);
+        console.log("ROHIT - addedPayment - ", addedPayment)
+
+        if (addedPayment) {
+          const relatedPayments = paymentDueResult.filter((row) => row.pur_group === addedPayment.pur_group);
+          console.log("ROHIT - relatedPayments - ", relatedPayments)
+
+          newPayments = [...newPayments, ...relatedPayments];
+          const relatedRowIds = relatedPayments.map((payment) => payment.index);
+          updatedRowSelectionModel = [...new Set([...updatedRowSelectionModel, ...relatedRowIds])];
+        }
       });
 
       // console.log("newPayments - ", newPayments);
@@ -809,14 +906,15 @@ function TransactionsTable(props) {
       // console.log("Removed rows: ", removedRows);
       let removedPayments = [];
       removedRows.forEach((item, index) => {
-        let removedPayment = paymentDueResult.find((row) => row.purchase_uid === removedRows[index]);
-        // setCurrentTotal(prevTotal => prevTotal - removedPayment.pur_amount_due);
+        let removedPayment = paymentDueResult.find((row) => row.index === item);
+
         removedPayments.push(removedPayment);
       });
       // console.log("removedPayments - ", removedPayments);
-      setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.purchase_uid)));
+      setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.payment_uid)));
     }
-    setSelectedRows(newRowSelectionModel);
+    // setSelectedRows(newRowSelectionModel);
+    setSelectedRows(updatedRowSelectionModel);
   };
 
   if (paymentDueResult.length > 0) {
@@ -838,8 +936,8 @@ function TransactionsTable(props) {
           pageSizeOptions={[10, 50, 100]}
           checkboxSelection
           // disableRowSelectionOnClick
-          // rowSelectionModel={selectedRows}
-          // onRowSelectionModelChange={handleSelectionModelChange}
+          rowSelectionModel={selectedRows}
+          onRowSelectionModelChange={handleSelectionModelChange}
           // onRowClick={(row) => {
           //   {
           //     console.log("Row =", row);
@@ -878,14 +976,16 @@ function TransactionsTable(props) {
                 fontFamily: "Source Sans Pro",
               }}
             >
-              {/* $ {selectedRows.reduce((total, rowId) => total + paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due, 0)} */}${" "}
-              {selectedRows.reduce((total, rowId) => {
-                const payment = paymentDueResult.find((row) => row.purchase_uid === rowId);
+              ${" "}
+              {selectedRows.reduce((total, selectedIndex) => {
+                const payment = paymentDueResult.find((row) => row.index === selectedIndex);
                 const amountDue = payment.pur_amount_due;
-                const isExpense = payment.pur_cf_type === "expense";
+                // const isExpense = payment.pur_cf_type === "expense";
 
                 // Adjust the total based on whether the payment is an expense or revenue
-                return total + (isExpense ? -amountDue : amountDue);
+                // return total + (isExpense ? -amountDue : amountDue);
+
+                return total + amountDue;
               }, 0)}
             </Typography>
           </Grid>
