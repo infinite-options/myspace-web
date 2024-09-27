@@ -21,10 +21,12 @@ import {
   TableHead,
   TableRow,
   Container,
+  Tooltip,
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import { DataGrid } from "@mui/x-data-grid";
 // import HomeWorkIcon from "@mui/icons-material/HomeWork";
 import CloseIcon from "@mui/icons-material/Close";
 import theme from "../../theme/theme";
@@ -203,6 +205,120 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
     const handleViewPropertyClick = (e, property_uid) => {
       e.stopPropagation();
       navigate("/propertiesPM", { state: {currentProperty: property_uid}});      
+    }
+
+    const transactionCoulmn = [
+      {
+        field: "purchase_type",
+        headerName: "Purchase Type",
+        flex: 1.5,
+        renderCell: (params) => <span>{params.row.purchase_type !== null ? params.row.purchase_type : "-"}</span>,
+        renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      },
+      {
+        field: "purchase_ids",
+        headerName: "Purchase Ids",
+        flex: 2,
+        renderCell: (params) => (
+          <Tooltip title={params.row.purchase_ids !== null ? JSON.parse(params.row.purchase_ids).join(", ") : "-"}>
+            <Typography sx={{ 
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              maxWidth: '100%',
+            }}>
+              {params.row.purchase_ids !== null ?JSON.parse(params.row.purchase_ids).join(", ") : "-"}
+            </Typography>
+          </Tooltip>
+        ),
+        renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      },
+      {
+        field: "pur_payer",
+        headerName: "Payer",
+        flex: 1.5,
+        renderCell: (params) => (
+          <Tooltip title={params.row.pur_payer !== null ? params.row.pur_payer : "-"}>
+            <Typography sx={{ 
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              maxWidth: '100%',
+            }}>
+              {params.row.pur_payer !== null ? params.row.pur_payer : "-"}
+            </Typography>
+        </Tooltip>
+        ),
+        renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      },
+      {
+        field: "pur_receiver",
+        headerName: "Receiver",
+        flex: 1.5,
+        renderCell: (params) => (
+          <Tooltip title={params.row.pur_receiver !== null ? params.row.pur_receiver: "-"}>
+              <Typography sx={{ 
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                maxWidth: '100%',
+              }}>
+                {params.row.pur_receiver !== null ? params.row.pur_receiver: "-"}
+              </Typography>
+          </Tooltip>
+        ),
+        renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      },
+      {
+        field: "expected",
+        headerName: "Expected",
+        flex: 1,
+        renderCell: (params) => (
+          <span>
+            $ {params.row.expected !== null ? parseFloat(params.row.expected).toFixed(2) : parseFloat(0).toFixed(2)}
+          </span>
+        ),
+        renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      },
+      {
+        field: "actual",
+        headerName: "Actual",
+        flex: 1,
+        renderCell: (params) => <span style={{ textAlign: 'right', display: 'block' }}>$ {params.row.actual !== null ? parseFloat(params.row.actual).toFixed(2) : parseFloat(0).toFixed(2)}</span>,
+        renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      }
+    ];
+
+    const getRowWithIds = (data)=>{
+      const rowsId = data?.map((row, index) => ({
+        ...row,
+        id: row.id ? index : index,
+      }));
+
+      return rowsId;
+    }
+
+    const getDataGrid = (data) => {
+      const rows = getRowWithIds(data);
+
+      return (
+        <DataGrid
+          rows={rows}
+          columns={transactionCoulmn}
+          hideFooter={true}
+          autoHeight
+          rowHeight={35}
+          sx={{
+            marginTop:"10px",
+           '& .MuiDataGrid-columnHeaders': {
+              minHeight: '35px !important',
+              maxHeight: '35px !important',
+              height: 35, 
+            },
+          }}
+        />
+      );
+
     }
   
   
@@ -418,18 +534,19 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                                       <AccordionDetails>
                                           <Grid container item xs={12}>
                                               {
+                                                getDataGrid(property?.profitItems)
                                                   
-                                                  property?.profitItems?.map( (item, index) => {
-                                                      return (
-                                                          <Grid item container xs={12} key={index}>
-                                                              <Grid item xs={8}>{item.purchase_type} __ {JSON.parse(item.purchase_ids).join(", ")}</Grid>
-                                                              <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.expected? item.expected : parseFloat(0).toFixed(2)}</Typography></Grid>
-                                                              <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.actual? item.actual : parseFloat(0).toFixed(2)}</Typography></Grid>
-                                                              {/* <Grid item xs={2}>{item.pur_cf_type}</Grid> */}
-                                                          </Grid>
+                                                  // property?.profitItems?.map( (item, index) => {
+                                                  //     return (
+                                                  //         <Grid item container xs={12} key={index}>
+                                                  //             <Grid item xs={8}>{item.purchase_type} __ {JSON.parse(item.purchase_ids).join(", ")}</Grid>
+                                                  //             <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.expected? item.expected : parseFloat(0).toFixed(2)}</Typography></Grid>
+                                                  //             <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.actual? item.actual : parseFloat(0).toFixed(2)}</Typography></Grid>
+                                                  //             {/* <Grid item xs={2}>{item.pur_cf_type}</Grid> */}
+                                                  //         </Grid>
     
-                                                      );
-                                                  })
+                                                  //     );
+                                                  // })
                                               }
                                           </Grid>
                                       </AccordionDetails>
@@ -533,18 +650,19 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                                       <AccordionDetails>
                                           <Grid container item xs={12}>
                                               {
+                                                getDataGrid(property?.rentItems)
                                                   
-                                                  property?.rentItems?.map( (item, index) => {
-                                                      return (
-                                                          <Grid item container xs={12} key={index}>
-                                                              <Grid item xs={8}>{item.purchase_type} __ {JSON.parse(item.purchase_ids).join(", ")}</Grid>
-                                                              <Grid container justifyContent='flex-end' item xs={2}>${item.expected? item.expected : parseFloat(0).toFixed(2)}</Grid>
-                                                              <Grid container justifyContent='flex-end' item xs={2}>${item.actual? item.actual : parseFloat(0).toFixed(2)}</Grid>
-                                                              {/* <Grid item xs={2}>{item.pur_cf_type}</Grid> */}
-                                                          </Grid>
+                                                  // property?.rentItems?.map( (item, index) => {
+                                                  //     return (
+                                                  //         <Grid item container xs={12} key={index}>
+                                                  //             <Grid item xs={8}>{item.purchase_type} __ {JSON.parse(item.purchase_ids).join(", ")}</Grid>
+                                                  //             <Grid container justifyContent='flex-end' item xs={2}>${item.expected? item.expected : parseFloat(0).toFixed(2)}</Grid>
+                                                  //             <Grid container justifyContent='flex-end' item xs={2}>${item.actual? item.actual : parseFloat(0).toFixed(2)}</Grid>
+                                                  //             {/* <Grid item xs={2}>{item.pur_cf_type}</Grid> */}
+                                                  //         </Grid>
     
-                                                      );
-                                                  })
+                                                  //     );
+                                                  // })
                                               }
                                           </Grid>
                                       </AccordionDetails>
@@ -637,18 +755,18 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                                       <AccordionDetails>
                                           <Grid container item xs={12}>
                                               {
-                                                  
-                                                  property?.payoutItems?.map( (item, index) => {
-                                                      return (
-                                                          <Grid item container xs={12} key={index}>
-                                                              <Grid item xs={8}>{item.purchase_type} __ {JSON.parse(item.purchase_ids).join(", ")}</Grid>
-                                                              <Grid container justifyContent='flex-end' item xs={2}>${item.expected? item.expected : parseFloat(0).toFixed(2)}</Grid>
-                                                              <Grid container justifyContent='flex-end' item xs={2}>${item.actual? item.actual : parseFloat(0).toFixed(2)}</Grid>
-                                                              {/* <Grid item xs={2}>{item.pur_cf_type}</Grid> */}
-                                                          </Grid>
+                                                  getDataGrid(property?.payoutItems)  
+                                                  // property?.payoutItems?.map( (item, index) => {
+                                                  //     return (
+                                                  //         <Grid item container xs={12} key={index}>
+                                                  //             <Grid item xs={8}>{item.purchase_type} __ {JSON.parse(item.purchase_ids).join(", ")}</Grid>
+                                                  //             <Grid container justifyContent='flex-end' item xs={2}>${item.expected? item.expected : parseFloat(0).toFixed(2)}</Grid>
+                                                  //             <Grid container justifyContent='flex-end' item xs={2}>${item.actual? item.actual : parseFloat(0).toFixed(2)}</Grid>
+                                                  //             {/* <Grid item xs={2}>{item.pur_cf_type}</Grid> */}
+                                                  //         </Grid>
     
-                                                      );
-                                                  })
+                                                  //     );
+                                                  // })
                                               }
                                           </Grid>
                                       </AccordionDetails>
@@ -786,17 +904,20 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                                 {/* Profit Items inside each Property Accordion */}
                                 <AccordionDetails>
                                   <Grid container item xs={12}>
-                                    {property?.profitItems?.map( (item, index) => {
-                                        return (
-                                            <Grid item container xs={12} key={index}>
-                                                <Grid item xs={8}>{item.purchase_type} __ {JSON.parse(item.purchase_ids).join(", ")}</Grid>
-                                                <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.expected? item.expected : parseFloat(0).toFixed(2)}</Typography></Grid>
-                                                <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.actual? item.actual : parseFloat(0).toFixed(2)}</Typography></Grid>
-                                                {/* <Grid item xs={2}>{item.pur_cf_type}</Grid> */}
-                                            </Grid>
+                                    {
+                                      getDataGrid(property?.profitItems)
+                                      // property?.profitItems?.map( (item, index) => {
+                                      //     return (
+                                      //         <Grid item container xs={12} key={index}>
+                                      //             <Grid item xs={8}>{item.purchase_type} __ {JSON.parse(item.purchase_ids).join(", ")}</Grid>
+                                      //             <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.expected? item.expected : parseFloat(0).toFixed(2)}</Typography></Grid>
+                                      //             <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.actual? item.actual : parseFloat(0).toFixed(2)}</Typography></Grid>
+                                      //             {/* <Grid item xs={2}>{item.pur_cf_type}</Grid> */}
+                                      //         </Grid>
 
-                                        );
-                                    })}
+                                      //     );
+                                      // })
+                                    }
                                   </Grid>
                                 </AccordionDetails>
                               </Accordion>
@@ -933,17 +1054,20 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                                 {/* Profit Items inside each Property Accordion */}
                                 <AccordionDetails>
                                   <Grid container item xs={12}>
-                                    {property?.profitItems?.map( (item, index) => {
-                                        return (
-                                            <Grid item container xs={12} key={index}>
-                                                <Grid item xs={8}>{item.purchase_type} __ {JSON.parse(item.purchase_ids).join(", ")}</Grid>
-                                                <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.expected? item.expected : parseFloat(0).toFixed(2)}</Typography></Grid>
-                                                <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.actual? item.actual : parseFloat(0).toFixed(2)}</Typography></Grid>
-                                                {/* <Grid item xs={2}>{item.pur_cf_type}</Grid> */}
-                                            </Grid>
+                                    {
+                                     getDataGrid(property?.profitItems)
+                                      // property?.profitItems?.map( (item, index) => {
+                                      //     return (
+                                      //         <Grid item container xs={12} key={index}>
+                                      //             <Grid item xs={8}>{item.purchase_type} __ {JSON.parse(item.purchase_ids).join(", ")}</Grid>
+                                      //             <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.expected? item.expected : parseFloat(0).toFixed(2)}</Typography></Grid>
+                                      //             <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.actual? item.actual : parseFloat(0).toFixed(2)}</Typography></Grid>
+                                      //             {/* <Grid item xs={2}>{item.pur_cf_type}</Grid> */}
+                                      //         </Grid>
 
-                                        );
-                                    })}
+                                      //     );
+                                      // })
+                                    }
                                   </Grid>
                                 </AccordionDetails>
                               </Accordion>
@@ -1080,17 +1204,23 @@ const ManagerProfitability = ({ propsMonth, propsYear, profitsTotal, profits, re
                                 {/* Profit Items inside each Property Accordion */}
                                 <AccordionDetails>
                                   <Grid container item xs={12}>
-                                    {property?.profitItems?.map( (item, index) => {
+                                    {/* need table */}
+                                    {
+                                      getDataGrid(property?.profitItems)
+                                    /* {property?.profitItems?.map( (item, index) => {
                                         return (
                                             <Grid item container xs={12} key={index}>
                                                 <Grid item xs={8}>{item.purchase_type} __ {JSON.parse(item.purchase_ids).join(", ")}</Grid>
                                                 <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.expected? item.expected : parseFloat(0).toFixed(2)}</Typography></Grid>
-                                                <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.actual? item.actual : parseFloat(0).toFixed(2)}</Typography></Grid>
+                                                <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.actual? item.actual : parseFloat(0).toFixed(2)}</Typography></Grid> */}
                                                 {/* <Grid item xs={2}>{item.pur_cf_type}</Grid> */}
-                                            </Grid>
+                                            {/* </Grid>
 
                                         );
-                                    })}
+                                    })} */
+                                    }
+
+                                    
                                   </Grid>
                                 </AccordionDetails>
                               </Accordion>

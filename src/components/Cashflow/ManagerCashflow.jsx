@@ -275,12 +275,12 @@ export default function ManagerCashflow() {
     // console.table("226 - profitDatacurrentMonth - ", profitDatacurrentMonth)
     
     // const rentDataCurrentMonth = profitDatacurrentMonth?.filter((item) => item.pur_payer?.startsWith("350") && item.pur_receiver?.startsWith("600"));
-    const rentDataCurrentMonth = profitDatacurrentMonth?.filter((item) => item.pur_receiver?.startsWith("600"));
-    const rentDataCurrentYear = profitDataCurrentYear?.filter((item) => item.pur_receiver?.startsWith("600"));
+    const rentDataCurrentMonth = profitDatacurrentMonth?.filter((item) => item.pur_receiver === profileId);
+    const rentDataCurrentYear = profitDataCurrentYear?.filter((item) => item.pur_receiver === profileId);
 
     
-    const payoutsCurrentMonth = profitDatacurrentMonth?.filter((item) => item.pur_payer?.startsWith("600"));
-    const payoutsCurrentYear = profitDataCurrentYear?.filter((item) => item.pur_payer?.startsWith("600"));
+    const payoutsCurrentMonth = profitDatacurrentMonth?.filter((item) => item.pur_payer === profileId);
+    const payoutsCurrentYear = profitDataCurrentYear?.filter((item) => item.pur_payer === profileId);
 
 
     // expense by property
@@ -613,8 +613,77 @@ export default function ManagerCashflow() {
   }, [unsortedPayoutsCurrentYear, unsortedRentsDataCurrentYear])
 
   const calculateProfitsByProperty = (rentsDataByProperty, payoutsByProperty) => {
-    const profitDataByProperty = {};
+    // const profitDataByProperty = {};
   
+    // Object.keys(rentsDataByProperty).forEach((propertyUID) => {
+    //   const rentData = rentsDataByProperty[propertyUID];
+    //   const payoutData = payoutsByProperty[propertyUID] || {
+    //     totalExpected: 0,
+    //     totalActual: 0,
+    //     payoutItems: [],
+    //   };
+  
+    //   const totalRentExpected = rentData.totalExpected || 0;
+    //   const totalRentActual = rentData.totalActual || 0;
+  
+    //   const totalPayoutExpected = payoutData.totalExpected || 0;
+    //   const totalPayoutActual = payoutData.totalActual || 0;
+  
+    //   const profitRentItems = rentData.rentItems.filter(
+    //     (item) => parseFloat(item.expected) > 0 || parseFloat(item.actual) > 0
+    //   );
+  
+    //   const profitPayoutItems = payoutData.payoutItems.filter(
+    //     (item) => parseFloat(item.expected) > 0 || parseFloat(item.actual) > 0
+    //   );
+  
+    //   const expectedProfit = totalRentExpected - totalPayoutExpected;
+    //   const actualProfit = totalRentActual - totalPayoutActual;
+
+    //   profitDataByProperty[propertyUID] = {
+    //     propertyInfo: rentData.propertyInfo,
+    //     totalRentExpected,
+    //     totalRentActual,
+    //     totalPayoutExpected,
+    //     totalPayoutActual,
+    //     expectedProfit,
+    //     actualProfit,
+    //     profitItems: [...profitRentItems, ...profitPayoutItems],
+    //   };
+    // });
+  
+    // Object.keys(payoutsByProperty).forEach((propertyUID) => {
+    //   if (!profitDataByProperty[propertyUID]) {
+    //     const payoutData = payoutsByProperty[propertyUID];
+    //     const totalPayoutExpected = payoutData.totalExpected || 0;
+    //     const totalPayoutActual = payoutData.totalActual || 0;
+  
+    //     const totalRentExpected = 0;
+    //     const totalRentActual = 0;
+  
+    //     const profitPayoutItems = payoutData.payoutItems.filter(
+    //       (item) => parseFloat(item.expected) > 0 || parseFloat(item.actual) > 0
+    //     );
+  
+    //     const expectedProfit = totalRentExpected - totalPayoutExpected;
+    //     const actualProfit = totalRentActual - totalPayoutActual;
+  
+    //     profitDataByProperty[propertyUID] = {
+    //       propertyInfo: payoutData.propertyInfo,
+    //       totalRentExpected,
+    //       totalRentActual,
+    //       totalPayoutExpected,
+    //       totalPayoutActual,
+    //       expectedProfit,
+    //       actualProfit,
+    //       profitItems: profitPayoutItems,
+    //     };
+    //   }
+    // });
+  
+    // return profitDataByProperty;
+    const profitDataByProperty = {};
+
     Object.keys(rentsDataByProperty).forEach((propertyUID) => {
       const rentData = rentsDataByProperty[propertyUID];
       const payoutData = payoutsByProperty[propertyUID] || {
@@ -622,23 +691,29 @@ export default function ManagerCashflow() {
         totalActual: 0,
         payoutItems: [],
       };
-  
+
       const totalRentExpected = rentData.totalExpected || 0;
       const totalRentActual = rentData.totalActual || 0;
-  
-      const totalPayoutExpected = payoutData.totalExpected || 0;
-      const totalPayoutActual = payoutData.totalActual || 0;
-  
+
+      const totalPayoutExpected = (payoutData.totalExpected || 0) * -1;
+      const totalPayoutActual = (payoutData.totalActual || 0) * -1;
+
+      // Filter rent items
       const profitRentItems = rentData.rentItems.filter(
-        (item) => parseFloat(item.expected) > 0 || parseFloat(item.actual) > 0
+        (item) => parseFloat(item.expected) >= 0 || parseFloat(item.actual) >= 0
       );
-  
-      const profitPayoutItems = payoutData.payoutItems.filter(
-        (item) => parseFloat(item.expected) > 0 || parseFloat(item.actual) > 0
-      );
-  
-      const expectedProfit = totalRentExpected - totalPayoutExpected;
-      const actualProfit = totalRentActual - totalPayoutActual;
+
+      // Filter payout items and convert expected/actual to negative
+      const profitPayoutItems = payoutData.payoutItems
+        .filter((item) => parseFloat(item.expected) >= 0 || parseFloat(item.actual) >= 0)
+        .map((item) => ({
+          ...item,
+          expected: (parseFloat(item.expected) || 0.00) * -1, // Negative value for expected for display
+          actual: (parseFloat(item.actual) || 0.00) * -1,     
+        }));
+
+      const expectedProfit = totalRentExpected + totalPayoutExpected;
+      const actualProfit = totalRentActual + totalPayoutActual;       
 
       profitDataByProperty[propertyUID] = {
         propertyInfo: rentData.propertyInfo,
@@ -648,26 +723,32 @@ export default function ManagerCashflow() {
         totalPayoutActual,
         expectedProfit,
         actualProfit,
-        profitItems: [...profitRentItems, ...profitPayoutItems],
+        profitItems: [...profitRentItems, ...profitPayoutItems], 
       };
     });
-  
+
     Object.keys(payoutsByProperty).forEach((propertyUID) => {
       if (!profitDataByProperty[propertyUID]) {
         const payoutData = payoutsByProperty[propertyUID];
-        const totalPayoutExpected = payoutData.totalExpected || 0;
-        const totalPayoutActual = payoutData.totalActual || 0;
-  
+        
+        const totalPayoutExpected = (payoutData.totalExpected || 0) * -1;
+        const totalPayoutActual = (payoutData.totalActual || 0) * -1;
+
         const totalRentExpected = 0;
         const totalRentActual = 0;
-  
-        const profitPayoutItems = payoutData.payoutItems.filter(
-          (item) => parseFloat(item.expected) > 0 || parseFloat(item.actual) > 0
-        );
-  
-        const expectedProfit = totalRentExpected - totalPayoutExpected;
-        const actualProfit = totalRentActual - totalPayoutActual;
-  
+
+        // Filter payout items and convert expected/actual to negative
+        const profitPayoutItems = payoutData.payoutItems
+          .filter((item) => parseFloat(item.expected) >= 0 || parseFloat(item.actual) >= 0)
+          .map((item) => ({
+            ...item,
+            expected: (parseFloat(item.expected) || 0.00) * -1, 
+            actual: (parseFloat(item.actual) || 0.00) * -1,    
+          }));
+
+        const expectedProfit = totalRentExpected + totalPayoutExpected; 
+        const actualProfit = totalRentActual + totalPayoutActual;       
+
         profitDataByProperty[propertyUID] = {
           propertyInfo: payoutData.propertyInfo,
           totalRentExpected,
@@ -676,18 +757,116 @@ export default function ManagerCashflow() {
           totalPayoutActual,
           expectedProfit,
           actualProfit,
-          profitItems: profitPayoutItems,
+          profitItems: profitPayoutItems, 
         };
       }
     });
-  
+
     return profitDataByProperty;
   };
 
   const calculateProfitsByMonth = (rentsDataByMonth, payoutsByMonth) => {
-    const profitDataByMonth = {};
+    // const profitDataByMonth = {};
   
-    // Iterate through rent data by month
+    // // Iterate through rent data by month
+    // Object.keys(rentsDataByMonth).forEach((monthYearKey) => {
+    //   const rentDataForMonth = rentsDataByMonth[monthYearKey];
+    //   const payoutDataForMonth = payoutsByMonth[monthYearKey] || {
+    //     totalExpectedProfit: 0,
+    //     totalActualProfit: 0,
+    //     properties: {},
+    //   };
+  
+    //   profitDataByMonth[monthYearKey] = {
+    //     month: rentDataForMonth.month,
+    //     year: rentDataForMonth.year,
+    //     totalExpectedProfit: 0,
+    //     totalActualProfit: 0,
+    //     properties: {},
+    //   };
+  
+    //   // Process each property within the month
+    //   Object.keys(rentDataForMonth.properties).forEach((propertyUID) => {
+    //     const rentData = rentDataForMonth.properties[propertyUID];
+    //     const payoutData = payoutDataForMonth.properties[propertyUID] || {
+    //       expectedProfit: 0,
+    //       actualProfit: 0,
+    //       profitItems: [],
+    //     };
+  
+    //     const totalRentExpected = rentData.expectedProfit || 0;
+    //     const totalRentActual = rentData.actualProfit || 0;
+  
+    //     const totalPayoutExpected = (payoutData.totalExpected || 0) * -1;
+    //     const totalPayoutActual = (payoutData.totalActual || 0) * -1;
+  
+    //     const profitRentItems = rentData.profitItems.filter(
+    //       (item) => parseFloat(item.expected) >= 0 || parseFloat(item.actual) >= 0
+    //     );
+  
+    //     const profitPayoutItems = payoutData.profitItems.filter(
+    //       (item) => parseFloat(item.expected) > 0 || parseFloat(item.actual) > 0
+    //     );
+  
+    //     const expectedProfit = totalRentExpected - totalPayoutExpected;
+    //     const actualProfit = totalRentActual - totalPayoutActual;
+  
+    //     profitDataByMonth[monthYearKey].properties[propertyUID] = {
+    //       propertyInfo: rentData.propertyInfo,
+    //       totalRentExpected,
+    //       totalRentActual,
+    //       totalPayoutExpected,
+    //       totalPayoutActual,
+    //       expectedProfit,
+    //       actualProfit,
+    //       profitItems: [...profitRentItems, ...profitPayoutItems],
+    //     };
+  
+    //     // Update the total profits for the month
+    //     profitDataByMonth[monthYearKey].totalExpectedProfit += expectedProfit;
+    //     profitDataByMonth[monthYearKey].totalActualProfit += actualProfit;
+    //   });
+  
+    //   // Now, process any properties that exist in payouts but not in rents
+    //   Object.keys(payoutDataForMonth.properties).forEach((propertyUID) => {
+    //     if (!profitDataByMonth[monthYearKey].properties[propertyUID]) {
+    //       const payoutData = payoutDataForMonth.properties[propertyUID];
+    //       const totalPayoutExpected = payoutData.expectedProfit || 0;
+    //       const totalPayoutActual = payoutData.actualProfit || 0;
+  
+    //       const totalRentExpected = 0;
+    //       const totalRentActual = 0;
+  
+    //       const profitPayoutItems = payoutData.profitItems.filter(
+    //         (item) => parseFloat(item.expected) > 0 || parseFloat(item.actual) > 0
+    //       );
+  
+    //       const expectedProfit = totalRentExpected - totalPayoutExpected;
+    //       const actualProfit = totalRentActual - totalPayoutActual;
+  
+    //       profitDataByMonth[monthYearKey].properties[propertyUID] = {
+    //         propertyInfo: payoutData.propertyInfo,
+    //         totalRentExpected,
+    //         totalRentActual,
+    //         totalPayoutExpected,
+    //         totalPayoutActual,
+    //         expectedProfit,
+    //         actualProfit,
+    //         profitItems: profitPayoutItems,
+    //       };
+  
+    //       // Update the total profits for the month
+    //       profitDataByMonth[monthYearKey].totalExpectedProfit += expectedProfit;
+    //       profitDataByMonth[monthYearKey].totalActualProfit += actualProfit;
+    //     }
+    //   });
+    // });
+  
+    // console.log("profit data By month - ", profitDataByMonth)
+    // return profitDataByMonth;
+
+    const profitDataByMonth = {};
+
     Object.keys(rentsDataByMonth).forEach((monthYearKey) => {
       const rentDataForMonth = rentsDataByMonth[monthYearKey];
       const payoutDataForMonth = payoutsByMonth[monthYearKey] || {
@@ -695,7 +874,7 @@ export default function ManagerCashflow() {
         totalActualProfit: 0,
         properties: {},
       };
-  
+
       profitDataByMonth[monthYearKey] = {
         month: rentDataForMonth.month,
         year: rentDataForMonth.year,
@@ -703,8 +882,7 @@ export default function ManagerCashflow() {
         totalActualProfit: 0,
         properties: {},
       };
-  
-      // Process each property within the month
+
       Object.keys(rentDataForMonth.properties).forEach((propertyUID) => {
         const rentData = rentDataForMonth.properties[propertyUID];
         const payoutData = payoutDataForMonth.properties[propertyUID] || {
@@ -712,24 +890,29 @@ export default function ManagerCashflow() {
           actualProfit: 0,
           profitItems: [],
         };
-  
+
         const totalRentExpected = rentData.expectedProfit || 0;
         const totalRentActual = rentData.actualProfit || 0;
-  
-        const totalPayoutExpected = payoutData.expectedProfit || 0;
-        const totalPayoutActual = payoutData.actualProfit || 0;
-  
+
+        const totalPayoutExpected = (payoutData.expectedProfit || 0) * -1;
+        const totalPayoutActual = (payoutData.actualProfit || 0) * -1;
+
+        // Filter rent items
         const profitRentItems = rentData.profitItems.filter(
-          (item) => parseFloat(item.expected) > 0 || parseFloat(item.actual) > 0
+          (item) => parseFloat(item.expected) >= 0 || parseFloat(item.actual) >= 0
         );
-  
-        const profitPayoutItems = payoutData.profitItems.filter(
-          (item) => parseFloat(item.expected) > 0 || parseFloat(item.actual) > 0
-        );
-  
-        const expectedProfit = totalRentExpected - totalPayoutExpected;
-        const actualProfit = totalRentActual - totalPayoutActual;
-  
+
+        const profitPayoutItems = payoutData.profitItems
+          .filter((item) => parseFloat(item.expected) >= 0 || parseFloat(item.actual) >= 0)
+          .map((item) => ({
+            ...item,
+            expected: (parseFloat(item.expected) || 0) * -1,
+            actual: (parseFloat(item.actual) || 0) * -1,
+          }));
+
+        const expectedProfit = totalRentExpected + totalPayoutExpected; 
+        const actualProfit = totalRentActual + totalPayoutActual;       
+
         profitDataByMonth[monthYearKey].properties[propertyUID] = {
           propertyInfo: rentData.propertyInfo,
           totalRentExpected,
@@ -738,31 +921,33 @@ export default function ManagerCashflow() {
           totalPayoutActual,
           expectedProfit,
           actualProfit,
-          profitItems: [...profitRentItems, ...profitPayoutItems],
+          profitItems: [...profitRentItems, ...profitPayoutItems], 
         };
-  
-        // Update the total profits for the month
+
         profitDataByMonth[monthYearKey].totalExpectedProfit += expectedProfit;
         profitDataByMonth[monthYearKey].totalActualProfit += actualProfit;
       });
-  
-      // Now, process any properties that exist in payouts but not in rents
+
       Object.keys(payoutDataForMonth.properties).forEach((propertyUID) => {
         if (!profitDataByMonth[monthYearKey].properties[propertyUID]) {
           const payoutData = payoutDataForMonth.properties[propertyUID];
-          const totalPayoutExpected = payoutData.expectedProfit || 0;
-          const totalPayoutActual = payoutData.actualProfit || 0;
-  
+          const totalPayoutExpected = (payoutData.expectedProfit || 0) * -1;
+          const totalPayoutActual = (payoutData.actualProfit || 0) * -1;
+
           const totalRentExpected = 0;
           const totalRentActual = 0;
-  
-          const profitPayoutItems = payoutData.profitItems.filter(
-            (item) => parseFloat(item.expected) > 0 || parseFloat(item.actual) > 0
-          );
-  
-          const expectedProfit = totalRentExpected - totalPayoutExpected;
-          const actualProfit = totalRentActual - totalPayoutActual;
-  
+
+          const profitPayoutItems = payoutData.profitItems
+            .filter((item) => parseFloat(item.expected) >= 0 || parseFloat(item.actual) >= 0)
+            .map((item) => ({
+              ...item,
+              expected: (parseFloat(item.expected) || 0) * -1, 
+              actual: (parseFloat(item.actual) || 0) * -1,     
+            }));
+
+          const expectedProfit = totalRentExpected + totalPayoutExpected; 
+          const actualProfit = totalRentActual + totalPayoutActual;      
+
           profitDataByMonth[monthYearKey].properties[propertyUID] = {
             propertyInfo: payoutData.propertyInfo,
             totalRentExpected,
@@ -773,16 +958,16 @@ export default function ManagerCashflow() {
             actualProfit,
             profitItems: profitPayoutItems,
           };
-  
-          // Update the total profits for the month
+
           profitDataByMonth[monthYearKey].totalExpectedProfit += expectedProfit;
           profitDataByMonth[monthYearKey].totalActualProfit += actualProfit;
         }
       });
     });
-  
-    console.log("profit data By month - ", profitDataByMonth)
+
+    console.log("profit data By month - ", profitDataByMonth);
     return profitDataByMonth;
+
   };
 
   // useEffect(() => {
