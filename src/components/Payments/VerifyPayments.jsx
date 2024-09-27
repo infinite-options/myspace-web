@@ -26,12 +26,12 @@ export default function VerifyPayments(props) {
 
   const [showSpinner, setShowSpinner] = useState(false);
   const [paymentNotes, setPaymentNotes] = useState("");
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [totalPaid, setTotalPaid] = useState(0);
-  const [totalReceived, setTotalReceived] = useState(0);
-  const [totalToBePaid, setTotalToBePaid] = useState(0);
-  const [totalToBeReceived, setTotalToBeReceived] = useState(0);
+  // const [selectedItems, setSelectedItems] = useState([]);
+  // const [total, setTotal] = useState(0);
+  // const [totalPaid, setTotalPaid] = useState(0);
+  // const [totalReceived, setTotalReceived] = useState(0);
+  // const [totalToBePaid, setTotalToBePaid] = useState(0);
+  // const [totalToBeReceived, setTotalToBeReceived] = useState(0);
   const [totalPayable, setTotalPayable] = useState(0);
 
   const [paymentData, setPaymentData] = useState({
@@ -215,7 +215,7 @@ function BalanceDetailsTable(props) {
     {
       field: "pur_group",
       headerName: "Pur Group",
-      flex: 4,
+      flex: 3,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {

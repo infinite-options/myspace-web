@@ -665,6 +665,12 @@ function TransactionsTable(props) {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedPayments, setSelectedPayments] = useState([]);
   const [paymentDueResult, setPaymentDueResult] = useState([]);
+  const [paymentDueResultMap, setPaymentDueResultMap] = useState([]); // index to row mapping for quick lookup.
+
+  const [sortModel, setSortModel] = useState([
+    { field: 'pur_group', sort: 'asc', },
+    { field: 'pur_payer', sort: 'asc', }
+  ]);
 
   useEffect(() => {
     setData(props.data);
@@ -760,6 +766,14 @@ function TransactionsTable(props) {
     props.setSelectedItems(selectedPayments);
   }, [selectedPayments]);
 
+  useEffect(() => {
+    const map = paymentDueResult.reduce((acc, row) => {
+      acc[row.index] = row;
+      return acc;
+    }, {});
+    setPaymentDueResultMap(map);
+  }, [paymentDueResult]);
+
   const getFontColor = (ps_value) => {
     if (ps_value === "PAID") {
       return theme.typography.primary.blue;
@@ -769,13 +783,6 @@ function TransactionsTable(props) {
       return theme.typography.primary.red; // UNPAID OR PARTIALLY PAID OR NULL
     }
   };
-
-  const sortModel = [
-    {
-      field: "pgps", // Specify the field to sort by
-      sort: "asc", // Specify the sort order, 'asc' for ascending
-    },
-  ];
 
   const columnsList = [    
     {
@@ -840,6 +847,7 @@ function TransactionsTable(props) {
           { params.row.pur_payer.startsWith("600")? `${parseFloat(params.value).toFixed(2)}` : `(${parseFloat(params.value).toFixed(2)})`}
         </Box>
       ),
+      headerAlign: 'right',
     },
     {
       field: "actual",
@@ -861,6 +869,7 @@ function TransactionsTable(props) {
           { params.value? `${parseFloat(params.value).toFixed(2)}` : '0'}
         </Box>
       ),
+      headerAlign: 'right',
     },
   ];
 
@@ -929,6 +938,9 @@ function TransactionsTable(props) {
               paginationModel: {
                 pageSize: 100,
               },
+              sorting: {
+                sortModel: [{ field: 'pur_group', sort: 'asc' }, { field: 'pur_payer', sort: 'asc' }]
+              }
             },
           }}          
           // getRowId={(row) => row.purchase_uid}
@@ -938,15 +950,8 @@ function TransactionsTable(props) {
           // disableRowSelectionOnClick
           rowSelectionModel={selectedRows}
           onRowSelectionModelChange={handleSelectionModelChange}
-          // onRowClick={(row) => {
-          //   {
-          //     console.log("Row =", row);
-          //   }
-          //   // handleOnClickNavigateToMaintenance(row);
-          // }}
-          // sortModel={sortModel} // Set the sortModel prop
-
-          //   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
+          sortModel={sortModel}
+          onSortModelChange={(newSortModel) => setSortModel(newSortModel)}
         />
         {/* {selectedRows.length > 0 && (
           <div>Total selected amount: ${selectedRows.reduce((total, rowId) => total + parseFloat(paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due), 0)}</div>
@@ -978,15 +983,24 @@ function TransactionsTable(props) {
             >
               ${" "}
               {selectedRows.reduce((total, selectedIndex) => {
-                const payment = paymentDueResult.find((row) => row.index === selectedIndex);
-                const amountDue = payment.pur_amount_due;
-                // const isExpense = payment.pur_cf_type === "expense";
+                // const payment = paymentDueResult.find((row) => row.index === selectedIndex);
+                const payment = paymentDueResultMap[selectedIndex];
+                if(payment){
+                  const amountDue = payment?.pur_amount_due;
+                  // const isExpense = payment.pur_cf_type === "expense";
 
-                // Adjust the total based on whether the payment is an expense or revenue
-                // return total + (isExpense ? -amountDue : amountDue);
+                  // Adjust the total based on whether the payment is an expense or revenue
+                  // return total + (isExpense ? -amountDue : amountDue);
 
-                return total + amountDue;
-              }, 0)}
+                  if (payment.pur_payer.startsWith("110")) {
+                    return total - amountDue;
+                  } else if (payment.pur_payer.startsWith("600")) {
+                    return total + amountDue;
+                  }
+                  // return total + 0;
+                }
+                return total + 0
+              }, 0)?.toFixed(2)}
             </Typography>
           </Grid>
         </Grid>

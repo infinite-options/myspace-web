@@ -141,7 +141,8 @@ export default function RevenueWidget({ revenueData, cashflowStatusData }) {
               onClick={(e) => {
                 e.stopPropagation();
                 // navigate("/payments")
-                navigate("/managerCashflow", { state: { currentWindow: "PAYMENTS" } });
+                // navigate("/managerCashflow", { state: { currentWindow: "PAYMENTS" } });
+                navigate("/paymentProcessing", { state: { currentWindow: "PAY_BILLS" } });
               }}
             >
               Pay Bills
@@ -151,7 +152,8 @@ export default function RevenueWidget({ revenueData, cashflowStatusData }) {
             <Button
               onClick={(e) => {
                 e.stopPropagation();
-                navigate("/managerCashflow", { state: { currentWindow: "TRANSACTIONS" } });
+                // navigate("/managerCashflow", { state: { currentWindow: "TRANSACTIONS" } });
+                navigate("/paymentProcessing", { state: { currentWindow: "TRANSACTIONS" } });
               }}
               variant='contained'
               sx={{
@@ -173,9 +175,9 @@ export default function RevenueWidget({ revenueData, cashflowStatusData }) {
           <Grid item xs={6} md={12} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
             <Button
               onClick={(e) => {
-                e.stopPropagation();
-                // navigate("/managerCashflow", { state: { currentWindow: "TRANSACTIONS" } });
-                navigate("/paymentVerification");                
+                e.stopPropagation();                
+                // navigate("/paymentVerification");                
+                navigate("/paymentProcessing", { state: { currentWindow: "VERIFY_PAYMENTS" } });
               }}
               variant='contained'
               sx={{
