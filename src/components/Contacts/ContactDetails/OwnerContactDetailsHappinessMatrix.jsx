@@ -4,18 +4,7 @@ import { useUser } from "../../../contexts/UserContext";
 import axios from "axios";
 import APIConfig from "../../../utils/APIConfig";
 import User_fill from "../../../images/User_fill_dark.png";
-import {
-  Typography,
-  Box,
-  Grid,
-  Container,
-  Paper,
-  Button,
-  ThemeProvider,
-  TextField,
-  InputAdornment,
-  Badge,
-} from "@mui/material";
+import { Typography, Box, Grid, Container, Paper, Button, ThemeProvider, TextField, InputAdornment, Badge } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import theme from "../../../theme/theme";
 import SearchIcon from "@mui/icons-material/Search";
@@ -28,7 +17,37 @@ import maintenanceIcon from "../../Property/maintenanceIcon.png";
 import { maskSSN, maskEIN } from "../../utils/privacyMasking";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ReturningUser from "../../Onboarding/ReturningUser";
+import CryptoJS from "crypto-js";
 
+// function maskSSNnew(ssn) {
+//   console.log("SSN input: ", ssn);
+//   // ssn = ssn.replace(/\D/g, "");
+//   // console.log("SSN: ", ssn);
+
+//   // Encrypted value (you'll get this from your data source)
+//   const encryptedValue = ssn; // Replace this with the actual encrypted value
+//   const encryptionKey = process.env.REACT_APP_ENKEY; // Your encryption key
+//   console.log("Encrypted Text:", encryptedValue); // This will log the decrypted SSN
+//   console.log("Encryption Key:", encryptionKey);
+
+//   // Decrypting the value
+//   const decryptedBytes = CryptoJS.AES.decrypt(encryptedValue, encryptionKey);
+//   const decryptedText = decryptedBytes.toString(CryptoJS.enc.Utf8);
+
+//   console.log("Decrypted Text:", decryptedText); // This will log the decrypted SSN
+
+//   ssn = decryptedText.replace(/\D/g, "");
+//   console.log("SSN: ", ssn);
+
+//   if (ssn.length !== 9) {
+//     console.error("Invalid SSN Length");
+//     return "<SSN-invalid length>";
+//   }
+
+//   console.log("***-**-" + ssn.slice(5));
+//   return "***-**-" + ssn.slice(5);
+//   // return `${ssn.slice(0, 3)}-${ssn.slice(3, 5)}-${ssn.slice(5)}`;
+// }
 
 function groupByProperty(array) {
   // const key = 'pur_property_id'
@@ -43,35 +62,33 @@ function groupByProperty(array) {
   const propertyList = [];
   const cashflowByProperty = [];
 
-  array?.forEach( item => {
-    if (!propertyList.includes(item.pur_property_id)){
+  array?.forEach((item) => {
+    if (!propertyList.includes(item.pur_property_id)) {
       propertyList.push(item.pur_property_id);
     }
-  })
+  });
 
   // console.log("propertyList - ", propertyList);
 
-  propertyList?.forEach( propertyID => {
-    const filteredTransactions = array.filter( item => item.pur_property_id === propertyID);
+  propertyList?.forEach((propertyID) => {
+    const filteredTransactions = array.filter((item) => item.pur_property_id === propertyID);
     // console.log("ROHIT - 56 - filteredTransactions - ", filteredTransactions);
     const totalPurAmountDue = filteredTransactions?.reduce((acc, transaction) => {
-      const purAmountDue =  parseFloat(transaction.expected)
-      if(transaction.pur_payer.startsWith("110")){
-        return acc - purAmountDue;  
-      } else if(transaction.pur_receiver.startsWith("110")){
-        return acc + purAmountDue;  
+      const purAmountDue = parseFloat(transaction.expected);
+      if (transaction.pur_payer.startsWith("110")) {
+        return acc - purAmountDue;
+      } else if (transaction.pur_receiver.startsWith("110")) {
+        return acc + purAmountDue;
       }
       return acc + 0;
     }, 0);
 
-
-
     const totalPaid = filteredTransactions?.reduce((acc, transaction) => {
-      const totalPaid =  parseFloat(transaction.actual? transaction.actual : "0")
-      if(transaction.pur_payer.startsWith("110")){
-        return acc - totalPaid;  
-      } else if(transaction.pur_receiver.startsWith("110")){
-        return acc + totalPaid;  
+      const totalPaid = parseFloat(transaction.actual ? transaction.actual : "0");
+      if (transaction.pur_payer.startsWith("110")) {
+        return acc - totalPaid;
+      } else if (transaction.pur_receiver.startsWith("110")) {
+        return acc + totalPaid;
       }
       return acc + 0;
     }, 0);
@@ -82,94 +99,85 @@ function groupByProperty(array) {
     const deltaCashflow = totalPurAmountDue - totalPaid;
     const percentDeltaCashflow = (deltaCashflow / totalPurAmountDue) * 100;
 
-
     const cashflowItem = {
       ...filteredTransactions[0],
       actual_cashflow: totalPaid,
       expected_cashflow: totalPurAmountDue,
       delta_cashflow: deltaCashflow,
       percent_delta_cashflow: percentDeltaCashflow.toFixed(2),
-
-    }
+    };
     console.log("ROHIT - 56 - cashflowItem - ", cashflowItem);
-  
+
     // console.log("ashflowItem - ", cashflowItem);
     cashflowByProperty.push(cashflowItem);
-  })
-  
+  });
+
   // console.log("cashflowByProperty - ", cashflowByProperty);
 
-  
   return cashflowByProperty;
 }
 
 function groupByMonth(array) {
   const monthOwnerList = [];
-  let cashflowByMonth = {};  
+  let cashflowByMonth = {};
 
-  const cashflowByOwnerByMonth = []
+  const cashflowByOwnerByMonth = [];
 
-  array?.forEach( item => {
+  array?.forEach((item) => {
     let ownerID = null;
-    if(item.pur_payer.startsWith("110")){
+    if (item.pur_payer.startsWith("110")) {
       ownerID = item.pur_payer;
-    }else if(item.pur_receiver.startsWith("110")){
+    } else if (item.pur_receiver.startsWith("110")) {
       ownerID = item.pur_receiver;
     } else {
       return;
     }
-    if (!monthOwnerList.includes(item.cf_month_num + item.cf_year + ownerID)){
+    if (!monthOwnerList.includes(item.cf_month_num + item.cf_year + ownerID)) {
       monthOwnerList.push(item.cf_month_num + item.cf_year + ownerID);
     }
-  })
+  });
 
-  
   // console.log("groupByMonth - monthOwnerList - ", monthOwnerList);
 
-  
-  monthOwnerList?.forEach( monthYearOwner => {
+  monthOwnerList?.forEach((monthYearOwner) => {
+    const filteredTransactions = array.filter((item) => item.cf_month_num + item.cf_year + item.property_owner_id === monthYearOwner);
 
-    const filteredTransactions = array.filter( item => (item.cf_month_num + item.cf_year + item.property_owner_id) === monthYearOwner);
-
-    
     // const filteredTransactions = array.filter( item => (item.cf_month_num + item.cf_year + item.pur_payer) === monthYearOwner || (item.cf_month_num + item.cf_year + item.pur_receiver) === monthYearOwner);
     // console.log("groupByMonth - filteredTransactions - ", filteredTransactions);
-    
 
+    const cashflowMonthItem = {
+      [`${monthYearOwner}`]: filteredTransactions,
+    };
 
-    const cashflowMonthItem = {      
-      [`${monthYearOwner}`]:  filteredTransactions,
-    }
-  
     // console.log("cashflowMonthItem - ", cashflowMonthItem);
     cashflowByMonth = {
       ...cashflowByMonth,
       ...cashflowMonthItem,
     };
-  })  
+  });
   // console.log("cashflowByMonth - ", cashflowByMonth);
 
-  Object.keys(cashflowByMonth)?.forEach( monthYearOwner => {
+  Object.keys(cashflowByMonth)?.forEach((monthYearOwner) => {
     const array = cashflowByMonth[monthYearOwner];
     const filteredTransactions = array;
     // console.log("277 - filteredTransactions - ", filteredTransactions);
     const totalPurAmountDue = filteredTransactions?.reduce((acc, transaction) => {
-      const purAmountDue =  parseFloat(transaction.expected)
-      if(transaction.pur_payer.startsWith("110")){
-        return acc - purAmountDue;  
-      } else if(transaction.pur_receiver.startsWith("110")){
-        return acc + purAmountDue;  
+      const purAmountDue = parseFloat(transaction.expected);
+      if (transaction.pur_payer.startsWith("110")) {
+        return acc - purAmountDue;
+      } else if (transaction.pur_receiver.startsWith("110")) {
+        return acc + purAmountDue;
       }
       return acc + 0;
     }, 0);
 
     const totalPaid = filteredTransactions?.reduce((acc, transaction) => {
-      const totalPaid =  parseFloat(transaction.actual? transaction.actual : "0")
-      if(transaction.pur_payer.startsWith("110")){
-        return acc - totalPaid;  
-      } else if(transaction.pur_receiver.startsWith("110")){
-        return acc + totalPaid;  
-      }      
+      const totalPaid = parseFloat(transaction.actual ? transaction.actual : "0");
+      if (transaction.pur_payer.startsWith("110")) {
+        return acc - totalPaid;
+      } else if (transaction.pur_receiver.startsWith("110")) {
+        return acc + totalPaid;
+      }
       return acc + 0;
     }, 0);
 
@@ -179,82 +187,73 @@ function groupByMonth(array) {
     const deltaCashflow = totalPurAmountDue - totalPaid;
     const percentDeltaCashflow = (deltaCashflow / totalPurAmountDue) * 100;
 
-
     const cashflowItem = {
       ...filteredTransactions[0],
       actual_cashflow: totalPaid,
       expected_cashflow: totalPurAmountDue,
       delta_cashflow: deltaCashflow,
       percent_delta_cashflow: percentDeltaCashflow.toFixed(2),
+    };
 
-    }
-  
     // console.log("cashflowItem - ", cashflowItem);
     cashflowByOwnerByMonth.push(cashflowItem);
-  })
+  });
 
   // console.log("277 - cashflowByOwnerByMonth - ", cashflowByOwnerByMonth);
-  
 
-
-  
-  return cashflowByOwnerByMonth;  
+  return cashflowByOwnerByMonth;
 }
 
 function groupByPropertyByMonth(array) {
   const ownermonthPropertyList = [];
-  let cashflowByPropertyByMonth = {};  
-  
-  const cashflowByOwnerByPropertyByMonth =[]
+  let cashflowByPropertyByMonth = {};
 
-  array?.forEach( item => {
+  const cashflowByOwnerByPropertyByMonth = [];
+
+  array?.forEach((item) => {
     const key = item.property_owner_id + item.cf_month_num + item.cf_year + item.pur_property_id;
-    if (!ownermonthPropertyList.includes(key)){
+    if (!ownermonthPropertyList.includes(key)) {
       ownermonthPropertyList.push(key);
     }
-  })
+  });
 
-  
   // console.log("groupByPropertyByMonth - ownermonthPropertyList - ", ownermonthPropertyList);
 
-  
-  ownermonthPropertyList?.forEach( ownerMonthProperty => {
-    const filteredTransactions = array.filter( item => (item.property_owner_id + item.cf_month_num + item.cf_year + item.pur_property_id) === ownerMonthProperty);
+  ownermonthPropertyList?.forEach((ownerMonthProperty) => {
+    const filteredTransactions = array.filter((item) => item.property_owner_id + item.cf_month_num + item.cf_year + item.pur_property_id === ownerMonthProperty);
     // console.log("groupByMonth - filteredTransactions - ", filteredTransactions);
-    
 
+    const cashflowMonthPropertyItem = {
+      [`${ownerMonthProperty}`]: filteredTransactions,
+    };
 
-    const cashflowMonthPropertyItem = {      
-      [`${ownerMonthProperty}`]:  filteredTransactions,
-    }
-  
     // console.log("cashflowMonthItem - ", cashflowMonthItem);
     cashflowByPropertyByMonth = {
       ...cashflowByPropertyByMonth,
       ...cashflowMonthPropertyItem,
     };
-  })  
+  });
   // console.log("cashflowByPropertyByMonth - ", cashflowByPropertyByMonth);
 
-  Object.keys(cashflowByPropertyByMonth)?.forEach( ownerMonthProperty => {
-    const filteredTransactions = cashflowByPropertyByMonth[ownerMonthProperty];     
+  Object.keys(cashflowByPropertyByMonth)?.forEach((ownerMonthProperty) => {
+    const filteredTransactions = cashflowByPropertyByMonth[ownerMonthProperty];
     // console.log("277 - filteredTransactions - ", filteredTransactions);
     const totalPurAmountDue = filteredTransactions?.reduce((acc, transaction) => {
-      const purAmountDue =  parseFloat(transaction.expected)
-      if(transaction.pur_payer.startsWith("110")){
-        return acc - purAmountDue;  
-      } else if(transaction.pur_receiver.startsWith("110")){
-        return acc + purAmountDue;  
+      const purAmountDue = parseFloat(transaction.expected);
+      if (transaction.pur_payer.startsWith("110")) {
+        return acc - purAmountDue;
+      } else if (transaction.pur_receiver.startsWith("110")) {
+        return acc + purAmountDue;
       }
       return acc + 0;
     }, 0);
 
     const totalPaid = filteredTransactions?.reduce((acc, transaction) => {
-      const totalPaid =  parseFloat(transaction.actual? transaction.actual : "0")
-      if(transaction.pur_payer.startsWith("110")){
-        return acc - totalPaid;  
-      } else if(transaction.pur_receiver.startsWith("110")){
-        return acc + totalPaid;  
+      const totalPaid = parseFloat(transaction.actual ? transaction.actual : "0");
+      if (transaction.pur_payer.startsWith("110")) {
+        return acc - totalPaid;
+      } else if (transaction.pur_receiver.startsWith("110")) {
+        return acc + totalPaid;
       }
       return acc + 0;
     }, 0);
@@ -265,30 +264,24 @@ function groupByPropertyByMonth(array) {
     const deltaCashflow = totalPurAmountDue - totalPaid;
     const percentDeltaCashflow = (deltaCashflow / totalPurAmountDue) * 100;
 
-
     const cashflowItem = {
       ...filteredTransactions[0],
       actual_cashflow: totalPaid,
       expected_cashflow: totalPurAmountDue,
       delta_cashflow: deltaCashflow,
       percent_delta_cashflow: percentDeltaCashflow.toFixed(2),
+    };
 
-    }
-  
     // console.log("cashflowItem - ", cashflowItem);
     cashflowByOwnerByPropertyByMonth.push(cashflowItem);
-  })
+  });
 
   // console.log("235 - cashflowByOwnerByPropertyByMonth - ", cashflowByOwnerByPropertyByMonth);
-  
 
-
-  
-  return cashflowByOwnerByPropertyByMonth;  
+  return cashflowByOwnerByPropertyByMonth;
 }
 
-
-const OwnerContactDetailsHappinessMatrix = () => {  
+const OwnerContactDetailsHappinessMatrix = () => {
   // Context and hooks
   const { getProfileId } = useUser();
   const navigate = useNavigate();
@@ -298,7 +291,7 @@ const OwnerContactDetailsHappinessMatrix = () => {
   // State variables
   const [happinessData, setHappinessData] = useState(location.state?.happinessData);
   const [ownerUID, setOwnerUID] = useState(location.state?.ownerUID);
-  const navigatingFrom = location.state.navigatingFrom;  
+  const navigatingFrom = location.state.navigatingFrom;
   // console.log("navigatingFrom - ", navigatingFrom);
   const cashflowDetails = happinessData?.delta_cashflow_details?.result;
   const cashflowDetailsByProperty = happinessData?.delta_cashflow_details_by_property?.result;
@@ -309,12 +302,11 @@ const OwnerContactDetailsHappinessMatrix = () => {
   const [contactDetails, setContactDetails] = useState();
   const [index, setIndex] = useState(0);
 
-  const [cashflowData, setCashflowData ] = useState([]);
-  const [cashflowDataByProperty, setCashflowDataByProperty ] = useState([]);
-  const [cashflowDataByOwner, setCashflowDataByOwner ] = useState([]);
-  const [cashflowDataByMonth, setCashflowDataByMonth ] = useState([]);
-  const [cashflowDataByPropertyByMonth, setCashflowDataByPropertyByMonth ] = useState([]);
-
+  const [cashflowData, setCashflowData] = useState([]);
+  const [cashflowDataByProperty, setCashflowDataByProperty] = useState([]);
+  const [cashflowDataByOwner, setCashflowDataByOwner] = useState([]);
+  const [cashflowDataByMonth, setCashflowDataByMonth] = useState([]);
+  const [cashflowDataByPropertyByMonth, setCashflowDataByPropertyByMonth] = useState([]);
 
   // useEffect(() => {
   //   console.log("index - ", index);
@@ -323,8 +315,6 @@ const OwnerContactDetailsHappinessMatrix = () => {
   //     console.log("contactDetails[index] - ", contactDetails[index]);
   //   }
   // }, [index]);
-
-
 
   // Effect for logging changes
   // useEffect(() => {
@@ -369,35 +359,32 @@ const OwnerContactDetailsHappinessMatrix = () => {
     // setCashflowDataByOwner(groupedByOwner);
     setCashflowDataByMonth(groupedByMonth);
     setCashflowDataByPropertyByMonth(groupedByPropertyByMonth);
-    
   }, [cashflowData, contactDetails, index]);
 
-  useEffect(() => {    
-    if(!contactDetails || !(index >= 0 ) || !cashflowDataByOwner) return;
+  useEffect(() => {
+    if (!contactDetails || !(index >= 0) || !cashflowDataByOwner) return;
     const currentOwnerID = contactDetails[index]?.owner_uid;
-    // console.log("contactDetails[index] - ", contactDetails[index]);    
-    if(currentOwnerID){
-      
+    console.log("contactDetails[index] - ", contactDetails[index]);
+    if (currentOwnerID) {
       setFilteredCashflowDetailsByProperty(contactDetails ? cashflowDataByProperty?.filter((item) => item.property_owner_id === currentOwnerID) : []);
       setFilteredCashflowDetails(contactDetails ? cashflowDataByMonth?.filter((item) => item.property_owner_id === currentOwnerID) : []);
       // const groupedByMonth = groupByMonth(cashflowDataByOwner[currentOwnerID]);
-      
+
       // console.log("272 - groupedByMonth - ", groupedByMonth);
       // setFilteredCashflowDetails(groupedByMonth); //by month
       setFilteredCashflowDetailsByPropertyByMonth(contactDetails ? cashflowDataByPropertyByMonth?.filter((item) => item.property_owner_id === currentOwnerID) : []);
     }
-    
   }, [cashflowDataByProperty, cashflowDataByMonth, cashflowDataByPropertyByMonth, contactDetails, index]);
 
-  const fetchCashflowData = async () => {    
+  const fetchCashflowData = async () => {
     // const url = `http://localhost:4000/contacts/${getProfileId()}`;
     // console.log("Calling contacts endpoint");
     const url = `${APIConfig.baseURL.dev}/cashflowTransactions/${getProfileId()}/new`;
     try {
       const resp = await axios.get(url);
       const data = resp.data["result"];
-      
-      setCashflowData(data);              
+
+      setCashflowData(data);
     } catch (e) {
       console.error(e);
     }
@@ -411,10 +398,9 @@ const OwnerContactDetailsHappinessMatrix = () => {
       const resp = await axios.get(url);
       const data = resp.data["management_contacts"];
       const ownerContacts = data["owners"];
-        // console.log("ownerContacts - ", ownerContacts);
+      // console.log("ownerContacts - ", ownerContacts);
       setContactDetails(ownerContacts);
-        // console.log("Set Contact Details 1", ownerContacts);
-        
+      // console.log("Set Contact Details 1", ownerContacts);
     } catch (e) {
       console.error(e);
     }
@@ -424,16 +410,13 @@ const OwnerContactDetailsHappinessMatrix = () => {
     // console.log("ownerUID - ", ownerUID);
     const index = contactDetails?.findIndex((contact) => contact.owner_uid === ownerUID);
     // console.log("setting Owner Index: ", index);
-      
-    if(index >= 0){
+
+    if (index >= 0) {
       setIndex(index);
     }
   }, [ownerUID, contactDetails]);
 
   useEffect(() => {
-
-
-
     if (navigatingFrom === "HappinessMatrixWidget" || navigatingFrom === "PropertyNavigator") {
       getDataFromAPI();
       // setContactsTab("Owner");
@@ -443,7 +426,7 @@ const OwnerContactDetailsHappinessMatrix = () => {
       // setContactsTab(location.state.tab);
     }
     fetchCashflowData();
-  }, [getProfileId, navigatingFrom,]);
+  }, [getProfileId, navigatingFrom]);
 
   // Effect to filter cashflow details when contactDetails or index changes
   // useEffect(() => {
@@ -619,7 +602,7 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
 
   useEffect(() => {
     // console.log("searchTerm - ", searchTerm);
-    if(searchTerm && searchTerm !== "") {
+    if (searchTerm && searchTerm !== "") {
       const filteredValues = contactsData?.filter((item) => {
         return item?.owner_first_name?.toLowerCase().includes(searchTerm.toLowerCase()) || item?.owner_last_name?.toLowerCase().includes(searchTerm.toLowerCase());
       });
@@ -629,7 +612,7 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
   }, [searchTerm, contactsData]);
 
   return (
-    <Container sx={{ padding: "5px", height: "100%"}}>
+    <Container sx={{ padding: "5px", height: "100%" }}>
       <Grid container justifyContent='center' sx={{ padding: "10px 10px", height: "100%" }}>
         <Typography sx={{ fontSize: "35px", color: "#160449", fontWeight: "bold" }}>All Owner Contacts</Typography>
         <Grid container item xs={12} justifyContent='center'>
@@ -655,7 +638,7 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
             }}
           />
         </Grid>
-        <Grid container item xs={12} justifyContent='center' sx={{ height: "380px", overflowY: "auto"}}>
+        <Grid container item xs={12} justifyContent='center' sx={{ height: "380px", overflowY: "auto" }}>
           {filteredContactsData?.map((contact, index) => (
             <Grid item xs={12} key={index} sx={{ marginBottom: "5px" }} onClick={() => setIndex(index)}>
               <Paper
@@ -719,7 +702,7 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
         setPropertiesData(data);
       })
       .catch((e) => {
-      console.error(e);
+        console.error(e);
       });
   };
 
@@ -735,7 +718,7 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
         setContractsData(data);
       })
       .catch((e) => {
-      console.error(e);
+        console.error(e);
       });
   };
 
@@ -878,11 +861,13 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
               width: "100%",
             }}
           >
-            {(filteredCashflowDetails || filteredCashflowDetailsByProperty || filteredCashflowDetailsByPropertyByMonth) &&  (<CashflowDataGrid
-              cashflowDetails={filteredCashflowDetails} //by month
-              cashflowDetailsByProperty={filteredCashflowDetailsByProperty}
-              cashflowDetailsByPropertyByMonth={filteredCashflowDetailsByPropertyByMonth}
-            />)}
+            {(filteredCashflowDetails || filteredCashflowDetailsByProperty || filteredCashflowDetailsByPropertyByMonth) && (
+              <CashflowDataGrid
+                cashflowDetails={filteredCashflowDetails} //by month
+                cashflowDetailsByProperty={filteredCashflowDetailsByProperty}
+                cashflowDetailsByPropertyByMonth={filteredCashflowDetailsByPropertyByMonth}
+              />
+            )}
           </Paper>
         </Grid>
       </Grid>
@@ -1016,9 +1001,7 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
       {activeProperties && activeProperties.length > 0 ? (
         <>
           <Grid item xs={12}>
-            <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "20px" }}>
-              Active {`(${activeProperties.length})`}
-            </Typography>
+            <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "20px" }}>Active {`(${activeProperties.length})`}</Typography>
           </Grid>
           <Grid container sx={{ padding: "10px", maxHeight: "220px", overflow: "auto" }}>
             <Grid item xs={12}>
@@ -1027,15 +1010,11 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
           </Grid>
         </>
       ) : (
-        <Grid container justifyContent="center" sx={{ marginTop: "20px" }}>
+        <Grid container justifyContent='center' sx={{ marginTop: "20px" }}>
           <Grid item xs={12}>
-            <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "2px", marginLeft: "20px" }}>
-              Active {`(0)`}
-            </Typography>
+            <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "2px", marginLeft: "20px" }}>Active {`(0)`}</Typography>
           </Grid>
-          <Typography sx={{ ontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px" }}>
-            No active properties available for this owner.
-          </Typography>
+          <Typography sx={{ ontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px" }}>No active properties available for this owner.</Typography>
         </Grid>
       )}
       {/* <Grid container sx={{ padding: "10px", maxHeight: "220px", overflow: "auto" }}>
@@ -1045,9 +1024,7 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
       </Grid> */}
       <Grid container sx={{ padding: "10px", maxHeight: "220px", overflow: "auto" }}>
         <Grid item xs={12}>
-          <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "20px" }}>
-            New {`(${newContracts?.length || 0})`}
-          </Typography>
+          <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "20px" }}>New {`(${newContracts?.length || 0})`}</Typography>
           {newContracts && newContracts.length > 0 ? (
             newContracts.map((contract, index) => (
               <Box
@@ -1056,23 +1033,19 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
                 sx={{ cursor: "pointer" }}
               >
                 <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px" }}>
-                  {`${contract.property_address}${contract.property_unit ? `, Unit - ${contract.property_unit}` : ''}`}
+                  {`${contract.property_address}${contract.property_unit ? `, Unit - ${contract.property_unit}` : ""}`}
                 </Typography>
               </Box>
             ))
           ) : (
-            <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px"  }}>
-              No new contracts
-            </Typography>
+            <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px" }}>No new contracts</Typography>
           )}
         </Grid>
       </Grid>
 
       <Grid container sx={{ padding: "10px", maxHeight: "220px", overflow: "auto" }}>
         <Grid item xs={12}>
-          <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "20px" }}>
-            Sent {`(${sentContracts?.length || 0})`}
-          </Typography>
+          <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "20px" }}>Sent {`(${sentContracts?.length || 0})`}</Typography>
           {sentContracts && sentContracts.length > 0 ? (
             sentContracts.map((contract, index) => (
               <Box
@@ -1080,15 +1053,13 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
                 onClick={() => navigate("/pmQuotesList", { state: { selected_contract_uid: contract.contract_uid, property_endpoint_resp: propertiesData } })}
                 sx={{ cursor: "pointer" }}
               >
-                <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px"  }}>
-                  {`${contract.property_address}${contract.property_unit ? `, Unit - ${contract.property_unit}` : ''}`}
+                <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px" }}>
+                  {`${contract.property_address}${contract.property_unit ? `, Unit - ${contract.property_unit}` : ""}`}
                 </Typography>
               </Box>
             ))
           ) : (
-            <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px"  }}>
-              No sent contracts
-            </Typography>
+            <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px" }}>No sent contracts</Typography>
           )}
         </Grid>
       </Grid>
@@ -1142,12 +1113,12 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
           sx={{ fontSize: "14px", color: "#160449", cursor: "pointer" }}
           onClick={() => {
             navigate("/propertiesPM", {
-              state: { currentProperty: params.row.property_uid }
+              state: { currentProperty: params.row.property_uid },
             });
           }}
         >
           {/* {`${params.row.property_address}, Unit - ${params.row.property_unit}`} */}
-          {`${params.row.property_address}${params.row.property_unit ? `, Unit - ${params.row.property_unit}` : ''}`}
+          {`${params.row.property_address}${params.row.property_unit ? `, Unit - ${params.row.property_unit}` : ""}`}
         </Typography>
       ),
     },
@@ -1285,7 +1256,6 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
     }
   }, [tab, cashflowDetails, cashflowDetailsByProperty, cashflowDetailsByPropertyByMonth]);
 
-
   const columns = [
     {
       field: "property_owner_id",
@@ -1331,7 +1301,7 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
             renderCell: (params) => <span>{params.row.cf_year !== null ? params.row.cf_year : "-"}</span>,
           },
         ]
-      : []),    
+      : []),
     {
       field: "expected_cashflow",
       headerName: "Expected Cashflow",
