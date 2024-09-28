@@ -348,11 +348,11 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
     //   return true;
     // }
 
-    if (group.total_paid_total == null || group.verified == null) {
+    if (group.total_paid_total == null || group.verified == null || group.total_paid_total >= group.pur_amount_due_total) {
       return false;
     } else if (group.total_paid_total < group.pur_amount_due_total && group.verified === "verified") {
       return true;
-    } else if (group.total_paid_total < group.pur_amount_due_total && group.verified === "unverified") {
+    } else if (group.total_paid_total > 0 && group.verified === "unverified") {
       return true;
     } else {
       return false;
