@@ -478,18 +478,33 @@ const closeDialog = () => {
         </Grid>
   
         {!method.paymentMethod_type ? (
-          <Grid item xs={3}>
-            <Select
-              value={method.paymentMethod_type || ""}
-              onChange={(e) => handleChangeValue(e, method.paymentMethod_uid, "type")}
-              displayEmpty
-              fullWidth
-              variant="filled"
-              className={classes.root}
+          <Grid item xs={3} sx={{alignContent: "center"}}>
+          <Select
+            value={method.paymentMethod_type || ""}
+            onChange={(e) => handleChangeValue(e, method.paymentMethod_uid, "type")}
+            displayEmpty
+            fullWidth
+            variant="filled"
+            className={classes.root}
+            sx={{
+              '.MuiSelect-select': {
+                padding: '4px 8px', 
+              },
+              '.MuiOutlinedInput-root': {
+                minHeight: '30px', 
+              },
+            }}
+          >
+            <MenuItem 
+              value="" 
+              disabled 
+              sx={{
+                padding: '4px 8px',
+                minHeight: 'auto',
+              }}
             >
-              <MenuItem value="" disabled>
-                Select Payment Method
-              </MenuItem>
+              Select Payment Method
+            </MenuItem>
               {paymentTypes.map((payment) => (
                 <MenuItem key={payment.type} value={payment.type}>
                   <img src={payment.icon} alt={payment.name} style={{ width: 20, marginRight: 10 }} />
