@@ -33,6 +33,7 @@ import EditMaintenanceItem from "../Maintenance/EditMaintenanceItem";
 import EditIcon from '@mui/icons-material/Edit';
 import TenantMaintenanceItemDetail from '../Maintenance/TenantMaintenanceItemDetail';
 import TenantAccountBalance from '../Payments/TenantAccountBalance';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -303,9 +304,9 @@ const TenantDashboard = () => {
     }
     
     return (
-        <Box sx={{ backgroundColor: '#fff', minHeight: '100vh'}}>
+        <Box sx={{ backgroundColor: '#fff', padding: '40px'}}>
             <Container>
-                <Grid container spacing={3} sx={{height: '100vh'}}>
+                <Grid container spacing={3}>
                     {/* Top Section: Welcome Message and Search Icon */}
                     <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                       <Typography
@@ -331,7 +332,7 @@ const TenantDashboard = () => {
                         </Button>
                     </Grid>
     
-                    <Grid container spacing={3} sx={{ height: 'calc(100vh - 100px)', alignItems: 'stretch'}}>
+                    <Grid container spacing={3}>
                         {/* Left-hand side: Account Balance */}
                         <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column'}}>
                             <TenantAccountBalance
@@ -760,15 +761,28 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack }) {
         >
             <Box sx={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '10px' }}>
                 {/* Back Button */}
-                <Button
-                    variant="outlined"
-                    onClick={onBack}
-                    sx={{ color: '#3D5CAC', borderColor: '#3D5CAC', fontWeight: 'bold' }}
-                >
-                    Back
-                </Button>
+                {/* <IconButton
+                        onClick={onBack}
+                        sx={{
+                            backgroundColor: '#3D5CAC',
+                            color: '#fff',
+                            '&:hover': {
+                                backgroundColor: '#4B6DB8',
+                            },
+                        }}
+                    >
+                        <ArrowBackIcon />
+                    </IconButton> */}
+              <Button onClick={onBack}>
+                <ArrowBackIcon
+                  sx={{
+                    color: theme.typography.common.blue,
+                    fontSize: "30px",
+                    margin: "5px",
+                  }}
+                />
+              </Button>
             </Box>
-
             {/* Payment History Table */}
             {data && data.length > 0 ? (
                 <DataGrid
@@ -1112,13 +1126,28 @@ const MaintenanceDetails = ({ maintenanceRequests, onPropertyClick, selectedProp
                 </Typography>
                 </Grid>
                 <Grid item xs={2} sx={{ textAlign: 'right' }}>
-                <IconButton
+                {/* <IconButton
                     aria-label="add"
                     sx={{ color: '#3D5CAC' }}
                     onClick={handleAddMaintenanceClick}
                 >
                     <AddIcon />
-                </IconButton>
+                </IconButton> */}
+                <Button
+                  sx={{
+                    color: "#160449",
+                    fontSize: "30px",
+                    padding: "0px",
+                    lineHeight: "1",
+                    justifyContent: "center",
+                    "&:hover": {
+                      backgroundColor: "#F2F2F2",
+                    },
+                  }}
+                  onClick={handleAddMaintenanceClick}
+                >
+                  {"+"}
+                </Button>
                 </Grid>
             </Grid>
 
@@ -1238,6 +1267,10 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
     // console.log('Edit clicked for:', request);
   };
 
+  const handleBack = () => {
+    setRightPane("");
+  };
+
   return (
     <Paper
       elevation={3}
@@ -1250,10 +1283,50 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
       }}
     >
       <Stack direction='row' justifyContent='space-between' alignItems='center' mb={2}>
-        <Typography variant='h6'>Maintenance Requests for Property {propertyId}</Typography>
-        <Button variant='outlined' onClick={onAdd}>
-          +
+        {/* <IconButton
+            onClick={handleBack}
+            sx={{
+                backgroundColor: '#3D5CAC',
+                color: '#fff',
+                '&:hover': {
+                    backgroundColor: '#4B6DB8',
+                },
+            }}
+        >
+          <ArrowBackIcon />
+        </IconButton> */}
+        <Button onClick={handleBack}>
+          <ArrowBackIcon
+            sx={{
+              color: theme.typography.common.blue,
+              fontSize: "30px",
+              margin: "5px",
+            }}
+          />
         </Button>
+        <Typography variant='h6'>Maintenance Requests for Property {propertyId}</Typography>
+        {/* <IconButton
+            aria-label="add"
+            sx={{ color: '#3D5CAC' }}
+            //   backgroundColor: '#3D5CAC',
+            //   color: '#fff',
+            //   '&:hover': {
+            //       backgroundColor: '#4B6DB8',
+            //   },
+            // }}
+            onClick={onAdd}
+        >
+          <AddIcon />
+        </IconButton> */}
+            <Button onClick={onAdd}>
+              <AddIcon
+                sx={{
+                  color: theme.typography.common.blue,
+                  fontSize: "30px",
+                  margin: "5px",
+                }}
+              />
+            </Button>
       </Stack>
       <TableContainer component={Paper}>
         <Table aria-label="maintenance requests table">

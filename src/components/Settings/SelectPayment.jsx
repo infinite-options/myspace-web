@@ -222,15 +222,15 @@ export default function SelectPayment(props) {
       payment_type: selectedMethod,
       payment_verify: "Unverified",
       paid_by: getProfileId(),
-      // payment_intent: paymentIntent,
+      payment_intent: paymentIntent,
       payment_method: paymentMethod,
     };
-    // if (paymentMethod == "Zelle") payment_request_payload.confirmation_number = confirmationNumber;
-    if (paymentMethod == "Stripe"){
-      payment_request_payload.payment_intent =  paymentIntent;
-    } else {
-      payment_request_payload.payment_intent =  confirmationNumber;
-    }
+    if (paymentMethod == "Zelle" || paymentMethod == "Paypal") payment_request_payload.payment_intent = confirmationNumber;
+    // if (paymentMethod == "Stripe"){
+    //   payment_request_payload.payment_intent =  paymentIntent;
+    // } else {
+    //   payment_request_payload.payment_intent =  confirmationNumber;
+    // }
 
     await fetch(`${APIConfig.baseURL.dev}/makePayment`, {
       // await fetch("http://localhost:4000/makePayment2", {

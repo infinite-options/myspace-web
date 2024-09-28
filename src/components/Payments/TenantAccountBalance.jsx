@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import CircleIcon from '@mui/icons-material/Circle';
 import { Table, TableHead, TableBody, TableRow, TableCell, TableContainer } from '@mui/material';
@@ -7,6 +8,7 @@ import defaultHouseImage from "../Property/defaultHouseImage.png";
 
 const TenantAccountBalance = ({ propertyData, selectedProperty, setSelectedProperty, leaseDetails, leaseDetailsData, balanceDetails, onPaymentHistoryNavigate, handleMakePayment, setRightPane, from }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const navigate = useNavigate();
   const open = Boolean(anchorEl);
   const balanceDue = parseFloat(selectedProperty?.balance || 0);
   console.log("balance details", balanceDetails);
@@ -47,6 +49,7 @@ const TenantAccountBalance = ({ propertyData, selectedProperty, setSelectedPrope
 
   const handleback = () => {
     console.log("go back");
+    navigate("/tenantDashboard");
   }
 
   const getButtonColor = () => {
@@ -56,7 +59,7 @@ const TenantAccountBalance = ({ propertyData, selectedProperty, setSelectedPrope
   };
 
   return (
-      <Paper sx={{ padding: '30px', backgroundColor: '#f0f0f0', borderRadius: '8px' }}>
+      <Paper sx={{ padding: '30px', backgroundColor: '#f0f0f0', borderRadius: '8px' , flex: 1}}>
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#160449' }}>
                   Account Balance
@@ -134,29 +137,29 @@ const TenantAccountBalance = ({ propertyData, selectedProperty, setSelectedPrope
 
               {/* Payment or Application Button */}
               {from !== "selectPayment" && (
-              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '20px' }}>
-                  <Button
-                      variant="contained"
-                      sx={{
-                          backgroundColor: getButtonColor(), // Dynamically set button color
-                          color: '#fff',
-                          fontWeight: 'bold',
-                      }}
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '20px' }}>
+                <Button
+                    variant="contained"
+                    sx={{
+                        backgroundColor: getButtonColor(), // Dynamically set button color
+                        color: '#fff',
+                        fontWeight: 'bold',
+                    }}
                       onClick={
                           leaseDetails?.lease_status === 'NEW' || leaseDetails?.lease_status === 'PROCESSING'
                               ? handleViewTenantApplication
                               : handleMakePayment
                       }
-                  >
-                      {leaseDetails?.lease_status === 'NEW'
-                          ? `Applied ${leaseDetails?.lease_application_date}`
-                          : leaseDetails?.lease_status === 'PROCESSING'
-                          ? `Approved ${leaseDetails?.lease_application_date}`
-                          : balanceDue > 0
-                          ? 'Make a Payment'
-                          : 'No Payment Due'}
-                  </Button>
-              </Box>
+                >
+                    {leaseDetails?.lease_status === 'NEW'
+                        ? `Applied ${leaseDetails?.lease_application_date}`
+                        : leaseDetails?.lease_status === 'PROCESSING'
+                            ? `Approved ${leaseDetails?.lease_application_date}`
+                            : balanceDue > 0
+                                ? 'Make a Payment'
+                                : 'No Payment Due'}
+                </Button>
+            </Box>
               )}
 
               {/* Payment Details and Management Details for NEW or PROCESSING status */}

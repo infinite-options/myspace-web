@@ -59,10 +59,9 @@ function StripePayment(props) {
     // console.log("--DEBUG-- in StripePayment paymentMethodID", paymentMethodID);
     // console.log("--DEBUG-- in StripePayment paymentIntentID", paymentIntentID);
 
-    await submit({
-      paymentIntent: paymentIntentID,
-      paymentMethod: paymentMethodID,
-    });
+    await submit(
+      paymentIntentID,
+      paymentMethodID);
     // setShowSpinner(false);
   };
 
