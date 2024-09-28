@@ -110,14 +110,14 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
   };
 
   const getPurGroupVerificationStatus = (purchaseGroup) => {
-    const tenantPayment = purchaseGroup.transactions?.find( transaction => transaction.pur_payer?.startsWith("350"));
+    const tenantPayment = purchaseGroup.transactions?.find((transaction) => transaction.pur_payer?.startsWith("350"));
 
-    if(!tenantPayment){
+    if (!tenantPayment) {
       return null;
-    } 
+    }
 
-    return tenantPayment.verified? tenantPayment.verified : "unverified";
-  }
+    return tenantPayment.verified ? tenantPayment.verified : "unverified";
+  };
 
   //   useEffect(() => {
   //     console.log("rentsByProperty - ", rentsByProperty);
@@ -154,27 +154,26 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
   };
 
   const getTotalsForPurGroup = (group) => {
-
     // console.log("ROHIT - 234 - group.transactions - ", group.transactions)
 
     const purAmountDueTotal = group.transactions.reduce((acc, transaction) => {
       // if(transaction.pur_payer.startsWith("600")){
-      //   return acc - parseFloat(transaction.expected)  
+      //   return acc - parseFloat(transaction.expected)
       // } else if(transaction.pur_payer.startsWith("110")){
-      //   return acc + parseFloat(transaction.expected)  
+      //   return acc + parseFloat(transaction.expected)
       // }
-      return acc + parseFloat(transaction.expected)  
-    }, 0)
+      return acc + parseFloat(transaction.expected);
+    }, 0);
     const totalPaidTotal = group.transactions.reduce((acc, transaction) => {
       // if(transaction.pur_payer.startsWith("600")){
       //   return acc - parseFloat(transaction.actual? transaction.actual : "0")
       // } else if(transaction.pur_payer.startsWith("110")){
       //   return acc + parseFloat(transaction.actual? transaction.actual : "0")
       // }
-      return acc + parseFloat(transaction.actual? transaction.actual : "0");
-    }, 0)
-    return { purAmountDueTotal: purAmountDueTotal, totalPaidTotal: totalPaidTotal,};
-  }
+      return acc + parseFloat(transaction.actual ? transaction.actual : "0");
+    }, 0);
+    return { purAmountDueTotal: purAmountDueTotal, totalPaidTotal: totalPaidTotal };
+  };
 
   useEffect(() => {
     //TRANSACTIONS
@@ -190,7 +189,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
       // console.log("filteredTransactionsData - ", filteredTransactionsData);
     }
     const transactionsCurrentMonth = filteredTransactionsData?.filter((item) => item.cf_month === month && item.cf_year === year);
-    
+
     // console.log("ROHIT - filteredTransactionsData - ", filteredTransactionsData);
 
     const sortedTransactions = transactionsCurrentMonth?.map((transaction) => {
@@ -233,10 +232,10 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
       const groupStatus = getPurchaseGroupStatus(item);
       if (!acc[propertyUID].purchaseGroups[item.pur_group]) {
         // acc[propertyUID] = [];
-        acc[propertyUID].purchaseGroups[item.pur_group] = {         
-          pur_group: item.pur_group, 
+        acc[propertyUID].purchaseGroups[item.pur_group] = {
+          pur_group: item.pur_group,
           transactions: [],
-        }
+        };
       }
       acc[propertyUID].purchaseGroups[item.pur_group].transactions.push(item);
       // acc[propertyUID].totalExpected += totalExpected;
@@ -247,33 +246,30 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
 
     //update pur group status for each pur group in each property
 
-
-
     // console.log("ROHIT - 211 - transactionsByProperty - ", transactionsByProperty);
 
     if (transactionsByProperty && Object.keys(transactionsByProperty).length > 0) {
       Object.keys(transactionsByProperty)?.forEach((propertyUID) => {
         const purchaseGroups = transactionsByProperty[propertyUID].purchaseGroups;
         // console.log("ROHIT - 212 - purchaseGroups - ", purchaseGroups);
-    
+
         Object.keys(purchaseGroups)?.forEach((group) => {
           const purGroup = purchaseGroups[group];
           // console.log("ROHIT - 220 - purGroup - ", purGroup);
-          const { purAmountDueTotal, totalPaidTotal } = getTotalsForPurGroup(purGroup);          
-    
+          const { purAmountDueTotal, totalPaidTotal } = getTotalsForPurGroup(purGroup);
+
           // Add totals to the current group object
           purGroup.pur_amount_due_total = purAmountDueTotal;
           purGroup.total_paid_total = totalPaidTotal;
           purGroup.purchaseGroupStatus = getPurchaseGroupStatus(purGroup);
-          
+
           const purGroupVerificationStatus = getPurGroupVerificationStatus(purGroup);
-          if(purGroupVerificationStatus){
+          if (purGroupVerificationStatus) {
             purGroup.verified = purGroupVerificationStatus;
           }
         });
       });
     }
-    
 
     // console.log("ROHIT - 234 - transactionsByProperty - ", transactionsByProperty);
 
@@ -354,33 +350,32 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
 
     if (group.total_paid_total == null || group.verified == null) {
       return false;
-    }
-    else if(group.total_paid_total < group.pur_amount_due_total && group.verified === "verified"){
+    } else if (group.total_paid_total < group.pur_amount_due_total && group.verified === "verified") {
       return true;
-    } else{
+    } else if (group.total_paid_total < group.pur_amount_due_total && group.verified === "unverified") {
+      return true;
+    } else {
       return false;
     }
   };
 
   const isPurGroupVerified = (purGroup) => {
-    console.log("ROHIT - 356 - isPurGroupVerified - purGroup.verified - ", purGroup.verified)
-    if(purGroup.verified && purGroup.verified.toLowerCase() === "verified"){      
+    console.log("ROHIT - 356 - isPurGroupVerified - purGroup.verified - ", purGroup.verified);
+    if (purGroup.verified && purGroup.verified.toLowerCase() === "verified") {
       return true;
     }
     return false;
-  }
+  };
 
   const isPurGroupPaid = (purGroup) => {
     console.log("ROHIT - 362 - purGroup - ", purGroup);
-    if(purGroup.pur_amount_due_total && purGroup.total_paid_total){
-      if(purGroup.total_paid_total >= purGroup.pur_amount_due_total){
+    if (purGroup.pur_amount_due_total && purGroup.total_paid_total) {
+      if (purGroup.total_paid_total >= purGroup.pur_amount_due_total) {
         return true;
-      }      
+      }
     }
     return false;
-  }
-
-  
+  };
 
   const handlePayment = (purGroup) => {
     console.log("ROHIT - 361 - handlePayment - transactions - ", purGroup.transactions);
@@ -389,14 +384,13 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
     const managerPayments = purGroup.transactions?.filter((item) => item.pur_receiver === getProfileId() && item.pur_payer?.startsWith("110")); //payments from 110 to 600
     // transaction.transactions.forEach(transaction => purchaseUIDs.push({ purchase_uid: transaction.purchase_uid, pur_amount_due: parseFloat(transaction.pur_amount_due)?.toFixed(2)?.toString()}))
     ownerPayments.forEach((transaction) => {
-      transaction.transactions.forEach( transaction => {
-        purchaseUIDs.push({ purchase_uid: transaction.purchase_uid, pur_amount_due: parseFloat(transaction.pur_amount_due)?.toFixed(2)?.toString() })      
-      })
-      
+      transaction.transactions.forEach((transaction) => {
+        purchaseUIDs.push({ purchase_uid: transaction.purchase_uid, pur_amount_due: parseFloat(transaction.pur_amount_due)?.toFixed(2)?.toString() });
+      });
     });
     managerPayments.forEach((transaction) =>
-      transaction.transactions.forEach( transaction => {
-        purchaseUIDs.push({ purchase_uid: transaction.purchase_uid, pur_amount_due: parseFloat(transaction.pur_amount_due)?.toFixed(2)?.toString() })
+      transaction.transactions.forEach((transaction) => {
+        purchaseUIDs.push({ purchase_uid: transaction.purchase_uid, pur_amount_due: parseFloat(transaction.pur_amount_due)?.toFixed(2)?.toString() });
       })
     );
 
@@ -441,14 +435,9 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
     //     state: { paymentData: paymentData, total: parseFloat(total.toFixed(1)), selectedItems: [], paymentMethodInfo: {} },
     // });
 
-
-
-
     setSelectedPayment({ paymentData: paymentData, total: parseFloat(total.toFixed(1)), selectedItems: [], paymentMethodInfo: {} });
 
     setCurrentWindow("MAKE_PAYMENT");
-
-    
   };
 
   return (
@@ -533,7 +522,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
                         sx={{
                           backgroundColor: theme.palette.primary.main,
                           boxShadow: "none",
-                          marginTop: "15px",                          
+                          marginTop: "15px",
                         }}
                         key={propertyID}
                       >
@@ -594,7 +583,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
                                   boxShadow: "none",
                                   marginTop: "5px",
                                   // marginLeft: "30px",
-                                  paddingLeft: "10px"
+                                  paddingLeft: "10px",
                                 }}
                                 key={purGroup.pur_group}
                               >
@@ -645,12 +634,10 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
                                           </Button>
                                         )}
                                       </Grid>
-                                      <Grid item xs={2}>   
+                                      <Grid item xs={2}>
                                         {
                                           // purGroup.pur_amount_due_total !== purGroup.total_paid_total && (
-                                            !isPaid && isPayable &&  (
-                                              <VerifiedButton isVerified={isVerified} isPaid={isPaid} isPayable={isPayable} />
-                                            )                                          
+                                          !isPaid && isPayable && <VerifiedButton isVerified={isVerified} isPaid={isPaid} isPayable={isPayable} />
                                         }
                                       </Grid>
                                     </Grid>
@@ -696,8 +683,8 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
                                       </>
                                     );
                                   })} */}
-                                  <Box sx={{paddingLeft: "30px"}}>
-                                    <PurGroupTable data={purGroup.transactions}/>
+                                  <Box sx={{ paddingLeft: "30px" }}>
+                                    <PurGroupTable data={purGroup.transactions} />
                                   </Box>
                                 </AccordionDetails>
                               </Accordion>
@@ -716,12 +703,12 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
   );
 }
 
-const VerifiedButton = ( {isVerified, isPaid, isPayable}) => {
+const VerifiedButton = ({ isVerified, isPaid, isPayable }) => {
   const navigate = useNavigate();
   return (
     <Button
       onClick={() => {
-        if(!isVerified){
+        if (!isVerified) {
           navigate("/paymentVerification");
         }
       }}
@@ -736,18 +723,16 @@ const VerifiedButton = ( {isVerified, isPaid, isPayable}) => {
     >
       <Typography sx={{ color: "inherit", fontWeight: theme.typography.common.fontWeight, textTransform: "none", fontSize: "15px" }}>
         {/* {isVerified? "Verified" : "Unverified"} */}
-        {isVerified === true? "Verified" : ""}
-        {isVerified === false ? "Unverified" : ""}        
-
+        {isVerified === true ? "Verified" : ""}
+        {isVerified === false ? "Unverified" : ""}
       </Typography>
-    </Button>  
-  )
-}
+    </Button>
+  );
+};
 
-
-function PurGroupTable(props) {  
-  const [data, setData] = useState(props.data);  
-  const [paymentDueResult, setPaymentDueResult] = useState([]);  
+function PurGroupTable(props) {
+  const [data, setData] = useState(props.data);
+  const [paymentDueResult, setPaymentDueResult] = useState([]);
 
   useEffect(() => {
     setData(props.data);
@@ -755,20 +740,16 @@ function PurGroupTable(props) {
 
   useEffect(() => {
     if (data && data.length > 0) {
-      const dataWithIndex = data?.map((item, index) => (
-        {
-          ...item,
-          'index': index,
-        }
-      ))
-      
+      const dataWithIndex = data?.map((item, index) => ({
+        ...item,
+        index: index,
+      }));
+
       setPaymentDueResult(dataWithIndex);
     }
   }, [data]);
 
- 
-
-  const columnsList = [    
+  const columnsList = [
     {
       field: "pur_payer",
       headerName: "Pur Payer",
@@ -782,14 +763,14 @@ function PurGroupTable(props) {
           {params.value?.startsWith("110") && params.row.pur_receiver?.startsWith("600") ? "Manager Payment" : ""}
           {/* {params.row.purchase_type ? params.row.purchase_type : ""} - {params.row.pur_description ? params.row.pur_description : ""} */}
         </Box>
-      ),      
+      ),
     },
     {
       field: "purchase_type",
       headerName: "Type",
       flex: 3,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    },    
+    },
     {
       field: "expected",
       headerName: "Expected",
@@ -806,11 +787,11 @@ function PurGroupTable(props) {
             flexDirection: "row",
             justifyContent: "flex-end",
           }}
-        >                    
-          { params.row.pur_payer.startsWith("600")? `(${parseFloat(params.value).toFixed(2)})` : `${parseFloat(params.value).toFixed(2)}`}
+        >
+          {params.row.pur_payer.startsWith("600") ? `(${parseFloat(params.value).toFixed(2)})` : `${parseFloat(params.value).toFixed(2)}`}
         </Box>
       ),
-      headerAlign: 'right',
+      headerAlign: "right",
     },
     {
       field: "actual",
@@ -828,15 +809,14 @@ function PurGroupTable(props) {
             flexDirection: "row",
             justifyContent: "flex-end",
           }}
-        >                    
-          { params.value? `${parseFloat(params.value).toFixed(2)}` : '0'}
+        >
+          {params.value ? `${parseFloat(params.value).toFixed(2)}` : "0"}
         </Box>
       ),
-      headerAlign: 'right',
+      headerAlign: "right",
     },
   ];
 
-  
   if (paymentDueResult.length > 0) {
     // console.log("Passed Data ", paymentDueResult);
     return (
@@ -851,18 +831,17 @@ function PurGroupTable(props) {
             pagination: {
               paginationModel: {
                 pageSize: 100,
-              },              
+              },
             },
-          }}          
+          }}
           // getRowId={(row) => row.purchase_uid}
           getRowId={(row) => row.index}
           pageSizeOptions={[10, 50, 100]}
-          hideFooter={true}          
-          
+          hideFooter={true}
+
           // checkboxSelection
           // disableRowSelectionOnClick
-          
-        />                
+        />
       </>
     );
   } else {
