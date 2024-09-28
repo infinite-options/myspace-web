@@ -22,6 +22,9 @@ import {
   TableRow,
   Container,
 } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
+import MuiAccordion from "@material-ui/core/Accordion";
+import { withStyles } from "@material-ui/core/styles";
 import { useNavigate, useLocation } from "react-router-dom";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
@@ -61,6 +64,15 @@ import axios from "axios";
 //   getRevenueList,
 //   getExpenseList,
 // } from "../Cashflow/CashflowFetchData2";
+
+// const Accordion = withStyles({
+//   root: {
+//     "&$expanded": {
+//       margin: "auto"
+//     }
+//   },
+//   expanded: {}
+// })(MuiAccordion);
 
 export default function ManagerTransactions({ propsMonth, propsYear, setMonth, setYear, transactionsData, setSelectedPayment, setCurrentWindow, selectedProperty }) {
   const location = useLocation();
@@ -351,11 +363,24 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
   };
 
   const isPurGroupVerified = (purGroup) => {
-    if(purGroup.verified && purGroup.verified === "verified"){
+    console.log("ROHIT - 356 - isPurGroupVerified - purGroup.verified - ", purGroup.verified)
+    if(purGroup.verified && purGroup.verified.toLowerCase() === "verified"){      
       return true;
     }
     return false;
   }
+
+  const isPurGroupPaid = (purGroup) => {
+    console.log("ROHIT - 362 - purGroup - ", purGroup);
+    if(purGroup.pur_amount_due_total && purGroup.total_paid_total){
+      if(purGroup.total_paid_total >= purGroup.pur_amount_due_total){
+        return true;
+      }      
+    }
+    return false;
+  }
+
+  
 
   const handlePayment = (purGroup) => {
     console.log("ROHIT - 361 - handlePayment - transactions - ", purGroup.transactions);
@@ -508,7 +533,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
                         sx={{
                           backgroundColor: theme.palette.primary.main,
                           boxShadow: "none",
-                          marginTop: "15px",
+                          marginTop: "15px",                          
                         }}
                         key={propertyID}
                       >
@@ -559,13 +584,17 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
                           {Object.values(property.purchaseGroups)?.map((purGroup, index) => {
                             const isPayable = isPurGroupPayable(purGroup);
                             const isVerified = isPurGroupVerified(purGroup);
+                            // console.log("Is Verified:", isVerified);
+                            const isPaid = isPurGroupPaid(purGroup);
                             return (
                               <Accordion
+                                // disableGutters
                                 sx={{
                                   backgroundColor: theme.palette.primary.main,
                                   boxShadow: "none",
                                   marginTop: "5px",
-                                  marginLeft: "10px",
+                                  // marginLeft: "30px",
+                                  paddingLeft: "10px"
                                 }}
                                 key={purGroup.pur_group}
                               >
@@ -618,27 +647,11 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
                                       </Grid>
                                       <Grid item xs={2}>   
                                         {
-                                          purGroup.pur_amount_due_total !== purGroup.total_paid_total && (
-                                          <Button
-                                            onClick={() => {
-                                              if(!isVerified){
-                                                navigate("/paymentVerification");
-                                              }
-                                            }}
-                                            sx={{
-                                              backgroundColor: "#8696BE",
-                                              color: "#160449",
-                                              "&:hover": {
-                                                backgroundColor: "#160449",
-                                                color: "#FFFFFF",
-                                              },
-                                            }}
-                                          >
-                                            <Typography sx={{ color: "inherit", fontWeight: theme.typography.common.fontWeight, textTransform: "none", fontSize: "15px" }}>
-                                              {isVerified? "Verified" : "Unverified"}
-                                            </Typography>
-                                          </Button>  
-                                        )}
+                                          // purGroup.pur_amount_due_total !== purGroup.total_paid_total && (
+                                            !isPaid && isPayable &&  (
+                                              <VerifiedButton isVerified={isVerified} isPaid={isPaid} isPayable={isPayable} />
+                                            )                                          
+                                        }
                                       </Grid>
                                     </Grid>
                                   </Grid>
@@ -656,7 +669,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
                                 </Grid>
 
                                 <AccordionDetails>
-                                  {purGroup?.transactions?.map((purchase, index) => {
+                                  {/* {purGroup?.transactions?.map((purchase, index) => {
                                     return (
                                       <>
                                         <Grid container item xs={12}>
@@ -669,22 +682,23 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
                                             </Typography>
                                           </Grid>
                                           <Grid container justifyContent='flex-end' item xs={3}>
-                                            <Typography sx={{ fontWeight: theme.typography.common.fontWeight }}>
-                                              {/* ${purchase?.expected ? purchase?.expected?.toFixed(2) : "0"} */}
+                                            <Typography sx={{ fontWeight: theme.typography.common.fontWeight }}>                                              
                                               ${purchase?.expected ? purchase?.expected : "0"}
                                             </Typography>
                                           </Grid>
 
                                           <Grid container justifyContent='flex-end' item xs={2}>
-                                            <Typography sx={{ fontWeight: theme.typography.common.fontWeight }}>
-                                              {/* ${purchase?.actual ? purchase?.actual?.toFixed(2) : "0"} */}
+                                            <Typography sx={{ fontWeight: theme.typography.common.fontWeight }}>                                              
                                               ${purchase?.actual ? purchase?.actual : "0"}
                                             </Typography>
                                           </Grid>
                                         </Grid>
                                       </>
                                     );
-                                  })}
+                                  })} */}
+                                  <Box sx={{paddingLeft: "30px"}}>
+                                    <PurGroupTable data={purGroup.transactions}/>
+                                  </Box>
                                 </AccordionDetails>
                               </Accordion>
                             );
@@ -700,6 +714,160 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
       </Container>
     </ThemeProvider>
   );
+}
+
+const VerifiedButton = ( {isVerified, isPaid, isPayable}) => {
+  const navigate = useNavigate();
+  return (
+    <Button
+      onClick={() => {
+        if(!isVerified){
+          navigate("/paymentVerification");
+        }
+      }}
+      sx={{
+        backgroundColor: "#8696BE",
+        color: "#160449",
+        "&:hover": {
+          backgroundColor: "#160449",
+          color: "#FFFFFF",
+        },
+      }}
+    >
+      <Typography sx={{ color: "inherit", fontWeight: theme.typography.common.fontWeight, textTransform: "none", fontSize: "15px" }}>
+        {/* {isVerified? "Verified" : "Unverified"} */}
+        {isVerified === true? "Verified" : ""}
+        {isVerified === false ? "Unverified" : ""}        
+
+      </Typography>
+    </Button>  
+  )
+}
+
+
+function PurGroupTable(props) {  
+  const [data, setData] = useState(props.data);  
+  const [paymentDueResult, setPaymentDueResult] = useState([]);  
+
+  useEffect(() => {
+    setData(props.data);
+  }, [props.data]);
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      const dataWithIndex = data?.map((item, index) => (
+        {
+          ...item,
+          'index': index,
+        }
+      ))
+      
+      setPaymentDueResult(dataWithIndex);
+    }
+  }, [data]);
+
+ 
+
+  const columnsList = [    
+    {
+      field: "pur_payer",
+      headerName: "Pur Payer",
+      flex: 1,
+      // renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+      renderCell: (params) => (
+        <Box sx={{ fontWeight: "bold" }}>
+          {/* {params.value} */}
+          {params.value.startsWith("350") && params.row.pur_receiver?.startsWith("600") ? "Tenant Payment" : ""}
+          {params.value?.startsWith("600") && params.row.pur_receiver?.startsWith("110") ? "Owner Payment" : ""}
+          {params.value?.startsWith("110") && params.row.pur_receiver?.startsWith("600") ? "Manager Payment" : ""}
+          {/* {params.row.purchase_type ? params.row.purchase_type : ""} - {params.row.pur_description ? params.row.pur_description : ""} */}
+        </Box>
+      ),      
+    },
+    {
+      field: "purchase_type",
+      headerName: "Type",
+      flex: 3,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },    
+    {
+      field: "expected",
+      headerName: "Expected",
+      flex: 1.5,
+      headerStyle: {
+        fontWeight: "bold",
+      },
+      renderCell: (params) => (
+        <Box
+          sx={{
+            fontWeight: "bold",
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+          }}
+        >                    
+          { params.row.pur_payer.startsWith("600")? `(${parseFloat(params.value).toFixed(2)})` : `${parseFloat(params.value).toFixed(2)}`}
+        </Box>
+      ),
+      headerAlign: 'right',
+    },
+    {
+      field: "actual",
+      headerName: "Actual",
+      flex: 1,
+      headerStyle: {
+        fontWeight: "bold", // Apply inline style to the header cell
+      },
+      renderCell: (params) => (
+        <Box
+          sx={{
+            fontWeight: "bold",
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+          }}
+        >                    
+          { params.value? `${parseFloat(params.value).toFixed(2)}` : '0'}
+        </Box>
+      ),
+      headerAlign: 'right',
+    },
+  ];
+
+  
+  if (paymentDueResult.length > 0) {
+    // console.log("Passed Data ", paymentDueResult);
+    return (
+      <>
+        <DataGrid
+          slots={{
+            columnHeaders: () => null,
+          }}
+          rows={paymentDueResult}
+          columns={columnsList}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 100,
+              },              
+            },
+          }}          
+          // getRowId={(row) => row.purchase_uid}
+          getRowId={(row) => row.index}
+          pageSizeOptions={[10, 50, 100]}
+          hideFooter={true}          
+          
+          // checkboxSelection
+          // disableRowSelectionOnClick
+          
+        />                
+      </>
+    );
+  } else {
+    return <></>;
+  }
 }
 
 function SelectMonthComponentTest(props) {

@@ -51,6 +51,8 @@ export default function PaymentsManager(props) {
   const location = useLocation();
   const { user, getProfileId, roleName, selectedRole } = useUser();
 
+  const {setSelectedPayment, setCurrentWindow, page} = props;
+
   const managerCashflowWidgetData = location.state?.managerCashflowWidgetData;
   const accountBalanceWidgetData = location.state?.accountBalanceWidgetData;
   // console.log("managerCashflowWidgetData - ", managerCashflowWidgetData);
@@ -427,18 +429,25 @@ export default function PaymentsManager(props) {
                           onClick={() => {
                             // paymentData.business_code = paymentNotes;
                             const updatedPaymentData = { ...paymentData, business_code: paymentNotes };
-                            console.log("In Payments.jsx and passing paymentData to SelectPayment.jsx: ", paymentData);
-                            console.log("In Payments.jsx and passing paymentMethodInfo to SelectPayment.jsx: ", paymentMethodInfo);
-                            navigate("/selectPayment", {
-                              state: {
-                                paymentData: updatedPaymentData,
-                                total: total,
-                                selectedItems: selectedItems,
-                                paymentMethodInfo: paymentMethodInfo,
-                                managerCashflowWidgetData: managerCashflowWidgetData,
-                                accountBalanceWidgetData: accountBalanceWidgetData,
-                              },
-                            });
+                             console.log("In Payments.jsx and passing paymentData to SelectPayment.jsx: ", paymentData);
+                            console.log("In Payments.jsx and passing paymentMethodInfo to SelectPayment.jsx: ", paymentMethodInfo);                            
+                            if(page != null && page === "paymentProcessing"){
+                              setSelectedPayment({ paymentData: updatedPaymentData, total: total, selectedItems: selectedItems, paymentMethodInfo: paymentMethodInfo });
+                              setCurrentWindow("MAKE_PAYMENT");
+                            }
+                            else {
+                              
+                              navigate("/selectPayment", {
+                                state: {
+                                  paymentData: updatedPaymentData,
+                                  total: total,
+                                  selectedItems: selectedItems,
+                                  paymentMethodInfo: paymentMethodInfo,
+                                  managerCashflowWidgetData: managerCashflowWidgetData,
+                                  accountBalanceWidgetData: accountBalanceWidgetData,
+                                },
+                              });
+                            }
                           }}
                         >
                           <Typography

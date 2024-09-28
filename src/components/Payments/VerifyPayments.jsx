@@ -221,7 +221,7 @@ function BalanceDetailsTable(props) {
     {
       field: "pur_property_id",
       headerName: "Property UID",
-      flex: 1,
+      flex: 2,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
@@ -242,18 +242,18 @@ function BalanceDetailsTable(props) {
       flex: 2,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
-    {
-      field: "payment_date",
-      headerName: "Payment Date",
-      flex: 2,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    },
-    {
-      field: "paid_by",
-      headerName: "Paid By",
-      flex: 2,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    },
+    // {
+    //   field: "payment_date",
+    //   headerName: "Payment Date",
+    //   flex: 2,
+    //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    // },
+    // {
+    //   field: "paid_by",
+    //   headerName: "Paid By",
+    //   flex: 2,
+    //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    // },
     {
       field: "payment_intent",
       headerName: "Payment Intent",
