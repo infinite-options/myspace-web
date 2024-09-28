@@ -118,7 +118,7 @@ const PaymentProcessing = () => {
         fetchCashflowTransactions(profileId)
           .then((data) => {
             
-            setCashflowTransactionsData(data?.Transactions);        
+            setCashflowTransactionsData(data);        
           })
           .catch((error) => {
             console.error("Error fetching cashflow transactions data:", error);
