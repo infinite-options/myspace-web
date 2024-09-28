@@ -774,29 +774,29 @@ const closeDialog = () => {
     if (!email) newErrors.email = 'Email is required';
     if (!phoneNumber) newErrors.phoneNumber = 'Phone Number is required';
     if (!ssn) newErrors.ssn = 'SSN is required';    
-
-
+  
     let paymentMethodsError = false;
-    let atleaseOneActive = false;
-    Object.keys(paymentMethods)?.forEach( method => { 
-      const payMethod = paymentMethods[method];
-      
-      if(payMethod.value === '' && payMethod.checked === true ){
+    let atLeastOneActive = false;
+    parsedPaymentMethods.forEach(method => {
+      if (method.checked && method.paymentMethod_name === '') {
         paymentMethodsError = true;
       }
-      if(payMethod.checked === true ){
-        atleaseOneActive = true;
-      }      
-
-    })
-
-    if(!atleaseOneActive){
+      if (method.checked) {
+        atLeastOneActive = true; // Found at least one active
+      }
+    });
+  
+    if (!atLeastOneActive) {
       newErrors.paymentMethods = 'Atleast one active payment method is required';
-      openDialog("Alert",'Atleast one active payment method is required',"info");
+      openDialog(
+        "Alert",
+        'Atleast one active payment method is required. Please select and activate a payment method.',
+        "info"
+      );
       return;
     }
-
-    if(paymentMethodsError){
+  
+    if (paymentMethodsError){
       newErrors.paymentMethods = 'Please check payment method details';
       openDialog("Alert",'Please check payment method details',"info");
       return;
@@ -807,24 +807,24 @@ const closeDialog = () => {
       openDialog("Alert","Please enter all required fields","info");
       return;
     }
-
+  
     setErrors({}); // Clear any previous errors
-
+  
     if (!DataValidator.email_validate(email)) {
       openDialog("Alert","Please enter a valid email","info");
       return false;
     }
-
+  
     if (!DataValidator.phone_validate(phoneNumber)) {
       openDialog("Alert","Please enter a valid phone number","info");
       return false;
     }
-
+  
     if (!DataValidator.zipCode_validate(zip)) {
       openDialog("Alert","Please enter a valid zip code","info");
       return false;
     }
-
+  
     // if (!DataValidator.ssn_validate(ssn)) {
     //   alert("Please enter a valid SSN");
     //   return false;
@@ -834,22 +834,22 @@ const closeDialog = () => {
       openDialog("Alert", "Please enter a valid Tax ID", "info");
       return false;
     }
-
+  
     setCookie("default_form_vals", { ...cookiesData, firstName, lastName });
-
+  
     // const payload = getPayload();
     // const form = encodeForm(payload);
     // const data = await saveProfile(form);
 
     saveProfile();
-
-    if(modifiedPayment){
-      const paymentSetup = await handlePaymentStep();
+    
+    if (modifiedPayment) {
+      await handlePaymentStep();
     }
     setShowSpinner(false);
     return;
   };
-
+  
   const showSnackbar = (message, severity) => {
     console.log("Inside show snackbar");
     setSnackbarMessage(message);
@@ -1628,6 +1628,18 @@ const closeDialog = () => {
           <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Save</Typography>
         </Button>
       </Grid>
+      <GenericDialog
+      isOpen={isDialogOpen}
+      title={dialogTitle}
+      contextText={dialogMessage}
+      actions={[
+        {
+          label: "OK",
+          onClick: closeDialog,
+        }
+      ]}
+      severity={dialogSeverity}
+    />
     </>
   );
 }
