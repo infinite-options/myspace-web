@@ -203,25 +203,25 @@ function BalanceDetailsTable(props) {
     {
       field: "payment_uid",
       headerName: "Payment UID",
-      flex: 3,
+      flex: 2.5,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
       field: "purchase_uid",
       headerName: "Pur UID",
-      flex: 3,
+      flex: 2.5,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
       field: "pur_group",
       headerName: "Pur Group",
-      flex: 3,
+      flex: 2.5,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
       field: "pur_property_id",
       headerName: "Property UID",
-      flex: 2,
+      flex: 2.5,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
