@@ -477,17 +477,18 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees, setDeleteFees }) => {
       ];
 
   const rowsWithId = leaseFees.map((row, index) => ({
+    ...row,
     id: row.id ? index : index,
-    fee_name: row.fee_name ?? "",
-    fee_type: row.fee_type ?? "",
-    charge: row.charge ?? "",
-    frequency: row.frequency ?? "Monthly",
-    due_by: row.due_by ?? "",
-    due_by_date: row.due_by_date ?? "",
-    available_topay: row.available_topay ?? "",
-    late_by: row.late_by ?? "",
-    late_fee: row.late_fee ?? "",
-    perDay_late_fee: row.perDay_late_fee ?? "",
+    fee_name: (row.fee_name !== null || row.fee_name !== undefined) ? row.fee_name : "",
+    fee_type: (row.fee_type !== null || row.fee_type !== undefined) ? row.fee_type :  "",
+    charge: (row.charge != null || row.charge !== undefined )? row.charge :  "",
+    frequency: (row.frequency !== null || row.frequency !== undefined) ? row.frequency : "Monthly",
+    due_by: ( row.due_by !== undefined) ? row.due_by :  "",
+    due_by_date: ( row.due_by_date !== undefined) ? row.due_by_date : "",
+    available_topay: (row.available_topay !== undefined) ? row.available_topay : "",
+    late_by: (row.late_by !== undefined ) ? row.late_by : "",
+    late_fee: (row.late_fee !== undefined)? row.late_fee : "",
+    perDay_late_fee: (row.perDay_late_fee !== undefined) ? row.perDay_late_fee : "",
   }));
 
   const checkRequiredField = () => {

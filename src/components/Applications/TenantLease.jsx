@@ -179,7 +179,7 @@ const TenantLease = () => {
       } else if (application?.lease_status === "NEW") {
         feesList = initialFees(property, application);
       }
-      // console.log("Fees: ", feesList);
+      console.log("Fees: ", feesList);
 
       // let i = 0;
       // feesList.forEach((fee) => {
