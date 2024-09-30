@@ -1085,7 +1085,7 @@ function EditProperty(props) {
 						<Grid container columnSpacing={6} rowSpacing={4}>
 							{/* Property Codes Section */}
 							<Grid item xs={11}>
-								<Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue }}>
+								<Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue, marginBottom: '8px',}}>
 									Property Codes
 								</Typography>
 							</Grid>
@@ -1097,7 +1097,7 @@ function EditProperty(props) {
 
 							{propertyCodes.map((code, index) => (
 								<React.Fragment key={index}>
-									<Grid item xs={3.5}>
+									<Grid item xs={3.5} >
 										<Typography
 											sx={{
 												color: theme.typography.primary.black,
@@ -1207,13 +1207,15 @@ function EditProperty(props) {
 
 							{/* Property Amenities Section */}
 							<Grid item xs={11}>
-								<Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue }}>
+								<Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue, marginTop: '20px',  // Add more space before the next title
+                marginBottom: '8px', }}>
 									Property Amenities
 								</Typography>
 							</Grid>
 
 							<Grid item xs={1}>
-								<IconButton onClick={handleAddPropertyAmenity}>
+								<IconButton onClick={handleAddPropertyAmenity} sx={{ marginTop: '20px',  // Add more space before the next title
+              }}>
 									<AddIcon />
 								</IconButton>
 							</Grid>
@@ -1308,13 +1310,14 @@ function EditProperty(props) {
 
 							{/* Other Details Section */}
 							<Grid item xs={11}>
-								<Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue }}>
+								<Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue, marginTop: '20px',  }}>
 									Other Details
 								</Typography>
 							</Grid>
 
 							<Grid item xs={1}>
-								<IconButton onClick={handleAddOtherDetail}>
+								<IconButton onClick={handleAddOtherDetail} sx={{ marginTop: '20px',  }}>
+			
 									<AddIcon />
 								</IconButton>
 							</Grid>
