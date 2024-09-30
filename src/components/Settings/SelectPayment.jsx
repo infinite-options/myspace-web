@@ -395,20 +395,9 @@ export default function SelectPayment(props) {
         </Backdrop>
 
         <Container disableGutters maxWidth='lg' sx={{ paddingTop: "10px", height: "90vh" }}>
-  <Grid container spacing={6} sx={{ height: "90%" }}>
-    {/* Conditional rendering based on selectedRole */}
-    {selectedRole === "TENANT" ? (
-      <Grid item xs={12} md={4}>
-        <TenantAccountBalance
-          selectedProperty={location.state.selectedProperty}
-          leaseDetails={location.state.leaseDetails}
-          balanceDetails={location.state.balanceDetails}
-          from={"selectPayment"}
-        />
-      </Grid>
-    ) : null}
+        <Grid container spacing={6} sx={{ height: "90%" }}>
 
-    <Grid container item xs={12} md={selectedRole === "TENANT" ? 8 : 12} justifyContent={selectedRole === "MANAGER" ? 'center' : 'flex-start'}>
+          <Grid container item xs={12} md={12} justifyContent={'center'}>
 
               <StripeFeesDialog stripeDialogShow={stripeDialogShow} setStripeDialogShow={setStripeDialogShow} toggleKeys={toggleKeys} setStripePayment={setStripePayment} />
 
