@@ -46,6 +46,7 @@ function DashboardTab(props) {
 
 export default function PaymentsManager(props) {
   console.log("In Payments.jsx");
+  console.log("props - ", props);
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
@@ -65,7 +66,8 @@ export default function PaymentsManager(props) {
   const [moneyToBeReceived, setMoneyToBeReceived] = useState([]);
   const [moneyPayable, setMoneyPayable] = useState([]);
 
-  const [transactionsData, setTransactionsData] = useState([]);
+  // const [transactionsData, setTransactionsData] = useState([]);
+  const [transactionsData, setTransactionsData] = useState(props.transactionsData);
   const [totalTransactions, setTotalTransactions] = useState(0);
 
   const [showSpinner, setShowSpinner] = useState(false);
@@ -205,42 +207,6 @@ export default function PaymentsManager(props) {
     return total;
   }
 
-  const fetchPaymentsData = async () => {
-    console.log("In fetchPaymensData");
-    setShowSpinner(true);
-    try {
-      const res = await axios.get(`${APIConfig.baseURL.dev}/paymentStatus/${getProfileId()}`);
-      // const paymentStatusData = res.data.PaymentStatus.result;
-      // const paidStatusData = res.data.PaidStatus.result;
-
-      const moneyPaidData = res.data.MoneyPaid.result;
-      const moneyReceivedData = res.data.MoneyReceived.result;
-      const moneyToBePaidData = res.data.MoneyToBePaid.result;
-      const moneyToBeReceivedData = res.data.MoneyToBeReceived.result;
-      const moneyPayableData = res.data.MoneyPayable.result;
-
-      setMoneyPaid(moneyPaidData);
-      setMoneyReceived(moneyReceivedData);
-      setMoneyToBePaid(moneyToBePaidData);
-      setMoneyToBeReceived(moneyToBeReceivedData);
-      setMoneyPayable(moneyPayableData);
-
-      // console.log("Money To Be Paid: ", moneyToBePaid);
-      // console.log("Money To Be Paid: ", moneyToBePaid[0].ps);
-
-      totalMoneyPaidUpdate(moneyPaidData);
-      totalMoneyReceivedUpdate(moneyReceivedData);
-      totalMoneyToBePaidUpdate(moneyToBePaidData);
-      totalMoneyToBeReceivedUpdate(moneyToBeReceivedData);
-      totalMoneyPayable(moneyPayableData);
-
-      // console.log("--> initialSelectedItems", initialSelectedItems);
-    } catch (error) {
-      console.error("Error fetching payment data:", error);
-    }
-    setShowSpinner(false);
-  };
-
   const fetchTransactionsData = async () => {
     // console.log("In fetchTransactionsData");
     setShowSpinner(true);
@@ -271,12 +237,12 @@ export default function PaymentsManager(props) {
   };
 
   // useEffect(() => {
-  //   fetchPaymentsData();
+  //   fetchTransactionsData();
   // }, []);
 
   useEffect(() => {
-    fetchTransactionsData();
-  }, []);
+    setTransactionsData(props.transactionsData);
+  }, [props.transactionsData]);
 
   const handlePaymentNotesChange = (event) => {
     setPaymentNotes(event.target.value);

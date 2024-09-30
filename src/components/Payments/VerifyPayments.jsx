@@ -122,7 +122,7 @@ export default function VerifyPayments(props) {
                   </Stack>
 
                   <Stack>
-                    <BalanceDetailsTable data={moneyPayable} setPaymentData={setPaymentData} />
+                    <BalanceDetailsTable data={moneyPayable} setPaymentData={setPaymentData} fetchPaymentsData={fetchPaymentsData}/>
                   </Stack>
                 </Paper>
               </Paper>
@@ -385,6 +385,7 @@ function BalanceDetailsTable(props) {
     } catch (error) {
       console.log("error", error);
     }
+    props.fetchPaymentsData();
   };
 
   if (paymentDueResult.length > 0) {

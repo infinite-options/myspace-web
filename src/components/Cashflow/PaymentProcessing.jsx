@@ -50,6 +50,7 @@ import ManagerTransactions from "./ManagerTransactions";
 import PaymentsManager from "../Payments/PaymentsManager";
 import MakePayment from "./MakePayment";
 import VerifyPayments from "../Payments/VerifyPayments";
+import SelectPayment from "./SelectPayment";
 import AddRevenue from "./AddRevenue";
 import AddExpense from "./AddExpense";
 
@@ -97,6 +98,8 @@ const PaymentProcessing = () => {
     // const [currentWindow, setCurrentWindow] = useState(location.state?.currentWindow || "VERIFY_PAYMENTS");    
 
     const [selectedPayment, setSelectedPayment] = useState(null);
+
+    const [selectedPurGroup, setSelectedPurGroup] = useState(null);
     
     // const [selectedProperty, setSelectedProperty] = useState("ALL");
 
@@ -107,7 +110,7 @@ const PaymentProcessing = () => {
           const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowTransactions/${userProfileId}/new`);
           console.log("Manager Cashflow Data: ", cashflow.data);
           setShowSpinner(false);
-          return cashflow.data;
+          return cashflow.data?.result;
         } catch (error) {
           console.error("Error fetching cashflow data:", error);
           setShowSpinner(false);
@@ -117,8 +120,13 @@ const PaymentProcessing = () => {
     const refreshCashflowData = () => {
         fetchCashflowTransactions(profileId)
           .then((data) => {
-            
-            setCashflowTransactionsData(data);        
+            const dataWithIndex = data?.map((item, index) => (
+              {
+                ...item,
+                'index': index,
+              }
+            ))
+            setCashflowTransactionsData(dataWithIndex);        
           })
           .catch((error) => {
             console.error("Error fetching cashflow transactions data:", error);
@@ -128,8 +136,13 @@ const PaymentProcessing = () => {
     useEffect(() => {
         fetchCashflowTransactions(profileId)
         .then((data) => {        
-        setCashflowTransactionsData(data);
-        // setCashflowData(data);        
+          const dataWithIndex = data?.map((item, index) => (
+            {
+              ...item,
+              'index': index,
+            }
+          ))
+          setCashflowTransactionsData(dataWithIndex);                
         })
         .catch((error) => {
         console.error("Error fetching cashflow data:", error);
@@ -157,12 +170,14 @@ const PaymentProcessing = () => {
                     transactionsData={cashflowTransactionsData}
                     setSelectedPayment={setSelectedPayment}
                     setCurrentWindow={setCurrentWindow}
+                    setSelectedPurGroup={setSelectedPurGroup}
                     selectedProperty={"ALL"}
                   />
                 )}
-                {currentWindow === "PAY_BILLS" && <PaymentsManager setSelectedPayment={setSelectedPayment} setCurrentWindow={setCurrentWindow} page={"paymentProcessing"} />}
+                {currentWindow === "PAY_BILLS" && <PaymentsManager transactionsData={cashflowTransactionsData} setSelectedPayment={setSelectedPayment} setCurrentWindow={setCurrentWindow} page={"paymentProcessing"} />}
                 {currentWindow === "VERIFY_PAYMENTS" && <VerifyPayments />}
                 {currentWindow === "MAKE_PAYMENT" && <MakePayment selectedPayment={selectedPayment} refreshCashflowData={refreshCashflowData} setCurrentWindow={setCurrentWindow} />}                                
+                {currentWindow === "SELECT_PAYMENT" && <SelectPayment selectedPayment={selectedPayment} selectedPurGroup={selectedPurGroup} />}
               </Grid>
             </Grid>
           </Container>

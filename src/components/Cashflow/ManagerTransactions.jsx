@@ -74,7 +74,7 @@ import axios from "axios";
 //   expanded: {}
 // })(MuiAccordion);
 
-export default function ManagerTransactions({ propsMonth, propsYear, setMonth, setYear, transactionsData, setSelectedPayment, setCurrentWindow, selectedProperty }) {
+export default function ManagerTransactions({ propsMonth, propsYear, setMonth, setYear, transactionsData, setSelectedPayment, setCurrentWindow, setSelectedPurGroup, selectedProperty }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, getProfileId } = useUser(); // Access the user object from UserContext
@@ -177,7 +177,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
 
   useEffect(() => {
     //TRANSACTIONS
-    const allTransactionsData = transactionsData?.result;
+    const allTransactionsData = transactionsData;
     // console.log("allTransactionsData - ", allTransactionsData);
     // console.log("allTransactionsData - selectedProperty", selectedProperty);
     let filteredTransactionsData = [];
@@ -379,6 +379,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
 
   const handlePayment = (purGroup) => {
     console.log("ROHIT - 361 - handlePayment - transactions - ", purGroup.transactions);
+    setSelectedPurGroup(purGroup);
     const purchaseUIDs = [];
     const ownerPayments = purGroup.transactions?.filter((item) => item.pur_payer === getProfileId()); //payments from 600 to 110
     const managerPayments = purGroup.transactions?.filter((item) => item.pur_receiver === getProfileId() && item.pur_payer?.startsWith("110")); //payments from 110 to 600
@@ -437,7 +438,8 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
 
     setSelectedPayment({ paymentData: paymentData, total: parseFloat(total.toFixed(1)), selectedItems: [], paymentMethodInfo: {} });
 
-    setCurrentWindow("MAKE_PAYMENT");
+    // setCurrentWindow("MAKE_PAYMENT");
+    setCurrentWindow("SELECT_PAYMENT");
   };
 
   return (
