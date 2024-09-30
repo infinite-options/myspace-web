@@ -54,7 +54,7 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees, setDeleteFees }) => {
   const feeRevenues = getList("revenue");
   const [currentRow, setCurrentRow] = useState({
     fee_name: "",
-    fee_type: "$",
+    fee_type: "",
     charge: "",
     frequency: "Monthly",
     due_by: "",
@@ -126,13 +126,13 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees, setDeleteFees }) => {
 
   const getFeesDueBy = (fee) => {
     if (fee.frequency === "Bi-Weekly") {
-      return fee.due_by ? biweeklyDueByValuetoDayMap[fee.due_by] : "-";
+      return fee.due_by !== ""? biweeklyDueByValuetoDayMap[fee.due_by] : "-";
     } else if (fee.frequency === "Weekly") {
-      return fee.due_by? weeklyDueByValuetoDayMap[fee.due_by] : "-";
+      return fee.due_by !== "" ? weeklyDueByValuetoDayMap[fee.due_by] : "-";
     } else if (fee.frequency === "Monthly" || fee.frequency === "Quarterly" || fee.frequency === "Semi-Monthly") {
-      return fee.due_by ? `${fee.due_by}${getDateAdornmentString(fee.due_by)} of the month` : "-";
+      return fee.due_by !== "" ? `${fee.due_by}${getDateAdornmentString(fee.due_by)} of the month` : "-";
     } else if (fee.frequency === "One Time" || fee.frequency === "Annually" || fee.frequency === "Semi-Annually") {
-      return `${fee.due_by_date ?? "No Due Date"}`;
+      return fee.due_by_date !== "" ? `${fee.due_by_date}` : "No Due Date";
     } else{
       return "-";
     }
@@ -140,7 +140,7 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees, setDeleteFees }) => {
 
   const getFeesLateBy = (fee) => {
     if (fee.frequency === "Bi-Weekly" || fee.frequency === "Weekly" || fee.frequency === "Monthly" || fee.frequency === "Annually" || fee.frequency === "One Time" || fee.frequency === "Semi-Annually" || fee.frequency === "Quarterly" || fee.frequency === "Semi-Monthly") {
-      return fee.late_by ? `${fee.late_by}${getDateAdornmentString(fee.late_by)} day after due` : "-";
+      return fee.late_by !== "" ? `${fee.late_by}${getDateAdornmentString(fee.late_by)} day after due` : "-";
     } else {
       return "-";
     }
@@ -148,7 +148,7 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees, setDeleteFees }) => {
 
   const getFeesAvailableToPay = (fee) => {
     if (fee.frequency === "Bi-Weekly" || fee.frequency === "Weekly" || fee.frequency === "Monthly" || fee.frequency === "Annually" || fee.frequency === "One Time" || fee.frequency === "Semi-Annually" || fee.frequency === "Quarterly" || fee.frequency === "Semi-Monthly") {
-      return fee.available_topay? `${fee.available_topay} days before due` : "-";
+      return fee.available_topay !== "" ? `${fee.available_topay} days before due` : "-";
     } else {
       return "-";
     }
@@ -336,7 +336,7 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees, setDeleteFees }) => {
           headerName: "Late Fee",
           flex: 0.7,
           renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
-          renderCell: (params) => <Typography>{params.row.late_fee ? `$ ${params.row.late_fee}` : "-"}</Typography>,
+          renderCell: (params) => <Typography>{params.row.late_fee !== ""  ? `$ ${params.row.late_fee}` : "-"}</Typography>,
         },
         {
           field: "perDay_late_fee",
@@ -346,7 +346,7 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees, setDeleteFees }) => {
               Late Fee <br /> Per Day
             </strong>
           ),
-          renderCell: (params) => <Typography>{params.row.perDay_late_fee ? `$ ${params.row.perDay_late_fee}` : "-"}</Typography>,
+          renderCell: (params) => <Typography>{params.row.perDay_late_fee !== "" ? `$ ${params.row.perDay_late_fee}` : "-"}</Typography>,
         },
         {
           field: "editactions",
@@ -477,20 +477,28 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees, setDeleteFees }) => {
       ];
 
   const rowsWithId = leaseFees.map((row, index) => ({
-    ...row,
     id: row.id ? index : index,
+    fee_name: row.fee_name ?? "",
+    fee_type: row.fee_type ?? "",
+    charge: row.charge ?? "",
+    frequency: row.frequency ?? "Monthly",
+    due_by: row.due_by ?? "",
+    due_by_date: row.due_by_date ?? "",
+    available_topay: row.available_topay ?? "",
+    late_by: row.late_by ?? "",
+    late_fee: row.late_fee ?? "",
+    perDay_late_fee: row.perDay_late_fee ?? "",
   }));
 
   const checkRequiredField = () => {
     if (
-      !currentRow.fee_name ||
-      !currentRow.fee_type ||
-      !currentRow.charge ||
-      !currentRow.charge ||
-      !currentRow.late_fee ||
-      !currentRow.perDay_late_fee ||
-      !currentRow.late_by ||
-      !currentRow.available_topay
+      currentRow.fee_name === ""||
+      currentRow.fee_type === "" ||
+      currentRow.charge === "" ||
+      currentRow.late_fee === "" ||
+      currentRow.perDay_late_fee === "" ||
+      currentRow.late_by === "" ||
+      currentRow.available_topay === ""
     ) {
       alert("enter all required fields");
       return false;
@@ -498,16 +506,16 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees, setDeleteFees }) => {
 
     if (currentRow.frequency === "One Time" || currentRow.frequency === "Annually" || currentRow.frequency === "Semi-Annually") {
       if (currentRow.due_by_date && isNaN(Date.parse(currentRow.due_by_date))) {
-        alert("Wrong due_by date ");
+        alert("Wrong due_by date -", currentRow.due_by_date);
         return false;
       }
-    } else if (!currentRow.due_by || isNaN(currentRow.due_by)) {
+    } else if (currentRow.due_by === "" || isNaN(currentRow.due_by)) {
       alert("Enter due_by in number format");
       return false;
     }
 
     if (isNaN(currentRow.late_by) || isNaN(currentRow.available_topay)) {
-      alert("Enter numbers only");
+      alert("Enter numbers only for late_by or available_topay");
       return false;
     }
 
@@ -570,6 +578,7 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees, setDeleteFees }) => {
   const handleClickEditFee = (row) => {
     // const {id, ...currentFee} = row;
     // setCurrentEditingIndex(row.id);
+    console.log("edit click ", row);
     setCurrentRow(row);
     setIsEditing(true);
     setOpen(true);
@@ -634,7 +643,6 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees, setDeleteFees }) => {
         late_fee: "",
         perDay_late_fee: "",
       });
-
       setOpen(false);
     }
   };

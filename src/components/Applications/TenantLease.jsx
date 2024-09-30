@@ -450,14 +450,15 @@ const TenantLease = () => {
     let retVal = true;
     fees.map((fee) => {
       if (
-        fee.fee_name === "" ||
-        fee.charge === "" ||
-        fee.frequency === "" ||
-        (fee.due_by === null && (fee.due_by_date === null || !isValidDate(fee.due_by_date))) ||
-        fee.late_by === null ||
-        fee.late_fee === "" ||
-        fee.available_topay === null ||
-        fee.perDay_late_fee === ""
+        fee.fee_name == null || fee.fee_name === "" || 
+        fee.fee_type == null || fee.fee_type === "" || 
+        fee.charge == null || fee.charge === "" || 
+        fee.frequency == null || fee.frequency === "" || 
+        ((fee.due_by == null || fee.due_by === "") && (fee.due_by_date == null || fee.due_by_date === "" || !isValidDate(fee.due_by_date))) ||
+        fee.late_by == null || 
+        fee.late_fee == null || fee.late_fee === "" || 
+        fee.available_topay == null || 
+        fee.perDay_late_fee == null || fee.perDay_late_fee === ""
       ) {
         retVal = false;
       }
@@ -465,21 +466,21 @@ const TenantLease = () => {
     return retVal;
   };
 
-  useEffect(() => {
-    let isValid = true;
-    fees.forEach((fee) => {
-      if (fee.frequency === "One Time" || fee.frequency === "Annually") {
-        if (fee.due_by_date == null || fee.due_by_date === "" || !isValidDate(fee.due_by_date)) {
-          isValid = false;
-        }
-      }
-    });
-    if (isValid) {
-      setShowInvalidDueDatePrompt(false);
-    } else {
-      setShowInvalidDueDatePrompt(true);
-    }
-  }, [fees]);
+  // useEffect(() => {
+  //   let isValid = true;
+  //   fees.forEach((fee) => {
+  //     if (fee.frequency === "One Time" || fee.frequency === "Annually") {
+  //       if (fee.due_by_date == null || fee.due_by_date === "" || !isValidDate(fee.due_by_date)) {
+  //         isValid = false;
+  //       }
+  //     }
+  //   });
+  //   if (isValid) {
+  //     setShowInvalidDueDatePrompt(false);
+  //   } else {
+  //     setShowInvalidDueDatePrompt(true);
+  //   }
+  // }, [fees]);
 
   const handleRemoveFile = (index) => {
     setLeaseFiles((prevFiles) => {
