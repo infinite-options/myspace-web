@@ -55,7 +55,7 @@ export default function PaymentsManager(props) {
 
   const managerCashflowWidgetData = location.state?.managerCashflowWidgetData;
   const accountBalanceWidgetData = location.state?.accountBalanceWidgetData;
-  // console.log("managerCashflowWidgetData - ", managerCashflowWidgetData);
+  console.log("managerCashflowWidgetData - ", managerCashflowWidgetData);
 
   // console.log("selectedRole - ", selectedRole);
 
@@ -431,11 +431,11 @@ export default function PaymentsManager(props) {
                             const updatedPaymentData = { ...paymentData, business_code: paymentNotes };
                              console.log("In Payments.jsx and passing paymentData to SelectPayment.jsx: ", paymentData);
                             console.log("In Payments.jsx and passing paymentMethodInfo to SelectPayment.jsx: ", paymentMethodInfo);                            
-                            if(page != null && page === "paymentProcessing"){
-                              setSelectedPayment({ paymentData: updatedPaymentData, total: total, selectedItems: selectedItems, paymentMethodInfo: paymentMethodInfo });
-                              setCurrentWindow("MAKE_PAYMENT");
-                            }
-                            else {
+                            // if(page != null && page === "paymentProcessing"){
+                            //   setSelectedPayment({ paymentData: updatedPaymentData, total: total, selectedItems: selectedItems, paymentMethodInfo: paymentMethodInfo });
+                            //   setCurrentWindow("MAKE_PAYMENT");
+                            // }
+                            // else {
                               
                               navigate("/selectPayment", {
                                 state: {
@@ -447,7 +447,6 @@ export default function PaymentsManager(props) {
                                   accountBalanceWidgetData: accountBalanceWidgetData,
                                 },
                               });
-                            }
                           }}
                         >
                           <Typography
@@ -460,7 +459,7 @@ export default function PaymentsManager(props) {
                               fontWeight: "600",
                             }}
                           >
-                            Select Payment
+                            Select Payment 2
                           </Typography>
                         </Button>
                       </Grid>

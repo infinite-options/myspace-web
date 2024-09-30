@@ -395,38 +395,21 @@ export default function SelectPayment(props) {
         </Backdrop>
 
         <Container disableGutters maxWidth='lg' sx={{ paddingTop: "10px", height: "90vh" }}>
-          <Grid container spacing={6} sx={{ height: "90%" }}>
-            <Grid item xs={12} md={4}>
-              {selectedRole === "MANAGER" && (
-                <ManagerCashflowWidget
-                  propsMonth={managerCashflowWidgetData?.propsMonth}
-                  propsYear={managerCashflowWidgetData?.propsYear}
-                  profitsTotal={managerCashflowWidgetData?.profitsTotal}
-                  rentsTotal={managerCashflowWidgetData?.rentsTotal}
-                  payoutsTotal={managerCashflowWidgetData?.payoutsTotal}
-                  graphData={managerCashflowWidgetData?.graphData}
-                />
-              )}
+  <Grid container spacing={6} sx={{ height: "90%" }}>
+    {/* Conditional rendering based on selectedRole */}
+    {selectedRole === "TENANT" ? (
+      <Grid item xs={12} md={4}>
+        <TenantAccountBalance
+          selectedProperty={location.state.selectedProperty}
+          leaseDetails={location.state.leaseDetails}
+          balanceDetails={location.state.balanceDetails}
+          from={"selectPayment"}
+        />
+      </Grid>
+    ) : null}
 
-              {selectedRole === "TENANT" && (
-                <TenantAccountBalance
-                  selectedProperty={location.state.selectedProperty}
-                  leaseDetails={location.state.leaseDetails}
-                  balanceDetails={location.state.balanceDetails}
-                  from={"selectPayment"}
-                  // selectedProperty={location.state.selectedProperty}
-                  // selectedLease={location.state.leaseDetails}
-                  // propertyAddr={location.state.selectedProperty.property_address}
-                  // propertyData={location.state.selectedProperty}
-                  // total={accountBalanceWidgetData?.total}
-                  // rentFees={accountBalanceWidgetData?.rentFees}
-                  // lateFees={accountBalanceWidgetData?.lateFees}
-                  // utilityFees={accountBalanceWidgetData?.utilityFees}
-                />
-              )}
-            </Grid>
+    <Grid container item xs={12} md={selectedRole === "TENANT" ? 8 : 12} justifyContent={selectedRole === "MANAGER" ? 'center' : 'flex-start'}>
 
-            <Grid container item xs={12} md={8} columnSpacing={6}>
               <StripeFeesDialog stripeDialogShow={stripeDialogShow} setStripeDialogShow={setStripeDialogShow} toggleKeys={toggleKeys} setStripePayment={setStripePayment} />
 
               {/* <Stack direction="row" > */}
@@ -444,7 +427,7 @@ export default function SelectPayment(props) {
                     fontSize: theme.typography.largeFont,
                   }}
                 >
-                  Select Payment Method
+                  Select Payment Method (NEW)
                 </Typography>
                 {/* </Stack> */}
               </Grid>
