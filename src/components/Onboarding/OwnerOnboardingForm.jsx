@@ -66,17 +66,17 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   errorBorder: {
-    border: '1px solid red',
+    border: "1px solid red",
   },
   error: {
-    color: 'red',
+    color: "red",
   },
 }));
 
 export default function OwnerOnboardingForm({ profileData, setIsSave }) {
   console.log("In TenenatOnBoardingForm  - profileData", profileData);
 
-  const { getList, } = useContext(ListsContext);
+  const { getList } = useContext(ListsContext);
   const classes = useStyles();
   const [cookies, setCookie] = useCookies(["default_form_vals"]);
   const cookiesData = cookies["default_form_vals"];
@@ -88,31 +88,31 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
   const { user, isBusiness, isManager, roleName, selectRole, setLoggedIn, selectedRole, updateProfileUid, isLoggedIn, getProfileId } = useUser();
   const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
   const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
-  const [ taxIDType, setTaxIDType ] = useState("SSN");  
-  
+  const [taxIDType, setTaxIDType] = useState("SSN");
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-const [dialogTitle, setDialogTitle] = useState("");
-const [dialogMessage, setDialogMessage] = useState("");
-const [dialogSeverity, setDialogSeverity] = useState("info");
+  const [dialogTitle, setDialogTitle] = useState("");
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [dialogSeverity, setDialogSeverity] = useState("info");
 
-const openDialog = (title, message, severity) => {
-  setDialogTitle(title); // Set custom title
-  setDialogMessage(message); // Set custom message
-  setDialogSeverity(severity); // Can use this if needed to control styles
-  setIsDialogOpen(true);
-};
+  const openDialog = (title, message, severity) => {
+    setDialogTitle(title); // Set custom title
+    setDialogMessage(message); // Set custom message
+    setDialogSeverity(severity); // Can use this if needed to control styles
+    setIsDialogOpen(true);
+  };
 
-const closeDialog = () => {
-  setIsDialogOpen(false);
-};
+  const closeDialog = () => {
+    setIsDialogOpen(false);
+  };
 
-useEffect(()=> {    
-    if(ssn && identifyTaxIdType(ssn) === "EIN") setTaxIDType("EIN");
-  }, [ssn])
+  useEffect(() => {
+    if (ssn && identifyTaxIdType(ssn) === "EIN") setTaxIDType("EIN");
+  }, [ssn]);
 
-  useEffect(()=> {        
-    handleTaxIDChange(ssn, false);    
-  }, [taxIDType])
+  useEffect(() => {
+    handleTaxIDChange(ssn, false);
+  }, [taxIDType]);
 
   const [paymentMethods, setPaymentMethods] = useState({
     paypal: { value: "", checked: false, uid: "" },
@@ -159,14 +159,13 @@ useEffect(()=> {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
-  const [ errors, setErrors ] = useState({})
-  
+  const [errors, setErrors] = useState({});
 
-  const getListDetails = async () => {    
-      const relationships = getList("relationships");
-      const states = getList("states");
-      setRelationships(relationships);
-      setStates(states);    
+  const getListDetails = async () => {
+    const relationships = getList("relationships");
+    const states = getList("states");
+    setRelationships(relationships);
+    setStates(states);
   };
 
   // useEffect(() => {
@@ -239,19 +238,18 @@ useEffect(()=> {
     // let value = event.target.value;
     if (value?.length > 11) return;
 
-    let updatedTaxID = ""
-    if(taxIDType === "EIN"){
-      updatedTaxID = formatEIN(value)      
+    let updatedTaxID = "";
+    if (taxIDType === "EIN") {
+      updatedTaxID = formatEIN(value);
     } else {
-      updatedTaxID = formatSSN(value)      
+      updatedTaxID = formatSSN(value);
     }
     setSsn(updatedTaxID);
-    if(onchangeflag){
-// updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
-updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.env.REACT_APP_ENKEY).toString() });
-  
+    if (onchangeflag) {
+      // updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
+      updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.env.REACT_APP_ENKEY).toString() });
     }
-    };
+  };
 
   const setProfileData = async () => {
     setShowSpinner(true);
@@ -340,7 +338,7 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
     let isLarge = file.file.size > 5000000;
     let file_size = (file.file.size / 1000000).toFixed(1);
     if (isLarge) {
-      openDialog("Alert",`Your file size is too large (${file_size} MB)`,"info");
+      openDialog("Alert", `Your file size is too large (${file_size} MB)`, "info");
       return;
     }
     updateModifiedData({ key: "owner_photo_url", value: e.target.files[0] });
@@ -435,8 +433,8 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
     //     map[name].value = "";
     //   }
     // }
-    setPaymentMethods(map);   
-    setModifiedPayment(true);    
+    setPaymentMethods(map);
+    setModifiedPayment(true);
   };
 
   const handleChangeValue = (e) => {
@@ -454,8 +452,8 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
         ...prevState,
         [name]: { ...prevState[name], value },
       }));
-    }    
-    setModifiedPayment(true); 
+    }
+    setModifiedPayment(true);
   };
 
   const handlePaymentStep = async () => {
@@ -505,64 +503,60 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
     setCookie("default_form_vals", { ...cookiesData, paymentMethods });
   };
 
-  const handleNextStep = async () => {    
-
+  const handleNextStep = async () => {
     const newErrors = {};
-    if (!firstName) newErrors.firstName = 'First name is required';    
-    if (!lastName) newErrors.lastName = 'Last name is required';    
-    if (!address) newErrors.address = 'Address is required';        
-    if (!email) newErrors.email = 'Email is required';
-    if (!phoneNumber) newErrors.phoneNumber = 'Phone Number is required';
-    if (!ssn) newErrors.ssn = 'SSN is required';   
-    
-    
+    if (!firstName) newErrors.firstName = "First name is required";
+    if (!lastName) newErrors.lastName = "Last name is required";
+    if (!address) newErrors.address = "Address is required";
+    if (!email) newErrors.email = "Email is required";
+    if (!phoneNumber) newErrors.phoneNumber = "Phone Number is required";
+    if (!ssn) newErrors.ssn = "SSN is required";
+
     let paymentMethodsError = false;
     let atleaseOneActive = false;
-    Object.keys(paymentMethods)?.forEach( method => { 
+    Object.keys(paymentMethods)?.forEach((method) => {
       const payMethod = paymentMethods[method];
-      
-      if(payMethod.value === '' && payMethod.checked === true ){
+
+      if (payMethod.value === "" && payMethod.checked === true) {
         paymentMethodsError = true;
       }
-      if(payMethod.checked === true ){
+      if (payMethod.checked === true) {
         atleaseOneActive = true;
-      }      
+      }
+    });
 
-    })
-
-    if(!atleaseOneActive){
-      newErrors.paymentMethods = 'Atleast one active payment method is required';
-      openDialog("Alert",'Atleast one active payment method is required',"info");
+    if (!atleaseOneActive) {
+      newErrors.paymentMethods = "Atleast one active payment method is required";
+      openDialog("Alert", "Atleast one active payment method is required", "info");
       return;
     }
 
-    if(paymentMethodsError){
-      newErrors.paymentMethods = 'Please check payment method details';
-      openDialog("Alert",'Please check payment method details',"info");
+    if (paymentMethodsError) {
+      newErrors.paymentMethods = "Please check payment method details";
+      openDialog("Alert", "Please check payment method details", "info");
       return;
     }
-  
+
     if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors); 
-      openDialog("Alert","Please enter all required fields","info");
+      setErrors(newErrors);
+      openDialog("Alert", "Please enter all required fields", "info");
       return;
     }
 
     setErrors({}); // Clear any previous errors
 
-
     if (!DataValidator.email_validate(email)) {
-      openDialog("Alert","Please enter a valid email","info");
+      openDialog("Alert", "Please enter a valid email", "info");
       return false;
     }
 
     if (!DataValidator.phone_validate(phoneNumber)) {
-      openDialog("Alert","Please enter a valid phone number","info");
+      openDialog("Alert", "Please enter a valid phone number", "info");
       return false;
     }
 
     if (!DataValidator.zipCode_validate(zip)) {
-      openDialog("Alert","Please enter a valid zip code","info");
+      openDialog("Alert", "Please enter a valid zip code", "info");
       return false;
     }
 
@@ -570,8 +564,8 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
     //   alert("Please enter a valid SSN");
     //   return false;
     // }
-    if((taxIDType === "EIN" && !DataValidator.ein_validate(ssn)) || (taxIDType === "SSN" && !DataValidator.ssn_validate(ssn))){
-      openDialog("Alert","Please enter a valid Tax ID","info");
+    if ((taxIDType === "EIN" && !DataValidator.ein_validate(ssn)) || (taxIDType === "SSN" && !DataValidator.ssn_validate(ssn))) {
+      openDialog("Alert", "Please enter a valid Tax ID", "info");
       return false;
     }
 
@@ -583,7 +577,7 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
 
     saveProfile();
 
-    if(modifiedPayment){
+    if (modifiedPayment) {
       const paymentSetup = await handlePaymentStep();
     }
     setShowSpinner(false);
@@ -634,13 +628,13 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
           .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, headers)
           .then((response) => {
             console.log("Data updated successfully", response);
-            openDialog("Success","Your profile has been successfully updated.", "success");
+            openDialog("Success", "Your profile has been successfully updated.", "success");
             handleUpdate();
             setShowSpinner(false);
           })
           .catch((error) => {
             setShowSpinner(false);
-            openDialog("Error","Cannot update your profile. Please try again", "error");
+            openDialog("Error", "Cannot update your profile. Please try again", "error");
             if (error.response) {
               console.log(error.response.data);
             }
@@ -648,10 +642,10 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
         setShowSpinner(false);
         setModifiedData([]);
       } else {
-        openDialog("Warning","You haven't made any changes to the form. Please save after changing the data.", "error");
+        openDialog("Warning", "You haven't made any changes to the form. Please save after changing the data.", "error");
       }
     } catch (error) {
-      openDialog("Error","Cannot update the lease. Please try again", "error");
+      openDialog("Error", "Cannot update the lease. Please try again", "error");
       console.log("Cannot Update the lease", error);
       setShowSpinner(false);
     }
@@ -684,13 +678,13 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
           .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, headers)
           .then((response) => {
             console.log("Data updated successfully", response);
-            openDialog("Success","Your profile has been successfully updated.", "success");
+            openDialog("Success", "Your profile has been successfully updated.", "success");
             handleUpdate();
             setShowSpinner(false);
           })
           .catch((error) => {
             setShowSpinner(false);
-            openDialog("Error","Cannot update your profile. Please try again", "error");
+            openDialog("Error", "Cannot update your profile. Please try again", "error");
             if (error.response) {
               console.log(error.response.data);
             }
@@ -698,10 +692,10 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
         setShowSpinner(false);
         setModifiedData([]);
       } else {
-        openDialog("Warning","You haven't made any changes to the form. Please save after changing the data.", "error");
+        openDialog("Warning", "You haven't made any changes to the form. Please save after changing the data.", "error");
       }
     } catch (error) {
-      openDialog("Error","Cannot update the lease. Please try again", "error");
+      openDialog("Error", "Cannot update the lease. Please try again", "error");
       console.log("Cannot Update the lease", error);
       setShowSpinner(false);
     }
@@ -786,13 +780,13 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
                     placeholder='First name'
                     className={classes.root}
                     InputProps={{
-                      className: errors.firstName || !firstName ? classes.errorBorder : '',
+                      className: errors.firstName || !firstName ? classes.errorBorder : "",
                     }}
                     required
                   />
                 </Grid>
                 <Grid item xs={6}>
-                  <TextField 
+                  <TextField
                     name='lastName'
                     value={lastName}
                     variant='filled'
@@ -801,7 +795,7 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
                     placeholder='Last name'
                     className={classes.root}
                     InputProps={{
-                      className: errors.lastName || !lastName ? classes.errorBorder : '',
+                      className: errors.lastName || !lastName ? classes.errorBorder : "",
                     }}
                     required
                   />
@@ -821,12 +815,7 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <AddressAutocompleteInput
-                      onAddressSelect={handleAddressSelect}
-                      gray={true}
-                      defaultValue={address} 
-                      isRequired={true}
-                    />
+                    <AddressAutocompleteInput onAddressSelect={handleAddressSelect} gray={true} defaultValue={address} isRequired={true} />
                   </Grid>
                 </Grid>
                 <Grid container item xs={2}>
@@ -842,13 +831,7 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField 
-                      value={unit}
-                      onChange={handleUnitChange}
-                      variant='filled'
-                      placeholder='3'
-                      className={classes.root}                      
-                    ></TextField>
+                    <TextField value={unit} onChange={handleUnitChange} variant='filled' placeholder='3' className={classes.root}></TextField>
                   </Grid>
                 </Grid>
                 <Grid container item xs={2}>
@@ -925,7 +908,7 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
                       placeholder='Email'
                       className={classes.root}
                       InputProps={{
-                        className: errors.email || !email ? classes.errorBorder : '',
+                        className: errors.email || !email ? classes.errorBorder : "",
                       }}
                       required
                     ></TextField>
@@ -952,7 +935,7 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
                       placeholder='Phone Number'
                       className={classes.root}
                       InputProps={{
-                        className: errors.phoneNumber || !phoneNumber ? classes.errorBorder : '',
+                        className: errors.phoneNumber || !phoneNumber ? classes.errorBorder : "",
                       }}
                       required
                     ></TextField>
@@ -973,36 +956,37 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
                       {"Tax ID (SSN or EIN)"}
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>                  
-
-                  <RadioGroup aria-label='taxIDType' name='announctax_id_typeementType' value={taxIDType} onChange={(e) => setTaxIDType(e.target.value)} row>
-                    <FormControlLabel 
-                      value='SSN'
-                      control={
-                        <Radio
-                          sx={{
-                            color: 'defaultColor', 
-                            '&.Mui-checked': {
-                              color: '#3D5CAC',
-                            },
-                          }}
-                        />
-                      }
-                      label='SSN' />
-                    <FormControlLabel
-                      value='EIN'
-                      control={
-                        <Radio
-                          sx={{
-                            color: 'defaultColor', 
-                            '&.Mui-checked': {
-                              color: '#3D5CAC', 
-                            },
-                          }}
-                        />
-                      }
-                      label='EIN' />                    
-                  </RadioGroup>
+                  <Grid item xs={6}>
+                    <RadioGroup aria-label='taxIDType' name='announctax_id_typeementType' value={taxIDType} onChange={(e) => setTaxIDType(e.target.value)} row>
+                      <FormControlLabel
+                        value='SSN'
+                        control={
+                          <Radio
+                            sx={{
+                              color: "defaultColor",
+                              "&.Mui-checked": {
+                                color: "#3D5CAC",
+                              },
+                            }}
+                          />
+                        }
+                        label='SSN'
+                      />
+                      <FormControlLabel
+                        value='EIN'
+                        control={
+                          <Radio
+                            sx={{
+                              color: "defaultColor",
+                              "&.Mui-checked": {
+                                color: "#3D5CAC",
+                              },
+                            }}
+                          />
+                        }
+                        label='EIN'
+                      />
+                    </RadioGroup>
                   </Grid>
                   <Grid item xs={12}>
                     <TextField
@@ -1016,7 +1000,7 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
                       placeholder='SSN'
                       className={classes.root}
                       InputProps={{
-                        className: errors.ssn  || !ssn ? classes.errorBorder : '',
+                        className: errors.ssn || !ssn ? classes.errorBorder : "",
                       }}
                       required
                     ></TextField>
@@ -1046,17 +1030,17 @@ updateModifiedData({ key: "owner_ssn", value: AES.encrypt(updatedTaxID, process.
       </Grid>
 
       <GenericDialog
-      isOpen={isDialogOpen}
-      title={dialogTitle}
-      contextText={dialogMessage}
-      actions={[
-        {
-          label: "OK",
-          onClick: closeDialog,
-        }
-      ]}
-      severity={dialogSeverity}
-    />
+        isOpen={isDialogOpen}
+        title={dialogTitle}
+        contextText={dialogMessage}
+        actions={[
+          {
+            label: "OK",
+            onClick: closeDialog,
+          },
+        ]}
+        severity={dialogSeverity}
+      />
     </>
   );
 }

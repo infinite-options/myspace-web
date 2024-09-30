@@ -160,7 +160,7 @@ const PaymentProcessing = () => {
                     selectedProperty={"ALL"}
                   />
                 )}
-                {currentWindow === "PAY_BILLS" && <PaymentsManager />}
+                {currentWindow === "PAY_BILLS" && <PaymentsManager setSelectedPayment={setSelectedPayment} setCurrentWindow={setCurrentWindow} page={"paymentProcessing"} />}
                 {currentWindow === "VERIFY_PAYMENTS" && <VerifyPayments />}
                 {currentWindow === "MAKE_PAYMENT" && <MakePayment selectedPayment={selectedPayment} refreshCashflowData={refreshCashflowData} setCurrentWindow={setCurrentWindow} />}                                
               </Grid>

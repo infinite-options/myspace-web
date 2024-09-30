@@ -122,7 +122,7 @@ export default function VerifyPayments(props) {
                   </Stack>
 
                   <Stack>
-                    <BalanceDetailsTable data={moneyPayable} setPaymentData={setPaymentData}/>
+                    <BalanceDetailsTable data={moneyPayable} setPaymentData={setPaymentData} />
                   </Stack>
                 </Paper>
               </Paper>
@@ -144,7 +144,7 @@ function BalanceDetailsTable(props) {
   const [totalVerified, setTotalVerified] = useState(0);
 
   useEffect(() => {
-    console.log("ROHIT - selectedPayments - ",selectedPayments);
+    console.log("ROHIT - selectedPayments - ", selectedPayments);
   }, [selectedPayments]);
 
   useEffect(() => {
@@ -164,19 +164,19 @@ function BalanceDetailsTable(props) {
     }
   }, [data]);
 
-  useEffect(() => {  
+  useEffect(() => {
     console.log("ROHIT - selectedRows - ", selectedRows);
     const total = selectedRows?.reduce((total, rowId) => {
       const payment = paymentDueResult.find((row) => row.payment_uid === rowId);
       console.log("ROHIT - payment - ", payment);
-      if(payment){
+      if (payment) {
         const payAmount = parseFloat(payment.pay_amount);
         // const isExpense = payment.pur_cf_type === "expense";
 
         // Adjust the total based on whether the payment is an expense or revenue
         return total + payAmount;
       } else {
-        return total + 0
+        return total + 0;
       }
     }, 0);
     setTotalVerified(total);
@@ -192,36 +192,36 @@ function BalanceDetailsTable(props) {
     }
   };
 
-//   const sortModel = [
-//     {
-//       field: "pgps", // Specify the field to sort by
-//       sort: "asc", // Specify the sort order, 'asc' for ascending
-//     },
-//   ];
+  //   const sortModel = [
+  //     {
+  //       field: "pgps", // Specify the field to sort by
+  //       sort: "asc", // Specify the sort order, 'asc' for ascending
+  //     },
+  //   ];
 
   const columnsList = [
     {
-        field: "payment_uid",
-        headerName: "Payment UID",
-        flex: 3,
-        renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+      field: "payment_uid",
+      headerName: "Payment UID",
+      flex: 2.5,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
       field: "purchase_uid",
       headerName: "Pur UID",
-      flex: 3,
+      flex: 2.5,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
       field: "pur_group",
       headerName: "Pur Group",
-      flex: 3,
+      flex: 2.5,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
       field: "pur_property_id",
       headerName: "Property UID",
-      flex: 1,
+      flex: 2.5,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
@@ -242,18 +242,18 @@ function BalanceDetailsTable(props) {
       flex: 2,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
-    {
-      field: "payment_date",
-      headerName: "Payment Date",
-      flex: 2,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    },
-    {
-      field: "paid_by",
-      headerName: "Paid By",
-      flex: 2,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    },
+    // {
+    //   field: "payment_date",
+    //   headerName: "Payment Date",
+    //   flex: 2,
+    //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    // },
+    // {
+    //   field: "paid_by",
+    //   headerName: "Paid By",
+    //   flex: 2,
+    //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    // },
     {
       field: "payment_intent",
       headerName: "Payment Intent",
@@ -321,9 +321,9 @@ function BalanceDetailsTable(props) {
     if (addedRows.length > 0) {
       // console.log("Added rows: ", addedRows);
       let newPayments = [];
-      
+
       addedRows.forEach((item, index) => {
-        console.log("ROHIT - item - ", item)
+        console.log("ROHIT - item - ", item);
         // const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
         const addedPayment = paymentDueResult.find((row) => row.payment_uid === item);
 
@@ -421,7 +421,7 @@ function BalanceDetailsTable(props) {
             }
             // handleOnClickNavigateToMaintenance(row);
           }}
-        //   sortModel={sortModel} // Set the sortModel prop
+          //   sortModel={sortModel} // Set the sortModel prop
 
           //   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
         />
