@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, useRef, useContext, } from 'react';
+import React, { useState, useEffect, Fragment, useRef, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
 	Typography,
@@ -49,10 +49,10 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import APIConfig from '../../utils/APIConfig';
 // import PropertyNavigator from './PropertyNavigator';
 
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
 
 import PropertiesContext from '../../contexts/PropertiesContext';
 
@@ -64,25 +64,24 @@ function EditProperty(props) {
 
 	const propertiesContext = useContext(PropertiesContext);
 	const {
-	  propertyList: propertyListFromContext,
-	  setPropertyList: setPropertyListFromContext,
-	  fetchProperties: fetchPropertiesFromContext,
-	  allRentStatus: allRentStatusFromContext,	  
-	  returnIndex: returnIndexFromContext,
+		propertyList: propertyListFromContext,
+		setPropertyList: setPropertyListFromContext,
+		fetchProperties: fetchPropertiesFromContext,
+		allRentStatus: allRentStatusFromContext,
+		returnIndex: returnIndexFromContext,
 	} = propertiesContext || {};
-  
+
 	const propertyList = propertyListFromContext || [];
 	const setPropertyList = setPropertyListFromContext;
-	const fetchProperties = fetchPropertiesFromContext;  
-	const allRentStatus = allRentStatusFromContext || [];	
+	const fetchProperties = fetchPropertiesFromContext;
+	const allRentStatus = allRentStatusFromContext || [];
 	const returnIndex = returnIndexFromContext || 0;
-	
 
 	// Check with Laysa
 	// replaced with line below
 	// let { index, propertyList, page, isDesktop, allRentStatus,rawPropertyData } = state || editPropertyState;
 	// let { index, page, isDesktop, onBackClick, } = props;
-	let { page, isDesktop, onBackClick, } = props;
+	let { page, isDesktop, onBackClick } = props;
 
 	let index = returnIndex;
 
@@ -97,8 +96,8 @@ function EditProperty(props) {
 	// console.log("Property propertyData---", propertyData)
 	// console.log("Property Data in Edit Property", propertyData);
 	const { user, selectedRole, selectRole, Name } = useUser();
-	const [showSpinner, setShowSpinner] = useState(false);	
-	
+	const [showSpinner, setShowSpinner] = useState(false);
+
 	const [address, setAddress] = useState('');
 	const [city, setCity] = useState('');
 	const [propertyState, setPropertyState] = useState('');
@@ -152,16 +151,17 @@ function EditProperty(props) {
 	const [hasChanges, setHasChanges] = useState(false);
 	const [imagesTobeDeleted, setImagesTobeDeleted] = useState([]);
 	const [deletedIcons, setDeletedIcons] = useState(
-		propertyData?.property_images? new Array(JSON.parse(propertyData.property_images).length).fill(false) : []
+		propertyData?.property_images ? new Array(JSON.parse(propertyData.property_images).length).fill(false) : []
 	);
 	const [favoriteIcons, setFavoriteIcons] = useState(
-		propertyData?.property_images? JSON.parse(propertyData.property_images).map(image => image === propertyData.property_favorite_image) : []
-  );
+		propertyData?.property_images
+			? JSON.parse(propertyData.property_images).map((image) => image === propertyData.property_favorite_image)
+			: []
+	);
 
-//   useEffect(() => {
-// 	console.log("assessmentYear - ", assessmentYear);
-//   }, [assessmentYear]);
-  
+	//   useEffect(() => {
+	// 	console.log("assessmentYear - ", assessmentYear);
+	//   }, [assessmentYear]);
 
 	useEffect(() => {
 		const property = propertyList[index];
@@ -214,7 +214,7 @@ function EditProperty(props) {
 	}, [index]);
 
 	const getChangedFields = () => {
-		const changes = {};		
+		const changes = {};
 		if (bedrooms !== initialData.property_num_beds) changes.property_num_beds = bedrooms;
 		if (address !== initialData.property_address) changes.property_address = address;
 		if (city !== initialData.property_city) changes.property_city = city;
@@ -243,27 +243,48 @@ function EditProperty(props) {
 			changes.property_amenities_community = communityAmenities;
 		if (unitAmenities !== initialData.property_amenities_unit) changes.property_amenities_unit = unitAmenities;
 		if (nearbyAmenities !== initialData.property_amenities_nearby)
-			changes.property_amenities_nearby = nearbyAmenities;		
+			changes.property_amenities_nearby = nearbyAmenities;
 		if (favImage !== initialData.property_favorite_image) changes.property_favorite_image = favImage;
-		
-		console.log("changes - ", changes);
+
+		console.log('changes - ', changes);
 
 		return changes;
 	};
 
 	useEffect(() => {
-		const hasImageChanges = imageState.length > 0 || deletedImageList.length > 0 || favImage !== propertyData.property_favorite_image;
+		const hasImageChanges =
+			imageState.length > 0 || deletedImageList.length > 0 || favImage !== propertyData.property_favorite_image;
 		const otherChanges = Object.keys(getChangedFields()).length > 0;
-	  
+
 		const hasUnsavedChanges = hasImageChanges || otherChanges;
 
 		// Update states based on unsaved changes
 		setHasChanges(hasUnsavedChanges);
 		setIsSaveDisabled(!hasUnsavedChanges);
 		setIsReturnDisabled(false);
-		setSaveButtonText(hasUnsavedChanges? 'Save and Return to Dashboard' : 'Return to Dashboard');
-	}, [imageState, deletedImageList, favImage, address, city, propertyState, zip, propertyType, squareFootage, bedrooms, bathrooms, isListed, description, notes, unit, propertyValue, assessmentYear, deposit, listedRent, depositForRent]);
-	
+		setSaveButtonText(hasUnsavedChanges ? 'Save and Return to Dashboard' : 'Return to Dashboard');
+	}, [
+		imageState,
+		deletedImageList,
+		favImage,
+		address,
+		city,
+		propertyState,
+		zip,
+		propertyType,
+		squareFootage,
+		bedrooms,
+		bathrooms,
+		isListed,
+		description,
+		notes,
+		unit,
+		propertyValue,
+		assessmentYear,
+		deposit,
+		listedRent,
+		depositForRent,
+	]);
 
 	// useEffect(() => {
 	// 	console.log('Size of selectedImageList:', selectedImageList.length);
@@ -311,7 +332,7 @@ function EditProperty(props) {
 			formData.append(key, value);
 		}
 
-		const currentDate = new Date();		
+		const currentDate = new Date();
 		const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(
 			currentDate.getDate()
 		).padStart(2, '0')}-${currentDate.getFullYear()}`;
@@ -333,31 +354,30 @@ function EditProperty(props) {
 			formData.append('property_latitude', coordinates.latitude);
 			formData.append('property_longitude', coordinates.longitude);
 		}
-    if (imagesTobeDeleted.length > 0) {
-  
-      let updatedImages = JSON.parse(propertyData.property_images);
-      updatedImages = updatedImages.filter(image => !imagesTobeDeleted.includes(image));
-      propertyData.property_images = JSON.stringify(updatedImages);
-      formData.append('delete_images', JSON.stringify(imagesTobeDeleted));
-    }
+		if (imagesTobeDeleted.length > 0) {
+			let updatedImages = JSON.parse(propertyData.property_images);
+			updatedImages = updatedImages.filter((image) => !imagesTobeDeleted.includes(image));
+			propertyData.property_images = JSON.stringify(updatedImages);
+			formData.append('delete_images', JSON.stringify(imagesTobeDeleted));
+		}
 		//console.log("--debug selectedImageList--", selectedImageList, selectedImageList.length);
 		formData.append('property_images', propertyData.property_images);
-    	formData.append('property_favorite_image', favImage);
+		formData.append('property_favorite_image', favImage);
 		// const files = imageState;
 		let i = 0;
-		for (const file of imageState) {			
+		for (const file of imageState) {
 			let key = `img_${i++}`;
-			if (file.file !== null) {				
+			if (file.file !== null) {
 				formData.append(key, file.file);
-			} else {				
+			} else {
 				formData.append(key, file.image);
-			 }
+			}
 			if (file.coverPhoto) {
 				formData.set('property_favorite_image', key);
 			}
 		}
 
-    //console.log('---FavImage----', favImage);
+		//console.log('---FavImage----', favImage);
 
 		if (deletedImageList.length > 0) {
 			formData.append('deleted_images', JSON.stringify(deletedImageList));
@@ -375,33 +395,37 @@ function EditProperty(props) {
 					method: 'PUT',
 					body: formData,
 				})
-			);			
+			);
 			setShowSpinner(false);
-			setImageState([]);			
+			setImageState([]);
 		};
 
 		const autoUpdate = async () => {
 			const updateResponse = await fetch(
 				`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`
 			);
-	
+
 			const updatedJson = await updateResponse.json();
 			const updatedProperty = updatedJson.Property.result[0];
 			const newPropertyList = propertyList.map((property) => {
 				if (property.property_uid === updatedProperty.property_uid) {
-					return { ...property, ...updatedProperty }
+					return { ...property, ...updatedProperty };
 				} else {
 					return property;
 				}
 			});
-	
+
 			setPropertyData(newPropertyList[index]);
 			setPropertyList(newPropertyList);
-	
+
 			// Reset the image delete/favorite icons after update
 			setDeletedIcons(new Array(JSON.parse(updatedProperty.property_images).length).fill(false));
-			setFavoriteIcons(JSON.parse(updatedProperty.property_images).map(image => image === updatedProperty.property_favorite_image));
-	
+			setFavoriteIcons(
+				JSON.parse(updatedProperty.property_images).map(
+					(image) => image === updatedProperty.property_favorite_image
+				)
+			);
+
 			return newPropertyList[index];
 		};
 
@@ -427,13 +451,12 @@ function EditProperty(props) {
 		}
 	};
 
-
 	const isCoverPhoto = (link) => {
 		if (link === favImage) {
 			return true;
 		}
 		return false;
-	};	
+	};
 
 	const handleAddressSelect = (address) => {
 		console.log('handleAddressSelect', address);
@@ -458,13 +481,13 @@ function EditProperty(props) {
 			setScrollPosition((prevScrollPosition) => {
 				const currentScrollPosition = scrollRef.current.scrollLeft;
 				let newScrollPosition;
-	
+
 				if (direction === 'left') {
 					newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
 				} else {
 					newScrollPosition = currentScrollPosition + scrollAmount;
 				}
-	
+
 				return newScrollPosition;
 			});
 		}
@@ -474,59 +497,61 @@ function EditProperty(props) {
 		const updatedDeletedIcons = [...deletedIcons];
 		updatedDeletedIcons[index] = !updatedDeletedIcons[index];
 		setDeletedIcons(updatedDeletedIcons);
-	
+
 		const imageToDelete = JSON.parse(propertyData.property_images)[index];
-	
+
 		setImagesTobeDeleted((prev) => {
 			let updatedImagesToBeDeleted;
 			if (updatedDeletedIcons[index]) {
 				updatedImagesToBeDeleted = [...prev, imageToDelete];
 			} else {
 				// Remove image from the delete list if the delete icon is toggled off
-				updatedImagesToBeDeleted = prev.filter(image => image !== imageToDelete);
+				updatedImagesToBeDeleted = prev.filter((image) => image !== imageToDelete);
 			}
-	
-			const hasImageChanges = updatedImagesToBeDeleted.length > 0 || imageState.length > 0 || favImage !== propertyData.property_favorite_image;
+
+			const hasImageChanges =
+				updatedImagesToBeDeleted.length > 0 ||
+				imageState.length > 0 ||
+				favImage !== propertyData.property_favorite_image;
 			const otherChanges = Object.keys(getChangedFields()).length > 0;
 			const hasUnsavedChanges = hasImageChanges || otherChanges;
-	
+
 			setHasChanges(hasUnsavedChanges);
 			setIsSaveDisabled(!hasUnsavedChanges);
 			setIsReturnDisabled(false);
 			setSaveButtonText(hasUnsavedChanges ? 'Save and Return to Dashboard' : 'Return to Dashboard');
-	
+
 			return updatedImagesToBeDeleted;
 		});
-	
+
 		console.log('Delete image at index:', JSON.stringify(updatedDeletedIcons));
 	};
-	
 
 	const handleFavorite = (index) => {
-    const updatedFavoriteIcons = new Array(favoriteIcons.length).fill(false);
-    updatedFavoriteIcons[index] = true;
-    setFavoriteIcons(updatedFavoriteIcons);
-  
-    const newFavImage = JSON.parse(propertyData.property_images)[index];
-    setFavImage(newFavImage);
-    setSelectedImageList(prevState =>
-      prevState.map((file, i) => ({
-        ...file,
-        coverPhoto: i === index
-      }))
-    );
-  
-    console.log(`Favorite image at index: ${index}`);
-	setHasChanges(true);
-	setIsSaveDisabled(false);
-    setIsReturnDisabled(false);
-    setSaveButtonText('Save and Return to Dashboard');
-  };
+		const updatedFavoriteIcons = new Array(favoriteIcons.length).fill(false);
+		updatedFavoriteIcons[index] = true;
+		setFavoriteIcons(updatedFavoriteIcons);
 
-  const handleUpdateFavoriteIcons = () => {
-    setFavoriteIcons(new Array(favoriteIcons.length).fill(false));
-};
-  
+		const newFavImage = JSON.parse(propertyData.property_images)[index];
+		setFavImage(newFavImage);
+		setSelectedImageList((prevState) =>
+			prevState.map((file, i) => ({
+				...file,
+				coverPhoto: i === index,
+			}))
+		);
+
+		console.log(`Favorite image at index: ${index}`);
+		setHasChanges(true);
+		setIsSaveDisabled(false);
+		setIsReturnDisabled(false);
+		setSaveButtonText('Save and Return to Dashboard');
+	};
+
+	const handleUpdateFavoriteIcons = () => {
+		setFavoriteIcons(new Array(favoriteIcons.length).fill(false));
+	};
+
 	return (
 		<ThemeProvider theme={theme}>
 			<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -609,10 +634,7 @@ function EditProperty(props) {
 										padding: 2,
 									}}
 								>
-									<IconButton
-										onClick={() => handleScroll('left')}
-										disabled={scrollPosition === 0}
-									>
+									<IconButton onClick={() => handleScroll('left')} disabled={scrollPosition === 0}>
 										<ArrowBackIosIcon />
 									</IconButton>
 									<Box
@@ -637,9 +659,11 @@ function EditProperty(props) {
 												},
 											}}
 										>
-											<ImageList 
-											ref={scrollRef}
-											sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
+											<ImageList
+												ref={scrollRef}
+												sx={{ display: 'flex', flexWrap: 'nowrap' }}
+												cols={5}
+											>
 												{JSON.parse(propertyData.property_images)?.map((image, index) => (
 													<ImageListItem
 														key={index}
@@ -916,7 +940,7 @@ function EditProperty(props) {
 									}}
 								>
 									Assessment Year
-								</Typography>								
+								</Typography>
 								<LocalizationProvider dateAdapter={AdapterDayjs}>
 									<DatePicker
 										// label="Year"
@@ -925,10 +949,10 @@ function EditProperty(props) {
 										format="YYYY"
 										maxDate={dayjs(new Date())}
 										onChange={(e) => {
-											const formattedDate = e ? e.format("YYYY") : null;
-											setAssessmentYear(formattedDate)
+											const formattedDate = e ? e.format('YYYY') : null;
+											setAssessmentYear(formattedDate);
 										}}
-										sx={{ 
+										sx={{
 											backgroundColor: '#FFFFFF',
 											width: '100%',
 											borderRadius: '3px',
@@ -988,240 +1012,335 @@ function EditProperty(props) {
 					</Box>
 				</Paper>
 				<Paper
-  style={{
-    marginTop: '15px',
-    backgroundColor: theme.palette.form.main,
-    width: '80%', // Adjust width as needed
-    padding: '25px',
-    boxShadow: theme.shadows[3],
-  }}
->
-  <Stack direction="row" justifyContent="center" alignItems="center" position="relative">
-    <Typography
-      sx={{
-		color: theme.typography.primary.black,
-		fontWeight: theme.typography.primary.fontWeight,
-		fontSize: theme.typography.largeFont,
-	}}
-    >
-      PROPERTY DETAILS
-    </Typography>
-  </Stack>
+					style={{
+						marginTop: '15px',
+						backgroundColor: theme.palette.form.main,
+						width: '80%', // Adjust width as needed
+						padding: '25px',
+						boxShadow: theme.shadows[3],
+					}}
+				>
+					<Stack direction="row" justifyContent="center" alignItems="center" position="relative">
+						<Typography
+							sx={{
+								color: theme.typography.primary.black,
+								fontWeight: theme.typography.primary.fontWeight,
+								fontSize: theme.typography.largeFont,
+							}}
+						>
+							PROPERTY DETAILS
+						</Typography>
+					</Stack>
 
-  <Box component="form" noValidate autoComplete="off">
-    <Grid container columnSpacing={6} rowSpacing={4}>
-      {/* Property Codes Section */}
-      <Grid item xs={12}>
-        <Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue }}>
-          Property Codes
-        </Typography>
-      </Grid>
-      <Grid item xs={3.5}>
-        <Typography sx={{
-		color: theme.typography.primary.black,
-		fontWeight: theme.typography.primary.fontWeight,
-		fontSize: theme.typography.smallFont,
-	}} >Description</Typography>
-        <TextField
-          fullWidth
-          placeholder="Enter description"
-          size="small"
-          sx={{
-			backgroundColor: 'white',
-			borderColor: 'black',
-			borderRadius: '7px',
-		}}
-        />
-      </Grid>
-      <Grid item xs={2.3}>
-        <Typography sx={{
-		color: theme.typography.primary.black,
-		fontWeight: theme.typography.primary.fontWeight,
-		fontSize: theme.typography.smallFont,
-	}}>Code</Typography>
-        <TextField fullWidth placeholder="Enter code" size="small" sx={{
+					<Box component="form" noValidate autoComplete="off">
+						<Grid container columnSpacing={6} rowSpacing={4}>
+							{/* Property Codes Section */}
+							<Grid item xs={12}>
+								<Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue }}>
+									Property Codes
+								</Typography>
+							</Grid>
+							<Grid item xs={3.5}>
+								<Typography
+									sx={{
+										color: theme.typography.primary.black,
+										fontWeight: theme.typography.primary.fontWeight,
+										fontSize: theme.typography.smallFont,
+									}}
+								>
+									Description
+								</Typography>
+								<TextField
+									fullWidth
+									placeholder="Enter description"
+									size="small"
+									sx={{
 										backgroundColor: 'white',
 										borderColor: 'black',
 										borderRadius: '7px',
-									}}/>
-      </Grid>
-      <Grid item xs={2}>
-        <Typography sx={{
-		color: theme.typography.primary.black,
-		fontWeight: theme.typography.primary.fontWeight,
-		fontSize: theme.typography.smallFont,
-	}}>Start Time</Typography>
-        <TextField fullWidth placeholder="Start Time" size="small" sx={{
+									}}
+								/>
+							</Grid>
+							<Grid item xs={2.3}>
+								<Typography
+									sx={{
+										color: theme.typography.primary.black,
+										fontWeight: theme.typography.primary.fontWeight,
+										fontSize: theme.typography.smallFont,
+									}}
+								>
+									Code
+								</Typography>
+								<TextField
+									fullWidth
+									placeholder="Enter code"
+									size="small"
+									sx={{
 										backgroundColor: 'white',
 										borderColor: 'black',
 										borderRadius: '7px',
-									}} />
-      </Grid>
-      <Grid item xs={2}>
-        <Typography sx={{
-		color: theme.typography.primary.black,
-		fontWeight: theme.typography.primary.fontWeight,
-		fontSize: theme.typography.smallFont,
-	}}>End Time</Typography>
-        <TextField fullWidth placeholder="End Time" size="small" sx={{
+									}}
+								/>
+							</Grid>
+							<Grid item xs={2}>
+								<Typography
+									sx={{
+										color: theme.typography.primary.black,
+										fontWeight: theme.typography.primary.fontWeight,
+										fontSize: theme.typography.smallFont,
+									}}
+								>
+									Start Time
+								</Typography>
+								<TextField
+									fullWidth
+									placeholder="Start Time"
+									size="small"
+									sx={{
 										backgroundColor: 'white',
 										borderColor: 'black',
 										borderRadius: '7px',
-									}} />
-      </Grid>
-      <Grid item xs={2.2}>
-        <Typography sx={{
-		color: theme.typography.primary.black,
-		fontWeight: theme.typography.primary.fontWeight,
-		fontSize: theme.typography.smallFont,
-	}}>Days</Typography>
-        <TextField fullWidth placeholder="Enter days" size="small" sx={{
+									}}
+								/>
+							</Grid>
+							<Grid item xs={2}>
+								<Typography
+									sx={{
+										color: theme.typography.primary.black,
+										fontWeight: theme.typography.primary.fontWeight,
+										fontSize: theme.typography.smallFont,
+									}}
+								>
+									End Time
+								</Typography>
+								<TextField
+									fullWidth
+									placeholder="End Time"
+									size="small"
+									sx={{
 										backgroundColor: 'white',
 										borderColor: 'black',
 										borderRadius: '7px',
-									}} />
-      </Grid>
+									}}
+								/>
+							</Grid>
+							<Grid item xs={2.2}>
+								<Typography
+									sx={{
+										color: theme.typography.primary.black,
+										fontWeight: theme.typography.primary.fontWeight,
+										fontSize: theme.typography.smallFont,
+									}}
+								>
+									Days
+								</Typography>
+								<TextField
+									fullWidth
+									placeholder="Enter days"
+									size="small"
+									sx={{
+										backgroundColor: 'white',
+										borderColor: 'black',
+										borderRadius: '7px',
+									}}
+								/>
+							</Grid>
 
-      {/* Property Amenities Section */}
-      <Grid item xs={12}>
-        <Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue }}>
-          Property Amenities
-        </Typography>
-      </Grid>
-      <Grid item xs={4}>
-        <Typography sx={{
-		color: theme.typography.primary.black,
-		fontWeight: theme.typography.primary.fontWeight,
-		fontSize: theme.typography.smallFont,
-	}}>Description</Typography>
-        <TextField
-          fullWidth
-          placeholder="Enter a description"
-          size="small"
-          sx={{
-			backgroundColor: 'white',
-			borderColor: 'black',
-			borderRadius: '7px',
-		}}
-        />
-      </Grid>
-      <Grid item xs={2}>
-        <Typography sx={{
-		color: theme.typography.primary.black,
-		fontWeight: theme.typography.primary.fontWeight,
-		fontSize: theme.typography.smallFont,
-	}}>Start Time</Typography>
-        <TextField fullWidth placeholder="Start Time" size="small" sx={{
+							{/* Property Amenities Section */}
+							<Grid item xs={12}>
+								<Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue }}>
+									Property Amenities
+								</Typography>
+							</Grid>
+							<Grid item xs={4}>
+								<Typography
+									sx={{
+										color: theme.typography.primary.black,
+										fontWeight: theme.typography.primary.fontWeight,
+										fontSize: theme.typography.smallFont,
+									}}
+								>
+									Description
+								</Typography>
+								<TextField
+									fullWidth
+									placeholder="Enter a description"
+									size="small"
+									sx={{
 										backgroundColor: 'white',
 										borderColor: 'black',
 										borderRadius: '7px',
-									}} />
-      </Grid>
-      <Grid item xs={2}>
-        <Typography sx={{
-		color: theme.typography.primary.black,
-		fontWeight: theme.typography.primary.fontWeight,
-		fontSize: theme.typography.smallFont,
-	}} >End Time</Typography>
-        <TextField fullWidth placeholder="End Time" size="small" sx={{
+									}}
+								/>
+							</Grid>
+							<Grid item xs={2}>
+								<Typography
+									sx={{
+										color: theme.typography.primary.black,
+										fontWeight: theme.typography.primary.fontWeight,
+										fontSize: theme.typography.smallFont,
+									}}
+								>
+									Start Time
+								</Typography>
+								<TextField
+									fullWidth
+									placeholder="Start Time"
+									size="small"
+									sx={{
 										backgroundColor: 'white',
 										borderColor: 'black',
 										borderRadius: '7px',
-									}} />
-      </Grid>
-      <Grid item xs={3}>
-        <Typography sx={{
-		color: theme.typography.primary.black,
-		fontWeight: theme.typography.primary.fontWeight,
-		fontSize: theme.typography.smallFont,
-	}}>Days</Typography>
-        <TextField fullWidth placeholder="Enter days" size="small" sx={{
+									}}
+								/>
+							</Grid>
+							<Grid item xs={2}>
+								<Typography
+									sx={{
+										color: theme.typography.primary.black,
+										fontWeight: theme.typography.primary.fontWeight,
+										fontSize: theme.typography.smallFont,
+									}}
+								>
+									End Time
+								</Typography>
+								<TextField
+									fullWidth
+									placeholder="End Time"
+									size="small"
+									sx={{
 										backgroundColor: 'white',
 										borderColor: 'black',
 										borderRadius: '7px',
-									}} />
-      </Grid>
+									}}
+								/>
+							</Grid>
+							<Grid item xs={3}>
+								<Typography
+									sx={{
+										color: theme.typography.primary.black,
+										fontWeight: theme.typography.primary.fontWeight,
+										fontSize: theme.typography.smallFont,
+									}}
+								>
+									Days
+								</Typography>
+								<TextField
+									fullWidth
+									placeholder="Enter days"
+									size="small"
+									sx={{
+										backgroundColor: 'white',
+										borderColor: 'black',
+										borderRadius: '7px',
+									}}
+								/>
+							</Grid>
 
-      {/* Other Details Section */}
-      <Grid item xs={12}>
-        <Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue }}>
-          Other Details
-        </Typography>
-      </Grid>
-      <Grid item xs={4}>
-        <Typography sx={{
-		color: theme.typography.primary.black,
-		fontWeight: theme.typography.primary.fontWeight,
-		fontSize: theme.typography.smallFont,
-	}}>Description</Typography>
-        <TextField
-          fullWidth
-          placeholder="Enter a description"
-          size="small"
-          sx={{
-			backgroundColor: 'white',
-			borderColor: 'black',
-			borderRadius: '7px',
-		}}
-        />
-      </Grid>
-      <Grid item xs={3}>
-        <Typography sx={{
-		color: theme.typography.primary.black,
-		fontWeight: theme.typography.primary.fontWeight,
-		fontSize: theme.typography.smallFont,
-	}}>Days</Typography>
-        <TextField fullWidth placeholder="Enter days" size="small" sx={{
+							{/* Other Details Section */}
+							<Grid item xs={12}>
+								<Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue }}>
+									Other Details
+								</Typography>
+							</Grid>
+							<Grid item xs={4}>
+								<Typography
+									sx={{
+										color: theme.typography.primary.black,
+										fontWeight: theme.typography.primary.fontWeight,
+										fontSize: theme.typography.smallFont,
+									}}
+								>
+									Description
+								</Typography>
+								<TextField
+									fullWidth
+									placeholder="Enter a description"
+									size="small"
+									sx={{
 										backgroundColor: 'white',
 										borderColor: 'black',
 										borderRadius: '7px',
-									}} />
-      </Grid>
-    </Grid>
+									}}
+								/>
+							</Grid>
+							<Grid item xs={3}>
+								<Typography
+									sx={{
+										color: theme.typography.primary.black,
+										fontWeight: theme.typography.primary.fontWeight,
+										fontSize: theme.typography.smallFont,
+									}}
+								>
+									Days
+								</Typography>
+								<TextField
+									fullWidth
+									placeholder="Enter days"
+									size="small"
+									sx={{
+										backgroundColor: 'white',
+										borderColor: 'black',
+										borderRadius: '7px',
+									}}
+								/>
+							</Grid>
+						</Grid>
 
-    {/* Save/Cancel Buttons */}
-    <Stack direction="row" spacing={2} justifyContent="center" sx={{ marginTop: '20px' }}>
-      <Button variant="contained" sx={{ backgroundColor: '#CB8E8E', color: theme.typography.primary.black,
-		fontWeight: theme.typography.primary.fontWeight,
-		fontSize: theme.typography.smallFont, }}>
-        Cancel
-      </Button>
-      <Button variant="contained" sx={{ backgroundColor: '#9EAED6', color: theme.typography.primary.black,
-		fontWeight: theme.typography.primary.fontWeight,
-		fontSize: theme.typography.smallFont, }}>
-        Save
-      </Button>
-    </Stack>
-  </Box>
-</Paper>
+						{/* Save/Cancel Buttons */}
+						<Stack direction="row" spacing={2} justifyContent="center" sx={{ marginTop: '20px' }}>
+							<Button
+								variant="contained"
+								sx={{
+									backgroundColor: '#CB8E8E',
+									color: theme.typography.primary.black,
+									fontWeight: theme.typography.primary.fontWeight,
+									fontSize: theme.typography.smallFont,
+								}}
+							>
+								Cancel
+							</Button>
+							<Button
+								variant="contained"
+								sx={{
+									backgroundColor: '#9EAED6',
+									color: theme.typography.primary.black,
+									fontWeight: theme.typography.primary.fontWeight,
+									fontSize: theme.typography.smallFont,
+								}}
+							>
+								Save
+							</Button>
+						</Stack>
+					</Box>
+				</Paper>
 
 				<Box
-				sx={{
-					marginBottom: '30px',
-					width: '80%',
-					paddingBottom: '30px',
-				}}
-			>
-			<Stack direction="row" spacing={6} justifyContent="center" sx={{ marginTop: '20px' }}>
-			<Button
-				variant="contained"
-				sx={{ backgroundColor: theme.typography.formButton.background }}
-				onClick={(event) => handleSubmit(event, hasChanges)}
-				disabled={false} // The button should always be enabled
-			>
-				<Typography
-				sx={{
-					color: '#FFFFFF',
-					fontWeight: theme.typography.primary.fontWeight,
-					fontSize: theme.typography.mediumFont,
-				}}
+					sx={{
+						marginBottom: '30px',
+						width: '80%',
+						paddingBottom: '30px',
+					}}
 				>
-				{hasChanges ? 'Save and Return to Dashboard' : 'Return to Dashboard'}
-				</Typography>
-			</Button>
-			</Stack>
-			</Box>
-
+					<Stack direction="row" spacing={6} justifyContent="center" sx={{ marginTop: '20px' }}>
+						<Button
+							variant="contained"
+							sx={{ backgroundColor: theme.typography.formButton.background }}
+							onClick={(event) => handleSubmit(event, hasChanges)}
+							disabled={false} // The button should always be enabled
+						>
+							<Typography
+								sx={{
+									color: '#FFFFFF',
+									fontWeight: theme.typography.primary.fontWeight,
+									fontSize: theme.typography.mediumFont,
+								}}
+							>
+								{hasChanges ? 'Save and Return to Dashboard' : 'Return to Dashboard'}
+							</Typography>
+						</Button>
+					</Stack>
+				</Box>
 			</Stack>
 		</ThemeProvider>
 	);
