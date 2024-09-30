@@ -75,11 +75,11 @@ const initialFees = (property, application) => {
       fee_type: "Rent",
       frequency: "Monthly",
       charge: property.property_listed_rent,
-      due_by: application.lease_rent_due_by,
-      late_by: application.lease_rent_late_by,
-      late_fee: application.lease_rent_late_fee,
-      perDay_late_fee: application.lease_rent_perDay_late_fee,
-      available_topay: application.lease_rent_available_topay,
+      due_by: 1,
+      late_by: 5,
+      late_fee: "50",
+      perDay_late_fee: "10",
+      available_topay: 10,
     });
   }
   if (property.property_deposit) {
@@ -91,8 +91,8 @@ const initialFees = (property, application) => {
       charge: property.property_deposit,
       due_by: application.lease_rent_due_by,
       late_by: application.lease_rent_late_by,
-      late_fee: application.lease_rent_late_fee,
-      perDay_late_fee: application.lease_rent_perDay_late_fee,
+      late_fee: "50",
+      perDay_late_fee: "10",
       available_topay: application.lease_rent_available_topay,
     });
   }
@@ -179,7 +179,7 @@ const TenantLease = () => {
       } else if (application?.lease_status === "NEW") {
         feesList = initialFees(property, application);
       }
-      // console.log("Fees: ", feesList);
+      console.log("Fees: ", feesList);
 
       // let i = 0;
       // feesList.forEach((fee) => {
@@ -450,14 +450,15 @@ const TenantLease = () => {
     let retVal = true;
     fees.map((fee) => {
       if (
-        fee.fee_name === "" ||
-        fee.charge === "" ||
-        fee.frequency === "" ||
-        (fee.due_by === null && (fee.due_by_date === null || !isValidDate(fee.due_by_date))) ||
-        fee.late_by === null ||
-        fee.late_fee === "" ||
-        fee.available_topay === null ||
-        fee.perDay_late_fee === ""
+        fee.fee_name == null || fee.fee_name === "" || 
+        fee.fee_type == null || fee.fee_type === "" || 
+        fee.charge == null || fee.charge === "" || 
+        fee.frequency == null || fee.frequency === "" || 
+        ((fee.due_by == null || fee.due_by === "") && (fee.due_by_date == null || fee.due_by_date === "" || !isValidDate(fee.due_by_date))) ||
+        fee.late_by == null || 
+        fee.late_fee == null || fee.late_fee === "" || 
+        fee.available_topay == null || 
+        fee.perDay_late_fee == null || fee.perDay_late_fee === ""
       ) {
         retVal = false;
       }
@@ -465,21 +466,21 @@ const TenantLease = () => {
     return retVal;
   };
 
-  useEffect(() => {
-    let isValid = true;
-    fees.forEach((fee) => {
-      if (fee.frequency === "One Time" || fee.frequency === "Annually") {
-        if (fee.due_by_date == null || fee.due_by_date === "" || !isValidDate(fee.due_by_date)) {
-          isValid = false;
-        }
-      }
-    });
-    if (isValid) {
-      setShowInvalidDueDatePrompt(false);
-    } else {
-      setShowInvalidDueDatePrompt(true);
-    }
-  }, [fees]);
+  // useEffect(() => {
+  //   let isValid = true;
+  //   fees.forEach((fee) => {
+  //     if (fee.frequency === "One Time" || fee.frequency === "Annually") {
+  //       if (fee.due_by_date == null || fee.due_by_date === "" || !isValidDate(fee.due_by_date)) {
+  //         isValid = false;
+  //       }
+  //     }
+  //   });
+  //   if (isValid) {
+  //     setShowInvalidDueDatePrompt(false);
+  //   } else {
+  //     setShowInvalidDueDatePrompt(true);
+  //   }
+  // }, [fees]);
 
   const handleRemoveFile = (index) => {
     setLeaseFiles((prevFiles) => {
@@ -981,7 +982,7 @@ const TenantLease = () => {
           {/* {console.log("Fees right before we loop through it", fees)} */}
 
           <Grid item xs={12}>
-            {fees?.length > 0 ? (<LeaseFees leaseFees={fees} isEditable={true} setLeaseFees={setFees} setDeleteFees={setDeleteFees} />) : (<></>)}
+            {fees?.length > 0 ? (<LeaseFees startDate={startDate} leaseFees={fees} isEditable={true} setLeaseFees={setFees} setDeleteFees={setDeleteFees} />) : (<></>)}
           </Grid>
 
           

@@ -143,13 +143,11 @@ function getPast12MonthsCashflow(data, month, year) {
 
   // create a loop that goes back 12 months
   for (var i = 0; i < 12; i++) {
-
     let expectedMonthRent = getTotalExpectedRentByMonthYear(data, currentMonth, currentYear);
     let currentMonthRent = getTotalRentByMonthYear(data, currentMonth, currentYear);
 
     let expectedMonthPayouts = getTotalExpectedPayoutsByMonthYear(data, currentMonth, currentYear);
     let currentMonthPayouts = getTotalPayoutsByMonthYear(data, currentMonth, currentYear);
-
 
     pastTwelveMonths.push({
       month: currentMonth,
@@ -642,14 +640,14 @@ function ManagerCashflowWidget({
           </Grid>
 
           <Grid item container xs={12} sx={{ marginBottom: "10px", marginTop: "10px" }}>
-            <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+            <Grid item xs={4} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
               <Button
                 variant='outlined'
                 id='revenue'
                 // className={classes.button}
                 style={{
                   // height: "100%",
-                  width: "60%",
+                  width: "80%",
                   backgroundColor: "#D0D0D0",
                   color: "#160449",
                   fontSize: "13px",
@@ -670,14 +668,14 @@ function ManagerCashflowWidget({
               </Button>
             </Grid>
 
-            <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+            <Grid item xs={4} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
               <Button
                 variant='outlined'
                 id='revenue'
                 // className={classes.button}
                 style={{
                   // height: "100%",
-                  width: "60%",
+                  width: "80%",
                   backgroundColor: "#D0D0D0",
                   color: "#160449",
                   fontSize: "13px",
@@ -694,30 +692,30 @@ function ManagerCashflowWidget({
               </Button>
             </Grid>
 
-            {/* <Grid item xs={4} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
-                <Button
-                  variant="outlined"
-                  id="profits"
-                  // className={classes.button}
-                  style={{
-                    // height: "100%",
-                    // width: '80%',
-                    backgroundColor: "#D0D0D0",
-                    color: "#160449",
-                    fontSize: "13px",
-                    marginBottom: "10px",
-                    borderRadius: "5px",
-                    fontWeight: 'bold',
-                    textTransform: 'none',
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate("/managerCashflow");
-                  }}
-                >                                    
-                  Profits
-                </Button>
-              </Grid> */}
+            <Grid item xs={4} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+              <Button
+                variant='outlined'
+                id='revenue'
+                // className={classes.button}
+                style={{
+                  // height: "100%",
+                  width: "80%",
+                  backgroundColor: "#D0D0D0",
+                  color: "#160449",
+                  fontSize: "13px",
+                  marginBottom: "10px",
+                  borderRadius: "5px",
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // navigate("/managerTransactions");
+                  navigate("/paymentProcessing", { state: { currentWindow: "VERIFY_PAYMENTS" } });
+                  // setCurrentWindow("TRANSACTIONS");
+                }}
+              >
+                Verify
+              </Button>
+            </Grid>
           </Grid>
 
           <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>

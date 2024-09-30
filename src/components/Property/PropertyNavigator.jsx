@@ -467,12 +467,14 @@ export default function PropertyNavigator({
       const formatData = (data) => {
         return data.map((item, index) => {
           // console.log("item - ", item.rent_detail_index);
+          console.log("Latest Data Formatted to catch SPLIT Issue: ", item.latest_date);
           return {
             ...item,
             // idx: index,
             cf_monthName: monthNames[item.cf_month - 1],
             total_paid_formatted: item.total_paid ? `$${item.total_paid}` : "-",
-            latest_date_formatted: item.latest_date || "-",
+            latest_date_formatted: item.latest_date ? item.latest_date : "-",
+            // latest_date_formatted: item.latest_date || "-",
             fees: "-",
           };
         });
@@ -517,7 +519,7 @@ export default function PropertyNavigator({
     },
     {
       field: "purchase_type",
-      headerName: "Type",
+      headerName: "Category",
       sortable: isDesktop,
       flex: 1,
       renderCell: (params) => {
