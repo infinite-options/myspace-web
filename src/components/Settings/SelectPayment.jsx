@@ -225,7 +225,7 @@ export default function SelectPayment(props) {
       payment_intent: paymentIntent,
       payment_method: paymentMethod,
     };
-    if (paymentMethod == "Zelle" || paymentMethod == "Paypal") payment_request_payload.payment_intent = confirmationNumber;
+    if (paymentMethod == "Zelle" || paymentMethod == "Paypal" || paymentMethod == "Venmo" || paymentMethod == "ApplePay") payment_request_payload.payment_intent = confirmationNumber;
     // if (paymentMethod == "Stripe"){
     //   payment_request_payload.payment_intent =  paymentIntent;
     // } else {
@@ -347,6 +347,18 @@ export default function SelectPayment(props) {
       let payment_intent = "Paypal";
       let payment_method = "Paypal";
       console.log("Setting PI and PM: (Paypal) ", payment_intent, payment_method);
+      submit(payment_intent, payment_method);
+    }
+    else if (selectedMethod === "venmo") {
+      let payment_intent = "Venmo";
+      let payment_method = "Venmo";
+      console.log("Setting PI and PM: Venmo ", payment_intent, payment_method);
+      submit(payment_intent, payment_method);
+    }
+    else if (selectedMethod === "apple_pay") {
+      let payment_intent = "ApplePay";
+      let payment_method = "ApplePay";
+      console.log("Setting PI and PM: ApplePay ", payment_intent, payment_method);
       submit(payment_intent, payment_method);
     }
     // credit_card_handler(paymentData.business_code);
