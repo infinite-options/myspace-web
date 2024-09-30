@@ -304,7 +304,7 @@ const ManagerProfitability = ({
               maxWidth: "100%",
             }}
           >
-            {params.row.verified !== null ? params.row.verified : "not paid"}
+            {params.row.verified !== null ? params.row.verified : "-"}
           </Typography>
         </Tooltip>
       ),

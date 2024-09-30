@@ -473,7 +473,8 @@ export default function PropertyNavigator({
             // idx: index,
             cf_monthName: monthNames[item.cf_month - 1],
             total_paid_formatted: item.total_paid ? `$${item.total_paid}` : "-",
-            latest_date_formatted: item.latest_date || "-",
+            latest_date_formatted: item.latest_date ? item.latest_date : "-",
+            // latest_date_formatted: item.latest_date || "-",
             fees: "-",
           };
         });
