@@ -75,11 +75,11 @@ const initialFees = (property, application) => {
       fee_type: "Rent",
       frequency: "Monthly",
       charge: property.property_listed_rent,
-      due_by: application.lease_rent_due_by,
-      late_by: application.lease_rent_late_by,
-      late_fee: application.lease_rent_late_fee,
-      perDay_late_fee: application.lease_rent_perDay_late_fee,
-      available_topay: application.lease_rent_available_topay,
+      due_by: 1,
+      late_by: 5,
+      late_fee: "50",
+      perDay_late_fee: "10",
+      available_topay: 10,
     });
   }
   if (property.property_deposit) {
@@ -91,8 +91,8 @@ const initialFees = (property, application) => {
       charge: property.property_deposit,
       due_by: application.lease_rent_due_by,
       late_by: application.lease_rent_late_by,
-      late_fee: application.lease_rent_late_fee,
-      perDay_late_fee: application.lease_rent_perDay_late_fee,
+      late_fee: "50",
+      perDay_late_fee: "10",
       available_topay: application.lease_rent_available_topay,
     });
   }
@@ -982,7 +982,7 @@ const TenantLease = () => {
           {/* {console.log("Fees right before we loop through it", fees)} */}
 
           <Grid item xs={12}>
-            {fees?.length > 0 ? (<LeaseFees leaseFees={fees} isEditable={true} setLeaseFees={setFees} setDeleteFees={setDeleteFees} />) : (<></>)}
+            {fees?.length > 0 ? (<LeaseFees startDate={startDate} leaseFees={fees} isEditable={true} setLeaseFees={setFees} setDeleteFees={setDeleteFees} />) : (<></>)}
           </Grid>
 
           

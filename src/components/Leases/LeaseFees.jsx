@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const LeaseFees = ({ leaseFees, isEditable, setLeaseFees, setDeleteFees }) => {
+const LeaseFees = ({ leaseFees, isEditable, setLeaseFees, setDeleteFees, startDate }) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -922,6 +922,29 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees, setDeleteFees }) => {
                     fullWidth
                     className={classes.root}
                     onChange={(e) => {
+                      // const newDueBy = e.target.value;
+
+                      // setCurrentRow((prev) => {
+                      //   let newLateBy = prev.late_by;
+                      //   let newAvailableToPay = prev.available_topay;
+                
+                      //   if (prev.fee_type === "Deposit" && prev.id === 1) {
+                      //     const today = new Date();
+                      //     const dueDate = new Date(newDueBy);
+                      //     const leaseStartDate = new Date(startDate);
+                
+                      //     newLateBy = Math.floor((dueDate - today) / (1000 * 60 * 60 * 24));
+                
+                      //     newAvailableToPay = Math.floor((leaseStartDate - dueDate) / (1000 * 60 * 60 * 24));
+                      //   }
+                
+                      //   return {
+                      //     ...prev,
+                      //     due_by: newDueBy,
+                      //     late_by: newLateBy,
+                      //     available_topay: newAvailableToPay,
+                      //   };
+                      // });
                       setCurrentRow((prev) => {
                         return {
                           ...prev,
@@ -940,13 +963,36 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees, setDeleteFees }) => {
                       value={currentRow.due_by_date !== null && currentRow.due_by_date !== "" ? dayjs(currentRow.due_by_date) : dayjs()}
                       minDate={dayjs()}
                       onChange={(v) => {
+                        const newDueByDate = v.format("MM-DD-YYYY");
+
                         setCurrentRow((prev) => {
-                          console.log(v.format("MM-DD-YYYY"));
+                          let newLateBy = prev.late_by;
+                          let newAvailableToPay = prev.available_topay;
+
+                          if (prev.fee_type === "Deposit" && prev.id === 1) {
+                            const today = dayjs();
+                            const dueDate = dayjs(newDueByDate);
+                            const leaseStartDate = dayjs(startDate);
+
+                            newLateBy = leaseStartDate.diff(dueDate, 'day') < 0 ? 1 : leaseStartDate.diff(dueDate, 'day');
+
+                            newAvailableToPay = dueDate.diff(today, 'day') + 1;
+                          }
+
                           return {
                             ...prev,
-                            due_by_date: v.format("MM-DD-YYYY"),
+                            due_by_date: newDueByDate,
+                            late_by: newLateBy,
+                            available_topay: newAvailableToPay,
                           };
                         });
+                        // setCurrentRow((prev) => {
+                        //   console.log(v.format("MM-DD-YYYY"));
+                        //   return {
+                        //     ...prev,
+                        //     due_by_date: v.format("MM-DD-YYYY"),
+                        //   };
+                        // });
                       }}
                       slots={{
                         openPickerIcon: CalendarIcon,
@@ -977,6 +1023,29 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees, setDeleteFees }) => {
                       size='small'
                       fullWidth
                       onChange={(e) => {
+                        // const newDueBy = daytoValueMap.get(e.target.value);
+
+                        // setCurrentRow((prev) => {
+                        //   let newLateBy = prev.late_by;
+                        //   let newAvailableToPay = prev.available_topay;
+
+                        //   if (prev.fee_type === "Deposit" && prev.id === 1) {
+                        //     const today = new Date();
+                        //     const dueDate = new Date(newDueBy);
+                        //     const leaseStartDate = new Date(startDate);
+
+                        //     newLateBy = Math.floor((dueDate - today) / (1000 * 60 * 60 * 24));
+
+                        //     newAvailableToPay = Math.floor((leaseStartDate - dueDate) / (1000 * 60 * 60 * 24));
+                        //   }
+
+                        //   return {
+                        //     ...prev,
+                        //     due_by: newDueBy,
+                        //     late_by: newLateBy,
+                        //     available_topay: newAvailableToPay,
+                        //   };
+                        // });
                         setCurrentRow((prev) => {
                           return {
                             ...prev,
