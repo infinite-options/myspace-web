@@ -56,6 +56,7 @@ import dayjs from 'dayjs';
 
 import PropertiesContext from '../../contexts/PropertiesContext';
 import AddIcon from '@mui/icons-material/Add';
+import defaultHouseImage from "./defaultHouseImage.png";
 
 function EditProperty(props) {
 	// console.log("In Edit Property");
@@ -160,6 +161,29 @@ function EditProperty(props) {
 			: []
 	);
 
+
+	const [initialPropertyCodes, setInitialPropertyCodes] = useState([
+		{ description: '', code: '', startTime: '', endTime: '', days: '' },
+	]);
+	const [initialPropertyAmenities, setInitialPropertyAmenities] = useState([
+		{ description: '', startTime: '', endTime: '', days: '' },
+	]);
+	const [initialOtherDetails, setInitialOtherDetails] = useState([{ description: '', days: '' }]);
+	
+	// Track if changes occurred
+	const [hasPropertyDetailsChanged, setHasPropertyDetailsChanged] = useState(false);
+	
+
+	 // Update the initial states when component mounts
+	 useEffect(() => {
+		if (propertyData && propertyData.property_details) {
+		  const details = JSON.parse(propertyData.property_details);
+		  setPropertyCodes(details.propertyCodes || [{ description: '', code: '', startTime: '', endTime: '', days: '' }]);
+		  setPropertyAmenities(details.propertyAmenities || [{ description: '', startTime: '', endTime: '', days: '' }]);
+		  setOtherDetails(details.otherDetails || [{ description: '', days: '' }]);
+		}
+	  }, [propertyData]);
+
 	//   useEffect(() => {
 	// 	console.log("assessmentYear - ", assessmentYear);
 	//   }, [assessmentYear]);
@@ -257,7 +281,7 @@ function EditProperty(props) {
 			imageState.length > 0 || deletedImageList.length > 0 || favImage !== propertyData.property_favorite_image;
 		const otherChanges = Object.keys(getChangedFields()).length > 0;
 
-		const hasUnsavedChanges = hasImageChanges || otherChanges;
+		const hasUnsavedChanges = hasImageChanges || otherChanges || hasPropertyDetailsChanged;
 
 		// Update states based on unsaved changes
 		setHasChanges(hasUnsavedChanges);
@@ -285,6 +309,7 @@ function EditProperty(props) {
 		deposit,
 		listedRent,
 		depositForRent,
+		hasPropertyDetailsChanged,
 	]);
 
 	// useEffect(() => {
@@ -311,17 +336,20 @@ function EditProperty(props) {
 		event.preventDefault();
 		console.log('handleSubmit');
 
-		if (!hasChanges) {
+		if (!hasChanges && !hasPropertyDetailsChanged) {
 			navigateBackToDashboard();
 			return;
 		}
 
 		const changedFields = getChangedFields();
-		if (Object.keys(changedFields).length === 0 && imageState.length === 0 && imagesTobeDeleted.length === 0) {
+		if (Object.keys(changedFields).length === 0 && imageState.length === 0 && imagesTobeDeleted.length === 0 && !hasPropertyDetailsChanged) {
 			setHasChanges(false);
 			console.log('No changes detected.');
 			return;
 		}
+
+		
+	
 
 		setIsSaveDisabled(true);
 		setSaveButtonText('Return to Dashboard');
@@ -331,6 +359,31 @@ function EditProperty(props) {
 
 		for (const [key, value] of Object.entries(changedFields)) {
 			formData.append(key, value);
+		}
+
+		// If property details have changed, append them to formData
+		if (hasPropertyDetailsChanged) {
+			const property_details = {
+				propertyCodes: propertyCodes.map((code) => ({
+					description: code.description,
+					code: code.code,
+					startTime: code.startTime,
+					endTime: code.endTime,
+					days: code.days,
+				})),
+				propertyAmenities: propertyAmenities.map((amenity) => ({
+					description: amenity.description,
+					startTime: amenity.startTime,
+					endTime: amenity.endTime,
+					days: amenity.days,
+				})),
+				otherDetails: otherDetails.map((detail) => ({
+					description: detail.description,
+					days: detail.days,
+				})),
+			};
+	
+			formData.append('property_details', JSON.stringify(property_details));
 		}
 
 		const currentDate = new Date();
@@ -362,8 +415,10 @@ function EditProperty(props) {
 			formData.append('delete_images', JSON.stringify(imagesTobeDeleted));
 		}
 		//console.log("--debug selectedImageList--", selectedImageList, selectedImageList.length);
-		formData.append('property_images', propertyData.property_images);
-		formData.append('property_favorite_image', favImage);
+		formData.append('property_images', (propertyData.property_images && propertyData.property_images.length > 0) ? propertyData.property_images : defaultHouseImage);
+		if (favImage) {
+			formData.append('property_favorite_image', favImage);
+		}
 		// const files = imageState;
 		let i = 0;
 		for (const file of imageState) {
@@ -577,29 +632,41 @@ function EditProperty(props) {
 		setOtherDetails([...otherDetails, { description: '', days: '' }]);
 	};
 
-	// Handle input change for Property Codes section
 	const handlePropertyCodeChange = (index, event) => {
 		const { name, value } = event.target;
 		const updatedCodes = [...propertyCodes];
 		updatedCodes[index][name] = value;
 		setPropertyCodes(updatedCodes);
+		checkForPropertyDetailsChanges(updatedCodes, initialPropertyCodes, propertyAmenities, initialPropertyAmenities, otherDetails, initialOtherDetails);
 	};
-
-	// Handle input change for Property Amenities section
+	
 	const handlePropertyAmenityChange = (index, event) => {
 		const { name, value } = event.target;
 		const updatedAmenities = [...propertyAmenities];
 		updatedAmenities[index][name] = value;
 		setPropertyAmenities(updatedAmenities);
+		checkForPropertyDetailsChanges(propertyCodes, initialPropertyCodes, updatedAmenities, initialPropertyAmenities, otherDetails, initialOtherDetails);
 	};
-
-	// Handle input change for Other Details section
+	
 	const handleOtherDetailChange = (index, event) => {
 		const { name, value } = event.target;
 		const updatedDetails = [...otherDetails];
 		updatedDetails[index][name] = value;
 		setOtherDetails(updatedDetails);
+		checkForPropertyDetailsChanges(propertyCodes, initialPropertyCodes, propertyAmenities, initialPropertyAmenities, updatedDetails, initialOtherDetails);
 	};
+	
+	// Function to check for changes
+	const checkForPropertyDetailsChanges = (newPropertyCodes, initialPropertyCodes, newPropertyAmenities, initialPropertyAmenities, newOtherDetails, initialOtherDetails) => {
+		if (JSON.stringify(newPropertyCodes) !== JSON.stringify(initialPropertyCodes) ||
+			JSON.stringify(newPropertyAmenities) !== JSON.stringify(initialPropertyAmenities) ||
+			JSON.stringify(newOtherDetails) !== JSON.stringify(initialOtherDetails)) {
+			setHasPropertyDetailsChanged(true);
+		} else {
+			setHasPropertyDetailsChanged(false);
+		}
+	};
+	
 
 	return (
 		<ThemeProvider theme={theme}>
@@ -1096,114 +1163,85 @@ function EditProperty(props) {
 							</Grid>
 
 							{propertyCodes.map((code, index) => (
-								<React.Fragment key={index}>
-									<Grid item xs={3.5} >
-										<Typography
-											sx={{
-												color: theme.typography.primary.black,
-												fontWeight: theme.typography.primary.fontWeight,
-												fontSize: theme.typography.smallFont,
-											}}
-										>
-											Description
-										</Typography>
-										<TextField
-											fullWidth
-											placeholder="Enter description"
-											size="small"
-											sx={{
-												backgroundColor: 'white',
-												borderColor: 'black',
-												borderRadius: '7px',
-											}}
-										/>
-									</Grid>
-									<Grid item xs={2.3}>
-										<Typography
-											sx={{
-												color: theme.typography.primary.black,
-												fontWeight: theme.typography.primary.fontWeight,
-												fontSize: theme.typography.smallFont,
-											}}
-										>
-											Code
-										</Typography>
-										<TextField
-											fullWidth
-											placeholder="Enter code"
-											size="small"
-											sx={{
-												backgroundColor: 'white',
-												borderColor: 'black',
-												borderRadius: '7px',
-											}}
-										/>
-									</Grid>
-									<Grid item xs={2}>
-										<Typography
-											sx={{
-												color: theme.typography.primary.black,
-												fontWeight: theme.typography.primary.fontWeight,
-												fontSize: theme.typography.smallFont,
-											}}
-										>
-											Start Time
-										</Typography>
-										<TextField
-											fullWidth
-											placeholder="Start Time"
-											size="small"
-											sx={{
-												backgroundColor: 'white',
-												borderColor: 'black',
-												borderRadius: '7px',
-											}}
-										/>
-									</Grid>
-									<Grid item xs={2}>
-										<Typography
-											sx={{
-												color: theme.typography.primary.black,
-												fontWeight: theme.typography.primary.fontWeight,
-												fontSize: theme.typography.smallFont,
-											}}
-										>
-											End Time
-										</Typography>
-										<TextField
-											fullWidth
-											placeholder="End Time"
-											size="small"
-											sx={{
-												backgroundColor: 'white',
-												borderColor: 'black',
-												borderRadius: '7px',
-											}}
-										/>
-									</Grid>
-									<Grid item xs={2.2}>
-										<Typography
-											sx={{
-												color: theme.typography.primary.black,
-												fontWeight: theme.typography.primary.fontWeight,
-												fontSize: theme.typography.smallFont,
-											}}
-										>
-											Days
-										</Typography>
-										<TextField
-											fullWidth
-											placeholder="Enter days"
-											size="small"
-											sx={{
-												backgroundColor: 'white',
-												borderColor: 'black',
-												borderRadius: '7px',
-											}}
-										/>
-									</Grid>
-								</React.Fragment>
-							))}
+    <React.Fragment key={index}>
+        <Grid item xs={3.5}>
+            <TextField
+                fullWidth
+                placeholder="Enter description"
+                size="small"
+                name="description"
+                value={code.description}
+                onChange={(e) => handlePropertyCodeChange(index, e)}
+                sx={{
+                    backgroundColor: 'white',
+                    borderColor: 'black',
+                    borderRadius: '7px',
+                }}
+            />
+        </Grid>
+        <Grid item xs={2.3}>
+            <TextField
+                fullWidth
+                placeholder="Enter code"
+                size="small"
+                name="code"
+                value={code.code}
+                onChange={(e) => handlePropertyCodeChange(index, e)}
+                sx={{
+                    backgroundColor: 'white',
+                    borderColor: 'black',
+                    borderRadius: '7px',
+                }}
+            />
+        </Grid>
+        <Grid item xs={2}>
+            <TextField
+                fullWidth
+                placeholder="Start Time"
+                size="small"
+                name="startTime"
+                value={code.startTime}
+                onChange={(e) => handlePropertyCodeChange(index, e)}
+                sx={{
+                    backgroundColor: 'white',
+                    borderColor: 'black',
+                    borderRadius: '7px',
+                }}
+            />
+        </Grid>
+        <Grid item xs={2}>
+            <TextField
+                fullWidth
+                placeholder="End Time"
+                size="small"
+                name="endTime"
+                value={code.endTime}
+                onChange={(e) => handlePropertyCodeChange(index, e)}
+                sx={{
+                    backgroundColor: 'white',
+                    borderColor: 'black',
+                    borderRadius: '7px',
+                }}
+            />
+        </Grid>
+        <Grid item xs={2.2}>
+            <TextField
+                fullWidth
+                placeholder="Enter days"
+                size="small"
+                name="days"
+                value={code.days}
+                onChange={(e) => handlePropertyCodeChange(index, e)}
+                sx={{
+                    backgroundColor: 'white',
+                    borderColor: 'black',
+                    borderRadius: '7px',
+                }}
+            />
+        </Grid>
+    </React.Fragment>
+))}
+
 
 							{/* Property Amenities Section */}
 							<Grid item xs={11}>
@@ -1220,93 +1258,70 @@ function EditProperty(props) {
 								</IconButton>
 							</Grid>
 							{propertyAmenities.map((amenity, index) => (
-								<React.Fragment key={index}>
-									<Grid item xs={4}>
-										<Typography
-											sx={{
-												color: theme.typography.primary.black,
-												fontWeight: theme.typography.primary.fontWeight,
-												fontSize: theme.typography.smallFont,
-											}}
-										>
-											Description
-										</Typography>
-										<TextField
-											fullWidth
-											placeholder="Enter a description"
-											size="small"
-											sx={{
-												backgroundColor: 'white',
-												borderColor: 'black',
-												borderRadius: '7px',
-											}}
-										/>
-									</Grid>
-									<Grid item xs={2}>
-										<Typography
-											sx={{
-												color: theme.typography.primary.black,
-												fontWeight: theme.typography.primary.fontWeight,
-												fontSize: theme.typography.smallFont,
-											}}
-										>
-											Start Time
-										</Typography>
-										<TextField
-											fullWidth
-											placeholder="Start Time"
-											size="small"
-											sx={{
-												backgroundColor: 'white',
-												borderColor: 'black',
-												borderRadius: '7px',
-											}}
-										/>
-									</Grid>
-									<Grid item xs={2}>
-										<Typography
-											sx={{
-												color: theme.typography.primary.black,
-												fontWeight: theme.typography.primary.fontWeight,
-												fontSize: theme.typography.smallFont,
-											}}
-										>
-											End Time
-										</Typography>
-										<TextField
-											fullWidth
-											placeholder="End Time"
-											size="small"
-											sx={{
-												backgroundColor: 'white',
-												borderColor: 'black',
-												borderRadius: '7px',
-											}}
-										/>
-									</Grid>
-									<Grid item xs={3}>
-										<Typography
-											sx={{
-												color: theme.typography.primary.black,
-												fontWeight: theme.typography.primary.fontWeight,
-												fontSize: theme.typography.smallFont,
-											}}
-										>
-											Days
-										</Typography>
-										<TextField
-											fullWidth
-											placeholder="Enter days"
-											size="small"
-											sx={{
-												backgroundColor: 'white',
-												borderColor: 'black',
-												borderRadius: '7px',
-											}}
-										/>
-									</Grid>
-								</React.Fragment>
-							))}
+    <React.Fragment key={index}>
+        <Grid item xs={4}>
+            <TextField
+                fullWidth
+                placeholder="Enter a description"
+                size="small"
+                name="description"  // Name matches the state property
+                value={amenity.description}
+                onChange={(e) => handlePropertyAmenityChange(index, e)}
+                sx={{
+                    backgroundColor: 'white',
+                    borderColor: 'black',
+                    borderRadius: '7px',
+                }}
+            />
+        </Grid>
+        <Grid item xs={2}>
+            <TextField
+                fullWidth
+                placeholder="Start Time"
+                size="small"
+                name="startTime"  // Name matches the state property
+                value={amenity.startTime}
+                onChange={(e) => handlePropertyAmenityChange(index, e)}
+                sx={{
+                    backgroundColor: 'white',
+                    borderColor: 'black',
+                    borderRadius: '7px',
+                }}
+            />
+        </Grid>
+        <Grid item xs={2}>
+            <TextField
+                fullWidth
+                placeholder="End Time"
+                size="small"
+                name="endTime"  // Name matches the state property
+                value={amenity.endTime}
+                onChange={(e) => handlePropertyAmenityChange(index, e)}
+                sx={{
+                    backgroundColor: 'white',
+                    borderColor: 'black',
+                    borderRadius: '7px',
+                }}
+            />
+        </Grid>
+        <Grid item xs={3}>
+            <TextField
+                fullWidth
+                placeholder="Enter days"
+                size="small"
+                name="days"  // Name matches the state property
+                value={amenity.days}
+                onChange={(e) => handlePropertyAmenityChange(index, e)}
+                sx={{
+                    backgroundColor: 'white',
+                    borderColor: 'black',
+                    borderRadius: '7px',
+                }}
+            />
+        </Grid>
+    </React.Fragment>
+))}
+
 
 							{/* Other Details Section */}
 							<Grid item xs={11}>
@@ -1322,78 +1337,42 @@ function EditProperty(props) {
 								</IconButton>
 							</Grid>
 							{otherDetails.map((detail, index) => (
-								<React.Fragment key={index}>
-									<Grid item xs={6}>
-										<Typography
-											sx={{
-												color: theme.typography.primary.black,
-												fontWeight: theme.typography.primary.fontWeight,
-												fontSize: theme.typography.smallFont,
-											}}
-										>
-											Description
-										</Typography>
-										<TextField
-											fullWidth
-											placeholder="Enter a description"
-											size="small"
-											sx={{
-												backgroundColor: 'white',
-												borderColor: 'black',
-												borderRadius: '7px',
-											}}
-										/>
-									</Grid>
-									<Grid item xs={3}>
-										<Typography
-											sx={{
-												color: theme.typography.primary.black,
-												fontWeight: theme.typography.primary.fontWeight,
-												fontSize: theme.typography.smallFont,
-											}}
-										>
-											Days
-										</Typography>
-										<TextField
-											fullWidth
-											placeholder="Enter days"
-											size="small"
-											sx={{
-												backgroundColor: 'white',
-												borderColor: 'black',
-												borderRadius: '7px',
-											}}
-										/>
-									</Grid>
-								</React.Fragment>
-							))}
+    <React.Fragment key={index}>
+        <Grid item xs={6}>
+            <TextField
+                fullWidth
+                placeholder="Enter a description"
+                size="small"
+                name="description"  // Name matches the state property
+                value={detail.description}
+                onChange={(e) => handleOtherDetailChange(index, e)}
+                sx={{
+                    backgroundColor: 'white',
+                    borderColor: 'black',
+                    borderRadius: '7px',
+                }}
+            />
+        </Grid>
+        <Grid item xs={3}>
+            <TextField
+                fullWidth
+                placeholder="Enter days"
+                size="small"
+                name="days"  // Name matches the state property
+                value={detail.days}
+                onChange={(e) => handleOtherDetailChange(index, e)}
+                sx={{
+                    backgroundColor: 'white',
+                    borderColor: 'black',
+                    borderRadius: '7px',
+                }}
+            />
+        </Grid>
+    </React.Fragment>
+))}
+
 						</Grid>
 
-						{/* Save/Cancel Buttons */}
-						<Stack direction="row" spacing={2} justifyContent="center" sx={{ marginTop: '20px' }}>
-							<Button
-								variant="contained"
-								sx={{
-									backgroundColor: '#CB8E8E',
-									color: theme.typography.primary.black,
-									fontWeight: theme.typography.primary.fontWeight,
-									fontSize: theme.typography.smallFont,
-								}}
-							>
-								Cancel
-							</Button>
-							<Button
-								variant="contained"
-								sx={{
-									backgroundColor: '#9EAED6',
-									color: theme.typography.primary.black,
-									fontWeight: theme.typography.primary.fontWeight,
-									fontSize: theme.typography.smallFont,
-								}}
-							>
-								Save
-							</Button>
-						</Stack>
 					</Box>
 				</Paper>
 				<Box
