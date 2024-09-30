@@ -987,6 +987,213 @@ function EditProperty(props) {
 						</Grid>
 					</Box>
 				</Paper>
+				<Paper
+  style={{
+    marginTop: '15px',
+    backgroundColor: theme.palette.form.main,
+    width: '80%', // Adjust width as needed
+    padding: '25px',
+    boxShadow: theme.shadows[3],
+  }}
+>
+  <Stack direction="row" justifyContent="center" alignItems="center" position="relative">
+    <Typography
+      sx={{
+		color: theme.typography.primary.black,
+		fontWeight: theme.typography.primary.fontWeight,
+		fontSize: theme.typography.largeFont,
+	}}
+    >
+      PROPERTY DETAILS
+    </Typography>
+  </Stack>
+
+  <Box component="form" noValidate autoComplete="off">
+    <Grid container columnSpacing={6} rowSpacing={4}>
+      {/* Property Codes Section */}
+      <Grid item xs={12}>
+        <Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue }}>
+          Property Codes
+        </Typography>
+      </Grid>
+      <Grid item xs={3.5}>
+        <Typography sx={{
+		color: theme.typography.primary.black,
+		fontWeight: theme.typography.primary.fontWeight,
+		fontSize: theme.typography.smallFont,
+	}} >Description</Typography>
+        <TextField
+          fullWidth
+          placeholder="Enter description"
+          size="small"
+          sx={{
+			backgroundColor: 'white',
+			borderColor: 'black',
+			borderRadius: '7px',
+		}}
+        />
+      </Grid>
+      <Grid item xs={2.3}>
+        <Typography sx={{
+		color: theme.typography.primary.black,
+		fontWeight: theme.typography.primary.fontWeight,
+		fontSize: theme.typography.smallFont,
+	}}>Code</Typography>
+        <TextField fullWidth placeholder="Enter code" size="small" sx={{
+										backgroundColor: 'white',
+										borderColor: 'black',
+										borderRadius: '7px',
+									}}/>
+      </Grid>
+      <Grid item xs={2}>
+        <Typography sx={{
+		color: theme.typography.primary.black,
+		fontWeight: theme.typography.primary.fontWeight,
+		fontSize: theme.typography.smallFont,
+	}}>Start Time</Typography>
+        <TextField fullWidth placeholder="Start Time" size="small" sx={{
+										backgroundColor: 'white',
+										borderColor: 'black',
+										borderRadius: '7px',
+									}} />
+      </Grid>
+      <Grid item xs={2}>
+        <Typography sx={{
+		color: theme.typography.primary.black,
+		fontWeight: theme.typography.primary.fontWeight,
+		fontSize: theme.typography.smallFont,
+	}}>End Time</Typography>
+        <TextField fullWidth placeholder="End Time" size="small" sx={{
+										backgroundColor: 'white',
+										borderColor: 'black',
+										borderRadius: '7px',
+									}} />
+      </Grid>
+      <Grid item xs={2.2}>
+        <Typography sx={{
+		color: theme.typography.primary.black,
+		fontWeight: theme.typography.primary.fontWeight,
+		fontSize: theme.typography.smallFont,
+	}}>Days</Typography>
+        <TextField fullWidth placeholder="Enter days" size="small" sx={{
+										backgroundColor: 'white',
+										borderColor: 'black',
+										borderRadius: '7px',
+									}} />
+      </Grid>
+
+      {/* Property Amenities Section */}
+      <Grid item xs={12}>
+        <Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue }}>
+          Property Amenities
+        </Typography>
+      </Grid>
+      <Grid item xs={4}>
+        <Typography sx={{
+		color: theme.typography.primary.black,
+		fontWeight: theme.typography.primary.fontWeight,
+		fontSize: theme.typography.smallFont,
+	}}>Description</Typography>
+        <TextField
+          fullWidth
+          placeholder="Enter a description"
+          size="small"
+          sx={{
+			backgroundColor: 'white',
+			borderColor: 'black',
+			borderRadius: '7px',
+		}}
+        />
+      </Grid>
+      <Grid item xs={2}>
+        <Typography sx={{
+		color: theme.typography.primary.black,
+		fontWeight: theme.typography.primary.fontWeight,
+		fontSize: theme.typography.smallFont,
+	}}>Start Time</Typography>
+        <TextField fullWidth placeholder="Start Time" size="small" sx={{
+										backgroundColor: 'white',
+										borderColor: 'black',
+										borderRadius: '7px',
+									}} />
+      </Grid>
+      <Grid item xs={2}>
+        <Typography sx={{
+		color: theme.typography.primary.black,
+		fontWeight: theme.typography.primary.fontWeight,
+		fontSize: theme.typography.smallFont,
+	}} >End Time</Typography>
+        <TextField fullWidth placeholder="End Time" size="small" sx={{
+										backgroundColor: 'white',
+										borderColor: 'black',
+										borderRadius: '7px',
+									}} />
+      </Grid>
+      <Grid item xs={3}>
+        <Typography sx={{
+		color: theme.typography.primary.black,
+		fontWeight: theme.typography.primary.fontWeight,
+		fontSize: theme.typography.smallFont,
+	}}>Days</Typography>
+        <TextField fullWidth placeholder="Enter days" size="small" sx={{
+										backgroundColor: 'white',
+										borderColor: 'black',
+										borderRadius: '7px',
+									}} />
+      </Grid>
+
+      {/* Other Details Section */}
+      <Grid item xs={12}>
+        <Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue }}>
+          Other Details
+        </Typography>
+      </Grid>
+      <Grid item xs={4}>
+        <Typography sx={{
+		color: theme.typography.primary.black,
+		fontWeight: theme.typography.primary.fontWeight,
+		fontSize: theme.typography.smallFont,
+	}}>Description</Typography>
+        <TextField
+          fullWidth
+          placeholder="Enter a description"
+          size="small"
+          sx={{
+			backgroundColor: 'white',
+			borderColor: 'black',
+			borderRadius: '7px',
+		}}
+        />
+      </Grid>
+      <Grid item xs={3}>
+        <Typography sx={{
+		color: theme.typography.primary.black,
+		fontWeight: theme.typography.primary.fontWeight,
+		fontSize: theme.typography.smallFont,
+	}}>Days</Typography>
+        <TextField fullWidth placeholder="Enter days" size="small" sx={{
+										backgroundColor: 'white',
+										borderColor: 'black',
+										borderRadius: '7px',
+									}} />
+      </Grid>
+    </Grid>
+
+    {/* Save/Cancel Buttons */}
+    <Stack direction="row" spacing={2} justifyContent="center" sx={{ marginTop: '20px' }}>
+      <Button variant="contained" sx={{ backgroundColor: '#CB8E8E', color: theme.typography.primary.black,
+		fontWeight: theme.typography.primary.fontWeight,
+		fontSize: theme.typography.smallFont, }}>
+        Cancel
+      </Button>
+      <Button variant="contained" sx={{ backgroundColor: '#9EAED6', color: theme.typography.primary.black,
+		fontWeight: theme.typography.primary.fontWeight,
+		fontSize: theme.typography.smallFont, }}>
+        Save
+      </Button>
+    </Stack>
+  </Box>
+</Paper>
 
 				<Box
 				sx={{
