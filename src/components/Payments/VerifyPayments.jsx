@@ -122,7 +122,7 @@ export default function VerifyPayments(props) {
                   </Stack>
 
                   <Stack>
-                    <BalanceDetailsTable data={moneyPayable} setPaymentData={setPaymentData} />
+                    <BalanceDetailsTable data={moneyPayable} setPaymentData={setPaymentData} fetchPaymentsData={fetchPaymentsData} />
                   </Stack>
                 </Paper>
               </Paper>
@@ -143,9 +143,9 @@ function BalanceDetailsTable(props) {
 
   const [totalVerified, setTotalVerified] = useState(0);
 
-  useEffect(() => {
-    console.log("ROHIT - selectedPayments - ", selectedPayments);
-  }, [selectedPayments]);
+  // useEffect(() => {
+  //   console.log("selectedPayments - ", selectedPayments);
+  // }, [selectedPayments]);
 
   useEffect(() => {
     setData(props.data);
@@ -165,10 +165,10 @@ function BalanceDetailsTable(props) {
   }, [data]);
 
   useEffect(() => {
-    console.log("ROHIT - selectedRows - ", selectedRows);
+    // console.log("selectedRows - ", selectedRows);
     const total = selectedRows?.reduce((total, rowId) => {
       const payment = paymentDueResult.find((row) => row.payment_uid === rowId);
-      console.log("ROHIT - payment - ", payment);
+      // console.log("payment - ", payment);
       if (payment) {
         const payAmount = parseFloat(payment.pay_amount);
         // const isExpense = payment.pur_cf_type === "expense";
@@ -311,7 +311,7 @@ function BalanceDetailsTable(props) {
   ];
 
   const handleSelectionModelChange = (newRowSelectionModel) => {
-    console.log("ROHIT - newRowSelectionModel - ", newRowSelectionModel);
+    // console.log("newRowSelectionModel - ", newRowSelectionModel);
 
     const addedRows = newRowSelectionModel.filter((rowId) => !selectedRows.includes(rowId));
     const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
@@ -323,7 +323,7 @@ function BalanceDetailsTable(props) {
       let newPayments = [];
 
       addedRows.forEach((item, index) => {
-        console.log("ROHIT - item - ", item);
+        // console.log("item - ", item);
         // const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
         const addedPayment = paymentDueResult.find((row) => row.payment_uid === item);
 
@@ -358,12 +358,12 @@ function BalanceDetailsTable(props) {
   };
 
   const handleVerifyPayments = async () => {
-    console.log("In handleVerifyPayments");
+    // console.log("In handleVerifyPayments");
 
-    console.log("ROHIT - selectedPayments - ", selectedPayments);
+    // console.log("selectedPayments - ", selectedPayments);
     const formData = new FormData();
     const verifiedList = selectedPayments?.map((payment) => payment.payment_uid);
-    console.log("ROHIT - verifiedList - ", verifiedList);
+    // console.log("verifiedList - ", verifiedList);
     formData.append("payment_uid", JSON.stringify(verifiedList));
     formData.append("payment_verify", "Verified");
 
@@ -385,6 +385,7 @@ function BalanceDetailsTable(props) {
     } catch (error) {
       console.log("error", error);
     }
+    props.fetchPaymentsData();
   };
 
   if (paymentDueResult.length > 0) {
