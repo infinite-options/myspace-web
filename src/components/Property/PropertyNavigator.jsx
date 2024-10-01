@@ -327,7 +327,7 @@ export default function PropertyNavigator({
       setSentContractCount(sentContractCount);
 
       const rentDetails = getRentStatus();
-      // console.log("rentDetails - ", rentDetails);
+      console.log("rentDetails - ", rentDetails);
       setpropertyRentStatus(rentDetails);
 
       if (property.leaseFees !== null) {
@@ -531,8 +531,12 @@ export default function PropertyNavigator({
       headerName: "Date Paid",
       sortable: isDesktop,
       // flex: 1,
+      // renderCell: (params) => {
+      //   return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value.split(" ")[0]}</Box>;
+      // },
       renderCell: (params) => {
-        return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value.split(" ")[0]}</Box>;
+        const value = params.value || "-";
+        return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{value.split(" ")[0]}</Box>;
       },
     },
     {
@@ -2031,6 +2035,7 @@ export default function PropertyNavigator({
                 handleViewPMQuotesRequested={handleViewPMQuotesRequested}
                 newContractCount={newContractCount}
                 sentContractCount={sentContractCount}
+                currentIndex={currentIndex}
                 handleOpenMaintenancePage={handleOpenMaintenancePage}
               />
               {/* <Card sx={{ backgroundColor: color, height: "100%" }}>

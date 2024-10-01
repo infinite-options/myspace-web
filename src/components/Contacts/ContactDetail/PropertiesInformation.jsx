@@ -40,8 +40,8 @@ import AES from "crypto-js/aes";
 import APIConfig from "../../../utils/APIConfig";
 
 
-const PropertiesInformation = ({ owner }) => {  
-  
+const PropertiesInformation = ({ owner, fromPage }) => {  
+  const navigate = useNavigate();
   const { selectedRole, getProfileId } = useUser();  
   const activeProperties = owner?.properties != null ? JSON.parse(owner?.properties).filter(property => property.contract_status === "ACTIVE") : [];
   const newProperties = owner?.properties != null ? JSON.parse(owner?.properties).filter(property => property.contract_status === "NEW") : [];
@@ -75,7 +75,7 @@ const PropertiesInformation = ({ owner }) => {
       ) : (
         <Grid container sx={{ padding: '10px 0', maxHeight: '220px', overflow: 'auto' }}>
           <Grid item xs={12} sx={{ height: 'auto', padding: '5px 0'}}>
-            <PropertiesDataGrid data={activeProperties} />
+            <PropertiesDataGrid data={activeProperties} fromPage={fromPage}/>
           </Grid>
         </Grid>
       )}
@@ -89,7 +89,19 @@ const PropertiesInformation = ({ owner }) => {
         <Grid container sx={{ maxHeight: '150px', overflow: 'auto' }}>
           {newProperties?.map((property, index) => (
             <Grid key={index} item xs={12} sx={{ padding: '5px 0' }}>
-              <Typography sx={{ fontSize: '12px', color: '#160449' }}>
+              <Typography sx={{ fontSize: '12px', color: '#160449', cursor: "pointer"}} 
+                onClick={() => {
+                  if(fromPage === " Owner"){
+                    navigate("/properties", {
+                      state: { currentProperty: property.property_uid}
+                    });
+                  }else{
+                    navigate("/properties", {
+                      state: { currentProperty: property.property_id}
+                    });
+                  }
+                }}
+              >
                 {`${property.property_address}${property.property_unit ? `, Unit - ${property.property_unit}` : ''}`}
               </Typography>
             </Grid>
@@ -105,7 +117,19 @@ const PropertiesInformation = ({ owner }) => {
         <Grid container sx={{ maxHeight: '150px', overflow: 'auto' }}>
           {sentProperties?.map((property, index) => (
             <Grid key={index} item xs={12} sx={{ padding: '5px 0' }}>
-              <Typography sx={{ fontSize: '12px', color: '#160449' }}>
+              <Typography sx={{ fontSize: '12px', color: '#160449', cursor: "pointer" }}
+                onClick={() => {
+                  if(fromPage === "Owner"){
+                    navigate("/properties", {
+                      state: { currentProperty: property.property_uid}
+                    });
+                  }else{
+                    navigate("/properties", {
+                      state: { currentProperty: property.property_id}
+                    });
+                  }
+                }}
+              >
                 {`${property.property_address}${property.property_unit ? `, Unit - ${property.property_unit}` : ''}`}
               </Typography>
             </Grid>
@@ -131,7 +155,7 @@ const PropertiesList = ({ data }) => {
 };
 
 
-  const PropertiesDataGrid = ({ data }) => {
+  const PropertiesDataGrid = ({ data, fromPage }) => {
     const navigate = useNavigate();
     console.log("PropertiesDataGrid - props.data -", data);
     const paymentStatusColorMap = {
@@ -169,9 +193,15 @@ const PropertiesList = ({ data }) => {
           <Typography
             sx={{ fontSize: '12px', color: '#160449', cursor: 'pointer' }}
             onClick={() => {
-              navigate("/propertiesPM", {
-                state: { currentProperty: params.row.property_uid }
-              });
+              if(fromPage === "Owner"){
+                navigate("/properties", {
+                  state: { currentProperty: params.row.property_uid}
+                });
+              }else{
+                navigate("/properties", {
+                  state: { currentProperty: params.row.property_id}
+                });
+              }
             }}
           >
             {`${params.row.property_address}${params.row.property_unit ? `, Unit - ${params.row.property_unit}` : ''}`}
@@ -236,9 +266,10 @@ const PropertiesList = ({ data }) => {
         // width: 100,
         flex: 0.5,
         renderCell: (params) => (
-          <Box sx={{ margin: "0px" }}
-            onClick = {() =>
-              navigate("/managerMaintenance", {
+          <Box sx={{ margin: "0px", cursor:"pointer"}}
+            onClick = {() => {
+              if(fromPage === "Owner"){
+                navigate("/managerMaintenance", {
                   state: {
                     selectedProperty: {
                       address: params.row.property_address,
@@ -247,12 +278,23 @@ const PropertiesList = ({ data }) => {
                     },
                   },
                 })
-            }
+              }else{
+                navigate("/managerMaintenance", {
+                    state: {
+                      selectedProperty: {
+                        address: params.row.property_address,
+                        property_uid: params.row.property_id,
+                        checked: true,
+                      },
+                    },
+                  })
+              }
+            }}
             >
             <Badge
               overlap="circular"
               color="error"
-              badgeContent={params?.row?.maintenance_count? params?.row?.maintenance_count : 0}
+              badgeContent={params.row?.maintenance_count? params.row?.maintenance_count : 0}
               anchorOrigin={{
                 vertical: "top",
                 horizontal: "right",
@@ -264,12 +306,13 @@ const PropertiesList = ({ data }) => {
                 fontSize: "2px", 
               }}
             >
-              <Button
+              <img src={maintenanceIcon} alt="maintenance icon" style={{ width: "30px", height: "30px" }} />
+              {/* <Button
                 // onClick={() => navigate("/maintenance")}
                 sx={{ border: "none", "&:hover, &:focus, &:active": { backgroundColor: "#d6d5da" }, alignContent: "left", justifyContent: "left" }}
               >
-                <img src={maintenanceIcon} alt="maintenance icon" style={{ width: "30px", height: "30px" }} />
-              </Button>
+                
+              </Button> */}
             </Badge>
           </Box>
         ),

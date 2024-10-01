@@ -351,15 +351,23 @@ function Main() {
             <Route path='tenantMaintenance' element={<TenantMaintenance />} />
             <Route path='addTenantMaintenanceItem' element={<AddTenantMaintenanceItem />} />
             <Route path='myProperty' element={<TenantProperty />} />
-            <Route 
+            {/* <Route 
               path='propertiesPM'
               element={
                 <PropertiesProvider>
                   <Properties />
                 </PropertiesProvider>
               } 
+            /> */}
+            <Route 
+              path='properties'
+              element={
+                <PropertiesProvider>
+                  <Properties />
+                </PropertiesProvider>
+              } 
             />
-            <Route path='properties' element={<PropertyList />} />
+            {/* <Route path='properties' element={<PropertyList />} /> */}
             {/* <Route path="PMProperties" element={<PMProperties />} /> */}
             <Route path='tenantMaintenanceItemDetail' element={<TenantMaintenanceItemDetail />} />
 

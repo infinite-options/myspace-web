@@ -178,7 +178,7 @@ const OwnerContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
                         contactDetails && typeof currentIndex === 'number' && currentIndex >=0 ? (
                           <PropertiesInformation                           
                             ownerUID={contactDetails[currentIndex]?.contact_uid}                       
-  
+                            fromPage={"Owner"}
                             owner={contactDetails[currentIndex]}
                           />
                         ) :

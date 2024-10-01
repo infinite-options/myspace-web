@@ -47,7 +47,7 @@ export default function PropertyDetail({}) {
   function handleBackButton() {
     console.log("handleBackButton");
     // navigate('/properties', { state: { index: index } }); - PM Changed
-    navigate("/propertiesPM", { state: { index: index } });
+    navigate("/properties", { state: { index: index } });
   }
 
   function navigateToAddProperty() {

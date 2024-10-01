@@ -324,6 +324,11 @@ const CashflowDetails = ({
   const [activeButton, setActiveButton] = useState("Cashflow");
 
   const [showChart, setShowChart] = useState("Current");
+  const [tab, setTab] = useState("by_type");
+
+  const handleSelectTab = (tab_name) => {
+    setTab(tab_name);
+  };
 
   return (
     <>
@@ -396,16 +401,48 @@ const CashflowDetails = ({
             m={3}
             padding={3}
             display='flex'
-            justifyContent='space-between'
+            justifyContent="space-between"
             alignItems='center'
           >
             <Box
               sx={{
-                width: "140px",
+                flex: 0.9,
+                display:"flex",
+                flexDirection:"row",
               }}
-            ></Box>
-            <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>Expected</Typography>
-            <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>Actual</Typography>
+            >
+              <Button
+                sx={{
+                  width: "100px",
+                  marginRight: "30px",
+                  backgroundColor: tab === "by_type" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: tab === "by_type" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => handleSelectTab("by_type")}
+              >
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Type</Typography>
+              </Button>
+              <Button
+                sx={{
+                  width: "100px",
+                  backgroundColor: tab === "by_month" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: tab === "by_month" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => handleSelectTab("by_month")}
+              >
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Month</Typography>
+              </Button>
+            </Box>
+            <Box sx={{display: "flex", flexDirection:"row", justifyContent: "space-between", flex : 0.95}}>
+              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>Expected</Typography>
+              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>Actual</Typography>
+            </Box>
           </Box>
           
           {/* -- Display Total CashFlow-- */}
@@ -733,7 +770,11 @@ function StatementTable(props) {
             <TableRow key={index} onClick={() => handleNavigation(type, item)}>
               <TableCell></TableCell>
               <TableCell>
-                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }} onClick={() => {
+                    navigate("/properties", {
+                      state: { currentProperty: item.pur_property_id}
+                    });
+                  }}>
                   {" "}
                   {item.property_address} {item.property_unit}{" "}
                 </Typography>
@@ -757,7 +798,11 @@ function StatementTable(props) {
                   <Typography sx={{ fontSize: theme.typography.smallFont, marginLeft: "25px" }}>{item.pur_property_id ? item.pur_property_id : ""}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography sx={{ fontSize: theme.typography.smallFont }}>{item.property_address? item.property_address : ""}</Typography>
+                  <Typography sx={{ fontSize: theme.typography.smallFont, cursor:"pointer" }} onClick={() => {
+                    navigate("/properties", {
+                      state: { currentProperty: item.pur_property_id}
+                    });
+                  }}>{item.property_address? item.property_address : ""}</Typography>
                 </TableCell>
                 <TableCell>
                   <Typography sx={{ fontSize: theme.typography.smallFont }}>{item.property_unit ? item.property_unit : ""}</Typography>

@@ -324,7 +324,7 @@ export function MaintenanceOwner() {
     if (location.state && location.state.fromProperty === true) {
       const { fromProperty, index } = location.state;
       // navigate('/properties', { state: { index } }); - PM CHanged
-      navigate("/propertiesPM", { state: { index } });
+      navigate("/properties", { state: { index } });
     } else {
       navigate(-1); // Fallback to default behavior if onBack is not provided
     }
