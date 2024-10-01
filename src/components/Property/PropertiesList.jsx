@@ -47,9 +47,9 @@ const paymentStatusMap = {
 
 export function getPaymentStatusColor(paymentStatus, property) {
   // console.log("214 - property - ", property);
-  if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property.property_available_to_rent && property.property_available_to_rent === 1)) {
+  if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property?.property_available_to_rent && property?.property_available_to_rent === 1)) {
     return paymentStatusColorMap["Vacant"];
-  } else if((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property.property_available_to_rent == null || property.property_available_to_rent === 0)){
+  } else if((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property?.property_available_to_rent == null || property?.property_available_to_rent === 0)){
     return paymentStatusColorMap["Not Listed"];
   } else {
     const status = paymentStatusMap[paymentStatus];
@@ -58,9 +58,9 @@ export function getPaymentStatusColor(paymentStatus, property) {
 }
 
 export function getPaymentStatus(paymentStatus, property) {    
-  if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property.property_available_to_rent && property.property_available_to_rent === 1)) {
+  if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property?.property_available_to_rent && property?.property_available_to_rent === 1)) {
     return paymentStatusMap["VACANT"];
-  } else if((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property.property_available_to_rent == null || property.property_available_to_rent === 0)){
+  } else if((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property?.property_available_to_rent == null || property?.property_available_to_rent === 0)){
     return paymentStatusMap["NOT LISTED"];
   } else {
     const status = paymentStatusMap[paymentStatus];
