@@ -316,6 +316,8 @@ function BalanceDetailsTable(props) {
     const addedRows = newRowSelectionModel.filter((rowId) => !selectedRows.includes(rowId));
     const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
 
+    console.log("ROHIT - addedRows - ", addedRows);
+
     let updatedRowSelectionModel = [...newRowSelectionModel];
 
     if (addedRows.length > 0) {
@@ -402,15 +404,15 @@ function BalanceDetailsTable(props) {
               },
             },
           }}
-          // getRowId={(row) => row.purchase_uid}
-          getRowId={(row) => {
-            const rowId = row.payment_uid;
-            // console.log("Hello Globe");
-            // console.log("Row ID:", rowId);
-            // console.log("Row Data:", row); // Log the entire row data
-            // console.log("Row PS:", row.ps); // Log the ps field
-            return rowId;
-          }}
+          getRowId={(row) => row.payment_uid}
+          // getRowId={(row) => {
+          //   const rowId = row.payment_uid;
+          //   // console.log("Hello Globe");
+          //   // console.log("Row ID:", rowId);
+          //   // console.log("Row Data:", row); // Log the entire row data
+          //   // console.log("Row PS:", row.ps); // Log the ps field
+          //   return rowId;
+          // }}
           pageSizeOptions={[10, 50, 100]}
           checkboxSelection
           disableRowSelectionOnClick
