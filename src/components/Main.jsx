@@ -19,6 +19,7 @@ import AddUtility from "./Cashflow/AddUtility";
 import Cashflow from "./Cashflow/Cashflow";
 import ManagerCashflow from "./Cashflow/ManagerCashflow";
 import PaymentProcessing from "./Cashflow/PaymentProcessing";
+import ManagerSelectPayment from "./Cashflow/ManagerSelectPayment"
 import PaymentVerification from "./Cashflow/PaymentVerification";
 import ManagerTransactions from "./Cashflow/ManagerTransactions";
 import ViewLease from "./Leases/ViewLease";
@@ -242,6 +243,7 @@ function Main() {
             <Route path='cashflow' element={<Cashflow />} />
             <Route path='managerCashflow' element={<ManagerCashflow />} />
             <Route path='paymentProcessing' element={<PaymentProcessing />} />
+            <Route path='managerSelectPayment' element={<ManagerSelectPayment/>} />
             <Route path='paymentVerification' element={<PaymentVerification />} />
             <Route path='managerTransactions' element={<ManagerTransactions />} />
             <Route path='selectMonthComponent' element={<SelectMonthComponent />} />

@@ -654,14 +654,21 @@ function ManagerCashflowWidget({
                   marginBottom: "10px",
                   borderRadius: "5px",
                 }}
+                // onClick={(e) => {
+                //   e.stopPropagation();
+
+                //   // navigate("/addRevenue", { state: { edit: false, itemToEdit: null } });
+                //   // navigate("/payments", { state: { managerCashflowWidgetData: { profitsTotal, rentsTotal, payoutsTotal, propsMonth, propsYear, graphData } } });
+
+                //   // setShowProfitability(false);
+                //   // setShowTransactions(false)
+                //   // setShowPayments(true);
+                // }}
                 onClick={(e) => {
                   e.stopPropagation();
-                  // navigate("/addRevenue", { state: { edit: false, itemToEdit: null } });
-                  navigate("/payments", { state: { managerCashflowWidgetData: { profitsTotal, rentsTotal, payoutsTotal, propsMonth, propsYear, graphData } } });
-
-                  // setShowProfitability(false);
-                  // setShowTransactions(false)
-                  // setShowPayments(true);
+                  // navigate("/managerTransactions");
+                  //setCurrentWindow("TRANSACTIONS");
+                  navigate("/paymentProcessing", { state: { currentWindow: "PAY_BILLS" } });
                 }}
               >
                 Pay Bills
@@ -685,7 +692,8 @@ function ManagerCashflowWidget({
                 onClick={(e) => {
                   e.stopPropagation();
                   // navigate("/managerTransactions");
-                  setCurrentWindow("TRANSACTIONS");
+                  //setCurrentWindow("TRANSACTIONS");
+                  navigate("/paymentProcessing", { state: { currentWindow: "TRANSACTIONS" } });
                 }}
               >
                 Transactions

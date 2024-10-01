@@ -20,9 +20,11 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  TextField,
   Container,
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
+import { DataGrid, } from "@mui/x-data-grid";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 // import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 // import HomeWorkIcon from "@mui/icons-material/HomeWork";
@@ -52,6 +54,7 @@ import MakePayment from "./MakePayment";
 import VerifyPayments from "../Payments/VerifyPayments";
 import AddRevenue from "./AddRevenue";
 import AddExpense from "./AddExpense";
+import ManagerSelectPayment from "./ManagerSelectPayment";
 
 import axios from "axios";
 
@@ -97,6 +100,7 @@ const PaymentProcessing = () => {
     // const [currentWindow, setCurrentWindow] = useState(location.state?.currentWindow || "VERIFY_PAYMENTS");    
 
     const [selectedPayment, setSelectedPayment] = useState(null);
+    const [selectedPurGroup, setSelectedPurGroup] = useState(null);
     
     // const [selectedProperty, setSelectedProperty] = useState("ALL");
 
@@ -107,7 +111,7 @@ const PaymentProcessing = () => {
           const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowTransactions/${userProfileId}/new`);
           console.log("Manager Cashflow Data: ", cashflow.data);
           setShowSpinner(false);
-          return cashflow.data;
+          return cashflow.data?.result;
         } catch (error) {
           console.error("Error fetching cashflow data:", error);
           setShowSpinner(false);
@@ -117,8 +121,13 @@ const PaymentProcessing = () => {
     const refreshCashflowData = () => {
         fetchCashflowTransactions(profileId)
           .then((data) => {
-            
-            setCashflowTransactionsData(data);        
+            const dataWithIndex = data?.map((item, index) => (
+              {
+                ...item,
+                'index': index,
+              }
+            ))
+            setCashflowTransactionsData(dataWithIndex);         
           })
           .catch((error) => {
             console.error("Error fetching cashflow transactions data:", error);
@@ -128,8 +137,13 @@ const PaymentProcessing = () => {
     useEffect(() => {
         fetchCashflowTransactions(profileId)
         .then((data) => {        
-        setCashflowTransactionsData(data);
-        // setCashflowData(data);        
+          const dataWithIndex = data?.map((item, index) => (
+            {
+              ...item,
+              'index': index,
+            }
+          ))
+          setCashflowTransactionsData(dataWithIndex);        
         })
         .catch((error) => {
         console.error("Error fetching cashflow data:", error);
@@ -157,12 +171,14 @@ const PaymentProcessing = () => {
                     transactionsData={cashflowTransactionsData}
                     setSelectedPayment={setSelectedPayment}
                     setCurrentWindow={setCurrentWindow}
+                    setSelectedPurGroup={setSelectedPurGroup}
                     selectedProperty={"ALL"}
                   />
                 )}
                 {currentWindow === "PAY_BILLS" && <PaymentsManager setSelectedPayment={setSelectedPayment} setCurrentWindow={setCurrentWindow} page={"paymentProcessing"} />}
                 {currentWindow === "VERIFY_PAYMENTS" && <VerifyPayments />}
-                {currentWindow === "MAKE_PAYMENT" && <MakePayment selectedPayment={selectedPayment} refreshCashflowData={refreshCashflowData} setCurrentWindow={setCurrentWindow} />}                                
+                {currentWindow === "MAKE_PAYMENT" && <MakePayment selectedPayment={selectedPayment} refreshCashflowData={refreshCashflowData} setCurrentWindow={setCurrentWindow} />}  
+                {currentWindow === "SELECT_PAYMENT" && <ManagerSelectPayment selectedPayment={selectedPayment} selectedPurGroup={selectedPurGroup} />}                             
               </Grid>
             </Grid>
           </Container>
