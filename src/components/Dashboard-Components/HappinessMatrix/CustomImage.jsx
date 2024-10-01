@@ -36,7 +36,7 @@ function CustomImage(props) {
 
   return (
     <g onClick={() => handleClick(payload)}>
-      <foreignObject x={cx-10 - diameter / 2} y={cy -10 - diameter / 2} width={diameter} height={diameter}>
+      <foreignObject x={cx- diameter / 2} y={cy - diameter / 2} width={diameter} height={diameter}>
         {![null, undefined, ""].includes(payload?.photo) ? (
           <img
             src={payload.photo}

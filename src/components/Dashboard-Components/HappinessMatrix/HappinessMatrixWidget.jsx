@@ -155,50 +155,43 @@ function HappinessMatrixWidget(props) {
                 onClick={() => setTooltipVisible(!tooltipVisible)}
               >
                 {/* <CartesianGrid /> */}
-
                 <YAxis
-                  type='number'
-                  dataKey='y'
-                  name='Delta Cashflow'
-                  axisLine={false}
-                  tickLine={false}
-                  style={axisLabelStyle}
-                  // domain={[-1.1, 0.1]}
-                  domain={[-100, 0]}
-                  // ticks={[-1.1, -0.5, 0.1]}
-                  // tick={false} 
-                  label={{
-                    value: "Delta Cashflow %", 
-                    angle: -90,  
-                    position: "insideLeft", 
-                    offset: 10,  
-                    fill: "#160449",
-                    fontSize: 14, 
-                    fontWeight: "bold",
-                  }}
-            
-                />
+  type='number'
+  dataKey='x' // Now vacancy percentage is plotted on the Y-axis
+  name='Vacancies'
+  axisLine={false}
+  tickLine={false}
+  style={axisLabelStyle}
+  domain={[-100, 0]} // Adjust this if necessary for vacancy percentage
+  label={{
+    value: "Vacancy %",
+    angle: -90,
+    position: "insideLeft",
+    offset: 10,
+    fill: "#160449",
+    fontSize: 14,
+    fontWeight: "bold",
+  }}
+/>
 
-                <XAxis
-                  type='number'
-                  dataKey='x'
-                  name='Vacancies'
-                  axisLine={false}
-                  tickLine={false}
-                  style={axisLabelStyle}
-                  domain={[-100, 0]}
-                  // tick={false} 
-                  label={{
-                    value: "Vacancy %",
-                    position: "insideBottom",
-                    offset: -5,
-                    fill: "#160449",
-                    fontSize: 14,
-                    fontWeight: "bold",
-                  }}
-                  // ticks={[-100, -50, 0]} // Add this line
-                  // tick={false}
-                />
+<XAxis
+  type='number'
+  dataKey='y' // Now cashflow percentage is plotted on the X-axis
+  name='Delta Cashflow'
+  axisLine={false}
+  tickLine={false}
+  style={axisLabelStyle}
+  domain={[-100, 0]} // Adjust this if necessary for cashflow percentage
+  label={{
+    value: "Delta Cashflow %",
+    position: "insideBottom",
+    offset: -5,
+    fill: "#160449",
+    fontSize: 14,
+    fontWeight: "bold",
+  }}
+/>
+
 
                 <Tooltip
                   cursor={{ strokeDasharray: "3 3" }}
