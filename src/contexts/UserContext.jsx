@@ -236,9 +236,9 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     const role = roleName();
     if (role === "Manager") {
       sessionStorage.removeItem("isrent");
-      return "/propertiesPM";
+      return "/properties";
     } else if (role === "Owner") {
-      return "/propertiesPM";
+      return "/properties";
     }
   };
 

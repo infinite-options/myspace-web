@@ -572,8 +572,16 @@ export default function ManagerCashflow() {
         return monthOrder.indexOf(a[0]) - monthOrder.indexOf(b[0]);  // sort base on months
       });
 
-      const sortedPayoutsByProperty = Object.fromEntries(sortedPayoutsArray);
-      setPayoutsCurrentYear(sortedPayoutsByProperty);
+      const sortedPayoutsByProperty = sortedPayoutsArray.map(([month, monthData]) => {
+        const sortedProperties = Object.entries(monthData.properties)
+          .sort(([uidA], [uidB]) => uidA.localeCompare(uidB));  // Sort by property_uid
+        return [month, {
+          ...monthData,
+          properties: Object.fromEntries(sortedProperties), 
+        }];
+      });
+      setPayoutsCurrentYear(Object.fromEntries(sortedPayoutsByProperty));
+
 
 
       const rentArray = Object.entries(unsortedRentsDataCurrentYear);
@@ -581,8 +589,16 @@ export default function ManagerCashflow() {
         return monthOrder.indexOf(a[0]) - monthOrder.indexOf(b[0]);  // a[0] and b[0] represent propertyUID keys
       });
 
-      const sortedRentData = Object.fromEntries(sortedRentArray);
-      setRentsByPropertyCurrentYear(sortedRentData)
+      const sortedRentData = sortedRentArray.map(([month, monthData]) => {
+        const sortedProperties = Object.entries(monthData.properties)
+          .sort(([uidA], [uidB]) => uidA.localeCompare(uidB));  // Sort by property_uid
+        return [month, {
+          ...monthData,
+          properties: Object.fromEntries(sortedProperties),  
+        }];
+      });
+      setRentsByPropertyCurrentYear(Object.fromEntries(sortedRentData))
+
 
       const profitDataByProperty = calculateProfitsByMonth(unsortedRentsDataCurrentYear, unsortedPayoutsCurrentYear);
 
@@ -590,11 +606,16 @@ export default function ManagerCashflow() {
       const sortedProfitarray = profitArray.sort((a, b) => {
         return monthOrder.indexOf(a[0]) - monthOrder.indexOf(b[0]);  // sort base on months
       });
-
-      const sortedProfitData = Object.fromEntries(sortedProfitarray);
-      setProfitsCurrentYear(sortedProfitData);
-
-      // console.log(" profits data current year---- ", profitDataByProperty)
+      
+      const sortedProfitData = sortedProfitarray.map(([month, monthData]) => {
+        const sortedProperties = Object.entries(monthData.properties)
+          .sort(([uidA], [uidB]) => uidA.localeCompare(uidB));  // Sort by property_uid
+        return [month, {
+          ...monthData,
+          properties: Object.fromEntries(sortedProperties),  
+        }];
+      });
+      setProfitsCurrentYear(Object.fromEntries(sortedProfitData));
 
       const totalProfits = Object.values(profitDataByProperty).reduce(
         (acc, property) => {
@@ -604,8 +625,6 @@ export default function ManagerCashflow() {
         },
         { totalExpectedProfit: 0, totalActualProfit: 0 }
       );
-
-      // console.log("profit current year - ", totalProfits)
 
       setProfitsTotalCurrentYear(totalProfits);
     }

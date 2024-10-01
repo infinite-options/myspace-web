@@ -498,9 +498,9 @@ function EditProperty(props) {
 	const navigateBackToDashboard = () => {
 		if (isDesktop) {
 			props.setRHS('PropertyNavigator');
-			navigate('/propertiesPM', { state: { index, propertyList } });
+			navigate('/properties', { state: { index, propertyList } });
 		} else {
-			navigate('/propertiesPM', {
+			navigate('/properties', {
 				// state: { index, propertyList, allRentStatus, isDesktop, rawPropertyData },
 				state: { index, propertyList, allRentStatus, isDesktop, propertyList },
 			});

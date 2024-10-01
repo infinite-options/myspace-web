@@ -123,10 +123,17 @@ const fetchContracts = async () => {
     if (!dataLoaded) {
            
       
-      fetchProperties();
-      fetchRentStatus();
-      fetchContracts();
-      setDataLoaded(true); 
+      // fetchProperties();
+      // fetchRentStatus();
+      // fetchContracts();
+      // setDataLoaded(true); 
+      Promise.all([fetchProperties(), fetchRentStatus(), fetchContracts()])
+      .then(() => {
+        setDataLoaded(true);
+      })
+      .catch(error => {
+        console.error("Error during data fetching:", error);
+      });
       
     }
   }, [dataLoaded]);

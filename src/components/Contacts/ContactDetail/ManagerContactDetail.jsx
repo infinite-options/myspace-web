@@ -31,7 +31,6 @@ import User_fill from "../../../images/User_fill_dark.png";
 import { maskSSN, maskEIN, formattedPhoneNumber } from "../../utils/privacyMasking";
 
 
-
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import dayjs from "dayjs";
 
@@ -42,13 +41,15 @@ import APIConfig from "../../../utils/APIConfig";
 import ProfileInformation from "../ContactDetail/ProfileInformation";
 import PaymentsInformation from "./PaymentsInformation";
 import PropertiesInformation from "./PropertiesInformation";
+import refundIcon from "../../Property/refundIcon.png"
 
 
 
-const ManagerContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
+const ManagerContactDetail = ({ data, currentIndex, setCurrentIndex, propertyIndex, fromPage }) => {
 
     const { selectedRole, getProfileId } = useUser();  
     const [ contactDetails, setContactDetails ] = useState([]);
+    let navigate = useNavigate();
   
     useEffect(() => {
       setContactDetails(data);
@@ -62,6 +63,24 @@ const ManagerContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
     return (
       <Grid container sx={{backgroundColor: theme.palette.primary.main,  borderRadius: '10px', padding: '10px'}}>                
           <Grid item xs={12} container justifyContent="center" sx={{ height: '50px',  }}>
+              <Button
+                sx={{
+                  textTransform: "none",
+                  color: theme.typography.common.blue,
+                  fontWeight: theme.typography.common.fontWeight,
+                  fontSize: "16px",
+                  "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
+                }}
+                onClick={() => {
+                  if(fromPage && propertyIndex >= 0){
+                    navigate("/properties", { state: { index : propertyIndex } });
+                  }else{
+                    navigate(-1)
+                  }
+                }}
+              >
+                <img src={refundIcon} style={{ width: "25px", height: "25px", margin: "5px" }} />
+              </Button>
               <Typography sx={{fontSize: '35px', fontWeight: 'bold', color: '#160449' }}>
                   Manager Contact
               </Typography>
@@ -179,7 +198,7 @@ const ManagerContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
                         contactDetails && typeof currentIndex === 'number' && currentIndex >=0 ? (
                           <PropertiesInformation                           
                             ownerUID={contactDetails[currentIndex]?.contact_uid}                       
-
+                            fromPage={"Manager"}
                             owner={contactDetails[currentIndex]}
                           />
                         ) :

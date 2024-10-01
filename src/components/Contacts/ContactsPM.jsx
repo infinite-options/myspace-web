@@ -17,6 +17,7 @@ const ContactsPM = () => {
   const [contactsTab, setContactsTab] = useState(location.state?.contactsTab);
   const [contactsData, setContactsData] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  // const [propertyIndex, setPropertyIndex] = useState(location?.state?.index);
   const [managerId, setManagerId] = useState(null);
 
   const fetchData = async () => {
@@ -128,6 +129,8 @@ const ContactsPM = () => {
         return (
           <ManagerContactDetail
             data={contactsData?.managers}
+            fromPage={location?.state?.fromPage}
+            propertyIndex={location?.state?.index}
             currentIndex={currentIndex}
             setCurrentIndex={setCurrentIndex}
           />

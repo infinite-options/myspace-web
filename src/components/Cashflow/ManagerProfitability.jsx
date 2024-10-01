@@ -45,6 +45,8 @@ import { useUser } from "../../contexts/UserContext"; // Import the UserContext
 // import EditIcon from "@mui/icons-material/Edit";
 // import CircularProgress from "@mui/material/CircularProgress";
 import "../../css/selectMonth.css";
+import { isGridCellRoot } from "@mui/x-data-grid/utils/domUtils";
+import VerificationStatus from "../PM_Emp_Dashboard/Waiting_Page";
 
 const ManagerProfitability = ({
   propsMonth,
@@ -79,147 +81,228 @@ const ManagerProfitability = ({
     setTab(tab_name);
   };
 
-  const pastTwelveMonths = [
-    {
-      month: "January",
-      year: "2023",
-      expected_profit: 2000,
-      profit: 1800,
-      expected_rent: 5000,
-      rent: 4800,
-      expected_payouts: 3000,
-      payouts: 3000,
-      monthYear: "Jan 23",
-    },
-    {
-      month: "February",
-      year: "2023",
-      expected_profit: 1500,
-      profit: 1400,
-      expected_rent: 4500,
-      rent: 4300,
-      expected_payouts: 3000,
-      payouts: 2900,
-      monthYear: "Feb 23",
-    },
-    {
-      month: "March",
-      year: "2023",
-      expected_profit: 2200,
-      profit: 2100,
-      expected_rent: 5200,
-      rent: 5100,
-      expected_payouts: 3000,
-      payouts: 3000,
-      monthYear: "Mar 23",
-    },
-    {
-      month: "April",
-      year: "2023",
-      expected_profit: 2400,
-      profit: 2300,
-      expected_rent: 5500,
-      rent: 5300,
-      expected_payouts: 3100,
-      payouts: 3000,
-      monthYear: "Apr 23",
-    },
-    {
-      month: "May",
-      year: "2023",
-      expected_profit: 1800,
-      profit: 1600,
-      expected_rent: 5000,
-      rent: 4700,
-      expected_payouts: 3200,
-      payouts: 3100,
-      monthYear: "May 23",
-    },
-    {
-      month: "June",
-      year: "2023",
-      expected_profit: 1900,
-      profit: 1800,
-      expected_rent: 5100,
-      rent: 4900,
-      expected_payouts: 3200,
-      payouts: 3100,
-      monthYear: "Jun 23",
-    },
-    {
-      month: "July",
-      year: "2023",
-      expected_profit: 2100,
-      profit: 2000,
-      expected_rent: 5300,
-      rent: 5100,
-      expected_payouts: 3200,
-      payouts: 3100,
-      monthYear: "Jul 23",
-    },
-    {
-      month: "August",
-      year: "2023",
-      expected_profit: 2300,
-      profit: 2200,
-      expected_rent: 5400,
-      rent: 5200,
-      expected_payouts: 3200,
-      payouts: 3000,
-      monthYear: "Aug 23",
-    },
-    {
-      month: "September",
-      year: "2023",
-      expected_profit: 1700,
-      profit: 1600,
-      expected_rent: 5000,
-      rent: 4700,
-      expected_payouts: 3300,
-      payouts: 3100,
-      monthYear: "Sep 23",
-    },
-    {
-      month: "October",
-      year: "2023",
-      expected_profit: 2500,
-      profit: 2400,
-      expected_rent: 5600,
-      rent: 5400,
-      expected_payouts: 3100,
-      payouts: 3000,
-      monthYear: "Oct 23",
-    },
-    {
-      month: "November",
-      year: "2023",
-      expected_profit: 2000,
-      profit: 1900,
-      expected_rent: 5100,
-      rent: 4900,
-      expected_payouts: 3100,
-      payouts: 3000,
-      monthYear: "Nov 23",
-    },
-    {
-      month: "December",
-      year: "2023",
-      expected_profit: 2200,
-      profit: 2100,
-      expected_rent: 5200,
-      rent: 5100,
-      expected_payouts: 3000,
-      payouts: 3000,
-      monthYear: "Dec 23",
-    },
-  ];
+  // const pastTwelveMonths = [
+  //   {
+  //     month: "January",
+  //     year: "2023",
+  //     expected_profit: 2000,
+  //     profit: 1800,
+  //     expected_rent: 5000,
+  //     rent: 4800,
+  //     expected_payouts: 3000,
+  //     payouts: 3000,
+  //     monthYear: "Jan 23",
+  //   },
+  //   {
+  //     month: "February",
+  //     year: "2023",
+  //     expected_profit: 1500,
+  //     profit: 1400,
+  //     expected_rent: 4500,
+  //     rent: 4300,
+  //     expected_payouts: 3000,
+  //     payouts: 2900,
+  //     monthYear: "Feb 23",
+  //   },
+  //   {
+  //     month: "March",
+  //     year: "2023",
+  //     expected_profit: 2200,
+  //     profit: 2100,
+  //     expected_rent: 5200,
+  //     rent: 5100,
+  //     expected_payouts: 3000,
+  //     payouts: 3000,
+  //     monthYear: "Mar 23",
+  //   },
+  //   {
+  //     month: "April",
+  //     year: "2023",
+  //     expected_profit: 2400,
+  //     profit: 2300,
+  //     expected_rent: 5500,
+  //     rent: 5300,
+  //     expected_payouts: 3100,
+  //     payouts: 3000,
+  //     monthYear: "Apr 23",
+  //   },
+  //   {
+  //     month: "May",
+  //     year: "2023",
+  //     expected_profit: 1800,
+  //     profit: 1600,
+  //     expected_rent: 5000,
+  //     rent: 4700,
+  //     expected_payouts: 3200,
+  //     payouts: 3100,
+  //     monthYear: "May 23",
+  //   },
+  //   {
+  //     month: "June",
+  //     year: "2023",
+  //     expected_profit: 1900,
+  //     profit: 1800,
+  //     expected_rent: 5100,
+  //     rent: 4900,
+  //     expected_payouts: 3200,
+  //     payouts: 3100,
+  //     monthYear: "Jun 23",
+  //   },
+  //   {
+  //     month: "July",
+  //     year: "2023",
+  //     expected_profit: 2100,
+  //     profit: 2000,
+  //     expected_rent: 5300,
+  //     rent: 5100,
+  //     expected_payouts: 3200,
+  //     payouts: 3100,
+  //     monthYear: "Jul 23",
+  //   },
+  //   {
+  //     month: "August",
+  //     year: "2023",
+  //     expected_profit: 2300,
+  //     profit: 2200,
+  //     expected_rent: 5400,
+  //     rent: 5200,
+  //     expected_payouts: 3200,
+  //     payouts: 3000,
+  //     monthYear: "Aug 23",
+  //   },
+  //   {
+  //     month: "September",
+  //     year: "2023",
+  //     expected_profit: 1700,
+  //     profit: 1600,
+  //     expected_rent: 5000,
+  //     rent: 4700,
+  //     expected_payouts: 3300,
+  //     payouts: 3100,
+  //     monthYear: "Sep 23",
+  //   },
+  //   {
+  //     month: "October",
+  //     year: "2023",
+  //     expected_profit: 2500,
+  //     profit: 2400,
+  //     expected_rent: 5600,
+  //     rent: 5400,
+  //     expected_payouts: 3100,
+  //     payouts: 3000,
+  //     monthYear: "Oct 23",
+  //   },
+  //   {
+  //     month: "November",
+  //     year: "2023",
+  //     expected_profit: 2000,
+  //     profit: 1900,
+  //     expected_rent: 5100,
+  //     rent: 4900,
+  //     expected_payouts: 3100,
+  //     payouts: 3000,
+  //     monthYear: "Nov 23",
+  //   },
+  //   {
+  //     month: "December",
+  //     year: "2023",
+  //     expected_profit: 2200,
+  //     profit: 2100,
+  //     expected_rent: 5200,
+  //     rent: 5100,
+  //     expected_payouts: 3000,
+  //     payouts: 3000,
+  //     monthYear: "Dec 23",
+  //   },
+  // ];
 
   const month = propsMonth || "July"; //fix
   const year = propsYear || "2024";
 
   const handleViewPropertyClick = (e, property_uid) => {
     e.stopPropagation();
-    navigate("/propertiesPM", { state: { currentProperty: property_uid } });
+    navigate("/properties", { state: { currentProperty: property_uid } });
+  };
+
+  const getVerificationForManagerPayment = (pur) => {
+    const actual = pur.actual ? parseFloat(pur.actual) : 0;
+    let expected = pur.expected ? parseFloat(pur.expected) : 0;
+    if (expected < 0) {
+      expected *= -1;
+    }
+
+    if (actual < expected) {
+      return "manager";
+    } else if (actual > expected) {
+      return "investigate";
+    } else if (actual === expected) {
+      return "-";
+    }
+  };
+
+  const getVerificationForOwnerPayment = (pur) => {
+    const actual = pur.actual ? parseFloat(pur.actual) : 0;
+    const expected = pur.expected ? parseFloat(pur.expected) : 0;
+    if (actual < expected) {
+      return "owner";
+    } else if (actual > expected) {
+      return "investigate";
+    } else if (actual === expected) {
+      return "-";
+    }
+  };
+
+  const getVerificationForTenantPayment = (pur) => {
+    const actual = pur.actual ? parseFloat(pur.actual) : 0;
+    const expected = pur.expected ? parseFloat(pur.expected) : 0;
+    if (actual < expected) {
+      return "tenant";
+    } else if (actual > expected) {
+      return "investigate";
+    } else if (actual === expected) {
+      if (pur.verified) {
+        if (pur.verified === "verified") {
+          return "verified";
+        }
+      }
+      return "not verified";
+    }
+  };
+
+  const getVerificationStatus = (purchase) => {
+    // console.log("getVerificationStatus - purchase - ", purchase);
+    if (purchase.pur_payer?.startsWith("600")) {
+      return getVerificationForManagerPayment(purchase);
+    } else if (purchase.pur_payer?.startsWith("110")) {
+      return getVerificationForOwnerPayment(purchase);
+    } else if (purchase.pur_payer?.startsWith("350")) {
+      return getVerificationForTenantPayment(purchase);
+    } else {
+      return "invalid payer";
+    }
+  };
+
+  const getVerificationStatusColor = (status) => {
+    switch (status) {
+      case "owner":
+        return "#0000CC";
+        break;
+      case "manager":
+        return "#0000CC";
+        break;
+      case "tenant":
+        return "#FF0000";
+        break;
+      case "verified":
+        return "#43A843";
+        break;
+      case "not verified":
+        return "#FF8000";
+        break;
+      default:
+        return "#000000";
+        break;
+    }
   };
 
   const transactionCoulmn = [
@@ -230,12 +313,32 @@ const ManagerProfitability = ({
       renderCell: (params) => <span>{params.row.purchase_type !== null ? params.row.purchase_type : "-"}</span>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
+    // {
+    //   field: "purchase_ids",
+    //   headerName: "Purchase Ids",
+    //   flex: 2,
+    //   renderCell: (params) => (
+    //     <Tooltip title={params.row.purchase_ids !== null ? JSON.parse(params.row.purchase_ids).join(", ") : "-"}>
+    //       <Typography
+    //         sx={{
+    //           whiteSpace: "nowrap",
+    //           overflow: "hidden",
+    //           textOverflow: "ellipsis",
+    //           maxWidth: "100%",
+    //         }}
+    //       >
+    //         {params.row.purchase_ids !== null ? JSON.parse(params.row.purchase_ids).join(", ") : "-"}
+    //       </Typography>
+    //     </Tooltip>
+    //   ),
+    //   renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    // },
     {
-      field: "purchase_ids",
-      headerName: "Purchase Ids",
-      flex: 2,
+      field: "pur_group",
+      headerName: "Purchase Group",
+      flex: 1.5,
       renderCell: (params) => (
-        <Tooltip title={params.row.purchase_ids !== null ? JSON.parse(params.row.purchase_ids).join(", ") : "-"}>
+        <Tooltip title={params.row.pur_group !== null ? params.row.pur_group : "-"}>
           <Typography
             sx={{
               whiteSpace: "nowrap",
@@ -244,7 +347,7 @@ const ManagerProfitability = ({
               maxWidth: "100%",
             }}
           >
-            {params.row.purchase_ids !== null ? JSON.parse(params.row.purchase_ids).join(", ") : "-"}
+            {params.row.pur_group !== null ? params.row.pur_group : "-"}
           </Typography>
         </Tooltip>
       ),
@@ -294,20 +397,26 @@ const ManagerProfitability = ({
       field: "verified",
       headerName: "Verified",
       flex: 1.5,
-      renderCell: (params) => (
-        <Tooltip title={params.row.verified !== null ? params.row.verified : "-"}>
-          <Typography
-            sx={{
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              maxWidth: "100%",
-            }}
-          >
-            {params.row.verified !== null ? params.row.verified : "-"}
-          </Typography>
-        </Tooltip>
-      ),
+      renderCell: (params) => {
+        const verificationStatus = getVerificationStatus(params.row);
+        const fontColor = getVerificationStatusColor(verificationStatus);
+        return (
+          <Tooltip title={params.row.verified !== null ? params.row.verified : "-"}>
+            <Typography
+              sx={{
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxWidth: "100%",
+                color: fontColor,
+              }}
+            >
+              {/* {params.row.verified !== null ? params.row.verified : "-"} */}
+              {verificationStatus}
+            </Typography>
+          </Tooltip>
+        );
+      },
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
@@ -497,7 +606,7 @@ const ManagerProfitability = ({
                   {profits &&
                     Object.keys(profits)?.map((propertyUID, index) => {
                       const property = profits[propertyUID];
-                      // console.log("property - ", property);
+                      console.log("property - ", property);
                       return (
                         <>
                           <Accordion
@@ -512,8 +621,11 @@ const ManagerProfitability = ({
                                 <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                     <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                      {`${property?.propertyInfo?.property_address},`} {property?.propertyInfo?.property_unit && "Unit - "}
+                                      {`${property?.propertyInfo?.property_address}`} {property?.propertyInfo?.property_unit && ", Unit - "}
                                       {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
+                                    </Typography>
+                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, marginLeft: 10 }}>
+                                      {`${property?.propertyInfo?.property_id}`}
                                     </Typography>
                                     <Button
                                       sx={{
@@ -629,6 +741,9 @@ const ManagerProfitability = ({
                                       {`${property?.propertyInfo?.property_address},`} {property?.propertyInfo?.property_unit && "Unit - "}
                                       {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
                                     </Typography>
+                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, marginLeft: 10 }}>
+                                      {`${property?.propertyInfo?.property_id}`}
+                                    </Typography>
                                   </AccordionSummary>
                                 </Grid>
                               </Grid>
@@ -721,6 +836,9 @@ const ManagerProfitability = ({
                                     <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
                                       {`${property?.propertyInfo?.property_address},`} {property?.propertyInfo?.property_unit && "Unit - "}
                                       {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
+                                    </Typography>
+                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, marginLeft: 10 }}>
+                                      {`${property?.propertyInfo?.property_id}`}
                                     </Typography>
                                   </AccordionSummary>
                                 </Grid>
@@ -854,6 +972,9 @@ const ManagerProfitability = ({
                                             <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
                                               {`${property?.propertyInfo?.property_address}, `}
                                               {property?.propertyInfo?.property_unit && `Unit - ${property?.propertyInfo?.property_unit}`}
+                                            </Typography>
+                                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, marginLeft: 10 }}>
+                                              {`${property?.propertyInfo?.property_id}`}
                                             </Typography>
                                             <Button
                                               sx={{
@@ -1001,6 +1122,9 @@ const ManagerProfitability = ({
                                               {`${property?.propertyInfo?.property_address}, `}
                                               {property?.propertyInfo?.property_unit && `Unit - ${property?.propertyInfo?.property_unit}`}
                                             </Typography>
+                                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, marginLeft: 10 }}>
+                                              {`${property?.propertyInfo?.property_id}`}
+                                            </Typography>
                                             <Button
                                               sx={{
                                                 padding: "0px",
@@ -1146,6 +1270,9 @@ const ManagerProfitability = ({
                                             <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
                                               {`${property?.propertyInfo?.property_address}, `}
                                               {property?.propertyInfo?.property_unit && `Unit - ${property?.propertyInfo?.property_unit}`}
+                                            </Typography>
+                                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, marginLeft: 10 }}>
+                                              {`${property?.propertyInfo?.property_id}`}
                                             </Typography>
                                             <Button
                                               sx={{

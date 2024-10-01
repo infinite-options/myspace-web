@@ -327,7 +327,7 @@ export default function PropertyNavigator({
       setSentContractCount(sentContractCount);
 
       const rentDetails = getRentStatus();
-      // console.log("rentDetails - ", rentDetails);
+      console.log("rentDetails - ", rentDetails);
       setpropertyRentStatus(rentDetails);
 
       if (property.leaseFees !== null) {
@@ -462,7 +462,7 @@ export default function PropertyNavigator({
 
   const getRentStatus = () => {
     try {
-      const rentStatus = allRentStatus.filter((data) => data.property_uid == currentId && data.rent_status != "VACANT");
+      const rentStatus = allRentStatus.filter((data) => data.property_uid == currentId && data?.rent_status != "VACANT");
       const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
       const formatData = (data) => {
         return data.map((item, index) => {
@@ -531,8 +531,12 @@ export default function PropertyNavigator({
       headerName: "Date Paid",
       sortable: isDesktop,
       // flex: 1,
+      // renderCell: (params) => {
+      //   return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value.split(" ")[0]}</Box>;
+      // },
       renderCell: (params) => {
-        return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value.split(" ")[0]}</Box>;
+        const value = params.value || "-";
+        return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{value.split(" ")[0]}</Box>;
       },
     },
     {
@@ -1387,7 +1391,7 @@ export default function PropertyNavigator({
                   <Grid item xs={12} md={3.5}>
                     <Grid container spacing={2}>
                       <Grid item xs={12}>
-                        {property && property.property_available_to_rent === 1 && (property.lease_status == null || property.lease_status !== "ACTIVE") && (
+                        {property && property?.property_available_to_rent === 1 && (property.lease_status == null || property.lease_status !== "ACTIVE") && (
                           // padding extra on the bottom
                           <Box sx={{ pb: 5 }}>
                             <Box
@@ -1422,7 +1426,7 @@ export default function PropertyNavigator({
                           </Box>
                         )}
                         {property &&
-                          (property.property_available_to_rent === 0 || property.property_available_to_rent == null) &&
+                          (property?.property_available_to_rent === 0 || property?.property_available_to_rent == null) &&
                           (property.business_uid == null || property.business_uid == "") && (
                             <Box sx={{ pb: 5 }}>
                               <Box
@@ -1457,7 +1461,7 @@ export default function PropertyNavigator({
                             </Box>
                           )}
                         {property &&
-                          (property.property_available_to_rent === 0 || property.property_available_to_rent == null) &&
+                          (property?.property_available_to_rent === 0 || property?.property_available_to_rent == null) &&
                           property.business_uid != null &&
                           property.business_uid !== "" && (
                             <Box sx={{ pb: 5 }}>
@@ -1535,7 +1539,7 @@ export default function PropertyNavigator({
                               flexWrap: "wrap",
                               alignContent: "center",
                               justifyContent: "center",
-                              backgroundColor: getPaymentStatusColor(property.rent_status, property),
+                              backgroundColor: getPaymentStatusColor(property?.rent_status, property),
                               borderRadius: "5px",
                               textTransform: "none",
                               minWidth: "150px",
@@ -1554,7 +1558,7 @@ export default function PropertyNavigator({
                                 marginLeft: "1%", // Adjusting margin for icon and text
                               }}
                             >
-                              {getPaymentStatus(property.rent_status, property)}
+                              {getPaymentStatus(property?.rent_status, property)}
                             </Typography>
                           </Box>
                         </Box>
@@ -1596,7 +1600,7 @@ export default function PropertyNavigator({
                           </Button>
                         </Box>
                       </Grid>
-                      {selectedRole === "MANAGER" && property && property.property_available_to_rent !== 1 && (
+                      {selectedRole === "MANAGER" && property && property?.property_available_to_rent !== 1 && (
                         <Grid item xs={12}>
                           <Button
                             variant='outlined'
@@ -1626,7 +1630,7 @@ export default function PropertyNavigator({
                           </Button>
                         </Grid>
                       )}
-                      {selectedRole === "MANAGER" && property && property.property_available_to_rent === 1 && (
+                      {selectedRole === "MANAGER" && property && property?.property_available_to_rent === 1 && (
                         <Grid item xs={12}>
                           <Button
                             variant='outlined'
@@ -2031,6 +2035,7 @@ export default function PropertyNavigator({
                 handleViewPMQuotesRequested={handleViewPMQuotesRequested}
                 newContractCount={newContractCount}
                 sentContractCount={sentContractCount}
+                currentIndex={currentIndex}
                 handleOpenMaintenancePage={handleOpenMaintenancePage}
               />
               {/* <Card sx={{ backgroundColor: color, height: "100%" }}>

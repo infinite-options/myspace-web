@@ -412,7 +412,7 @@ export default function AddProperty({}) {
     setShowSpinner(false);
     if (selectedRole === "OWNER") {
       // navigate("/properties", { state: { isBack: true } }); - PM CHanged
-      navigate("/propertiesPM", { state: { isBack: true } });
+      navigate("/properties", { state: { isBack: true } });
     }
   };
 

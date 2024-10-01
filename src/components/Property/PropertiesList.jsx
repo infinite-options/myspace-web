@@ -47,9 +47,9 @@ const paymentStatusMap = {
 
 export function getPaymentStatusColor(paymentStatus, property) {
   // console.log("214 - property - ", property);
-  if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property.property_available_to_rent && property.property_available_to_rent === 1)) {
+  if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property?.property_available_to_rent && property?.property_available_to_rent === 1)) {
     return paymentStatusColorMap["Vacant"];
-  } else if((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property.property_available_to_rent == null || property.property_available_to_rent === 0)){
+  } else if((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property?.property_available_to_rent == null || property?.property_available_to_rent === 0)){
     return paymentStatusColorMap["Not Listed"];
   } else {
     const status = paymentStatusMap[paymentStatus];
@@ -58,9 +58,9 @@ export function getPaymentStatusColor(paymentStatus, property) {
 }
 
 export function getPaymentStatus(paymentStatus, property) {    
-  if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property.property_available_to_rent && property.property_available_to_rent === 1)) {
+  if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property?.property_available_to_rent && property?.property_available_to_rent === 1)) {
     return paymentStatusMap["VACANT"];
-  } else if((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property.property_available_to_rent == null || property.property_available_to_rent === 0)){
+  } else if((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property?.property_available_to_rent == null || property?.property_available_to_rent === 0)){
     return paymentStatusMap["NOT LISTED"];
   } else {
     const status = paymentStatusMap[paymentStatus];
@@ -561,57 +561,57 @@ export default function PropertiesList(props) {
                   <PropertiesSearch propertyList={propertyList} setFilteredItems={setDisplayedItems} sx={{ width: "100%" }} />
     
                   <Box sx={{ marginTop: "20px" }}>
-                    <DataGrid
-                      getRowHeight={() => "auto"}
-                      // getRowId={(row) => row.property_uid}
-                      rows={rows}
-                      columns={columns}
-                      autoHeight
-                      pageSizeOptions={[15]}
-                      initialState={{
-                        pagination: {
-                          paginationModel: {
-                            pageSize: 15,
-                          },
-                        },
-                      }}
-                      onRowClick={onPropertyClick}
-                      rowSelectionModel={[propertyIndex]}
-                  // onRowSelectionModelChange={(newSelection) => {
-                  //   if (newSelection.length > 0) {
-                  //     setPropertyIndex(newSelection[0]);
-                  //   }
-                  // }}
-                      getRowSpacing={getRowSpacing}
-                      sx={{
-                        "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
-                        "& .MuiDataGrid-row:hover": {
-                          cursor: "pointer",
-                        },
-                        "& .MuiDataGrid-cell": {
-                          padding: "0px",
-                          margin: "0px",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        },
-                        "& .MuiDataGrid-row.Mui-selected": {
-                          backgroundColor: "#ffffff !important",
-                        },
-                        [`& .${gridClasses.row}`]: {
-                          bgcolor: (row) => row.id === propertyIndex ? "#ffffff" : theme.palette.form.main, // White for selected row,
-                          "&:before": {
-                            content: '""',
-                            display: "block",
-                            height: "100%",
-                            backgroundColor: "#ffffff",
-                            position: "absolute",
-                            left: "0",
-                            right: "0",
-                            zIndex: "-1",
-                          }
-                        },
-                      }}
-                    />
+                  <DataGrid
+  getRowHeight={() => "auto"}
+  rows={rows}
+  columns={columns}
+  autoHeight
+  pageSizeOptions={[15]}
+  initialState={{
+    pagination: {
+      paginationModel: {
+        pageSize: 15,
+      },
+    },
+  }}
+  onRowClick={onPropertyClick}
+  rowSelectionModel={[propertyIndex]}
+  getRowSpacing={getRowSpacing}
+  hideHeader={true} // This hides the headers
+  sx={{
+    "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
+    "& .MuiDataGrid-row:hover": {
+      cursor: "pointer",
+    },
+    "& .MuiDataGrid-cell": {
+      padding: "0px",
+      margin: "0px",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    "& .MuiDataGrid-row.Mui-selected": {
+      backgroundColor: "#ffffff !important",
+    },
+    [`& .${gridClasses.row}`]: {
+      bgcolor: (row) =>
+        row.id === propertyIndex ? "#ffffff" : theme.palette.form.main, // White for selected row
+      "&:before": {
+        content: '""',
+        display: "block",
+        height: "100%",
+        backgroundColor: "#ffffff",
+        position: "absolute",
+        left: "0",
+        right: "0",
+        zIndex: "-1",
+      },
+    },
+    "& .MuiDataGrid-columnHeaders": {
+      display: "none", // This ensures headers are hidden
+    },
+  }}
+/>
+
                   </Box>
                 </>
               )}

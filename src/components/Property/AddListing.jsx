@@ -337,11 +337,11 @@ export default function AddListing(props) {
       if (confirmSave) {
         saveChanges(true);
       } else {
-        navigate("/propertiesPM", { state: { isBack: true } });
+        navigate("/properties", { state: { isBack: true } });
         onBackClick();
       }
     } else {
-      navigate("/propertiesPM", { state: { isBack: true } });
+      navigate("/properties", { state: { isBack: true } });
       onBackClick();
     }
   };
@@ -534,7 +534,7 @@ export default function AddListing(props) {
       console.log("No changes detected.");
       setChangedSaved(true);
       if (navigateAfterSave) {
-        navigate("/propertiesPM", { state: { isBack: true } });
+        navigate("/properties", { state: { isBack: true } });
       }
     }
   };

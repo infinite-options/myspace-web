@@ -97,7 +97,7 @@ export default function OwnerPropertyRentWidget(props) {
               filter='url(#shadow)'
               // onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
               // onClick={() => navigate("/properties", { state: { showPropertyForm: true } })} - PM Changed
-              onClick={() => navigate("/propertiesPM", { state: { showPropertyForm: true , showRHS: "PropertyNavigator"} })}
+              onClick={() => navigate("/properties", { state: { showPropertyForm: true , showRHS: "PropertyNavigator"} })}
             >
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
@@ -115,7 +115,7 @@ export default function OwnerPropertyRentWidget(props) {
               formatter={renderColorfulLegendText}
               // onClick={() => navigate("/pmRent")}
               // onClick={() => navigate("/properties")} - PM Changed
-              onClick={() => navigate("/propertiesPM")}
+              onClick={() => navigate("/properties")}
               // onClick={() => navigate("/properties", { state: { showRentForm: true } })}
             />
 
@@ -160,7 +160,7 @@ export default function OwnerPropertyRentWidget(props) {
                 fontWeight: "800",
               }}
               // onClick={() => navigate("/properties", { state: { showPropertyForm: true } })} - PM Changed
-              onClick={() => navigate("/propertiesPM", { state: { showPropertyForm: true } })}
+              onClick={() => navigate("/properties", { state: { showPropertyForm: true } })}
             >
               Add your first
               <tspan x={120} y={125}>

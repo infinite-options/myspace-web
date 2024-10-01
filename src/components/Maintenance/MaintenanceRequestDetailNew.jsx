@@ -126,7 +126,7 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
   function handleBackButton() {
     if (fromProperty) {
       if (isDesktop === true) {
-        navigate("/propertiesPM", { state: { index: propertyIndex } });
+        navigate("/properties", { state: { index: propertyIndex } });
       } else {
         navigate(-1);
       }

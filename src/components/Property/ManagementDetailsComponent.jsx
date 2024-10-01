@@ -7,8 +7,8 @@ import theme from '../../theme/theme';
 import FilePreviewDialog from '../Leases/FilePreviewDialog';
 import { useNavigate } from "react-router-dom";
 
-export default function ManagementDetailsComponent({activeContract, currentProperty, selectedRole, handleViewPMQuotesRequested, newContractCount, sentContractCount, handleOpenMaintenancePage}){
-    console.log("---dhyey-- inside new component -", activeContract)
+export default function ManagementDetailsComponent({activeContract, currentProperty, currentIndex, selectedRole, handleViewPMQuotesRequested, newContractCount, sentContractCount, handleOpenMaintenancePage}){
+    // console.log("---dhyey-- inside new component -", activeContract)
     const [selectedPreviewFile, setSelectedPreviewFile] = useState(null)
     const [previewDialogOpen, setPreviewDialogOpen] = useState(false) 
     const navigate = useNavigate();
@@ -87,6 +87,8 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
                                                     state: {
                                                         contactsTab: "Manager",
                                                         managerId: activeContract.business_uid,
+                                                        fromPage: true,
+                                                        index: currentIndex
                                                     },
                                                 });
                                             }
