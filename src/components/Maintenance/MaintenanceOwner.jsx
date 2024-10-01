@@ -146,6 +146,7 @@ export function MaintenanceOwner() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [cookies] = useCookies(["selectedRole"]);
   const selectedRole = cookies.selectedRole;
+  const selectedProperty = location.state?.selectedProperty || null;
 
   // const [desktopView] = useSessionStorage("desktopView", false);
   // const [quoteAcceptView] = useSessionStorage("quoteAcceptView", false);
@@ -197,7 +198,18 @@ export function MaintenanceOwner() {
         }
       }
 
-      setFilterPropertyList(propertyList);
+      if (selectedProperty === null || selectedProperty === undefined) {
+        setFilterPropertyList(propertyList);
+      } else {
+        for (const property of propertyList) {
+          if (property.property_uid !== selectedProperty.property_uid) {
+            property.checked = false;
+          }
+        }
+        setFilterPropertyList(propertyList);
+      }
+
+      // setFilterPropertyList(propertyList);
     }
   }, [maintenanceData]);
 

@@ -279,7 +279,7 @@ const PropertiesList = ({ data }) => {
                   },
                 })
               }else{
-                navigate("/managerMaintenance", {
+                navigate("/ownerMaintenance", {
                     state: {
                       selectedProperty: {
                         address: params.row.property_address,
