@@ -45,6 +45,8 @@ import { useUser } from "../../contexts/UserContext"; // Import the UserContext
 // import EditIcon from "@mui/icons-material/Edit";
 // import CircularProgress from "@mui/material/CircularProgress";
 import "../../css/selectMonth.css";
+import { isGridCellRoot } from "@mui/x-data-grid/utils/domUtils";
+import VerificationStatus from "../PM_Emp_Dashboard/Waiting_Page";
 
 const ManagerProfitability = ({
   propsMonth,
@@ -222,6 +224,89 @@ const ManagerProfitability = ({
     navigate("/propertiesPM", { state: { currentProperty: property_uid } });
   };
 
+  const getVerificationForManagerPayment = (pur) => {
+    const actual = pur.actual? parseFloat(pur.actual) : 0;
+    let expected = pur.expected? parseFloat(pur.expected) : 0;
+    if (expected < 0){
+      expected *= -1;
+    } 
+
+    if (actual < expected){
+      return "manager";
+    } else if( actual > expected){
+      return "investigate";
+    } else if (actual === expected){
+      return "-"
+    }
+  };
+
+  const getVerificationForOwnerPayment = (pur) => {
+    const actual = pur.actual? parseFloat(pur.actual) : 0;
+    const expected = pur.expected? parseFloat(pur.expected) : 0;
+    if (actual < expected){
+      return "owner";
+    } else if( actual > expected){
+      return "investigate";
+    } else if (actual === expected){
+      return "-"
+    }
+  };
+
+  const getVerificationForTenantPayment = ( pur ) => {
+    const actual = pur.actual? parseFloat(pur.actual) : 0;
+    const expected = pur.expected? parseFloat(pur.expected) : 0;
+    if (actual < expected){
+      return "tenant";
+    } else if( actual > expected){
+      return "investigate";
+    } else if (actual === expected){
+      if( pur.verified){
+        if(pur.verified === "verified"){
+          return "verified"
+        }        
+      }
+      return "not verified";      
+    }
+
+  };
+
+  const getVerificationStatus = (purchase) => {
+    // console.log("getVerificationStatus - purchase - ", purchase);
+    if(purchase.pur_payer?.startsWith("600")){
+      return getVerificationForManagerPayment(purchase);
+    } else if(purchase.pur_payer?.startsWith("110")){
+      return getVerificationForOwnerPayment(purchase);
+    } else if(purchase.pur_payer?.startsWith("350")){
+      return getVerificationForTenantPayment(purchase);
+    } else{
+      return "invalid payer";
+    }
+  }
+
+  const getVerificationStatusColor = (status) => {
+    switch(status){
+      case "owner":
+        return "#0000CC";
+        break;
+      case "manager":
+        return "#0000CC";
+        break;
+      case "tenant":
+        return "#FF0000";
+        break;
+      case "verified":
+        return "#43A843";
+        break;
+      case "not verified":
+        return "#FF8000";
+        break;
+      default:
+        return "#000000";
+        break;
+    }
+
+  }
+
   const transactionCoulmn = [
     {
       field: "purchase_type",
@@ -314,20 +399,25 @@ const ManagerProfitability = ({
       field: "verified",
       headerName: "Verified",
       flex: 1.5,
-      renderCell: (params) => (
-        <Tooltip title={params.row.verified !== null ? params.row.verified : "-"}>
-          <Typography
-            sx={{
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              maxWidth: "100%",
-            }}
-          >
-            {params.row.verified !== null ? params.row.verified : "-"}
-          </Typography>
-        </Tooltip>
-      ),
+      renderCell: (params) => {
+        const verificationStatus = getVerificationStatus(params.row);
+        const fontColor = getVerificationStatusColor(verificationStatus);
+        return (
+          <Tooltip title={params.row.verified !== null ? params.row.verified : "-"}>
+            <Typography
+              sx={{
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxWidth: "100%",
+                color: fontColor
+              }}
+            >
+              {/* {params.row.verified !== null ? params.row.verified : "-"} */}
+              {verificationStatus}
+            </Typography>
+          </Tooltip>
+      )},
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {

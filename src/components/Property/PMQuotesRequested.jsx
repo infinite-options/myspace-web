@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function PMQuotesRequested(props) {
+export default function PMQuotesRequested(props) {  
   const location = useLocation();
   let navigate = useNavigate();
   const { getProfileId } = useUser();
@@ -207,12 +207,13 @@ export default function PMQuotesRequested(props) {
                       variant="contained"
                       sx={{
                         textTransform: "none",
-                        background: "#A52A2A",
-                        color: theme.palette.background.default,
+                        background: "#CB8E8E",
+                        color: "#160449",
+                        fontWeight: 'bold',
+                        fontSize: '15px',
                         width: "40%",
                         height: "85%",
-                        borderRadius: "10px",
-                        fontSize: "10px",
+                        borderRadius: "10px",                        
                       }}
                       onClick={() => handleDecline(contract)}
                     >
@@ -222,12 +223,13 @@ export default function PMQuotesRequested(props) {
                       variant="contained"
                       sx={{
                         textTransform: "none",
-                        background: "#76B148",
-                        color: theme.palette.background.default,
+                        background: "#848484",
+                        color: "#160449",
                         width: "40%",
                         height: "85%",
                         borderRadius: "10px",
-                        fontSize: "10px",
+                        fontWeight: 'bold',
+                        fontSize: '15px',
                       }}
                       onClick={() => handleAccept(contract)}
                     >
@@ -262,11 +264,12 @@ export default function PMQuotesRequested(props) {
                       sx={{
                         textTransform: "none",
                         background: "#A52A2A",
-                        color: theme.palette.background.default,
+                        color: "#160449",
                         width: "40%",
                         height: "85%",
                         borderRadius: "10px",
-                        fontSize: "10px",
+                        fontWeight: 'bold',
+                        fontSize: '15px',
                       }}
                       onClick={async () => {
                         await handleStatusChange(contract, "CANCELLED");                        
@@ -897,9 +900,14 @@ export default function PMQuotesRequested(props) {
 
 function DocumentCard(props) {
   const data = props.data;
-  // console.log("---dhyey--- data -", data);
+  console.log("ROHIT -  data -", data);
   const [fees, setFees] = useState(JSON.parse(data.contract_fees) ? JSON.parse(data.contract_fees) : []);
-  const [contractDocuments, setContractDocuments] = useState(JSON.parse(data.contract_documents)?JSON.parse(data.contract_documents) : [])
+  const [locations, setLocations] = useState(JSON.parse(data.business_locations) ? JSON.parse(data.business_locations) : []);
+  const [contractDocuments, setContractDocuments] = useState(JSON.parse(data.contract_documents)? JSON.parse(data.contract_documents) : [])
+
+  const [feesExpanded, setFeesExpanded ] = useState(false);
+  const [documentsExpanded, setDocumentsExpanded ] = useState(false);
+  
 
   let navigate = useNavigate();
 
@@ -912,25 +920,15 @@ function DocumentCard(props) {
 
   const contractDocumentLink = getContractDocumentLink();
 
-  useEffect(() => {
-    const getBusinessProfileFees = async () => {
-      try {
-        const response = await fetch(`${APIConfig.baseURL.dev}/businessProfile`, {
-          method: "GET",
-        });
-        const responseData = await response.json();
-        const filteredResult = responseData.result.filter(item => item.business_uid === data.business_uid);
-        // console.log("filteredResult - ", filteredResult)
-        if (
-          filteredResult[0].business_services_fees !== null &&
-          filteredResult[0].business_services_fees !== undefined
-        ) {
-          setFees(JSON.parse(filteredResult[0].business_services_fees));
-        }
-      } catch (error) {
-        console.log("error", error);
-      }
-    };
+  const getBusinessProfileFees = async () => {
+    try {      
+      setFees(JSON.parse(data.business_services_fees)? JSON.parse(data.business_services_fees) : []);      
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  useEffect(() => {    
     if (data.contract_status === "NEW") {
       getBusinessProfileFees(data);
     }
@@ -964,59 +962,142 @@ function DocumentCard(props) {
           {data.business_name}
         </Typography>
       </Box>
-      <Box>
-        <Typography sx={textStyle}>
-          Area of service: {data.city} +-{data.miles} miles
-        </Typography>
-      </Box>
-      <Box>
-        <Typography sx={textStyle}>Status: {data.contract_status}</Typography>
-      </Box>
-      <Box>
-        <Typography sx={textStyle}>Contract ID: {data.contract_uid}</Typography>
-      </Box>
-      <Box>
-        <Typography sx={textStyle}>Contract Name: {data.contract_name}</Typography>
-      </Box>
-      <Box>
-        <Typography sx={textStyle}>{data.contract_status === "NEW" ? "Estimated Fees" : "Quoted Fees"}</Typography>
-      </Box>
+      <Grid container>
+        <Grid container item xs={6}>
+          <Grid item xs={12}>
+            <Typography sx={{ color: '#3D5CAC', fontSize: '18px', fontWeight: 'bold', }}>
+              Area of Service
+            </Typography>            
+          </Grid>
+          <Grid item xs={12}>
+            {
+              locations?.map((location, index) => (
+                <Typography key={index} sx={{ color: '#160449', fontSize: '15px', }}>
+                  {location.city} +-{location.miles} miles
+                </Typography>
+              ))
+            }
+            
+          </Grid>
+        </Grid>
+        <Grid container item xs={3}>
+          <Grid item xs={12}>
+            <Typography sx={{ color: '#3D5CAC', fontSize: '18px', fontWeight: 'bold', }}>
+              Status
+            </Typography>            
+          </Grid>
+          <Grid item xs={12}>
+            <Typography sx={{ color: '#160449', fontSize: '15px', }}>
+              {data.contract_status}
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid container item xs={3}>
+          <Grid item xs={12}>
+            <Typography sx={{ color: '#3D5CAC', fontSize: '18px', fontWeight: 'bold', }}>
+              Contract ID
+            </Typography>            
+          </Grid>
+          <Grid item xs={12}>
+            <Typography sx={{ color: '#160449', fontSize: '15px', }}>
+              {data.contract_uid}
+            </Typography>
+          </Grid>
+        </Grid>
+      </Grid>                        
+      <Accordion sx={{ backgroundColor: "#D6D5DA", boxShadow: "none" }} expanded={feesExpanded} onChange={() => setFeesExpanded(prevState => !prevState)}>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='fees-content' id='fees-header'>
+            <Grid container>
+                <Grid item xs={12}>
+                    <Typography
+                        sx={{
+                            color: "#160449",
+                            fontWeight: '600',
+                            fontSize: "20px",
+                            // textAlign: "center",
+                            paddingBottom: "10px",
+                            paddingTop: "5px",
+                            flexGrow: 1,
+                            // paddingLeft: "50px",
+                        }}
+                        paddingTop='5px'
+                        paddingBottom='10px'
+                    >
+                        {data.contract_status === "NEW" ? "Estimated Fees" : "Quoted Fees"}
+                    </Typography>
+                </Grid>                
+            </Grid>
+        </AccordionSummary>
+        <AccordionDetails>
+            {data !== null ? fees?.length !== 0 ? (
+              <>          
+                <FeesDataGrid data={fees} />            
+              </>
+            ) : (          
+              <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginBottom: '7px',
+                    width: '100%',
+                    height:"100px"
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      color: "#A9A9A9",
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: "15px",
+                    }}
+                  >
+                    No Fees
+                  </Typography>
+                </Box>
+            )
+          : (
+            <Typography sx={textStyle}>No data available</Typography>
+          )}
+                                                      
+        </AccordionDetails>
+      </Accordion>
 
-      {data !== null ? fees.length !== 0 ? (
-          <>          
-            <FeesDataGrid data={fees} />
-          </>
-        ) : (          
-          <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginBottom: '7px',
-                width: '100%',
-                height:"100px"
-              }}
-            >
-              <Typography
-                sx={{
-                  color: "#A9A9A9",
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: "15px",
-                }}
-              >
-                No Fees
-              </Typography>
-            </Box>
-        )
-      : (
-        <Typography sx={textStyle}>No data available</Typography>
+      {data.contract_status !== "NEW" && (
+        <Accordion sx={{ backgroundColor: "#D6D5DA", boxShadow: "none" }} expanded={documentsExpanded} onChange={() => setDocumentsExpanded(prevState => !prevState)}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='fees-content' id='fees-header'>
+              <Grid container>
+                  <Grid item xs={12}>
+                      <Typography
+                          sx={{
+                              color: "#160449",
+                              fontWeight: '600',
+                              fontSize: "20px",
+                              // textAlign: "center",
+                              paddingBottom: "10px",
+                              paddingTop: "5px",
+                              flexGrow: 1,
+                              // paddingLeft: "50px",
+                          }}
+                          paddingTop='5px'
+                          paddingBottom='10px'
+                      >
+                          {"Attached Documents"}
+                      </Typography>
+                  </Grid>                
+              </Grid>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Documents isEditable={false} isAccord={false} documents={contractDocuments} setDocuments={setContractDocuments} customName={""}/>                                       
+          </AccordionDetails>
+        </Accordion>
+
       )}
 
-      {data.contract_status !== "NEW" ? 
+      {/* {data.contract_status !== "NEW" ? 
       (<Box marginLeft={"5px"}>
         <Documents isEditable={false} isAccord={false} documents={contractDocuments} setDocuments={setContractDocuments} customName={"Attached Documents"}/>
-      </Box>) : <></>}
+      </Box>) : <></>} */}
 
     </Box>
   );
@@ -1292,7 +1373,7 @@ export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee, handle
 
 
   // Adding a unique id to each row using map if the data doesn't have an id field
-  const rowsWithId = data.map((row, index) => ({
+  const rowsWithId = data?.map((row, index) => ({
     ...row,
     id: row.id ? index : index,
   }));
