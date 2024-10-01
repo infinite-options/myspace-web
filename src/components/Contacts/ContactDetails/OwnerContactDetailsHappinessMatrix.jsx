@@ -1112,7 +1112,7 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
         <Typography
           sx={{ fontSize: "14px", color: "#160449", cursor: "pointer" }}
           onClick={() => {
-            navigate("/propertiesPM", {
+            navigate("/properties", {
               state: { currentProperty: params.row.property_uid },
             });
           }}

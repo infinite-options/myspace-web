@@ -221,70 +221,69 @@ const ManagerProfitability = ({
 
   const handleViewPropertyClick = (e, property_uid) => {
     e.stopPropagation();
-    navigate("/propertiesPM", { state: { currentProperty: property_uid } });
+    navigate("/properties", { state: { currentProperty: property_uid } });
   };
 
   const getVerificationForManagerPayment = (pur) => {
-    const actual = pur.actual? parseFloat(pur.actual) : 0;
-    let expected = pur.expected? parseFloat(pur.expected) : 0;
-    if (expected < 0){
+    const actual = pur.actual ? parseFloat(pur.actual) : 0;
+    let expected = pur.expected ? parseFloat(pur.expected) : 0;
+    if (expected < 0) {
       expected *= -1;
-    } 
+    }
 
-    if (actual < expected){
+    if (actual < expected) {
       return "manager";
-    } else if( actual > expected){
+    } else if (actual > expected) {
       return "investigate";
-    } else if (actual === expected){
-      return "-"
+    } else if (actual === expected) {
+      return "-";
     }
   };
 
   const getVerificationForOwnerPayment = (pur) => {
-    const actual = pur.actual? parseFloat(pur.actual) : 0;
-    const expected = pur.expected? parseFloat(pur.expected) : 0;
-    if (actual < expected){
+    const actual = pur.actual ? parseFloat(pur.actual) : 0;
+    const expected = pur.expected ? parseFloat(pur.expected) : 0;
+    if (actual < expected) {
       return "owner";
-    } else if( actual > expected){
+    } else if (actual > expected) {
       return "investigate";
-    } else if (actual === expected){
-      return "-"
+    } else if (actual === expected) {
+      return "-";
     }
   };
 
-  const getVerificationForTenantPayment = ( pur ) => {
-    const actual = pur.actual? parseFloat(pur.actual) : 0;
-    const expected = pur.expected? parseFloat(pur.expected) : 0;
-    if (actual < expected){
+  const getVerificationForTenantPayment = (pur) => {
+    const actual = pur.actual ? parseFloat(pur.actual) : 0;
+    const expected = pur.expected ? parseFloat(pur.expected) : 0;
+    if (actual < expected) {
       return "tenant";
-    } else if( actual > expected){
+    } else if (actual > expected) {
       return "investigate";
-    } else if (actual === expected){
-      if( pur.verified){
-        if(pur.verified === "verified"){
-          return "verified"
-        }        
+    } else if (actual === expected) {
+      if (pur.verified) {
+        if (pur.verified === "verified") {
+          return "verified";
+        }
       }
-      return "not verified";      
+      return "not verified";
     }
-
   };
 
   const getVerificationStatus = (purchase) => {
     // console.log("getVerificationStatus - purchase - ", purchase);
-    if(purchase.pur_payer?.startsWith("600")){
+    if (purchase.pur_payer?.startsWith("600")) {
       return getVerificationForManagerPayment(purchase);
-    } else if(purchase.pur_payer?.startsWith("110")){
+    } else if (purchase.pur_payer?.startsWith("110")) {
       return getVerificationForOwnerPayment(purchase);
-    } else if(purchase.pur_payer?.startsWith("350")){
+    } else if (purchase.pur_payer?.startsWith("350")) {
       return getVerificationForTenantPayment(purchase);
-    } else{
+    } else {
       return "invalid payer";
     }
-  }
+  };
 
   const getVerificationStatusColor = (status) => {
-    switch(status){
+    switch (status) {
       case "owner":
         return "#0000CC";
         break;
@@ -304,8 +303,7 @@ const ManagerProfitability = ({
         return "#000000";
         break;
     }
-
-  }
+  };
 
   const transactionCoulmn = [
     {
@@ -410,14 +408,15 @@ const ManagerProfitability = ({
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 maxWidth: "100%",
-                color: fontColor
+                color: fontColor,
               }}
             >
               {/* {params.row.verified !== null ? params.row.verified : "-"} */}
               {verificationStatus}
             </Typography>
           </Tooltip>
-      )},
+        );
+      },
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {

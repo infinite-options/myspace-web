@@ -107,22 +107,6 @@ const PaymentsDataGrid = ({ data }) => {
         )
       },
       { 
-        field: 'total_paid',      
-        headerName: 'Amount', 
-        renderHeader: () => (
-          <Typography sx={{ fontSize: '15px', color: "#160449", fontWeight: 'bold', }}>
-            {'Amount'}          
-          </Typography>        
-        ),
-        // width: 200,
-        flex: 0.5,
-        renderCell: (params) => (
-          <Typography sx={{ fontSize: '14px', color: '#160449', }}>
-            {`${params.row.total_paid? params.row.total_paid : "-"}`}
-          </Typography>
-        )
-      },
-      { 
         field: 'total_amount_due',
         headerName: 'Expected',       
         renderHeader: () => (
@@ -135,6 +119,22 @@ const PaymentsDataGrid = ({ data }) => {
         renderCell: (params) => (
           <Typography sx={{ fontSize: '14px', color: '#160449', }}>
             {`${params.row.total_amount_due || params.row.pur_amount_due}`}
+          </Typography>
+        )
+      },
+      { 
+        field: 'total_paid',      
+        headerName: 'Amount', 
+        renderHeader: () => (
+          <Typography sx={{ fontSize: '15px', color: "#160449", fontWeight: 'bold', }}>
+            {'Amount'}          
+          </Typography>        
+        ),
+        // width: 200,
+        flex: 0.5,
+        renderCell: (params) => (
+          <Typography sx={{ fontSize: '14px', color: '#160449', }}>
+            {`${params.row.total_paid? params.row.total_paid : "-"}`}
           </Typography>
         )
       },

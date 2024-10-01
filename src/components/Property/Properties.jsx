@@ -49,7 +49,7 @@ function Properties() {
 	const returnIndex = returnIndexFromContext || 0;
   const setReturnIndex = setReturnIndexFromContext;
 
-  console.log("----loading issue - propertyList - ", dataload)
+  console.log("----loading issue - propertyList - ", propertyList, dataload)
 
   const [dataReady, setDataReady] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
@@ -66,9 +66,7 @@ function Properties() {
   const profileId = getProfileId();
   const [rawPropertyData, setRawPropertyData] = useState([]);
   
-  if(location.state?.index){
-    setReturnIndex(location.state?.index || 0);
-  }  
+   
   const [returnIndexTest, setReturnIndexTest] = useState(location.state?.index || 0);
   const [returnIndexByProp, setReturnIndexByProperty]=useState("");
   const [applicationIndex, setApplicationIndex] = useState(0);
@@ -85,36 +83,50 @@ function Properties() {
   
   const [ currentProperty, setCurrentProperty ] = useState(location?.state?.currentProperty? location?.state?.currentProperty : null);
 
+
   useEffect(() => {
-    setShowSpinner(true);
-    // console.log("currentProperty - ", currentProperty);
+    if(location.state?.index){
+      setReturnIndex(location.state?.index || 0);
+    } 
+  }, [location?.state])
+
+  useEffect(() => {
     if(currentProperty){
+      // setShowSpinner(true);
+      // console.log("currentProperty - ", currentProperty);
       setPropertyTo(currentProperty);
+      // setShowSpinner(false)
     }
-    setShowSpinner(false)
   }, [currentProperty, propertyList]);
   
-
+  useEffect(()=>{
+    if(dataload){
+      setShowSpinner(false)
+    }
+  }, [dataload])
 
   useEffect(() => {
-    setShowSpinner(true)
-    // console.log("returnIndex - ", returnIndex);
-    
-    const properties = rawPropertyData?.Property?.result;
-    // console.log("returnIndex useEffect - properties - ", properties);
-    if(properties != null){
-      const state = {
-        ownerId: properties[returnIndex]?.owner_uid,
-        managerBusinessId: properties[returnIndex]?.business_uid,
-        managerData: properties[returnIndex],
-        propertyData: properties,
-        index: returnIndex,
-        isDesktop: isDesktop,
-      };
-      console.log("---inside prop nav state---", state);
-      setManagerDetailsState(state);
+    if(rawPropertyData && rawPropertyData.property){
+
+      setShowSpinner(true)
+      console.log("returnIndex - ", returnIndex);
+      
+      const properties = rawPropertyData?.Property?.result;
+      // console.log("returnIndex useEffect - properties - ", properties);
+      if(properties != null){
+        const state = {
+          ownerId: properties[returnIndex]?.owner_uid,
+          managerBusinessId: properties[returnIndex]?.business_uid,
+          managerData: properties[returnIndex],
+          propertyData: properties,
+          index: returnIndex,
+          isDesktop: isDesktop,
+        };
+        console.log("---inside prop nav state---", state);
+        setManagerDetailsState(state);
+      }
+      setShowSpinner(false)
     }
-    setShowSpinner(false)
   }, [returnIndex]);
 
   // For propertyRentWidget to show filtered vacant properties
@@ -235,7 +247,7 @@ function Properties() {
 
   function setPropertyTo(newPropertyUid){
     console.log("setPropertyTo - newPropertyUid - ", newPropertyUid);
-    setShowSpinner(true);
+    // setShowSpinner(true);
 
     if(newPropertyUid!=""){
       let foundIndex = 0; // Initialize with 0 to indicate not found
@@ -249,18 +261,17 @@ function Properties() {
 
 // Now, use setReturnIndex to set the found index
        setReturnIndex(foundIndex);
-       setShowSpinner(false);
+      //  setShowSpinner(false);
    }
 
   }
 
   useEffect(()=>{
-    console.log("----dhyey --- now list is complete")
     if(newPropertyUid!== ""){
        setPropertyTo(newPropertyUid)
         setNewPropertyUid("")
     }
-    },[propertyList])
+  },[propertyList])
 
   const fetchProperties = async () => {
     setShowSpinner(true);
@@ -325,7 +336,7 @@ function Properties() {
   };
 
   const handleListClick = (newData) => {
-    // console.log("handleListClick - newData - ", newData);
+    console.log("handleListClick - newData - ", newData);
     setReturnIndex(newData);
     // console.log("View leases RETURN INDEX : ", returnIndex);
   };
