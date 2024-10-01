@@ -466,24 +466,29 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
             <Grid container justifyContent='ceneter'>
   
                 {/* Document Text */}
-                <Grid item md={11.2}>
-                  <Typography
-                    sx={{
-                      color: "#160449",
-                      fontWeight: theme.typography.primary.fontWeight,
-                      fontSize: "24px",
-                      textAlign: "center",
-                      paddingBottom: "10px",
-                      paddingTop: "5px",
-                      flexGrow: 1,
-                      paddingLeft: "50px",
-                    }}
-                    // paddingTop='5px'
-                    // paddingBottom='10px'
-                  >
-                    {customName? customName : "Documents"}
-                  </Typography>
-                </Grid>
+                {
+                  customName != "" && (
+                    <Grid item md={11.2}>
+                      <Typography
+                        sx={{
+                          color: "#160449",
+                          fontWeight: theme.typography.primary.fontWeight,
+                          fontSize: "24px",
+                          textAlign: "center",
+                          paddingBottom: "10px",
+                          paddingTop: "5px",
+                          flexGrow: 1,
+                          paddingLeft: "50px",
+                        }}
+                        // paddingTop='5px'
+                        // paddingBottom='10px'
+                      >
+                        {customName}
+                      </Typography>
+                    </Grid>
+                  )
+                }
+                
   
                 {/* Add Icon button */}
                 <Grid item md={0.5}>
@@ -999,18 +1004,22 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
             color: '#3D5CAC',
           }}
         >
-          <Typography
-            sx={{
-              color: "#160449",
-              fontWeight: theme.typography.primary.fontWeight,
-              fontSize: "18px",
-              paddingBottom: "5px",
-              paddingTop: "5px",
-              marginTop:"10px"
-            }}
-          >
-            {customName ? customName : "Documents: "}
-          </Typography>
+          {
+            customName != "" && (
+              <Typography
+                sx={{
+                  color: "#160449",
+                  fontWeight: theme.typography.primary.fontWeight,
+                  fontSize: "18px",
+                  paddingBottom: "5px",
+                  paddingTop: "5px",
+                  marginTop:"10px"
+                }}
+              >
+                {customName ? customName : "Documents: "}
+              </Typography>
+            )
+          }          
           {isEditable && <Box
 						sx={{
 							display: 'flex',
