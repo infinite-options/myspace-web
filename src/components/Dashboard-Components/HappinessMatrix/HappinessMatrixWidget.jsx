@@ -168,7 +168,7 @@ function HappinessMatrixWidget(props) {
                   // ticks={[-1.1, -0.5, 0.1]}
                   // tick={false} 
                   label={{
-                    value: "Revenue", 
+                    value: "Delta Cashflow %", 
                     angle: -90,  
                     position: "insideLeft", 
                     offset: 10,  
@@ -189,9 +189,9 @@ function HappinessMatrixWidget(props) {
                   domain={[-100, 0]}
                   // tick={false} 
                   label={{
-                    value: "Vacancies",
+                    value: "Vacancy %",
                     position: "insideBottom",
-                    offset: -10,
+                    offset: -5,
                     fill: "#160449",
                     fontSize: 14,
                     fontWeight: "bold",
