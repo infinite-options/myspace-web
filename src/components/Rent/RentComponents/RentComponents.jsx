@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 import theme from "../../../theme/theme";
 import AllOwnerIcon from "./AllOwnerIcon.png";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import defaultHouseImage from "../../Property/defaultHouseImage.png";
 
 export function MainContainer(props) {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -355,49 +356,67 @@ export function RentAccordion(props) {
           <Box>{properties.length}</Box>
         </Box>
       </AccordionSummary>
+      {console.log('---properties----', properties)}
       {properties.map((property, index) => {
-        const address =
-          property.property_address +
-          ", " +
-          (property.property_unit !== "" ? property.property_unit + ", " : "") +
-          property.property_city +
-          " " +
-          property.property_state +
-          " " +
-          property.property_zip +
-          ", Tenant ID: " +
-          property.tenant_uid;
-        return (
-          <AccordionDetails key={property.property_uid}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                fontSize: "13px",
-                fontWeight: "600",
-                cursor: "pointer",
-              }}
-              onClick={() => {
-                if (isMobile) {
-                  navigateTo(rentDetailUrl, index);
-                } else {
-                  props.onPropertyInRentWidgetClicked(property.property_uid);
-                }
-              }}
-            >
-              <Box
-                sx={{
-                  textDecoration: "underline",
-                }}
-              >
-                {address}
-              </Box>
-              <Box>${property.pur_amount_due}</Box>
-            </Box>
-          </AccordionDetails>
-        );
-      })}
+  const address =
+    property.property_address +
+    ", " +
+    (property.property_unit !== "" ? property.property_unit + ", " : "") +
+    property.property_city +
+    " " +
+    property.property_state +
+    " " +
+    property.property_zip +
+    ", Tenant ID: " +
+    property.tenant_uid;
+
+  // Check if property_favorite_image exists, otherwise use defaultHouseImage
+  const propertyImage = property.property_favorite_image || defaultHouseImage;
+
+  return (
+    <AccordionDetails key={property.property_uid}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          fontSize: "13px",
+          fontWeight: "600",
+          cursor: "pointer",
+        }}
+        onClick={() => {
+          if (isMobile) {
+            navigateTo(rentDetailUrl, index);
+          } else {
+            props.onPropertyInRentWidgetClicked(property.property_uid);
+          }
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {/* Display the property image */}
+          <img
+            src={propertyImage} // Show the property_favorite_image or defaultHouseImage
+            alt="Property"
+            width="50px" // Set a fixed width or height as needed
+            height="50px"
+            style={{ borderRadius: '5px', marginRight: '10px' }} // Optional styling
+          />
+          {/* Address */}
+          <Box
+            sx={{
+              textDecoration: "underline",
+            }}
+          >
+            {address}
+          </Box>
+        </Box>
+        {/* Amount due */}
+        <Box>${property.pur_amount_due}</Box>
+      </Box>
+    </AccordionDetails>
+  );
+})}
+
     </Accordion>
   );
 }
