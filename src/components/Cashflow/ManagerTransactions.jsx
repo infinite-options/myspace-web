@@ -362,7 +362,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
   };
 
   const isPurGroupVerified = (purGroup) => {
-    console.log("ROHIT - 356 - isPurGroupVerified - purGroup.verified - ", purGroup.verified);
+    // console.log("ROHIT - 356 - isPurGroupVerified - purGroup.verified - ", purGroup.verified);
     if (purGroup.verified && purGroup.verified.toLowerCase() === "verified") {
       return true;
     }
@@ -370,7 +370,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
   };
 
   const isPurGroupPaid = (purGroup) => {
-    console.log("ROHIT - 362 - purGroup - ", purGroup);
+    // console.log("ROHIT - 362 - purGroup - ", purGroup);
     if (purGroup.pur_amount_due_total && purGroup.total_paid_total) {
       if (purGroup.total_paid_total >= purGroup.pur_amount_due_total) {
         return true;
@@ -380,8 +380,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
   };
 
   const handlePayment = (purGroup) => {
-    console.log("ROHIT - 361 - handlePayment - transactions - ", purGroup.transactions);
-    setSelectedPurGroup(purGroup);
+    // console.log("ROHIT - 361 - handlePayment - transactions - ", purGroup.transactions);
     const purchaseUIDs = [];
     const ownerPayments = purGroup.transactions?.filter((item) => item.pur_payer === getProfileId()); //payments from 600 to 110
     const managerPayments = purGroup.transactions?.filter((item) => item.pur_receiver === getProfileId() && item.pur_payer?.startsWith("110")); //payments from 110 to 600
@@ -432,7 +431,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
       purchase_uids: purchaseUIDs,
     };
 
-    console.log("handlePayment - paymentData - ", paymentData);
+    // console.log("handlePayment - paymentData - ", paymentData);
 
     // navigate("/selectPayment", {
     //     state: { paymentData: paymentData, total: parseFloat(total.toFixed(1)), selectedItems: [], paymentMethodInfo: {} },
@@ -653,7 +652,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
                                       <Grid item xs={2}>
                                         {
                                           // purGroup.pur_amount_due_total !== purGroup.total_paid_total && (
-                                          !isPaid && isPayable && <VerifiedButton isVerified={isVerified} isPaid={isPaid} isPayable={isPayable} />
+                                          !isPaid && isPayable && <VerifiedButton isVerified={isVerified} isPaid={isPaid} isPayable={isPayable} purGroup={purGroup} />
                                         }
                                       </Grid>
                                     </Grid>
@@ -719,13 +718,18 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
   );
 }
 
-const VerifiedButton = ({ isVerified, isPaid, isPayable }) => {
+const VerifiedButton = ({ isVerified, isPaid, isPayable, purGroup, }) => {
   const navigate = useNavigate();
   return (
     <Button
       onClick={() => {
+        console.log("ROHIT - purGroup - ", purGroup)
+        const propertyID = purGroup.transactions[0]?.pur_property_id;
+        console.log("ROHIT - propertyID - ", propertyID)
         if (!isVerified) {
-          navigate("/paymentVerification");
+          navigate("/paymentVerification", {state: {
+            propertyID: propertyID,
+          }});
         }
       }}
       sx={{

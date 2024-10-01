@@ -58,6 +58,9 @@ import axios from "axios";
 
 export default function PaymentVerification() {
   const [showSpinner, setShowSpinner] = useState(false);
+  const location = useLocation();
+
+  const propertyID = location?.state?.propertyID;
 
   return (
     <ThemeProvider theme={theme}>
@@ -67,7 +70,7 @@ export default function PaymentVerification() {
       <Container maxWidth='lg' sx={{ paddingTop: "10px", height: "90vh" }}>
         <Grid container spacing={6} sx={{ height: "90%" }}>
           <Grid container item xs={12} md={12} columnSpacing={6}>
-            <VerifyPayments  />
+            <VerifyPayments  propertyID={propertyID}/>
           </Grid>          
         </Grid>
       </Container>
