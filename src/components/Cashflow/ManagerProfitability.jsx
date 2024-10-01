@@ -226,7 +226,11 @@ const ManagerProfitability = ({
 
   const getVerificationForManagerPayment = (pur) => {
     const actual = pur.actual? parseFloat(pur.actual) : 0;
-    const expected = pur.expected? parseFloat(pur.expected) : 0;
+    let expected = pur.expected? parseFloat(pur.expected) : 0;
+    if (expected < 0){
+      expected *= -1;
+    } 
+
     if (actual < expected){
       return "manager";
     } else if( actual > expected){

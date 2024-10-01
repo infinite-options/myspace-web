@@ -203,7 +203,19 @@ function BalanceDetailsTable(props) {
     {
       field: "payment_uid",
       headerName: "Payment UID",
-      flex: 2.5,
+      flex: 2.7,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "paid_by",
+      headerName: "Paid By",
+      flex: 3,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "payment_date",
+      headerName: "Payment Date",
+      flex: 5,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
@@ -330,7 +342,8 @@ function BalanceDetailsTable(props) {
         const addedPayment = paymentDueResult.find((row) => row.payment_uid === item);
 
         if (addedPayment) {
-          const relatedPayments = paymentDueResult.filter((row) => row.payment_intent === addedPayment.payment_intent);
+          // const relatedPayments = paymentDueResult.filter((row) => row.payment_intent === addedPayment.payment_intent);
+          const relatedPayments = paymentDueResult.filter((row) => (row.paid_by + row.payment_date + row.payment_intent) === (addedPayment.paid_by + addedPayment.payment_date + addedPayment.payment_intent));
 
           newPayments = [...newPayments, ...relatedPayments];
           const relatedRowIds = relatedPayments.map((payment) => payment.payment_uid);
