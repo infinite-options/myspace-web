@@ -21,6 +21,7 @@ export default function VerifyPayments(props) {
   //   console.log("In VerifyPayments.jsx");
 
   const { user, getProfileId, roleName, selectedRole } = useUser();
+  const [selectedProperty, setSelectedProperty] = useState(props.propertyID)
 
   const [moneyPayable, setMoneyPayable] = useState([]);
 
@@ -122,7 +123,7 @@ export default function VerifyPayments(props) {
                   </Stack>
 
                   <Stack>
-                    <BalanceDetailsTable data={moneyPayable} setPaymentData={setPaymentData} fetchPaymentsData={fetchPaymentsData} />
+                    <BalanceDetailsTable data={moneyPayable} setPaymentData={setPaymentData} fetchPaymentsData={fetchPaymentsData} selectedProperty={selectedProperty} />
                   </Stack>
                 </Paper>
               </Paper>
@@ -154,7 +155,13 @@ function BalanceDetailsTable(props) {
   useEffect(() => {
     if (data && data.length > 0) {
       setSelectedPayments(data);
-      setSelectedRows(data.map((row) => row.payment_uid));
+      let filteredRows = [];
+      if(props.selectedProperty != null){
+        filteredRows = data?.filter( item => item.pur_property_id === props.selectedProperty)
+      }else {
+        filteredRows = data;
+      }
+      setSelectedRows(filteredRows.map((row) => row.payment_uid));
       setPaymentDueResult(
         data.map((item) => ({
           ...item,
@@ -233,7 +240,7 @@ function BalanceDetailsTable(props) {
     {
       field: "pur_property_id",
       headerName: "Property UID",
-      flex: 2.5,
+      flex: 3,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {

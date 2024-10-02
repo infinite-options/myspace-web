@@ -110,6 +110,23 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
     }
   };
 
+  const getVerificationForTenantPayment = (pur) => {
+    const actual = pur.actual ? parseFloat(pur.actual) : 0;
+    const expected = pur.expected ? parseFloat(pur.expected) : 0;
+    if (actual < expected) {
+      return "tenant";
+    } else if (actual > expected) {
+      return "investigate";
+    } else if (actual === expected) {
+      if (pur.verified) {
+        if (pur.verified === "verified") {
+          return "verified";
+        }
+      }
+      return "not verified";
+    }
+  };
+
   const getPurGroupVerificationStatus = (purchaseGroup) => {
     const tenantPayment = purchaseGroup.transactions?.find((transaction) => transaction.pur_payer?.startsWith("350"));
 
@@ -117,7 +134,8 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
       return null;
     }
 
-    return tenantPayment.verified ? tenantPayment.verified : "unverified";
+    // return tenantPayment.verified ? tenantPayment.verified : "unverified";
+    return getVerificationForTenantPayment(tenantPayment)
   };
 
   //   useEffect(() => {
@@ -354,7 +372,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
       return false;
     } else if (group.total_paid_total < group.pur_amount_due_total && group.verified === "verified") {
       return true;
-    } else if (group.total_paid_total > 0 && group.verified === "unverified") {
+    } else if (group.total_paid_total > 0 && group.verified === "not verified") {
       return true;
     } else {
       return false;
@@ -362,7 +380,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
   };
 
   const isPurGroupVerified = (purGroup) => {
-    console.log("ROHIT - 356 - isPurGroupVerified - purGroup.verified - ", purGroup.verified);
+    // console.log("ROHIT - 356 - isPurGroupVerified - purGroup.verified - ", purGroup.verified);
     if (purGroup.verified && purGroup.verified.toLowerCase() === "verified") {
       return true;
     }
@@ -370,7 +388,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
   };
 
   const isPurGroupPaid = (purGroup) => {
-    console.log("ROHIT - 362 - purGroup - ", purGroup);
+    // console.log("ROHIT - 362 - purGroup - ", purGroup);
     if (purGroup.pur_amount_due_total && purGroup.total_paid_total) {
       if (purGroup.total_paid_total >= purGroup.pur_amount_due_total) {
         return true;
@@ -380,8 +398,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
   };
 
   const handlePayment = (purGroup) => {
-    console.log("ROHIT - 361 - handlePayment - transactions - ", purGroup.transactions);
-    setSelectedPurGroup(purGroup);
+    // console.log("ROHIT - 361 - handlePayment - transactions - ", purGroup.transactions);
     const purchaseUIDs = [];
     const ownerPayments = purGroup.transactions?.filter((item) => item.pur_payer === getProfileId()); //payments from 600 to 110
     const managerPayments = purGroup.transactions?.filter((item) => item.pur_receiver === getProfileId() && item.pur_payer?.startsWith("110")); //payments from 110 to 600
@@ -432,7 +449,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
       purchase_uids: purchaseUIDs,
     };
 
-    console.log("handlePayment - paymentData - ", paymentData);
+    // console.log("handlePayment - paymentData - ", paymentData);
 
     // navigate("/selectPayment", {
     //     state: { paymentData: paymentData, total: parseFloat(total.toFixed(1)), selectedItems: [], paymentMethodInfo: {} },
@@ -644,7 +661,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
                                               },
                                             }}
                                           >
-                                            <Typography sx={{ color: "inherit", fontWeight: theme.typography.common.fontWeight, textTransform: "none", fontSize: "15px" }}>
+                                            <Typography sx={{ color: "inherit", fontWeight: theme.typography.common.fontWeight, textTransform: "none", fontSize: "12px" }}>
                                               Pay
                                             </Typography>
                                           </Button>
@@ -653,7 +670,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
                                       <Grid item xs={2}>
                                         {
                                           // purGroup.pur_amount_due_total !== purGroup.total_paid_total && (
-                                          !isPaid && isPayable && <VerifiedButton isVerified={isVerified} isPaid={isPaid} isPayable={isPayable} />
+                                          !isPaid && isPayable && <VerifiedButton isVerified={isVerified} isPaid={isPaid} isPayable={isPayable} purGroup={purGroup} />
                                         }
                                       </Grid>
                                     </Grid>
@@ -719,13 +736,18 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
   );
 }
 
-const VerifiedButton = ({ isVerified, isPaid, isPayable }) => {
+const VerifiedButton = ({ isVerified, isPaid, isPayable, purGroup, }) => {
   const navigate = useNavigate();
   return (
     <Button
       onClick={() => {
+        console.log("ROHIT - purGroup - ", purGroup)
+        const propertyID = purGroup.transactions[0]?.pur_property_id;
+        console.log("ROHIT - propertyID - ", propertyID)
         if (!isVerified) {
-          navigate("/paymentVerification");
+          navigate("/paymentVerification", {state: {
+            propertyID: propertyID,
+          }});
         }
       }}
       sx={{
@@ -737,10 +759,10 @@ const VerifiedButton = ({ isVerified, isPaid, isPayable }) => {
         },
       }}
     >
-      <Typography sx={{ color: "inherit", fontWeight: theme.typography.common.fontWeight, textTransform: "none", fontSize: "15px" }}>
+      <Typography sx={{ color: "inherit", fontWeight: theme.typography.common.fontWeight, textTransform: "none", fontSize: "12px" }}>
         {/* {isVerified? "Verified" : "Unverified"} */}
         {isVerified === true ? "Verified" : ""}
-        {isVerified === false ? "Unverified" : ""}
+        {isVerified === false ? "Not verified" : ""}
       </Typography>
     </Button>
   );
