@@ -362,6 +362,8 @@ export default function Cashflow() {
           <Grid item xs={12} md={4}>
             <CashflowWidget
               data={cashflowData2}
+              monthForData={month}
+              yearForData={year}
               setData={setCashflowData2}
               setCurrentWindow={setCurrentWindow}
               page='OwnerCashflow'
@@ -524,7 +526,7 @@ const CashflowDetails = ({
                   backgroundColor: headerTab === "last_month" ? "#3D5CAC" : "#9EAED6",
                   textTransform: "none",
                   "&:hover": {
-                    backgroundColor: tab === "last_month" ? "#3D5CAC" : "#9EAED6",
+                    backgroundColor: headerTab === "last_month" ? "#3D5CAC" : "#9EAED6",
                   },
                 }}
                 onClick={() => {

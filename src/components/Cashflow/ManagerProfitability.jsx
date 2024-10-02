@@ -76,148 +76,21 @@ const ManagerProfitability = ({
   const [revenueExpanded, setRevenueExpanded] = useState(true);
   const [expenseExpanded, setExpenseExpanded] = useState(true);
   const [tab, setTab] = useState("by_property");
+  const [headerTab, setHeaderTab] = useState("current_month");
 
   const handleSelectTab = (tab_name) => {
     setTab(tab_name);
   };
 
-  // const pastTwelveMonths = [
-  //   {
-  //     month: "January",
-  //     year: "2023",
-  //     expected_profit: 2000,
-  //     profit: 1800,
-  //     expected_rent: 5000,
-  //     rent: 4800,
-  //     expected_payouts: 3000,
-  //     payouts: 3000,
-  //     monthYear: "Jan 23",
-  //   },
-  //   {
-  //     month: "February",
-  //     year: "2023",
-  //     expected_profit: 1500,
-  //     profit: 1400,
-  //     expected_rent: 4500,
-  //     rent: 4300,
-  //     expected_payouts: 3000,
-  //     payouts: 2900,
-  //     monthYear: "Feb 23",
-  //   },
-  //   {
-  //     month: "March",
-  //     year: "2023",
-  //     expected_profit: 2200,
-  //     profit: 2100,
-  //     expected_rent: 5200,
-  //     rent: 5100,
-  //     expected_payouts: 3000,
-  //     payouts: 3000,
-  //     monthYear: "Mar 23",
-  //   },
-  //   {
-  //     month: "April",
-  //     year: "2023",
-  //     expected_profit: 2400,
-  //     profit: 2300,
-  //     expected_rent: 5500,
-  //     rent: 5300,
-  //     expected_payouts: 3100,
-  //     payouts: 3000,
-  //     monthYear: "Apr 23",
-  //   },
-  //   {
-  //     month: "May",
-  //     year: "2023",
-  //     expected_profit: 1800,
-  //     profit: 1600,
-  //     expected_rent: 5000,
-  //     rent: 4700,
-  //     expected_payouts: 3200,
-  //     payouts: 3100,
-  //     monthYear: "May 23",
-  //   },
-  //   {
-  //     month: "June",
-  //     year: "2023",
-  //     expected_profit: 1900,
-  //     profit: 1800,
-  //     expected_rent: 5100,
-  //     rent: 4900,
-  //     expected_payouts: 3200,
-  //     payouts: 3100,
-  //     monthYear: "Jun 23",
-  //   },
-  //   {
-  //     month: "July",
-  //     year: "2023",
-  //     expected_profit: 2100,
-  //     profit: 2000,
-  //     expected_rent: 5300,
-  //     rent: 5100,
-  //     expected_payouts: 3200,
-  //     payouts: 3100,
-  //     monthYear: "Jul 23",
-  //   },
-  //   {
-  //     month: "August",
-  //     year: "2023",
-  //     expected_profit: 2300,
-  //     profit: 2200,
-  //     expected_rent: 5400,
-  //     rent: 5200,
-  //     expected_payouts: 3200,
-  //     payouts: 3000,
-  //     monthYear: "Aug 23",
-  //   },
-  //   {
-  //     month: "September",
-  //     year: "2023",
-  //     expected_profit: 1700,
-  //     profit: 1600,
-  //     expected_rent: 5000,
-  //     rent: 4700,
-  //     expected_payouts: 3300,
-  //     payouts: 3100,
-  //     monthYear: "Sep 23",
-  //   },
-  //   {
-  //     month: "October",
-  //     year: "2023",
-  //     expected_profit: 2500,
-  //     profit: 2400,
-  //     expected_rent: 5600,
-  //     rent: 5400,
-  //     expected_payouts: 3100,
-  //     payouts: 3000,
-  //     monthYear: "Oct 23",
-  //   },
-  //   {
-  //     month: "November",
-  //     year: "2023",
-  //     expected_profit: 2000,
-  //     profit: 1900,
-  //     expected_rent: 5100,
-  //     rent: 4900,
-  //     expected_payouts: 3100,
-  //     payouts: 3000,
-  //     monthYear: "Nov 23",
-  //   },
-  //   {
-  //     month: "December",
-  //     year: "2023",
-  //     expected_profit: 2200,
-  //     profit: 2100,
-  //     expected_rent: 5200,
-  //     rent: 5100,
-  //     expected_payouts: 3000,
-  //     payouts: 3000,
-  //     monthYear: "Dec 23",
-  //   },
-  // ];
-
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June", 
+    "July", "August", "September", "October", "November", "December"
+  ];
   const month = propsMonth || "July"; //fix
   const year = propsYear || "2024";
+  const date = new Date();
+  const currentMonth = monthNames[date.getMonth()];
+  const currentYear = date.getFullYear();
 
   const handleViewPropertyClick = (e, property_uid) => {
     e.stopPropagation();
@@ -501,10 +374,84 @@ const ManagerProfitability = ({
 
           {/* Select month and all owner button */}
           <Box component='span' m={2} display='flex' justifyContent='space-between' alignItems='center'>
-            <Button sx={{ textTransform: "capitalize" }} onClick={() => setShowSelectMonth(true)}>
+            {/* <Button sx={{ textTransform: "capitalize" }} onClick={() => setShowSelectMonth(true)}>
               <CalendarTodayIcon sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }} />
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>Select Month / Year</Typography>
-            </Button>
+            </Button> */}
+
+            <Box
+              sx={{
+                width: "100%",
+                display:"flex",
+                flexDirection:"row",
+              }}
+            >
+              <Button 
+                sx={{
+                  marginRight: "30px",
+                  backgroundColor: headerTab === "select_month_year" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: headerTab === "select_month_year" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => {
+                  setHeaderTab("select_month_year")
+                  setShowSelectMonth(true)
+                }}
+              >
+                <CalendarTodayIcon sx={{ color: "#160449" , fontWeight: theme.typography.common.fontWeight, fontSize: "12px", margin: "5px"}} />
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Select Month / Year</Typography>
+              </Button>
+              <Button
+                sx={{
+                  marginRight: "30px",
+                  backgroundColor: headerTab === "last_month" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: headerTab === "last_month" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => {
+                  const monthNames = [
+                    "January", "February", "March", "April", "May", "June", 
+                    "July", "August", "September", "October", "November", "December"
+                  ];
+
+                  let monthIndex = monthNames.indexOf(currentMonth);
+
+                  if (monthIndex === 0) { // If current month is January
+                    setMonth("December");
+                    setYear((currentYear - 1).toString());
+                  } else {
+                    setMonth(monthNames[monthIndex - 1]);
+                    setYear(currentYear.toString());
+                  }
+                
+                  setHeaderTab("last_month")
+                  
+                }}
+              >
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Last Month</Typography>
+              </Button>
+              <Button
+                sx={{
+                  backgroundColor: headerTab === "current_month" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: headerTab === "current_month" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => {
+                  setHeaderTab("current_month")
+                  setMonth(currentMonth)
+                  setYear(currentYear.toString())
+                }}
+              >
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>{currentMonth}</Typography>
+              </Button>
+            </Box>
+
             <SelectMonthComponentTest
               selectedMonth={month}
               selectedYear={year}
@@ -1345,6 +1292,7 @@ function SelectMonthComponentTest(props) {
   const lastYear = new Date().getFullYear() - 1;
   const currentYear = new Date().getFullYear();
   const nextYear = new Date().getFullYear() + 1;
+  const yearsNames = [lastYear, currentYear, nextYear]
 
   return (
     <Dialog open={props.showSelectMonth} onClose={() => props.setShowSelectMonth(false)} maxWidth='lg'>
@@ -1363,25 +1311,29 @@ function SelectMonthComponentTest(props) {
         </IconButton>
       </DialogTitle>
       <DialogContent>
-        <Box>
-          {monthNames.map((month, index) => {
-            return (
-              <Typography className={props.selectedMonth === month ? "selected" : "unselected"} key={index} onClick={() => props.setMonth(month)}>
-                {month}
-              </Typography>
-            );
-          })}
+        <Box marginBottom={"40px"}>
+          <Typography sx={{fontWeight: "bold", color: "#160449", textAlign:"center"}} marginBottom={"10px"}>Months</Typography>
+          <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+            {monthNames.map((month, index) => {
+              return (
+                <Typography textAlign={"center"} className={props.selectedMonth === month ? "selected" : "unselected"} key={index} onClick={() => props.setMonth(month)}>
+                  {month}
+                </Typography>
+              );
+            })}
+          </Box>
         </Box>
-        <Box>
-          <Typography className={props.selectedYear === lastYear.toString() ? "selected" : "unselected"} onClick={() => props.setYear(lastYear.toString())}>
-            {lastYear}
-          </Typography>
-          <Typography className={props.selectedYear === currentYear.toString() ? "selected" : "unselected"} onClick={() => props.setYear(currentYear.toString())}>
-            {currentYear}
-          </Typography>
-          <Typography className={props.selectedYear === nextYear.toString() ? "selected" : "unselected"} onClick={() => props.setYear(nextYear.toString())}>
-            {nextYear}
-          </Typography>
+        <Box marginBottom={"10px"}>
+          <Typography sx={{fontWeight: "bold", color: "#160449", textAlign:"center"}} marginBottom={"10px"}>Years</Typography>
+          <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+            {yearsNames.map((year, index) => {
+              return (
+                <Typography textAlign={"center"} className={props.selectedYear === year.toString() ? "selected" : "unselected"} onClick={() => props.setYear(year.toString())} key={index}>
+                  {year}
+                </Typography>
+              );
+            })}
+          </Box>
         </Box>
       </DialogContent>
     </Dialog>
