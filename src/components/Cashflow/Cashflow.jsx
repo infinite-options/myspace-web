@@ -76,8 +76,17 @@ export default function Cashflow() {
   const profileId = getProfileId();
   const [showSpinner, setShowSpinner] = useState(true);
 
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June", 
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  const date = new Date();
   const [month, setMonth] = useState(location.state.month || "January");
   const [year, setYear] = useState(location.state.year || "2024");
+  const currentMonth = monthNames[date.getMonth()];
+  const currentYear = date.getFullYear();
+
 
   const [cashflowData, setCashflowData] = useState(null); // Cashflow data from API
   const [cashflowData2, setCashflowData2] = useState(location.state?.cashFlowData?location.state?.cashFlowData : null); // Cashflow data from API
@@ -374,6 +383,8 @@ export default function Cashflow() {
                 setMonth={setMonth}
                 year={year}
                 setYear={setYear}
+                currentMonth={currentMonth}
+                currentYear={currentYear}
                 expectedExpenseByMonth={expectedExpenseByMonth}
                 totalExpenseByMonth={totalExpenseByMonth}
                 expectedRevenueByMonth={expectedRevenueByMonth}
@@ -411,6 +422,8 @@ const CashflowDetails = ({
   setCurrentWindow,
   year,
   setYear,
+  currentMonth,
+  currentYear,
   expectedExpenseByMonth,
   totalExpenseByMonth,
   expectedRevenueByMonth,
@@ -440,6 +453,7 @@ const CashflowDetails = ({
 
   const [showChart, setShowChart] = useState("Current");
   const [tab, setTab] = useState("by_month");
+  const [headerTab, setHeaderTab] = useState("current_month");
 
   const handleSelectTab = (tab_name) => {
     setTab(tab_name);
@@ -478,10 +492,80 @@ const CashflowDetails = ({
 
           {/* -- Select Month and property component-- */}
           <Box component='span' m={2} display='flex' justifyContent='space-between' alignItems='center' marginY={"20px"}>
-            <Button sx={{ textTransform: "capitalize" }} onClick={() => setShowSelectMonth(true)}>
-              <CalendarTodayIcon sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont, margin: "5px"}} />
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "13px"}}>Select Month / Year</Typography>
-            </Button>
+            
+            {/* All 3 filter button last_month, current_mont and select date */}
+            <Box
+              sx={{
+                width: "100%",
+                display:"flex",
+                flexDirection:"row",
+              }}
+            >
+              <Button 
+                sx={{
+                  marginRight: "30px",
+                  backgroundColor: headerTab === "select_month_year" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: headerTab === "select_month_year" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => {
+                  setHeaderTab("select_month_year")
+                  setShowSelectMonth(true)
+                }}
+              >
+                <CalendarTodayIcon sx={{ color: "#160449" , fontWeight: theme.typography.common.fontWeight, fontSize: "12px", margin: "5px"}} />
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Select Month / Year</Typography>
+              </Button>
+              <Button
+                sx={{
+                  marginRight: "30px",
+                  backgroundColor: headerTab === "last_month" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: tab === "last_month" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => {
+                  const monthNames = [
+                    "January", "February", "March", "April", "May", "June", 
+                    "July", "August", "September", "October", "November", "December"
+                  ];
+
+                  let monthIndex = monthNames.indexOf(currentMonth);
+
+                  if (monthIndex === 0) { // If current month is January
+                    setMonth("December");
+                    setYear((currentYear - 1).toString());
+                  } else {
+                    setMonth(monthNames[monthIndex - 1]);
+                    setYear(currentYear.toString());
+                  }
+                
+                  setHeaderTab("last_month")
+                  
+                }}
+              >
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Last Month</Typography>
+              </Button>
+              <Button
+                sx={{
+                  backgroundColor: headerTab === "current_month" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: headerTab === "current_month" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => {
+                  setHeaderTab("current_month")
+                  setMonth(currentMonth)
+                  setYear(currentYear.toString())
+                }}
+              >
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>{currentMonth}</Typography>
+              </Button>
+            </Box>
 
             {/* For display months and year as well as selected month and year */}
             <SelectMonthComponentTest
@@ -1035,10 +1119,10 @@ const CashflowDetails = ({
 
 function SelectMonthComponentTest(props) {
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
   const lastYear = new Date().getFullYear() - 1;
   const currentYear = new Date().getFullYear();
   const nextYear = new Date().getFullYear() + 1;
+  const yearsNames = [lastYear, currentYear, nextYear]
 
   return (
     <Dialog open={props.showSelectMonth} onClose={() => props.setShowSelectMonth(false)} maxWidth='lg'>
@@ -1057,25 +1141,29 @@ function SelectMonthComponentTest(props) {
         </IconButton>
       </DialogTitle>
       <DialogContent>
-        <Box>
-          {monthNames.map((month, index) => {
-            return (
-              <Typography className={props.selectedMonth === month ? "selected" : "unselected"} key={index} onClick={() => props.setMonth(month)}>
-                {month}
-              </Typography>
-            );
-          })}
+        <Box marginBottom={"40px"}>
+          <Typography sx={{fontWeight: "bold", color: "#160449", textAlign:"center"}} marginBottom={"10px"}>Months</Typography>
+          <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+            {monthNames.map((month, index) => {
+              return (
+                <Typography textAlign={"center"} className={props.selectedMonth === month ? "selected" : "unselected"} key={index} onClick={() => props.setMonth(month)}>
+                  {month}
+                </Typography>
+              );
+            })}
+          </Box>
         </Box>
-        <Box>
-          <Typography className={props.selectedYear === lastYear.toString() ? "selected" : "unselected"} onClick={() => props.setYear(lastYear.toString())}>
-            {lastYear}
-          </Typography>
-          <Typography className={props.selectedYear === currentYear.toString() ? "selected" : "unselected"} onClick={() => props.setYear(currentYear.toString())}>
-            {currentYear}
-          </Typography>
-          <Typography className={props.selectedYear === nextYear.toString() ? "selected" : "unselected"} onClick={() => props.setYear(nextYear.toString())}>
-            {nextYear}
-          </Typography>
+        <Box marginBottom={"10px"}>
+          <Typography sx={{fontWeight: "bold", color: "#160449", textAlign:"center"}} marginBottom={"10px"}>Years</Typography>
+          <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+            {yearsNames.map((year, index) => {
+              return (
+                <Typography textAlign={"center"} className={props.selectedYear === year.toString() ? "selected" : "unselected"} onClick={() => props.setYear(year.toString())} key={index}>
+                  {year}
+                </Typography>
+              );
+            })}
+          </Box>
         </Box>
       </DialogContent>
     </Dialog>
