@@ -60,6 +60,7 @@ import { maintenanceManagerDataCollectAndProcess } from "../Maintenance/Maintena
 
 import APIConfig from "../../utils/APIConfig";
 import { v4 as uuidv4 } from "uuid";
+import InfoIcon from "@mui/icons-material/Info";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -143,6 +144,7 @@ export default function PropertyNavigator({
   const [initialApplData, setInitialApplData] = useState(null);
 
   const [selectedImageList, setSelectedImageList] = useState([]);
+  const [isReadOnly, setIsReadOnly] = useState(false);
 
   // console.log("PropertyNavigator - location state allRentStatus - ", allRentStatus);
 
@@ -597,6 +599,7 @@ export default function PropertyNavigator({
 
   const handleEditClick = async (row) => {
     // console.log("handleEditClick - row - ", row);
+    await setIsReadOnly(false);
     await setInitialApplData(row);
     await setcurrentApplRow(row);
     await setModifiedApplRow({ appliance_uid: row.appliance_uid });
@@ -907,29 +910,40 @@ export default function PropertyNavigator({
     }
   };
 
+  const handleInfoClick = (row) => {
+    setcurrentApplRow(row);
+    setIsEditing(false); // This will ensure that edit options are disabled
+    setIsReadOnly(true); // Set read-only mode for Info button click
+    handleOpen(); // Open the dialog
+  };
+  
+
   const applnColumns = [
-    { field: "appliance_uid", headerName: "UID", width: 80 },
-    { field: "appliance_item", headerName: "Appliance", width: 100 },
-    { field: "appliance_desc", headerName: "Description", width: 80 },
-    { field: "appliance_manufacturer", headerName: "Manufacturer", width: 80 },
-    { field: "appliance_purchased_from", headerName: "Purchased From", width: 80 },
-    { field: "appliance_purchased", headerName: "Purchased On", width: 80 },
-    { field: "appliance_purchase_order", headerName: "Purchase Order Number", width: 80 },
-    { field: "appliance_installed", headerName: "Installed On", width: 80 },
-    { field: "appliance_serial_num", headerName: "Serial Number", width: 80 },
-    { field: "appliance_model_num", headerName: "Model Number", width: 80 },
-    { field: "appliance_warranty_till", headerName: "Warranty Till", width: 80 },
-    { field: "appliance_warranty_info", headerName: "Warranty Info", width: 80 },
-    { field: "appliance_url", headerName: "URLs", width: 80 },
-    { field: "appliance_images", headerName: "Image", width: 100, renderCell: ImageCell }, //appliance_favorite_image needs to be added
-    { field: "appliance_documents", headerName: "Documents", width: 80 },
+    // { field: "appliance_uid", headerName: "UID", width: 80 },
+    { field: "appliance_item", headerName: "Appliance", width: 150 },
+    // { field: "appliance_desc", headerName: "Description", width: 80 },
+    // { field: "appliance_manufacturer", headerName: "Manufacturer", width: 80 },
+    //{ field: "appliance_purchased_from", headerName: "Purchased From", width: 80 },
+    { field: "appliance_purchased", headerName: "Purchased On", width: 180 },
+    //{ field: "appliance_purchase_order", headerName: "Purchase Order Number", width: 80 },
+    { field: "appliance_installed", headerName: "Installed On", width: 180 },
+    //{ field: "appliance_serial_num", headerName: "Serial Number", width: 80 },
+    //{ field: "appliance_model_num", headerName: "Model Number", width: 80 },
+    { field: "appliance_warranty_till", headerName: "Warranty Till", width: 180 },
+    //{ field: "appliance_warranty_info", headerName: "Warranty Info", width: 80 },
+    //{ field: "appliance_url", headerName: "URLs", width: 80 },
+    //{ field: "appliance_images", headerName: "Image", width: 100, renderCell: ImageCell }, //appliance_favorite_image needs to be added
+    //{ field: "appliance_documents", headerName: "Documents", width: 80 },
     {
       field: "actions",
       headerName: "Actions",
-      width: 100,
+      width: 180,
       renderCell: (params) => {
         return (
           <Box>
+             <IconButton onClick={() => handleInfoClick(params.row)}>
+              <InfoIcon />
+            </IconButton>
             <IconButton onClick={() => handleEditClick(params.row)}>
               <EditIcon />
             </IconButton>
@@ -2551,8 +2565,16 @@ export default function PropertyNavigator({
                   </Alert>
                 </Snackbar>
                 <Dialog open={open} onClose={handleClose}>
-                  <DialogTitle>{isEditing ? "Edit Appliance" : "Add New Appliance"}</DialogTitle>
-                  <DialogContent>
+                <DialogTitle>{isReadOnly ? "View Appliance" : isEditing ? "Edit Appliance" : "Add New Appliance"}</DialogTitle><DialogContent>
+                    {/* Appliance UID */}
+  <TextField
+    margin='dense'
+    label='Appliance UID'
+    fullWidth
+    variant='outlined'
+    value={currentApplRow?.appliance_uid || ""}
+    disabled={isReadOnly}
+  />
                     <FormControl margin='dense' fullWidth variant='outlined' sx={{ marginTop: "10px" }}>
                       <InputLabel required>Appliance Type</InputLabel>
                       <Select
@@ -2560,6 +2582,7 @@ export default function PropertyNavigator({
                         label='Appliance Type'
                         fullWidth
                         required
+                        disabled={isReadOnly}
                         variant='outlined'
                         value={applianceUIDToCategoryMap[currentApplRow?.appliance_type] || ""}
                         onChange={(e) => {
@@ -2679,20 +2702,23 @@ export default function PropertyNavigator({
                         </IconButton>
                       </Box>
                     )}
-                    <ImageUploader
-                      selectedImageList={selectedImageList}
-                      setSelectedImageList={setSelectedImageList}
-                      page={"Add"}
-                      setDeletedImageList={setDeletedImageList}
-                      setFavImage={setFavImage}
-                      favImage={favImage}
-                      updateFavoriteIcons={handleUpdateFavoriteIcons}
-                    />
+                    {!isReadOnly && (
+  <ImageUploader
+    selectedImageList={selectedImageList}
+    setSelectedImageList={setSelectedImageList}
+    page={"Add"}
+    setDeletedImageList={setDeletedImageList}
+    setFavImage={setFavImage}
+    favImage={favImage}
+    updateFavoriteIcons={handleUpdateFavoriteIcons}
+  />
+)}
                     <TextField
                       margin='dense'
                       label='Description'
                       fullWidth
                       variant='outlined'
+                      disabled={isReadOnly}
                       value={currentApplRow?.appliance_desc || ""}
                       onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_desc: e.target.value })}
                     />
@@ -2708,6 +2734,7 @@ export default function PropertyNavigator({
                           appliance_manufacturer: e.target.value,
                         })
                       }
+                      disabled={isReadOnly}
                     />
                     <TextField
                       margin='dense'
@@ -2721,6 +2748,7 @@ export default function PropertyNavigator({
                           appliance_purchased_from: e.target.value,
                         })
                       }
+                      disabled={isReadOnly}
                     />
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker
@@ -2733,12 +2761,14 @@ export default function PropertyNavigator({
                             appliance_purchased: formattedDate,
                           });
                         }}
+                        disabled={isReadOnly}
                         textField={(params) => (
                           <TextField
                             {...params}
                             margin='dense'
                             fullWidth
                             size='small'
+                            disabled={isReadOnly}
                             variant='outlined'
                             sx={{
                               "& .MuiInputBase-root": {
@@ -2758,6 +2788,7 @@ export default function PropertyNavigator({
                       label='Purchase Order Number'
                       fullWidth
                       variant='outlined'
+                      disabled={isReadOnly}
                       value={currentApplRow?.appliance_purchase_order || ""}
                       onChange={(e) =>
                         setcurrentApplRow({
@@ -2770,6 +2801,7 @@ export default function PropertyNavigator({
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker
                         label='Installed On'
+                        disabled={isReadOnly}
                         value={currentApplRow?.appliance_installed ? dayjs(currentApplRow.appliance_installed) : null}
                         onChange={(date) => {
                           const formattedDate = dayjs(date).format("MM-DD-YYYY");
@@ -2782,6 +2814,7 @@ export default function PropertyNavigator({
                           <TextField
                             {...params}
                             size='small'
+                            disabled={isReadOnly}
                             sx={{
                               "& .MuiInputBase-root": {
                                 fontSize: "14px",
@@ -2802,6 +2835,7 @@ export default function PropertyNavigator({
                       fullWidth
                       variant='outlined'
                       value={currentApplRow?.appliance_serial_num || ""}
+                      disabled={isReadOnly}
                       onChange={(e) =>
                         setcurrentApplRow({
                           ...currentApplRow,
@@ -2815,6 +2849,7 @@ export default function PropertyNavigator({
                       fullWidth
                       variant='outlined'
                       value={currentApplRow?.appliance_model_num || ""}
+                      disabled={isReadOnly}
                       onChange={(e) =>
                         setcurrentApplRow({
                           ...currentApplRow,
@@ -2828,6 +2863,7 @@ export default function PropertyNavigator({
                       fullWidth
                       variant='outlined'
                       value={currentApplRow?.appliance_warranty_info || ""}
+                      disabled={isReadOnly}
                       onChange={(e) =>
                         setcurrentApplRow({
                           ...currentApplRow,
@@ -2838,6 +2874,7 @@ export default function PropertyNavigator({
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker
                         label='Warranty Till'
+                        disabled={isReadOnly}
                         value={currentApplRow?.appliance_warranty_till ? dayjs(currentApplRow.appliance_warranty_till) : null}
                         onChange={(date) => {
                           const formattedDate = dayjs(date).format("MM-DD-YYYY");
@@ -2850,6 +2887,7 @@ export default function PropertyNavigator({
                           <TextField
                             {...params}
                             size='small'
+                            disabled={isReadOnly}
                             sx={{
                               "& .MuiInputBase-root": {
                                 fontSize: "14px",
@@ -2866,6 +2904,7 @@ export default function PropertyNavigator({
                     <TextField
                       margin='dense'
                       label='URLs'
+                      disabled={isReadOnly}
                       fullWidth
                       variant='outlined'
                       value={currentApplRow?.appliance_url || ""}
@@ -2873,40 +2912,49 @@ export default function PropertyNavigator({
                     />
                   </DialogContent>
                   <DialogActions sx={{ alignContent: "center", justifyContent: "center" }}>
-                    <Button
-                      variant='outlined'
-                      sx={{
-                        background: "#3D5CAC",
-                        color: theme.palette.background.default,
-                        cursor: "pointer",
-                        textTransform: "none",
-                        width: "30%",
-                        fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                      size='small'
-                      onClick={handleClose}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      variant='outlined'
-                      sx={{
-                        background: "#3D5CAC",
-                        color: theme.palette.background.default,
-                        cursor: "pointer",
-                        textTransform: "none",
-                        width: "30%",
-                        fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                      size='small'
-                      onClick={handleAddAppln}
-                    >
-                      Save
-                    </Button>
-                  </DialogActions>
-                </Dialog>
+    {isReadOnly ? (
+      // Show "Close" button only if it's read-only
+      <IconButton onClick={handleClose} sx={{ position: 'absolute', top: 8, right: 8 }}>
+        <CloseIcon />
+      </IconButton>
+    ) : (
+      // Show "Cancel" and "Save" buttons if not read-only
+      <>
+        <Button
+          variant='outlined'
+          sx={{
+            background: "#3D5CAC",
+            color: theme.palette.background.default,
+            cursor: "pointer",
+            textTransform: "none",
+            width: "30%",
+            fontWeight: theme.typography.secondary.fontWeight,
+            fontSize: theme.typography.smallFont,
+          }}
+          size='small'
+          onClick={handleClose}
+        >
+          Cancel
+        </Button>
+        <Button
+          variant='outlined'
+          sx={{
+            background: "#3D5CAC",
+            color: theme.palette.background.default,
+            cursor: "pointer",
+            textTransform: "none",
+            width: "30%",
+            fontWeight: theme.typography.secondary.fontWeight,
+            fontSize: theme.typography.smallFont,
+          }}
+          size='small'
+          onClick={handleAddAppln}
+        >
+          Save
+        </Button>
+      </>
+    )}
+  </DialogActions></Dialog>
               </Box>
             </Card>
           </Grid>
