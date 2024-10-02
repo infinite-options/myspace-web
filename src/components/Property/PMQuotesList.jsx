@@ -161,9 +161,9 @@ function ContractCard(props) {
 
   // Determine text color based on contract_status or use default blue
   const textColor = statusTextColorMap[contract.contract_status] || "#3D5CAC";
-  let announcements = JSON.parse(contract.announcements);
-  // console.log("Annoncements", announcements);
-  if (Array.isArray(announcements)) announcements.sort((a, b) => new Date(b.announcement_date) - new Date(a.announcement_date));
+  // let announcements = JSON.parse(contract.announcements);
+  // // console.log("Annoncements", announcements);
+  // if (Array.isArray(announcements)) announcements.sort((a, b) => new Date(b.announcement_date) - new Date(a.announcement_date));
 
   return (
     <>
@@ -210,7 +210,7 @@ function ContractCard(props) {
         <Typography sx={{ color: textColor, fontWeight: "bold", fontSize: "16px" }}>
             {contract.contract_status}
           </Typography>
-          {announcements?.length && (
+          {/* {announcements?.length && (
             <img
               src={Bell_fill}
               alt="Bell Icon"
@@ -220,7 +220,7 @@ function ContractCard(props) {
                 navigate("/announcements", { state: { owner_uid: contract.owner_uid } });
               }}
             />
-          )}
+          )} */}
         </Grid>
       </Grid>
       <Grid item xs={12}>
@@ -233,16 +233,16 @@ function ContractCard(props) {
           <span style={{ fontWeight: "bold" }}>Contract Property ID:</span> {`${contract.contract_property_id}`}
         </Typography>
       </Grid>
-      <Grid item xs={12}>
+      {/* <Grid item xs={12}>
         <Typography sx={{ color: "#160449", fontSize: "14px" }}>
           <span style={{ fontWeight: "bold" }}>Title:</span> {`${announcements?.length ? announcements[0]?.announcement_title : "No title"}`}
         </Typography>
-      </Grid>
-      <Grid item xs={12}>
+      </Grid> */}
+      {/* <Grid item xs={12}>
         <Typography sx={{ color: "#160449", fontSize: "14px" }}>
           <span style={{ fontWeight: "bold" }}>Message:</span> {`${announcements?.length ? announcements[0]?.announcement_msg : "No message"}`}
         </Typography>
-      </Grid>
+      </Grid> */}
       <Grid item xs={12}>
         <Typography sx={{ color: "#160449", fontSize: "14px" }}>
           <span style={{ fontWeight: "bold" }}>Owner:</span> {`${contract.owner_first_name} ${contract.owner_last_name}`}
