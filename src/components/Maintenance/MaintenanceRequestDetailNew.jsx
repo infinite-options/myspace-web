@@ -95,6 +95,7 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
   const [filteredQuotes, setFilteredQuotes] = useState([]);
   const [navParams, setNavParams] = useState({});
   const allData = isMobile ? location.state.allMaintenanceData : allMaintenancefilteredData;
+
   const isDesktop = location.state?.isDesktop || false;
   const propertyIndex = location.state?.index || -1;
 
@@ -426,19 +427,19 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
                 {selectedRole !== "OWNER" && colorStatus[value]?.status === "New Requests" && maintenanceItemsForStatus[selectedRequestIndex] ? (
                   <NewRequestAction maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} setRefresh = {setRefresh}/>
                 ) : null}
-                {colorStatus[value]?.status === "Quotes Requested" ? (
+                {colorStatus[value]?.status === "Quotes Requested" && maintenanceItemsForStatus[selectedRequestIndex] ? (
                   <QuotesRequestAction maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh = {setRefresh}/>
                 ) : null}
-                {colorStatus[value]?.status === "Quotes Accepted" ? (
+                {colorStatus[value]?.status === "Quotes Accepted" && maintenanceItemsForStatus[selectedRequestIndex]? (
                   <QuotesAccepted maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh={setRefresh}/>
                 ) : null}
-                {colorStatus[value]?.status === "Scheduled" ? (
+                {colorStatus[value]?.status === "Scheduled" && maintenanceItemsForStatus[selectedRequestIndex] ? (
                   <ScheduleMaintenance maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh = {setRefresh}/>
                 ) : null}
                 {colorStatus[value]?.status === "Completed" && maintenanceItemsForStatus[selectedRequestIndex]?.maintenance_request_status !== "CANCELLED" ? (
                   <CompleteMaintenance maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh = {setRefresh}/>
                 ) : null}
-                {colorStatus[value]?.status === "Paid" ? (
+                {colorStatus[value]?.status === "Paid" && maintenanceItemsForStatus[selectedRequestIndex] ? (
                   <PaidMaintenance maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh = {setRefresh}/>
                 ) : null}
               </Box>

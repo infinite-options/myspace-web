@@ -187,6 +187,7 @@ export default function MaintenanceManager() {
 
   useEffect(() => {
     if (maintenanceData) {
+      console.log("maintenace data manager side --- ", maintenanceData)
       const propertyList = [];
       const addedAddresses = [];
       for (const key in maintenanceData) {
