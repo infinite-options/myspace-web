@@ -330,7 +330,7 @@ const ManagerProfitability = ({
       if (groupComparison !== 0) {
         return groupComparison; 
       } else {
-        return a.purchase_type.localeCompare(b.purchase_type); 
+        return a.pur_payer.localeCompare(b.pur_payer); 
       }
     });
 
@@ -396,7 +396,7 @@ const ManagerProfitability = ({
           </Stack>
 
           {/* Select month and all owner button */}
-          <Box component='span' m={2} display='flex' justifyContent='space-between' alignItems='center'>
+          <Box component='span' m={2} marginTop={10} display='flex' justifyContent='space-between' alignItems='center'>
             {/* <Button sx={{ textTransform: "capitalize" }} onClick={() => setShowSelectMonth(true)}>
               <CalendarTodayIcon sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }} />
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>Select Month / Year</Typography>
@@ -484,7 +484,7 @@ const ManagerProfitability = ({
               setShowSelectMonth={setShowSelectMonth}
             />
             {selectedRole === "MANAGER" && (
-              <Button sx={{ textTransform: "capitalize" }} onClick={() => {}}>
+              <Button sx={{ textTransform: "capitalize", width:"150px"}} onClick={() => {}}>
                 <img src={AllOwnerIcon} alt='All Owners' style={{ width: "10px", height: "10px" }} />
                 <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>All Owners</Typography>
               </Button>
@@ -1732,14 +1732,14 @@ function StatementTable(props) {
                   <Table>
                     <TableHead>
                       <TableRow>
-                        <TableCell sx={{ width: "250px" }}>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                        <TableCell sx={{ width: "500px" }}>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
                             {" "}
                             {category} {getCategoryCount(category, true)}{" "}
                           </Typography>
                         </TableCell>
                         <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, width: "150px" }}>
+                          <Typography sx={{textAlign: "right", fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, width: "150px" }}>
                             ${value ? value : 0}
                           </Typography>
                         </TableCell>
