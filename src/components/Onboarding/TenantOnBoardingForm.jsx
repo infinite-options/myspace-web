@@ -1573,6 +1573,7 @@ const closeDialog = () => {
                   modifiedData={modifiedData}
                   setModifiedData={setModifiedData}
                   dataKey={"tenant_adult_occupants"}
+                  isEditable={true}
                 />
               )}
               {children && (
@@ -1585,6 +1586,7 @@ const closeDialog = () => {
                   modifiedData={modifiedData}
                   setModifiedData={setModifiedData}
                   dataKey={"tenant_children_occupants"}
+                  isEditable={true}
                 />
               )}
               {pets && (
@@ -1596,6 +1598,7 @@ const closeDialog = () => {
                   modifiedData={modifiedData}
                   setModifiedData={setModifiedData}
                   dataKey={"tenant_pet_occupants"}
+                  isEditable={true}
                 />
               )}
               {vehicles && (
@@ -1609,6 +1612,7 @@ const closeDialog = () => {
                   setModifiedData={setModifiedData}
                   dataKey={"tenant_vehicle_info"}
                   ownerOptions={[...adults, ...children]}
+                  isEditable={true}
                 />
               )}
             </AccordionDetails>
@@ -1617,7 +1621,13 @@ const closeDialog = () => {
       </Grid>
 
       <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+      <Grid item xs={12}>
+          <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
+            Documents
+          </Typography>
+        </Grid>
         <Grid item xs={12}>
+       
           <Documents
             documents={documents}
             setDocuments={setDocuments}
@@ -1638,11 +1648,13 @@ const closeDialog = () => {
         </Grid>
       </Grid>
 
+
       <Grid container justifyContent='center' item xs={12}>
         <Button variant='contained' color='primary' onClick={handleNextStep} disabled={nextStepDisabled} sx={{ mb: 2, backgroundColor: "#3D5CAC" }}>
           <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Save</Typography>
         </Button>
       </Grid>
+
       <GenericDialog
       isOpen={isDialogOpen}
       title={dialogTitle}
