@@ -154,7 +154,7 @@ const AddRevenue = (props) => {
     let config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/addRevenue",
+      url: "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/addPurchase",
       headers: {
         "Content-Type": "application/json",
       },
@@ -421,7 +421,7 @@ const AddRevenue = (props) => {
               }}
               onClick={handleAddRevenue}
             >
-              + Add Revenue
+              + Add Revenue 1
             </Button>
           </Paper>
         </Box>
