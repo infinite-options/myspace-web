@@ -202,7 +202,7 @@ const AddExpense = (props) => {
     formData.append("purchase_date", date);
     formData.append("pur_due_date", dueDate);
     formData.append("pur_amount_due", Number(amount));
-    formData.append("pur_notes", description);
+    formData.append("pur_notes", notes);
     formData.append("pur_receiver", handleId(selectedReceiver));
     formData.append("pur_payer", handleId(selectedPayer));
     formData.append("pur_payer_final", handleId(selectedFinalPayer));
