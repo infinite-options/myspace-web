@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   Paper,
   DialogContent,
@@ -51,6 +51,7 @@ import PaymentsManager from "../Payments/PaymentsManager";
 import MakePayment from "./MakePayment";
 import AddRevenue from "./AddRevenue";
 import AddExpense from "./AddExpense";
+import ListsContext from "../../contexts/ListsContext";
 
 import axios from "axios";
 
@@ -78,6 +79,10 @@ export default function ManagerCashflow() {
   const [showSpinner, setShowSpinner] = useState(false);
 
   const [activeButton, setActiveButton] = useState("Cashflow");
+
+  const { getList, } = useContext(ListsContext);	
+	const profitCategories = getList("purchaseType");
+  console.log("profit categories - ", profitCategories)
 
   const [showChart, setShowChart] = useState("Current");
 
@@ -133,6 +138,8 @@ export default function ManagerCashflow() {
   const [getTotalValueByTypeMapping, setGetTotalValueByTypeMapping] = useState({})
   const [getExpectedTotalByTypeMapping, setGetExpectedTotalByTypeMapping] = useState({})
   const [allProfitDataItems, setAllProfitDataItems] = useState([])
+  const [getSortedTotalValueByMapping, setGetSortedTotalValueByMapping] = useState({})
+  const [getSortedExpectedTotalByMapping, setGetSortedExpectedTotalByMapping] = useState({})
 
   //ROHIT - remove this function
   // async function fetchCashflow(userProfileId, month, year) {
@@ -433,120 +440,169 @@ export default function ManagerCashflow() {
     };
   }
 
-  const getTotalByType = (data, month, year, expected) => {
-    // Determine which key to use for calculations (either 'actual' or 'expected')
-    // console.log(" data - ", data)
+  const getTotalByType = (data, month, year, expected, sorting) => {
     var key = expected === true ? "expected" : "actual";
   
     let items = data;
   
+    let totals = {};
+    profitCategories.forEach(category => {
+    
+      totals[category.list_item.toUpperCase()] = 0.0; 
+    });
+
+    items?.forEach(item => {
+      const purchaseType = item.purchase_type.toUpperCase();
+      
+      if (item[key] !== null && totals.hasOwnProperty(purchaseType)) {
+        totals[purchaseType] += parseFloat(item[key]);
+      }else if(item[key] !== null ){
+        totals["OTHER"] += parseFloat(item[key])
+      }
+    });
+
+    let sortedTotals;
+
+    if(sorting){
+      const priority = ["RENT", "LATE FEE", "EXTRA CHARGE", "DEPOSIT"];
+
+      sortedTotals = Object.fromEntries(
+        Object.entries(totals).sort(([keyA], [keyB]) => {
+          const indexA = priority.indexOf(keyA);
+          const indexB = priority.indexOf(keyB);
+
+          if (indexA !== -1 && indexB !== -1) {
+            // Both keys are in priority list, maintain their relative order
+            return indexA - indexB;
+          } else if (indexA !== -1) {
+            // keyA is in priority, keyB is not
+            return -1;
+          } else if (indexB !== -1) {
+            // keyB is in priority, keyA is not
+            return 1;
+          } else {
+            // Both keys are not in priority, sort alphabetically
+            return keyA.localeCompare(keyB);
+          }
+        })
+      );
+
+    }else{
+      sortedTotals = Object.fromEntries(
+        Object.entries(totals).sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
+      );
+    }
+
+
+  
+    return sortedTotals;
     // Revenue and Expense Calculations
-    let totalRent = items?.reduce((acc, item) => {
-      if (item[key] !== null && item.purchase_type.toUpperCase() === "RENT") {
-        return acc + parseFloat(item[key]);
-      }
-      return acc;
-    }, 0.0);
+    // let totalRent = items?.reduce((acc, item) => {
+    //   if (item[key] !== null && item.purchase_type.toUpperCase() === "RENT") {
+    //     return acc + parseFloat(item[key]);
+    //   }
+    //   return acc;
+    // }, 0.0);
   
-    let totalDeposits = items?.reduce((acc, item) => {
-      if (item[key] !== null && item.purchase_type.toUpperCase() === "DEPOSIT") {
-        return acc + parseFloat(item[key]);
-      }
-      return acc;
-    }, 0.0);
+    // let totalDeposits = items?.reduce((acc, item) => {
+    //   if (item[key] !== null && item.purchase_type.toUpperCase() === "DEPOSIT") {
+    //     return acc + parseFloat(item[key]);
+    //   }
+    //   return acc;
+    // }, 0.0);
   
-    let totalExtraCharges = items?.reduce((acc, item) => {
-      if (item[key] !== null && item.purchase_type.toUpperCase() === "EXTRA CHARGE") {
-        return acc + parseFloat(item[key]);
-      }
-      return acc;
-    }, 0.0);
+    // let totalExtraCharges = items?.reduce((acc, item) => {
+    //   if (item[key] !== null && item.purchase_type.toUpperCase() === "EXTRA CHARGE") {
+    //     return acc + parseFloat(item[key]);
+    //   }
+    //   return acc;
+    // }, 0.0);
   
-    let totalUtilities = items?.reduce((acc, item) => {
-      if (item[key] !== null && item.purchase_type.toUpperCase() === "UTILITIES") {
-        return acc + parseFloat(item[key]);
-      }
-      return acc;
-    }, 0.0);
+    // let totalUtilities = items?.reduce((acc, item) => {
+    //   if (item[key] !== null && item.purchase_type.toUpperCase() === "UTILITIES") {
+    //     return acc + parseFloat(item[key]);
+    //   }
+    //   return acc;
+    // }, 0.0);
   
-    let totalLateFee = items?.reduce((acc, item) => {
-      if (item[key] !== null && item.purchase_type.toUpperCase() === "LATE FEE") {
-        return acc + parseFloat(item[key]);
-      }
-      return acc;
-    }, 0.0);
+    // let totalLateFee = items?.reduce((acc, item) => {
+    //   if (item[key] !== null && item.purchase_type.toUpperCase() === "LATE FEE") {
+    //     return acc + parseFloat(item[key]);
+    //   }
+    //   return acc;
+    // }, 0.0);
   
-    let totalMaintenance = items?.reduce((acc, item) => {
-      if (item[key] !== null && item.purchase_type.toUpperCase() === "MAINTENANCE") {
-        return acc + parseFloat(item[key]);
-      }
-      return acc;
-    }, 0.0);
+    // let totalMaintenance = items?.reduce((acc, item) => {
+    //   if (item[key] !== null && item.purchase_type.toUpperCase() === "MAINTENANCE") {
+    //     return acc + parseFloat(item[key]);
+    //   }
+    //   return acc;
+    // }, 0.0);
   
-    let totalRepairs = items?.reduce((acc, item) => {
-      if (item[key] !== null && item.purchase_type.toUpperCase() === "REPAIRS") {
-        return acc + parseFloat(item[key]);
-      }
-      return acc;
-    }, 0.0);
+    // let totalRepairs = items?.reduce((acc, item) => {
+    //   if (item[key] !== null && item.purchase_type.toUpperCase() === "REPAIRS") {
+    //     return acc + parseFloat(item[key]);
+    //   }
+    //   return acc;
+    // }, 0.0);
   
-    let totalMortgage = items?.reduce((acc, item) => {
-      if (item[key] !== null && item.purchase_type.toUpperCase() === "MORTGAGE") {
-        return acc + parseFloat(item[key]);
-      }
-      return acc;
-    }, 0.0);
+    // let totalMortgage = items?.reduce((acc, item) => {
+    //   if (item[key] !== null && item.purchase_type.toUpperCase() === "MORTGAGE") {
+    //     return acc + parseFloat(item[key]);
+    //   }
+    //   return acc;
+    // }, 0.0);
   
-    let totalTaxes = items?.reduce((acc, item) => {
-      if (item[key] !== null && item.purchase_type.toUpperCase() === "TAXES") {
-        return acc + parseFloat(item[key]);
-      }
-      return acc;
-    }, 0.0);
+    // let totalTaxes = items?.reduce((acc, item) => {
+    //   if (item[key] !== null && item.purchase_type.toUpperCase() === "TAXES") {
+    //     return acc + parseFloat(item[key]);
+    //   }
+    //   return acc;
+    // }, 0.0);
   
-    let totalInsurance = items?.reduce((acc, item) => {
-      if (item[key] !== null && item.purchase_type.toUpperCase() === "INSURANCE") {
-        return acc + parseFloat(item[key]);
-      }
-      return acc;
-    }, 0.0);
+    // let totalInsurance = items?.reduce((acc, item) => {
+    //   if (item[key] !== null && item.purchase_type.toUpperCase() === "INSURANCE") {
+    //     return acc + parseFloat(item[key]);
+    //   }
+    //   return acc;
+    // }, 0.0);
   
-    let totalManagement = items?.reduce((acc, item) => {
-      if (item[key] !== null && item.purchase_type.toUpperCase() === "MANAGEMENT") {
-        return acc + parseFloat(item[key]);
-      }
-      return acc;
-    }, 0.0);
+    // let totalManagement = items?.reduce((acc, item) => {
+    //   if (item[key] !== null && item.purchase_type.toUpperCase() === "MANAGEMENT") {
+    //     return acc + parseFloat(item[key]);
+    //   }
+    //   return acc;
+    // }, 0.0);
   
-    let totalBillPosting = items?.reduce((acc, item) => {
-      if (item[key] !== null && item.purchase_type.toUpperCase() === "BILL POSTING") {
-        return acc + parseFloat(item[key]);
-      }
-      return acc;
-    }, 0.0);
+    // let totalBillPosting = items?.reduce((acc, item) => {
+    //   if (item[key] !== null && item.purchase_type.toUpperCase() === "BILL POSTING") {
+    //     return acc + parseFloat(item[key]);
+    //   }
+    //   return acc;
+    // }, 0.0);
   
-    let totalOther = items?.reduce((acc, item) => {
-      if (item[key] !== null && item.purchase_type.toUpperCase() === "OTHER") {
-        return acc + parseFloat(item[key]);
-      }
-      return acc;
-    }, 0.0);
+    // let totalOther = items?.reduce((acc, item) => {
+    //   if (item[key] !== null && item.purchase_type.toUpperCase() === "OTHER") {
+    //     return acc + parseFloat(item[key]);
+    //   }
+    //   return acc;
+    // }, 0.0);
   
-    return {
-      RENT: totalRent,
-      DEPOSIT: totalDeposits,
-      "EXTRA CHARGE": totalExtraCharges,
-      UTILITIES: totalUtilities,
-      "LATE FEE": totalLateFee,
-      MAINTENANCE: totalMaintenance,
-      REPAIRS: totalRepairs,
-      MORTGAGE: totalMortgage,
-      TAXES: totalTaxes,
-      INSURANCE: totalInsurance,
-      MANAGEMENT: totalManagement,
-      "BILL POSTING": totalBillPosting,
-      OTHER: totalOther
-    };
+    // return {
+    //   RENT: totalRent,
+    //   DEPOSIT: totalDeposits,
+    //   "EXTRA CHARGE": totalExtraCharges,
+    //   UTILITIES: totalUtilities,
+    //   "LATE FEE": totalLateFee,
+    //   MAINTENANCE: totalMaintenance,
+    //   REPAIRS: totalRepairs,
+    //   MORTGAGE: totalMortgage,
+    //   TAXES: totalTaxes,
+    //   INSURANCE: totalInsurance,
+    //   MANAGEMENT: totalManagement,
+    //   "BILL POSTING": totalBillPosting,
+    //   OTHER: totalOther
+    // };
   };
   
 
@@ -938,11 +994,16 @@ export default function ManagerCashflow() {
       const sortedProfitByProperty = Object.fromEntries(sortedProfitData);
       setProfits(sortedProfitByProperty);
 
-      const getTotalValueByType = getTotalByType(allProfitData, month, year, false)
-      const getExpectedTotalByType = getTotalByType(allProfitData, month, year, true)
+      const getTotalValueByType = getTotalByType(allProfitData, month, year, false, false)
+      const getExpectedTotalByType = getTotalByType(allProfitData, month, year, true, false)
       setGetExpectedTotalByTypeMapping(getExpectedTotalByType)
       setGetTotalValueByTypeMapping(getTotalValueByType)
       setAllProfitDataItems(allProfitData)
+
+      const sortedTotalValueByType = getTotalByType(allProfitData, month, year, false, true)
+      const sortedExpectedByType = getTotalByType(allProfitData, month, year, true, true)
+      setGetSortedTotalValueByMapping(sortedTotalValueByType)
+      setGetSortedExpectedTotalByMapping(sortedExpectedByType)
 
 
       const totalProfits = Object.values(profitDataByProperty).reduce(
@@ -1454,6 +1515,8 @@ export default function ManagerCashflow() {
                 getTotalValueByTypeMapping={getTotalValueByTypeMapping}
                 getExpectedTotalByTypeMapping={getExpectedTotalByTypeMapping}
                 allProfitDataItems={allProfitDataItems}
+                getSortedExpectedTotalByMapping={getSortedExpectedTotalByMapping}
+                getSortedTotalValueByMapping={getSortedTotalValueByMapping}
 
                 setMonth={setMonth}
                 setYear={setYear}
