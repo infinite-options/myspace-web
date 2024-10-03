@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Paper, Box, Stack, ThemeProvider, FormControl, Select, MenuItem, FormControlLabel, Typography, TextField, IconButton, Checkbox, Button } from "@mui/material";
+import { Radio, RadioGroup, Paper, Box, Stack, ThemeProvider, FormControl, Switch, Select, MenuItem, FormControlLabel, Typography, TextField, IconButton, Checkbox, Button } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import theme from "../../theme/theme";
 import File_dock_add from "../../images/File_dock_add.png";
@@ -13,6 +13,7 @@ import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import ListsContext from "../../contexts/ListsContext";
+import APIConfig from "../../utils/APIConfig";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,9 +54,12 @@ const AddExpense = (props) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [partialAmount, setPartialAmount] = useState(null);
   const setCurrentWindow = props.setCurrentWindow;
+  const [selectedFinalPayer, setSelectedFinalPayer] = useState(null);
+  console.log("props", props);
 
   useEffect(() => {
     setPropertyList(props.propertyList);
+    console.log(props.propertyList);
   }, [props.propertyList]);
 
   const handleCheckboxChange = (option) => {
@@ -139,9 +143,18 @@ const AddExpense = (props) => {
     setDate(event.target.value);
   };
 
-  const handlePayableChange = (event) => {
-    setPayable(event.target.name);
+  const handlePayerChange = (event) => {
+    setSelectedPayer(event.target.value);
   };
+  
+  const handleReceiverChange = (event) => {
+    setSelectedReceiver(event.target.value);
+  };
+  
+  const handleFinalPayerChange = (event) => {
+    setSelectedFinalPayer(event.target.value);
+  };
+
   const determinePurchaseStatus = () => {
     if (selectedOption === "already_paid") {
       return "PAID";
@@ -151,60 +164,98 @@ const AddExpense = (props) => {
       return "UNPAID";
     }
   }
+
+  const [selectedPayer, setSelectedPayer] = useState(null);
+  const [selectedReceiver, setSelectedReceiver] = useState(null);
+
+  const handleId = (value) => {
+    if (value === "Tenant") {
+      return selectedProperty.tenant_uid;
+    }
+    else if (value == "Property Manager") {
+      return selectedProperty.business_uid;
+    }
+    else if (value == "Owner") {
+      return selectedProperty.owner_uid;
+    }
+    else {
+      return value
+    }
+  }
+  
   const handleExpenseChange = async () => {
     const [year, month, day] = date.split('-');
     const formattedDate = `${month}-${day}-${year}`;
+
+    const [dueYear, dueMonth, dueDay] = dueDate.split('-');
+    const formattedDueDate = `${dueMonth}-${dueDay}-${dueYear}`;
+
+    const formData = new FormData();
 
     // if (edit && itemToEdit){
     //   console.log("itemToEdit", itemToEdit)
     // }
 
-    let data = {
-      "pur_property_id": selectedProperty.property_uid,
-      "purchase_type": category,
-      "pur_cf_type": "expense",
-      "purchase_date": formattedDate,
-      "pur_due_date": formattedDate,
-      "pur_amount_due": Number(amount),
-      "purchase_status": determinePurchaseStatus(), // TODO: default to UNPAID, unless then already completed button is checked
-      "pur_notes": notes,
-      "pur_description": description,
-      "pur_receiver": getProfileId(),
-      "pur_initiator": getProfileId(),
-      "pur_payer": purPayerId, // this needs to be the tenant_id or the PM business_id
-      "pur_frequency": frequency
-    };
+    formData.append("pur_property_id", selectedProperty.property_uid);
+    formData.append("purchase_type", category);
+    // formData.append("pur_cf_type", "expense");
+    formData.append("purchase_date", date);
+    formData.append("pur_due_date", dueDate);
+    formData.append("pur_amount_due", Number(amount));
+    formData.append("pur_notes", description);
+    formData.append("pur_receiver", handleId(selectedReceiver));
+    formData.append("pur_payer", handleId(selectedPayer));
+    formData.append("pur_payer_final", handleId(selectedFinalPayer));
+    formData.append("pur_frequency", frequency);
+    formData.append("pur_initiator", getProfileId());
+    formData.append("pur_description", description);
+    formData.append("pur_reimbursable", reimbursable);
+    formData.append("pur_payFromCycle", payFromCycle);
+    formData.append("purchase_status", determinePurchaseStatus());
 
     if (determinePurchaseStatus() === "PARTIALLY PAID"){
-      data["partial_amount"] = Number(partialAmount)
+      // data["partial_amount"] = Number(partialAmount)
+      formData.append("partial_amount", Number(partialAmount));
     }
+
+    formData.forEach((value, key) => {
+      console.log(key, value);
+    });
     
-    let config = {
-        method: 'post',
-        maxBodyLength: Infinity,
-        url: 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/addExpense',
-        headers: { 
-            'Content-Type': 'application/json'
-        },
-        data: JSON.stringify(data)
-    };
+    // const config = {
+    //   method: 'post',
+    //   maxBodyLength: Infinity,
+    //   url: 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/addPurchase',
+    //   headers: { 'Content-Type': 'multipart/form-data' },
+    //   data: formData
+    // };
+
     setShowSpinner(true);
-    axios.request(config)
-    .then((response) => {
-      // console.log(JSON.stringify(response.data));
-      setShowSpinner(false);
-      if(selectedRole === "OWNER"){
-        // navigate("/", {state: { month: currentMonth, year: currentYear, currentWindow: "CASHFLOW_DETAILS"}});
+    try {
+      setShowSpinner(true);
+      const response = await fetch(`${APIConfig.baseURL.dev}/addPurchase`, {
+        method: "POST",
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+  
+      const data = await response.json();
+      console.log(data);
+  
+      if (selectedRole === "OWNER") {
         setCurrentWindow("CASHFLOW_DETAILS");
-        
-      } else if (selectedRole === "MANAGER"){
-        // navigate("/managerCashflow", {state: { currentWindow: "PROFITABILITY" }});
+      } else if (selectedRole === "MANAGER") {
         setCurrentWindow("PROFITABILITY");
       }
-    })
-    .catch((error) => {
+    } catch (error) {
+      console.error("There was an error with the request", error);
+    } finally {
       setShowSpinner(false);
-    });
+    }
+  };
 
     // let currentDate = new Date();
     // let currentMonth = currentDate.toLocaleString("default", { month: "long" });
@@ -218,6 +269,10 @@ const AddExpense = (props) => {
     //   // navigate("/managerCashflow", {state: { currentWindow: "PROFITABILITY" }});
     //   setCurrentWindow("PROFITABILITY");
     // }
+
+  const [payFromCycle, setPayFromCycle] = useState(false);
+  const handlePayFromCycleChange = (event) => {
+    setPayFromCycle(event.target.checked);
   };
 
   const handleClosePopup = (event) => {
@@ -230,6 +285,16 @@ const AddExpense = (props) => {
       setCurrentWindow("PROFITABILITY");
     }
   }
+
+  const [reimbursable, setReimbursable] = useState(false);
+
+  const handleReimbursableChange = (event) => {
+    setReimbursable(event.target.checked);
+  };
+
+  const [dueDate, setDueDate] = useState("");
+  const handleDueDateChange = (event) => setDueDate(event.target.value); 
+
   
   return (
     
@@ -334,7 +399,7 @@ const AddExpense = (props) => {
             </Stack>
 
             <Stack spacing={-2}>
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Payment Date</Typography>
+              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Transaction Date</Typography>
               <TextField
                 className={classes.root}
                 type="date"
@@ -346,38 +411,113 @@ const AddExpense = (props) => {
               </TextField>
             </Stack>
 
-            <Stack direction="row" spacing={-2}>
-              <FormControlLabel control={<Checkbox checked={isCheckedOne} onChange={() => handleCheckboxChange("already_paid")} sx={{ color: theme.typography.common.blue }} />} label="Already Paid" sx={{ color: theme.typography.common.blue }} />
-              <FormControlLabel control={<Checkbox checked={isCheckedTwo} onChange={() => handleCheckboxChange("partially_paid")} sx={{ color: theme.typography.common.blue }} />} label="Partially Paid" sx={{ color: theme.typography.common.blue }} />
+            {/* New Due By Date field */}
+            <Stack spacing={-2}>
+              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Due by Date</Typography>
+              <TextField
+                className={classes.root}
+                type="date"
+                variant="filled"
+                fullWidth
+                placeholder="mm/dd/yyyy"
+                value={dueDate}
+                onChange={handleDueDateChange}
+              />
             </Stack>
 
-            {isCheckedTwo ? <Stack spacing={-2}>
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Partial Payment Amount</Typography>
+          {/* Already Paid, Partially Paid, and Reimbursable */}
+          <Stack direction="row" spacing={2} alignItems="center">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={isCheckedOne}
+                  onChange={() => handleCheckboxChange("already_paid")}
+                  sx={{ color: theme.typography.common.blue }}
+                />
+              }
+              label="Already Paid"
+              sx={{ color: theme.typography.common.blue }}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={isCheckedTwo}
+                  onChange={() => handleCheckboxChange("partially_paid")}
+                  sx={{ color: theme.typography.common.blue }}
+                />
+              }
+              label="Partially Paid"
+              sx={{ color: theme.typography.common.blue }}
+            />
+            <Stack direction="row" alignItems="center">
+              <Typography
+                sx={{
+                  color: theme.typography.common.blue,
+                  fontWeight: theme.typography.primary.fontWeight,
+                }}
+              >
+                Reimbursable?
+              </Typography>
+              <Switch
+                checked={reimbursable}
+                onChange={handleReimbursableChange}
+                sx={{ color: theme.typography.common.blue }}
+              />
+            </Stack>
+          </Stack>
+
+          {isCheckedTwo && (
+            <Stack spacing={-2}>
+              <Typography sx={{ color: theme.typography.common.blue }}>
+                Partial Payment Amount
+              </Typography>
               <TextField
                 variant="filled"
                 fullWidth
-                inputProps={{ 
-                  autoComplete: 'off'
-                }}
                 placeholder="$"
                 type="number"
                 value={partialAmount}
                 className={classes.root}
-                onChange={handlePartialAmountChange}>
-              </TextField>
-            </Stack> : null }
+                onChange={handlePartialAmountChange}
+              />
+            </Stack>
+          )}
 
-            <Stack spacing={-2}>
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Frequency</Typography>
-              <FormControl variant="filled" fullWidth className={classes.root}>
-                <Select defaultValue="One Time" value={frequency} onChange={handleFrequencyChange}>                  
-                  {
-                    feeFrequencies?.map( (freq ) => (
-                      <MenuItem key={freq.list_uid} value={freq.list_item}>{freq.list_item}</MenuItem>
-                    ))
-                  }
-                </Select>
-              </FormControl>
+            {/* Payer and Receiver Section */}
+            <Stack direction="row" spacing={2} justifyContent="space-between">
+              <Stack>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Final Payer</Typography>
+                <RadioGroup value={selectedFinalPayer} onChange={handleFinalPayerChange}>
+                  <FormControlLabel control={<Radio />} value="Tenant" label="Tenant" />
+                  <FormControlLabel control={<Radio />} value="Owner" label="Owner" />
+                  <FormControlLabel control={<Radio />} value="Property Manager" label="Property Manager" />
+                  <FormControlLabel control={<Radio />} value="Third Party" label="Third Party" />
+                </RadioGroup>
+              </Stack>
+
+              <Stack>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
+                  Payer
+                </Typography>
+                <RadioGroup value={selectedPayer} onChange={handlePayerChange}>
+                  <FormControlLabel control={<Radio />} value="Tenant" label="Tenant" />
+                  <FormControlLabel control={<Radio />} value="Owner" label="Owner" />
+                  <FormControlLabel control={<Radio />} value="Property Manager" label="Property Manager" />
+                  <FormControlLabel control={<Radio />} value="Third Party" label="Third Party" />
+                </RadioGroup>
+              </Stack>
+
+              <Stack>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
+                  Receiver
+                </Typography>
+                <RadioGroup value={selectedReceiver} onChange={handleReceiverChange}>
+                  <FormControlLabel control={<Radio />} value="Tenant" label="Tenant" />
+                  <FormControlLabel control={<Radio />} value="Owner" label="Owner" />
+                  <FormControlLabel control={<Radio />} value="Property Manager" label="Property Manager" />
+                  <FormControlLabel control={<Radio />} value="Third Party" label="Third Party" />
+                </RadioGroup>
+              </Stack>
             </Stack>
 
             <Stack spacing={-2}>
@@ -415,37 +555,21 @@ const AddExpense = (props) => {
             <Box
               component="span"
               display="flex"
+              flexDirection="row" 
               justifyContent="space-between"
               alignItems="center"
-              // onClick={()=>{handleButtonClick('ExpectedCashflow')}}
+              width="100%"
             >
-              <Stack>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Reimbursable?</Typography>
-                <FormControlLabel
-                  control={
-                    <Checkbox sx={{ color: theme.typography.common.blue }} name="Property Manager" checked={payable === "Property Manager"} onChange={handlePayableChange} />
-                  }
-                  label="By Property Manager"
-                  sx={{ color: theme.typography.common.blue }}
-                />
-                <FormControlLabel
-                  control={<Checkbox sx={{ color: theme.typography.common.blue }} name="Tenant" checked={payable === "Tenant"} onChange={handlePayableChange} />}
-                  label="By Tenant"
-                  sx={{ color: theme.typography.common.blue }}
-                />
-                <FormControlLabel
-                    control={<Checkbox sx={{ color: theme.typography.common.blue }} name="Owner" checked={payable === "Owner"} onChange={handlePayableChange} />}
-                    label="Owner"
-                    sx={{ color: theme.typography.common.blue }}
-                />
-              </Stack>
-              <Stack>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Add Receipt</Typography>
-                <IconButton sx={{ backgroundColor: "white", width: 70, height: 70, borderRadius: 0, margin: 5 }}>
+
+              {/* Add Receipt button on the same row */}
+              <Stack direction="row" alignItems="center">
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, marginRight: 2 }}>Add Receipt</Typography>
+                <IconButton sx={{ backgroundColor: "white", width: 70, height: 70, borderRadius: 0 }}>
                   <img src={File_dock_add}></img>
                 </IconButton>
               </Stack>
             </Box>
+
 
             <Button
               variant="contained"
