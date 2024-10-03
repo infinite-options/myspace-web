@@ -101,14 +101,13 @@ export default function PropertyNavigator({
   const navigate = useNavigate();
   const { getList } = useContext(ListsContext);
   const { getProfileId, isManager, roleName, selectedRole } = useUser();
-  // const { propertyList, allRentStatus, allContracts, returnIndex, setReturnIndex  } = useContext(PropertiesContext);
+  
   const propertiesContext = useContext(PropertiesContext);
   const {
     propertyList: propertyListFromContext,
     allRentStatus: allRentStatusFromContext,
     allContracts: allContractsFromContext,
-    returnIndex: returnIndexFromContext,
-    setReturnIndex,
+    returnIndex: returnIndexFromContext,    
   } = propertiesContext || {};
 
   const propertyList = propertyListFromContext || [];

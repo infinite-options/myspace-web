@@ -50,6 +50,7 @@ function Properties() {
   const setReturnIndex = setReturnIndexFromContext;
 
   console.log("----loading issue - propertyList - ", propertyList, dataload)
+  console.log("ROHIT - returnIndexFromContext - ", returnIndexFromContext);
 
   const [dataReady, setDataReady] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
@@ -67,7 +68,7 @@ function Properties() {
   const [rawPropertyData, setRawPropertyData] = useState([]);
   
    
-  const [returnIndexTest, setReturnIndexTest] = useState(location.state?.index || 0);
+  // const [returnIndexTest, setReturnIndexTest] = useState(location.state?.index || 0);
   const [returnIndexByProp, setReturnIndexByProperty]=useState("");
   const [applicationIndex, setApplicationIndex] = useState(0);
 
@@ -81,24 +82,33 @@ function Properties() {
   const [newPropertyUid,setNewPropertyUid]=useState("");
 
   
-  const [ currentProperty, setCurrentProperty ] = useState(location?.state?.currentProperty? location?.state?.currentProperty : null);
+  // const [ currentProperty, setCurrentProperty ] = useState(location?.state?.currentProperty? location?.state?.currentProperty : null);
 
+  if(location?.state?.currentProperty) {
+    setPropertyTo(location?.state?.currentProperty);
+  }
 
-  useEffect(() => {
+  // takes index from location.state and sets the current index
+  useEffect(() => {    
     if(location.state?.index){
+      console.log("location.state?.index - ", location.state?.index);
       setReturnIndex(location.state?.index || 0);
     } 
   }, [location?.state])
 
+
+  // when propertyList changes, checks if location.state.currentProperty is not null and sets the current index
   useEffect(() => {
-    if(currentProperty){
+    // if(currentProperty){
+    if(location?.state?.currentProperty) {
       // setShowSpinner(true);
       // console.log("currentProperty - ", currentProperty);
-      setPropertyTo(currentProperty);
+      setPropertyTo(location?.state?.currentProperty);
       // setShowSpinner(false)
     }
-  }, [currentProperty, propertyList]);
+  }, [propertyList]);
   
+  //hides the spinner after data is loaded.
   useEffect(()=>{
     if(dataload){
       setShowSpinner(false)
@@ -185,66 +195,6 @@ function Properties() {
   // console.log("LEASE", propertyList[propertyIndex].lease_id)
   
 
-  // useEffect(() => {
-  //   console.log("In Properties - LHS: ", LHS);
-  //   console.log("In Properties - RHS: ", RHS);
-  //   console.log("Current Profile ID: ", getProfileId);
-  //   console.log("Current Selected Role: ", selectedRole);
-  //   console.log("propertyIndex at the beginning 2: ", propertyIndex);
-  //   console.log("Return Index: ", returnIndex);
-  // }, [LHS, RHS]);
-
-  // if (selectedRole === "MANAGER") {
-  //   console.log("Manager Selected");
-  // } else {
-  //   console.log("Owner Selected");
-  // }
-
-  // ENDPOINT CALLS IN PROPERTIES
-  // useEffect(() => {
-  //     // if(true){
-  //     if(reloadPropertyList === true){
-  //       setShowSpinner(true);
-  //       // console.log("In Properties Endpoint Call");
-  //       console.log("location.state - reloadPropertyList useEffect");
-  //       const fetchData = async () => {
-        
-
-  //         // PROPERTIES ENDPOINT
-  //         const property_response = await fetch(`${APIConfig.baseURL.dev}/properties/${profileId}`);
-  //         //const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000003`)
-  //         if (!property_response.ok) {
-  //           // console.log("Error fetching Property Details data");
-  //         }
-  //         const propertyData = await property_response.json();
-  //         const propertyList = getPropertyList(propertyData); // This combines Properties with Applications and Maitenance Items to enable the LHS screen
-  //         // console.log("In Properties > Property Endpoint: ", propertyList);
-  //         setRawPropertyData(propertyData); // Sets rawPropertyData to be based into Edit Properties Function      
-  //         setPropertyList([...propertyList]);
-  //         setDisplayedItems([...propertyList]);
-  //         setPropertyIndex(0);      
-
-  //         if (propertyData.Property.code === 200) {
-  //           // console.log("Endpoint Data is Ready");
-  //           setDataReady(true);
-  //         }
-  //         if (selectedRole === "MANAGER" && sessionStorage.getItem("isrent") === "true") {
-  //           setFromRentWidget(true);
-  //         } else {
-  //           setFromRentWidget(false);
-  //           sessionStorage.removeItem("isrent");
-  //         }
-  //         navigate(location.pathname, { replace: true, state: {} });
-  //       };
-  //       fetchData();
-        
-  //       setReloadPropertyList(false)
-  //       setTimeout(() => {
-  //         setShowSpinner(false);
-  //       }, 2000); 
-  //   }
-  // }, [reloadPropertyList]);
-
   function setPropertyTo(newPropertyUid){
     console.log("setPropertyTo - newPropertyUid - ", newPropertyUid);
     // setShowSpinner(true);
@@ -267,7 +217,7 @@ function Properties() {
   }
 
   useEffect(()=>{
-    if(newPropertyUid!== ""){
+    if(newPropertyUid !== ""){
        setPropertyTo(newPropertyUid)
         setNewPropertyUid("")
     }

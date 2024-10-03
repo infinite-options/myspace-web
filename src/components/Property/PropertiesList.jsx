@@ -140,7 +140,9 @@ export default function PropertiesList(props) {
     if(displayedItems && displayedItems.length > 0){
       const firstItem = displayedItems[0];
       const i = propertyList?.findIndex((p) => p.property_uid === firstItem.property_uid);
-      setReturnIndex(i);
+      if(returnIndex === 0){
+        setReturnIndex(i);
+      }
 
       if (LHS === "Rent") {
         onPropertyInRentWidgetClicked(initialPropInRent);
