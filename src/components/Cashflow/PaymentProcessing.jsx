@@ -57,6 +57,7 @@ import AddExpense from "./AddExpense";
 import ManagerSelectPayment from "./ManagerSelectPayment";
 
 import axios from "axios";
+import VerifyPayments2 from "../Payments/VerifyPayments2";
 
 
 const PaymentProcessing = () => {
@@ -175,11 +176,14 @@ const PaymentProcessing = () => {
                     selectedProperty={"ALL"}
                   />
                 )}
-                {currentWindow === "PAY_BILLS" && <PaymentsManager setSelectedPayment={setSelectedPayment} setCurrentWindow={setCurrentWindow} page={"paymentProcessing"} />}
+                {currentWindow === "PAY_BILLS" && <PaymentsManager setSelectedPayment={setSelectedPayment} setCurrentWindow={setCurrentWindow} page={"paymentProcessing"} />}                                
                 {currentWindow === "VERIFY_PAYMENTS" && <VerifyPayments />}
+                
                 {currentWindow === "MAKE_PAYMENT" && <MakePayment selectedPayment={selectedPayment} refreshCashflowData={refreshCashflowData} setCurrentWindow={setCurrentWindow} />}  
                 {currentWindow === "SELECT_PAYMENT" && <ManagerSelectPayment selectedPayment={selectedPayment} selectedPurGroup={selectedPurGroup} />}                             
               </Grid>
+
+              {currentWindow === "VERIFY_PAYMENTS" && <VerifyPayments2 />}
             </Grid>
           </Container>
         </ThemeProvider>
