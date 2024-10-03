@@ -1384,9 +1384,20 @@ function StatementTable(props) {
   }
 
 
-  function getCategoryCount(category) {
-    // console.log("getCategoryCount - allItems - ", allItems);
-    let filteredItems = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
+  function getCategoryCount(category, expected) {
+    // console.log("getCategoryCount - category - ", category);
+    let filteredItems = allItems.filter((item) => {
+      if(item.purchase_type.toUpperCase() === category.toUpperCase()){
+        return item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year
+      }
+      if(category === "OTHER"){
+          if(expected){
+            return !categoryExpectedTotalMapping.hasOwnProperty(item.purchase_type.toUpperCase());
+          }else{
+            return !categoryTotalMapping.hasOwnProperty(item.purchase_type.toUpperCase());
+          }
+      }
+    });
     // let items = filteredItems?.map((item) => ({ ...item, property: JSON.parse(item.property) }));
     let count = 0
 
@@ -1397,9 +1408,22 @@ function StatementTable(props) {
     return "(" + count + ")";
   }
 
-  function getCategoryItems(category, type) {
-    let filteredIitems = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
+  function getCategoryItems(category, isExpected, type ) {
+    // let filteredIitems = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
     // let items = filteredIitems?.map((item) => ({ ...item, property: JSON.parse(item.property) }));
+
+    let filteredIitems = allItems.filter((item) => {
+      if(item.purchase_type.toUpperCase() === category.toUpperCase()){
+        return item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year
+      }
+      if(category === "OTHER"){
+          if(isExpected){
+            return !categoryExpectedTotalMapping.hasOwnProperty(item.purchase_type.toUpperCase());
+          }else{
+            return !categoryTotalMapping.hasOwnProperty(item.purchase_type.toUpperCase());
+          }
+      }
+    });
 
     return (
       <>
@@ -1507,7 +1531,7 @@ function StatementTable(props) {
                         <TableCell>
                           <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight}}>
                             {" "}
-                            {category} {getCategoryCount(category)}{" "}
+                            {category} {getCategoryCount(category, false)}{" "}
                           </Typography>
                         </TableCell>
                         <TableCell align='right'>
@@ -1522,7 +1546,7 @@ function StatementTable(props) {
                 </AccordionSummary>
                 <AccordionDetails>
                   <Table>
-                    <TableBody>{getCategoryItems(category, navigateType)}</TableBody>
+                    <TableBody>{getCategoryItems(category, false, navigateType)}</TableBody>
                   </Table>
                 </AccordionDetails>
               </Accordion>
@@ -1547,7 +1571,7 @@ function StatementTable(props) {
                         <TableCell sx={{ width: "150px" }}>
                           <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
                             {" "}
-                            {category} {getCategoryCount(category)}{" "}
+                            {category} {getCategoryCount(category, true)}{" "}
                           </Typography>
                         </TableCell>
                         <TableCell align='right'>
@@ -1566,7 +1590,7 @@ function StatementTable(props) {
                 </AccordionSummary>
                 <AccordionDetails>
                   <Table>
-                    <TableBody>{getCategoryItems(category)}</TableBody>
+                    <TableBody>{getCategoryItems(category, true)}</TableBody>
                   </Table>
                 </AccordionDetails>
               </Accordion>

@@ -82,6 +82,7 @@ export default function Cashflow() {
   ];
 
   const date = new Date();
+  console.log("month fetch - ", location.state.month)
   const [month, setMonth] = useState(location.state.month || "January");
   const [year, setYear] = useState(location.state.year || "2024");
   const currentMonth = monthNames[date.getMonth()];

@@ -55,6 +55,7 @@ function CashflowWidget({ data, monthForData, yearForData, originalData, setCurr
   let currentMonth = date.toLocaleString("default", { month: "long" });
   let currentYear = date.getFullYear().toString();
 
+  // console.log(currentMonth)
   const [month, setMonth] = useState(currentMonth);
   const [year, setYear] = useState(currentYear);
   const { user, getProfileId } = useUser();
