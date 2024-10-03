@@ -451,6 +451,171 @@ function getTotalExpenseByType(data, month, year, expected) {
   };
 }
 
+function getTotalRevenueByTypeByProperty(data, month, year, expected, propertyId) {
+  // console.log(data, month, year)
+
+  var key = "actual";
+
+  if (expected === true) {
+    key = "expected";
+  } else {
+    key = "actual";
+  }
+
+  let revenueItems = data?.result?.filter((item) => item.pur_receiver?.startsWith("110") && item.cf_month === month && item.cf_year === year && item.pur_property_id === propertyId);
+  let totalRent = revenueItems?.reduce((acc, revenue) => {
+    if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "RENT") {
+      // console.log("revenue", revenue[key])
+      // console.log("acc", acc)
+      return acc + parseFloat(revenue[key]);
+    }
+    return acc;
+  }, 0.0);
+  let totalDeposits = revenueItems?.reduce((acc, revenue) => {
+    if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "DEPOSIT") {
+      return acc + parseFloat(revenue[key]);
+    }
+    return acc;
+  }, 0.0);
+  let totalExtraCharges = revenueItems?.reduce((acc, revenue) => {
+    if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "EXTRA CHARGE") {
+      return acc + parseFloat(revenue[key]);
+    }
+    return acc;
+  }, 0.0);
+  let totalUtilities = revenueItems?.reduce((acc, revenue) => {
+    if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "UTILITIES") {
+      return acc + parseFloat(revenue[key]);
+    }
+    return acc;
+  }, 0.0);
+  let totalLateFee = revenueItems?.reduce((acc, revenue) => {
+    if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "LATE FEE") {
+      return acc + parseFloat(revenue[key]);
+    }
+    return acc;
+  }, 0.0);
+  let totalMaintenance = revenueItems?.reduce((acc, revenue) => {
+    if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "MAINTENANCE") {
+      return acc + parseFloat(revenue[key]);
+    }
+    return acc;
+  }, 0.0);
+  let totalRepairs = revenueItems?.reduce((acc, revenue) => {
+    if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "REPAIRS") {
+      return acc + parseFloat(revenue[key]);
+    }
+    return acc;
+  }, 0.0);
+
+  let totalOther = revenueItems?.reduce((acc, revenue) => {
+    if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "OTHER") {
+      return acc + parseFloat(revenue[key]);
+    }
+    return acc;
+  }, 0.0);
+
+  return {
+    RENT: totalRent,
+    DEPOSIT: totalDeposits,
+    "EXTRA CHARGE": totalExtraCharges,
+    UTILITIES: totalUtilities,
+    "LATE FEE": totalLateFee,
+    MAINTENANCE: totalMaintenance,
+    REPAIRS: totalRepairs,
+    OTHER: totalOther
+  };
+}
+
+function getTotalExpenseByTypeByProperty(data, month, year, expected, propertyId) {
+  // console.log(data, month, year)
+
+  var key = "actual";
+
+  if (expected === true) {
+    key = "expected";
+  } else {
+    key = "actual";
+  }
+
+  let expenseItems = data?.result?.filter((item) => item.pur_payer?.startsWith("110") && item.cf_month === month && item.cf_year === year && item.pur_property_id === propertyId);
+
+  let totalMaintenance = expenseItems?.reduce((acc, expense) => {
+    if (expense[key] !== null && expense.purchase_type.toUpperCase() === "MAINTENANCE") {
+      return acc + parseFloat(expense[key]);
+    }
+    return acc;
+  }, 0.0);
+
+  let totalRepairs = expenseItems?.reduce((acc, expense) => {
+    if (expense[key] !== null && expense.purchase_type.toUpperCase() === "REPAIRS") {
+      return acc + parseFloat(expense[key]);
+    }
+    return acc;
+  }, 0.0);
+
+  let totalMortgage = expenseItems?.reduce((acc, expense) => {
+    if (expense[key] !== null && expense.purchase_type.toUpperCase() === "MORTGAGE") {
+      return acc + parseFloat(expense[key]);
+    }
+    return acc;
+  }, 0.0);
+
+  let totalTaxes = expenseItems?.reduce((acc, expense) => {
+    if (expense[key] !== null && expense.purchase_type.toUpperCase() === "TAXES") {
+      return acc + parseFloat(expense[key]);
+    }
+    return acc;
+  }, 0.0);
+
+  let totalInsurance = expenseItems?.reduce((acc, expense) => {
+    if (expense[key] !== null && expense.purchase_type.toUpperCase() === "INSURANCE") {
+      return acc + parseFloat(expense[key]);
+    }
+    return acc;
+  }, 0.0);
+
+  let totalUtilities = expenseItems?.reduce((acc, expense) => {
+    if (expense[key] !== null && expense.purchase_type.toUpperCase() === "UTILITIES") {
+      return acc + parseFloat(expense[key]);
+    }
+    return acc;
+  }, 0.0);
+
+  let totalManagement = expenseItems?.reduce((acc, expense) => {
+    if (expense[key] !== null && expense.purchase_type.toUpperCase() === "MANAGEMENT") {
+      return acc + parseFloat(expense[key]);
+    }
+    return acc;
+  }, 0.0);
+
+  let totalBillPosting = expenseItems?.reduce((acc, expense) => {
+    if (expense[key] !== null && expense.purchase_type.toUpperCase() === "BILL POSTING") {
+      return acc + parseFloat(expense[key]);
+    }
+    return acc;
+  }, 0.0);
+
+  let totalOther = expenseItems?.reduce((acc, expense) => {
+    if (expense[key] !== null && expense.purchase_type.toUpperCase() === "OTHER") {
+      return acc + parseFloat(expense[key]);
+    }
+    return acc;
+  }, 0.0);
+
+  return {
+    MAINTENANCE: totalMaintenance,
+    REPAIRS: totalRepairs,
+    MORTGAGE: totalMortgage,
+    TAXES: totalTaxes,
+    INSURANCE: totalInsurance,
+    UTILITIES: totalUtilities,
+    MANAGEMENT: totalManagement,
+    "BILL POSTING": totalBillPosting,
+    OTHER : totalOther
+  };
+}
+
 function getTotalRevenueByMonthYearWidget(data, month, year){
   let revenueItems = data?.result?.filter((item) => item.cf_month === month && item.cf_year === year && item.pur_cf_type === "revenue");
   // console.log("After filter revenueItems: ", revenueItems);
@@ -543,5 +708,7 @@ export {
   getTotalExpenseByMonthYearWidget,
   getTotalExpectedRevenueByMonthYearWidget,
   getTotalRevenueByMonthYearWidget,
-  getPast12MonthsExpectedCashflowWidget
+  getPast12MonthsExpectedCashflowWidget,
+  getTotalExpenseByTypeByProperty,
+  getTotalRevenueByTypeByProperty
 };

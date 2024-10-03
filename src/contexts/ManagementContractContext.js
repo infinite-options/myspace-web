@@ -38,6 +38,8 @@ export const ManagementContractProvider = ({ children }) => {
    
     if (data !== "No records for this Uid") {
       setAllContracts(data.result);
+      const newAndSentContracts = data?.result?.filter(contract => (contract.contract_status === "NEW" || contract.contract_status === "SENT"))
+      setContractRequests(newAndSentContracts);
       
       // Set currentContractUID and currentContractPropertyUID after the fetch
       // if (!currentContractUID && !currentContractPropertyUID && data.result.length > 0) {
@@ -47,18 +49,18 @@ export const ManagementContractProvider = ({ children }) => {
     }
   };
 
-  const fetchContractRequests = async () => {    
-    const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
-    // const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000003`);
+  // const fetchContractRequests = async () => {    
+  //   const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
+  //   // const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000003`);
 
-    try {
-      const jsonData = await response.json();      
-      const requests = jsonData?.newPMRequests?.result;
-      setContractRequests(requests);      
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  //   try {
+  //     const jsonData = await response.json();      
+  //     const requests = jsonData?.newPMRequests?.result;
+  //     setContractRequests(requests);      
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
   
   useEffect(() => {
     if (!dataLoaded) {
@@ -66,7 +68,7 @@ export const ManagementContractProvider = ({ children }) => {
             
       fetchDefaultContractFees();
       fetchContracts();
-      fetchContractRequests();
+      // fetchContractRequests();
     }
   }, [dataLoaded]);
 

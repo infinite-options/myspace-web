@@ -22,6 +22,7 @@ export default function CompleteButton(props){
     const [showModal, setShowModal] = useState(false);
     const [cancelTicket, setCancelTicket] = useState(false);
     let maintenanceItem = props.maintenanceItem;
+    console.log(" maintenace item inside complete buttonm - ", maintenanceItem)
     let setShowMessage = props.setShowMessage;
     let setMessage = props.setMessage;
     let quotes = props.quotes;

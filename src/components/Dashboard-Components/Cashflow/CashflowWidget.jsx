@@ -46,7 +46,7 @@ import AddRevenueIcon from "../../../images/AddRevenueIcon.png";
 
 // "../../images/AddRevenueIcon.png"
 
-function CashflowWidget({ data, originalData, setCurrentWindow, page, setSelectedProperty, setData, selectedProperty, allProperties, window }) {
+function CashflowWidget({ data, monthForData, yearForData, originalData, setCurrentWindow, page, setSelectedProperty, setData, selectedProperty, allProperties, window }) {
   // console.log("In Cashflow Widget ");
   // console.log("Cashflow Widget - data - ", data);
   const navigate = useNavigate();
@@ -222,6 +222,13 @@ function CashflowWidget({ data, originalData, setCurrentWindow, page, setSelecte
     //   });
 
   }, [])
+
+  // useEffect(()=>{
+  //   if(monthForData && yearForData){
+  //     setMonth(monthForData)
+  //     setYear(yearForData)
+  //   }
+  // },[monthForData, yearForData])
   
   const handlePropertyChange = (propertyUID) => {
     

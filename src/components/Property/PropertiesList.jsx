@@ -122,7 +122,7 @@ export default function PropertiesList(props) {
     // console.log("74 - props.showOnlyListings - ", props.showOnlyListings)       
     if(props.showOnlyListings && props.showOnlyListings === true){
       const onlyListings = propertyList?.filter( property => property.rent_status === "VACANT")
-      setDisplayedItems(onlyListings);
+      setDisplayedItems(onlyListings);      
     } else {
       setDisplayedItems(propertyList);
     }
@@ -132,24 +132,33 @@ export default function PropertiesList(props) {
     setLHS(props.LHS);
     setIsDataReady(true);
 
-  }, [props.LHS, returnIndex, propertyList, props.showOnlyListings]);  
+  // }, [props.LHS, returnIndex, propertyList, props.showOnlyListings]);  
+  }, [props.LHS, propertyList, props.showOnlyListings]);  
 
   useEffect(() => {
     console.log("displayedItems changed - ", displayedItems);
-    if (LHS === "Rent") {
-      onPropertyInRentWidgetClicked(initialPropInRent);
+    if(displayedItems && displayedItems.length > 0){
+      const firstItem = displayedItems[0];
+      const i = propertyList?.findIndex((p) => p.property_uid === firstItem.property_uid);
+      setReturnIndex(i);
+
+      if (LHS === "Rent") {
+        onPropertyInRentWidgetClicked(initialPropInRent);
+      }
     }
 
   }, [displayedItems]);
 
   const onPropertyClick = (params) => {
     const property = params.row;
-    const i = displayedItems.findIndex((p) => p.property_uid === property.property_uid);
+    // const i = displayedItems.findIndex((p) => p.property_uid === property.property_uid);
+    const i = propertyList?.findIndex((p) => p.property_uid === property.property_uid);
     // console.log("List Item Clicked", property, i, displayedItems);    
     setPropertyIndex(property.id);  
     setReturnIndex(i);
     setCurrentPropertyID(property.property_uid);
     setCurrentProperty(property);
+    props.setRHS("PropertyNavigator");
   };
 
   const onPropertyInRentWidgetClicked = (property_uid) => {
@@ -562,55 +571,55 @@ export default function PropertiesList(props) {
     
                   <Box sx={{ marginTop: "20px" }}>
                   <DataGrid
-  getRowHeight={() => "auto"}
-  rows={rows}
-  columns={columns}
-  autoHeight
-  pageSizeOptions={[15]}
-  initialState={{
-    pagination: {
-      paginationModel: {
-        pageSize: 15,
-      },
-    },
-  }}
-  onRowClick={onPropertyClick}
-  rowSelectionModel={[propertyIndex]}
-  getRowSpacing={getRowSpacing}
-  hideHeader={true} // This hides the headers
-  sx={{
-    "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
-    "& .MuiDataGrid-row:hover": {
-      cursor: "pointer",
-    },
-    "& .MuiDataGrid-cell": {
-      padding: "0px",
-      margin: "0px",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    "& .MuiDataGrid-row.Mui-selected": {
-      backgroundColor: "#ffffff !important",
-    },
-    [`& .${gridClasses.row}`]: {
-      bgcolor: (row) =>
-        row.id === propertyIndex ? "#ffffff" : theme.palette.form.main, // White for selected row
-      "&:before": {
-        content: '""',
-        display: "block",
-        height: "100%",
-        backgroundColor: "#ffffff",
-        position: "absolute",
-        left: "0",
-        right: "0",
-        zIndex: "-1",
-      },
-    },
-    "& .MuiDataGrid-columnHeaders": {
-      display: "none", // This ensures headers are hidden
-    },
-  }}
-/>
+                    getRowHeight={() => "auto"}
+                    rows={rows}
+                    columns={columns}
+                    autoHeight
+                    pageSizeOptions={[15]}
+                    initialState={{
+                      pagination: {
+                        paginationModel: {
+                          pageSize: 15,
+                        },
+                      },
+                    }}
+                    onRowClick={onPropertyClick}
+                    rowSelectionModel={[propertyIndex]}
+                    getRowSpacing={getRowSpacing}
+                    hideHeader={true} // This hides the headers
+                    sx={{
+                      "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
+                      "& .MuiDataGrid-row:hover": {
+                        cursor: "pointer",
+                      },
+                      "& .MuiDataGrid-cell": {
+                        padding: "0px",
+                        margin: "0px",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      },
+                      "& .MuiDataGrid-row.Mui-selected": {
+                        backgroundColor: "#ffffff !important",
+                      },
+                      [`& .${gridClasses.row}`]: {
+                        bgcolor: (row) =>
+                          row.id === propertyIndex ? "#ffffff" : theme.palette.form.main, // White for selected row
+                        "&:before": {
+                          content: '""',
+                          display: "block",
+                          height: "100%",
+                          backgroundColor: "#ffffff",
+                          position: "absolute",
+                          left: "0",
+                          right: "0",
+                          zIndex: "-1",
+                        },
+                      },
+                      "& .MuiDataGrid-columnHeaders": {
+                        display: "none", // This ensures headers are hidden
+                      },
+                    }}
+                  />
 
                   </Box>
                 </>
