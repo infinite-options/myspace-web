@@ -90,6 +90,53 @@ const TenantAccountBalance = ({
     return balanceDue > 0 ? "#A52A2A" : "#3D5CAC"; // Red for balance due, default for no balance
   };
 
+  const handlePropertySelect = (property) => {
+    setSelectedProperty(property);
+    handleClose();
+  }
+
+  if (!selectedProperty) {
+    return (
+      <Paper sx={{ padding: "30px", backgroundColor: "#f0f0f0", borderRadius: "8px", flex: 1 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+            {/* Property Image */}
+            <Box sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+              <CardMedia
+                component='img'
+                image={selectedProperty?.property_favorite_image || defaultHouseImage}
+                alt='property image'
+                sx={{ width: "100%", height: "auto", maxHeight: "150px" }}
+              />
+            </Box>
+            <Typography variant="h6" sx={{ fontWeight: "bold", color: "#160449" }}>
+              No Property Selected
+            </Typography>
+          <Typography variant="body1" sx={{ marginTop: "20px", color: "#3D5CAC" }}>
+            Please follow the steps below:
+          </Typography>
+          <ol style={{ textAlign: "left", marginTop: "20px", color: "#160449" }}>
+            <li>Go to your profile and fill out your information.</li>
+            <li>Search for a property that suits your needs.</li>
+            <li>Submit an application for the property.</li>
+            <li>Once your application is approved, you'll see your property details here.</li>
+          </ol>
+          <Button
+            variant="contained"
+            sx={{
+              marginTop: "20px",
+              backgroundColor: "#3D5CAC",
+              color: "#fff",
+              fontWeight: "bold",
+            }}
+            onClick={() => navigate("/profileEditor")}
+          >
+            Go to Profile
+          </Button>
+        </Box>
+      </Paper>
+    );
+  }
+
   return (
     <Paper sx={{ padding: "30px", backgroundColor: "#f0f0f0", borderRadius: "8px", flex: 1 }}>
       <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -108,18 +155,56 @@ const TenantAccountBalance = ({
         </Box>
 
         {/* Property Address */}
-        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "10px" }}>
-          <CircleIcon
-            sx={{
-              color: returnLeaseStatusColor(leaseDetails?.lease_status),
-              marginRight: "8px",
-              fontSize: "16px",
+        <Box 
+          sx={{ 
+            display: "flex", 
+            justifyContent: "center", 
+            alignItems: "center", 
+            marginTop: "10px", 
+            position: "relative",
+            width: "100%",
+            paddingRight: "20px" 
+          }}
+        >
+          <Box 
+            sx={{ 
+              display: "flex", 
+              justifyContent: "center", 
+              alignItems: "center", 
+              width: "100%"
             }}
-          />
-          <Typography sx={{ fontSize: "22px", fontWeight: "600", color: "#3D5CAC" }}>
-            {`${selectedProperty?.property_address}`}
-            <KeyboardArrowDownIcon onClick={handleOpen} />
-          </Typography>
+          >
+            <CircleIcon
+              sx={{
+                color: returnLeaseStatusColor(leaseDetails?.lease_status),
+                marginRight: "8px",
+                fontSize: "16px",
+                flexShrink: 0,
+              }}
+            />
+            <Typography
+              sx={{
+                fontSize: "22px",
+                fontWeight: "600",
+                color: "#3D5CAC",
+                textAlign: "center",
+              }}
+            >
+              {`${selectedProperty?.property_address}`}
+            </Typography>
+          </Box>
+          <IconButton 
+            onClick={handleOpen} 
+            sx={{ 
+              position: "absolute", 
+              right: 0, 
+              top: "50%", 
+              transform: "translateY(-50%)", 
+              padding: 0 
+            }}
+          >
+            <KeyboardArrowDownIcon />
+          </IconButton>
           {from !== "selectPayment" && (
             <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
               {propertyData?.map((property) => {
@@ -127,7 +212,7 @@ const TenantAccountBalance = ({
                 const propertyStatusColor = returnLeaseStatusColor(propertyLease?.lease_status);
 
                 return (
-                  <MenuItem key={property.property_uid} onClick={() => setSelectedProperty(property)} sx={{ display: "flex", alignItems: "center" }}>
+                  <MenuItem key={property.property_uid} onClick={() => handlePropertySelect(property)} sx={{ display: "flex", alignItems: "center" }}>
                     <CircleIcon
                       sx={{
                         color: propertyStatusColor,
@@ -183,50 +268,6 @@ const TenantAccountBalance = ({
                 ? "Make a Payment"
                 : "No Payment Due"}
             </Button>
-          </Box>
-        )}
-
-        {/* Payment Details and Management Details for NEW or PROCESSING status */}
-        {(leaseDetails?.lease_status === "NEW" || leaseDetails?.lease_status === "PROCESSING") && (
-          <Box sx={{ padding: "20px" }}>
-            <Typography sx={{ fontSize: "18px", fontWeight: "bold", color: "#160449" }}>Payment Details</Typography>
-            <Grid container spacing={1}>
-              <Grid item xs={6}>
-                <Typography>Rent:</Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography align='right'>${leaseDetails?.property_listed_rent || "N/A"}</Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography>Deposit:</Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography align='right'>${leaseDetails?.property_deposit || "N/A"}</Typography>
-              </Grid>
-            </Grid>
-
-            {/* Management Details */}
-            <Typography sx={{ fontSize: "18px", fontWeight: "bold", color: "#160449", marginTop: "20px" }}>Management Details</Typography>
-            <Grid container spacing={1}>
-              <Grid item xs={6}>
-                <Typography>Name:</Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography align='right'>{leaseDetails?.business_name || "N/A"}</Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography>Email:</Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography align='right'>{leaseDetails?.business_email || "N/A"}</Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography>Phone:</Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography align='right'>{leaseDetails?.business_phone_number || "N/A"}</Typography>
-              </Grid>
-            </Grid>
           </Box>
         )}
 
@@ -313,6 +354,7 @@ const TenantAccountBalance = ({
             </Button>
           </Box>
         )}
+
         {from === "selectPayment" && (
           <Box sx={{ display: "flex", justifyContent: "center", marginTop: "10px" }}>
             <Button
@@ -339,6 +381,53 @@ const TenantAccountBalance = ({
           </Box>
         )}
       </Box>
+          {/* Payment Details and Management Details for NEW or PROCESSING status */}
+        {(leaseDetails?.lease_status === "NEW" || leaseDetails?.lease_status === "PROCESSING") && (
+        <Box sx={{padding: "10px"}}>
+          <Typography variant='h6' sx={{ fontWeight: "bold", color: "#160449", marginBottom: "20px", fontSize: "20px", textAlign: "center" }}>
+            Rent Details
+          </Typography>
+          <Grid container spacing={1}>
+            <Grid item xs={6}>
+              <Typography sx={{color: "#3D5CAC"}}>Rent:</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography align="right">
+                ${leaseDetails?.property_listed_rent || "N/A"}
+              </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography sx={{color: "#3D5CAC"}}>Deposit:</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography align="right">
+                ${leaseDetails?.property_deposit || "N/A"}
+              </Typography>
+            </Grid>
+          </Grid>
+
+        {/* Management Details */}
+          <Typography variant='h6' sx={{ fontWeight: "bold", color: "#160449", marginBottom: "20px", marginTop: "5px", fontSize: "20px", textAlign: "center" }}>
+              Management Details
+            </Typography>
+
+            {/* Business Details */}
+            <Stack spacing={1}>
+              <Stack direction='row' justifyContent='space-between'>
+                <Typography sx={{color: "#3D5CAC"}}>Name:</Typography>
+                <Typography>{leaseDetails?.business_name || "N/A"}</Typography>
+              </Stack>
+              <Stack direction='row' justifyContent='space-between'>
+                <Typography sx={{color: "#3D5CAC"}}>Email:</Typography>
+                <Typography>{leaseDetails?.business_email || "N/A"}</Typography>
+              </Stack>
+              <Stack direction='row' justifyContent='space-between'>
+                <Typography sx={{color: "#3D5CAC"}}>Phone:</Typography>
+                <Typography>{leaseDetails?.business_phone_number || "N/A"}</Typography>
+              </Stack>
+            </Stack>
+        </Box>
+        )}
     </Paper>
   );
 };

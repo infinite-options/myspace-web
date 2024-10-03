@@ -328,7 +328,7 @@ const TenantDashboard = () => {
   }
 
   return (
-    <Box sx={{ backgroundColor: "#fff", padding: "40px" }}>
+    <Box sx={{ backgroundColor: "#fff", padding: "30px" }}>
       <Container>
         <Grid container spacing={3}>
           {/* Top Section: Welcome Message and Search Icon */}
@@ -406,7 +406,7 @@ const TenantDashboard = () => {
                             setRightPane={setRightPane}
                           />
                         </Grid>
-                        <Grid item xs={12} sx={{ marginTop: "10px" }}>
+                        <Grid item xs={12} sx={{ marginTop: "5px" }}>
                           <ManagementDetails leaseDetails={leaseDetails} />
                         </Grid>
                       </Grid>
@@ -919,6 +919,10 @@ const LeaseDetails = ({ leaseDetails }) => {
     setIsFlipped(!isFlipped);
   };
 
+  const isRejected = leaseDetails?.lease_status === "REFUSED";
+
+  console.log("lease details", leaseDetails);
+
   return (
     <Paper
       elevation={3}
@@ -1023,11 +1027,13 @@ const LeaseDetails = ({ leaseDetails }) => {
       {/* Flip Icon as Toggle Button */}
       <IconButton
         onClick={handleFlip}
+        disabled={isRejected}
         sx={{
           position: "absolute",
           top: "10px",
           right: "10px",
           padding: 0,
+          opacity: isRejected ? 0 : 1,
         }}
       >
         <img src={FlipIcon} alt='Flip Icon' style={{ width: "30px", height: "30px" }} />
