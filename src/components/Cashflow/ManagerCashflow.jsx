@@ -138,6 +138,8 @@ export default function ManagerCashflow() {
   const [getTotalValueByTypeMapping, setGetTotalValueByTypeMapping] = useState({})
   const [getExpectedTotalByTypeMapping, setGetExpectedTotalByTypeMapping] = useState({})
   const [allProfitDataItems, setAllProfitDataItems] = useState([])
+  const [getSortedTotalValueByMapping, setGetSortedTotalValueByMapping] = useState({})
+  const [getSortedExpectedTotalByMapping, setGetSortedExpectedTotalByMapping] = useState({})
 
   //ROHIT - remove this function
   // async function fetchCashflow(userProfileId, month, year) {
@@ -438,7 +440,7 @@ export default function ManagerCashflow() {
     };
   }
 
-  const getTotalByType = (data, month, year, expected) => {
+  const getTotalByType = (data, month, year, expected, sorting) => {
     var key = expected === true ? "expected" : "actual";
   
     let items = data;
@@ -459,7 +461,41 @@ export default function ManagerCashflow() {
       }
     });
 
-    return totals;
+    let sortedTotals;
+
+    if(sorting){
+      const priority = ["RENT", "LATE FEE", "EXTRA CHARGE", "DEPOSIT"];
+
+      sortedTotals = Object.fromEntries(
+        Object.entries(totals).sort(([keyA], [keyB]) => {
+          const indexA = priority.indexOf(keyA);
+          const indexB = priority.indexOf(keyB);
+
+          if (indexA !== -1 && indexB !== -1) {
+            // Both keys are in priority list, maintain their relative order
+            return indexA - indexB;
+          } else if (indexA !== -1) {
+            // keyA is in priority, keyB is not
+            return -1;
+          } else if (indexB !== -1) {
+            // keyB is in priority, keyA is not
+            return 1;
+          } else {
+            // Both keys are not in priority, sort alphabetically
+            return keyA.localeCompare(keyB);
+          }
+        })
+      );
+
+    }else{
+      sortedTotals = Object.fromEntries(
+        Object.entries(totals).sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
+      );
+    }
+
+
+  
+    return sortedTotals;
     // Revenue and Expense Calculations
     // let totalRent = items?.reduce((acc, item) => {
     //   if (item[key] !== null && item.purchase_type.toUpperCase() === "RENT") {
@@ -958,11 +994,16 @@ export default function ManagerCashflow() {
       const sortedProfitByProperty = Object.fromEntries(sortedProfitData);
       setProfits(sortedProfitByProperty);
 
-      const getTotalValueByType = getTotalByType(allProfitData, month, year, false)
-      const getExpectedTotalByType = getTotalByType(allProfitData, month, year, true)
+      const getTotalValueByType = getTotalByType(allProfitData, month, year, false, false)
+      const getExpectedTotalByType = getTotalByType(allProfitData, month, year, true, false)
       setGetExpectedTotalByTypeMapping(getExpectedTotalByType)
       setGetTotalValueByTypeMapping(getTotalValueByType)
       setAllProfitDataItems(allProfitData)
+
+      const sortedTotalValueByType = getTotalByType(allProfitData, month, year, false, true)
+      const sortedExpectedByType = getTotalByType(allProfitData, month, year, true, true)
+      setGetSortedTotalValueByMapping(sortedTotalValueByType)
+      setGetSortedExpectedTotalByMapping(sortedExpectedByType)
 
 
       const totalProfits = Object.values(profitDataByProperty).reduce(
@@ -1474,6 +1515,8 @@ export default function ManagerCashflow() {
                 getTotalValueByTypeMapping={getTotalValueByTypeMapping}
                 getExpectedTotalByTypeMapping={getExpectedTotalByTypeMapping}
                 allProfitDataItems={allProfitDataItems}
+                getSortedExpectedTotalByMapping={getSortedExpectedTotalByMapping}
+                getSortedTotalValueByMapping={getSortedTotalValueByMapping}
 
                 setMonth={setMonth}
                 setYear={setYear}
