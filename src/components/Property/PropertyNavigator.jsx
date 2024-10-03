@@ -920,16 +920,16 @@ export default function PropertyNavigator({
 
   const applnColumns = [
     // { field: "appliance_uid", headerName: "UID", width: 80 },
-    { field: "appliance_item", headerName: "Appliance", width: 150 },
+    { field: "appliance_item", headerName: "Appliance",  flex: 1},
     // { field: "appliance_desc", headerName: "Description", width: 80 },
     // { field: "appliance_manufacturer", headerName: "Manufacturer", width: 80 },
     //{ field: "appliance_purchased_from", headerName: "Purchased From", width: 80 },
-    { field: "appliance_purchased", headerName: "Purchased On", width: 180 },
+    { field: "appliance_purchased", headerName: "Purchased On", flex: 1},
     //{ field: "appliance_purchase_order", headerName: "Purchase Order Number", width: 80 },
-    { field: "appliance_installed", headerName: "Installed On", width: 180 },
+    { field: "appliance_installed", headerName: "Installed On", flex: 1},
     //{ field: "appliance_serial_num", headerName: "Serial Number", width: 80 },
     //{ field: "appliance_model_num", headerName: "Model Number", width: 80 },
-    { field: "appliance_warranty_till", headerName: "Warranty Till", width: 180 },
+    { field: "appliance_warranty_till", headerName: "Warranty Till", flex: 1},
     //{ field: "appliance_warranty_info", headerName: "Warranty Info", width: 80 },
     //{ field: "appliance_url", headerName: "URLs", width: 80 },
     //{ field: "appliance_images", headerName: "Image", width: 100, renderCell: ImageCell }, //appliance_favorite_image needs to be added
@@ -937,10 +937,10 @@ export default function PropertyNavigator({
     {
       field: "actions",
       headerName: "Actions",
-      width: 180,
+      width: 120,
       renderCell: (params) => {
         return (
-          <Box>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
              <IconButton onClick={() => handleInfoClick(params.row)}>
               <InfoIcon />
             </IconButton>
@@ -2483,7 +2483,7 @@ export default function PropertyNavigator({
           {/* Appliances grid */}
           <Grid item xs={12} md={12} sx={{ pt: "10px" }}>
             <Card sx={{ backgroundColor: color, height: "100%" }}>
-              <Box sx={{ width: "100%" }}>
+              <Box sx={{ width: "100%"}}>
                 <Box
                   sx={{
                     display: "flex",
@@ -2603,7 +2603,7 @@ export default function PropertyNavigator({
                           ))}
                       </Select>
                     </FormControl>
-                    {isEditing && (
+                    {(isEditing || isReadOnly) && (
                       <Box
                         sx={{
                           display: "flex",
@@ -2638,63 +2638,72 @@ export default function PropertyNavigator({
                             }}
                           >
                             <ImageList ref={scrollRef} sx={{ display: "flex", flexWrap: "nowrap" }} cols={5}>
-                              {currentApplRow.appliance_images ? (
-                                currentApplRow.appliance_images.map((image, index) => (
-                                  <ImageListItem
-                                    key={index}
-                                    sx={{
-                                      width: "auto",
-                                      flex: "0 0 auto",
-                                      border: "1px solid #ccc",
-                                      margin: "0 2px",
-                                      position: "relative", // Added to position icons
-                                    }}
-                                  >
-                                    <img
-                                      src={image}
-                                      alt={`maintenance-${index}`}
-                                      style={{
-                                        height: "150px",
-                                        width: "150px",
-                                        objectFit: "cover",
-                                      }}
-                                    />
-                                    <Box sx={{ position: "absolute", top: 0, right: 0 }}>
-                                      <IconButton
-                                        onClick={() => handleDelete(index)}
-                                        sx={{
-                                          color: deletedIcons[index] ? "red" : "black",
-                                          backgroundColor: "rgba(255, 255, 255, 0.7)",
-                                          "&:hover": {
-                                            backgroundColor: "rgba(255, 255, 255, 0.9)",
-                                          },
-                                          margin: "2px",
-                                        }}
-                                      >
-                                        <DeleteIcon />
-                                      </IconButton>
-                                    </Box>
-                                    <Box sx={{ position: "absolute", bottom: 0, left: 0 }}>
-                                      <IconButton
-                                        onClick={() => handleFavorite(index)}
-                                        sx={{
-                                          color: favoriteIcons[index] ? "red" : "black",
-                                          backgroundColor: "rgba(255, 255, 255, 0.7)",
-                                          "&:hover": {
-                                            backgroundColor: "rgba(255, 255, 255, 0.9)",
-                                          },
-                                          margin: "2px",
-                                        }}
-                                      >
-                                        {favoriteIcons[index] ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-                                      </IconButton>
-                                    </Box>
-                                  </ImageListItem>
-                                ))
-                              ) : (
-                                <></>
-                              )}
-                            </ImageList>
+  {currentApplRow.appliance_images ? (
+    currentApplRow.appliance_images.map((image, index) => (
+      <ImageListItem
+        key={index}
+        sx={{
+          width: "auto",
+          flex: "0 0 auto",
+          border: "1px solid #ccc",
+          margin: "0 2px",
+          position: "relative",
+        }}
+      >
+        <img
+          src={image}
+          alt={`maintenance-${index}`}
+          style={{
+            height: "150px",
+            width: "150px",
+            objectFit: "cover",
+          }}
+        />
+        
+        {/* Conditionally render delete icon if not read-only */}
+        {!isReadOnly && (
+          <Box sx={{ position: "absolute", top: 0, right: 0 }}>
+            <IconButton
+              onClick={() => handleDelete(index)}
+              sx={{
+                color: deletedIcons[index] ? "red" : "black",
+                backgroundColor: "rgba(255, 255, 255, 0.7)",
+                "&:hover": {
+                  backgroundColor: "rgba(255, 255, 255, 0.9)",
+                },
+                margin: "2px",
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Box>
+        )}
+
+        {/* Conditionally render favorite icon if not read-only */}
+        {!isReadOnly && (
+          <Box sx={{ position: "absolute", bottom: 0, left: 0 }}>
+            <IconButton
+              onClick={() => handleFavorite(index)}
+              sx={{
+                color: favoriteIcons[index] ? "red" : "black",
+                backgroundColor: "rgba(255, 255, 255, 0.7)",
+                "&:hover": {
+                  backgroundColor: "rgba(255, 255, 255, 0.9)",
+                },
+                margin: "2px",
+              }}
+            >
+              {favoriteIcons[index] ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+            </IconButton>
+          </Box>
+        )}
+      </ImageListItem>
+    ))
+  ) : (
+    <></>
+  )}
+</ImageList>
+
                           </Box>
                         </Box>
                         <IconButton onClick={() => handleScroll("right")}>
