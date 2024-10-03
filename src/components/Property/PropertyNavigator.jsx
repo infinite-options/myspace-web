@@ -2505,11 +2505,9 @@ export default function PropertyNavigator({
                       Appliances
                     </Typography>
                   </Box>
-                  <Button
+                  <IconButton
                     variant='outlined'
                     sx={{
-                      background: "#3D5CAC",
-                      color: theme.palette.background.default,
                       cursor: "pointer",
                       textTransform: "none",
                       minWidth: "30px",
@@ -2541,8 +2539,8 @@ export default function PropertyNavigator({
                       handleOpen();
                     }}
                   >
-                    <AddIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
-                  </Button>
+                    <AddIcon sx={{ color: "black", fontSize: "24px" }} />
+                  </IconButton>
                 </Box>
                 <DataGrid
                   rows={appliances}
