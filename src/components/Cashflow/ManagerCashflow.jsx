@@ -112,6 +112,14 @@ export default function ManagerCashflow() {
   const [payoutsTotalCurrentYear, setPayoutsTotalCurrentYear] = useState({}); //current Year
   const [unsortedPayoutsCurrentYear, setUnsortedPayoutsCurrentYear] = useState([])
   const [unsortedRentsDataCurrentYear, setUnsortedRentsDataCurrentYear] = useState([])
+  const [revenueByType, setRevenueByType] = useState({});
+  const [expenseByType, setExpenseByType] = useState({});
+  const [expectedRevenueByType, setExpectedRevenueByType] = useState([]);
+  const [expectedExpenseByType, setExpectedExpenseByType] = useState([]);
+  const [revenueList, setRevenueList] = useState([])
+  const [expenseList, setExpenseList] = useState([])
+  const [revenueByMonthByType, setRevenueByMonthByType] = useState([])
+  const [expenseByMonthByType, setExpenseByMonthByType] = useState([])
 
   const [profitabilityData, setProfitabilityData] = useState([]);
   const [transactionsData, setTransactionsData] = useState([]);
@@ -122,6 +130,9 @@ export default function ManagerCashflow() {
 
   const [propertyList, setPropertyList] = useState([]);
   const [selectedProperty, setSelectedProperty] = useState("ALL");
+  const [getTotalValueByTypeMapping, setGetTotalValueByTypeMapping] = useState({})
+  const [getExpectedTotalByTypeMapping, setGetExpectedTotalByTypeMapping] = useState({})
+  const [allProfitDataItems, setAllProfitDataItems] = useState([])
 
   //ROHIT - remove this function
   // async function fetchCashflow(userProfileId, month, year) {
@@ -256,6 +267,289 @@ export default function ManagerCashflow() {
       });
   };
 
+  const getTotalRevenueByType = (data, month, year, expected) => {
+    // console.log(data, month, year)
+  
+    var key = "actual";
+  
+    if (expected === true) {
+      key = "expected";
+    } else {
+      key = "actual";
+    }
+  
+    let revenueItems = data;
+    let totalRent = revenueItems?.reduce((acc, revenue) => {
+      if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "RENT") {
+        // console.log("revenue", revenue[key])
+        // console.log("acc", acc)
+        return acc + parseFloat(revenue[key]);
+      }
+      return acc;
+    }, 0.0);
+    let totalDeposits = revenueItems?.reduce((acc, revenue) => {
+      if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "DEPOSIT") {
+        return acc + parseFloat(revenue[key]);
+      }
+      return acc;
+    }, 0.0);
+    let totalExtraCharges = revenueItems?.reduce((acc, revenue) => {
+      if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "EXTRA CHARGE") {
+        return acc + parseFloat(revenue[key]);
+      }
+      return acc;
+    }, 0.0);
+    let totalUtilities = revenueItems?.reduce((acc, revenue) => {
+      if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "UTILITIES") {
+        return acc + parseFloat(revenue[key]);
+      }
+      return acc;
+    }, 0.0);
+    let totalLateFee = revenueItems?.reduce((acc, revenue) => {
+      if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "LATE FEE") {
+        return acc + parseFloat(revenue[key]);
+      }
+      return acc;
+    }, 0.0);
+    let totalMaintenance = revenueItems?.reduce((acc, revenue) => {
+      if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "MAINTENANCE") {
+        return acc + parseFloat(revenue[key]);
+      }
+      return acc;
+    }, 0.0);
+    let totalRepairs = revenueItems?.reduce((acc, revenue) => {
+      if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "REPAIRS") {
+        return acc + parseFloat(revenue[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalOther = revenueItems?.reduce((acc, revenue) => {
+      if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "OTHER") {
+        return acc + parseFloat(revenue[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    return {
+      RENT: totalRent,
+      DEPOSIT: totalDeposits,
+      "EXTRA CHARGE": totalExtraCharges,
+      UTILITIES: totalUtilities,
+      "LATE FEE": totalLateFee,
+      MAINTENANCE: totalMaintenance,
+      REPAIRS: totalRepairs,
+      OTHER: totalOther
+    };
+  }
+
+  const getTotalExpenseByType = (data, month, year, expected) => {
+    
+  
+    var key = "actual";
+  
+    if (expected === true) {
+      key = "expected";
+    } else {
+      key = "actual";
+    }
+  
+    let expenseItems = data;
+  
+    let totalMaintenance = expenseItems?.reduce((acc, expense) => {
+      if (expense[key] !== null && expense.purchase_type.toUpperCase() === "MAINTENANCE") {
+        return acc + parseFloat(expense[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalRepairs = expenseItems?.reduce((acc, expense) => {
+      if (expense[key] !== null && expense.purchase_type.toUpperCase() === "REPAIRS") {
+        return acc + parseFloat(expense[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalMortgage = expenseItems?.reduce((acc, expense) => {
+      if (expense[key] !== null && expense.purchase_type.toUpperCase() === "MORTGAGE") {
+        return acc + parseFloat(expense[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalTaxes = expenseItems?.reduce((acc, expense) => {
+      if (expense[key] !== null && expense.purchase_type.toUpperCase() === "TAXES") {
+        return acc + parseFloat(expense[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalInsurance = expenseItems?.reduce((acc, expense) => {
+      if (expense[key] !== null && expense.purchase_type.toUpperCase() === "INSURANCE") {
+        return acc + parseFloat(expense[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalUtilities = expenseItems?.reduce((acc, expense) => {
+      if (expense[key] !== null && expense.purchase_type.toUpperCase() === "UTILITIES") {
+        return acc + parseFloat(expense[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalManagement = expenseItems?.reduce((acc, expense) => {
+      if (expense[key] !== null && expense.purchase_type.toUpperCase() === "MANAGEMENT") {
+        return acc + parseFloat(expense[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalBillPosting = expenseItems?.reduce((acc, expense) => {
+      if (expense[key] !== null && expense.purchase_type.toUpperCase() === "BILL POSTING") {
+        return acc + parseFloat(expense[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalOther = expenseItems?.reduce((acc, expense) => {
+      if (expense[key] !== null && expense.purchase_type.toUpperCase() === "OTHER") {
+        return acc + parseFloat(expense[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    console.log("inside expense mapping - ", totalMaintenance)
+    return {
+      MAINTENANCE: totalMaintenance,
+      REPAIRS: totalRepairs,
+      MORTGAGE: totalMortgage,
+      TAXES: totalTaxes,
+      INSURANCE: totalInsurance,
+      UTILITIES: totalUtilities,
+      MANAGEMENT: totalManagement,
+      "BILL POSTING": totalBillPosting,
+      OTHER : totalOther
+    };
+  }
+
+  const getTotalByType = (data, month, year, expected) => {
+    // Determine which key to use for calculations (either 'actual' or 'expected')
+    // console.log(" data - ", data)
+    var key = expected === true ? "expected" : "actual";
+  
+    let items = data;
+  
+    // Revenue and Expense Calculations
+    let totalRent = items?.reduce((acc, item) => {
+      if (item[key] !== null && item.purchase_type.toUpperCase() === "RENT") {
+        return acc + parseFloat(item[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalDeposits = items?.reduce((acc, item) => {
+      if (item[key] !== null && item.purchase_type.toUpperCase() === "DEPOSIT") {
+        return acc + parseFloat(item[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalExtraCharges = items?.reduce((acc, item) => {
+      if (item[key] !== null && item.purchase_type.toUpperCase() === "EXTRA CHARGE") {
+        return acc + parseFloat(item[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalUtilities = items?.reduce((acc, item) => {
+      if (item[key] !== null && item.purchase_type.toUpperCase() === "UTILITIES") {
+        return acc + parseFloat(item[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalLateFee = items?.reduce((acc, item) => {
+      if (item[key] !== null && item.purchase_type.toUpperCase() === "LATE FEE") {
+        return acc + parseFloat(item[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalMaintenance = items?.reduce((acc, item) => {
+      if (item[key] !== null && item.purchase_type.toUpperCase() === "MAINTENANCE") {
+        return acc + parseFloat(item[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalRepairs = items?.reduce((acc, item) => {
+      if (item[key] !== null && item.purchase_type.toUpperCase() === "REPAIRS") {
+        return acc + parseFloat(item[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalMortgage = items?.reduce((acc, item) => {
+      if (item[key] !== null && item.purchase_type.toUpperCase() === "MORTGAGE") {
+        return acc + parseFloat(item[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalTaxes = items?.reduce((acc, item) => {
+      if (item[key] !== null && item.purchase_type.toUpperCase() === "TAXES") {
+        return acc + parseFloat(item[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalInsurance = items?.reduce((acc, item) => {
+      if (item[key] !== null && item.purchase_type.toUpperCase() === "INSURANCE") {
+        return acc + parseFloat(item[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalManagement = items?.reduce((acc, item) => {
+      if (item[key] !== null && item.purchase_type.toUpperCase() === "MANAGEMENT") {
+        return acc + parseFloat(item[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalBillPosting = items?.reduce((acc, item) => {
+      if (item[key] !== null && item.purchase_type.toUpperCase() === "BILL POSTING") {
+        return acc + parseFloat(item[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalOther = items?.reduce((acc, item) => {
+      if (item[key] !== null && item.purchase_type.toUpperCase() === "OTHER") {
+        return acc + parseFloat(item[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    return {
+      RENT: totalRent,
+      DEPOSIT: totalDeposits,
+      "EXTRA CHARGE": totalExtraCharges,
+      UTILITIES: totalUtilities,
+      "LATE FEE": totalLateFee,
+      MAINTENANCE: totalMaintenance,
+      REPAIRS: totalRepairs,
+      MORTGAGE: totalMortgage,
+      TAXES: totalTaxes,
+      INSURANCE: totalInsurance,
+      MANAGEMENT: totalManagement,
+      "BILL POSTING": totalBillPosting,
+      OTHER: totalOther
+    };
+  };
+  
+
   useEffect(() => {
     //PROFITS
     const allProfitData = cashflowData?.result;
@@ -281,6 +575,9 @@ export default function ManagerCashflow() {
     
     const payoutsCurrentMonth = profitDatacurrentMonth?.filter((item) => item.pur_payer === profileId);
     const payoutsCurrentYear = profitDataCurrentYear?.filter((item) => item.pur_payer === profileId);
+
+    setRevenueList(rentDataCurrentMonth)
+    setExpenseList(payoutsCurrentMonth)
 
 
     // expense by property
@@ -505,6 +802,101 @@ export default function ManagerCashflow() {
 
     setPayoutsTotalCurrentYear(totalPayoutsCurrentYear);
 
+
+
+    // mapping revenue
+    let revenueMapping = getTotalRevenueByType(rentDataCurrentMonth, month, year, false);
+    let expectedRevenueMapping = getTotalRevenueByType(rentDataCurrentMonth, month, year, true);
+    setRevenueByType(revenueMapping)
+    setExpectedRevenueByType(expectedRevenueMapping)
+    
+    // mapping expense
+    let expenseMapping = getTotalExpenseByType(payoutsCurrentMonth, month, year, false);
+    let expectedExpenseMapping = getTotalExpenseByType(payoutsCurrentMonth, month, year, true);
+    setExpenseByType(expenseMapping)
+    setExpectedExpenseByType(expectedExpenseMapping)
+
+    // console.log("revenue by type - ", revenueMapping, " expense by type - ", expenseMapping)
+
+
+    // const revenueByMonth = rentDataCurrentYear?.reduce((acc, item) => {
+    //   if (item.cf_year !== year) {
+    //     return acc;
+    //   }
+    
+    //   const monthKey = item.cf_month; // Use the month as the key
+    //   const totalExpected = parseFloat(item.expected) || 0;
+    //   const totalActual = parseFloat(item.actual) || 0;
+    
+    //   if (!acc[monthKey]) {
+    //     acc[monthKey] = {
+    //       revenueItems: [],
+    //       RevenueByType: {},
+    //       expectedRevenueByType: {},
+    //       totalExpected: 0,
+    //       totalActual: 0,
+    //     };
+    //   }
+    
+    //   acc[monthKey].revenueItems.push(item);
+    //   acc[monthKey].totalExpected += totalExpected;
+    //   acc[monthKey].totalActual += totalActual;
+    
+    //   return acc;
+    // }, {});
+    
+    // // Now process each month's revenue
+    // Object.keys(revenueByMonth).forEach((monthKey) => {
+    //   const monthData = revenueByMonth[monthKey];
+    //   const revenueItems = monthData.revenueItems;
+    
+    //   const RevenueByType = getTotalRevenueByType(revenueItems, month, year, false);
+    //   const expectedRevenueByType = getTotalRevenueByType(revenueItems, month, year, true);
+    
+    //   revenueByMonth[monthKey].RevenueByType = RevenueByType;
+    //   revenueByMonth[monthKey].expectedRevenueByType = expectedRevenueByType;
+    // });
+    
+    // setRevenueByMonthByType(revenueByMonth);
+
+    // const expenseByMonth = payoutsCurrentYear?.reduce((acc, item) => {
+    //   const monthKey = item.cf_month; // Use the month as the key
+    //   const totalExpected = parseFloat(item.expected) || 0;
+    //   const totalActual = parseFloat(item.actual) || 0;
+    
+    //   if (!acc[monthKey]) {
+    //     acc[monthKey] = {
+    //       expenseItems: [],
+    //       ExpenseByType: {},
+    //       expectedExpenseByType: {},
+    //       totalExpected: 0,
+    //       totalActual: 0,
+    //     };
+    //   }
+    
+    //   acc[monthKey].expenseItems.push(item);
+    //   acc[monthKey].totalExpected += totalExpected;
+    //   acc[monthKey].totalActual += totalActual;
+    
+    //   return acc;
+    // }, {});
+    
+    // // Now process each month's expenses
+    // Object.keys(expenseByMonth).forEach((monthKey) => {
+    //   const monthData = expenseByMonth[monthKey];
+    //   const expenseItems = monthData.expenseItems;
+    
+    //   const ExpenseByType = getTotalExpenseByType(expenseItems, month, year, false);
+    //   const expectedExpenseByType = getTotalExpenseByType(expenseItems, month, year, true);
+    
+    //   expenseByMonth[monthKey].ExpenseByType = ExpenseByType;
+    //   expenseByMonth[monthKey].expectedExpenseByType = expectedExpenseByType;
+    // });
+
+    // setExpenseByMonthByType(expenseByMonth)
+
+    // console.log("revenue by month by type - ", revenueByMonth, "expense by minth by type - ", expenseByMonth)
+
   }, [month, year, cashflowData, selectedProperty]);
 
   useEffect(() => {
@@ -536,7 +928,7 @@ export default function ManagerCashflow() {
       setRentsByProperty(sortedRentData)
 
 
-      const profitDataByProperty = calculateProfitsByProperty(unsortedRentsData, unsortedPayouts);
+      const [profitDataByProperty, allProfitData] = calculateProfitsByProperty(unsortedRentsData, unsortedPayouts);
 
       const profitData = Object.entries(profitDataByProperty);
       const sortedProfitData = profitData.sort((a, b) => {
@@ -545,6 +937,13 @@ export default function ManagerCashflow() {
 
       const sortedProfitByProperty = Object.fromEntries(sortedProfitData);
       setProfits(sortedProfitByProperty);
+
+      const getTotalValueByType = getTotalByType(allProfitData, month, year, false)
+      const getExpectedTotalByType = getTotalByType(allProfitData, month, year, true)
+      setGetExpectedTotalByTypeMapping(getExpectedTotalByType)
+      setGetTotalValueByTypeMapping(getTotalValueByType)
+      setAllProfitDataItems(allProfitData)
+
 
       const totalProfits = Object.values(profitDataByProperty).reduce(
         (acc, property) => {
@@ -702,6 +1101,7 @@ export default function ManagerCashflow() {
   
     // return profitDataByProperty;
     const profitDataByProperty = {};
+    const allProfitItems = [];
 
     Object.keys(rentsDataByProperty).forEach((propertyUID) => {
       const rentData = rentsDataByProperty[propertyUID];
@@ -732,7 +1132,10 @@ export default function ManagerCashflow() {
         }));
 
       const expectedProfit = totalRentExpected + totalPayoutExpected;
-      const actualProfit = totalRentActual + totalPayoutActual;       
+      const actualProfit = totalRentActual + totalPayoutActual;
+      
+      allProfitItems.push(...profitRentItems)
+      allProfitItems.push(...profitPayoutItems)
 
       profitDataByProperty[propertyUID] = {
         propertyInfo: rentData.propertyInfo,
@@ -765,6 +1168,8 @@ export default function ManagerCashflow() {
             actual: (parseFloat(item.actual) || 0.00) * -1,    
           }));
 
+        allProfitItems.push(...profitPayoutItems)
+
         const expectedProfit = totalRentExpected + totalPayoutExpected; 
         const actualProfit = totalRentActual + totalPayoutActual;       
 
@@ -781,7 +1186,7 @@ export default function ManagerCashflow() {
       }
     });
 
-    return profitDataByProperty;
+    return [profitDataByProperty, allProfitItems];
   };
 
   const calculateProfitsByMonth = (rentsDataByMonth, payoutsByMonth) => {
@@ -1035,6 +1440,20 @@ export default function ManagerCashflow() {
                 rentsByPropertyCurrentYear = {rentsByPropertyCurrentYear}
                 payoutsCurrentYear = {payoutsCurrentYear}
                 payoutsTotalCurrentYear = {payoutsTotalCurrentYear}
+
+                revenueByType={revenueByType}
+                expenseByType={expenseByType}
+                expectedExpenseByType={expectedExpenseByType}
+                expectedRevenueByType={expectedRevenueByType}
+                revenueList={revenueList}
+                expenseList={expenseList}
+
+                revenueByMonthByType={revenueByMonthByType}
+                expenseByMonthByType={expenseByMonthByType}
+
+                getTotalValueByTypeMapping={getTotalValueByTypeMapping}
+                getExpectedTotalByTypeMapping={getExpectedTotalByTypeMapping}
+                allProfitDataItems={allProfitDataItems}
 
                 setMonth={setMonth}
                 setYear={setYear}
