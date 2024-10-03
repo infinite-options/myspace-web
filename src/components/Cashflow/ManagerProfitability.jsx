@@ -1568,14 +1568,14 @@ function StatementTable(props) {
                   <Table>
                     <TableHead>
                       <TableRow>
-                        <TableCell sx={{ width: "150px" }}>
+                        <TableCell sx={{ width: "250px" }}>
                           <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
                             {" "}
                             {category} {getCategoryCount(category, true)}{" "}
                           </Typography>
                         </TableCell>
                         <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, width: "250px" }}>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, width: "150px" }}>
                             ${value ? value : 0}
                           </Typography>
                         </TableCell>
