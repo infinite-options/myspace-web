@@ -197,78 +197,78 @@ export default function QuotesRequestAction({ maintenanceItem, navigateParams, q
 				width: '100%',
 			}}
 		>
-                <Box
-  sx={{
-    display: 'flex',  // Flexbox for horizontal alignment
-    justifyContent: 'space-between',  // Ensures space between buttons
-    flexWrap: 'nowrap',  // Prevent wrapping on larger screens
-    gap: 5,  // Space between buttons
-    width: '100%',
-    padding: '20px',
-  }}
->
-  <Button
-    variant="contained"
-    sx={{
-      backgroundColor: '#a7b8e6',
-      color: '#160449',
-      textTransform: 'none',
-      fontWeight: 'bold',
-      borderRadius: '8px',
-      height: '120px',
-      width: '200px', 
-      padding: '10px',
-      '&:hover': {
-        backgroundColor: '#a7b8e6',
-      },
-    }}
-    onClick={() => handleNavigateToQuotesAccept()}
-  >
-    View Quotes
-  </Button>
+			<Box
+				sx={{
+					display: 'flex',  // Flexbox for horizontal alignment
+					justifyContent: 'space-between',  // Ensures space between buttons
+					flexWrap: 'nowrap',  // Prevent wrapping on larger screens
+					gap: 5,  // Space between buttons
+					width: '100%',
+					padding: '20px',
+				}}
+			>
+				<Button
+					variant="contained"
+					sx={{
+					backgroundColor: '#a7b8e6',
+					color: '#160449',
+					textTransform: 'none',
+					fontWeight: 'bold',
+					borderRadius: '8px',
+					height: '120px',
+					width: '200px', 
+					padding: '10px',
+					'&:hover': {
+						backgroundColor: '#a7b8e6',
+					},
+					}}
+					onClick={() => handleNavigateToQuotesAccept()}
+				>
+					View Quotes
+				</Button>
 
-  <Button
-    variant="contained"
-    sx={{
-      backgroundColor: '#FFC614',
-      color: '#160449',
-      textTransform: 'none',
-      fontWeight: 'bold',
-      borderRadius: '8px',
-      height: '120px',
-      width: '200px',   
-      padding: '10px',
-      '&:hover': {
-        backgroundColor: '#FFC614',
-      },
-    }}
-    onClick={() => setShowModal(true)}
-  >
-    Schedule
-  </Button>
+				<Button
+					variant="contained"
+					sx={{
+					backgroundColor: '#FFC614',
+					color: '#160449',
+					textTransform: 'none',
+					fontWeight: 'bold',
+					borderRadius: '8px',
+					height: '120px',
+					width: '200px',   
+					padding: '10px',
+					'&:hover': {
+						backgroundColor: '#FFC614',
+					},
+					}}
+					onClick={() => setShowModal(true)}
+				>
+					Schedule
+				</Button>
 
-  <Button
-    variant="contained"
-    sx={{
-      backgroundColor: '#F87C7A',
-      color: '#160449',
-      textTransform: 'none',
-      fontWeight: 'bold',
-      borderRadius: '8px',
-      height: '120px',
-      width: '200px',   
-      padding: '10px',
-      '&:hover': {
-        backgroundColor: '#F87C7A',
-      },
-    }}
-    onClick={() => handleNavigateToQuotesRequested()}
-  >
-    Request Quotes
-  </Button>
+				<Button
+					variant="contained"
+					sx={{
+					backgroundColor: '#F87C7A',
+					color: '#160449',
+					textTransform: 'none',
+					fontWeight: 'bold',
+					borderRadius: '8px',
+					height: '120px',
+					width: '200px',   
+					padding: '10px',
+					'&:hover': {
+						backgroundColor: '#F87C7A',
+					},
+					}}
+					onClick={() => handleNavigateToQuotesRequested()}
+				>
+					Request Quotes
+				</Button>
 
-  <CompleteButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage} setRefresh = {setRefresh}/>
-                    </Box>
+				<CompleteButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage} setRefresh = {setRefresh}/>
+			</Box>
 
             <AlertMessage showMessage={showMessage} setShowMessage={setShowMessage} message={message} />
 			<DateTimePickerModal

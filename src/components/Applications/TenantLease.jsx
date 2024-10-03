@@ -76,6 +76,7 @@ const initialFees = (property, application) => {
       frequency: "Monthly",
       charge: property.property_listed_rent,
       due_by: 1,
+      due_by_date: "",
       late_by: 5,
       late_fee: "50",
       perDay_late_fee: "10",

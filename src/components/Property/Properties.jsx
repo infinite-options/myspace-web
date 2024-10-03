@@ -429,6 +429,7 @@ function Properties() {
               onDataChange={handleListClick}
               onAddPropertyClick={handleAddPropertyClick}
               handleSorting={handleSorting}
+              setRHS={setRHS}
               showOnlyListings={showOnlyListings}
             />
           </Grid>
@@ -456,6 +457,7 @@ function Properties() {
                   onAddListingClick={handleAddListingClick}
                   setManagerDetailsState={setManagerDetailsState}
                   handleViewManagerDetailsClick={handleViewManagerDetailsClick}
+                  showOnlyListings={showOnlyListings}
                 />
               )}
               {RHS === "EditProperty" && (

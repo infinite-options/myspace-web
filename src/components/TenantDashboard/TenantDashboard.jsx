@@ -93,6 +93,12 @@ const TenantDashboard = () => {
   //     }
   // };
 
+  useEffect(() => {
+    if(leaseDetailsData != null && leaseDetailsData.length === 0 ){
+      setRightPane({ type: "listings" })
+    }
+  }, [leaseDetailsData]);
+
   const fetchData = async () => {
     try {
       setLoading(true); // Set loading to true before fetching data

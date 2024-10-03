@@ -148,21 +148,21 @@ export default function PropertyNavigator({
 
   // console.log("PropertyNavigator - location state allRentStatus - ", allRentStatus);
 
-  const getDataFromAPI = async () => {
-    const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
-    // const url = `${APIConfig.baseURL.dev}/contacts/600-000003`;
-    try {
-      const response = await axios.get(url);
-      // console.log("--response in nav----", response);
-      const data = response["management_contacts"];
-      // console.log("--response data----", data);
-      const ownerContacts = data["owners"];
-      // console.log("--response ownerContacts----", ownerContacts);
-      setContactDetails(ownerContacts);
-    } catch (error) {
-      // console.log("Error fetching owner contacts: ", error);
-    }
-  };
+  // const getDataFromAPI = async () => {
+  //   const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
+  //   // const url = `${APIConfig.baseURL.dev}/contacts/600-000003`;
+  //   try {
+  //     const response = await axios.get(url);
+  //     // console.log("--response in nav----", response);
+  //     const data = response["management_contacts"];
+  //     // console.log("--response data----", data);
+  //     const ownerContacts = data["owners"];
+  //     // console.log("--response ownerContacts----", ownerContacts);
+  //     setContactDetails(ownerContacts);
+  //   } catch (error) {
+  //     // console.log("Error fetching owner contacts: ", error);
+  //   }
+  // };
 
   // useEffect(() => {
   //   console.log("PropertyNavigator - property - ", property);
@@ -181,7 +181,7 @@ export default function PropertyNavigator({
   // }, [property]);
 
   useEffect(() => {
-    getDataFromAPI();
+    // getDataFromAPI();
     // fetchApplianceList();
     getApplianceCategories();
   }, []);
@@ -361,25 +361,25 @@ export default function PropertyNavigator({
   );
 
   let dashboard_id = getProfileId();
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      setShowSpinner(true);
-      try {
-        const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
-        // const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000003`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch dashboard data");
-        }
-        const jsonData = await response.json();
-        setHappinessData(jsonData.HappinessMatrix);
-        setdataforhappiness(jsonData);
-      } catch (error) {
-        console.error(error);
-      }
-      setShowSpinner(false);
-    };
-    fetchDashboardData();
-  }, [dashboard_id]);
+  // useEffect(() => {
+  //   const fetchDashboardData = async () => {
+  //     setShowSpinner(true);
+  //     try {
+  //       const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
+  //       // const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/600-000003`);
+  //       if (!response.ok) {
+  //         throw new Error("Failed to fetch dashboard data");
+  //       }
+  //       const jsonData = await response.json();
+  //       setHappinessData(jsonData.HappinessMatrix);
+  //       setdataforhappiness(jsonData);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //     setShowSpinner(false);
+  //   };
+  //   fetchDashboardData();
+  // }, [dashboard_id]);
 
   const handleNextCard = () => {
     let nextIndex = (currentIndex + 1) % (propertyData ? propertyData.length : 1);

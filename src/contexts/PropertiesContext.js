@@ -40,7 +40,7 @@ function getPropertyList(data) {
 export const PropertiesProvider = ({ children }) => {
   const { getProfileId } = useUser();
   const [ dataLoaded, setDataLoaded ] = useState(false);
-  const [ rawPropertyData, setRawPropertyData ] = useState([]);
+  // const [ rawPropertyData, setRawPropertyData ] = useState([]);
   const [ propertyList, setPropertyList ] = useState([]);
   const [ allRentStatus, setAllRentStatus ] = useState([]);
   const [ allContracts, setAllContracts ] = useState([]);
@@ -85,7 +85,7 @@ export const PropertiesProvider = ({ children }) => {
     // console.log("In Properties > Property Endpoint: ", propertyList);
     
     
-    setRawPropertyData(propertyData); // Sets rawPropertyData to be based into Edit Properties Function
+    // setRawPropertyData(propertyData); // Sets rawPropertyData to be based into Edit Properties Function
     setPropertyList(propertyList)
     // setPropertyList([...propertyList]);
     // setDisplayedItems([...propertyList]);
