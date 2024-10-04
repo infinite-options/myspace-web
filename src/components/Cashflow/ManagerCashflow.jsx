@@ -699,9 +699,13 @@ export default function ManagerCashflow() {
           property_address: item.property_address,
           property_unit: item.property_unit,
         };
-  
-        const totalExpected = parseFloat(item.expected) || 0;
-        const totalActual = parseFloat(item.actual) || 0;
+        
+        const totalExpected = parseFloat(item.expected) || 0;;
+        let totalActual = 0;
+
+        if(item.pur_payer.startsWith("110")){
+          totalActual = parseFloat(item.actual) || 0;
+        }
   
         if (!acc[propertyUID]) {
           // acc[propertyUID] = [];
