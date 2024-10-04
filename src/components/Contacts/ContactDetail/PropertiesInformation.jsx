@@ -191,7 +191,7 @@ const PropertiesList = ({ data }) => {
         flex: 1,
         renderCell: (params) => (
           <Typography
-            sx={{ fontSize: '12px', color: '#160449', cursor: 'pointer' }}
+            sx={{ fontSize: '14px', color: '#160449', cursor: 'pointer' }}
             onClick={() => {
               if(fromPage === "Owner"){
                 navigate("/properties", {
@@ -244,7 +244,7 @@ const PropertiesList = ({ data }) => {
                 sx={{
                   color: theme.palette.primary.main,
                   fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: "10px",
+                  fontSize: "12px",
                   margin: "0px",
                   padding: "0px",
                   height: "35px",
@@ -264,7 +264,7 @@ const PropertiesList = ({ data }) => {
       {
         field: "maintenance",      
         // width: 100,
-        flex: 0.5,
+        flex: 0.3,
         renderCell: (params) => (
           <Box sx={{ margin: "0px", cursor:"pointer"}}
             onClick = {() => {
@@ -331,8 +331,8 @@ const PropertiesList = ({ data }) => {
         <DataGrid
             rows={data}
             columns={columns}
-            autoHeight
-            // getRowHeight={() => 'auto'}
+            //autoHeight
+            getRowHeight={() => 'auto'}
             slots={{
               columnHeaders: () => null,
             }}      
@@ -349,10 +349,10 @@ const PropertiesList = ({ data }) => {
               border: '0px',            
             }}
             hideFooter={true}
-            getRowSpacing={(params) => ({
-              top: 3, // Space above each row
-              bottom: 3, // Space below each row
-            })}               
+            // getRowSpacing={(params) => ({
+            //   top: 3, // Space above each row
+            //   bottom: 3, // Space below each row
+            // })}               
           />
       </>
         // <Grid

@@ -535,7 +535,7 @@ const TenantContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
         flex: 0.5,
         renderCell: (params) => (
           <Typography sx={{ fontSize: '14px', color: '#160449', }}>
-            {params.row.latest_date || "-"}
+            {params.row.latest_date ? dayjs(params.row.latest_date).format('MM/DD/YYYY') : "-"}
           </Typography>
         )
       },
@@ -550,8 +550,8 @@ const TenantContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
         // width: 200,
         flex: 0.5,
         renderCell: (params) => (
-          <Typography sx={{ fontSize: '14px', color: '#160449', }}>
-            {params.row.purchase_status === "UNPAID" ? params.row.pur_amount_due : params.row.total_paid || "-"}
+          <Typography sx={{ fontSize: '14px', color: '#160449', textAlign: 'right', width: '100%'}}>
+            {params.row.purchase_status === "UNPAID" ? params.row.pur_amount_due.toFixed(2) : params.row.total_paid.toFixed(2) || "-"}
           </Typography>
         )
       },

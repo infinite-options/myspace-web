@@ -774,7 +774,7 @@ const TenantLease = () => {
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   value={startDate}
-                  minDate={dayjs()}
+                  // minDate={dayjs()}
                   onChange={handleStartDateChange}
                   slots={{
                     openPickerIcon: CalendarIcon,
@@ -809,7 +809,7 @@ const TenantLease = () => {
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   value={endDate}
-                  minDate={dayjs()}
+                  // minDate={dayjs()}
                   onChange={handleEndDateChange}
                   slots={{
                     openPickerIcon: CalendarIcon,
@@ -845,7 +845,7 @@ const TenantLease = () => {
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   value={moveInDate}
-                  minDate={dayjs()}
+                  // minDate={dayjs()}
                   onChange={handleMoveInDateChange}
                   slots={{
                     openPickerIcon: CalendarIcon,
