@@ -183,6 +183,7 @@ function ManagerCashflowWidget({
   profitsTotal,
   rentsTotal,
   payoutsTotal,
+  totalDeposit,
   propsMonth,
   propsYear,
   graphData,
@@ -633,6 +634,27 @@ function ManagerCashflowWidget({
 
                     {cfPeriodButtonName === "Last 12 Months" && <>${payouts?.totalActual ? parseFloat(payouts?.totalActual).toFixed(2) : "0.00"}</>}
                     {cfPeriodButtonName === "Current Month" && <>${last12MonthsTotals?.totalPayouts ? parseFloat(last12MonthsTotals?.totalPayouts).toFixed(2) : "0.00"}</>}
+                  </Typography>
+                </Grid>
+              </Grid>
+              <Grid container direction='row' item xs={12} columnSpacing={3} sx={{ backgroundColor: "#160449", borderRadius: "5px", marginTop: "5px" }}>
+                <Grid item xs={5} sx={{ padding: "5px", display: "flex" }}>
+                  <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>{`Deposit`}</Typography>
+                </Grid>
+                <Grid item xs={3} sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
+                  <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
+                    {/* ${(profits?.pur_amount_due != null && revenueCurrentMonth?.pur_amount_due != null ) ? (parseFloat(revenueCurrentMonth.pur_amount_due) - parseFloat(expenseCurrentMonth.pur_amount_due)).toFixed(2) : 0} */}
+                    {cfPeriodButtonName === "Last 12 Months" && <>${totalDeposit?.totalExpected ? parseFloat(totalDeposit?.totalExpected).toFixed(2) : "0.00"}</>}
+                    {/* {cfPeriodButtonName === "Current Month" && (
+                      <>${last12MonthsTotals?.totalExpectedProfit ? parseFloat(last12MonthsTotals?.totalExpectedProfit).toFixed(2) : "0.00"}</>
+                    )} */}
+                  </Typography>
+                </Grid>
+                <Grid item xs={1}></Grid>
+                <Grid container item xs={3} justifyContent='center' sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
+                  <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
+                    {cfPeriodButtonName === "Last 12 Months" && <>${totalDeposit?.totalActual ? parseFloat(totalDeposit?.totalActual).toFixed(2) : "0.00"}</>}
+                    {/* {cfPeriodButtonName === "Current Month" && <>${last12MonthsTotals?.totalProfit ? parseFloat(last12MonthsTotals?.totalProfit).toFixed(2) : "0.00"}</>} */}
                   </Typography>
                 </Grid>
               </Grid>

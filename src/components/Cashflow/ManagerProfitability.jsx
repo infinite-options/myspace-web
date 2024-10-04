@@ -77,7 +77,9 @@ const ManagerProfitability = ({
   getExpectedTotalByTypeMapping,
   allProfitDataItems,
   getSortedExpectedTotalByMapping,
-  getSortedTotalValueByMapping
+  getSortedTotalValueByMapping,
+  totalDeposit,
+  totalDepositByProperty
 }) => {
   const { user, getProfileId, selectedRole } = useUser();
   const navigate = useNavigate();
@@ -936,11 +938,11 @@ const ManagerProfitability = ({
                               <Grid container justifyContent='flex-start' item xs={8}>
                                 <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
                                       {`${property?.propertyInfo?.property_address}`} {property?.propertyInfo?.property_unit && ", Unit - "}
                                       {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
                                     </Typography>
-                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, marginLeft: 10 }}>
+                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, marginLeft: 10, fontSize: theme.typography.smallFont }}>
                                       {`${property?.propertyInfo?.property_id}`}
                                     </Typography>
                                     <Button
@@ -954,7 +956,7 @@ const ManagerProfitability = ({
                                       }}
                                       onClick={(e) => handleViewPropertyClick(e, property?.propertyInfo?.property_id)}
                                     >
-                                      <Typography sx={{ fontWeight: theme.typography.common.fontWeight, textTransform: "none" }}>View</Typography>
+                                      <Typography sx={{ fontWeight: theme.typography.common.fontWeight, textTransform: "none", fontSize: theme.typography.smallFont }}>View</Typography>
                                     </Button>
                                   </AccordionSummary>
                                 </Grid>
@@ -975,6 +977,105 @@ const ManagerProfitability = ({
                               <Grid container item xs={12}>
                                 {
                                   getDataGrid(property?.profitItems)
+                                }
+                              </Grid>
+                            </AccordionDetails>
+                          </Accordion>
+                        </>
+                      );
+                    })}
+                </AccordionDetails>
+              </Accordion>
+
+              <Box width={"100%"} height={"20px"}>
+                    <hr></hr>
+              </Box>
+
+              <Accordion
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  boxShadow: "none",
+                }}
+                expanded={revenueExpanded}
+                onChange={() => setRevenueExpanded((prevState) => !prevState)}
+              >
+                <Grid container item xs={12}>
+                  <Grid container justifyContent='flex-start' item xs={8}>
+                    <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>Deposits Collected</Typography>
+                      </AccordionSummary>
+                    </Grid>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                        ${totalDeposit && totalDeposit?.totalExpected ? totalDeposit?.totalExpected?.toFixed(2) : "0.00"}
+                    </Typography>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                        ${totalDeposit && totalDeposit?.totalActual ? totalDeposit?.totalActual?.toFixed(2) : "0.00"}
+                    </Typography>
+                  </Grid>
+                </Grid>
+
+                <AccordionDetails>
+                {totalDepositByProperty &&
+                    Object.keys(totalDepositByProperty)?.map((propertyUID, index) => {
+                      const property = totalDepositByProperty[propertyUID];
+                      // console.log("property - ", property);
+                      return (
+                        <>
+                          <Accordion
+                            sx={{
+                              backgroundColor: theme.palette.primary.main,
+                              boxShadow: "none",
+                            }}
+                            key={index}
+                          >
+                            <Grid container item xs={12}>
+                              <Grid container justifyContent='flex-start' item xs={8}>
+                                <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
+                                      {`${property?.propertyInfo?.property_address}`} {property?.propertyInfo?.property_unit && ", Unit - "}
+                                      {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
+                                    </Typography>
+                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, marginLeft: 10, fontSize: theme.typography.smallFont }}>
+                                      {`${property?.propertyInfo?.property_id}`}
+                                    </Typography>
+                                    <Button
+                                      sx={{
+                                        padding: "0px",
+                                        marginLeft: "10px",
+                                        color: "#160449",
+                                        "&:hover": {
+                                          color: "#FFFFFF",
+                                        },
+                                      }}
+                                      onClick={(e) => handleViewPropertyClick(e, property?.propertyInfo?.property_id)}
+                                    >
+                                      <Typography sx={{ fontWeight: theme.typography.common.fontWeight, textTransform: "none",  fontSize: theme.typography.smallFont}}>View</Typography>
+                                    </Button>
+                                  </AccordionSummary>
+                                </Grid>
+                              </Grid>
+                              <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                  ${property?.totalExpected ? property?.totalExpected?.toFixed(2) : "0.00"}
+                                </Typography>
+                              </Grid>
+                              <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                  ${property?.totalActual ? property?.totalActual?.toFixed(2) : "0.00"}
+                                </Typography>
+                              </Grid>
+                            </Grid>
+
+                            <AccordionDetails>
+                              <Grid container item xs={12}>
+                                {
+                                  getDataGrid(property?.rentItems)
                                 }
                               </Grid>
                             </AccordionDetails>
