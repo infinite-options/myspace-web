@@ -175,7 +175,12 @@ const closeDialog = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
-  const [ errors, setErrors ] = useState({})
+  const [ errors, setErrors ] = useState({});
+
+  const [ occupancyExpanded, setOccupancyExpanded ] = useState(true);
+  const [ empinfoExpanded, setEmpinfoExpanded ] = useState(true);
+  const [ paymentExpanded, setPaymentExpanded ] = useState(true);
+  const [ documentsExpanded, setDocumentsExpanded] = useState(true);
 
   const getListDetails = () => {    
     const relationships = getList("relationships");
@@ -1406,27 +1411,57 @@ const closeDialog = () => {
         </Grid>
       </Grid>
 
-      <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
-        <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
-            Payment Information
-          </Typography>
-          <IconButton onClick={handleAddPaymentMethod} aria-label="Add Payment Method">
-            <AddIcon />
-          </IconButton>
+      <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+  <Grid item xs={12}>
+    <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={paymentExpanded} onChange={() => setPaymentExpanded(prevState => !prevState)}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='payment-content' id='payment-header'>
+        <Grid container justifyContent='center'>
+          <Grid item md={11.5}>
+            <Typography
+              sx={{
+                color: "#160449",
+                fontWeight: theme.typography.primary.fontWeight,
+                fontSize: "24px",
+                textAlign: "center",
+                paddingBottom: "10px",
+                paddingTop: "5px",
+                flexGrow: 1,
+                paddingLeft: "50px",
+              }}
+              paddingTop='5px'
+              paddingBottom='10px'
+            >
+              Payment Information
+            </Typography>
+          </Grid>
+          <Grid item md={0.5}>
+            <IconButton onClick={handleAddPaymentMethod} aria-label="Add Payment Method">
+              <AddIcon />
+            </IconButton>
+          </Grid>
         </Grid>
+      </AccordionSummary>
+      <AccordionDetails>
         <Grid container item xs={12}>
           {renderPaymentMethods()}
         </Grid>
-      </Grid>
+      </AccordionDetails>
+    </Accordion>
+  </Grid>
+</Grid>
+
 
       <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+      <Grid item xs={12}>
+         <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={empinfoExpanded} onChange={() => setEmpinfoExpanded(prevState => !prevState)}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='occupants-content' id='occupants-header'>
         <Grid item xs={12}>
           <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
             Employment Information
           </Typography>
-        </Grid>
-        <Grid container item xs={12} columnSpacing={2}>
+      </Grid></AccordionSummary>
+            <AccordionDetails>
+            <Grid container item xs={12} columnSpacing={2}>
           <Grid container item xs={6} columnSpacing={2}>
             <Grid item xs={12}>
               <Typography
@@ -1534,11 +1569,15 @@ const closeDialog = () => {
             </Grid>
           </Grid>
         </Grid>
-      </Grid>
-
+      
+            </AccordionDetails>
+          </Accordion>
+          </Grid>
+          </Grid>
+      
       <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
         <Grid item xs={12}>
-          <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={true}>
+          <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={occupancyExpanded} onChange={() => setOccupancyExpanded(prevState => !prevState)}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='occupants-content' id='occupants-header'>
               <Grid container justifyContent='center'>
                 <Grid item md={11.5}>
@@ -1621,32 +1660,46 @@ const closeDialog = () => {
       </Grid>
 
       <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
-      <Grid item xs={12}>
-          <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
-            Documents
-          </Typography>
+  <Grid item xs={12}>
+    <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={documentsExpanded} onChange={() => setDocumentsExpanded(prevState => !prevState)}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='documents-content' id='documents-header'>
+        <Grid container justifyContent='center'>
+          <Grid item md={11.5}>
+            <Typography
+              sx={{
+                color: "#160449",
+                fontWeight: theme.typography.primary.fontWeight,
+                fontSize: "24px",
+                textAlign: "center",
+                paddingBottom: "10px",
+                paddingTop: "5px",
+                flexGrow: 1,
+                paddingLeft: "50px",
+              }}
+              paddingTop='5px'
+              paddingBottom='10px'
+            >
+              Documents
+            </Typography>
+          </Grid>
         </Grid>
-        <Grid item xs={12}>
-       
+      </AccordionSummary>
+      <AccordionDetails>
           <Documents
             documents={documents}
             setDocuments={setDocuments}
             setContractFiles={setuploadedFiles}
-            // editOrUpdateLease={editOrUpdateTenant}
-            // documentsRef={documentsRef}
             setDeleteDocsUrl={setDeletedFiles}
-            // setDeletedFiles={setDeletedFiles}
-            // modifiedData={modifiedData}
             isAccord={true}
             contractFiles={uploadedFiles}
             contractFileTypes={uploadedFileTypes}
             setContractFileTypes={setUploadedFileTypes}
             setIsPreviousFileChange={setIsPreviousFileChange}
-            // setModifiedData={setModifiedData}
-            // dataKey={"tenant_documents"}
           />
-        </Grid>
-      </Grid>
+      </AccordionDetails>
+    </Accordion>
+  </Grid>
+</Grid>
 
 
       <Grid container justifyContent='center' item xs={12}>
