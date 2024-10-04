@@ -295,6 +295,12 @@ const ManagerProfitability = ({
                 textOverflow: "ellipsis",
                 maxWidth: "100%",
                 color: fontColor,
+                cursor: verificationStatus === "not verified"? "pointer" : "auto"
+              }}
+              onClick={()=>{
+                if(verificationStatus === "not verified"){
+                  navigate("/paymentProcessing", { state: { currentWindow: "VERIFY_PAYMENTS", selectedPurchaseGroup : params.row.pur_group} });
+                }
               }}
             >
               {/* {params.row.verified !== null ? params.row.verified : "-"} */}
