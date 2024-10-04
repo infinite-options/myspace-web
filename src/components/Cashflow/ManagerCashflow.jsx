@@ -123,6 +123,10 @@ export default function ManagerCashflow() {
   const [expectedExpenseByType, setExpectedExpenseByType] = useState([]);
   const [revenueList, setRevenueList] = useState([])
   const [expenseList, setExpenseList] = useState([])
+  const [totalDepositByProperty, setTotalDepositByProperty] = useState([])
+  const [totalDeposit, setTotalDeposit] = useState({})
+  const [totalDepositByPropertyByMonth, setTotalDepositByPropertyByMonth] = useState([])
+  const [totalDepositByMonth, setTotalDepositByMonth] = useState({})
   const [revenueByMonthByType, setRevenueByMonthByType] = useState([])
   const [expenseByMonthByType, setExpenseByMonthByType] = useState([])
 
@@ -638,33 +642,38 @@ export default function ManagerCashflow() {
 
     // expense by property
     const payoutsByProperty = payoutsCurrentMonth?.reduce((acc, item) => {
-      const propertyUID = item.pur_property_id;
-      const propertyInfo = {
-        property_id: item.pur_property_id,
-        property_address: item.property_address,
-        property_unit: item.property_unit,
-      };
-
-      const totalExpected = parseFloat(item.expected) || 0;
-      const totalActual = parseFloat(item.actual) || 0;
-
-      if (!acc[propertyUID]) {
-        // acc[propertyUID] = [];
-        acc[propertyUID] = {
-          propertyInfo: propertyInfo,
-          payoutItems: [],
-          totalExpected: 0,
-          totalActual: 0,
+      if (item.purchase_type.toUpperCase() !== "DEPOSIT") {
+      
+        const propertyUID = item.pur_property_id;
+        const propertyInfo = {
+          property_id: item.pur_property_id,
+          property_address: item.property_address,
+          property_unit: item.property_unit,
         };
+  
+        const totalExpected = parseFloat(item.expected) || 0;
+        const totalActual = parseFloat(item.actual) || 0;
+  
+        if (!acc[propertyUID]) {
+          // acc[propertyUID] = [];
+          acc[propertyUID] = {
+            propertyInfo: propertyInfo,
+            payoutItems: [],
+            totalExpected: 0,
+            totalActual: 0,
+          };
+        }
+  
+        acc[propertyUID].payoutItems.push(item);
+        acc[propertyUID].totalExpected += totalExpected;
+        acc[propertyUID].totalActual += totalActual;
       }
 
-      acc[propertyUID].payoutItems.push(item);
-      acc[propertyUID].totalExpected += totalExpected;
-      acc[propertyUID].totalActual += totalActual;
       return acc;
     }, {});
 
     // setPayouts(payoutsByProperty);
+    
     setUnsortedPayouts(payoutsByProperty)
 
     const totalPayouts = payoutsByProperty
@@ -682,31 +691,41 @@ export default function ManagerCashflow() {
     
 
     const rentsDataByProperty = rentDataCurrentMonth?.reduce((acc, item) => {
-      const propertyUID = item.pur_property_id;
-      const propertyInfo = {
-        property_id: item.pur_property_id,
-        property_address: item.property_address,
-        property_unit: item.property_unit,
-      };
+      if (item.purchase_type.toUpperCase() !== "DEPOSIT") {
 
-      const totalExpected = parseFloat(item.expected) || 0;
-      const totalActual = parseFloat(item.actual) || 0;
-
-      if (!acc[propertyUID]) {
-        // acc[propertyUID] = [];
-        acc[propertyUID] = {
-          propertyInfo: propertyInfo,
-          rentItems: [],
-          totalExpected: 0,
-          totalActual: 0,
+        const propertyUID = item.pur_property_id;
+        const propertyInfo = {
+          property_id: item.pur_property_id,
+          property_address: item.property_address,
+          property_unit: item.property_unit,
         };
+        
+        const totalExpected = parseFloat(item.expected) || 0;
+        let totalActual = 0;
+
+        if(item.pur_payer.startsWith("110")){
+          totalActual = parseFloat(item.actual) || 0;
+        }
+  
+        if (!acc[propertyUID]) {
+          // acc[propertyUID] = [];
+          acc[propertyUID] = {
+            propertyInfo: propertyInfo,
+            rentItems: [],
+            totalExpected: 0,
+            totalActual: 0,
+          };
+        }
+  
+        acc[propertyUID].rentItems.push(item);
+        acc[propertyUID].totalExpected += totalExpected;
+        acc[propertyUID].totalActual += totalActual;
       }
 
-      acc[propertyUID].rentItems.push(item);
-      acc[propertyUID].totalExpected += totalExpected;
-      acc[propertyUID].totalActual += totalActual;
       return acc;
     }, {});
+
+    // console.log("rents data by property - ", rentsDataByProperty)
 
     setUnsortedRentsData(rentsDataByProperty)
 
@@ -953,6 +972,100 @@ export default function ManagerCashflow() {
 
     // console.log("revenue by month by type - ", revenueByMonth, "expense by minth by type - ", expenseByMonth)
 
+
+    // for all deposits
+    const totalDepositsByProperty = rentDataCurrentYear?.reduce((acc, item) => {
+      if (item.purchase_type === "Deposit") {
+        const propertyUID = item.pur_property_id;
+        const propertyInfo = {
+          property_id: item.pur_property_id,
+          property_address: item.property_address,
+          property_unit: item.property_unit,
+        };
+  
+        const totalExpected = parseFloat(item.expected) || 0;
+        const totalActual = parseFloat(item.actual) || 0;
+  
+        if (!acc[propertyUID]) {
+          // acc[propertyUID] = [];
+          acc[propertyUID] = {
+            propertyInfo: propertyInfo,
+            rentItems: [],
+            totalExpected: 0,
+            totalActual: 0,
+          };
+        }
+  
+        acc[propertyUID].rentItems.push(item);
+        acc[propertyUID].totalExpected += totalExpected;
+        acc[propertyUID].totalActual += totalActual;
+      }
+
+      return acc;
+    }, {});
+
+    setTotalDepositByProperty(totalDepositsByProperty)
+
+    const totalDeposits = totalDepositsByProperty
+      ? Object.values(totalDepositsByProperty).reduce(
+          (acc, property) => {
+            acc.totalExpected += property.totalExpected;
+            acc.totalActual += property.totalActual;
+            return acc;
+          },
+          { totalExpected: 0, totalActual: 0 }
+        )
+      : { totalExpected: 0, totalActual: 0 };
+
+    setTotalDeposit(totalDeposits)
+
+    // console.log(" total deposits - ", totalDeposits, " deposits by property - ", totalDepositsByProperty)
+    const totalDepositsByPropertyByMonth = rentDataCurrentMonth?.reduce((acc, item) => {
+      if (item.purchase_type === "Deposit") {
+        const propertyUID = item.pur_property_id;
+        const propertyInfo = {
+          property_id: item.pur_property_id,
+          property_address: item.property_address,
+          property_unit: item.property_unit,
+        };
+  
+        const totalExpected = parseFloat(item.expected) || 0;
+        const totalActual = parseFloat(item.actual) || 0;
+  
+        if (!acc[propertyUID]) {
+          // acc[propertyUID] = [];
+          acc[propertyUID] = {
+            propertyInfo: propertyInfo,
+            rentItems: [],
+            totalExpected: 0,
+            totalActual: 0,
+          };
+        }
+  
+        acc[propertyUID].rentItems.push(item);
+        acc[propertyUID].totalExpected += totalExpected;
+        acc[propertyUID].totalActual += totalActual;
+      }
+
+      return acc;
+    }, {});
+
+    setTotalDepositByPropertyByMonth(totalDepositsByPropertyByMonth)
+
+    const totalDepositsByMonth = totalDepositsByPropertyByMonth
+      ? Object.values(totalDepositsByPropertyByMonth).reduce(
+          (acc, property) => {
+            acc.totalExpected += property.totalExpected;
+            acc.totalActual += property.totalActual;
+            return acc;
+          },
+          { totalExpected: 0, totalActual: 0 }
+        )
+      : { totalExpected: 0, totalActual: 0 };
+
+    setTotalDepositByMonth(totalDepositsByMonth)
+
+
   }, [month, year, cashflowData, selectedProperty]);
 
   useEffect(() => {
@@ -963,11 +1076,10 @@ export default function ManagerCashflow() {
 
       const payoutsArray = Object.entries(unsortedPayouts);
       const sortedPayoutsArray = payoutsArray.sort((a, b) => {
-        return a[0].localeCompare(b[0]);  // a[0] and b[0] represent propertyUID keys
+        return a[0]?.localeCompare(b[0]);  // a[0] and b[0] represent propertyUID keys
       });
 
       const sortedPayoutsByProperty = Object.fromEntries(sortedPayoutsArray);
-      // console.log("payouts - ", sortedPayoutsByProperty)
       setPayouts(sortedPayoutsByProperty);
 
 
@@ -976,11 +1088,10 @@ export default function ManagerCashflow() {
       const rentArray = Object.entries(unsortedRentsData);
 
       const sortedRentArray = rentArray.sort((a, b) => {
-        return a[0].localeCompare(b[0]);  // a[0] and b[0] represent propertyUID keys
+        return a[0]?.localeCompare(b[0]);  // a[0] and b[0] represent propertyUID keys
       });
 
       const sortedRentData = Object.fromEntries(sortedRentArray);
-      // console.log("rent data - ", sortedRentData)
       setRentsByProperty(sortedRentData)
 
 
@@ -988,7 +1099,7 @@ export default function ManagerCashflow() {
 
       const profitData = Object.entries(profitDataByProperty);
       const sortedProfitData = profitData.sort((a, b) => {
-        return a[0].localeCompare(b[0]);  // a[0] and b[0] represent propertyUID keys
+        return a[0]?.localeCompare(b[0]);  // a[0] and b[0] represent propertyUID keys
       });
 
       const sortedProfitByProperty = Object.fromEntries(sortedProfitData);
@@ -1193,7 +1304,8 @@ export default function ManagerCashflow() {
         }));
 
       const expectedProfit = totalRentExpected + totalPayoutExpected;
-      const actualProfit = totalRentActual + totalPayoutActual;
+      // const actualProfit = totalRentActual + totalPayoutActual;
+      const actualProfit = totalRentActual;
       
       allProfitItems.push(...profitRentItems)
       allProfitItems.push(...profitPayoutItems)
@@ -1232,7 +1344,8 @@ export default function ManagerCashflow() {
         allProfitItems.push(...profitPayoutItems)
 
         const expectedProfit = totalRentExpected + totalPayoutExpected; 
-        const actualProfit = totalRentActual + totalPayoutActual;       
+        // const actualProfit = totalRentActual + totalPayoutActual;
+        const actualProfit = totalRentActual;       
 
         profitDataByProperty[propertyUID] = {
           propertyInfo: payoutData.propertyInfo,
@@ -1246,6 +1359,8 @@ export default function ManagerCashflow() {
         };
       }
     });
+
+    console.log("profit data - ", profitDataByProperty)
 
     return [profitDataByProperty, allProfitItems];
   };
@@ -1475,6 +1590,7 @@ export default function ManagerCashflow() {
               profitsTotal={profitsTotal}
               rentsTotal={rentsTotal}
               payoutsTotal={payoutsTotal}
+              totalDeposit={totalDepositByMonth}
               graphData={cashflowTransactionsData?.result}
               setCurrentWindow={setCurrentWindow}
               propertyList={propertyList}
@@ -1517,6 +1633,9 @@ export default function ManagerCashflow() {
                 allProfitDataItems={allProfitDataItems}
                 getSortedExpectedTotalByMapping={getSortedExpectedTotalByMapping}
                 getSortedTotalValueByMapping={getSortedTotalValueByMapping}
+
+                totalDepositByProperty={totalDepositByProperty}
+                totalDeposit={totalDeposit}
 
                 setMonth={setMonth}
                 setYear={setYear}

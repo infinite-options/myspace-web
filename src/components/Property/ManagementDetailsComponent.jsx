@@ -7,7 +7,7 @@ import theme from '../../theme/theme';
 import FilePreviewDialog from '../Leases/FilePreviewDialog';
 import { useNavigate } from "react-router-dom";
 
-export default function ManagementDetailsComponent({activeContract, currentProperty, currentIndex, selectedRole, handleViewPMQuotesRequested, newContractCount, sentContractCount, handleOpenMaintenancePage}){
+export default function ManagementDetailsComponent({activeContract, currentProperty, currentIndex, selectedRole, handleViewPMQuotesRequested, newContractCount, sentContractCount, handleOpenMaintenancePage, onShowSearchManager}){
     // console.log("---dhyey-- inside new component -", activeContract)
     const [selectedPreviewFile, setSelectedPreviewFile] = useState(null)
     const [previewDialogOpen, setPreviewDialogOpen] = useState(false) 
@@ -43,10 +43,27 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
                     <IconButton onClick={() => {handleViewPMQuotesRequested(1)}}>
                         <SearchIcon />
                     </IconButton>
-                    <IconButton onClick={()=>{handleViewPMQuotesRequested(0)}} sx={{marginRight: "10px"}}>
+                    <IconButton
+                        onClick={()=>{
+                            console.log("ROHIT - newContractCount - ", newContractCount);
+                            if(newContractCount === 0){
+                                onShowSearchManager();
+                            } else {
+                                handleViewPMQuotesRequested(0)
+                            }                            
+                        }} 
+                        sx={{marginRight: "10px"}}
+                    >
                         <Badge badgeContent={newContractCount || 0} color="error" showZero/>
                     </IconButton>
-                    <IconButton onClick={()=>{handleViewPMQuotesRequested(0)}} sx={{marginRight: "10px"}}>
+                    <IconButton 
+                        onClick={()=>{
+                            if(sentContractCount && sentContractCount > 0){
+                                handleViewPMQuotesRequested(0)
+                            }
+                        }}
+                        sx={{marginRight: "10px"}}
+                    >
                         <Badge badgeContent={sentContractCount || 0} color="warning" showZero/>
                     </IconButton>
                 </Box>)}
@@ -143,7 +160,8 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
                                     if (activeContract && activeContract.business_uid) {
                                         navigate("/ContactsPM", {
                                             state: {
-                                                contactsTab: "Owner"
+                                                contactsTab: "Owner",
+                                                ownerId: currentProperty.owner_uid,
                                             },
                                         });
                                     }

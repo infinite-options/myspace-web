@@ -79,6 +79,18 @@ const TenantAccountBalance = ({
     });
   };
 
+  const handleApprovedClick = () => {
+    setRightPane({
+      type: "tenantLeases",
+      state: {
+        data: leaseDetails,
+        status: leaseDetails?.lease_status,
+        lease: leaseDetails,
+        from: "accwidget",
+      },
+    });
+  };
+
   const handleback = () => {
     console.log("go back");
     navigate("/tenantDashboard");
@@ -258,7 +270,13 @@ const TenantAccountBalance = ({
                 color: "#fff",
                 fontWeight: "bold",
               }}
-              onClick={leaseDetails?.lease_status === "NEW" || leaseDetails?.lease_status === "PROCESSING" ? handleViewTenantApplication : handleMakePayment}
+              onClick={
+                leaseDetails?.lease_status === "NEW" || leaseDetails?.lease_status === "PROCESSING"
+                  ? leaseDetails?.lease_status === "PROCESSING"
+                    ? handleApprovedClick
+                    : handleViewTenantApplication
+                  : handleMakePayment
+              }
             >
               {leaseDetails?.lease_status === "NEW"
                 ? `Applied ${leaseDetails?.lease_application_date}`

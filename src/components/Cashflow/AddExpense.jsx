@@ -144,11 +144,23 @@ const AddExpense = (props) => {
   };
 
   const handlePayerChange = (event) => {
-    setSelectedPayer(event.target.value);
+    const selectedPayer = event.target.value;
+    setSelectedPayer(selectedPayer);
+
+    // If the receiver is the same as the payer, reset receiver
+    if (selectedReceiver === selectedPayer) {
+      setSelectedReceiver(null);
+    }
   };
-  
+
+  // Handle receiver selection
   const handleReceiverChange = (event) => {
-    setSelectedReceiver(event.target.value);
+    const selectedReceiver = event.target.value;
+
+    // Ensure payer and receiver are not the same
+    if (selectedReceiver !== selectedPayer) {
+      setSelectedReceiver(selectedReceiver);
+    }
   };
   
   const handleFinalPayerChange = (event) => {
@@ -187,8 +199,13 @@ const AddExpense = (props) => {
     const [year, month, day] = date.split('-');
     const formattedDate = `${month}-${day}-${year}`;
 
-    const [dueYear, dueMonth, dueDay] = dueDate.split('-');
-    const formattedDueDate = `${dueMonth}-${dueDay}-${dueYear}`;
+    let formattedDueDate;
+    if (dueDate) {
+      const [dueYear, dueMonth, dueDay] = dueDate.split('-');
+      formattedDueDate = `${dueMonth}-${dueDay}-${dueYear}`;
+    } else {
+      formattedDueDate = formattedDate;
+    }
 
     const formData = new FormData();
 
@@ -199,18 +216,15 @@ const AddExpense = (props) => {
     formData.append("pur_property_id", selectedProperty.property_uid);
     formData.append("purchase_type", category);
     // formData.append("pur_cf_type", "expense");
-    formData.append("purchase_date", date);
-    formData.append("pur_due_date", dueDate);
+    formData.append("purchase_date", formattedDate);
+    formData.append("pur_due_date", formattedDueDate);
     formData.append("pur_amount_due", Number(amount));
     formData.append("pur_notes", notes);
     formData.append("pur_receiver", handleId(selectedReceiver));
     formData.append("pur_payer", handleId(selectedPayer));
-    formData.append("pur_payer_final", handleId(selectedFinalPayer));
-    formData.append("pur_frequency", frequency);
+    //formData.append("pur_frequency", frequency);
     formData.append("pur_initiator", getProfileId());
     formData.append("pur_description", description);
-    formData.append("pur_reimbursable", reimbursable);
-    formData.append("pur_payFromCycle", payFromCycle);
     formData.append("purchase_status", determinePurchaseStatus());
 
     if (determinePurchaseStatus() === "PARTIALLY PAID"){
@@ -422,6 +436,7 @@ const AddExpense = (props) => {
                 placeholder="mm/dd/yyyy"
                 value={dueDate}
                 onChange={handleDueDateChange}
+                disabled={isCheckedOne}
               />
             </Stack>
 
@@ -449,7 +464,7 @@ const AddExpense = (props) => {
               label="Partially Paid"
               sx={{ color: theme.typography.common.blue }}
             />
-            <Stack direction="row" alignItems="center">
+            {/* <Stack direction="row" alignItems="center">
               <Typography
                 sx={{
                   color: theme.typography.common.blue,
@@ -463,7 +478,7 @@ const AddExpense = (props) => {
                 onChange={handleReimbursableChange}
                 sx={{ color: theme.typography.common.blue }}
               />
-            </Stack>
+            </Stack> */}
           </Stack>
 
           {isCheckedTwo && (
@@ -483,42 +498,18 @@ const AddExpense = (props) => {
             </Stack>
           )}
 
-            {/* Payer and Receiver Section */}
-            <Stack direction="row" spacing={2} justifyContent="space-between">
-              <Stack>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Final Payer</Typography>
-                <RadioGroup value={selectedFinalPayer} onChange={handleFinalPayerChange}>
-                  <FormControlLabel control={<Radio />} value="Tenant" label="Tenant" />
-                  <FormControlLabel control={<Radio />} value="Owner" label="Owner" />
-                  <FormControlLabel control={<Radio />} value="Property Manager" label="Property Manager" />
-                  <FormControlLabel control={<Radio />} value="Third Party" label="Third Party" />
-                </RadioGroup>
-              </Stack>
-
-              <Stack>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
-                  Payer
-                </Typography>
-                <RadioGroup value={selectedPayer} onChange={handlePayerChange}>
-                  <FormControlLabel control={<Radio />} value="Tenant" label="Tenant" />
-                  <FormControlLabel control={<Radio />} value="Owner" label="Owner" />
-                  <FormControlLabel control={<Radio />} value="Property Manager" label="Property Manager" />
-                  <FormControlLabel control={<Radio />} value="Third Party" label="Third Party" />
-                </RadioGroup>
-              </Stack>
-
-              <Stack>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
-                  Receiver
-                </Typography>
-                <RadioGroup value={selectedReceiver} onChange={handleReceiverChange}>
-                  <FormControlLabel control={<Radio />} value="Tenant" label="Tenant" />
-                  <FormControlLabel control={<Radio />} value="Owner" label="Owner" />
-                  <FormControlLabel control={<Radio />} value="Property Manager" label="Property Manager" />
-                  <FormControlLabel control={<Radio />} value="Third Party" label="Third Party" />
-                </RadioGroup>
-              </Stack>
-            </Stack>
+{/* <Stack spacing={-2}>
+              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Frequency</Typography>
+              <FormControl variant='filled' fullWidth className={classes.root}>
+                <Select defaultValue='One Time' value={frequency} onChange={handleFrequencyChange}>
+                  {
+                    feeFrequencies?.map( (freq ) => (
+                      <MenuItem key={freq.list_uid} value={freq.list_item}>{freq.list_item}</MenuItem>
+                    ))
+                  }
+                </Select>
+              </FormControl>
+            </Stack> */}
 
             <Stack spacing={-2}>
               <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Description</Typography>
@@ -560,6 +551,51 @@ const AddExpense = (props) => {
               alignItems="center"
               width="100%"
             >
+          <Stack spacing={-2}>
+            {/* Payer RadioGroup */}
+            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
+              Payer
+            </Typography>
+            <RadioGroup value={selectedPayer} onChange={handlePayerChange}>
+              <FormControlLabel control={<Radio />} value="Tenant" label="Tenant" />
+              <FormControlLabel control={<Radio />} value="Owner" label="Owner" />
+              <FormControlLabel control={<Radio />} value="Property Manager" label="Property Manager" />
+              <FormControlLabel control={<Radio />} value="Third Party" label="Third Party" />
+            </RadioGroup>
+          </Stack>
+
+          <Stack spacing={-2}>
+            {/* Receiver RadioGroup */}
+            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
+              Receiver
+            </Typography>
+            <RadioGroup value={selectedReceiver} onChange={handleReceiverChange}>
+              <FormControlLabel
+                control={<Radio />}
+                value="Tenant"
+                label="Tenant"
+                disabled={selectedPayer === "Tenant"} // Disable if payer is Tenant
+              />
+              <FormControlLabel
+                control={<Radio />}
+                value="Owner"
+                label="Owner"
+                disabled={selectedPayer === "Owner"} // Disable if payer is Owner
+              />
+              <FormControlLabel
+                control={<Radio />}
+                value="Property Manager"
+                label="Property Manager"
+                disabled={selectedPayer === "Property Manager"} // Disable if payer is Property Manager
+              />
+              <FormControlLabel
+                control={<Radio />}
+                value="Third Party"
+                label="Third Party"
+                disabled={selectedPayer === "Third Party"} // Disable if payer is Third Party
+              />
+            </RadioGroup>
+          </Stack>
 
               {/* Add Receipt button on the same row */}
               <Stack direction="row" alignItems="center">
@@ -569,7 +605,6 @@ const AddExpense = (props) => {
                 </IconButton>
               </Stack>
             </Box>
-
 
             <Button
               variant="contained"
