@@ -701,11 +701,11 @@ export default function ManagerCashflow() {
         };
         
         const totalExpected = parseFloat(item.expected) || 0;
-        let totalActual = 0;
+        const totalActual = parseFloat(item.actual) || 0;;
 
-        if(item.pur_payer.startsWith("110")){
-          totalActual = parseFloat(item.actual) || 0;
-        }
+        // if(item.pur_payer.startsWith("110")){
+          
+        // }
   
         if (!acc[propertyUID]) {
           // acc[propertyUID] = [];
@@ -1284,7 +1284,13 @@ export default function ManagerCashflow() {
       };
 
       const totalRentExpected = rentData.totalExpected || 0;
-      const totalRentActual = rentData.totalActual || 0;
+      // const totalRentActual = rentData.totalActual || 0;
+      const totalRentActual = rentData.rentItems.reduce((total, item) => {
+        if (item.pur_payer && item.pur_payer.startsWith("110")) {
+          return total + parseFloat(item.actual || 0);
+        }
+        return total;
+      }, 0);
 
       const totalPayoutExpected = (payoutData.totalExpected || 0) * -1;
       const totalPayoutActual = (payoutData.totalActual || 0) * -1;
