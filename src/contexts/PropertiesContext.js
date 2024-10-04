@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useRef } from 'react';
 import APIConfig from '../utils/APIConfig';
 import { useUser } from './UserContext';
 const PropertiesContext = createContext();
@@ -42,6 +42,7 @@ export const PropertiesProvider = ({ children }) => {
   const [ dataLoaded, setDataLoaded ] = useState(false);
   // const [ rawPropertyData, setRawPropertyData ] = useState([]);
   const [ propertyList, setPropertyList ] = useState([]);
+  const propertyListRef = useRef();
   const [ allRentStatus, setAllRentStatus ] = useState([]);
   const [ allContracts, setAllContracts ] = useState([]);
   const [ contracts, setContracts ] = useState([]);
@@ -49,6 +50,9 @@ export const PropertiesProvider = ({ children }) => {
 
   const [newContractUID, setNewContractUID] = useState(null);
   const [newContractPropertyUID, setNewContractPropertyUID] = useState(null);
+
+  //add property
+  const [ newPropertyUid,setNewPropertyUid ]=useState("");
 
   const [ returnIndex, setReturnIndex ] = useState(0);
   const [ currentPropertyID, setCurrentPropertyID ] = useState(null);
@@ -59,6 +63,37 @@ export const PropertiesProvider = ({ children }) => {
     setPropertyList(propertyList);
   };
 
+  function setPropertyTo(newPropertyUid){
+    console.log("setPropertyTo - newPropertyUid - ", newPropertyUid);
+    // setShowSpinner(true);
+
+    if(newPropertyUid != ""){
+      let foundIndex = -1; // Initialize with 0 to indicate not found
+
+       for (let i = 0; i < propertyList.length; i++) {
+         if (propertyList[i].property_uid === newPropertyUid) {
+           foundIndex = i; // Found the index
+           break; // Exit the loop since we found the matching object
+         }
+         }
+
+      // Now, use setReturnIndex to set the found index       
+       if(foundIndex >= 0){
+        setReturnIndex(foundIndex);
+       }
+       
+      //  setShowSpinner(false);
+   }
+
+  }
+
+  useEffect(()=>{    
+    if(newPropertyUid !== "" && propertyListRef.current != propertyList){
+       setPropertyTo(newPropertyUid)
+       setNewPropertyUid("")
+    }
+    propertyListRef.current = propertyList;
+  },[propertyList, newPropertyUid])
 //   useEffect(() => {
 //     console.log("PropertiesProvider - propertyList - ",propertyList);
 //   }, [propertyList]);
@@ -157,6 +192,7 @@ const fetchContracts = async () => {
         setCurrentPropertyID,
         currentProperty,
         setCurrentProperty,
+        setNewPropertyUid,
         dataLoaded, 
       }}
     >

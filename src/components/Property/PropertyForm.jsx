@@ -124,7 +124,7 @@ const useStyles = makeStyles({
 
 
 
-const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setReloadPropertyList,setNewPropertyUid}) => {
+const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setReloadPropertyList, setPropertyTo}) => {
 	
 	const { getList, } = useContext(ListsContext);
 	const propertyTypes = getList("propertyType");
@@ -133,7 +133,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 	const { getProfileId } = useUser();
 	const { user, selectedRole, selectRole, Name } = useUser();
 
-	const { setNewContractUID, setNewContractPropertyUID, fetchProperties} = useContext(PropertiesContext);
+	const { setNewContractUID, setNewContractPropertyUID, fetchProperties, setNewPropertyUid, } = useContext(PropertiesContext);
 
 	const [readOnlyNotes, setReadOnlyNotes] = useState(selectedRole === "MANAGER" ? true : false);	
 	const [selectedImageList, setSelectedImageList] = useState([]);
@@ -357,7 +357,11 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 			setNewContractPropertyUID(responsePropertyUID);
 			console.log("response data - property UID: ", responsePropertyUID);
 			
-			setReloadPropertyList(true);
+			// setReloadPropertyList(true);
+			
+
+			fetchProperties();
+			// setPropertyTo(responsePropertyUID);
 			setNewPropertyUid(responsePropertyUID)
 		} catch (error) {
 			console.log("Error posting data:", error);
@@ -440,7 +444,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		setActiveStep(0);
 		setShowSpinner(false);
 
-		fetchProperties();
+		
 		
 		if (selectedRole === "OWNER") {
 			onBack();

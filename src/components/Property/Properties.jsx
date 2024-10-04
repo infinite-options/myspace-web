@@ -92,7 +92,8 @@ function Properties() {
   useEffect(() => {    
     if(location.state?.index){
       console.log("location.state?.index - ", location.state?.index);
-      setReturnIndex(location.state?.index || 0);
+      console.log("ROHIT - setting Return Index 95");
+      setReturnIndex(location.state?.index || 0); 
     } 
   }, [location?.state])
 
@@ -159,6 +160,7 @@ function Properties() {
   
   function updateNavPage(){
     if(returnIndexByProp!=""){
+      console.log("ROHIT - setting Property To 163");
       setPropertyTo(returnIndexByProp)
       setReturnIndexByProperty("")
       
@@ -199,8 +201,8 @@ function Properties() {
     console.log("setPropertyTo - newPropertyUid - ", newPropertyUid);
     // setShowSpinner(true);
 
-    if(newPropertyUid!=""){
-      let foundIndex = 0; // Initialize with 0 to indicate not found
+    if(newPropertyUid != ""){
+      let foundIndex = -1; // Initialize with 0 to indicate not found
 
        for (let i = 0; i < propertyList.length; i++) {
          if (propertyList[i].property_uid === newPropertyUid) {
@@ -210,18 +212,24 @@ function Properties() {
          }
 
 // Now, use setReturnIndex to set the found index
-       setReturnIndex(foundIndex);
+       console.log("ROHIT - setting Return Index 215 - propertyList - ", propertyList);
+       console.log("ROHIT - setting Return Index 215 - foundIndex - ", foundIndex);
+       if(foundIndex >= 0){
+        setReturnIndex(foundIndex);
+       }
+       
       //  setShowSpinner(false);
    }
 
   }
 
-  useEffect(()=>{
-    if(newPropertyUid !== ""){
-       setPropertyTo(newPropertyUid)
-        setNewPropertyUid("")
-    }
-  },[propertyList])
+  // useEffect(()=>{
+  //   console.log("ROHIT - newPropertyUid - ", newPropertyUid)
+  //   if(newPropertyUid !== ""){
+  //      setPropertyTo(newPropertyUid)
+  //      setNewPropertyUid("")
+  //   }
+  // },[propertyList, newPropertyUid])
 
   const fetchProperties = async () => {
     setShowSpinner(true);
@@ -287,6 +295,7 @@ function Properties() {
 
   const handleListClick = (newData) => {
     console.log("handleListClick - newData - ", newData);
+    console.log("ROHIT - setting Return Index 293");
     setReturnIndex(newData);
     // console.log("View leases RETURN INDEX : ", returnIndex);
   };
@@ -391,6 +400,7 @@ function Properties() {
                 showNewContract={showNewContract}                
                 setReloadPropertyList={setReloadPropertyList}                
                 setNewPropertyUid={setNewPropertyUid}
+                setPropertyTo={setPropertyTo}
               />
             ) : (
             <>
