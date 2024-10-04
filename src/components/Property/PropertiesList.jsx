@@ -40,7 +40,7 @@ const paymentStatusMap = {
   PAID: "Paid On Time",
   Partial: "Partially Paid",
   VACANT: "Vacant",
-  "NOT LISTED": " Vacant - Not Listed",
+  "NOT LISTED": "Vacant - Not Listed",
   "NO MANAGER": "No Manager",
 };
 

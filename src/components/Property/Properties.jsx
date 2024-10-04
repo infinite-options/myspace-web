@@ -402,7 +402,7 @@ function Properties() {
                   onViewContractClick={handleViewContractClick}
                   handleViewApplication={handleViewApplication}
                   handleViewPMQuotesRequested={handleViewPMQuotesRequested}
-                  // onShowSearchManager={handleShowSearchManager}
+                  onShowSearchManager={handleShowSearchManager}
                   handleShowRequestQuotes={handleShowRequestQuotes}
                   onAddListingClick={handleAddListingClick}
                   setManagerDetailsState={setManagerDetailsState}

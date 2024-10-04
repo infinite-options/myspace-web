@@ -28,6 +28,7 @@ export default function PMQuotesList() {
   // let navigate = useNavigate();  
   const location = useLocation();
   const { contractRequests, updateContractUID, updateContractPropertyUID, } = useContext(ManagementContractContext); 
+  const navigatingFrom = location.state?.navigatingFrom || null;
   // console.log("In PMQuoteList");
   // console.log("In PMQuoteList property_endpoint_resp: ", location.state?.property_endpoint_resp);
   // console.log("contractRequests from context - ", contractRequests)
@@ -68,7 +69,7 @@ export default function PMQuotesList() {
             </Grid>
 
             <Grid item xs={12} md={8}>
-              <ManagementContractDetails />
+              <ManagementContractDetails navigatingFrom={navigatingFrom} />
             </Grid>
           </Grid>
         </Container>

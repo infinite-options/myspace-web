@@ -1355,6 +1355,7 @@ const PropertyCard = (props) => {
 		  setIsChange(false)
 		  sendAnnouncement();
         //   navigate("/managerDashboard");
+		  
         }
       })
       .catch((error) => {
@@ -1364,9 +1365,10 @@ const PropertyCard = (props) => {
 
   const sendAnnouncement = async () => {    
 	const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
-	// console.log("sendAnnouncement - contract - ", contractData)
+	console.log("sendAnnouncement - contract - ", contractData)
     const receiverPropertyMapping = {
-        [contractData.property_owner_id]: [contractData.property_id],
+        // [contractData.property_owner_id]: [contractData.property_id],
+		[contractData.owner_uid]: [contractData.property_uid],
     };
 
 	let announcementTitle;
@@ -1392,13 +1394,16 @@ const PropertyCard = (props) => {
 			  announcement_date: new Date().toDateString(),			  
 			  announcement_properties: JSON.stringify(receiverPropertyMapping),
 			  announcement_mode: "CONTRACT",
-			  announcement_receiver: [contractData.property_owner_id],
+			//   announcement_receiver: [contractData.property_owner_id],
+			  announcement_receiver: [contractData.owner_uid],
 			  announcement_type: ["App", "Email", "Text"],
 			}),
 		  });
 
 		  if (response.ok) {
-			
+			if(props.navigatingFrom && props.navigatingFrom === "PropertyForm"){
+				navigate("/properties"); 	
+			}
 			navigate("/managerDashboard"); 
 		  } else {
 			throw new Error(`Failed to send the announcement: ${response.statusText}`);

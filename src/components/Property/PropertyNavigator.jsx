@@ -76,6 +76,8 @@ import PropertiesContext from "../../contexts/PropertiesContext";
 import ListsContext from "../../contexts/ListsContext.js";
 import ManagementDetailsComponent from "./ManagementDetailsComponent.jsx";
 
+import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy, } from "../../utils/fees";
+
 const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_status !== "REFUSED" ? "#778DC5" : "#874499") : "#A52A2A");
 
 export default function PropertyNavigator({
@@ -307,7 +309,13 @@ export default function PropertyNavigator({
       var count = 0;
       var newContractCount = 0;
       var sentContractCount = 0;
-      const filtered = allContracts?.filter((contract) => contract.property_id === propertyId);
+      console.log("ROHIT - PropertyNavigator - allContracts - ", allContracts);
+      console.log("ROHIT - PropertyNavigator - propertyId - ", propertyId);      
+      const filtered = allContracts?.filter((contract) => {
+        const contractPropertyID = contract.property_id || contract.property_uid;
+        return contractPropertyID === propertyId
+      });
+      console.log("ROHIT - PropertyNavigator - filtered - ", filtered);
       const active = filtered?.filter((contract) => contract.contract_status === "ACTIVE");
       // console.log("322 - PropertyNavigator - filtered contracts - ", filtered);
       filtered.forEach((contract) => {
@@ -320,7 +328,7 @@ export default function PropertyNavigator({
           newContractCount++;
         }
       });
-      // console.log("PropertyNavigator - Active contract - ", active);
+      console.log("ROHIT - PropertyNavigator - Active contract - ", active);
       setContractsNewSent(count);
       setContractsData(allContracts);
       setActiveContracts(active);
@@ -1558,6 +1566,19 @@ export default function PropertyNavigator({
                               minWidth: "150px",
                               minHeight: "35px",
                               width: "100%",
+                              cursor: 'pointer',
+                            }}
+                            onClick={() => {
+                              console.log("ROHIT - here1");
+                              console.log("ROHIT - here1 = getPaymentStatus(property?.rent_status, property) -", getPaymentStatus(property?.rent_status, property));
+                              
+                              if(getPaymentStatus(property?.rent_status, property) === "Vacant - Not Listed"){
+                                
+                                onAddListingClick("create_listing")
+                              } else if(getPaymentStatus(property?.rent_status, property) === "No Manager"){
+                                console.log("ROHIT - here2");
+                                onShowSearchManager();
+                              }
                             }}
                           >
                             {/* <CheckIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} /> */}
@@ -1867,7 +1888,7 @@ export default function PropertyNavigator({
                           fontSize: theme.typography.smallFont,
                         }}
                       >
-                        Due:
+                        Due By:
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -1878,7 +1899,29 @@ export default function PropertyNavigator({
                           fontSize: theme.typography.smallFont,
                         }}
                       >
-                        {rentFee ? rentFee.due_by : "No Due Date Listed"}
+                        {rentFee ? getFeesDueBy(rentFee) : "No Due Date Listed"}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        Late By:
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.light.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        {rentFee ? getFeesLateBy(rentFee) : "No Late By Date Listed"}
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -1900,7 +1943,7 @@ export default function PropertyNavigator({
                           fontSize: theme.typography.smallFont,
                         }}
                       >
-                        {rentFee ? rentFee.late_fee : "-"}
+                        {rentFee ? "$" + rentFee.late_fee : "-"}
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -1922,7 +1965,7 @@ export default function PropertyNavigator({
                           fontSize: theme.typography.smallFont,
                         }}
                       >
-                        {rentFee ? rentFee.perDay_late_fee : "-"}
+                        {rentFee ? "$" + rentFee.perDay_late_fee : "-"}
                       </Typography>
                     </Grid>
 
@@ -2050,6 +2093,7 @@ export default function PropertyNavigator({
                 sentContractCount={sentContractCount}
                 currentIndex={currentIndex}
                 handleOpenMaintenancePage={handleOpenMaintenancePage}
+                onShowSearchManager={onShowSearchManager}
               />
               {/* <Card sx={{ backgroundColor: color, height: "100%" }}>
                 <Box

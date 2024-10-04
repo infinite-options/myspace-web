@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, } from "react";
 import { useLocation } from "react-router-dom";
 import { Container, Grid } from "@mui/material";
 import axios from "axios";
@@ -14,7 +14,9 @@ import ManagerContactDetail from "./ContactDetail/ManagerContactDetail";
 const ContactsPM = () => {
   const { getProfileId, selectedRole } = useUser();
   const location = useLocation();
+  const { contactsTab: contactsTabState, managerId: managerIdState, tenantId, ownerId } = location.state;
   const [contactsTab, setContactsTab] = useState(location.state?.contactsTab);
+  const prevContactsTabRef = useRef(location.state?.contactsTab);
   const [contactsData, setContactsData] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   // const [propertyIndex, setPropertyIndex] = useState(location?.state?.index);
@@ -28,19 +30,27 @@ const ContactsPM = () => {
     switch (selectedRole) {
       case "MANAGER":
         data = response.data["management_contacts"];
-        setContactsTab("Owner");
+        if(!contactsTab){
+          setContactsTab("Owner");
+        }        
         break;
       case "OWNER":
         data = response.data["owner_contacts"];
-        setContactsTab("Manager");
+        if(!contactsTab){
+          setContactsTab("Manager");
+        }
         break;
       case "TENANT":
         data = response.data["tenant_contacts"];
-        setContactsTab("Manager");
+        if(!contactsTab){
+          setContactsTab("Manager");
+        }
         break;
       case "MAINTENANCE":
         data = response.data["maintenance_contacts"];
-        setContactsTab("Manager");
+        if(!contactsTab){
+          setContactsTab("Manager");
+        }
         break;
       default:
         data = [];
@@ -55,23 +65,30 @@ const ContactsPM = () => {
   }, []);
 
   useEffect(() => {
-    if (location.state && contactsData) {
-      const { contactsTab, managerId, tenantId, ownerId } = location.state;
+    console.log("ROHIT - currentIndex - ", currentIndex);
+  }, [currentIndex]);
 
-      let newTab = contactsTab;
+  useEffect(() => {
+    if (location.state && contactsData) {
+      
+
+      let newTab = contactsTabState;
       let newIndex = 0;
+      console.log("ROHIT - here 1")
   
-      if (newTab === "Manager" && managerId) {
+      if (newTab === "Manager" && managerIdState) {
         const managerIndex = contactsData?.managers?.findIndex(
-          (manager) => manager.business_uid === managerId
+          (manager) => manager.business_uid === managerIdState
         );
 
         
         newIndex = managerIndex >= 0 ? managerIndex : 0;
       } else if (newTab === "Tenant" && tenantId && selectedRole !== "TENANT") {
+        console.log("ROHIT - here 2");
         const tenantIndex = contactsData?.tenants?.findIndex(
           (tenant) => tenant.tenant_uid === tenantId
         );
+        console.log("ROHIT - tenantIndex - ", tenantIndex);
         newIndex = tenantIndex >= 0 ? tenantIndex : 0; 
       }else if(newTab === "Owner" && ownerId){
         const ownerIndex = contactsData?.owners?.findIndex(
@@ -85,11 +102,23 @@ const ContactsPM = () => {
     }
   }, [location.state, contactsData, selectedRole]);
   
-  useEffect(() => {
-    if (contactsTab) {
-      setCurrentIndex(0); // Reset to the first item whenever the tab changes
+  // useEffect(() => {
+  //   if (contactsTab) {      
+  //     setCurrentIndex(0); // Reset to the first item whenever the tab changes
+  //   }
+  // }, [contactsTab]);
+  useEffect(() => {  
+    console.log("ROHIT - 103 - contactsTab - ", contactsTab)  
+    console.log("ROHIT - 103 - prevContactsTabRef.current - ", prevContactsTabRef.current)  
+    
+    if (contactsTab !== prevContactsTabRef.current) {
+      setCurrentIndex(0);
     }
+    
+    prevContactsTabRef.current = contactsTab;
+
   }, [contactsTab]);
+
 
   const renderContactDetail = () => {
     switch (contactsTab) {
