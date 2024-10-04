@@ -551,51 +551,75 @@ const AddRevenue = (props) => {
               alignItems="center"
               width="100%"
             >
-          <Stack spacing={-2}>
-            {/* Payer RadioGroup */}
-            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
-              Payer
-            </Typography>
-            <RadioGroup value={selectedPayer} onChange={handlePayerChange}>
-              <FormControlLabel control={<Radio />} value="Tenant" label="Tenant" />
-              <FormControlLabel control={<Radio />} value="Owner" label="Owner" />
-              <FormControlLabel control={<Radio />} value="Property Manager" label="Property Manager" />
-              <FormControlLabel control={<Radio />} value="Third Party" label="Third Party" />
-            </RadioGroup>
-          </Stack>
+            <Stack spacing={-2}>
+              {/* Payer RadioGroup */}
+              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
+                Payer
+              </Typography>
+              <RadioGroup value={selectedPayer} onChange={handlePayerChange}>
+                <FormControlLabel 
+                  control={<Radio sx={{ 
+                    '&.Mui-checked': { color: theme.palette.custom.blue } 
+                  }} />} 
+                  value="Tenant" label="Tenant" 
+                />
+                <FormControlLabel 
+                  control={<Radio sx={{ 
+                    '&.Mui-checked': { color: theme.palette.custom.blue } 
+                  }} />} 
+                  value="Owner" label="Owner" 
+                />
+                <FormControlLabel 
+                  control={<Radio sx={{ 
+                    '&.Mui-checked': { color: theme.palette.custom.blue } 
+                  }} />} 
+                  value="Property Manager" label="Property Manager" 
+                />
+                <FormControlLabel 
+                  control={<Radio sx={{ 
+                    '&.Mui-checked': { color: theme.palette.custom.blue } 
+                  }} />} 
+                  value="Third Party" label="Third Party" 
+                />
+              </RadioGroup>
+            </Stack>
 
-          <Stack spacing={-2}>
-            {/* Receiver RadioGroup */}
-            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
-              Receiver
-            </Typography>
-            <RadioGroup value={selectedReceiver} onChange={handleReceiverChange}>
-              <FormControlLabel
-                control={<Radio />}
-                value="Tenant"
-                label="Tenant"
-                disabled={selectedPayer === "Tenant"} // Disable if payer is Tenant
-              />
-              <FormControlLabel
-                control={<Radio />}
-                value="Owner"
-                label="Owner"
-                disabled={selectedPayer === "Owner"} // Disable if payer is Owner
-              />
-              <FormControlLabel
-                control={<Radio />}
-                value="Property Manager"
-                label="Property Manager"
-                disabled={selectedPayer === "Property Manager"} // Disable if payer is Property Manager
-              />
-              <FormControlLabel
-                control={<Radio />}
-                value="Third Party"
-                label="Third Party"
-                disabled={selectedPayer === "Third Party"} // Disable if payer is Third Party
-              />
-            </RadioGroup>
-          </Stack>
+            <Stack spacing={-2}>
+              {/* Receiver RadioGroup */}
+              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
+                Receiver
+              </Typography>
+              <RadioGroup value={selectedReceiver} onChange={handleReceiverChange}>
+                <FormControlLabel 
+                  control={<Radio sx={{ 
+                    '&.Mui-checked': { color: theme.palette.custom.blue } 
+                  }} />} 
+                  value="Tenant" label="Tenant" 
+                  disabled={selectedPayer === "Tenant"} 
+                />
+                <FormControlLabel 
+                  control={<Radio sx={{ 
+                    '&.Mui-checked': { color: theme.palette.custom.blue } 
+                  }} />} 
+                  value="Owner" label="Owner" 
+                  disabled={selectedPayer === "Owner"} 
+                />
+                <FormControlLabel 
+                  control={<Radio sx={{ 
+                    '&.Mui-checked': { color: theme.palette.custom.blue } 
+                  }} />} 
+                  value="Property Manager" label="Property Manager" 
+                  disabled={selectedPayer === "Property Manager"} 
+                />
+                <FormControlLabel 
+                  control={<Radio sx={{ 
+                    '&.Mui-checked': { color: theme.palette.custom.blue } 
+                  }} />} 
+                  value="Third Party" label="Third Party" 
+                  disabled={selectedPayer === "Third Party"} 
+                />
+              </RadioGroup>
+            </Stack>
 
               {/* Add Receipt button on the same row */}
               <Stack direction="row" alignItems="center">
