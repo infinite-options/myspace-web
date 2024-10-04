@@ -211,14 +211,14 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
       payment_verify: "Unverified",
       paid_by: getProfileId(),
       // payment_intent: paymentIntent,
-      
+
       payment_method: paymentMethod,
     };
     // if (paymentMethod == "Zelle") payment_request_payload.confirmation_number = confirmationNumber;
-    if (paymentMethod == "Stripe"){
-      payment_request_payload.payment_intent =  paymentIntent;
+    if (paymentMethod == "Stripe") {
+      payment_request_payload.payment_intent = paymentIntent;
     } else {
-      payment_request_payload.payment_intent =  confirmationNumber;
+      payment_request_payload.payment_intent = confirmationNumber;
     }
 
     await fetch(`${APIConfig.baseURL.dev}/makePayment`, {
@@ -341,8 +341,8 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
         ? // ? "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
           // : "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PM";
           "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
-        : "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST";
-    // : "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PM";
+        : // : "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST";
+          "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PM";
 
     let response = await fetch(url);
     const responseData = await response.json();
