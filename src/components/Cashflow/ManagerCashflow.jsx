@@ -700,7 +700,7 @@ export default function ManagerCashflow() {
           property_unit: item.property_unit,
         };
         
-        const totalExpected = parseFloat(item.expected) || 0;;
+        const totalExpected = parseFloat(item.expected) || 0;
         let totalActual = 0;
 
         if(item.pur_payer.startsWith("110")){
@@ -724,6 +724,8 @@ export default function ManagerCashflow() {
 
       return acc;
     }, {});
+
+    console.log("rents data by property - ", rentsDataByProperty)
 
     setUnsortedRentsData(rentsDataByProperty)
 
@@ -1302,7 +1304,8 @@ export default function ManagerCashflow() {
         }));
 
       const expectedProfit = totalRentExpected + totalPayoutExpected;
-      const actualProfit = totalRentActual + totalPayoutActual;
+      // const actualProfit = totalRentActual + totalPayoutActual;
+      const actualProfit = totalRentActual;
       
       allProfitItems.push(...profitRentItems)
       allProfitItems.push(...profitPayoutItems)
@@ -1341,7 +1344,8 @@ export default function ManagerCashflow() {
         allProfitItems.push(...profitPayoutItems)
 
         const expectedProfit = totalRentExpected + totalPayoutExpected; 
-        const actualProfit = totalRentActual + totalPayoutActual;       
+        // const actualProfit = totalRentActual + totalPayoutActual;
+        const actualProfit = totalRentActual;       
 
         profitDataByProperty[propertyUID] = {
           propertyInfo: payoutData.propertyInfo,
@@ -1355,6 +1359,8 @@ export default function ManagerCashflow() {
         };
       }
     });
+
+    console.log("profit data - ", profitDataByProperty)
 
     return [profitDataByProperty, allProfitItems];
   };
