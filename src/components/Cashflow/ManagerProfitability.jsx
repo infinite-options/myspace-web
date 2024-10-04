@@ -331,12 +331,12 @@ const ManagerProfitability = ({
 
   const getRowWithIds = (data) => {
     const sortedData = data?.sort((a, b) => {
-      const groupComparison = a.pur_group.localeCompare(b.pur_group);
+      const groupComparison = a.pur_group?.localeCompare(b.pur_group) || 0;
   
       if (groupComparison !== 0) {
         return groupComparison; 
       } else {
-        return a.pur_payer.localeCompare(b.pur_payer); 
+        return a.pur_payer?.localeCompare(b.pur_payer) || 0; 
       }
     });
 
