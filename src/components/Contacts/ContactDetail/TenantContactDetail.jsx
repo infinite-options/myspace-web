@@ -237,6 +237,7 @@ const TenantContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
                             // propertyData={contactDetails[currentIndex]?.property}
                             propertyData={(selectedRole === "OWNER" || selectedRole === "MAINTENANCE" )  ? contactDetails[currentIndex]?.properties : contactDetails[currentIndex]?.property} //fix later
                             index={0}
+                            selectedRole={selectedRole}
                           />
                         ) :
                         <></>
@@ -250,10 +251,10 @@ const TenantContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
     );
   }
   
-  const TenantPropertyInformation = ({ propertyData, index }) => {
+  const TenantPropertyInformation = ({ propertyData, index, selectedRole }) => {
     const properties = propertyData != null? JSON.parse(propertyData).filter(property => property.lease_status === "ACTIVE") : []
     const [ currentIndex, setCurrentIndex ] = useState(index);
-  
+    const navigate = useNavigate();
     console.log("TenantPropertyInformation - properties - ", properties);
   
   
@@ -338,8 +339,33 @@ const TenantContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
                     fontSize: "5px", 
                   }}
                 >
+
                   <Button
                     // onClick={() => navigate("/maintenance")}
+                    onClick = {() => {
+                      if(selectedRole === "MANAGER"){
+                        navigate("/managerMaintenance", {
+                          state: {
+                            selectedProperty: {
+                              address: properties[currentIndex]?.property_address,
+                              property_uid: properties[currentIndex]?.contract_property_id
+                              ,
+                              checked: true,
+                            },
+                          },
+                        })
+                      }else{
+                        navigate("/ownerMaintenance", {
+                            state: {
+                              selectedProperty: {
+                                address: properties[currentIndex]?.property_address,
+                                property_uid: properties[currentIndex]?.property_id,
+                                checked: true,
+                              },
+                            },
+                          })
+                      }
+                    }}
                     sx={{ border: "none", "&:hover, &:focus, &:active": { backgroundColor: "#d6d5da" }, alignContent: "left", justifyContent: "left" }}
                   >
                     <img src={maintenanceIcon} alt="maintenance icon" style={{ width: "45px", height: "45px" }} />
@@ -505,6 +531,33 @@ const TenantContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
   
   const RentHistoryDataGrid = ({ data }) => {
     console.log("RentHistoryDataGrid - props.data -", data);
+
+    const paymentStatusColorMap = {
+      "Paid On Time": theme.palette.priority.clear,
+      "Partially Paid": theme.palette.priority.medium,
+      "Paid Late": theme.palette.priority.low,
+      "Not Paid": theme.palette.priority.high,
+      "Vacant": "#160449",
+      "No Manager": theme.palette.priority.low,
+    };
+    
+    const paymentStatusMap = {
+      UNPAID: "Not Paid",
+      "PAID LATE": "Paid Late",
+      PAID: "Paid On Time",
+      Partial: "Partially Paid",
+      VACANT: "Vacant",
+      "NO MANAGER": "No Manager",
+    };
+
+    function getPaymentStatusColor(paymentStatus) {
+      if (paymentStatus === null || paymentStatus === undefined) {
+        return paymentStatusColorMap["Vacant"];
+      } else {
+        const status = paymentStatusMap[paymentStatus];
+        return paymentStatusColorMap[status];
+      }
+    }
     
     const columns = [
       { 
@@ -551,7 +604,7 @@ const TenantContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
         flex: 0.5,
         renderCell: (params) => (
           <Typography sx={{ fontSize: '14px', color: '#160449', textAlign: 'right', width: '100%'}}>
-            {params.row.purchase_status === "UNPAID" ? params.row.pur_amount_due.toFixed(2) : params.row.total_paid.toFixed(2) || "-"}
+            {params.row.purchase_status === "UNPAID" ? params.row.pur_amount_due?.toFixed(2) : params.row.total_paid?.toFixed(2) || "-"}
           </Typography>
         )
       },
@@ -566,9 +619,38 @@ const TenantContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
         // width: 200,
         flex: 0.5,
         renderCell: (params) => (
-          <Typography sx={{ fontSize: '14px', color: '#160449', }}>
-            {`${params.row.purchase_status || params.row.payment_status}`}
-          </Typography>
+          <Box
+          sx={{
+            backgroundColor: getPaymentStatusColor(params.row.purchase_status || params.row.payment_status),
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "0px",
+            border: "none",
+            margin: "0px",
+          }}
+        >
+            <Typography
+              sx={{
+                color: theme.palette.primary.main,
+                fontWeight: theme.typography.primary.fontWeight,
+                fontSize: "12px",
+                margin: "0px",
+                padding: "0px",
+                height: "35px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                textAlign: "center",
+              }}
+            >
+              {params.row.purchase_status || params.row.payment_status}
+            </Typography>
+        </Box>
+      
         )
       },
                  

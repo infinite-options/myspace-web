@@ -616,7 +616,7 @@ export default function MaintenanceRequestNavigatorNew({
 										onQuoteSelect={handleQuoteSelect}
 									/>
 									<Grid container sx={{ padding: '0px' }}>
-									{data.maintenance_request_status !== 'NEW' && maintenanceQuotes.length > 0? (
+									{data?.maintenance_request_status !== 'NEW' && maintenanceQuotes.length > 0? (
 										<QuoteDetails
 											maintenanceItem={data}
 											navigateParams={navigateParams}
