@@ -39,6 +39,7 @@ export default function VerifyPayments2(props) {
 
   const { user, getProfileId, roleName, selectedRole } = useUser();
   const [selectedProperty, setSelectedProperty] = useState(props.propertyID)
+  const selectedPurchaserow = props.selectedPurchaseRow || "";
 
   const [moneyPayable, setMoneyPayable] = useState([]);
   const [dataByProperty, setDataByProperty] = useState([]);
@@ -96,15 +97,15 @@ export default function VerifyPayments2(props) {
     try {
       const res = await axios.get(`${APIConfig.baseURL.dev}/paymentVerification/${getProfileId()}`);
       const moneyPayableData = res.data.result;
-      console.log("Verfiy Payment GET Results: ", moneyPayableData);
+      // console.log("Verfiy Payment GET Results: ", moneyPayableData);
 
       setMoneyPayable(moneyPayableData);
       totalMoneyPayable(moneyPayableData);
       const groupedByProperty = groupDataByKey(moneyPayableData, "pur_property_id");
       const groupedByPayer = groupDataByKey(moneyPayableData, "pur_payer");
       const groupedByPaymentIntent = groupDataByKey(moneyPayableData, "payment_intent");
-      console.log("ROHIT - groupedByProperty - ", groupedByProperty);
-      console.log("ROHIT - groupedByPayer - ", groupedByPayer);
+      // console.log("ROHIT - groupedByProperty - ", groupedByProperty);
+      // console.log("ROHIT - groupedByPayer - ", groupedByPayer);
       setDataByProperty(groupedByProperty);
       setDataByPayer(groupedByPayer);
       setDataByPaymentIntent(groupedByPaymentIntent)
@@ -233,7 +234,7 @@ export default function VerifyPayments2(props) {
                   <Stack>
                     {
                         tab === "DEFAULT" && (
-                            <BalanceDetailsTable data={moneyPayable} setPaymentData={setPaymentData}  setSelectedPayments={setSelectedPayments} fetchPaymentsData={fetchPaymentsData} selectedProperty={selectedProperty} sortBy={sortBy} />
+                            <BalanceDetailsTable data={moneyPayable} selectedPurchaseRow={selectedPurchaserow} setPaymentData={setPaymentData}  setSelectedPayments={setSelectedPayments} fetchPaymentsData={fetchPaymentsData} selectedProperty={selectedProperty} sortBy={sortBy} />
                         )
                     }
                     {
@@ -246,7 +247,7 @@ export default function VerifyPayments2(props) {
                                             Property ID: {propertyPayments[0].pur_property_id}
                                         </Typography>
                                     </Grid>
-                                    <BalanceDetailsTable data={propertyPayments} setPaymentData={setPaymentData} setSelectedPayments={setSelectedPayments} fetchPaymentsData={fetchPaymentsData} selectedProperty={selectedProperty} sortBy={sortBy} />
+                                    <BalanceDetailsTable data={propertyPayments} selectedPurchaseRow={selectedPurchaserow} setPaymentData={setPaymentData} setSelectedPayments={setSelectedPayments} fetchPaymentsData={fetchPaymentsData} selectedProperty={selectedProperty} sortBy={sortBy} />
                                     <br />
                                 </>
                             ))
@@ -262,7 +263,7 @@ export default function VerifyPayments2(props) {
                                             Payer ID: {paymentItems[0].pur_payer}
                                         </Typography>
                                     </Grid>
-                                    <BalanceDetailsTable data={paymentItems} setPaymentData={setPaymentData} setSelectedPayments={setSelectedPayments} fetchPaymentsData={fetchPaymentsData} selectedProperty={selectedProperty} sortBy={sortBy} />
+                                    <BalanceDetailsTable data={paymentItems} selectedPurchaseRow={selectedPurchaserow} setPaymentData={setPaymentData} setSelectedPayments={setSelectedPayments} fetchPaymentsData={fetchPaymentsData} selectedProperty={selectedProperty} sortBy={sortBy} />
                                     <br />
                                 </>
                             ))
@@ -278,7 +279,7 @@ export default function VerifyPayments2(props) {
                                             Payment Intent: {paymentItems[0].payment_intent}
                                         </Typography>
                                     </Grid>
-                                    <BalanceDetailsTable data={paymentItems} setPaymentData={setPaymentData} setSelectedPayments={setSelectedPayments} fetchPaymentsData={fetchPaymentsData} selectedProperty={selectedProperty} sortBy={sortBy} />
+                                    <BalanceDetailsTable data={paymentItems} selectedPurchaseRow={selectedPurchaserow} setPaymentData={setPaymentData} setSelectedPayments={setSelectedPayments} fetchPaymentsData={fetchPaymentsData} selectedProperty={selectedProperty} sortBy={sortBy} />
                                     <br />
                                 </>
                             ))
@@ -299,6 +300,7 @@ export default function VerifyPayments2(props) {
 function BalanceDetailsTable(props) {
   // console.log("In BalanceDetailTable", props);
   const [data, setData] = useState(props.data);
+  const selectedPurchaseGroup = props.selectedPurchaseRow || "";
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedPayments, setSelectedPayments] = useState([]);
   const [paymentDueResult, setPaymentDueResult] = useState([]);
@@ -384,7 +386,18 @@ function BalanceDetailsTable(props) {
       }else {
         filteredRows = data;
       }
-      setSelectedRows(filteredRows.map((row) => row.payment_uid));
+      
+      if(selectedPurchaseGroup && selectedPurchaseGroup !== ""){
+        setSelectedRows(
+          filteredRows
+            .filter((row) => row.pur_group === selectedPurchaseGroup)
+            .map((row) => row.payment_uid) 
+        );
+      
+      }else{
+        setSelectedRows(filteredRows.map((row) => row.payment_uid));
+      }
+
       setPaymentDueResult(
         data.map((item) => ({
           ...item,

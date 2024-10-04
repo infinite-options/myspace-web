@@ -102,6 +102,7 @@ const PaymentProcessing = () => {
 
     const [selectedPayment, setSelectedPayment] = useState(null);
     const [selectedPurGroup, setSelectedPurGroup] = useState(null);
+    const selectedPurchasegrp = location?.state?.selectedPurchaseGroup || "";
     
     // const [selectedProperty, setSelectedProperty] = useState("ALL");
 
@@ -183,7 +184,7 @@ const PaymentProcessing = () => {
                 {currentWindow === "SELECT_PAYMENT" && <ManagerSelectPayment selectedPayment={selectedPayment} selectedPurGroup={selectedPurGroup} />}                             
               </Grid>
 
-              {currentWindow === "VERIFY_PAYMENTS" && <VerifyPayments2 />}
+              {currentWindow === "VERIFY_PAYMENTS" && <VerifyPayments2 selectedPurchaseRow={selectedPurchasegrp} />}
             </Grid>
           </Container>
         </ThemeProvider>

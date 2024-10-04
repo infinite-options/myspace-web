@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Box, ThemeProvider, Paper, Button, Typography, Stack, Grid, TextField, IconButton, Divider, Checkbox, Container } from "@mui/material";
+import { Box, ThemeProvider, Paper, Button, Typography, Stack, Grid, TextField, IconButton, Divider, Checkbox, Container,  Accordion,
+  AccordionSummary,
+  AccordionDetails, } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import theme from "../../theme/theme";
 import { alpha, makeStyles } from "@material-ui/core/styles";
@@ -10,6 +12,7 @@ import StripePayment from "../Settings/StripePayment";
 import BackIcon from "./backIcon.png";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { DataGrid } from "@mui/x-data-grid";
 
 import APIConfig from "../../utils/APIConfig";
@@ -26,6 +29,41 @@ const useStyles = makeStyles((theme) => ({
     background: "#000000",
   },
 }));
+
+const groupDataByKey = (data, key, byOwner) => {
+  // console.log("ROHIT - data - ", data);
+  const groupedByKey = {};
+
+  if(!byOwner){
+    data?.forEach(payment => {
+        const dataKey = payment[key];
+        if(!groupedByKey[dataKey]){
+            groupedByKey[dataKey] = [];
+        }
+        groupedByKey[dataKey].push(payment)
+    })
+  }else{
+    data?.forEach((item) => {
+      const ownerId = item.property_owner_id;
+      const propertyId = item.pur_property_id;
+  
+      if (ownerId.startsWith("110")) {
+  
+        if (!groupedByKey[ownerId]) {
+          groupedByKey[ownerId] = {};
+        }
+  
+        if (!groupedByKey[ownerId][propertyId]) {
+          groupedByKey[ownerId][propertyId] = [];
+        }
+  
+        groupedByKey[ownerId][propertyId].push(item);
+      }
+    });
+  }
+
+  return groupedByKey;
+}
 
 function DashboardTab(props) {
   return (
@@ -55,7 +93,7 @@ export default function PaymentsManager(props) {
 
   const managerCashflowWidgetData = location.state?.managerCashflowWidgetData;
   const accountBalanceWidgetData = location.state?.accountBalanceWidgetData;
-  console.log("managerCashflowWidgetData - ", managerCashflowWidgetData);
+  // console.log("managerCashflowWidgetData - ", managerCashflowWidgetData);
 
   // console.log("selectedRole - ", selectedRole);
 
@@ -79,6 +117,11 @@ export default function PaymentsManager(props) {
   const [totalPayable, setTotalPayable] = useState(0);
   const [isHeaderChecked, setIsHeaderChecked] = useState(true);
   const [paymentMethodInfo, setPaymentMethodInfo] = useState({});
+  const [tab, setTab] = useState("by_property")
+  const [sortBy, setSortBy] = useState("by_property")
+
+  const [transactionDataByProeprty, setTransactionDataByProeprty] = useState({})
+  const [transactionDataByOwner, setTransactionDataByOwner] = useState({})
 
   const [paymentData, setPaymentData] = useState({
     currency: "usd",
@@ -263,6 +306,14 @@ export default function PaymentsManager(props) {
         setTransactionsData(dataWithIndex);
         const total = getTransactionsTotal(dataWithIndex);
         setTotalTransactions(total);
+
+        const dataByProperty = groupDataByKey(dataWithIndex, "pur_property_id", false)
+        const dataByOwner = groupDataByKey(dataWithIndex, "pur_receiver", true)
+        // console.log("---dhyey--- successfully filter data - ", dataByProperty);
+        setTransactionDataByProeprty(dataByProperty)
+        setTransactionDataByOwner(dataByOwner)
+
+
       // totalMoneyPaidUpdate(moneyPaidData);      
     } catch (error) {
       console.error("Error fetching transactions data:", error);
@@ -540,6 +591,42 @@ export default function PaymentsManager(props) {
                       <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
                         Transactions
                       </Typography>
+                      <Button
+                        sx={{
+                            width: "150px",
+                            backgroundColor: tab === "by_property" ? "#3D5CAC" : "#9EAED6",
+                            textTransform: "none",
+                            "&:hover": {
+                                backgroundColor: tab === "by_property" ? "#3D5CAC" : "#9EAED6",
+                            },
+                        }}
+
+                        onClick={() => {
+                                setSortBy("by_property");
+                                setTab("by_property");
+                                
+                            }}
+                        >
+                          <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Property</Typography>
+                      </Button> 
+                      <Button
+                          sx={{
+                              width: "150px",
+                              backgroundColor: tab === "by_owner" ? "#3D5CAC" : "#9EAED6",
+                              textTransform: "none",
+                              "&:hover": {
+                                  backgroundColor: tab === "by_owner" ? "#3D5CAC" : "#9EAED6",
+                              },
+                          }}
+
+                          onClick={() => {
+                                  setSortBy("by_owner");
+                                  setTab("by_owner");
+                                  
+                              }}
+                          >
+                          <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Owner</Typography>
+                      </Button> 
                       <Typography
                         sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
                       >
@@ -548,7 +635,83 @@ export default function PaymentsManager(props) {
                     </Stack>
 
                     <Stack>
-                      <TransactionsTable data={transactionsData} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
+                      {tab === "by_property" && (
+                        Object.values(transactionDataByProeprty)?.map( propertyPayments => (
+                          <>
+                              <br />
+                              <Grid item xs={12} marginBottom={10}>
+                                  <Typography sx={{fontWeight: 'bold', color: "#160449"}}>
+                                      Property: {propertyPayments[0].property_address}
+                                  </Typography>
+                              </Grid>
+                              <TransactionsTable data={propertyPayments} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
+                              <br />
+                          </>
+                        ))
+                      )}
+                      {/* {tab === "by_owner" && (
+                        Object.keys(transactionDataByOwner)?.map((ownerID, index) => (
+                          <>
+                              <br />
+                              <Grid item xs={12} marginBottom={10}>
+                                  <Typography sx={{fontWeight: 'bold', color: "#160449"}}>
+                                      Owner ID: {ownerID}
+                                  </Typography>
+                              </Grid>
+                              <TransactionsTable data={transactionDataByOwner[ownerID]} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
+                              <br />
+                          </>
+                        ))
+                      )} */}
+                      {tab === "by_owner" && (
+                        Object.keys(transactionDataByOwner)?.map((ownerID, index) => (
+                          <React.Fragment key={ownerID}>
+                            <br />
+                            <Grid item xs={12} marginBottom={10}>
+                              <Typography sx={{ fontWeight: 'bold', color: "#160449" }}>
+                                Owner ID: {ownerID}
+                              </Typography>
+                            </Grid>
+
+                            {Object.keys(transactionDataByOwner[ownerID])?.map((propertyID) => (
+                              <Accordion
+                                sx={{
+                                  backgroundColor: theme.palette.primary.main,
+                                  boxShadow: "none",
+                                  marginY: "10px"
+                                }}
+                                key={propertyID}
+                              >
+                                <Grid container justifyContent='flex-start' item xs={8}>
+                                  <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                                    <AccordionSummary
+                                      expandIcon={<ExpandMoreIcon />}
+                                      aria-controls={`panel-${propertyID}-content`}
+                                      id={`panel-${propertyID}-header`}
+                                    >
+                                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                        Property: {transactionDataByOwner[ownerID][propertyID][0].property_address}
+                                      </Typography>
+                                    </AccordionSummary>
+                                  </Grid>
+                                </Grid>
+
+                                <AccordionDetails>
+                                  <TransactionsTable 
+                                    data={transactionDataByOwner[ownerID][propertyID]} 
+                                    total={total} 
+                                    setTotal={setTotal} 
+                                    setPaymentData={setPaymentData} 
+                                    setSelectedItems={setSelectedItems} 
+                                  />
+                                </AccordionDetails>
+                              </Accordion>
+                            ))}
+
+                            <br />
+                          </React.Fragment>
+                        ))
+                      )}
                     </Stack>
                   </Paper>
                 )}
@@ -685,11 +848,10 @@ function TransactionsTable(props) {
   }, [props.data]);
 
   useEffect(() => {
-    console.log("ROHIT - selectedRows - ", selectedRows);
+    // console.log("ROHIT - selectedRows - ", selectedRows);
   }, [selectedRows]);
 
   const filterTransactions = (data) => {
-    console.log("ROHIT - 631 - data - ", data);
 
     const verifiedPurGroups = []
 
@@ -719,8 +881,8 @@ function TransactionsTable(props) {
 
   useEffect(() => {
     if (data && data.length > 0) {
+      console.log("ROHIT - 814 - without filteredData - ", data, " for property - ", data[0].pur_property_id);
       const filteredData = filterTransactions(data);
-      console.log("ROHIT - 631 - filteredData - ", filteredData);
       // setSelectedRows(filteredData.map((row) => row.index));
       setSelectedRows([]);
       setPaymentDueResult(
@@ -850,6 +1012,7 @@ function TransactionsTable(props) {
             display: "flex",
             flexDirection: "row",
             justifyContent: "flex-end",
+            color:  params.row.pur_payer.startsWith("600")? "red" : "green"
           }}
         >                    
           { params.row.pur_payer.startsWith("600")? `${parseFloat(params.value).toFixed(2)}` : `(${parseFloat(params.value).toFixed(2)})`}
@@ -1015,7 +1178,29 @@ function TransactionsTable(props) {
       </>
     );
   } else {
-    return <></>;
+    return <>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginBottom: '7px',
+          width: '100%',
+          height:"70px"
+        }}
+      >
+        <Typography
+          sx={{
+            color: "#A9A9A9",
+            fontWeight: theme.typography.primary.fontWeight,
+            fontSize: "15px",
+          }}
+        >
+          No Transactions
+        </Typography>
+      </Box>
+    </>;
   }
 }
 
