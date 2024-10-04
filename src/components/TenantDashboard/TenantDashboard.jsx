@@ -698,7 +698,6 @@ const TenantDashboard = () => {
 // };
 
 function TenantPaymentHistoryTable({ data, setRightPane, onBack }) {
-  // console.log("data tenantpaymenthistorytable", data);
   const columns = [
     {
       field: "description",
@@ -738,7 +737,14 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack }) {
       field: "purchaseDate",
       headerName: "Date",
       flex: 1,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value || "-"}</Box>,
+      renderCell: (params) => {
+        const date = new Date(params.value);
+        return (
+          <Box sx={{ fontWeight: "bold" }}>
+            {date.toLocaleDateString("en-US")} {/* Format date to MM/DD/YYYY */}
+          </Box>
+        );
+      },
     },
     {
       field: "amountDue",
@@ -764,26 +770,13 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack }) {
     <Paper
       sx={{
         padding: "20px",
-        backgroundColor: "#f0f0f0", // Grey background to match other components
+        backgroundColor: "#f0f0f0",
         borderRadius: "12px",
         boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
         margin: "20px 0",
       }}
     >
       <Box sx={{ display: "flex", justifyContent: "flex-start", marginBottom: "10px" }}>
-        {/* Back Button */}
-        {/* <IconButton
-                        onClick={onBack}
-                        sx={{
-                            backgroundColor: '#3D5CAC',
-                            color: '#fff',
-                            '&:hover': {
-                                backgroundColor: '#4B6DB8',
-                            },
-                        }}
-                    >
-                        <ArrowBackIcon />
-                    </IconButton> */}
         <Button onClick={onBack}>
           <ArrowBackIcon
             sx={{
@@ -794,7 +787,6 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack }) {
           />
         </Button>
       </Box>
-      {/* Payment History Table */}
       {data && data.length > 0 ? (
         <DataGrid
           rows={data}
@@ -804,10 +796,13 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack }) {
             pagination: {
               paginationModel: { pageSize: 5 },
             },
+            sorting: {
+              sortModel: [{ field: "purchaseDate", sort: "desc" }], // Default sorting by date
+            },
           }}
           getRowId={(row) => row.purchase_uid} // Use purchase_uid as the unique identifier
           sx={{
-            backgroundColor: "#f0f0f0", // Ensure consistent grey background within the DataGrid
+            backgroundColor: "#f0f0f0",
           }}
         />
       ) : (
