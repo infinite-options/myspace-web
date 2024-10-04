@@ -725,7 +725,7 @@ export default function ManagerCashflow() {
       return acc;
     }, {});
 
-    console.log("rents data by property - ", rentsDataByProperty)
+    // console.log("rents data by property - ", rentsDataByProperty)
 
     setUnsortedRentsData(rentsDataByProperty)
 
