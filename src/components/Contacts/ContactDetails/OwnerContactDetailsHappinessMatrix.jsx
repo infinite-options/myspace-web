@@ -1069,30 +1069,73 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
 
 const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
   const navigate = useNavigate();
+  // const paymentStatusColorMap = {
+  //   "Paid On Time": theme.palette.priority.clear,
+  //   "Partially Paid": theme.palette.priority.medium,
+  //   "Paid Late": theme.palette.priority.low,
+  //   "Not Paid": theme.palette.priority.high,
+  //   Vacant: "#160449",
+  //   "No Manager": theme.palette.priority.low,
+  // };
+
   const paymentStatusColorMap = {
     "Paid On Time": theme.palette.priority.clear,
     "Partially Paid": theme.palette.priority.medium,
     "Paid Late": theme.palette.priority.low,
     "Not Paid": theme.palette.priority.high,
     Vacant: "#160449",
-    "No Manager": theme.palette.priority.low,
+    "No Manager": "#626264",
+    // "Not Listed": theme.palette.priority.medium,
+    "Not Listed": "#000000",
   };
 
+  // const paymentStatusMap = {
+  //   UNPAID: "Not Paid",
+  //   "PAID LATE": "Paid Late",
+  //   PAID: "Paid On Time",
+  //   Partial: "Partially Paid",
+  //   VACANT: "Vacant",
+  //   "NO MANAGER": "No Manager",
+  // };
   const paymentStatusMap = {
     UNPAID: "Not Paid",
     "PAID LATE": "Paid Late",
     PAID: "Paid On Time",
     Partial: "Partially Paid",
     VACANT: "Vacant",
+    "NOT LISTED": " Vacant - Not Listed",
     "NO MANAGER": "No Manager",
   };
 
-  function getPaymentStatusColor(paymentStatus) {
-    if (paymentStatus === null || paymentStatus === undefined) {
+  // function getPaymentStatusColor(paymentStatus) {
+  //   if (paymentStatus === null || paymentStatus === undefined) {
+  //     return paymentStatusColorMap["Vacant"];
+  //   } else {
+  //     const status = paymentStatusMap[paymentStatus];
+  //     return paymentStatusColorMap[status];
+  //   }
+  // }
+
+  function getPaymentStatusColor(paymentStatus, property) {
+    // console.log("214 - property - ", property);
+    if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property?.property_available_to_rent && property?.property_available_to_rent === 1)) {
       return paymentStatusColorMap["Vacant"];
+    } else if((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property?.property_available_to_rent == null || property?.property_available_to_rent === 0)){
+      return paymentStatusColorMap["Not Listed"];
     } else {
       const status = paymentStatusMap[paymentStatus];
       return paymentStatusColorMap[status];
+    }
+  }
+
+  function getPaymentStatus(paymentStatus, property) {    
+    if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property?.property_available_to_rent && property?.property_available_to_rent === 1)) {
+      return paymentStatusMap["VACANT"];
+    } else if((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property?.property_available_to_rent == null || property?.property_available_to_rent === 0)){
+      return paymentStatusMap["NOT LISTED"];
+    } else {
+      const status = paymentStatusMap[paymentStatus];
+      return status;
     }
   }
 
@@ -1154,7 +1197,8 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
               textAlign: "center",
             }}
           >
-            {params.row.rent_status}
+            {getPaymentStatus(params.row.rent_status)}
+            {/* {params.row.rent_status} */}
           </Typography>
         </Box>
       ),

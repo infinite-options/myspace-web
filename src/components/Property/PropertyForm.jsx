@@ -422,7 +422,8 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 			navigate("/pmQuotesList", {
 				state: {
 				selectedContractUID: responseContractUID,		
-				selectedContractPropertyUID: responsePropertyUID,   
+				selectedContractPropertyUID: responsePropertyUID,
+				navigatingFrom: "PropertyForm",  
 				},
 			});	
 		}

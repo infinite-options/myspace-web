@@ -158,7 +158,7 @@ function ManagementContractDetails(props) {
                 {/* {contactsTab} */}
               </Typography>
             </Box>                        
-            <PropertyCard data={filteredPropertiesData[index] ? filteredPropertiesData[index] : []} />
+            <PropertyCard data={filteredPropertiesData[index] ? filteredPropertiesData[index] : []} navigatingFrom={props.navigatingFrom} />
           </Box>
         </Grid>
       </Container>
