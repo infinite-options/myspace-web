@@ -231,6 +231,7 @@ const TenantContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
                           padding: '10px',
                       }}
                   >
+                    {console.log('---before---', contactDetails[currentIndex])}
                       {
                         contactDetails && typeof currentIndex === 'number' && currentIndex >=0 ? (
                           <TenantPropertyInformation 
@@ -395,57 +396,38 @@ const TenantContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
                 <Typography sx={{fontSize: '20px', color: '#160449', fontWeight: 'bold', }}>
                   Occupants
                 </Typography>
-              </Grid>              
+              </Grid>  
+                        
               <Grid item xs={12}>
-                <Typography sx={{ fontSize: '20px', color: '#3D5CAC'}}>
+                {/* <Typography sx={{ fontSize: '20px', color: '#3D5CAC'}}>
                   {properties[currentIndex]?.lease_adults?.length} Adult(s)
-                </Typography>
-                {
-                  properties[currentIndex]?.lease_adults?.map( adult => (
-                    <Typography sx={{ fontSize: '16px', color: '#3D5CAC'}}>
-                      {`${adult?.name} ${adult?.last_name} | ${adult?.relationship} | DOB: `}
-                    </Typography>
-                  ))
-                }
+                </Typography> */}
+                <OccupantsDataGrid occupants={properties[currentIndex]?.lease_adults} />
               </Grid>
   
               <Grid item xs={12}>
-                <Typography sx={{ fontSize: '20px', color: '#3D5CAC'}}>
+                {/* <Typography sx={{ fontSize: '20px', color: '#3D5CAC'}}>
                   {properties[currentIndex]?.lease_children?.length} Children
-                </Typography>
-                {
-                  properties[currentIndex]?.lease_children?.map( child => (
-                    <Typography sx={{ fontSize: '16px', color: '#3D5CAC'}}>
-                      {`${child?.name} ${child?.last_name} | ${child?.relationship} | DOB: `}
-                    </Typography>
-                  ))
-                }
+                </Typography> */}
+                <OccupantsDataGrid occupants={properties[currentIndex]?.lease_children} />
+              
               </Grid>
   
               <Grid item xs={12}>
-                <Typography sx={{ fontSize: '20px', color: '#3D5CAC'}}>
+                {/* <Typography sx={{ fontSize: '20px', color: '#3D5CAC'}}>
                   {properties[currentIndex]?.lease_pets?.length} Pet(s)
-                </Typography>
-                {
-                  properties[currentIndex]?.lease_pets?.map( pet => (
-                    <Typography sx={{ fontSize: '16px', color: '#3D5CAC'}}>
-                      {`${pet?.name} | ${pet?.type} | ${pet?.weight} lbs`}
-                    </Typography>
-                  ))
-                }
+                </Typography> */}
+                <OccupantsDataGrid occupants={properties[currentIndex]?.lease_pets} />
+              
               </Grid>
   
               <Grid item xs={12}>
-                <Typography sx={{ fontSize: '20px', color: '#3D5CAC'}}>
+                {/* <Typography sx={{ fontSize: '20px', color: '#3D5CAC'}}>
                   {properties[currentIndex]?.lease_vehicles?.length} Vehicle(s)
-                </Typography>
-                {
-                  properties[currentIndex]?.lease_vehicles?.map( vehicle => (
-                    <Typography sx={{ fontSize: '16px', color: '#3D5CAC'}}>
-                      {`${vehicle?.year} ${vehicle?.make} ${vehicle?.model} | ${vehicle?.license} | ${vehicle?.state}`}
-                    </Typography>
-                  ))
-                }
+                </Typography> */}
+                <OccupantsDataGrid occupants={properties[currentIndex]?.lease_vehicles} />
+              
+              
               </Grid>
   
               <Grid container item xs={12} justifyContent='center'>
@@ -690,6 +672,72 @@ const TenantContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
       </>
     );
   }
+
+  const OccupantsDataGrid = ({ occupants }) => {
+    const columns = [
+      {
+        field: 'name',
+        headerName: 'Name',
+        renderHeader: () => (
+          <Typography sx={{ fontSize: '15px', color: "#160449", fontWeight: 'bold', }}>
+            {'Name'}
+          </Typography>
+        ),
+        flex: 1,
+        renderCell: (params) => (
+          <Typography sx={{ fontSize: '14px', color: '#160449', }}>
+            {`${params.row.name} ${params.row.last_name}`}
+          </Typography>
+        )
+      },
+      {
+        field: 'relationship',
+        headerName: 'Relationship',
+        renderHeader: () => (
+          <Typography sx={{ fontSize: '15px', color: "#160449", fontWeight: 'bold', }}>
+            {'Relationship'}
+          </Typography>
+        ),
+        flex: 1,
+        renderCell: (params) => (
+          <Typography sx={{ fontSize: '14px', color: '#160449', }}>
+            {params.row.relationship}
+          </Typography>
+        )
+      },
+      {
+        field: 'dob',
+        headerName: 'DOB',
+        renderHeader: () => (
+          <Typography sx={{ fontSize: '15px', color: "#160449", fontWeight: 'bold', }}>
+            {'DOB'}
+          </Typography>
+        ),
+        flex: 1,
+        renderCell: (params) => (
+          <Typography sx={{ fontSize: '14px', color: '#160449', }}>
+            {params.row.dob ? dayjs(params.row.dob).format('MM/DD/YYYY') : '-'}
+          </Typography>
+        )
+      }
+    ];
+  
+    return (
+      <>
+        <DataGrid
+          rows={occupants}
+          columns={columns}
+          getRowHeight={() => 'auto'}
+          getRowId={row => row.name} // Assuming 'name' is unique, otherwise use a unique field
+          hideFooter={true}
+          sx={{
+            border: '0px',
+            marginTop: '10px',
+          }}
+        />
+      </>
+    );
+  };
 
 
   export default TenantContactDetail;
