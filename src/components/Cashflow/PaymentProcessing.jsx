@@ -178,7 +178,7 @@ const PaymentProcessing = () => {
                   />
                 )}
                 {currentWindow === "PAY_BILLS" && <PaymentsManager setSelectedPayment={setSelectedPayment} setCurrentWindow={setCurrentWindow} page={"paymentProcessing"} />}                                
-                {currentWindow === "VERIFY_PAYMENTS" && <VerifyPayments />}
+                {/* {currentWindow === "VERIFY_PAYMENTS" && <VerifyPayments />} */}
                 
                 {currentWindow === "MAKE_PAYMENT" && <MakePayment selectedPayment={selectedPayment} refreshCashflowData={refreshCashflowData} setCurrentWindow={setCurrentWindow} />}  
                 {currentWindow === "SELECT_PAYMENT" && <ManagerSelectPayment selectedPayment={selectedPayment} selectedPurGroup={selectedPurGroup} />}                             

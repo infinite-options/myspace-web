@@ -131,6 +131,7 @@ export default function ManagerCashflow() {
   const [totalDepositByMonth, setTotalDepositByMonth] = useState({})
   const [revenueByMonthByType, setRevenueByMonthByType] = useState([])
   const [expenseByMonthByType, setExpenseByMonthByType] = useState([])
+  const [revenueDataForManager, setRevenueDataForManager] = useState([]);
 
   const [profitabilityData, setProfitabilityData] = useState([]);
   const [transactionsData, setTransactionsData] = useState([]);
@@ -638,6 +639,9 @@ export default function ManagerCashflow() {
     const payoutsCurrentMonth = profitDatacurrentMonth?.filter((item) => item.pur_payer === profileId);
     const payoutsCurrentYear = profitDataCurrentYear?.filter((item) => item.pur_payer === profileId);
 
+    const revenueDataForManager = profitDataCurrentYear?.filter((item) => item.pur_payer === profileId || item.pur_receiver === profileId)
+    // setRevenueDataForManager(revenueDataForManager);
+
     setRevenueList(rentDataCurrentMonth)
     setExpenseList(payoutsCurrentMonth)
 
@@ -1067,6 +1071,44 @@ export default function ManagerCashflow() {
 
     setTotalDepositByMonth(totalDepositsByMonth)
 
+
+
+    // Manager revenue
+    const revenueDataForManagerByProperty = revenueDataForManager?.reduce((acc, item) => {
+      const propertyUID = item.pur_property_id;
+      const propertyInfo = {
+        property_id: item.pur_property_id,
+        property_address: item.property_address,
+        property_unit: item.property_unit,
+      };
+      
+      const totalExpected = parseFloat(item.expected) || 0;
+      const totalActual = parseFloat(item.actual) || 0;;
+
+      // if(item.pur_payer.startsWith("110")){
+        
+      // }
+
+      if (!acc[propertyUID]) {
+        // acc[propertyUID] = [];
+        acc[propertyUID] = {
+          propertyInfo: propertyInfo,
+          rentItems: [],
+          totalExpected: 0,
+          totalActual: 0,
+        };
+      }
+
+      acc[propertyUID].rentItems.push(item);
+      acc[propertyUID].totalExpected += totalExpected;
+      acc[propertyUID].totalActual += totalActual;
+
+      return acc;
+    }, {});
+
+    setRevenueDataForManager(revenueDataForManagerByProperty)
+
+    console.log("revenue data for manager by property - ", revenueDataForManagerByProperty)
 
   }, [month, year, cashflowData, selectedProperty]);
 
@@ -1833,6 +1875,8 @@ export default function ManagerCashflow() {
 
                 totalDepositByProperty={totalDepositByProperty}
                 totalDeposit={totalDeposit}
+
+                revenueDataForManager={revenueDataForManager}
 
                 setMonth={setMonth}
                 setYear={setYear}
