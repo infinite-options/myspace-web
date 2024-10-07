@@ -59,7 +59,7 @@ export default function RevenueWidget({ revenueData, cashflowStatusData }) {
           >
             <Grid container>
               <Grid item xs={8}>
-                <Typography sx={{ fontWeight: "bold" }}>{currentMonth} Profit (Expected vs Actual)</Typography>
+                <Typography sx={{ fontWeight: "bold" }}>{currentMonth} Cashflow (Expected vs Actual)</Typography>
               </Grid>
               <Grid item xs={2}>
                 {/* <Typography sx={{ fontWeight: "bold" }}>{profit? profit.toFixed(2) : '0.00'}</Typography> */}

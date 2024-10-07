@@ -434,7 +434,7 @@ const closeDialog = () => {
     }
     await readImage(file);
 
-    await updateModifiedData({ key: "business_photo", value: e.target.files[0] });
+    await updateModifiedData({ key: "business_photo_url", value: e.target.files[0] });
   };
 
   const readEmpImage = (file) => {

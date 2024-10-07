@@ -90,7 +90,7 @@ const ManagerProfitability = ({
   const [profitsExpanded, setProfitsExpanded] = useState(true);
   const [revenueExpanded, setRevenueExpanded] = useState(true);
   const [expenseExpanded, setExpenseExpanded] = useState(true);
-  const [tab, setTab] = useState("by_profit");
+  const [tab, setTab] = useState("by_property");
   const [headerTab, setHeaderTab] = useState("current_month");
 
   const handleSelectTab = (tab_name) => {
@@ -496,21 +496,7 @@ const ManagerProfitability = ({
           {/* Filter buttons */}
           <Grid container item xs={12} marginTop={15} marginBottom={5}>
             <Grid container item xs={8} display={"flex"} direction={"row"}>
-              <Grid container justifyContent='center' item xs={3} marginRight={10}>
-                <Button
-                  sx={{
-                    width: "150px",
-                    backgroundColor: tab === "by_profit" ? "#3D5CAC" : "#9EAED6",
-                    textTransform: "none",
-                    "&:hover": {
-                      backgroundColor: tab === "by_profit" ? "#3D5CAC" : "#9EAED6",
-                    },
-                  }}
-                  onClick={() => handleSelectTab("by_profit")}
-                >
-                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Profit</Typography>
-                </Button>
-              </Grid>
+              
               <Grid container justifyContent='center' item xs={2} marginRight={10}>
                 <Button
                   sx={{
@@ -541,7 +527,7 @@ const ManagerProfitability = ({
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Type</Typography>
                 </Button>
               </Grid>
-              <Grid container justifyContent='center' item xs={2}>
+              <Grid container justifyContent='center' item xs={2} marginRight={10}>
                 <Button
                   sx={{
                     width: "200px",
@@ -554,6 +540,21 @@ const ManagerProfitability = ({
                   onClick={() => handleSelectTab("by_sort")}
                 >
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Sort</Typography>
+                </Button>
+              </Grid>
+              <Grid container justifyContent='center' item xs={3}>
+                <Button
+                  sx={{
+                    width: "150px",
+                    backgroundColor: tab === "by_profit" ? "#3D5CAC" : "#9EAED6",
+                    textTransform: "none",
+                    "&:hover": {
+                      backgroundColor: tab === "by_profit" ? "#3D5CAC" : "#9EAED6",
+                    },
+                  }}
+                  onClick={() => handleSelectTab("by_profit")}
+                >
+                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Profit</Typography>
                 </Button>
               </Grid>
             </Grid>
@@ -1037,6 +1038,9 @@ const ManagerProfitability = ({
                                     </Typography>
                                     <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, marginLeft: 10, fontSize: theme.typography.smallFont }}>
                                       {`${property?.propertyInfo?.property_id}`}
+                                    </Typography>
+                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, marginLeft: 10, fontSize: theme.typography.smallFont }}>
+                                      {`(${property?.rentItems[0]?.cf_month} ${property?.rentItems[0]?.cf_year})`}
                                     </Typography>
                                     <Button
                                       sx={{
@@ -1809,10 +1813,10 @@ function StatementTable(props) {
                           </Typography>
                         </TableCell>
                         <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? value : 0}</Typography>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? parseFloat(value).toFixed(2) : 0}</Typography>
                         </TableCell>
                         <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? value : 0}</Typography>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? parseFloat(value).toFixed(2) : 0}</Typography>
                         </TableCell>
                       </TableRow>
                     </TableHead>

@@ -89,7 +89,7 @@ export default function PropertiesList(props) {
 	const returnIndex = returnIndexFromContext || 0;  
   const allcontracts = allContractsFromContext || []
 	
-
+  console.log("ROHIT - PropertiesList - returnIndex - ", returnIndex);
   // const [propertyList, setPropertyList] = useState([]);
   const [displayedItems, setDisplayedItems] = useState([]);
   const [citySortOrder, setCitySortOrder] = useState("asc");
@@ -97,7 +97,7 @@ export default function PropertiesList(props) {
   const [addressSortOrder, setAddressSortOrder] = useState("asc");
   const [statusSortOrder, setStatusSortOrder] = useState("asc");
   const [zipSortOrder, setZipSortOrder] = useState("asc");
-  const [propertyIndex, setPropertyIndex] = useState(0);
+  const [propertyIndex, setPropertyIndex] = useState(returnIndex);
   // const [allRentStatus, setAllRentStatus] = useState([]);
   const [LHS, setLHS] = useState("Rent");
   const [isFromRentWidget, setFromRentWidget] = useState(false);
@@ -116,10 +116,35 @@ export default function PropertiesList(props) {
   // console.log("In Property List - returnIndex outside: ", );
   // console.log("In Property List - rentStatus outside: ", allRentStatus);
   // console.log("In Property List - LHS outside: ", LHS);
+
+  //datagrid current page and page size
+  const [page, setPage] = useState(0);
+  // const [pageSize, setPageSize] = useState(15);
+
+  const [paginationModel, setPaginationModel] = React.useState({
+    pageSize: 15,
+    page: 0,
+  });
   
+  
+  useEffect(() => {
+    //set current page in datagrid
+    // Calculate the page based on the current index and page size
+    console.log("ROHIT - PropertiesList - propertyIndex - ", propertyIndex);
+    if (propertyList.length > 0 && propertyIndex !== null) {
+      const calculatedPage = Math.floor(propertyIndex / 15);
+      console.log("ROHIT - PropertiesList - calculatedPage - ", calculatedPage);
+      // setPage(calculatedPage); // Update the current page
+      setPaginationModel({
+        pageSize: 15,
+        page: calculatedPage,
+      });
+    }
+  }, [propertyIndex, propertyList,]);
 
   useEffect(() => { 
     // console.log("74 - props.showOnlyListings - ", props.showOnlyListings)       
+    const returnIndex = returnIndexFromContext || 0;
     if(props.showOnlyListings && props.showOnlyListings === true){
       const onlyListings = propertyList?.filter( property => property.rent_status === "VACANT")
       setDisplayedItems(onlyListings);      
@@ -133,7 +158,7 @@ export default function PropertiesList(props) {
     setIsDataReady(true);
 
   // }, [props.LHS, returnIndex, propertyList, props.showOnlyListings]);  
-  }, [props.LHS, propertyList, props.showOnlyListings]);  
+  }, [props.LHS, propertyList, props.showOnlyListings, returnIndexFromContext]);  
 
   useEffect(() => {
     console.log("displayedItems changed - ", displayedItems);
@@ -577,14 +602,24 @@ export default function PropertiesList(props) {
                     rows={rows}
                     columns={columns}
                     autoHeight
-                    pageSizeOptions={[15]}
-                    initialState={{
-                      pagination: {
-                        paginationModel: {
-                          pageSize: 15,
-                        },
-                      },
-                    }}
+                    // pageSizeOptions={[15, 20, 25]}
+                    // pageSize={pageSize}
+                    // page={page}
+                    // pagination                    
+                    // onPaginationModelChange={(newModel) => {
+                    //   setPage(newModel.page || 0);
+                    //   setPageSize(newModel.pageSize || 15);
+                    // }}
+                    paginationModel={paginationModel}
+                    onPaginationModelChange={setPaginationModel}
+                    // initialState={{
+                    //   pagination: {
+                    //     paginationModel: {
+                    //       pageSize: 15,
+                    //       page: 0,
+                    //     },
+                    //   },
+                    // }}
                     onRowClick={onPropertyClick}
                     rowSelectionModel={[propertyIndex]}
                     getRowSpacing={getRowSpacing}

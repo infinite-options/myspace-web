@@ -699,9 +699,13 @@ export default function ManagerCashflow() {
           property_address: item.property_address,
           property_unit: item.property_unit,
         };
-  
+        
         const totalExpected = parseFloat(item.expected) || 0;
-        const totalActual = parseFloat(item.actual) || 0;
+        const totalActual = parseFloat(item.actual) || 0;;
+
+        // if(item.pur_payer.startsWith("110")){
+          
+        // }
   
         if (!acc[propertyUID]) {
           // acc[propertyUID] = [];
@@ -720,6 +724,8 @@ export default function ManagerCashflow() {
 
       return acc;
     }, {});
+
+    // console.log("rents data by property - ", rentsDataByProperty)
 
     setUnsortedRentsData(rentsDataByProperty)
 
@@ -1278,7 +1284,13 @@ export default function ManagerCashflow() {
       };
 
       const totalRentExpected = rentData.totalExpected || 0;
-      const totalRentActual = rentData.totalActual || 0;
+      // const totalRentActual = rentData.totalActual || 0;
+      const totalRentActual = rentData.rentItems.reduce((total, item) => {
+        if (item.pur_payer && item.pur_payer.startsWith("110")) {
+          return total + parseFloat(item.actual || 0);
+        }
+        return total;
+      }, 0);
 
       const totalPayoutExpected = (payoutData.totalExpected || 0) * -1;
       const totalPayoutActual = (payoutData.totalActual || 0) * -1;
@@ -1298,7 +1310,8 @@ export default function ManagerCashflow() {
         }));
 
       const expectedProfit = totalRentExpected + totalPayoutExpected;
-      const actualProfit = totalRentActual + totalPayoutActual;
+      // const actualProfit = totalRentActual + totalPayoutActual;
+      const actualProfit = totalRentActual;
       
       allProfitItems.push(...profitRentItems)
       allProfitItems.push(...profitPayoutItems)
@@ -1337,7 +1350,8 @@ export default function ManagerCashflow() {
         allProfitItems.push(...profitPayoutItems)
 
         const expectedProfit = totalRentExpected + totalPayoutExpected; 
-        const actualProfit = totalRentActual + totalPayoutActual;       
+        // const actualProfit = totalRentActual + totalPayoutActual;
+        const actualProfit = totalRentActual;       
 
         profitDataByProperty[propertyUID] = {
           propertyInfo: payoutData.propertyInfo,
@@ -1351,6 +1365,8 @@ export default function ManagerCashflow() {
         };
       }
     });
+
+    console.log("profit data - ", profitDataByProperty)
 
     return [profitDataByProperty, allProfitItems];
   };

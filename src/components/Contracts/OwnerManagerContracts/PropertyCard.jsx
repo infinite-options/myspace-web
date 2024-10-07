@@ -1403,8 +1403,9 @@ const PropertyCard = (props) => {
 		  if (response.ok) {
 			if(props.navigatingFrom && props.navigatingFrom === "PropertyForm"){
 				navigate("/properties"); 	
-			}
-			navigate("/managerDashboard"); 
+			} else {
+				navigate("/managerDashboard"); 
+			}			
 		  } else {
 			throw new Error(`Failed to send the announcement: ${response.statusText}`);
 		  }
@@ -1544,10 +1545,13 @@ return (
         sx={{
           display: "flex",
           padding: "5px",
+		  flexDirection: "column",
           justifyContent: "flex-end",
           alignItems: "center",
           fontSize: "20px",
           color: "#160449",
+		  backgroundColor: "#D6D5DA",
+		  borderRadius: "10px",
           // color: '#3D5CAC',
         }}
       >
@@ -1558,7 +1562,7 @@ return (
 						display: 'flex',
 						alignItems: 'center',
 						justifyContent: 'center',
-						padding: 2,
+						padding: 2,						
 					}}
 				>
 					<IconButton onClick={() => handleScroll('left')} disabled={scrollPosition === 0}>
@@ -1625,12 +1629,8 @@ return (
           {timeDiff}
         </Box> */}
 		</Grid>
-        
-      </Box>
-      {/* Property Address */}
-      
-			{/* Property Address */}
-			<Box
+		<Grid item xs={12}>
+		<Box
 				sx={{
 					display: 'flex',
 					padding: '5px',
@@ -1671,452 +1671,265 @@ return (
 				</Box>
 			</Box>
 
-			{/* Property Owner and Status */}
-			<Box
-				sx={{
-					display: 'flex',
-					flexDirection: 'row',
-					justifyContent: 'space-between',
-				}}
-			>
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'column',
-					}}
-				>
-					<Box
-						sx={{
-							fontSize: '13px',
-							fontWeight: 'bold',
-							padding: '5px',
-							paddingBottom: '0px',
-							color: 'text.darkblue',
-						}}
-					>
-						{/* Owner: {propertyData.owner_first_name}{' '}{propertyData.owner_last_name} <ChatIcon sx={{ fontSize: 16, color: '#3D5CAC' }}  /> */}
-						Owner: {propertyOwnerName} <ChatIcon sx={{ fontSize: 16, color: '#3D5CAC' }} />
-					</Box>
-				</Box>
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'column',
-					}}
-				>
-					<Box
-						sx={{
-							fontSize: '13px',
-							fontWeight: 'bold',
-							padding: '5px',
-							paddingBottom: '0px',
-							color: 'text.darkblue',
-						}}
-					>
-						Property Management Contract Status: {contractStatus ? contractStatus : '<CONTRACT_STATUS>'}
-					</Box>
-				</Box>
-			</Box>
+		</Grid>
+        
+      </Box>
+	  <Box
+        sx={{
+          display: "flex",
+          padding: "5px",
+		  marginTop: "10px",
+		  flexDirection: "column",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          fontSize: "15px",
+          color: "#3D5CAC",
+		  backgroundColor: "#D6D5DA",
+		  borderRadius: "10px",
+          // color: '#3D5CAC',
+        }}
+      >
+		<Grid container sx={{marginTop: '10px', }}>
+			<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
+				<Grid item xs={12}>
+					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+						Owner
+					</Typography>					
+				</Grid>
+				<Grid item xs={12}>
+					<Typography sx={{color: '#160449', textAlign: 'center',}}>
+						{propertyOwnerName} <ChatIcon sx={{ fontSize: 16, color: '#3D5CAC' }} />
+					</Typography>					
+				</Grid>
+				
 
-			{/* Rent and Lease */}
-			<Box
-				sx={{
-					display: 'flex',
-					flexDirection: 'row',
-					justifyContent: 'space-between',
-				}}
-			>
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'column',
-						justifyContent: 'space-between',
-					}}
-				>
-					<Box
-						sx={{
-							fontSize: '13px',
-							fontWeight: 'bold',
-							padding: '5px',
-							paddingBottom: '0px',
-							color: 'text.darkblue',
-						}}
-					>
-						Rent:
-						{propertyData.property_listed_rent ? `$ ${propertyData.property_listed_rent}` : ' -'}
-					</Box>
-					<Box
-						sx={{
-							fontSize: '13px',
-							fontWeight: 'bold',
-							padding: '5px',
-							paddingTop: '0px',
-							color: 'text.darkblue',
-						}}
-					>
-						Due:{' '}
-						{propertyData.lease_rent_due_by ? `${propertyData.lease_rent_due_by} of every month` : ' -'}
-					</Box>
-				</Box>
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'column',
-					}}
-				>
-					{contractDocument ? (
-						<Box
-							sx={{
-								display: 'flex',
-								flexDirection: 'row',
-								fontSize: '13px',
-								fontWeight: 'bold',
-								padding: '5px',
-								paddingBottom: '0px',
-								color: 'text.darkblue',
-							}}
-						>
-							Contract:
-							<a
-								href={contractDocument.link}
-								target="_blank"
-								rel="noopener noreferrer"
-								style={{ textDecoration: 'none', color: 'text.darkblue' }}
-							>
-								<Box sx={{ cursor: 'pointer' }}>
-									<DescriptionIcon sx={{ fontSize: 16, color: '#3D5CAC' }} />
-								</Box>
-							</a>
-						</Box>
-					) : (
-						<></>
-					)}
-					<Box
-						sx={{
-							fontSize: '13px',
-							fontWeight: 'bold',
-							padding: '5px',
-							paddingTop: '0px',
-							color: 'text.darkblue',
-						}}
-					>
-						Expiring:{' '}
-						{contractEndDate ? contractEndDate.format('MM-DD-YYYY') : dayjs().format('MM-DD-YYYY')}
-					</Box>
-				</Box>
-			</Box>
-
-			{/* Property Value*/}
-			<Box
-				sx={{
-					display: 'flex',
-					flexDirection: 'row',
-					justifyContent: 'space-between',
-				}}
-			>
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'column',
-					}}
-				>
-					<Box
-						sx={{
-							fontSize: '13px',
-							fontWeight: 'bold',
-							padding: '5px',
-							paddingBottom: '0px',
-							color: 'text.darkblue',
-						}}
-					>
-						Property Value:
-					</Box>
-					<Box
-						sx={{
-							fontSize: '13px',
-							fontWeight: 'bold',
-							padding: '5px',
-							paddingTop: '0px',
-							color: 'text.darkblue',
-						}}
-					>
+			</Grid>
+			<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
+				<Grid item xs={12}>
+					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+						Type
+					</Typography>					
+				</Grid>
+				<Grid item xs={12}>
+					<Typography sx={{color: '#160449', textAlign: 'center',}}>
+						{propertyData.property_type ? propertyData.property_type : '<TYPE>'}
+					</Typography>					
+				</Grid>
+			</Grid>
+			<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
+				<Grid item xs={12}>
+					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+						Property Value
+					</Typography>					
+				</Grid>
+				<Grid item xs={12}>
+					<Typography sx={{color: '#160449', textAlign: 'center',}}>
 						{'$'}
 						{propertyData.property_value ? propertyData.property_value : 'No Property Value'}{' '}
 						{propertyData.property_value_year ? `(${propertyData.property_value_year})` : ''}
-					</Box>
-				</Box>
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'column',
-					}}
-				>
-					<Box
-						sx={{
-							fontSize: '13px',
-							fontWeight: 'bold',
-							padding: '5px',
-							paddingBottom: '0px',
-							color: 'text.darkblue',
-						}}
-					>
-						$ Per SqFt
-					</Box>
-					<Box
-						sx={{
-							fontSize: '13px',
-							fontWeight: 'bold',
-							padding: '5px',
-							paddingTop: '0px',
-							color: 'text.darkblue',
-						}}
-					>
+					</Typography>					
+				</Grid>
+			</Grid>
+			
+		</Grid>
+		<Grid container sx={{marginTop: '10px', }}>
+			<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
+				<Grid item xs={12}>
+					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+						PM Contract Status
+					</Typography>					
+				</Grid>
+				<Grid item xs={12}>
+					<Typography sx={{color: '#160449', textAlign: 'center',}}>
+						{contractStatus ? contractStatus : '<CONTRACT_STATUS>'}
+					</Typography>					
+				</Grid>
+				
+
+			</Grid>
+			<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
+				<Grid item xs={12}>
+					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+						Sq Ft
+					</Typography>					
+				</Grid>
+				<Grid item xs={12}>
+					<Typography sx={{color: '#160449', textAlign: 'center',}}>
+						{propertyData.property_area ? propertyData.property_area : '<SFT>'}
+					</Typography>					
+				</Grid>
+			</Grid>
+			<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
+				<Grid item xs={12}>
+					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+						Value per Sqft
+					</Typography>					
+				</Grid>
+				<Grid item xs={12}>
+					<Typography sx={{color: '#160449', textAlign: 'center',}}>
 						{'$'}
 						{propertyData.property_value && propertyData.property_area
 							? (propertyData.property_value / propertyData.property_area).toFixed(2)
 							: 'No SqFt available'}
-					</Box>
-				</Box>
-			</Box>
-
-			{/* Property Type */}
-			<Box
-				sx={{
-					display: 'flex',
-					flexDirection: 'row',
-					justifyContent: 'space-between',
-				}}
-			>
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'column',
-					}}
-				>
-					<Box
-						sx={{
-							fontSize: '13px',
-							fontWeight: 'bold',
-							padding: '5px',
-							paddingBottom: '0px',
-							color: 'text.darkblue',
-						}}
-					>
-						Type
-					</Box>
-					<Box
-						sx={{
-							fontSize: '13px',
-							fontWeight: 'bold',
-							padding: '5px',
-							paddingTop: '0px',
-							color: 'text.darkblue',
-						}}
-					>
-						{propertyData.property_type ? propertyData.property_type : '<TYPE>'}
-					</Box>
-				</Box>
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'column',
-					}}
-				>
-					<Box
-						sx={{
-							fontSize: '13px',
-							fontWeight: 'bold',
-							padding: '5px',
-							paddingBottom: '0px',
-							color: 'text.darkblue',
-						}}
-					>
-						SqFt
-					</Box>
-					<Box
-						sx={{
-							fontSize: '13px',
-							fontWeight: 'bold',
-							padding: '5px',
-							paddingTop: '0px',
-							color: 'text.darkblue',
-						}}
-					>
-						{propertyData.property_area ? propertyData.property_area : '<SFT>'}
-					</Box>
-				</Box>
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'column',
-					}}
-				>
-					<Box
-						sx={{
-							fontSize: '13px',
-							fontWeight: 'bold',
-							padding: '5px',
-							paddingBottom: '0px',
-							color: 'text.darkblue',
-						}}
-					>
-						Bed
-					</Box>
-					<Box
-						sx={{
-							fontSize: '13px',
-							fontWeight: 'bold',
-							padding: '5px',
-							paddingTop: '0px',
-							color: 'text.darkblue',
-						}}
-					>
-						{propertyData.property_num_beds >= 0 ? Number(propertyData.property_num_beds) : '<BEDS>'}
-					</Box>
-				</Box>
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'column',
-					}}
-				>
-					<Box
-						sx={{
-							fontSize: '13px',
-							fontWeight: 'bold',
-							padding: '5px',
-							paddingBottom: '0px',
-							color: 'text.darkblue',
-						}}
-					>
-						Bath
-					</Box>
-					<Box
-						sx={{
-							fontSize: '13px',
-							fontWeight: 'bold',
-							padding: '5px',
-							paddingTop: '0px',
-							color: 'text.darkblue',
-						}}
-					>
-						{propertyData.property_num_baths >= 0 ? propertyData.property_num_baths : '<BATHS>'}
-					</Box>
-				</Box>
-			</Box>
-			
-			{/* Management agreement name */}
-			<Box
-				sx={{
-					fontSize: '15px',
-					fontWeight: 'bold',
-					padding: '5px',
-					color: '#3D5CAC',
-				}}
-			>
-				Management Agreement Name *
-			</Box>
-			<TextInputField
-				name="management_agreement_name"
-				placeholder="Enter contract name"
-				value={contractName}
-				onChange={handleContractNameChange}
-				required
-			>
-				First Name
-			</TextInputField>
-
-			{/* Contract Start date and end date */}
-			<Box
-				sx={{
-					display: 'flex',
-					flexDirection: 'row',
-					justifyContent: 'space-between',
-					alignItems: 'center',
-					marginBottom: '7px',
-					width: '100%',
-				}}
-			>
-				<Grid container item xs={12} columnSpacing={6}>
-					<Grid item xs={6} md={6}>
-						<Stack>
-							<Typography
-								sx={{
-									color: theme.typography.propertyPage.color,
-									fontFamily: 'Source Sans Pro',
-									fontWeight: theme.typography.common.fontWeight,
-									fontSize: theme.typography.smallFont,
-								}}
-							>
-								{'Start Date'}
-							</Typography>
-							<LocalizationProvider dateAdapter={AdapterDayjs}>
-								<DatePicker
-									value={contractStartDate}
-									// minDate={dayjs()}
-									onChange={handleStartDateChange}
-									slots={{
-										openPickerIcon: CalendarIcon,
-									}}
-									slotProps={{
-										textField: {
-											size: 'small',
-											style: {
-												width: '100%',
-												fontSize: 12,
-												backgroundColor: '#F2F2F2 !important',
-												borderRadius: '10px !important',
-											},
-										},
-									}}
-								/>
-							</LocalizationProvider>
-						</Stack>
-					</Grid>
-
-					<Grid item xs={6} md={6}>
-						<Stack>
-							<Typography
-								sx={{
-									color: theme.typography.propertyPage.color,
-									fontFamily: 'Source Sans Pro',
-									fontWeight: theme.typography.common.fontWeight,
-									fontSize: theme.typography.smallFont,
-								}}
-							>
-								{'End Date 89'}
-							</Typography>
-							<LocalizationProvider dateAdapter={AdapterDayjs}>
-								<DatePicker
-									value={contractEndDate}
-									// minDate={dayjs()}
-									onChange={handleEndDateChange}
-									slots={{
-										openPickerIcon: CalendarIcon,
-									}}
-									slotProps={{
-										textField: {
-											size: 'small',
-											style: {
-												width: '100%',
-												fontSize: 24,
-												backgroundColor: '#F2F2F2 !important',
-												// borderRadius: "10px !important",
-												borderRadius: '10px',
-												border: '1px solid black',
-												// border: "10px solid green",
-												input: {
-													border: '1px solid black', // Ensure input border is black
-												},
-											},
-										},
-									}}
-								/>
-							</LocalizationProvider>
-						</Stack>
-					</Grid>
+					</Typography>					
 				</Grid>
-			</Box>
+			</Grid>
+			
+		</Grid>
+		<Grid container sx={{marginTop: '10px', marginBottom: '10px',}}>
+			<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
+				<Grid item xs={12}>
+					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+						Expiration Date
+					</Typography>					
+				</Grid>
+				<Grid item xs={12}>
+					<Typography sx={{color: '#160449', textAlign: 'center',}}>
+						{contractEndDate ? contractEndDate.format('MM-DD-YYYY') : dayjs().format('MM-DD-YYYY')}
+					</Typography>					
+				</Grid>
+				
+
+			</Grid>
+			<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
+				<Grid item xs={12}>
+					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+						Beds
+					</Typography>					
+				</Grid>
+				<Grid item xs={12}>
+					<Typography sx={{color: '#160449', textAlign: 'center',}}>
+						{propertyData.property_num_beds >= 0 ? Number(propertyData.property_num_beds) : '<BEDS>'}
+					</Typography>					
+				</Grid>
+			</Grid>
+			<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
+				<Grid item xs={12}>
+					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+						Baths
+					</Typography>					
+				</Grid>
+				<Grid item xs={12}>
+					<Typography sx={{color: '#160449', textAlign: 'center',}}>
+						{propertyData.property_num_baths >= 0 ? propertyData.property_num_baths : '<BATHS>'}
+					</Typography>					
+				</Grid>
+			</Grid>
+			
+		</Grid>
+		
+	  </Box>  
+
+	  <Box
+        sx={{
+          display: "flex",
+          padding: "5px",
+		  marginTop: "10px",
+		  flexDirection: "column",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          fontSize: "15px",
+          color: "#3D5CAC",
+		  backgroundColor: "#D6D5DA",
+		  borderRadius: "10px",
+          // color: '#3D5CAC',
+        }}
+      >    
+			
+		<Grid container columnGap={6} sx={{marginTop: '10px', }}>
+			<Grid item container direction="row" xs={6.5} sx={{justifyContent: 'center', }}>
+				<Grid item xs={12}>
+					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+						Management Agreement Name
+					</Typography>					
+				</Grid>
+				<Grid item xs={12} sx={{marginTop: '5px', }}>
+					<TextInputField
+						name="management_agreement_name"
+						placeholder="Enter contract name"
+						value={contractName}
+						onChange={handleContractNameChange}
+						required						
+					>						
+					</TextInputField>
+				</Grid>
+				
+
+			</Grid>
+			<Grid item container direction="row" xs={2.5} sx={{justifyContent: 'center', }}>
+				<Grid item xs={12}>
+					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+						Start Date
+					</Typography>					
+				</Grid>
+				<Grid item xs={12}>
+					<LocalizationProvider dateAdapter={AdapterDayjs}>
+						<DatePicker
+							value={contractStartDate}
+							// minDate={dayjs()}
+							onChange={handleStartDateChange}
+							slots={{
+								openPickerIcon: CalendarIcon,
+							}}
+							slotProps={{
+								textField: {
+									size: 'small',
+									style: {
+										width: '100%',
+										fontSize: 24,
+										backgroundColor: '#FFFFFF',
+										// borderRadius: "10px !important",
+										borderRadius: '10px',
+										border: '1px solid black',
+										// border: "10px solid green",
+										input: {
+											border: '1px solid black', // Ensure input border is black
+										},
+									},
+								},
+							}}
+						/>
+					</LocalizationProvider>
+				</Grid>
+			</Grid>
+			<Grid item container direction="row" xs={2.5} sx={{justifyContent: 'center', }}>
+				<Grid item xs={12}>
+					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+						End Date
+					</Typography>					
+				</Grid>
+				<Grid item xs={12}>
+					<LocalizationProvider dateAdapter={AdapterDayjs}>
+						<DatePicker
+							value={contractEndDate}
+							// minDate={dayjs()}
+							onChange={handleEndDateChange}
+							slots={{
+								openPickerIcon: CalendarIcon,
+							}}
+							slotProps={{
+								textField: {
+									size: 'small',
+									style: {
+										width: '100%',
+										fontSize: 24,
+										backgroundColor: '#FFFFFF',
+										// borderRadius: "10px !important",
+										borderRadius: '10px',
+										border: '1px solid black',
+										// border: "10px solid green",
+										input: {
+											border: '1px solid black', // Ensure input border is black
+										},
+									},
+								},
+							}}
+						/>
+					</LocalizationProvider>
+				</Grid>
+			</Grid>
+
+		</Grid>			
 			{showInvalidStartDatePrompt && (
 				<Box
 					sx={{
@@ -2139,35 +1952,37 @@ return (
 			)}
 
 			{/* For management Fees */}
-			<Box
-				sx={{
-					display: 'flex',
-					flexDirection: 'row',
-					justifyContent: 'space-between',
-					fontSize: '15px',
-					fontWeight: 'bold',
-					padding: '5px',
-					color: '#3D5CAC',
-				}}
-			>
-				<Typography
+			<Box sx={{width: '100%'}}>			
+				<Box
 					sx={{
-						color: "#160449",
-						fontWeight: theme.typography.primary.fontWeight,
-						fontSize: "18px",
-						paddingBottom: "5px",
-						paddingTop: "5px",
-						marginTop:"10px"
+						display: 'flex',
+						flexDirection: 'row',
+						justifyContent: 'space-between',
+						fontSize: '15px',
+						fontWeight: 'bold',
+						padding: '5px',
+						color: '#3D5CAC',
 					}}
 				>
-					{"Management Fees* "}
-				</Typography>
-				{/* <Box>Management Fees 1*</Box> */}
-				<Box onClick={handleOpenAddFee} marginTop={"10px"} paddingTop={"5px"}>
-					<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
+					<Typography
+						sx={{
+							color: "#160449",
+							fontWeight: theme.typography.primary.fontWeight,
+							fontSize: "18px",
+							paddingBottom: "5px",
+							paddingTop: "5px",
+							marginTop:"10px"
+						}}
+					>
+						{"Management Fees* "}
+					</Typography>
+					{/* <Box>Management Fees 1*</Box> */}
+					<Box onClick={handleOpenAddFee} marginTop={"10px"} marginLeft={"10px"} paddingTop={"5px"}>
+						<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
+					</Box>
 				</Box>
 			</Box>
-			{contractFees?.length !== 0 ? <FeesDataGrid data={contractFees} isDeleteable={true} handleEditFee={handleOpenEditFee} handleDeleteFee={handleDeleteFee}/> : 
+			{contractFees?.length !== 0 ? <Box sx={{width: '100%', }}><FeesDataGrid data={contractFees} isDeleteable={true} handleEditFee={handleOpenEditFee} handleDeleteFee={handleDeleteFee}/> </Box> : 
 				<>
 						<Box
 							sx={{
@@ -2194,77 +2009,15 @@ return (
 			}
 			
 
-			{/* <Box
-				sx={{
-					background: '#FFFFFF',
-					fontSize: '13px',
-					padding: '5px',
-					color: '#3D5CAC',
-					borderRadius: '5px',
-				}}
-			>
-				{contractFees.length === 0 ? (					
-					<Box
-						sx={{
-							height: '13px',
-						}}
-						
-					>
-						<p>No fees to display</p>
-					</Box>
-				) : (
-					contractFees?.map((fee, index) => (
-						<Box
-							key={index}
-							// FeeIndex={index}
-							sx={{
-								display: 'flex',
-								flexDirection: 'column',
-							}}
-							onClick={() => handleOpenEditFee(index)}
-						>							
-							<Box
-								sx={{
-									display: 'flex',
-									flexDirection: 'row',
-									justifyContent: 'space-between',
-								}}
-							>
-								<Box>
-									{getFormattedFeeFrequency(fee.frequency)} {fee.fee_name}:{' '}
-									{fee.fee_type === 'PERCENT' ? `${fee.charge}% of ${fee.of}` : ` $${fee.charge}`}
-								</Box>
-
-								<Button
-									variant="text"
-									onClick={(event) => {
-										handleDeleteFee(index, event);
-									}}
-									sx={{
-										width: '10%',
-										cursor: 'pointer',
-										fontSize: '14px',
-										fontWeight: 'bold',
-										color: '#3D5CAC',
-										'&:hover': {
-											backgroundColor: 'transparent', // Set to the same color as the default state
-										},
-									}}
-								>
-									<DeleteIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
-								</Button>
-							</Box>
-						</Box>
-					))
-				)}
-			</Box> */}
+			
 
 			{/* previously Uploaded docs */}
-			<Box padding={"5px"}>
-				<Documents isEditable={true} setIsPreviousFileChange={setIsPreviousFileChange} isAccord={false} documents={previouslyUploadedDocs} setDocuments={setPreviouslyUploadedDocs} setDeleteDocsUrl={setDeletedDocsUrl} contractFiles={contractFiles} contractFileTypes={contractFileTypes} setContractFiles={setContractFiles} setContractFileTypes={setContractFileTypes}/>
+			<Box id="rohit" padding={"10px"} sx={{width: '100%', marginLeft: '10px', paddingRight: '10px',}}>				
+				<Documents isEditable={true} setIsPreviousFileChange={setIsPreviousFileChange} isAccord={false} documents={previouslyUploadedDocs} setDocuments={setPreviouslyUploadedDocs} setDeleteDocsUrl={setDeletedDocsUrl} contractFiles={contractFiles} contractFileTypes={contractFileTypes} setContractFiles={setContractFiles} setContractFileTypes={setContractFileTypes}/>				
 			</Box>
 
 			{/* Contact details */}
+			<Box sx={{width: '100%'}}>				
 			<Box
 				sx={{
 					display: 'flex',
@@ -2292,51 +2045,7 @@ return (
 					<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
 				</Box>
 			</Box>
-			{contractAssignedContacts?.length !== 0 ? (
-				// <Box
-				// 	sx={{
-				// 		display: 'flex',
-				// 		flexDirection: 'row',
-				// 		justifyContent: 'space-between',
-				// 		alignItems: 'center',
-				// 		marginBottom: '7px',
-				// 		width: '100%',
-				// 	}}
-				// >
-				// 	<Box
-				// 		sx={{
-				// 			fontSize: '15px',
-				// 			fontWeight: 'bold',
-				// 			paddingTop: '10px',
-				// 			paddingLeft: '5px',
-				// 			color: '#3D5CAC',
-				// 			width: '100%',
-				// 		}}
-				// 	>
-						
-				// 		<Grid container sx={{ color: 'black' }} marginY={"13px"}>
-				// 			<Grid item xs={3}>
-				// 				Name
-				// 			</Grid>
-				// 			<Grid item xs={4}>
-				// 				Email
-				// 			</Grid>
-				// 			<Grid item xs={3}>
-				// 				Phone Number
-				// 			</Grid>
-				// 		</Grid>
-				// 		{[...contractAssignedContacts].map((contact, i) => (
-				// 			<React.Fragment key={i}>
-				// 				<ContactListItem
-				// 					contact={contact}
-				// 					handleOpenEditContact={handleOpenEditContact}
-				// 					handleDeleteContact={handleDeleteContact}
-				// 				/>
-				// 			</React.Fragment>
-				// 		))}
-				// 	</Box>
-				// </Box>
-
+			{contractAssignedContacts?.length !== 0 ? (				
 				<DataGrid
 					rows={contactRowsWithId}
 					columns={ContactColumns}
@@ -2353,44 +2062,7 @@ return (
 			) : (
 				<></>
 			)}
-			{/* <Box
-				sx={{
-					display: 'flex',
-					flexDirection: 'row',
-					justifyContent: 'space-between',
-					alignItems: 'center',
-					paddingTop: '20px',
-					marginBottom: '7px',
-					width: '100%',
-				}}
-			>
-				<Box> */}
-					{/* <Box
-						sx={{
-							display: 'flex',
-							flexDirection: 'row',
-							fontSize: '16px',
-							fontWeight: 'bold',
-							padding: '5px',
-							color: '#3D5CAC',
-						}}
-					>
-						<label htmlFor="file-upload" style={{ cursor: 'pointer' }}>
-							<DescriptionIcon sx={{ fontSize: 19, color: '#3D5CAC' }} /> Add Document
-						</label>
-						<input
-							id="file-upload"
-							type="file"
-							accept=".doc,.docx,.txt,.pdf"
-							hidden
-							// onChange={(e) => setContractFiles(e.target.files)}
-							onChange={(e) => setContractFiles((prevFiles) => [...prevFiles, ...e.target.files])}
-							multiple
-						/>
-					</Box> */}
-				{/* </Box>
-			</Box> */}
-
+			</Box>								
 			<Box
 				sx={{
 					display: 'flex',
@@ -2458,6 +2130,7 @@ return (
 						{contractStatus === 'NEW' ? 'Send Quote' : 'Update Quote'}
 					</Typography>
 				</Button>
+			</Box>
 			</Box>
 			{showAddFeeDialog && (
 				<Box>
