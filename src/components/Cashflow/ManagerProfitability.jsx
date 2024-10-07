@@ -53,6 +53,8 @@ const ManagerProfitability = ({
   propsYear,
   profitsTotal,
   profits,
+  cashFlowData,
+  cashFlowtotal,
   rentsTotal,
   rentsByProperty,
   payoutsTotal,
@@ -546,15 +548,15 @@ const ManagerProfitability = ({
                 <Button
                   sx={{
                     width: "150px",
-                    backgroundColor: tab === "by_profit" ? "#3D5CAC" : "#9EAED6",
+                    backgroundColor: tab === "by_cashflow" ? "#3D5CAC" : "#9EAED6",
                     textTransform: "none",
                     "&:hover": {
-                      backgroundColor: tab === "by_profit" ? "#3D5CAC" : "#9EAED6",
+                      backgroundColor: tab === "by_cashflow" ? "#3D5CAC" : "#9EAED6",
                     },
                   }}
-                  onClick={() => handleSelectTab("by_profit")}
+                  onClick={() => handleSelectTab("by_cashflow")}
                 >
-                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Profit</Typography>
+                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Cashflow</Typography>
                 </Button>
               </Grid>
             </Grid>
@@ -571,7 +573,7 @@ const ManagerProfitability = ({
             </Grid>
           </Grid>
 
-          {tab === "by_profit" && (
+          {tab === "by_cashflow" && (
             <>
               <Accordion
                 sx={{
@@ -588,27 +590,27 @@ const ManagerProfitability = ({
                   <Grid container justifyContent='flex-start' item xs={8}>
                     <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month} Profit</Typography>
+                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month} CashFlow</Typography>
                       </AccordionSummary>
                     </Grid>
                   </Grid>
                   {/* <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}> */}
                   <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
                     <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                      ${profitsTotal && profitsTotal?.totalExpectedProfit ? profitsTotal?.totalExpectedProfit?.toFixed(2) : "0.00"}
+                      ${cashFlowtotal && cashFlowtotal?.totalExpectedProfit ? cashFlowtotal?.totalExpectedProfit?.toFixed(2) : "0.00"}
                     </Typography>
                   </Grid>
                   <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
                     <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                      ${profitsTotal && profitsTotal?.totalActualProfit ? profitsTotal?.totalActualProfit?.toFixed(2) : "0.00"}
+                      ${cashFlowtotal && cashFlowtotal?.totalActualProfit ? cashFlowtotal?.totalActualProfit?.toFixed(2) : "0.00"}
                     </Typography>
                   </Grid>
                 </Grid>
 
                 <AccordionDetails>
-                  {profits &&
-                    Object.keys(profits)?.map((propertyUID, index) => {
-                      const property = profits[propertyUID];
+                  {cashFlowData &&
+                    Object.keys(cashFlowData)?.map((propertyUID, index) => {
+                      const property = cashFlowData[propertyUID];
                       // console.log("property - ", property);
                       return (
                         <>
@@ -1854,12 +1856,12 @@ function StatementTable(props) {
                         </TableCell>
                         <TableCell align='right'>
                           <Typography sx={{ textAlign: "right", fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, width: "150px" }}>
-                            ${value ? value : 0}
+                            ${value ? parseFloat(value).toFixed(2) : 0}
                           </Typography>
                         </TableCell>
                         <TableCell align='right'>
                           <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-                            ${categoryTotalMapping[category] ? categoryTotalMapping[category] : 0}
+                            ${categoryTotalMapping[category] ? parseFloat(categoryTotalMapping[category]).toFixed(2) : 0}
                           </Typography>
                         </TableCell>
                       </TableRow>

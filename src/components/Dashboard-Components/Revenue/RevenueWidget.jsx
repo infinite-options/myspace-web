@@ -21,8 +21,8 @@ export default function RevenueWidget({ revenueData, cashflowStatusData }) {
     const expenseCurrentMonth = cashflowStatusData?.find((item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "expense");
     const revenueCurrentMonth = cashflowStatusData?.find((item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "revenue");
     const profitCurrentMonth = {
-      pur_amount_due: revenueCurrentMonth?.pur_amount_due - expenseCurrentMonth?.pur_amount_due,
-      total_paid: revenueCurrentMonth?.total_paid - expenseCurrentMonth?.total_paid,
+      pur_amount_due: (revenueCurrentMonth?.pur_amount_due || 0.00) - (expenseCurrentMonth?.pur_amount_due || 0.00),
+      total_paid: (revenueCurrentMonth?.total_paid || 0.00) - (expenseCurrentMonth?.total_paid || 0.00 ),
     }
   
     // console.log("ROHIT - expenseCurrentMonth", expenseCurrentMonth);
