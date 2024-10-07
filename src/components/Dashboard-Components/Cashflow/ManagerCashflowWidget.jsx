@@ -97,7 +97,11 @@ function getTotalExpectedRentByMonthYear(data, month, year) {
   // let rentItems = data?.filter((item) => item.pur_payer?.startsWith("350") && item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
   let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
   let totalRent = rentItems?.reduce((acc, item) => {
-    return acc + parseFloat(item["expected"] ? item["expected"] : 0.0);
+    if (item.purchase_type.toUpperCase() !== "DEPOSIT") {
+      return acc + parseFloat(item["expected"] ? item["expected"] : 0.0);
+    }
+
+    return acc;
   }, 0.0);
   return totalRent;
 }
@@ -107,7 +111,10 @@ function getTotalRentByMonthYear(data, month, year) {
   // let rentItems = data?.filter((item) => item.pur_payer?.startsWith("350") && item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
   let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
   let totalRent = rentItems?.reduce((acc, item) => {
-    return acc + parseFloat(item["actual"] ? item["actual"] : 0.0);
+    if (item.purchase_type.toUpperCase() !== "DEPOSIT") {
+      return acc + parseFloat(item["actual"] ? item["actual"] : 0.0);
+    }
+    return acc;
   }, 0.0);
   return totalRent;
 }
@@ -118,7 +125,10 @@ function getTotalExpectedPayoutsByMonthYear(data, month, year) {
   // let payoutItems = data?.filter((item) => item.pur_payer?.startsWith("600") && item.pur_receiver?.startsWith("110") && item.cf_month === month && item.cf_year === year);
   let payoutItems = data?.filter((item) => item.pur_payer?.startsWith("600") && item.cf_month === month && item.cf_year === year);
   let totalPayouts = payoutItems?.reduce((acc, item) => {
-    return acc + parseFloat(item["expected"] ? item["expected"] : 0.0);
+    if (item.purchase_type.toUpperCase() !== "DEPOSIT") {
+      return acc + parseFloat(item["expected"] ? item["expected"] : 0.0);
+    }
+    return acc;
   }, 0.0);
   return totalPayouts;
 }
@@ -128,13 +138,51 @@ function getTotalPayoutsByMonthYear(data, month, year) {
   // let payoutItems = data?.filter((item) => item.pur_payer?.startsWith("600") && item.pur_receiver?.startsWith("110") && item.cf_month === month && item.cf_year === year);
   let payoutItems = data?.filter((item) => item.pur_payer?.startsWith("600") && item.cf_month === month && item.cf_year === year);
   let totalPayouts = payoutItems?.reduce((acc, item) => {
-    return acc + parseFloat(item["actual"] ? item["actual"] : 0.0);
+    if (item.purchase_type.toUpperCase() !== "DEPOSIT") {
+      return acc + parseFloat(item["actual"] ? item["actual"] : 0.0);
+    }
+    return acc;
   }, 0.0);
   return totalPayouts;
 }
 
+function getTotalExpectedDepositByMonthByYear(data, month, year){
+  let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
+  let totalDeposit = rentItems?.reduce((acc, item) => {
+    if (item.purchase_type.toUpperCase() === "DEPOSIT") {
+      return acc + parseFloat(item["expected"] ? item["expected"] : 0.0);
+    }
+
+    return acc;
+  }, 0.0);
+  return totalDeposit;
+}
+
+function getTotalDepositByMonthByYear(data, month, year){
+  let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
+  let totalDeposit = rentItems?.reduce((acc, item) => {
+    if (item.purchase_type.toUpperCase() === "DEPOSIT") {
+      return acc + parseFloat(item["actual"] ? item["actual"] : 0.0);
+    }
+
+    return acc;
+  }, 0.0);
+  return totalDeposit;
+}
+
+function getTotalProfitByMonthByYear(data, month, year){
+  let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
+  let totalProfit = rentItems?.reduce((acc, item) => {
+    if (item.pur_payer && item.pur_payer.startsWith("110")) {
+      return acc + parseFloat(item["actual"] ? item["actual"] : 0.0);
+    }
+
+    return acc;
+  }, 0.0);
+  return totalProfit;
+}
+
 function getPast12MonthsCashflow(data, month, year) {
-  // console.log("In getPast12MonthsExpectedCashflow: ", data, month, year);
   var pastTwelveMonths = [];
   let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -149,16 +197,25 @@ function getPast12MonthsCashflow(data, month, year) {
     let expectedMonthPayouts = getTotalExpectedPayoutsByMonthYear(data, currentMonth, currentYear);
     let currentMonthPayouts = getTotalPayoutsByMonthYear(data, currentMonth, currentYear);
 
+    let expectedMonthDeposit =  getTotalExpectedDepositByMonthByYear(data, currentMonth, currentYear)
+    let currentMonthDeposit = getTotalDepositByMonthByYear(data, currentMonth, currentYear)
+
+    let currentMonthProfit = getTotalProfitByMonthByYear(data, currentMonth, currentYear)
+
     pastTwelveMonths.push({
       month: currentMonth,
       year: currentYear,
 
       expected_profit: expectedMonthRent - expectedMonthPayouts,
-      profit: currentMonthRent - currentMonthPayouts,
+      profit: currentMonthProfit,
+      cashflow: currentMonthRent - currentMonthPayouts,
+      expected_cashflow: expectedMonthRent - expectedMonthPayouts,
       expected_rent: expectedMonthRent,
       rent: currentMonthRent,
       expected_payouts: expectedMonthPayouts,
       payouts: currentMonthPayouts,
+      deposit : currentMonthDeposit,
+      expected_deposit: expectedMonthDeposit,
 
       monthYear: currentMonth?.slice(0, 3) + " " + currentYear?.slice(2, 4),
       // "expected_revenue": expectedMonthRevenue,
@@ -172,7 +229,6 @@ function getPast12MonthsCashflow(data, month, year) {
       currentMonth = months[months.indexOf(currentMonth) - 1];
     }
   }
-  // console.log("170 getPast12MonthsCashflow - Past 12 months: ", pastTwelveMonths);
 
   pastTwelveMonths.reverse();
 
@@ -259,6 +315,10 @@ function ManagerCashflowWidget({
         acc.totalRent += month.rent;
         acc.totalExpectedPayouts += month.expected_payouts;
         acc.totalPayouts += month.payouts;
+        acc.totalDeposit += month.deposit;
+        acc.totalExpectedDeposit += month.expected_deposit;
+        acc.totalCashflow += month.cashflow;
+        acc.totalExpectedCashflow += month.expected_cashflow;
         return acc;
       },
       {
@@ -268,6 +328,10 @@ function ManagerCashflowWidget({
         totalRent: 0,
         totalExpectedPayouts: 0,
         totalPayouts: 0,
+        totalDeposit : 0,
+        totalExpectedDeposit : 0,
+        totalCashflow : 0,
+        totalExpectedCashflow : 0,
       }
     );
 
@@ -309,7 +373,6 @@ function ManagerCashflowWidget({
   // }, []);
 
   const getCashflowData = (data) => {
-    // console.log("getCashflowData - data - ", data);
     if (data === null || data === undefined) return [];
 
     // const past12Months = getPast12MonthsCashflow(data, month, year)
@@ -355,6 +418,7 @@ function ManagerCashflowWidget({
     }
     let cashflowLast12Months = getCashflowData(filteredGraphdata);
     setLast12Months(cashflowLast12Months);
+    setCfPeriodButtonName("Last 12 Months");
     // let revenue = getRevenueData(graphData);
     // setCashflowData(cashflow);
     // setRevenueData(revenue);
@@ -599,7 +663,7 @@ function ManagerCashflowWidget({
                     {/* ${(profits?.pur_amount_due != null && revenueCurrentMonth?.pur_amount_due != null ) ? (parseFloat(revenueCurrentMonth.pur_amount_due) - parseFloat(expenseCurrentMonth.pur_amount_due)).toFixed(2) : 0} */}
                     {cfPeriodButtonName === "Last 12 Months" && <>${parseFloat(rents?.totalExpected - payouts?.totalExpected).toFixed(2)}</>}
                     {cfPeriodButtonName === "Current Month" && (
-                      <>${last12MonthsTotals?.totalExpectedProfit ? parseFloat(last12MonthsTotals?.totalExpectedProfit).toFixed(2) : "0.00"}</>
+                      <>${last12MonthsTotals?.totalExpectedCashflow ? parseFloat(last12MonthsTotals?.totalExpectedCashflow).toFixed(2) : "0.00"}</>
                     )}
                   </Typography>
                 </Grid>
@@ -607,7 +671,7 @@ function ManagerCashflowWidget({
                 <Grid container item xs={3} justifyContent='center' sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
                     {cfPeriodButtonName === "Last 12 Months" && <>${parseFloat(rents?.totalActual - payouts?.totalActual).toFixed(2)}</>}
-                    {cfPeriodButtonName === "Current Month" && <>${last12MonthsTotals?.totalProfit ? parseFloat(last12MonthsTotals?.totalProfit).toFixed(2) : "0.00"}</>}
+                    {cfPeriodButtonName === "Current Month" && <>${last12MonthsTotals?.totalCashflow ? parseFloat(last12MonthsTotals?.totalCashflow).toFixed(2) : "0.00"}</>}
                   </Typography>
                 </Grid>
               </Grid>
@@ -669,16 +733,16 @@ function ManagerCashflowWidget({
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
                     {/* ${(profits?.pur_amount_due != null && revenueCurrentMonth?.pur_amount_due != null ) ? (parseFloat(revenueCurrentMonth.pur_amount_due) - parseFloat(expenseCurrentMonth.pur_amount_due)).toFixed(2) : 0} */}
                     {cfPeriodButtonName === "Last 12 Months" && <>${totalDeposit?.totalExpected ? parseFloat(totalDeposit?.totalExpected).toFixed(2) : "0.00"}</>}
-                    {/* {cfPeriodButtonName === "Current Month" && (
-                      <>${last12MonthsTotals?.totalExpectedProfit ? parseFloat(last12MonthsTotals?.totalExpectedProfit).toFixed(2) : "0.00"}</>
-                    )} */}
+                    {cfPeriodButtonName === "Current Month" && (
+                      <>${last12MonthsTotals?.totalExpectedDeposit ? parseFloat(last12MonthsTotals?.totalExpectedDeposit).toFixed(2) : "0.00"}</>
+                    )}
                   </Typography>
                 </Grid>
                 <Grid item xs={1}></Grid>
                 <Grid container item xs={3} justifyContent='center' sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
                     {cfPeriodButtonName === "Last 12 Months" && <>${totalDeposit?.totalActual ? parseFloat(totalDeposit?.totalActual).toFixed(2) : "0.00"}</>}
-                    {/* {cfPeriodButtonName === "Current Month" && <>${last12MonthsTotals?.totalProfit ? parseFloat(last12MonthsTotals?.totalProfit).toFixed(2) : "0.00"}</>} */}
+                    {cfPeriodButtonName === "Current Month" && <>${last12MonthsTotals?.totalDeposit ? parseFloat(last12MonthsTotals?.totalDeposit).toFixed(2) : "0.00"}</>}
                   </Typography>
                 </Grid>
               </Grid>
