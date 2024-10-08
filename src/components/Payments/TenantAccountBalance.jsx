@@ -42,8 +42,8 @@ const TenantAccountBalance = ({
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
   const open = Boolean(anchorEl);
-  const balanceDue = parseFloat(selectedProperty?.balance || 0);
-  console.log("balance details", balanceDetails);
+  const balanceDue = parseFloat(balanceDetails[0]?.amountDue || 0);
+  // console.log("balance details", balanceDetails);
 
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
