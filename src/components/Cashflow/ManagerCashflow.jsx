@@ -55,6 +55,7 @@ import ListsContext from "../../contexts/ListsContext";
 import APIConfig from "../../utils/APIConfig";
 
 import axios from "axios";
+import { ConstructionOutlined } from "@mui/icons-material";
 
 // import {
 //   getTotalRevenueByType,
@@ -202,8 +203,14 @@ export default function ManagerCashflow() {
       // return res.data.result;
       setPaymentVerificationData(res.data.result);
 
+      console.log(" res data - ", res.data.result)
+
       const groupedByProperty = groupDataByKey(res.data.result, "pur_property_id");
       setPaymentVerificationByProperty(groupedByProperty);
+
+      refreshCashFlowAfterVerified()
+
+      console.log(" after refreshcashflow data - ", groupedByProperty)
 
       return res.data.result
     }catch(error){
@@ -320,12 +327,27 @@ export default function ManagerCashflow() {
     fetchCashflowTransactions(profileId)
       .then((data) => {
         
-        setCashflowTransactionsData(data);        
+        setCashflowTransactionsData(data); 
+               
       })
       .catch((error) => {
         console.error("Error fetching cashflow transactions data:", error);
       });
   };
+
+  const refreshCashFlowAfterVerified = () => {
+    fetchCashflowTransactions(profileId)
+      .then((data) => {        
+        setCashflowTransactionsData(data);
+        setCashflowData(data);
+        // setProfitabilityData(data?.Profit);
+        // setTransactionsData(data?.Transactions);
+        // let currentMonthYearRevenueExpected = get
+      })
+      .catch((error) => {
+        console.error("Error fetching cashflow data:", error);
+      });
+  }
 
   const getTotalRevenueByType = (data, month, year, expected) => {
     // console.log(data, month, year)
@@ -1167,7 +1189,7 @@ export default function ManagerCashflow() {
 
     console.log("revenue data for manager by property - ", revenueDataForManagerByProperty)
 
-  }, [month, year, cashflowData, selectedProperty]);
+  }, [month, year, cashflowData, selectedProperty, paymentVerificationByProperty]);
 
   useEffect(() => {
     

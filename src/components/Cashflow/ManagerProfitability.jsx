@@ -1770,7 +1770,7 @@ const ManagerProfitability = ({
                                     Unverified
                                   </Typography>
                                   <BalanceDetailsTable 
-                                    data={property?.payments} 
+                                    data={property?.payments !== undefined ? property?.payments : []} 
                                     selectedPurchaseRow={""} 
                                     setPaymentData={setPaymentData} 
                                     setSelectedPayments={setSelectedPayments} 
@@ -2176,17 +2176,14 @@ function TransactionsTable(props) {
         const pur_payer = item.pur_payer;
         const pur_type = item.purchase_type;
     
-        // Assign to 'received_amt' if pur_payer starts with '350'
         if (pur_payer.startsWith("350")) {
           received_amt += parseFloat(item.actual);
         }
     
-        // Assign to 'management_fee' if pur_payer starts with '110' and pur_type is "Management"
         else if (pur_payer.startsWith("110") && pur_type === "Management") {
           management_fee += parseFloat(item.expected);
         }
     
-        // Assign to 'other_expense' if pur_payer starts with '110' and pur_type is NOT "Management"
         else if (pur_payer.startsWith("110") && pur_type !== "Management") {
           other_expense += parseFloat(item.expected);
         }
@@ -2196,7 +2193,6 @@ function TransactionsTable(props) {
         purchase_group = item.pur_group;
       });
     
-      // Calculate 'owner_payment' as received_amt - management_fee - other_expense
       const owner_payment = parseFloat(received_amt - management_fee - other_expense);
     
       // Push the aggregated object for this group into the result if it passes the conditions
