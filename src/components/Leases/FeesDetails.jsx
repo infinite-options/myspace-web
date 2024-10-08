@@ -34,6 +34,8 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
     const { getList, } = useContext(ListsContext);	
 	const feeBases = getList("basis");
 	const feeFrequencies = getList("frequency");	
+    const feeTypes = getList("revenue");
+    console.log('---feeTypes---', feeTypes);
 
     const [currentFeeRow, setcurrentFeeRow] = useState(null);
     const [isEditing, setIsFeeEditing] = useState(false);
@@ -497,7 +499,8 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
                                         <TextField
                                             sx={{ backgroundColor: '#D6D5DA', }}
                                             margin="dense"
-                                            label="Fee Name"
+                                            //label="Fee Name"
+                                            placeholder = "Fee Name"
                                             fullWidth
                                             variant="outlined"
                                             value={currentFeeRow?.fee_name || ''}
@@ -513,15 +516,30 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
                                         <span style={{ color: "red" }}>*</span>
                                     </Grid>
                                     <Grid item md={10}>
-                                        <TextField
-                                            sx={{ backgroundColor: '#D6D5DA', }}
-                                            margin="dense"
-                                            label="Fee Type"
-                                            fullWidth
-                                            variant="outlined"
-                                            value={currentFeeRow?.fee_type || ''}
-                                            onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, fee_type: e.target.value !== "" ? e.target.value : '$' })}
-                                        />
+
+<FormControl fullWidth>
+                                                    <Select
+                                                        value={currentFeeRow?.fee_type || ''}
+                                                        size="small"
+                                                        onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, fee_type: e.target.value !== "" ? e.target.value : '$' })}
+                                        fullWidth
+                                                        // label="Frequency"
+                                                        placeholder = "Fee Type"
+                                                        className={classes.select}
+                                                        sx={{
+                                                            marginTop: "10px",
+                                                            height: '50px',
+                                                            backgroundColor: '#D6D5DA',
+                                                        }}
+                                                    >
+                                                        {
+                                                            feeTypes?.map( (freq, index) => (
+                                                                <MenuItem key={index} value={freq.list_item}>{freq.list_item}</MenuItem>
+                                                            ) )
+                                                        }
+                                                    </Select>
+                                                </FormControl>
+                                            
                                     </Grid>
 
                                     {/* Charge */}
@@ -536,7 +554,8 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
                                             sx={{ backgroundColor: '#D6D5DA', }}
                                             type="number"
                                             margin="dense"
-                                            label="Amount"
+                                            // label="Amount"
+                                            placeholder = "Amount"
                                             fullWidth
                                             variant="outlined"
                                             value={currentFeeRow?.charge || ''}
@@ -563,13 +582,13 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
                                             </Grid>
                                             <Grid item md={8}>
                                                 <FormControl sx={{ width: '300px', height: '70px' }}>
-                                                    <InputLabel sx={{ color: theme.palette.grey, textAlign: 'center', paddingTop: '5px' }}>Frequency</InputLabel>
                                                     <Select
                                                         value={currentFeeRow?.frequency || ''}
                                                         onChange={(e) => setcurrentFeeRow({ ...currentFeeRow, frequency: e.target.value })}
                                                         size="small"
                                                         fullWidth
-                                                        label="Frequency"
+                                                        // label="Frequency"
+                                                        placeholder = "Frequency"
                                                         className={classes.select}
                                                         sx={{
                                                             marginTop: "10px",
@@ -613,11 +632,11 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
                                                         sx={{ marginLeft: '5px', width: '295px', backgroundColor: '#D6D5DA', }}
                                                     />
                                                 )}
-
-                                                {currentFeeRow && (currentFeeRow.frequency === "One-time" || currentFeeRow.frequency === "Annually") && (
+                                                {currentFeeRow && (currentFeeRow.frequency === "One Time" || currentFeeRow.frequency === "Semi-Monthly" || currentFeeRow.frequency === "Quarterly" || currentFeeRow.frequency === "Semi-Annually" || currentFeeRow.frequency === "Annually") && (
                                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                         <DatePicker
-                                                            label="Due By"
+                                                            //label="Due By"
+                                                            placeholder = "Due By"
                                                             value={currentFeeRow?.due_by_date ? dayjs(currentFeeRow.due_by_date) : null}
                                                             onChange={(e) => {
                                                                 // console.log('dueby row', e)
@@ -689,13 +708,13 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
                                         <span style={{ color: "red" }}>*</span>
                                     </Grid>
                                     <Grid item md={3}>
-                                        {currentFeeRow && (currentFeeRow.frequency === "Monthly" || currentFeeRow.frequency === "One-time" ||
-                                            currentFeeRow.frequency === "Annually" || currentFeeRow.frequency === "") && (
+                                        {currentFeeRow &&  currentFeeRow.frequency && (
                                                 <TextField
                                                     type="number"
                                                     sx={{ backgroundColor: '#D6D5DA', }}
                                                     margin="dense"
-                                                    label="# Days Before"
+                                                    //label="# Days Before"
+                                                    placeholder = "# Days Before"
                                                     fullWidth
                                                     variant="outlined"
                                                     value={currentFeeRow?.available_topay || ''}
@@ -745,12 +764,13 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
                                         <span style={{ color: "red" }}>*</span>
                                     </Grid>
                                     <Grid item md={4}>
-                                        {currentFeeRow && (currentFeeRow.frequency === "Monthly" || currentFeeRow.frequency === "One-time" || currentFeeRow.frequency === "Annually" || currentFeeRow.frequency === "") && (
+                                        {currentFeeRow && currentFeeRow.frequency  && (
                                             <TextField
                                                 type="number"
                                                 sx={{ backgroundColor: '#D6D5DA', }}
                                                 margin="dense"
-                                                label="# Days By"
+                                                //label="# Days By"
+                                                placeholder = "# Days BY"
                                                 fullWidth
                                                 variant="outlined"
                                                 value={currentFeeRow?.late_by || ''}
@@ -803,7 +823,8 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
                                             type="number"
                                             sx={{ backgroundColor: '#D6D5DA', }}
                                             margin="dense"
-                                            label="Amount"
+                                            //label="Amount"
+                                            placeholder = "Amount"
                                             fullWidth
                                             variant="outlined"
                                             value={currentFeeRow?.late_fee || ''}
@@ -831,7 +852,8 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
                                             type="number"
                                             sx={{ backgroundColor: '#D6D5DA', }}
                                             margin="dense"
-                                            label="Amount"
+                                            //label="Amount"
+                                            placeholder = "Amount"
                                             fullWidth
                                             variant="outlined"
                                             value={currentFeeRow?.perDay_late_fee || ''}
