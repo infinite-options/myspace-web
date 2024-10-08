@@ -2312,10 +2312,10 @@ function TransactionsTable(props) {
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
-      field: "purchase_ids",
-      headerName: "Purchase Ids",
+      field: "purchase_group",
+      headerName: "Purchase Group",
       flex: 1.5,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width:"100%" }}>{JSON.parse(params.value)}</Box>,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width:"100%" }}>{params.value}</Box>,
     },
     {
       field: "received_amt",
