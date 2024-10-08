@@ -21,6 +21,9 @@ import {
   Backdrop,
   CircularProgress,
   TextField,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { alpha, makeStyles } from "@material-ui/core/styles";
@@ -55,6 +58,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import TenantMaintenanceItemDetail from "../Maintenance/TenantMaintenanceItemDetail";
 import TenantAccountBalance from "../Payments/TenantAccountBalance";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import GenericDialog from "../GenericDialog";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -114,7 +118,7 @@ const TenantDashboard = () => {
         // console.log("Dashboard inside check", dashboardData);
         setPropertyListingData(dashboardData.property?.result);
         setLeaseDetailsData(dashboardData.leaseDetails?.result);
-        setMaintenanceRequestsNew(dashboardData.maintenanceRequestsNew?.result);
+        setMaintenanceRequestsNew(dashboardData.maintenanceRequests?.result);
         setMaintenanceStatus(dashboardData.maintenanceStatus?.result);
         setAnnouncements(dashboardData.announcementsReceived?.result);
 
@@ -131,7 +135,7 @@ const TenantDashboard = () => {
           propertyUid: payment.pur_property_id,
           purchaseType: payment.purchase_type,
           dueDate: payment.pur_due_date,
-          amountDue: parseFloat(payment.pur_amount_due || 0),
+          amountDue: parseFloat(payment.amt_remaining || 0),
           totalPaid: parseFloat(payment.total_paid || 0),
           description: payment.pur_description || "N/A",
           purchaseStatus: payment.purchase_status,
@@ -151,6 +155,7 @@ const TenantDashboard = () => {
 
   useEffect(() => {
     fetchData();
+    //fetchCashflowDetails();
     setReload(false);
   }, [reload]);
 
@@ -169,7 +174,11 @@ const TenantDashboard = () => {
     // fetchPaymentHistory(property.property_uid);
     // fetchBalanceDetails(property.property_uid);
 
-    const filteredBalanceDetails = allBalanceDetails.filter((detail) => detail.propertyUid === property.property_uid && detail.purchaseStatus === "UNPAID");
+    const filteredBalanceDetails = allBalanceDetails.filter(
+      (detail) => 
+        detail.propertyUid === property.property_uid && 
+        (detail.purchaseStatus === "UNPAID" || detail.purchaseStatus === "PARTIALLY PAID")
+    );
     setBalanceDetails(filteredBalanceDetails);
 
     const filteredRequests = maintenanceRequestsNew.filter((request) => request.lease_property_id === property.property_uid);
@@ -698,6 +707,7 @@ const TenantDashboard = () => {
 // };
 
 function TenantPaymentHistoryTable({ data, setRightPane, onBack }) {
+  console.log("data for table", data);
   const columns = [
     {
       field: "description",
@@ -747,23 +757,32 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack }) {
       },
     },
     {
-      field: "amountDue",
-      headerName: "Amount",
+      field: "totalPaid",
+      headerName: "Total",
       flex: 1,
-      renderCell: (params) => (
-        <Box
-          sx={{
-            fontWeight: "bold",
-            width: "100%",
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "flex-end",
-          }}
-        >
-          ${params.value ? parseFloat(params.value).toFixed(2) : "0.00"}
-        </Box>
-      ),
-    },
+      renderCell: (params) => {
+        const { purchaseStatus, amountDue, totalPaid } = params.row;
+  
+        const amountToDisplay =
+          purchaseStatus === "UNPAID" || purchaseStatus === "PARTIALLY PAID"
+            ? amountDue
+            : totalPaid;
+    
+        return (
+          <Box
+            sx={{
+              fontWeight: "bold",
+              width: "100%",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flex-end",
+            }}
+          >
+            ${amountToDisplay ? parseFloat(amountToDisplay).toFixed(2) : "0.00"}
+          </Box>
+        );
+      },
+    }
   ];
 
   return (
@@ -914,9 +933,9 @@ const LeaseDetails = ({ leaseDetails }) => {
     setIsFlipped(!isFlipped);
   };
 
-  const isRejected = leaseDetails?.lease_status === "REFUSED";
+  const isRejected = leaseDetails?.lease_status === "REFUSED" || leaseDetails?.lease_status === "NEW";
 
-  console.log("lease details", leaseDetails);
+  // console.log("lease details", leaseDetails);
 
   return (
     <Paper
@@ -1371,23 +1390,22 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, getProfileId, roleName, selectedRole } = useUser();
-
-  // Log incoming data
-  // useEffect(() => {
-  //   console.log('Received payment history:', data);
-  // }, [data]);
+  const { getProfileId } = useUser();
 
   const [showSpinner, setShowSpinner] = useState(false);
   const [paymentNotes, setPaymentNotes] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
   const [total, setTotal] = useState(0);
-  const [totalPaid, setTotalPaid] = useState(0);
   const [totalToBePaid, setTotalToBePaid] = useState(0);
   const [totalPayable, setTotalPayable] = useState(0);
-  const [totalToBeReceived, setTotalToBeReceived] = useState(0);
-  const [paymentMethodInfo, setPaymentMethodInfo] = useState({});
-  const managerCashflowWidgetData = location.state?.managerCashflowWidgetData || {};
+  const [partialAmount, setPartialAmount] = useState("");
+  const [paymentOption, setPaymentOption] = useState("full");
+  const [unpaidData, setUnpaidData] = useState([]);
+
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState("");
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [dialogSeverity, setDialogSeverity] = useState("error");
 
   const [paymentData, setPaymentData] = useState({
     currency: "usd",
@@ -1398,11 +1416,11 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
     purchase_uids: [],
   });
 
-  const [unpaidData, setUnpaidData] = useState([]);
-
-  // Calculate totals from the filtered unpaid data
   useEffect(() => {
-    const filteredUnpaidData = data.filter((item) => item.purchaseStatus === "UNPAID");
+    // console.log("data", data);
+    const filteredUnpaidData = data.filter(
+      (item) => item.purchaseStatus === "UNPAID" || item.purchaseStatus === "PARTIALLY PAID"
+    );
     setUnpaidData(filteredUnpaidData);
 
     const moneyToBePaidData = filteredUnpaidData.filter((item) => item.purchaseType === "Rent");
@@ -1410,11 +1428,58 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
 
     setTotalToBePaid(moneyToBePaidData.reduce((acc, item) => acc + parseFloat(item.amountDue || 0), 0));
     setTotalPayable(moneyPayableData.reduce((acc, item) => acc + parseFloat(item.amountDue || 0), 0));
-    setTotal(unpaidData.reduce((acc, item) => acc + parseFloat(item.amountDue || 0), 0));
-  }, [data]);
+
+    const totalAmount = filteredUnpaidData.reduce((acc, item) => acc + parseFloat(item.amountDue || 0), 0);
+    if (paymentOption === "full") {
+      setTotal(totalAmount);
+    }
+  }, [data, paymentOption]);
 
   const handlePaymentNotesChange = (event) => {
     setPaymentNotes(event.target.value);
+  };
+
+  const handlePaymentOptionChange = (event) => {
+    setPaymentOption(event.target.value);
+    if (event.target.value === "full") {
+      setPartialAmount(""); 
+    }
+  };
+
+  const handlePartialAmountChange = (event) => {
+    const value = event.target.value;
+    if (value === "" || !isNaN(value)) {
+      setPartialAmount(value);
+    }
+  };
+
+  const handleNavigateToSelectPayment = () => {
+    if (paymentOption === "partial" && parseFloat(partialAmount) > total) {
+      setDialogTitle("Invalid Partial Amount");
+      setDialogMessage("The partial payment amount cannot exceed the total amount.");
+      setDialogOpen(true);
+      return;
+    }
+    const updatedPaymentData = {
+      ...paymentData,
+      business_code: paymentNotes,
+      balance: paymentOption === "partial" ? partialAmount : total, // Check here for partial amount getting passed into balance - Abhinav
+    };
+    console.log("check here", updatedPaymentData);
+    navigate("/selectPayment", {
+      state: {
+        paymentData: updatedPaymentData,
+        total: paymentOption === "partial" ? partialAmount : total,
+        selectedItems: selectedItems,
+        selectedProperty: selectedProperty,
+        leaseDetails: leaseDetails,
+        balanceDetails: balanceDetails,
+      },
+    });
+  };
+
+  const closeDialog = () => {
+    setDialogOpen(false);
   };
 
   return (
@@ -1425,7 +1490,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
         </Backdrop>
 
         <Container>
-          <Grid container spacing={6} sx={{ height: "90%" }}>
+          <Grid container spacing={6}>
             <Grid container>
               <Paper
                 component={Stack}
@@ -1443,7 +1508,6 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
                     flexDirection: "row",
                     justifyContent: "center",
                     alignItems: "center",
-                    color: "#160449",
                     padding: "5px",
                   }}
                 ></Box>
@@ -1455,58 +1519,131 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
                     backgroundColor: theme.palette.primary.main,
                   }}
                 >
-                  <Stack direction='row' justifyContent='left' m={2}>
+                  <Stack direction='row' justifyContent='space-between'>
                     <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                      Balance
+                      Payment
                     </Typography>
                   </Stack>
-                  <Stack direction='row' justifyContent='center' m={2}>
-                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                      <Grid item xs={6}>
-                        <Typography sx={{ marginLeft: "20px", color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: "26px" }}>
-                          ${total.toFixed(2)}
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Button
-                          disabled={total <= 0}
-                          sx={{
-                            backgroundColor: "#3D5CAC",
-                            borderRadius: "10px",
-                            color: "#FFFFFF",
-                            width: "100%",
-                          }}
-                          onClick={() => {
-                            const updatedPaymentData = { ...paymentData, business_code: paymentNotes };
-                            navigate("/selectPayment", {
-                              state: {
-                                paymentData: updatedPaymentData,
-                                total: total,
-                                selectedItems: selectedItems,
-                                selectedProperty: selectedProperty,
-                                leaseDetails: leaseDetails,
-                                balanceDetails: balanceDetails,
-                              },
-                            });
-                          }}
-                        >
-                          <Typography
-                            variant='outlined'
-                            style={{
-                              textTransform: "none",
-                              color: "#FFFFFF",
-                              fontSize: "18px",
-                              fontFamily: "Source Sans Pro",
-                              fontWeight: "600",
-                            }}
-                          >
-                            Select Payment
-                          </Typography>
-                        </Button>
-                      </Grid>
-                    </Grid>
-                  </Stack>
 
+                  <Grid container spacing={2} alignItems="center">
+                    <Grid item xs={1}>
+                    <RadioGroup
+                        aria-label="payment-option"
+                        value={paymentOption}
+                        onChange={handlePaymentOptionChange}
+                        row
+                      >
+                        <FormControlLabel
+                          value="full"
+                          control={
+                            <Radio
+                              sx={{
+                                color: "#3D5CAC",
+                                "&.Mui-checked": {
+                                  color: "#1e3a8a", 
+                                },
+                              }}
+                            />
+                          }
+                          label=""
+                        />
+                      </RadioGroup>
+                    </Grid>
+                    <Grid item xs={5}>
+                      <Typography
+                        sx={{ fontWeight: "bold", fontSize: "18px", color: "#160449" }}
+                      >
+                        Pay Selected Balance
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={5}>
+                      <Typography
+                        sx={{ fontWeight: "bold", fontSize: "24px", color: "#1e3a8a", textAlign: "right" }}
+                      >
+                        {/* ${paymentOption === "partial" ? partialAmount || 0 : total.toFixed(2)} */}
+                        ${total.toFixed(2)}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+
+                  <Grid container spacing={3} alignItems="center">
+                    <Grid item xs={1}>
+                      <RadioGroup
+                        aria-label="payment-option"
+                        value={paymentOption}
+                        onChange={handlePaymentOptionChange}
+                        row
+                      >
+                        <FormControlLabel
+                          value="partial"
+                          control={
+                            <Radio
+                              sx={{
+                                color: "#3D5CAC",
+                                "&.Mui-checked": {
+                                  color: "#1e3a8a", 
+                                },
+                              }}
+                            />
+                          }
+                          label=""
+                        />
+                      </RadioGroup>
+                    </Grid>
+                    <Grid item xs={4}>
+                      <Typography sx={{ fontWeight: "bold", fontSize: "18px", color: "#160449" }}>
+                        Make Partial Payment
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={3}>
+                      {paymentOption === "partial" && (
+                        <TextField
+                          value={partialAmount}
+                          onChange={handlePartialAmountChange}
+                          fullWidth={true}
+                          label="Enter Amount"
+                          variant="filled"
+                          height="0.45em"
+                          InputLabelProps={{
+                            style: {
+                              fontSize: '15px',
+                            },
+                          }}
+                        />
+                      )}
+                    </Grid>
+                    <Grid item xs={3}>
+                      <Typography
+                        sx={{ fontWeight: "bold", fontSize: "24px", color: "#1e3a8a", textAlign: "right" }}
+                      >
+                        ${partialAmount || 0}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+
+                  <Stack direction="row" justifyContent="center" mt={4}>
+                    <Button
+                      disabled={paymentOption === "partial" && !partialAmount}
+                      sx={{
+                        marginTop: "10px",
+                        backgroundColor: "#3D5CAC",
+                        color: "#fff",
+                        borderRadius: "5px",
+                        padding: "8px 16px",
+                        minWidth: "120px",
+                        boxShadow: "none",
+                        textTransform: "none",
+                        fontSize: "13px",
+                      }}
+                      onClick={handleNavigateToSelectPayment}
+                    >
+                      <Typography
+                        sx={{ textTransform: "none", color: "#FFFFFF", fontSize: "18px", fontWeight: "600" }}
+                      >
+                        Select Payment
+                      </Typography>
+                    </Button>
+                  </Stack>
                   <Stack direction='row' justifyContent='center' m={2} sx={{ paddingTop: "25px", paddingBottom: "15px" }}>
                     <TextField variant='filled' fullWidth={true} multiline={true} value={paymentNotes} onChange={handlePaymentNotesChange} label='Payment Notes' />
                   </Stack>
@@ -1536,6 +1673,19 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
           </Grid>
         </Container>
       </ThemeProvider>
+      {/* Dialog for Invalid Partial Payment */}
+      <GenericDialog
+        isOpen={isDialogOpen}
+        title={dialogTitle}
+        contextText={dialogMessage}
+        actions={[
+          {
+            label: "OK",
+            onClick: closeDialog,
+          },
+        ]}
+        severity={dialogSeverity}
+      />
     </>
   );
 }
