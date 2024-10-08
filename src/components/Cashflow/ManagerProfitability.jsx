@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo  } from "react";
 import {
   Paper,
   DialogContent,
@@ -395,7 +395,54 @@ const ManagerProfitability = ({
     );
   };
 
-  const newTransactionColumn = [
+  // const newTransactionColumn = [
+  //   {
+  //     field: "purchase_date",
+  //     headerName: "Purchase Date",
+  //     flex: 1.5,
+  //     renderCell: (params) => <span>{params.row.purchase_date !== null ? params.row.purchase_date.split(" ")[0] : "-"}</span>,
+  //     renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+  //   },
+  //   {
+  //     field: "purchase_type",
+  //     headerName: "Purchase Type",
+  //     flex: 1.5,
+  //     renderCell: (params) => <span>{params.row.purchase_type !== null ? params.row.purchase_type : "-"}</span>,
+  //     renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+  //   },
+  //   {
+  //     field: "expected",
+  //     headerName: "Expected",
+  //     flex: 1,
+  //     renderCell: (params) => (
+  //       <span style={{ textAlign: "right", display: "block" }}>$ {params.row.expected !== null ? parseFloat(params.row.expected).toFixed(2) : parseFloat(0).toFixed(2)}</span>
+  //     ),
+  //     renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+  //   },
+  //   {
+  //     field: "payment_status",
+  //     headerName: "Payment Status",
+  //     flex: 1.5,
+  //     renderCell: (params) => <span>{params.row.payment_status !== null ? params.row.payment_status : "-"}</span>,
+  //     renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+  //   },
+  // ]
+
+  const newTransactionColumn = [    
+    {
+      field: "purchase_type",
+      headerName: "Purchase Type",
+      flex: 1.5,
+      renderCell: (params) => <Box>{params.value}</Box>,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "purchase_group",
+      headerName: "Purchase Group",
+      flex: 1.5,
+      renderCell: (params) => <Box sx={{textAlign: "right", width:"100%" }}>{params.value}</Box>,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
     {
       field: "purchase_date",
       headerName: "Purchase Date",
@@ -404,35 +451,34 @@ const ManagerProfitability = ({
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
-      field: "purchase_type",
-      headerName: "Purchase Type",
-      flex: 1.5,
-      renderCell: (params) => <span>{params.row.purchase_type !== null ? params.row.purchase_type : "-"}</span>,
-      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
-    },
-    {
       field: "expected",
       headerName: "Expected",
-      flex: 1,
-      renderCell: (params) => (
-        <span style={{ textAlign: "right", display: "block" }}>$ {params.row.expected !== null ? parseFloat(params.row.expected).toFixed(2) : parseFloat(0).toFixed(2)}</span>
-      ),
+      flex: 1.5,
+      renderCell: (params) => <Box sx={{textAlign: "right", width:"100%"}}>{parseFloat(params.value).toFixed(2)}</Box>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
-      field: "payment_status",
-      headerName: "Payment Status",
+      field: "owner_payment",
+      headerName: "Owner Payment",
       flex: 1.5,
-      renderCell: (params) => <span>{params.row.payment_status !== null ? params.row.payment_status : "-"}</span>,
+      renderCell: (params) => <Box sx={{textAlign: "right", width:"100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
-  ]
+    {
+      field: "management_fee",
+      headerName: "Management Fee",
+      flex: 1.5,
+      renderCell: (params) => <Box sx={{textAlign: "right", width:"100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+  ];
 
   const getNewRowWithIds = (data) => {
-    const revenueData = data?.filter((item) => item.pur_payer.startsWith("350"))
-    const filteredData = revenueData?.filter((item) => item.payment_status === "UNPAID")
+    // const revenueData = data?.filter((item) => item.pur_payer.startsWith("350"))
+    
 
-    const rowsId = filteredData?.map((row, index) => ({
+
+    const rowsId = data?.map((row, index) => ({
       ...row,
       id: row.id ? index : index,
     }));
@@ -440,8 +486,159 @@ const ManagerProfitability = ({
     return rowsId;
   }
 
-  const getNewDataGrid = (data) => {
-    const rows = getNewRowWithIds(data);
+  const GetNewDataGrid = (data) => {
+    const filteredData = data?.filter((item) => item.payment_status === "UNPAID")
+
+    const groupedData = filteredData.reduce((acc, item) => {
+      if (!acc[item.pur_group]) {
+        acc[item.pur_group] = [];
+      }
+      acc[item.pur_group].push(item);
+      return acc;
+    }, {});
+
+    // console.log("group data - ", groupedData, " for - ", data);
+
+    const result = Object.keys(groupedData).reduce((acc, group) => {
+      let expected = 0;
+      let management_fee = 0;
+      let other_expense = 0;
+    
+      // Check if all items in this group have 'payment_status' === "PAID"
+      // const allPaid = groupedData[group].every(item => item.purchase_type === "Deposit");
+      const has350Payer = groupedData[group].some(item => item.pur_payer.startsWith("350"));
+    
+      // If all items are paid, skip this group
+      // if (allPaid) {
+      //   return acc;
+      // }
+
+      if (!has350Payer) {
+        return acc;
+      }
+    
+    
+      let allTransactions = []
+      let purchase_ids = []
+      let purchase_group;
+      let purchase_type;
+      let purchase_date;
+
+      groupedData[group].forEach(item => {
+        const pur_payer = item.pur_payer;
+        const pur_type = item.purchase_type;
+    
+        if (pur_payer.startsWith("350")) {
+          purchase_type = item.purchase_type;
+          purchase_date = item.purchase_date
+          expected += parseFloat(item.expected);
+        }
+    
+        else if (pur_payer.startsWith("110") && pur_type === "Management") {
+          management_fee += parseFloat(item.expected);
+        }
+    
+        else if (pur_payer.startsWith("110") && pur_type !== "Management") {
+          other_expense += parseFloat(item.expected);
+        }
+
+        purchase_ids.push(...JSON.parse(item.purchase_ids))
+        allTransactions.push(item)
+        purchase_group = item.pur_group;
+      });
+    
+      const owner_payment = parseFloat(expected - management_fee - other_expense);
+    
+      // Push the aggregated object for this group into the result if it passes the conditions
+      acc.push({
+        pur_group: group,
+        expected,
+        management_fee,
+        other_expense,
+        owner_payment,
+        purchase_type: purchase_type,
+        purchase_ids : JSON.stringify(purchase_ids),
+        allTransactions,
+        purchase_group,
+        purchase_date : purchase_date
+      });
+    
+      return acc;
+    }, []);
+
+    // const filteredData = useMemo(() => {
+    //   return data?.filter((item) => item.payment_status === "UNPAID");
+    // }, [data]);
+  
+    // const groupedData = useMemo(() => {
+    //   return filteredData.reduce((acc, item) => {
+    //     if (!acc[item.pur_group]) {
+    //       acc[item.pur_group] = [];
+    //     }
+    //     acc[item.pur_group].push(item);
+    //     return acc;
+    //   }, {});
+    // }, [filteredData]);
+  
+    // console.log("group data - ", groupedData, " for - ", data);
+  
+    // const result = useMemo(() => {
+    //   return Object.keys(groupedData).reduce((acc, group) => {
+    //     let expected = 0;
+    //     let management_fee = 0;
+    //     let other_expense = 0;
+  
+    //     const has350Payer = groupedData[group].some(item => item.pur_payer.startsWith("350"));
+  
+    //     if (!has350Payer) {
+    //       return acc;
+    //     }
+  
+    //     let allTransactions = [];
+    //     let purchase_ids = [];
+    //     let purchase_group;
+    //     let purchase_type;
+    //     let purchase_date;
+  
+    //     groupedData[group].forEach(item => {
+    //       const pur_payer = item.pur_payer;
+    //       const pur_type = item.purchase_type;
+  
+    //       if (pur_payer.startsWith("350")) {
+    //         purchase_type = item.purchase_type;
+    //         purchase_date = item.purchase_date;
+    //         expected += parseFloat(item.expected);
+    //       } else if (pur_payer.startsWith("110") && pur_type === "Management") {
+    //         management_fee += parseFloat(item.expected);
+    //       } else if (pur_payer.startsWith("110") && pur_type !== "Management") {
+    //         other_expense += parseFloat(item.expected);
+    //       }
+  
+    //       purchase_ids.push(...JSON.parse(item.purchase_ids));
+    //       allTransactions.push(item);
+    //       purchase_group = item.pur_group;
+    //     });
+  
+    //     const owner_payment = parseFloat(expected - management_fee - other_expense);
+  
+    //     acc.push({
+    //       pur_group: group,
+    //       expected,
+    //       management_fee,
+    //       other_expense,
+    //       owner_payment,
+    //       purchase_type: purchase_type,
+    //       purchase_ids: JSON.stringify(purchase_ids),
+    //       allTransactions,
+    //       purchase_group,
+    //       purchase_date: purchase_date
+    //     });
+  
+    //     return acc;
+    //   }, []);
+    // }, [groupedData]);
+
+    const rows = getNewRowWithIds(result);
 
     return (
       <DataGrid
@@ -1761,7 +1958,7 @@ const ManagerProfitability = ({
                                   <Typography sx={{ fontWeight: 'bold', color: "#160449" }}>
                                     Unpaid Rent
                                   </Typography>
-                                  {getNewDataGrid(property?.rentItems)}
+                                  {GetNewDataGrid(property?.rentItems)}
                                 </Grid>
 
                                 {/* Unverified Section */}
