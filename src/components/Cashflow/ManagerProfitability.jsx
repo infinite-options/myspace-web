@@ -2556,11 +2556,11 @@ function TransactionsTable(props) {
         console.log("ROHIT - item - ", item)
         // const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
         const addedPayment = paymentDueResult.find((row) => row.index === item);
-        console.log("ROHIT - addedPayment - ", addedPayment)
+        // console.log("ROHIT - addedPayment - ", addedPayment)
 
         if (addedPayment) {
           const relatedPayments = paymentDueResult.filter((row) => row.pur_group === addedPayment.pur_group);
-          console.log("ROHIT - relatedPayments - ", relatedPayments)
+          // console.log("ROHIT - relatedPayments - ", relatedPayments)
 
           newPayments = [...newPayments, ...relatedPayments];
           const relatedRowIds = relatedPayments.map((payment) => payment.index);
@@ -2583,7 +2583,7 @@ function TransactionsTable(props) {
         removedPayments.push(removedPayment);
       });
       // console.log("removedPayments - ", removedPayments);
-      setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.payment_uid)));
+      setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.index)));
     }
     // setSelectedRows(newRowSelectionModel);
     setSelectedRows(updatedRowSelectionModel);
