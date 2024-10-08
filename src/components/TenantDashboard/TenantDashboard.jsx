@@ -58,6 +58,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import TenantMaintenanceItemDetail from "../Maintenance/TenantMaintenanceItemDetail";
 import TenantAccountBalance from "../Payments/TenantAccountBalance";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import GenericDialog from "../GenericDialog";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -1401,6 +1402,11 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
   const [paymentOption, setPaymentOption] = useState("full");
   const [unpaidData, setUnpaidData] = useState([]);
 
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState("");
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [dialogSeverity, setDialogSeverity] = useState("error");
+
   const [paymentData, setPaymentData] = useState({
     currency: "usd",
     customer_uid: getProfileId(),
@@ -1448,6 +1454,12 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
   };
 
   const handleNavigateToSelectPayment = () => {
+    if (paymentOption === "partial" && parseFloat(partialAmount) > total) {
+      setDialogTitle("Invalid Partial Amount");
+      setDialogMessage("The partial payment amount cannot exceed the total amount.");
+      setDialogOpen(true);
+      return;
+    }
     const updatedPaymentData = {
       ...paymentData,
       business_code: paymentNotes,
@@ -1464,6 +1476,10 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
         balanceDetails: balanceDetails,
       },
     });
+  };
+
+  const closeDialog = () => {
+    setDialogOpen(false);
   };
 
   return (
@@ -1505,7 +1521,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
                 >
                   <Stack direction='row' justifyContent='space-between'>
                     <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                      Balance
+                      Payment
                     </Typography>
                   </Stack>
 
@@ -1544,12 +1560,13 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
                       <Typography
                         sx={{ fontWeight: "bold", fontSize: "24px", color: "#1e3a8a", textAlign: "right" }}
                       >
-                        ${paymentOption === "partial" ? partialAmount || 0 : total.toFixed(2)}
+                        {/* ${paymentOption === "partial" ? partialAmount || 0 : total.toFixed(2)} */}
+                        ${total.toFixed(2)}
                       </Typography>
                     </Grid>
                   </Grid>
 
-                  <Grid container spacing={2} alignItems="center" sx={{ marginTop: "10px" }}>
+                  <Grid container spacing={3} alignItems="center">
                     <Grid item xs={1}>
                       <RadioGroup
                         aria-label="payment-option"
@@ -1573,21 +1590,34 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
                         />
                       </RadioGroup>
                     </Grid>
-                    <Grid item xs={5}>
+                    <Grid item xs={4}>
                       <Typography sx={{ fontWeight: "bold", fontSize: "18px", color: "#160449" }}>
                         Make Partial Payment
                       </Typography>
                     </Grid>
-                    <Grid item xs={5}>
+                    <Grid item xs={3}>
                       {paymentOption === "partial" && (
                         <TextField
                           value={partialAmount}
                           onChange={handlePartialAmountChange}
-                          variant="filled"
                           fullWidth={true}
                           label="Enter Amount"
+                          variant="filled"
+                          height="0.45em"
+                          InputLabelProps={{
+                            style: {
+                              fontSize: '15px',
+                            },
+                          }}
                         />
                       )}
+                    </Grid>
+                    <Grid item xs={3}>
+                      <Typography
+                        sx={{ fontWeight: "bold", fontSize: "24px", color: "#1e3a8a", textAlign: "right" }}
+                      >
+                        ${partialAmount || 0}
+                      </Typography>
                     </Grid>
                   </Grid>
 
@@ -1643,6 +1673,19 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
           </Grid>
         </Container>
       </ThemeProvider>
+      {/* Dialog for Invalid Partial Payment */}
+      <GenericDialog
+        isOpen={isDialogOpen}
+        title={dialogTitle}
+        contextText={dialogMessage}
+        actions={[
+          {
+            label: "OK",
+            onClick: closeDialog,
+          },
+        ]}
+        severity={dialogSeverity}
+      />
     </>
   );
 }
