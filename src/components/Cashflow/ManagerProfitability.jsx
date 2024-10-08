@@ -2557,6 +2557,7 @@ function BalanceDetailsTable(props) {
   // }, [selectedPayments]);
 
   useEffect(() => {
+    // console.log(" inside use effect of unverified data- ", props.data)
     setData(props.data);
   }, [props.data]);
 
@@ -2619,6 +2620,10 @@ function BalanceDetailsTable(props) {
           pur_amount_due: parseFloat(item.pur_amount_due),
         }))
       );
+    }else if(data && data.length == 0){
+      setPaymentDueResult([])
+      setSelectedPayments([])
+      setSelectedRows([])
     }
   }, [data]);
 
