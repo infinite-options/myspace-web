@@ -244,7 +244,7 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
                         },
                         '& .MuiDataGrid-cell': {
                             color: "#160449",
-                            fontWeight: "bold",
+                            // fontWeight: "bold",
                         },
 
                     }}

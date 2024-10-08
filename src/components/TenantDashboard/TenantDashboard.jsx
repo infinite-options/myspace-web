@@ -172,7 +172,7 @@ const TenantDashboard = () => {
     const filteredBalanceDetails = allBalanceDetails.filter((detail) => detail.propertyUid === property.property_uid && detail.purchaseStatus === "UNPAID");
     setBalanceDetails(filteredBalanceDetails);
 
-    const filteredRequests = maintenanceRequestsNew.filter((request) => request.lease_property_id === property.property_uid);
+    const filteredRequests = maintenanceRequestsNew?.filter((request) => request.lease_property_id === property.property_uid);
     setFilteredMaintenanceRequests(filteredRequests);
 
     if (rightPane?.type === "paymentHistory") {
