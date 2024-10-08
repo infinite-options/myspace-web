@@ -51,6 +51,7 @@ import { useCookies } from "react-cookie";
 import APIConfig from "../../utils/APIConfig";
 
 import AdultOccupant from "../Leases/AdultOccupant";
+import EmploymentInformation from "../Leases/EmploymentInformation";
 import ChildrenOccupant from "../Leases/ChildrenOccupant";
 import PetsOccupant from "../Leases/PetsOccupant";
 import VehiclesOccupant from "../Leases/VehiclesOccupant";
@@ -188,6 +189,23 @@ const closeDialog = () => {
     setRelationships(relationships);
     setStates(states);    		
   };
+
+  const [employmentList, setEmploymentList] = useState([
+    {jobTitle: "", companyName: "", salary: "", frequency: "" }
+  ]);
+
+  useEffect(() => {
+    if (profileData) {
+      const employmentData = {
+        jobTitle: profileData.tenant_current_job_title || "",
+        companyName: profileData.tenant_current_job_company || "",
+        salary: profileData.tenant_current_salary || "",
+        frequency: profileData.tenant_salary_frequency || "",
+      };
+      setEmploymentList([employmentData]);
+    }
+  }, [profileData]);
+
 
   // useEffect(() => {
   //   console.log("adults - ", adults);
@@ -1574,7 +1592,28 @@ const closeDialog = () => {
           </Accordion>
           </Grid>
           </Grid>
-      
+
+{/* <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+  <Grid item xs={12}>
+    <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={empinfoExpanded} onChange={() => setEmpinfoExpanded(prevState => !prevState)}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='employment-content' id='employment-header'>
+        <Grid item xs={12}>
+          <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
+            Employment Information
+          </Typography>
+        </Grid>
+      </AccordionSummary>
+      <AccordionDetails>
+        <EmploymentInformation
+          employmentList={employmentList}
+          setEmploymentList={setEmploymentList}
+          salaryFrequencies={salaryFrequencies}
+        />
+      </AccordionDetails>
+    </Accordion>
+  </Grid>
+</Grid> */}
+
       <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
         <Grid item xs={12}>
           <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={occupancyExpanded} onChange={() => setOccupancyExpanded(prevState => !prevState)}>
