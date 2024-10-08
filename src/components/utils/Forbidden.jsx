@@ -1,8 +1,18 @@
 import { Box, Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../contexts/UserContext";
+import { useEffect } from "react";
+import { roleMap } from "../Onboarding/helper";
 
 const Forbidden = () => {
   const navigate = useNavigate();
+  const { user} = useUser();
+
+  useEffect(() => {
+    window.location.reload();
+  }, [user]);
+
+
   return (
     <Box sx={{ textAlign: "center", p: 4 }}>
       <Typography variant="h5">{"Login required"}</Typography>
@@ -17,7 +27,7 @@ const Forbidden = () => {
           borderRadius: "10px",
           textTransform: "none",
         }}
-        onClick={() => navigate("/returningUser")}
+        onClick={() => navigate("/")}
       >
         {"Go to Login"}
       </Button>

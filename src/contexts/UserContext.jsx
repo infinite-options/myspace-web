@@ -26,10 +26,10 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     });
   };
 
-  useEffect(() => {
-    // console.log("$user set to", user);
-    // console.log("cookies set to", cookies);    
-  }, [user]);
+  // useEffect(() => {
+  //   console.log("$user set to", user);
+  //   console.log("cookies set to", cookies);    
+  // }, [user]);
 
   const selectRole = (role) => {
     setSelectedRole(role);

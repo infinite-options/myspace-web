@@ -144,11 +144,9 @@ import PayMaintenanceForm from "./Maintenance/Manager/PayMaintenanceForm";
 
 import Onboarding from "./Onboarding/Onboarding";
 import OnBoardDesktop from "./Onboarding/OnBoardDesktop";
-// import NewUser from "./Onboarding/NewUser";
-import NewUser2 from "./Onboarding/NewUser2";
+import NewUser from "./Onboarding/NewUser";
 import CreateProfile from "./Onboarding/CreateProfile";
 import Register from "./Onboarding/Register";
-import ReturningUser from "./Onboarding/ReturningUser";
 import UserLogin from "./Onboarding/UserLogin";
 import OnboardingRouter from "./Onboarding/OnboardingRouter";
 import ContactInfo from "./Onboarding/ContactInfo";
@@ -216,10 +214,9 @@ function Main() {
             <Route path='/' element={<LandingPage />} />
             <Route path='/onboarding' element={<Onboarding />} />
             <Route path='onboardingDesktop' element={<OnBoardDesktop />} />
-            <Route path='newUser' element={<NewUser2 />} />
+            <Route path='newUser' element={<NewUser />} />
             <Route path='createProfile' element={<CreateProfile />} />
-            <Route path='register' element={<Register />} />
-            <Route path='returningUser' element={<ReturningUser />} />
+            <Route path='register' element={<Register />} />            
             <Route path='userLogin' element={<UserLogin />} />
             <Route path='selectRole' element={<SelectRole />} />
             <Route path='profileName' element={<ProfileName />} />

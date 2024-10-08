@@ -47,8 +47,8 @@ const CreateProfile = () => {
 
   const [email, setEmail] = useState(user?.email);
   const [businessEmail, setBusinessEmail] = useState(user?.email);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [firstName, setFirstName] = useState(user?.first_name || "");
+  const [lastName, setLastName] = useState(user?.last_name || "");
   const [businessName, setBusinessName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [businessPhoneNumber, setBusinessPhoneNumber] = useState("");
