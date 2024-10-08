@@ -2171,12 +2171,14 @@ function TransactionsTable(props) {
       let allTransactions = []
       let purchase_ids = []
       let purchase_group;
+      let purchase_type;
 
       groupedData[group].forEach(item => {
         const pur_payer = item.pur_payer;
         const pur_type = item.purchase_type;
     
         if (pur_payer.startsWith("350")) {
+          purchase_type = item.purchase_type;
           received_amt += parseFloat(item.actual);
         }
     
@@ -2202,7 +2204,7 @@ function TransactionsTable(props) {
         management_fee,
         other_expense,
         owner_payment,
-        purchase_type: "Rent",
+        purchase_type: purchase_type,
         purchase_ids : JSON.stringify(purchase_ids),
         allTransactions,
         purchase_group
@@ -2307,7 +2309,7 @@ function TransactionsTable(props) {
   const columnsList = [    
     {
       field: "purchase_type",
-      headerName: "Revenue",
+      headerName: "Purchase Type",
       flex: 1.5,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
@@ -2324,24 +2326,17 @@ function TransactionsTable(props) {
       renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width:"100%"}}>{parseFloat(params.value).toFixed(2)}</Box>,
     },
     {
-      field: "management_fee",
-      headerName: "Management Fee",
-      flex: 1.5,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width:"100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
-    },
-    {
-      field: "other_expense",
-      headerName: "Other Expense",
-      flex: 1.5,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width:"100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
-    },
-    {
       field: "owner_payment",
       headerName: "Owner Payment",
       flex: 1.5,
       renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width:"100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
     },
-
+    {
+      field: "management_fee",
+      headerName: "Management Fee",
+      flex: 1.5,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width:"100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
+    },
   ];
 
   const handleSelectionModelChange = (newRowSelectionModel) => {
