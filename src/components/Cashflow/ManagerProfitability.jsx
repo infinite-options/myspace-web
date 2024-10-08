@@ -1709,6 +1709,16 @@ const ManagerProfitability = ({
                                   </AccordionSummary>
                                 </Grid>
                               </Grid>
+                              <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                  ${property?.totalExpected ? property?.totalExpected?.toFixed(2) : "0.00"}
+                                </Typography>
+                              </Grid>
+                              <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                  ${property?.totalActual ? property?.totalActual?.toFixed(2) : "0.00"}
+                                </Typography>
+                              </Grid>
                             </Grid>
 
                             {/* <AccordionDetails>
@@ -2104,6 +2114,7 @@ function StatementTable(props) {
 function TransactionsTable(props) {
   // console.log("In BalanceDetailTable", props);
   const [data, setData] = useState(props.data);
+  const navigate = useNavigate();
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedPayments, setSelectedPayments] = useState([]);
   const [paymentDueResult, setPaymentDueResult] = useState([]);
@@ -2159,6 +2170,7 @@ function TransactionsTable(props) {
     
       let allTransactions = []
       let purchase_ids = []
+      let purchase_group;
 
       groupedData[group].forEach(item => {
         const pur_payer = item.pur_payer;
@@ -2181,6 +2193,7 @@ function TransactionsTable(props) {
 
         purchase_ids.push(...JSON.parse(item.purchase_ids))
         allTransactions.push(item)
+        purchase_group = item.pur_group;
       });
     
       // Calculate 'owner_payment' as received_amt - management_fee - other_expense
@@ -2195,7 +2208,8 @@ function TransactionsTable(props) {
         owner_payment,
         purchase_type: "Rent",
         purchase_ids : JSON.stringify(purchase_ids),
-        allTransactions
+        allTransactions,
+        purchase_group
       });
     
       return acc;
@@ -2462,7 +2476,12 @@ function TransactionsTable(props) {
                       backgroundColor: "#3D5CAC",
                     },
                   }}
-                  onClick={() => {}}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const selectedPurchaseGroup = selectedPayments.map(payment => payment.purchase_group);
+                    console.log("selected purchase group -- ", selectedPurchaseGroup)
+                    navigate("/paymentProcessing", { state: { currentWindow: "PAY_BILLS", selectedRows: selectedPurchaseGroup } });
+                  }}
                 >
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#ffffff" }}>Pay Owner</Typography>
                 </Button>
