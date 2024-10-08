@@ -50,45 +50,63 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
             field: "leaseFees_uid",
             headerName: "UID",
             flex: 1,
+            minWidth: 100,
         },
+
         {
             field: "fee_name",
+            headerName: "Name",
+            flex: 1,
+            minWidth: 150,
+        },
+        {
+            field: "fee_type",
             headerName: "Type",
             flex: 1,
+            minWidth: 100,
+        },
+
+        {
+            field: "-",
+            headerName: "Description",
+            flex: 1,
+            minWidth: 100,
+        },
+
+        {
+            field: "charge",
+            headerName: "Amount",
+            flex: 1,
+            minWidth: 100,
         },
         {
             field: "frequency",
             headerName: "Frequency",
             flex: 1,
-        },
-        {
-            field: "-",
-            headerName: "Description",
-            flex: 1,
+            minWidth: 100,
         },
         {
             field: "available_topay",
-            headerName: "In Advance",
+            headerName: "Days In Advance",
             flex: 1,
-        },
-        {
-            field: "charge",
-            headerName: "Amount",
-            flex: 1,
+            minWidth: 100,
         },
         {
             field: "late_by",
             headerName: "Late",
             flex: 1,
+            minWidth: 100,
         },
         {
             field: "late_fee",
             headerName: "Late Fee",
             flex: 1,
+            minWidth: 100,
         },
         {
             field: 'actions',
             headerName: 'Actions',
+            minWidth: 100,
             flex: 0.7,
             renderCell: (params) => (
                 <Box>
@@ -100,48 +118,62 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
                 </Box>
             )
         }
-    ] : [
-        {
-            field: "leaseFees_uid",
-            headerName: "UID",
-            flex: 1,
-        },
-        {
-            field: "fee_name",
-            headerName: "Type",
-            flex: 1,
-        },
-        {
-            field: "frequency",
-            headerName: "Frequency",
-            flex: 1,
-        },
-        {
-            field: "-",
-            headerName: "Description",
-            flex: 1,
-        },
-        {
-            field: "available_topay",
-            headerName: "In Advance",
-            flex: 1,
-        },
-        {
-            field: "charge",
-            headerName: "Amount",
-            flex: 1,
-        },
-        {
-            field: "late_by",
-            headerName: "Late",
-            flex: 1,
-        },
-        {
-            field: "late_fee",
-            headerName: "Late Fee",
-            flex: 1,
-        },
-    ];
+    ] : [{
+        field: "leaseFees_uid",
+        headerName: "UID",
+        flex: 1,
+        minWidth: 100,
+    },
+    {
+        field: "fee_name",
+        headerName: "Name",
+        flex: 1,
+        minWidth: 100,
+    },
+    {
+        field: "fee_type",
+        headerName: "Type",
+        flex: 1,
+        minWidth: 100,
+    },
+
+    {
+        field: "-",
+        headerName: "Description",
+        flex: 1,
+        minWidth: 100,
+    },
+
+    {
+        field: "charge",
+        headerName: "Amount",
+        flex: 1,
+        minWidth: 100,
+    },
+    {
+        field: "frequency",
+        headerName: "Frequency",
+        flex: 1,
+        minWidth: 100,
+    },
+    {
+        field: "available_topay",
+        headerName: "Days In Advance",
+        flex: 1,
+        minWidth: 100,
+    },
+    {
+        field: "late_by",
+        headerName: "Late",
+        flex: 1,
+        minWidth: 100,
+    },
+    {
+        field: "late_fee",
+        headerName: "Late Fee",
+        flex: 1,
+        minWidth: 100,
+    }];
 
     const handleEditFeeClick = (row) => {
         setcurrentFeeRow(row);
@@ -398,8 +430,8 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
                     </Grid>
                 </AccordionSummary>
                 <AccordionDetails>
-
                     {leaseFees && <>
+                        <Box sx={{ width: '100%', overflowX: 'auto' }}>
                         <DataGrid
                             rows={leaseFees}
                             columns={feesColumns}
@@ -408,6 +440,7 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
                             rowsPerPageOptions={[10]}
                             getRowId={(row) => row.leaseFees_uid}
                             sx={{
+                                minWidth: '1000px', 
                                 '& .MuiDataGrid-columnHeader': {
                                     justifyContent: 'center',
                                     alignItems: 'center',
@@ -422,11 +455,12 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
                                 },
                                 '& .MuiDataGrid-cell': {
                                     color: "#160449",
-                                    fontWeight: "bold",
+                                    // fontWeight: "bold",
                                 },
 
                             }}
                         />
+                        </Box>
                         <Dialog open={open} onClose={handleFeeModalClose} maxWidth="md">
                             <DialogTitle
                                 sx={{
