@@ -316,17 +316,25 @@ export default function PropertiesList(props) {
       headerName: "",
       flex: 0.4,
       renderCell: (params) => (
-        <Avatar
-          src={`${getCoverPhoto(params.row)}?${Date.now()}`}
-          alt='property image'
+        <Box
           sx={{
-            borderRadius: "0",
             width: "60px",
             height: "60px",
-            margin: "0px",
-            padding: "0px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            overflow: "hidden", // Ensures no overflow
           }}
-        />
+        >
+          <img
+            src={`${getCoverPhoto(params.row)}?${Date.now()}`}
+            alt='property image'
+            style={{
+              width: "100%",  // Ensures the image takes full width
+              height: "auto",  // Maintain aspect ratio
+            }}
+          />
+        </Box>
       ),
     },
     {
