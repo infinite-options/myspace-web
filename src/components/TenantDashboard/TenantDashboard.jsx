@@ -117,7 +117,7 @@ const TenantDashboard = () => {
         // console.log("Dashboard inside check", dashboardData);
         setPropertyListingData(dashboardData.property?.result);
         setLeaseDetailsData(dashboardData.leaseDetails?.result);
-        setMaintenanceRequestsNew(dashboardData.maintenanceRequestsNew?.result);
+        setMaintenanceRequestsNew(dashboardData.maintenanceRequests?.result);
         setMaintenanceStatus(dashboardData.maintenanceStatus?.result);
         setAnnouncements(dashboardData.announcementsReceived?.result);
 
@@ -706,7 +706,7 @@ const TenantDashboard = () => {
 // };
 
 function TenantPaymentHistoryTable({ data, setRightPane, onBack }) {
-  // console.log("data for table", data);
+  console.log("data for table", data);
   const columns = [
     {
       field: "description",
