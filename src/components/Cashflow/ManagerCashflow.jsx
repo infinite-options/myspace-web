@@ -52,6 +52,7 @@ import MakePayment from "./MakePayment";
 import AddRevenue from "./AddRevenue";
 import AddExpense from "./AddExpense";
 import ListsContext from "../../contexts/ListsContext";
+import APIConfig from "../../utils/APIConfig";
 
 import axios from "axios";
 
@@ -147,6 +148,8 @@ export default function ManagerCashflow() {
   const [allProfitDataItems, setAllProfitDataItems] = useState([])
   const [getSortedTotalValueByMapping, setGetSortedTotalValueByMapping] = useState({})
   const [getSortedExpectedTotalByMapping, setGetSortedExpectedTotalByMapping] = useState({})
+  const [paymentVerificationData, setPaymentVerificationData] = useState([])
+  const [paymentVerificationByProperty, setPaymentVerificationByProperty] = useState({})
 
   //ROHIT - remove this function
   // async function fetchCashflow(userProfileId, month, year) {
@@ -193,6 +196,21 @@ export default function ManagerCashflow() {
     }
   }
 
+  async function fecthPaymentVerification(profileId){
+    try{
+      const res = await axios.get(`${APIConfig.baseURL.dev}/paymentVerification/${getProfileId()}`);
+      // return res.data.result;
+      setPaymentVerificationData(res.data.result);
+
+      const groupedByProperty = groupDataByKey(res.data.result, "pur_property_id");
+      setPaymentVerificationByProperty(groupedByProperty);
+
+      return res.data.result
+    }catch(error){
+      console.error("Error fetching properties data:", error);
+    }
+  }
+
   // useEffect(() => {
   //   console.log("ROHIT - currentWindow - ", currentWindow);
   // }, [currentWindow]);
@@ -224,6 +242,20 @@ export default function ManagerCashflow() {
   //   useEffect(() => {
   //     console.log("payouts - ", payouts);
   //   }, [payouts]);
+  const groupDataByKey = (data, key) => {
+    // console.log("ROHIT - data - ", data);
+    const groupedByKey = {};
+
+    data?.forEach(payment => {
+        const dataKey = payment[key];
+        if(!groupedByKey[dataKey]){
+            groupedByKey[dataKey] = [];
+        }
+        groupedByKey[dataKey].push(payment)
+    })
+
+    return groupedByKey;
+}
 
   useEffect(() => {
     // fetchCashflow(profileId)
@@ -258,6 +290,20 @@ export default function ManagerCashflow() {
       .catch((error) => {
         console.error("Error fetching PropertyList:", error);
       });
+
+
+      fecthPaymentVerification(getProfileId())
+      .then((data) => {
+        console.log("successfully fetch payment verification")
+        // setPaymentVerificationData(data);
+
+        // const groupedByProperty = groupDataByKey(data, "pur_property_id");
+        // setPaymentVerificationByProperty(groupedByProperty);
+
+      }).catch((error) => {
+        console.error("Error fetching payment verification:", error);
+      })
+
   }, []);
 
   const refreshCashflowData = () => {
@@ -1096,6 +1142,7 @@ export default function ManagerCashflow() {
           rentItems: [],
           totalExpected: 0,
           totalActual: 0,
+          payments : paymentVerificationByProperty[propertyUID],
         };
       }
 
@@ -1877,6 +1924,10 @@ export default function ManagerCashflow() {
                 totalDeposit={totalDeposit}
 
                 revenueDataForManager={revenueDataForManager}
+
+                selectedProperty={selectedProperty}
+
+                fecthPaymentVerification={fecthPaymentVerification}
 
                 setMonth={setMonth}
                 setYear={setYear}
