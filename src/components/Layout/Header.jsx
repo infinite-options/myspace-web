@@ -13,6 +13,7 @@ import { darken, lighten } from "@mui/system";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import UserNavBar from "./UserNavBar";
 import { ThemeProvider } from "@mui/material/styles"; // Correct import for ThemeProvider
+import GoogleLogin from "../Onboarding/GoogleLogin";
 
 function Header(props) {
   // console.log("In Header.jsx");
@@ -28,6 +29,14 @@ function Header(props) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
+  useEffect(() => {
+    console.log("ROHIT - isMenuOpen - ", isMenuOpen);
+  }, [isMenuOpen]);
+
+  useEffect(() => {
+    console.log("ROHIT - selectedRole - ", selectedRole);
+  }, [selectedRole]);
+
   const desiredOrder = ["MANAGER", "OWNER", "TENANT", "MAINTENANCE", "PM_EMPLOYEE", "MAINT_EMPLOYEE"];
 
   const sortUserRoles = (roles, order) => {
@@ -39,7 +48,8 @@ function Header(props) {
 
   const handleMenuToggle = (event) => {
     setAnchorEl(event.currentTarget);
-    setIsMenuOpen(!isMenuOpen);
+    // setIsMenuOpen(!isMenuOpen);
+    setIsMenuOpen(prevState => !prevState);
   };
 
   const handleButtonClick = (role) => {
@@ -78,11 +88,11 @@ function Header(props) {
     setIsMenuOpen(false);
   };
 
-  const handleClick = (event) => {
-    console.log("In handle Click: ", event);
-    setAnchorEl(event.currentTarget);
-    setIsMenuOpen(true);
-  };
+  // const handleClick = (event) => {
+  //   console.log("In handle Click: ", event);
+  //   setAnchorEl(event.currentTarget);
+  //   setIsMenuOpen(true);
+  // };
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -91,6 +101,15 @@ function Header(props) {
       setIsMenuOpen(false);
     }
   }, [isMobile]);
+
+  const googleLoginButtonStyle = {
+    width: '112px',
+    background: "#FFFFFF",
+    color: "#000000",    
+    "&:hover": {
+      backgroundColor: darken("#FFFFFF", 0.3)
+    }
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -159,7 +178,17 @@ function Header(props) {
                 }}
               >
                 {sortedRoles.map((role) => (
-                  <MenuItem key={role} onClick={() => handleButtonClick(role)}>
+                  <MenuItem 
+                    key={role}
+                    onClick={() => handleButtonClick(role)}
+                    sx={{
+                      fontWeight: selectedRole === role ? 800 : 400,
+                      fontSize: "18px",
+                      fontFamily: "Source Sans 3, sans-serif",
+                      margin: "0 2px",
+                      textTransform: "none",
+                    }}
+                  >
                     {roleName(role)}
                   </MenuItem>
                 ))}
@@ -184,13 +213,12 @@ function Header(props) {
                   <Logo />
                 </div>
                 <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-                  <Box sx={{ display: { xs: "none", md: "flex" }, gap: "25px" }}>
+                  <Box sx={{ display: { xs: "none", md: "flex" }, gap: "25px" }}>                    
+                    <GoogleLogin buttonStyle={googleLoginButtonStyle} buttonText={"Login"}/>
                     <Button
-                      variant='contained'
-                      // onClick={() => navigate("/returningUser")}
-
-                      onClick={() => navigate("/", { state: { showLogin: true } })}
-                      sx={{ background: "#FFFFFF", color: theme.palette.primary.main, "&:hover": { backgroundColor: darken("#FFFFFF", 0.3) } }}
+                      variant='contained'                      
+                      onClick={() => navigate("/", { state: { showEmail: true,} })}                      
+                      sx={{ minWidth: "112px", background: "#FFFFFF", color: theme.palette.primary.main, "&:hover": { backgroundColor: darken("#FFFFFF", 0.3) } }}
                     >
                       <Typography
                         sx={{
@@ -216,7 +244,7 @@ function Header(props) {
                       </Typography>
                     </Button>
                   </Box>
-                  <IconButton size='large' edge='end' color='inherit' aria-label='menu' sx={{ ml: 2, display: { xs: "flex", md: "none" } }} onClick={handleClick}>
+                  <IconButton size='large' edge='end' color='inherit' aria-label='menu' sx={{ ml: 2, display: { xs: "flex", md: "none" } }} onClick={handleMenuToggle}>
                     <MenuIcon />
                   </IconButton>
                 </div>
@@ -224,10 +252,10 @@ function Header(props) {
             </AppBar>
             {isMenuOpen && (
               <Box sx={{ position: "absolute", top: "64px", right: "10px", backgroundColor: "white", borderRadius: "4px", boxShadow: "0 2px 8px rgba(0,0,0,0.1)", zIndex: "1000" }}>
-                <Button variant='outlined' sx={{ display: "block", width: "100%", color: "#000000" }} onClick={() => navigate("/returningUser")}>
+                <Button variant='outlined' sx={{ display: "block", width: "100%", fontWeight: "bold", color: "#000000", "&:hover": { color: "#FFFFFF"} }} onClick={() => navigate("/")}>
                   Login
                 </Button>
-                <Button variant='outlined' sx={{ width: "100%", color: "#000000" }} onClick={() => navigate("/newUser")}>
+                <Button variant='outlined' sx={{ width: "100%", color: "#000000", fontWeight: "bold", "&:hover": { color: "#FFFFFF"}  }} onClick={() => navigate("/newUser")}>
                   Create Account
                 </Button>
               </Box>

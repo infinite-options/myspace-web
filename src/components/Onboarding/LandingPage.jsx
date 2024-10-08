@@ -178,6 +178,26 @@ export default function LandingPage() {
     setUserDoesntExist(false);
   };
 
+  const googleLoginButtonStyle = {
+    marginTop: "10px",
+    width: '100%',
+    height: '39px',         
+    textTransform: "none",
+    // "&:hover, &:focus, &:active": {
+    //   backgroundColor: "white",
+    // },
+    borderRadius: "5px",
+    fontSize: "16px",
+    backgroundColor: "#F2F2F2",
+    textTransform: "none",
+    color: "#000000",
+    fontWeight: "bold",
+    "&:hover": {
+      backgroundColor: "#3D5CAC",
+      color: "#FFFFFF",
+    },
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Box>
@@ -185,6 +205,7 @@ export default function LandingPage() {
           <Grid item xs={12} sm={6} sx={{ display: "flex" }}>
             <Box
               sx={{
+                flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
                 display: "flex",
@@ -202,7 +223,9 @@ export default function LandingPage() {
                 >
                   Your <u>Complete</u> Property Management Solution
                 </Typography>
-                {!showLogin && (
+              </Stack>
+              <Stack sx={{ minHeight: "330px", width: "95%", padding: "25px 25px 25px 25px" }}>
+                {/* {!showLogin && ( */}
                   <Stack spacing={8} direction='column'>
                     <Button
                       sx={{
@@ -220,44 +243,24 @@ export default function LandingPage() {
                       variant='contained'
                     >
                       <Typography sx={{ color: "#FFFFFF", fontSize: 18, fontWeight: 700 }}>Get Started</Typography>
-                    </Button>
-                    <Button
-                      sx={{
-                        // width: isMobile ? "100%" : "80%",
-                        width: "100%",
-                        alignContent: "center",
-                        alignItems: "center",
-                        background: "#FFFFFF",
-                        color: theme.palette.background.default,
-                        "&:hover": {
-                          backgroundColor: darken("#FFFFFF", 0.3),
-                        },
-                        borderColor: "#000000",
-                        borderWidth: "3px",
-                      }}
-                      // onClick={() => navigate("/returningUser")}
-                      onClick={() => setShowLogin(true)}
-                      variant='contained'
-                    >
-                      <Typography sx={{ color: "#160449", fontSize: 18, fontWeight: 700 }}>Login</Typography>
-                    </Button>
+                    </Button>                                        
                   </Stack>
-                )}
+                {/* )} */}
 
-                {showLogin && (
+                
                   <Stack spacing={8} direction='column' sx={{ marginTop: "20px" }}>
                     {!showEmailLogin && (
                       <>
                         <Box>
-                          <GoogleLogin />
+                          <GoogleLogin buttonStyle={googleLoginButtonStyle} buttonText={"Login with Google"} />
                         </Box>
 
                         <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
                           <Button
                             onClick={() => setShowEmailLogin(true)}
                             sx={{
-                              width: "350px",
-                              height: "57px",
+                              width: "100%",
+                              height: "39px",
                               borderRadius: "5px",
                               fontSize: "16px",
                               backgroundColor: "#F2F2F2",
@@ -268,7 +271,7 @@ export default function LandingPage() {
                                 backgroundColor: "#3D5CAC",
                                 color: "#FFFFFF",
                               },
-                              marginTop: "10px",
+                              // marginTop: "10px",
                             }}
                           >
                             {"Login with Email"}
@@ -341,8 +344,7 @@ export default function LandingPage() {
                         </Box>
                       </Box>
                     )}
-                  </Stack>
-                )}
+                  </Stack>                
               </Stack>
             </Box>
           </Grid>

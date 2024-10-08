@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 import { roleMap } from './helper';
 import googleImg from "../../images/ContinueWithGoogle.svg";
+import GoogleIcon from '@mui/icons-material/Google';
+import { Box, Stack, ThemeProvider, Button, Typography, Grid, Paper, Container, Toolbar, OutlinedInput } from "@mui/material";
 
 const CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
@@ -12,7 +13,7 @@ const GOOGLE_LOGIN = process.env.REACT_APP_GOOGLE_LOGIN;
 let SCOPES =
   "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/userinfo.profile ";
 
-function GoogleLogin(props) {
+function GoogleLogin({buttonStyle, buttonText, }) {
   const navigate = useNavigate();
   // let google=null;
   const [email, setEmail] = useState("");
@@ -95,10 +96,12 @@ function GoogleLogin(props) {
                     at
                 )
                 .then((response) => {
-                  let data = response.data;
+                  let data = response.data;                  
 
                   let e = data["email"];
                   let si = data["id"];
+                  let fn = data["given_name"];
+                  let ln = data["family_name"];
 
                   setEmail(e);
 
@@ -112,24 +115,31 @@ function GoogleLogin(props) {
                       if (
                         data["message"] === "Email ID doesnt exist"
                       ) {
-                        const socialGoogle = async () => {
+                        const navigateToNewUser = async () => {
                           const user = {
                             email: e,
                             password: GOOGLE_LOGIN,
-                            first_name: data["given_name"],
-                            last_name: data["family_name"],
+                            first_name: fn,
+                            last_name: ln,
                             google_auth_token: at,
                             google_refresh_token: rt,
                             social_id: si,
-                            access_expires_in: ax,
+                            phone_number: "",
+                            // access_expires_in: ax,
+                            access_expires_in: String(ax),
                           };
-                          navigate("/createProfile", {
+                          // navigate("/createProfile", {
+                          //   state: {
+                          //     user: user,
+                          //   },
+                          // });
+                          navigate("/newUser", {
                             state: {
                               user: user,
                             },
                           });
-                        };
-                        socialGoogle();
+                        };                        
+                        navigateToNewUser();
                         return;
                       } else if (
                         data["message"] === "Login with email"
@@ -225,21 +235,40 @@ function GoogleLogin(props) {
       <Button
         onClick={() => getAuthorizationCode()}
         role="button"
-        sx={{
-          width: '375px',
-          textTransform: "none",
-          "&:hover, &:focus, &:active": {
-            backgroundColor: "white",
-          },
-        }}
+        // sx={{
+        //   marginTop: "10px",
+        //   width: '100%',
+        //   height: '39px',         
+        //   textTransform: "none",
+        //   // "&:hover, &:focus, &:active": {
+        //   //   backgroundColor: "white",
+        //   // },
+        //   borderRadius: "5px",
+        //   fontSize: "16px",
+        //   backgroundColor: "#F2F2F2",
+        //   textTransform: "none",
+        //   color: "#000000",
+        //   fontWeight: "bold",
+        //   "&:hover": {
+        //     backgroundColor: "#3D5CAC",
+        //     color: "#FFFFFF",
+        //   },
+        // }}
+        sx={buttonStyle}
       >
-        <img
+        <GoogleIcon />
+        <Box sx={{ marginLeft: '10px', }}>
+          <Typography sx={{fontWeight: "bold",}}>{buttonText}</Typography>
+        </Box>
+        
+        {/* <img
           style={{
-            width: "100%",
+            // width: "100%",
+            
           }}
           alt="Google sign-up"
           src={googleImg}
-        />
+        /> */}
       </Button>                
     </div>
   );
