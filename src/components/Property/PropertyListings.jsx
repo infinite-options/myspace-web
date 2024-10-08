@@ -342,7 +342,7 @@ const PropertyListings = ({ setRightPane }) => {
             fontFamily: "Source Sans Pro",
             justifyContent: "center",
             width: "100%",
-            height: "90vh",
+            flex: 1,
             overflowY: 'auto',
             overflowX: 'hidden',
             marginTop: theme.spacing(2),
@@ -354,6 +354,7 @@ const PropertyListings = ({ setRightPane }) => {
               // margin: "30px",
               padding: theme.spacing(2),
               backgroundColor: theme.palette.primary.main,
+              height: "100%",
               width: "100%",
               // [theme.breakpoints.down("sm")]: {
               //   width: "80%",

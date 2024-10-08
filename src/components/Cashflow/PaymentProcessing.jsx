@@ -98,6 +98,7 @@ const PaymentProcessing = () => {
     // const [transactionsData, setTransactionsData] = useState([]);
 
     const [currentWindow, setCurrentWindow] = useState(location.state?.currentWindow || "TRANSACTIONS");
+    const selectedRowsForPayBills = location.state?.selectedRows || [];
     // const [currentWindow, setCurrentWindow] = useState(location.state?.currentWindow || "VERIFY_PAYMENTS");    
 
     const [selectedPayment, setSelectedPayment] = useState(null);
@@ -177,8 +178,8 @@ const PaymentProcessing = () => {
                     selectedProperty={"ALL"}
                   />
                 )}
-                {currentWindow === "PAY_BILLS" && <PaymentsManager setSelectedPayment={setSelectedPayment} setCurrentWindow={setCurrentWindow} page={"paymentProcessing"} />}                                
-                {currentWindow === "VERIFY_PAYMENTS" && <VerifyPayments />}
+                {currentWindow === "PAY_BILLS" && <PaymentsManager setSelectedPayment={setSelectedPayment} setCurrentWindow={setCurrentWindow} page={"paymentProcessing"} selectedRowsForPayBills={selectedRowsForPayBills}/>}                                
+                {/* {currentWindow === "VERIFY_PAYMENTS" && <VerifyPayments />} */}
                 
                 {currentWindow === "MAKE_PAYMENT" && <MakePayment selectedPayment={selectedPayment} refreshCashflowData={refreshCashflowData} setCurrentWindow={setCurrentWindow} />}  
                 {currentWindow === "SELECT_PAYMENT" && <ManagerSelectPayment selectedPayment={selectedPayment} selectedPurGroup={selectedPurGroup} />}                             

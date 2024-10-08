@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import theme from "../../theme/theme";
-import { ThemeProvider, Box, Paper, Stack, Typography, Grid, Divider, Button, ButtonGroup, Rating, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+import {ThemeProvider, Box, Paper, Stack, Typography, Grid, Divider, Button, ButtonGroup, Rating, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import { Form, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 import backButton from "../Payments/backIcon.png";
@@ -17,6 +17,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import Documents from "../Leases/Documents";
 import { DataGrid } from "@mui/x-data-grid";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 export default function TenantApplication(props) {
   console.log("In Tenant Application", props);
@@ -505,7 +506,7 @@ export default function TenantApplication(props) {
         style={{
           margin: "5px",
           padding: 20,
-          backgroundColor: theme.palette.primary.main,
+          backgroundColor: '#F2F2F2',
           borderRadius: '10px',
           boxShadow: "0px 2px 4px #00000040"
         }}
@@ -556,638 +557,130 @@ export default function TenantApplication(props) {
               {formattedAddress}
             </Typography>
           </Box>
-
-          {props.from === "PropertyInfo" &&
-            <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative' sx={{ paddingBottom: "10px" }}>
-              <Button
-                // onClick={() => navigate("-1")}
-                onClick={() => props.setRightPane({ type: "listings" })}
-                sx={{
-                  textTransform: "none",
-                  padding: "10px 10px 0px 10px",
-                  textDecoration: "underline",
-                  position: "relative",
-                }}
-              >
-                <img src={backButton} style={{ width: "20px", height: "20px", margin: "0 5px" }} />
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.medium.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                    textAlign: "center",
-                  }}
-                >
-                  <u>Return to All Listings</u>
-                </Typography>
-              </Button>
+            
+            <Box sx={{padding: "10px"}}>
+            <Accordion 
+              defaultExpanded 
+              sx={{
+                marginBottom: "20px", 
+                backgroundColor: "#f0f0f0", 
+                borderRadius: '8px',
+                margin: "auto", 
+                minHeight: "50px"
+              }}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography sx={{ fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue}}>Applicant Personal Details</Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ padding: "30px" }}> {/* Increased padding */}
+                <Grid container spacing={3}> {/* Increased spacing */}
+                  <Grid item xs={6}>
+                    <Typography>Name: {tenantProfile?.tenant_first_name} {tenantProfile?.tenant_last_name}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography>Email: {tenantProfile?.tenant_email}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography>Phone: {tenantProfile?.tenant_phone_number}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography>SSN: Last 4 digits: {tenantProfile?.tenant_ssn?.slice(-4)}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography>License #: {tenantProfile?.tenant_drivers_license_number}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography>License State: {tenantProfile?.tenant_drivers_license_state}</Typography>
+                  </Grid>
+                </Grid>
+              </AccordionDetails>
+            </Accordion>
             </Box>
-          }
-          {status ? (
-            <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative' sx={{ padding: "10px" }}>
-              <Typography
-                sx={{
-                  justifySelf: "center",
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: theme.typography.secondaryFont,
-                }}
-              >
-                Applied on {lease.length > 0 && lease[0].lease_application_date}
-              </Typography>
+
+            <Box sx={{padding: "10px"}}>
+            <Accordion 
+              sx={{
+                marginBottom: "20px", 
+                backgroundColor: "#f0f0f0", 
+                borderRadius: '8px',
+                margin: "auto", // Center the accordion
+                minHeight: "50px" // Increase minimum height for better content display
+              }}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography sx={{ fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue}}>Applicant Job Details</Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ padding: "30px" }}>
+                <Grid container spacing={3}>
+                  <Grid item xs={6}>
+                    <Typography>Current Salary: ${tenantProfile?.tenant_current_salary}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography>Salary Frequency: {tenantProfile?.tenant_salary_frequency}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography>Company Name: {tenantProfile?.tenant_current_job_company}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography>Job Title: {tenantProfile?.tenant_current_job_title}</Typography>
+                  </Grid>
+                </Grid>
+              </AccordionDetails>
+            </Accordion>
             </Box>
-          ) : null}
 
-          <Paper
-            style={{
-              margin: "25px",
-              padding: 20,
-              backgroundColor: theme.palette.primary.main,
-              height: "25%",
-            }}
-          >
-            <Grid container spacing={4}>
-              <Grid item xs={6}>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.mediumFont,
-                  }}
-                >
-                  Name
-                </Typography>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                  }}
-                >
-                  {tenantProfile?.tenant_first_name} {tenantProfile?.tenant_last_name}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.mediumFont,
-                  }}
-                >
-                  Email
-                </Typography>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                  }}
-                >
-                  {tenantProfile?.tenant_email}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.mediumFont,
-                  }}
-                >
-                  Phone
-                </Typography>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                  }}
-                >
-                  {tenantProfile?.tenant_phone_number}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.mediumFont,
-                  }}
-                >
-                  SSN #
-                </Typography>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                  }}
-                >
-                  {/* {tenantProfile?.tenant_ssn} */}
-                  {displaySSN()}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.mediumFont,
-                  }}
-                >
-                  License #
-                </Typography>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                  }}
-                >
-                  {tenantProfile?.tenant_drivers_license_number}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.mediumFont,
-                  }}
-                >
-                  License State
-                </Typography>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                  }}
-                >
-                  {tenantProfile?.tenant_drivers_license_state}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.mediumFont,
-                  }}
-                >
-                  Current Salary
-                </Typography>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                  }}
-                >
-                  ${tenantProfile?.tenant_current_salary}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.mediumFont,
-                  }}
-                >
-                  Salary Frequency
-                </Typography>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                  }}
-                >
-                  {tenantProfile?.tenant_salary_frequency}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.mediumFont,
-                  }}
-                >
-                  Company Name
-                </Typography>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                  }}
-                >
-                  {tenantProfile?.tenant_current_job_company}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.mediumFont,
-                  }}
-                >
-                  Job Title
-                </Typography>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                  }}
-                >
-                  {tenantProfile?.tenant_current_job_title}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.mediumFont,
-                  }}
-                >
-                  Current Address
-                </Typography>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                  }}
-                >
-                  {formatTenantAddress()}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.mediumFont,
-                  }}
-                >
-                  Unit #
-                </Typography>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                  }}
-                >
-                  {formatTenantUnit()}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.mediumFont,
-                  }}
-                >
-                  City/State
-                </Typography>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                  }}
-                >
-                  {formatTenantCityState()}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.mediumFont,
-                  }}
-                >
-                  Zip Code
-                </Typography>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.light.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                  }}
-                >
-                  {formatTenantZip()}
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.primary.fontWeight,
-                    fontSize: theme.typography.secondaryFont,
-                  }}
-                >
-                  Who plans to live in the unit <span style={{ color: "red" }}>*</span>
-                </Typography>
-              </Grid>
+            <Box sx={{padding: "10px"}}>
+            <Accordion 
+              sx={{
+                marginBottom: "20px", 
+                backgroundColor: "#f0f0f0", 
+                borderRadius: '8px',
+                margin: "auto", // Center the accordion
+                minHeight: "50px" // Increase minimum height for better content display
+              }}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography sx={{ fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue}}>Occupancy Details</Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ padding: "30px" }}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12}>
+                    <Typography>Adults</Typography>
+                    <AdultDataGrid adults={adultOccupants} />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Typography>Children</Typography>
+                    <ChildDataGrid children={childOccupants} />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Typography>Pets</Typography>
+                    <PetDataGrid pets={petOccupants} />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Typography>Vehicles</Typography>
+                    <VehicleDataGrid vehicles={vehicles} />
+                  </Grid>
+                </Grid>
+              </AccordionDetails>
+            </Accordion>
+            </Box>
 
-              {/* adult section */}
-              <Grid item xs={12} marginTop={"20px"}>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.primary.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                  }}
-                >
-                  Adults
-                </Typography>
-                {adultOccupants && adultOccupants?.length >0 ? <AdultDataGrid adults={adultOccupants}/> : 
-                  <>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        marginBottom: '7px',
-                        width: '100%',
-                        height:"70px"
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                        color: "#A9A9A9",
-                        fontWeight: theme.typography.primary.fontWeight,
-                        fontSize: "15px",
-                        }}
-                      >
-                        No Adults
-                      </Typography>
-                    </Box>
-                  </>
-                }
-                {/* {adultOccupants && 
-                  adultOccupants.map((occupant, index) => (
-                    <Typography
-                      sx={{
-                        justifySelf: "center",
-                        color: theme.typography.primary.black,
-                        fontWeight: theme.typography.light.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                      key={index}
-                    >
-                      {occupant.name} {occupant.last_name} | {occupant.relationship} | DOB: {occupant.dob}
-                    </Typography>
-                  ))} */}
-              </Grid>
-
-              {/* child section */}
-              <Grid item xs={12} marginTop={"20px"}>
-                {/* <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.primary.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                  }}
-                >
-                  {childOccupants?.length} Children
-                </Typography>
-                {childOccupants &&
-                  childOccupants.map((occupant, index) => (
-                    <Typography
-                      sx={{
-                        justifySelf: "center",
-                        color: theme.typography.primary.black,
-                        fontWeight: theme.typography.light.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                      key={index}
-                    >
-                      {occupant.name} {occupant.last_name} | {occupant.relationship} | DOB: {occupant.dob}
-                    </Typography>
-                  ))} */}
-                  <Typography
-                    sx={{
-                      justifySelf: "center",
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.primary.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                    }}
-                  >
-                  Children
-                </Typography>
-                {childOccupants && childOccupants?.length >0 ? <ChildDataGrid children={childOccupants}/> : 
-                  <>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        marginBottom: '7px',
-                        width: '100%',
-                        height:"70px"
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                        color: "#A9A9A9",
-                        fontWeight: theme.typography.primary.fontWeight,
-                        fontSize: "15px",
-                        }}
-                      >
-                        No Child
-                      </Typography>
-                    </Box>
-                  </>
-                }
-              </Grid>
-
-              {/* pet section */}
-              <Grid item xs={12} marginTop={"20px"}>
-                <Typography
-                    sx={{
-                      justifySelf: "center",
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.primary.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                    }}
-                  >
-                  Pets
-                </Typography>
-                {petOccupants && petOccupants?.length >0 ? <PetDataGrid pets={petOccupants}/> : 
-                  <>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        marginBottom: '7px',
-                        width: '100%',
-                        height:"70px"
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                        color: "#A9A9A9",
-                        fontWeight: theme.typography.primary.fontWeight,
-                        fontSize: "15px",
-                        }}
-                      >
-                        No Pets
-                      </Typography>
-                    </Box>
-                  </>
-                }
-                {/* <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.primary.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                  }}
-                >
-                  {petOccupants?.length} Pets
-                </Typography> */}
-                {/* <Typography
-                                    sx={{
-                                        justifySelf: 'center',
-                                        color: theme.typography.primary.black,
-                                        fontWeight: theme.typography.light.fontWeight,
-                                        fontSize: theme.typography.smallFont
-                                    }}
-                                >
-                                    Otto | Cat | 16 lbs | 2 years old
-                                </Typography> */}
-                {/* {petOccupants &&
-                  petOccupants.map((occupant, index) => (
-                    <Typography
-                      sx={{
-                        justifySelf: "center",
-                        color: theme.typography.primary.black,
-                        fontWeight: theme.typography.light.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                      key={index}
-                    >
-                      {occupant.name} {occupant.type} | {occupant.relationship} | DOB: {occupant.dob}
-                    </Typography>
-                  ))} */}
-              </Grid>
-
-              {/* vehicle section */}
-              <Grid item xs={12} marginTop={"20px"}>
-                <Typography
-                    sx={{
-                      justifySelf: "center",
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.primary.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                    }}
-                  >
-                  Vehicles
-                </Typography>
-                {vehicles && vehicles?.length >0 ? <VehicleDataGrid vehicles={vehicles}/> : 
-                  <>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        marginBottom: '7px',
-                        width: '100%',
-                        height:"70px"
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                        color: "#A9A9A9",
-                        fontWeight: theme.typography.primary.fontWeight,
-                        fontSize: "15px",
-                        }}
-                      >
-                        No Vehicles
-                      </Typography>
-                    </Box>
-                  </>
-                }
-                {/* <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.primary.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                  }}
-                >
-                  {vehicles?.length} Vehicles
-                </Typography>
-                {vehicles &&
-                  vehicles.map((vehicle, index) => (
-                    <Typography
-                      sx={{
-                        justifySelf: "center",
-                        color: theme.typography.primary.black,
-                        fontWeight: theme.typography.light.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                      key={index}
-                    >
-                      {vehicle.make} {vehicle.model} | {vehicle.year} | {vehicle.license} | {vehicle.state}
-                    </Typography>
-                  ))} */}
-              </Grid>
-
-              {/* document section */}
-              <Grid item xs={12}>
+            <Box sx={{padding: "10px"}}>
+            <Accordion 
+              sx={{
+                marginBottom: "20px", 
+                backgroundColor: "#f0f0f0", 
+                borderRadius: '8px',
+                margin: "auto", // Center the accordion
+                minHeight: "50px" // Increase minimum height for better content display
+              }}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography sx={{ fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue}}>Documents</Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ padding: "30px" }}>
                 <Documents documents={tenantDocuments} setDocuments={setTenantDocuments} isEditable={false} isAccord={false} customName={"Your Documents"} contractFiles={extraUploadDocument} contractFileTypes={extraUploadDocumentType}/>
-              </Grid>
+              </AccordionDetails>
+            </Accordion>
+            </Box>
 
-              <Box
+            <Box
                 sx={{
                   display: "flex",
                   flexDirection: "row",
@@ -1247,8 +740,9 @@ export default function TenantApplication(props) {
                   </Typography>
                 </Button>
                 }
-              </Box>
-              {status && status === "NEW" ? (
+            </Box>
+
+            {status && status === "NEW" ? (
                 <>
                   <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                     <Button
@@ -1272,8 +766,9 @@ export default function TenantApplication(props) {
                     </Button>
                   </Grid>
                 </>
-              ) : null}
-              {showWithdrawLeaseDialog && (
+            ) : null}
+            
+            {showWithdrawLeaseDialog && (
                 <Dialog
                   open={showWithdrawLeaseDialog}
                   onClose={() => setShowWithdrawLeaseDialog(false)}
@@ -1330,10 +825,8 @@ export default function TenantApplication(props) {
                     </Box>
                   </DialogActions>
                 </Dialog>
-              )}
-            </Grid>
-          </Paper>
-        </Box>
+            )}
+            </Box>
       </Paper>)}
     </ThemeProvider>
   );

@@ -102,6 +102,7 @@ export default function PaymentsManager(props) {
   const [moneyToBePaid, setMoneyToBePaid] = useState([]);
   const [moneyToBeReceived, setMoneyToBeReceived] = useState([]);
   const [moneyPayable, setMoneyPayable] = useState([]);
+  const [selectedRowsForTransaction, setSelectedRowsForTransaction] = useState(props.selectedRowsForPayBills || [])
 
   const [transactionsData, setTransactionsData] = useState([]);
   const [totalTransactions, setTotalTransactions] = useState(0);
@@ -644,7 +645,7 @@ export default function PaymentsManager(props) {
                                       Property: {propertyPayments[0].property_address}
                                   </Typography>
                               </Grid>
-                              <TransactionsTable data={propertyPayments} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
+                              <TransactionsTable data={propertyPayments} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} selectedRowsForTransaction={selectedRowsForTransaction}/>
                               <br />
                           </>
                         ))
@@ -703,6 +704,7 @@ export default function PaymentsManager(props) {
                                     setTotal={setTotal} 
                                     setPaymentData={setPaymentData} 
                                     setSelectedItems={setSelectedItems} 
+                                    selectedRowsForTransaction={selectedRowsForTransaction}
                                   />
                                 </AccordionDetails>
                               </Accordion>
@@ -843,9 +845,9 @@ function TransactionsTable(props) {
     { field: 'pur_payer', sort: 'asc', }
   ]);
 
-  useEffect(() => {
-    setData(props.data);
-  }, [props.data]);
+   useEffect(() => {
+     setData(props.data);
+   }, [props.data]);
 
   useEffect(() => {
     // console.log("ROHIT - selectedRows - ", selectedRows);
@@ -884,7 +886,18 @@ function TransactionsTable(props) {
       console.log("ROHIT - 814 - without filteredData - ", data, " for property - ", data[0].pur_property_id);
       const filteredData = filterTransactions(data);
       // setSelectedRows(filteredData.map((row) => row.index));
-      setSelectedRows([]);
+      // setSelectedRows([]);
+      if(props.selectedRowsForTransaction && props.selectedRowsForTransaction !== ""){
+        setSelectedRows(
+          filteredData
+            .filter((row) => props.selectedRowsForTransaction.includes(row.pur_group))
+            .map((row) => row.index) 
+        );
+      
+      }else{
+        setSelectedRows([]);
+      }
+
       setPaymentDueResult(
         filteredData.map((item) => ({
           ...item,
