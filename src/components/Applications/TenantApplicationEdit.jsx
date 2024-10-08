@@ -525,6 +525,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                                             setModifiedData={setModifiedData}
                                             // dataKey={lease_uid !== null ? "lease_adults" : "tenant_adult_occupants"}
                                             dataKey={"lease_adults"}
+                                            isEditable={true}
                                         />
                                     )}
                                     {children && (
@@ -537,6 +538,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                                             setModifiedData={setModifiedData}
                                             // dataKey={lease_uid !== null ? "lease_children" : "tenant_children_occupants"}
                                             dataKey={"lease_children"}
+                                            isEditable={true}
                                         />
                                     )}
                                     {pets && (
@@ -548,6 +550,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                                             setModifiedData={setModifiedData}
                                             // dataKey={lease_uid !== null ? "lease_pets" : "tenant_pet_occupants"}
                                             dataKey={"lease_pets"}
+                                            isEditable={true}
                                         />
                                     )}
                                     {vehicles && (
@@ -561,6 +564,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                                             // dataKey={lease_uid !== null ? "lease_vehicles" : "tenant_vehicle_info"}
                                             dataKey={"lease_vehicles"}
                                             ownerOptions={[...adults, ...children]}
+                                            isEditable={true}
                                         />
                                     )}
                                 </AccordionDetails>
