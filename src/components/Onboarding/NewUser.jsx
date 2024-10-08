@@ -51,7 +51,18 @@ const NewUser = () => {
   const [showEmailSignup, setShowEmailSignup] = useState(false);
   const { setAuthData, selectRole, setLoggedIn } = useUser();
   const [cookies, setCookie] = useCookies(["user"]);
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);  
+  const [googleInfoAvailable, setGoogleInfoAvailable] = useState(false);
+  const [user, setUser] = useState(location.state?.user ? location.state?.user : null);
+
+  useEffect(() => {
+    if(user){
+      setGoogleInfoAvailable(true);
+    }
+  }, [user]);
+  
+
+  console.log("ROHIT - user - ", user);
 
   const [email, setEmail] = useState(location.state?.user_email || "");
   const [password, setPassword] = useState("");
@@ -109,6 +120,9 @@ const NewUser = () => {
   };
 
   const validate_form = () => {
+    if(googleInfoAvailable){
+      return true;
+    }
     if (email === "" || password === "" || confirmPassword === "") {
       alert("Please fill out all fields");
       return false;
@@ -131,14 +145,27 @@ const NewUser = () => {
   };
 
   const checkIfUserExists = async (email) => {
-    try {
-      const response = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo/${email}`);
-      return response;
-    } catch (error) {
-      if (error.response && error.response.status === 404 && error.response.data.message === "User not found") {
-        return null;
-      } else {
-        throw error;
+    if(email) {
+      try {
+        const response = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo/${email}`);
+        return response;
+      } catch (error) {
+        if (error.response && error.response.status === 404 && error.response.data.message === "User not found") {
+          return null;
+        } else {
+          throw error;
+        }
+      }
+    } else if(user?.email){
+      try {
+        const response = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo/${user.email}`);
+        return response;
+      } catch (error) {
+        if (error.response && error.response.status === 404 && error.response.data.message === "User not found") {
+          return null;
+        } else {
+          throw error;
+        }
       }
     }
   };
@@ -276,19 +303,31 @@ const NewUser = () => {
       return ;
     }
     const userExists = await checkIfUserExists(email);
-    const user = {
-      email: email,
-      password: password,
-      role: role,
-      isEmailSignup: true,
-    };
+    let userObject = null;
+
+    if(googleInfoAvailable){
+      userObject = {
+        ...user,
+        role: role,
+        // isEmailSignup: false,
+      };
+    } else {
+      userObject = {      
+        email: email,
+        password: password,
+        role: role,
+        isEmailSignup: true,
+      };
+    }
+
+    
     console.log("user Exists", userExists);
     console.log("Current User Info: ", user);
     if (userExists) {
       handleLogin();
     } else {
       if (validate_form() === false) return;
-      navigate(`/createProfile`, { state: { user: user, selectedBusiness:  selectedBusiness,} });
+      navigate(`/createProfile`, { state: { user: userObject, selectedBusiness:  selectedBusiness,} });
     }
   };
 
@@ -335,7 +374,7 @@ const NewUser = () => {
                 </Box>
               </ToggleButton>
             </ToggleButtonGroup>
-          </Grid>
+          </Grid>          
           {
             (role != null && (role === "EMPLOYEE" || role === "PM_EMPLOYEE" || role === "MAINT_EMPLOYEE")) && (              
               <>
@@ -356,7 +395,7 @@ const NewUser = () => {
               </>
             )
           }
-          {role != null && (
+          {role != null && (user == null || user.google_auth_token == null) && (
             <>
               <Grid container item xs={12} justifyContent='center' sx={{ marginTop: "50px" }}>
                 <Grid container direction='column' item xs={4} alignItems='center'>
@@ -462,6 +501,41 @@ const NewUser = () => {
             </>
           )}
 
+          {role != null && user != null && user.google_auth_token != null  && (
+            <>
+              <Grid container direction='row' justifyContent="center" item xs={12} sx={{  }}>
+                  <Grid item xs={4}>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Button
+                      onClick={handleSignup}
+                      sx={{
+                        // margin: 'auto',
+                        width: "100%",
+                        height: "57px",
+                        borderRadius: "15px",
+                        fontSize: "20px",
+                        backgroundColor: "#F2F2F2",
+                        textTransform: "none",
+                        color: "grey",
+                        fontWeight: "bold",
+                        "&:hover": {
+                          backgroundColor: "#F2F2F2",
+                          color: "#160449",
+                        },
+                        boxShadow: 1,
+                        justifyContent: "space-evenly",
+                      }}
+                    >
+                      Continue 
+                    </Button>
+                  </Grid>
+                  <Grid item xs={4}>
+                  </Grid>
+                </Grid>
+            </>
+          )}
+
           <Grid container item xs={12} justifyContent='center' sx={{ marginTop: "20px" }}>
             <Typography
               sx={{
@@ -472,7 +546,7 @@ const NewUser = () => {
             >
               Already have an account ?{" "}
               <u>
-                <a href='/returningUser'>Log In</a>
+                <a href='/'>Log In</a>
               </u>
             </Typography>
           </Grid>

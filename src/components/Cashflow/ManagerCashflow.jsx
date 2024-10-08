@@ -52,6 +52,7 @@ import MakePayment from "./MakePayment";
 import AddRevenue from "./AddRevenue";
 import AddExpense from "./AddExpense";
 import ListsContext from "../../contexts/ListsContext";
+import APIConfig from "../../utils/APIConfig";
 
 import axios from "axios";
 
@@ -131,6 +132,7 @@ export default function ManagerCashflow() {
   const [totalDepositByMonth, setTotalDepositByMonth] = useState({})
   const [revenueByMonthByType, setRevenueByMonthByType] = useState([])
   const [expenseByMonthByType, setExpenseByMonthByType] = useState([])
+  const [revenueDataForManager, setRevenueDataForManager] = useState([]);
 
   const [profitabilityData, setProfitabilityData] = useState([]);
   const [transactionsData, setTransactionsData] = useState([]);
@@ -146,6 +148,8 @@ export default function ManagerCashflow() {
   const [allProfitDataItems, setAllProfitDataItems] = useState([])
   const [getSortedTotalValueByMapping, setGetSortedTotalValueByMapping] = useState({})
   const [getSortedExpectedTotalByMapping, setGetSortedExpectedTotalByMapping] = useState({})
+  const [paymentVerificationData, setPaymentVerificationData] = useState([])
+  const [paymentVerificationByProperty, setPaymentVerificationByProperty] = useState({})
 
   //ROHIT - remove this function
   // async function fetchCashflow(userProfileId, month, year) {
@@ -192,6 +196,21 @@ export default function ManagerCashflow() {
     }
   }
 
+  async function fecthPaymentVerification(profileId){
+    try{
+      const res = await axios.get(`${APIConfig.baseURL.dev}/paymentVerification/${getProfileId()}`);
+      // return res.data.result;
+      setPaymentVerificationData(res.data.result);
+
+      const groupedByProperty = groupDataByKey(res.data.result, "pur_property_id");
+      setPaymentVerificationByProperty(groupedByProperty);
+
+      return res.data.result
+    }catch(error){
+      console.error("Error fetching properties data:", error);
+    }
+  }
+
   // useEffect(() => {
   //   console.log("ROHIT - currentWindow - ", currentWindow);
   // }, [currentWindow]);
@@ -223,6 +242,20 @@ export default function ManagerCashflow() {
   //   useEffect(() => {
   //     console.log("payouts - ", payouts);
   //   }, [payouts]);
+  const groupDataByKey = (data, key) => {
+    // console.log("ROHIT - data - ", data);
+    const groupedByKey = {};
+
+    data?.forEach(payment => {
+        const dataKey = payment[key];
+        if(!groupedByKey[dataKey]){
+            groupedByKey[dataKey] = [];
+        }
+        groupedByKey[dataKey].push(payment)
+    })
+
+    return groupedByKey;
+}
 
   useEffect(() => {
     // fetchCashflow(profileId)
@@ -257,6 +290,20 @@ export default function ManagerCashflow() {
       .catch((error) => {
         console.error("Error fetching PropertyList:", error);
       });
+
+
+      fecthPaymentVerification(getProfileId())
+      .then((data) => {
+        console.log("successfully fetch payment verification")
+        // setPaymentVerificationData(data);
+
+        // const groupedByProperty = groupDataByKey(data, "pur_property_id");
+        // setPaymentVerificationByProperty(groupedByProperty);
+
+      }).catch((error) => {
+        console.error("Error fetching payment verification:", error);
+      })
+
   }, []);
 
   const refreshCashflowData = () => {
@@ -637,6 +684,9 @@ export default function ManagerCashflow() {
     
     const payoutsCurrentMonth = profitDatacurrentMonth?.filter((item) => item.pur_payer === profileId);
     const payoutsCurrentYear = profitDataCurrentYear?.filter((item) => item.pur_payer === profileId);
+
+    const revenueDataForManager = profitDataCurrentYear?.filter((item) => item.pur_payer === profileId || item.pur_receiver === profileId)
+    // setRevenueDataForManager(revenueDataForManager);
 
     setRevenueList(rentDataCurrentMonth)
     setExpenseList(payoutsCurrentMonth)
@@ -1067,6 +1117,55 @@ export default function ManagerCashflow() {
 
     setTotalDepositByMonth(totalDepositsByMonth)
 
+
+
+    // Manager revenue
+    const revenueDataForManagerByProperty = revenueDataForManager?.reduce((acc, item) => {
+      const propertyUID = item.pur_property_id;
+      const propertyInfo = {
+        property_id: item.pur_property_id,
+        property_address: item.property_address,
+        property_unit: item.property_unit,
+      };
+      
+      // const totalExpected = parseFloat(item.expected) || 0;
+      // const totalActual = parseFloat(item.actual) || 0;
+      let totalExpected = parseFloat(item.expected) || 0;
+      let totalActual = parseFloat(item.actual) || 0;
+    
+      if (item.pur_payer.startsWith("110")) {
+        totalActual = parseFloat(item.actual) || 0;
+      } else {
+        totalActual = 0;
+      }
+    
+      if (item.pur_payer.startsWith("600")) {
+        totalExpected = -(parseFloat(item.expected) || 0);
+      } else {
+        totalExpected = parseFloat(item.expected) || 0;
+      }
+
+      if (!acc[propertyUID]) {
+        // acc[propertyUID] = [];
+        acc[propertyUID] = {
+          propertyInfo: propertyInfo,
+          rentItems: [],
+          totalExpected: 0,
+          totalActual: 0,
+          payments : paymentVerificationByProperty[propertyUID],
+        };
+      }
+
+      acc[propertyUID].rentItems.push(item);
+      acc[propertyUID].totalExpected += totalExpected;
+      acc[propertyUID].totalActual += totalActual;
+
+      return acc;
+    }, {});
+
+    setRevenueDataForManager(revenueDataForManagerByProperty)
+
+    console.log("revenue data for manager by property - ", revenueDataForManagerByProperty)
 
   }, [month, year, cashflowData, selectedProperty]);
 
@@ -1833,6 +1932,12 @@ export default function ManagerCashflow() {
 
                 totalDepositByProperty={totalDepositByProperty}
                 totalDeposit={totalDeposit}
+
+                revenueDataForManager={revenueDataForManager}
+
+                selectedProperty={selectedProperty}
+
+                fecthPaymentVerification={fecthPaymentVerification}
 
                 setMonth={setMonth}
                 setYear={setYear}

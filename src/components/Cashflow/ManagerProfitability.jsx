@@ -29,6 +29,7 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { DataGrid } from "@mui/x-data-grid";
 // import HomeWorkIcon from "@mui/icons-material/HomeWork";
 import CloseIcon from "@mui/icons-material/Close";
+import APIConfig from "../../utils/APIConfig";
 import theme from "../../theme/theme";
 // import RevenueTable from "./RevenueTable";
 // import ExpectedRevenueTable from "./ExpectedRevenueTable";
@@ -82,6 +83,9 @@ const ManagerProfitability = ({
   getSortedTotalValueByMapping,
   totalDeposit,
   totalDepositByProperty,
+  revenueDataForManager,
+  selectedProperty,
+  fecthPaymentVerification
 }) => {
   const { user, getProfileId, selectedRole } = useUser();
   const navigate = useNavigate();
@@ -94,6 +98,26 @@ const ManagerProfitability = ({
   const [expenseExpanded, setExpenseExpanded] = useState(true);
   const [tab, setTab] = useState("by_property");
   const [headerTab, setHeaderTab] = useState("current_month");
+  const [ total, setTotal] = useState();
+  const [paymentNotes, setPaymentNotes] = useState("");
+  const [paymentData, setPaymentData] = useState({
+    currency: "usd",
+    //customer_uid: '100-000125', // customer_uid: user.user_uid currently gives error of undefined
+    customer_uid: getProfileId(),
+    // customer_uid: user.user_uid,
+    // business_code: "IOTEST",
+    business_code: paymentNotes,
+    item_uid: "320-000054",
+    // payment_summary: {
+    //     total: "0.0"
+    // },
+    balance: "0.0",
+    purchase_uids: [],
+  });
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedPayments, setSelectedPayments] = useState([]);
+
+  const [sortBy, setSortBy] = useState("");
 
   const handleSelectTab = (tab_name) => {
     setTab(tab_name);
@@ -371,6 +395,74 @@ const ManagerProfitability = ({
     );
   };
 
+  const newTransactionColumn = [
+    {
+      field: "purchase_date",
+      headerName: "Purchase Date",
+      flex: 1.5,
+      renderCell: (params) => <span>{params.row.purchase_date !== null ? params.row.purchase_date.split(" ")[0] : "-"}</span>,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "purchase_type",
+      headerName: "Purchase Type",
+      flex: 1.5,
+      renderCell: (params) => <span>{params.row.purchase_type !== null ? params.row.purchase_type : "-"}</span>,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "expected",
+      headerName: "Expected",
+      flex: 1,
+      renderCell: (params) => (
+        <span style={{ textAlign: "right", display: "block" }}>$ {params.row.expected !== null ? parseFloat(params.row.expected).toFixed(2) : parseFloat(0).toFixed(2)}</span>
+      ),
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "payment_status",
+      headerName: "Payment Status",
+      flex: 1.5,
+      renderCell: (params) => <span>{params.row.payment_status !== null ? params.row.payment_status : "-"}</span>,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+  ]
+
+  const getNewRowWithIds = (data) => {
+    const revenueData = data?.filter((item) => item.pur_payer.startsWith("350"))
+    const filteredData = revenueData?.filter((item) => item.payment_status === "UNPAID")
+
+    const rowsId = filteredData?.map((row, index) => ({
+      ...row,
+      id: row.id ? index : index,
+    }));
+
+    return rowsId;
+  }
+
+  const getNewDataGrid = (data) => {
+    const rows = getNewRowWithIds(data);
+
+    return (
+      <DataGrid
+        rows={rows}
+        columns={newTransactionColumn}
+        hideFooter={true}
+        autoHeight
+        rowHeight={35}
+        sx={{
+          marginTop: "10px",
+          "& .MuiDataGrid-columnHeaders": {
+            minHeight: "35px !important",
+            maxHeight: "35px !important",
+            height: 35,
+          },
+        }}
+      />
+    );
+  }
+
+
   return (
     <>
       <Box
@@ -499,7 +591,7 @@ const ManagerProfitability = ({
           <Grid container item xs={12} marginTop={15} marginBottom={5}>
             <Grid container item xs={8} display={"flex"} direction={"row"}>
               
-              <Grid container justifyContent='center' item xs={2} marginRight={10}>
+              <Grid container justifyContent='center' item xs={2} marginRight={6}>
                 <Button
                   sx={{
                     width: "200px",
@@ -514,7 +606,7 @@ const ManagerProfitability = ({
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Property</Typography>
                 </Button>
               </Grid>
-              <Grid container justifyContent='center' item xs={2} marginRight={10}>
+              <Grid container justifyContent='center' item xs={2} marginRight={6}>
                 <Button
                   sx={{
                     width: "200px",
@@ -529,10 +621,10 @@ const ManagerProfitability = ({
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Type</Typography>
                 </Button>
               </Grid>
-              <Grid container justifyContent='center' item xs={2} marginRight={10}>
+              <Grid container justifyContent='center' item xs={2} marginRight={6}>
                 <Button
                   sx={{
-                    width: "200px",
+                    width: "90px",
                     backgroundColor: tab === "by_sort" ? "#3D5CAC" : "#9EAED6",
                     textTransform: "none",
                     "&:hover": {
@@ -544,10 +636,10 @@ const ManagerProfitability = ({
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Sort</Typography>
                 </Button>
               </Grid>
-              <Grid container justifyContent='center' item xs={3}>
+              <Grid container justifyContent='center' item xs={2} marginRight={6}>
                 <Button
                   sx={{
-                    width: "150px",
+                    width: "90px",
                     backgroundColor: tab === "by_cashflow" ? "#3D5CAC" : "#9EAED6",
                     textTransform: "none",
                     "&:hover": {
@@ -557,6 +649,21 @@ const ManagerProfitability = ({
                   onClick={() => handleSelectTab("by_cashflow")}
                 >
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Cashflow</Typography>
+                </Button>
+              </Grid>
+              <Grid container justifyContent='center' item xs={2}>
+                <Button
+                  sx={{
+                    width: "70px",
+                    backgroundColor: tab === "view" ? "#3D5CAC" : "#9EAED6",
+                    textTransform: "none",
+                    "&:hover": {
+                      backgroundColor: tab === "view" ? "#3D5CAC" : "#9EAED6",
+                    },
+                  }}
+                  onClick={() => handleSelectTab("view")}
+                >
+                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>View</Typography>
                 </Button>
               </Grid>
             </Grid>
@@ -1572,6 +1679,128 @@ const ManagerProfitability = ({
               </Accordion> */}
             </>
           )}
+
+          {tab === "view" && (<>
+            {revenueDataForManager &&
+                    Object.keys(revenueDataForManager)?.map((propertyUID, index) => {
+                      const property = revenueDataForManager[propertyUID];
+                      // console.log("property - ", property);
+                      return (
+                        <>
+                          <Accordion
+                            sx={{
+                              backgroundColor: theme.palette.primary.main,
+                              boxShadow: "none",
+                              marginY: "10px"
+                            }}
+                            key={index}
+                          >
+                            <Grid container item xs={12}>
+                              <Grid container justifyContent='flex-start' item xs={8}>
+                                <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
+                                      {`${property?.propertyInfo?.property_address}`} {property?.propertyInfo?.property_unit && ", Unit - "}
+                                      {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
+                                    </Typography>
+                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, marginLeft: 10, fontSize: theme.typography.smallFont }}>
+                                      {`${property?.propertyInfo?.property_id}`}
+                                    </Typography>
+                                  </AccordionSummary>
+                                </Grid>
+                              </Grid>
+                              <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                  ${property?.totalExpected ? property?.totalExpected?.toFixed(2) : "0.00"}
+                                </Typography>
+                              </Grid>
+                              <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                  ${property?.totalActual ? property?.totalActual?.toFixed(2) : "0.00"}
+                                </Typography>
+                              </Grid>
+                            </Grid>
+
+                            {/* <AccordionDetails>
+                              <Grid container item xs={12}>
+                                <Grid item xs={12}>
+                                    <Typography sx={{fontWeight: 'bold', color: "#160449"}}>
+                                        Unpaid Rent
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12}>
+                                  {getNewDataGrid(property?.rentItems)}
+                                </Grid>
+                              </Grid>
+                              <Grid container item xs={12}>
+                                <Grid item xs={12}>
+                                    <Typography sx={{fontWeight: 'bold', color: "#160449"}}>
+                                        Unverified
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} marginY={10}>
+                                  <BalanceDetailsTable data={property?.payments} selectedPurchaseRow={""} setPaymentData={setPaymentData} setSelectedPayments={setSelectedPayments} selectedProperty={selectedProperty} sortBy={sortBy}/>
+                                </Grid>
+                              </Grid>
+                              <Grid container item xs={12}>
+                                <Grid item xs={12}>
+                                    <Typography sx={{fontWeight: 'bold', color: "#160449"}}>
+                                        Pay Owner
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} marginY={10}>
+                                  <TransactionsTable data={property.rentItems} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems}/>
+                                </Grid>
+                              </Grid>
+                            </AccordionDetails> */}
+                            <AccordionDetails>
+                              <Grid container item xs={12} direction="column" justifyContent="space-between" style={{ height: '100%' }}>
+                                
+                                {/* Unpaid Rent Section */}
+                                <Grid item marginY={10}>
+                                  <Typography sx={{ fontWeight: 'bold', color: "#160449" }}>
+                                    Unpaid Rent
+                                  </Typography>
+                                  {getNewDataGrid(property?.rentItems)}
+                                </Grid>
+
+                                {/* Unverified Section */}
+                                <Grid item marginY={10}>
+                                  <Typography sx={{ fontWeight: 'bold', color: "#160449" }}>
+                                    Unverified
+                                  </Typography>
+                                  <BalanceDetailsTable 
+                                    data={property?.payments} 
+                                    selectedPurchaseRow={""} 
+                                    setPaymentData={setPaymentData} 
+                                    setSelectedPayments={setSelectedPayments} 
+                                    selectedProperty={selectedProperty}
+                                    fetchPaymentsData={fecthPaymentVerification} 
+                                    sortBy={sortBy}
+                                  />
+                                </Grid>
+
+                                {/* Pay Owner Section */}
+                                <Grid item>
+                                  <Typography sx={{ fontWeight: 'bold', color: "#160449" }}>
+                                    Pay Owner
+                                  </Typography>
+                                  <TransactionsTable 
+                                    data={property.rentItems} 
+                                    total={total} 
+                                    setTotal={setTotal} 
+                                    setPaymentData={setPaymentData} 
+                                    setSelectedItems={setSelectedItems}
+                                  />
+                                </Grid>
+
+                              </Grid>
+                            </AccordionDetails>
+                          </Accordion>
+                        </>
+                      );
+                    })}
+          </>)}
         </Paper>
       </Box>
     </>
@@ -1881,5 +2110,849 @@ function StatementTable(props) {
     </>
   );
 }
+
+function TransactionsTable(props) {
+  // console.log("In BalanceDetailTable", props);
+  const [data, setData] = useState(props.data);
+  const navigate = useNavigate();
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedPayments, setSelectedPayments] = useState([]);
+  const [paymentDueResult, setPaymentDueResult] = useState([]);
+  const [paymentDueResultMap, setPaymentDueResultMap] = useState([]); // index to row mapping for quick lookup.
+
+   const [sortModel, setSortModel] = useState([
+    { field: 'pur_group', sort: 'asc', },
+    { field: 'pur_payer', sort: 'asc', }
+  ]);
+
+  useEffect(() => {
+    setData(props.data);
+  }, [props.data]);
+
+  useEffect(() => {
+    // console.log("ROHIT - selectedRows - ", selectedRows);
+  }, [selectedRows]);
+
+  const filterTransactions = (data) => {
+
+    const verifiedPurGroups = []
+
+    data.forEach(transaction => {
+      if(!verifiedPurGroups.includes(transaction.pur_group) && transaction.verified && transaction.verified.toLowerCase() === "verified" ){
+        verifiedPurGroups.push(transaction.pur_group);
+      }
+    })
+
+    const groupedData = data.reduce((acc, item) => {
+      if (verifiedPurGroups.includes(item.pur_group)) {
+        if (!acc[item.pur_group]) {
+          acc[item.pur_group] = [];
+        }
+        acc[item.pur_group].push(item);
+      }
+      return acc;
+    }, {});
+
+    console.log("ROHIT - 631 - vgroupByPurchaseGroup - ", groupedData);
+
+    const result = Object.keys(groupedData).reduce((acc, group) => {
+      let received_amt = 0;
+      let management_fee = 0;
+      let other_expense = 0;
+    
+      // Check if all items in this group have 'payment_status' === "PAID"
+      const allPaid = groupedData[group].every(item => item.payment_status === "PAID");
+    
+      // If all items are paid, skip this group
+      if (allPaid) {
+        return acc;
+      }
+    
+      let allTransactions = []
+      let purchase_ids = []
+      let purchase_group;
+
+      groupedData[group].forEach(item => {
+        const pur_payer = item.pur_payer;
+        const pur_type = item.purchase_type;
+    
+        // Assign to 'received_amt' if pur_payer starts with '350'
+        if (pur_payer.startsWith("350")) {
+          received_amt += parseFloat(item.actual);
+        }
+    
+        // Assign to 'management_fee' if pur_payer starts with '110' and pur_type is "Management"
+        else if (pur_payer.startsWith("110") && pur_type === "Management") {
+          management_fee += parseFloat(item.expected);
+        }
+    
+        // Assign to 'other_expense' if pur_payer starts with '110' and pur_type is NOT "Management"
+        else if (pur_payer.startsWith("110") && pur_type !== "Management") {
+          other_expense += parseFloat(item.expected);
+        }
+
+        purchase_ids.push(...JSON.parse(item.purchase_ids))
+        allTransactions.push(item)
+        purchase_group = item.pur_group;
+      });
+    
+      // Calculate 'owner_payment' as received_amt - management_fee - other_expense
+      const owner_payment = parseFloat(received_amt - management_fee - other_expense);
+    
+      // Push the aggregated object for this group into the result if it passes the conditions
+      acc.push({
+        pur_group: group,
+        received_amt,
+        management_fee,
+        other_expense,
+        owner_payment,
+        purchase_type: "Rent",
+        purchase_ids : JSON.stringify(purchase_ids),
+        allTransactions,
+        purchase_group
+      });
+    
+      return acc;
+    }, []);
+
+    console.log("ROHIT - 631 - result - ", result);
+
+    return result
+
+
+    // return data            
+    //         // .filter(item => (item.verified && item.verified.toLowerCase() === "verified"));
+    //         .filter(item => (verifiedPurGroups.includes(item.pur_group)))
+    //         .filter( item => (item.pur_payer.startsWith("600") || item.pur_payer.startsWith("110")))
+    //         .filter( item => {
+    //           const actual = parseFloat(item.actual? item.actual : "0");
+    //           const expected = parseFloat(item.expected? item.expected : "0");
+              
+    //           return actual !== expected;
+    //         });
+
+  }
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      // console.log("ROHIT - 814 - without filteredData - ", data, " for property - ", data[0].pur_property_id);
+      const filteredData = filterTransactions(data);
+      // setSelectedRows(filteredData.map((row) => row.index));
+      setSelectedRows([]);
+      setPaymentDueResult(
+        filteredData.map((item, index) => ({
+          ...item,
+          index : index,
+        }))
+      );
+    }
+  }, [data]);
+
+  useEffect(() => {
+    var total = 0;
+
+    let purchase_uid_mapping = [];
+
+    for (const item of selectedRows) {
+      // console.log("item in loop", item)
+
+      let paymentItemData = paymentDueResult.find((element) => element.index === item);
+      console.log("ROHIT - 687 - paymentItemData - ", paymentItemData);
+      const purchaseIDs = JSON.parse(paymentItemData.purchase_ids);
+      purchaseIDs.forEach( purID => {
+        purchase_uid_mapping.push({ purchase_uid: purID, pur_amount_due: paymentItemData.owner_payment.toFixed(2) });
+      });
+      
+      // console.log("payment item data", paymentItemData);
+
+      // total += parseFloat(paymentItemData.pur_amount_due);
+      // Adjust total based on pur_cf_type
+      // if (paymentItemData.pur_payer.startsWith("110")) {
+      //   total -= parseFloat(paymentItemData.pur_amount_due);
+      // } else if (paymentItemData.pur_payer.startsWith("600")) {
+      //   total += parseFloat(paymentItemData.pur_amount_due);
+      // }
+
+      total += parseFloat(paymentItemData.owner_payment)
+    }
+    // console.log("selectedRows useEffect - total - ", total);
+    // console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
+    props.setTotal(total);
+    props.setPaymentData((prevPaymentData) => ({
+      ...prevPaymentData,
+      balance: total.toFixed(2),
+      purchase_uids: purchase_uid_mapping,
+    }));
+  }, [selectedRows]);
+
+  useEffect(() => {
+    console.log("selectedPayments - ", selectedPayments);
+    props.setSelectedItems(selectedPayments);
+  }, [selectedPayments]);
+
+  useEffect(() => {
+    const map = paymentDueResult.reduce((acc, row) => {
+      acc[row.index] = row;
+      return acc;
+    }, {});
+    setPaymentDueResultMap(map);
+  }, [paymentDueResult]);
+
+  const getFontColor = (ps_value) => {
+    if (ps_value === "PAID") {
+      return theme.typography.primary.blue;
+    } else if (ps_value === "PAID LATE") {
+      return theme.typography.primary.aqua;
+    } else {
+      return theme.typography.primary.red; // UNPAID OR PARTIALLY PAID OR NULL
+    }
+  };
+
+  const columnsList = [    
+    {
+      field: "purchase_type",
+      headerName: "Revenue",
+      flex: 1.5,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "purchase_ids",
+      headerName: "Purchase Ids",
+      flex: 1.5,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width:"100%" }}>{JSON.parse(params.value)}</Box>,
+    },
+    {
+      field: "received_amt",
+      headerName: "Amount Received",
+      flex: 1.5,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width:"100%"}}>{parseFloat(params.value).toFixed(2)}</Box>,
+    },
+    {
+      field: "management_fee",
+      headerName: "Management Fee",
+      flex: 1.5,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width:"100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
+    },
+    {
+      field: "other_expense",
+      headerName: "Other Expense",
+      flex: 1.5,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width:"100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
+    },
+    {
+      field: "owner_payment",
+      headerName: "Owner Payment",
+      flex: 1.5,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width:"100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
+    },
+
+  ];
+
+  const handleSelectionModelChange = (newRowSelectionModel) => {
+    console.log("ROHIT - newRowSelectionModel - ", newRowSelectionModel);
+    console.log("ROHIT - paymentDueResult - ", paymentDueResult);
+    console.log("ROHIT -  selectedRows - ", selectedRows);
+
+    const addedRows = newRowSelectionModel.filter((rowId) => !selectedRows.includes(rowId));
+    const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
+
+    let updatedRowSelectionModel = [...newRowSelectionModel];
+
+    console.log("ROHIT -  addedRows - ", addedRows);
+
+    if (addedRows.length > 0) {
+      // console.log("Added rows: ", addedRows);
+      let newPayments = [];
+      
+      addedRows.forEach((item, index) => {
+        console.log("ROHIT - item - ", item)
+        // const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
+        const addedPayment = paymentDueResult.find((row) => row.index === item);
+        console.log("ROHIT - addedPayment - ", addedPayment)
+
+        if (addedPayment) {
+          const relatedPayments = paymentDueResult.filter((row) => row.pur_group === addedPayment.pur_group);
+          console.log("ROHIT - relatedPayments - ", relatedPayments)
+
+          newPayments = [...newPayments, ...relatedPayments];
+          const relatedRowIds = relatedPayments.map((payment) => payment.index);
+          updatedRowSelectionModel = [...new Set([...updatedRowSelectionModel, ...relatedRowIds])];
+        }
+      });
+
+      // console.log("newPayments - ", newPayments);
+      setSelectedPayments((prevState) => {
+        return [...prevState, ...newPayments];
+      });
+    }
+
+    if (removedRows.length > 0) {
+      // console.log("Removed rows: ", removedRows);
+      let removedPayments = [];
+      removedRows.forEach((item, index) => {
+        let removedPayment = paymentDueResult.find((row) => row.index === item);
+
+        removedPayments.push(removedPayment);
+      });
+      // console.log("removedPayments - ", removedPayments);
+      setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.payment_uid)));
+    }
+    // setSelectedRows(newRowSelectionModel);
+    setSelectedRows(updatedRowSelectionModel);
+  };
+
+  if (paymentDueResult.length > 0) {
+    return (
+      <>
+        <DataGrid
+          rows={paymentDueResult}
+          columns={columnsList}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 100,
+              },
+              sorting: {
+                sortModel: [{ field: 'pur_group', sort: 'asc' }, { field: 'pur_payer', sort: 'asc' }]
+              }
+            },
+          }}          
+          // getRowId={(row) => row.purchase_uid}
+          getRowId={(row) => row.index}
+          pageSizeOptions={[10, 50, 100]}
+          checkboxSelection
+          // disableRowSelectionOnClick
+          rowSelectionModel={selectedRows}
+          onRowSelectionModelChange={handleSelectionModelChange}
+          sortModel={sortModel}
+          onSortModelChange={(newSortModel) => setSortModel(newSortModel)}
+        />
+        {/* {selectedRows.length > 0 && (
+          <div>Total selected amount: ${selectedRows.reduce((total, rowId) => total + parseFloat(paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due), 0)}</div>
+        )} */}
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems='center' sx={{ paddingTop: "15px" }}>
+          <Grid item xs={1} alignItems='center'></Grid>
+          <Grid item xs={7} alignItems='center'>
+            <Typography
+              sx={{
+                color: theme.typography.primary.blue,
+                fontWeight: theme.typography.medium.fontWeight,
+                fontSize: theme.typography.smallFont,
+                fontFamily: "Source Sans Pro",
+              }}
+            >
+              Total Paid: ${" "}
+              {selectedRows.reduce((total, selectedIndex) => {
+                // const payment = paymentDueResult.find((row) => row.index === selectedIndex);
+                const payment = paymentDueResultMap[selectedIndex];
+                if(payment){
+                  const amountDue = payment?.owner_payment;
+                  // const isExpense = payment.pur_cf_type === "expense";
+
+                  // Adjust the total based on whether the payment is an expense or revenue
+                  // return total + (isExpense ? -amountDue : amountDue);
+
+                  // if (payment.pur_payer.startsWith("110")) {
+                  //   return total - amountDue;
+                  // } else if (payment.pur_payer.startsWith("600")) {
+                        // return total + amountDue;
+                  // }
+
+                  return total + amountDue;
+                  // return total + 0;
+                }
+                return total + 0
+              }, 0)?.toFixed(2)}
+            </Typography>
+          </Grid>
+
+          <Grid item xs={3} alignItems='right'>
+            <Button
+                  sx={{
+                    width: "170px",
+                    backgroundColor: "#3D5CAC",
+                    textTransform: "none",
+                    "&:hover": {
+                      backgroundColor: "#3D5CAC",
+                    },
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const selectedPurchaseGroup = selectedPayments.map(payment => payment.purchase_group);
+                    console.log("selected purchase group -- ", selectedPurchaseGroup)
+                    navigate("/paymentProcessing", { state: { currentWindow: "PAY_BILLS", selectedRows: selectedPurchaseGroup } });
+                  }}
+                >
+                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#ffffff" }}>Pay Owner</Typography>
+                </Button>
+          </Grid>
+        </Grid>
+      </>
+    );
+  } else {
+    return <>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginBottom: '7px',
+          width: '100%',
+          height:"30px"
+        }}
+      >
+        <Typography
+          sx={{
+            color: "#A9A9A9",
+            fontWeight: theme.typography.primary.fontWeight,
+            fontSize: "15px",
+          }}
+        >
+          No Transactions
+        </Typography>
+      </Box>
+    </>;
+  }
+}
+
+function BalanceDetailsTable(props) {
+  // console.log("In BalanceDetailTable", props);
+  const [data, setData] = useState(props.data);
+  const selectedPurchaseGroup = props.selectedPurchaseRow || "";
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedPayments, setSelectedPayments] = useState([]);
+  const [paymentDueResult, setPaymentDueResult] = useState([]);
+
+  const [totalVerified, setTotalVerified] = useState(0);
+
+  const defaultSortModel = [
+    {
+      field: "pur_property_id", 
+      sort: "asc",
+    },
+  ];
+
+  const byPropertySortModel = [
+    {
+      field: "pur_property_id", 
+      sort: "asc",
+    },
+  ];
+
+  const byPayerSortModel = [
+    {
+      field: "paid_by", 
+      sort: "asc",
+    },
+  ];
+
+  const [sortModel, setSortModel] = useState([
+    {
+      field: "payment_uid", 
+      sort: "asc",
+    },
+  ]);
+
+
+
+  // useEffect(() => {
+  //   console.log("selectedPayments - ", selectedPayments);
+  // }, [selectedPayments]);
+
+  useEffect(() => {
+    setData(props.data);
+  }, [props.data]);
+
+  useEffect(() => {
+    props.setSelectedPayments( (prevState) => {
+        const updatedPaymentData = prevState?.filter(
+            (payment) => selectedPayments.some((selected) => selected.id === payment.id)
+        );
+
+        const newPayments = selectedPayments.filter(
+            (selected) => !updatedPaymentData.some((payment) => payment.id === selected.id)
+          );
+        return [
+            ...updatedPaymentData, 
+            ...newPayments,
+        ];
+    })
+  }, [selectedPayments]);
+
+  useEffect(() => {    
+    if(props.sortBy) {
+        switch(props.sortBy){
+            case "BY_PROPERTY":
+                setSortModel(byPropertySortModel);
+                break;
+            case "BY_PAYER":
+                setSortModel(byPayerSortModel);
+                break;
+            default:
+                setSortModel(defaultSortModel);
+                break;
+        }
+    }
+  }, [props.sortBy]);
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      setSelectedPayments(data);
+      let filteredRows = [];
+      if(props.selectedProperty != null || props.selectedProperty !== "ALL"){
+        filteredRows = data?.filter( item => item.pur_property_id === props.selectedProperty)
+      }else {
+        filteredRows = data;
+      }
+      
+      if(selectedPurchaseGroup && selectedPurchaseGroup !== ""){
+        setSelectedRows(
+          filteredRows
+            .filter((row) => row.pur_group === selectedPurchaseGroup)
+            .map((row) => row.payment_uid) 
+        );
+      
+      }else{
+        setSelectedRows(filteredRows.map((row) => row.payment_uid));
+      }
+
+      setPaymentDueResult(
+        data.map((item) => ({
+          ...item,
+          pur_amount_due: parseFloat(item.pur_amount_due),
+        }))
+      );
+    }
+  }, [data]);
+
+  useEffect(() => {
+    // console.log("selectedRows - ", selectedRows);
+    const total = selectedRows?.reduce((total, rowId) => {
+      const payment = paymentDueResult.find((row) => row.payment_uid === rowId);
+      // console.log("payment - ", payment);
+      if (payment) {
+        const payAmount = parseFloat(payment.pay_amount);
+        // const isExpense = payment.pur_cf_type === "expense";
+
+        // Adjust the total based on whether the payment is an expense or revenue
+        return total + payAmount;
+      } else {
+        return total + 0;
+      }
+    }, 0);
+    setTotalVerified(total);
+  }, [selectedRows]);
+
+  const getFontColor = (ps_value) => {
+    if (ps_value === "PAID") {
+      return theme.typography.primary.blue;
+    } else if (ps_value === "PAID LATE") {
+      return theme.typography.primary.aqua;
+    } else {
+      return theme.typography.primary.red; // UNPAID OR PARTIALLY PAID OR NULL
+    }
+  };
+
+    
+
+  const columnsList = [
+    
+    {
+      field: "payment_date",
+      headerName: "Payment Date",
+      flex: 5,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value? params.value.split(" ")[0] : "-"}</Box>,
+    },
+    {
+      field: "purchase_type",
+      headerName: "Purchase Type",
+      flex: 2,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    // {
+    //   field: "pur_notes",
+    //   headerName: "Notes",
+    //   flex: 2,
+    //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    // },
+    // {
+    //   field: "payment_date",
+    //   headerName: "Payment Date",
+    //   flex: 2,
+    //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    // },
+    // {
+    //   field: "paid_by",
+    //   headerName: "Paid By",
+    //   flex: 2,
+    //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    // },    
+    // {
+    //   field: "pur_amount_due",
+    //   headerName: "Amount Due",
+    //   flex: 2,
+    //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    // },
+    {
+      field: "pay_amount",
+      headerName: "Pay Amount",
+      flex: 2,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },   
+    {
+      field: "total_paid",
+      headerName: "Total Paid",
+      flex: 3,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+  }, 
+    // {
+    //     field: "payment_verify",
+    //     headerName: "Payment Verify",
+    //     flex: 2,
+    //     renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    // },
+    // {
+    //     field: "pur_group",
+    //     headerName: "Purchase Group",
+    //     flex: 2,
+    //     renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    // },
+    // {
+    //     field: "pur_leaseFees_id",
+    //     headerName: "Purchase leaseFees ID",
+    //     flex: 2,
+    //     renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    // },
+    // {
+    //     field: "pur_bill_id",
+    //     headerName: "Purchase Bill ID",
+    //     flex: 2,
+    //     renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    // },
+  ];
+
+  const handleSelectionModelChange = (newRowSelectionModel) => {
+    // console.log("newRowSelectionModel - ", newRowSelectionModel);
+
+    const addedRows = newRowSelectionModel.filter((rowId) => !selectedRows.includes(rowId));
+    const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
+
+    console.log("ROHIT - addedRows - ", addedRows);
+
+    let updatedRowSelectionModel = [...newRowSelectionModel];
+
+    if (addedRows.length > 0) {
+      // console.log("Added rows: ", addedRows);
+      let newPayments = [];
+
+      addedRows.forEach((item, index) => {
+        // console.log("item - ", item);
+        // const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
+        const addedPayment = paymentDueResult.find((row) => row.payment_uid === item);
+
+        if (addedPayment) {
+          // const relatedPayments = paymentDueResult.filter((row) => row.payment_intent === addedPayment.payment_intent);
+          const relatedPayments = paymentDueResult.filter((row) => (row.paid_by + row.payment_date + row.payment_intent) === (addedPayment.paid_by + addedPayment.payment_date + addedPayment.payment_intent));
+
+          newPayments = [...newPayments, ...relatedPayments];
+          const relatedRowIds = relatedPayments.map((payment) => payment.payment_uid);
+          updatedRowSelectionModel = [...new Set([...updatedRowSelectionModel, ...relatedRowIds])];
+        }
+      });
+
+      // console.log("newPayments - ", newPayments);
+      setSelectedPayments((prevState) => {
+        return [...prevState, ...newPayments];
+      });
+    }
+
+    if (removedRows.length > 0) {
+      // console.log("Removed rows: ", removedRows);
+      let removedPayments = [];
+      removedRows.forEach((item, index) => {
+        let removedPayment = paymentDueResult.find((row) => row.payment_uid === item);
+
+        removedPayments.push(removedPayment);
+      });
+      // console.log("removedPayments - ", removedPayments);
+      setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.payment_uid)));
+    }
+    // setSelectedRows(newRowSelectionModel);
+    setSelectedRows(updatedRowSelectionModel);
+  };
+
+  const handleVerifyPayments = async () => {
+    // console.log("In handleVerifyPayments");
+
+    // console.log("selectedPayments - ", selectedPayments);
+    const formData = new FormData();
+    const verifiedList = selectedPayments?.map((payment) => payment.payment_uid);
+    // console.log("verifiedList - ", verifiedList);
+    formData.append("payment_uid", JSON.stringify(verifiedList));
+    formData.append("payment_verify", "Verified");
+
+    // return;
+
+    try {
+      const response = await fetch(`${APIConfig.baseURL.dev}/paymentVerification`, {
+        method: "PUT",
+        body: formData,
+      });
+
+      const responseData = await response.json();
+      console.log(responseData);
+      if (response.status === 200) {
+        console.log("successfuly verified selected payments");
+      } else {
+        console.error("Could not update verification for selected payments ");
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+    props.fetchPaymentsData();
+  };
+
+  if (paymentDueResult.length > 0) {
+    // console.log("Passed Data ", paymentDueResult);
+    return (
+      <>
+        <DataGrid
+          rows={paymentDueResult}
+          columns={columnsList}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 100,
+              },
+            },
+          }}
+          getRowId={(row) => row.payment_uid}
+          // getRowId={(row) => {
+          //   const rowId = row.payment_uid;
+          //   // console.log("Hello Globe");
+          //   // console.log("Row ID:", rowId);
+          //   // console.log("Row Data:", row); // Log the entire row data
+          //   // console.log("Row PS:", row.ps); // Log the ps field
+          //   return rowId;
+          // }}
+          pageSizeOptions={[10, 50, 100]}
+          checkboxSelection
+          disableRowSelectionOnClick
+          rowSelectionModel={selectedRows}
+          onRowSelectionModelChange={handleSelectionModelChange}
+          onRowClick={(row) => {
+            // handleOnClickNavigateToMaintenance(row);
+          }}
+            sortModel={sortModel}
+
+          //   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
+        />
+        {/* {selectedRows.length > 0 && (
+          <div>Total selected amount: ${selectedRows.reduce((total, rowId) => total + parseFloat(paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due), 0)}</div>
+        )} */}
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems='center' sx={{ paddingTop: "15px" }}>
+          <Grid item xs={1} alignItems='center'></Grid>
+          <Grid item xs={7} alignItems='center' display={"flex"} flexDirection={"row"}>
+            <Typography
+              sx={{
+                color: theme.typography.primary.blue,
+                // color: paymentDueResult.ps === "UNPAID" ? "green" : "red", // Set color based on condition
+                fontWeight: theme.typography.medium.fontWeight,
+                fontSize: theme.typography.smallFont,
+                fontFamily: "Source Sans Pro",
+              }}
+            >
+              Total Verified:
+            </Typography>
+            <Typography
+              sx={{
+                color: theme.typography.primary.blue,
+                fontWeight: theme.typography.medium.fontWeight,
+                fontSize: theme.typography.smallFont,
+                fontFamily: "Source Sans Pro",
+                marginLeft: "20px"
+              }}
+            >
+              {/* $ {selectedRows.reduce((total, rowId) => total + paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due, 0)} */}$ {totalVerified}
+            </Typography>
+          </Grid>
+
+          <Grid item xs={3} alignItems='right'>
+          {/* <Button
+              variant='outlined'
+              id='complete_verification'
+              // className={classes.button}
+              sx={{
+                // height: "100%",
+                // width: "60%",
+                backgroundColor: "#3D5CAC",
+                color: "#FFFFFF",
+                fontSize: "15px",
+                fontWeight: "bold",
+                textTransform: "none",
+                marginBottom: "10px",
+                borderRadius: "5px",
+                "&:hover": {
+                  backgroundColor: "#160449",
+                },
+              }}
+              // sx={{
+
+              // }}
+              onClick={(e) => {
+                //   e.stopPropagation();
+                handleVerifyPayments();
+              }}
+            >
+              Complete Verification
+            </Button> */}
+            <Button
+              sx={{
+                width: "170px",
+                backgroundColor: "#3D5CAC",
+                textTransform: "none",
+                "&:hover": {
+                  backgroundColor: "#3D5CAC",
+                },
+              }}
+              onClick={() => {
+                handleVerifyPayments();
+              }}
+            >
+              <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#FFFFFF" }}>Verify</Typography>
+            </Button>
+          </Grid>
+        </Grid>
+      </>
+    );
+  } else {
+    return <>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginBottom: '7px',
+          width: '100%',
+          height:"30px"
+        }}
+      >
+        <Typography
+          sx={{
+            color: "#A9A9A9",
+            fontWeight: theme.typography.primary.fontWeight,
+            fontSize: "15px",
+          }}
+        >
+          No Verification Remaining 
+        </Typography>
+      </Box>
+  </>;;
+  }
+}
+
+
 
 export default ManagerProfitability;

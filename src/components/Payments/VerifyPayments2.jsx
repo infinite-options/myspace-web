@@ -97,14 +97,14 @@ export default function VerifyPayments2(props) {
     try {
       const res = await axios.get(`${APIConfig.baseURL.dev}/paymentVerification/${getProfileId()}`);
       const moneyPayableData = res.data.result;
-      // console.log("Verfiy Payment GET Results: ", moneyPayableData);
+      console.log("Verfiy Payment GET Results: ", moneyPayableData);
 
       setMoneyPayable(moneyPayableData);
       totalMoneyPayable(moneyPayableData);
       const groupedByProperty = groupDataByKey(moneyPayableData, "pur_property_id");
       const groupedByPayer = groupDataByKey(moneyPayableData, "pur_payer");
       const groupedByPaymentIntent = groupDataByKey(moneyPayableData, "payment_intent");
-      // console.log("ROHIT - groupedByProperty - ", groupedByProperty);
+      console.log("ROHIT - groupedByProperty - ", groupedByProperty);
       // console.log("ROHIT - groupedByPayer - ", groupedByPayer);
       setDataByProperty(groupedByProperty);
       setDataByPayer(groupedByPayer);

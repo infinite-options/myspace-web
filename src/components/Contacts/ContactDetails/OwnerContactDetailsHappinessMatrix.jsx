@@ -16,7 +16,6 @@ import AddressIcon from "../../Property/addressIconDark.png";
 import maintenanceIcon from "../../Property/maintenanceIcon.png";
 import { maskSSN, maskEIN } from "../../utils/privacyMasking";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import ReturningUser from "../../Onboarding/ReturningUser";
 import CryptoJS from "crypto-js";
 
 // function maskSSNnew(ssn) {
