@@ -154,6 +154,7 @@ const TenantDashboard = () => {
 
   useEffect(() => {
     fetchData();
+    //fetchCashflowDetails();
     setReload(false);
   }, [reload]);
 
@@ -931,9 +932,9 @@ const LeaseDetails = ({ leaseDetails }) => {
     setIsFlipped(!isFlipped);
   };
 
-  const isRejected = leaseDetails?.lease_status === "REFUSED";
+  const isRejected = leaseDetails?.lease_status === "REFUSED" || leaseDetails?.lease_status === "NEW";
 
-  console.log("lease details", leaseDetails);
+  // console.log("lease details", leaseDetails);
 
   return (
     <Paper
