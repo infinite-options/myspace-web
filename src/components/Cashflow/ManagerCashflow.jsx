@@ -151,6 +151,7 @@ export default function ManagerCashflow() {
   const [getSortedExpectedTotalByMapping, setGetSortedExpectedTotalByMapping] = useState({})
   const [paymentVerificationData, setPaymentVerificationData] = useState([])
   const [paymentVerificationByProperty, setPaymentVerificationByProperty] = useState({})
+  const [totalRevenueData, setTotalRevenueData] = useState({})
 
   //ROHIT - remove this function
   // async function fetchCashflow(userProfileId, month, year) {
@@ -1159,15 +1160,17 @@ export default function ManagerCashflow() {
 
         if (item.pur_payer.startsWith("110")) {
           totalActual = parseFloat(item.actual) || 0;
+          totalExpected = parseFloat(item.expected) || 0;
         } else {
           totalActual = 0;
+          totalExpected = 0
         }
       
-        if (item.pur_payer.startsWith("600")) {
-          totalExpected = -(parseFloat(item.expected) || 0);
-        } else {
-          totalExpected = parseFloat(item.expected) || 0;
-        }
+        // if (item.pur_payer.startsWith("600")) {
+        //   totalExpected = -(parseFloat(item.expected) || 0);
+        // } else {
+        //   totalExpected = parseFloat(item.expected) || 0;
+        // }
       }
       
     
@@ -1191,6 +1194,20 @@ export default function ManagerCashflow() {
     }, {});
 
     setRevenueDataForManager(revenueDataForManagerByProperty)
+
+    const totalrevenueData = revenueDataForManagerByProperty
+    ? Object.values(revenueDataForManagerByProperty).reduce(
+        (acc, property) => {
+          acc.totalExpected += property.totalExpected;
+          acc.totalActual += property.totalActual;
+          return acc;
+        },
+        { totalExpected: 0, totalActual: 0 }
+      )
+    : { totalExpected: 0, totalActual: 0 };
+
+      
+    setTotalRevenueData(totalrevenueData)
 
     console.log("revenue data for manager by property - ", revenueDataForManagerByProperty)
 
@@ -1434,8 +1451,15 @@ export default function ManagerCashflow() {
         payoutItems: [],
       };
 
-      const totalRentExpected = rentData.totalExpected || 0;
+      // const totalRentExpected = rentData.totalExpected || 0;
       // const totalRentActual = rentData.totalActual || 0;
+      const totalRentExpected = rentData.rentItems.reduce((total, item) => {
+        if (item.pur_payer && item.pur_payer.startsWith("110")) {
+          return total + parseFloat(item.expected || 0);
+        }
+        return total;
+      }, 0);
+
       const totalRentActual = rentData.rentItems.reduce((total, item) => {
         if (item.pur_payer && item.pur_payer.startsWith("110")) {
           return total + parseFloat(item.actual || 0);
@@ -1460,8 +1484,9 @@ export default function ManagerCashflow() {
           actual: (parseFloat(item.actual) || 0.00) * -1,     
         }));
 
-      const expectedProfit = totalRentExpected + totalPayoutExpected;
+      // const expectedProfit = totalRentExpected + totalPayoutExpected;
       // const actualProfit = totalRentActual + totalPayoutActual;
+      const expectedProfit = totalRentExpected;
       const actualProfit = totalRentActual;
       
       allProfitItems.push(...profitRentItems)
@@ -1500,7 +1525,7 @@ export default function ManagerCashflow() {
 
         allProfitItems.push(...profitPayoutItems)
 
-        const expectedProfit = totalRentExpected + totalPayoutExpected; 
+        const expectedProfit = totalRentExpected; 
         // const actualProfit = totalRentActual + totalPayoutActual;
         const actualProfit = totalRentActual;       
 
@@ -1961,6 +1986,7 @@ export default function ManagerCashflow() {
                 totalDeposit={totalDeposit}
 
                 revenueDataForManager={revenueDataForManager}
+                totalRevenueData={totalRevenueData}
 
                 selectedProperty={selectedProperty}
 

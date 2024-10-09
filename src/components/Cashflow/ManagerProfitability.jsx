@@ -85,7 +85,8 @@ const ManagerProfitability = ({
   totalDepositByProperty,
   revenueDataForManager,
   selectedProperty,
-  fecthPaymentVerification
+  fecthPaymentVerification,
+  totalRevenueData
 }) => {
   const { user, getProfileId, selectedRole } = useUser();
   const navigate = useNavigate();
@@ -1831,7 +1832,36 @@ const ManagerProfitability = ({
           )}
 
           {tab === "view" && (<>
-            {revenueDataForManager &&
+            <Accordion
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  boxShadow: "none",
+                }}
+                expanded={profitsExpanded}
+                onChange={() => setProfitsExpanded((prevState) => !prevState)}
+              >
+                <Grid container item xs={12}>
+                  <Grid container justifyContent='flex-start' item xs={8}>
+                    <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month}</Typography>
+                      </AccordionSummary>
+                    </Grid>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                      ${totalRevenueData && totalRevenueData?.totalExpected ? totalRevenueData?.totalExpected?.toFixed(2) : "0.00"}
+                    </Typography>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                      ${totalRevenueData && totalRevenueData?.totalActual ? totalRevenueData?.totalActual?.toFixed(2) : "0.00"}
+                    </Typography>
+                  </Grid>
+                </Grid>
+
+                <AccordionDetails>
+                  {revenueDataForManager &&
                     Object.keys(revenueDataForManager)?.map((propertyUID, index) => {
                       const property = revenueDataForManager[propertyUID];
                       // console.log("property - ", property);
@@ -1949,7 +1979,11 @@ const ManagerProfitability = ({
                           </Accordion>
                         </>
                       );
-                    })}
+                    })
+                  }
+                </AccordionDetails>
+
+              </Accordion>
           </>)}
         </Paper>
       </Box>
