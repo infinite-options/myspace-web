@@ -501,7 +501,7 @@ const ManagerProfitability = ({
   }
 
   const GetNewDataGrid = (data) => {
-    const filteredData = data?.filter((item) => item.payment_status === "UNPAID")
+    const filteredData = data?.filter((item) => item.payment_status === "UNPAID" || item.payment_status === "PARTIALLY PAID")
 
     const groupedData = filteredData.reduce((acc, item) => {
       if (!acc[item.pur_group]) {
@@ -548,7 +548,12 @@ const ManagerProfitability = ({
           purchase_date = item.purchase_date;
           month = item.cf_month;
           year = item.cf_year;
-          expected += parseFloat(item.expected);
+          if(item.payment_status === "PARTIALLY PAID"){
+            expected += parseFloat(item.expected - item.actual)
+          }else{
+
+            expected += parseFloat(item.expected);
+          }
         }
     
         else if (pur_payer.startsWith("110") && pur_type === "Management") {
@@ -585,77 +590,6 @@ const ManagerProfitability = ({
       return acc;
     }, []);
 
-    // const filteredData = useMemo(() => {
-    //   return data?.filter((item) => item.payment_status === "UNPAID");
-    // }, [data]);
-  
-    // const groupedData = useMemo(() => {
-    //   return filteredData.reduce((acc, item) => {
-    //     if (!acc[item.pur_group]) {
-    //       acc[item.pur_group] = [];
-    //     }
-    //     acc[item.pur_group].push(item);
-    //     return acc;
-    //   }, {});
-    // }, [filteredData]);
-  
-    // console.log("group data - ", groupedData, " for - ", data);
-  
-    // const result = useMemo(() => {
-    //   return Object.keys(groupedData).reduce((acc, group) => {
-    //     let expected = 0;
-    //     let management_fee = 0;
-    //     let other_expense = 0;
-  
-    //     const has350Payer = groupedData[group].some(item => item.pur_payer.startsWith("350"));
-  
-    //     if (!has350Payer) {
-    //       return acc;
-    //     }
-  
-    //     let allTransactions = [];
-    //     let purchase_ids = [];
-    //     let purchase_group;
-    //     let purchase_type;
-    //     let purchase_date;
-  
-    //     groupedData[group].forEach(item => {
-    //       const pur_payer = item.pur_payer;
-    //       const pur_type = item.purchase_type;
-  
-    //       if (pur_payer.startsWith("350")) {
-    //         purchase_type = item.purchase_type;
-    //         purchase_date = item.purchase_date;
-    //         expected += parseFloat(item.expected);
-    //       } else if (pur_payer.startsWith("110") && pur_type === "Management") {
-    //         management_fee += parseFloat(item.expected);
-    //       } else if (pur_payer.startsWith("110") && pur_type !== "Management") {
-    //         other_expense += parseFloat(item.expected);
-    //       }
-  
-    //       purchase_ids.push(...JSON.parse(item.purchase_ids));
-    //       allTransactions.push(item);
-    //       purchase_group = item.pur_group;
-    //     });
-  
-    //     const owner_payment = parseFloat(expected - management_fee - other_expense);
-  
-    //     acc.push({
-    //       pur_group: group,
-    //       expected,
-    //       management_fee,
-    //       other_expense,
-    //       owner_payment,
-    //       purchase_type: purchase_type,
-    //       purchase_ids: JSON.stringify(purchase_ids),
-    //       allTransactions,
-    //       purchase_group,
-    //       purchase_date: purchase_date
-    //     });
-  
-    //     return acc;
-    //   }, []);
-    // }, [groupedData]);
 
     const rows = getNewRowWithIds(result);
 
@@ -2383,6 +2317,12 @@ function TransactionsTable(props) {
       if (allPaid) {
         return acc;
       }
+
+      const hasPartiallyPaid = groupedData[group].some(item => item.payment_status === "PARTIALLY PAID");
+
+      if(hasPartiallyPaid){
+        return acc;
+      }
     
       let allTransactions = []
       let purchase_ids = []
@@ -2823,7 +2763,8 @@ function BalanceDetailsTable(props) {
 
   useEffect(() => {
     if (data && data.length > 0) {
-      setSelectedPayments(data);
+      // setSelectedPayments(data);
+      setSelectedPayments([])
       let filteredRows = [];
       if(props.selectedProperty != null || props.selectedProperty !== "ALL"){
         filteredRows = data?.filter( item => item.pur_property_id === props.selectedProperty)
@@ -2968,6 +2909,8 @@ function BalanceDetailsTable(props) {
     const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
 
     console.log("ROHIT - addedRows - ", addedRows);
+    console.log("remove rows - ", removedRows);
+    console.log("before selected row do anything - ", selectedPayments)
 
     let updatedRowSelectionModel = [...newRowSelectionModel];
 
@@ -3007,6 +2950,8 @@ function BalanceDetailsTable(props) {
       // console.log("removedPayments - ", removedPayments);
       setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.payment_uid)));
     }
+
+    console.log("selected payments after remove row - ", selectedPayments)
     // setSelectedRows(newRowSelectionModel);
     setSelectedRows(updatedRowSelectionModel);
   };
@@ -3014,7 +2959,7 @@ function BalanceDetailsTable(props) {
   const handleVerifyPayments = async () => {
     // console.log("In handleVerifyPayments");
 
-    // console.log("selectedPayments - ", selectedPayments);
+    console.log("before pasing it selectedPayments - ", selectedPayments);
     const formData = new FormData();
     const verifiedList = selectedPayments?.map((payment) => payment.payment_uid);
     // console.log("verifiedList - ", verifiedList);
@@ -3023,6 +2968,7 @@ function BalanceDetailsTable(props) {
 
     // return;
 
+    // for testing
     try {
       const response = await fetch(`${APIConfig.baseURL.dev}/paymentVerification`, {
         method: "PUT",

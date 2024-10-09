@@ -898,13 +898,13 @@ function TransactionsTable(props) {
 
         console.log("selected rows - ", props.selectedRowsForTransaction, " calling for property - ", data[0].pur_property_id)
 
-        // setSelectedRows(filtereRow);
-        setSelectedRows((prevSelectedRows) => {
-          const combinedRows = [...prevSelectedRows, ...filtereRow];
-          // Remove duplicates if needed
-          console.log("previous row - ", prevSelectedRows)
-          return Array.from(new Set(combinedRows));
-        });
+        setSelectedRows(filtereRow);
+        // setSelectedRows((prevSelectedRows) => {
+        //   const combinedRows = [...prevSelectedRows, ...filtereRow];
+        //   // Remove duplicates if needed
+        //   console.log("previous row - ", prevSelectedRows)
+        //   return Array.from(new Set(combinedRows));
+        // });
 
         console.log("after set selected rows inside data useeffect - ", selectedRows)
       
