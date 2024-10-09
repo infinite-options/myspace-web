@@ -228,8 +228,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                 leaseApplicationFormData.append('tenant_uid', tenantWithId[i].tenant_uid);
                 leaseApplicationFormData.append('lease_referred', currentLease.lease_referred)
                 leaseApplicationFormData.append("lease_move_in_date", currentLease.lease_move_in_date);
-                leaseApplicationFormData.append("property_listed_rent", newRent);
-                leaseApplicationFormData.append("frequency", newFreq);
+                // leaseApplicationFormData.append("property_listed_rent", newRent);
+                // leaseApplicationFormData.append("frequency", newFreq);
                 const feesJSON = JSON.stringify(leaseFees)
                 leaseApplicationFormData.append("lease_fees", feesJSON);
 

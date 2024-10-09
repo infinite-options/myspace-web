@@ -263,7 +263,7 @@ const TenantDetails = ({ tenantWithId, setTenantWithId }) => {
                             },
                             '& .MuiDataGrid-cell': {
                                 color: "#160449",
-                                fontWeight: "bold",
+                                // fontWeight: "bold",
                             },
                         }}
                     />

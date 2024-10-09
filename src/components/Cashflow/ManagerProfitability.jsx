@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo  } from "react";
 import {
   Paper,
   DialogContent,
@@ -395,7 +395,54 @@ const ManagerProfitability = ({
     );
   };
 
-  const newTransactionColumn = [
+  // const newTransactionColumn = [
+  //   {
+  //     field: "purchase_date",
+  //     headerName: "Purchase Date",
+  //     flex: 1.5,
+  //     renderCell: (params) => <span>{params.row.purchase_date !== null ? params.row.purchase_date.split(" ")[0] : "-"}</span>,
+  //     renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+  //   },
+  //   {
+  //     field: "purchase_type",
+  //     headerName: "Purchase Type",
+  //     flex: 1.5,
+  //     renderCell: (params) => <span>{params.row.purchase_type !== null ? params.row.purchase_type : "-"}</span>,
+  //     renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+  //   },
+  //   {
+  //     field: "expected",
+  //     headerName: "Expected",
+  //     flex: 1,
+  //     renderCell: (params) => (
+  //       <span style={{ textAlign: "right", display: "block" }}>$ {params.row.expected !== null ? parseFloat(params.row.expected).toFixed(2) : parseFloat(0).toFixed(2)}</span>
+  //     ),
+  //     renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+  //   },
+  //   {
+  //     field: "payment_status",
+  //     headerName: "Payment Status",
+  //     flex: 1.5,
+  //     renderCell: (params) => <span>{params.row.payment_status !== null ? params.row.payment_status : "-"}</span>,
+  //     renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+  //   },
+  // ]
+
+  const newTransactionColumn = [    
+    {
+      field: "purchase_type",
+      headerName: "Purchase Type",
+      flex: 1.5,
+      renderCell: (params) => <Box>{params.value}</Box>,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "purchase_group",
+      headerName: "Purchase Group",
+      flex: 1.5,
+      renderCell: (params) => <Box sx={{textAlign: "right", width:"100%" }}>{params.value}</Box>,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
     {
       field: "purchase_date",
       headerName: "Purchase Date",
@@ -404,35 +451,34 @@ const ManagerProfitability = ({
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
-      field: "purchase_type",
-      headerName: "Purchase Type",
-      flex: 1.5,
-      renderCell: (params) => <span>{params.row.purchase_type !== null ? params.row.purchase_type : "-"}</span>,
-      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
-    },
-    {
       field: "expected",
       headerName: "Expected",
-      flex: 1,
-      renderCell: (params) => (
-        <span style={{ textAlign: "right", display: "block" }}>$ {params.row.expected !== null ? parseFloat(params.row.expected).toFixed(2) : parseFloat(0).toFixed(2)}</span>
-      ),
+      flex: 1.5,
+      renderCell: (params) => <Box sx={{textAlign: "right", width:"100%"}}>{parseFloat(params.value).toFixed(2)}</Box>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
-      field: "payment_status",
-      headerName: "Payment Status",
+      field: "owner_payment",
+      headerName: "Owner Payment",
       flex: 1.5,
-      renderCell: (params) => <span>{params.row.payment_status !== null ? params.row.payment_status : "-"}</span>,
+      renderCell: (params) => <Box sx={{textAlign: "right", width:"100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
-  ]
+    {
+      field: "management_fee",
+      headerName: "Management Fee",
+      flex: 1.5,
+      renderCell: (params) => <Box sx={{textAlign: "right", width:"100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+  ];
 
   const getNewRowWithIds = (data) => {
-    const revenueData = data?.filter((item) => item.pur_payer.startsWith("350"))
-    const filteredData = revenueData?.filter((item) => item.payment_status === "UNPAID")
+    // const revenueData = data?.filter((item) => item.pur_payer.startsWith("350"))
+    
 
-    const rowsId = filteredData?.map((row, index) => ({
+
+    const rowsId = data?.map((row, index) => ({
       ...row,
       id: row.id ? index : index,
     }));
@@ -440,8 +486,159 @@ const ManagerProfitability = ({
     return rowsId;
   }
 
-  const getNewDataGrid = (data) => {
-    const rows = getNewRowWithIds(data);
+  const GetNewDataGrid = (data) => {
+    const filteredData = data?.filter((item) => item.payment_status === "UNPAID")
+
+    const groupedData = filteredData.reduce((acc, item) => {
+      if (!acc[item.pur_group]) {
+        acc[item.pur_group] = [];
+      }
+      acc[item.pur_group].push(item);
+      return acc;
+    }, {});
+
+    // console.log("group data - ", groupedData, " for - ", data);
+
+    const result = Object.keys(groupedData).reduce((acc, group) => {
+      let expected = 0;
+      let management_fee = 0;
+      let other_expense = 0;
+    
+      // Check if all items in this group have 'payment_status' === "PAID"
+      // const allPaid = groupedData[group].every(item => item.purchase_type === "Deposit");
+      const has350Payer = groupedData[group].some(item => item.pur_payer.startsWith("350"));
+    
+      // If all items are paid, skip this group
+      // if (allPaid) {
+      //   return acc;
+      // }
+
+      if (!has350Payer) {
+        return acc;
+      }
+    
+    
+      let allTransactions = []
+      let purchase_ids = []
+      let purchase_group;
+      let purchase_type;
+      let purchase_date;
+
+      groupedData[group].forEach(item => {
+        const pur_payer = item.pur_payer;
+        const pur_type = item.purchase_type;
+    
+        if (pur_payer.startsWith("350")) {
+          purchase_type = item.purchase_type;
+          purchase_date = item.purchase_date
+          expected += parseFloat(item.expected);
+        }
+    
+        else if (pur_payer.startsWith("110") && pur_type === "Management") {
+          management_fee += parseFloat(item.expected);
+        }
+    
+        else if (pur_payer.startsWith("110") && pur_type !== "Management") {
+          other_expense += parseFloat(item.expected);
+        }
+
+        purchase_ids.push(...JSON.parse(item.purchase_ids))
+        allTransactions.push(item)
+        purchase_group = item.pur_group;
+      });
+    
+      const owner_payment = parseFloat(expected - management_fee - other_expense);
+    
+      // Push the aggregated object for this group into the result if it passes the conditions
+      acc.push({
+        pur_group: group,
+        expected,
+        management_fee,
+        other_expense,
+        owner_payment,
+        purchase_type: purchase_type,
+        purchase_ids : JSON.stringify(purchase_ids),
+        allTransactions,
+        purchase_group,
+        purchase_date : purchase_date
+      });
+    
+      return acc;
+    }, []);
+
+    // const filteredData = useMemo(() => {
+    //   return data?.filter((item) => item.payment_status === "UNPAID");
+    // }, [data]);
+  
+    // const groupedData = useMemo(() => {
+    //   return filteredData.reduce((acc, item) => {
+    //     if (!acc[item.pur_group]) {
+    //       acc[item.pur_group] = [];
+    //     }
+    //     acc[item.pur_group].push(item);
+    //     return acc;
+    //   }, {});
+    // }, [filteredData]);
+  
+    // console.log("group data - ", groupedData, " for - ", data);
+  
+    // const result = useMemo(() => {
+    //   return Object.keys(groupedData).reduce((acc, group) => {
+    //     let expected = 0;
+    //     let management_fee = 0;
+    //     let other_expense = 0;
+  
+    //     const has350Payer = groupedData[group].some(item => item.pur_payer.startsWith("350"));
+  
+    //     if (!has350Payer) {
+    //       return acc;
+    //     }
+  
+    //     let allTransactions = [];
+    //     let purchase_ids = [];
+    //     let purchase_group;
+    //     let purchase_type;
+    //     let purchase_date;
+  
+    //     groupedData[group].forEach(item => {
+    //       const pur_payer = item.pur_payer;
+    //       const pur_type = item.purchase_type;
+  
+    //       if (pur_payer.startsWith("350")) {
+    //         purchase_type = item.purchase_type;
+    //         purchase_date = item.purchase_date;
+    //         expected += parseFloat(item.expected);
+    //       } else if (pur_payer.startsWith("110") && pur_type === "Management") {
+    //         management_fee += parseFloat(item.expected);
+    //       } else if (pur_payer.startsWith("110") && pur_type !== "Management") {
+    //         other_expense += parseFloat(item.expected);
+    //       }
+  
+    //       purchase_ids.push(...JSON.parse(item.purchase_ids));
+    //       allTransactions.push(item);
+    //       purchase_group = item.pur_group;
+    //     });
+  
+    //     const owner_payment = parseFloat(expected - management_fee - other_expense);
+  
+    //     acc.push({
+    //       pur_group: group,
+    //       expected,
+    //       management_fee,
+    //       other_expense,
+    //       owner_payment,
+    //       purchase_type: purchase_type,
+    //       purchase_ids: JSON.stringify(purchase_ids),
+    //       allTransactions,
+    //       purchase_group,
+    //       purchase_date: purchase_date
+    //     });
+  
+    //     return acc;
+    //   }, []);
+    // }, [groupedData]);
+
+    const rows = getNewRowWithIds(result);
 
     return (
       <DataGrid
@@ -1761,7 +1958,7 @@ const ManagerProfitability = ({
                                   <Typography sx={{ fontWeight: 'bold', color: "#160449" }}>
                                     Unpaid Rent
                                   </Typography>
-                                  {getNewDataGrid(property?.rentItems)}
+                                  {GetNewDataGrid(property?.rentItems)}
                                 </Grid>
 
                                 {/* Unverified Section */}
@@ -1770,7 +1967,7 @@ const ManagerProfitability = ({
                                     Unverified
                                   </Typography>
                                   <BalanceDetailsTable 
-                                    data={property?.payments} 
+                                    data={property?.payments !== undefined ? property?.payments : []} 
                                     selectedPurchaseRow={""} 
                                     setPaymentData={setPaymentData} 
                                     setSelectedPayments={setSelectedPayments} 
@@ -2171,22 +2368,21 @@ function TransactionsTable(props) {
       let allTransactions = []
       let purchase_ids = []
       let purchase_group;
+      let purchase_type;
 
       groupedData[group].forEach(item => {
         const pur_payer = item.pur_payer;
         const pur_type = item.purchase_type;
     
-        // Assign to 'received_amt' if pur_payer starts with '350'
         if (pur_payer.startsWith("350")) {
+          purchase_type = item.purchase_type;
           received_amt += parseFloat(item.actual);
         }
     
-        // Assign to 'management_fee' if pur_payer starts with '110' and pur_type is "Management"
         else if (pur_payer.startsWith("110") && pur_type === "Management") {
           management_fee += parseFloat(item.expected);
         }
     
-        // Assign to 'other_expense' if pur_payer starts with '110' and pur_type is NOT "Management"
         else if (pur_payer.startsWith("110") && pur_type !== "Management") {
           other_expense += parseFloat(item.expected);
         }
@@ -2196,7 +2392,6 @@ function TransactionsTable(props) {
         purchase_group = item.pur_group;
       });
     
-      // Calculate 'owner_payment' as received_amt - management_fee - other_expense
       const owner_payment = parseFloat(received_amt - management_fee - other_expense);
     
       // Push the aggregated object for this group into the result if it passes the conditions
@@ -2206,7 +2401,7 @@ function TransactionsTable(props) {
         management_fee,
         other_expense,
         owner_payment,
-        purchase_type: "Rent",
+        purchase_type: purchase_type,
         purchase_ids : JSON.stringify(purchase_ids),
         allTransactions,
         purchase_group
@@ -2311,15 +2506,15 @@ function TransactionsTable(props) {
   const columnsList = [    
     {
       field: "purchase_type",
-      headerName: "Revenue",
+      headerName: "Purchase Type",
       flex: 1.5,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
-      field: "purchase_ids",
-      headerName: "Purchase Ids",
+      field: "purchase_group",
+      headerName: "Purchase Group",
       flex: 1.5,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width:"100%" }}>{JSON.parse(params.value)}</Box>,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width:"100%" }}>{params.value}</Box>,
     },
     {
       field: "received_amt",
@@ -2328,24 +2523,17 @@ function TransactionsTable(props) {
       renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width:"100%"}}>{parseFloat(params.value).toFixed(2)}</Box>,
     },
     {
-      field: "management_fee",
-      headerName: "Management Fee",
-      flex: 1.5,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width:"100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
-    },
-    {
-      field: "other_expense",
-      headerName: "Other Expense",
-      flex: 1.5,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width:"100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
-    },
-    {
       field: "owner_payment",
       headerName: "Owner Payment",
       flex: 1.5,
       renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width:"100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
     },
-
+    {
+      field: "management_fee",
+      headerName: "Management Fee",
+      flex: 1.5,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width:"100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
+    },
   ];
 
   const handleSelectionModelChange = (newRowSelectionModel) => {
@@ -2368,11 +2556,11 @@ function TransactionsTable(props) {
         console.log("ROHIT - item - ", item)
         // const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
         const addedPayment = paymentDueResult.find((row) => row.index === item);
-        console.log("ROHIT - addedPayment - ", addedPayment)
+        // console.log("ROHIT - addedPayment - ", addedPayment)
 
         if (addedPayment) {
           const relatedPayments = paymentDueResult.filter((row) => row.pur_group === addedPayment.pur_group);
-          console.log("ROHIT - relatedPayments - ", relatedPayments)
+          // console.log("ROHIT - relatedPayments - ", relatedPayments)
 
           newPayments = [...newPayments, ...relatedPayments];
           const relatedRowIds = relatedPayments.map((payment) => payment.index);
@@ -2395,7 +2583,7 @@ function TransactionsTable(props) {
         removedPayments.push(removedPayment);
       });
       // console.log("removedPayments - ", removedPayments);
-      setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.payment_uid)));
+      setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.index)));
     }
     // setSelectedRows(newRowSelectionModel);
     setSelectedRows(updatedRowSelectionModel);
@@ -2561,6 +2749,7 @@ function BalanceDetailsTable(props) {
   // }, [selectedPayments]);
 
   useEffect(() => {
+    // console.log(" inside use effect of unverified data- ", props.data)
     setData(props.data);
   }, [props.data]);
 
@@ -2623,6 +2812,10 @@ function BalanceDetailsTable(props) {
           pur_amount_due: parseFloat(item.pur_amount_due),
         }))
       );
+    }else if(data && data.length == 0){
+      setPaymentDueResult([])
+      setSelectedPayments([])
+      setSelectedRows([])
     }
   }, [data]);
 
