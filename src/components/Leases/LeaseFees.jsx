@@ -47,6 +47,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const LeaseFees = ({ leaseFees, isEditable, setLeaseFees, setDeleteFees, startDate }) => {
+  // console.log("lease fees", leaseFees);
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
