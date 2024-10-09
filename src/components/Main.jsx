@@ -87,7 +87,7 @@ import OwnerContactDetails from "./Contacts/ContactDetails/OwnerContactDetails";
 import OwnerContactDetailsHappinessMatrix from "./Contacts/ContactDetails/OwnerContactDetailsHappinessMatrix";
 import OwnerContactTest from "./Contacts/ContactDetails/OwnerContactTest";
 
-import PropertyList from "./Property/PropertyList";
+// import PropertyList from "./Property/PropertyList";
 import Properties from "./Property/Properties";
 // import PMProperties from "./Property/PMProperties";
 import OwnerDashboard from "./OwnerDashboard/OwnerDashboard";
@@ -99,7 +99,7 @@ import EditMaintenanceItem from "./Maintenance/EditMaintenanceItem";
 import AddProperty from "./Property/AddProperty";
 import EditProperty from "./Property/EditProperty";
 import PropertyDetail from "./Property/PropertyDetail";
-import SearchManager from "./Property/SearchManager";
+// import SearchManager from "./Property/SearchManager";
 import ManagerDetails from "./Property/ManagerDetails";
 import TenantMaintenance from "./Maintenance/TenantMaintenance";
 import AddTenantMaintenanceItem from "./Maintenance/AddTenantMaintenanceItem";
@@ -345,7 +345,7 @@ function Main() {
             <Route path='addProperty' element={<AddProperty />} />
             <Route path='editProperty' element={<EditProperty />} />
             <Route path='propertyDetail' element={<PropertyDetail />} />
-            <Route path='searchManager' element={<SearchManager />} />
+            {/* <Route path='searchManager' element={<SearchManager />} /> */}
             <Route path='managerDetails' element={<ManagerDetails />} />
             <Route path='tenantMaintenance' element={<TenantMaintenance />} />
             <Route path='addTenantMaintenanceItem' element={<AddTenantMaintenanceItem />} />

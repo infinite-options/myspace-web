@@ -15,7 +15,7 @@ import TenantApplicationNav from "../Applications/TenantApplicationNav";
 import PropertyForm from "./PropertyForm";
 import ManagementContractDetails from "../Contracts/OwnerManagerContracts/ManagementContractDetails";
 import PMQuotesRequested from "./PMQuotesRequested";
-import SearchManager from "./SearchManager";
+// import SearchManager from "./SearchManager";
 import RequestQuotes from "./RequestQuotes";
 import AddListing from "./AddListing";
 import ManagerDetails from "./ManagerDetails";
@@ -347,10 +347,15 @@ function Properties() {
     setRHS("ViewPMQuotesRequested");
   };
 
+  // const handleShowSearchManager = () => {
+  //   setRHS("SearchManager");
+  // };
+  
   const handleShowSearchManager = () => {
-    setRHS("SearchManager");
+    SetTabStatus(1)
+    setRHS("ViewPMQuotesRequested");
   };
-
+  
   const handleShowRequestQuotes = () => {
     setRHS("RequestQuotes");
   };
@@ -423,6 +428,7 @@ function Properties() {
                   handleViewApplication={handleViewApplication}
                   handleViewPMQuotesRequested={handleViewPMQuotesRequested}
                   onShowSearchManager={handleShowSearchManager}
+                  // onShowSearchManager={handleViewPMQuotesRequested}                  
                   handleShowRequestQuotes={handleShowRequestQuotes}
                   onAddListingClick={handleAddListingClick}
                   setManagerDetailsState={setManagerDetailsState}
@@ -473,14 +479,14 @@ function Properties() {
                   handleRequestQuotes={handleRequestQuotes}                  
                 />
               )}
-              {RHS === "SearchManager" && (
+              {/* {RHS === "SearchManager" && (
                 <SearchManager                     
                     setManagersList={setManagersList}
                     handleBackClick={handleBackClick}
                     handleRequestQuotes={handleRequestQuotes}                    
                     propertyId={propertyList[returnIndex].property_uid}
                   />
-              )}
+              )} */}
               {RHS === "RequestQuotes" && (
                 <RequestQuotes                  
                   managerData={managerData}

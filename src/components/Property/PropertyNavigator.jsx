@@ -1578,7 +1578,7 @@ export default function PropertyNavigator({
                                 onAddListingClick("create_listing")
                               } else if(getPaymentStatus(property?.rent_status, property) === "No Manager"){
                                 console.log("ROHIT - here2");
-                                onShowSearchManager();
+                                onShowSearchManager(1);
                               }
                             }}
                           >
