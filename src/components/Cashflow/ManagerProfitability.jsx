@@ -486,6 +486,13 @@ const ManagerProfitability = ({
       renderCell: (params) => <Box sx={{width:"100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
+    {
+      field: "payment_status",
+      headerName: "Payment Status",
+      flex: 1.5,
+      renderCell: (params) => <span>{params.row.payment_status !== null ? params.row.payment_status : "-"}</span>,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
   ];
 
   const getNewRowWithIds = (data) => {
@@ -539,6 +546,7 @@ const ManagerProfitability = ({
       let purchase_type;
       let purchase_date;
       let month, year;
+      let payment_status;
 
       groupedData[group].forEach(item => {
         const pur_payer = item.pur_payer;
@@ -549,6 +557,7 @@ const ManagerProfitability = ({
           purchase_date = item.purchase_date;
           month = item.cf_month;
           year = item.cf_year;
+          payment_status = item.payment_status
           if(item.payment_status === "PARTIALLY PAID"){
             expected += parseFloat(item.expected - item.actual)
           }else{
@@ -584,6 +593,7 @@ const ManagerProfitability = ({
         allTransactions,
         purchase_group,
         purchase_date : purchase_date,
+        payment_status,
         month,
         year
       });
@@ -607,6 +617,12 @@ const ManagerProfitability = ({
             minHeight: "35px !important",
             maxHeight: "35px !important",
             height: 35,
+          },
+          "& .MuiDataGrid-virtualScroller": {
+            overflowX: "auto", // Enable horizontal scrolling
+          },
+          "& .MuiDataGrid-root": {
+            minWidth: "1000px", // Adjust this value based on how wide you want the grid to be
           },
         }}
       />
@@ -1879,7 +1895,7 @@ const ManagerProfitability = ({
                               <Grid container justifyContent='flex-start' item xs={8}>
                                 <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
+                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight}}>
                                       {`${property?.propertyInfo?.property_address}`} {property?.propertyInfo?.property_unit && ", Unit - "}
                                       {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
                                     </Typography>
@@ -1938,7 +1954,7 @@ const ManagerProfitability = ({
                                 
                                 {/* Unpaid Rent Section */}
                                 <Grid item marginY={10}>
-                                  <Typography sx={{ fontWeight: 'bold', color: "#160449" }}>
+                                  <Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}>
                                     Unpaid Rent
                                   </Typography>
                                   {GetNewDataGrid(property?.rentItems)}
@@ -1946,7 +1962,7 @@ const ManagerProfitability = ({
 
                                 {/* Unverified Section */}
                                 <Grid item marginY={10}>
-                                  <Typography sx={{ fontWeight: 'bold', color: "#160449" }}>
+                                  <Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}>
                                     Unverified
                                   </Typography>
                                   <BalanceDetailsTable 
@@ -1962,7 +1978,7 @@ const ManagerProfitability = ({
 
                                 {/* Pay Owner Section */}
                                 <Grid item>
-                                  <Typography sx={{ fontWeight: 'bold', color: "#160449" }}>
+                                  <Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}>
                                     Pay Owner
                                   </Typography>
                                   <TransactionsTable 
