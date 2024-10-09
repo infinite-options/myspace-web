@@ -71,6 +71,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
     const [showSpinner, setShowSpinner] = useState(false);
 
     const [modifiedData, setModifiedData] = useState([]);
+    const [isPreviousFileChange, setIsPreviousFileChange] = useState(false)
 
 
     useEffect(() => {
@@ -284,7 +285,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
     const editOrUpdateLease = async () => {
         console.log('inside edit', modifiedData);
         try {
-            if (modifiedData.length > 0) {
+            if (modifiedData.length > 0 || isPreviousFileChange) {
                 setShowSpinner(true);
                 const headers = {
                     "Access-Control-Allow-Origin": "*",
@@ -298,7 +299,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                 // const feesJSON = JSON.stringify(leaseFees)
                 // leaseApplicationFormData.append("lease_fees", feesJSON);
                 // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
-                modifiedData.forEach(item => {
+                modifiedData?.forEach(item => {
                     console.log(`Key: ${item.key}`);
                     if (item.key === "uploadedFiles") {
                         console.log('uploadedFiles', item.value);
@@ -322,6 +323,9 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                         leaseApplicationFormData.append(item.key, JSON.stringify(item.value));
                     }
                 });
+                if(isPreviousFileChange){
+                    leaseApplicationFormData.append("lease_documents", JSON.stringify(documents));
+                }
                 leaseApplicationFormData.append('lease_uid', currentLease.lease_uid);
                 
             axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
@@ -530,8 +534,8 @@ return (
                 </Grid>
                 <Grid item xs={12} md={12}>
                     <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                        {selectedRole === "OWNER" && <Documents isEditable={false} documents={documents} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_documents"} />}
-                        {selectedRole !== "OWNER" && <Documents isEditable={true} documents={documents} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_documents"} />}
+                        {selectedRole === "OWNER" && <Documents isEditable={false} setIsPreviousFileChange={setIsPreviousFileChange} documents={documents} setDocuments={setDocuments} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_documents"} />}
+                        {selectedRole !== "OWNER" && <Documents isEditable={true} setIsPreviousFileChange={setIsPreviousFileChange} documents={documents} setDocuments={setDocuments} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_documents"} />}
                     </Paper>
                 </Grid>
 
