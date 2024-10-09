@@ -440,7 +440,21 @@ const ManagerProfitability = ({
       field: "purchase_group",
       headerName: "Purchase Group",
       flex: 1.5,
-      renderCell: (params) => <Box sx={{textAlign: "right", width:"100%" }}>{params.value}</Box>,
+      renderCell: (params) => <Box sx={{width:"100%" }}>{params.value}</Box>,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "month",
+      headerName: "Month",
+      flex: 1.5,
+      renderCell: (params) => <Box sx={{ width:"100%" }}>{params.value}</Box>,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "year",
+      headerName: "Year",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ width:"100%" }}>{params.value}</Box>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
@@ -454,21 +468,21 @@ const ManagerProfitability = ({
       field: "expected",
       headerName: "Expected",
       flex: 1.5,
-      renderCell: (params) => <Box sx={{textAlign: "right", width:"100%"}}>{parseFloat(params.value).toFixed(2)}</Box>,
+      renderCell: (params) => <Box sx={{width:"100%"}}>{parseFloat(params.value).toFixed(2)}</Box>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
       field: "owner_payment",
       headerName: "Owner Payment",
       flex: 1.5,
-      renderCell: (params) => <Box sx={{textAlign: "right", width:"100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
+      renderCell: (params) => <Box sx={{width:"100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
       field: "management_fee",
       headerName: "Management Fee",
       flex: 1.5,
-      renderCell: (params) => <Box sx={{textAlign: "right", width:"100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
+      renderCell: (params) => <Box sx={{width:"100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
   ];
@@ -523,6 +537,7 @@ const ManagerProfitability = ({
       let purchase_group;
       let purchase_type;
       let purchase_date;
+      let month, year;
 
       groupedData[group].forEach(item => {
         const pur_payer = item.pur_payer;
@@ -530,7 +545,9 @@ const ManagerProfitability = ({
     
         if (pur_payer.startsWith("350")) {
           purchase_type = item.purchase_type;
-          purchase_date = item.purchase_date
+          purchase_date = item.purchase_date;
+          month = item.cf_month;
+          year = item.cf_year;
           expected += parseFloat(item.expected);
         }
     
@@ -560,7 +577,9 @@ const ManagerProfitability = ({
         purchase_ids : JSON.stringify(purchase_ids),
         allTransactions,
         purchase_group,
-        purchase_date : purchase_date
+        purchase_date : purchase_date,
+        month,
+        year
       });
     
       return acc;
@@ -2369,6 +2388,7 @@ function TransactionsTable(props) {
       let purchase_ids = []
       let purchase_group;
       let purchase_type;
+      let month, year;
 
       groupedData[group].forEach(item => {
         const pur_payer = item.pur_payer;
@@ -2376,6 +2396,8 @@ function TransactionsTable(props) {
     
         if (pur_payer.startsWith("350")) {
           purchase_type = item.purchase_type;
+          month = item.cf_month;
+          year = item.cf_year;
           received_amt += parseFloat(item.actual);
         }
     
@@ -2404,7 +2426,9 @@ function TransactionsTable(props) {
         purchase_type: purchase_type,
         purchase_ids : JSON.stringify(purchase_ids),
         allTransactions,
-        purchase_group
+        purchase_group,
+        month,
+        year
       });
     
       return acc;
@@ -2507,12 +2531,24 @@ function TransactionsTable(props) {
     {
       field: "purchase_type",
       headerName: "Purchase Type",
-      flex: 1.5,
+      flex: 1,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
       field: "purchase_group",
       headerName: "Purchase Group",
+      flex: 1.5,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width:"100%" }}>{params.value}</Box>,
+    },
+    {
+      field: "month",
+      headerName: "Month",
+      flex: 1.5,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width:"100%" }}>{params.value}</Box>,
+    },
+    {
+      field: "year",
+      headerName: "Year",
       flex: 1.5,
       renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width:"100%" }}>{params.value}</Box>,
     },

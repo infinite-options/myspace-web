@@ -1152,20 +1152,25 @@ export default function ManagerCashflow() {
       
       // const totalExpected = parseFloat(item.expected) || 0;
       // const totalActual = parseFloat(item.actual) || 0;
-      let totalExpected = parseFloat(item.expected) || 0;
-      let totalActual = parseFloat(item.actual) || 0;
-    
-      if (item.pur_payer.startsWith("110")) {
-        totalActual = parseFloat(item.actual) || 0;
-      } else {
-        totalActual = 0;
+      let totalExpected =  0;
+      let totalActual = 0;
+
+      if(item.cf_month === month && item.cf_year === year && item.purchase_type !== "Deposit"){
+
+        if (item.pur_payer.startsWith("110")) {
+          totalActual = parseFloat(item.actual) || 0;
+        } else {
+          totalActual = 0;
+        }
+      
+        if (item.pur_payer.startsWith("600")) {
+          totalExpected = -(parseFloat(item.expected) || 0);
+        } else {
+          totalExpected = parseFloat(item.expected) || 0;
+        }
       }
+      
     
-      if (item.pur_payer.startsWith("600")) {
-        totalExpected = -(parseFloat(item.expected) || 0);
-      } else {
-        totalExpected = parseFloat(item.expected) || 0;
-      }
 
       if (!acc[propertyUID]) {
         // acc[propertyUID] = [];
