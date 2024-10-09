@@ -1616,7 +1616,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
                       <Typography
                         sx={{ fontWeight: "bold", fontSize: "24px", color: "#1e3a8a", textAlign: "right" }}
                       >
-                        ${partialAmount || 0}
+                        ${partialAmount || 0.00}
                       </Typography>
                     </Grid>
                   </Grid>
