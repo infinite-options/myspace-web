@@ -99,11 +99,19 @@ export default function MaintenanceWidget({ maintenanceData, onMaintenanceClick 
             variant='outlined'
             onClick={(e) => {
               e.stopPropagation();
-              navigate("/managerMaintenance", {
-                state: {
-                  showAddMaintenance: true,
-                }
-              });
+              if(selectedRole === "MANAGER"){
+                navigate("/managerMaintenance", {
+                  state: {
+                    showAddMaintenance: true,
+                  }
+                });
+              } else if (selectedRole === "OWNER"){
+                navigate("/ownerMaintenance", {
+                  state: {
+                    showAddMaintenance: true,
+                  }
+                });
+              }
             }}
           >
             {"+"}
