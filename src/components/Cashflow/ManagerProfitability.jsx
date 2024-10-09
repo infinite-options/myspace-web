@@ -1936,7 +1936,7 @@ const ManagerProfitability = ({
                                     Pay Owner
                                   </Typography>
                                   <TransactionsTable 
-                                    data={property.rentItems} 
+                                    data={property?.rentItems? property.rentItems : []} 
                                     total={total} 
                                     setTotal={setTotal} 
                                     setPaymentData={setPaymentData} 
@@ -2329,6 +2329,7 @@ function TransactionsTable(props) {
       let purchase_group;
       let purchase_type;
       let month, year;
+      let purchase_date;
 
       groupedData[group].forEach(item => {
         const pur_payer = item.pur_payer;
@@ -2336,6 +2337,7 @@ function TransactionsTable(props) {
     
         if (pur_payer.startsWith("350")) {
           purchase_type = item.purchase_type;
+          purchase_date = item.purchase_date;
           month = item.cf_month;
           year = item.cf_year;
           received_amt += parseFloat(item.actual);
@@ -2367,6 +2369,7 @@ function TransactionsTable(props) {
         purchase_ids : JSON.stringify(purchase_ids),
         allTransactions,
         purchase_group,
+        purchase_date,
         month,
         year
       });
@@ -2491,6 +2494,12 @@ function TransactionsTable(props) {
       headerName: "Year",
       flex: 1.5,
       renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width:"100%" }}>{params.value}</Box>,
+    },
+    {
+      field: "purchase_date",
+      headerName: "Purchase Date",
+      flex: 1.5,
+      renderCell: (params) => <span><strong>{(params.value !== undefined || params.value !== null) ? params.value.split(" ")[0] : "-"}</strong></span>,
     },
     {
       field: "received_amt",
@@ -2828,18 +2837,38 @@ function BalanceDetailsTable(props) {
 
   const columnsList = [
     
-    {
-      field: "payment_date",
-      headerName: "Payment Date",
-      flex: 5,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value? params.value.split(" ")[0] : "-"}</Box>,
-    },
+    // 
     {
       field: "purchase_type",
       headerName: "Purchase Type",
+      flex: 1.5,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "pur_group",
+      headerName: "Purchase Group",
       flex: 2,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
+    {
+      field: "cf_month",
+      headerName: "Month",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "cf_year",
+      headerName: "Year",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+        field: "payment_date",
+        headerName: "Payment Date",
+        flex: 1.5,
+        renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value? params.value.split(" ")[0] : "-"}</Box>,
+    },
+    
     // {
     //   field: "pur_notes",
     //   headerName: "Notes",
@@ -2867,13 +2896,13 @@ function BalanceDetailsTable(props) {
     {
       field: "pay_amount",
       headerName: "Pay Amount",
-      flex: 2,
+      flex: 1.5,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },   
     {
       field: "total_paid",
       headerName: "Total Paid",
-      flex: 3,
+      flex: 1.5,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
   }, 
     // {
@@ -2942,16 +2971,26 @@ function BalanceDetailsTable(props) {
     if (removedRows.length > 0) {
       // console.log("Removed rows: ", removedRows);
       let removedPayments = [];
+      let relatedRows = [];
+
       removedRows.forEach((item, index) => {
         let removedPayment = paymentDueResult.find((row) => row.payment_uid === item);
+        let relatedPayments = []
+
+        if(removedPayment){
+          relatedPayments = paymentDueResult.filter((row) => (row.paid_by + row.payment_date + row.payment_intent) === (removedPayment.paid_by + removedPayment.payment_date + removedPayment.payment_intent));
+          relatedRows = relatedPayments.map((payment) => payment.payment_uid);
+        }
 
         removedPayments.push(removedPayment);
+        removedPayments.push(relatedPayments)
       });
-      // console.log("removedPayments - ", removedPayments);
-      setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.payment_uid)));
+      // console.log("removedPayments - ", removedPayments, " and relatedRows id - ", relatedRows);
+      const allRowRemove = [...removedRows, ...relatedRows]
+      setSelectedPayments((prevState) => prevState.filter((payment) => !allRowRemove.includes(payment.payment_uid)));
     }
 
-    console.log("selected payments after remove row - ", selectedPayments)
+    // console.log("selected payments after remove row - ", selectedPayments)
     // setSelectedRows(newRowSelectionModel);
     setSelectedRows(updatedRowSelectionModel);
   };
