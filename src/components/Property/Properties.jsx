@@ -22,7 +22,7 @@ import ManagerDetails from "./ManagerDetails";
 
 
 import PropertiesContext from "../../contexts/PropertiesContext";
-import { PropertiesProvider } from "../../contexts/PropertiesContext";
+import ManagementContractContext from "../../contexts/ManagementContractContext";
 
 
 
@@ -51,6 +51,8 @@ function Properties() {
 
   console.log("----loading issue - propertyList - ", propertyList, dataload)
   console.log("ROHIT - returnIndexFromContext - ", returnIndexFromContext);
+
+  const { updateContractUID, updateContractPropertyUID } = useContext(ManagementContractContext);
 
   const [dataReady, setDataReady] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
@@ -372,6 +374,13 @@ function Properties() {
     setRHS("ManagerDetails");
   };
 
+  const handleManageContract = (contractUID, contractPropertyUID) => {
+    console.log("ROHIT - handleManageContract - ", contractUID, contractPropertyUID);
+    updateContractUID(contractUID);
+    updateContractPropertyUID(contractPropertyUID);
+    setRHS("ManageContract");
+  }
+
   return (    
     <ThemeProvider theme={theme}>
       {showSpinner ? (
@@ -410,6 +419,7 @@ function Properties() {
                   onEditClick={handleEditClick}
                   onViewLeaseClick={handleViewLeaseClick}
                   onViewContractClick={handleViewContractClick}
+                  onManageContractClick={handleManageContract}
                   handleViewApplication={handleViewApplication}
                   handleViewPMQuotesRequested={handleViewPMQuotesRequested}
                   onShowSearchManager={handleShowSearchManager}
@@ -492,6 +502,13 @@ function Properties() {
                   handleBackClick={handleBackClick} 
                   handleShowSearchManager={handleShowSearchManager}
                   setReturnIndexByProperty={setReturnIndexByProperty}
+                />
+              )}
+              { RHS === "ManageContract" && (
+                <ManagementContractDetails          
+                  page={"properties"}
+                  handleBackClick={handleBackClick} 
+                  navigatingFrom={"ManageContract"}
                 />
               )}
             </>

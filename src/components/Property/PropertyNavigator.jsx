@@ -87,6 +87,7 @@ export default function PropertyNavigator({
   onEditClick,
   onViewLeaseClick,
   onViewContractClick,
+  onManageContractClick,
   setEditPropertyState,
   setTenantAppNavState,
   setPmQuoteRequestedState,
@@ -2085,6 +2086,8 @@ export default function PropertyNavigator({
             {/* Right component */}
             <Grid item xs={12} md={6}>
               <ManagementDetailsComponent
+                handleViewContractClick={handleViewContractClick}
+                handleManageContractClick={onManageContractClick}
                 activeContract={activeContracts[0]}
                 currentProperty={property}
                 selectedRole={selectedRole}

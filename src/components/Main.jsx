@@ -362,7 +362,9 @@ function Main() {
               path='properties'
               element={
                 <PropertiesProvider>
-                  <Properties />
+                  <ManagementContractProvider>
+                    <Properties />
+                  </ManagementContractProvider>
                 </PropertiesProvider>
               } 
             />
