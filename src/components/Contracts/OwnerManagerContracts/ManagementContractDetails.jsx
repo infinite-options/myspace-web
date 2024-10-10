@@ -25,7 +25,11 @@ function ManagementContractDetails(props) {
       setContractRequests(contractRequestsFromContext);
     }
 
-  }, [props.page]);
+  }, [props.page, contractRequestsFromContext, allContractsFromContext]);
+
+  useEffect(() => {
+    console.log("ROHIT - contractRequests - ", contractRequests);
+  }, [contractRequests]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [filteredPropertiesData, setFilteredPropertiesData] = useState([]); // filter out the properties that aren't included in announcement_properties
