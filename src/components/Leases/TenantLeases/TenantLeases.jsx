@@ -605,6 +605,9 @@ function TenantLeases(props) {
                     fontWeight: "700",
                     color: "#FFFFFF",
                     textTransform: "none",
+                    "&:hover": {
+                      backgroundColor: "#A75A5A",
+                    },
                   }}
                   onClick={() => handleTenantRefuse()}
                 >
@@ -628,6 +631,9 @@ function TenantLeases(props) {
                     fontWeight: "600",
                     color: "#FFFFFF",
                     textTransform: "none",
+                    "&:hover": {
+                      backgroundColor: "#6A8AB3",
+                    },
                   }}
                   onClick={() => handleTenantAccept()}
                 >

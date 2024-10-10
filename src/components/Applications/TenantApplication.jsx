@@ -18,6 +18,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Documents from "../Leases/Documents";
 import { DataGrid } from "@mui/x-data-grid";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import CryptoJS from "crypto-js";
+import AES from "crypto-js/aes";
 
 export default function TenantApplication(props) {
   console.log("In Tenant Application", props);
@@ -305,10 +307,21 @@ export default function TenantApplication(props) {
     return "10-31-2023";
   }
 
+  const getDecryptedSSN = (encryptedSSN) => {
+    try {
+      const decrypted = AES.decrypt(encryptedSSN, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8);
+      // console.log("getDecryptedSSN - decrypted - ", decrypted.toString());
+      return "***-**-" + decrypted.toString().slice(-4);
+    } catch (error) {
+      console.error('Error decrypting SSN:', error);
+      return '';
+    }
+  };
+
   function displaySSN() {
     // console.log('ssn is', tenantProfile)
     if (tenantProfile && (tenantProfile.tenant_ssn != null || tenantProfile.tenant_ssn != "")) {
-      return `Last 4 digits: ${tenantProfile?.tenant_ssn?.slice(-4)}`;
+      return `${tenantProfile?.tenant_ssn?.slice(-4)}`;
     } else {
       return "-";
     }
@@ -504,7 +517,6 @@ export default function TenantApplication(props) {
       ) : (
       <Paper
         style={{
-          margin: "5px",
           padding: 20,
           backgroundColor: '#F2F2F2',
           borderRadius: '10px',
@@ -583,7 +595,7 @@ export default function TenantApplication(props) {
                     <Typography>Phone: {tenantProfile?.tenant_phone_number}</Typography>
                   </Grid>
                   <Grid item xs={6}>
-                    <Typography>SSN: Last 4 digits: {tenantProfile?.tenant_ssn?.slice(-4)}</Typography>
+                    <Typography>SSN: {tenantProfile?.tenant_ssn ? (getDecryptedSSN(tenantProfile?.tenant_ssn)) : "No SSN provided"}</Typography>  
                   </Grid>
                   <Grid item xs={6}>
                     <Typography>License #: {tenantProfile?.tenant_drivers_license_number}</Typography>
@@ -675,7 +687,7 @@ export default function TenantApplication(props) {
                 <Typography sx={{ fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue}}>Documents</Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ padding: "30px" }}>
-                <Documents documents={tenantDocuments} setDocuments={setTenantDocuments} isEditable={false} isAccord={false} customName={"Your Documents"} contractFiles={extraUploadDocument} contractFileTypes={extraUploadDocumentType}/>
+                <Documents documents={tenantDocuments} setDocuments={setTenantDocuments} isEditable={false} isAccord={false} contractFiles={extraUploadDocument} contractFileTypes={extraUploadDocumentType}/>
               </AccordionDetails>
             </Accordion>
             </Box>

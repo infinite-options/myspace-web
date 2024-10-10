@@ -43,7 +43,7 @@ const mapStyles = [
 
 const libraries = ['places'];
 
-const PropertiesMap = ({ properties, mapCenter }) => {
+const PropertiesMap = ({ properties, mapCenter, onMarkerClick }) => {
   const [selectedProperty, setSelectedProperty] = React.useState(null);
 
   // console.log("PropertiesMap - properties - ", properties)
@@ -69,23 +69,23 @@ const PropertiesMap = ({ properties, mapCenter }) => {
   return (
     <GoogleMap
       mapContainerStyle={containerStyle}
-      center={mapCenter? mapCenter : defaultCenter}
+      center={mapCenter ? mapCenter : defaultCenter}
       zoom={10}
       options={{ styles: mapStyles }}
     >
       {properties.map((property, idx) => {
         const latitude = parseFloat(property.property_latitude);
         const longitude = parseFloat(property.property_longitude);
-        console.log("property.property_latitude - ", parseFloat(property.property_latitude));
-        console.log("property.property_longitude - ", parseFloat(property.property_longitude));
-
 
         if (!isNaN(latitude) && !isNaN(longitude)) {
           return (
             <MarkerF
               key={idx}
               position={{ lat: latitude, lng: longitude }}
-              onClick={() => setSelectedProperty(property)}
+              onClick={() => {
+                setSelectedProperty(property);
+                onMarkerClick(property); // Notify parent component
+              }}
             />
           );
         }

@@ -728,14 +728,6 @@ const PropertyInfo = (props) => {
                 </Typography>
               </Box>
               <Box sx={{ marginTop: "20px", marginLeft: '5px',  }}>
-                <Typography
-                  sx={{
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.primary.fontWeight,
-                  }}
-                >
-                  Utilities
-                </Typography>
                 <UtilitiesDataGrid data={utilities}/>
               </Box>
               <Box sx={{ marginTop: "20px", marginLeft: '5px',  }}>
@@ -847,31 +839,43 @@ const UtilitiesDataGrid = ({ data }) => {
     "050-000049": "user",
   };
 
-  const columns = [
-    {
-      field: 'utility_desc',
-      headerName: 'Utility',
-      flex: 1,
-      renderCell: (params) => params.value || '-',
-    },
-    {
-      field: 'utility_payer_id',
-      headerName: 'Paid By',
-      flex: 1,
-      renderCell: (params) => utilityPayerMap[params.value] || '-',
-    },    
-  ];
-  return (          
-      <DataGrid
-        rows={data}
-        columns={columns}
-        // pageSize={5}
-        // rowsPerPageOptions={[5]}
-        disableSelectionOnClick
-        getRowId={(row) => row.utility_type_id}
-        hideFooter={true}
-      />    
+  const utilitiesPaidByOwner = data.filter(utility => utilityPayerMap[utility.utility_payer_id] === 'owner');
+  const utilitiesPaidByTenant = data.filter(utility => utilityPayerMap[utility.utility_payer_id] === 'tenant');
+
+  const renderUtilities = (utilities) => {
+    return utilities.map((utility, index) => (
+      <Typography key={index}>
+        {utility.utility_desc || '-'}
+      </Typography>
+    ));
+  };
+
+  // const columns = [
+  //   {
+  //     field: 'utility_desc',
+  //     headerName: 'Utility',
+  //     flex: 1,
+  //     renderCell: (params) => params.value || '-',
+  //   },
+  //   {
+  //     field: 'utility_payer_id',
+  //     headerName: 'Paid By',
+  //     flex: 1,
+  //     renderCell: (params) => utilityPayerMap[params.value] || '-',
+  //   },    
+  // ];
+  return (
+    <Box>
+      <Box sx={{ marginBottom: '20px' }}>
+        <Typography sx={{ fontWeight: 'bold', marginBottom: '10px' }}>Utilities Paid by Owner</Typography>
+        {utilitiesPaidByOwner.length > 0 ? renderUtilities(utilitiesPaidByOwner) : <Typography>No utilities paid by owner</Typography>}
+      </Box>
+      <Box>
+        <Typography sx={{ fontWeight: 'bold', marginBottom: '10px' }}>Utilities Paid by Tenant</Typography>
+        {utilitiesPaidByTenant.length > 0 ? renderUtilities(utilitiesPaidByTenant) : <Typography>No utilities paid by tenant</Typography>}
+      </Box>
+    </Box>
   );
-}
+};
 
 export default PropertyInfo;

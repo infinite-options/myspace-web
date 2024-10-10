@@ -329,6 +329,15 @@ const PropertyListings = ({ setRightPane }) => {
     }
   }
 
+  const handleMarkerClick = (selectedProperty) => {
+    setDisplayProperties([selectedProperty]);
+  };
+
+  const resetProperties = () => {
+    setDisplayProperties(sortedProperties);
+  };
+
+
   return (
     <div>
       <ThemeProvider theme={theme}>
@@ -438,7 +447,21 @@ const PropertyListings = ({ setRightPane }) => {
               </Typography>
             </Stack>
             <Stack sx={{ padding: 5 }}>
-              <PropertiesMap properties={displayProperties} />
+              <PropertiesMap properties={displayProperties} onMarkerClick={handleMarkerClick}/>
+            </Stack>
+            <Stack alignItems='center' justifyContent='center' sx={{ marginTop: "20px" }}>
+              <Button
+                variant='contained'
+                sx={{
+                  backgroundColor: theme.palette.custom.blue,
+                  color: theme.typography.secondary.white,
+                  marginTop: "10px",
+                  textTransform: "none",
+                }}
+                onClick={resetProperties} // Reset properties to original list
+              >
+                Reset Listings
+              </Button>
             </Stack>
             {displayProperties.length > 0 &&
               displayProperties.map((property, index) => {

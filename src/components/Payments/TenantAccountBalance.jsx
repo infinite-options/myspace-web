@@ -107,6 +107,8 @@ const TenantAccountBalance = ({
     handleClose();
   }
 
+  const totalBalanceDue = balanceDetails.reduce((acc, detail) => acc + parseFloat(detail.amountDue || 0), 0);
+
   if (!selectedProperty) {
     return (
       <Paper sx={{ padding: "30px", backgroundColor: "#f0f0f0", borderRadius: "8px", flex: 1 }}>
@@ -244,12 +246,12 @@ const TenantAccountBalance = ({
         <Typography
           variant='h4'
           sx={{
-            color: balanceDue > 0 ? "#A52A2A" : "#3D5CAC",
+            color: totalBalanceDue > 0 ? "#A52A2A" : "#3D5CAC",
             fontWeight: "bold",
             marginTop: "10px",
           }}
         >
-          ${balanceDue.toFixed(2)}
+          ${totalBalanceDue.toFixed(2)}
         </Typography>
 
         {/* <Typography>
@@ -293,7 +295,7 @@ const TenantAccountBalance = ({
         {balanceDue > 0 && !(leaseDetails?.lease_status === "NEW" || leaseDetails?.lease_status === "PROCESSING") && (
           <>
             <Typography sx={{ fontSize: "18px", fontWeight: "bold", color: "#160449", padding: "3px" }}>Balance Details</Typography>
-            <Box sx={{ padding: "10px", maxHeight: "250px", overflowY: "auto", backgroundColor: "#f0f0f0" }}>
+            <Box sx={{ padding: "10px", maxHeight: "250px", overflowY: "auto", width: "100%", backgroundColor: "#f0f0f0", overflowX: "auto" }}>
               <Table sx={{ "& .MuiTableCell-root": { padding: "8px", fontSize: "14px" } }}>
                 <TableHead>
                   <TableRow sx={{ backgroundColor: "#f0f0f0" }}>
