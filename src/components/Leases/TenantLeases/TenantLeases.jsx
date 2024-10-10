@@ -20,6 +20,7 @@ import {
   TableRow,
 } from "@mui/material";
 import axios from "axios";
+import { DataGrid } from "@mui/x-data-grid";
 import { useEffect, useState, Fragment } from "react";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
@@ -43,6 +44,8 @@ function TenantLeases(props) {
   const [property, setProperty] = useState(props.property);
   const [status, setStatus] = useState("01-01-2024");
   const [lease, setLease] = useState(props?.lease);
+  const [tenantUtilities, setTenantUtilities] = useState([]);
+  const [ownerUtilities, setOwnerUtilities] = useState([]);
   // const [pets, setPets] = useState(JSON.parse(lease.lease_pets));
   // const [vehicles, setVehicles] = useState(JSON.parse(lease.lease_vehicles));
   // const [adultOccupants, setAdultOccupants] = useState(JSON.parse(lease.lease_adults));
@@ -62,13 +65,13 @@ function TenantLeases(props) {
     setLease(props.lease);
   }, [props.property, props.lease]);
 
-  useEffect(() => {    
-    console.log("62 - lease - ", lease);
-  }, [lease]);
+  // useEffect(() => {    
+  //   console.log("62 - lease - ", lease);
+  // }, [lease]);
 
-  useEffect(() => {    
-    console.log("68 - managerID - ", managerID);
-  }, [managerID]);
+  // useEffect(() => {    
+  //   console.log("68 - managerID - ", managerID);
+  // }, [managerID]);
 
   useEffect(() => {
     setShowSpinner(true);
@@ -107,6 +110,24 @@ function TenantLeases(props) {
         setChildrenOccupants(detailed_property.lease_children ? JSON.parse(detailed_property?.lease_children) : []);
         setFees(detailed_property?.lease_fees ? JSON.parse(detailed_property.lease_fees) : []);
         setStatus(detailed_property?.lease_effective_date ?? null);
+
+      if (detailed_property?.property_utilities) {
+        // Parse the utilities JSON
+        const utilities = JSON.parse(detailed_property.property_utilities);
+  
+        // Separate utilities by payer
+        const tenantUtilities = utilities
+          .filter((utility) => utility.utility_payer_id === "050-000043")
+          .map((utility) => utility.utility_desc);
+  
+        const ownerUtilities = utilities
+          .filter((utility) => utility.utility_payer_id === "050-000041")
+          .map((utility) => utility.utility_desc);
+  
+        // Update state
+        setTenantUtilities(tenantUtilities);
+        setOwnerUtilities(ownerUtilities);
+      }
         //lease link
         const parsedDocs = JSON.parse(detailed_property.lease_documents);
         const leaseDoc = parsedDocs.find(doc => doc.type && doc.type === "Lease Agreement");
@@ -435,87 +456,81 @@ function TenantLeases(props) {
                 </Typography>
               </CenteringBox>
             </Grid>
-            <Grid item xs={3}>
-              <CenteringBox justify_content="flex-start">
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont }}>Start Date</Typography>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize: theme.typography.mediumFont.fontSize }}>
-                  {lease.lease_start}
-                </Typography>
-              </CenteringBox>
+
+          {/* Lease Details Grid */}
+          <Grid container spacing={2} mt={2}>
+            <Grid item xs={6}>
+              <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Start Date</Typography>
+              <Typography>{lease?.lease_start || "N/A"}</Typography>
             </Grid>
-            <Grid item xs={3}>
-              <CenteringBox justify_content="flex-start">
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont }}>
-                  Move In Date
-                </Typography>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize: theme.typography.mediumFont.fontSize }}>
-                  {lease.lease_move_in_date ? lease.lease_move_in_date : "No Move In Date"}
-                </Typography>
-              </CenteringBox>
+            <Grid item xs={6}>
+              <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Rent Amount</Typography>
+              <Typography>${lease?.property_listed_rent.toFixed(2) || "$0.00"}</Typography>
             </Grid>
-            <Grid item xs={3}>
-              <CenteringBox justify_content="flex-start">
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont }}>
-                  Effective Date
-                </Typography>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize: theme.typography.mediumFont.fontSize }}>
-                  {lease.lease_effective_date ? lease.lease_effective_date : "No Effective Date"}
-                </Typography>
-              </CenteringBox>
+
+            <Grid item xs={6}>
+              <Typography sx={{ fontWeight: "bold", color: "#160449" }}>End Date</Typography>
+              <Typography>{lease?.lease_end || "N/A"}</Typography>
             </Grid>
-            <Grid item xs={3}>
-              <CenteringBox justify_content="flex-start">
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont }}>End Date</Typography>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize: theme.typography.mediumFont.fontSize }}>
-                  {lease.lease_end}
-                </Typography>
-              </CenteringBox>
+            <Grid item xs={6}>
+              <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Frequency</Typography>
+              <Typography>{lease?.frequency || "Monthly"}</Typography>
             </Grid>
-            <Grid item xs={4}>
-              <CenteringBox justify_content="flex-start">
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont }}>
-                  # of Occupants
-                </Typography>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize: theme.typography.mediumFont.fontSize }}>
-                  {/* {JSON.parse(lease.lease_adults).length + JSON.parse(lease.lease_children).length} */}
-                  {adultOccupants.length + childrenOccupants.length}
-                </Typography>
-              </CenteringBox>
+
+            <Grid item xs={6}>
+              <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Move-In Date</Typography>
+              <Typography>{lease?.lease_move_in_date || "N/A"}</Typography>
             </Grid>
-            <Grid item xs={4}>
-              <CenteringBox justify_content="flex-start">
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont }}># of Pets</Typography>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize: theme.typography.mediumFont.fontSize }}>
-                  {/* {JSON.parse(lease.lease_pets).length} */}
-                  {pets.length}
-                </Typography>
-              </CenteringBox>
+            <Grid item xs={6}>
+              <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Due Date</Typography>
+              <Typography>{lease?.due_date || "1st of month"}</Typography>
             </Grid>
-            <Grid item xs={4}>
-              <CenteringBox justify_content="flex-start">
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont }}>
-                  # of Vehicles
-                </Typography>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize: theme.typography.mediumFont.fontSize }}>
-                  {/* {JSON.parse(lease.lease_vehicles).length} */}
-                  {vehicles.length}
-                </Typography>
-              </CenteringBox>
+
+            {/* <Grid item xs={6}>
+              <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Move-Out Date</Typography>
+              <Typography>{lease?.move_out_date || "N/A"}</Typography>
+            </Grid> */}
+
+            <Grid item xs={6}>
+            <Typography sx={{ fontWeight: "bold", color: "#160449" }}>
+              Utilities Paid By Tenant
+            </Typography>
+            <Typography>
+              {tenantUtilities.length > 0
+                ? tenantUtilities.join(", ")
+                : "None"}
+            </Typography>
             </Grid>
+            {/* <Grid item xs={6}>
+              <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Late Fee</Typography>
+              <Typography>{lease?.lease_fees || "%95"}</Typography>
+            </Grid> */}
+            {/* <Grid item xs={6}>
+              <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Lease Status</Typography>
+              <Typography>{lease?.lease_status}</Typography>
+            </Grid> */}
+
+            <Grid item xs={6}>
+            <Typography sx={{ fontWeight: "bold", color: "#160449" }}>
+              Utilities Paid By Owner
+            </Typography>
+            <Typography>
+              {ownerUtilities.length > 0
+                ? ownerUtilities.join(", ")
+                : "None"}
+            </Typography>
+            </Grid>
+            {/* <Grid item xs={6}>
+              <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Late Fee Per Day</Typography>
+              <Typography>{lease?.late_fee_per_day || "$0"}</Typography>
+            </Grid> */}
+          </Grid>
 
                         
             <Grid item xs={12}>
               <LeaseFees leaseFees={fees} />
             </Grid>
 
-            <Grid item xs={6}>
-              <CenteringBox justifyContent="flex-start">
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont }}>Utilities</Typography>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.light.fontWeight, fontSize: theme.typography.mediumFont.fontSize }}>
-                  Gas | Electricity | Water | Trash
-                </Typography>
-              </CenteringBox>
-            </Grid>
             <Grid item xs={6}>
               <CenteringBox justifyContent="flex-start">
                 {signedLease &&
@@ -553,92 +568,25 @@ function TenantLeases(props) {
             </Grid>
           </Grid>
 
-          <Box
-            sx={{
-              fontSize: "13px",
-              marginTop: "7px",
-              marginBottom: "7px",
-            }}
-          >
-            {adultOccupants?.length ?? 0} Adults
-          </Box>
-
-          {adultOccupants?.map((adult) => (
-            <Box
-              sx={{
-                fontSize: "13px",
-                color: "#160449",
-                marginBottom: "7px",
-              }}
-            >
-              {`${adult?.name} | ${adult?.relationship} | DOB: ${adult?.dob}`}
-            </Box>
-          ))}
-
-          <Box
-            sx={{
-              fontSize: "13px",
-              marginTop: "7px",
-              marginBottom: "7px",
-            }}
-          >
-            {childrenOccupants?.length ?? 0} Child
-          </Box>
-          {childrenOccupants?.map((child) => (
-            <Box
-              sx={{
-                fontSize: "13px",
-                color: "#160449",
-                marginBottom: "7px",
-              }}
-            >
-              {`${child.name} | ${child.relationship} | DOB: ${child.dob}`}
-            </Box>
-          ))}
-
-          <Box
-            sx={{
-              fontSize: "13px",
-              marginTop: "7px",
-              marginBottom: "7px",
-            }}
-          >
-            {pets?.length ?? 0} Pets
-          </Box>
-
-          {pets?.map((pet) => (
-            <Box
-              sx={{
-                fontSize: "13px",
-                color: "#160449",
-                marginBottom: "7px",
-              }}
-            >
-              {`${pet.name} | ${pet.type} | ${pet.weight} lbs`}
-            </Box>
-          ))}
-
-          <Box
-            sx={{
-              fontSize: "13px",
-              marginTop: "7px",
-              marginBottom: "7px",
-            }}
-          >
-            {vehicles?.length ?? 0} Vehicles
-          </Box>
-
-          {vehicles?.map((vehicle) => (
-            <Box
-              sx={{
-                fontSize: "13px",
-                color: "#160449",
-                marginBottom: "7px",
-              }}
-            >
-              {`${vehicle.make} ${vehicle.model} ${vehicle.year} | ${vehicle.license} | ${vehicle.state}`}
-            </Box>
-          ))}
+          <Grid container spacing={1}>            
+          <Typography sx={{ fontWeight: "bold", color: "#160449", padding:"5px" }}>Occupants:</Typography>
+            <Grid item xs={12}>
+              <Typography>Adults</Typography>
+              <AdultDataGrid adults={adultOccupants} />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography>Children</Typography>
+              <ChildDataGrid children={childrenOccupants} />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography>Pets</Typography>
+              <PetDataGrid pets={pets} />
+            </Grid>
+            <Grid item xs={12} sx={{paddingBottom: "20px"}}>
+              <Typography>Vehicles</Typography>
+              <VehicleDataGrid vehicles={vehicles} />
+            </Grid>
+          </Grid>
 
           <Grid container spacing={2}>
             <Grid item xs={6}>
@@ -692,5 +640,129 @@ function TenantLeases(props) {
       </Box>
     </Paper>
   );
+}
+
+export const AdultDataGrid = ({ adults }) => {
+  const columns = [
+    { field: 'name', headerName: 'Name', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 2, renderCell : (params) => (<Typography>{params.row.name} {params.row.last_name}</Typography>)},
+    { field: 'relationship', headerName: 'Relationship', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+    { field: 'dob', headerName: 'DoB', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+  ];
+
+  let rowsWithId = []
+
+  if(adults && adults?.length !== 0){
+    rowsWithId = adults.map((row, index) => ({
+      ...row,
+      id: row.id ? index : index,
+    }));
+  }
+
+  return (
+    <DataGrid
+      rows={rowsWithId}
+      columns={columns}
+      sx={{        
+        marginTop: "5px",
+      }}
+      autoHeight
+      rowHeight={50} 
+      hideFooter={true}
+    />
+  );
+
+}
+
+export const ChildDataGrid = ({ children }) => {
+  const columns = [
+    { field: 'name', headerName: 'Name', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 2, renderCell : (params) => (<Typography>{params.row.name} {params.row.last_name}</Typography>)},
+    { field: 'relationship', headerName: 'Relationship', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+    { field: 'dob', headerName: 'DoB', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+  ];
+
+  let rowsWithId = []
+
+  if(children && children?.length !== 0){
+    rowsWithId = children.map((row, index) => ({
+      ...row,
+      id: row.id ? index : index,
+    }));
+  }
+
+  return (
+    <DataGrid
+      rows={rowsWithId}
+      columns={columns}
+      sx={{        
+        marginTop: "10px",
+      }}
+      autoHeight
+      rowHeight={50} 
+      hideFooter={true}
+    />
+  );
+
+}
+
+export const PetDataGrid = ({ pets }) => {
+  const columns = [
+    { field: 'name', headerName: 'Name', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 2, renderCell : (params) => (<Typography>{params.row.name} {params.row.last_name}</Typography>)},
+    { field: 'type', headerName: 'Type', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+    { field: 'dob', headerName: 'DoB', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+  ];
+
+  let rowsWithId = []
+
+  if(pets && pets?.length !== 0){
+    rowsWithId = pets.map((row, index) => ({
+      ...row,
+      id: row.id ? index : index,
+    }));
+  }
+
+  return (
+    <DataGrid
+      rows={rowsWithId}
+      columns={columns}
+      sx={{        
+        marginTop: "10px",
+      }}
+      autoHeight
+      rowHeight={50} 
+      hideFooter={true}
+    />
+  );
+
+}
+
+export const VehicleDataGrid = ({ vehicles }) => {
+  const columns = [
+    { field: 'name', headerName: 'Name', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 2, renderCell : (params) => (<Typography>{params.row.make} {params.row.model}</Typography>)},
+    { field: 'license', headerName: 'License', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1, renderCell : (params) => (<Typography>{params.row.license} {params.row.state}</Typography>)},
+    { field: 'year', headerName: 'Year', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+  ];
+
+  let rowsWithId = []
+
+  if(vehicles && vehicles?.length !== 0){
+    rowsWithId = vehicles.map((row, index) => ({
+      ...row,
+      id: row.id ? index : index,
+    }));
+  }
+
+  return (
+    <DataGrid
+      rows={rowsWithId}
+      columns={columns}
+      sx={{        
+        marginTop: "10px",
+      }}
+      autoHeight
+      rowHeight={50} 
+      hideFooter={true}
+    />
+  );
+
 }
 export default TenantLeases;

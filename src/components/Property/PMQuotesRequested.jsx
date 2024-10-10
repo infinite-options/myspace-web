@@ -403,14 +403,19 @@ export default function PMQuotesRequested(props) {
     let announcementTitle;
     let announcementMessage;
     
-    if(status === "ACCEPTED"){
+    if(status === "ACTIVE") {
       announcementTitle = `Management Contract Quote Accepted`;
-      announcementMessage = `Your quote for Management contract - ${obj.contract_name} (Property - ${contractProperty.property_address}${contractProperty.property_unit ? (", " + contractProperty.property_unit) : ""}) has been accepted by the Owner - ${obj.owner_first_name || ""} ${obj.owner_last_name || ""}.`;
+      announcementMessage = `Your quote for Management contract - ${obj.contract_name} (Property - ${contractProperty.property_address}${contractProperty.property_unit ? (", " + contractProperty.property_unit) : ""}) has been accepted by the Owner - ${obj.owner_first_name || ""} ${obj.owner_last_name || ""}. The contract is active.`;
+    } else if(status === "INACTIVE") {
+      announcementTitle = `Management Contract Ended`;
+      announcementMessage = `Management contract - ${obj.contract_name} (Property - ${contractProperty.property_address}${contractProperty.property_unit ? (", " + contractProperty.property_unit) : ""}) has been ended by the Owner - ${obj.owner_first_name || ""} ${obj.owner_last_name || ""}.`;
+    } else if(status === "APPROVED") {
+      announcementTitle = `Management Contract Quote Approved`;
+      announcementMessage = `Your quote for Management contract - ${obj.contract_name} (Property - ${contractProperty.property_address}${contractProperty.property_unit ? (", " + contractProperty.property_unit) : ""}) has been accepted by the Owner - ${obj.owner_first_name || ""} ${obj.owner_last_name || ""}. The contract will be active from ${obj.contract_start_date}.`;
     } else if(status === "DECLINED") {
       announcementTitle = `Management Contract Quote Declined`;
       announcementMessage = `Your quote for Management contract - ${obj.contract_name} (Property - ${contractProperty.property_address}${contractProperty.property_unit ? (", " + contractProperty.property_unit) : ""}) has been declined by the Owner - ${obj.owner_first_name || ""} ${obj.owner_last_name || ""}.`;
     }
-    
   
     try {
       const response = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
@@ -442,57 +447,141 @@ export default function PMQuotesRequested(props) {
     }
   };
 
+  // function handleAccept(obj) {          
+  //   try {
+  //     const newContractStart = new Date(obj.contract_start_date);
+  //     const newContractEnd = new Date(obj.contract_end_date);
+  //     const newPropertyId = obj.property_id;
+
+  //     for (let i = 0; i < activeContracts.length; i++) {
+  //       const existingContract = activeContracts[i];
+
+  //       if (existingContract.property_id === newPropertyId) {
+  //         const existingContractStart = new Date(existingContract.contract_start_date);
+  //         const existingContractEnd = new Date(existingContract.contract_end_date);
+
+  //         if (
+  //           (newContractStart <= existingContractEnd && newContractStart >= existingContractStart) ||
+  //           (newContractEnd <= existingContractEnd && newContractEnd >= existingContractStart) ||
+  //           (newContractStart <= existingContractStart && newContractEnd >= existingContractEnd)
+  //         ) {
+  //           setConflictingContract(existingContract);
+  //           setNewContract(obj);
+  //           setDialogOpen(true);
+  //           return;
+  //         }
+  //       }
+  //     }
+
+  //     const formData = new FormData();
+  //     formData.append("contract_uid", obj.contract_uid);
+  //     formData.append("contract_status", "ACTIVE");
+
+  //     fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`, {
+  //       method: "PUT",
+  //       body: formData,
+  //     })
+  //       .then((response) => {
+  //         if (!response.ok) {
+  //           throw new Error("Network response was not ok");
+  //         } else {
+  //           console.log("Data added successfully");
+  //           sendAnnouncement("ACCEPTED", obj);
+  //           refreshContracts();
+  //           refreshProperties();            
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         console.error("There was a problem with the fetch operation:", error);
+  //       });
+  //   } catch (error) {
+  //     console.error(error);
+  //   }    
+  //   setTabStatus(1);    
+  // }
+
   function handleAccept(obj) {          
-    try {
+    
       const newContractStart = new Date(obj.contract_start_date);
       const newContractEnd = new Date(obj.contract_end_date);
       const newPropertyId = obj.property_id;
 
+      let newContractStatus = "ACTIVE";
+
       for (let i = 0; i < activeContracts.length; i++) {
         const existingContract = activeContracts[i];
 
-        if (existingContract.property_id === newPropertyId) {
+        if (existingContract.property_id === newPropertyId && existingContract.contract_status === "ACTIVE") {
           const existingContractStart = new Date(existingContract.contract_start_date);
           const existingContractEnd = new Date(existingContract.contract_end_date);
+          const today = new Date();
 
-          if (
-            (newContractStart <= existingContractEnd && newContractStart >= existingContractStart) ||
-            (newContractEnd <= existingContractEnd && newContractEnd >= existingContractStart) ||
-            (newContractStart <= existingContractStart && newContractEnd >= existingContractEnd)
-          ) {
-            setConflictingContract(existingContract);
-            setNewContract(obj);
-            setDialogOpen(true);
-            return;
+          console.log("ROHIT - 514 - newContractStart - ", newContractStart)
+          console.log("ROHIT - 514 - existingContractEnd - ", existingContractEnd)
+          console.log("ROHIT - 514 - today - ", today)
+
+          // return;
+
+          if(newContractStart <= today){
+            // newContractStatus = "ACTIVE";
+             //end current contract
+            const formData = new FormData();
+            formData.append("contract_uid", existingContract.contract_uid);
+            formData.append("contract_status", "INACTIVE");
+
+            try {
+              fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`, {
+                method: "PUT",
+                body: formData,
+              })
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                  } else {
+                    console.log("Data added successfully");
+                    sendAnnouncement("INACTIVE", obj);
+                    refreshContracts();
+                    refreshProperties();            
+                  }
+                })
+                .catch((error) => {
+                  console.error("There was a problem with the fetch operation:", error);
+                });
+            } catch (error) {
+              console.error(error);
+            } 
+          } else {
+            newContractStatus = "APPROVED";
           }
         }
       }
-
+      
       const formData = new FormData();
       formData.append("contract_uid", obj.contract_uid);
-      formData.append("contract_status", "ACTIVE");
+      formData.append("contract_status", newContractStatus);
 
-      fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`, {
-        method: "PUT",
-        body: formData,
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          } else {
-            console.log("Data added successfully");
-            sendAnnouncement("ACCEPTED", obj);
-            refreshContracts();
-            refreshProperties();            
-          }
+      try {
+        fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`, {
+          method: "PUT",
+          body: formData,
         })
-        .catch((error) => {
-          console.error("There was a problem with the fetch operation:", error);
-        });
-    } catch (error) {
-      console.error(error);
-    }    
-    setTabStatus(1);    
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            } else {
+              console.log("Data added successfully");
+              sendAnnouncement(newContractStatus, obj);
+              refreshContracts();
+              refreshProperties();            
+            }
+          })
+          .catch((error) => {
+            console.error("There was a problem with the fetch operation:", error);
+          });
+      } catch (error) {
+        console.error(error);
+      }    
+      setTabStatus(1);    
   }
 
   function handleDecline(obj) {        
@@ -960,6 +1049,31 @@ function DocumentCard(props) {
       >
         <Typography sx={{ fontWeight: "bold", fontSize: "26px" }}>
           {data.business_name}
+        </Typography>
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Typography sx={{ fontWeight: "bold", fontSize: "20px" }}>
+          Contract name: {data.contract_name}
+        </Typography>
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-start",
+          alignItems: "flex-start",
+        }}
+      >
+        <Typography sx={{ fontWeight: "bold", fontSize: "20px" }}>
+          Start Date: {data.contract_start_date}
+        </Typography>
+        <Typography sx={{ fontWeight: "bold", fontSize: "20px", marginLeft: "20px", }}>
+          End Date: {data.contract_end_date}
         </Typography>
       </Box>
       <Grid container>
