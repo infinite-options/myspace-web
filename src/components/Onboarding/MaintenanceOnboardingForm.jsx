@@ -1339,7 +1339,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                 </Grid>
               </Grid>
               <Grid container item xs={12} columnSpacing={4}>
-                <Grid container item xs={3}>
+                <Grid container item xs={5.5}>
                   <Grid item xs={12}>
                     <Typography
                       sx={{
@@ -1399,7 +1399,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                   </Grid>
                 </Grid>
 
-                <Grid container item xs={2}>
+                <Grid container item xs={1}>
                   <Grid item xs={12}>
                     <Typography
                       sx={{
@@ -1416,7 +1416,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                   </Grid>
                 </Grid>
 
-                <Grid container item xs={3}>
+                <Grid container item xs={1.5}>
                   <Grid item xs={12}>
                     <Typography
                       sx={{
