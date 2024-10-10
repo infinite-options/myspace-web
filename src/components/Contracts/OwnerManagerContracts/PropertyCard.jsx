@@ -51,6 +51,7 @@ import Documents from '../../Leases/Documents';
 import { FeesDataGrid } from '../../Property/PMQuotesRequested';
 import ManagementContractContext from '../../../contexts/ManagementContractContext';
 import ListsContext from '../../../contexts/ListsContext';
+import GenericDialog from '../../GenericDialog';
 // import { gridColumnsTotalWidthSelector } from '@mui/x-data-grid';
 // dhyey
 
@@ -835,7 +836,7 @@ const PropertyCard = (props) => {
   const navigate = useNavigate();
   const { getProfileId } = useUser();
   const { defaultContractFees, allContracts, currentContractUID, currentContractPropertyUID, isChange, setIsChange, fetchContracts} = useContext(ManagementContractContext);  
-//   console.log("PropertyCard - props - ", props);
+  console.log("PropertyCard - props - ", props);
   
 
   const [propertyData, setPropertyData] = useState(props.data);
@@ -879,6 +880,23 @@ const PropertyCard = (props) => {
   const [documentDetails, setDocumentDetails] = useState([]);
   const [isPreviousFileChange, setIsPreviousFileChange] = useState(false)
   const[contactRowsWithId, setContactRowsWithId] = useState([]);
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState("");
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [dialogSeverity, setDialogSeverity] = useState("info");
+
+  const openDialog = (title, message, severity) => {
+    setDialogTitle(title);  // Set the dialog title
+    setDialogMessage(message);  // Set the dialog message
+    setDialogSeverity(severity);  // Optionally set the severity for styling
+    setIsDialogOpen(true);
+  };
+
+  const closeDialog = () => {
+    setIsDialogOpen(false);
+  };
+
 
   const setContractDetails = () => {
 	if (allContracts !== null && allContracts !== undefined) {
@@ -1261,7 +1279,14 @@ const PropertyCard = (props) => {
 
   const handleSendQuoteClick = () => {
     // console.log("Send Quote Clicked");
-    const formData = new FormData();
+    const formData = new FormData();	
+    
+    const hasInvalidCharge = contractFees.some(fee => fee.charge === null || fee.charge === "");
+    if(hasInvalidCharge){
+      openDialog("Invalid Fee Charges", "Please enter valid charges for all fees.", "Error");
+      return;
+    }
+    
     let contractFeesJSONString = JSON.stringify(contractFees);
     // console.log("Send Quote - contractFeesJSONString : ", contractFeesJSONString);
     let contractContactsJSONString = JSON.stringify(contractAssignedContacts);
@@ -1275,11 +1300,11 @@ const PropertyCard = (props) => {
     //     "contract_status": "SENT"
     // };
 
-	//Check here -- Abhinav
+    //Check here -- Abhinav
 
-	if(deletedDocsUrl && deletedDocsUrl?.length !== 0){
-		formData.append("delete_documents", JSON.stringify(deletedDocsUrl));
-	}
+    if(deletedDocsUrl && deletedDocsUrl?.length !== 0){
+      formData.append("delete_documents", JSON.stringify(deletedDocsUrl));
+    }
 
     formData.append("contract_uid", currentContractUID);
     formData.append("contract_name", contractName);
@@ -1289,11 +1314,11 @@ const PropertyCard = (props) => {
     formData.append("contract_status", "SENT");
     formData.append("contract_assigned_contacts", contractContactsJSONString);
 
-	if(isPreviousFileChange){
-		formData.append("contract_documents", JSON.stringify(previouslyUploadedDocs));
-	}
+    if(isPreviousFileChange){
+      formData.append("contract_documents", JSON.stringify(previouslyUploadedDocs));
+    }
 
-	// formData.append("contract_documents_details", JSON.stringify(contractFileTypes));
+    // formData.append("contract_documents_details", JSON.stringify(contractFileTypes));
 
     const endDateIsValid = isValidDate(contractEndDate.format("MM-DD-YYYY"));
     if (!isValidDate(contractEndDate.format("MM-DD-YYYY")) || !isValidDate(contractStartDate.format("MM-DD-YYYY"))) {
@@ -1670,7 +1695,7 @@ const PropertyCard = (props) => {
 
 		  if (response.ok) {
 			if(props.navigatingFrom && props.navigatingFrom === "PropertyForm"){
-				navigate("/properties"); 	
+				// navigate("/properties"); 					
 			} else if(props.navigatingFrom && props.navigatingFrom === "ManageContract" && props.handleBackBtn){
 				props.handleBackBtn();
 			} 			
@@ -2231,7 +2256,7 @@ return (
 						justifyContent: 'space-between',
 						fontSize: '15px',
 						fontWeight: 'bold',
-						padding: '5px',
+						paddingRight: '10px',
 						color: '#3D5CAC',
 					}}
 				>
@@ -2283,7 +2308,7 @@ return (
 			
 
 			{/* previously Uploaded docs */}
-			<Box id="rohit" padding={"10px"} sx={{width: '100%', marginLeft: '10px', paddingRight: '10px',}}>				
+			<Box sx={{width: '100%', marginLeft: '10px', paddingRight: '10px',}}>				
 				<Documents isEditable={true} setIsPreviousFileChange={setIsPreviousFileChange} isAccord={false} documents={previouslyUploadedDocs} setDocuments={setPreviouslyUploadedDocs} setDeleteDocsUrl={setDeletedDocsUrl} contractFiles={contractFiles} contractFileTypes={contractFileTypes} setContractFiles={setContractFiles} setContractFileTypes={setContractFileTypes}/>				
 			</Box>
 
@@ -2296,7 +2321,7 @@ return (
 					justifyContent: 'space-between',
 					fontSize: '15px',
 					fontWeight: 'bold',
-					padding: '5px',
+					paddingRight: '10px',
 					color: '#3D5CAC',
 				}}
 			>
@@ -2312,7 +2337,7 @@ return (
 				>
 					{"Contract Assigned Contacts: "}
 				</Typography>
-				<Box onClick={()=>{setShowAddContactDialog(true)}} marginTop={"10px"} paddingTop={"5px"} paddingRight={"5px"}>
+				<Box onClick={()=>{setShowAddContactDialog(true)}} marginTop={"10px"} paddingTop={"5px"} paddingRight={"0px"}>
 					<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
 				</Box>
 			</Box>
@@ -2541,6 +2566,18 @@ return (
 					/>
 				</Box>
 			)}
+      <GenericDialog
+        isOpen={isDialogOpen}
+        title={dialogTitle}
+        contextText={dialogMessage}
+        actions={[
+          {
+            label: "OK",
+            onClick: closeDialog,
+          }
+        ]}
+        severity={dialogSeverity}
+      />
 
 			
 		</>

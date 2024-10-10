@@ -1002,6 +1002,7 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
             fontSize: '15px',
             fontWeight: 'bold',
             color: '#3D5CAC',
+            paddingRight: '10px',
           }}
         >
           {

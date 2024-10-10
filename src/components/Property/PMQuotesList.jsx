@@ -13,8 +13,8 @@ import theme from "../../theme/theme";
 // import axios from "axios";
 // import { CustomTabPanel } from "../Maintenance/MaintenanceRequestDetail";
 // import { useUser } from "../../contexts/UserContext";
-// import CircularProgress from "@mui/material/CircularProgress";
-// import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
+import Backdrop from "@mui/material/Backdrop";
 
 // import APIConfig from "../../utils/APIConfig";
 import ManagementContractDetails from "../Contracts/OwnerManagerContracts/ManagementContractDetails";
@@ -27,13 +27,18 @@ import ManagementContractContext from "../../contexts/ManagementContractContext"
 export default function PMQuotesList() {
   // let navigate = useNavigate();  
   const location = useLocation();
-  const { contractRequests, updateContractUID, updateContractPropertyUID, } = useContext(ManagementContractContext); 
+  const { contractRequests, updateContractUID, updateContractPropertyUID, dataLoaded } = useContext(ManagementContractContext); 
   const navigatingFrom = location.state?.navigatingFrom || null;
   // console.log("In PMQuoteList");
   // console.log("In PMQuoteList property_endpoint_resp: ", location.state?.property_endpoint_resp);
   // console.log("contractRequests from context - ", contractRequests)
 
-  
+  const [showSpinner, setShowSpinner] = useState(dataLoaded);
+
+  useEffect(() => {
+    setShowSpinner(!dataLoaded);
+  }, [dataLoaded]);
+
   useEffect(() => {
     // console.log("PMQuotesList - location.state - ",location.state);
     if (location.state?.selectedContractUID && location.state?.selectedContractPropertyUID) {
@@ -59,9 +64,9 @@ export default function PMQuotesList() {
 
   return (    
       <ThemeProvider theme={theme}>
-        {/* <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
           <CircularProgress color='inherit' />
-        </Backdrop> */}
+        </Backdrop>
         <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
           <Grid container spacing={4}>
             <Grid item xs={12} md={4}>
