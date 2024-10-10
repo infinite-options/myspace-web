@@ -34,8 +34,8 @@ const TenantApplicationNav = (props) => {
   //   useEffect(() => {
   //     console.log("application - ", application);
   // }, [application]);
-
-  // console.log("---dhyey--- in application view - ", applications)
+  // console.log("---dhyey--- in property - ", property)
+  // console.log("---dhyey--- in application view - ", application)
   const [showSpinner, setShowSpinner] = useState(false);
   const [vehicles, setVehicles] = useState(JSON.parse(application?.lease_vehicles || '["No Vehicle Information"]'));
   const [adultOccupants, setAdultOccupants] = useState(JSON.parse(application?.lease_adults || '["No Adult Occupants"]'));
