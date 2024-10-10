@@ -35,7 +35,6 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
 	const feeBases = getList("basis");
 	const feeFrequencies = getList("frequency");	
     const feeTypes = getList("revenue");
-    console.log('---feeTypes---', feeTypes);
 
     const [currentFeeRow, setcurrentFeeRow] = useState(null);
     const [isEditing, setIsFeeEditing] = useState(false);

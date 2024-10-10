@@ -240,7 +240,7 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
                         },
                         '& .MuiDataGrid-cell': {
                             color: "#160449",
-                            fontWeight: "bold",
+                            // fontWeight: "bold",
                         },
 
                     }}
