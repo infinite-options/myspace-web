@@ -428,79 +428,75 @@ const ManagerProfitability = ({
   //     renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
   //   },
   // ]
+  const commonStyles = {
+    color: theme.typography.primary.black,
+    fontWeight: theme.typography.light.fontWeight,
+    fontSize: theme.typography.smallFont,
+  };
 
   const newTransactionColumn = [
     {
       field: "payment_status",
-      headerName: "Payment Status",
-      flex: 2.1,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{width:"100%", textAlign:"right"}}>{params.row.payment_status !== null ? params.row.payment_status : "-"}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      headerName: "Status",
+      flex: 1.2,
+      renderCell: (params) => <Box sx={commonStyles}>{params.row.payment_status !== null ? params.row.payment_status : "-"}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },    
     {
       field: "purchase_type",
-      headerName: "Purchase Type",
-      flex: 1.5,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{width:"100%", textAlign:"right"}}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      headerName: "Type",
+      flex: 0.8,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     {
       field: "purchase_group",
-      headerName: "Purchase Group",
-      flex: 1.5,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{width:"100%", textAlign:"right"}}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      headerName: "Group",
+      flex: 1,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     {
       field: "month",
       headerName: "Month",
-      flex: 1,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{width:"100%", textAlign:"right"}}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      flex: 0.7,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     {
       field: "year",
       headerName: "Year",
-      flex: 1,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{width:"100%", textAlign:"right"}}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      flex: 0.5,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     {
       field: "purchase_date",
       headerName: "Purchase Date",
-      flex: 1.5,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{width:"100%", textAlign:"right"}}>{params.row.purchase_date !== null ? params.row.purchase_date.split(" ")[0] : "-"}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      flex: 1,
+      renderCell: (params) => <Box sx={commonStyles}>{params.row.purchase_date !== null ? params.row.purchase_date.split(" ")[0] : "-"}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     {
       field: "expected",
       headerName: "Expected",
-      flex: 1,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{width:"100%", textAlign:"right"}}>{parseFloat(params.value).toFixed(2)}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      flex: 0.7,
+      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     {
       field: "owner_payment",
       headerName: "Owner Payment",
-      flex: 1,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{width:"100%", textAlign:"right"}}>{parseFloat(params.value).toFixed(2)}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      flex: 0.7,
+      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     {
       field: "management_fee",
       headerName: "Management Fee",
-      flex: 1,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{width:"100%", textAlign:"right"}}>{parseFloat(params.value).toFixed(2)}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      flex: 0.7,
+      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
   ];
 
@@ -624,7 +620,6 @@ const ManagerProfitability = ({
             rowHeight={35}
             sx={{
               marginTop: "10px",
-              minWidth: "1000px",
               "& .MuiDataGrid-columnHeaders": {
                 minHeight: "35px !important",
                 maxHeight: "35px !important",
@@ -2361,6 +2356,12 @@ function TransactionsTable(props) {
     { field: 'pur_payer', sort: 'asc', }
   ]);
 
+  const commonStyles = {
+    color: theme.typography.primary.black,
+    fontWeight: theme.typography.light.fontWeight,
+    fontSize: theme.typography.smallFont,
+  };
+
   useEffect(() => {
     setData(props.data);
   }, [props.data]);
@@ -2563,74 +2564,65 @@ function TransactionsTable(props) {
     {
       field: "pur_receiver",
       headerName: "Owner ID",
-      flex: 1.5,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{textAlign: "right", width:"100%" }}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      flex: 0.8,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     {
       field: "purchase_type",
-      headerName: "Purchase Type",
-      flex: 1.5,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{ textAlign: "right", width:"100%" }}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      headerName: "Type",
+      flex: 0.8,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     {
       field: "purchase_group",
-      headerName: "Purchase Group",
-      flex: 1.5,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{textAlign: "right", width:"100%" }}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      headerName: "Group",
+      flex: 1,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     {
       field: "month",
       headerName: "Month",
-      flex: 1,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{textAlign: "right", width:"100%" }}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      flex: 0.7,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     {
       field: "year",
       headerName: "Year",
-      flex: 1,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{textAlign: "right", width:"100%" }}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      flex: 0.5,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     {
       field: "purchase_date",
       headerName: "Purchase Date",
-      flex: 1.5,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{textAlign: "right", width:"100%"}}>{(params.value !== undefined || params.value !== null) ? params.value.split(" ")[0] : "-"}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      flex: 1,
+      renderCell: (params) => <Box sx={commonStyles}>{(params.value !== undefined || params.value !== null) ? params.value.split(" ")[0] : "-"}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     {
       field: "received_amt",
       headerName: "Amount Received",
-      flex: 1,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{textAlign: "right", width:"100%"}}>{parseFloat(params.value).toFixed(2)}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      flex: 0.7,
+      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     {
       field: "owner_payment",
       headerName: "Owner Payment",
-      flex: 1,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{ textAlign: "right", width:"100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      flex: 0.7,
+      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     {
       field: "management_fee",
       headerName: "Management Fee",
-      flex: 1,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{textAlign: "right", width:"100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      flex: 0.7,
+      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
   ];
 
@@ -2714,7 +2706,7 @@ function TransactionsTable(props) {
               sortModel={sortModel}
               onSortModelChange={(newSortModel) => setSortModel(newSortModel)}
               sx={{
-                minWidth: "1000px"
+                // minWidth: "700px"
               }}
             />
           </Grid>
@@ -2816,6 +2808,11 @@ function BalanceDetailsTable(props) {
   const [paymentDueResult, setPaymentDueResult] = useState([]);
 
   const [totalVerified, setTotalVerified] = useState(0);
+  const commonStyles = {
+    color: theme.typography.primary.black,
+    fontWeight: theme.typography.light.fontWeight,
+    fontSize: theme.typography.smallFont,
+  };
 
   const filterTransactions = (data) => {
 
@@ -3130,51 +3127,44 @@ function BalanceDetailsTable(props) {
     {
       field: "total_paid",
       headerName: "Total Paid",
-      flex: 1.5,
-      align: "right",
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{width:"100%", textAlign:"right"}}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      flex: 0.8,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     }, 
     {
       field: "purchase_type",
-      headerName: "Purchase Type",
-      flex: 1.5,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{width:"100%", textAlign:"right" }}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      headerName: "Type",
+      flex: 0.8,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     {
       field: "pur_group",
-      headerName: "Purchase Group",
-      flex: 1.5,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{width:"100%", textAlign:"right" }}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      headerName: "Group",
+      flex: 1,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     {
       field: "cf_month",
       headerName: "Month",
-      flex: 1,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{width:"100%", textAlign:"right" }}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      flex: 0.7,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     {
       field: "cf_year",
       headerName: "Year",
-      flex: 1,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{width:"100%", textAlign:"right" }}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      flex: 0.5,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     {
         field: "payment_date",
         headerName: "Payment Date",
-        flex: 1.5,
-        headerAlign: "right",
-        renderCell: (params) => <Box sx={{width:"100%", textAlign:"right" }}>{params.value? params.value.split(" ")[0] : "-"}</Box>,
-        renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+        flex: 1,
+        renderCell: (params) => <Box sx={commonStyles}>{params.value? params.value.split(" ")[0] : "-"}</Box>,
+        renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     
     // {
@@ -3204,27 +3194,24 @@ function BalanceDetailsTable(props) {
     {
       field: "pay_amount",
       headerName: "Pay Amount",
-      flex: 1,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{width:"100%", textAlign:"right"}}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      flex: 0.7,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     
     {
       field: "owner_payment",
       headerName: "Owner Payment",
-      flex: 1,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{width:"100%", textAlign:"right"}}>{params.value? params.value : "-"}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      flex: 0.7,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value? params.value : "-"}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     {
       field: "management_fee",
       headerName: "Management Fee",
-      flex: 1,
-      headerAlign: "right",
-      renderCell: (params) => <Box sx={{width:"100%", textAlign:"right" }}>{params.value? params.value : "-"}</Box>,
-      renderHeader: (params) => <Box sx={{width:"100%", textAlign:"right"}}><strong>{params.colDef.headerName}</strong></Box>,
+      flex: 0.7,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value? params.value : "-"}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },    
     // {
     //     field: "payment_verify",
@@ -3364,7 +3351,7 @@ function BalanceDetailsTable(props) {
               },
             }}
             sx={{
-              minWidth: "1000px"
+              // minWidth: "1000px"
             }}
             getRowId={(row) => row.payment_uid}
             // getRowId={(row) => {
