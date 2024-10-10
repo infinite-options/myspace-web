@@ -834,7 +834,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 const PropertyCard = (props) => {
   const navigate = useNavigate();
   const { getProfileId } = useUser();
-  const { defaultContractFees, allContracts, currentContractUID, setIsChange} = useContext(ManagementContractContext);  
+  const { defaultContractFees, allContracts, currentContractUID, currentContractPropertyUID, isChange, setIsChange, fetchContracts} = useContext(ManagementContractContext);  
 //   console.log("PropertyCard - props - ", props);
   
 
@@ -1363,7 +1363,264 @@ const PropertyCard = (props) => {
       });
   };
 
-  const sendAnnouncement = async () => {    
+  
+  const handleUpdateContactInfo = () => {
+    // console.log("Send Quote Clicked");
+	if(!isChange || isChange === false){
+		return;
+	}
+    const formData = new FormData();
+    let contractContactsJSONString = JSON.stringify(contractAssignedContacts);
+
+	if(deletedDocsUrl && deletedDocsUrl?.length !== 0){
+		formData.append("delete_documents", JSON.stringify(deletedDocsUrl));
+	}
+
+    formData.append("contract_uid", currentContractUID);    
+    // formData.append("contract_status", "SENT");
+    formData.append("contract_assigned_contacts", contractContactsJSONString);
+
+    
+
+    // console.log("handleUpdateContactInfo - formData - ");
+    // for (const pair of formData.entries()) {
+    //   console.log(`${pair[0]}, ${pair[1]}`);
+    // }
+    
+	const url = `${APIConfig.baseURL.dev}/contracts`;
+    // const url = `http://localhost:4000/contracts`;
+
+    fetch(url, {
+      method: "PUT",
+	//   headers: {
+	// 	"Content-Type": "application/json", // Ensure the server expects JSON
+	//   },
+	//   body: JSON.stringify(data),
+      body: formData,
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        } else {
+          // console.log("Data updated successfully");
+		  setIsChange(false)
+		  fetchContracts();
+		  sendAnnouncement("UPDATE_CONTACT_INFO");
+        //   navigate("/managerDashboard");
+		  
+        }
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+      });
+  };
+
+  const handleRenewContractClick = () => {
+    // console.log("Send Quote Clicked");
+	if(!isChange || isChange === false){
+		return;
+	}
+    const formData = new FormData();
+    let contractFeesJSONString = JSON.stringify(contractFees);
+    // console.log("Send Quote - contractFeesJSONString : ", contractFeesJSONString);
+    let contractContactsJSONString = JSON.stringify(contractAssignedContacts);
+    // console.log("Send Quote - contractContactsJSONString : ", contractContactsJSONString);
+    // const data = {
+    //     "contract_uid": contractUID,
+    //     "contract_name": contractName,
+    //     "contract_start_date": contractStartDate,
+    //     "contract_end_date": contractEndDate,
+    //     "contract_fees": contractFeesJSONString,
+    //     "contract_status": "SENT"
+    // };
+
+	//Check here -- Abhinav
+
+	if(deletedDocsUrl && deletedDocsUrl?.length !== 0){
+		formData.append("delete_documents", JSON.stringify(deletedDocsUrl));
+	}
+
+    formData.append("contract_uid", currentContractUID);
+    formData.append("contract_name", contractName);
+    formData.append("contract_start_date", contractStartDate.format("MM-DD-YYYY"));
+    formData.append("contract_end_date", contractEndDate.format("MM-DD-YYYY"));
+    formData.append("contract_fees", contractFeesJSONString);
+    formData.append("contract_status", "UPDATED");
+    formData.append("contract_assigned_contacts", contractContactsJSONString);
+
+	if(isPreviousFileChange){
+		formData.append("contract_documents", JSON.stringify(previouslyUploadedDocs));
+	}
+
+	// formData.append("contract_documents_details", JSON.stringify(contractFileTypes));
+
+    const endDateIsValid = isValidDate(contractEndDate.format("MM-DD-YYYY"));
+    if (!isValidDate(contractEndDate.format("MM-DD-YYYY")) || !isValidDate(contractStartDate.format("MM-DD-YYYY"))) {
+      return;
+    }
+
+    const hasMissingType = !checkFileTypeSelected();
+
+    if (hasMissingType) {
+      setShowMissingFileTypePrompt(true);
+      return;
+    }
+
+    if (contractFiles && contractFiles?.length) {
+
+      const documentsDetails = [];
+      [...contractFiles].forEach((file, i) => {
+		
+		// console.log(JSON.stringify(file));
+		
+
+        formData.append(`file_${i}`, file);
+        const fileType = contractFileTypes[i] || "";
+		// formData.append("contract")
+        const documentObject = {
+          // file: file,
+          fileIndex: i, //may not need fileIndex - will files be appended in the same order?
+          fileName: file.name, //may not need filename
+          contentType: fileType, // contentType = "contract or lease",  fileType = "pdf, doc"
+        };
+        documentsDetails.push(documentObject);
+      });
+
+      formData.append("contract_documents_details", JSON.stringify(documentsDetails));
+    }
+
+    // console.log("Quote sent. Data sent - ");
+    // for (const pair of formData.entries()) {
+    //   console.log(`${pair[0]}, ${pair[1]}`);
+    // }
+
+    // sendPutRequest(formData);
+	const url = `${APIConfig.baseURL.dev}/contracts`;
+    // const url = `http://localhost:4000/contracts`;
+
+    fetch(url, {
+      method: "PUT",
+	//   headers: {
+	// 	"Content-Type": "application/json", // Ensure the server expects JSON
+	//   },
+	//   body: JSON.stringify(data),
+      body: formData,
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        } else {
+          // console.log("Data updated successfully");
+		  setIsChange(false)
+		  sendAnnouncement("RENEW_CONTRACT");
+        //   navigate("/managerDashboard");
+		  
+        }
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+      });
+  };
+  
+  const handleCreateNewContractClick = () => {    
+	if(!isChange || isChange === false){
+		return;
+	}
+
+    const formData = new FormData();
+    let contractFeesJSONString = JSON.stringify(contractFees);
+    let contractContactsJSONString = JSON.stringify(contractAssignedContacts);
+
+
+	if(deletedDocsUrl && deletedDocsUrl?.length !== 0){
+		formData.append("delete_documents", JSON.stringify(deletedDocsUrl));
+	}
+    
+    formData.append("contract_name", contractName);
+    formData.append("contract_start_date", contractStartDate.format("MM-DD-YYYY"));
+    formData.append("contract_end_date", contractEndDate.format("MM-DD-YYYY"));
+    formData.append("contract_fees", contractFeesJSONString);
+    formData.append("contract_status", "SENT");
+    formData.append("contract_assigned_contacts", contractContactsJSONString);
+	formData.append("contract_business_id", getProfileId());
+	formData.append("contract_property_ids", JSON.stringify([currentContractPropertyUID]));
+
+
+	if(isPreviousFileChange){
+		formData.append("contract_documents", JSON.stringify(previouslyUploadedDocs));
+	}
+
+	// formData.append("contract_documents_details", JSON.stringify(contractFileTypes));
+
+    const endDateIsValid = isValidDate(contractEndDate.format("MM-DD-YYYY"));
+    if (!isValidDate(contractEndDate.format("MM-DD-YYYY")) || !isValidDate(contractStartDate.format("MM-DD-YYYY"))) {
+      return;
+    }
+
+    const hasMissingType = !checkFileTypeSelected();
+
+    if (hasMissingType) {
+      setShowMissingFileTypePrompt(true);
+      return;
+    }
+
+    if (contractFiles && contractFiles?.length) {
+
+      const documentsDetails = [];
+      [...contractFiles].forEach((file, i) => {
+		
+		// console.log(JSON.stringify(file));
+		
+
+        formData.append(`file_${i}`, file);
+        const fileType = contractFileTypes[i] || "";
+		// formData.append("contract")
+        const documentObject = {
+          // file: file,
+          fileIndex: i, //may not need fileIndex - will files be appended in the same order?
+          fileName: file.name, //may not need filename
+          contentType: fileType, // contentType = "contract or lease",  fileType = "pdf, doc"
+        };
+        documentsDetails.push(documentObject);
+      });
+
+      formData.append("contract_documents_details", JSON.stringify(documentsDetails));
+    }
+
+    // console.log("Quote sent. Data sent - ");
+    // for (const pair of formData.entries()) {
+    //   console.log(`${pair[0]}, ${pair[1]}`);
+    // }
+
+    // sendPutRequest(formData);
+	const url = `${APIConfig.baseURL.dev}/contracts`;
+    // const url = `http://localhost:4000/contracts`;
+
+    fetch(url, {
+      method: "POST",
+	//   headers: {
+	// 	"Content-Type": "application/json", // Ensure the server expects JSON
+	//   },
+	//   body: JSON.stringify(data),
+      body: formData,
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        } else {
+          // console.log("Data updated successfully");
+		  setIsChange(false)
+		  sendAnnouncement("CREATE_NEW_CONTRACT");
+        //   navigate("/managerDashboard");
+		  
+        }
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+      });
+  };
+
+  const sendAnnouncement = async (action) => {    
 	const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
 	console.log("sendAnnouncement - contract - ", contractData)
     const receiverPropertyMapping = {
@@ -1379,6 +1636,17 @@ const PropertyCard = (props) => {
 	} else if (contractStatus === "SENT") {
 		announcementTitle = "Quote Updated by Property Manager"
 		announcementMessage = `Quote for Management contract (Property - ${contractData.property_address}${contractData.property_unit ? (", " + contractData.property_unit) : ""}) has been updated by ${contractData.business_name}.`
+	} else if (contractStatus === "ACTIVE" && action === "UPDATE_CONTACT_INFO") {
+		announcementTitle = "Contact Info Updated by Property Manager"
+		announcementMessage = `Contact Info for Management contract (Property - ${contractData.property_address}${contractData.property_unit ? (", " + contractData.property_unit) : ""}) has been updated by ${contractData.business_name}.`
+	} else if (contractStatus === "ACTIVE" && action === "RENEW_CONTRACT") {
+		announcementTitle = "Contract Renewed by Property Manager"
+		announcementMessage = `Management contract (Property - ${contractData.property_address}${contractData.property_unit ? (", " + contractData.property_unit) : ""}) has been renewed by ${contractData.business_name}. Please review the updated contract.`
+	} else if (contractStatus === "ACTIVE" && action === "CREATE_NEW_CONTRACT") {
+		announcementTitle = "New Quote from Property Manager"
+		announcementMessage = `New Quote Management contract (Property - ${contractData.property_address}${contractData.property_unit ? (", " + contractData.property_unit) : ""}) has been sent by ${contractData.business_name}.`
+	} else{
+		return;
 	}
 
 	try {
@@ -1403,7 +1671,10 @@ const PropertyCard = (props) => {
 		  if (response.ok) {
 			if(props.navigatingFrom && props.navigatingFrom === "PropertyForm"){
 				navigate("/properties"); 	
-			} else {
+			} else if(props.navigatingFrom && props.navigatingFrom === "ManageContract" && props.handleBackBtn){
+				props.handleBackBtn();
+			} 			
+			else {
 				navigate("/managerDashboard"); 
 			}			
 		  } else {
@@ -2062,75 +2333,177 @@ return (
 			) : (
 				<></>
 			)}
-			</Box>								
-			<Box
-				sx={{
-					display: 'flex',
-					flexDirection: 'row',
-					justifyContent: 'space-between',
-					alignItems: 'center',
-					paddingTop: '10px',
-					marginBottom: '7px',
-					marginTop:"10px",
-					width: '100%',
-				}}
-			>
-				{contractStatus !== 'REJECTED' && (
-				<>
-				<Button
-					variant="contained"
-					sx={{
-						backgroundColor: '#CB8E8E',
-						textTransform: 'none',
-						borderRadius: '5px',
-						display: 'flex',
-						width: '45%',
-						'&:hover': {
-							backgroundColor: '#CB8E8E',
-						},
-					}}
-					onClick={handleDeclineOfferClick}
-				>
-					<Typography
+			</Box>	
+			{
+				(contractStatus === "NEW" || contractStatus === "SENT" || contractStatus === "REJECTED") && (
+					<Box
 						sx={{
-							fontWeight: theme.typography.primary.fontWeight,
-							fontSize: '14px',
-							color: '#160449',
-							textTransform: 'none',
+							display: 'flex',
+							flexDirection: 'row',
+							justifyContent: 'space-between',
+							alignItems: 'center',
+							paddingTop: '10px',
+							marginBottom: '7px',
+							marginTop:"10px",
+							width: '100%',
 						}}
 					>
-						{contractStatus === 'NEW' ? 'Decline Offer' : 'Withdraw Offer 1'}
-					</Typography>
-				</Button>
-				</>
-				)}
-				<Button
-					variant="contained"
-					sx={{
-						backgroundColor: '#9EAED6',
-						textTransform: 'none',
-						borderRadius: '5px',
-						display: 'flex',
-						width: contractStatus === 'REJECTED' ? '100%' : '45%',
-						'&:hover': {
-							backgroundColor: '#9EAED6',
-						},
-					}}
-					onClick={handleSendQuoteClick}
-					disabled={!contractName || !contractStartDate || !contractEndDate || !contractFees}
-				>
-					<Typography
+						{contractStatus !== 'REJECTED' && (
+						<>
+						<Button
+							variant="contained"
+							sx={{
+								backgroundColor: '#CB8E8E',
+								textTransform: 'none',
+								borderRadius: '5px',
+								display: 'flex',
+								width: '45%',
+								'&:hover': {
+									backgroundColor: '#CB8E8E',
+								},
+							}}
+							onClick={handleDeclineOfferClick}
+						>
+							<Typography
+								sx={{
+									fontWeight: theme.typography.primary.fontWeight,
+									fontSize: '14px',
+									color: '#160449',
+									textTransform: 'none',
+								}}
+							>
+								{contractStatus === 'NEW' ? 'Decline Offer' : 'Withdraw Offer 1'}
+							</Typography>
+						</Button>
+						</>
+						)}
+						<Button
+							variant="contained"
+							sx={{
+								backgroundColor: '#9EAED6',
+								textTransform: 'none',
+								borderRadius: '5px',
+								display: 'flex',
+								width: contractStatus === 'REJECTED' ? '100%' : '45%',
+								'&:hover': {
+									backgroundColor: '#9EAED6',
+								},
+							}}
+							onClick={handleSendQuoteClick}
+							disabled={!contractName || !contractStartDate || !contractEndDate || !contractFees}
+						>
+							<Typography
+								sx={{
+									fontWeight: theme.typography.primary.fontWeight,
+									fontSize: '14px',
+									color: '#160449',
+									textTransform: 'none',
+								}}
+							>
+								{contractStatus === 'NEW' ? 'Send Quote' : 'Update Quote'}
+							</Typography>
+						</Button>
+					</Box>
+				)
+			}							
+			{
+				(contractStatus === "ACTIVE") && (
+					<Box
 						sx={{
-							fontWeight: theme.typography.primary.fontWeight,
-							fontSize: '14px',
-							color: '#160449',
-							textTransform: 'none',
+							display: 'flex',
+							flexDirection: 'row',
+							justifyContent: 'space-between',
+							alignItems: 'center',
+							paddingTop: '10px',
+							marginBottom: '7px',
+							marginTop:"10px",
+							width: '100%',
 						}}
 					>
-						{contractStatus === 'NEW' ? 'Send Quote' : 'Update Quote'}
-					</Typography>
-				</Button>
-			</Box>
+						
+						<Button
+							variant="contained"
+							sx={{
+								backgroundColor: '#CB8E8E',
+								textTransform: 'none',
+								borderRadius: '5px',
+								display: 'flex',
+								width: '30%',
+								'&:hover': {
+									backgroundColor: '#CB8E8E',
+								},
+							}}
+							onClick={handleUpdateContactInfo}
+						>
+							<Typography
+								sx={{
+									fontWeight: theme.typography.primary.fontWeight,
+									fontSize: '14px',
+									color: '#160449',
+									textTransform: 'none',
+								}}
+							>
+								{'Update Contact Info'}
+							</Typography>
+						</Button>
+							
+						<Button
+							variant="contained"
+							sx={{
+								backgroundColor: '#9EAED6',
+								textTransform: 'none',
+								borderRadius: '5px',
+								display: 'flex',
+								width: '30%',
+								'&:hover': {
+									backgroundColor: '#9EAED6',
+								},
+							}}
+							onClick={handleRenewContractClick}							
+							disabled={!contractName || !contractStartDate || !contractEndDate || !contractFees}
+						>
+							<Typography
+								sx={{
+									fontWeight: theme.typography.primary.fontWeight,
+									fontSize: '14px',
+									color: '#160449',
+									textTransform: 'none',
+								}}
+							>
+								{'Renew Contract'}
+							</Typography>
+						</Button>
+
+						<Button
+							variant="contained"
+							sx={{
+								backgroundColor: '#9EAED6',
+								textTransform: 'none',
+								borderRadius: '5px',
+								display: 'flex',
+								width: '30%',
+								'&:hover': {
+									backgroundColor: '#9EAED6',
+								},
+							}}
+							onClick={handleCreateNewContractClick}
+							disabled={!contractName || !contractStartDate || !contractEndDate || !contractFees}
+						>
+							<Typography
+								sx={{
+									fontWeight: theme.typography.primary.fontWeight,
+									fontSize: '14px',
+									color: '#160449',
+									textTransform: 'none',
+								}}
+							>
+								{'Create New Contract'}
+							</Typography>
+						</Button>
+					</Box>
+				)
+			}							
+			
 			</Box>
 			{showAddFeeDialog && (
 				<Box>

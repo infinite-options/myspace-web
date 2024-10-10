@@ -7,7 +7,7 @@ import theme from '../../theme/theme';
 import FilePreviewDialog from '../Leases/FilePreviewDialog';
 import { useNavigate } from "react-router-dom";
 
-export default function ManagementDetailsComponent({activeContract, currentProperty, currentIndex, selectedRole, handleViewPMQuotesRequested, newContractCount, sentContractCount, handleOpenMaintenancePage, onShowSearchManager}){
+export default function ManagementDetailsComponent({activeContract, currentProperty, currentIndex, selectedRole, handleViewPMQuotesRequested, newContractCount, sentContractCount, handleOpenMaintenancePage, onShowSearchManager, handleViewContractClick, handleManageContractClick}){
     // console.log("---dhyey-- inside new component -", activeContract)
     const [selectedPreviewFile, setSelectedPreviewFile] = useState(null)
     const [previewDialogOpen, setPreviewDialogOpen] = useState(false) 
@@ -205,18 +205,20 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
                                 >
                                     No Contract
                                 </Typography>)}
-                            {currentProperty?.contract_status === "ACTIVE" && <Button
-                            variant='outlined'
-                            sx={{
-                                background: "#3D5CAC",
-                                color: theme.palette.background.default,
-                                cursor: "pointer",
-                                paddingX:"10px",
-                                textTransform: "none",
-                                maxWidth: "120px", // Fixed width for the button
-                                maxHeight: "100%",
-                            }}
-                            size='small'
+                            {currentProperty?.contract_status === "ACTIVE" && 
+                            <Button
+                                onClick={() => handleManageContractClick(currentProperty.contract_uid, currentProperty.contract_property_id )}
+                                variant='outlined'
+                                sx={{
+                                    background: "#3D5CAC",
+                                    color: theme.palette.background.default,
+                                    cursor: "pointer",
+                                    paddingX:"10px",
+                                    textTransform: "none",
+                                    maxWidth: "120px", // Fixed width for the button
+                                    maxHeight: "100%",
+                                }}
+                                size='small'
                             >
                             <Typography
                                 sx={{
@@ -228,7 +230,7 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
                                 //   marginLeft: "1%", // Adjusting margin for icon and text
                                 }}
                             >
-                                {"End Contract"}
+                                {"Manage Contract"}
                             </Typography>
                             </Button>}
                         </Box>

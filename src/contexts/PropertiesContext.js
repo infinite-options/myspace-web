@@ -51,6 +51,9 @@ export const PropertiesProvider = ({ children }) => {
   const [newContractUID, setNewContractUID] = useState(null);
   const [newContractPropertyUID, setNewContractPropertyUID] = useState(null);
 
+  // const [currentContractUID, setCurrentContractUID] = useState(null);
+  // const [currentContractPropertyUID, setCurrentContractPropertyUID] = useState(null);
+
   //add property
   const [ newPropertyUid,setNewPropertyUid ]=useState("");
 
@@ -181,7 +184,7 @@ const fetchContracts = async () => {
         allRentStatus,
         allContracts,
         fetchContracts,
-        fetchProperties, // refresh properties
+        fetchProperties, // refresh properties        
         newContractUID,
         setNewContractUID,
         newContractPropertyUID,
