@@ -252,7 +252,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                         },
                         '& .MuiDataGrid-cell': {
                             color: "#160449",
-                            fontWeight: "bold",
+                            // fontWeight: "bold",
                         },
 
                     }}

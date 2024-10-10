@@ -88,21 +88,7 @@ const RequestQuotes = (props) => {
     return selectedProperties.includes(property.property_uid);
   };
 
-  const handleRequestQuotes = async () => {
-    if (!announcementTitle) {
-      alert("Title should not be empty.");
-      return;
-    }
-
-    if (!announcementMsg) {
-      alert("Message should not be empty.");
-      return;
-    }
-
-    if (selectedProperties.length === 0) {
-      alert("Please select at least one property.");
-      return;
-    }
+  const sendAnnouncement  = async () => {
 
     const currentDate = new Date();    
     const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}-${currentDate.getFullYear()}`;
@@ -138,6 +124,28 @@ const RequestQuotes = (props) => {
       console.log(error);
     }
 
+  }
+
+  const handleRequestQuotes = async () => {
+    if (!announcementTitle) {
+      alert("Title should not be empty.");
+      return;
+    }
+
+    if (!announcementMsg) {
+      alert("Message should not be empty.");
+      return;
+    }
+
+    if (selectedProperties.length === 0) {
+      alert("Please select at least one property.");
+      return;
+    }
+
+    const currentDate = new Date();    
+    const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}-${currentDate.getFullYear()}`;
+
+  
     const formData = new FormData();
     formData.append("contract_property_ids", JSON.stringify(selectedProperties));
     formData.append("contract_business_id", managerData.business_uid);
@@ -155,6 +163,7 @@ const RequestQuotes = (props) => {
         throw new Error("Network response was not ok");
       }
       console.log(response.body);
+      sendAnnouncement();
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
     }

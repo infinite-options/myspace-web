@@ -2025,54 +2025,58 @@ export default function PropertyNavigator({
                               }}
                             >
                               {property.applications.map((app, index) => (
-                                <Button
-                                  key={index}
-                                  onClick={() => handleAppClick(index)}
+                              <Button
+                              key={index}
+                              onClick={() => handleAppClick(index)}
+                              sx={{
+                                backgroundColor: getAppColor(app),
+                                color: "#FFFFFF",
+                                textTransform: "none",
+                                width: "100%",
+                                height: "70px",
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                marginBottom: 2,
+                                "&:hover, &:focus, &:active": {
+                                  backgroundColor: getAppColor(app),
+                                },
+                              }}
+                            >
+                              {/* Box for full name and date on one line */}
+                              <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%" }}>
+                                <Typography
                                   sx={{
-                                    backgroundColor: getAppColor(app),
-                                    color: "#FFFFFF",
-                                    textTransform: "none",
-                                    width: "100%",
-                                    height: "70px",
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    marginBottom: 2,
-                                    "&:hover, &:focus, &:active": {
-                                      backgroundColor: getAppColor(app),
-                                    },
+                                    fontSize: theme.typography.smallFont,
+                                    mr: 1,
                                   }}
                                 >
-                                  <Box sx={{ display: "flex" }}>
-                                    <Typography
-                                      sx={{
-                                        fontSize: theme.typography.smallFont,
-                                        mr: 1,
-                                      }}
-                                    >
-                                      {app.tenant_first_name + " " + app.tenant_last_name + " "}
-                                    </Typography>
-                                    <Typography
-                                      sx={{
-                                        fontWeight: "bold",
-                                        fontSize: theme.typography.smallFont,
-                                        mr: 1,
-                                      }}
-                                    >
-                                      {app.lease_status + " "}
-                                    </Typography>
-                                    <Typography
-                                      sx={{
-                                        fontWeight: "bold",
-                                        fontSize: theme.typography.smallFont,
-                                      }}
-                                    >
-                                      {app.lease_application_date}
-                                    </Typography>
-                                  </Box>
-                                </Button>
-                              ))}
+                                  {app.tenant_first_name + " " + app.tenant_last_name + " "}
+                                </Typography>
+                                <Typography
+                                  sx={{
+                                    fontWeight: "bold",
+                                    fontSize: theme.typography.smallFont,
+                                  }}
+                                >
+                                  {app.lease_application_date}
+                                </Typography>
+                              </Box>
+                            
+                              {/* Box for status on the next line */}
+                              <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
+                                <Typography
+                                  sx={{
+                                    fontWeight: "bold",
+                                    fontSize: theme.typography.smallFont,
+                                  }}
+                                >
+                                  {app.lease_status}
+                                </Typography>
+                              </Box>
+                            </Button>
+                            ))}
                             </AccordionDetails>
                           </Accordion>
                         </Grid>

@@ -251,7 +251,7 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
                         },
                         '& .MuiDataGrid-cell': {
                             color: "#160449",
-                            fontWeight: "bold",
+                            // fontWeight: "bold",
                         },
 
                     }}

@@ -55,7 +55,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
     return (
         <Paper sx={{ margin: "10px", backgroundColor: color, paddingBottom: "10px" }}>
             {isEditable && <Box sx={{ display: 'flex', flexDirection: 'row-reverse', height: '20px' }}>
-                <Button
+                {/* <Button
                     sx={{
                         "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
                         cursor: "pointer",
@@ -72,7 +72,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                     }}
                 >
                     <EditIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
-                </Button>
+                </Button> */}
                 <Dialog open={open}
                     close={handleCloseDialog}
                     aria-labelledby="alert-dialog-title"

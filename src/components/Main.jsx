@@ -59,7 +59,6 @@ import PMRentDetail from "./Rent/PMRent/PMRentDetail";
 import MaintenanceProfile from "./Profile/MaintenanceProfile/MaintenanceProfile";
 
 import ViewTransactionOwner from "./Transactions/ViewTransactionOwner";
-import TransactionHistory from "./Transactions/TransactionHistory";
 import CardDetails from "./Payments/CardDetails";
 import ManagerDashboardHappinessMatrix from "./ManagerDashboard/ManagerDashboardHappinessMatrix";
 import Settings from "./Settings/SettingsOwner";
@@ -291,8 +290,7 @@ function Main() {
             <Route path='pmRentDetail' element={<PMRentDetail />} />
             <Route path='addPaymentSettings' element={<AddPayment />} />
             <Route path='selectPayment' element={<SelectPayment />} />
-            <Route path='PaymentConfirmation' element={<PaymentConfirmation />} />
-            <Route path='transactionHistory' element={<TransactionHistory />} />
+            <Route path='PaymentConfirmation' element={<PaymentConfirmation />} />            
             <Route path='viewTransactionOwner' element={<ViewTransactionOwner />} />
             {/* <Route path='payments' element={<Payments />} /> */}
             <Route path='card' element={<CardDetails />} />

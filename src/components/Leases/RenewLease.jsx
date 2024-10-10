@@ -1,5 +1,6 @@
 import React from "react";
 import { useEffect, useState, useRef, useContext, } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
     Typography, Box, Paper, Grid, Accordion, AccordionSummary, AccordionDetails, Button, Snackbar, Alert, AlertTitle
 } from "@mui/material";
@@ -39,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClicked, handleUpdate }) {
+    const navigate = useNavigate();
     const { getList, } = useContext(ListsContext);	
     const classes = useStyles();
     const [currentLease, setCurrentLease] = useState("");
@@ -374,6 +376,12 @@ const handleDeleteButtonClick = () => {
     setIsEndClicked(true);
 }
 
+// use this for renew button
+const handleEditLease = () => {
+    navigate("/tenantLease", { state: { page: "edit_lease", application: currentLease,  property: currentLease } });
+    console.log("---on renew---", currentLease);
+  };
+
 return (
     <Box
         style={{
@@ -607,7 +615,7 @@ return (
                                         background: '#ffc04d',
                                     },
                                 }}
-                                onClick={handleRenewLease}
+                                onClick={handleEditLease}
                                 size="small"
                             >
                                 <Typography sx={{
