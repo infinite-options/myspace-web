@@ -102,7 +102,8 @@ export const ManagementContractProvider = ({ children }) => {
         updateContractPropertyUID,
         isChange,
         setIsChange,
-        dataLoaded 
+        dataLoaded,
+        fetchContracts, 
       }}
     >
       {children}

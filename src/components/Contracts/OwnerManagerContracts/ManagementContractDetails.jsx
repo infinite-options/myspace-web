@@ -15,7 +15,17 @@ function ManagementContractDetails(props) {
   const navigate = useNavigate();
   // const propertiesContext = useContext(PropertiesContext);
 
-  const { currentContractUID, currentContractPropertyUID, contractRequests } = useContext(ManagementContractContext);
+  const { currentContractUID, currentContractPropertyUID, contractRequests: contractRequestsFromContext, allContracts: allContractsFromContext, } = useContext(ManagementContractContext);
+  const [contractRequests, setContractRequests] = useState([]);
+
+  useEffect(() => {
+    if(props.page && props.page === "properties"){
+      setContractRequests(allContractsFromContext);
+    } else {
+      setContractRequests(contractRequestsFromContext);
+    }
+
+  }, [props.page]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [filteredPropertiesData, setFilteredPropertiesData] = useState([]); // filter out the properties that aren't included in announcement_properties
@@ -85,7 +95,12 @@ function ManagementContractDetails(props) {
   }, []);
 
   const handleBackBtn = () => {
-    navigate(-1);
+    if(props.page && props.page === "properties" && props.handleBackClick ){
+      props.handleBackClick();
+    }
+    else {
+      navigate(-1);
+    }
   };
 
   if (isLoading) {
@@ -158,7 +173,11 @@ function ManagementContractDetails(props) {
                 {/* {contactsTab} */}
               </Typography>
             </Box>                        
-            <PropertyCard data={filteredPropertiesData[index] ? filteredPropertiesData[index] : []} navigatingFrom={props.navigatingFrom} />
+            <PropertyCard 
+              data={filteredPropertiesData[index] ? filteredPropertiesData[index] : []}
+              navigatingFrom={props.navigatingFrom} 
+              handleBackBtn={handleBackBtn}
+            />
           </Box>
         </Grid>
       </Container>

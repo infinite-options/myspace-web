@@ -153,7 +153,7 @@ export function MaintenanceOwner() {
   // const [rescheduleView] = useSessionStorage("rescheduleView", false);
   // const [payMaintenanceView] = useSessionStorage("payMaintenanceView", false);
   // const [editMaintenanceView] = useSessionStorage("editMaintenanceView", false);
-  const [showNewMaintenance, setshowNewMaintenance] = useState(false);
+  const [showNewMaintenance, setshowNewMaintenance] = useState(location.state?.showAddMaintenance ? location.state?.showAddMaintenance :false);
 
   const newDataObject = {};
   newDataObject["NEW REQUEST"] = [];

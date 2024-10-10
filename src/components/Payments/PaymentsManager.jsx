@@ -19,7 +19,7 @@ import APIConfig from "../../utils/APIConfig";
 
 import ManagerCashflowWidget from "../Dashboard-Components/Cashflow/ManagerCashflowWidget";
 import AccountBalanceWidget from "./TenantAccountBalance";
-import { AccountBalance, CollectionsBookmarkRounded } from "@mui/icons-material";
+import { AccountBalance, CollectionsBookmarkRounded, ConstructionOutlined, ContactSupportOutlined } from "@mui/icons-material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import CircleIcon from "@mui/icons-material/Circle";
 import documentIcon from "../../images/Subtract.png";
@@ -834,8 +834,8 @@ export default function PaymentsManager(props) {
 
 function TransactionsTable(props) {
   // console.log("In BalanceDetailTable", props);
-  const [data, setData] = useState(props.data);
-  const [selectedRows, setSelectedRows] = useState([]);
+  const [data, setData] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([])
   const [selectedPayments, setSelectedPayments] = useState([]);
   const [paymentDueResult, setPaymentDueResult] = useState([]);
   const [paymentDueResultMap, setPaymentDueResultMap] = useState([]); // index to row mapping for quick lookup.
@@ -844,14 +844,6 @@ function TransactionsTable(props) {
     { field: 'pur_group', sort: 'asc', },
     { field: 'pur_payer', sort: 'asc', }
   ]);
-
-   useEffect(() => {
-     setData(props.data);
-   }, [props.data]);
-
-  useEffect(() => {
-    // console.log("ROHIT - selectedRows - ", selectedRows);
-  }, [selectedRows]);
 
   const filterTransactions = (data) => {
 
@@ -881,6 +873,17 @@ function TransactionsTable(props) {
 
   }
 
+   useEffect(() => {
+     setData(props.data);
+   }, [props.data]);
+
+   
+
+  // useEffect(() => {
+  //   // console.log("ROHIT - selectedRows - ", selectedRows);
+  // }, [selectedRows]);
+
+
   useEffect(() => {
     if (data && data.length > 0) {
       console.log("ROHIT - 814 - without filteredData - ", data, " for property - ", data[0].pur_property_id);
@@ -888,13 +891,25 @@ function TransactionsTable(props) {
       // setSelectedRows(filteredData.map((row) => row.index));
       // setSelectedRows([]);
       if(props.selectedRowsForTransaction && props.selectedRowsForTransaction !== ""){
-        setSelectedRows(
-          filteredData
-            .filter((row) => props.selectedRowsForTransaction.includes(row.pur_group))
-            .map((row) => row.index) 
-        );
+        
+        const filtereRow = filteredData
+        .filter((row) => props.selectedRowsForTransaction.includes(row.pur_group))
+        .map((row) => row.index) 
+
+        console.log("selected rows - ", props.selectedRowsForTransaction, " calling for property - ", data[0].pur_property_id)
+
+        setSelectedRows(filtereRow);
+        // setSelectedRows((prevSelectedRows) => {
+        //   const combinedRows = [...prevSelectedRows, ...filtereRow];
+        //   // Remove duplicates if needed
+        //   console.log("previous row - ", prevSelectedRows)
+        //   return Array.from(new Set(combinedRows));
+        // });
+
+        console.log("after set selected rows inside data useeffect - ", selectedRows)
       
       }else{
+        console.log("---- here-----")
         setSelectedRows([]);
       }
 
@@ -904,44 +919,46 @@ function TransactionsTable(props) {
           pur_amount_due: parseFloat(item.expected),
         }))
       );
+
     }
   }, [data]);
 
   useEffect(() => {
     var total = 0;
-
-    let purchase_uid_mapping = [];
-
-    for (const item of selectedRows) {
-      // console.log("item in loop", item)
-
-      let paymentItemData = paymentDueResult.find((element) => element.index === item);
-      console.log("ROHIT - 687 - paymentItemData - ", paymentItemData);
-      const purchaseIDs = JSON.parse(paymentItemData.purchase_ids);
-      purchaseIDs.forEach( purID => {
-        purchase_uid_mapping.push({ purchase_uid: purID, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
-      });
-      
-      // console.log("payment item data", paymentItemData);
-
-      // total += parseFloat(paymentItemData.pur_amount_due);
-      // Adjust total based on pur_cf_type
-      if (paymentItemData.pur_payer.startsWith("110")) {
-        total -= parseFloat(paymentItemData.pur_amount_due);
-      } else if (paymentItemData.pur_payer.startsWith("600")) {
-        total += parseFloat(paymentItemData.pur_amount_due);
+  
+      let purchase_uid_mapping = [];
+  
+      for (const item of selectedRows) {
+  
+        let paymentItemData = paymentDueResult.find((element) => element.index === item);
+        console.log("ROHIT - 687 - paymentItemData - ", paymentItemData);
+        const purchaseIDs = JSON.parse(paymentItemData.purchase_ids);
+        purchaseIDs.forEach( purID => {
+          purchase_uid_mapping.push({ purchase_uid: purID, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
+        });
+        
+        // console.log("payment item data", paymentItemData);
+  
+        // total += parseFloat(paymentItemData.pur_amount_due);
+        // Adjust total based on pur_cf_type
+        if (paymentItemData.pur_payer.startsWith("110")) {
+          total -= parseFloat(paymentItemData.pur_amount_due);
+        } else if (paymentItemData.pur_payer.startsWith("600")) {
+          total += parseFloat(paymentItemData.pur_amount_due);
+        }
+  
+        // total += parseFloat(paymentItemData.pur_amount_due)
       }
+      console.log("selectedRows useEffect - total - ", total);
+      console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
 
-      // total += parseFloat(paymentItemData.pur_amount_due)
-    }
-    // console.log("selectedRows useEffect - total - ", total);
-    // console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
-    props.setTotal(total);
-    props.setPaymentData((prevPaymentData) => ({
-      ...prevPaymentData,
-      balance: total.toFixed(2),
-      purchase_uids: purchase_uid_mapping,
-    }));
+      props.setTotal(total);
+      props.setPaymentData((prevPaymentData) => ({
+        ...prevPaymentData,
+        balance: total.toFixed(2),
+        purchase_uids: purchase_uid_mapping,
+      }));
+
   }, [selectedRows]);
 
   useEffect(() => {

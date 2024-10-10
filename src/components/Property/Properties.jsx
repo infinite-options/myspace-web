@@ -15,14 +15,14 @@ import TenantApplicationNav from "../Applications/TenantApplicationNav";
 import PropertyForm from "./PropertyForm";
 import ManagementContractDetails from "../Contracts/OwnerManagerContracts/ManagementContractDetails";
 import PMQuotesRequested from "./PMQuotesRequested";
-import SearchManager from "./SearchManager";
+// import SearchManager from "./SearchManager";
 import RequestQuotes from "./RequestQuotes";
 import AddListing from "./AddListing";
 import ManagerDetails from "./ManagerDetails";
 
 
 import PropertiesContext from "../../contexts/PropertiesContext";
-import { PropertiesProvider } from "../../contexts/PropertiesContext";
+import ManagementContractContext from "../../contexts/ManagementContractContext";
 
 
 
@@ -51,6 +51,8 @@ function Properties() {
 
   console.log("----loading issue - propertyList - ", propertyList, dataload)
   console.log("ROHIT - returnIndexFromContext - ", returnIndexFromContext);
+
+  const { updateContractUID, updateContractPropertyUID } = useContext(ManagementContractContext);
 
   const [dataReady, setDataReady] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
@@ -345,10 +347,15 @@ function Properties() {
     setRHS("ViewPMQuotesRequested");
   };
 
+  // const handleShowSearchManager = () => {
+  //   setRHS("SearchManager");
+  // };
+  
   const handleShowSearchManager = () => {
-    setRHS("SearchManager");
+    SetTabStatus(1)
+    setRHS("ViewPMQuotesRequested");
   };
-
+  
   const handleShowRequestQuotes = () => {
     setRHS("RequestQuotes");
   };
@@ -371,6 +378,13 @@ function Properties() {
   const handleViewManagerDetailsClick = (mode) => {    
     setRHS("ManagerDetails");
   };
+
+  const handleManageContract = (contractUID, contractPropertyUID) => {
+    console.log("ROHIT - handleManageContract - ", contractUID, contractPropertyUID);
+    updateContractUID(contractUID);
+    updateContractPropertyUID(contractPropertyUID);
+    setRHS("ManageContract");
+  }
 
   return (    
     <ThemeProvider theme={theme}>
@@ -410,9 +424,11 @@ function Properties() {
                   onEditClick={handleEditClick}
                   onViewLeaseClick={handleViewLeaseClick}
                   onViewContractClick={handleViewContractClick}
+                  onManageContractClick={handleManageContract}
                   handleViewApplication={handleViewApplication}
                   handleViewPMQuotesRequested={handleViewPMQuotesRequested}
                   onShowSearchManager={handleShowSearchManager}
+                  // onShowSearchManager={handleViewPMQuotesRequested}                  
                   handleShowRequestQuotes={handleShowRequestQuotes}
                   onAddListingClick={handleAddListingClick}
                   setManagerDetailsState={setManagerDetailsState}
@@ -463,14 +479,14 @@ function Properties() {
                   handleRequestQuotes={handleRequestQuotes}                  
                 />
               )}
-              {RHS === "SearchManager" && (
+              {/* {RHS === "SearchManager" && (
                 <SearchManager                     
                     setManagersList={setManagersList}
                     handleBackClick={handleBackClick}
                     handleRequestQuotes={handleRequestQuotes}                    
                     propertyId={propertyList[returnIndex].property_uid}
                   />
-              )}
+              )} */}
               {RHS === "RequestQuotes" && (
                 <RequestQuotes                  
                   managerData={managerData}
@@ -492,6 +508,13 @@ function Properties() {
                   handleBackClick={handleBackClick} 
                   handleShowSearchManager={handleShowSearchManager}
                   setReturnIndexByProperty={setReturnIndexByProperty}
+                />
+              )}
+              { RHS === "ManageContract" && (
+                <ManagementContractDetails          
+                  page={"properties"}
+                  handleBackClick={handleBackClick} 
+                  navigatingFrom={"ManageContract"}
                 />
               )}
             </>
