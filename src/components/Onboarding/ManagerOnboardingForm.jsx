@@ -620,7 +620,7 @@ const closeDialog = () => {
                     value={row.charge}
                     variant='filled'
                     fullWidth
-                    placeholder='15'
+                    // placeholder='15'
                     className={classes.root}
                     onChange={(e) => handleFeeChange(e, row.id)}
                     InputProps={{
@@ -720,7 +720,7 @@ const closeDialog = () => {
   }
 
   const addServiceLocationRow = () => {
-    const updatedLocations = [...locations, { id: locations.length + 1, address: "", city: "", state: "", miles: "" }];    
+    const updatedLocations = [...locations, { id: locations.length + 1, address: "", unit: "", city: "", state: "", miles: "" }];    
 
     setLocations(updatedLocations);
 
@@ -759,7 +759,7 @@ const closeDialog = () => {
   const renderServiceLocations = () => {
     return locations?.map((row, index) => (
       <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id}>
-          <Grid item xs={3}>
+          <Grid item xs={4}>
             <Stack spacing={-2} m={2}>
               <Typography
                 sx={{
@@ -784,8 +784,31 @@ const closeDialog = () => {
               </Grid>
             </Stack>
           </Grid>
+          <Grid container item xs={1.5}>
+            <Grid item xs={12}>
+              <Typography
+                sx={{
+                  color: theme.typography.common.blue,
+                  fontWeight: theme.typography.primary.fontWeight,
+                  width: "100%",
+                }}
+              >
+                {"Unit"}
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField 
+                name='unit'
+                value={row.unit}
+                onChange={(e) => handleServiceLocationChange(e, row.id)}
+                variant='filled'
+                // placeholder='3'
+                className={classes.root}                        
+              ></TextField>
+            </Grid>
+          </Grid>
 
-          <Grid item xs={3}>
+          <Grid item xs={2.5}>
             <Stack spacing={-2} m={2}>
               <Typography
                 sx={{
@@ -809,7 +832,7 @@ const closeDialog = () => {
             </Stack>
           </Grid>
 
-          <Grid item xs={2}>
+          <Grid item xs={1}>
             <Stack spacing={-2} m={2}>
               <Typography
                 sx={{
@@ -833,7 +856,7 @@ const closeDialog = () => {
             </Stack>
           </Grid>
 
-          <Grid item xs={3}>
+          <Grid item xs={2}>
             <Stack spacing={-2} m={2}>
               <Typography
                 sx={{
@@ -1379,7 +1402,7 @@ const closeDialog = () => {
                   </Grid>
                 </Grid>
                 <Grid container item xs={12} columnSpacing={4}>
-                  <Grid container item xs={3}>
+                  <Grid container item xs={4}>
                     <Grid item xs={12}>
                       <Typography
                         sx={{
@@ -1439,7 +1462,7 @@ const closeDialog = () => {
                     </Grid>
                   </Grid>
 
-                  <Grid container item xs={2}>
+                  <Grid container item xs={1}>
                     <Grid item xs={12}>
                       <Typography
                         sx={{
@@ -1456,7 +1479,7 @@ const closeDialog = () => {
                     </Grid>
                   </Grid>
 
-                  <Grid container item xs={3}>
+                  <Grid container item xs={1.5}>
                     <Grid item xs={12}>
                       <Typography
                         sx={{

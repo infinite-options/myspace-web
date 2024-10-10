@@ -140,7 +140,7 @@ function Header(props) {
               </Toolbar>
             </AppBar>
             {!isMobile && sortedRoles.length > 0 && (
-              <Toolbar style={{ justifyContent: "space-between", padding: "0 20px", backgroundColor: "#3D5CAC", color: "#FFFFFF" }}>
+              <Toolbar style={{ justifyContent: "center", padding: "0 20px", backgroundColor: "#3D5CAC", color: "#FFFFFF", gap: "200px", }}>
                 {sortedRoles.map((role) => (
                   <Button
                     key={role}
@@ -149,7 +149,7 @@ function Header(props) {
                       fontWeight: selectedRole === role ? 800 : 300,
                       fontSize: "18px",
                       fontFamily: "Source Sans 3, sans-serif",
-                      margin: "0 2px",
+                      // margin: "0 100px",
                       textTransform: "none",
                     }}
                     id={role}

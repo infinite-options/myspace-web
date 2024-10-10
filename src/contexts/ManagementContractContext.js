@@ -14,7 +14,7 @@ export const ManagementContractProvider = ({ children }) => {
   const [ contractRequests, setContractRequests ] = useState([]);
   const [isChange, setIsChange] = useState(false)
 
-  const fetchDefaultContractFees = async () => {
+  const fetchDefaultContractFees = async () => {    
     try {
         const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
         const data = await response.json();
@@ -25,21 +25,21 @@ export const ManagementContractProvider = ({ children }) => {
                 ? JSON.parse(data?.profile?.result[0].business_services_fees)
                 : [];
             
-            setDefaultContractFees(profileFees);
+            setDefaultContractFees(profileFees);            
         }
     } catch (error) {
         console.error("Error fetching profile data: ", error);
     }
   };
 
-  const fetchContracts = async () => {
+  const fetchContracts = async () => {    
     const result = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
     const data = await result.json();
    
     if (data !== "No records for this Uid") {
       setAllContracts(data.result);
       const newAndSentContracts = data?.result?.filter(contract => (contract.contract_status === "NEW" || contract.contract_status === "SENT"))
-      setContractRequests(newAndSentContracts);
+      setContractRequests(newAndSentContracts);      
       
       // Set currentContractUID and currentContractPropertyUID after the fetch
       // if (!currentContractUID && !currentContractPropertyUID && data.result.length > 0) {
@@ -63,13 +63,17 @@ export const ManagementContractProvider = ({ children }) => {
   // };
   
   useEffect(() => {
-    if (!dataLoaded) {
-      setDataLoaded(true);      
-            
-      fetchDefaultContractFees();
-      fetchContracts();
-      // fetchContractRequests();
+    const loadData = async () => {
+      if (!dataLoaded) {
+        // setDataLoaded(true);      
+              
+        await fetchDefaultContractFees();
+        await fetchContracts();
+        // fetchContractRequests();
+        setDataLoaded(true);
+      }
     }
+    loadData();
   }, [dataLoaded]);
 
   useEffect(() => {
@@ -102,7 +106,8 @@ export const ManagementContractProvider = ({ children }) => {
         updateContractPropertyUID,
         isChange,
         setIsChange,
-        dataLoaded 
+        dataLoaded,
+        fetchContracts, 
       }}
     >
       {children}

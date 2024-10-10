@@ -106,6 +106,7 @@ const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray, rowID, 
           value={address}
           style={{
             backgroundColor: "#D6D5DA",
+            width: "95%",
             borderRadius: 10,
             height: 20,
             // marginBlock: 10,
@@ -127,7 +128,7 @@ const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray, rowID, 
           style={{
             boxSizing: "border-box",
             border: (isRequired && address === "") ? '1px solid red' : '1px solid transparent',
-            width: "100%",
+            width: "95%",
             height: "40px",
             padding: "0 12px",
             borderRadius: "3px",
