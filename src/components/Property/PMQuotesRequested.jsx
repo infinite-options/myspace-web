@@ -1086,7 +1086,7 @@ function DocumentCard(props) {
         }}
       >
         <Typography sx={{ fontWeight: "bold", fontSize: "20px" }}>
-          Notice Period: {data.contract_end_notice_period ? data.contract_end_notice_period : ""} days
+          Notice Period: {data.contract_end_notice_period ? data.contract_end_notice_period : "0"} days
         </Typography>        
           <FormControlLabel 
             sx={{
