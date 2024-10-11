@@ -54,6 +54,7 @@ import ManagementContractContext from '../../../contexts/ManagementContractConte
 import ListsContext from '../../../contexts/ListsContext';
 import GenericDialog from '../../GenericDialog';
 import { InputAdornment } from '@material-ui/core';
+import { minutesToSeconds } from 'date-fns';
 // import { gridColumnsTotalWidthSelector } from '@mui/x-data-grid';
 // dhyey
 
@@ -946,6 +947,8 @@ function EndContractDialog({ open, handleClose, onEndContract, noticePeriod, }) 
 
   const noticePeriodDays = parseInt(noticePeriod, 10);
   const minEndDate = dayjs().add(noticePeriodDays, 'day')
+  // console.log("minEndDate - ", minEndDate);
+  const formattedMinEndDate = minEndDate.format('MM/DD/YYYY')
 	
   const [earlyEndDate, setEarlyEndDate] = useState(minEndDate);
 	
@@ -981,10 +984,10 @@ function EndContractDialog({ open, handleClose, onEndContract, noticePeriod, }) 
           <Grid container>
             <Grid item xs={12}>
               <Typography sx={{width: 'auto',}}>
-                Are you sure you want to end this contract?
+                {`The notice period to end this contract is ${noticePeriod} days, and the earliest possible end date is ${formattedMinEndDate}.`}
               </Typography>
-            </Grid>
-            <Grid container item xs={3} sx={{marginTop: '20px', }}>
+            </Grid>            
+            <Grid container item xs={3} sx={{marginTop: '10px', }}>
               <Grid item xs={12}>
                 <Typography sx={{fontWeight: 'bold', color: '#3D5CAC'}}>
                   End Date
@@ -1004,33 +1007,42 @@ function EndContractDialog({ open, handleClose, onEndContract, noticePeriod, }) 
                 </LocalizationProvider>
               </Grid>
             </Grid>
+            <Grid item xs={12} sx={{marginTop: '15px', }}>
+              <Typography sx={{width: 'auto',}}>
+                {`Are you sure you want to end this contract?`}
+              </Typography>
+            </Grid>
           </Grid>
 
         </DialogContent>
 				
-				<DialogActions>
-					<Button
-						onClick={handleClose}
-						sx={{
-							'&:hover': {
-								backgroundColor: '#fff',
-							},
-							color: '#160449',
-						}}
-					>
-						No
-					</Button>
+				<DialogActions>					
 					<Button
 						type="submit"
 						onClick={handleEndContract}
 						sx={{
 							'&:hover': {
-								backgroundColor: '#fff',
+								backgroundColor: '#160449',                
 							},
-							color: '#160449',
+              backgroundColor: '#3D5CAC',
+							color: '#FFFFFF',
+              fontWeight: 'bold',
 						}}
 					>
 						Yes
+					</Button>
+          <Button
+						onClick={handleClose}
+						sx={{
+							'&:hover': {
+								backgroundColor: '#160449',                
+							},
+              backgroundColor: '#3D5CAC',
+							color: '#FFFFFF',
+              fontWeight: 'bold',
+						}}
+					>
+						No
 					</Button>
 				</DialogActions>
 			</Dialog>
@@ -1075,7 +1087,7 @@ const PropertyCard = (props) => {
   const [contractStartDate, setContractStartDate] = useState(dayjs());
   const [contractEndDate, setContractEndDate] = useState(dayjs());
   const [contractEndNotice, setContractEndNotice] = useState(30);
-  const [continueM2M, setContinueM2M] = useState(true);
+  const [continueM2M, setContinueM2M] = useState(1); // 0 -  1- continue m2m 2 - renews automatically 
   const [contractStatus, setContractStatus] = useState(null);
   const [contractFees, setContractFees] = useState([]);
 //   const [defaultContractFees, setDefaultContractFees] = useState([]);
@@ -1118,7 +1130,7 @@ const PropertyCard = (props) => {
 		// setContractEndDate(contractData["contract_end_date"] ? dayjs(contractData["contract_end_date"]) : contractStartDate.add(1, "year").subtract(1, "day"));
 		setContractStatus(contractData["contract_status"] ? contractData["contract_status"] : "");
     setContractEndNotice(contractData["contract_end_notice_period"] ? contractData["contract_end_notice_period"] : "");
-    setContinueM2M(contractData["contract_m2m"] && contractData["contract_m2m"] === 1 ? true : false);
+    setContinueM2M(contractData["contract_m2m"] && contractData["contract_m2m"]);
 
 		// setContractAssignedContacts(contractData["contract_assigned_contacts"] ? JSON.parse(contractData["contract_assigned_contacts"]) : []);
 		const defaultContacts = [];
@@ -1565,7 +1577,7 @@ const PropertyCard = (props) => {
     formData.append("contract_status", "SENT");
     formData.append("contract_assigned_contacts", contractContactsJSONString);
     formData.append("contract_end_notice_period", contractEndNotice);
-    formData.append("contract_m2m", continueM2M === true? 1 : 0);
+    formData.append("contract_m2m", continueM2M);
 
     if(isPreviousFileChange){
       formData.append("contract_documents", JSON.stringify(previouslyUploadedDocs));
@@ -2340,11 +2352,56 @@ return (
 			</Grid>
 
 		</Grid>			
-    <Grid container item xs={12} columnGap={3} sx={{marginTop: '10px', }}>      
-			<Grid item container direction="row" xs={3} sx={{justifyContent: 'flex-start', }}>
+    <Grid container item xs={12}  sx={{marginTop: '10px', }}>      			    
+      <Grid item container direction="row" xs={3.5} sx={{justifyContent: 'center', }}>
+				<Grid item xs={12}>					
+				</Grid>
+				<Grid item xs={12} sx={{marginTop: '5px', }}>          
+          <FormControlLabel 
+            sx={{
+              marginTop: '25px',
+            }}        
+            control={
+              <Checkbox
+                checked={continueM2M === 1 ? true : false}
+                onChange={() => {
+                  setContinueM2M(1)
+                }}
+                inputProps={{ 'aria-label': 'controlled' }}
+              />	          
+            } 
+            label="Continue Month-to-Month" 
+          />				
+				</Grid>
+      </Grid>
+      <Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
+				<Grid item xs={12}>					
+				</Grid>
+				<Grid item xs={12} sx={{marginTop: '5px', }}>          
+          <FormControlLabel 
+            sx={{
+              marginTop: '25px',
+            }}        
+            control={
+              <Checkbox
+                checked={continueM2M === 2 ? true : false}
+                onChange={() => {
+                  setContinueM2M(2)
+                }}
+                inputProps={{ 'aria-label': 'controlled' }}
+              />	          
+            } 
+            label="Contract renews automatically" 
+          />				
+				</Grid>
+      </Grid>
+      <Grid item xs={1.85}>
+
+      </Grid>
+      <Grid item container direction="row" xs={2.55} sx={{justifyContent: 'flex-start', }}>
 				<Grid item xs={12}>
 					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
-						Notice Period
+						Contract End Notice
 					</Typography>					
 				</Grid>
 				<Grid item xs={12} sx={{marginTop: '5px', }}>
@@ -2364,28 +2421,7 @@ return (
 					>						
 					</TextField>
 				</Grid>
-      </Grid>      
-      <Grid item container direction="row" xs={6} sx={{justifyContent: 'center', }}>
-				<Grid item xs={12}>					
-				</Grid>
-				<Grid item xs={12} sx={{marginTop: '5px', }}>          
-          <FormControlLabel 
-            sx={{
-              marginTop: '25px',
-            }}        
-            control={
-              <Checkbox
-                checked={continueM2M}
-                onChange={() => {
-                  setContinueM2M( prevState => !prevState)
-                }}
-                inputProps={{ 'aria-label': 'controlled' }}
-              />	          
-            } 
-            label="Continue Month-to-Month" 
-          />				
-				</Grid>
-      </Grid>            
+      </Grid>              
     </Grid>    
 			{showInvalidStartDatePrompt && (
 				<Box
@@ -2612,13 +2648,13 @@ return (
 						<Button
 							variant="contained"
 							sx={{
-								backgroundColor: '#9EAED6',
+								backgroundColor: '#CB8E8E',
 								textTransform: 'none',
 								borderRadius: '5px',
 								display: 'flex',
-								width: '30%',
+								width: '45%',
 								'&:hover': {
-									backgroundColor: '#9EAED6',
+									backgroundColor: '#CB8E8E',
 								},
 							}}
 							onClick={() => setShowEndContractDialog(true)}							
@@ -2643,7 +2679,7 @@ return (
 								textTransform: 'none',
 								borderRadius: '5px',
 								display: 'flex',
-								width: '30%',
+								width: '45%',
 								'&:hover': {
 									backgroundColor: '#9EAED6',
 								},
