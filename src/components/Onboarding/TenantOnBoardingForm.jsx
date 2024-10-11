@@ -1593,26 +1593,26 @@ const closeDialog = () => {
           </Grid>
           </Grid>
 
-{/* <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
-  <Grid item xs={12}>
-    <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={empinfoExpanded} onChange={() => setEmpinfoExpanded(prevState => !prevState)}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='employment-content' id='employment-header'>
-        <Grid item xs={12}>
-          <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
-            Employment Information
-          </Typography>
-        </Grid>
-      </AccordionSummary>
-      <AccordionDetails>
-        <EmploymentInformation
-          employmentList={employmentList}
-          setEmploymentList={setEmploymentList}
-          salaryFrequencies={salaryFrequencies}
-        />
-      </AccordionDetails>
-    </Accordion>
-  </Grid>
-</Grid> */}
+        {/* <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+          <Grid item xs={12}>
+            <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={empinfoExpanded} onChange={() => setEmpinfoExpanded(prevState => !prevState)}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='employment-content' id='employment-header'>
+                <Grid item xs={12}>
+                  <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
+                    Income Information
+                  </Typography>
+                </Grid>
+              </AccordionSummary>
+              <AccordionDetails>
+                <EmploymentInformation
+                  employmentList={employmentList}
+                  setEmploymentList={setEmploymentList}
+                  salaryFrequencies={salaryFrequencies}
+                />
+              </AccordionDetails>
+            </Accordion>
+          </Grid>
+        </Grid> */}
 
       <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
         <Grid item xs={12}>

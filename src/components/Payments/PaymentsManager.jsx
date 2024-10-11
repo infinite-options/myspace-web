@@ -111,6 +111,7 @@ export default function PaymentsManager(props) {
   const [paymentNotes, setPaymentNotes] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
   const [total, setTotal] = useState(0);
+  const [globalTotal, setGlobalTotal] = useState({})
   const [totalPaid, setTotalPaid] = useState(0);
   const [totalReceived, setTotalReceived] = useState(0);
   const [totalToBePaid, setTotalToBePaid] = useState(0);
@@ -163,6 +164,21 @@ export default function PaymentsManager(props) {
   // useEffect(() => {
   //   console.log("transactionsData - ", transactionsData);
   // }, [transactionsData]);
+
+  const handleTotalChange = (propertyId, newTotal) => {
+
+    setGlobalTotal((prevTotals) => {
+      const updatedTotals = {
+        ...prevTotals,
+        [propertyId]: newTotal, 
+      };
+      
+      const updatedTotal = Object.values(updatedTotals).reduce((acc, val) => acc + val, 0);
+      setTotal(updatedTotal); 
+
+      return updatedTotals;
+    });
+  }
 
   function totalMoneyPaidUpdate(moneyPaid) {
     var total = 0;
@@ -645,7 +661,7 @@ export default function PaymentsManager(props) {
                                       Property: {propertyPayments[0].property_address}
                                   </Typography>
                               </Grid>
-                              <TransactionsTable data={propertyPayments} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} selectedRowsForTransaction={selectedRowsForTransaction}/>
+                              <TransactionsTable data={propertyPayments} total={globalTotal[propertyPayments[0].pur_property_id]} setTotal={(newTotal) => handleTotalChange(propertyPayments[0].pur_property_id, newTotal)} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} selectedRowsForTransaction={selectedRowsForTransaction}/>
                               <br />
                           </>
                         ))
@@ -700,8 +716,7 @@ export default function PaymentsManager(props) {
                                 <AccordionDetails>
                                   <TransactionsTable 
                                     data={transactionDataByOwner[ownerID][propertyID]} 
-                                    total={total} 
-                                    setTotal={setTotal} 
+                                    total={globalTotal[transactionDataByOwner[ownerID][propertyID][0].pur_property_id]} setTotal={(newTotal) => handleTotalChange(transactionDataByOwner[ownerID][propertyID][0].pur_property_id, newTotal)}
                                     setPaymentData={setPaymentData} 
                                     setSelectedItems={setSelectedItems} 
                                     selectedRowsForTransaction={selectedRowsForTransaction}

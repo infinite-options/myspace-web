@@ -295,7 +295,7 @@ const TenantAccountBalance = ({
         {balanceDue > 0 && !(leaseDetails?.lease_status === "NEW" || leaseDetails?.lease_status === "PROCESSING") && (
           <>
             <Typography sx={{ fontSize: "18px", fontWeight: "bold", color: "#160449", padding: "3px" }}>Balance Details</Typography>
-            <Box sx={{ padding: "10px", maxHeight: "250px", overflowY: "auto", width: "100%", backgroundColor: "#f0f0f0", overflowX: "auto" }}>
+            <Box sx={{ padding: "10px", maxHeight: "200px", overflowY: "auto", width: "100%", backgroundColor: "#f0f0f0", overflowX: "auto" }}>
               <Table sx={{ "& .MuiTableCell-root": { padding: "8px", fontSize: "14px" } }}>
                 <TableHead>
                   <TableRow sx={{ backgroundColor: "#f0f0f0" }}>

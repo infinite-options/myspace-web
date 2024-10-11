@@ -121,6 +121,7 @@ const TenantDashboard = () => {
         setMaintenanceRequestsNew(dashboardData.maintenanceRequests?.result);
         setMaintenanceStatus(dashboardData.maintenanceStatus?.result);
         setAnnouncements(dashboardData.announcementsReceived?.result);
+        setPaymentHistory(dashboardData.tenantPayments?.result);
 
         // Set first property as selected, if available
         // const firstProperty = dashboardData.property?.result[0];
@@ -185,7 +186,7 @@ const TenantDashboard = () => {
     setFilteredMaintenanceRequests(filteredRequests);
 
     if (rightPane?.type === "paymentHistory") {
-      const updatedPaymentHistory = allBalanceDetails.filter((detail) => detail.propertyUid === property.property_uid);
+      const updatedPaymentHistory = paymentHistory.filter((detail) => detail.pur_property_id === property.property_uid);
       setRightPane({
         type: "paymentHistory",
         state: { data: updatedPaymentHistory },
@@ -239,7 +240,7 @@ const TenantDashboard = () => {
   // };
 
   const handlePaymentHistoryNavigate = () => {
-    const paymentHistoryForProperty = allBalanceDetails.filter((detail) => detail.propertyUid === selectedProperty.property_uid);
+    const paymentHistoryForProperty = paymentHistory.filter((detail) => detail.pur_property_id === selectedProperty.property_uid);
     // console.log("testing", paymentHistoryForProperty);
     setRightPane({ type: "paymentHistory", state: { data: paymentHistoryForProperty } });
   };
@@ -433,35 +434,38 @@ const TenantDashboard = () => {
 
 function TenantPaymentHistoryTable({ data, setRightPane, onBack }) {
   console.log("data for table", data);
+  
   const columns = [
     {
-      field: "description",
+      field: "pur_description",
       headerName: "Description",
-      flex: 2,
+      flex: 1.5,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value || "-"}</Box>,
     },
     {
-      field: "purchaseType",
+      field: "purchase_type",
       headerName: "Type",
       flex: 1,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value || "-"}</Box>,
     },
     {
-      field: "purchaseStatus",
+      field: "purchase_status",
       headerName: "Status",
-      flex: 1,
+      flex: 1.5,
       renderCell: (params) => (
         <Box
           sx={{
             backgroundColor: params.value === "PAID" ? "#76B148" : "#A52A2A",
             textTransform: "none",
             fontWeight: "bold",
-            width: "100px",
             height: "20px",
+            width: "120px",
             borderRadius: "4px",
             alignItems: "center",
             textAlign: "center",
             color: "#FFFFFF",
+            overflow: "hidden", 
+            whiteSpace: "nowrap", 
           }}
         >
           {params.value || "-"}
@@ -469,7 +473,7 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack }) {
       ),
     },
     {
-      field: "purchaseDate",
+      field: "payment_date",
       headerName: "Date",
       flex: 1,
       renderCell: (params) => {
@@ -482,25 +486,20 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack }) {
       },
     },
     {
-      field: "totalPaid",
+      field: "pay_amount",
       headerName: "Total",
       flex: 1,
       renderCell: (params) => {
-        const { purchaseStatus, amountDue, totalPaid } = params.row;
-  
-        const amountToDisplay =
-          purchaseStatus === "UNPAID" || purchaseStatus === "PARTIALLY PAID"
-            ? amountDue
-            : totalPaid;
+        const amountToDisplay = params.row.purchase_status === "UNPAID" || params.row.purchase_status === "PARTIALLY PAID"
+          ? params.row.pay_amount
+          : params.row.pay_amount;
     
         return (
           <Box
             sx={{
               fontWeight: "bold",
-              width: "100%",
               display: "flex",
               flexDirection: "row",
-              justifyContent: "flex-end",
             }}
           >
             ${amountToDisplay ? parseFloat(amountToDisplay).toFixed(2) : "0.00"}
@@ -539,10 +538,10 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack }) {
               paginationModel: { pageSize: 5 },
             },
             sorting: {
-              sortModel: [{ field: "purchaseDate", sort: "desc" }], // Default sorting by date
+              sortModel: [{ field: "payment_date", sort: "desc" }], // Default sorting by date
             },
           }}
-          getRowId={(row) => row.purchase_uid} // Use purchase_uid as the unique identifier
+          getRowId={(row) => row.payment_uid} // Use payment_uid as the unique identifier
           sx={{
             backgroundColor: "#f0f0f0",
           }}
@@ -1327,7 +1326,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
                       <Typography
                         sx={{ fontWeight: "bold", fontSize: "24px", color: "#1e3a8a", textAlign: "right" }}
                       >
-                        ${partialAmount || 0.00}
+                        ${parseFloat(partialAmount || 0).toFixed(2)}
                       </Typography>
                     </Grid>
                   </Grid>
