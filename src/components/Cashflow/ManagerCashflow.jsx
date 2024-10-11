@@ -361,7 +361,7 @@ export default function ManagerCashflow() {
       key = "total_paid";
     }
   
-    let revenueItems = data;
+    let revenueItems = data
     let totalRent = revenueItems?.reduce((acc, revenue) => {
       if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "RENT") {
         // console.log("revenue", revenue[key])
@@ -438,6 +438,172 @@ export default function ManagerCashflow() {
     }
   
     let expenseItems = data;
+  
+    let totalMaintenance = expenseItems?.reduce((acc, expense) => {
+      if (expense[key] !== null && expense.purchase_type.toUpperCase() === "MAINTENANCE") {
+        return acc + parseFloat(expense[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalRepairs = expenseItems?.reduce((acc, expense) => {
+      if (expense[key] !== null && expense.purchase_type.toUpperCase() === "REPAIRS") {
+        return acc + parseFloat(expense[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalMortgage = expenseItems?.reduce((acc, expense) => {
+      if (expense[key] !== null && expense.purchase_type.toUpperCase() === "MORTGAGE") {
+        return acc + parseFloat(expense[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalTaxes = expenseItems?.reduce((acc, expense) => {
+      if (expense[key] !== null && expense.purchase_type.toUpperCase() === "TAXES") {
+        return acc + parseFloat(expense[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalInsurance = expenseItems?.reduce((acc, expense) => {
+      if (expense[key] !== null && expense.purchase_type.toUpperCase() === "INSURANCE") {
+        return acc + parseFloat(expense[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalUtilities = expenseItems?.reduce((acc, expense) => {
+      if (expense[key] !== null && expense.purchase_type.toUpperCase() === "UTILITIES") {
+        return acc + parseFloat(expense[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalManagement = expenseItems?.reduce((acc, expense) => {
+      if (expense[key] !== null && expense.purchase_type.toUpperCase() === "MANAGEMENT") {
+        return acc + parseFloat(expense[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalBillPosting = expenseItems?.reduce((acc, expense) => {
+      if (expense[key] !== null && expense.purchase_type.toUpperCase() === "BILL POSTING") {
+        return acc + parseFloat(expense[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalOther = expenseItems?.reduce((acc, expense) => {
+      if (expense[key] !== null && expense.purchase_type.toUpperCase() === "OTHER") {
+        return acc + parseFloat(expense[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    console.log("inside expense mapping - ", totalMaintenance)
+    return {
+      MAINTENANCE: totalMaintenance,
+      REPAIRS: totalRepairs,
+      MORTGAGE: totalMortgage,
+      TAXES: totalTaxes,
+      INSURANCE: totalInsurance,
+      UTILITIES: totalUtilities,
+      MANAGEMENT: totalManagement,
+      "BILL POSTING": totalBillPosting,
+      OTHER : totalOther
+    };
+  }
+
+  const getRevenueByType = (data, month, year, expected) => {
+    // console.log(data, month, year)
+  
+    var key = "total_paid";
+  
+    if (expected === true) {
+      key = "pur_amount_due";
+    } else {
+      key = "total_paid";
+    }
+  
+    let revenueItems = data?.result?.filter((item) => item.pur_receiver === profileId && item.cf_month === month && item.cf_year === year);
+    let totalRent = revenueItems?.reduce((acc, revenue) => {
+      if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "RENT") {
+        // console.log("revenue", revenue[key])
+        // console.log("acc", acc)
+        return acc + parseFloat(revenue[key]);
+      }
+      return acc;
+    }, 0.0);
+    let totalDeposits = revenueItems?.reduce((acc, revenue) => {
+      if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "DEPOSIT") {
+        return acc + parseFloat(revenue[key]);
+      }
+      return acc;
+    }, 0.0);
+    let totalExtraCharges = revenueItems?.reduce((acc, revenue) => {
+      if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "EXTRA CHARGE") {
+        return acc + parseFloat(revenue[key]);
+      }
+      return acc;
+    }, 0.0);
+    let totalUtilities = revenueItems?.reduce((acc, revenue) => {
+      if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "UTILITIES") {
+        return acc + parseFloat(revenue[key]);
+      }
+      return acc;
+    }, 0.0);
+    let totalLateFee = revenueItems?.reduce((acc, revenue) => {
+      if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "LATE FEE") {
+        return acc + parseFloat(revenue[key]);
+      }
+      return acc;
+    }, 0.0);
+    let totalMaintenance = revenueItems?.reduce((acc, revenue) => {
+      if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "MAINTENANCE") {
+        return acc + parseFloat(revenue[key]);
+      }
+      return acc;
+    }, 0.0);
+    let totalRepairs = revenueItems?.reduce((acc, revenue) => {
+      if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "REPAIRS") {
+        return acc + parseFloat(revenue[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    let totalOther = revenueItems?.reduce((acc, revenue) => {
+      if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "OTHER") {
+        return acc + parseFloat(revenue[key]);
+      }
+      return acc;
+    }, 0.0);
+  
+    return {
+      RENT: totalRent,
+      DEPOSIT: totalDeposits,
+      "EXTRA CHARGE": totalExtraCharges,
+      UTILITIES: totalUtilities,
+      "LATE FEE": totalLateFee,
+      MAINTENANCE: totalMaintenance,
+      REPAIRS: totalRepairs,
+      OTHER: totalOther
+    };
+  }
+
+  const getExpenseByType = (data, month, year, expected) => {
+    
+  
+    var key = "total_paid";
+  
+    if (expected === true) {
+      key = "pur_amount_due";
+    } else {
+      key = "total_paid";
+    }
+  
+    let expenseItems = data?.result?.filter((item) => item.pur_payer === profileId && item.cf_month === month && item.cf_year === year);
   
     let totalMaintenance = expenseItems?.reduce((acc, expense) => {
       if (expense[key] !== null && expense.purchase_type.toUpperCase() === "MAINTENANCE") {
@@ -967,6 +1133,14 @@ export default function ManagerCashflow() {
     setExpectedExpenseByType(expectedExpenseMapping)
 
     // console.log("revenue by type - ", revenueMapping, " expense by type - ", expenseMapping)
+
+
+    //for type page ---- 
+
+    // let revenueByType = getRevenueByType(rentDataCurrentMonth, month, year, false)
+    // let expectedRevenueByType = getRevenueByType(rentDataCurrentMonth, month, year, true)
+    // setRevenueByType(revenueByType)
+
 
 
     // const revenueByMonth = rentDataCurrentYear?.reduce((acc, item) => {
@@ -2062,6 +2236,8 @@ export default function ManagerCashflow() {
 
                 setMonth={setMonth}
                 setYear={setYear}
+
+                uid={revenueByType ? revenueByType : expenseByType}
               />
             )}
             {currentWindow === "TRANSACTIONS" && (

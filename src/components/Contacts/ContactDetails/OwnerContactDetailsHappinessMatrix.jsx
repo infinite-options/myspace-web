@@ -4,7 +4,7 @@ import { useUser } from "../../../contexts/UserContext";
 import axios from "axios";
 import APIConfig from "../../../utils/APIConfig";
 import User_fill from "../../../images/User_fill_dark.png";
-import { Typography, Box, Grid, Container, Paper, Button, ThemeProvider, TextField, InputAdornment, Badge } from "@mui/material";
+import { Typography, Box, Grid, Container, Paper, Button, ThemeProvider, TextField, InputAdornment, Badge, Backdrop, CircularProgress } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import theme from "../../../theme/theme";
 import SearchIcon from "@mui/icons-material/Search";
@@ -307,6 +307,8 @@ const OwnerContactDetailsHappinessMatrix = () => {
   const [cashflowDataByMonth, setCashflowDataByMonth] = useState([]);
   const [cashflowDataByPropertyByMonth, setCashflowDataByPropertyByMonth] = useState([]);
 
+  const [showSpinner, setShowSpinner] = useState(false);
+
   // useEffect(() => {
   //   console.log("index - ", index);
   //   if(contactDetails){
@@ -376,6 +378,7 @@ const OwnerContactDetailsHappinessMatrix = () => {
   }, [cashflowDataByProperty, cashflowDataByMonth, cashflowDataByPropertyByMonth, contactDetails, index]);
 
   const fetchCashflowData = async () => {
+    setShowSpinner(true);
     // const url = `http://localhost:4000/contacts/${getProfileId()}`;
     // console.log("Calling contacts endpoint");
     const url = `${APIConfig.baseURL.dev}/cashflowTransactions/${getProfileId()}/new`;
@@ -387,11 +390,13 @@ const OwnerContactDetailsHappinessMatrix = () => {
     } catch (e) {
       console.error(e);
     }
+    setShowSpinner(false);
   };
 
   const getDataFromAPI = async () => {
     // const url = `http://localhost:4000/contacts/${getProfileId()}`;
     // console.log("Calling contacts endpoint");
+    setShowSpinner(true);
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
     try {
       const resp = await axios.get(url);
@@ -403,6 +408,7 @@ const OwnerContactDetailsHappinessMatrix = () => {
     } catch (e) {
       console.error(e);
     }
+    setShowSpinner(false);
   };
 
   useEffect(() => {
@@ -516,8 +522,11 @@ const OwnerContactDetailsHappinessMatrix = () => {
   };
 
   return (
-    <>
-      <ThemeProvider theme={theme}>
+    <>      
+      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+        <CircularProgress color='inherit' />        
+      </Backdrop>
+      <ThemeProvider theme={theme}>        
         <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px", marginTop: "10px", backgroundColor: "#FFFFFF" }}>
           <Grid container columnSpacing={5} sx={{ marginTop: "10px" }}>
             {!isMobile && (
@@ -565,6 +574,7 @@ const OwnerContactDetailsHappinessMatrix = () => {
                 filteredCashflowDetails={filteredCashflowDetails}
                 filteredCashflowDetailsByProperty={filteredCashflowDetailsByProperty}
                 filteredCashflowDetailsByPropertyByMonth={filteredCashflowDetailsByPropertyByMonth}
+                setShowSpinner={setShowSpinner}
               />
             </Grid>
           </Grid>
@@ -682,7 +692,7 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
   );
 };
 
-const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowDetails, filteredCashflowDetailsByProperty, filteredCashflowDetailsByPropertyByMonth }) => {
+const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowDetails, filteredCashflowDetailsByProperty, filteredCashflowDetailsByPropertyByMonth, setShowSpinner, }) => {
   const { getProfileId } = useUser();
   const [propertiesData, setPropertiesData] = useState([]);
   const [contractsData, setContractsData] = useState([]);
@@ -721,9 +731,15 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
       });
   };
 
+  const loadData = async () => {
+    setShowSpinner(true);
+    await getPropertiesData();
+    await getContractsData();
+    setShowSpinner(false);
+  }
+
   useEffect(() => {
-    getPropertiesData();
-    getContractsData();
+    loadData();
   }, [getProfileId]);
 
   return (
@@ -985,8 +1001,8 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
 
   const maintenanceReqsByProperty = mapPropertiesToMaintenanceRequests(maintenanceRequests);
 
-  const sentContracts = contractsData?.filter((contract) => contract.property_owner_id === ownerUID && contract.contract_status === "SENT");
-  const newContracts = contractsData?.filter((contract) => contract.property_owner_id === ownerUID && contract.contract_status === "NEW");
+  const sentContracts = contractsData?.filter((contract) => contract.owner_uid === ownerUID && contract.contract_status === "SENT");
+  const newContracts = contractsData?.filter((contract) => contract.owner_uid === ownerUID && contract.contract_status === "NEW");
 
   // console.log("Active properties:", activeProperties);
 
@@ -1028,7 +1044,7 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
             newContracts.map((contract, index) => (
               <Box
                 key={index}
-                onClick={() => navigate("/pmQuotesList", { state: { selected_contract_uid: contract.contract_uid, property_endpoint_resp: propertiesData } })}
+                onClick={() => navigate("/pmQuotesList", { state: { selectedContractUID: contract.contract_uid, selectedContractPropertyUID: contract.property_uid } })}
                 sx={{ cursor: "pointer" }}
               >
                 <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px" }}>
@@ -1049,7 +1065,7 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
             sentContracts.map((contract, index) => (
               <Box
                 key={index}
-                onClick={() => navigate("/pmQuotesList", { state: { selected_contract_uid: contract.contract_uid, property_endpoint_resp: propertiesData } })}
+                onClick={() => navigate("/pmQuotesList", { state: { selectedContractUID: contract.contract_uid, selectedContractPropertyUID: contract.property_uid } })}
                 sx={{ cursor: "pointer" }}
               >
                 <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px" }}>

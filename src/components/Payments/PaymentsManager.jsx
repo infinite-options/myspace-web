@@ -121,6 +121,8 @@ export default function PaymentsManager(props) {
   const [paymentMethodInfo, setPaymentMethodInfo] = useState({});
   const [tab, setTab] = useState("by_property")
   const [sortBy, setSortBy] = useState("by_property")
+  const [cashFlowTotal, setCashFlowTotal] = useState(0)
+  const [globalCashFlowTotal, setGlobalCashFlowTotal] = useState({})
 
   const [transactionDataByProeprty, setTransactionDataByProeprty] = useState({})
   const [transactionDataByOwner, setTransactionDataByOwner] = useState({})
@@ -175,6 +177,21 @@ export default function PaymentsManager(props) {
       
       const updatedTotal = Object.values(updatedTotals).reduce((acc, val) => acc + val, 0);
       setTotal(updatedTotal); 
+
+      return updatedTotals;
+    });
+  }
+
+  const handleTotalCashFlowChange = (propertyId, newTotal) => {
+
+    setGlobalCashFlowTotal((prevTotals) => {
+      const updatedTotals = {
+        ...prevTotals,
+        [propertyId]: newTotal, 
+      };
+      
+      const updatedTotal = Object.values(updatedTotals).reduce((acc, val) => acc + val, 0);
+      setCashFlowTotal(updatedTotal); 
 
       return updatedTotals;
     });
@@ -509,6 +526,7 @@ export default function PaymentsManager(props) {
                                 state: {
                                   paymentData: updatedPaymentData,
                                   total: total,
+                                  cashFlowTotal: cashFlowTotal,
                                   selectedItems: selectedItems,
                                   paymentMethodInfo: paymentMethodInfo,
                                   managerCashflowWidgetData: managerCashflowWidgetData,
@@ -661,7 +679,7 @@ export default function PaymentsManager(props) {
                                       Property: {propertyPayments[0].property_address}
                                   </Typography>
                               </Grid>
-                              <TransactionsTable data={propertyPayments} total={globalTotal[propertyPayments[0].pur_property_id]} setTotal={(newTotal) => handleTotalChange(propertyPayments[0].pur_property_id, newTotal)} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} selectedRowsForTransaction={selectedRowsForTransaction}/>
+                              <TransactionsTable data={propertyPayments} cashFlowTotal={globalCashFlowTotal[propertyPayments[0].pur_property_id]} setCashFlowTotal={(newTotal) => handleTotalCashFlowChange(propertyPayments[0].pur_property_id, newTotal)} total={globalTotal[propertyPayments[0].pur_property_id]} setTotal={(newTotal) => handleTotalChange(propertyPayments[0].pur_property_id, newTotal)} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} selectedRowsForTransaction={selectedRowsForTransaction}/>
                               <br />
                           </>
                         ))
@@ -716,6 +734,7 @@ export default function PaymentsManager(props) {
                                 <AccordionDetails>
                                   <TransactionsTable 
                                     data={transactionDataByOwner[ownerID][propertyID]} 
+                                    cashFlowTotal={globalCashFlowTotal[transactionDataByOwner[ownerID][propertyID][0].pur_property_id]} setCashFlowTotal={(newTotal) => handleTotalCashFlowChange(transactionDataByOwner[ownerID][propertyID][0].pur_property_id, newTotal)}
                                     total={globalTotal[transactionDataByOwner[ownerID][propertyID][0].pur_property_id]} setTotal={(newTotal) => handleTotalChange(transactionDataByOwner[ownerID][propertyID][0].pur_property_id, newTotal)}
                                     setPaymentData={setPaymentData} 
                                     setSelectedItems={setSelectedItems} 
@@ -940,6 +959,7 @@ function TransactionsTable(props) {
 
   useEffect(() => {
     var total = 0;
+    var cashflow = 0;
   
       let purchase_uid_mapping = [];
   
@@ -954,7 +974,7 @@ function TransactionsTable(props) {
         
         // console.log("payment item data", paymentItemData);
   
-        // total += parseFloat(paymentItemData.pur_amount_due);
+        cashflow += parseFloat(paymentItemData.pur_amount_due);
         // Adjust total based on pur_cf_type
         if (paymentItemData.pur_payer.startsWith("110")) {
           total -= parseFloat(paymentItemData.pur_amount_due);
@@ -965,9 +985,11 @@ function TransactionsTable(props) {
         // total += parseFloat(paymentItemData.pur_amount_due)
       }
       console.log("selectedRows useEffect - total - ", total);
+      console.log("selectedRows useEffect - cashFlow total - ", cashflow);
       console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
 
       props.setTotal(total);
+      props.setCashFlowTotal(cashflow)
       props.setPaymentData((prevPaymentData) => ({
         ...prevPaymentData,
         balance: total.toFixed(2),
