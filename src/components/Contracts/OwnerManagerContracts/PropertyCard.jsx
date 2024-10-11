@@ -22,6 +22,7 @@ import {
 	Grid,
 	ImageList,
 	ImageListItem,
+  Checkbox,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useUser } from '../../../contexts/UserContext';
@@ -52,8 +53,117 @@ import { FeesDataGrid } from '../../Property/PMQuotesRequested';
 import ManagementContractContext from '../../../contexts/ManagementContractContext';
 import ListsContext from '../../../contexts/ListsContext';
 import GenericDialog from '../../GenericDialog';
+import { InputAdornment } from '@material-ui/core';
 // import { gridColumnsTotalWidthSelector } from '@mui/x-data-grid';
 // dhyey
+
+//standard textfield style 
+
+const textFieldInputProps = {  
+  sx: {
+    border: 'none',
+    width: '100%',    
+    height: '40px',
+    fontFamily: 'inherit',
+    fontWeight: 'inherit',
+    color: '#3D5CAC',
+    opacity: '1',
+    paddingLeft: '2px',
+    borderRadius: '5px',
+    backgroundColor: '#FFFFFF',
+  },
+};
+
+const textFieldSX = {
+  width: '100%',
+  "& .MuiInputBase-root": {
+    borderRadius: "5px",    
+    border: "1px solid #3D5CAC",
+    // border: 'none',
+  },              
+  "& .MuiInputBase-root.Mui-focused": {
+    borderColor: "#3D5CAC",
+    border: "2px solid #3D5CAC"                
+  },
+  "& input": {
+    padding: "5px",
+    height: "40px",
+    color: "#3D5CAC",
+  },
+  // "& .MuiFormControl-root": {
+  //   width: '100%',
+  // },
+  // "& .MuiTextField-root": {
+  //   width: '100%',
+  // },
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderColor: 'white',
+    },
+    '&:hover fieldset': {
+      borderColor: 'white',
+    },
+    '&.Mui-focused fieldset': {      
+      border: 'none',
+    },
+  },
+}
+
+const datePickerSlotProps = {
+  textField: {
+    size: 'small',
+    sx: {
+      width: '100%',
+      marginTop: '6px',
+      height: '38px',
+      fontSize: 24,
+      backgroundColor: '#FFFFFF',
+      borderRadius: '5px',
+      border: '1px solid #3D5CAC',
+      transition: 'border-color 0.3s',
+      "& .MuiInputBase-root": {
+        // borderRadius: '5px',
+        borderColor: '#3D5CAC',                      
+      },
+      "&:hover .MuiInputBase-root": {
+        borderColor: '#3D5CAC', // Change border color on hover
+        
+      },
+      "& .MuiInputBase-root.Mui-focused": {
+        borderColor: '#3D5CAC', // Change border color on focus                      
+      },
+      "& input": {
+        padding: '0 10px',
+        height: '38px',
+        color: '#3D5CAC',
+        // border: '1px solid #3D5CAC',
+        // borderColor: '#3D5CAC',
+        // borderRadius: '5px',                      
+      },
+      "& input:focus": {
+        borderColor: '#3D5CAC',        
+
+        // outline: 'none', // Remove the default outline
+      },
+      "& input:hover": {
+        borderColor: '#3D5CAC', 
+      },
+      '& .MuiOutlinedInput-root': {
+        '& fieldset': {
+          borderColor: 'white',
+        },
+        '&:hover fieldset': {
+          borderColor: 'white',
+        },
+        '&.Mui-focused fieldset': {      
+          // border: 'none',
+          border: '1px solid #3D5CAC',
+        },
+      },
+
+    },
+  },
+}
 
 function TextInputField(props) {
 	const inputStyle = {
@@ -832,6 +942,102 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 	);
 }
 
+function EndContractDialog({ open, handleClose, onEndContract, noticePeriod, }) {	
+
+  const noticePeriodDays = parseInt(noticePeriod, 10);
+  const minEndDate = dayjs().add(noticePeriodDays, 'day')
+	
+  const [earlyEndDate, setEarlyEndDate] = useState(minEndDate);
+	
+
+	
+
+	const handleEndContract = (event) => {
+		event.preventDefault();
+		
+		onEndContract(earlyEndDate);
+		handleClose();
+	};
+
+	return (
+		<form 
+      onSubmit={handleEndContract}
+    >
+			<Dialog
+				open={open}
+				onClose={handleClose}				
+				maxWidth="xl"
+				sx={{
+					'& .MuiDialog-paper': {
+						width: '60%',
+						maxWidth: 'none',
+					},
+				}}
+			>
+        <DialogTitle sx={{ justifyContent: 'center',}}>        
+              End Current Contract        
+        </DialogTitle>
+        <DialogContent>
+          <Grid container>
+            <Grid item xs={12}>
+              <Typography sx={{width: 'auto',}}>
+                Are you sure you want to end this contract?
+              </Typography>
+            </Grid>
+            <Grid container item xs={3} sx={{marginTop: '20px', }}>
+              <Grid item xs={12}>
+                <Typography sx={{fontWeight: 'bold', color: '#3D5CAC'}}>
+                  End Date
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    value={earlyEndDate}
+                    minDate={minEndDate}
+                    onChange={(v) => setEarlyEndDate(v)}
+                    slots={{
+                      openPickerIcon: CalendarIcon,
+                    }}
+                    slotProps={datePickerSlotProps}
+                  />
+                </LocalizationProvider>
+              </Grid>
+            </Grid>
+          </Grid>
+
+        </DialogContent>
+				
+				<DialogActions>
+					<Button
+						onClick={handleClose}
+						sx={{
+							'&:hover': {
+								backgroundColor: '#fff',
+							},
+							color: '#160449',
+						}}
+					>
+						No
+					</Button>
+					<Button
+						type="submit"
+						onClick={handleEndContract}
+						sx={{
+							'&:hover': {
+								backgroundColor: '#fff',
+							},
+							color: '#160449',
+						}}
+					>
+						Yes
+					</Button>
+				</DialogActions>
+			</Dialog>
+		</form>
+	);
+}
+
 const PropertyCard = (props) => {
   const navigate = useNavigate();
   const { getProfileId } = useUser();
@@ -851,6 +1057,7 @@ const PropertyCard = (props) => {
   const [showEditFeeDialog, setShowEditFeeDialog] = useState(false);
   const [showAddContactDialog, setShowAddContactDialog] = useState(false);
   const [showEditContactDialog, setShowEditContactDialog] = useState(false);
+  const [showEndContractDialog, setShowEndContractDialog] = useState(false);
   const [showMissingFileTypePrompt, setShowMissingFileTypePrompt] = useState(false);
   const [showInvalidEndDatePrompt, setShowInvalidEndDatePrompt] = useState(false);
   const [showInvalidStartDatePrompt, setShowInvalidStartDatePrompt] = useState(false);
@@ -867,6 +1074,8 @@ const PropertyCard = (props) => {
   const [contractName, setContractName] = useState("");
   const [contractStartDate, setContractStartDate] = useState(dayjs());
   const [contractEndDate, setContractEndDate] = useState(dayjs());
+  const [contractEndNotice, setContractEndNotice] = useState(30);
+  const [continueM2M, setContinueM2M] = useState(true);
   const [contractStatus, setContractStatus] = useState(null);
   const [contractFees, setContractFees] = useState([]);
 //   const [defaultContractFees, setDefaultContractFees] = useState([]);
@@ -908,6 +1117,8 @@ const PropertyCard = (props) => {
 		setContractStartDate(contractData["contract_start_date"] ? dayjs(contractData["contract_start_date"]) : dayjs());
 		// setContractEndDate(contractData["contract_end_date"] ? dayjs(contractData["contract_end_date"]) : contractStartDate.add(1, "year").subtract(1, "day"));
 		setContractStatus(contractData["contract_status"] ? contractData["contract_status"] : "");
+    setContractEndNotice(contractData["contract_end_notice_period"] ? contractData["contract_end_notice_period"] : "");
+    setContinueM2M(contractData["contract_m2m"] && contractData["contract_m2m"] === 1 ? true : false);
 
 		// setContractAssignedContacts(contractData["contract_assigned_contacts"] ? JSON.parse(contractData["contract_assigned_contacts"]) : []);
 		const defaultContacts = [];
@@ -1029,14 +1240,49 @@ const PropertyCard = (props) => {
 	)
   }, [propertyData]); 
 
+  const saveContacts = async () => {    
+    const formData = new FormData();	            
+    let contractContactsJSONString = JSON.stringify(contractAssignedContacts);
+    // console.log("Send Quote - contractContactsJSONString : ", contractContactsJSONString);        
+
+    
+
+    formData.append("contract_uid", currentContractUID);    
+    formData.append("contract_assigned_contacts", contractContactsJSONString);
+    
+  	const url = `${APIConfig.baseURL.dev}/contracts`;
+    // const url = `http://localhost:4000/contracts`;
+
+    fetch(url, {
+      method: "PUT",	
+      body: formData,
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        } else {
+          // console.log("Data updated successfully");
+		      setIsChange(false)		      
+        }
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+      });
+
+  }
+
 //   When contacts change reassign contacts to contacts array
   useEffect(()=>{
-	const temp = contractAssignedContacts.map((row, index) => ({
-		...row,
-		id: row.id ? index : index,
-	  }));
+    if(isChange === true){
+      saveContacts();
+    }
+    
+	  const temp = contractAssignedContacts.map((row, index) => ({
+      ...row,
+      id: row.id ? index : index,
+    }));
 
-	setContactRowsWithId(temp);
+	  setContactRowsWithId(temp);
 
   },[contractAssignedContacts])
 //   useEffect(() => {
@@ -1077,7 +1323,7 @@ const PropertyCard = (props) => {
     // setContractFees((prevContractFees) => [...prevContractFees, newFee]);
     // console.log("IN handleEditFee of PropertyCard");
     // console.log(newFee, index);
-	setIsChange(true)
+	  setIsChange(true)
     setContractFees((prevContractFees) => {
       const updatedContractFees = prevContractFees.map((fee, i) => {
         if (i === index) {
@@ -1160,16 +1406,21 @@ const PropertyCard = (props) => {
   //     //setContractFees() // map to the correct keys
   // }
 
+  const handleNoticePeriodChange = (e) => {
+    setIsChange(true)
+    setContractEndNotice(e.target.value);    
+  }            
+
   const handleAddContact = (newContact) => {
     // console.log("newContact - ", newContact);
-	setIsChange(true)
+	  setIsChange(true)
     setContractAssignedContacts((prevContractContacts) => [...prevContractContacts, newContact]);
   };
-
+  
   const handleEditContact = (newContact, index) => {
     // console.log("In handleEditContact of PropertyCard");
     // console.log(newContact, index);
-	setIsChange(true)
+	  setIsChange(true)
     setContractAssignedContacts((prevContacts) => {
       const updatedContacts = prevContacts.map((contact, i) => {
         if (i === index) {
@@ -1313,6 +1564,8 @@ const PropertyCard = (props) => {
     formData.append("contract_fees", contractFeesJSONString);
     formData.append("contract_status", "SENT");
     formData.append("contract_assigned_contacts", contractContactsJSONString);
+    formData.append("contract_end_notice_period", contractEndNotice);
+    formData.append("contract_m2m", continueM2M === true? 1 : 0);
 
     if(isPreviousFileChange){
       formData.append("contract_documents", JSON.stringify(previouslyUploadedDocs));
@@ -1388,39 +1641,24 @@ const PropertyCard = (props) => {
       });
   };
 
-  
-  const handleUpdateContactInfo = () => {
-    // console.log("Send Quote Clicked");
-	if(!isChange || isChange === false){
-		return;
-	}
-    const formData = new FormData();
-    let contractContactsJSONString = JSON.stringify(contractAssignedContacts);
 
-	if(deletedDocsUrl && deletedDocsUrl?.length !== 0){
-		formData.append("delete_documents", JSON.stringify(deletedDocsUrl));
-	}
-
+  const handleEndContractClick = (endDate) => {
+    const formattedDate = endDate.format('MM-DD-YYYY');
+    // console.log("handleEndContractClick - formattedDate - ", formattedDate);
+    
+    
+    const formData = new FormData();	            
+    
     formData.append("contract_uid", currentContractUID);    
-    // formData.append("contract_status", "SENT");
-    formData.append("contract_assigned_contacts", contractContactsJSONString);
-
+    formData.append("contract_status", "ENDING");
+    formData.append("contract_early_end_date", formattedDate);
     
-
-    // console.log("handleUpdateContactInfo - formData - ");
-    // for (const pair of formData.entries()) {
-    //   console.log(`${pair[0]}, ${pair[1]}`);
-    // }
     
-	const url = `${APIConfig.baseURL.dev}/contracts`;
+  	const url = `${APIConfig.baseURL.dev}/contracts`;
     // const url = `http://localhost:4000/contracts`;
 
     fetch(url, {
-      method: "PUT",
-	//   headers: {
-	// 	"Content-Type": "application/json", // Ensure the server expects JSON
-	//   },
-	//   body: JSON.stringify(data),
+      method: "PUT",	
       body: formData,
     })
       .then((response) => {
@@ -1428,118 +1666,7 @@ const PropertyCard = (props) => {
           throw new Error("Network response was not ok");
         } else {
           // console.log("Data updated successfully");
-		  setIsChange(false)
-		  fetchContracts();
-		  sendAnnouncement("UPDATE_CONTACT_INFO");
-        //   navigate("/managerDashboard");
-		  
-        }
-      })
-      .catch((error) => {
-        console.error("There was a problem with the fetch operation:", error);
-      });
-  };
-
-  const handleRenewContractClick = () => {
-    // console.log("Send Quote Clicked");
-	if(!isChange || isChange === false){
-		return;
-	}
-    const formData = new FormData();
-    let contractFeesJSONString = JSON.stringify(contractFees);
-    // console.log("Send Quote - contractFeesJSONString : ", contractFeesJSONString);
-    let contractContactsJSONString = JSON.stringify(contractAssignedContacts);
-    // console.log("Send Quote - contractContactsJSONString : ", contractContactsJSONString);
-    // const data = {
-    //     "contract_uid": contractUID,
-    //     "contract_name": contractName,
-    //     "contract_start_date": contractStartDate,
-    //     "contract_end_date": contractEndDate,
-    //     "contract_fees": contractFeesJSONString,
-    //     "contract_status": "SENT"
-    // };
-
-	//Check here -- Abhinav
-
-	if(deletedDocsUrl && deletedDocsUrl?.length !== 0){
-		formData.append("delete_documents", JSON.stringify(deletedDocsUrl));
-	}
-
-    formData.append("contract_uid", currentContractUID);
-    formData.append("contract_name", contractName);
-    formData.append("contract_start_date", contractStartDate.format("MM-DD-YYYY"));
-    formData.append("contract_end_date", contractEndDate.format("MM-DD-YYYY"));
-    formData.append("contract_fees", contractFeesJSONString);
-    formData.append("contract_status", "UPDATED");
-    formData.append("contract_assigned_contacts", contractContactsJSONString);
-
-	if(isPreviousFileChange){
-		formData.append("contract_documents", JSON.stringify(previouslyUploadedDocs));
-	}
-
-	// formData.append("contract_documents_details", JSON.stringify(contractFileTypes));
-
-    const endDateIsValid = isValidDate(contractEndDate.format("MM-DD-YYYY"));
-    if (!isValidDate(contractEndDate.format("MM-DD-YYYY")) || !isValidDate(contractStartDate.format("MM-DD-YYYY"))) {
-      return;
-    }
-
-    const hasMissingType = !checkFileTypeSelected();
-
-    if (hasMissingType) {
-      setShowMissingFileTypePrompt(true);
-      return;
-    }
-
-    if (contractFiles && contractFiles?.length) {
-
-      const documentsDetails = [];
-      [...contractFiles].forEach((file, i) => {
-		
-		// console.log(JSON.stringify(file));
-		
-
-        formData.append(`file_${i}`, file);
-        const fileType = contractFileTypes[i] || "";
-		// formData.append("contract")
-        const documentObject = {
-          // file: file,
-          fileIndex: i, //may not need fileIndex - will files be appended in the same order?
-          fileName: file.name, //may not need filename
-          contentType: fileType, // contentType = "contract or lease",  fileType = "pdf, doc"
-        };
-        documentsDetails.push(documentObject);
-      });
-
-      formData.append("contract_documents_details", JSON.stringify(documentsDetails));
-    }
-
-    // console.log("Quote sent. Data sent - ");
-    // for (const pair of formData.entries()) {
-    //   console.log(`${pair[0]}, ${pair[1]}`);
-    // }
-
-    // sendPutRequest(formData);
-	const url = `${APIConfig.baseURL.dev}/contracts`;
-    // const url = `http://localhost:4000/contracts`;
-
-    fetch(url, {
-      method: "PUT",
-	//   headers: {
-	// 	"Content-Type": "application/json", // Ensure the server expects JSON
-	//   },
-	//   body: JSON.stringify(data),
-      body: formData,
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        } else {
-          // console.log("Data updated successfully");
-		  setIsChange(false)
-		  sendAnnouncement("RENEW_CONTRACT");
-        //   navigate("/managerDashboard");
-		  
+		      setIsChange(false)		      
         }
       })
       .catch((error) => {
@@ -1830,9 +1957,6 @@ if (scrollRef.current) {
 		  ),
 		}
 	];
-
-	
-
 
 return (
     <>
@@ -2140,14 +2264,16 @@ return (
 					</Typography>					
 				</Grid>
 				<Grid item xs={12} sx={{marginTop: '5px', }}>
-					<TextInputField
+					<TextField
 						name="management_agreement_name"
 						placeholder="Enter contract name"
 						value={contractName}
 						onChange={handleContractNameChange}
 						required						
+            InputProps={textFieldInputProps}
+            sx={textFieldSX}
 					>						
-					</TextInputField>
+					</TextField>
 				</Grid>
 				
 
@@ -2167,23 +2293,7 @@ return (
 							slots={{
 								openPickerIcon: CalendarIcon,
 							}}
-							slotProps={{
-								textField: {
-									size: 'small',
-									style: {
-										width: '100%',
-										fontSize: 24,
-										backgroundColor: '#FFFFFF',
-										// borderRadius: "10px !important",
-										borderRadius: '10px',
-										border: '1px solid black',
-										// border: "10px solid green",
-										input: {
-											border: '1px solid black', // Ensure input border is black
-										},
-									},
-								},
-							}}
+							slotProps={datePickerSlotProps}
 						/>
 					</LocalizationProvider>
 				</Grid>
@@ -2203,29 +2313,80 @@ return (
 							slots={{
 								openPickerIcon: CalendarIcon,
 							}}
-							slotProps={{
-								textField: {
-									size: 'small',
-									style: {
-										width: '100%',
-										fontSize: 24,
-										backgroundColor: '#FFFFFF',
-										// borderRadius: "10px !important",
-										borderRadius: '10px',
-										border: '1px solid black',
-										// border: "10px solid green",
-										input: {
-											border: '1px solid black', // Ensure input border is black
-										},
-									},
-								},
-							}}
+              // sx={{
+              //   height: '40px',
+              // }}
+							// slotProps={{
+							// 	textField: {
+							// 		size: 'small',
+							// 		style: {
+							// 			width: '100%',
+							// 			fontSize: 24,
+							// 			backgroundColor: '#FFFFFF',
+							// 			// borderRadius: "10px !important",
+							// 			borderRadius: '10px',
+							// 			border: '1px solid #3D5CAC',
+							// 			// border: "10px solid green",
+							// 			input: {
+							// 				// border: '1px solid black', // Ensure input border is black
+							// 			},
+							// 		},
+							// 	},
+							// }}
+              slotProps={datePickerSlotProps}
 						/>
 					</LocalizationProvider>
 				</Grid>
 			</Grid>
 
 		</Grid>			
+    <Grid container item xs={12} columnGap={3} sx={{marginTop: '10px', }}>      
+			<Grid item container direction="row" xs={3} sx={{justifyContent: 'flex-start', }}>
+				<Grid item xs={12}>
+					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+						Notice Period
+					</Typography>					
+				</Grid>
+				<Grid item xs={12} sx={{marginTop: '5px', }}>
+					<TextField
+						name="contract_notice_period"
+						// placeholder="days"
+						value={contractEndNotice}
+						onChange={handleNoticePeriodChange}
+						required            
+            InputProps={{
+              ...textFieldInputProps,
+              endAdornment: (
+                <InputAdornment position="end">days</InputAdornment>
+              ),
+            }}
+            sx={textFieldSX}
+					>						
+					</TextField>
+				</Grid>
+      </Grid>      
+      <Grid item container direction="row" xs={6} sx={{justifyContent: 'center', }}>
+				<Grid item xs={12}>					
+				</Grid>
+				<Grid item xs={12} sx={{marginTop: '5px', }}>          
+          <FormControlLabel 
+            sx={{
+              marginTop: '25px',
+            }}        
+            control={
+              <Checkbox
+                checked={continueM2M}
+                onChange={() => {
+                  setContinueM2M( prevState => !prevState)
+                }}
+                inputProps={{ 'aria-label': 'controlled' }}
+              />	          
+            } 
+            label="Continue Month-to-Month" 
+          />				
+				</Grid>
+      </Grid>            
+    </Grid>    
 			{showInvalidStartDatePrompt && (
 				<Box
 					sx={{
@@ -2446,31 +2607,7 @@ return (
 						}}
 					>
 						
-						<Button
-							variant="contained"
-							sx={{
-								backgroundColor: '#CB8E8E',
-								textTransform: 'none',
-								borderRadius: '5px',
-								display: 'flex',
-								width: '30%',
-								'&:hover': {
-									backgroundColor: '#CB8E8E',
-								},
-							}}
-							onClick={handleUpdateContactInfo}
-						>
-							<Typography
-								sx={{
-									fontWeight: theme.typography.primary.fontWeight,
-									fontSize: '14px',
-									color: '#160449',
-									textTransform: 'none',
-								}}
-							>
-								{'Update Contact Info'}
-							</Typography>
-						</Button>
+						
 							
 						<Button
 							variant="contained"
@@ -2484,8 +2621,8 @@ return (
 									backgroundColor: '#9EAED6',
 								},
 							}}
-							onClick={handleRenewContractClick}							
-							disabled={!contractName || !contractStartDate || !contractEndDate || !contractFees}
+							onClick={() => setShowEndContractDialog(true)}							
+							// disabled={!contractName || !contractStartDate || !contractEndDate || !contractFees}
 						>
 							<Typography
 								sx={{
@@ -2495,7 +2632,7 @@ return (
 									textTransform: 'none',
 								}}
 							>
-								{'Renew Contract'}
+								{'End Contract'}
 							</Typography>
 						</Button>
 
@@ -2564,6 +2701,11 @@ return (
 						contactIndex={indexForEditContactDialog}
 						contacts={contractAssignedContacts}
 					/>
+				</Box>
+			)}
+      {showEndContractDialog && (
+				<Box>
+					<EndContractDialog open={showEndContractDialog} handleClose={() => setShowEndContractDialog(false)} onEndContract={handleEndContractClick} noticePeriod={contractEndNotice} />
 				</Box>
 			)}
       <GenericDialog
