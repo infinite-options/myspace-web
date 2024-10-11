@@ -472,8 +472,8 @@ const Documents = ({ fromRenew, documents, setDocuments, setDeleteDocsUrl, setIs
                       <Typography
                         sx={{
                           color: "#160449",
-                          fontWeight: theme.typography.primary.fontWeight,
-                          fontSize: "24px",
+                          fontWeight: "bold",
+                          fontSize: "20px",
                           textAlign: "center",
                           paddingBottom: "10px",
                           paddingTop: "5px",

@@ -201,29 +201,42 @@ const TenantApplicationNav = (props) => {
         <Typography display="block" sx={{ color: "#3D5CAC" }}>SSN:</Typography>
         <Typography display="block" sx={{ color: "#160449" }}>***-**-{AES.decrypt(application.tenant_ssn, process.env.REACT_APP_ENKEY)?.toString()?.slice(-4)}</Typography>
         <Typography display="block" sx={{ color: "#3D5CAC" }}>DL:</Typography>
-        <Typography display="block" sx={{ color: "#160449" }}>{application.tenant_drivers_license_number} / {application.tenant_drivers_license_state}</Typography>
-      </Box>
+        <Typography display="block" sx={{ color: "#160449" }}>
+  {application.tenant_drivers_license_number 
+    ? `${application.tenant_drivers_license_number} / ${application.tenant_drivers_license_state}`
+    : "Not available"}
+</Typography></Box>
     </Grid>
   </Grid>
 </Paper>
 
 {/* Job Details */}
-<Paper sx={{ backgroundColor: theme.palette.form.main, padding: "20px", marginBottom: "10px" }}>
-  <Typography sx={{ fontWeight: "bold", color: "#160449", marginBottom: "10px" }}>JOB DETAILS</Typography>
-  <Grid container spacing={2}>
-    <Grid item xs={12} sm={6}>
-      <Typography display="block" sx={{ color: "#3D5CAC" }}>Company Name:</Typography>
-      <Typography display="block">{application.tenant_current_job_company}</Typography>
-      <Typography display="block" sx={{ color: "#3D5CAC" }}>Job Title:</Typography>
-      <Typography display="block">{application.tenant_current_job_title}</Typography>
+<Paper sx={{ backgroundColor: theme.palette.form.main, padding: "20px", marginBottom: "10px", borderRadius: "10px" }}>
+  <Typography sx={{fontWeight: "bold", color: "#160449", marginBottom: "10px"}}>
+    INCOME DETAILS
+  </Typography>
+  
+  {/* Parsing the stringified JSON data */}
+  {JSON.parse(application.lease_income).map((income, index) => (
+    <Grid container spacing={2} key={index} sx={{ marginBottom: "10px", padding: "10px", backgroundColor: theme.palette.form.main, borderRadius: "5px" }}>
+      <Grid item xs={3}>
+        <Typography sx={{ color: "#3D5CAC"}}>Income Title</Typography>
+        <Typography>{income.jobTitle}</Typography>
+      </Grid>
+      <Grid item xs={3}>
+        <Typography sx={{ color: "#3D5CAC"}}>Amount</Typography>
+        <Typography>{income.salary}</Typography>
+      </Grid>
+      <Grid item xs={3}>
+        <Typography sx={{ color: "#3D5CAC" }}>Amount Frequency</Typography>
+        <Typography>{income.frequency}</Typography>
+      </Grid>
+      <Grid item xs={3}>
+        <Typography sx={{ color: "#3D5CAC" }}>Company Name</Typography>
+        <Typography>{income.companyName}</Typography>
+      </Grid>
     </Grid>
-    <Grid item xs={12} sm={6}>
-      <Typography display="block" sx={{ color: "#3D5CAC" }}>Current Salary:</Typography>
-      <Typography display="block">{application.tenant_current_salary}</Typography>
-      <Typography display="block" sx={{ color: "#3D5CAC" }}>Salary Frequency:</Typography>
-      <Typography display="block">{application.tenant_salary_frequency}</Typography>
-    </Grid>
-  </Grid>
+  ))}
 </Paper>
 
 {/* Occupant Details */}
@@ -257,15 +270,75 @@ const TenantApplicationNav = (props) => {
                   
             </Paper>
            {/* Action Buttons */}
-                  <Stack direction="row" justifyContent="center" spacing={2} sx={{ padding: "30px" }}>
-                    <Button onClick={handleWithdrawLease} sx={{ backgroundColor: "#CB8E8E", color: "#FFFFFF", textTransform: "none", width: "160px", "&:hover, &:focus, &:active": { backgroundColor: "#bb6b6b" } }}>
-                      Withdraw Lease
-                    </Button>
-                    <Button onClick={handleEditLease} sx={{ backgroundColor: "#9EAED6", color: "#FFFFFF", textTransform: "none", width: "160px", "&:hover, &:focus, &:active": { backgroundColor: "#6780bf" } }}>
-                      Edit Lease
-                    </Button>
-                  </Stack>
-                </Box>
+           <Stack direction='row' alignItems='center' justifyContent='space-around' sx={{ padding: "30px 0", paddingRight: "15px" }}>
+                      {application.lease_status === "NEW" && (
+                        <Button
+                          onClick={handleRejectLease}
+                          sx={{
+                            backgroundColor: "#CB8E8E",
+                            color: "#160449",
+                            textTransform: "none",
+                            width: "120px",
+                            "&:hover, &:focus, &:active": {
+                              backgroundColor: "#CB8E8E",
+                            },
+                          }}
+                        >
+                          {"Reject Tenant"}
+                        </Button>
+                      )}
+                      {application.lease_status === "PROCESSING" && (
+                        <div>
+                          <Button
+                            onClick={handleWithdrawLease}
+                            sx={{
+                              backgroundColor: "#CB8E8E",
+                              color: "#FFFFFF",
+                              textTransform: "none",
+                              width: "160px",
+                              marginRight: "10px",
+                              marginRight: "30px",
+                              whiteSpace: "nowrap",
+                              "&:hover, &:focus, &:active": {
+                                backgroundColor: "#bb6b6b",
+                              },
+                            }}
+                          >
+                            {"Withdraw Lease"}
+                          </Button>
+                          <Button
+                            onClick={handleEditLease}
+                            sx={{
+                              backgroundColor: "#9EAED6",
+                              color: "#FFFFFF",
+                              textTransform: "none",
+                              width: "120px",
+                              "&:hover, &:focus, &:active": {
+                                backgroundColor: "#6780bf",
+                              },
+                            }}
+                          >
+                            {"Edit Lease"}
+                          </Button>
+                        </div>
+                      )}
+                      {application.lease_status !== "PROCESSING" && (
+                        <Button
+                          onClick={handleCreateLease}
+                          sx={{
+                            backgroundColor: "#9EAED6",
+                            color: "#160449",
+                            textTransform: "none",
+                            width: "120px",
+                            "&:hover, &:focus, &:active": {
+                              backgroundColor: "#9EAED6",
+                            },
+                          }}
+                        >
+                          {"New Lease"}
+                        </Button>
+                      )}
+                    </Stack></Box>
               </Paper>
             </Box>
           </Stack>
