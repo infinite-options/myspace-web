@@ -149,663 +149,122 @@ const TenantApplicationNav = (props) => {
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
         <CircularProgress color='inherit' />
       </Backdrop>
-      <Box
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          width: "100%",
-          minHeight: "100vh",
-          marginTop: theme.spacing(2),
-          marginBottom: theme.spacing(2),
-          paddingBottom: "50px",
-        }}
-      >
-        <Paper
-          style={{
-            backgroundColor: theme.palette.primary.main,
-            width: "100%",
-            paddingTop: "10px",
-          }}
-        >
-          <Stack direction='column' justifyContent='center' alignItems='center'>
-            <Box
-              sx={{
-                borderBottom: 0,
-                width: "90%",
-              }}
-            >
-              <Paper
-                sx={{
-                  backgroundColor: theme.palette.form.main,
-                }}
-              >
-                <Box
-                  sx={{
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    width: "100%",
-                    marginTop: theme.spacing(2),
-                  }}
-                >
-                  <Box
-                    sx={{
-                      position: "relative",
-                      backgroundColor: "#FFFFFF",
-                      borderRadius: "10px",
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        backgroundColor: "#160449",
-                        position: "relative",
-                        borderRadius: "10px 10px 0 0",
-                        paddingTop: "10px",
-                      }}
-                    >
-                      <Stack direction='row' justifyContent='center' alignItems='center'>
-                        <Button onClick={handlePreviousCard} disabled={currentIndex === 0}>
-                          {currentIndex === 0 ? (
-                            <ArrowBackIcon
-                              sx={{
-                                color: "#A0A0A0",
-                                width: "25px",
-                                height: "25px",
-                                margin: "0px",
-                              }}
-                            />
-                          ) : (
-                            <ArrowBackIcon
-                              sx={{
-                                width: "25px",
-                                height: "25px",
-                                margin: "0px",
-                              }}
-                            />
-                          )}
-                        </Button>
-                        <Stack direction='column' margin='0px' justifyContent='center' alignItems='center' spacing={2}>
-                          <Typography
-                            sx={{
-                              color: "#FFFFFF",
-                              fontWeight: theme.typography.propertyPage.fontWeight,
-                              fontSize: "16px",
-                            }}
-                          >
-                            {`${currentIndex + 1} of ${applications.length} Applicants`}
-                          </Typography>
-                        </Stack>
-                        <Button onClick={handleNextCard} disabled={currentIndex === applications.length - 1}>
-                          {currentIndex === applications.length - 1 ? (
-                            <ArrowForwardIcon
-                              sx={{
-                                color: "#A0A0A0",
-                                width: "25px",
-                                height: "25px",
-                                margin: "0px",
-                              }}
-                            />
-                          ) : (
-                            <ArrowForwardIcon
-                              sx={{
-                                width: "25px",
-                                height: "25px",
-                                margin: "0px",
-                              }}
-                            />
-                          )}
-                        </Button>
-                        <Box position='absolute' right={0}>
-                          <Button onClick={(e) => handleCloseButton(e)}>
-                            <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px", margin: "5px", color: "#FFFFFF" }} />
-                          </Button>
-                        </Box>
-                      </Stack>
-                      <Typography
-                        align='center'
-                        sx={{
-                          fontSize: "15px",
-                          fontFamily: "Source Sans 3, sans-serif",
-                          margin: "0 18px",
-                          color: "#FFFFFF",
-                          fontWeight: 800,
-                          marginTop: "10px",
-                          marginBottom: "50px",
-                        }}
-                      >
-                        {application.tenant_first_name + " " + application.tenant_last_name}
-                      </Typography>
-                      <Avatar
-                        src={application.tenant_photo_url}
-                        sx={{
-                          width: "60px",
-                          height: "60px",
-                          position: "absolute",
-                          bottom: "-30px",
-                          left: "50%",
-                          transform: "translateX(-50%)",
-                        }}
-                      />
+      <Box sx={{  display: "flex", justifyContent: "center", width: "100%", minHeight: "100vh", marginTop: theme.spacing(2), marginBottom: theme.spacing(2), paddingBottom: "50px" }}>
+        <Paper sx={{  width: "100%", paddingTop: "10px" }}>
+          <Stack direction="column" justifyContent="center" alignItems="center">
+            <Box sx={{ width: "90%" }}>
+              <Paper sx={{ backgroundColor: theme.palette.primary.white}}>
+                <Box sx={{ flexDirection: "column", justifyContent: "center", width: "100%", marginTop: theme.spacing(2) }}>
+                  {/* Header with name and avatar */}
+                  <Box sx={{ position: "relative", backgroundColor: "#FFFFFF", borderRadius: "10px", display: "flex", flexDirection: "column", width: "100%" }}>
+                    <Box sx={{ backgroundColor: "#160449", position: "relative", borderRadius: "10px 10px 0 0", paddingTop: "10px", paddingBottom: "30px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <Button onClick={handlePreviousCard} disabled={currentIndex === 0}>
+                        <ArrowBackIcon sx={{ color: currentIndex === 0 ? "#A0A0A0" : "#FFFFFF", width: "25px", height: "25px", margin: "0px" }} />
+                      </Button>
+                      <Box sx={{ textAlign: "center" }}>
+                        <Avatar src={application.tenant_photo_url} sx={{ width: "60px", height: "60px", margin: "0 auto", marginBottom: "10px" }} />
+                        <Typography sx={{ color: "#FFFFFF", fontSize: "16px", fontWeight: 800 }}>
+                          {application.tenant_first_name + " " + application.tenant_last_name}
+                        </Typography>
+                        <Typography sx={{ color: "#FFFFFF", fontSize: "14px" }}>{`${currentIndex + 1} of ${applications.length} Applicants`}</Typography>
+                      </Box>
+                      <Button onClick={handleNextCard} disabled={currentIndex === applications.length - 1}>
+                        <ArrowForwardIcon sx={{ color: currentIndex === applications.length - 1 ? "#A0A0A0" : "#FFFFFF", width: "25px", height: "25px", margin: "0px" }} />
+                      </Button>
                     </Box>
                   </Box>
-                  <Box sx={{ paddingTop: "50px", paddingLeft: "15px" }}>
-                    <Grid container>
-                      <Grid item xs={1}>
-                        <img src={EmailIcon} alt='email' />
-                      </Grid>
-                      <Grid item xs={7}>
-                        <Typography
-                          sx={{
-                            fontSize: 13,
-                            paddingLeft: "10px",
-                            fontFamily: "Source Sans Pro, sans-serif",
-                            color: "#160449",
-                          }}
-                        >
-                          {application.tenant_email}
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={4}></Grid>
-                      <Grid item xs={1}>
-                        <img src={PhoneIcon} alt='phone' />
-                      </Grid>
-                      <Grid item xs={7}>
-                        <Typography
-                          sx={{
-                            fontSize: 13,
-                            paddingLeft: "10px",
-                            fontFamily: "Source Sans Pro, sans-serif",
-                            color: "#160449",
-                          }}
-                        >
-                          {application.tenant_phone_number}
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={4}></Grid>
-                      <Grid item xs={12}>                        
-                        <Typography
-                          sx={{
-                            fontSize: 15,
-                            fontFamily: "Source Sans Pro, sans-serif",
-                            color: "#160449",
-                          }}
-                        >{`${application.tenant_address}, ${application.tenant_city}, ${application.tenant_state} ${application.tenant_zip}`}</Typography>
-                      </Grid>
-                      <Grid
-                        item
-                        xs={12}
-                        sx={{
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "space-around",
-                        }}
-                      >
-                        <Stack
-                          sx={{
-                            marginLeft: "0px",
-                          }}
-                        >
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#160449",
-                            }}
-                          >
-                            {application?.tenant_ssn && ("***-**-" + AES.decrypt(application.tenant_ssn, process.env.REACT_APP_ENKEY)?.toString()?.slice(-4))}
-                          </Typography>
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#160449",
-                            }}
-                          >
-                            {"SSN"}
-                          </Typography>
-                        </Stack>
-                        <Stack sx={{ marginRight: "40px" }}>
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#160449",
-                            }}
-                          >
-                            {application.tenant_drivers_license_number ? application.tenant_drivers_license_number : "<LICENSE_NUM>"}/
-                            {application.tenant_drivers_license_state ? application.tenant_drivers_license_state : "<LICENSE/STATE>"}
-                          </Typography>
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#160449",
-                            }}
-                          >
-                            {"License Number/ State"}
-                          </Typography>
-                        </Stack>
-                      </Grid>                      
-                      <Grid item xs={6}>
-                        <Stack>
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#3D5CAC",
-                            }}
-                          >
-                            {"Current Salary"}
-                          </Typography>
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#160449",
-                            }}
-                          >
-                            {application.tenant_current_salary}
-                          </Typography>
-                        </Stack>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Stack>
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#3D5CAC",
-                            }}
-                          >
-                            {"Salary Frequency"}
-                          </Typography>
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#160449",
-                            }}
-                          >
-                            {application.tenant_salary_frequency}
-                          </Typography>
-                        </Stack>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Stack>
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#3D5CAC",
-                            }}
-                          >
-                            {"Company Name"}
-                          </Typography>
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#160449",
-                            }}
-                          >
-                            {application.tenant_current_job_company}
-                          </Typography>
-                        </Stack>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Stack>
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#3D5CAC",
-                            }}
-                          >
-                            {"Job Title"}
-                          </Typography>
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#160449",
-                            }}
-                          >
-                            {application.tenant_current_job_title}
-                          </Typography>
-                        </Stack>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Stack>
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#3D5CAC",
-                            }}
-                          >
-                            {"Current Address"}
-                          </Typography>
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#160449",
-                            }}
-                          >
-                            {application.tenant_address}
-                          </Typography>
-                        </Stack>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Stack>
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#3D5CAC",
-                            }}
-                          >
-                            {"Unit #"}
-                          </Typography>
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#160449",
-                            }}
-                          >
-                            {application.tenant_unit}
-                          </Typography>
-                        </Stack>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Stack>
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#3D5CAC",
-                            }}
-                          >
-                            {"City/ State"}
-                          </Typography>
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#160449",
-                            }}
-                          >
-                            {application.tenant_city}/ {application.tenant_state}
-                          </Typography>
-                        </Stack>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Stack>
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#3D5CAC",
-                            }}
-                          >
-                            {"Zip Code"}
-                          </Typography>
-                          <Typography
-                            sx={{
-                              fontSize: 13,
-                              fontFamily: "Source Sans Pro, sans-serif",
-                              color: "#160449",
-                            }}
-                          >
-                            {application.tenant_zip}
-                          </Typography>
-                        </Stack>
-                      </Grid>
 
-                      <Grid item xs={12} marginTop={"20px"}>
-                        <Typography
-                          sx={{
-                            justifySelf: "center",
-                            color: theme.typography.primary.black,
-                            fontWeight: theme.typography.primary.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                          }}
-                        >
-                          Adults
-                        </Typography>
-                        {adultOccupants && adultOccupants?.length >0 ? <AdultDataGrid adults={adultOccupants}/> : 
-                          <>
-                            <Box
-                              sx={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                marginBottom: '7px',
-                                width: '100%',
-                                height:"70px"
-                              }}
-                            >
-                              <Typography
-                                sx={{
-                                color: "#A9A9A9",
-                                fontWeight: theme.typography.primary.fontWeight,
-                                fontSize: "15px",
-                                }}
-                              >
-                                No Adults
-                              </Typography>
-                            </Box>
-                          </>
-                        }
-                      </Grid>
 
-                      {/* child section */}
-                      <Grid item xs={12} marginTop={"20px"}>
-                          <Typography
-                            sx={{
-                              justifySelf: "center",
-                              color: theme.typography.primary.black,
-                              fontWeight: theme.typography.primary.fontWeight,
-                              fontSize: theme.typography.smallFont,
-                            }}
-                          >
-                          Children
-                        </Typography>
-                        {childOccupants && childOccupants?.length >0 ? <ChildDataGrid children={childOccupants}/> : 
-                          <>
-                            <Box
-                              sx={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                marginBottom: '7px',
-                                width: '100%',
-                                height:"70px"
-                              }}
-                            >
-                              <Typography
-                                sx={{
-                                color: "#A9A9A9",
-                                fontWeight: theme.typography.primary.fontWeight,
-                                fontSize: "15px",
-                                }}
-                              >
-                                No Child
-                              </Typography>
-                            </Box>
-                          </>
-                        }
-                      </Grid>
+              {/* Contact and Confidential Info */}
+<Paper sx={{ backgroundColor: theme.palette.form.main, padding: "20px", marginBottom: "10px" }}>
+  <Grid container spacing={2} sx={{ padding: "0px" }}>
+    <Grid item xs={12} sm={6}>
+      <Box >
+        <Typography sx={{ fontWeight: "bold", color: "#160449", marginBottom: "10px" }}>CONTACT INFORMATION</Typography>
+        <Typography display="block">
+          <img src={EmailIcon} alt="email" style={{ marginRight: "10px" }} />
+          {application.tenant_email}
+        </Typography>
+        <Typography display="block">
+          <img src={PhoneIcon} alt="phone" style={{ marginRight: "10px" }} />
+          {application.tenant_phone_number}
+        </Typography>
+        <Typography display="block">
+          {application.tenant_address}, {application.tenant_city}, {application.tenant_state} {application.tenant_zip}
+        </Typography>
+      </Box>
+    </Grid>
 
-                      {/* pet section */}
-                      <Grid item xs={12} marginTop={"20px"}>
-                        <Typography
-                            sx={{
-                              justifySelf: "center",
-                              color: theme.typography.primary.black,
-                              fontWeight: theme.typography.primary.fontWeight,
-                              fontSize: theme.typography.smallFont,
-                            }}
-                          >
-                          Pets
-                        </Typography>
-                        {petOccupants && petOccupants?.length >0 ? <PetDataGrid pets={petOccupants}/> : 
-                          <>
-                            <Box
-                              sx={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                marginBottom: '7px',
-                                width: '100%',
-                                height:"70px"
-                              }}
-                            >
-                              <Typography
-                                sx={{
-                                color: "#A9A9A9",
-                                fontWeight: theme.typography.primary.fontWeight,
-                                fontSize: "15px",
-                                }}
-                              >
-                                No Pets
-                              </Typography>
-                            </Box>
-                          </>
-                        }
-                      </Grid>
+    <Grid item xs={12} sm={6}>
+      <Box sx={{ padding: "10px" }}>
+        <Typography sx={{ fontWeight: "bold", color: "#160449", marginBottom: "10px" }}>CONFIDENTIAL INFO</Typography>
+        <Typography display="block" sx={{ color: "#3D5CAC" }}>SSN:</Typography>
+        <Typography display="block" sx={{ color: "#160449" }}>***-**-{AES.decrypt(application.tenant_ssn, process.env.REACT_APP_ENKEY)?.toString()?.slice(-4)}</Typography>
+        <Typography display="block" sx={{ color: "#3D5CAC" }}>DL:</Typography>
+        <Typography display="block" sx={{ color: "#160449" }}>{application.tenant_drivers_license_number} / {application.tenant_drivers_license_state}</Typography>
+      </Box>
+    </Grid>
+  </Grid>
+</Paper>
 
-                      {/* vehicle section */}
-                      <Grid item xs={12} marginTop={"20px"}>
-                        <Typography
-                            sx={{
-                              justifySelf: "center",
-                              color: theme.typography.primary.black,
-                              fontWeight: theme.typography.primary.fontWeight,
-                              fontSize: theme.typography.smallFont,
-                            }}
-                          >
-                          Vehicles
-                        </Typography>
-                        {vehicles && vehicles?.length >0 ? <VehicleDataGrid vehicles={vehicles}/> : 
-                          <>
-                            <Box
-                              sx={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                marginBottom: '7px',
-                                width: '100%',
-                                height:"70px"
-                              }}
-                            >
-                              <Typography
-                                sx={{
-                                color: "#A9A9A9",
-                                fontWeight: theme.typography.primary.fontWeight,
-                                fontSize: "15px",
-                                }}
-                              >
-                                No Vehicles
-                              </Typography>
-                            </Box>
-                          </>
-                        }
-                      </Grid>
+{/* Job Details */}
+<Paper sx={{ backgroundColor: theme.palette.form.main, padding: "20px", marginBottom: "10px" }}>
+  <Typography sx={{ fontWeight: "bold", color: "#160449", marginBottom: "10px" }}>JOB DETAILS</Typography>
+  <Grid container spacing={2}>
+    <Grid item xs={12} sm={6}>
+      <Typography display="block" sx={{ color: "#3D5CAC" }}>Company Name:</Typography>
+      <Typography display="block">{application.tenant_current_job_company}</Typography>
+      <Typography display="block" sx={{ color: "#3D5CAC" }}>Job Title:</Typography>
+      <Typography display="block">{application.tenant_current_job_title}</Typography>
+    </Grid>
+    <Grid item xs={12} sm={6}>
+      <Typography display="block" sx={{ color: "#3D5CAC" }}>Current Salary:</Typography>
+      <Typography display="block">{application.tenant_current_salary}</Typography>
+      <Typography display="block" sx={{ color: "#3D5CAC" }}>Salary Frequency:</Typography>
+      <Typography display="block">{application.tenant_salary_frequency}</Typography>
+    </Grid>
+  </Grid>
+</Paper>
 
-                      {/* document section */}
-                      <Grid
-                        item
-                        xs={12}
-                        sx={{
-                          marginRight: "30px",
-                        }}
-                      >
-                        {
-                          application?.lease_status === "PROCESSING" && (
-                            <LeaseFees leaseFees={leaseFees} isEditable={false}/>
-                          )
-                        }
-                        <Documents documents={applicationDocuments} setDocuments={setApplicationDocuments} isEditable={false} isAccord={false} customName={"Application Documents:"}/>                                                
-                      </Grid>
-                    </Grid>
-                    <Stack direction='row' alignItems='center' justifyContent='space-around' sx={{ padding: "30px 0", paddingRight: "15px" }}>
-                      {application.lease_status === "NEW" && (
-                        <Button
-                          onClick={handleRejectLease}
-                          sx={{
-                            backgroundColor: "#CB8E8E",
-                            color: "#160449",
-                            textTransform: "none",
-                            width: "120px",
-                            "&:hover, &:focus, &:active": {
-                              backgroundColor: "#CB8E8E",
-                            },
-                          }}
-                        >
-                          {"Reject Tenant"}
-                        </Button>
-                      )}
-                      {application.lease_status === "PROCESSING" && (
-                        <div>
-                          <Button
-                            onClick={handleWithdrawLease}
-                            sx={{
-                              backgroundColor: "#CB8E8E",
-                              color: "#FFFFFF",
-                              textTransform: "none",
-                              width: "160px",
-                              marginRight: "10px",
-                              marginRight: "30px",
-                              whiteSpace: "nowrap",
-                              "&:hover, &:focus, &:active": {
-                                backgroundColor: "#bb6b6b",
-                              },
-                            }}
-                          >
-                            {"Withdraw Lease"}
-                          </Button>
-                          <Button
-                            onClick={handleEditLease}
-                            sx={{
-                              backgroundColor: "#9EAED6",
-                              color: "#FFFFFF",
-                              textTransform: "none",
-                              width: "120px",
-                              "&:hover, &:focus, &:active": {
-                                backgroundColor: "#6780bf",
-                              },
-                            }}
-                          >
-                            {"Edit Lease"}
-                          </Button>
-                        </div>
-                      )}
-                      {application.lease_status !== "PROCESSING" && (
-                        <Button
-                          onClick={handleCreateLease}
-                          sx={{
-                            backgroundColor: "#9EAED6",
-                            color: "#160449",
-                            textTransform: "none",
-                            width: "120px",
-                            "&:hover, &:focus, &:active": {
-                              backgroundColor: "#9EAED6",
-                            },
-                          }}
-                        >
-                          {"New Lease"}
-                        </Button>
-                      )}
-                    </Stack>
-                  </Box>
+{/* Occupant Details */}
+<Paper elevation={2} sx={{ backgroundColor: theme.palette.form.main, padding: "20px", marginBottom: "10px" }}>
+  <Typography sx={{ fontWeight: "bold", color: "#160449", marginBottom: "10px" }}>OCCUPANT DETAILS</Typography>
+  <Grid container spacing={2}>
+    <Grid item xs={3}>
+      <Typography display="block" sx={{ color: "#3D5CAC" }}>Adults:</Typography>
+      <Typography display="block">{adultOccupants.length}</Typography>
+    </Grid>
+    <Grid item xs={3}>
+      <Typography display="block" sx={{ color: "#3D5CAC" }}>Children:</Typography>
+      <Typography display="block">{childOccupants.length}</Typography>
+    </Grid>
+    <Grid item xs={3}>
+      <Typography display="block" sx={{ color: "#3D5CAC" }}>Pets:</Typography>
+      <Typography display="block">{petOccupants.length}</Typography>
+    </Grid>
+    <Grid item xs={3}>
+      <Typography display="block" sx={{ color: "#3D5CAC" }}>Vehicles:</Typography>
+      <Typography display="block">{vehicles.length}</Typography>
+    </Grid>
+  </Grid>
+</Paper>
+{/* Documents */}
+            <Paper  elevation={2} sx={{ backgroundColor: theme.palette.form.main, padding: "20px"}}>
+       
+                    <Documents documents={applicationDocuments} setDocuments={setApplicationDocuments} isEditable={false} isAccord={false} customName={"APPLICATION DOCUMENTS:"} />
+               
+
+                  
+            </Paper>
+           {/* Action Buttons */}
+                  <Stack direction="row" justifyContent="center" spacing={2} sx={{ padding: "30px" }}>
+                    <Button onClick={handleWithdrawLease} sx={{ backgroundColor: "#CB8E8E", color: "#FFFFFF", textTransform: "none", width: "160px", "&:hover, &:focus, &:active": { backgroundColor: "#bb6b6b" } }}>
+                      Withdraw Lease
+                    </Button>
+                    <Button onClick={handleEditLease} sx={{ backgroundColor: "#9EAED6", color: "#FFFFFF", textTransform: "none", width: "160px", "&:hover, &:focus, &:active": { backgroundColor: "#6780bf" } }}>
+                      Edit Lease
+                    </Button>
+                  </Stack>
                 </Box>
               </Paper>
             </Box>
@@ -814,6 +273,7 @@ const TenantApplicationNav = (props) => {
       </Box>
     </ThemeProvider>
   );
+
 };
 
 
