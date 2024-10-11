@@ -16,6 +16,8 @@ import {
   TextField,
   InputAdornment,
   CircularProgress,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
 import { useEffect, useState, useContext, } from "react";
@@ -38,7 +40,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Documents from "../Leases/Documents";
 
 import PropertiesContext from '../../contexts/PropertiesContext';
-import { KeyboardReturnOutlined } from "@mui/icons-material";
+import { CheckBox, KeyboardReturnOutlined } from "@mui/icons-material";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -1060,7 +1062,7 @@ function DocumentCard(props) {
       >
         <Typography sx={{ fontWeight: "bold", fontSize: "20px" }}>
           Contract name: {data.contract_name}
-        </Typography>
+        </Typography>        
       </Box>
       <Box
         sx={{
@@ -1076,49 +1078,77 @@ function DocumentCard(props) {
           End Date: {data.contract_end_date}
         </Typography>
       </Box>
-      <Grid container>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-start",
+          alignItems: "flex-start",
+        }}
+      >
+        <Typography sx={{ fontWeight: "bold", fontSize: "20px" }}>
+          Notice Period: {data.contract_end_notice_period ? data.contract_end_notice_period : "0"} days
+        </Typography>        
+          <FormControlLabel 
+            sx={{
+              marginLeft: '5px',
+              alignItems: 'flex-start',                            
+            }}     
+            control={
+              <Checkbox
+                sx={{alignSelf: 'flex-start', padding: '2px 6px',}}
+                checked={data.contract_m2m && data.contract_m2m === 1 ? true : false}
+                // onChange={() => {
+                //   setContinueM2M( prevState => !prevState)
+                // }}                
+                inputProps={{ 
+                  'aria-label': 'controlled',
+                  style: { alignSelf: 'flex-start', margin: '0' }
+                }}
+              />	          
+            } 
+            label={<Typography sx={{fontWeight: "bold", fontSize: '20px',}}>Continues Month-to-Month</Typography> }
+          />                      
+      </Box>      
+      <Grid container alignItems="flex-start" spacing={2}>
         <Grid container item xs={6}>
           <Grid item xs={12}>
-            <Typography sx={{ color: '#3D5CAC', fontSize: '18px', fontWeight: 'bold', }}>
+            <Typography sx={{ color: '#3D5CAC', fontSize: '18px', fontWeight: 'bold' }}>
               Area of Service
-            </Typography>            
+            </Typography>
           </Grid>
           <Grid item xs={12}>
-            {
-              locations?.map((location, index) => (
-                <Typography key={index} sx={{ color: '#160449', fontSize: '15px', }}>
-                  {location.city} +-{location.miles} miles
-                </Typography>
-              ))
-            }
-            
+            {locations?.map((location, index) => (
+              <Typography key={index} sx={{ color: '#160449', fontSize: '15px' }}>
+                {location.city} ± {location.miles} miles
+              </Typography>
+            ))}
           </Grid>
         </Grid>
         <Grid container item xs={3}>
           <Grid item xs={12}>
-            <Typography sx={{ color: '#3D5CAC', fontSize: '18px', fontWeight: 'bold', }}>
+            <Typography sx={{ color: '#3D5CAC', fontSize: '18px', fontWeight: 'bold' }}>
               Status
-            </Typography>            
+            </Typography>
           </Grid>
           <Grid item xs={12}>
-            <Typography sx={{ color: '#160449', fontSize: '15px', }}>
+            <Typography sx={{ color: '#160449', fontSize: '15px' }}>
               {data.contract_status}
             </Typography>
           </Grid>
         </Grid>
         <Grid container item xs={3}>
           <Grid item xs={12}>
-            <Typography sx={{ color: '#3D5CAC', fontSize: '18px', fontWeight: 'bold', }}>
+            <Typography sx={{ color: '#3D5CAC', fontSize: '18px', fontWeight: 'bold' }}>
               Contract ID
-            </Typography>            
+            </Typography>
           </Grid>
           <Grid item xs={12}>
-            <Typography sx={{ color: '#160449', fontSize: '15px', }}>
+            <Typography sx={{ color: '#160449', fontSize: '15px' }}>
               {data.contract_uid}
             </Typography>
           </Grid>
         </Grid>
-      </Grid>                        
+      </Grid>
       <Accordion sx={{ backgroundColor: "#D6D5DA", boxShadow: "none" }} expanded={feesExpanded} onChange={() => setFeesExpanded(prevState => !prevState)}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='fees-content' id='fees-header'>
             <Grid container>
