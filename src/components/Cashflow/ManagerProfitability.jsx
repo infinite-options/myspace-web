@@ -137,41 +137,41 @@ const ManagerProfitability = ({
   };
 
   const getVerificationForManagerPayment = (pur) => {
-    const actual = pur.actual ? parseFloat(pur.actual) : 0;
-    let expected = pur.expected ? parseFloat(pur.expected) : 0;
-    if (expected < 0) {
-      expected *= -1;
+    const total_paid = pur.total_paid ? parseFloat(pur.total_paid) : 0;
+    let pur_amount_due = pur.pur_amount_due ? parseFloat(pur.pur_amount_due) : 0;
+    if (pur_amount_due < 0) {
+      pur_amount_due *= -1;
     }
 
-    if (actual < expected) {
+    if (total_paid < pur_amount_due) {
       return "manager";
-    } else if (actual > expected) {
+    } else if (total_paid > pur_amount_due) {
       return "investigate";
-    } else if (actual === expected) {
+    } else if (total_paid === pur_amount_due) {
       return "-";
     }
   };
 
   const getVerificationForOwnerPayment = (pur) => {
-    const actual = pur.actual ? parseFloat(pur.actual) : 0;
-    const expected = pur.expected ? parseFloat(pur.expected) : 0;
-    if (actual < expected) {
+    const total_paid = pur.total_paid ? parseFloat(pur.total_paid) : 0;
+    const pur_amount_due = pur.pur_amount_due ? parseFloat(pur.pur_amount_due) : 0;
+    if (total_paid < pur_amount_due) {
       return "owner";
-    } else if (actual > expected) {
+    } else if (total_paid > pur_amount_due) {
       return "investigate";
-    } else if (actual === expected) {
+    } else if (total_paid === pur_amount_due) {
       return "-";
     }
   };
 
   const getVerificationForTenantPayment = (pur) => {
-    const actual = pur.actual ? parseFloat(pur.actual) : 0;
-    const expected = pur.expected ? parseFloat(pur.expected) : 0;
-    if (actual < expected) {
+    const total_paid = pur.total_paid ? parseFloat(pur.total_paid) : 0;
+    const pur_amount_due = pur.pur_amount_due ? parseFloat(pur.pur_amount_due) : 0;
+    if (total_paid < pur_amount_due) {
       return "tenant";
-    } else if (actual > expected) {
+    } else if (total_paid > pur_amount_due) {
       return "investigate";
-    } else if (actual === expected) {
+    } else if (total_paid === pur_amount_due) {
       if (pur.verified) {
         if (pur.verified === "verified") {
           return "verified";
@@ -338,18 +338,18 @@ const ManagerProfitability = ({
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
-      field: "expected",
+      field: "pur_amount_due",
       headerName: "Expected",
       flex: 1,
-      renderCell: (params) => <span>$ {params.row.expected !== null ? parseFloat(params.row.expected).toFixed(2) : parseFloat(0).toFixed(2)}</span>,
+      renderCell: (params) => <span>$ {params.row.pur_amount_due !== null ? parseFloat(params.row.pur_amount_due).toFixed(2) : parseFloat(0).toFixed(2)}</span>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
-      field: "actual",
+      field: "total_paid",
       headerName: "Actual",
       flex: 1,
       renderCell: (params) => (
-        <span style={{ textAlign: "right", display: "block" }}>$ {params.row.actual !== null ? parseFloat(params.row.actual).toFixed(2) : parseFloat(0).toFixed(2)}</span>
+        <span style={{ textAlign: "right", display: "block" }}>$ {params.row.total_paid !== null ? parseFloat(params.row.total_paid).toFixed(2) : parseFloat(0).toFixed(2)}</span>
       ),
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
@@ -564,22 +564,22 @@ const ManagerProfitability = ({
           year = item.cf_year;
           payment_status = item.payment_status
           if(item.payment_status === "PARTIALLY PAID"){
-            expected += parseFloat(item.expected - item.actual)
+            expected += parseFloat(item.amt_remaining)
           }else{
 
-            expected += parseFloat(item.expected);
+            expected += parseFloat(item.pur_amount_due?item.pur_amount_due : "0.00");
           }
         }
     
         else if (pur_payer.startsWith("110") && pur_type === "Management") {
-          management_fee += parseFloat(item.expected);
+          management_fee += parseFloat(item.pur_amount_due?item.pur_amount_due : "0.00");
         }
     
         else if (pur_payer.startsWith("110") && pur_type !== "Management") {
-          other_expense += parseFloat(item.expected);
+          other_expense += parseFloat(item.pur_amount_due?item.pur_amount_due : "0.00");
         }
 
-        purchase_ids.push(...JSON.parse(item.purchase_ids))
+        purchase_ids.push(item.purchase_uid)
         allTransactions.push(item)
         purchase_group = item.pur_group;
       });
@@ -972,7 +972,7 @@ const ManagerProfitability = ({
                                   //         <Grid item container xs={12} key={index}>
                                   //             <Grid item xs={8}>{item.purchase_type} __ {JSON.parse(item.purchase_ids).join(", ")}</Grid>
                                   //             <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.expected? item.expected : parseFloat(0).toFixed(2)}</Typography></Grid>
-                                  //             <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.actual? item.actual : parseFloat(0).toFixed(2)}</Typography></Grid>
+                                  //             <Grid container  justifyContent='flex-end' item xs={2}><Typography>${item.total_paid? item.actual : parseFloat(0).toFixed(2)}</Typography></Grid>
                                   //             {/* <Grid item xs={2}>{item.pur_cf_type}</Grid> */}
                                   //         </Grid>
 
@@ -2204,10 +2204,10 @@ function StatementTable(props) {
                 </Typography>
               </TableCell>
               <TableCell>
-                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${item["expected"] ? item["expected"] : 0}</Typography>
+                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${item["pur_amount_due"] ? item["pur_amount_due"] : 0}</Typography>
               </TableCell>
               <TableCell>
-                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${item["actual"] ? item["actual"] : 0}</Typography>
+                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${item["total_paid"] ? item["total_paid"] : 0}</Typography>
               </TableCell>
             </TableRow>
           ) : (
@@ -2235,13 +2235,13 @@ function StatementTable(props) {
                   {/* {property.individual_purchase.map((p) => {
                       total_amount_due += (p.pur_amount_due? p.pur_amount_due : 0)
                   })} */}
-                  <Typography sx={{ fontSize: theme.typography.smallFont }}>${item.expected ? item.expected : 0}</Typography>
+                  <Typography sx={{ fontSize: theme.typography.smallFont }}>${item.pur_amount_due ? item.pur_amount_due : 0}</Typography>
                 </TableCell>
                 <TableCell align='right'>
                   {/* {property.individual_purchase.map((p) => {
                       total_amount_paid += (p.total_paid ? p.total_paid : 0)
                   })} */}
-                  <Typography sx={{ fontSize: theme.typography.smallFont, marginRight: "25px" }}>${item.actual ? item.actual : 0}</Typography>
+                  <Typography sx={{ fontSize: theme.typography.smallFont, marginRight: "25px" }}>${item.total_paid ? item.total_paid : 0}</Typography>
                 </TableCell>
               </TableRow>
             </React.Fragment>
@@ -2428,19 +2428,19 @@ function TransactionsTable(props) {
           purchase_date = item.purchase_date;
           month = item.cf_month;
           year = item.cf_year;
-          received_amt += parseFloat(item.actual);
+          received_amt += parseFloat(item.total_paid);
         }
         else if (pur_payer.startsWith("110") && pur_type === "Management") {
-          management_fee += parseFloat(item.expected);
+          management_fee += parseFloat(item.pur_amount_due?item.pur_amount_due : "0.00");
         }
         else if (pur_payer.startsWith("110") && pur_type !== "Management") {
-          other_expense += parseFloat(item.expected);
+          other_expense += parseFloat(item.pur_amount_due?item.pur_amount_due : "0.00");
         }
         else if(pur_payer.startsWith("600")){
           pur_receiver = item.pur_receiver;
         }
 
-        purchase_ids.push(...JSON.parse(item.purchase_ids))
+        purchase_ids.push(item.purchase_uid)
         allTransactions.push(item)
         purchase_group = item.pur_group;
       });
@@ -2801,7 +2801,7 @@ function TransactionsTable(props) {
 
 function BalanceDetailsTable(props) {
   // console.log("In BalanceDetailTable", props);
-  const [data, setData] = useState(props.data);
+  const [data, setData] = useState({});
   const selectedPurchaseGroup = props.selectedPurchaseRow || "";
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedPayments, setSelectedPayments] = useState([]);
@@ -2942,16 +2942,16 @@ function BalanceDetailsTable(props) {
           purchase_date = item.purchase_date;
           month = item.cf_month;
           year = item.cf_year;
-          received_amt += parseFloat(item.actual);
+          received_amt += parseFloat(item.total_paid);
         } else if (pur_payer.startsWith("110") && pur_type === "Management") {
-          management_fee += parseFloat(item.expected);
+          management_fee += parseFloat(item.pur_amount_due?item.pur_amount_due : "0.00");
         } else if (pur_payer.startsWith("110") && pur_type !== "Management") {
-          other_expense += parseFloat(item.expected);
+          other_expense += parseFloat(item.pur_amount_due?item.pur_amount_due : "0.00");
         } else if (pur_payer.startsWith("600")) {
           pur_receiver = item.pur_receiver;
         }
     
-        purchase_ids.push(...JSON.parse(item.purchase_ids));
+        purchase_ids.push(item.purchase_uid);
         purchase_group = item.pur_group;
       });
     
@@ -2966,8 +2966,6 @@ function BalanceDetailsTable(props) {
     
       return acc;
     }, {});
-
-    console.log("dhyey --- inside verify -  ", result);
 
     return result
 
@@ -3049,6 +3047,7 @@ function BalanceDetailsTable(props) {
       // setSelectedPayments(data);
       setSelectedPayments([])
       let filteredRows = [];
+
       if(props.selectedProperty != null || props.selectedProperty !== "ALL"){
         filteredRows = data?.filter( item => item.pur_property_id === props.selectedProperty)
       }else {
@@ -3061,30 +3060,25 @@ function BalanceDetailsTable(props) {
         setSelectedRows(
           filteredRows
             .filter((row) => row.pur_group === selectedPurchaseGroup)
-            .map((row) => row.payment_uid) 
+            .map((row) => row.payment_id) 
         );
       
       }else{
-        setSelectedRows(filteredRows.map((row) => row.payment_uid));
+        setSelectedRows([]);
       }
-      
-      console.log("payment due Result dhyey - ", data.map((item) => ({
-        ...item,
-        ...expense[item.pur_group],
-        pur_amount_due: parseFloat(item.pur_amount_due),
-      })))
 
       setPaymentDueResult(
-        data.map((item) => ({
+        data.map((item, index) => ({
           ...item,
           ...expense[item.pur_group],
-          pur_amount_due: parseFloat(item.pur_amount_due),
+          index: index,
+          // pur_amount_due: parseFloat(item.pur_amount_due?item.pur_amount_due : "0.00"),
         }))
       );
 
       
 
-    }else if(data && data.length == 0){
+    }else if(data && data.length === 0){
       setPaymentDueResult([])
       setSelectedPayments([])
       setSelectedRows([])
@@ -3094,7 +3088,7 @@ function BalanceDetailsTable(props) {
   useEffect(() => {
     // console.log("selectedRows - ", selectedRows);
     const total = selectedRows?.reduce((total, rowId) => {
-      const payment = paymentDueResult.find((row) => row.payment_uid === rowId);
+      const payment = paymentDueResult.find((row) => row.payment_id === rowId);
       // console.log("payment - ", payment);
       if (payment) {
         const payAmount = parseFloat(payment.pay_amount);
@@ -3128,7 +3122,7 @@ function BalanceDetailsTable(props) {
       field: "total_paid",
       headerName: "Total Paid",
       flex: 0.8,
-      renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
+      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2) || 0.00}</Box>,
       renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     }, 
     {
@@ -3195,7 +3189,7 @@ function BalanceDetailsTable(props) {
       field: "pay_amount",
       headerName: "Pay Amount",
       flex: 0.7,
-      renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
+      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2) || 0.00}</Box>,
       renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     
@@ -3203,14 +3197,14 @@ function BalanceDetailsTable(props) {
       field: "owner_payment",
       headerName: "Owner Payment",
       flex: 0.7,
-      renderCell: (params) => <Box sx={commonStyles}>{params.value? params.value : "-"}</Box>,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value? parseFloat(params.value).toFixed(2) : "-"}</Box>,
       renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     {
       field: "management_fee",
       headerName: "Management Fee",
       flex: 0.7,
-      renderCell: (params) => <Box sx={commonStyles}>{params.value? params.value : "-"}</Box>,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value? parseFloat(params.value).toFixed(2) : "-"}</Box>,
       renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },    
     // {
@@ -3245,11 +3239,11 @@ function BalanceDetailsTable(props) {
     const addedRows = newRowSelectionModel.filter((rowId) => !selectedRows.includes(rowId));
     const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
 
-    console.log("ROHIT - addedRows - ", addedRows);
-    console.log("remove rows - ", removedRows);
-    console.log("before selected row do anything - ", selectedPayments)
+    // console.log("ROHIT - addedRows - ", addedRows);
+    // console.log("remove rows - ", removedRows);
 
     let updatedRowSelectionModel = [...newRowSelectionModel];
+
 
     if (addedRows.length > 0) {
       // console.log("Added rows: ", addedRows);
@@ -3258,14 +3252,14 @@ function BalanceDetailsTable(props) {
       addedRows.forEach((item, index) => {
         // console.log("item - ", item);
         // const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
-        const addedPayment = paymentDueResult.find((row) => row.payment_uid === item);
+        const addedPayment = paymentDueResult.find((row) => row.payment_id === item);
 
         if (addedPayment) {
           // const relatedPayments = paymentDueResult.filter((row) => row.payment_intent === addedPayment.payment_intent);
-          const relatedPayments = paymentDueResult.filter((row) => (row.paid_by + row.payment_date + row.payment_intent) === (addedPayment.paid_by + addedPayment.payment_date + addedPayment.payment_intent));
+          const relatedPayments = paymentDueResult.filter((row) => (row.pur_payer + row.payment_date + row.payment_intent) === (addedPayment.pur_payer + addedPayment.payment_date + addedPayment.payment_intent));
 
           newPayments = [...newPayments, ...relatedPayments];
-          const relatedRowIds = relatedPayments.map((payment) => payment.payment_uid);
+          const relatedRowIds = relatedPayments.map((payment) => payment.payment_id);
           updatedRowSelectionModel = [...new Set([...updatedRowSelectionModel, ...relatedRowIds])];
         }
       });
@@ -3282,23 +3276,23 @@ function BalanceDetailsTable(props) {
       let relatedRows = [];
 
       removedRows.forEach((item, index) => {
-        let removedPayment = paymentDueResult.find((row) => row.payment_uid === item);
+        let removedPayment = paymentDueResult.find((row) => row.payment_id === item);
         let relatedPayments = []
 
         if(removedPayment){
-          relatedPayments = paymentDueResult.filter((row) => (row.paid_by + row.payment_date + row.payment_intent) === (removedPayment.paid_by + removedPayment.payment_date + removedPayment.payment_intent));
-          relatedRows = relatedPayments.map((payment) => payment.payment_uid);
+          relatedPayments = paymentDueResult.filter((row) => (row.pur_payer + row.payment_date + row.payment_intent) === (removedPayment.pur_payer + removedPayment.payment_date + removedPayment.payment_intent));
+          relatedRows = relatedPayments.map((payment) => payment.payment_id);
         }
 
         removedPayments.push(removedPayment);
         removedPayments.push(relatedPayments)
       });
-      // console.log("removedPayments - ", removedPayments, " and relatedRows id - ", relatedRows);
-      const allRowRemove = [...removedRows, ...relatedRows]
-      setSelectedPayments((prevState) => prevState.filter((payment) => !allRowRemove.includes(payment.payment_uid)));
+      const allRowRemove = [...new Set([...removedRows, ...relatedRows])];
+
+      updatedRowSelectionModel = updatedRowSelectionModel.filter((payment) => !allRowRemove.includes(payment));
+      setSelectedPayments((prevState) => prevState.filter((payment) => !allRowRemove.includes(payment.payment_id)));
     }
 
-    // console.log("selected payments after remove row - ", selectedPayments)
     // setSelectedRows(newRowSelectionModel);
     setSelectedRows(updatedRowSelectionModel);
   };
@@ -3308,7 +3302,7 @@ function BalanceDetailsTable(props) {
 
     console.log("before pasing it selectedPayments - ", selectedPayments);
     const formData = new FormData();
-    const verifiedList = selectedPayments?.map((payment) => payment.payment_uid);
+    const verifiedList = selectedPayments?.map((payment) => payment.payment_id);
     // console.log("verifiedList - ", verifiedList);
     formData.append("payment_uid", JSON.stringify(verifiedList));
     formData.append("payment_verify", "Verified");
@@ -3353,7 +3347,7 @@ function BalanceDetailsTable(props) {
             sx={{
               // minWidth: "1000px"
             }}
-            getRowId={(row) => row.payment_uid}
+            getRowId={(row) => row.payment_id}
             // getRowId={(row) => {
             //   const rowId = row.payment_uid;
             //   // console.log("Hello Globe");
