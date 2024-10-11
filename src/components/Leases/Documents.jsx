@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFileChange, isAccord=false, contractFiles, setContractFiles, contractFileTypes, setContractFileTypes, isEditable=true, customName, customUploadingName }) => {
+const Documents = ({ fromRenew, documents, setDocuments, setDeleteDocsUrl, setIsPreviousFileChange, isAccord=false, contractFiles, setContractFiles, contractFileTypes, setContractFileTypes, isEditable=true, customName, customUploadingName }) => {
 
   const { getList, } = useContext(ListsContext);	
   
@@ -1021,7 +1021,7 @@ const Documents = ({ documents, setDocuments, setDeleteDocsUrl, setIsPreviousFil
               </Typography>
             )
           }          
-          {isEditable && <Box
+          {isEditable && !fromRenew && <Box
 						sx={{
 							display: 'flex',
 							flexDirection: 'row',
