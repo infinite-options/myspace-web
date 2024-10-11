@@ -104,21 +104,21 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
             flex: 1,
             minWidth: 100,
         },
-        {
-            field: 'actions',
-            headerName: 'Actions',
-            minWidth: 100,
-            flex: 0.7,
-            renderCell: (params) => (
-                <Box>
-                    <IconButton
-                        onClick={() => handleEditFeeClick(params.row)}
-                    >
-                        <EditIcon sx={{ color: "#3D5CAC" }} />
-                    </IconButton>
-                </Box>
-            )
-        }
+        // {
+        //     field: 'actions',
+        //     headerName: 'Actions',
+        //     minWidth: 100,
+        //     flex: 0.7,
+        //     renderCell: (params) => (
+        //         <Box>
+        //             <IconButton
+        //                 onClick={() => handleEditFeeClick(params.row)}
+        //             >
+        //                 <EditIcon sx={{ color: "#3D5CAC" }} />
+        //             </IconButton>
+        //         </Box>
+        //     )
+        // }
     ] : [{
         field: "leaseFees_uid",
         headerName: "UID",
@@ -396,7 +396,7 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
                                 Fee Details
                             </Typography>
                         </Grid>
-                        {isEditable && <Grid item md={0.5}>
+                        {/* {isEditable && <Grid item md={0.5}>
                             <Button
                                 sx={{
                                     "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
@@ -427,7 +427,7 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
                                 }}>
                                 <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
                             </Button>
-                        </Grid>}
+                        </Grid>} */}
                     </Grid>
                 </AccordionSummary>
                 <AccordionDetails>
