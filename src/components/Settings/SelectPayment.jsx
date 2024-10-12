@@ -57,7 +57,7 @@ export default function SelectPayment(props) {
   const location = useLocation();
   const { getProfileId, paymentRoutingBasedOnSelectedRole, selectedRole } = useUser();
   // console.log("--DEBUG-- props", props);
-  // console.log("--DEBUG-- location.state", location.state);
+  console.log("--DEBUG-- location.state", location.state);
 
   const managerCashflowWidgetData = location.state?.managerCashflowWidgetData;
   const accountBalanceWidgetData = location.state?.accountBalanceWidgetData;
@@ -221,6 +221,7 @@ export default function SelectPayment(props) {
       pay_purchase_id: paymentData.purchase_uids,
       pay_fee: convenience_fee,
       pay_total: totalBalance,
+      cashflow_total: location.state?.cashFlowTotal,
       payment_notes: paymentData.business_code,
       pay_charge_id: "stripe transaction key",
       payment_type: selectedMethod,

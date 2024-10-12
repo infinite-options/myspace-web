@@ -90,18 +90,8 @@ const QuotesList = (props) => {
   return (
     <>
       <ThemeProvider theme={theme}>
-        <Grid container item xs={12} sx={{ backgroundColor: "#F2F2F2", padding: "10px", borderRadius: "10px", height: "100%" }}>
-          <Stack
-            direction='column'
-            alignItems='center'
-            // justifyContent='center'
-            sx={{
-              width: "100%", // Take up full screen width
-              height: "100%", // Set the Box height to full height
-              // marginTop: theme.spacing(2), // Set the margin to 20px
-            }}
-          >
-            <Stack
+        <Grid container item xs={12} sx={{ backgroundColor: "#F2F2F2", padding: "10px", borderRadius: "10px", height: "139vh" }}>
+        <Stack
               sx={{
                 // backgroundColor: "#fff",
                 width: "100%", // Occupy full width with 25px margins on each side
@@ -120,6 +110,42 @@ const QuotesList = (props) => {
               >
                 All Property Management Requests
               </Typography>
+          </Stack>
+          <Stack
+            direction='column'
+            alignItems='center'
+            // justifyContent='center'
+            sx={{
+              width: "100%", // Take up full screen width
+              height: "132vh", // Set the Box height to full height
+              overflowY: "auto",
+              overflowX: "hidden",              
+              // marginTop: theme.spacing(2), // Set the margin to 20px
+              "&::-webkit-scrollbar": {
+                width: "6px",                
+              },
+              "&::-webkit-scrollbar-track": {
+                background: "#f1f1f1", // track color
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "#888", // thumb color
+                borderRadius: "10px", 
+              },
+              "&::-webkit-scrollbar-thumb:hover": {
+                backgroundColor: "#555",
+              },
+            }}
+          >
+            <Stack
+              sx={{
+                // backgroundColor: "#fff",
+                width: "100%", // Occupy full width with 25px margins on each side
+                maxWidth: "800px", // You can set a maxWidth if needed
+                textAlign: "center", // Center align text
+              }}
+              spacing={2}
+              p={2}
+            >              
               <Stack
                   direction='column'
                   sx={{

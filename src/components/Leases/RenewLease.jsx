@@ -542,8 +542,8 @@ return (
                 </Grid>
                 <Grid item xs={12} md={12}>
                     <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                        {selectedRole === "OWNER" && <Documents isEditable={false} setIsPreviousFileChange={setIsPreviousFileChange} documents={documents} setDocuments={setDocuments} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_documents"} />}
-                        {selectedRole !== "OWNER" && <Documents isEditable={true} setIsPreviousFileChange={setIsPreviousFileChange} documents={documents} setDocuments={setDocuments} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_documents"} />}
+                        {selectedRole === "OWNER" && <Documents fromRenew={true} isEditable={false} setIsPreviousFileChange={setIsPreviousFileChange} documents={documents} setDocuments={setDocuments} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_documents"} />}
+                        {selectedRole !== "OWNER" && <Documents fromRenew={true} isEditable={true} setIsPreviousFileChange={setIsPreviousFileChange} documents={documents} setDocuments={setDocuments} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_documents"} />}
                     </Paper>
                 </Grid>
 
@@ -565,38 +565,7 @@ return (
 
                 {selectedRole !== "OWNER" && <Grid item xs={12} md={12}>
                     <Grid container sx={{ alignItems: "center", justifyContent: "center" }} spacing={2}>
-                        <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
-                            <Button
-                                variant="outlined"
-                                sx={{
-                                    background: "#6788B3",
-                                    color: theme.palette.background.default,
-                                    cursor: "pointer",
-                                    textTransform: "none",
-                                    minWidth: "150px",
-                                    minHeight: "35px",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    '&:hover': {
-                                        background: '#9ab0cd',
-                                    },
-                                }}
-                                size="small"
-                                onClick={editOrUpdateLease}
-                            >
-                                <Typography sx={{
-                                    textTransform: "none",
-                                    color: theme.typography.primary.black,
-                                    fontWeight: theme.typography.secondary.fontWeight,
-                                    fontSize: theme.typography.smallFont,
-                                    whiteSpace: "nowrap",
-                                    marginLeft: "1%",
-                                }}>
-                                    {"Edit/Update"}
-                                </Typography>
-                            </Button>
-                        </Grid>
+                        
 
                         <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
                             <Button
@@ -626,7 +595,7 @@ return (
                                     whiteSpace: "nowrap",
                                     marginLeft: "1%",
                                 }}>
-                                    {"Renew"}
+                                    {"New Lease"}
                                 </Typography>
                             </Button>
                         </Grid>
@@ -659,7 +628,7 @@ return (
                                     whiteSpace: "nowrap",
                                     marginLeft: "1%",
                                 }}>
-                                    End
+                                    End Lease
                                 </Typography>
                             </Button>
                         </Grid>
