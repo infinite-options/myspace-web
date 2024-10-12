@@ -198,15 +198,32 @@ export default function PaymentsManager(props) {
   const handlePaymentDataChange = (propertyId, newTotal, newPurchaseIds) => {
 
     setGlobalPaymentData((prevTotals) => {
-      const updatedTotals = {
+      const updatedPaymentData  = {
         ...prevTotals,
-        [propertyId]: newTotal, 
+        [propertyId]: {
+          balance: newTotal,
+          purchase_uids: [...newPurchaseIds]
+        }, 
       };
       
-      const updatedTotal = Object.values(updatedTotals).reduce((acc, val) => acc + val, 0);
-      setTotal(updatedTotal); 
+      const updatedOverallBalance = Object.values(updatedPaymentData).reduce(
+        (acc, data) => acc + parseFloat(data.balance || 0),
+        0
+      );
+      
+      // const allPurchaseIdsSet = new Set([...allPurchaseIds, ...newPurchaseIds]);
+      // console.log("check here .... - ", updatedPaymentData)
+      const updatedPurchaseIds = Object.values(updatedPaymentData).reduce((acc, data) => {
+        return [...acc, ...(Array.isArray(data.purchase_uids) ? data.purchase_uids : [])];
+      }, []);
 
-      return updatedTotals;
+      setPaymentData((prevData) => ({
+        ...prevData,
+        balance: updatedOverallBalance,
+        purchase_uids: updatedPurchaseIds,
+      }))
+
+      return updatedPaymentData;
     });
   }
 
@@ -708,7 +725,7 @@ export default function PaymentsManager(props) {
                                       Property: {propertyPayments[0].property_address}
                                   </Typography>
                               </Grid>
-                              <TransactionsTable data={propertyPayments} cashFlowTotal={globalCashFlowTotal[propertyPayments[0].pur_property_id]} setCashFlowTotal={(newTotal) => handleTotalCashFlowChange(propertyPayments[0].pur_property_id, newTotal)} total={globalTotal[propertyPayments[0].pur_property_id]} setTotal={(newTotal) => handleTotalChange(propertyPayments[0].pur_property_id, newTotal)} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} selectedRowsForTransaction={selectedRowsForTransaction}/>
+                              <TransactionsTable data={propertyPayments} cashFlowTotal={globalCashFlowTotal[propertyPayments[0].pur_property_id]} setCashFlowTotal={(newTotal) => handleTotalCashFlowChange(propertyPayments[0].pur_property_id, newTotal)} total={globalTotal[propertyPayments[0].pur_property_id]} setTotal={(newTotal) => handleTotalChange(propertyPayments[0].pur_property_id, newTotal)} setPaymentData={(newTotal, purchase_ids) => handlePaymentDataChange(propertyPayments[0].pur_property_id, newTotal, purchase_ids)} setSelectedItems={setSelectedItems} selectedRowsForTransaction={selectedRowsForTransaction}/>
                               <br />
                           </>
                         ))
@@ -765,7 +782,7 @@ export default function PaymentsManager(props) {
                                     data={transactionDataByOwner[ownerID][propertyID]} 
                                     cashFlowTotal={globalCashFlowTotal[transactionDataByOwner[ownerID][propertyID][0].pur_property_id]} setCashFlowTotal={(newTotal) => handleTotalCashFlowChange(transactionDataByOwner[ownerID][propertyID][0].pur_property_id, newTotal)}
                                     total={globalTotal[transactionDataByOwner[ownerID][propertyID][0].pur_property_id]} setTotal={(newTotal) => handleTotalChange(transactionDataByOwner[ownerID][propertyID][0].pur_property_id, newTotal)}
-                                    setPaymentData={setPaymentData} 
+                                    setPaymentData={(newTotal, purchase_ids) => handlePaymentDataChange(transactionDataByOwner[ownerID][propertyID][0].pur_property_id, newTotal, purchase_ids)} 
                                     setSelectedItems={setSelectedItems} 
                                     selectedRowsForTransaction={selectedRowsForTransaction}
                                   />
@@ -997,9 +1014,14 @@ function TransactionsTable(props) {
         let paymentItemData = paymentDueResult.find((element) => element.index === item);
         console.log("ROHIT - 687 - paymentItemData - ", paymentItemData);
         const purchaseIDs = JSON.parse(paymentItemData.purchase_ids);
-        purchaseIDs.forEach( purID => {
-          purchase_uid_mapping.push({ purchase_uid: purID, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
+        
+        JSON.parse(paymentItemData?.transactions).forEach(element => {
+          if(purchaseIDs.includes(element.purchase_uid)){
+            purchase_uid_mapping.push({ purchase_uid: element.purchase_uid, pur_amount_due: element.pur_amount_due.toFixed(2) });
+          }
         });
+        // purchaseIDs.forEach( purID => {
+        // });
         
         // console.log("payment item data", paymentItemData);
   
@@ -1019,11 +1041,7 @@ function TransactionsTable(props) {
 
       props.setTotal(total);
       props.setCashFlowTotal(cashflow)
-      props.setPaymentData((prevPaymentData) => ({
-        ...prevPaymentData,
-        balance: total.toFixed(2),
-        purchase_uids: purchase_uid_mapping,
-      }));
+      props.setPaymentData(total.toFixed(2), purchase_uid_mapping);
 
   }, [selectedRows]);
 
