@@ -1313,10 +1313,23 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
                           fullWidth={true}
                           label="Enter Amount"
                           variant="filled"
-                          height="0.45em"
-                          InputLabelProps={{
+                          sx={{
+                            height: "40px", 
+                            "& .MuiInputBase-root": {
+                              padding: "5px", 
+                              color: "#000",
+                            },
+                            "& .MuiInputLabel-root": {
+                              fontSize: "12px", 
+                              top: "-4px", 
+                              color: "#000",
+                            },
+                          }}
+                          InputProps={{
                             style: {
-                              fontSize: '15px',
+                              height: "40px",
+                              fontSize: "14px", 
+                              color: "#000",
                             },
                           }}
                         />

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from "../../theme/theme";
-import { ThemeProvider } from "@mui/material";
+import { ThemeProvider, Accordion, AccordionSummary, AccordionDetails,  } from "@mui/material";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
@@ -259,6 +260,189 @@ const TenantApplicationNav = (props) => {
       <Typography display="block" sx={{ color: "#3D5CAC" }}>Vehicles:</Typography>
       <Typography display="block">{vehicles.length}</Typography>
     </Grid>
+    
+    <Accordion sx={{ marginTop: '20px', backgroundColor: theme.palette.form.main, width: { xs: '100%', sm: '100%', md: '100%' }}}>
+    <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="occupants-content"
+                                id="occupants-header"
+                            >
+                        <Typography
+                          sx={{
+                            justifySelf: "center",
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.primary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          Adults
+                        </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                        {adultOccupants && adultOccupants?.length >0 ? <AdultDataGrid adults={adultOccupants}/> : 
+                          <>
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginBottom: '7px',
+                                width: '100%',
+                                height:"70px"
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                color: "#A9A9A9",
+                                fontWeight: theme.typography.primary.fontWeight,
+                                fontSize: "15px",
+                                }}
+                              >
+                                No Adults
+                              </Typography>
+                            </Box>
+                          </>
+                        }
+                          </AccordionDetails>
+                      </Accordion>
+                      
+                      
+                      <Accordion sx={{ marginTop: '20px', backgroundColor: theme.palette.form.main, width: { xs: '100%', sm: '100%', md: '100%' }}}>
+    <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="occupants-content"
+                                id="occupants-header"
+                            > 
+                          <Typography
+                            sx={{
+                              justifySelf: "center",
+                              color: theme.typography.primary.black,
+                              fontWeight: theme.typography.primary.fontWeight,
+                              fontSize: theme.typography.smallFont,
+                            }}
+                          >
+                          Children
+                        </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                        {childOccupants && childOccupants?.length >0 ? <ChildDataGrid children={childOccupants}/> : 
+                          <>
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginBottom: '7px',
+                                width: '100%',
+                                height:"70px"
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                color: "#A9A9A9",
+                                fontWeight: theme.typography.primary.fontWeight,
+                                fontSize: "15px",
+                                }}
+                              >
+                                No Child
+                              </Typography>
+                            </Box>
+                          </>
+                        }
+                        </AccordionDetails>
+                      </Accordion>
+                      <Accordion sx={{ marginTop: '20px', backgroundColor: theme.palette.form.main, width: { xs: '100%', sm: '100%', md: '100%' }}}>
+    <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="occupants-content"
+                                id="occupants-header"
+                            > 
+                        <Typography
+                            sx={{
+                              justifySelf: "center",
+                              color: theme.typography.primary.black,
+                              fontWeight: theme.typography.primary.fontWeight,
+                              fontSize: theme.typography.smallFont,
+                            }}
+                          >
+                          Pets
+                        </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                        {petOccupants && petOccupants?.length >0 ? <PetDataGrid pets={petOccupants}/> : 
+                          <>
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginBottom: '7px',
+                                width: '100%',
+                                height:"70px"
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                color: "#A9A9A9",
+                                fontWeight: theme.typography.primary.fontWeight,
+                                fontSize: "15px",
+                                }}
+                              >
+                                No Pets
+                              </Typography>
+                            </Box>
+                          </>
+                        }
+                        </AccordionDetails>
+                      </Accordion>
+                      <Accordion sx={{ marginTop: '20px', backgroundColor: theme.palette.form.main, width: { xs: '100%', sm: '100%', md: '100%' }}}>
+    <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="occupants-content"
+                                id="occupants-header"
+                            > 
+                        <Typography
+                            sx={{
+                              justifySelf: "center",
+                              color: theme.typography.primary.black,
+                              fontWeight: theme.typography.primary.fontWeight,
+                              fontSize: theme.typography.smallFont,
+                            }}
+                          >
+                          Vehicles
+                        </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                        {vehicles && vehicles?.length >0 ? <VehicleDataGrid vehicles={vehicles}/> : 
+                          <>
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginBottom: '7px',
+                                width: '100%',
+                                height:"70px"
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                color: "#A9A9A9",
+                                fontWeight: theme.typography.primary.fontWeight,
+                                fontSize: "15px",
+                                }}
+                              >
+                                No Vehicles
+                              </Typography>
+                            </Box>
+                          </>
+                        }
+                        </AccordionDetails>
+                      </Accordion>
   </Grid>
 </Paper>
 {/* Documents */}

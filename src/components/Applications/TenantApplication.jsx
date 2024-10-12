@@ -987,6 +987,12 @@ export const EmploymentDataGrid = ({ tenantProfile, selectedJobs, setSelectedJob
     }
   };
 
+  useEffect(() => {
+    if (selectedJobs.length === 0 && employmentData.length > 0) {
+      setSelectedJobs(employmentData);
+    }
+  }, [employmentData, selectedJobs, setSelectedJobs]);
+
   return (
     <Box sx={{ padding: '10px' }}>
       <Grid container spacing={2}>
