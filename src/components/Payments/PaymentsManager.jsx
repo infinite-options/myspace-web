@@ -142,6 +142,19 @@ export default function PaymentsManager(props) {
     purchase_uids: [],
   });
 
+  const [globalPaymentData, setGlobalPaymentData] = useState({
+    currency: "usd",
+    //customer_uid: '100-000125', // customer_uid: user.user_uid currently gives error of undefined
+    customer_uid: getProfileId(),
+    // customer_uid: user.user_uid,
+    // business_code: "IOTEST",
+    business_code: paymentNotes,
+    item_uid: "320-000054",
+    // payment_summary: {
+    //     total: "0.0"
+    // },
+  })
+
   useEffect(() => {
     console.log("ROHIT - 96 - paymentData - ", paymentData);
   }, [paymentData]);
@@ -170,6 +183,21 @@ export default function PaymentsManager(props) {
   const handleTotalChange = (propertyId, newTotal) => {
 
     setGlobalTotal((prevTotals) => {
+      const updatedTotals = {
+        ...prevTotals,
+        [propertyId]: newTotal, 
+      };
+      
+      const updatedTotal = Object.values(updatedTotals).reduce((acc, val) => acc + val, 0);
+      setTotal(updatedTotal); 
+
+      return updatedTotals;
+    });
+  }
+
+  const handlePaymentDataChange = (propertyId, newTotal, newPurchaseIds) => {
+
+    setGlobalPaymentData((prevTotals) => {
       const updatedTotals = {
         ...prevTotals,
         [propertyId]: newTotal, 
@@ -515,7 +543,8 @@ export default function PaymentsManager(props) {
                             // paymentData.business_code = paymentNotes;
                             const updatedPaymentData = { ...paymentData, business_code: paymentNotes };
                              console.log("In Payments.jsx and passing paymentData to SelectPayment.jsx: ", paymentData);
-                            console.log("In Payments.jsx and passing paymentMethodInfo to SelectPayment.jsx: ", paymentMethodInfo);                            
+                            console.log("In Payments.jsx and passing paymentMethodInfo to SelectPayment.jsx: ", paymentMethodInfo); 
+                            console.log("cashflow - ", cashFlowTotal)                           
                             // if(page != null && page === "paymentProcessing"){
                             //   setSelectedPayment({ paymentData: updatedPaymentData, total: total, selectedItems: selectedItems, paymentMethodInfo: paymentMethodInfo });
                             //   setCurrentWindow("MAKE_PAYMENT");
