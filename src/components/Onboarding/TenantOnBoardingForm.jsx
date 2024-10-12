@@ -58,6 +58,7 @@ import VehiclesOccupant from "../Leases/VehiclesOccupant";
 import Documents from "../Leases/Documents";
 import ListsContext from "../../contexts/ListsContext";
 import GenericDialog from "../GenericDialog";
+import IncomeDetails from "./IncomeDetails";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -158,7 +159,7 @@ const closeDialog = () => {
   const [relationships, setRelationships] = useState([]);
   const [states, setStates] = useState([]);
 
-  // New state for job details
+  // Old state for job details
   const [currentSalary, setCurrentSalary] = useState("");
   const [salaryFrequency, setSalaryFrequency] = useState("");
   const [jobTitle, setJobTitle] = useState("");
@@ -191,22 +192,28 @@ const closeDialog = () => {
   };
 
   const [employmentList, setEmploymentList] = useState([
-    {jobTitle: "", companyName: "", salary: "", frequency: "" }
+    {id: Date.now(), jobTitle: "", companyName: "", salary: "", frequency: "" }
   ]);
+
+  // useEffect(() => {
+  //   if (profileData) {
+  //     const employmentData = {
+  //       jobTitle: profileData.tenant_current_job_title || "",
+  //       companyName: profileData.tenant_current_job_company || "",
+  //       salary: profileData.tenant_current_salary || "",
+  //       frequency: profileData.tenant_salary_frequency || "",
+  //     };
+  //     setEmploymentList([employmentData]);
+  //   }
+  // }, [profileData]);
 
   useEffect(() => {
     if (profileData) {
-      const employmentData = {
-        jobTitle: profileData.tenant_current_job_title || "",
-        companyName: profileData.tenant_current_job_company || "",
-        salary: profileData.tenant_current_salary || "",
-        frequency: profileData.tenant_salary_frequency || "",
-      };
-      setEmploymentList([employmentData]);
+      const employmentData = profileData.tenant_employment ? JSON.parse(profileData.tenant_employment) : [];
+      setEmploymentList(employmentData);
     }
   }, [profileData]);
-
-
+  
   // useEffect(() => {
   //   console.log("adults - ", adults);
   // }, [adults]);
@@ -693,14 +700,14 @@ const closeDialog = () => {
   // };
 
 
-    const handleChangeChecked = (e, uid) => {
-      const { checked } = e.target;
-      const updatedMethods = parsedPaymentMethods.map((method) =>
-        method.paymentMethod_uid === uid ? { ...method, checked, paymentMethod_status: checked ? "Active" : "Inactive" } : method
-      );
-      setParsedPaymentMethods(updatedMethods);
-      setModifiedPayment(true);
-    };
+  const handleChangeChecked = (e, uid) => {
+    const { checked } = e.target;
+    const updatedMethods = parsedPaymentMethods.map((method) =>
+      method.paymentMethod_uid === uid ? { ...method, checked, paymentMethod_status: checked ? "Active" : "Inactive" } : method
+    );
+    setParsedPaymentMethods(updatedMethods);
+    setModifiedPayment(true);
+  };
 
   const handleChangeValue = (e, uid, field) => {
     const { value } = e.target;
@@ -713,7 +720,8 @@ const closeDialog = () => {
     setModifiedPayment(true);
   };
 
-  const handleAddPaymentMethod = () => {
+  const handleAddPaymentMethod = (event) => {
+    event.stopPropagation();
     const newPaymentMethod = {
       paymentMethod_uid: `new_${Date.now()}`, 
       paymentMethod_type: "", 
@@ -724,7 +732,7 @@ const closeDialog = () => {
     setParsedPaymentMethods([...parsedPaymentMethods, newPaymentMethod]);
   };
 
-  const handlePaymentStep = async () => {
+  const handlePaymentStep = async (validPaymentMethods) => {
     setShowSpinner(true);
     const existingMethods = profileData.paymentMethods
       ? JSON.parse(profileData.paymentMethods)
@@ -733,7 +741,7 @@ const closeDialog = () => {
     const putPayload = [];
     const postPayload = [];
   
-    parsedPaymentMethods.forEach((method) => {
+    validPaymentMethods.forEach((method) => {
       const existingMethod = existingMethods.find(
         (m) => m.paymentMethod_uid === method.paymentMethod_uid
       );
@@ -802,6 +810,7 @@ const closeDialog = () => {
   
   
   
+  
 
 
   const handleNextStep = async () => {
@@ -815,14 +824,17 @@ const closeDialog = () => {
   
     let paymentMethodsError = false;
     let atLeastOneActive = false;
-    parsedPaymentMethods.forEach(method => {
-      if (method.checked && method.paymentMethod_name === '') {
-        paymentMethodsError = true;
-      }
-      if (method.checked) {
-        atLeastOneActive = true; // Found at least one active
-      }
-    });
+
+  const validPaymentMethods = parsedPaymentMethods.filter((method) => method.paymentMethod_type !== "");
+
+  validPaymentMethods.forEach(method => {
+    if (method.checked && method.paymentMethod_name === '') {
+      paymentMethodsError = true;
+    }
+    if (method.checked) {
+      atLeastOneActive = true; // Found at least one active
+    }
+  });
   
     if (!atLeastOneActive) {
       newErrors.paymentMethods = 'Atleast one active payment method is required';
@@ -882,7 +894,7 @@ const closeDialog = () => {
     saveProfile();
     
     if (modifiedPayment) {
-      await handlePaymentStep();
+      await handlePaymentStep(validPaymentMethods);
     }
     setShowSpinner(false);
     return;
@@ -983,85 +995,114 @@ const closeDialog = () => {
     try {
       if (modifiedData.length > 0 || isPreviousFileChange || deletedFiles?.length > 0 || uploadedFiles?.length > 0) {
         setShowSpinner(true);
+  
         const headers = {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Methods": "*",
           "Access-Control-Allow-Headers": "*",
           "Access-Control-Allow-Credentials": "*",
         };
-
+  
         const profileFormData = new FormData();
-
-        // const feesJSON = JSON.stringify(leaseFees)
-        // leaseApplicationFormData.append("lease_fees", feesJSON);
-        // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
-        modifiedData?.forEach((item) => {
-          console.log(`Key: ${item.key}`);
-          if(item.key !== "tenant_ssn"){
-            profileFormData.append(item.key, item.value);
-          }else{
+  
+        // Append modified data only
+        modifiedData.forEach((item) => {
+          // Ensure tenant_employment is appended only once and avoid appending tenant_income_1
+          if (item.key !== "tenant_income_1" && item.key !== "tenant_employment") {
             profileFormData.append(item.key, item.value);
           }
         });
-
-        if(isPreviousFileChange){
+  
+        // If employment data has changed, append tenant_employment only once
+        if (employmentList && employmentList.length > 0) {
+          profileFormData.append("tenant_employment", JSON.stringify(employmentList));
+        }
+  
+        // Handle documents, files, and tenant_uid as before
+        if (isPreviousFileChange) {
           profileFormData.append("tenant_documents", JSON.stringify(documents));
         }
-
-        if(deletedFiles && deletedFiles?.length !== 0){
+  
+        if (deletedFiles && deletedFiles?.length !== 0) {
           profileFormData.append("delete_documents", JSON.stringify(deletedFiles));
         }
-
+  
         if (uploadedFiles && uploadedFiles?.length) {
-
           const documentsDetails = [];
           [...uploadedFiles].forEach((file, i) => {
-    
             profileFormData.append(`file_${i}`, file);
             const fileType = uploadedFileTypes[i] || "";
             const documentObject = {
-              // file: file,
-              fileIndex: i, //may not need fileIndex - will files be appended in the same order?
-              fileName: file.name, //may not need filename
-              contentType: fileType, // contentType = "contract or lease",  fileType = "pdf, doc"
+              fileIndex: i,
+              fileName: file.name,
+              contentType: fileType,
             };
             documentsDetails.push(documentObject);
           });
-    
           profileFormData.append("tenant_documents_details", JSON.stringify(documentsDetails));
         }
-
+  
         profileFormData.append("tenant_uid", profileData.tenant_uid);
-
-        axios
-          .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, headers)
-          .then((response) => {
-            console.log("Data updated successfully", response);
-            openDialog("Success","Your profile has been successfully updated.", "success");
-            handleUpdate();
-            setShowSpinner(false);
-          })
-          .catch((error) => {
-            setShowSpinner(false);
-            openDialog("Error","Cannot update your profile. Please try again", "error");
-            if (error.response) {
-              console.log(error.response.data);
-            }
-          });
-        setShowSpinner(false);
+  
+        // Send the API request
+        await axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, { headers });
+  
+        console.log("Data updated successfully");
+        openDialog("Success", "Your profile has been successfully updated.", "success");
+        handleUpdate();
+  
+        // Reset state after successful save
         setModifiedData([]);
         setuploadedFiles([]);
         setUploadedFileTypes([]);
         setDeletedFiles([]);
-        setIsPreviousFileChange(false)
+        setIsPreviousFileChange(false);
       } else {
-        openDialog("Warning","You haven't made any changes to the form. Please save after changing the data.", "error");
+        openDialog("Warning", "You haven't made any changes to the form. Please save after changing the data.", "error");
       }
+  
     } catch (error) {
-      openDialog("Error","Cannot update the lease. Please try again", "error");
+      setShowSpinner(false);
+      openDialog("Error", "Cannot update your profile. Please try again", "error");
       console.log("Cannot Update the lease", error);
+    } finally {
       setShowSpinner(false);
     }
+  };
+  
+  const handleIncomeChange = (event, index, field) => {
+    const updatedList = [...employmentList];
+    updatedList[index][field] = event.target.value;
+    setEmploymentList(updatedList);
+  
+    // Check for changes and update modifiedData
+    const hasChanges = employmentList.some((emp, i) => 
+      emp.jobTitle !== updatedList[i].jobTitle ||
+      emp.companyName !== updatedList[i].companyName ||
+      emp.salary !== updatedList[i].salary ||
+      emp.frequency !== updatedList[i].frequency
+    );
+  
+    if (hasChanges) {
+      updateModifiedData({ key: "tenant_employment", value: updatedList });
+    }
+  };
+  
+  const handleAddIncome = () => {
+    const newIncome = { jobTitle: "", companyName: "", salary: "", frequency: "" };
+    const updatedList = [...employmentList, newIncome];
+    setEmploymentList(updatedList);
+  
+    // Update tenant_employment in modifiedData
+    updateModifiedData({ key: "tenant_employment", value: updatedList });
+  };
+
+  const handleRemoveIncome = (index) => {
+    const updatedList = employmentList.filter((_, i) => i !== index);
+    setEmploymentList(updatedList);
+  
+    // Update tenant_employment in modifiedData
+    updateModifiedData({ key: "tenant_employment", value: updatedList });
   };
 
   return (
@@ -1469,7 +1510,7 @@ const closeDialog = () => {
 </Grid>
 
 
-      <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+    {/* <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
       <Grid item xs={12}>
          <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={empinfoExpanded} onChange={() => setEmpinfoExpanded(prevState => !prevState)}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='occupants-content' id='occupants-header'>
@@ -1591,7 +1632,7 @@ const closeDialog = () => {
             </AccordionDetails>
           </Accordion>
           </Grid>
-          </Grid>
+          </Grid> */}
 
         {/* <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
           <Grid item xs={12}>
@@ -1614,6 +1655,27 @@ const closeDialog = () => {
           </Grid>
         </Grid> */}
 
+<Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+  <Grid item xs={12}>
+    <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={empinfoExpanded} onChange={() => setEmpinfoExpanded(prevState => !prevState)}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='income-details-content' id='income-details-header'>
+        <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
+          Income Details
+        </Typography>
+      </AccordionSummary>
+      <AccordionDetails>
+        <IncomeDetails
+          employmentList={employmentList}
+          setEmploymentList={(newList) => {
+            setEmploymentList(newList);
+            updateModifiedData({ key: "tenant_employment", value: newList });
+          }}
+          salaryFrequencies={salaryFrequencies}
+        />
+      </AccordionDetails>
+    </Accordion>
+  </Grid>
+</Grid>
       <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
         <Grid item xs={12}>
           <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={occupancyExpanded} onChange={() => setOccupancyExpanded(prevState => !prevState)}>

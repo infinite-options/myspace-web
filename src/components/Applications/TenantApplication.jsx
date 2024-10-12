@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import theme from "../../theme/theme";
-import {ThemeProvider, Box, Paper, Stack, Typography, Grid, Divider, Button, ButtonGroup, Rating, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+import {Checkbox, FormControlLabel, ThemeProvider, Box, Paper, Stack, Typography, Grid, Divider, Button, ButtonGroup, Rating, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import { Form, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 import backButton from "../Payments/backIcon.png";
@@ -45,9 +45,12 @@ export default function TenantApplication(props) {
 
   const [tenantDocuments, setTenantDocuments] = useState([]);
   const [formattedAddress, setFormattedAddress] = useState("");
-  const [extraUploadDocument, setExtraUploadDocument] = useState([])
-  const [extraUploadDocumentType, setExtraUploadDocumentType] = useState([])
-  const [deleteDocuments, setDeleteDocuments] = useState([])
+  const [extraUploadDocument, setExtraUploadDocument] = useState([]);
+  const [extraUploadDocumentType, setExtraUploadDocumentType] = useState([]);
+  const [deleteDocuments, setDeleteDocuments] = useState([]);
+  const [selectedJobs, setSelectedJobs] = useState([]);
+
+
 
   // useEffect(() => {
   //     console.log("tenantDocuments - ", tenantDocuments);
@@ -356,6 +359,13 @@ export default function TenantApplication(props) {
     return `${month}-${day}-${year}`;
   }
 
+  // useEffect(() => {
+  //   if (props.status !== "NEW" && tenantProfile?.selected_jobs) {
+  //     console.log("in here");
+  //     setSelectedJobs(tenantProfile.selected_jobs);
+  //   }
+  // }, [props.status, tenantProfile]);
+
   async function handleApplicationSubmit() {
     //submit to backend
     // console.log("Application Submitted")
@@ -373,6 +383,7 @@ export default function TenantApplication(props) {
       leaseApplicationData.append("lease_property_id", property.property_uid);
       leaseApplicationData.append("lease_status", "NEW");
       leaseApplicationData.append("lease_assigned_contacts", JSON.stringify([getProfileId()]));
+      leaseApplicationData.append("lease_income", JSON.stringify(selectedJobs));
       const documentsDetails = [];
       let index = -1
 
@@ -621,20 +632,13 @@ export default function TenantApplication(props) {
               <Typography sx={{ fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue}}>Applicant Job Details</Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ padding: "30px" }}>
-                <Grid container spacing={3}>
-                  <Grid item xs={6}>
-                    <Typography>Current Salary: ${tenantProfile?.tenant_current_salary}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography>Salary Frequency: {tenantProfile?.tenant_salary_frequency}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography>Company Name: {tenantProfile?.tenant_current_job_company}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography>Job Title: {tenantProfile?.tenant_current_job_title}</Typography>
-                  </Grid>
-                </Grid>
+              <EmploymentDataGrid
+                  tenantProfile={tenantProfile}
+                  lease={lease}
+                  selectedJobs={selectedJobs}
+                  setSelectedJobs={setSelectedJobs}
+                  leaseStatus={status}
+                />
               </AccordionDetails>
             </Accordion>
             </Box>
@@ -967,3 +971,53 @@ export const VehicleDataGrid = ({ vehicles }) => {
   );
 
 }
+
+export const EmploymentDataGrid = ({ tenantProfile, selectedJobs, setSelectedJobs, leaseStatus, lease }) => {
+  // If leaseStatus is PROCESSING or ACTIVE, use the lease's job information (lease_income)
+  const employmentData =
+    leaseStatus === "PROCESSING" || leaseStatus === "ACTIVE" || leaseStatus === "NEW"
+      ? (lease?.[0]?.lease_income ? JSON.parse(lease[0].lease_income) : [])
+      : (tenantProfile?.tenant_employment ? JSON.parse(tenantProfile.tenant_employment) : []);
+
+  const handleJobSelection = (job, isChecked) => {
+    if (isChecked) {
+      setSelectedJobs([...selectedJobs, job]);
+    } else {
+      setSelectedJobs(selectedJobs.filter((selectedJob) => selectedJob.companyName !== job.companyName));
+    }
+  };
+
+  return (
+    <Box sx={{ padding: '10px' }}>
+      <Grid container spacing={2}>
+        {employmentData.map((job, index) => (
+          <Grid item xs={12} key={index}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              {(leaseStatus == null || leaseStatus === "" || leaseStatus === "REJECTED" || leaseStatus === "RESCIND") && (
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={selectedJobs.some((selectedJob) => selectedJob.companyName === job.companyName)}
+                      onChange={(e) => handleJobSelection(job, e.target.checked)}
+                    />
+                  }
+                  label=""
+                />
+              )}
+
+              <Box sx={{ flex: 1 }}>
+                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                  Job Title: {job.jobTitle}
+                </Typography>
+                <Typography variant="body2">Company: {job.companyName}</Typography>
+                <Typography variant="body2">Salary: ${job.salary}</Typography>
+                <Typography variant="body2">Frequency: {job.frequency}</Typography>
+              </Box>
+            </Box>
+            <Divider sx={{ marginTop: '10px', marginBottom: '10px' }} />
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
+  );
+};
