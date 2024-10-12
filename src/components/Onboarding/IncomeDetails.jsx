@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography,
     FormControl, InputLabel, Select, MenuItem, Grid, Snackbar, Alert, AlertTitle
@@ -6,8 +6,6 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
-import theme from "../../theme/theme";
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
@@ -48,22 +46,23 @@ const IncomeDetails = ({ employmentList, setEmploymentList, salaryFrequencies })
         handleOpen();
     };
 
-    const handleEditClick = (row) => {
+    const handleEditClick = (job) => {
         setIsEditing(true);
-        setCurrentRow(row);
+        setCurrentRow(job);
         handleOpen();
     };
 
     const handleSave = () => {
         if (isEditing) {
             const updatedList = employmentList.map((income) =>
-                income.id === currentRow.id ? currentRow : income
+                income.jobTitle === currentRow.jobTitle && income.companyName === currentRow.companyName
+                    ? currentRow
+                    : income
             );
             setEmploymentList(updatedList);
             setSnackbarMessage("Income details updated successfully");
         } else {
-            const newIncome = { ...currentRow, id: Date.now() }; // Add unique ID for DataGrid
-            setEmploymentList([...employmentList, newIncome]);
+            setEmploymentList([...employmentList, currentRow]);
             setSnackbarMessage("Income added successfully");
         }
         setSnackbarSeverity('success');
@@ -71,38 +70,15 @@ const IncomeDetails = ({ employmentList, setEmploymentList, salaryFrequencies })
         handleClose();
     };
 
-    const handleDeleteClick = (row) => {
-        const updatedList = employmentList.filter((income) => income.id !== row.id);
+    const handleDeleteClick = (job) => {
+        const updatedList = employmentList.filter(
+            (income) => income.jobTitle !== job.jobTitle || income.companyName !== job.companyName
+        );
         setEmploymentList(updatedList);
         setSnackbarMessage("Income removed successfully");
         setSnackbarSeverity('success');
         setSnackbarOpen(true);
     };
-
-    const columns = [
-        { field: 'jobTitle', headerName: 'Job Title', flex: 1 },
-        { field: 'companyName', headerName: 'Company', flex: 1 },
-        { field: 'salary', headerName: 'Salary', flex: 1 },
-        { field: 'frequency', headerName: 'Frequency', flex: 1 },
-        {
-            field: 'actions',
-            headerName: 'Actions',
-            type: 'actions',
-            width: 100,
-            getActions: (params) => [
-                <GridActionsCellItem
-                    icon={<EditIcon sx={{ color: "#3D5CAC" }} />}
-                    label="Edit"
-                    onClick={() => handleEditClick(params.row)}
-                />,
-                <GridActionsCellItem
-                    icon={<DeleteIcon sx={{ color: "#F87C7A" }} />}
-                    label="Delete"
-                    onClick={() => handleDeleteClick(params.row)}
-                />,
-            ],
-        },
-    ];
 
     return (
         <Box>
@@ -125,14 +101,38 @@ const IncomeDetails = ({ employmentList, setEmploymentList, salaryFrequencies })
                 </Button>
             </Box>
 
-            <DataGrid
-                rows={employmentList}
-                columns={columns}
-                getRowId={(row) => row.jobTitle || Date.now()}
-                hideFooter={true}
-                autoHeight
-                disableSelectionOnClick
-            />
+            {/* Display job information as a list */}
+            {employmentList.map((job, index) => (
+                <Box
+                    key={`${job.jobTitle}-${job.companyName}-${index}`}  // Using job title, company name, and index for key
+                    sx={{
+                        padding: "10px",
+                        borderRadius: "5px",
+                        marginBottom: "15px",
+                        backgroundColor: "#f0f0f0",
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Box>
+                        <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                            Job Title: {job.jobTitle}
+                        </Typography>
+                        <Typography variant="body2">Company: {job.companyName}</Typography>
+                        <Typography variant="body2">Salary: ${job.salary}</Typography>
+                        <Typography variant="body2">Frequency: {job.frequency}</Typography>
+                    </Box>
+                    <Box>
+                        <Button onClick={() => handleEditClick(job)} sx={{ marginRight: 1 }}>
+                            <EditIcon sx={{ color: "#3D5CAC" }} />
+                        </Button>
+                        <Button onClick={() => handleDeleteClick(job)}>
+                            <DeleteIcon sx={{ color: "#F87C7A" }} />
+                        </Button>
+                    </Box>
+                </Box>
+            ))}
 
             {/* Add/Edit Income Dialog */}
             <Dialog open={open} onClose={handleClose} maxWidth="md">
