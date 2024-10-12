@@ -215,7 +215,11 @@ export default function PMQuotesRequested(props) {
                         fontSize: '15px',
                         width: "40%",
                         height: "85%",
-                        borderRadius: "10px",                        
+                        borderRadius: "10px",
+                        "&:hover": {
+                          backgroundColor: "#D32F2F",
+                          color: "#FFFFFF",
+                        }                        
                       }}
                       onClick={() => handleDecline(contract)}
                     >
@@ -225,13 +229,17 @@ export default function PMQuotesRequested(props) {
                       variant="contained"
                       sx={{
                         textTransform: "none",
-                        background: "#848484",
+                        background: "#9EAED6",
                         color: "#160449",
                         width: "40%",
                         height: "85%",
                         borderRadius: "10px",
                         fontWeight: 'bold',
                         fontSize: '15px',
+                        "&:hover": {
+                          backgroundColor: "#160449",
+                          color: "#FFFFFF",
+                        }
                       }}
                       onClick={() => handleAccept(contract)}
                     >
@@ -272,6 +280,10 @@ export default function PMQuotesRequested(props) {
                         borderRadius: "10px",
                         fontWeight: 'bold',
                         fontSize: '15px',
+                        "&:hover": {
+                          backgroundColor: "#D32F2F",
+                          color: "#FFFFFF",
+                        }     
                       }}
                       onClick={async () => {
                         await handleStatusChange(contract, "CANCELLED");                        
@@ -1049,7 +1061,7 @@ function DocumentCard(props) {
           alignItems: "center",
         }}
       >
-        <Typography sx={{ fontWeight: "bold", fontSize: "26px" }}>
+        <Typography sx={{ fontWeight: "bold", fontSize: "24px" }}>
           {data.business_name}
         </Typography>
       </Box>
@@ -1060,7 +1072,7 @@ function DocumentCard(props) {
           alignItems: "center",
         }}
       >
-        <Typography sx={{ fontWeight: "bold", fontSize: "20px" }}>
+        <Typography sx={{ fontWeight: "bold", fontSize: "18px" }}>
           Contract name: {data.contract_name}
         </Typography>        
       </Box>
@@ -1071,12 +1083,15 @@ function DocumentCard(props) {
           alignItems: "flex-start",
         }}
       >
-        <Typography sx={{ fontWeight: "bold", fontSize: "20px" }}>
+        <Typography sx={{ fontWeight: "bold", fontSize: "18px" }}>
           Start Date: {data.contract_start_date}
         </Typography>
-        <Typography sx={{ fontWeight: "bold", fontSize: "20px", marginLeft: "20px", }}>
+        <Typography sx={{ fontWeight: "bold", fontSize: "18px", marginLeft: "20px", }}>
           End Date: {data.contract_end_date}
         </Typography>
+        <Typography sx={{ fontWeight: "bold", fontSize: "18px", marginLeft: "20px", }}>
+          Notice Period: {data.contract_end_notice_period ? data.contract_end_notice_period : "0"} days
+        </Typography>    
       </Box>
       <Box
         sx={{
@@ -1084,18 +1099,15 @@ function DocumentCard(props) {
           justifyContent: "flex-start",
           alignItems: "flex-start",
         }}
-      >
-        <Typography sx={{ fontWeight: "bold", fontSize: "20px" }}>
-          Notice Period: {data.contract_end_notice_period ? data.contract_end_notice_period : "0"} days
-        </Typography>        
+      >            
           <FormControlLabel 
             sx={{
-              marginLeft: '5px',
+              marginLeft: '-2px',
               alignItems: 'flex-start',                            
             }}     
             control={
               <Checkbox
-                sx={{alignSelf: 'flex-start', padding: '2px 6px',}}
+                sx={{alignSelf: 'flex-start', padding: '2px 0px',}}
                 checked={data.contract_m2m && data.contract_m2m === 1 ? true : false}
                 // onChange={() => {
                 //   setContinueM2M( prevState => !prevState)
@@ -1107,7 +1119,27 @@ function DocumentCard(props) {
               />	          
             } 
             label={<Typography sx={{fontWeight: "bold", fontSize: '20px',}}>Continues Month-to-Month</Typography> }
-          />                      
+          />
+          <FormControlLabel 
+            sx={{
+              marginLeft: '-2px',
+              alignItems: 'flex-start',                            
+            }}     
+            control={
+              <Checkbox
+                sx={{alignSelf: 'flex-start', padding: '2px 0px',}}
+                checked={data.contract_m2m && data.contract_m2m === 2 ? true : false}
+                // onChange={() => {
+                //   setContinueM2M( prevState => !prevState)
+                // }}                
+                inputProps={{ 
+                  'aria-label': 'controlled',
+                  style: { alignSelf: 'flex-start', margin: '0' }
+                }}
+              />	          
+            } 
+            label={<Typography sx={{fontWeight: "bold", fontSize: '20px',}}>Renews Automatically</Typography> }
+          />                         
       </Box>      
       <Grid container alignItems="flex-start" spacing={2}>
         <Grid container item xs={6}>
