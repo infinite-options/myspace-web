@@ -78,8 +78,11 @@ export default function PMQuotesRequested(props) {
   const fetchContracts = fetchContractsFromContext;  
   const refreshProperties = fetchPropertiesFromContext;
 	const returnIndex = returnIndexFromContext || 0;
+
+  console.log("ROHIT - allContracts - ", allContracts);
   
   const index = returnIndex || location.state?.index;
+  
 
   const [contracts, setContracts] = useState([]);
   const refreshContracts = fetchContracts;  
@@ -106,7 +109,7 @@ export default function PMQuotesRequested(props) {
   const handleRequestQuotes = props.handleRequestQuotes;
 
   const filteredContracts = contracts.filter(contract => 
-    contract.property_id === propertyId && 
+    contract.property_uid === propertyId && 
     (contract.contract_status === "NEW" || 
      contract.contract_status === "ACTIVE" || 
      contract.contract_status === "SENT")
@@ -160,10 +163,11 @@ export default function PMQuotesRequested(props) {
   }, [contracts]);
 
   useEffect(() => {    
-    
+    console.log("ROHIT - 166 - propertyId - ", propertyId);
     const contractsData = allContracts?.filter(
-      (contract) => contract.property_id === propertyId
+      (contract) => contract.property_uid === propertyId
     );
+    console.log("ROHIT - 166 - contractsData - ", contractsData);
     setContracts(contractsData);
   }, [allContracts]);
 
@@ -178,7 +182,7 @@ export default function PMQuotesRequested(props) {
         const response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
         const contractsResponse = await response.json();
         const contractsData = contractsResponse.result.filter(
-          (contract) => contract.property_id === propertyId
+          (contract) => contract.property_uid === propertyId
         );
         setContracts(contractsData);
       } catch (error) {
@@ -518,7 +522,7 @@ export default function PMQuotesRequested(props) {
     
       const newContractStart = new Date(obj.contract_start_date);
       const newContractEnd = new Date(obj.contract_end_date);
-      const newPropertyId = obj.property_id;
+      const newPropertyId = obj.property_uid;
 
       let newContractStatus = "ACTIVE";
 
@@ -1005,7 +1009,7 @@ function DocumentCard(props) {
   const data = props.data;
   console.log("ROHIT -  data -", data);
   const [fees, setFees] = useState(JSON.parse(data.contract_fees) ? JSON.parse(data.contract_fees) : []);
-  const [locations, setLocations] = useState(JSON.parse(data.business_locations) ? JSON.parse(data.business_locations) : []);
+  const [locations, setLocations] = useState(data.business_locations ? JSON.parse(data.business_locations) : []);
   const [contractDocuments, setContractDocuments] = useState(JSON.parse(data.contract_documents)? JSON.parse(data.contract_documents) : [])
 
   const [feesExpanded, setFeesExpanded ] = useState(false);

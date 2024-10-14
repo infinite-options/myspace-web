@@ -264,12 +264,13 @@ const TenantDashboard = () => {
     }
   };
 
-  // useEffect(() => {
-  //   console.log("ROHIT - rightPaneRef - ", rightPaneRef)
-  //   if (rightPaneRef.current) {
-  //     rightPaneRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-  //   }
-  // }, [rightPane]);
+  console.log("ROHIT - rightPaneRef1 - ", rightPaneRef)
+  useEffect(() => {
+    console.log("ROHIT - rightPaneRef2 - ", rightPaneRef)
+    // if (rightPaneRef.current) {
+    //   rightPaneRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    // }
+  }, [rightPane]);
 
   const handleAddMaintenanceClick = () => {
     setRightPane({
