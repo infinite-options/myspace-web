@@ -147,10 +147,13 @@ const ManagerProfitability = ({
   };
 
   const getVerificationForManagerPayment = (pur) => {
-    const total_paid = pur.total_paid ? parseFloat(pur.total_paid) : 0;
+    let total_paid = pur.total_paid ? parseFloat(pur.total_paid) : 0;
     let pur_amount_due = pur.pur_amount_due ? parseFloat(pur.pur_amount_due) : 0;
     if (pur_amount_due < 0) {
       pur_amount_due *= -1;
+    }
+    if(total_paid < 0){
+      total_paid *= -1;
     }
 
     if (total_paid < pur_amount_due) {
@@ -192,7 +195,7 @@ const ManagerProfitability = ({
   };
 
   const getVerificationStatus = (purchase) => {
-    // console.log("getVerificationStatus - purchase - ", purchase);
+    console.log("getVerificationStatus - purchase - ", purchase);
     if (purchase.pur_payer?.startsWith("600")) {
       return getVerificationForManagerPayment(purchase);
     } else if (purchase.pur_payer?.startsWith("110")) {
