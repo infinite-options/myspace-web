@@ -1376,10 +1376,9 @@ export default function ManagerCashflow() {
     //For unverified
     const dataListForUnverified = revenueDataForManager?.filter((item) => item.verified === "unverified");
 
-    // console.log("dataList for unverified - ", dataListForUnverified)
+    console.log("dataList for unverified - ", dataListForUnverified)
     const result = {};
 
-    // Step 1: First, generate the result object as previously done to get `total_paid` for each combination
     dataListForUnverified?.forEach(data => {
       const paymentDetails = JSON.parse(data.payment_ids);
 
@@ -1399,8 +1398,8 @@ export default function ManagerCashflow() {
       });
     });
 
-    // console.log("result mapping for unverified - ", result);
-    // Step 2: Create the final list based on each payment_ids entry
+    console.log("result mapping for unverified - ", result);
+  
     const finalListForUnverified = [];
 
     dataListForUnverified?.forEach(data => {
@@ -1428,7 +1427,16 @@ export default function ManagerCashflow() {
       });
     });
 
-    const DataForUnverified = finalListForUnverified?.filter((item) => item.payment_verify === "Unverified")
+    console.log(" DataForUnverified - ", finalListForUnverified)
+
+    const filteredItems = finalListForUnverified.filter(data => {
+      
+      return data.items.some(item => {
+        return item.pur_payer.startsWith("350") && item.verified === "unverified";
+      });
+    });
+
+    const DataForUnverified = filteredItems?.filter((item) => item.payment_verify === "Unverified")
 
     // setPaymentVerificationData(DataForUnverified);
 
