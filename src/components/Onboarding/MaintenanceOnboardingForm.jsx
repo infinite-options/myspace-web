@@ -1617,7 +1617,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
       <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
         <Grid item xs={12}>
           <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
-            Business Payment Methods
+            Business Payment Methods 1
           </Typography>
         </Grid>
         <Grid container item xs={12}>

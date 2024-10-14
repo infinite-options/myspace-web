@@ -11,6 +11,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DataValidator from "../DataValidator";
 import { formatPhoneNumber, formatSSN, formatEIN, identifyTaxIdType, headers, maskNumber, maskEin, roleMap, photoFields } from "./helper";
 import { useOnboardingContext } from "../../contexts/OnboardingContext";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Box,
   Button,
@@ -484,6 +485,31 @@ const closeDialog = () => {
     { type: 'apple_pay', name: 'Apple Pay', icon: ApplePay },
     { type: 'bank_account', name: 'Bank Account', icon: ChaseIcon },
   ];
+
+  const handleDeletePaymentMethod = async (paymentMethodUid) => {
+    try {
+      const tenantUid = getProfileId();
+      const url = `${APIConfig.baseURL.dev}/paymentmethod/${tenantUid}/${paymentMethodUid}`;
+  
+      setShowSpinner(true); 
+  
+      await axios.delete(url, {
+        headers: { "Content-Type": "application/json" },
+      });
+  
+      setParsedPaymentMethods((prevMethods) =>
+        prevMethods.filter((method) => method.paymentMethod_uid !== paymentMethodUid)
+      );
+  
+      setShowSpinner(false);
+  
+      openDialog("Success", "Payment method deleted successfully.", "success");
+    } catch (error) {
+      setShowSpinner(false);
+      openDialog("Error", "Failed to delete the payment method. Please try again.", "error");
+      console.error("Error deleting payment method:", error);
+    }
+  };
   
   const renderPaymentMethods = () => {
     return parsedPaymentMethods.map((method, index) => (
@@ -547,7 +573,7 @@ const closeDialog = () => {
           <>
             {method.paymentMethod_type === "bank_account" ? (
               <>
-                <Grid item xs={5}>
+                <Grid item xs={4}>
                   <TextField
                     name={`account_${method.paymentMethod_uid}`}
                     value={method.paymentMethod_acct || ""}
@@ -559,7 +585,7 @@ const closeDialog = () => {
                     className={classes.root}
                   />
                 </Grid>
-                <Grid item xs={5}>
+                <Grid item xs={4}>
                   <TextField
                     name={`routing_${method.paymentMethod_uid}`}
                     value={method.paymentMethod_routing_number || ""}
@@ -573,7 +599,7 @@ const closeDialog = () => {
                 </Grid>
               </>
             ) : (
-              <Grid item xs={10}>
+              <Grid item xs={9}>
                 <TextField
                   name={`${method.paymentMethod_type}_${method.paymentMethod_uid}`}
                   value={method.paymentMethod_name || ""}
@@ -587,6 +613,14 @@ const closeDialog = () => {
               </Grid>
             )}
           </>
+        )}
+  
+        {method.paymentMethod_uid && !method.paymentMethod_uid.startsWith('new_') && (
+          <Grid item xs={1}>
+            <IconButton onClick={() => handleDeletePaymentMethod(method.paymentMethod_uid)} aria-label="delete">
+              <DeleteIcon />
+            </IconButton>
+          </Grid>
         )}
       </Grid>
     ));
