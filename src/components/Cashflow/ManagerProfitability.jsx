@@ -388,14 +388,13 @@ const ManagerProfitability = ({
     const rows = getRowWithIds(data);
 
     const sortedRows = rows.sort((a, b) => {
-      if (a.purchase_group < b.purchase_group) return -1;
-      if (a.purchase_group > b.purchase_group) return 1;
 
-      if (a.purchase_type === "Rent" && b.purchase_type !== "Rent") return -1;
-      if (a.purchase_type !== "Rent" && b.purchase_type === "Rent") return 1;
-    
-      if (a.purchase_type < b.purchase_type) return 1;
-      if (a.purchase_type > b.purchase_type) return -1;
+      if (a.pur_group < b.pur_group) return -1;
+      if (a.pur_group > b.pur_group) return 1;
+      
+      if (a.pur_type_code < b.pur_type_code) return -1; 
+      if (a.pur_type_code > b.pur_type_code) return 1; 
+
     
       return 0; // If both fields are equal
     });
@@ -949,14 +948,16 @@ const ManagerProfitability = ({
                               <Grid container justifyContent='flex-start' item xs={8}>
                                 <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}
+                                      onClick={(e) => handleViewPropertyClick(e, property?.propertyInfo?.property_id)}
+                                    >
                                       {`${property?.propertyInfo?.property_address}`} {property?.propertyInfo?.property_unit && ", Unit - "}
                                       {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
                                     </Typography>
                                     <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, marginLeft: 10 }}>
                                       {`${property?.propertyInfo?.property_id}`}
                                     </Typography>
-                                    <Button
+                                    {/* <Button
                                       sx={{
                                         padding: "0px",
                                         marginLeft: "10px",
@@ -965,10 +966,10 @@ const ManagerProfitability = ({
                                           color: "#FFFFFF",
                                         },
                                       }}
-                                      onClick={(e) => handleViewPropertyClick(e, property?.propertyInfo?.property_id)}
+                                      
                                     >
                                       <Typography sx={{ fontWeight: theme.typography.common.fontWeight, textTransform: "none" }}>View</Typography>
-                                    </Button>
+                                    </Button> */}
                                   </AccordionSummary>
                                 </Grid>
                               </Grid>
@@ -1845,7 +1846,9 @@ const ManagerProfitability = ({
                               <Grid container justifyContent='flex-start' item xs={8}>
                                 <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight}}>
+                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight}}
+                                      onClick={(e) => handleViewPropertyClick(e, property?.propertyInfo?.property_id)}
+                                    >
                                       {`${property?.propertyInfo?.property_address}`} {property?.propertyInfo?.property_unit && ", Unit - "}
                                       {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
                                     </Typography>
