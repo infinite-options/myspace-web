@@ -387,9 +387,22 @@ const ManagerProfitability = ({
   const getDataGrid = (data) => {
     const rows = getRowWithIds(data);
 
+    const sortedRows = rows.sort((a, b) => {
+      if (a.purchase_group < b.purchase_group) return -1;
+      if (a.purchase_group > b.purchase_group) return 1;
+
+      if (a.purchase_type === "Rent" && b.purchase_type !== "Rent") return -1;
+      if (a.purchase_type !== "Rent" && b.purchase_type === "Rent") return 1;
+    
+      if (a.purchase_type < b.purchase_type) return 1;
+      if (a.purchase_type > b.purchase_type) return -1;
+    
+      return 0; // If both fields are equal
+    });
+
     return (
       <DataGrid
-        rows={rows}
+        rows={sortedRows}
         columns={transactionCoulmn}
         hideFooter={true}
         autoHeight

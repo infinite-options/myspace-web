@@ -1699,6 +1699,13 @@ function TenantBalanceTable(props) {
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
+      field: "pur_amount_due",
+      headerName: "Purchase Amount Due",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>$ ${parseFloat(params.value).toFixed(2)}</Box>,
+      
+    },
+    {
       field: "property_address",
       headerName: "Address",
       flex: 1,
