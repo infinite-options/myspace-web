@@ -7,6 +7,7 @@ import theme from "../../theme/theme";
 import { useUser } from "../../contexts/UserContext";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
 import AddressAutocompleteInput from "../Property/AddressAutocompleteInput";
+import DeleteIcon from '@mui/icons-material/Delete';
 import DataValidator from "../DataValidator";
 import AddIcon from '@mui/icons-material/Add'; 
 import { formatPhoneNumber, formatSSN, formatEIN, identifyTaxIdType, headers, maskNumber, maskEin, roleMap, photoFields } from "./helper";
@@ -374,6 +375,33 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
 
   const [modifiedPayment, setModifiedPayment] = useState(false);
 
+  //http://127.0.0.1:4000/paymentMethod/350-000007/070-000076 - DELETE
+
+  const handleDeletePaymentMethod = async (paymentMethodUid) => {
+    try {
+      const tenantUid = getProfileId();
+      const url = `${APIConfig.baseURL.dev}/paymentmethod/${tenantUid}/${paymentMethodUid}`;
+  
+      setShowSpinner(true); 
+  
+      await axios.delete(url, {
+        headers: { "Content-Type": "application/json" },
+      });
+  
+      setParsedPaymentMethods((prevMethods) =>
+        prevMethods.filter((method) => method.paymentMethod_uid !== paymentMethodUid)
+      );
+  
+      setShowSpinner(false);
+  
+      openDialog("Success", "Payment method deleted successfully.", "success");
+    } catch (error) {
+      setShowSpinner(false);
+      openDialog("Error", "Failed to delete the payment method. Please try again.", "error");
+      console.error("Error deleting payment method:", error);
+    }
+  };
+  
   const renderPaymentMethods = () => {
     return parsedPaymentMethods.map((method, index) => (
       <Grid
@@ -436,7 +464,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
           <>
             {method.paymentMethod_type === "bank_account" ? (
               <>
-                <Grid item xs={5}>
+                <Grid item xs={4}>
                   <TextField
                     name={`account_${method.paymentMethod_uid}`}
                     value={method.paymentMethod_acct || ""}
@@ -448,7 +476,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                     className={classes.root}
                   />
                 </Grid>
-                <Grid item xs={5}>
+                <Grid item xs={4}>
                   <TextField
                     name={`routing_${method.paymentMethod_uid}`}
                     value={method.paymentMethod_routing_number || ""}
@@ -462,7 +490,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                 </Grid>
               </>
             ) : (
-              <Grid item xs={10}>
+              <Grid item xs={9}>
                 <TextField
                   name={`${method.paymentMethod_type}_${method.paymentMethod_uid}`}
                   value={method.paymentMethod_name || ""}
@@ -477,9 +505,18 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
             )}
           </>
         )}
+  
+        {method.paymentMethod_uid && !method.paymentMethod_uid.startsWith('new_') && (
+          <Grid item xs={1}>
+            <IconButton onClick={() => handleDeletePaymentMethod(method.paymentMethod_uid)} aria-label="delete">
+              <DeleteIcon />
+            </IconButton>
+          </Grid>
+        )}
       </Grid>
     ));
   };
+  
 
   const getIconForMethod = (type) => {
     console.log("payments icon ---", type);
@@ -819,6 +856,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
     };
     setParsedPaymentMethods([...parsedPaymentMethods, newPaymentMethod]);
   };
+
   return (
     <>
       <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", cursor: "pointer", marginBottom: "10px", padding: "10px" }}>

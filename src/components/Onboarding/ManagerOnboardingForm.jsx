@@ -5,11 +5,13 @@ import AES from "crypto-js/aes";
 import CryptoJS from "crypto-js";
 import theme from "../../theme/theme";
 import { useUser } from "../../contexts/UserContext";
+import AddIcon from '@mui/icons-material/Add'; 
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
 import AddressAutocompleteInput from "../Property/AddressAutocompleteInput";
 import DataValidator from "../DataValidator";
 import { formatPhoneNumber, formatSSN, formatEIN, identifyTaxIdType, maskNumber, newmaskNumber,} from "./helper";
 import { useOnboardingContext } from "../../contexts/OnboardingContext";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Button,
   TextField,
@@ -22,6 +24,9 @@ import {
   MenuItem,
   Select,
   InputAdornment,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
   Snackbar,
   Alert,
   AlertTitle,
@@ -102,6 +107,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
 const [dialogTitle, setDialogTitle] = useState("");
 const [dialogMessage, setDialogMessage] = useState("");
 const [dialogSeverity, setDialogSeverity] = useState("info");
+const [ paymentExpanded, setPaymentExpanded ] = useState(true);
 
 const openDialog = (title, message, severity) => {
   setDialogTitle(title); // Set custom title
@@ -172,7 +178,25 @@ const closeDialog = () => {
 
   const [ errors, setErrors ] = useState({})
 
+  const getIconForMethod = (type) => {
+    console.log("payments icon ---", type);
+    switch (type) {
+      case "paypal":
+        return PayPal;
+      case "zelle":
+        return ZelleIcon;
+      case "venmo":
+        return VenmoIcon;
+      case "stripe":
+        return Stripe;
+      case "apple_pay":
+        return ApplePay;
+      case "bank_account":
+        return ChaseIcon;
+    }
+  };
 
+  const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
   const getFeeTypeValue = (item) => {
     switch(item){
@@ -337,32 +361,30 @@ const closeDialog = () => {
         setLocations(locationsWithId);
       }
 
-      const paymentMethodsData = JSON.parse(profileData.paymentMethods);
+      const paymentMethods = JSON.parse(profileData.paymentMethods);
+      console.log("payment methods test", paymentMethods);
       const updatedPaymentMethods = {
-        paypal: { value: "", checked: false, uid: "", status: "Inactive" },
-        apple_pay: { value: "", checked: false, uid: "", status: "Inactive" },
-        stripe: { value: "", checked: false, uid: "", status: "Inactive" },
-        zelle: { value: "", checked: false, uid: "", status: "Inactive" },
-        venmo: { value: "", checked: false, uid: "", status: "Inactive" },
-        credit_card: { value: "", checked: false, uid: "", status: "Inactive" },
-        bank_account: { account_number: "", routing_number: "", checked: false, uid: "", status: "Inactive" },
+        paypal: { value: "", checked: false, uid: "" },
+        apple_pay: { value: "", checked: false, uid: "" },
+        stripe: { value: "", checked: false, uid: "" },
+        zelle: { value: "", checked: false, uid: "" },
+        venmo: { value: "", checked: false, uid: "" },
+        credit_card: { value: "", checked: false, uid: "" },
+        bank_account: { account_number: "", routing_number: "", checked: false, uid: "" },
       };
-      paymentMethodsData?.forEach((method) => {
-        const status = method.paymentMethod_status || "Inactive";
+      paymentMethods?.forEach((method) => {
         if (method.paymentMethod_type === "bank_account") {
           updatedPaymentMethods.bank_account = {
             account_number: method.paymentMethod_account_number || "",
             routing_number: method.paymentMethod_routing_number || "",
-            checked: status === "Active",
+            checked: method.paymentMethod_status === "Active",
             uid: method.paymentMethod_uid,
-            status,
           };
         } else {
           updatedPaymentMethods[method.paymentMethod_type] = {
             value: method.paymentMethod_name,
-            checked: status === "Active",
+            checked: method.paymentMethod_status === "Active",
             uid: method.paymentMethod_uid,
-            status,
           };
         }
       });
@@ -397,19 +419,12 @@ const closeDialog = () => {
     }
   };
 
-  useEffect(() => {
-    console.log("calling useeffect");
-    setIsSave(false);
+  // useEffect(() => {
+  //   console.log("calling profileData useEffect");
 
-    setProfileData();    
-  }, []);
-
-  useEffect(() => {
-    console.log("calling profileData useEffect");
-
-    setIsSave(false);
-    setProfileData();
-  }, [profileData]);
+  //   setIsSave(false);
+  //   setProfileData();
+  // }, [profileData]);
 
   const readImage = (file) => {
     const reader = new FileReader();
@@ -904,251 +919,366 @@ const closeDialog = () => {
     ));
   };
 
-  const paymentMethodsArray = [
-    { name: "PayPal", icon: PayPal, state: paymentMethods.paypal },
-    { name: "Apple Pay", icon: ApplePay, state: paymentMethods.apple_pay },
-    { name: "Stripe", icon: Stripe, state: paymentMethods.stripe },
-    { name: "Zelle", icon: ZelleIcon, state: paymentMethods.zelle },
-    { name: "Venmo", icon: VenmoIcon, state: paymentMethods.venmo },
-    { name: "Credit Card", icon: ChaseIcon, state: paymentMethods.credit_card },
-    { name: "Bank Account", icon: ChaseIcon, state: paymentMethods.bank_account },
+  const paymentTypes = [
+    { type: 'paypal', name: 'PayPal', icon: PayPal },
+    { type: 'zelle', name: 'Zelle', icon: ZelleIcon },
+    { type: 'venmo', name: 'Venmo', icon: VenmoIcon },
+    { type: 'stripe', name: 'Stripe', icon: Stripe },
+    { type: 'apple_pay', name: 'Apple Pay', icon: ApplePay },
+    { type: 'bank_account', name: 'Bank Account', icon: ChaseIcon },
   ];
 
   const [modifiedPayment, setModifiedPayment] = useState(false);
+  const [parsedPaymentMethods, setParsedPaymentMethods] = useState([]);
+
+  useEffect(() => {
+    console.log("calling useeffect");
+    setIsSave(false);
+
+    setProfileData();   
+
+    if (profileData?.paymentMethods) {
+      try {
+        const methods = JSON.parse(profileData.paymentMethods).map((method) => ({
+          ...method,
+          checked: method.paymentMethod_status === "Active", 
+        }));
+        setParsedPaymentMethods(methods);
+      } catch (error) {
+        console.error("Error parsing payment methods:", error);
+      }
+    }
+  }, [profileData]);
 
   const renderPaymentMethods = () => {
-    return paymentMethodsArray.map((method, index) => (
-      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={index}>
+    return parsedPaymentMethods.map((method, index) => (
+      <Grid
+        container
+        rowSpacing={1}
+        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+        key={method.paymentMethod_uid || index}
+      >
         <Grid item xs={1}>
-          <Checkbox name={method.name.toLowerCase().replace(/\s/g, "_")} checked={method.state?.checked} onChange={handleChangeChecked} />
+          <Checkbox
+            name={`${method.paymentMethod_type}_${method.paymentMethod_uid}`}
+            checked={method.checked} // Use the checked state
+            onChange={(e) => handleChangeChecked(e, method.paymentMethod_uid)}
+          />
         </Grid>
-        {/* {
-          (method.name !== "Credit Card" && method.name !== "Bank Account") && (
-            <Grid container alignContent='center' item xs={1}>
-              <img src={method.icon} alt={method.name} />
-            </Grid>
-          )
-        } */}
-
-        <Grid container alignContent='center' item xs={1}>
-          <img src={method.icon} alt={method.name} />
+  
+        <Grid container alignContent="center" item xs={1}>
+          {method.paymentMethod_type ? (
+            <img src={getIconForMethod(method.paymentMethod_type)} alt={method.paymentMethod_type} />
+          ) : null}
         </Grid>
-
-        {method.name === "Bank Account" ? (
-          <>
-            <Grid item xs={5}>
-              <TextField
-                name={`${method.name.toLowerCase().replace(/\s/g, "_")}_account`}
-                value={method.state?.account_number}
-                onChange={handleChangeValue}
-                variant='filled'
-                fullWidth
-                placeholder={`Enter Your Bank Account Number`}
-                disabled={!method.state?.checked}
-                className={classes.root}
-                InputProps={{
-                  className: method.state?.value === "" && method.state?.checked ? classes.errorBorder : '',
-                }}
-                required
-              />
-            </Grid>
-            <Grid item xs={5}>
-              <TextField
-                name={`${method.name.toLowerCase().replace(/\s/g, "_")}_routing`}
-                value={method.state?.routing_number}
-                onChange={handleChangeValue}
-                variant='filled'
-                fullWidth
-                placeholder={`Enter Your Bank Routing Number`}
-                disabled={!method.state?.checked}
-                className={classes.root}
-              />
-            </Grid>
-          </>
-        ) : (
-          <Grid item xs={10}>
-            <TextField
-              name={method.name.toLowerCase().replace(/\s/g, "_")}
-              value={method.state?.value}
-              onChange={handleChangeValue}
-              variant='filled'
-              fullWidth
-              placeholder={`Enter ${method.name}`}
-              disabled={!method.state?.checked}
-              className={classes.root}
-              InputProps={{
-                className: method.state?.value === "" && method.state?.checked ? classes.errorBorder : '',
+  
+        {!method.paymentMethod_type ? (
+          <Grid item xs={3} sx={{alignContent: "center"}}>
+          <Select
+            value={method.paymentMethod_type || ""}
+            onChange={(e) => handleChangeValue(e, method.paymentMethod_uid, "type")}
+            displayEmpty
+            fullWidth
+            variant="filled"
+            className={classes.root}
+            sx={{
+              '.MuiSelect-select': {
+                padding: '4px 8px', 
+              },
+              '.MuiOutlinedInput-root': {
+                minHeight: '30px', 
+              },
+            }}
+          >
+            <MenuItem 
+              value="" 
+              disabled 
+              sx={{
+                padding: '4px 8px',
+                minHeight: 'auto',
               }}
-              required
-            />
+            >
+              Select Payment Method
+            </MenuItem>
+              {paymentTypes.map((payment) => (
+                <MenuItem key={payment.type} value={payment.type}>
+                  <img src={payment.icon} alt={payment.name} style={{ width: 20, marginRight: 10 }} />
+                  {payment.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </Grid>
+        ) : (
+          <>
+            {method.paymentMethod_type === "bank_account" ? (
+              <>
+                <Grid item xs={4}>
+                  <TextField
+                    name={`account_${method.paymentMethod_uid}`}
+                    value={method.paymentMethod_acct || ""}
+                    onChange={(e) => handleChangeValue(e, method.paymentMethod_uid, "acct")}
+                    variant="filled"
+                    fullWidth
+                    placeholder="Enter Your Bank Account Number"
+                    disabled={!method.checked} // Use checked state for disabled
+                    className={classes.root}
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField
+                    name={`routing_${method.paymentMethod_uid}`}
+                    value={method.paymentMethod_routing_number || ""}
+                    onChange={(e) => handleChangeValue(e, method.paymentMethod_uid, "routing_number")}
+                    variant="filled"
+                    fullWidth
+                    placeholder="Enter Your Bank Routing Number"
+                    disabled={!method.checked} // Use checked state for disabled
+                    className={classes.root}
+                  />
+                </Grid>
+              </>
+            ) : (
+              <Grid item xs={9}>
+                <TextField
+                  name={`${method.paymentMethod_type}_${method.paymentMethod_uid}`}
+                  value={method.paymentMethod_name || ""}
+                  onChange={(e) => handleChangeValue(e, method.paymentMethod_uid, "name")}
+                  variant="filled"
+                  fullWidth
+                  placeholder={`Enter ${capitalizeFirstLetter(method.paymentMethod_type)}`}
+                  disabled={!method.checked} // Use checked state for disabled
+                  className={classes.root}
+                />
+              </Grid>
+            )}
+          </>
+        )}
+  
+        {method.paymentMethod_uid && !method.paymentMethod_uid.startsWith('new_') && (
+          <Grid item xs={1}>
+            <IconButton onClick={() => handleDeletePaymentMethod(method.paymentMethod_uid)} aria-label="delete">
+              <DeleteIcon />
+            </IconButton>
           </Grid>
         )}
       </Grid>
     ));
   };
 
-  const handleChangeChecked = (e) => {
-    const { name, checked } = e.target;
-    const map = { ...paymentMethods };
-    map[name].checked = checked;
-    console.log("handleChangeChecked - map[name]", map[name]);
-    // if (name === "bank_account") {
-    //   if (!checked) {
-    //     map.bank_account.account_number = "";
-    //     map.bank_account.routing_number = "";
-    //   }
-    // } else {
-    //   if (!checked) {
-    //     map[name].value = "";
-    //   }
-    // }
-    setPaymentMethods(map);
+
+  const handleChangeChecked = (e, uid) => {
+    const { checked } = e.target;
+    const updatedMethods = parsedPaymentMethods.map((method) =>
+      method.paymentMethod_uid === uid ? { ...method, checked, paymentMethod_status: checked ? "Active" : "Inactive" } : method
+    );
+    setParsedPaymentMethods(updatedMethods);
     setModifiedPayment(true);
   };
 
-  const handleChangeValue = (e) => {
-    const { name, value } = e.target;
-    if (name === "bank_account_account" || name === "bank_account_routing") {
-      setPaymentMethods((prevState) => ({
-        ...prevState,
-        bank_account: {
-          ...prevState.bank_account,
-          [name === "bank_account_account" ? "account_number" : "routing_number"]: value,
-        },
-      }));
-    } else {
-      setPaymentMethods((prevState) => ({
-        ...prevState,
-        [name]: { ...prevState[name], value },
-      }));
-    }
-
+  const handleChangeValue = (e, uid, field) => {
+    const { value } = e.target;
+    const updatedMethods = parsedPaymentMethods.map((method) =>
+      method.paymentMethod_uid === uid
+        ? { ...method, [`paymentMethod_${field}`]: value }
+        : method
+    );
+    setParsedPaymentMethods(updatedMethods);
     setModifiedPayment(true);
   };
 
-  const handlePaymentStep = async () => {
+  const handleAddPaymentMethod = (event) => {
+    // console.log("check", event)
+    event.stopPropagation();
+    const newPaymentMethod = {
+      paymentMethod_uid: `new_${Date.now()}`, 
+      paymentMethod_type: "", 
+      paymentMethod_name: "", 
+      paymentMethod_status: "Inactive", 
+      checked: false,
+    };
+    setParsedPaymentMethods([...parsedPaymentMethods, newPaymentMethod]);
+    console.log("parsed", parsedPaymentMethods);
+  };
+
+  const handlePaymentStep = async (validPaymentMethods = []) => {
     setShowSpinner(true);
-    const keys = Object.keys(paymentMethods);
+    const existingMethods = profileData.paymentMethods
+      ? JSON.parse(profileData.paymentMethods)
+      : [];
+  
     const putPayload = [];
     const postPayload = [];
-    keys.forEach((key) => {
-      if (paymentMethods[key].value !== "" || (key === "bank_account" && paymentMethods[key].checked)) {
-        let paymentMethodPayload = {
-          paymentMethod_type: key,
-          paymentMethod_profile_id: getProfileId(),
-        };
-        if (key === "bank_account") {
-          const bankAccount = paymentMethods[key];
-          if (bankAccount.routing_number && bankAccount.account_number) {
-            paymentMethodPayload.paymentMethod_routing_number = bankAccount.routing_number;
-            paymentMethodPayload.paymentMethod_account_number = bankAccount.account_number;
-            paymentMethodPayload.paymentMethod_status = bankAccount.checked ? "Active" : "Inactive";
-            if (bankAccount.uid) {
-              putPayload.push({ ...paymentMethodPayload, paymentMethod_uid: bankAccount.uid });
-            } else {
-              postPayload.push(paymentMethodPayload);
-            }
-          }
-        } else {
-          paymentMethodPayload.paymentMethod_name = paymentMethods[key].value;
-          paymentMethodPayload.paymentMethod_status = paymentMethods[key].checked ? "Active" : "Inactive";
-          if (paymentMethods[key].uid) {
-            putPayload.push({ ...paymentMethodPayload, paymentMethod_uid: paymentMethods[key].uid });
-          } else {
-            postPayload.push(paymentMethodPayload);
+  
+    validPaymentMethods.forEach((method) => {
+      if (method.paymentMethod_uid && !method.paymentMethod_uid.startsWith('new_')) {
+        // Existing payment method (UID exists and doesn't start with 'new_')
+        const existingMethod = existingMethods.find(
+          (m) => m.paymentMethod_uid === method.paymentMethod_uid
+        );
+  
+        if (existingMethod) {
+          const hasChanged =
+            method.paymentMethod_name !== existingMethod.paymentMethod_name ||
+            method.paymentMethod_status !== existingMethod.paymentMethod_status ||
+            (method.paymentMethod_type === "bank_account" &&
+              (method.paymentMethod_routing_number !==
+                existingMethod.paymentMethod_routing_number ||
+                method.paymentMethod_account_number !==
+                  existingMethod.paymentMethod_account_number));
+  
+          if (hasChanged) {
+            putPayload.push({
+              paymentMethod_uid: method.paymentMethod_uid,
+              paymentMethod_name: method.paymentMethod_name,
+              paymentMethod_profile_id: getProfileId(),
+              paymentMethod_status: method.paymentMethod_status,
+              paymentMethod_type: method.paymentMethod_type,
+            });
           }
         }
+      } else {
+        // New payment method (no UID or UID starts with 'new_')
+        postPayload.push({
+          paymentMethod_type: method.paymentMethod_type,
+          paymentMethod_name: method.paymentMethod_name,
+          paymentMethod_status: method.checked ? "Active" : "Inactive",
+          paymentMethod_profile_id: getProfileId(),
+          ...(method.paymentMethod_type === "bank_account" && {
+            paymentMethod_routing_number: method.paymentMethod_routing_number,
+            paymentMethod_account_number: method.paymentMethod_account_number,
+          }),
+        });
+      }
+    });
+  
+    try {
+      // Make PUT request if there are modified existing payment methods
+      if (putPayload.length > 0) {
+        await axios.put(
+          "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
+          putPayload,
+          { headers: { "Content-Type": "application/json" } }
+        );
+      }
+  
+      // Make POST request if there are new payment methods
+      if (postPayload.length > 0) {
+        await axios.post(
+          "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
+          postPayload,
+          { headers: { "Content-Type": "application/json" } }
+        );
+      }
+  
+      setCookie("default_form_vals", { ...cookiesData, paymentMethods });
+    } catch (error) {
+      console.error("Error handling payment methods:", error);
+    } finally {
+      setShowSpinner(false);
+    }
+  };
+
+  const handleDeletePaymentMethod = async (paymentMethodUid) => {
+    try {
+      const tenantUid = getProfileId();
+      const url = `${APIConfig.baseURL.dev}/paymentmethod/${tenantUid}/${paymentMethodUid}`;
+  
+      setShowSpinner(true); 
+  
+      await axios.delete(url, {
+        headers: { "Content-Type": "application/json" },
+      });
+  
+      setParsedPaymentMethods((prevMethods) =>
+        prevMethods.filter((method) => method.paymentMethod_uid !== paymentMethodUid)
+      );
+  
+      setShowSpinner(false);
+  
+      openDialog("Success", "Payment method deleted successfully.", "success");
+    } catch (error) {
+      setShowSpinner(false);
+      openDialog("Error", "Failed to delete the payment method. Please try again.", "error");
+      console.error("Error deleting payment method:", error);
+    }
+  };
+
+  const handleNextStep = async () => {
+    const newErrors = {};
+    if (!firstName) newErrors.firstName = "First name is required";
+    if (!lastName) newErrors.lastName = "Last name is required";
+    if (!address) newErrors.address = "Address is required";
+    if (!email) newErrors.email = "Email is required";
+    if (!phoneNumber) newErrors.phoneNumber = "Phone Number is required";
+    if (!ssn) newErrors.ssn = "SSN is required";
+
+    let paymentMethodsError = false;
+    let atLeastOneActive = false;
+    // Object.keys(paymentMethods)?.forEach((method) => {
+    //   const payMethod = paymentMethods[method];
+
+    //   if (payMethod.value === "" && payMethod.checked === true) {
+    //     paymentMethodsError = true;
+    //   }
+    //   if (payMethod.checked === true) {
+    //     atleaseOneActive = true;
+    //   }
+    // });
+    
+
+    const validPaymentMethods = parsedPaymentMethods.filter((method) => method.paymentMethod_type !== "");
+    console.log("payment methods valid", validPaymentMethods);
+
+    validPaymentMethods.forEach(method => {
+      if (method.checked && method.paymentMethod_name === '') {
+        paymentMethodsError = true;
+      }
+      if (method.checked) {
+        atLeastOneActive = true; // Found at least one active
       }
     });
 
-    if (putPayload.length > 0) {
-      await axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod", putPayload, { headers: { "Content-Type": "application/json" } });
-    }
-
-    if (postPayload.length > 0) {
-      await axios.post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod", postPayload, { headers: { "Content-Type": "application/json" } });
-    }
-
-    setShowSpinner(false);
-    setCookie("default_form_vals", { ...cookiesData, paymentMethods });
-    openDialog("Success","Your Payment Details has been successfully updated.", "success");
-            
-  };
-
-  const handleNextStep = async () => {    
-    const newErrors = {};
-    if (!businessName) newErrors.businessName = 'Business name is required';    
-    if (!address) newErrors.address = 'Address is required';        
-    if (!email) newErrors.email = 'Email is required';
-    if (!phoneNumber) newErrors.phoneNumber = 'Phone Number is required';
-    if (!ein) newErrors.ein = 'SSN is required';
-
-    if (!empFirstName) newErrors.empFirstName = 'First name is required';
-    if (!empLastName) newErrors.empLastName = 'Last name is required';
-    // if (!empEmail) newErrors.empEmail = 'Email is required';
-    // if (!empPhoneNumber) newErrors.empPhoneNumber = 'Email is required';
-    // if (!empSsn) newErrors.empSsn = 'SSN is required';
-
-    let paymentMethodsError = false;
-    let atleaseOneActive = false;
-    Object.keys(paymentMethods)?.forEach( method => { 
-      const payMethod = paymentMethods[method];
-      
-      if(payMethod.value === '' && payMethod.checked === true ){
-        paymentMethodsError = true;
-      }
-      if(payMethod.checked === true ){
-        atleaseOneActive = true;
-      }      
-
-    })
-
-    if(!atleaseOneActive){
-      newErrors.paymentMethods = 'Atleast one active payment method is required';
-      openDialog("Alert",'Atleast one active payment method is required',"info");
+    if (!atLeastOneActive) {
+      newErrors.paymentMethods = "Atleast one active payment method is required";
+      openDialog("Alert", "Atleast one active payment method is required", "info");
       return;
     }
 
-    if(paymentMethodsError){
-      newErrors.paymentMethods = 'Please check payment method details';
-      openDialog("Alert",'Please check payment method details',"info");
+    if (paymentMethodsError) {
+      newErrors.paymentMethods = "Please check payment method details";
+      openDialog("Alert", "Please check payment method details", "info");
       return;
     }
-        
-    
-    
+
     if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors); // Show errors if any field is empty
-      openDialog("Alert","Please enter all required fields","info");
+      setErrors(newErrors);
+      openDialog("Alert", "Please enter all required fields", "info");
       return;
     }
 
     setErrors({}); // Clear any previous errors
 
-
-
     if (!DataValidator.email_validate(email)) {
-      openDialog("Alert","Please enter a valid email","info");
+      openDialog("Alert", "Please enter a valid email", "info");
       return false;
     }
 
     if (!DataValidator.phone_validate(phoneNumber)) {
-      openDialog("Alert","Please enter a valid phone number","info");
+      openDialog("Alert", "Please enter a valid phone number", "info");
       return false;
     }
 
     if (!DataValidator.zipCode_validate(zip)) {
-      openDialog("Alert","Please enter a valid zip code","info");
+      openDialog("Alert", "Please enter a valid zip code", "info");
       return false;
     }
 
-    if (empSsn && !DataValidator.ssn_validate(empSsn)) {
-      openDialog("Alert","Please enter a valid SSN","info");
-      return false;
-    }
-
-    if((taxIDType === "EIN" && !DataValidator.ein_validate(ein)) || (taxIDType === "SSN" && !DataValidator.ssn_validate(ein))){
-      openDialog("Alert","Please enter a valid Tax ID","info");
+    // if (!DataValidator.ssn_validate(ssn)) {
+    //   alert("Please enter a valid SSN");
+    //   return false;
+    // }
+    if ((taxIDType === "EIN" && !DataValidator.ein_validate(ssn)) || (taxIDType === "SSN" && !DataValidator.ssn_validate(ssn))) {
+      openDialog("Alert", "Please enter a valid Tax ID", "info");
       return false;
     }
 
@@ -1160,8 +1290,8 @@ const closeDialog = () => {
 
     saveProfile();
 
-    if(modifiedPayment){
-      const paymentSetup = await handlePaymentStep();
+    if (modifiedPayment) {
+      await handlePaymentStep(validPaymentMethods);
     }
     setShowSpinner(false);
     return;
@@ -1271,52 +1401,34 @@ const closeDialog = () => {
         // const feesJSON = JSON.stringify(leaseFees)
         // leaseApplicationFormData.append("lease_fees", feesJSON);
         // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
-        let hasEmployeeKey = false;
-        let hasBusinessKey = false;
         modifiedData.forEach((item) => {
-          console.log(`profileFormData Key: ${item.key}`);
+          console.log(`Key: ${item.key}`);
           profileFormData.append(item.key, item.value);
-
-          if (item.key.startsWith("employee_")) {
-            hasEmployeeKey = true;
-          }
-          if (item.key.startsWith("business_")) {
-            hasBusinessKey = true;
-          }
         });
-
-        if (hasBusinessKey) {
-          profileFormData.append("business_uid", profileData.business_uid);
-        }
-
-        if (hasEmployeeKey) {
-          profileFormData.append("employee_uid", profileData.employee_uid);
-        }
+        profileFormData.append("owner_uid", profileData.owner_uid);
 
         axios
           .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, headers)
-          // axios.put('http://localhost:4000/profile', profileFormData, headers)
           .then((response) => {
             console.log("Data updated successfully", response);
-            openDialog("Success","Your profile has been successfully updated.", "success");
+            openDialog("Success", "Your profile has been successfully updated.", "success");
             handleUpdate();
             setShowSpinner(false);
           })
           .catch((error) => {
             setShowSpinner(false);
-            openDialog("Error","Cannot update your profile. Please try again", "error");
+            openDialog("Error", "Cannot update your profile. Please try again", "error");
             if (error.response) {
               console.log(error.response.data);
             }
           });
         setShowSpinner(false);
         setModifiedData([]);
+      } else {
+        openDialog("Warning", "You haven't made any changes to the form. Please save after changing the data.", "error");
       }
-      // else {
-      //     showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
-      // }
     } catch (error) {
-      openDialog("Error","Cannot update the lease. Please try again", "error");
+      openDialog("Error", "Cannot update the lease. Please try again", "error");
       console.log("Cannot Update the lease", error);
       setShowSpinner(false);
     }
@@ -1675,16 +1787,44 @@ const closeDialog = () => {
           </Grid>
         </Grid>
 
-        <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
-          <Grid item xs={12}>
-            <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
-              Business Payment Methods
-            </Typography>
-          </Grid>
-          <Grid container item xs={12}>
-            {renderPaymentMethods()}
-          </Grid>
+        <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+        <Grid item xs={12}>
+          <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={paymentExpanded} onChange={() => setPaymentExpanded(prevState => !prevState)}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='payment-content' id='payment-header'>
+              <Grid container justifyContent='center'>
+                <Grid item md={11.5}>
+                  <Typography
+                    sx={{
+                      color: "#160449",
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: "24px",
+                      textAlign: "center",
+                      paddingBottom: "10px",
+                      paddingTop: "5px",
+                      flexGrow: 1,
+                      paddingLeft: "50px",
+                    }}
+                    paddingTop='5px'
+                    paddingBottom='10px'
+                  >
+                    Business Payment Information
+                  </Typography>
+                </Grid>
+                <Grid item md={0.5}>
+                  <IconButton onClick={handleAddPaymentMethod} aria-label="Add Payment Method">
+                    <AddIcon />
+                  </IconButton>
+                </Grid>
+              </Grid>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Grid container item xs={12}>
+                {renderPaymentMethods()}
+              </Grid>
+            </AccordionDetails>
+          </Accordion>
         </Grid>
+      </Grid>
 
         <Grid item xs={12} sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
           <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>

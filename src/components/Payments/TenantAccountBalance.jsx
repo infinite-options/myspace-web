@@ -254,9 +254,10 @@ const TenantAccountBalance = ({
           ${totalBalanceDue.toFixed(2)}
         </Typography>
 
-        {/* <Typography>
-                  {`${selectedProperty?.property_uid}`}
-              </Typography> */}
+
+        <Typography>
+            {`${selectedProperty?.property_uid}`}
+        </Typography>
 
         <Box sx={{ fontSize: "20px", fontWeight: "600", color: "#160449", marginLeft: "5px", opacity: "50%", alignItems: "center", alignContent: "center" }}>
           Due: {selectedProperty?.earliest_due_date ? selectedProperty.earliest_due_date.split(" ")[0] : "Contact Property Manager"}
