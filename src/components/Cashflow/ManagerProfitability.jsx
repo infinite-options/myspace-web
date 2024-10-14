@@ -74,6 +74,10 @@ const ManagerProfitability = ({
   expectedRevenueByType,
   revenueList,
   expenseList,
+  view,
+  totalCashflowValueByType,
+  expectedCashflowValueByType,
+  allCashflowData,
 
   expectedExpenseByMonth,
   totalExpenseByMonth,
@@ -107,7 +111,8 @@ const ManagerProfitability = ({
   const [profitsExpanded, setProfitsExpanded] = useState(true);
   const [revenueExpanded, setRevenueExpanded] = useState(true);
   const [expenseExpanded, setExpenseExpanded] = useState(true);
-  const [tab, setTab] = useState("profit");
+  console.log("inside cashflow - view - ", view)
+  const [tab, setTab] = useState( "profit");
   const [headerTab, setHeaderTab] = useState("current_month");
   const [ total, setTotal] = useState();
   const [paymentNotes, setPaymentNotes] = useState("");
@@ -140,6 +145,10 @@ const ManagerProfitability = ({
   const date = new Date();
   const currentMonth = monthNames[date.getMonth()];
   const currentYear = date.getFullYear();
+
+  useEffect(() => {
+    handleSelectTab(view)
+  }, [view])
 
   const handleViewPropertyClick = (e, property_uid) => {
     e.stopPropagation();
@@ -195,7 +204,6 @@ const ManagerProfitability = ({
   };
 
   const getVerificationStatus = (purchase) => {
-    console.log("getVerificationStatus - purchase - ", purchase);
     if (purchase.pur_payer?.startsWith("600")) {
       return getVerificationForManagerPayment(purchase);
     } else if (purchase.pur_payer?.startsWith("110")) {
@@ -683,6 +691,8 @@ const ManagerProfitability = ({
 }
 
 
+
+
   return (
     <>
       <Box
@@ -852,7 +862,7 @@ const ManagerProfitability = ({
                   }}
                   onClick={() => handleSelectTab("type")}
                 >
-                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Type</Typography>
+                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Cashflow By Type</Typography>
                 </Button>
               </Grid>
               <Grid container justifyContent='center' item xs={2} marginRight={6}>
@@ -867,7 +877,7 @@ const ManagerProfitability = ({
                   }}
                   onClick={() => handleSelectTab("by_type")}
                 >
-                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Type</Typography>
+                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit By Type</Typography>
                 </Button>
               </Grid>
               <Grid container justifyContent='center' item xs={2} marginRight={6}>
@@ -2064,6 +2074,50 @@ const ManagerProfitability = ({
           </>)}
 
           {tab === "type" && (<>
+            
+            {/* For Cashflow */}
+            <Accordion
+              sx={{
+                backgroundColor: theme.palette.primary.main,
+                boxShadow: "none",
+              }}
+            >
+              <Grid container item xs={12}>
+                <Grid container justifyContent='flex-start' item xs={8}>
+                  <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>{month} Cashflow</Typography>
+                    </AccordionSummary>
+                  </Grid>
+                </Grid>
+                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                      ${cashFlowtotal && cashFlowtotal?.totalExpectedProfit ? cashFlowtotal?.totalExpectedProfit?.toFixed(2) : "0.00"}
+                  </Typography>
+                </Grid>
+                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                    ${cashFlowtotal && cashFlowtotal?.totalActualProfit ? cashFlowtotal?.totalActualProfit?.toFixed(2) : "0.00"}
+                  </Typography>
+                </Grid>
+              </Grid>
+
+
+              <AccordionDetails>
+                {/* <RevenueTable totalRevenueByType={revenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/>             */}
+                <NewStatmentTable
+                  uid={uid}
+                  categoryTotalMapping={totalCashflowValueByType}
+                  allItems={allCashflowData}
+                  activeView={"ExpectedCashflow"}
+                  tableType='Profit'
+                  categoryExpectedTotalMapping={expectedCashflowValueByType}
+                  month={month}
+                  year={year}
+                />
+              </AccordionDetails>
+            </Accordion>
+            
             {/* For Revenue */}
             <Accordion
               sx={{

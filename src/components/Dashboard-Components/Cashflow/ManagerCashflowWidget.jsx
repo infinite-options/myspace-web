@@ -247,6 +247,7 @@ function ManagerCashflowWidget({
   propertyList,
   selectedProperty,
   setSelectedProperty,
+  setView
 }) {
   // console.log("In ManagerCashflow Widget ");
   // console.log("ManagerCashflow widget - propertyList - ", propertyList);
@@ -633,7 +634,7 @@ function ManagerCashflowWidget({
                 cursor: "pointer",
               }}
             >
-              <Grid container direction='row' item xs={12} columnSpacing={3} sx={{ backgroundColor: theme.palette.success.main, borderRadius: "5px", marginTop: "5px" }}>
+              <Grid container direction='row' item xs={12} columnSpacing={3} sx={{ backgroundColor: theme.palette.success.main, borderRadius: "5px", marginTop: "5px" }} onClick={(e)=>{setView("profit")}}>
                 <Grid item xs={5} sx={{ padding: "5px", display: "flex" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>{`Profit`}</Typography>
                 </Grid>
@@ -654,7 +655,7 @@ function ManagerCashflowWidget({
                   </Typography>
                 </Grid>
               </Grid>
-              <Grid container direction='row' item xs={12} columnSpacing={3} sx={{ backgroundColor: "#160449", borderRadius: "5px", marginTop: "5px" }}>
+              <Grid container direction='row' item xs={12} columnSpacing={3} sx={{ backgroundColor: "#160449", borderRadius: "5px", marginTop: "5px" }} onClick={(e)=>{setView("by_cashflow")}}>
                 <Grid item xs={5} sx={{ padding: "5px", display: "flex" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>{`Cashflow`}</Typography>
                 </Grid>
