@@ -380,7 +380,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
   const handleDeletePaymentMethod = async (paymentMethodUid) => {
     try {
       const tenantUid = getProfileId();
-      const url = `${APIConfig.baseURL.dev}/paymentmethod/${tenantUid}/${paymentMethodUid}`;
+      const url = `${APIConfig.baseURL.dev}/paymentMethod/${tenantUid}/${paymentMethodUid}`;
   
       setShowSpinner(true); 
   

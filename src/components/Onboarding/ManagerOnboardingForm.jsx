@@ -1181,7 +1181,8 @@ const closeDialog = () => {
   const handleDeletePaymentMethod = async (paymentMethodUid) => {
     try {
       const tenantUid = getProfileId();
-      const url = `${APIConfig.baseURL.dev}/paymentmethod/${tenantUid}/${paymentMethodUid}`;
+      console.log("paymentmethoduid", paymentMethodUid);
+      const url = `${APIConfig.baseURL.dev}/paymentMethod/${tenantUid}/${paymentMethodUid}`;
   
       setShowSpinner(true); 
   
@@ -1205,97 +1206,90 @@ const closeDialog = () => {
 
   const handleNextStep = async () => {
     const newErrors = {};
-    if (!firstName) newErrors.firstName = "First name is required";
-    if (!lastName) newErrors.lastName = "Last name is required";
-    if (!address) newErrors.address = "Address is required";
-    if (!email) newErrors.email = "Email is required";
-    if (!phoneNumber) newErrors.phoneNumber = "Phone Number is required";
-    if (!ssn) newErrors.ssn = "SSN is required";
-
+    
+    let isAddingPaymentMethod = parsedPaymentMethods.some(method => method.paymentMethod_uid.startsWith('new_') || modifiedPayment);
+  
+    // Payment method validation
     let paymentMethodsError = false;
     let atLeastOneActive = false;
-    // Object.keys(paymentMethods)?.forEach((method) => {
-    //   const payMethod = paymentMethods[method];
-
-    //   if (payMethod.value === "" && payMethod.checked === true) {
-    //     paymentMethodsError = true;
-    //   }
-    //   if (payMethod.checked === true) {
-    //     atleaseOneActive = true;
-    //   }
-    // });
-    
-
+  
     const validPaymentMethods = parsedPaymentMethods.filter((method) => method.paymentMethod_type !== "");
     console.log("payment methods valid", validPaymentMethods);
-
-    validPaymentMethods.forEach(method => {
-      if (method.checked && method.paymentMethod_name === '') {
+  
+    validPaymentMethods.forEach((method) => {
+      if (method.checked && method.paymentMethod_name === "") {
         paymentMethodsError = true;
       }
       if (method.checked) {
-        atLeastOneActive = true; // Found at least one active
+        atLeastOneActive = true;
       }
     });
-
+  
     if (!atLeastOneActive) {
-      newErrors.paymentMethods = "Atleast one active payment method is required";
-      openDialog("Alert", "Atleast one active payment method is required", "info");
+      newErrors.paymentMethods = "At least one active payment method is required";
+      openDialog("Alert", "At least one active payment method is required", "info");
       return;
     }
-
+  
     if (paymentMethodsError) {
       newErrors.paymentMethods = "Please check payment method details";
       openDialog("Alert", "Please check payment method details", "info");
       return;
     }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      openDialog("Alert", "Please enter all required fields", "info");
-      return;
+  
+    // Business information validation (only if not just adding a payment method)
+    if (!isAddingPaymentMethod) {
+      if (!firstName) newErrors.firstName = "First name is required";
+      if (!lastName) newErrors.lastName = "Last name is required";
+      if (!address) newErrors.address = "Address is required";
+      if (!email) newErrors.email = "Email is required";
+      if (!phoneNumber) newErrors.phoneNumber = "Phone Number is required";
+      if (!ssn) newErrors.ssn = "SSN is required";
+  
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        openDialog("Alert", "Please enter all required fields", "info");
+        return;
+      }
+  
+      // Additional validation for business information fields
+      if (!DataValidator.email_validate(email)) {
+        openDialog("Alert", "Please enter a valid email", "info");
+        return false;
+      }
+  
+      if (!DataValidator.phone_validate(phoneNumber)) {
+        openDialog("Alert", "Please enter a valid phone number", "info");
+        return false;
+      }
+  
+      if (!DataValidator.zipCode_validate(zip)) {
+        openDialog("Alert", "Please enter a valid zip code", "info");
+        return false;
+      }
+  
+      if ((taxIDType === "EIN" && !DataValidator.ein_validate(ssn)) || (taxIDType === "SSN" && !DataValidator.ssn_validate(ssn))) {
+        openDialog("Alert", "Please enter a valid Tax ID", "info");
+        return false;
+      }
     }
-
+  
     setErrors({}); // Clear any previous errors
-
-    if (!DataValidator.email_validate(email)) {
-      openDialog("Alert", "Please enter a valid email", "info");
-      return false;
-    }
-
-    if (!DataValidator.phone_validate(phoneNumber)) {
-      openDialog("Alert", "Please enter a valid phone number", "info");
-      return false;
-    }
-
-    if (!DataValidator.zipCode_validate(zip)) {
-      openDialog("Alert", "Please enter a valid zip code", "info");
-      return false;
-    }
-
-    // if (!DataValidator.ssn_validate(ssn)) {
-    //   alert("Please enter a valid SSN");
-    //   return false;
-    // }
-    if ((taxIDType === "EIN" && !DataValidator.ein_validate(ssn)) || (taxIDType === "SSN" && !DataValidator.ssn_validate(ssn))) {
-      openDialog("Alert", "Please enter a valid Tax ID", "info");
-      return false;
-    }
-
+  
     setCookie("default_form_vals", { ...cookiesData, firstName, lastName });
-
-    // const payload = getPayload();
-    // const form = encodeForm(payload);
-    // const data = await saveProfile(form);
-
+  
+    // Save the profile
     saveProfile();
-
+  
+    // Handle payment step if payment is modified
     if (modifiedPayment) {
       await handlePaymentStep(validPaymentMethods);
     }
+  
     setShowSpinner(false);
     return;
   };
+  
 
   const showSnackbar = (message, severity) => {
     console.log("Inside show snackbar");
