@@ -673,6 +673,27 @@ const LeaseDetails = ({ leaseDetails }) => {
 
   // console.log("lease details", leaseDetails);
 
+  const currentDate = new Date();
+  const leaseEndDate = new Date(leaseDetails?.lease_end);
+  const noticePeriod = leaseDetails?.lease_end_notice_period ? parseInt(leaseDetails.lease_end_notice_period, 10) : 0;
+
+  // Calculate the number of days between the current date and the lease end date
+  const timeDifference = leaseEndDate.getTime() - currentDate.getTime();
+  const daysUntilLeaseEnd = Math.ceil(timeDifference / (1000 * 3600 * 24));
+
+  // Check if Renew Lease button should be visible (if within 2x notice period)
+  const showRenewLeaseButton = daysUntilLeaseEnd <= 2 * noticePeriod;
+
+  const handleRenewLease = () => {
+    // Logic for renewing lease
+    alert("Renew Lease clicked!");
+  };
+
+  const handleEndLease = () => {
+    // Logic for ending lease
+    alert("End Lease clicked!");
+  };
+
   return (
     <Paper
       elevation={3}
@@ -769,6 +790,23 @@ const LeaseDetails = ({ leaseDetails }) => {
                 <Typography>Deposit:</Typography>
                 <Typography>${leaseDetails?.property_deposit || "N/A"}</Typography>
               </Stack>
+              <Stack direction='row' justifyContent='space-between'>
+                <Typography>Notice Period:</Typography>
+                <Typography>{noticePeriod} days</Typography>
+              </Stack>
+            </Stack>
+            <Stack direction="row" spacing={2} sx={{ marginTop: "20px" }}>
+              {/* Conditionally render the Renew Lease button */}
+              {showRenewLeaseButton && (
+                <Button variant="contained" color="primary" onClick={handleRenewLease}>
+                  Renew Lease
+                </Button>
+              )}
+
+              {/* Always show the End Lease button */}
+              <Button variant="contained" color="secondary" onClick={handleEndLease}>
+                End Lease
+              </Button>
             </Stack>
           </>
         )}
@@ -1328,10 +1366,23 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
                           fullWidth={true}
                           label="Enter Amount"
                           variant="filled"
-                          height="0.45em"
-                          InputLabelProps={{
+                          sx={{
+                            height: "40px", 
+                            "& .MuiInputBase-root": {
+                              padding: "5px", 
+                              color: "#000",
+                            },
+                            "& .MuiInputLabel-root": {
+                              fontSize: "12px", 
+                              top: "-4px", 
+                              color: "#000",
+                            },
+                          }}
+                          InputProps={{
                             style: {
-                              fontSize: '15px',
+                              height: "40px",
+                              fontSize: "14px", 
+                              color: "#000",
                             },
                           }}
                         />
@@ -1421,6 +1472,7 @@ function TenantBalanceTablePM(props) {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedPayments, setSelectedPayments] = useState([]);
   const [paymentDueResult, setPaymentDueResult] = useState([]);
+  // console.log("props", data);
 
   useEffect(() => {
     setData(props.data);
@@ -1495,10 +1547,10 @@ function TenantBalanceTablePM(props) {
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
-      field: "propertyUid",
-      headerName: "Property UID",
+      field: "pur_amount_due",
+      headerName: "Total",
       flex: 1,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>${parseFloat(params.value).toFixed(2)}</Box>,
     },
     {
       field: "purchaseStatus",
@@ -1513,8 +1565,8 @@ function TenantBalanceTablePM(props) {
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value.split(" ")[0]}</Box>,
     },
     {
-      field: "pur_amount_due",
-      headerName: "Amount Due",
+      field: "totalPaid",
+      headerName: "Amount Paid",
       flex: 1,
       renderCell: (params) => (
         <Box

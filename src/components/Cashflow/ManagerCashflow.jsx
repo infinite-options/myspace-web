@@ -55,7 +55,7 @@ import ListsContext from "../../contexts/ListsContext";
 import APIConfig from "../../utils/APIConfig";
 
 import axios from "axios";
-import { ConstructionOutlined } from "@mui/icons-material";
+import { ConstructionOutlined, PersonOff } from "@mui/icons-material";
 
 // import {
 //   getTotalRevenueByType,
@@ -123,8 +123,16 @@ export default function ManagerCashflow() {
   const [unsortedRentsDataCurrentYear, setUnsortedRentsDataCurrentYear] = useState([])
   const [revenueByType, setRevenueByType] = useState({});
   const [expenseByType, setExpenseByType] = useState({});
+  const [revenueByTypeForView, setRevenueByTypeForView] = useState({});
+  const [expenseByTypeForView, setExpenseByTypeForView] = useState({});
   const [expectedRevenueByType, setExpectedRevenueByType] = useState([]);
   const [expectedExpenseByType, setExpectedExpenseByType] = useState([]);
+  const [expectedRevenueByTypeForView, setExpectedRevenueByTypeForView] = useState([]);
+  const [expectedExpenseByTypeForView, setExpectedExpenseByTypeForView] = useState([]);
+  const [expectedExpenseByMonth, setExpectedExpenseByMonth] = useState([])
+  const [totalExpenseByMonth, setTotalExpenseByMonth] = useState([])
+  const [expectedRevenueByMonth, setExpectedRevenueByMonth] = useState([])
+  const [totalRevenueByMonth, setTotalRevenueByMonth] = useState([])
   const [revenueList, setRevenueList] = useState([])
   const [expenseList, setExpenseList] = useState([])
   const [totalDepositByProperty, setTotalDepositByProperty] = useState([])
@@ -527,7 +535,7 @@ export default function ManagerCashflow() {
       key = "total_paid";
     }
   
-    let revenueItems = data?.result?.filter((item) => item.pur_receiver === profileId && item.cf_month === month && item.cf_year === year);
+    let revenueItems = data?.filter((item) => item.pur_receiver === profileId && item.cf_month === month && item.cf_year === year);
     let totalRent = revenueItems?.reduce((acc, revenue) => {
       if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "RENT") {
         // console.log("revenue", revenue[key])
@@ -603,7 +611,7 @@ export default function ManagerCashflow() {
       key = "total_paid";
     }
   
-    let expenseItems = data?.result?.filter((item) => item.pur_payer === profileId && item.cf_month === month && item.cf_year === year);
+    let expenseItems = data?.filter((item) => item.pur_payer === profileId && item.cf_month === month && item.cf_year === year);
   
     let totalMaintenance = expenseItems?.reduce((acc, expense) => {
       if (expense[key] !== null && expense.purchase_type.toUpperCase() === "MAINTENANCE") {
@@ -846,8 +854,44 @@ export default function ManagerCashflow() {
     //   OTHER: totalOther
     // };
   };
-  
 
+  function getTotalRevenueByMonthYear(data, month, year) {
+    console.log("In getTotalRevenueByMonthYear: ", data, month, year);
+    let revenueItems = data?.filter((item) => item.cf_month === month && item.cf_year === year && item.pur_receiver === profileId);
+    console.log("After filter revenueItems: ", revenueItems);
+    let totalRevenue = revenueItems?.reduce((acc, item) => {
+      return acc + parseFloat(item["total_paid"] ? item["total_paid"] : 0.0);
+    }, 0.0);
+    console.log("Cashflow Fetch Data total Revenue: ", totalRevenue);
+    return totalRevenue;
+  }
+
+  function getTotalExpenseByMonthYear(data, month, year) {
+    let expenseItems = data?.filter((item) => item.cf_month === month && item.cf_year === year && item.pur_payer === profileId);
+    let totalExpense = expenseItems?.reduce((acc, item) => {
+      return acc + parseFloat(item["total_paid"] ? item["total_paid"] : 0.0);
+    }, 0.0);
+    return totalExpense;
+  }
+
+  function getTotalExpectedRevenueByMonthYear(data, month, year) {
+    // console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
+    let revenueItems = data?.filter((item) => item.cf_month === month && item.cf_year === year && item.pur_receiver === profileId);
+    let totalRevenue = revenueItems?.reduce((acc, item) => {
+      return acc + parseFloat(item["pur_amount_due"] ? item["pur_amount_due"] : 0.0);
+    }, 0.0);
+    return totalRevenue;
+  }
+
+  function getTotalExpectedExpenseByMonthYear(data, month, year) {
+    // console.log(data)
+    let expenseItems = data?.filter((item) => item.cf_month === month && item.cf_year === year && item.pur_payer === profileId);
+    let totalExpense = expenseItems?.reduce((acc, item) => {
+      return acc + parseFloat(item["pur_amount_due"] ? item["pur_amount_due"] : 0.0);
+    }, 0.0);
+    return totalExpense;
+  }
+  
   useEffect(() => {
     //PROFITS
     const allProfitData = cashflowData?.result;
@@ -1137,12 +1181,25 @@ export default function ManagerCashflow() {
 
     //for type page ---- 
 
-    // let revenueByType = getRevenueByType(rentDataCurrentMonth, month, year, false)
-    // let expectedRevenueByType = getRevenueByType(rentDataCurrentMonth, month, year, true)
-    // setRevenueByType(revenueByType)
+    let revenueByType = getRevenueByType(rentDataCurrentMonth, month, year, false)
+    let expectedRevenueByType = getRevenueByType(rentDataCurrentMonth, month, year, true)
+    setRevenueByTypeForView(revenueByType)
+    setExpectedRevenueByTypeForView(expectedRevenueByType)
 
+    let expenseByType = getExpenseByType(payoutsCurrentMonth, month, year, false);
+    let expectedExpenseByType = getExpenseByType(payoutsCurrentMonth, month, year, true);
+    setExpenseByTypeForView(expenseByType)
+    setExpectedExpenseByTypeForView(expectedExpenseByType)
 
+    let totalExpenseByMonth = getTotalExpenseByMonthYear(payoutsCurrentMonth, month, year)
+    let totalRevenueByMonth = getTotalRevenueByMonthYear(rentDataCurrentMonth, month, year)
 
+    let expectedExpenseByMonth = getTotalExpectedExpenseByMonthYear(payoutsCurrentMonth, month, year)
+    let expectedRevenueByMonth = getTotalExpectedRevenueByMonthYear(rentDataCurrentMonth, month, year)
+    setTotalExpenseByMonth(totalExpenseByMonth)
+    setTotalRevenueByMonth(totalRevenueByMonth)
+    setExpectedExpenseByMonth(expectedExpenseByMonth)
+    setExpectedRevenueByMonth(expectedRevenueByMonth)
     // const revenueByMonth = rentDataCurrentYear?.reduce((acc, item) => {
     //   if (item.cf_year !== year) {
     //     return acc;
@@ -1319,10 +1376,9 @@ export default function ManagerCashflow() {
     //For unverified
     const dataListForUnverified = revenueDataForManager?.filter((item) => item.verified === "unverified");
 
-    // console.log("dataList for unverified - ", dataListForUnverified)
+    console.log("dataList for unverified - ", dataListForUnverified)
     const result = {};
 
-    // Step 1: First, generate the result object as previously done to get `total_paid` for each combination
     dataListForUnverified?.forEach(data => {
       const paymentDetails = JSON.parse(data.payment_ids);
 
@@ -1342,8 +1398,8 @@ export default function ManagerCashflow() {
       });
     });
 
-    // console.log("result mapping for unverified - ", result);
-    // Step 2: Create the final list based on each payment_ids entry
+    console.log("result mapping for unverified - ", result);
+  
     const finalListForUnverified = [];
 
     dataListForUnverified?.forEach(data => {
@@ -1371,7 +1427,16 @@ export default function ManagerCashflow() {
       });
     });
 
-    const DataForUnverified = finalListForUnverified?.filter((item) => item.payment_verify === "Unverified")
+    console.log(" DataForUnverified - ", finalListForUnverified)
+
+    const filteredItems = finalListForUnverified.filter(data => {
+      
+      return data.items.some(item => {
+        return item.pur_payer.startsWith("350") && item.verified === "unverified";
+      });
+    });
+
+    const DataForUnverified = filteredItems?.filter((item) => item.payment_verify === "Unverified")
 
     // setPaymentVerificationData(DataForUnverified);
 
@@ -2215,8 +2280,17 @@ export default function ManagerCashflow() {
                 revenueList={revenueList}
                 expenseList={expenseList}
 
+                revenueByTypeForView={revenueByTypeForView}
+                expenseByTypeForView={expenseByTypeForView}
+                expectedRevenueByTypeForView={expectedRevenueByTypeForView}
+                expectedExpenseByTypeForView={expectedExpenseByTypeForView}
+
                 revenueByMonthByType={revenueByMonthByType}
                 expenseByMonthByType={expenseByMonthByType}
+                totalExpenseByMonth={totalExpenseByMonth}
+                totalRevenueByMonth={totalRevenueByMonth}
+                expectedExpenseByMonth={expectedExpenseByMonth}
+                expectedRevenueByMonth={expectedRevenueByMonth}
 
                 getTotalValueByTypeMapping={getTotalValueByTypeMapping}
                 getExpectedTotalByTypeMapping={getExpectedTotalByTypeMapping}
