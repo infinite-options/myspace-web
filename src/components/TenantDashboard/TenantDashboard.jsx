@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef, } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Accordion,
@@ -84,6 +84,8 @@ const TenantDashboard = () => {
 
   const [showPropertyListings, setShowPropertyListings] = useState(false);
   const [rightPane, setRightPane] = useState("");
+  const rightPaneRef = useRef(null);
+  
   const [loading, setLoading] = useState(true);
   const [balanceDetails, setBalanceDetails] = useState([]);
   const [filteredMaintenanceRequests, setFilteredMaintenanceRequests] = useState([]);
@@ -260,8 +262,21 @@ const TenantDashboard = () => {
       state: {
         data: paymentHistoryForProperty,
       },
-    });
+    });    
+    
+    if (rightPaneRef.current) {
+      console.log("ROHIT - rightPaneRef - ", rightPaneRef)
+      rightPaneRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
+
+  console.log("ROHIT - rightPaneRef1 - ", rightPaneRef)
+  useEffect(() => {
+    console.log("ROHIT - rightPaneRef2 - ", rightPaneRef)
+    // if (rightPaneRef.current) {
+    //   rightPaneRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    // }
+  }, [rightPane]);
 
   const handleAddMaintenanceClick = () => {
     setRightPane({
@@ -405,7 +420,7 @@ const TenantDashboard = () => {
               <Grid container spacing={3} sx={{ marginTop: "1px" }}>
                 {rightPane?.type ? (
                   /* Render the rightPane component if available */
-                  <Grid item xs={12} sx={{ flex: 1 }}>
+                  <Grid item xs={12} sx={{ flex: 1 }} ref={rightPaneRef}>
                     {renderRightPane()}
                   </Grid>
                 ) : (
