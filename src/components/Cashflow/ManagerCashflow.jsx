@@ -558,9 +558,33 @@ export default function ManagerCashflow() {
       }
     });
 
+    const priority = ["RENT", "LATE FEE", "EXTRA CHARGE", "DEPOSIT"];
+
     const sortedTotals = Object.fromEntries(
-      Object.entries(totals).sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
-    );
+        Object.entries(totals).sort(([keyA], [keyB]) => {
+          const indexA = priority.indexOf(keyA);
+          const indexB = priority.indexOf(keyB);
+
+          if (indexA !== -1 && indexB !== -1) {
+            // Both keys are in priority list, maintain their relative order
+            return indexA - indexB;
+          } else if (indexA !== -1) {
+            // keyA is in priority, keyB is not
+            return -1;
+          } else if (indexB !== -1) {
+            // keyB is in priority, keyA is not
+            return 1;
+          } else {
+            // Both keys are not in priority, sort alphabetically
+            return keyA.localeCompare(keyB);
+          }
+        })
+      );
+
+
+    // const sortedTotals = Object.fromEntries(
+    //   Object.entries(totals).sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
+    // );
 
     return sortedTotals
 
@@ -658,9 +682,28 @@ export default function ManagerCashflow() {
       }
     });
 
+    const priority = ["RENT", "LATE FEE", "EXTRA CHARGE", "DEPOSIT"];
+
     const sortedTotals = Object.fromEntries(
-      Object.entries(totals).sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
-    );
+        Object.entries(totals).sort(([keyA], [keyB]) => {
+          const indexA = priority.indexOf(keyA);
+          const indexB = priority.indexOf(keyB);
+
+          if (indexA !== -1 && indexB !== -1) {
+            // Both keys are in priority list, maintain their relative order
+            return indexA - indexB;
+          } else if (indexA !== -1) {
+            // keyA is in priority, keyB is not
+            return -1;
+          } else if (indexB !== -1) {
+            // keyB is in priority, keyA is not
+            return 1;
+          } else {
+            // Both keys are not in priority, sort alphabetically
+            return keyA.localeCompare(keyB);
+          }
+        })
+      );
 
     return sortedTotals
     // let totalMaintenance = expenseItems?.reduce((acc, expense) => {
@@ -1643,8 +1686,8 @@ export default function ManagerCashflow() {
       const sortedCashFlowDataByProperty = Object.fromEntries(sortedcashFlowData);
       setCashFlowData(sortedCashFlowDataByProperty);
 
-      const totalCashflowValueByType = getTotalByType(allcashflowData, month, year, false, false)
-      const expectedCashflowTotalByType = getTotalByType(allcashflowData, month, year, true, false)
+      const totalCashflowValueByType = getTotalByType(allcashflowData, month, year, false, true)
+      const expectedCashflowTotalByType = getTotalByType(allcashflowData, month, year, true, true)
       setTotalCashflowValueByType(totalCashflowValueByType)
       setExpectedCashflowValueByType(expectedCashflowTotalByType)
       setAllCashflowData(allcashflowData)
