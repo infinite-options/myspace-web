@@ -123,8 +123,13 @@ const TenantDashboard = () => {
       // console.log("Dashboard data", dashboardData);
 
       if (dashboardData) {
-        // console.log("Dashboard inside check", dashboardData);
-        setPropertyListingData(dashboardData.property?.result);
+        // console.log("Dashboard inside check", dashboardData.property?.result);
+
+        const filteredPropertyDetails = dashboardData.property?.result.filter(
+          (lease) => lease.lease_status === "ACTIVE"
+        );
+        setPropertyListingData(filteredPropertyDetails);
+        
         setLeaseDetailsData(dashboardData.leaseDetails?.result);
         setMaintenanceRequestsNew(dashboardData.maintenanceRequests?.result);
         setMaintenanceStatus(dashboardData.maintenanceStatus?.result);
