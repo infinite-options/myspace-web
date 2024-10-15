@@ -199,57 +199,61 @@ export default function PMQuotesRequested(props) {
       <div>
         {contracts?.length > 0 ? activeContractsIds?.length !== contracts?.length ?(
           contracts.map((contract) => {
-            if (contract.contract_status === "SENT") {
+            if (contract.contract_status === "SENT" || contract.contract_status === "REFUSED") {
               return (
                 <div key={contract.contract_uid}>
                   <DocumentCard data={contract} />
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    sx={{ padding: "8px" }}
-                  >
-                    <Button
-                      variant="contained"
-                      sx={{
-                        textTransform: "none",
-                        background: "#CB8E8E",
-                        color: "#160449",
-                        fontWeight: 'bold',
-                        fontSize: '15px',
-                        width: "40%",
-                        height: "85%",
-                        borderRadius: "10px",
-                        "&:hover": {
-                          backgroundColor: "#D32F2F",
-                          color: "#FFFFFF",
-                        }                        
-                      }}
-                      onClick={() => handleDecline(contract)}
-                    >
-                      Decline
-                    </Button>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        textTransform: "none",
-                        background: "#9EAED6",
-                        color: "#160449",
-                        width: "40%",
-                        height: "85%",
-                        borderRadius: "10px",
-                        fontWeight: 'bold',
-                        fontSize: '15px',
-                        "&:hover": {
-                          backgroundColor: "#160449",
-                          color: "#FFFFFF",
-                        }
-                      }}
-                      onClick={() => handleAccept(contract)}
-                    >
-                      Accept
-                    </Button>
-                  </Stack>
+                  {
+                    contract.contract_status === "SENT" && (                    
+                      <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        sx={{ padding: "8px" }}
+                      >
+                        <Button
+                          variant="contained"
+                          sx={{
+                            textTransform: "none",
+                            background: "#CB8E8E",
+                            color: "#160449",
+                            fontWeight: 'bold',
+                            fontSize: '15px',
+                            width: "40%",
+                            height: "85%",
+                            borderRadius: "10px",
+                            "&:hover": {
+                              backgroundColor: "#D32F2F",
+                              color: "#FFFFFF",
+                            }                        
+                          }}
+                          onClick={() => handleDecline(contract)}
+                        >
+                          Decline
+                        </Button>
+                        <Button
+                          variant="contained"
+                          sx={{
+                            textTransform: "none",
+                            background: "#9EAED6",
+                            color: "#160449",
+                            width: "40%",
+                            height: "85%",
+                            borderRadius: "10px",
+                            fontWeight: 'bold',
+                            fontSize: '15px',
+                            "&:hover": {
+                              backgroundColor: "#160449",
+                              color: "#FFFFFF",
+                            }
+                          }}
+                          onClick={() => handleAccept(contract)}
+                        >
+                          Accept
+                        </Button>
+                      </Stack>
+                    )
+                  }
                 </div>
               );
             }
@@ -1048,6 +1052,20 @@ function DocumentCard(props) {
     fontSize: theme.typography.secondaryFont,
   };
 
+  const getContractStatusColor = () => {
+    switch(data.contract_status){
+      case "SENT":
+        return "#160449";
+        break;
+      case "REFUSED":
+        return "#D32F2F"
+        break;
+      default:
+        return "#160449";
+        break; 
+    }
+  }
+
   return (
     <Box
       sx={{
@@ -1167,7 +1185,7 @@ function DocumentCard(props) {
             </Typography>
           </Grid>
           <Grid item xs={12}>
-            <Typography sx={{ color: '#160449', fontSize: '15px' }}>
+            <Typography sx={{ color: getContractStatusColor(), fontSize: '15px', fontWeight: 'bold' }}>
               {data.contract_status}
             </Typography>
           </Grid>

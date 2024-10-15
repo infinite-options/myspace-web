@@ -1380,7 +1380,7 @@ const PropertyCard = (props) => {
     // };
 
     const formData = new FormData();
-    formData.append("contract_uid", contractUID);
+    formData.append("contract_uid", currentContractUID);
     formData.append("contract_status", "REFUSED");
 
     // console.log("Declined offer. Data sent - ", formData);
