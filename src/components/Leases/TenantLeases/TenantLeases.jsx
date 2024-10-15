@@ -232,7 +232,7 @@ function TenantLeases(props) {
       if (data.lease_update.code === 200) {
         alert("You have successfully Rejected the lease.");
         await sendAnnouncement();
-        props.setRightPane({ type: "" });
+        props.setRightPane({ type: "", state: { property: property, lease: lease }, });
         props.setReload(prev => !prev);
       } else {
         console.log(data);
