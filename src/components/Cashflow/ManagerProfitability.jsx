@@ -3634,7 +3634,25 @@ function TransactionsTable(props) {
       return acc;
     }, []);
 
-    data.forEach(transaction => {
+    const newData = data.reduce((acc, item) => {
+      if (!acc[item.pur_group]) {
+        acc[item.pur_group] = [];
+      }
+      acc[item.pur_group].push(item);
+      return acc;
+    }, {});
+
+    const filteredValues = Object.keys(newData).reduce((acc, key) => {
+      const hasNon350Payer = newData[key].every(item => !item.pur_payer.startsWith("350"));
+      
+      if (hasNon350Payer) {
+        acc.push(...newData[key]); // Push the values instead of key-value pairs
+      }
+      
+      return acc;
+    }, []);
+
+    filteredValues.forEach(transaction => {
       if(transaction.pur_payer.startsWith("110") && !verifiedPurGroups.includes(transaction.pur_group) && transaction.payment_status?.toLowerCase() === "unpaid"){
         result.push({
           ...transaction,
