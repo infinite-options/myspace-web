@@ -674,6 +674,7 @@ const AnnouncementsPM = ({ announcements, setRightPane }) => {
 
 const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty }) => {
   console.log("Lease Details", leaseDetails);
+  const { getProfileId } = useUser();
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleFlip = () => {
@@ -695,11 +696,49 @@ const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty }) => {
   // Check if Renew Lease button should be visible (if within 2x notice period)
   const showRenewLeaseButton = daysUntilLeaseEnd <= 2 * noticePeriod;
 
-  const handleRenewLease = () => {
-    // Logic for renewing lease
-    alert("Renew Lease clicked!");
+  const handleRenewLease = async () => {
+    // try {
+    //   const currentDate = new Date();
+  
+    //   // Send POST request to create an announcement for renewing the lease
+    //   const announcementResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       announcement_title: "Renew Lease Requested",
+    //       announcement_msg: "The tenant has requested to renew the lease for your property.",
+    //       announcement_sender: getProfileId(),
+    //       announcement_date: currentDate.toDateString(),
+    //       announcement_properties: JSON.stringify(selectedProperty?.property_uid),
+    //       announcement_mode: "LEASE",
+    //       announcement_receiver: [leaseDetails?.contract_business_id],
+    //       announcement_type: ["Email", "Text"],
+    //     }),
+    //   });
+  
+    //   if (!announcementResponse.ok) {
+    //     throw new Error("Failed to create an announcement.");
+    //   }
+  
+    //   // Display success message or perform any other action
+    //   alert("Lease renewal request sent to the manager!");
+  
+    // } catch (error) {
+    //   console.error("Error posting announcement: ", error);
+    //   alert("Failed to send lease renewal request. Please try again.");
+    // }
+    setRightPane({
+      type: "tenantApplication",
+      state: {
+        data: leaseDetails,
+        status: "RENEW",
+        lease: leaseDetails,
+      },
+    });
   };
-
+  
   const handleEndLease = () => {
     setRightPane({
       type: "tenantEndLease",
