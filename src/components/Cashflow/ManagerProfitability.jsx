@@ -3654,6 +3654,7 @@ function TransactionsTable(props) {
 
     filteredValues.forEach(transaction => {
       if(transaction.pur_payer.startsWith("110") && !verifiedPurGroups.includes(transaction.pur_group) && transaction.payment_status?.toLowerCase() === "unpaid"){
+        let purchase_ids = [transaction.purchase_uid]
         result.push({
           ...transaction,
           received_amt: 0.00,
@@ -3663,6 +3664,7 @@ function TransactionsTable(props) {
           purchase_group: transaction.pur_group,
           month: transaction.cf_month,
           year: transaction.cf_year,
+          purchase_ids : JSON.stringify(purchase_ids),
           pur_receiver: transaction.pur_payer
         })
       }
