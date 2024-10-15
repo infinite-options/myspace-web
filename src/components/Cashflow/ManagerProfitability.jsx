@@ -839,6 +839,21 @@ const ManagerProfitability = ({
                 <Button
                   sx={{
                     width: "90px",
+                    backgroundColor: tab === "by_sort" ? "#3D5CAC" : "#9EAED6",
+                    textTransform: "none",
+                    "&:hover": {
+                      backgroundColor: tab === "by_sort" ? "#3D5CAC" : "#9EAED6",
+                    },
+                  }}
+                  onClick={() => handleSelectTab("by_sort")}
+                >
+                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit By Type</Typography>
+                </Button>
+              </Grid>
+              <Grid container justifyContent='center' item xs={2} marginRight={6}>
+                <Button
+                  sx={{
+                    width: "90px",
                     backgroundColor: tab === "by_cashflow" ? "#3D5CAC" : "#9EAED6",
                     textTransform: "none",
                     "&:hover": {
@@ -863,21 +878,6 @@ const ManagerProfitability = ({
                   onClick={() => handleSelectTab("type")}
                 >
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Cashflow By Type</Typography>
-                </Button>
-              </Grid>
-              <Grid container justifyContent='center' item xs={2} marginRight={6}>
-                <Button
-                  sx={{
-                    width: "90px",
-                    backgroundColor: tab === "by_sort" ? "#3D5CAC" : "#9EAED6",
-                    textTransform: "none",
-                    "&:hover": {
-                      backgroundColor: tab === "by_sort" ? "#3D5CAC" : "#9EAED6",
-                    },
-                  }}
-                  onClick={() => handleSelectTab("by_sort")}
-                >
-                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit By Type</Typography>
                 </Button>
               </Grid>
             </Grid>
@@ -3327,51 +3327,57 @@ function NewStatmentTableForByCashflow(props){
 
     // const groupedItemsByProperty = groupItemsByProperty(filteredIitems);
 
-    return (
-      <>
-        {
-          // filteredIitems.map((item, index)=>(
-          //   <Accordion
-          //     sx={{
-          //       backgroundColor: "transparent",
-          //       boxShadow: "none",
-          //       marginBottom: "15px"
-          //     }}
-          //       key={index}
-          //     >
-          //       <AccordionSummary expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
-          //         <Table>
-          //           <TableHead>
-          //             <TableRow>
-          //               <TableCell sx={{ width: "555px" }}>
-          //                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-          //                   {groupedItemsByProperty[propertyId].items[0].property_address}
-          //                 </Typography>
-          //               </TableCell>
-          //               <TableCell align='right'>
-          //                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-          //                   ${groupedItemsByProperty[propertyId].totalExpected ? parseFloat(groupedItemsByProperty[propertyId].totalExpected).toFixed(2) : 0}
-          //                 </Typography>
-          //               </TableCell>
-          //               <TableCell align='right'>
-          //                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-          //                   ${groupedItemsByProperty[propertyId].totalActual ? parseFloat(groupedItemsByProperty[propertyId].totalActual).toFixed(2) : 0}
-          //                 </Typography>
-          //               </TableCell>
-          //             </TableRow>
-          //           </TableHead>
-          //         </Table>
-          //       </AccordionSummary>
-          //       <AccordionDetails>
-          //         {getDataGrid(groupedItemsByProperty[propertyId].items)}
-          //       </AccordionDetails>
-          //   </Accordion>
-          // ))
-          getDataGrid(filteredIitems)
-        } 
-        {/* {getDataGrid(filteredIitems)} */}
-      </>
-    );
+    if (filteredIitems.length > 0){
+      return (
+        <>
+          {
+            // filteredIitems.map((item, index)=>(
+            //   <Accordion
+            //     sx={{
+            //       backgroundColor: "transparent",
+            //       boxShadow: "none",
+            //       marginBottom: "15px"
+            //     }}
+            //       key={index}
+            //     >
+            //       <AccordionSummary expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
+            //         <Table>
+            //           <TableHead>
+            //             <TableRow>
+            //               <TableCell sx={{ width: "555px" }}>
+            //                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+            //                   {groupedItemsByProperty[propertyId].items[0].property_address}
+            //                 </Typography>
+            //               </TableCell>
+            //               <TableCell align='right'>
+            //                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+            //                   ${groupedItemsByProperty[propertyId].totalExpected ? parseFloat(groupedItemsByProperty[propertyId].totalExpected).toFixed(2) : 0}
+            //                 </Typography>
+            //               </TableCell>
+            //               <TableCell align='right'>
+            //                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+            //                   ${groupedItemsByProperty[propertyId].totalActual ? parseFloat(groupedItemsByProperty[propertyId].totalActual).toFixed(2) : 0}
+            //                 </Typography>
+            //               </TableCell>
+            //             </TableRow>
+            //           </TableHead>
+            //         </Table>
+            //       </AccordionSummary>
+            //       <AccordionDetails>
+            //         {getDataGrid(groupedItemsByProperty[propertyId].items)}
+            //       </AccordionDetails>
+            //   </Accordion>
+            // ))
+            getDataGrid(filteredIitems)
+          } 
+          {/* {getDataGrid(filteredIitems)} */}
+        </>
+      );
+    }else{
+      return(
+        <></>
+      );
+    }
   }
 
   return (

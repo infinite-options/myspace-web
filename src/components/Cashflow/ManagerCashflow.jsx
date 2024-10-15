@@ -543,9 +543,12 @@ export default function ManagerCashflow() {
     let revenueItems = data?.filter((item) => item.pur_receiver === profileId && item.cf_month === month && item.cf_year === year && item.purchase_type.toUpperCase() !== "DEPOSIT");
 
     let totals = {};
+    let hasItems = {};
+
     profitCategories.forEach(category => {
     
       totals[category.list_item.toUpperCase()] = 0.0; 
+      hasItems[category.list_item.toUpperCase()] = false; 
     });
 
     revenueItems?.forEach(item => {
@@ -553,15 +556,19 @@ export default function ManagerCashflow() {
       
       if (item[key] !== null && totals.hasOwnProperty(purchaseType)) {
         totals[purchaseType] += parseFloat(item[key]);
+        hasItems[purchaseType] = true;
       }else if(item[key] !== null ){
         totals["OTHER"] += parseFloat(item[key])
+        hasItems["OTHER"] = true;
       }
     });
+
+    const nonZeroTotals = Object.entries(totals).filter(([key, value]) => hasItems[key]);
 
     const priority = ["RENT", "LATE FEE", "EXTRA CHARGE", "DEPOSIT"];
 
     const sortedTotals = Object.fromEntries(
-        Object.entries(totals).sort(([keyA], [keyB]) => {
+        nonZeroTotals.sort(([keyA], [keyB]) => {
           const indexA = priority.indexOf(keyA);
           const indexB = priority.indexOf(keyB);
 
@@ -667,8 +674,10 @@ export default function ManagerCashflow() {
   
     
     let totals = {};
+    let hasItems = {};
+
     profitCategories.forEach(category => {
-    
+      hasItems[category.list_item.toUpperCase()] = false;
       totals[category.list_item.toUpperCase()] = 0.0; 
     });
 
@@ -676,16 +685,20 @@ export default function ManagerCashflow() {
       const purchaseType = item.purchase_type.toUpperCase();
       
       if (item[key] !== null && totals.hasOwnProperty(purchaseType)) {
+        hasItems[purchaseType] = true; 
         totals[purchaseType] += parseFloat(item[key]);
       }else if(item[key] !== null ){
+        hasItems["OTHER"] = true; 
         totals["OTHER"] += parseFloat(item[key])
       }
     });
 
+    const nonZeroTotals = Object.entries(totals).filter(([key, value]) => hasItems[key]);
+
     const priority = ["RENT", "LATE FEE", "EXTRA CHARGE", "DEPOSIT"];
 
     const sortedTotals = Object.fromEntries(
-        Object.entries(totals).sort(([keyA], [keyB]) => {
+        nonZeroTotals.sort(([keyA], [keyB]) => {
           const indexA = priority.indexOf(keyA);
           const indexB = priority.indexOf(keyB);
 
@@ -789,8 +802,10 @@ export default function ManagerCashflow() {
     let items = data;
   
     let totals = {};
+    let hasItems = {};
+
     profitCategories.forEach(category => {
-    
+      hasItems[category.list_item.toUpperCase()] = false;
       totals[category.list_item.toUpperCase()] = 0.0; 
     });
 
@@ -798,11 +813,15 @@ export default function ManagerCashflow() {
       const purchaseType = item.purchase_type.toUpperCase();
       
       if (item[key] !== null && totals.hasOwnProperty(purchaseType)) {
+        hasItems[purchaseType] = true;
         totals[purchaseType] += parseFloat(item[key]);
       }else if(item[key] !== null ){
+        hasItems["OTHER"] = true;
         totals["OTHER"] += parseFloat(item[key])
       }
     });
+
+    const nonZeroTotals = Object.entries(totals).filter(([key, value]) => hasItems[key]);
 
     let sortedTotals;
 
@@ -810,7 +829,7 @@ export default function ManagerCashflow() {
       const priority = ["RENT", "LATE FEE", "EXTRA CHARGE", "DEPOSIT"];
 
       sortedTotals = Object.fromEntries(
-        Object.entries(totals).sort(([keyA], [keyB]) => {
+        nonZeroTotals.sort(([keyA], [keyB]) => {
           const indexA = priority.indexOf(keyA);
           const indexB = priority.indexOf(keyB);
 
@@ -832,7 +851,7 @@ export default function ManagerCashflow() {
 
     }else{
       sortedTotals = Object.fromEntries(
-        Object.entries(totals).sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
+        nonZeroTotals.sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
       );
     }
 
