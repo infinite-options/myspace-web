@@ -126,7 +126,9 @@ const TenantDashboard = () => {
         // console.log("Dashboard inside check", dashboardData.property?.result);
 
         const filteredPropertyDetails = dashboardData.property?.result.filter(
-          (lease) => lease.lease_status === "ACTIVE"
+          (lease) =>
+            !lease.lease_status.includes("RENEW NEW") &&
+            !lease.lease_status.includes("RENEW PROCESSING")
         );
         setPropertyListingData(filteredPropertyDetails);
         
