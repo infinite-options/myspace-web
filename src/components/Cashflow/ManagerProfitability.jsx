@@ -3557,7 +3557,9 @@ function TransactionsTable(props) {
 
     console.log("ROHIT - 631 - vgroupByPurchaseGroup - ", groupedData);
 
-    const result = Object.keys(groupedData).reduce((acc, group) => {
+    
+
+    let result = Object.keys(groupedData).reduce((acc, group) => {
       let received_amt = 0;
       let management_fee = 0;
       let other_expense = 0;
@@ -3631,6 +3633,24 @@ function TransactionsTable(props) {
     
       return acc;
     }, []);
+
+    data.forEach(transaction => {
+      if(transaction.pur_payer.startsWith("110") && !verifiedPurGroups.includes(transaction.pur_group) && transaction.payment_status?.toLowerCase() === "unpaid"){
+        result.push({
+          ...transaction,
+          received_amt: 0.00,
+          management_fee: transaction.pur_amount_due,
+          owner_payment: 0.00,
+          allTransactions: [transaction],
+          purchase_group: transaction.pur_group,
+          month: transaction.cf_month,
+          year: transaction.cf_year,
+          pur_receiver: transaction.pur_payer
+        })
+      }
+    })
+
+    
 
     console.log("ROHIT - 631 - result - ", result);
 
