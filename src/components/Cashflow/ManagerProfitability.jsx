@@ -868,21 +868,6 @@ const ManagerProfitability = ({
               <Grid container justifyContent='center' item xs={2} marginRight={6}>
                 <Button
                   sx={{
-                    width: "200px",
-                    backgroundColor: tab === "by_type" ? "#3D5CAC" : "#9EAED6",
-                    textTransform: "none",
-                    "&:hover": {
-                      backgroundColor: tab === "by_type" ? "#3D5CAC" : "#9EAED6",
-                    },
-                  }}
-                  onClick={() => handleSelectTab("by_type")}
-                >
-                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit By Type</Typography>
-                </Button>
-              </Grid>
-              <Grid container justifyContent='center' item xs={2} marginRight={6}>
-                <Button
-                  sx={{
                     width: "90px",
                     backgroundColor: tab === "by_sort" ? "#3D5CAC" : "#9EAED6",
                     textTransform: "none",
@@ -892,7 +877,7 @@ const ManagerProfitability = ({
                   }}
                   onClick={() => handleSelectTab("by_sort")}
                 >
-                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Sort</Typography>
+                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit By Type</Typography>
                 </Button>
               </Grid>
             </Grid>
@@ -961,13 +946,13 @@ const ManagerProfitability = ({
                               <Grid container justifyContent='flex-start' item xs={8}>
                                 <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}
+                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}
                                       onClick={(e) => handleViewPropertyClick(e, property?.propertyInfo?.property_id)}
                                     >
                                       {`${property?.propertyInfo?.property_address}`} {property?.propertyInfo?.property_unit && ", Unit - "}
                                       {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
                                     </Typography>
-                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, marginLeft: 10 }}>
+                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, marginLeft: 10, fontSize: theme.typography.smallFont }}>
                                       {`${property?.propertyInfo?.property_id}`}
                                     </Typography>
                                     {/* <Button
@@ -987,12 +972,12 @@ const ManagerProfitability = ({
                                 </Grid>
                               </Grid>
                               <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
                                   ${property?.expectedProfit ? property?.expectedProfit?.toFixed(2) : "0.00"}
                                 </Typography>
                               </Grid>
                               <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
                                   ${property?.actualProfit ? property?.actualProfit?.toFixed(2) : "0.00"}
                                 </Typography>
                               </Grid>
@@ -1080,11 +1065,11 @@ const ManagerProfitability = ({
                               <Grid container justifyContent='flex-start' item xs={8}>
                                 <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
                                       {`${property?.propertyInfo?.property_address},`} {property?.propertyInfo?.property_unit && "Unit - "}
                                       {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
                                     </Typography>
-                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, marginLeft: 10 }}>
+                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, marginLeft: 10, fontSize: theme.typography.smallFont }}>
                                       {`${property?.propertyInfo?.property_id}`}
                                     </Typography>
                                   </AccordionSummary>
@@ -1092,12 +1077,12 @@ const ManagerProfitability = ({
                               </Grid>
 
                               <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
                                   ${property?.totalExpected ? property?.totalExpected?.toFixed(2) : "0.00"}
                                 </Typography>
                               </Grid>
                               <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
                                   ${property?.totalActual ? property?.totalActual?.toFixed(2) : "0.00"}
                                 </Typography>
                               </Grid>
@@ -1176,23 +1161,23 @@ const ManagerProfitability = ({
                               <Grid container justifyContent='flex-start' item xs={8}>
                                 <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
                                       {`${property?.propertyInfo?.property_address},`} {property?.propertyInfo?.property_unit && "Unit - "}
                                       {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
                                     </Typography>
-                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, marginLeft: 10 }}>
+                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, marginLeft: 10, fontSize: theme.typography.smallFont }}>
                                       {`${property?.propertyInfo?.property_id}`}
                                     </Typography>
                                   </AccordionSummary>
                                 </Grid>
                               </Grid>
                               <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
                                   ${property?.totalExpected ? property?.totalExpected?.toFixed(2) : "0.00"}
                                 </Typography>
                               </Grid>
                               <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
                                   ${property?.totalActual ? property?.totalActual?.toFixed(2) : "0.00"}
                                 </Typography>
                               </Grid>
@@ -2020,7 +2005,7 @@ const ManagerProfitability = ({
                               <Grid container justifyContent='flex-start' item xs={8}>
                                 <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
+                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }} onClick={(e) => handleViewPropertyClick(e, property?.propertyInfo?.property_id)}>
                                       {`${property?.propertyInfo?.property_address}`} {property?.propertyInfo?.property_unit && ", Unit - "}
                                       {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
                                     </Typography>
@@ -2030,21 +2015,6 @@ const ManagerProfitability = ({
                                     <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, marginLeft: 5, fontSize: theme.typography.smallFont }}>
                                       {`(${property?.rentItems[0]?.cf_month_num}, ${property?.rentItems[0]?.cf_year})`}
                                     </Typography>
-                                    <Button
-                                      sx={{
-                                        padding: "0px",
-                                        marginLeft: "5px",
-                                        color: "#160449",
-                                        "&:hover": {
-                                          color: "#FFFFFF",
-                                        },
-                                      }}
-                                      onClick={(e) => handleViewPropertyClick(e, property?.propertyInfo?.property_id)}
-                                    >
-                                      <Typography sx={{ fontWeight: theme.typography.common.fontWeight, textTransform: "none", fontSize: theme.typography.smallFont }}>
-                                        View
-                                      </Typography>
-                                    </Button>
                                   </AccordionSummary>
                                 </Grid>
                               </Grid>
@@ -3422,16 +3392,16 @@ function NewStatmentTableForByCashflow(props){
                     <TableHead>
                       <TableRow>
                         <TableCell>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: theme.typography.common.blue }}>
                             {" "}
                             {category} {getCategoryCount(category, false)}{" "}
                           </Typography>
                         </TableCell>
                         <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? parseFloat(value).toFixed(2) : 0}</Typography>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: theme.typography.common.blue }}>${value ? parseFloat(value).toFixed(2) : 0}</Typography>
                         </TableCell>
                         <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? parseFloat(value).toFixed(2) : 0}</Typography>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: theme.typography.common.blue }}>${value ? parseFloat(value).toFixed(2) : 0}</Typography>
                         </TableCell>
                       </TableRow>
                     </TableHead>
@@ -3460,18 +3430,18 @@ function NewStatmentTableForByCashflow(props){
                     <TableHead>
                       <TableRow>
                         <TableCell sx={{ width: "500px" }}>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: theme.typography.common.blue }}>
                             {" "}
                             {category} {getCategoryCount(category, true)}{" "}
                           </Typography>
                         </TableCell>
                         <TableCell align='right'>
-                          <Typography sx={{ textAlign: "right", fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, width: "150px" }}>
+                          <Typography sx={{ textAlign: "right", fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, width: "150px", color: theme.typography.common.blue }}>
                             ${value ? parseFloat(value).toFixed(2) : 0}
                           </Typography>
                         </TableCell>
                         <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: theme.typography.common.blue }}>
                             ${categoryTotalMapping[category] ? parseFloat(categoryTotalMapping[category]).toFixed(2) : 0}
                           </Typography>
                         </TableCell>
