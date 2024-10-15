@@ -80,7 +80,7 @@ import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy, } from "../../utils
 
 const getAppColor = (app) => {
   if (app.lease_status.includes("RENEW")) {
-    return "green"; // Return green if lease_status contains 'RENEW'
+    return '#2E7D32'; // Return green if lease_status contains 'RENEW'
   } else if (app.lease_status === "REJECTED") {
     return "#A52A2A"; // Red color for rejected
   } else if (app.lease_status === "REFUSED") {
