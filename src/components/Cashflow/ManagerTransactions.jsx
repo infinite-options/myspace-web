@@ -75,7 +75,7 @@ import axios from "axios";
 //   expanded: {}
 // })(MuiAccordion);
 
-export default function ManagerTransactions({ propsMonth, propsYear, setMonth, setYear, transactionsData, setSelectedPayment, setCurrentWindow, selectedProperty, setSelectedPurGroup }) {
+export default function ManagerTransactions({ propsMonth, propsYear, setMonth, setYear, setSelectedPayment, setCurrentWindow, selectedProperty, setSelectedPurGroup }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, getProfileId } = useUser(); // Access the user object from UserContext
@@ -99,6 +99,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
   const [transactions, setTransactions] = useState([]);
 
   const [transactionsNew, setTransactionsNew] = useState([]);
+  const [transactionsData, setTransactionsData] = useState([]);
 
   const getPurchaseGroupStatus = (purchaseGroup) => {
     if (purchaseGroup.pur_amount_due_total === purchaseGroup.total_paid_total) {
@@ -138,6 +139,35 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
     return getVerificationForTenantPayment(tenantPayment)
   };
 
+  async function fetchCashflowTransactions(userProfileId, month, year) {
+    setShowSpinner(true);
+    try {
+
+      const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowTransactions/${userProfileId}/new`);
+      // console.log("Manager Cashflow Data: ", cashflow.data);
+      setShowSpinner(false);
+      return cashflow.data?.result;
+    } catch (error) {
+      console.error("Error fetching cashflow data:", error);
+      setShowSpinner(false);
+    }
+}
+
+  useEffect(()=>{
+    fetchCashflowTransactions(profileId)
+        .then((data) => {        
+          const dataWithIndex = data?.map((item, index) => (
+            {
+              ...item,
+              'index': index,
+            }
+          ))
+          setTransactionsData(dataWithIndex);        
+        })
+        .catch((error) => {
+        console.error("Error fetching cashflow data:", error);
+        });  
+  },[])
   //   useEffect(() => {
   //     console.log("rentsByProperty - ", rentsByProperty);
   //   }, [rentsByProperty]);
