@@ -218,8 +218,8 @@ function getPast12MonthsCashflow(data, month, year) {
       expected_deposit: expectedMonthDeposit,
 
       monthYear: currentMonth?.slice(0, 3) + " " + currentYear?.slice(2, 4),
-      // "expected_revenue": expectedMonthRevenue,
-      // "expected_cashflow": expectedMonthRevenue - expectedMonthExpense,
+      "expected_revenue": expectedMonthRent,
+      "expected_cashflow": expectedMonthRent - expectedMonthPayouts,
     });
     if (currentMonth === "January") {
       currentMonth = "December";
