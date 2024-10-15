@@ -78,7 +78,7 @@ function getTotalExpectedProfitByMonthYear(data, month, year) {
   let profitItems = data?.filter((item) => item.pur_payer?.startsWith("110") && item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
   // console.log(`270 - profitItems - ${month}, ${year} - `, profitItems);
   let totalProfit = profitItems?.reduce((acc, item) => {
-    return acc + parseFloat(item["expected"] ? item["expected"] : 0.0);
+    return acc + parseFloat(item["pur_amount_due"] ? item["pur_amount_due"] : 0.0);
   }, 0.0);
   return totalProfit;
 }
@@ -98,7 +98,7 @@ function getTotalExpectedRentByMonthYear(data, month, year) {
   let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
   let totalRent = rentItems?.reduce((acc, item) => {
     if (item.purchase_type.toUpperCase() !== "DEPOSIT") {
-      return acc + parseFloat(item["expected"] ? item["expected"] : 0.0);
+      return acc + parseFloat(item["pur_amount_due"] ? item["pur_amount_due"] : 0.0);
     }
 
     return acc;
@@ -112,7 +112,7 @@ function getTotalRentByMonthYear(data, month, year) {
   let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
   let totalRent = rentItems?.reduce((acc, item) => {
     if (item.purchase_type.toUpperCase() !== "DEPOSIT") {
-      return acc + parseFloat(item["actual"] ? item["actual"] : 0.0);
+      return acc + parseFloat(item["total_paid"] ? item["total_paid"] : 0.0);
     }
     return acc;
   }, 0.0);
@@ -126,7 +126,7 @@ function getTotalExpectedPayoutsByMonthYear(data, month, year) {
   let payoutItems = data?.filter((item) => item.pur_payer?.startsWith("600") && item.cf_month === month && item.cf_year === year);
   let totalPayouts = payoutItems?.reduce((acc, item) => {
     if (item.purchase_type.toUpperCase() !== "DEPOSIT") {
-      return acc + parseFloat(item["expected"] ? item["expected"] : 0.0);
+      return acc + parseFloat(item["pur_amount_due"] ? item["pur_amount_due"] : 0.0);
     }
     return acc;
   }, 0.0);
@@ -139,7 +139,7 @@ function getTotalPayoutsByMonthYear(data, month, year) {
   let payoutItems = data?.filter((item) => item.pur_payer?.startsWith("600") && item.cf_month === month && item.cf_year === year);
   let totalPayouts = payoutItems?.reduce((acc, item) => {
     if (item.purchase_type.toUpperCase() !== "DEPOSIT") {
-      return acc + parseFloat(item["actual"] ? item["actual"] : 0.0);
+      return acc + parseFloat(item["total_paid"] ? item["total_paid"] : 0.0);
     }
     return acc;
   }, 0.0);
@@ -150,7 +150,7 @@ function getTotalExpectedDepositByMonthByYear(data, month, year){
   let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
   let totalDeposit = rentItems?.reduce((acc, item) => {
     if (item.purchase_type.toUpperCase() === "DEPOSIT") {
-      return acc + parseFloat(item["expected"] ? item["expected"] : 0.0);
+      return acc + parseFloat(item["pur_amount_due"] ? item["pur_amount_due"] : 0.0);
     }
 
     return acc;
@@ -162,7 +162,7 @@ function getTotalDepositByMonthByYear(data, month, year){
   let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
   let totalDeposit = rentItems?.reduce((acc, item) => {
     if (item.purchase_type.toUpperCase() === "DEPOSIT") {
-      return acc + parseFloat(item["actual"] ? item["actual"] : 0.0);
+      return acc + parseFloat(item["total_paid"] ? item["total_paid"] : 0.0);
     }
 
     return acc;
@@ -174,7 +174,7 @@ function getTotalProfitByMonthByYear(data, month, year){
   let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
   let totalProfit = rentItems?.reduce((acc, item) => {
     if (item.pur_payer && item.pur_payer.startsWith("110")) {
-      return acc + parseFloat(item["actual"] ? item["actual"] : 0.0);
+      return acc + parseFloat(item["total_paid"] ? item["total_paid"] : 0.0);
     }
 
     return acc;
