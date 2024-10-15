@@ -291,7 +291,8 @@ export default function ManagerCashflow() {
     //   });
 
       fetchCashflowTransactions(profileId)
-      .then((data) => {        
+      .then((data) => {
+        console.log(" for graph data - ", data)        
         setCashflowTransactionsData(data);
         setCashflowData(data);
         // setProfitabilityData(data?.Profit);

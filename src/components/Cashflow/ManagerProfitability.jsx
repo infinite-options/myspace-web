@@ -243,7 +243,7 @@ const ManagerProfitability = ({
       field: "purchase_type",
       headerName: "Purchase Type",
       flex: 1.5,
-      renderCell: (params) => <span>{params.row.purchase_type !== null ? params.row.purchase_type : "-"}</span>,
+      renderCell: (params) => <span style={{fontSize: theme.typography.smallFont}}>{params.row.purchase_type !== null ? params.row.purchase_type : "-"}</span>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     // {
@@ -278,6 +278,7 @@ const ManagerProfitability = ({
               overflow: "hidden",
               textOverflow: "ellipsis",
               maxWidth: "100%",
+              fontSize: theme.typography.smallFont
             }}
           >
             {params.row.pur_group !== null ? params.row.pur_group : "-"}
@@ -298,6 +299,7 @@ const ManagerProfitability = ({
               overflow: "hidden",
               textOverflow: "ellipsis",
               maxWidth: "100%",
+              fontSize: theme.typography.smallFont
             }}
           >
             {params.row.pur_payer !== null ? params.row.pur_payer : "-"}
@@ -318,6 +320,7 @@ const ManagerProfitability = ({
               overflow: "hidden",
               textOverflow: "ellipsis",
               maxWidth: "100%",
+              fontSize: theme.typography.smallFont
             }}
           >
             {params.row.pur_receiver !== null ? params.row.pur_receiver : "-"}
@@ -340,6 +343,7 @@ const ManagerProfitability = ({
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
+                fontSize: theme.typography.smallFont,
                 maxWidth: "100%",
                 color: fontColor,
                 cursor: verificationStatus === "not verified" ? "pointer" : "auto",
@@ -362,7 +366,7 @@ const ManagerProfitability = ({
       field: "pur_amount_due",
       headerName: "Expected",
       flex: 1,
-      renderCell: (params) => <span>$ {params.row.pur_amount_due !== null ? parseFloat(params.row.pur_amount_due).toFixed(2) : parseFloat(0).toFixed(2)}</span>,
+      renderCell: (params) => <span style={{fontSize: theme.typography.smallFont}}>$ {params.row.pur_amount_due !== null ? parseFloat(params.row.pur_amount_due).toFixed(2) : parseFloat(0).toFixed(2)}</span>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
@@ -370,7 +374,7 @@ const ManagerProfitability = ({
       headerName: "Actual",
       flex: 1,
       renderCell: (params) => (
-        <span style={{ textAlign: "right", display: "block" }}>$ {params.row.total_paid !== null ? parseFloat(params.row.total_paid).toFixed(2) : parseFloat(0).toFixed(2)}</span>
+        <span style={{ textAlign: "right", display: "block", fontSize: theme.typography.smallFont }}>$ {params.row.total_paid !== null ? parseFloat(params.row.total_paid).toFixed(2) : parseFloat(0).toFixed(2)}</span>
       ),
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
@@ -1844,7 +1848,7 @@ const ManagerProfitability = ({
                               <Grid container justifyContent='flex-start' item xs={8}>
                                 <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight}}
+                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont}}
                                       onClick={(e) => handleViewPropertyClick(e, property?.propertyInfo?.property_id)}
                                     >
                                       {`${property?.propertyInfo?.property_address}`} {property?.propertyInfo?.property_unit && ", Unit - "}
@@ -1857,12 +1861,12 @@ const ManagerProfitability = ({
                                 </Grid>
                               </Grid>
                               <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
                                   ${property?.totalExpected ? property?.totalExpected?.toFixed(2) : "0.00"}
                                 </Typography>
                               </Grid>
                               <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
                                   ${property?.totalActual ? property?.totalActual?.toFixed(2) : "0.00"}
                                 </Typography>
                               </Grid>
@@ -2366,10 +2370,10 @@ function StatementTable(props) {
                 </Typography>
               </TableCell>
               <TableCell>
-                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${item["pur_amount_due"] ? item["pur_amount_due"] : 0}</Typography>
+                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${item["pur_amount_due"] ? parseFloat(item["pur_amount_due"]).toFixed(2) : 0}</Typography>
               </TableCell>
               <TableCell>
-                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${item["total_paid"] ? item["total_paid"] : 0}</Typography>
+                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${item["total_paid"] ? parseFloat(item["total_paid"]).toFixed(2) : 0}</Typography>
               </TableCell>
             </TableRow>
           ) : (
@@ -2397,13 +2401,13 @@ function StatementTable(props) {
                   {/* {property.individual_purchase.map((p) => {
                       total_amount_due += (p.pur_amount_due? p.pur_amount_due : 0)
                   })} */}
-                  <Typography sx={{ fontSize: theme.typography.smallFont }}>${item.pur_amount_due ? item.pur_amount_due : 0}</Typography>
+                  <Typography sx={{ fontSize: theme.typography.smallFont }}>${item.pur_amount_due ? parseFloat(item.pur_amount_due).toFixed(2) : 0}</Typography>
                 </TableCell>
                 <TableCell align='right'>
                   {/* {property.individual_purchase.map((p) => {
                       total_amount_paid += (p.total_paid ? p.total_paid : 0)
                   })} */}
-                  <Typography sx={{ fontSize: theme.typography.smallFont, marginRight: "25px" }}>${item.total_paid ? item.total_paid : 0}</Typography>
+                  <Typography sx={{ fontSize: theme.typography.smallFont, marginRight: "25px" }}>${item.total_paid ? parseFloat(item.total_paid).toFixed(2) : 0}</Typography>
                 </TableCell>
               </TableRow>
             </React.Fragment>
@@ -3092,14 +3096,14 @@ function NewStatmentTableForByCashflow(props){
       field: "property_address",
       headerName: "Address",
       flex: 2,
-      renderCell: (params) => <span>{params.row.property_address !== null ? params.row.property_address : "-"}</span>,
+      renderCell: (params) => <span style={{fontSize: theme.typography.smallFont}}>{params.row.property_address !== null ? params.row.property_address : "-"}</span>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
       field: "purchase_type",
       headerName: "Type",
       flex: 1,
-      renderCell: (params) => <span>{params.row.purchase_type !== null ? params.row.purchase_type : "-"}</span>,
+      renderCell: (params) => <span style={{fontSize: theme.typography.smallFont}}>{params.row.purchase_type !== null ? params.row.purchase_type : "-"}</span>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     // {
@@ -3134,6 +3138,7 @@ function NewStatmentTableForByCashflow(props){
               overflow: "hidden",
               textOverflow: "ellipsis",
               maxWidth: "100%",
+              fontSize: theme.typography.smallFont
             }}
           >
             {params.row.pur_group !== null ? params.row.pur_group : "-"}
@@ -3154,6 +3159,7 @@ function NewStatmentTableForByCashflow(props){
               overflow: "hidden",
               textOverflow: "ellipsis",
               maxWidth: "100%",
+              fontSize: theme.typography.smallFont
             }}
           >
             {params.row.pur_payer !== null ? params.row.pur_payer : "-"}
@@ -3174,6 +3180,7 @@ function NewStatmentTableForByCashflow(props){
               overflow: "hidden",
               textOverflow: "ellipsis",
               maxWidth: "100%",
+              fontSize: theme.typography.smallFont
             }}
           >
             {params.row.pur_receiver !== null ? params.row.pur_receiver : "-"}
@@ -3193,6 +3200,7 @@ function NewStatmentTableForByCashflow(props){
           <Tooltip title={params.row.verified !== null ? params.row.verified : "-"}>
             <Typography
               sx={{
+                fontSize: theme.typography.smallFont,
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -3218,7 +3226,7 @@ function NewStatmentTableForByCashflow(props){
       field: "pur_amount_due",
       headerName: "Expected",
       flex: 1,
-      renderCell: (params) => <span>$ {params.row.pur_amount_due !== null ? parseFloat(params.row.pur_amount_due).toFixed(2) : parseFloat(0).toFixed(2)}</span>,
+      renderCell: (params) => <span style={{fontSize: theme.typography.smallFont}}>$ {params.row.pur_amount_due !== null ? parseFloat(params.row.pur_amount_due).toFixed(2) : parseFloat(0).toFixed(2)}</span>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
@@ -3226,7 +3234,7 @@ function NewStatmentTableForByCashflow(props){
       headerName: "Actual",
       flex: 1,
       renderCell: (params) => (
-        <span style={{ textAlign: "right", display: "block" }}>$ {params.row.total_paid !== null ? parseFloat(params.row.total_paid).toFixed(2) : parseFloat(0).toFixed(2)}</span>
+        <span style={{ textAlign: "right", display: "block", fontSize: theme.typography.smallFont }}>$ {params.row.total_paid !== null ? parseFloat(params.row.total_paid).toFixed(2) : parseFloat(0).toFixed(2)}</span>
       ),
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
