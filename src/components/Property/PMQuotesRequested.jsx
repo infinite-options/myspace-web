@@ -41,6 +41,7 @@ import Documents from "../Leases/Documents";
 
 import PropertiesContext from '../../contexts/PropertiesContext';
 import { CheckBox, KeyboardReturnOutlined } from "@mui/icons-material";
+import { id } from "date-fns/locale";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -79,7 +80,7 @@ export default function PMQuotesRequested(props) {
   const refreshProperties = fetchPropertiesFromContext;
 	const returnIndex = returnIndexFromContext || 0;
 
-  console.log("ROHIT - allContracts - ", allContracts);
+  // console.log("allContracts - ", allContracts);
   
   const index = returnIndex || location.state?.index;
   
@@ -163,11 +164,11 @@ export default function PMQuotesRequested(props) {
   }, [contracts]);
 
   useEffect(() => {    
-    console.log("ROHIT - 166 - propertyId - ", propertyId);
+    // console.log("166 - propertyId - ", propertyId);
     const contractsData = allContracts?.filter(
       (contract) => contract.property_uid === propertyId
     );
-    console.log("ROHIT - 166 - contractsData - ", contractsData);
+    // console.log("166 - contractsData - ", contractsData);
     setContracts(contractsData);
   }, [allContracts]);
 
@@ -199,7 +200,7 @@ export default function PMQuotesRequested(props) {
       <div>
         {contracts?.length > 0 ? activeContractsIds?.length !== contracts?.length ?(
           contracts.map((contract) => {
-            if (contract.contract_status === "SENT" || contract.contract_status === "REFUSED") {
+            if (contract.contract_status === "SENT" || contract.contract_status === "REFUSED"  || contract.contract_status === "WITHDRAW" || contract.contract_status === "REJECTED") {
               return (
                 <div key={contract.contract_uid}>
                   <DocumentCard data={contract} />
@@ -257,16 +258,15 @@ export default function PMQuotesRequested(props) {
                 </div>
               );
             }
-            if (
-              contract.contract_status === "WITHDRAW" ||
-              contract.contract_status === "REJECTED"
-            ) {
-              return (
-                <div key={contract.contract_uid}>
-                  <p>This contract is withdrawn/rejected</p>
-                </div>
-              );
-            }
+            // if (
+            //    contract.contract_status === "REJECTED"
+            // ) {
+            //   return (
+            //     <div key={contract.contract_uid}>
+            //       <p>This contract is withdrawn/rejected</p>
+            //     </div>
+            //   );
+            // }
             if (contract.contract_status === "NEW") {
               return (
                 <div key={contract.contract_uid}>
@@ -407,7 +407,7 @@ export default function PMQuotesRequested(props) {
     );
   }
 
-  const sendAnnouncement = async (status, obj) => {    
+  const sendAnnouncement = async (status, obj, earlyEndDate) => {    
     // const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
     // console.log("sendAnnouncement - obj - ", obj);
     // console.log("sendAnnouncement - property - ", property[returnIndex]);
@@ -431,6 +431,9 @@ export default function PMQuotesRequested(props) {
     } else if(status === "INACTIVE") {
       announcementTitle = `Management Contract Ended`;
       announcementMessage = `Management contract - ${obj.contract_name} (Property - ${contractProperty.property_address}${contractProperty.property_unit ? (", " + contractProperty.property_unit) : ""}) has been ended by the Owner - ${obj.owner_first_name || ""} ${obj.owner_last_name || ""}.`;
+    } else if(status === "ENDING") {
+      announcementTitle = `Management Contract will be ended`;
+      announcementMessage = `Management contract - ${obj.contract_name} (Property - ${contractProperty.property_address}${contractProperty.property_unit ? (", " + contractProperty.property_unit) : ""}) will be ended on ${earlyEndDate}.`;
     } else if(status === "APPROVED") {
       announcementTitle = `Management Contract Quote Approved`;
       announcementMessage = `Your quote for Management contract - ${obj.contract_name} (Property - ${contractProperty.property_address}${contractProperty.property_unit ? (", " + contractProperty.property_unit) : ""}) has been accepted by the Owner - ${obj.owner_first_name || ""} ${obj.owner_last_name || ""}. The contract will be active from ${obj.contract_start_date}.`;
@@ -522,87 +525,146 @@ export default function PMQuotesRequested(props) {
   //   setTabStatus(1);    
   // }
 
+  const updateExistingContractStatus = ( contractObj, status, earlyEndDate) => {
+
+    const actualEndDate = new Date(contractObj.contract_end_date)      
+    const formattedEarlyEndDate = `${String(earlyEndDate.getMonth() + 1).padStart(2, '0')}-${String(earlyEndDate.getDate()).padStart(2, '0')}-${earlyEndDate.getFullYear()}`;
+
+    const formData = new FormData();
+    formData.append("contract_uid", contractObj.contract_uid);
+    
+    if(status === "INACTIVE"){
+      formData.append("contract_status", status);      
+
+      if(earlyEndDate < actualEndDate) {
+        formData.append("contract_early_end_date", formattedEarlyEndDate);
+      }
+    }    
+
+    if(status === "ACTIVE"){
+      // formData.append("contract_early_end_date", formattedEarlyEndDate);      
+      console.log("ROHIT - earlyEndDate - ", earlyEndDate)
+      console.log("ROHIT - actualEndDate - ", actualEndDate)
+      
+      if(earlyEndDate < actualEndDate) {
+        formData.append("contract_early_end_date", formattedEarlyEndDate);
+      } else {
+        return;
+      }
+      
+    }
+
+    try {
+      fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`, {
+        method: "PUT",
+        body: formData,
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          } else {
+            console.log("Data added successfully");
+            if(status === "ENDING"){
+              sendAnnouncement(status, contractObj, formattedEarlyEndDate);  
+            } else {
+              sendAnnouncement(status, contractObj);
+            }
+            
+            refreshContracts();
+            refreshProperties();            
+          }
+        })
+        .catch((error) => {
+          console.error("There was a problem with the fetch operation:", error);
+        });
+    } catch (error) {
+      console.error(error);
+    } 
+
+
+  }
+
+  const acceptNewContract = (contract, status) => {
+    const formData = new FormData();
+    formData.append("contract_uid", contract.contract_uid);
+    formData.append("contract_status", status);
+
+    try {
+      fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`, {
+        method: "PUT",
+        body: formData,
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          } else {
+            console.log("Data added successfully");
+            sendAnnouncement(status, contract);
+            refreshContracts();
+            refreshProperties();            
+          }
+        })
+        .catch((error) => {
+          console.error("There was a problem with the fetch operation:", error);
+        });
+    } catch (error) {
+      console.error(error);
+    } 
+  }
+
   function handleAccept(obj) {          
     
       const newContractStart = new Date(obj.contract_start_date);
       const newContractEnd = new Date(obj.contract_end_date);
       const newPropertyId = obj.property_uid;
 
-      let newContractStatus = "ACTIVE";
-
-      for (let i = 0; i < activeContracts.length; i++) {
-        const existingContract = activeContracts[i];
-
-        if (existingContract.property_id === newPropertyId && existingContract.contract_status === "ACTIVE") {
-          const existingContractStart = new Date(existingContract.contract_start_date);
-          const existingContractEnd = new Date(existingContract.contract_end_date);
-          const today = new Date();
-
-          console.log("ROHIT - 514 - newContractStart - ", newContractStart)
-          console.log("ROHIT - 514 - existingContractEnd - ", existingContractEnd)
-          console.log("ROHIT - 514 - today - ", today)
-
-          // return;
-
-          if(newContractStart <= today){
-            // newContractStatus = "ACTIVE";
-             //end current contract
-            const formData = new FormData();
-            formData.append("contract_uid", existingContract.contract_uid);
-            formData.append("contract_status", "INACTIVE");
-
-            try {
-              fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`, {
-                method: "PUT",
-                body: formData,
-              })
-                .then((response) => {
-                  if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                  } else {
-                    console.log("Data added successfully");
-                    sendAnnouncement("INACTIVE", obj);
-                    refreshContracts();
-                    refreshProperties();            
-                  }
-                })
-                .catch((error) => {
-                  console.error("There was a problem with the fetch operation:", error);
-                });
-            } catch (error) {
-              console.error(error);
-            } 
-          } else {
-            newContractStatus = "APPROVED";
-          }
-        }
-      }
       
-      const formData = new FormData();
-      formData.append("contract_uid", obj.contract_uid);
-      formData.append("contract_status", newContractStatus);
 
-      try {
-        fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`, {
-          method: "PUT",
-          body: formData,
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("Network response was not ok");
-            } else {
-              console.log("Data added successfully");
-              sendAnnouncement(newContractStatus, obj);
-              refreshContracts();
-              refreshProperties();            
-            }
-          })
-          .catch((error) => {
-            console.error("There was a problem with the fetch operation:", error);
-          });
-      } catch (error) {
-        console.error(error);
-      }    
+      const existingContractIndex = activeContracts.findIndex(contract => contract.property_uid === newPropertyId && contract.contract_status === "ACTIVE");
+
+      if (existingContractIndex < 0){
+        // console.log("ERROR - existing contract not found.");
+        acceptNewContract(obj, "ACTIVE");
+        return;
+      }
+
+      
+      const existingContract = activeContracts[existingContractIndex];
+      let newContractStatus = "";
+
+      if (existingContract.property_uid === newPropertyId && existingContract.contract_status === "ACTIVE") {
+        const existingContractStart = new Date(existingContract.contract_start_date);
+        const existingContractEnd = new Date(existingContract.contract_end_date);
+        const today = new Date();
+
+        console.log("ROHIT - 514 - newContractStart - ", newContractStart)
+        console.log("ROHIT - 514 - existingContractEnd - ", existingContractEnd)
+        console.log("ROHIT - 514 - today - ", today)        
+
+        
+        const earlyEndDate = new Date(newContractStart)
+        earlyEndDate.setDate(newContractStart.getDate() - 1)
+        
+
+        if(newContractStart <= today){
+            newContractStatus = "ACTIVE";
+
+            //end current contract                        
+            updateExistingContractStatus(existingContract, "INACTIVE", earlyEndDate);
+                 
+        } else {
+          newContractStatus = "APPROVED";
+          
+          //update existing contract status to ending
+          const earlyEndDate = new Date(newContractStart)
+          earlyEndDate.setDate(newContractStart.getDate() - 1)
+          // const formattedarlyEndDate = `${String(earlyEndDate.getMonth() + 1).padStart(2, '0')}-${String(earlyEndDate.getDate()).padStart(2, '0')}-${earlyEndDate.getFullYear()}`;
+          updateExistingContractStatus(existingContract, "ACTIVE", earlyEndDate);          
+        }
+        acceptNewContract(obj, newContractStatus);   
+      }      
+      
+      
       setTabStatus(1);    
   }
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Grid, Typography, Button, IconButton, Badge, Card, CardContent } from '@mui/material';
+import { Box, Grid, Typography, Button, IconButton, Badge, Card, CardContent, Dialog, DialogActions, DialogTitle, DialogContent, } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { DataGrid } from "@mui/x-data-grid";
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
@@ -8,10 +8,12 @@ import FilePreviewDialog from '../Leases/FilePreviewDialog';
 import { useNavigate } from "react-router-dom";
 
 export default function ManagementDetailsComponent({activeContract, currentProperty, currentIndex, selectedRole, handleViewPMQuotesRequested, newContractCount, sentContractCount, handleOpenMaintenancePage, onShowSearchManager, handleViewContractClick, handleManageContractClick}){
-    // console.log("---dhyey-- inside new component -", activeContract)
+    // console.log("---dhyey-- inside new component -", activeContract)    
     const [selectedPreviewFile, setSelectedPreviewFile] = useState(null)
     const [previewDialogOpen, setPreviewDialogOpen] = useState(false) 
     const navigate = useNavigate();
+    const [showManageContractOptions, setShowManageContractOptions] = useState(false);
+    const [showEndContractDialog, setShowEndContractDialog] = useState(false);
 
     const handleFileClick = (file)=>{
         setSelectedPreviewFile(file)
@@ -207,7 +209,14 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
                                 </Typography>)}
                             {currentProperty?.contract_status === "ACTIVE" && 
                             <Button
-                                onClick={() => handleManageContractClick(currentProperty.contract_uid, currentProperty.contract_property_id )}
+                                onClick={() => {
+                                    if(selectedRole === "MANAGER"){
+                                        handleManageContractClick(currentProperty.contract_uid, currentProperty.contract_property_id )
+                                    } else if (selectedRole === "OWNER") {
+                                        setShowManageContractOptions(true);
+                                    }
+                                    
+                                }}
                                 variant='outlined'
                                 sx={{
                                     background: "#3D5CAC",
@@ -266,6 +275,90 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
                         </Typography>
                         </Grid>
                     </Grid>}
+
+                    {
+                        showManageContractOptions && (
+                            <Grid container item spacing={2}>
+                                
+                                <Grid 
+                                    item
+                                    xs={6}
+                                    sx={{
+                                        display: "flex", 
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        height: "100%",
+                                    }}
+                                >   
+                                    <Button
+                                        onClick={() => setShowEndContractDialog(true)}
+                                        variant='outlined'
+                                        sx={{
+                                            background: "#3D5CAC",
+                                            color: theme.palette.background.default,
+                                            cursor: "pointer",
+                                            paddingX:"10px",
+                                            textTransform: "none",
+                                            maxWidth: "120px", // Fixed width for the button
+                                            maxHeight: "100%",
+                                        }}
+                                        size='small'
+                                    >
+                                        <Typography
+                                            sx={{
+                                            textTransform: "none",
+                                            color: "#FFFFFF",
+                                            fontWeight: theme.typography.secondary.fontWeight,
+                                            fontSize: "12px",
+                                            whiteSpace: "nowrap",
+                                            //   marginLeft: "1%", // Adjusting margin for icon and text
+                                            }}
+                                        >
+                                            {"End Contract"}
+                                        </Typography>
+                                    </Button>                                
+                                </Grid>
+                                <Grid 
+                                    item
+                                    xs={6}
+                                    sx={{
+                                        display: "flex", 
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        height: "100%",
+                                    }}
+                                >                                
+                                    <Button
+                                        // onClick={() => handleManageContractClick(currentProperty.contract_uid, currentProperty.contract_property_id )}
+                                        variant='outlined'
+                                        sx={{
+                                            background: "#3D5CAC",
+                                            color: theme.palette.background.default,
+                                            cursor: "pointer",
+                                            paddingX:"10px",
+                                            textTransform: "none",
+                                            maxWidth: "120px", // Fixed width for the button
+                                            maxHeight: "100%",
+                                        }}
+                                        size='small'
+                                    >
+                                        <Typography
+                                            sx={{
+                                            textTransform: "none",
+                                            color: "#FFFFFF",
+                                            fontWeight: theme.typography.secondary.fontWeight,
+                                            fontSize: "12px",
+                                            whiteSpace: "nowrap",
+                                            //   marginLeft: "1%", // Adjusting margin for icon and text
+                                            }}
+                                        >
+                                            {"Renew Contract"}
+                                        </Typography>
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        )
+                    }
 
                     {/* Management Fees */}
                     {activeContract && <Grid container item spacing={2}>
@@ -376,6 +469,12 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
             </CardContent>
         </Card>
         {previewDialogOpen && selectedPreviewFile && <FilePreviewDialog file={selectedPreviewFile} onClose={handlePreviewDialogClose}/>}
+        <EndContractDialog 
+            open={showEndContractDialog} 
+            handleClose={() => setShowEndContractDialog(false)}
+            onEndContract={() => {}}            
+            contract={activeContract}
+        />
     </>
     );
 }
@@ -546,3 +645,104 @@ export const DocumentSmallDataGrid = ({data, handleFileClick}) => {
         />
     );
 }
+
+const EndContractDialog = ({ open, handleClose, contract }) => {	
+        
+          
+    const handleEndContract = (event) => {
+        event.preventDefault();
+            
+        const formData = new FormData();
+        formData.append("contract_uid", contract.contract_uid);
+        formData.append("contract_status", "ENDING");
+
+        try {
+            fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`, {
+                method: "PUT",
+                body: formData,
+            }).then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                } else {
+                    console.log("Data added successfully");                    
+                }
+            }).catch((error) => {
+                console.error("There was a problem with the fetch operation:", error);
+            });
+        } catch (error) {
+            console.error(error);
+        } 
+
+
+        handleClose();
+    };
+  
+    return (
+        <form 
+            onSubmit={handleEndContract}
+        >
+            <Dialog
+                open={open}
+                onClose={handleClose}				
+                maxWidth="xl"
+                sx={{
+                    '& .MuiDialog-paper': {
+                        width: '60%',
+                        maxWidth: 'none',
+                    },
+                }}
+            >
+                <DialogTitle sx={{ justifyContent: 'center',}}>        
+                    End Current Contract        
+                </DialogTitle>
+                <DialogContent>
+                    <Grid container>                                   
+                        <Grid container item xs={12} sx={{marginTop: '10px', }}>
+                            <Grid item xs={12}>
+                                <Typography sx={{fontWeight: 'bold', color: '#3D5CAC'}}>
+                                    This contract will end on {contract?.contract_end_date}.
+                                </Typography>
+                            </Grid>                        
+                        </Grid>
+                        <Grid item xs={12} sx={{marginTop: '15px', }}>
+                            <Typography sx={{width: 'auto',}}>
+                                {`Are you sure you want to end it?`}
+                            </Typography>
+                        </Grid>
+                    </Grid>
+
+                </DialogContent>
+                
+                <DialogActions>					
+                    <Button
+                        type="submit"
+                        onClick={handleEndContract}
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: '#160449',                
+                            },
+                            backgroundColor: '#3D5CAC',
+                            color: '#FFFFFF',
+                            fontWeight: 'bold',
+                        }}
+                    >
+                        Yes
+                    </Button>
+                    <Button
+                        onClick={handleClose}
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: '#160449',                
+                            },
+                            backgroundColor: '#3D5CAC',
+                            color: '#FFFFFF',
+                            fontWeight: 'bold',
+                        }}
+                    >
+                        No
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </form>
+    );
+  }
