@@ -1092,22 +1092,34 @@ tenant_current_job_company
         </Accordion>
   
         {/* Documents Section */}
-        {/* <Box marginTop={"20px"}>
-          <Documents 
-            setIsPreviousFileChange={setIsPreviousFileChange} 
-            documents={leaseDocuments} 
-            setDocuments={setLeaseDocuments} 
-            deletedDocsUrl={deletedDocsUrl} 
-            setDeleteDocsUrl={setDeletedDocsUrl} 
-            contractFiles={leaseFiles} 
-            setContractFiles={setLeaseFiles} 
-            contractFileTypes={leaseFileTypes} 
-            setContractFileTypes={setLeaseFileTypes} 
-            isAccord={false} 
-            isEditable={true}
-          />
-        </Box>
-   */}
+        <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
+  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+    <Typography
+      variant="h6" sx={{ fontWeight: "bold" }}
+    >
+      Documents
+    </Typography>
+  </AccordionSummary>
+
+  <AccordionDetails>
+    <Box marginTop={"20px"}>
+      <Documents 
+        setIsPreviousFileChange={setIsPreviousFileChange} 
+        documents={leaseDocuments} 
+        setDocuments={setLeaseDocuments} 
+        deletedDocsUrl={deletedDocsUrl} 
+        setDeleteDocsUrl={setDeletedDocsUrl} 
+        contractFiles={leaseFiles} 
+        setContractFiles={setLeaseFiles} 
+        contractFileTypes={leaseFileTypes} 
+        setContractFileTypes={setLeaseFileTypes} 
+        isAccord={false} 
+        isEditable={true}
+      />
+    </Box>
+  </AccordionDetails>
+</Accordion>
+  
         {/* Submit Button */}
         <Grid item xs={12} sx={{ textAlign: "center", paddingBottom: 5,  marginBottom: "20px", marginTop: "20px"  }}>
           <Button
