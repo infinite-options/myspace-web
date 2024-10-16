@@ -707,23 +707,25 @@ let date = new Date();
         try {
           // Safely parse the tenants data
           const parsedData = JSON.parse(property.tenants);
-          
-          // Access the tenant_uid if available in the parsed data
-          const tenantUID = parsedData[0]?.tenant_uid;
+      
+          // Collect all tenant_uid as an array
+          const tenantUIDs = parsedData.map(tenant => tenant.tenant_uid);
       
           // Log for debugging
-          console.log('before tenant id append leaseApplicationFormData');
+          console.log('Collected tenant UIDs:', tenantUIDs);
       
-          // Append tenant_uid to the form data if available
-          leaseApplicationFormData.append("tenant_uid", tenantUID || property.tenant_uid);
+          // Append tenant_uid array to the form data as a list of array
+          leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify(tenantUIDs));
         } catch (error) {
           // Handle JSON parse errors
           console.error("Error parsing tenants data: ", error);
-          leaseApplicationFormData.append("tenant_uid", property.tenant_uid);
+      
+          // Append the property.tenant_uid as fallback
+          leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify([property.tenant_uid]));
         }
       } else {
-        // If 'tenants' field is not available, use the property.tenant_uid
-        leaseApplicationFormData.append("tenant_uid", property.tenant_uid);
+        // If 'tenants' field is not available, append property.tenant_uid as a single value array
+        leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify([property.tenant_uid]));
       }
 
       const hasMissingType = !checkFileTypeSelected();
@@ -903,6 +905,8 @@ useEffect(() => {
         </Box>
   
         {/* Lease Details Section */}
+        <Paper sx={{  marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
+
         <Accordion defaultExpanded sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
     <Typography variant="h6" sx={{ fontWeight: "bold"}}>Lease Details</Typography>
@@ -1028,6 +1032,9 @@ useEffect(() => {
     </Grid>
   </AccordionDetails>
 </Accordion>
+</Paper>
+<Paper sx={{  marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
+
 <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography
@@ -1071,6 +1078,9 @@ useEffect(() => {
     )}
   </AccordionDetails>
 </Accordion>
+</Paper>
+
+<Paper sx={{  marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
 
 <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -1109,9 +1119,11 @@ tenant_current_job_company
     )}
   </AccordionDetails>
 </Accordion>
-
+</Paper>
 
 {/* Occupancy Details Section */}
+<Paper sx={{  marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
+        
         <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px" }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography variant="h6" sx={{ fontWeight: "bold" }}>Occupancy Details</Typography>
@@ -1137,8 +1149,10 @@ tenant_current_job_company
             </Grid>
           </AccordionDetails>
         </Accordion>
-  
+        </Paper>
         {/* Fees Section */}
+        <Paper sx={{  marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
+        
         <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px" }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography variant="h6" sx={{ fontWeight: "bold" }}>Fees</Typography>
@@ -1147,8 +1161,9 @@ tenant_current_job_company
             <LeaseFees startDate={startDate} leaseFees={fees} isEditable={true} setLeaseFees={setFees} setDeleteFees={setDeleteFees} />
           </AccordionDetails>
         </Accordion>
-  
+        </Paper>
         {/* Documents Section */}
+        <Paper sx={{  marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
         <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
     <Typography
@@ -1176,7 +1191,7 @@ tenant_current_job_company
     </Box>
   </AccordionDetails>
 </Accordion>
-  
+</Paper>
                     <Paper sx={{  marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
                         <UtilitiesManager newUtilities={newUtilities} utils={utilities}
                             utilitiesMap={utilitiesMap} handleNewUtilityChange={handleNewUtilityChange}
