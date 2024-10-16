@@ -138,7 +138,9 @@ const PaymentProcessing = () => {
     };
 
     useEffect(() => {
-        fetchCashflowTransactions(profileId)
+      setShowSpinner(true)
+        
+      fetchCashflowTransactions(profileId)
         .then((data) => {        
           const dataWithIndex = data?.map((item, index) => (
             {
@@ -146,6 +148,7 @@ const PaymentProcessing = () => {
               'index': index,
             }
           ))
+          setShowSpinner(false)
           setCashflowTransactionsData(dataWithIndex);        
         })
         .catch((error) => {
@@ -185,7 +188,7 @@ const PaymentProcessing = () => {
                 {currentWindow === "SELECT_PAYMENT" && <ManagerSelectPayment selectedPayment={selectedPayment} selectedPurGroup={selectedPurGroup} />}                             
               </Grid>
 
-              {currentWindow === "VERIFY_PAYMENTS" && <VerifyPayments2 selectedPurchaseRow={selectedPurchasegrp} />}
+              {currentWindow === "VERIFY_PAYMENTS" && <VerifyPayments2 selectedPurchaseRow={selectedPurchasegrp}  transactionsData={cashflowTransactionsData} />}
             </Grid>
           </Container>
         </ThemeProvider>

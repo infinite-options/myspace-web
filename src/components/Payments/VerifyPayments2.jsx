@@ -38,6 +38,9 @@ export default function VerifyPayments2(props) {
   //   console.log("In VerifyPayments.jsx");
 
   const { user, getProfileId, roleName, selectedRole } = useUser();
+
+  const profileId = getProfileId();
+
   const [selectedProperty, setSelectedProperty] = useState(props.propertyID)
   const selectedPurchaserow = props.selectedPurchaseRow || "";
 
@@ -45,6 +48,7 @@ export default function VerifyPayments2(props) {
   const [dataByProperty, setDataByProperty] = useState([]);
   const [dataByPayer, setDataByPayer] = useState([]);
   const [dataByPaymentIntent, setDataByPaymentIntent] = useState([]);
+  const [unpaidRentData, setUnpaidRentData] = useState([])
 
   const [showSpinner, setShowSpinner] = useState(false);
   const [paymentNotes, setPaymentNotes] = useState("");
@@ -55,6 +59,12 @@ export default function VerifyPayments2(props) {
   // const [totalToBePaid, setTotalToBePaid] = useState(0);
   // const [totalToBeReceived, setTotalToBeReceived] = useState(0);
   const [totalPayable, setTotalPayable] = useState(0);
+  const currentDate = new Date();
+  const currentMonth = currentDate.toLocaleString('default', { month: 'long' });
+  const currentYear = currentDate.getFullYear().toString();
+
+  const [month, setMonth] = useState(props.month || currentMonth);
+  const [year, setYear] = useState(props.year || currentYear);  
 
   const [paymentData, setPaymentData] = useState({
     currency: "usd",
@@ -115,9 +125,318 @@ export default function VerifyPayments2(props) {
     setShowSpinner(false);
   };
 
+  const fetchTransactionsData =  () => {
+    // if(props.transactionsData){
+    //   setCashflowData(props.transactionsData);
+    // }
+    if(props.transactionsData){
+      const profitDataCurrentYear = props.transactionsData?.filter((item) => item.cf_year === year);
+  
+      const revenueDataForManager = profitDataCurrentYear?.filter((item) => item.pur_payer === profileId || item.pur_receiver === profileId)
+  
+      // const revenueDataForManagerByProperty = revenueDataForManager?.reduce((acc, item) => {
+      //   const propertyUID = item.pur_property_id;
+      //   const propertyInfo = {
+      //     property_id: item.pur_property_id,
+      //     property_address: item.property_address,
+      //     property_unit: item.property_unit,
+      //   };
+        
+      //   // const totalExpected = parseFloat(item.pur_amount_due) || 0;
+      //   // const totalActual = parseFloat(item.total_paid) || 0;
+      //   let totalExpected =  0;
+      //   let totalActual = 0;
+  
+      //   if(item.cf_month === month && item.cf_year === year && item.purchase_type !== "Deposit"){
+  
+      //     if (item.pur_payer.startsWith("110")) {
+      //       totalActual = parseFloat(item.total_paid) || 0;
+      //       totalExpected = parseFloat(item.pur_amount_due?item.pur_amount_due : 0.00) || 0;
+      //     } else {
+      //       totalActual = 0;
+      //       totalExpected = 0
+      //     }
+        
+      //     // if (item.pur_payer.startsWith("600")) {
+      //     //   totalExpected = -(parseFloat(item.pur_amount_due) || 0);
+      //     // } else {
+      //     //   totalExpected = parseFloat(item.pur_amount_due) || 0;
+      //     // }
+      //   }
+        
+      
+  
+      //   if (!acc[propertyUID]) {
+      //     // acc[propertyUID] = [];
+      //     acc[propertyUID] = {
+      //       propertyInfo: propertyInfo,
+      //       rentItems: [],
+      //       totalExpected: 0,
+      //       totalActual: 0,
+      //     };
+      //   }
+  
+      //   acc[propertyUID].rentItems.push(item);
+      //   acc[propertyUID].totalExpected += totalExpected;
+      //   acc[propertyUID].totalActual += totalActual;
+  
+      //   return acc;
+      // }, {});
+      setUnpaidRentData(revenueDataForManager)
+  
+      console.log(" ---- DEBUG ---- inside VerifyPayment2 page - ", props.transactionsData)
+    }
+  }
+
   useEffect(() => {
     fetchPaymentsData();
+    fetchTransactionsData();
   }, []);
+
+  useEffect(()=>{
+    fetchTransactionsData();
+  }, [props.transactionsData])
+
+  const commonStyles = {
+    color: theme.typography.primary.black,
+    fontWeight: theme.typography.light.fontWeight,
+    fontSize: theme.typography.smallFont,
+  };
+
+  const newTransactionColumn = [
+    {
+      field: "payment_status",
+      headerName: "Status",
+      flex: 1.2,
+      renderCell: (params) => <Box sx={commonStyles}>{params.row.payment_status !== null ? params.row.payment_status : "-"}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+    },    
+    {
+      field: "purchase_type",
+      headerName: "Type",
+      flex: 0.8,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+    },   
+    {
+      field: "property_address",
+      headerName: "Property",
+      flex: 1.8,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+    },
+    
+    {
+      field: "purchase_payer",
+      headerName: "Tenant Id",
+      flex: 0.8,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+    }, 
+    {
+      field: "cf_month",
+      headerName: "Month",
+      flex: 0.7,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+    },
+    {
+      field: "cf_year",
+      headerName: "Year",
+      flex: 0.5,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+    },
+    {
+      field: "pur_due_date",
+      headerName: "Purchase Due Date",
+      flex: 1,
+      renderCell: (params) => <Box sx={commonStyles}>{params.row.purchase_due_date !== null ? (params.row.pur_due_date.includes(" ") ?  params.row.pur_due_date.split(" ")[0] : params.row.pur_due_date ) : "-"}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+    },
+    {
+      field: "amount_received",
+      headerName: "Amt Received",
+      flex: 0.7,
+      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+    },
+    {
+      field: "amount_remaining",
+      headerName: "Amt Remaining",
+      flex: 0.7,
+      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+    },
+  ];
+
+  const getNewRowWithIds = (data) => {
+    // const revenueData = data?.filter((item) => item.pur_payer.startsWith("350"))
+    
+
+
+    const rowsId = data?.map((row, index) => ({
+      ...row,
+      id: row.index ? index : index,
+    }));
+
+    return rowsId;
+  }
+
+  const GetNewDataGrid = (data) => {
+    const filteredData = data?.filter((item) => item.payment_status === "UNPAID" || item.payment_status === "PARTIALLY PAID")
+
+    const groupedData = filteredData.reduce((acc, item) => {
+      if (!acc[item.pur_group]) {
+        acc[item.pur_group] = [];
+      }
+      acc[item.pur_group].push(item);
+      return acc;
+    }, {});
+
+    // console.log("group data - ", groupedData, " for - ", data);
+
+    const result = Object.keys(groupedData).reduce((acc, group) => {
+      let expected = 0;
+      let management_fee = 0;
+      let other_expense = 0;
+    
+      // Check if all items in this group have 'payment_status' === "PAID"
+      // const allPaid = groupedData[group].every(item => item.purchase_type === "Deposit");
+      const has350Payer = groupedData[group].some(item => item.pur_payer.startsWith("350"));
+    
+      // If all items are paid, skip this group
+      // if (allPaid) {
+      //   return acc;
+      // }
+
+      if (!has350Payer) {
+        return acc;
+      }
+    
+    
+      let allTransactions = []
+      let purchase_ids = []
+      let purchase_group;
+      let purchase_type;
+      let purchase_due_date;
+      let cf_month, cf_year;
+      let payment_status;
+      let amount_received, amount_remaining;
+      let property_address;
+      let purchase_payer;
+
+      groupedData[group].forEach(item => {
+        const pur_type = item.purchase_type;
+        const pur_payer = item.pur_payer;
+        amount_received = item.pur_amount_due;
+        amount_remaining = item.amt_remaining;
+        property_address = item.property_address
+    
+        if (pur_payer.startsWith("350")) {
+          purchase_payer = item.pur_payer;
+          purchase_type = item.purchase_type;
+          purchase_due_date = item.pur_due_date;
+          cf_month = item.cf_month;
+          cf_year = item.cf_year;
+          payment_status = item.payment_status
+          if(item.payment_status === "PARTIALLY PAID"){
+            expected += parseFloat(item.amt_remaining)
+          }else{
+
+            expected += parseFloat(item.pur_amount_due?item.pur_amount_due : "0.00");
+          }
+        }
+    
+        else if (pur_payer.startsWith("110") && pur_type === "Management") {
+          management_fee += parseFloat(item.pur_amount_due?item.pur_amount_due : "0.00");
+        }
+    
+        else if (pur_payer.startsWith("110") && pur_type !== "Management") {
+          other_expense += parseFloat(item.pur_amount_due?item.pur_amount_due : "0.00");
+        }
+
+        purchase_ids.push(item.purchase_uid)
+        allTransactions.push(item)
+        purchase_group = item.pur_group;
+      });
+    
+      const owner_payment = parseFloat(expected - management_fee - other_expense);
+    
+      // Push the aggregated object for this group into the result if it passes the conditions
+      acc.push({
+        pur_group: group,
+        expected,
+        management_fee,
+        other_expense,
+        owner_payment,
+        purchase_type: purchase_type,
+        purchase_ids : JSON.stringify(purchase_ids),
+        allTransactions,
+        purchase_group,
+        pur_due_date : purchase_due_date,
+        payment_status,
+        cf_month,
+        cf_year,
+        amount_received,
+        amount_remaining,
+        property_address,
+        purchase_payer,
+      });
+    
+      return acc;
+    }, []);
+
+
+    const rows = getNewRowWithIds(result);
+
+    if(rows?.length > 0){
+      return (
+        
+          <DataGrid
+            rows={rows}
+            columns={newTransactionColumn}
+            hideFooter={true}
+            autoHeight
+            rowHeight={35}
+            sx={{
+              marginTop: "10px",
+              "& .MuiDataGrid-columnHeaders": {
+                minHeight: "35px !important",
+                maxHeight: "35px !important",
+                height: 35,
+              }
+              
+            }}
+          />
+      );
+    }else{
+      return (
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginBottom: '7px',
+            width: '100%',
+            height:"30px"
+          }}
+        >
+          <Typography
+            sx={{
+              color: "#A9A9A9",
+              fontWeight: theme.typography.primary.fontWeight,
+              fontSize: "15px",
+            }}
+          >
+            No Unpaid Rent
+          </Typography>
+        </Box>
+      );
+    }
+        
+}
 
   return (
     <>
@@ -141,6 +460,27 @@ export default function VerifyPayments2(props) {
                   boxShadow: "none",
                 }}
               >
+                <Paper 
+                  sx={{
+                    margin: "25px",
+                    padding: 20,
+                    backgroundColor: theme.palette.primary.main,
+                    // height: "25%",
+                  }}
+                >
+                  <Stack direction='row' justifyContent='space-between'>
+                    <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                      Unpaid Rent
+                    </Typography>
+                  </Stack>
+
+
+                  <Stack>
+                    {GetNewDataGrid(unpaidRentData)}
+                  </Stack>
+                </Paper>
+
+                {/* for Verify Payments */}
                 <Paper
                   sx={{
                     margin: "25px",
