@@ -927,7 +927,7 @@ useEffect(() => {
       <Grid item xs={6} sm={3}>
         <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>Rent Status</Typography>
         <Typography sx={{ fontSize: "14px", fontWeight: "400", color: "#302A68" }}>
-          {property.property_available_to_rent === 1 ? "Not Rented" : "Rented"}
+          {property.rent_status}
         </Typography>
       </Grid>
     </Grid>
@@ -1013,21 +1013,34 @@ useEffect(() => {
       <Grid item xs={6} sm={3}>
         <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>End Lease Notice</Typography>
         <TextField
-          name="endLeaseNotice"
-          value={`${endLeaseNoticePeriod} days before`}
-          variant="filled"
-          InputProps={{
-            disableUnderline: true,
-            sx: { backgroundColor: "#FFFFFF", borderRadius: "10px", height: "40px" },
-          }}
-          sx={{
-            "& .MuiFilledInput-root": {
-              backgroundColor: "#FFFFFF",
-              borderRadius: "10px",
-              height: "40px",
-            },
-          }}
-        />
+  name="endLeaseNoticePeriod"
+  value={endLeaseNoticePeriod}
+  onChange={(e) => setEndLeaseNoticePeriod(e.target.value)}
+  variant="outlined" // Use outlined for a similar look
+  fullWidth
+  size="small"
+  placeholder=""
+  InputProps={{
+    style: {
+      fontSize: 14, // Adjust font size
+      padding: "2px", // Adjust padding to make it look like the date picker
+      backgroundColor: "#FFFFFF",
+      borderRadius: "10px", // Rounded corners like the date picker
+    },
+  }}
+  sx={{
+    "& .MuiOutlinedInput-root": {
+      "&:hover fieldset": {
+        borderColor: "#6e6e6e", // Same hover behavior
+      },
+    },
+    width: "100%",
+    backgroundColor: "#FFFFFF", // Background same as date picker
+    borderRadius: "10px", // Same rounded corners
+  }}
+/>
+
+            
       </Grid>
     </Grid>
   </AccordionDetails>
