@@ -40,10 +40,41 @@ const TenantAccountBalance = ({
   from,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [relatedLease, setRelatedLease] = useState(null);
   const navigate = useNavigate();
   const open = Boolean(anchorEl);
   const balanceDue = parseFloat(balanceDetails[0]?.amountDue || 0);
   // console.log("balance details", balanceDetails);
+
+  useEffect(() => {
+    if (selectedProperty) {
+      // Filter the leases for the selected property
+      const leasesForProperty = leaseDetailsData.filter(
+        (lease) => lease.property_uid === selectedProperty.property_uid
+      );
+
+      // Find if there's a lease in the "RENEW PROCESSING" state for the selected property
+      const renewProcessingLease = leasesForProperty.find(
+        (lease) => lease.lease_status === "RENEW PROCESSING"
+      );
+
+      // If a renew processing lease exists, set it to relatedLease
+      setRelatedLease(renewProcessingLease || null);
+    }
+  }, [selectedProperty, leaseDetailsData]);
+
+  const handleViewRenewProcessingLease = () => {
+    if (relatedLease) {
+      setRightPane({
+        type: "tenantLeases",
+        state: {
+          data: relatedLease,
+          status: "RENEW PROCESSING",
+          lease: relatedLease,
+        },
+      });
+    }
+  };
 
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -106,6 +137,17 @@ const TenantAccountBalance = ({
     setSelectedProperty(property);
     handleClose();
   }
+
+  const uniquePropertiesMap = new Map();
+  propertyData.forEach((property) => {
+    const propertyLease = leaseDetailsData.find((ld) => ld.property_uid === property.property_uid);
+
+    if (!uniquePropertiesMap.has(property.property_uid)) {
+      uniquePropertiesMap.set(property.property_uid, propertyLease);
+    }
+  });
+
+  const uniqueProperties = Array.from(uniquePropertiesMap.values()); 
 
   const totalBalanceDue = balanceDetails.reduce((acc, detail) => acc + parseFloat(detail.amountDue || 0), 0);
 
@@ -221,24 +263,23 @@ const TenantAccountBalance = ({
           </IconButton>
           {from !== "selectPayment" && (
             <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-              {propertyData?.map((property) => {
-                const propertyLease = leaseDetailsData.find((ld) => ld.property_uid === property.property_uid);
-                const propertyStatusColor = returnLeaseStatusColor(propertyLease?.lease_status);
+            {uniqueProperties.map((property) => {
+              const propertyStatusColor = returnLeaseStatusColor(property.lease_status);
 
-                return (
-                  <MenuItem key={property.property_uid} onClick={() => handlePropertySelect(property)} sx={{ display: "flex", alignItems: "center" }}>
-                    <CircleIcon
-                      sx={{
-                        color: propertyStatusColor,
-                        marginRight: "8px",
-                        fontSize: "16px",
-                      }}
-                    />
-                    {`${property.property_address} ${property.property_unit}`}
-                  </MenuItem>
-                );
-              })}
-            </Menu>
+              return (
+                <MenuItem key={property.property_uid} onClick={() => handlePropertySelect(property)} sx={{ display: "flex", alignItems: "center" }}>
+                  <CircleIcon
+                    sx={{
+                      color: propertyStatusColor,
+                      marginRight: "8px",
+                      fontSize: "16px",
+                    }}
+                  />
+                  {`${property.property_address} ${property.property_unit}`}
+                </MenuItem>
+              );
+            })}
+          </Menu>
           )}
         </Box>
 
@@ -348,6 +389,16 @@ const TenantAccountBalance = ({
             VIEW APPLICATION
           </Button>
         )}
+
+      {relatedLease && (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleViewRenewProcessingLease}
+        >
+          View Renewed Lease
+        </Button>
+      )}
 
         {/* Payment History Button */}
         {from !== "selectPayment" && leaseDetails?.lease_status === "ACTIVE" && (

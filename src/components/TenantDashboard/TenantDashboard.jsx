@@ -123,12 +123,13 @@ const TenantDashboard = () => {
       // console.log("Dashboard data", dashboardData);
 
       if (dashboardData) {
-        // console.log("Dashboard inside check", dashboardData.property?.result);
+        console.log("Dashboard inside check", dashboardData.property?.result);
+        setPropertyListingData(dashboardData.property?.result);
 
-        const filteredPropertyDetails = dashboardData.property?.result.filter(
-          (lease) => lease.lease_status === "ACTIVE"
-        );
-        setPropertyListingData(filteredPropertyDetails);
+        // const filteredPropertyDetails = dashboardData.property?.result.filter(
+        //   (lease) => lease.lease_status === "ACTIVE"
+        // );
+        // setPropertyListingData(filteredPropertyDetails);
         
         setLeaseDetailsData(dashboardData.leaseDetails?.result);
         setMaintenanceRequestsNew(dashboardData.maintenanceRequests?.result);
@@ -858,11 +859,16 @@ const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty }) => {
               </Stack>
             </Stack>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', marginTop: "auto" }}>
-            <Button variant="contained" color="secondary" onClick={handleEndLease}>
+            <Button 
+              variant="contained" 
+              color="secondary" 
+              onClick={handleEndLease}
+              size="small"
+              sx={{ width: 'fit-content', padding: '5px 10px' }}
+            >
               End Lease
             </Button>
             
-            {/* Check if lease renewal status is RENEW */}
             {leaseDetails?.lease_renew_status === "RENEW REQUESTED" ? (
               <Box mt={2}> {/* Add margin top to create space between elements */}
                 <Typography variant="body1" color="text.secondary">
