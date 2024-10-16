@@ -268,6 +268,14 @@ export default function VerifyPayments2(props) {
       renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
       renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
+    
+    {
+      field: "total_amount",
+      headerName: "Total Amount",
+      flex: 0.7,
+      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+    },
   ];
 
   const getNewRowWithIds = (data) => {
@@ -325,21 +333,24 @@ export default function VerifyPayments2(props) {
       let amount_received, amount_remaining;
       let property_address;
       let purchase_payer;
+      let total_amount;
 
       groupedData[group].forEach(item => {
         const pur_type = item.purchase_type;
         const pur_payer = item.pur_payer;
-        amount_received = item.pur_amount_due;
-        amount_remaining = item.amt_remaining;
         property_address = item.property_address
     
         if (pur_payer.startsWith("350")) {
+          amount_remaining = item.amt_remaining;
+          amount_received = item.total_paid ? item.total_paid : 0.00;
+          total_amount = item.pur_amount_due;
           purchase_payer = item.pur_payer;
           purchase_type = item.purchase_type;
           purchase_due_date = item.pur_due_date;
           cf_month = item.cf_month;
           cf_year = item.cf_year;
           payment_status = item.payment_status
+
           if(item.payment_status === "PARTIALLY PAID"){
             expected += parseFloat(item.amt_remaining)
           }else{
@@ -382,6 +393,7 @@ export default function VerifyPayments2(props) {
         amount_remaining,
         property_address,
         purchase_payer,
+        total_amount
       });
     
       return acc;
