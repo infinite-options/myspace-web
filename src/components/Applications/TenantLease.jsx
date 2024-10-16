@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import theme from "../../theme/theme";
-import { ThemeProvider } from "@mui/material";
+import { ThemeProvider, Paper, } from "@mui/material";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
@@ -38,7 +38,7 @@ import LeaseFees from "../Leases/LeaseFees";
 import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Slider from "react-slick";  // Add react-slick for image slider
-
+import UtilitiesManager from "../../components/Leases/Utilities";
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiFilledInput-root": {
@@ -812,6 +812,63 @@ let date = new Date();
     }
   };
 
+  const [newUtilities, setNewUtilities] = useState([]);
+const [utilities, setUtilities] = useState([]);
+const [remainingUtils, setRemainingUtils] = useState([]);
+
+const utilitiesMap = new Map([
+  ["050-000001", "electricity"],
+  ["050-000002", "water"],
+  ["050-000003", "gas"],
+  ["050-000004", "trash"],
+  ["050-000005", "sewer"],
+  ["050-000006", "internet"],
+  ["050-000007", "cable"],
+  ["050-000008", "hoa dues"],
+  ["050-000009", "security system"],
+  ["050-000010", "pest control"],
+  ["050-000011", "gardener"],
+  ["050-000012", "maintenance"],
+]);
+
+const handleNewUtilityChange = (e, newUtility, utilityIndex) => {
+  const { value } = e.target;
+  setNewUtilities((prevUtilities) => {
+    const updatedUtilities = [...prevUtilities];
+    const toChange = { ...updatedUtilities[utilityIndex], utility_payer_id: value === 'owner' ? '050-000041' : '050-000043' };
+    updatedUtilities[utilityIndex] = toChange;
+    return updatedUtilities;
+  });
+};
+
+// Fetch utilities data when loading the component
+useEffect(() => {
+  const utils = JSON.parse(property.property_utilities); // Assuming `property.property_utilities` contains the utilities data
+  if (utils === null) {
+    setUtilities([]);
+    setNewUtilities([]);
+  } else {
+    setUtilities(utils);
+    setNewUtilities(utils);
+  }
+
+  const newUtilityIds = utils !== null ? new Set(utils.map((utility) => utility.utility_type_id)) : null;
+  let missingUtilitiesMap = new Map();
+
+  if (newUtilityIds) {
+    for (const [key, value] of utilitiesMap) {
+      if (!newUtilityIds.has(key)) {
+        missingUtilitiesMap.set(key, value);
+      }
+    }
+  } else {
+    missingUtilitiesMap = utilitiesMap;
+  }
+
+  setRemainingUtils(missingUtilitiesMap);
+}, [property]);
+
+
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ backgroundColor: "#F2F2F2", borderRadius: "10px", margin: "10px", padding: "15px", fontFamily: "Source Sans Pro" }}>
@@ -1120,6 +1177,13 @@ tenant_current_job_company
   </AccordionDetails>
 </Accordion>
   
+                    <Paper sx={{  marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
+                        <UtilitiesManager newUtilities={newUtilities} utils={utilities}
+                            utilitiesMap={utilitiesMap} handleNewUtilityChange={handleNewUtilityChange}
+                            remainingUtils={remainingUtils} setRemainingUtils={setRemainingUtils}
+                            setNewUtilities={setNewUtilities} fromTenantLease={true}/>
+                    </Paper>
+
         {/* Submit Button */}
         <Grid item xs={12} sx={{ textAlign: "center", paddingBottom: 5,  marginBottom: "20px", marginTop: "20px"  }}>
           <Button
