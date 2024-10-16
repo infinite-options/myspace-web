@@ -534,22 +534,25 @@ export default function PMQuotesRequested(props) {
     formData.append("contract_uid", contractObj.contract_uid);
     
     if(status === "INACTIVE"){
-      formData.append("contract_status", status);      
+      formData.append("contract_status", status);            
 
       if(earlyEndDate < actualEndDate) {
         formData.append("contract_early_end_date", formattedEarlyEndDate);
+        formData.append("contract_renew_status", "EARLY TERMINATION");
+      }else {
+        formData.append("contract_renew_status", "RENEWED");
       }
-    }    
-
-    if(status === "ACTIVE"){
+    } else if(status === "ACTIVE"){
       // formData.append("contract_early_end_date", formattedEarlyEndDate);      
-      console.log("ROHIT - earlyEndDate - ", earlyEndDate)
-      console.log("ROHIT - actualEndDate - ", actualEndDate)
+      // console.log("earlyEndDate - ", earlyEndDate)
+      // console.log("actualEndDate - ", actualEndDate)
       
       if(earlyEndDate < actualEndDate) {
         formData.append("contract_early_end_date", formattedEarlyEndDate);
+        formData.append("contract_renew_status", "EARLY TERMINATION");
       } else {
-        return;
+        // return;
+        formData.append("contract_renew_status", "ENDING");
       }
       
     }
@@ -637,9 +640,9 @@ export default function PMQuotesRequested(props) {
         const existingContractEnd = new Date(existingContract.contract_end_date);
         const today = new Date();
 
-        console.log("ROHIT - 514 - newContractStart - ", newContractStart)
-        console.log("ROHIT - 514 - existingContractEnd - ", existingContractEnd)
-        console.log("ROHIT - 514 - today - ", today)        
+        // console.log("514 - newContractStart - ", newContractStart)
+        // console.log("514 - existingContractEnd - ", existingContractEnd)
+        // console.log("514 - today - ", today)        
 
         
         const earlyEndDate = new Date(newContractStart)
@@ -1073,7 +1076,7 @@ export default function PMQuotesRequested(props) {
 
 function DocumentCard(props) {
   const data = props.data;
-  console.log("ROHIT -  data -", data);
+  // console.log("data -", data);
   const [fees, setFees] = useState(JSON.parse(data.contract_fees) ? JSON.parse(data.contract_fees) : []);
   const [locations, setLocations] = useState(data.business_locations ? JSON.parse(data.business_locations) : []);
   const [contractDocuments, setContractDocuments] = useState(JSON.parse(data.contract_documents)? JSON.parse(data.contract_documents) : [])
