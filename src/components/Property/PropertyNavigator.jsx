@@ -78,7 +78,17 @@ import ManagementDetailsComponent from "./ManagementDetailsComponent.jsx";
 
 import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy, } from "../../utils/fees";
 
-const getAppColor = (app) => (app.lease_status !== "REJECTED" ? (app.lease_status !== "REFUSED" ? "#778DC5" : "#874499") : "#A52A2A");
+const getAppColor = (app) => {
+  if (app.lease_status.includes("RENEW")) {
+    return '#2E7D32'; // Return green if lease_status contains 'RENEW'
+  } else if (app.lease_status === "REJECTED") {
+    return "#A52A2A"; // Red color for rejected
+  } else if (app.lease_status === "REFUSED") {
+    return "#874499"; // Purple color for refused
+  } else {
+    return "#778DC5"; // Default blue color for other statuses
+  }
+};
 
 export default function PropertyNavigator({
   rawPropertyData,
@@ -1994,7 +2004,7 @@ export default function PropertyNavigator({
                             >
                               <Badge
                                 color='success'
-                                badgeContent={property.applications.filter((app) => app.lease_status === "NEW" || app.lease_status === "PROCESSING").length}
+                                badgeContent={property.applications.filter((app) => app.lease_status.includes("NEW") || app.lease_status.includes("PROCESSING")).length}
                                 showZero
                                 sx={{
                                   paddingRight: "50px",

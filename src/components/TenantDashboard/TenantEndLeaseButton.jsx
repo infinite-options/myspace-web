@@ -9,9 +9,13 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import theme from "../../theme/theme";
 import dayjs from 'dayjs';
+import { useUser } from "../../contexts/UserContext";
+import APIConfig from "../../utils/APIConfig";
+import axios from 'axios'; 
 
 const TenantEndLeaseButton = ({ leaseDetails, setRightPane }) => {
     const [open, setOpen] = useState(false);
+    const {getProfileId } = useUser();
     const [confirmationText, setConfirmationText] = useState("");
     const [showSpinner, setShowSpinner] = useState(false);
     const [selectedValue, setSelectedValue] = useState('');
@@ -130,20 +134,22 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane }) => {
             leaseApplicationFormData.append("lease_early_end_date", currentDateFormatted);
         }
 
-        console.log("lease end data", leaseApplicationFormData);
+        for (let pair of leaseApplicationFormData.entries()) {
+            console.log(pair[0] + ": " + pair[1]);
+        }
 
         // API call (commented for now)
-        // axios
-        //     .put("https://api.endpoint/leaseApplication", leaseApplicationFormData)
-        //     .then((response) => {
-        //         setShowSpinner(false);
-        //         setSuccess(`Your lease has been moved to ${endLeaseStatus} status.`);
-        //     })
-        //     .catch((error) => {
-        //         if (error.response) {
-        //             setError(["Cannot end the lease. Please try again."]);
-        //         }
-        //     });
+        axios
+            .put(`${APIConfig.baseURL.dev}/leaseApplication`, leaseApplicationFormData)
+            .then((response) => {
+                setShowSpinner(false);
+                setSuccess(`Your lease has been moved to ${endLeaseStatus} status.`);
+            })
+            .catch((error) => {
+                if (error.response) {
+                    setError(["Cannot end the lease. Please try again."]);
+                }
+            });
     };
 
     return (
@@ -270,7 +276,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane }) => {
                                                     I/We has a personal reason(s) for terminating the lease early.
                                                 </Typography>
 
-                                                {selectedValue === 'I/We have a personal reason(s) for terminating the lease early.' && (
+                                                {selectedValue === 'I/We has a personal reason(s) for terminating the lease early.' && (
                                                     <>
                                                         <Typography
                                                             sx={{
@@ -318,7 +324,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane }) => {
                     </Grid>
 
 
-                    {/* <Grid item xs={12} md={12}>
+                    <Grid item xs={12} md={12}>
                         <Paper sx={{ padding: "10px", backgroundColor: color, width: '95%', margin: '10px 10px 0px 10px' }} >
                             <FormControl sx={{ width: '100%' }}>
                                 <RadioGroup
@@ -329,7 +335,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane }) => {
                                     id='2'
                                     sx={{ marginLeft: '5px', width: '100%' }}
                                 >
-                                    {/* <FormControlLabel
+                                    {/* {<FormControlLabel
                                         id='2'
                                         value="I/We is/are currently undergoing a legal issue(s)."
                                         control={<Radio sx={{ '&.Mui-checked': { color: "#3D5CAC" } }} />}
@@ -378,11 +384,11 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane }) => {
                                                 )}
                                             </Box>
                                         }
-                                    /> */}
-                                {/* </RadioGroup>
+                                    />} */}
+                                </RadioGroup>
                             </FormControl>
                         </Paper>
-                    </Grid> */}
+                    </Grid>
 
                     <Grid item xs={12} md={12}>
                         <Paper sx={{ padding: "10px", backgroundColor: color, width: '95%', margin: '10px 10px 0px 10px' }} >

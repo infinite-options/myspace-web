@@ -35,6 +35,9 @@ import { getDateAdornmentString } from "../../utils/dates";
 
 import ListsContext from "../../contexts/ListsContext";
 import LeaseFees from "../Leases/LeaseFees";
+import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Slider from "react-slick";  // Add react-slick for image slider
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -116,7 +119,7 @@ const initialFees = (property, application) => {
 };
 
 const TenantLease = () => {
-  // console.log("In Tenant Lease");
+  console.log("In Tenant Lease");
   const classes = useStyles();
   const navigate = useNavigate();
   const { getProfileId } = useUser();
@@ -124,6 +127,7 @@ const TenantLease = () => {
   const { application, property } = state;
   const { getList, } = useContext(ListsContext);	
 	const feeFrequencies = getList("frequency");
+  console.log("Property: ", property);
   console.log("Application: ", application);
   const [showSpinner, setShowSpinner] = useState(false);
   const [startDate, setStartDate] = useState(application.lease_start ? dayjs(application.lease_start) : dayjs());
@@ -146,7 +150,7 @@ const TenantLease = () => {
 
   const [fees, setFees] = useState([]);
 
-  const [leaseDocuments, setLeaseDocuments] = useState(JSON.parse(application.lease_documents));
+  const [leaseDocuments, setLeaseDocuments] = useState(JSON.parse(application?.lease_documents));
   const [leaseFiles, setLeaseFiles] = useState([]);
   const [leaseFileTypes, setLeaseFileTypes] = useState([]);
 
@@ -160,7 +164,7 @@ const TenantLease = () => {
   } else if (property.property_images === null || property.property_images === "[]") {
     propertyImage = defaultHouseImage;
   } else {
-    const images = JSON.parse(property.property_images);
+    const images = JSON.parse(property?.property_images);
     propertyImage = images.length > 0 ? images[0] : defaultHouseImage;
   }
 
@@ -174,9 +178,10 @@ const TenantLease = () => {
 
   useEffect(() => {
     const getLeaseFees = () => {
+      console.log('is it here---', property, application);
       let feesList = [];
-      if (application?.lease_status === "PROCESSING") {
-        feesList = JSON.parse(application.lease_fees);
+      if (application?.lease_status === "PROCESSING" || application?.lease_status === "ACTIVE" ) {
+        feesList = JSON.parse(application?.lease_fees);
       } else if (application?.lease_status === "NEW") {
         feesList = initialFees(property, application);
       }
@@ -615,39 +620,147 @@ const TenantLease = () => {
     }
   };
 
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    console.log('check date', dateString, date)
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}-${day}-${year}`;
+  }
+
+  const handleRenewLease = async () => {
+    try {
+      setShowMissingFieldsPrompt(false);
+      if (!checkRequiredFields()) {
+        setShowMissingFieldsPrompt(true);
+        return;
+      }
+      setShowSpinner(true);
+
+      const leaseApplicationFormData = new FormData();
+      leaseApplicationFormData.append("lease_property_id", property.property_id);
+      leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");
+      leaseApplicationFormData.append("lease_effective_date", startDate.format("MM-DD-YYYY"));
+      leaseApplicationFormData.append("lease_start", startDate.format("MM-DD-YYYY"));
+      leaseApplicationFormData.append("lease_end", endDate.format("MM-DD-YYYY"));
+      leaseApplicationFormData.append("lease_fees", JSON.stringify(fees));
+      leaseApplicationFormData.append("lease_move_in_date", moveInDate.format("MM-DD-YYYY"));
+      leaseApplicationFormData.append("lease_end_notice_period", endLeaseNoticePeriod);
+      if(deleteFees?.length > 0){
+        leaseApplicationFormData.append("delete_fees", JSON.stringify(deleteFees));
+      }
+
+      if(deletedDocsUrl && deletedDocsUrl?.length !== 0){
+        leaseApplicationFormData.append("delete_documents", JSON.stringify(deletedDocsUrl));
+      }
+
+      if(isPreviousFileChange){
+        leaseApplicationFormData.append("lease_documents", JSON.stringify(leaseDocuments));
+      }
+
+      leaseApplicationFormData.append("lease_adults", JSON.stringify(leaseAdults));
+      leaseApplicationFormData.append("lease_children", JSON.stringify(leaseChildren));
+      leaseApplicationFormData.append("lease_pets", JSON.stringify(leasePets));
+      leaseApplicationFormData.append("lease_vehicles", JSON.stringify(leaseVehicles));
+let date = new Date();
+      leaseApplicationFormData.append("lease_application_date", formatDate(date.toLocaleDateString()));
+      
+//       const parsedData = JSON.parse(property?.tenants);
+
+// // Access the tenant_uid
+// const tenantUID = parsedData[0].tenant_uid;
+
+leaseApplicationFormData.append("tenant_uid", property.tenant_uid);
+
+
+      const hasMissingType = !checkFileTypeSelected();
+      // console.log("HAS MISSING TYPE", hasMissingType);
+
+      if (hasMissingType) {
+        setShowMissingFileTypePrompt(true);
+        setShowSpinner(false);
+        return;
+      }
+
+      if (leaseFiles.length) {
+        const documentsDetails = [];
+        [...leaseFiles].forEach((file, i) => {
+          leaseApplicationFormData.append(`file_${i}`, file, file.name);
+          const fileType = leaseFileTypes[i] || "";
+          const documentObject = {
+            // file: file,
+            fileIndex: i, //may not need fileIndex - will files be appended in the same order?
+            fileName: file.name, //may not need filename
+            contentType: fileType,
+          };
+          documentsDetails.push(documentObject);
+        });
+        leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
+      }
+
+      // for (let [key, value] of leaseApplicationFormData.entries()) {
+      //   console.log(key, value);
+      // }
+
+      // await fetch(
+      //   `http://localhost:4000/leaseApplication`,
+      //   {
+      //     method: "PUT",
+      //     body: leaseApplicationFormData
+      //   }
+      // );
+const leaseApplicationUpdateFormData = new FormData();
+leaseApplicationUpdateFormData.append("lease_uid", application.lease_uid);
+leaseApplicationUpdateFormData.append("lease_renew_status", "PM RENEW REQUESTED");
+
+      await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+        method: "PUT",
+        body: leaseApplicationUpdateFormData,
+      });
+
+      await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+        method: "POST",
+        body: leaseApplicationFormData,
+      });
+
+      const receiverPropertyMapping = {
+        [application.tenant_uid]: [property.property_uid],
+      };
+
+      await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          announcement_title: "New Lease created",
+          announcement_msg: "You have a new lease to be approved for your property",
+          announcement_sender: getProfileId(),
+          announcement_date: new Date().toDateString(),
+          // announcement_properties: property.property_uid,
+          announcement_properties: JSON.stringify(receiverPropertyMapping),
+          announcement_mode: "LEASE",
+          announcement_receiver: [application.tenant_uid],
+          announcement_type: ["Email", "Text"],
+        }),
+      });
+      navigate("/managerDashboard");
+      setShowSpinner(false);
+    } catch (error) {
+      // console.log("Error Creating Lease:", error);
+      alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
+
+      navigate("/managerDashboard");
+      setShowSpinner(false);
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
-      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color='inherit' />
-      </Backdrop>
-      <Box
-        sx={{
-          backgroundColor: "#F2F2F2",
-          borderRadius: "10px",
-          margin: "10px",
-          padding: "15px",
-          fontFamily: "Source Sans Pro",
-        }}
-      >
-        <Grid container>
-          <Grid item xs={1}>
-            <Button
-              sx={{
-                "&:hover, &:focus, &:active": {
-                  backgroundColor: "#F2F2F2",
-                },
-              }}
-              onClick={() => navigate(-1)}
-            >
-              <svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
-                <path
-                  d='M4 8L2.58579 9.41421L1.17157 8L2.58579 6.58579L4 8ZM9 21C7.89543 21 7 20.1046 7 19C7 17.8954 7.89543 17 9 17L9 21ZM7.58579 14.4142L2.58579 9.41421L5.41421 6.58579L10.4142 11.5858L7.58579 14.4142ZM2.58579 6.58579L7.58579 1.58579L10.4142 4.41421L5.41421 9.41421L2.58579 6.58579ZM4 6L14.5 6L14.5 10L4 10L4 6ZM14.5 21L9 21L9 17L14.5 17L14.5 21ZM22 13.5C22 17.6421 18.6421 21 14.5 21L14.5 17C16.433 17 18 15.433 18 13.5L22 13.5ZM14.5 6C18.6421 6 22 9.35786 22 13.5L18 13.5C18 11.567 16.433 10 14.5 10L14.5 6Z'
-                  fill='#3D5CAC'
-                />
-              </svg>
-            </Button>
-          </Grid>
-          <Grid item xs={11} textAlign='center' sx={{ paddingTop: "5px", paddingRight: "30px" }}>
+      <Box sx={{ backgroundColor: "#F2F2F2", borderRadius: "10px", margin: "10px", padding: "15px", fontFamily: "Source Sans Pro" }}>
+        
+      <Grid item xs={11} textAlign='center' sx={{ paddingTop: "5px" }}>
             <Typography
               sx={{
                 fontSize: "20px",
@@ -658,879 +771,225 @@ const TenantLease = () => {
               {"New Tenant Lease"}
             </Typography>
           </Grid>
-        </Grid>
-        <Box
-          sx={{
-            display: "flex",
-            padding: "5px",
-            justifyContent: "space-evenly",
-            alignItems: "center",
-            fontSize: "20px",
-            color: "#160449",
-          }}
-        >
-          <Box
-            sx={{
-              minWidth: "130px",
-              height: "130px",
-              marginRight: "20px",
-              backgroundColor: "grey",
-            }}
-          >
-            <img
-              src={propertyImage}
-              alt='Property Img'
-              style={{
-                width: "130px",
-                height: "130px",
-              }}
+        {/* Single Property Image */}
+        <Box sx={{ marginBottom: "20px", textAlign: "center" }}>
+          <Box sx={{ display: "inline-block", width: "130px", height: "130px", backgroundColor: "grey" }}>
+            <img 
+              src={propertyImage ? propertyImage: defaultHouseImage} 
+              alt="Property Image" 
+              style={{ width: "100%", height: "100%", borderRadius: "10px" }} 
             />
           </Box>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <Box
-              sx={{
-                fontSize: "14px",
-                fontWeight: "bold",
-              }}
-            >
-              {property.property_address}
-              {", "}
-              {property.property_city}
-              {", "}
-              {property.property_state} {property.property_zip}
-            </Box>
-            <Box
-              sx={{
-                fontSize: "14px",
-                fontWeight: "bold",
-                paddingTop: "10px",
-              }}
-            >
-              {"Owner:"}
-            </Box>
-            <Box
-              sx={{
-                fontSize: "14px",
-                fontWeight: "bold",
-              }}
-            >
-              {property.owner_first_name} {property.owner_last_name}
-            </Box>
-            <Box
-              sx={{
-                fontSize: "14px",
-                fontWeight: "bold",
-                paddingTop: "10px",
-              }}
-            >
-              {"Tenant:"}
-            </Box>
-            <Box
-              sx={{
-                fontSize: "14px",
-                fontWeight: "bold",
-              }}
-            >
-              {application.tenant_first_name} {application.tenant_last_name}
-            </Box>
-            <Box
-              sx={{
-                fontSize: "12px",
-                fontWeight: "bold",
-                paddingTop: "5px",
-              }}
-            >
-              {property.property_available_to_rent === 1 ? "Not Rented" : "Rented"}
-            </Box>
-            <Box
-              sx={{
-                fontSize: "10px",
-                paddingTop: "10px",
-                color: "#3D5CAC",
-              }}
-            >
-              {calculateAge(application.lease_application_date)}
-            </Box>
-          </Box>
         </Box>
-        <Grid container spacing={10} sx={{ paddingBottom: 5 }}>
-          <Grid item xs={6} md={6}>
-            <Stack>
-              <Typography
-                sx={{
-                  color: theme.typography.propertyPage.color,
-                  fontFamily: "Source Sans Pro",
-                  fontWeight: theme.typography.common.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {"Start Date"}
-              </Typography>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  value={startDate}
-                  // minDate={dayjs()}
-                  onChange={handleStartDateChange}
-                  slots={{
-                    openPickerIcon: CalendarIcon,
-                  }}
-                  slotProps={{
-                    textField: {
-                      size: "small",
-                      style: {
-                        width: "100%",
-                        fontSize: 12,
-                        backgroundColor: "#F2F2F2 !important",
-                        borderRadius: "10px !important",
-                      },
-                    },
-                  }}
-                />
-              </LocalizationProvider>
-            </Stack>
-          </Grid>
-          <Grid item xs={6} md={6}>
-            <Stack>
-              <Typography
-                sx={{
-                  color: theme.typography.propertyPage.color,
-                  fontFamily: "Source Sans Pro",
-                  fontWeight: theme.typography.common.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {"End Date"}
-              </Typography>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  value={endDate}
-                  minDate={startDate}
-                  onChange={handleEndDateChange}
-                  slots={{
-                    openPickerIcon: CalendarIcon,
-                  }}
-                  variant='desktop'
-                  slotProps={{
-                    textField: {
-                      size: "small",
-                      style: {
-                        width: "100%",
-                        fontSize: 12,
-                        backgroundColor: "#F2F2F2 !important",
-                        borderRadius: "10px !important",
-                      },
-                    },
-                  }}
-                />
-              </LocalizationProvider>
-            </Stack>
-          </Grid>
-          <Grid item xs={6} md={6}>
-            <Stack>
-              <Typography
-                sx={{
-                  color: theme.typography.propertyPage.color,
-                  fontFamily: "Source Sans Pro",
-                  fontWeight: theme.typography.common.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {"Move In Date"}
-              </Typography>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  value={moveInDate}
-                  minDate={startDate}
-                  onChange={handleMoveInDateChange}
-                  slots={{
-                    openPickerIcon: CalendarIcon,
-                  }}
-                  variant='desktop'
-                  slotProps={{
-                    textField: {
-                      size: "small",
-                      style: {
-                        width: "100%",
-                        fontSize: 12,
-                        backgroundColor: "#F2F2F2 !important",
-                        borderRadius: "10px !important",
-                      },
-                    },
-                  }}
-                />
-              </LocalizationProvider>
-            </Stack>
-          </Grid>
-          <Grid item xs={6} md={6}>
-            <Stack spacing={-2} m={2}>
-              <Typography
-                sx={{
-                  color: theme.typography.propertyPage.color,
-                  fontFamily: "Source Sans Pro",
-                  fontWeight: theme.typography.common.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {"# of Occupants"}
-              </Typography>
-              <TextField
-                name='noOfOccupants'
-                value={noOfOccupants}
-                onChange={handleNoOfOccupantsChange}
-                variant='filled'
-                fullWidth
-                placeholder='Number'
-                sx={{
-                  "& .MuiFilledInput-root": {
-                    backgroundColor: "#D6D5DA",
-                    borderRadius: 10,
-                    height: 40,
-                    paddingBottom: "10px",
-                  },
-                }}
-                className={classes.root}
-              />
-            </Stack>
-          </Grid>
-          <Grid item xs={6} md={6}>
-            
-              <Typography
-                sx={{
-                  color: theme.typography.propertyPage.color,
-                  fontFamily: "Source Sans Pro",
-                  fontWeight: theme.typography.common.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                {"End Lease Notice Period"}
-              </Typography>
-              <TextField
-                name='endLeaseNoticePeriod'
-                value={endLeaseNoticePeriod}
-                onChange={(e) => setEndLeaseNoticePeriod(e.target.value)}
-                variant='filled'
-                fullWidth
-                placeholder=''
-                sx={{
-                  "& .MuiFilledInput-root": {
-                    backgroundColor: "#D6D5DA",
-                    borderRadius: 10,
-                    height: 40,
-                    // paddingBottom: "15px",
-                  },
-                }}
-                className={classes.root}
-              />
-            
-          </Grid>
-          {
-            leaseAdults && leaseAdults?.length > 0 && (
-              <Grid container direction="column" item xs={12}>
-                <Typography sx={{ fontWeight: 'bold', color: '#160449'}}>
-                  Adult Occupants:
-                </Typography>
-                
+  
+        {/* Property Address */}
+        <Box sx={{ textAlign: "center", marginBottom: "20px" }}>
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            {property.property_address}, {property.property_city}, {property.property_state} {property.property_zip}
+          </Typography>
+        </Box>
+  
+        {/* Lease Details Section */}
+        <Accordion defaultExpanded sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
+  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+    <Typography variant="h6" sx={{ fontWeight: "bold", color: "#302A68" }}>Lease Details</Typography>
+  </AccordionSummary>
+  <AccordionDetails sx={{ padding: "20px", borderRadius: "10px" }}>
+    {/* First row: Owner, Tenant, Rent Status */}
+    <Grid container spacing={4} sx={{ marginBottom: "20px" }} alignItems="center">
+      <Grid item xs={6} sm={3}>
+        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>Owner</Typography>
+        <Typography sx={{ fontSize: "14px", fontWeight: "400", color: "#302A68" }}>{property.owner_first_name} {property.owner_last_name}</Typography>
+      </Grid>
+
+      <Grid item xs={6} sm={3}>
+        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>Tenant</Typography>
+        <Typography sx={{ fontSize: "14px", fontWeight: "400", color: "#302A68" }}>{property?.tenant_first_name} {property?.tenant_last_name}</Typography>
+      </Grid>
+
+      <Grid item xs={6} sm={3}>
+        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>Rent Status</Typography>
+        <Typography sx={{ fontSize: "14px", fontWeight: "400", color: "#302A68" }}>
+          {property.property_available_to_rent === 1 ? "Not Rented" : "Rented"}
+        </Typography>
+      </Grid>
+    </Grid>
+
+    {/* Second row: Start Date, End Date, Move-In Date, End Lease Notice */}
+    <Grid container spacing={4} alignItems="center">
+      <Grid item xs={6} sm={3}>
+        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>Start Date</Typography>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            value={startDate}
+            onChange={handleStartDateChange}
+            slots={{
+              openPickerIcon: CalendarIcon,
+            }}
+            slotProps={{
+              textField: {
+                size: "small",
+                style: {
+                  width: "100%",
+                  fontSize: 12,
+                  backgroundColor: "#FFFFFF",
+                  borderRadius: "10px",
+                },
+              },
+            }}
+          />
+        </LocalizationProvider>
+      </Grid>
+
+      <Grid item xs={6} sm={3}>
+        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>End Date</Typography>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            value={endDate}
+            minDate={startDate}
+            onChange={handleEndDateChange}
+            slots={{
+              openPickerIcon: CalendarIcon,
+            }}
+            variant="desktop"
+            slotProps={{
+              textField: {
+                size: "small",
+                style: {
+                  width: "100%",
+                  fontSize: 12,
+                  backgroundColor: "#FFFFFF",
+                  borderRadius: "10px",
+                },
+              },
+            }}
+          />
+        </LocalizationProvider>
+      </Grid>
+
+      <Grid item xs={6} sm={3}>
+        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>Move-In Date</Typography>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            value={moveInDate}
+            minDate={startDate}
+            onChange={handleMoveInDateChange}
+            slots={{
+              openPickerIcon: CalendarIcon,
+            }}
+            variant="desktop"
+            slotProps={{
+              textField: {
+                size: "small",
+                style: {
+                  width: "100%",
+                  fontSize: 12,
+                  backgroundColor: "#FFFFFF",
+                  borderRadius: "10px",
+                },
+              },
+            }}
+          />
+        </LocalizationProvider>
+      </Grid>
+
+      <Grid item xs={6} sm={3}>
+        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>End Lease Notice</Typography>
+        <TextField
+          name="endLeaseNotice"
+          value={`${endLeaseNoticePeriod} days before`}
+          variant="filled"
+          InputProps={{
+            disableUnderline: true,
+            sx: { backgroundColor: "#FFFFFF", borderRadius: "10px", height: "40px" },
+          }}
+          sx={{
+            "& .MuiFilledInput-root": {
+              backgroundColor: "#FFFFFF",
+              borderRadius: "10px",
+              height: "40px",
+            },
+          }}
+        />
+      </Grid>
+    </Grid>
+  </AccordionDetails>
+</Accordion>
+{/* Occupancy Details Section */}
+        <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px" }}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="h6" sx={{ fontWeight: "bold" }}>Occupancy Details</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>Adults</Typography>
                 <OccupantsDataGrid data={leaseAdults} />
               </Grid>
-            )
-          }
-          {
-            leaseChildren && leaseChildren?.length > 0 && (
-              <Grid container direction="column" item xs={12}>
-                <Typography sx={{ fontWeight: 'bold', color: '#160449'}}>
-                  Children Occupants:
-                </Typography>
-                
+              <Grid item xs={12}>
+                <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>Children</Typography>
                 <OccupantsDataGrid data={leaseChildren} />
               </Grid>
-            )
-          }
-          {
-            leasePets && leasePets?.length > 0 && (
-              <Grid container direction="column" item xs={12}>
-                <Typography sx={{ fontWeight: 'bold', color: '#160449'}}>
-                  Pets:
-                </Typography>
-                
-                <PetsDataGrid data={leasePets} />                
+              <Grid item xs={12}>
+                <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>Pets</Typography>
+                <PetsDataGrid data={leasePets} />
               </Grid>
-            )
-          }
-          {
-            leaseVehicles && leaseVehicles?.length > 0 && (
-              <Grid container direction="column" item xs={12}>
-                <Typography sx={{ fontWeight: 'bold', color: '#160449'}}>
-                  Vehicles:
-                </Typography>
-                
+              <Grid item xs={12}>
+                <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>Vehicles</Typography>
                 <VehiclesDataGrid data={leaseVehicles} />
-                
               </Grid>
-            )
-          }
-          
-          
-          
-
-          <Grid item xs={12}>
-            <hr />
-          </Grid>
-          {/* {console.log("Fees right before we loop through it", fees)} */}
-
-          <Grid item xs={12}>
-            {fees?.length > 0 ? (<LeaseFees startDate={startDate} leaseFees={fees} isEditable={true} setLeaseFees={setFees} setDeleteFees={setDeleteFees} />) : (<></>)}
-          </Grid>
-
-          
-          {/* {fees.map((row) => (
-            <Grid item xs={12} key={row.id}>
-              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={6}>
-                  <Stack spacing={-2} m={2}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.propertyPage.color,
-                        fontFamily: "Source Sans Pro",
-                        fontWeight: theme.typography.common.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      {"Fee Name "}
-                      <span style={{ color: "red" }}>*</span>
-                    </Typography>
-                    <TextField name='fee_name' value={row.fee_name} variant='filled' fullWidth className={classes.root} onChange={(e) => handleFeeChange(e, row.id)} />
-                  </Stack>
-                </Grid>
-                <Grid item xs={6}>
-                  <Stack spacing={-2} m={2}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.propertyPage.color,
-                        fontFamily: "Source Sans Pro",
-                        fontWeight: theme.typography.common.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      {"Charge "}
-                      <span style={{ color: "red" }}>*</span>
-                    </Typography>
-                    <TextField name='charge' value={row.charge} variant='filled' fullWidth className={classes.root} onChange={(e) => handleFeeChange(e, row.id)} />
-                  </Stack>
-                </Grid>
-                <Grid item xs={6}>
-                  <Stack spacing={-2} m={2}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.propertyPage.color,
-                        fontFamily: "Source Sans Pro",
-                        fontWeight: theme.typography.common.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                        paddingBottom: 5,
-                      }}
-                    >
-                      {"Frequency "}
-                      <span style={{ color: "red" }}>*</span>
-                    </Typography>
-                    <Select
-                      value={row.frequency}
-                      size='small'
-                      fullWidth
-                      onChange={(e) => handleFrequencyChange(e, row.id)}
-                      placeholder='Select frequency'
-                      className={classes.select}
-                    >                                         
-                      {
-                        feeFrequencies?.map( (freq) => (
-                          <MenuItem key={freq.list_uid} value={freq.list_item}>{freq.list_item}</MenuItem>
-                        ))
-                      }
-                    </Select>
-                  </Stack>
-                </Grid>
-                <Grid item xs={6}>
-                  <Stack spacing={-2} m={2}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.propertyPage.color,
-                        fontFamily: "Source Sans Pro",
-                        fontWeight: theme.typography.common.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      {"Due By "}
-                      <span style={{ color: "red" }}>*</span>
-                    </Typography>
-                    {(row.frequency === "Monthly" || row.frequency === "Semi-Annually" || row.frequency === "Quarterly") && (
-                      <TextField
-                        name='due_by'
-                        value={row.due_by !== null && row.due_by !== "" ? row.due_by : ""}
-                        variant='filled'
-                        fullWidth
-                        className={classes.root}
-                        onChange={(e) => handleFeeChange(e, row.id)}  
-                        InputProps={{
-                          endAdornment: <InputAdornment position='start'>{getDateAdornmentString(row.due_by)}</InputAdornment>,
-                        }}
-                      />
-
-                    )}
-                    {(row.frequency === "One Time" || row.frequency === "Annually") && (
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DatePicker
-                          value={row.due_by_date !== null && row.due_by_date !== "" ? dayjs(row.due_by_date) : dayjs()}
-                          minDate={dayjs()}
-                          onChange={(v) => handleDueByDateChange(v, row.id)}
-                          slots={{
-                            openPickerIcon: CalendarIcon,
-                          }}
-                          slotProps={{
-                            textField: {
-                              size: "small",
-                              style: {
-                                width: "100%",
-                                fontSize: 12,
-                                backgroundColor: "#F2F2F2 !important",
-                                borderRadius: "10px !important",
-                              },
-                            },
-                          }}
-                        />
-                      </LocalizationProvider>
-                    )}
-                    {(row.frequency === "Weekly" || row.frequency === "Bi-Weekly") && (
-                      <Box
-                        sx={{
-                          paddingTop: "10px",
-                        }}
-                      >
-                        <Select
-                          name='due_by'
-                          value={row.due_by !== null ? valueToDayMap.get(row.due_by) : ""}
-                          size='small'
-                          fullWidth
-                          onChange={(e) => handleDueByChange(e, row.id, "weekly")}
-                          placeholder='Select Due By Day'
-                          className={classes.select}
-                          sx={{
-                            margin: "auto",
-                          }}
-                        >
-                          {row.frequency &&
-                            row.frequency === "Weekly" &&
-                            dayOptionsForWeekly.map((day) => (
-                              <MenuItem key={day.value} value={day.value}>
-                                {day.label}
-                              </MenuItem>
-                            ))}
-                          {row.frequency &&
-                            row.frequency === "Bi-Weekly" &&
-                            dayOptionsForBiWeekly.map((day) => (
-                              <MenuItem key={day.value} value={day.value}>
-                                {day.label}
-                              </MenuItem>
-                            ))}
-                        </Select>
-                      </Box>
-                    )}
-                  </Stack>
-                </Grid>
-                <Grid item xs={6}>
-                  <Stack spacing={-2} m={2}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.propertyPage.color,
-                        fontFamily: "Source Sans Pro",
-                        fontWeight: theme.typography.common.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      {"Available To Pay "}
-                      <span style={{ color: "red" }}>*</span>
-                    </Typography>
-                    
-                    {(row.frequency === "Monthly" || row.frequency === "One Time" || row.frequency === "Annually" || row.frequency === "Semi-Annually" || row.frequency === "Quarterly") && (
-                      <TextField
-                        name='available_topay'
-                        value={row.available_topay !== null ? row.available_topay : ""}
-                        variant='filled'
-                        fullWidth
-                        className={classes.root}
-                        onChange={(e) => handleFeeChange(e, row.id)}
-                        InputProps={{
-                          endAdornment: <InputAdornment position='start'>days before</InputAdornment>,
-                        }}
-                      />
-                    )}
-                    {(row.frequency === "Weekly" || row.frequency === "Bi-Weekly") && (
-                      <Box
-                        sx={{
-                          paddingTop: "10px",
-                        }}
-                      >
-                        <Select
-                          name='available_topay'
-                          value={row.available_topay !== null ? row.available_topay : ""}
-                          size='small'
-                          fullWidth
-                          onChange={(e) => handleAvailableToPayChange(e, row.id, "weekly")}
-                          placeholder='Select Available to Pay By Day'
-                          className={classes.select}
-                        >
-                          {row.frequency &&
-                            row.frequency === "Weekly" &&
-                            availableToPayOptionsForWeekly.map((option) => (
-                              <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                              </MenuItem>
-                            ))}
-                          {row.frequency &&
-                            row.frequency === "Bi-Weekly" &&
-                            availableToPayOptionsForBiWeekly.map((option) => (
-                              <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                              </MenuItem>
-                            ))}
-                        </Select>
-                      </Box>
-                    )}
-                  </Stack>
-                </Grid>
-                <Grid item xs={6}>
-                  <Stack spacing={-2} m={2}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.propertyPage.color,
-                        fontFamily: "Source Sans Pro",
-                        fontWeight: theme.typography.common.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      {"Late By "}
-                      <span style={{ color: "red" }}>*</span>
-                    </Typography>                    
-                    {(row.frequency === "Monthly" || row.frequency === "One Time" || row.frequency === "Annually" || row.frequency === "Semi-Annually" || row.frequency === "Quarterly") && (
-                      <TextField
-                        name='late_by'
-                        value={row.late_by}
-                        variant='filled'
-                        fullWidth
-                        className={classes.root}
-                        onChange={(e) => handleFeeChange(e, row.id)}
-                        InputProps={{
-                          endAdornment: <InputAdornment position='start'>days after</InputAdornment>,
-                        }}
-                      />
-                    )}
-                    {(row.frequency === "Weekly" || row.frequency === "Bi-Weekly") && (
-                      <Box
-                        sx={{
-                          paddingTop: "10px",
-                        }}
-                      >
-                        <Select
-                          name='late_by'
-                          value={row.late_by !== null ? row.late_by : ""}
-                          size='small'
-                          fullWidth
-                          onChange={(e) => handleLateByChange(e, row.id, "weekly")}
-                          placeholder='Select Late By Day'
-                          className={classes.select}
-                        >
-                          {row.frequency &&
-                            row.frequency === "Weekly" &&
-                            lateByOptionsForWeekly.map((option) => (
-                              <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                              </MenuItem>
-                            ))}
-                          {row.frequency &&
-                            row.frequency === "Bi-Weekly" &&
-                            lateByOptionsForBiWeekly.map((option) => (
-                              <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                              </MenuItem>
-                            ))}
-                        </Select>
-                      </Box>
-                    )}
-                  </Stack>
-                </Grid>
-                <Grid item xs={6}>
-                  <Stack spacing={-2} m={2}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.propertyPage.color,
-                        fontFamily: "Source Sans Pro",
-                        fontWeight: theme.typography.common.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      {"Late Fee "}
-                      <span style={{ color: "red" }}>*</span>
-                    </Typography>
-                    <TextField name='late_fee' value={row.late_fee} variant='filled' fullWidth className={classes.root} onChange={(e) => handleFeeChange(e, row.id)} />
-                  </Stack>
-                </Grid>
-                <Grid item xs={6}>
-                  <Stack spacing={-2} m={2}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.propertyPage.color,
-                        fontFamily: "Source Sans Pro",
-                        fontWeight: theme.typography.common.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      {"Late Fee Per Day "}
-                      <span style={{ color: "red" }}>*</span>
-                    </Typography>
-                    <TextField
-                      name='perDay_late_fee'
-                      value={row.perDay_late_fee}
-                      variant='filled'
-                      fullWidth
-                      className={classes.root}
-                      onChange={(e) => handleFeeChange(e, row.id)}
-                    />
-                  </Stack>
-                </Grid>
-                <Grid item xs={12}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "flex-start",
-                    }}
-                  >
-                    <Button
-                      onClick={() => deleteFeeRow(row.id)}
-                      sx={{
-                        textTransform: "none",
-                        backgroundColor: "#CB8E8E",
-                        color: "#160449",
-                      }}
-                    >
-                      Delete Fee
-                    </Button>
-                  </Box>
-                </Grid>
-              </Grid> */}
-              {/* {row.id === fees.length ? (
-                <Stack
-                  direction="row"
-                  sx={{
-                    display: "flex",
-                  }}
-                >
-                <Box
-                    sx={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    }}
-                >
-                    <Button onClick={deleteFeeRow(row.id)}
-                        sx={{
-                            textTransform: "none",
-                            backgroundColor: "#9EAED6",
-                            color: "#160449"
-                        }}>
-                        Delete Fee
-                    </Button>
-                </Box>
-                </Stack>
-              ) : (
-                <hr />
-              )} */}
-            {/* </Grid>
-          ))} */}
-          {/* <Grid item xs={12}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-              }}
-            >
-              <Button
-                onClick={addFeeRow}
-                sx={{
-                  textTransform: "none",
-                  backgroundColor: "#9EAED6",
-                  color: "#160449",
-                }}
-              >
-                Add Fee
-              </Button>
-            </Box>
-          </Grid> */}
-          {/* {leaseFiles.length ? (
-            <Grid item xs={12}>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: "7px",
-                  width: "100%",
-                }}
-              >
-                <Box
-                  sx={{
-                    fontSize: "15px",
-                    fontWeight: "bold",
-                    padding: "5px",
-                    color: "#3D5CAC",
-                    width: "100%",
-                  }}
-                >
-                  Added Documents:
-                  {[...leaseFiles].map((f, i) => (
-                    <Box
-                      key={i}
-                      sx={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          // height: '16px',
-                          width: "50%", // Adjust the width as needed
-                          padding: "8px", // Adjust the padding as needed
-                        }}
-                      >
-                        {f.name}
-                      </Box>
-                      <Select
-                        value={leaseFileTypes[i]}
-                        label='Document Type'
-                        onChange={(e) => {
-                          const updatedTypes = [...leaseFileTypes];
-                          updatedTypes[i] = e.target.value;
-                          setLeaseFileTypes(updatedTypes);
-                        }}
-                        required
-                        sx={{
-                          backgroundColor: "#D6D5DA",
-                          height: "16px",
-                          width: "40%", // Adjust the width as needed
-                          padding: "8px", // Adjust the padding as needed
-                        }}
-                      >
-                        <MenuItem value={"contract"}>Lease Agreement</MenuItem>
-                        <MenuItem value={"other"}>Other</MenuItem>
-                      </Select>
-                      <Button
-                        variant='text'
-                        onClick={() => {
-                          // setContractFiles(prevFiles => prevFiles.filter((file, index) => index !== i));
-                          handleRemoveFile(i);
-                        }}
-                        sx={{
-                          width: "10%",
-                          cursor: "pointer",
-                          fontSize: "14px",
-                          fontWeight: "bold",
-                          color: "#3D5CAC",
-                        }}
-                      >
-                        <DeleteIcon sx={{ fontSize: 19, color: "#3D5CAC" }} />
-                      </Button>
-                    </Box>
-                  ))}
-                  {showMissingFileTypePrompt && (
-                    <Box
-                      sx={{
-                        color: "red",
-                        fontSize: "13px",
-                      }}
-                    >
-                      Please select document types for all documents before proceeding.
-                    </Box>
-                  )}
-                </Box>
-              </Box>
             </Grid>
-          ) : (
-            <></>
-          )} */}
-          <Box marginLeft={'20px'} marginTop={"10px"} width={'100%'}>
-            <Documents setIsPreviousFileChange={setIsPreviousFileChange} documents={leaseDocuments} setDocuments={setLeaseDocuments} deletedDocsUrl={deletedDocsUrl} setDeleteDocsUrl={setDeletedDocsUrl} contractFiles={leaseFiles} setContractFiles={setLeaseFiles} contractFileTypes={leaseFileTypes} setContractFileTypes={setLeaseFileTypes} isAccord={false} isEditable={true}/>
-          </Box>
-          {/* <Grid item xs={12}>
-            <Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  fontSize: "16px",
-                  fontWeight: "bold",
-                  padding: "5px",
-                  color: "#3D5CAC",
-                }}
-              >
-                <label htmlFor='file-upload' style={{ cursor: "pointer" }}>
-                  <DescriptionIcon sx={{ fontSize: 19, color: "#3D5CAC" }} /> Add Document
-                </label>
-                <input
-                  id='file-upload'
-                  type='file'
-                  accept='.doc,.docx,.txt,.pdf'
-                  hidden
-                  onChange={(e) => setLeaseFiles((prevFiles) => [...prevFiles, ...e.target.files])}
-                  multiple
-                />
-              </Box>
-            </Box>
-          </Grid> */}
-          <Grid item xs={12}>
-            {showMissingFieldsPrompt && (
-              <Box
-                sx={{
-                  color: "red",
-                  fontSize: "13px",
-                }}
-              >
-                Please fill out all required fields.
-              </Box>
-            )}
-            {/* {showInvalidDueDatePrompt && (
-              <Box
-                sx={{
-                  color: "red",
-                  fontSize: "13px",
-                }}
-              >
-                Please enter valid due dates in "MM-DD-YYYY" format for all fees.
-              </Box>
-            )} */}
-          </Grid>
-          <Grid item xs={12} sx={{ textAlign: "center", paddingBottom: 5 }}>
-            <Button
-              onClick={handleCreateLease}
-              sx={{
+          </AccordionDetails>
+        </Accordion>
+  
+        {/* Fees Section */}
+        <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px" }}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="h6" sx={{ fontWeight: "bold" }}>Fees</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <LeaseFees startDate={startDate} leaseFees={fees} isEditable={true} setLeaseFees={setFees} setDeleteFees={setDeleteFees} />
+          </AccordionDetails>
+        </Accordion>
+  
+        {/* Documents Section */}
+        {/* <Box marginTop={"20px"}>
+          <Documents 
+            setIsPreviousFileChange={setIsPreviousFileChange} 
+            documents={leaseDocuments} 
+            setDocuments={setLeaseDocuments} 
+            deletedDocsUrl={deletedDocsUrl} 
+            setDeleteDocsUrl={setDeletedDocsUrl} 
+            contractFiles={leaseFiles} 
+            setContractFiles={setLeaseFiles} 
+            contractFileTypes={leaseFileTypes} 
+            setContractFileTypes={setLeaseFileTypes} 
+            isAccord={false} 
+            isEditable={true}
+          />
+        </Box>
+   */}
+        {/* Submit Button */}
+        <Grid item xs={12} sx={{ textAlign: "center", paddingBottom: 5 }}>
+          <Button
+            onClick={application?.lease_status === "NEW" ? handleCreateLease : handleRenewLease}
+            sx={{
+              backgroundColor: "#9EAED6",
+              color: "#160449",
+              textTransform: "none",
+              width: "80%",
+              "&:hover, &:focus, &:active": {
                 backgroundColor: "#9EAED6",
-                color: "#160449",
-                textTransform: "none",
-                width: "80%",
-                "&:hover, &:focus, &:active": {
-                  backgroundColor: "#9EAED6",
-                },
-              }}
-            >
-              {application?.lease_status === "NEW" ? "Create Lease" : "Update Lease"}
-            </Button>
-          </Grid>
+              },
+            }}
+          >
+            {application?.lease_status === "NEW" ? "Create Lease" : "Renew Lease"}
+          </Button>
         </Grid>
       </Box>
     </ThemeProvider>
   );
+  
 };
 
 const OccupantsDataGrid = ({ data }) => {

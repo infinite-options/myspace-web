@@ -371,6 +371,7 @@ export default function TenantApplication(props) {
     // console.log("Application Submitted")
     // console.log("should call /annoucements")
     // console.log("should call /leases")
+    console.log("lease status", status);
     try {
       let date = new Date();
 
@@ -381,7 +382,12 @@ export default function TenantApplication(props) {
       const leaseApplicationData = new FormData();
 
       leaseApplicationData.append("lease_property_id", property.property_uid);
-      leaseApplicationData.append("lease_status", "NEW");
+      if (status === "RENEW" ) {
+        leaseApplicationData.append("lease_status", "RENEW NEW");
+      }
+      else {
+        leaseApplicationData.append("lease_status", "NEW");
+      }
       leaseApplicationData.append("lease_assigned_contacts", JSON.stringify([getProfileId()]));
       leaseApplicationData.append("lease_income", JSON.stringify(selectedJobs));
       const documentsDetails = [];
@@ -708,7 +714,7 @@ export default function TenantApplication(props) {
                   width: "100%",
                 }}
               >
-                {(status == null || status === "" || status === "REJECTED" || status === "RESCIND") &&
+                {(status == null || status === "" || status === "REJECTED" || status === "RESCIND" || status === "RENEW") &&
                   <Button
                     variant='contained'
                     sx={{
@@ -732,7 +738,7 @@ export default function TenantApplication(props) {
                       Submit
                     </Typography>
                   </Button>}
-                {(status == null || status === "" || status === "NEW" || status === "REJECTED" || status === "RESCIND") &&
+                {(status == null || status === "" || status === "NEW" || status === "REJECTED" || status === "RESCIND" || status === "RENEW") &&
                 <Button
                   variant='contained'
                   sx={{
@@ -974,6 +980,7 @@ export const VehicleDataGrid = ({ vehicles }) => {
 
 export const EmploymentDataGrid = ({ tenantProfile, selectedJobs, setSelectedJobs, leaseStatus, lease }) => {
   // If leaseStatus is PROCESSING or ACTIVE, use the lease's job information (lease_income)
+  console.log("lease lease emp", leaseStatus);
   const employmentData =
     leaseStatus === "PROCESSING" || leaseStatus === "ACTIVE" || leaseStatus === "NEW"
       ? (lease?.[0]?.lease_income ? JSON.parse(lease[0].lease_income) : [])
@@ -999,7 +1006,7 @@ export const EmploymentDataGrid = ({ tenantProfile, selectedJobs, setSelectedJob
         {employmentData.map((job, index) => (
           <Grid item xs={12} key={index}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              {(leaseStatus == null || leaseStatus === "" || leaseStatus === "REJECTED" || leaseStatus === "RESCIND") && (
+              {(leaseStatus == null || leaseStatus === "" || leaseStatus === "REJECTED" || leaseStatus === "RESCIND" || leaseStatus === "RENEW") && (
                 <FormControlLabel
                   control={
                     <Checkbox

@@ -595,7 +595,7 @@ return (
                                     whiteSpace: "nowrap",
                                     marginLeft: "1%",
                                 }}>
-                                    {"New Lease"}
+                                    {"Renew Lease"}
                                 </Typography>
                             </Button>
                         </Grid>
