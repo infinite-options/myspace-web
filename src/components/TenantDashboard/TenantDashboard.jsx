@@ -699,7 +699,7 @@ const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty }) => {
   const daysUntilLeaseEnd = Math.ceil(timeDifference / (1000 * 3600 * 24));
 
   // Check if Renew Lease button should be visible (if within 2x notice period)
-  const showRenewLeaseButton = daysUntilLeaseEnd <= 2 * noticePeriod;
+  const showRenewLeaseButton = daysUntilLeaseEnd <= 2 * noticePeriod && leaseDetails?.lease_renew_status !== "RENEW NEW";
 
   const handleRenewLease = async () => {
     // try {
@@ -857,15 +857,27 @@ const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty }) => {
                 <Typography>{noticePeriod} days</Typography>
               </Stack>
             </Stack>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: "auto" }}>
-            {showRenewLeaseButton && (
-              <Button variant="contained" color="primary" onClick={handleRenewLease}>
-                Renew Lease
-              </Button>
-            )}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', marginTop: "auto" }}>
             <Button variant="contained" color="secondary" onClick={handleEndLease}>
               End Lease
             </Button>
+            
+            {/* Check if lease renewal status is RENEW */}
+            {leaseDetails?.lease_renew_status === "RENEW REQUESTED" ? (
+              <Box mt={2}> {/* Add margin top to create space between elements */}
+                <Typography variant="body1" color="text.secondary">
+                  Lease renewal has been requested
+                </Typography>
+              </Box>
+            ) : (
+              showRenewLeaseButton && (
+                <Box mt={2}> {/* Add margin top to create space between elements */}
+                  <Button variant="contained" color="primary" onClick={handleRenewLease}>
+                    Renew Lease
+                  </Button>
+                </Box>
+              )
+            )}
           </Box>
           </Box>
           </>

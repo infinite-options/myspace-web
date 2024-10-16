@@ -382,12 +382,30 @@ export default function TenantApplication(props) {
       const leaseApplicationData = new FormData();
 
       leaseApplicationData.append("lease_property_id", property.property_uid);
-      if (status === "RENEW" ) {
+      if (status === "RENEW") {
+        const updateLeaseData = new FormData();
+        updateLeaseData.append("lease_uid", lease[0].lease_uid);
+        updateLeaseData.append("lease_renew_status", "RENEW REQUESTED");
+  
+        const updateLeaseResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+          method: "PUT",
+          body: updateLeaseData,
+        });
+  
+        if (!updateLeaseResponse.ok) {
+          throw new Error("Failed to update lease status to RENEW.");
+        }
+  
         leaseApplicationData.append("lease_status", "RENEW NEW");
-      }
-      else {
+      } else {
         leaseApplicationData.append("lease_status", "NEW");
       }
+      // if (status === "RENEW" ) {
+      //   leaseApplicationData.append("lease_status", "RENEW NEW");
+      // }
+      // else {
+      //   leaseApplicationData.append("lease_status", "NEW");
+      // }
       leaseApplicationData.append("lease_assigned_contacts", JSON.stringify([getProfileId()]));
       leaseApplicationData.append("lease_income", JSON.stringify(selectedJobs));
       const documentsDetails = [];
