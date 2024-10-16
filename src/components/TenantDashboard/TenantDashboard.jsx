@@ -59,6 +59,7 @@ import TenantMaintenanceItemDetail from "../Maintenance/TenantMaintenanceItemDet
 import TenantAccountBalance from "../Payments/TenantAccountBalance";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import GenericDialog from "../GenericDialog";
+import TenantEndLeaseButton from "./TenantEndLeaseButton";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -69,6 +70,7 @@ const useStyles = makeStyles((theme) => ({
 const TenantDashboard = () => {
   const { user } = useUser();
   const { getProfileId } = useUser();
+  const location = useLocation();
 
   const [propertyListingData, setPropertyListingData] = useState([]);
   const [selectedProperty, setSelectedProperty] = useState(null);
@@ -90,6 +92,10 @@ const TenantDashboard = () => {
   const [allBalanceDetails, setAllBalanceDetails] = useState([]);
   const [reload, setReload] = useState(false);
 
+  useEffect(() => {
+    // Whenever this component is mounted or navigated to, reset the right pane
+    setRightPane("");
+  }, [location]);
   // const fetchCashflowDetails = async () => {
   //     try {
   //         const response = await fetch(`${APIConfig.baseURL.dev}/cashflowTransactions/${getProfileId()}/all`);
@@ -117,8 +123,13 @@ const TenantDashboard = () => {
       // console.log("Dashboard data", dashboardData);
 
       if (dashboardData) {
-        // console.log("Dashboard inside check", dashboardData);
-        setPropertyListingData(dashboardData.property?.result);
+        // console.log("Dashboard inside check", dashboardData.property?.result);
+
+        const filteredPropertyDetails = dashboardData.property?.result.filter(
+          (lease) => lease.lease_status === "ACTIVE"
+        );
+        setPropertyListingData(filteredPropertyDetails);
+        
         setLeaseDetailsData(dashboardData.leaseDetails?.result);
         setMaintenanceRequestsNew(dashboardData.maintenanceRequests?.result);
         setMaintenanceStatus(dashboardData.maintenanceStatus?.result);
@@ -337,6 +348,11 @@ const TenantDashboard = () => {
           );
         case "announcements":
           return <Announcements setRightPane={setRightPane} />;
+        case "tenantEndLease":
+          return (<TenantEndLeaseButton 
+          leaseDetails={rightPane.state.leaseDetails}
+          setRightPane={setRightPane}
+        />);
         default:
           return null;
       }
@@ -416,7 +432,7 @@ const TenantDashboard = () => {
                   <>
                     {/* Lease Details: Aligns with Account Balance */}
                     <Grid item xs={12} md={6} sx={{ flex: 1 }}>
-                      <LeaseDetails leaseDetails={leaseDetails} />
+                      <LeaseDetails leaseDetails={leaseDetails} setRightPane={setRightPane} selectedProperty={selectedProperty}/>
                     </Grid>
 
                     {/* Maintenance and Management Details: Match height with Lease Details */}
@@ -661,8 +677,9 @@ const AnnouncementsPM = ({ announcements, setRightPane }) => {
   );
 };
 
-const LeaseDetails = ({ leaseDetails }) => {
-  // console.log("Lease Details", leaseDetails);
+const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty }) => {
+  console.log("Lease Details", leaseDetails);
+  const { getProfileId } = useUser();
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleFlip = () => {
@@ -684,14 +701,58 @@ const LeaseDetails = ({ leaseDetails }) => {
   // Check if Renew Lease button should be visible (if within 2x notice period)
   const showRenewLeaseButton = daysUntilLeaseEnd <= 2 * noticePeriod;
 
-  const handleRenewLease = () => {
-    // Logic for renewing lease
-    alert("Renew Lease clicked!");
+  const handleRenewLease = async () => {
+    // try {
+    //   const currentDate = new Date();
+  
+    //   // Send POST request to create an announcement for renewing the lease
+    //   const announcementResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       announcement_title: "Renew Lease Requested",
+    //       announcement_msg: "The tenant has requested to renew the lease for your property.",
+    //       announcement_sender: getProfileId(),
+    //       announcement_date: currentDate.toDateString(),
+    //       announcement_properties: JSON.stringify(selectedProperty?.property_uid),
+    //       announcement_mode: "LEASE",
+    //       announcement_receiver: [leaseDetails?.contract_business_id],
+    //       announcement_type: ["Email", "Text"],
+    //     }),
+    //   });
+  
+    //   if (!announcementResponse.ok) {
+    //     throw new Error("Failed to create an announcement.");
+    //   }
+  
+    //   // Display success message or perform any other action
+    //   alert("Lease renewal request sent to the manager!");
+  
+    // } catch (error) {
+    //   console.error("Error posting announcement: ", error);
+    //   alert("Failed to send lease renewal request. Please try again.");
+    // }
+    setRightPane({
+      type: "tenantApplication",
+      state: {
+        data: leaseDetails,
+        status: "RENEW",
+        lease: leaseDetails,
+      },
+    });
   };
-
+  
   const handleEndLease = () => {
-    // Logic for ending lease
-    alert("End Lease clicked!");
+    setRightPane({
+      type: "tenantEndLease",
+      state: {
+        leaseDetails: leaseDetails,
+        selectedProperty: selectedProperty,
+        // onClose: () => setRightPane(""),
+      },
+    });
   };
 
   return (
@@ -766,6 +827,7 @@ const LeaseDetails = ({ leaseDetails }) => {
         ) : (
           <>
             {/* Lease Details */}
+            <Box sx={{flexGrow: 1}}>
             <Stack spacing={2} sx={{ marginBottom: "15px" }}>
               <Typography variant='subtitle1' sx={{ fontWeight: "bold", color: "#3D5CAC" }}>
                 Rent Details
@@ -795,19 +857,17 @@ const LeaseDetails = ({ leaseDetails }) => {
                 <Typography>{noticePeriod} days</Typography>
               </Stack>
             </Stack>
-            <Stack direction="row" spacing={2} sx={{ marginTop: "20px" }}>
-              {/* Conditionally render the Renew Lease button */}
-              {showRenewLeaseButton && (
-                <Button variant="contained" color="primary" onClick={handleRenewLease}>
-                  Renew Lease
-                </Button>
-              )}
-
-              {/* Always show the End Lease button */}
-              <Button variant="contained" color="secondary" onClick={handleEndLease}>
-                End Lease
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: "auto" }}>
+            {showRenewLeaseButton && (
+              <Button variant="contained" color="primary" onClick={handleRenewLease}>
+                Renew Lease
               </Button>
-            </Stack>
+            )}
+            <Button variant="contained" color="secondary" onClick={handleEndLease}>
+              End Lease
+            </Button>
+          </Box>
+          </Box>
           </>
         )}
       </Stack>
@@ -1191,7 +1251,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
   });
 
   useEffect(() => {
-    // console.log("data", data);
+    console.log("data", data);
     const filteredUnpaidData = data.filter(
       (item) => item.purchaseStatus === "UNPAID" || item.purchaseStatus === "PARTIALLY PAID"
     );
@@ -1476,6 +1536,7 @@ function TenantBalanceTablePM(props) {
 
   useEffect(() => {
     setData(props.data);
+    console.log("props", props);
   }, [props.data]);
 
   useEffect(() => {
@@ -1550,7 +1611,10 @@ function TenantBalanceTablePM(props) {
       field: "pur_amount_due",
       headerName: "Total",
       flex: 1,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>${parseFloat(params.value).toFixed(2)}</Box>,
+      renderCell: (params) => {
+          const total = parseFloat(params.row.pur_amount_due) + parseFloat(params.row.totalPaid);
+          return <Box sx={{ fontWeight: "bold" }}>${total.toFixed(2)}</Box>;
+      },
     },
     {
       field: "purchaseStatus",

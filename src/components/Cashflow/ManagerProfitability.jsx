@@ -74,6 +74,10 @@ const ManagerProfitability = ({
   expectedRevenueByType,
   revenueList,
   expenseList,
+  view,
+  totalCashflowValueByType,
+  expectedCashflowValueByType,
+  allCashflowData,
 
   expectedExpenseByMonth,
   totalExpenseByMonth,
@@ -107,7 +111,8 @@ const ManagerProfitability = ({
   const [profitsExpanded, setProfitsExpanded] = useState(true);
   const [revenueExpanded, setRevenueExpanded] = useState(true);
   const [expenseExpanded, setExpenseExpanded] = useState(true);
-  const [tab, setTab] = useState("profit");
+  console.log("inside cashflow - view - ", view)
+  const [tab, setTab] = useState( "profit");
   const [headerTab, setHeaderTab] = useState("current_month");
   const [ total, setTotal] = useState();
   const [paymentNotes, setPaymentNotes] = useState("");
@@ -129,6 +134,9 @@ const ManagerProfitability = ({
   const [selectedPayments, setSelectedPayments] = useState([]);
 
   const [sortBy, setSortBy] = useState("");
+  const [cashflowExpand, setCashflowExpand] = useState(true)
+  const [cashflowRevenueExpand, setCashflowRevenueExpand] = useState(true)
+  const [ cashflowExpenseExpand, setCashflowExpanseExpand] = useState(true)
 
   const handleSelectTab = (tab_name) => {
     setTab(tab_name);
@@ -140,6 +148,10 @@ const ManagerProfitability = ({
   const date = new Date();
   const currentMonth = monthNames[date.getMonth()];
   const currentYear = date.getFullYear();
+
+  useEffect(() => {
+    handleSelectTab(view)
+  }, [view])
 
   const handleViewPropertyClick = (e, property_uid) => {
     e.stopPropagation();
@@ -195,7 +207,6 @@ const ManagerProfitability = ({
   };
 
   const getVerificationStatus = (purchase) => {
-    console.log("getVerificationStatus - purchase - ", purchase);
     if (purchase.pur_payer?.startsWith("600")) {
       return getVerificationForManagerPayment(purchase);
     } else if (purchase.pur_payer?.startsWith("110")) {
@@ -235,7 +246,7 @@ const ManagerProfitability = ({
       field: "purchase_type",
       headerName: "Purchase Type",
       flex: 1.5,
-      renderCell: (params) => <span>{params.row.purchase_type !== null ? params.row.purchase_type : "-"}</span>,
+      renderCell: (params) => <span style={{fontSize: theme.typography.smallFont}}>{params.row.purchase_type !== null ? params.row.purchase_type : "-"}</span>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     // {
@@ -270,6 +281,7 @@ const ManagerProfitability = ({
               overflow: "hidden",
               textOverflow: "ellipsis",
               maxWidth: "100%",
+              fontSize: theme.typography.smallFont
             }}
           >
             {params.row.pur_group !== null ? params.row.pur_group : "-"}
@@ -290,6 +302,7 @@ const ManagerProfitability = ({
               overflow: "hidden",
               textOverflow: "ellipsis",
               maxWidth: "100%",
+              fontSize: theme.typography.smallFont
             }}
           >
             {params.row.pur_payer !== null ? params.row.pur_payer : "-"}
@@ -310,6 +323,7 @@ const ManagerProfitability = ({
               overflow: "hidden",
               textOverflow: "ellipsis",
               maxWidth: "100%",
+              fontSize: theme.typography.smallFont
             }}
           >
             {params.row.pur_receiver !== null ? params.row.pur_receiver : "-"}
@@ -332,6 +346,7 @@ const ManagerProfitability = ({
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
+                fontSize: theme.typography.smallFont,
                 maxWidth: "100%",
                 color: fontColor,
                 cursor: verificationStatus === "not verified" ? "pointer" : "auto",
@@ -354,7 +369,7 @@ const ManagerProfitability = ({
       field: "pur_amount_due",
       headerName: "Expected",
       flex: 1,
-      renderCell: (params) => <span>$ {params.row.pur_amount_due !== null ? parseFloat(params.row.pur_amount_due).toFixed(2) : parseFloat(0).toFixed(2)}</span>,
+      renderCell: (params) => <span style={{fontSize: theme.typography.smallFont}}>$ {params.row.pur_amount_due !== null ? parseFloat(params.row.pur_amount_due).toFixed(2) : parseFloat(0).toFixed(2)}</span>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
@@ -362,7 +377,7 @@ const ManagerProfitability = ({
       headerName: "Actual",
       flex: 1,
       renderCell: (params) => (
-        <span style={{ textAlign: "right", display: "block" }}>$ {params.row.total_paid !== null ? parseFloat(params.row.total_paid).toFixed(2) : parseFloat(0).toFixed(2)}</span>
+        <span style={{ textAlign: "right", display: "block", fontSize: theme.typography.smallFont }}>$ {params.row.total_paid !== null ? parseFloat(params.row.total_paid).toFixed(2) : parseFloat(0).toFixed(2)}</span>
       ),
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
@@ -683,6 +698,8 @@ const ManagerProfitability = ({
 }
 
 
+
+
   return (
     <>
       <Box
@@ -829,6 +846,21 @@ const ManagerProfitability = ({
                 <Button
                   sx={{
                     width: "90px",
+                    backgroundColor: tab === "by_sort" ? "#3D5CAC" : "#9EAED6",
+                    textTransform: "none",
+                    "&:hover": {
+                      backgroundColor: tab === "by_sort" ? "#3D5CAC" : "#9EAED6",
+                    },
+                  }}
+                  onClick={() => handleSelectTab("by_sort")}
+                >
+                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit By Type</Typography>
+                </Button>
+              </Grid>
+              <Grid container justifyContent='center' item xs={2} marginRight={6}>
+                <Button
+                  sx={{
+                    width: "90px",
                     backgroundColor: tab === "by_cashflow" ? "#3D5CAC" : "#9EAED6",
                     textTransform: "none",
                     "&:hover": {
@@ -852,37 +884,7 @@ const ManagerProfitability = ({
                   }}
                   onClick={() => handleSelectTab("type")}
                 >
-                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Type</Typography>
-                </Button>
-              </Grid>
-              <Grid container justifyContent='center' item xs={2} marginRight={6}>
-                <Button
-                  sx={{
-                    width: "200px",
-                    backgroundColor: tab === "by_type" ? "#3D5CAC" : "#9EAED6",
-                    textTransform: "none",
-                    "&:hover": {
-                      backgroundColor: tab === "by_type" ? "#3D5CAC" : "#9EAED6",
-                    },
-                  }}
-                  onClick={() => handleSelectTab("by_type")}
-                >
-                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Type</Typography>
-                </Button>
-              </Grid>
-              <Grid container justifyContent='center' item xs={2} marginRight={6}>
-                <Button
-                  sx={{
-                    width: "90px",
-                    backgroundColor: tab === "by_sort" ? "#3D5CAC" : "#9EAED6",
-                    textTransform: "none",
-                    "&:hover": {
-                      backgroundColor: tab === "by_sort" ? "#3D5CAC" : "#9EAED6",
-                    },
-                  }}
-                  onClick={() => handleSelectTab("by_sort")}
-                >
-                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Sort</Typography>
+                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Cashflow By Type</Typography>
                 </Button>
               </Grid>
             </Grid>
@@ -951,13 +953,13 @@ const ManagerProfitability = ({
                               <Grid container justifyContent='flex-start' item xs={8}>
                                 <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}
+                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}
                                       onClick={(e) => handleViewPropertyClick(e, property?.propertyInfo?.property_id)}
                                     >
                                       {`${property?.propertyInfo?.property_address}`} {property?.propertyInfo?.property_unit && ", Unit - "}
                                       {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
                                     </Typography>
-                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, marginLeft: 10 }}>
+                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, marginLeft: 10, fontSize: theme.typography.smallFont }}>
                                       {`${property?.propertyInfo?.property_id}`}
                                     </Typography>
                                     {/* <Button
@@ -977,12 +979,16 @@ const ManagerProfitability = ({
                                 </Grid>
                               </Grid>
                               <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
                                   ${property?.expectedProfit ? property?.expectedProfit?.toFixed(2) : "0.00"}
                                 </Typography>
                               </Grid>
                               <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                <Typography sx={{ 
+                                  color: property?.actualProfit !== property?.expectedProfit 
+                                        ? theme.palette.priority.high 
+                                        : theme.typography.common.blue, 
+                                  fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
                                   ${property?.actualProfit ? property?.actualProfit?.toFixed(2) : "0.00"}
                                 </Typography>
                               </Grid>
@@ -1070,11 +1076,11 @@ const ManagerProfitability = ({
                               <Grid container justifyContent='flex-start' item xs={8}>
                                 <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
                                       {`${property?.propertyInfo?.property_address},`} {property?.propertyInfo?.property_unit && "Unit - "}
                                       {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
                                     </Typography>
-                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, marginLeft: 10 }}>
+                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, marginLeft: 10, fontSize: theme.typography.smallFont }}>
                                       {`${property?.propertyInfo?.property_id}`}
                                     </Typography>
                                   </AccordionSummary>
@@ -1082,12 +1088,15 @@ const ManagerProfitability = ({
                               </Grid>
 
                               <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
                                   ${property?.totalExpected ? property?.totalExpected?.toFixed(2) : "0.00"}
                                 </Typography>
                               </Grid>
                               <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                <Typography sx={{ color: property?.totalActual !== property?.totalExpected 
+                                    ? theme.palette.priority.high 
+                                    : theme.typography.common.blue, 
+                                    fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
                                   ${property?.totalActual ? property?.totalActual?.toFixed(2) : "0.00"}
                                 </Typography>
                               </Grid>
@@ -1166,23 +1175,26 @@ const ManagerProfitability = ({
                               <Grid container justifyContent='flex-start' item xs={8}>
                                 <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
                                       {`${property?.propertyInfo?.property_address},`} {property?.propertyInfo?.property_unit && "Unit - "}
                                       {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
                                     </Typography>
-                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, marginLeft: 10 }}>
+                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, marginLeft: 10, fontSize: theme.typography.smallFont }}>
                                       {`${property?.propertyInfo?.property_id}`}
                                     </Typography>
                                   </AccordionSummary>
                                 </Grid>
                               </Grid>
                               <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
                                   ${property?.totalExpected ? property?.totalExpected?.toFixed(2) : "0.00"}
                                 </Typography>
                               </Grid>
                               <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                <Typography sx={{ color: property?.totalActual !== property?.totalExpected 
+                                    ? theme.palette.priority.high 
+                                    : theme.typography.common.blue, 
+                                    fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
                                   ${property?.totalActual ? property?.totalActual?.toFixed(2) : "0.00"}
                                 </Typography>
                               </Grid>
@@ -1214,6 +1226,556 @@ const ManagerProfitability = ({
               </Accordion>
             </>
           )}
+
+          {tab === "type" && (<>
+            
+            {/* For Cashflow */}
+            <Accordion
+              sx={{
+                backgroundColor: theme.palette.primary.main,
+                boxShadow: "none",
+              }}
+              expanded={cashflowExpand}
+              onChange={()=>{
+                setCashflowExpand((prev) => !prev)
+              }}
+            >
+              <Grid container item xs={12}>
+                <Grid container justifyContent='flex-start' item xs={8}>
+                  <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                      <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month} Cashflow</Typography>
+                    </AccordionSummary>
+                  </Grid>
+                </Grid>
+                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                  <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                      ${cashFlowtotal && cashFlowtotal?.totalExpectedProfit ? cashFlowtotal?.totalExpectedProfit?.toFixed(2) : "0.00"}
+                  </Typography>
+                </Grid>
+                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                    ${cashFlowtotal && cashFlowtotal?.totalActualProfit ? cashFlowtotal?.totalActualProfit?.toFixed(2) : "0.00"}
+                  </Typography>
+                </Grid>
+              </Grid>
+
+
+              <AccordionDetails>
+                {/* <RevenueTable totalRevenueByType={revenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/>             */}
+                <NewStatmentTableForByCashflow
+                  uid={uid}
+                  categoryTotalMapping={totalCashflowValueByType}
+                  allItems={allCashflowData}
+                  activeView={"ExpectedCashflow"}
+                  tableType='Profit'
+                  categoryExpectedTotalMapping={expectedCashflowValueByType}
+                  month={month}
+                  year={year}
+                />
+              </AccordionDetails>
+            </Accordion>
+            
+            {/* For Revenue */}
+            <Accordion
+              sx={{
+                backgroundColor: theme.palette.primary.main,
+                boxShadow: "none",
+              }}
+              expanded={cashflowRevenueExpand}
+              onChange={()=>{
+                setCashflowRevenueExpand((prev) => !prev)
+              }}
+            >
+              <Grid container item xs={12}>
+                <Grid container justifyContent='flex-start' item xs={8}>
+                  <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                      <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month} Revenue</Typography>
+                    </AccordionSummary>
+                  </Grid>
+                </Grid>
+                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                  <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                      ${" "}
+                      {"ExpectedCashflow" === "Cashflow"
+                        ? totalRevenueByMonth
+                          ? totalRevenueByMonth.toFixed(2)
+                          : "0.00"
+                        : expectedRevenueByMonth
+                        ? expectedRevenueByMonth.toFixed(2)
+                        : "0.00"}
+                  </Typography>
+                </Grid>
+                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                    ${" "}
+                    {"Cashflow" === "Cashflow" ? (totalRevenueByMonth ? totalRevenueByMonth.toFixed(2) : "0.00") : expectedRevenueByMonth ? expectedRevenueByMonth.toFixed(2) : "0.00"}
+                  </Typography>
+                </Grid>
+              </Grid>
+
+
+              <AccordionDetails>
+                {/* <RevenueTable totalRevenueByType={revenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/>             */}
+                <NewStatmentTableForByCashflow
+
+                  uid={uid}
+                  categoryTotalMapping={revenueByTypeForView}
+                  allItems={revenueList}
+                  activeView={"ExpectedCashflow"}
+                  tableType='Revenue'
+                  categoryExpectedTotalMapping={expectedRevenueByTypeForView}
+                  month={month}
+                  year={year}
+                />
+              </AccordionDetails>
+            </Accordion>
+
+            {/* For expense */}
+            <Accordion
+              sx={{
+                backgroundColor: theme.palette.primary.main,
+                boxShadow: "none",
+              }}
+              expanded={cashflowExpenseExpand}
+              onChange={()=>{
+                setCashflowExpanseExpand((prev) => !prev)
+              }}
+            >
+              <Grid container item xs={12}>
+                <Grid container justifyContent='flex-start' item xs={8}>
+                  <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                      <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month} Expense</Typography>
+                    </AccordionSummary>
+                  </Grid>
+                </Grid>
+                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                  <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                    ${" "}
+                    {"ExpectedCashflow" === "Cashflow"
+                      ? totalExpenseByMonth
+                        ? totalExpenseByMonth.toFixed(2)
+                        : "0.00"
+                      : expectedExpenseByMonth
+                      ? expectedExpenseByMonth.toFixed(2)
+                      : "0.00"}
+                  </Typography>
+                </Grid>
+                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                  <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                    ${" "}
+                    {"Cashflow" === "Cashflow"
+                      ? totalExpenseByMonth
+                        ? totalExpenseByMonth.toFixed(2)
+                        : "0.00"
+                      : expectedExpenseByMonth
+                      ? expectedExpenseByMonth.toFixed(2)
+                      : "0.00"}
+                  </Typography>
+                </Grid>
+              </Grid>
+
+              <AccordionDetails>
+                <NewStatmentTableForByCashflow
+                  categoryTotalMapping={expenseByTypeForView}
+                  allItems={expenseList}
+                  activeView={"ExpectedCashflow"}
+                  tableType='Expense'
+                  categoryExpectedTotalMapping={expectedExpenseByTypeForView}
+                  month={month}
+                  year={year}
+                />
+              </AccordionDetails>
+            </Accordion>
+          </>)}
+
+          {tab === "profit" && (<>
+            <Accordion
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  boxShadow: "none",
+                }}
+                expanded={profitsExpanded}
+                onChange={() => setProfitsExpanded((prevState) => !prevState)}
+              >
+                <Grid container item xs={12}>
+                  <Grid container justifyContent='flex-start' item xs={8}>
+                    <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month}</Typography>
+                      </AccordionSummary>
+                    </Grid>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                      ${totalRevenueData && totalRevenueData?.totalExpected ? totalRevenueData?.totalExpected?.toFixed(2) : "0.00"}
+                    </Typography>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                      ${totalRevenueData && totalRevenueData?.totalActual ? totalRevenueData?.totalActual?.toFixed(2) : "0.00"}
+                    </Typography>
+                  </Grid>
+                </Grid>
+
+                <AccordionDetails>
+                  {revenueDataForManager &&
+                    Object.keys(revenueDataForManager)?.map((propertyUID, index) => {
+                      const property = revenueDataForManager[propertyUID];
+                      // console.log("property - ", property);
+                      return (
+                        <>
+                          <Accordion
+                            sx={{
+                              backgroundColor: theme.palette.primary.main,
+                              boxShadow: "none",
+                              marginY: "10px"
+                            }}
+                            key={index}
+                          >
+                            <Grid container item xs={12}>
+                              <Grid container justifyContent='flex-start' item xs={8}>
+                                <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont}}
+                                      onClick={(e) => handleViewPropertyClick(e, property?.propertyInfo?.property_id)}
+                                    >
+                                      {`${property?.propertyInfo?.property_address}`} {property?.propertyInfo?.property_unit && ", Unit - "}
+                                      {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
+                                    </Typography>
+                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, marginLeft: 10, fontSize: theme.typography.smallFont }}>
+                                      {`${property?.propertyInfo?.property_id}`}
+                                    </Typography>
+                                  </AccordionSummary>
+                                </Grid>
+                              </Grid>
+                              <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                                <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
+                                  ${property?.totalExpected ? property?.totalExpected?.toFixed(2) : "0.00"}
+                                </Typography>
+                              </Grid>
+                              <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                                <Typography sx={{ color: property?.totalActual !== property?.totalExpected ? theme.palette.priority.high : "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
+                                  ${property?.totalActual ? property?.totalActual?.toFixed(2) : "0.00"}
+                                </Typography>
+                              </Grid>
+                            </Grid>
+
+                            {/* <AccordionDetails>
+                              <Grid container item xs={12}>
+                                <Grid item xs={12}>
+                                    <Typography sx={{fontWeight: 'bold', color: "#160449"}}>
+                                        Unpaid Rent
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12}>
+                                  {getNewDataGrid(property?.rentItems)}
+                                </Grid>
+                              </Grid>
+                              <Grid container item xs={12}>
+                                <Grid item xs={12}>
+                                    <Typography sx={{fontWeight: 'bold', color: "#160449"}}>
+                                        Unverified
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} marginY={10}>
+                                  <BalanceDetailsTable data={property?.payments} selectedPurchaseRow={""} setPaymentData={setPaymentData} setSelectedPayments={setSelectedPayments} selectedProperty={selectedProperty} sortBy={sortBy}/>
+                                </Grid>
+                              </Grid>
+                              <Grid container item xs={12}>
+                                <Grid item xs={12}>
+                                    <Typography sx={{fontWeight: 'bold', color: "#160449"}}>
+                                        Pay Owner
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} marginY={10}>
+                                  <TransactionsTable data={property.rentItems} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems}/>
+                                </Grid>
+                              </Grid>
+                            </AccordionDetails> */}
+                            <AccordionDetails>
+                              <Grid container item xs={12} direction="column" justifyContent="space-between" style={{ height: '100%' }}>
+                                
+                                {/* Unpaid Rent Section */}
+                                <Grid container item marginY={10}>
+                                  <Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}>
+                                    Unpaid Rent
+                                  </Typography>
+                                  <Grid item xs={12} sx={{ overflowX: "auto" }}>
+                                    {GetNewDataGrid(property?.rentItems)}
+                                  </Grid>
+                                </Grid>
+
+                                {/* Unverified Section */}
+                                <Grid container item marginY={10}>
+                                  <Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}>
+                                    Unverified
+                                  </Typography>
+                                  <BalanceDetailsTable 
+                                    data={property?.payments !== undefined ? property?.payments : []} 
+                                    revenueData={property?.rentItems}
+                                    selectedPurchaseRow={""} 
+                                    setPaymentData={setPaymentData} 
+                                    setSelectedPayments={setSelectedPayments} 
+                                    selectedProperty={selectedProperty}
+                                    fetchPaymentsData={fecthPaymentVerification} 
+                                    sortBy={sortBy}
+                                  />
+                                </Grid>
+
+                                {/* Pay Owner Section */}
+                                <Grid container item>
+                                  <Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}>
+                                    Pay Owner
+                                  </Typography>
+                                  <TransactionsTable 
+                                    data={property?.rentItems? property.rentItems : []} 
+                                    total={total} 
+                                    setTotal={setTotal} 
+                                    setPaymentData={setPaymentData} 
+                                    setSelectedItems={setSelectedItems}
+                                  />
+                                </Grid>
+
+                              </Grid>
+                            </AccordionDetails>
+                          </Accordion>
+                        </>
+                      );
+                    })
+                  }
+                </AccordionDetails>
+
+            </Accordion>
+
+            <Box width={"100%"} height={"20px"}>
+              <hr></hr>
+            </Box>
+
+            <Accordion
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  boxShadow: "none",
+                }}
+                expanded={revenueExpanded}
+                onChange={() => setRevenueExpanded((prevState) => !prevState)}
+              >
+                <Grid container item xs={12} marginBottom={10}>
+                  <Grid container justifyContent='flex-start' item xs={8}>
+                    <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>Deposits Collected</Typography>
+                      </AccordionSummary>
+                    </Grid>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                      ${totalDeposit && totalDeposit?.totalExpected ? totalDeposit?.totalExpected?.toFixed(2) : "0.00"}
+                    </Typography>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                      ${totalDeposit && totalDeposit?.totalActual ? totalDeposit?.totalActual?.toFixed(2) : "0.00"}
+                    </Typography>
+                  </Grid>
+                </Grid>
+
+                <AccordionDetails>
+                  {totalDepositByProperty &&
+                    Object.keys(totalDepositByProperty)?.map((propertyUID, index) => {
+                      const property = totalDepositByProperty[propertyUID];
+                      // console.log("property - ", property);
+                      return (
+                        <>
+                          <Accordion
+                            sx={{
+                              backgroundColor: theme.palette.primary.main,
+                              boxShadow: "none",
+                            }}
+                            key={index}
+                          >
+                            <Grid container item xs={12}>
+                              <Grid container justifyContent='flex-start' item xs={8}>
+                                <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }} onClick={(e) => handleViewPropertyClick(e, property?.propertyInfo?.property_id)}>
+                                      {`${property?.propertyInfo?.property_address}`} {property?.propertyInfo?.property_unit && ", Unit - "}
+                                      {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
+                                    </Typography>
+                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, marginLeft: 5, fontSize: theme.typography.smallFont }}>
+                                      {`${property?.propertyInfo?.property_id}`}
+                                    </Typography>
+                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, marginLeft: 5, fontSize: theme.typography.smallFont }}>
+                                      {`(${property?.rentItems[0]?.cf_month_num}, ${property?.rentItems[0]?.cf_year})`}
+                                    </Typography>
+                                  </AccordionSummary>
+                                </Grid>
+                              </Grid>
+                              <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
+                                  ${property?.totalExpected ? property?.totalExpected?.toFixed(2) : "0.00"}
+                                </Typography>
+                              </Grid>
+                              <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                                <Typography sx={{ color: property?.totalActual !== property?.totalExpected ? theme.palette.priority.high : theme.typography.common.blue,  fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
+                                  ${property?.totalActual ? property?.totalActual?.toFixed(2) : "0.00"}
+                                </Typography>
+                              </Grid>
+                            </Grid>
+
+                            <AccordionDetails>
+                              <Grid container item xs={12}>
+                                {getDataGrid(property?.rentItems)}
+                              </Grid>
+                            </AccordionDetails>
+                          </Accordion>
+                        </>
+                      );
+                    })}
+                </AccordionDetails>
+            </Accordion>
+          </>)}
+
+          {tab === "by_type" && (
+            <>
+              <Accordion
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  boxShadow: "none",
+                }}
+                expanded={profitsExpanded}
+                onChange={() => {
+                  setProfitsExpanded((prevState) => !prevState);
+                }}
+              >
+                {/* This is Revenue Bar underneath the Yellow Expected Cashflow box */}
+                <Grid container item xs={12}>
+                  <Grid container justifyContent='flex-start' item xs={8}>
+                    <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month}</Typography>
+                      </AccordionSummary>
+                    </Grid>
+                  </Grid>
+                  {/* <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}> */}
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                      ${profitsTotal && profitsTotal?.totalExpectedProfit ? profitsTotal?.totalExpectedProfit?.toFixed(2) : "0.00"}
+                    </Typography>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                      ${profitsTotal && profitsTotal?.totalActualProfit ? profitsTotal?.totalActualProfit?.toFixed(2) : "0.00"}
+                    </Typography>
+                  </Grid>
+                </Grid>
+
+                <AccordionDetails>
+                  <StatementTable
+                    categoryTotalMapping={getTotalValueByTypeMapping}
+                    allItems={allProfitDataItems}
+                    activeView={"ExpectedCashflow"}
+                    tableType='Profit'
+                    categoryExpectedTotalMapping={getExpectedTotalByTypeMapping}
+                    month={month}
+                    year={year}
+                  />
+                </AccordionDetails>
+              </Accordion>
+
+              {/*<Accordion
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  boxShadow: "none",
+                }}
+                expanded={revenueExpanded}
+                onChange={() => {
+                  setRevenueExpanded((prevState) => !prevState);
+                }}
+              >
+                <Grid container item xs={12}>
+                  <Grid container justifyContent='flex-start' item xs={8}>
+                    <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month} Revenue</Typography>
+                      </AccordionSummary>
+                    </Grid>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                      ${rentsTotal && rentsTotal?.totalExpected ? rentsTotal?.totalExpected?.toFixed(2) : "0.00"}
+                    </Typography>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                      ${rentsTotal && rentsTotal?.totalActual ? rentsTotal?.totalActual?.toFixed(2) : "0.00"}
+                    </Typography>
+                  </Grid>
+                </Grid>
+
+                <AccordionDetails> */}
+              {/* <RevenueTable totalRevenueByType={revenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/> */}
+              {/* <StatementTable
+                    categoryTotalMapping={revenueByType}
+                    allItems={revenueList}
+                    activeView={"ExpectedCashflow"}
+                    tableType="Revenue"
+                    categoryExpectedTotalMapping={expectedRevenueByType}
+                    month={month}
+                    year={year}
+                  />
+                  
+                </AccordionDetails>
+              </Accordion> */}
+
+              {/* <Accordion
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  boxShadow: "none",
+                }}
+                expanded={expenseExpanded}
+                onChange={() => {
+                  setExpenseExpanded((prevState) => !prevState);
+                }}
+              >
+                <Grid container item xs={12}>
+                  <Grid container justifyContent='flex-start' item xs={8}>
+                    <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month} Expense</Typography>
+                      </AccordionSummary>
+                    </Grid>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                      ${payoutsTotal && payoutsTotal?.totalExpected ? payoutsTotal?.totalExpected?.toFixed(2) : "0.00"}
+                    </Typography>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                      ${payoutsTotal && payoutsTotal?.totalActual ? payoutsTotal?.totalActual?.toFixed(2) : "0.00"}
+                    </Typography>
+                  </Grid>
+                </Grid>
+
+                <AccordionDetails>
+                  <StatementTable
+                    categoryTotalMapping={expenseByType}
+                    allItems={expenseList}
+                    activeView={"ExpectedCashflow"}
+                    tableType='Expense'
+                    categoryExpectedTotalMapping={expectedExpenseByType}
+                    month={month}
+                    year={year}
+                  />
+                </AccordionDetails>
+              </Accordion> */}
+            </>
+          )}
+
+
 
           {tab === "by_property" && (
             <>
@@ -1527,143 +2089,6 @@ const ManagerProfitability = ({
             </>
           )}
 
-          {tab === "by_type" && (
-            <>
-              <Accordion
-                sx={{
-                  backgroundColor: theme.palette.primary.main,
-                  boxShadow: "none",
-                }}
-                expanded={profitsExpanded}
-                onChange={() => {
-                  setProfitsExpanded((prevState) => !prevState);
-                }}
-              >
-                {/* This is Revenue Bar underneath the Yellow Expected Cashflow box */}
-                <Grid container item xs={12}>
-                  <Grid container justifyContent='flex-start' item xs={8}>
-                    <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
-                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month}</Typography>
-                      </AccordionSummary>
-                    </Grid>
-                  </Grid>
-                  {/* <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ width: '200px',}}> */}
-                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                      ${profitsTotal && profitsTotal?.totalExpectedProfit ? profitsTotal?.totalExpectedProfit?.toFixed(2) : "0.00"}
-                    </Typography>
-                  </Grid>
-                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                      ${profitsTotal && profitsTotal?.totalActualProfit ? profitsTotal?.totalActualProfit?.toFixed(2) : "0.00"}
-                    </Typography>
-                  </Grid>
-                </Grid>
-
-                <AccordionDetails>
-                  <StatementTable
-                    categoryTotalMapping={getTotalValueByTypeMapping}
-                    allItems={allProfitDataItems}
-                    activeView={"ExpectedCashflow"}
-                    tableType='Profit'
-                    categoryExpectedTotalMapping={getExpectedTotalByTypeMapping}
-                    month={month}
-                    year={year}
-                  />
-                </AccordionDetails>
-              </Accordion>
-
-              {/*<Accordion
-                sx={{
-                  backgroundColor: theme.palette.primary.main,
-                  boxShadow: "none",
-                }}
-                expanded={revenueExpanded}
-                onChange={() => {
-                  setRevenueExpanded((prevState) => !prevState);
-                }}
-              >
-                <Grid container item xs={12}>
-                  <Grid container justifyContent='flex-start' item xs={8}>
-                    <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
-                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month} Revenue</Typography>
-                      </AccordionSummary>
-                    </Grid>
-                  </Grid>
-                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                      ${rentsTotal && rentsTotal?.totalExpected ? rentsTotal?.totalExpected?.toFixed(2) : "0.00"}
-                    </Typography>
-                  </Grid>
-                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                      ${rentsTotal && rentsTotal?.totalActual ? rentsTotal?.totalActual?.toFixed(2) : "0.00"}
-                    </Typography>
-                  </Grid>
-                </Grid>
-
-                <AccordionDetails> */}
-              {/* <RevenueTable totalRevenueByType={revenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/> */}
-              {/* <StatementTable
-                    categoryTotalMapping={revenueByType}
-                    allItems={revenueList}
-                    activeView={"ExpectedCashflow"}
-                    tableType="Revenue"
-                    categoryExpectedTotalMapping={expectedRevenueByType}
-                    month={month}
-                    year={year}
-                  />
-                  
-                </AccordionDetails>
-              </Accordion> */}
-
-              {/* <Accordion
-                sx={{
-                  backgroundColor: theme.palette.primary.main,
-                  boxShadow: "none",
-                }}
-                expanded={expenseExpanded}
-                onChange={() => {
-                  setExpenseExpanded((prevState) => !prevState);
-                }}
-              >
-                <Grid container item xs={12}>
-                  <Grid container justifyContent='flex-start' item xs={8}>
-                    <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
-                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month} Expense</Typography>
-                      </AccordionSummary>
-                    </Grid>
-                  </Grid>
-                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                      ${payoutsTotal && payoutsTotal?.totalExpected ? payoutsTotal?.totalExpected?.toFixed(2) : "0.00"}
-                    </Typography>
-                  </Grid>
-                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                      ${payoutsTotal && payoutsTotal?.totalActual ? payoutsTotal?.totalActual?.toFixed(2) : "0.00"}
-                    </Typography>
-                  </Grid>
-                </Grid>
-
-                <AccordionDetails>
-                  <StatementTable
-                    categoryTotalMapping={expenseByType}
-                    allItems={expenseList}
-                    activeView={"ExpectedCashflow"}
-                    tableType='Expense'
-                    categoryExpectedTotalMapping={expectedExpenseByType}
-                    month={month}
-                    year={year}
-                  />
-                </AccordionDetails>
-              </Accordion> */}
-            </>
-          )}
-
           {tab === "by_sort" && (
             <>
               <Accordion
@@ -1800,375 +2225,7 @@ const ManagerProfitability = ({
               </Accordion> */}
             </>
           )}
-
-          {tab === "profit" && (<>
-            <Accordion
-                sx={{
-                  backgroundColor: theme.palette.primary.main,
-                  boxShadow: "none",
-                }}
-                expanded={profitsExpanded}
-                onChange={() => setProfitsExpanded((prevState) => !prevState)}
-              >
-                <Grid container item xs={12}>
-                  <Grid container justifyContent='flex-start' item xs={8}>
-                    <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
-                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month}</Typography>
-                      </AccordionSummary>
-                    </Grid>
-                  </Grid>
-                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                      ${totalRevenueData && totalRevenueData?.totalExpected ? totalRevenueData?.totalExpected?.toFixed(2) : "0.00"}
-                    </Typography>
-                  </Grid>
-                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                      ${totalRevenueData && totalRevenueData?.totalActual ? totalRevenueData?.totalActual?.toFixed(2) : "0.00"}
-                    </Typography>
-                  </Grid>
-                </Grid>
-
-                <AccordionDetails>
-                  {revenueDataForManager &&
-                    Object.keys(revenueDataForManager)?.map((propertyUID, index) => {
-                      const property = revenueDataForManager[propertyUID];
-                      // console.log("property - ", property);
-                      return (
-                        <>
-                          <Accordion
-                            sx={{
-                              backgroundColor: theme.palette.primary.main,
-                              boxShadow: "none",
-                              marginY: "10px"
-                            }}
-                            key={index}
-                          >
-                            <Grid container item xs={12}>
-                              <Grid container justifyContent='flex-start' item xs={8}>
-                                <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
-                                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight}}
-                                      onClick={(e) => handleViewPropertyClick(e, property?.propertyInfo?.property_id)}
-                                    >
-                                      {`${property?.propertyInfo?.property_address}`} {property?.propertyInfo?.property_unit && ", Unit - "}
-                                      {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
-                                    </Typography>
-                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, marginLeft: 10, fontSize: theme.typography.smallFont }}>
-                                      {`${property?.propertyInfo?.property_id}`}
-                                    </Typography>
-                                  </AccordionSummary>
-                                </Grid>
-                              </Grid>
-                              <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                  ${property?.totalExpected ? property?.totalExpected?.toFixed(2) : "0.00"}
-                                </Typography>
-                              </Grid>
-                              <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                  ${property?.totalActual ? property?.totalActual?.toFixed(2) : "0.00"}
-                                </Typography>
-                              </Grid>
-                            </Grid>
-
-                            {/* <AccordionDetails>
-                              <Grid container item xs={12}>
-                                <Grid item xs={12}>
-                                    <Typography sx={{fontWeight: 'bold', color: "#160449"}}>
-                                        Unpaid Rent
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={12}>
-                                  {getNewDataGrid(property?.rentItems)}
-                                </Grid>
-                              </Grid>
-                              <Grid container item xs={12}>
-                                <Grid item xs={12}>
-                                    <Typography sx={{fontWeight: 'bold', color: "#160449"}}>
-                                        Unverified
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={12} marginY={10}>
-                                  <BalanceDetailsTable data={property?.payments} selectedPurchaseRow={""} setPaymentData={setPaymentData} setSelectedPayments={setSelectedPayments} selectedProperty={selectedProperty} sortBy={sortBy}/>
-                                </Grid>
-                              </Grid>
-                              <Grid container item xs={12}>
-                                <Grid item xs={12}>
-                                    <Typography sx={{fontWeight: 'bold', color: "#160449"}}>
-                                        Pay Owner
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={12} marginY={10}>
-                                  <TransactionsTable data={property.rentItems} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems}/>
-                                </Grid>
-                              </Grid>
-                            </AccordionDetails> */}
-                            <AccordionDetails>
-                              <Grid container item xs={12} direction="column" justifyContent="space-between" style={{ height: '100%' }}>
-                                
-                                {/* Unpaid Rent Section */}
-                                <Grid container item marginY={10}>
-                                  <Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}>
-                                    Unpaid Rent
-                                  </Typography>
-                                  <Grid item xs={12} sx={{ overflowX: "auto" }}>
-                                    {GetNewDataGrid(property?.rentItems)}
-                                  </Grid>
-                                </Grid>
-
-                                {/* Unverified Section */}
-                                <Grid container item marginY={10}>
-                                  <Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}>
-                                    Unverified
-                                  </Typography>
-                                  <BalanceDetailsTable 
-                                    data={property?.payments !== undefined ? property?.payments : []} 
-                                    revenueData={property?.rentItems}
-                                    selectedPurchaseRow={""} 
-                                    setPaymentData={setPaymentData} 
-                                    setSelectedPayments={setSelectedPayments} 
-                                    selectedProperty={selectedProperty}
-                                    fetchPaymentsData={fecthPaymentVerification} 
-                                    sortBy={sortBy}
-                                  />
-                                </Grid>
-
-                                {/* Pay Owner Section */}
-                                <Grid container item>
-                                  <Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}>
-                                    Pay Owner
-                                  </Typography>
-                                  <TransactionsTable 
-                                    data={property?.rentItems? property.rentItems : []} 
-                                    total={total} 
-                                    setTotal={setTotal} 
-                                    setPaymentData={setPaymentData} 
-                                    setSelectedItems={setSelectedItems}
-                                  />
-                                </Grid>
-
-                              </Grid>
-                            </AccordionDetails>
-                          </Accordion>
-                        </>
-                      );
-                    })
-                  }
-                </AccordionDetails>
-
-            </Accordion>
-
-            <Box width={"100%"} height={"20px"}>
-              <hr></hr>
-            </Box>
-
-            <Accordion
-                sx={{
-                  backgroundColor: theme.palette.primary.main,
-                  boxShadow: "none",
-                }}
-                expanded={revenueExpanded}
-                onChange={() => setRevenueExpanded((prevState) => !prevState)}
-              >
-                <Grid container item xs={12} marginBottom={10}>
-                  <Grid container justifyContent='flex-start' item xs={8}>
-                    <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
-                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>Deposits Collected</Typography>
-                      </AccordionSummary>
-                    </Grid>
-                  </Grid>
-                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                      ${totalDeposit && totalDeposit?.totalExpected ? totalDeposit?.totalExpected?.toFixed(2) : "0.00"}
-                    </Typography>
-                  </Grid>
-                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                      ${totalDeposit && totalDeposit?.totalActual ? totalDeposit?.totalActual?.toFixed(2) : "0.00"}
-                    </Typography>
-                  </Grid>
-                </Grid>
-
-                <AccordionDetails>
-                  {totalDepositByProperty &&
-                    Object.keys(totalDepositByProperty)?.map((propertyUID, index) => {
-                      const property = totalDepositByProperty[propertyUID];
-                      // console.log("property - ", property);
-                      return (
-                        <>
-                          <Accordion
-                            sx={{
-                              backgroundColor: theme.palette.primary.main,
-                              boxShadow: "none",
-                            }}
-                            key={index}
-                          >
-                            <Grid container item xs={12}>
-                              <Grid container justifyContent='flex-start' item xs={8}>
-                                <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
-                                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
-                                      {`${property?.propertyInfo?.property_address}`} {property?.propertyInfo?.property_unit && ", Unit - "}
-                                      {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
-                                    </Typography>
-                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, marginLeft: 5, fontSize: theme.typography.smallFont }}>
-                                      {`${property?.propertyInfo?.property_id}`}
-                                    </Typography>
-                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, marginLeft: 5, fontSize: theme.typography.smallFont }}>
-                                      {`(${property?.rentItems[0]?.cf_month_num}, ${property?.rentItems[0]?.cf_year})`}
-                                    </Typography>
-                                    <Button
-                                      sx={{
-                                        padding: "0px",
-                                        marginLeft: "5px",
-                                        color: "#160449",
-                                        "&:hover": {
-                                          color: "#FFFFFF",
-                                        },
-                                      }}
-                                      onClick={(e) => handleViewPropertyClick(e, property?.propertyInfo?.property_id)}
-                                    >
-                                      <Typography sx={{ fontWeight: theme.typography.common.fontWeight, textTransform: "none", fontSize: theme.typography.smallFont }}>
-                                        View
-                                      </Typography>
-                                    </Button>
-                                  </AccordionSummary>
-                                </Grid>
-                              </Grid>
-                              <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                  ${property?.totalExpected ? property?.totalExpected?.toFixed(2) : "0.00"}
-                                </Typography>
-                              </Grid>
-                              <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                  ${property?.totalActual ? property?.totalActual?.toFixed(2) : "0.00"}
-                                </Typography>
-                              </Grid>
-                            </Grid>
-
-                            <AccordionDetails>
-                              <Grid container item xs={12}>
-                                {getDataGrid(property?.rentItems)}
-                              </Grid>
-                            </AccordionDetails>
-                          </Accordion>
-                        </>
-                      );
-                    })}
-                </AccordionDetails>
-            </Accordion>
-          </>)}
-
-          {tab === "type" && (<>
-            {/* For Revenue */}
-            <Accordion
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                boxShadow: "none",
-              }}
-            >
-              <Grid container item xs={12}>
-                <Grid container justifyContent='flex-start' item xs={8}>
-                  <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>{month} Revenue</Typography>
-                    </AccordionSummary>
-                  </Grid>
-                </Grid>
-                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                      ${" "}
-                      {"ExpectedCashflow" === "Cashflow"
-                        ? totalRevenueByMonth
-                          ? totalRevenueByMonth.toFixed(2)
-                          : "0.00"
-                        : expectedRevenueByMonth
-                        ? expectedRevenueByMonth.toFixed(2)
-                        : "0.00"}
-                  </Typography>
-                </Grid>
-                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                    ${" "}
-                    {"Cashflow" === "Cashflow" ? (totalRevenueByMonth ? totalRevenueByMonth.toFixed(2) : "0.00") : expectedRevenueByMonth ? expectedRevenueByMonth.toFixed(2) : "0.00"}
-                  </Typography>
-                </Grid>
-              </Grid>
-
-
-              <AccordionDetails>
-                {/* <RevenueTable totalRevenueByType={revenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/>             */}
-                <NewStatmentTable
-                  uid={uid}
-                  categoryTotalMapping={revenueByTypeForView}
-                  allItems={revenueList}
-                  activeView={"ExpectedCashflow"}
-                  tableType='Revenue'
-                  categoryExpectedTotalMapping={expectedRevenueByTypeForView}
-                  month={month}
-                  year={year}
-                />
-              </AccordionDetails>
-            </Accordion>
-
-            {/* For expense */}
-            <Accordion
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                boxShadow: "none",
-              }}
-            >
-              <Grid container item xs={12}>
-                <Grid container justifyContent='flex-start' item xs={8}>
-                  <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>{month} Expense</Typography>
-                    </AccordionSummary>
-                  </Grid>
-                </Grid>
-                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                    ${" "}
-                    {"ExpectedCashflow" === "Cashflow"
-                      ? totalExpenseByMonth
-                        ? totalExpenseByMonth.toFixed(2)
-                        : "0.00"
-                      : expectedExpenseByMonth
-                      ? expectedExpenseByMonth.toFixed(2)
-                      : "0.00"}
-                  </Typography>
-                </Grid>
-                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                    ${" "}
-                    {"Cashflow" === "Cashflow"
-                      ? totalExpenseByMonth
-                        ? totalExpenseByMonth.toFixed(2)
-                        : "0.00"
-                      : expectedExpenseByMonth
-                      ? expectedExpenseByMonth.toFixed(2)
-                      : "0.00"}
-                  </Typography>
-                </Grid>
-              </Grid>
-
-              <AccordionDetails>
-                <NewStatmentTable
-                  categoryTotalMapping={expenseByTypeForView}
-                  allItems={expenseList}
-                  activeView={"ExpectedCashflow"}
-                  tableType='Expense'
-                  categoryExpectedTotalMapping={expectedExpenseByTypeForView}
-                  month={month}
-                  year={year}
-                />
-              </AccordionDetails>
-            </Accordion>
-          </>)}
+          
         </Paper>
       </Box>
     </>
@@ -2341,10 +2398,10 @@ function StatementTable(props) {
                 </Typography>
               </TableCell>
               <TableCell>
-                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${item["pur_amount_due"] ? item["pur_amount_due"] : 0}</Typography>
+                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${item["pur_amount_due"] ? parseFloat(item["pur_amount_due"]).toFixed(2) : 0}</Typography>
               </TableCell>
               <TableCell>
-                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${item["total_paid"] ? item["total_paid"] : 0}</Typography>
+                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${item["total_paid"] ? parseFloat(item["total_paid"]).toFixed(2) : 0}</Typography>
               </TableCell>
             </TableRow>
           ) : (
@@ -2372,13 +2429,13 @@ function StatementTable(props) {
                   {/* {property.individual_purchase.map((p) => {
                       total_amount_due += (p.pur_amount_due? p.pur_amount_due : 0)
                   })} */}
-                  <Typography sx={{ fontSize: theme.typography.smallFont }}>${item.pur_amount_due ? item.pur_amount_due : 0}</Typography>
+                  <Typography sx={{ fontSize: theme.typography.smallFont }}>${item.pur_amount_due ? parseFloat(item.pur_amount_due).toFixed(2) : 0}</Typography>
                 </TableCell>
                 <TableCell align='right'>
                   {/* {property.individual_purchase.map((p) => {
                       total_amount_paid += (p.total_paid ? p.total_paid : 0)
                   })} */}
-                  <Typography sx={{ fontSize: theme.typography.smallFont, marginRight: "25px" }}>${item.total_paid ? item.total_paid : 0}</Typography>
+                  <Typography sx={{ fontSize: theme.typography.smallFont, marginRight: "25px" }}>${item.total_paid ? parseFloat(item.total_paid).toFixed(2) : 0}</Typography>
                 </TableCell>
               </TableRow>
             </React.Fragment>
@@ -2406,16 +2463,16 @@ function StatementTable(props) {
                     <TableHead>
                       <TableRow>
                         <TableCell>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: "#160449" }}>
                             {" "}
                             {category} {getCategoryCount(category, false)}{" "}
                           </Typography>
                         </TableCell>
                         <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? parseFloat(value).toFixed(2) : 0}</Typography>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: "#160449" }}>${value ? parseFloat(value).toFixed(2) : 0}</Typography>
                         </TableCell>
                         <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? parseFloat(value).toFixed(2) : 0}</Typography>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: value !== value ? theme.palette.priority.high : "#160449", }}>${value ? parseFloat(value).toFixed(2) : 0}</Typography>
                         </TableCell>
                       </TableRow>
                     </TableHead>
@@ -2446,18 +2503,18 @@ function StatementTable(props) {
                     <TableHead>
                       <TableRow>
                         <TableCell sx={{ width: "500px" }}>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: "#160449" }}>
                             {" "}
                             {category} {getCategoryCount(category, true)}{" "}
                           </Typography>
                         </TableCell>
                         <TableCell align='right'>
-                          <Typography sx={{ textAlign: "right", fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, width: "150px" }}>
+                          <Typography sx={{ textAlign: "right", fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, width: "150px", color: "#160449" }}>
                             ${value ? parseFloat(value).toFixed(2) : 0}
                           </Typography>
                         </TableCell>
                         <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: categoryTotalMapping[category] !== value ? theme.palette.priority.high : "#160449", }}>
                             ${categoryTotalMapping[category] ? parseFloat(categoryTotalMapping[category]).toFixed(2) : 0}
                           </Typography>
                         </TableCell>
@@ -2958,6 +3015,498 @@ function NewStatmentTable(props){
   );
 }
 
+function NewStatmentTableForByCashflow(props){
+  const navigate = useNavigate();
+
+  const activeView = props.activeView;
+  const tableType = props.tableType;
+
+  const month = props.month;
+  const year = props.year;
+
+  const categoryTotalMapping = props.categoryTotalMapping;
+  const allItems = props.allItems;
+
+  const categoryExpectedTotalMapping = props.categoryExpectedTotalMapping;
+  const allExpectedItems = [];
+
+  const navigateType = "/edit" + tableType;
+
+  function handleNavigation(type, item) {
+    navigate(type, { state: { itemToEdit: item, edit: true } });
+  }
+
+  
+
+  const getVerificationForManagerPayment = (pur) => {
+    const total_paid = pur.total_paid ? parseFloat(pur.total_paid) : 0;
+    let pur_amount_due = pur.pur_amount_due ? parseFloat(pur.pur_amount_due) : 0;
+    if (pur_amount_due < 0) {
+      pur_amount_due *= -1;
+    }
+
+    if (total_paid < pur_amount_due) {
+      return "manager";
+    } else if (total_paid > pur_amount_due) {
+      return "investigate";
+    } else if (total_paid === pur_amount_due) {
+      return "-";
+    }
+  };
+
+  const getVerificationForOwnerPayment = (pur) => {
+    const total_paid = pur.total_paid ? parseFloat(pur.total_paid) : 0;
+    const pur_amount_due = pur.pur_amount_due ? parseFloat(pur.pur_amount_due) : 0;
+    if (total_paid < pur_amount_due) {
+      return "owner";
+    } else if (total_paid > pur_amount_due) {
+      return "investigate";
+    } else if (total_paid === pur_amount_due) {
+      return "-";
+    }
+  };
+
+  const getVerificationForTenantPayment = (pur) => {
+    const total_paid = pur.total_paid ? parseFloat(pur.total_paid) : 0;
+    const pur_amount_due = pur.pur_amount_due ? parseFloat(pur.pur_amount_due) : 0;
+    if (total_paid < pur_amount_due) {
+      return "tenant";
+    } else if (total_paid > pur_amount_due) {
+      return "investigate";
+    } else if (total_paid === pur_amount_due) {
+      if (pur.verified) {
+        if (pur.verified === "verified") {
+          return "verified";
+        }
+      }
+      return "not verified";
+    }
+  };
+
+  const getVerificationStatus = (purchase) => {
+    // console.log("getVerificationStatus - purchase - ", purchase);
+    if (purchase.pur_payer?.startsWith("600")) {
+      return getVerificationForManagerPayment(purchase);
+    } else if (purchase.pur_payer?.startsWith("110")) {
+      return getVerificationForOwnerPayment(purchase);
+    } else if (purchase.pur_payer?.startsWith("350")) {
+      return getVerificationForTenantPayment(purchase);
+    } else {
+      return "invalid payer";
+    }
+  };
+
+  const getVerificationStatusColor = (status) => {
+    switch (status) {
+      case "owner":
+        return "#0000CC";
+        break;
+      case "manager":
+        return "#0000CC";
+        break;
+      case "tenant":
+        return "#FF0000";
+        break;
+      case "verified":
+        return "#43A843";
+        break;
+      case "not verified":
+        return "#FF8000";
+        break;
+      default:
+        return "#000000";
+        break;
+    }
+  };
+
+  const transactionCoulmn = [
+    {
+      field: "property_address",
+      headerName: "Address",
+      flex: 2,
+      renderCell: (params) => <span style={{fontSize: theme.typography.smallFont}}>{params.row.property_address !== null ? params.row.property_address : "-"}</span>,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "purchase_type",
+      headerName: "Type",
+      flex: 1,
+      renderCell: (params) => <span style={{fontSize: theme.typography.smallFont}}>{params.row.purchase_type !== null ? params.row.purchase_type : "-"}</span>,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    // {
+    //   field: "purchase_ids",
+    //   headerName: "Purchase Ids",
+    //   flex: 2,
+    //   renderCell: (params) => (
+    //     <Tooltip title={params.row.purchase_ids !== null ? JSON.parse(params.row.purchase_ids).join(", ") : "-"}>
+    //       <Typography
+    //         sx={{
+    //           whiteSpace: "nowrap",
+    //           overflow: "hidden",
+    //           textOverflow: "ellipsis",
+    //           maxWidth: "100%",
+    //         }}
+    //       >
+    //         {params.row.purchase_ids !== null ? JSON.parse(params.row.purchase_ids).join(", ") : "-"}
+    //       </Typography>
+    //     </Tooltip>
+    //   ),
+    //   renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    // },
+    {
+      field: "pur_group",
+      headerName: "Purchase Group",
+      flex: 1.5,
+      renderCell: (params) => (
+        <Tooltip title={params.row.pur_group !== null ? params.row.pur_group : "-"}>
+          <Typography
+            sx={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              maxWidth: "100%",
+              fontSize: theme.typography.smallFont
+            }}
+          >
+            {params.row.pur_group !== null ? params.row.pur_group : "-"}
+          </Typography>
+        </Tooltip>
+      ),
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "pur_payer",
+      headerName: "Payer",
+      flex: 1.5,
+      renderCell: (params) => (
+        <Tooltip title={params.row.pur_payer !== null ? params.row.pur_payer : "-"}>
+          <Typography
+            sx={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              maxWidth: "100%",
+              fontSize: theme.typography.smallFont
+            }}
+          >
+            {params.row.pur_payer !== null ? params.row.pur_payer : "-"}
+          </Typography>
+        </Tooltip>
+      ),
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "pur_receiver",
+      headerName: "Receiver",
+      flex: 1.5,
+      renderCell: (params) => (
+        <Tooltip title={params.row.pur_receiver !== null ? params.row.pur_receiver : "-"}>
+          <Typography
+            sx={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              maxWidth: "100%",
+              fontSize: theme.typography.smallFont
+            }}
+          >
+            {params.row.pur_receiver !== null ? params.row.pur_receiver : "-"}
+          </Typography>
+        </Tooltip>
+      ),
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "verified",
+      headerName: "Verified",
+      flex: 1.5,
+      renderCell: (params) => {
+        const verificationStatus = getVerificationStatus(params.row);
+        const fontColor = getVerificationStatusColor(verificationStatus);
+        return (
+          <Tooltip title={params.row.verified !== null ? params.row.verified : "-"}>
+            <Typography
+              sx={{
+                fontSize: theme.typography.smallFont,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxWidth: "100%",
+                color: fontColor,
+                cursor: verificationStatus === "not verified" ? "pointer" : "auto",
+              }}
+              onClick={() => {
+                if (verificationStatus === "not verified") {
+                  navigate("/paymentProcessing", { state: { currentWindow: "VERIFY_PAYMENTS", selectedPurchaseGroup: params.row.pur_group } });
+                }
+              }}
+            >
+              {/* {params.row.verified !== null ? params.row.verified : "-"} */}
+              {verificationStatus}
+            </Typography>
+          </Tooltip>
+        );
+      },
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "pur_amount_due",
+      headerName: "Expected",
+      flex: 1,
+      renderCell: (params) => <span style={{fontSize: theme.typography.smallFont}}>$ {params.row.pur_amount_due !== null ? parseFloat(params.row.pur_amount_due).toFixed(2) : parseFloat(0).toFixed(2)}</span>,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "total_paid",
+      headerName: "Actual",
+      flex: 1,
+      renderCell: (params) => (
+        <span style={{ textAlign: "right", display: "block", fontSize: theme.typography.smallFont }}>$ {params.row.total_paid !== null ? parseFloat(params.row.total_paid).toFixed(2) : parseFloat(0).toFixed(2)}</span>
+      ),
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+  ];
+
+  const getRowWithIds = (data) => {
+    const rowsId = data?.map((row, index) => ({
+      ...row,
+      id: row.id ? index : index,
+    }));
+
+    return rowsId;
+  };
+
+  const getDataGrid = (data) => {
+    const rows = getRowWithIds(data);
+
+    return (
+      <DataGrid
+        rows={rows}
+        columns={transactionCoulmn}
+        hideFooter={true}
+        autoHeight
+        rowHeight={35}
+        sx={{
+          marginTop: "10px",
+          "& .MuiDataGrid-columnHeaders": {
+            minHeight: "35px !important",
+            maxHeight: "35px !important",
+            height: 35,
+          },
+        }}
+      />
+    );
+  };
+
+  function getCategoryCount(category, expected) {
+    // console.log("getCategoryCount - category - ", category);
+    let filteredItems = allItems.filter((item) => {
+      if (item.purchase_type.toUpperCase() === category.toUpperCase()) {
+        return item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year;
+      }
+      if (category === "OTHER") {
+        if (expected) {
+          return !categoryExpectedTotalMapping.hasOwnProperty(item.purchase_type.toUpperCase());
+        } else {
+          return !categoryTotalMapping.hasOwnProperty(item.purchase_type.toUpperCase());
+        }
+      }
+    });
+    // let items = filteredItems?.map((item) => ({ ...item, property: JSON.parse(item.property) }));
+    let count = 0;
+
+    filteredItems.map((i) => {
+      count += 1;
+    });
+
+    return "(" + count + ")";
+  }
+
+  const groupItemsByProperty = (filteredItems) => {
+    return filteredItems.reduce((acc, item) => {
+      const propertyKey = item.pur_property_id;
+  
+      if (!acc[propertyKey]) {
+        acc[propertyKey] = {
+          items: [],         
+          totalExpected: 0,   
+          totalActual: 0,     
+        };
+      }
+  
+      acc[propertyKey].items.push(item);
+  
+      acc[propertyKey].totalExpected += parseFloat(item.pur_amount_due || 0);
+      acc[propertyKey].totalActual += parseFloat(item.total_paid || 0);
+      
+      return acc;
+    }, {});  
+  };
+
+  function getCategoryItems(category, isExpected, type) {
+    // let filteredIitems = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
+    // let items = filteredIitems?.map((item) => ({ ...item, property: JSON.parse(item.property) }));
+
+    let filteredIitems = allItems.filter((item) => {
+      if (item.purchase_type.toUpperCase() === category.toUpperCase()) {
+        return item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year;
+      }
+      if (category === "OTHER") {
+        if (isExpected) {
+          return !categoryExpectedTotalMapping.hasOwnProperty(item.purchase_type.toUpperCase()) && item.cf_month === month && item.cf_year === year;
+        } else {
+          return !categoryTotalMapping.hasOwnProperty(item.purchase_type.toUpperCase()) && item.cf_month === month && item.cf_year === year;
+        }
+      }
+    });
+
+    // const groupedItemsByProperty = groupItemsByProperty(filteredIitems);
+
+    if (filteredIitems.length > 0){
+      return (
+        <>
+          {
+            // filteredIitems.map((item, index)=>(
+            //   <Accordion
+            //     sx={{
+            //       backgroundColor: "transparent",
+            //       boxShadow: "none",
+            //       marginBottom: "15px"
+            //     }}
+            //       key={index}
+            //     >
+            //       <AccordionSummary expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
+            //         <Table>
+            //           <TableHead>
+            //             <TableRow>
+            //               <TableCell sx={{ width: "555px" }}>
+            //                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+            //                   {groupedItemsByProperty[propertyId].items[0].property_address}
+            //                 </Typography>
+            //               </TableCell>
+            //               <TableCell align='right'>
+            //                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+            //                   ${groupedItemsByProperty[propertyId].totalExpected ? parseFloat(groupedItemsByProperty[propertyId].totalExpected).toFixed(2) : 0}
+            //                 </Typography>
+            //               </TableCell>
+            //               <TableCell align='right'>
+            //                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+            //                   ${groupedItemsByProperty[propertyId].totalActual ? parseFloat(groupedItemsByProperty[propertyId].totalActual).toFixed(2) : 0}
+            //                 </Typography>
+            //               </TableCell>
+            //             </TableRow>
+            //           </TableHead>
+            //         </Table>
+            //       </AccordionSummary>
+            //       <AccordionDetails>
+            //         {getDataGrid(groupedItemsByProperty[propertyId].items)}
+            //       </AccordionDetails>
+            //   </Accordion>
+            // ))
+            getDataGrid(filteredIitems)
+          } 
+          {/* {getDataGrid(filteredIitems)} */}
+        </>
+      );
+    }else{
+      return(
+        <></>
+      );
+    }
+  }
+
+  return (
+    <>
+      {activeView === "Cashflow" ? (
+        <>
+          {Object.entries(categoryTotalMapping).map(([category, value]) => {
+            return (
+              <Accordion
+                sx={{
+                  backgroundColor: theme.palette.custom.pink,
+                  boxShadow: "none",
+                }}
+                key={category}
+              >
+                <AccordionSummary sx={{ flexDirection: "row-reverse" }} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: theme.typography.common.blue }}>
+                            {" "}
+                            {category} {getCategoryCount(category, false)}{" "}
+                          </Typography>
+                        </TableCell>
+                        <TableCell align='right'>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: theme.typography.common.blue }}>${value ? parseFloat(value).toFixed(2) : 0}</Typography>
+                        </TableCell>
+                        <TableCell align='right'>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: value !== value ? theme.palette.priority.high : theme.typography.common.blue, }}>
+                            ${value ? parseFloat(value).toFixed(2) : 0}
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                  </Table>
+                </AccordionSummary>
+                <AccordionDetails>
+                  {getCategoryItems(category, false, navigateType)}
+                </AccordionDetails>
+              </Accordion>
+            );
+          })}
+        </>
+      ) : (
+        <>
+          {Object.entries(categoryExpectedTotalMapping).map(([category, value]) => {
+            return (
+              <Accordion
+                sx={{
+                  backgroundColor: "transparent",
+                  boxShadow: "none",
+                }}
+                key={category}
+              >
+                <AccordionSummary sx={{ flexDirection: "space-between" }} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell sx={{ width: "500px" }}>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: theme.typography.common.blue }}>
+                            {" "}
+                            {category} {getCategoryCount(category, true)}{" "}
+                          </Typography>
+                        </TableCell>
+                        <TableCell align='right'>
+                          <Typography sx={{ textAlign: "right", fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, width: "150px", color: theme.typography.common.blue }}>
+                            ${value ? parseFloat(value).toFixed(2) : 0}
+                          </Typography>
+                        </TableCell>
+                        <TableCell align='right'>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: categoryTotalMapping[category] !== value? theme.palette.priority.high : theme.typography.common.blue, }}>
+                            ${categoryTotalMapping[category] ? parseFloat(categoryTotalMapping[category]).toFixed(2) : 0}
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                  </Table>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Table>
+                    <TableBody>{getCategoryItems(category, true)}</TableBody>
+                  </Table>
+                </AccordionDetails>
+              </Accordion>
+            );
+          })}
+        </>
+      )}
+    </>
+  );
+}
+
 function TransactionsTable(props) {
   // console.log("In BalanceDetailTable", props);
   const [data, setData] = useState(props.data);
@@ -3008,7 +3557,9 @@ function TransactionsTable(props) {
 
     console.log("ROHIT - 631 - vgroupByPurchaseGroup - ", groupedData);
 
-    const result = Object.keys(groupedData).reduce((acc, group) => {
+    
+
+    let result = Object.keys(groupedData).reduce((acc, group) => {
       let received_amt = 0;
       let management_fee = 0;
       let other_expense = 0;
@@ -3082,6 +3633,44 @@ function TransactionsTable(props) {
     
       return acc;
     }, []);
+
+    const newData = data.reduce((acc, item) => {
+      if (!acc[item.pur_group]) {
+        acc[item.pur_group] = [];
+      }
+      acc[item.pur_group].push(item);
+      return acc;
+    }, {});
+
+    const filteredValues = Object.keys(newData).reduce((acc, key) => {
+      const hasNon350Payer = newData[key].every(item => !item.pur_payer.startsWith("350"));
+      
+      if (hasNon350Payer) {
+        acc.push(...newData[key]); // Push the values instead of key-value pairs
+      }
+      
+      return acc;
+    }, []);
+
+    filteredValues.forEach(transaction => {
+      if(transaction.pur_payer.startsWith("110") && !verifiedPurGroups.includes(transaction.pur_group) && transaction.payment_status?.toLowerCase() === "unpaid"){
+        let purchase_ids = [transaction.purchase_uid]
+        result.push({
+          ...transaction,
+          received_amt: 0.00,
+          management_fee: transaction.pur_amount_due,
+          owner_payment: 0.00,
+          allTransactions: [transaction],
+          purchase_group: transaction.pur_group,
+          month: transaction.cf_month,
+          year: transaction.cf_year,
+          purchase_ids : JSON.stringify(purchase_ids),
+          pur_receiver: transaction.pur_payer
+        })
+      }
+    })
+
+    
 
     console.log("ROHIT - 631 - result - ", result);
 
