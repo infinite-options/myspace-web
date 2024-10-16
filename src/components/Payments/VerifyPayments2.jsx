@@ -207,7 +207,7 @@ export default function VerifyPayments2(props) {
     {
       field: "payment_status",
       headerName: "Status",
-      flex: 1.2,
+      flex: 1,
       renderCell: (params) => <Box sx={commonStyles}>{params.row.payment_status !== null ? params.row.payment_status : "-"}</Box>,
       renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },    
@@ -249,33 +249,27 @@ export default function VerifyPayments2(props) {
     },
     {
       field: "pur_due_date",
-      headerName: "Purchase Due Date",
+      headerName: "Pur Due Date",
+      flex: 0.8,
+      renderCell: (params) => <Box sx={{...commonStyles, color: new Date(params.row.pur_due_date) < new Date() ? 'red' : 'green'}}>{params.row.purchase_due_date !== null ? (params.row.pur_due_date.includes(" ") ?  params.row.pur_due_date.split(" ")[0] : params.row.pur_due_date ) : "-"}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+    },
+    {
+      field: "total_amount",
+      headerName: "Total Amount Due",
       flex: 1,
-      renderCell: (params) => <Box sx={commonStyles}>{params.row.purchase_due_date !== null ? (params.row.pur_due_date.includes(" ") ?  params.row.pur_due_date.split(" ")[0] : params.row.pur_due_date ) : "-"}</Box>,
+      headerAlign: "right",
+      renderCell: (params) => <Box sx={commonStyles} textAlign={"right"} width={"100%"}>{parseFloat(params.value).toFixed(2)}</Box>,
       renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
     },
     {
       field: "amount_received",
-      headerName: "Amt Received",
-      flex: 0.7,
-      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
-    },
-    {
-      field: "amount_remaining",
-      headerName: "Amt Remaining",
-      flex: 0.7,
-      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
-    },
-    
-    {
-      field: "total_amount",
-      headerName: "Total Amount",
-      flex: 0.7,
-      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
-    },
+      headerName: "Amount Paid",
+      flex: 1,
+      headerAlign: "right",
+      renderCell: (params) => <Box sx={commonStyles} textAlign={"right"} width={"100%"}>{parseFloat(params.value).toFixed(2)}</Box>,
+      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont}}><strong>{params.colDef.headerName}</strong></Box>,
+    },    
   ];
 
   const getNewRowWithIds = (data) => {
@@ -411,6 +405,12 @@ export default function VerifyPayments2(props) {
             hideFooter={true}
             autoHeight
             rowHeight={35}
+            sortModel={[
+              {
+                field: 'pur_due_date',
+                sort: 'asc',
+              },
+            ]}
             sx={{
               marginTop: "10px",
               "& .MuiDataGrid-columnHeaders": {
