@@ -775,7 +775,7 @@ let date = new Date();
                 body: leaseApplicationUpdateFormData,
               });
 
-
+              leaseApplicationFormData.append("tenant_uid", property.tenant_uid);
       await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "POST",
         body: leaseApplicationFormData,
