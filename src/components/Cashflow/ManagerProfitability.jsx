@@ -827,7 +827,7 @@ const ManagerProfitability = ({
           {/* Filter buttons */}
           <Grid container item xs={12} marginTop={15} marginBottom={5}>
             <Grid container item xs={8} display={"flex"} direction={"row"}>
-              <Grid container justifyContent='center' item xs={2} marginRight={6}>
+              <Grid container justifyContent='center' item xs={1.5} marginRight={6}>
                 <Button
                   sx={{
                     width: "90px",
@@ -842,10 +842,10 @@ const ManagerProfitability = ({
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit</Typography>
                 </Button>
               </Grid>
-              <Grid container justifyContent='center' item xs={2} marginRight={6}>
+              <Grid container justifyContent='center' item xs={2.5} marginRight={6}>
                 <Button
                   sx={{
-                    width: "90px",
+                    width: "120px",
                     backgroundColor: tab === "by_sort" ? "#3D5CAC" : "#9EAED6",
                     textTransform: "none",
                     "&:hover": {
@@ -857,7 +857,7 @@ const ManagerProfitability = ({
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit By Type</Typography>
                 </Button>
               </Grid>
-              <Grid container justifyContent='center' item xs={2} marginRight={6}>
+              <Grid container justifyContent='center' item xs={1.3} marginRight={6}>
                 <Button
                   sx={{
                     width: "90px",
@@ -872,10 +872,10 @@ const ManagerProfitability = ({
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Cashflow</Typography>
                 </Button>
               </Grid>
-              <Grid container justifyContent='center' item xs={2} marginRight={6}>
+              <Grid container justifyContent='center' item xs={2.8} marginRight={6}>
                 <Button
                   sx={{
-                    width: "200px",
+                    width: "150px",
                     backgroundColor: tab === "type" ? "#3D5CAC" : "#9EAED6",
                     textTransform: "none",
                     "&:hover": {
