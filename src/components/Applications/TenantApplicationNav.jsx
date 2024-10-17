@@ -28,8 +28,9 @@ import LeaseFees from "../Leases/LeaseFees";
 const TenantApplicationNav = (props) => {
   const navigate = useNavigate();
   const { state } = useLocation();
-  // console.log('Inside TenantApplicationNav', props, state);
+  console.log('Inside TenantApplicationNav', props, state);
   const { index, property, isDesktop, propertyIndex, onBackClick } = props;
+  console.log('Inside TenantApplicationNav property', property);
   const { applications } = property;
   const [currentIndex, setCurrentIndex] = useState(index || 0);
   const [application, setApplication] = useState(applications[currentIndex]);
@@ -37,15 +38,15 @@ const TenantApplicationNav = (props) => {
   //     console.log("application - ", application);
   // }, [application]);
   // console.log("---dhyey--- in property - ", property)
-  // console.log("---dhyey--- in application view - ", application)
+  console.log("---dhyey--- in application view - ", application)
   const [showSpinner, setShowSpinner] = useState(false);
   const [vehicles, setVehicles] = useState(JSON.parse(application?.lease_vehicles || '["No Vehicle Information"]'));
   const [adultOccupants, setAdultOccupants] = useState(JSON.parse(application?.lease_adults || '["No Adult Occupants"]'));
   const [petOccupants, setPetOccupants] = useState(JSON.parse(application?.lease_pets || '["No Pet Occupants"]'));
   const [childOccupants, setChildOccupants] = useState(JSON.parse(application?.lease_children || '["No Child Occupants"]'));
-  const [applicationDocuments, setApplicationDocuments] = useState(JSON.parse(application.lease_documents));
+  const [applicationDocuments, setApplicationDocuments] = useState(JSON.parse(application?.lease_documents));
   const [ leaseFees, setLeaseFees ] = useState([])
-
+  console.log("---dhyey--- in application view 222 - ", application)
   useEffect(() => {
       // console.log("lease fees - ", application?.lease_fees);
 
@@ -232,7 +233,7 @@ const TenantApplicationNav = (props) => {
   </Typography>
   
   {/* Parsing the stringified JSON data */}
-  {JSON.parse(application.lease_income).map((income, index) => (
+  {JSON.parse(application?.lease_income).map((income, index) => (
     <Grid container spacing={2} key={index} sx={{ marginBottom: "10px", padding: "10px", backgroundColor: theme.palette.form.main, borderRadius: "5px" }}>
       <Grid item xs={3}>
         <Typography sx={{ color: "#3D5CAC"}}>Income Title</Typography>

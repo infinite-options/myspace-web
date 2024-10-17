@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClicked, handleUpdate }) {
+export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClicked, handleUpdate, onReviewRenewal }) {
     const navigate = useNavigate();
     const { getList, } = useContext(ListsContext);	
     const classes = useStyles();
@@ -378,9 +378,18 @@ const handleDeleteButtonClick = () => {
 
 // use this for renew button
 const handleEditLease = () => {
-    navigate("/tenantLease", { state: { page: "edit_lease", application: currentLease,  property: currentLease, managerInitiatedRenew: true } });
-    console.log("---on renew---", currentLease);
-  };
+    if (currentLease.lease_renew_status === "PM RENEW REQUESTED" || currentLease.lease_renew_status === "RENEW REQUESTED") {
+        if (onReviewRenewal) {
+            const applicationIndex = leaseDetails.findIndex(lease => lease.lease_uid === selectedLeaseId);
+            onReviewRenewal(applicationIndex); // Pass the index to the parent component
+            console.log("---on renew---", currentLease);
+        }
+    } else {
+        navigate("/tenantLease", { state: { page: "edit_lease", application: currentLease, property: currentLease, managerInitiatedRenew: true } });
+        console.log("---on renew---", currentLease);
+    }
+};
+
 
 return (
     <Box
@@ -595,7 +604,9 @@ return (
                                     whiteSpace: "nowrap",
                                     marginLeft: "1%",
                                 }}>
-                                    {"Renew Lease"}
+                                    {currentLease.lease_renew_status === "PM RENEW REQUESTED" || currentLease.lease_renew_status === "RENEW REQUESTED" ? 
+                    "Review Renewal Application" : 
+                    "Renew Lease"}
                                 </Typography>
                             </Button>
                         </Grid>
