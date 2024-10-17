@@ -290,7 +290,7 @@ function TenantLeases(props) {
     };
 
     try {
-      var lease_status = "TENANT APPROVED";
+      var lease_status = "APPROVED"; // Abhinav - Tenant Approved
       // var status = "TENANT APPROVED";
       const date = new Date();
       console.log("Date: ", date);

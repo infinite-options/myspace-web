@@ -98,7 +98,7 @@ const UtilityComponent = ({ newUtilities, utilities, utilitiesMap, handleNewUtil
     );
 };
 
-const UtilitiesManager = ({ newUtilities, setNewUtilities, utils, utilitiesMap, remainingUtils, setRemainingUtils, isEditable }) => {
+const UtilitiesManager = ({ newUtilities, setNewUtilities, utils, utilitiesMap, remainingUtils, setRemainingUtils, isEditable, fromTenantLease = false }) => {
     const color = theme.palette.form.main;
     const [open, setOpen] = useState(false);
     const [newUtilList, setNewUtilList] = useState([]);
@@ -186,61 +186,81 @@ const UtilitiesManager = ({ newUtilities, setNewUtilities, utils, utilitiesMap, 
 
     return (
         <div>
-            <Accordion sx={{ backgroundColor: color }}>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="documents-content"
-                    id="documents-header"
-                >
-                    <Grid container>
-                        <Grid item md={11.2}>
-                            <Typography
-                                sx={{
-                                    color: "#160449",
-                                    fontWeight: theme.typography.primary.fontWeight,
-                                    fontSize: theme.typography.small,
-                                    textAlign: 'center',
-                                    paddingBottom: "10px",
-                                    paddingTop: "5px",
-                                    flexGrow: 1,
-                                    paddingLeft: "50px"
-                                }}
-                            >
-                                Utilities
-                            </Typography>
-                        </Grid>
-                        {isEditable && <Grid item md={0.5}>
-                            <Button
-                                sx={{
-                                    "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
-                                    cursor: "pointer",
-                                    textTransform: "none",
-                                    minWidth: "40px",
-                                    minHeight: "40px",
-                                    width: "40px",
-                                    fontWeight: theme.typography.secondary.fontWeight,
-                                    fontSize: theme.typography.smallFont,
-                                }}
-                                size="small"
-                                onClick={handleOpen}
-                            >
-                                <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
-                            </Button>
-                        </Grid>}
-                    </Grid>
-                </AccordionSummary>
-                {newUtilList && newUtilList.length > 0 &&
-                    <AccordionDetails>
-                        <UtilityComponent
-                            newUtilities={newUtilities}
-                            utilities={utilities}
-                            utilitiesMap={utilitiesMap}
-                            handleNewUtilityChange={handleNewUtilityChange}
-                        />
-                    </AccordionDetails>
-                }
-            </Accordion>
-            <Modal
+            <Accordion
+  sx={
+    fromTenantLease 
+      ? { backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }
+      : { backgroundColor: color }
+  }
+>
+  <AccordionSummary
+    expandIcon={<ExpandMoreIcon />}
+    aria-controls="documents-content"
+    id="documents-header"
+    sx={
+      fromTenantLease
+        ? { "& .MuiTypography-root": { fontWeight: "bold" } }
+        : {}
+    }
+  >
+    {fromTenantLease ? (
+      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+        Utilities
+      </Typography>
+    ) : (
+      <Grid container>
+        <Grid item md={11.2}>
+          <Typography
+            sx={{
+              color: "#160449",
+              fontWeight: theme.typography.primary.fontWeight,
+              fontSize: theme.typography.small,
+              textAlign: "center",
+              paddingBottom: "10px",
+              paddingTop: "5px",
+              flexGrow: 1,
+              paddingLeft: "50px",
+            }}
+          >
+            Utilities
+          </Typography>
+        </Grid>
+        {isEditable && (
+          <Grid item md={0.5}>
+            <Button
+              sx={{
+                "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
+                cursor: "pointer",
+                textTransform: "none",
+                minWidth: "40px",
+                minHeight: "40px",
+                width: "40px",
+                fontWeight: theme.typography.secondary.fontWeight,
+                fontSize: theme.typography.smallFont,
+              }}
+              size="small"
+              onClick={handleOpen}
+            >
+              <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
+            </Button>
+          </Grid>
+        )}
+      </Grid>
+    )}
+  </AccordionSummary>
+
+  {newUtilList && newUtilList.length > 0 && (
+    <AccordionDetails>
+      <UtilityComponent
+        newUtilities={newUtilities}
+        utilities={utilities}
+        utilitiesMap={utilitiesMap}
+        handleNewUtilityChange={handleNewUtilityChange}
+      />
+    </AccordionDetails>
+  )}
+</Accordion>
+<Modal
                 open={open}
                 onClose={handleClose}
                 aria-labelledby="add-utilities-modal"

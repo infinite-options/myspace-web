@@ -433,13 +433,14 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
         if(lease_uid !== null){
             updateLeaseData().then(() => {
                 const state = {
-                    data: property, status: lease_uid === null ? "" : lease[0].lease_status, lease: lease_uid === null ? [] : lease[0] , from: from
+                    data: property, status: lease_uid === null ? "" : lease.lease_status, lease: lease_uid === null ? [] : lease[0] , from: from
                 }
+                console.log("state", state);
                 setRightPane?.({ type: "tenantApplication", state: state });
             });
         }else{
             const state = {
-                data: property, status: lease_uid === null ? "" : lease[0].lease_status, lease: lease_uid === null ? [] : lease[0] , from: from, tenantDocuments : documents, vehicles : vehicles, adultOccupants: adults, petOccupants : pets, childOccupants : children,  extraUploadDocument : uploadedFiles, extraUploadDocumentType : uploadedFileTypes, deleteDocuments : deletedFiles
+                data: property, status: lease_uid === null ? "" : lease.lease_status, lease: lease_uid === null ? [] : lease[0] , from: from, tenantDocuments : documents, vehicles : vehicles, adultOccupants: adults, petOccupants : pets, childOccupants : children,  extraUploadDocument : uploadedFiles, extraUploadDocumentType : uploadedFileTypes, deleteDocuments : deletedFiles
             }
             setRightPane?.({ type: "tenantApplication", state: state });
         }

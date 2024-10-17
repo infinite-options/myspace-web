@@ -323,73 +323,6 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane }) => {
                         </Paper>
                     </Grid>
 
-
-                    <Grid item xs={12} md={12}>
-                        <Paper sx={{ padding: "10px", backgroundColor: color, width: '95%', margin: '10px 10px 0px 10px' }} >
-                            <FormControl sx={{ width: '100%' }}>
-                                <RadioGroup
-                                    aria-labelledby="demo-controlled-radio-buttons-group"
-                                    name="controlled-radio-buttons-group"
-                                    value={selectedValue}
-                                    onChange={(event) => handleRadioChange(event, 2)}
-                                    id='2'
-                                    sx={{ marginLeft: '5px', width: '100%' }}
-                                >
-                                    {/* {<FormControlLabel
-                                        id='2'
-                                        value="I/We is/are currently undergoing a legal issue(s)."
-                                        control={<Radio sx={{ '&.Mui-checked': { color: "#3D5CAC" } }} />}
-                                        sx={{ marginBottom: '10px' }}
-                                        label={
-                                            <Box sx={{ display: 'block' }}>
-                                                <Typography
-                                                    sx={{
-                                                        color: "#160449",
-                                                        fontWeight: theme.typography.primary.fontWeight,
-                                                        fontSize: theme.typography.smallFont,
-                                                    }}
-                                                >
-                                                    The tenant is currently undergoing a legal issue(s).
-                                                </Typography>
-
-                                                {selectedValue === 'The tenant is currently undergoing a legal issue(s).' && (
-                                                    <>
-                                                        <Typography
-                                                            sx={{
-                                                                color: "#3D5CAC",
-                                                                fontWeight: theme.typography.primary.fontWeight,
-                                                                fontSize: '14px',
-                                                                marginTop: '10px'
-                                                            }}
-                                                        >
-                                                            Please specify the reason.
-                                                        </Typography>
-                                                        <FormGroup>
-                                                            <FormControlLabel control={<Checkbox checked={selectedOption3Checkbox === 'crime'}
-                                                                onChange={(event) => handleOption3CheckboxChange(event, "The tenant has committed a crime.")}
-                                                                value="crime" />} label="The tenant has committed a crime." />
-                                                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                                <FormControlLabel control={<Checkbox checked={selectedOption3Checkbox === 'other'}
-                                                                    onChange={(event) => handleOption3CheckboxChange(event, "Other")}
-                                                                    value="other" />} label="Other:" />
-                                                                <TextField
-                                                                    onChange={(e) => setMoveOutReason(`other: ${e.target.value}`)}
-                                                                    label="Please provide a reason."
-                                                                    variant="outlined"
-                                                                    fullWidth
-                                                                />
-                                                            </Box>
-                                                        </FormGroup>
-                                                    </>
-                                                )}
-                                            </Box>
-                                        }
-                                    />} */}
-                                </RadioGroup>
-                            </FormControl>
-                        </Paper>
-                    </Grid>
-
                     <Grid item xs={12} md={12}>
                         <Paper sx={{ padding: "10px", backgroundColor: color, width: '95%', margin: '10px 10px 0px 10px' }} >
                             <FormControl sx={{ width: '100%' }}>
@@ -403,7 +336,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane }) => {
                                 >
                                     <FormControlLabel
                                         id='3'
-                                        value="The property has been deemed unsafe or uninhabitable."
+                                        value="I/We have deemed the property unsafe or uninhabitable."
                                         control={<Radio sx={{ '&.Mui-checked': { color: "#3D5CAC" } }} />}
                                         label={
                                             <Box sx={{ display: 'block' }}>
@@ -414,7 +347,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane }) => {
                                                         fontSize: theme.typography.smallFont,
                                                     }}
                                                 >
-                                                    The property has been deemed unsafe or uninhabitable.
+                                                    I/We have deemed the property unsafe or uninhabitable.
                                                 </Typography>
                                             </Box>
                                         }

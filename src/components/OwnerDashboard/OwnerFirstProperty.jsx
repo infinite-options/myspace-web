@@ -65,7 +65,7 @@ export default function OwnerFirstProperty() {
   const rentData = [
     ["Properties", "Rent status"],
     ["not paid", 18],
-    ["paid partially", 6],
+    ["PARTIALLY PAID", 6],
     ["paid late", 3],
     ["vacant", 3],
     ["paid on time", 36],

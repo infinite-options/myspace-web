@@ -170,7 +170,7 @@ export function HomeIcon(props) {
 export function ViewAllButton(props) {
   return (
     <Box
-    onClick={props.onClick}
+      onClick={props.onClick}
       sx={{
         display: "flex",
         justifyContent: "center",
@@ -194,7 +194,7 @@ export function ViewAllButton(props) {
 
 const propertyRentStatus = [
   { status: "UNPAID", color: "#A52A2A" },
-  { status: "PAID PARTIALLY", color: "#FF8A00" },
+  { status: "PARTIALLY PAID", color: "#FF8A00" },
   { status: "PAID LATE", color: "#FFC614" },
   { status: "PAID", color: "#3D5CAC" },
   { status: "VACANT", color: "#160449" },
@@ -258,7 +258,7 @@ export function RentAccordionView(props) {
         onPropertyInRentWidgetClicked={props.onPropertyInRentWidgetClicked}
       />
       <RentAccordion
-        status={"PAID PARTIALLY"}
+        status={"PARTIALLY PAID"}
         data={[rentData, partial]}
         rentDetailIndexList={rentDetailIndexList}
         link={rentDetailUrl}
@@ -302,8 +302,8 @@ export function RentAccordion(props) {
     switch (status) {
       case "UNPAID":
         return "Not Paid";
-      case "PAID PARTIALLY":
-        return "Paid partially";
+      case "PARTIALLY PAID":
+        return "Partially Paid";
       case "PAID LATE":
         return "Paid Late";
       case "PAID":
@@ -356,67 +356,66 @@ export function RentAccordion(props) {
           <Box>{properties.length}</Box>
         </Box>
       </AccordionSummary>
-      {console.log('---properties----', properties)}
+      {console.log("---properties----", properties)}
       {properties.map((property, index) => {
-  const address =
-    property.property_address +
-    ", " +
-    (property.property_unit !== "" ? property.property_unit + ", " : "") +
-    property.property_city +
-    " " +
-    property.property_state +
-    " " +
-    property.property_zip +
-    ", Tenant ID: " +
-    property.tenant_uid;
+        const address =
+          property.property_address +
+          ", " +
+          (property.property_unit !== "" ? property.property_unit + ", " : "") +
+          property.property_city +
+          " " +
+          property.property_state +
+          " " +
+          property.property_zip +
+          ", Tenant ID: " +
+          property.tenant_uid;
 
-  // Check if property_favorite_image exists, otherwise use defaultHouseImage
-  const propertyImage = property.property_favorite_image || defaultHouseImage;
+        // Check if property_favorite_image exists, otherwise use defaultHouseImage
+        const propertyImage = property.property_favorite_image || defaultHouseImage;
 
-  return (
-    <AccordionDetails key={property.property_uid}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          fontSize: "13px",
-          fontWeight: "600",
-          cursor: "pointer",
-        }}
-        onClick={() => {
-          if (isMobile) {
-            navigateTo(rentDetailUrl, index);
-          } else {
-            props.onPropertyInRentWidgetClicked(property.property_uid);
-          }
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {/* Display the property image */}
-          <img
-            src={propertyImage} // Show the property_favorite_image or defaultHouseImage
-            alt="Property"
-            width="50px" // Set a fixed width or height as needed
-            height="50px"
-            style={{ borderRadius: '5px', marginRight: '10px' }} // Optional styling
-          />
-          {/* Address */}
-          <Box
-            sx={{
-              textDecoration: "underline",
-            }}
-          >
-            {address}
-          </Box>
-        </Box>
-        {/* Amount due */}
-        <Box>${property.pur_amount_due}</Box>
-      </Box>
-    </AccordionDetails>
-  );
-})}
-
+        return (
+          <AccordionDetails key={property.property_uid}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                fontSize: "13px",
+                fontWeight: "600",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                if (isMobile) {
+                  navigateTo(rentDetailUrl, index);
+                } else {
+                  props.onPropertyInRentWidgetClicked(property.property_uid);
+                }
+              }}
+            >
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                {/* Display the property image */}
+                <img
+                  src={propertyImage} // Show the property_favorite_image or defaultHouseImage
+                  alt='Property'
+                  width='50px' // Set a fixed width or height as needed
+                  height='50px'
+                  style={{ borderRadius: "5px", marginRight: "10px" }} // Optional styling
+                />
+                {/* Address */}
+                <Box
+                  sx={{
+                    textDecoration: "underline",
+                  }}
+                >
+                  {address}
+                </Box>
+              </Box>
+              {/* Amount due */}
+              <Box>${property.pur_amount_due}</Box>
+            </Box>
+          </AccordionDetails>
+        );
+      })}
     </Accordion>
   );
 }

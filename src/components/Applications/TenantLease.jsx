@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import theme from "../../theme/theme";
-import { ThemeProvider } from "@mui/material";
+import { ThemeProvider, Paper, } from "@mui/material";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
@@ -38,7 +38,7 @@ import LeaseFees from "../Leases/LeaseFees";
 import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Slider from "react-slick";  // Add react-slick for image slider
-
+import UtilitiesManager from "../../components/Leases/Utilities";
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiFilledInput-root": {
@@ -93,11 +93,12 @@ const initialFees = (property, application) => {
       fee_type: "Deposit",
       frequency: "One Time",
       charge: property.property_deposit,
-      due_by: application.lease_rent_due_by,
-      late_by: application.lease_rent_late_by,
+      due_by: 1,
+      due_by_date: "",
+      late_by: 2,
       late_fee: "50",
       perDay_late_fee: "10",
-      available_topay: application.lease_rent_available_topay,
+      available_topay: 10,
     });
   }
   if (fees.length === 0) {
@@ -124,7 +125,7 @@ const TenantLease = () => {
   const navigate = useNavigate();
   const { getProfileId } = useUser();
   const { state } = useLocation();
-  const { application, property } = state;
+  const { application, property, managerInitiatedRenew = false } = state;
   const { getList, } = useContext(ListsContext);	
 	const feeFrequencies = getList("frequency");
   console.log("Property: ", property);
@@ -180,9 +181,9 @@ const TenantLease = () => {
     const getLeaseFees = () => {
       console.log('is it here---', property, application);
       let feesList = [];
-      if (application?.lease_status === "PROCESSING" || application?.lease_status === "ACTIVE" ) {
+      if (application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "ACTIVE" ) {
         feesList = JSON.parse(application?.lease_fees);
-      } else if (application?.lease_status === "NEW") {
+      } else if (application?.lease_status === "NEW" || application?.lease_status === "RENEW NEW") {
         feesList = initialFees(property, application);
       }
       console.log("Fees: ", feesList);
@@ -450,6 +451,39 @@ const TenantLease = () => {
     ["sunday-week-2", 13],
   ]);
 
+  const tenantColumns = [
+    {
+        field: "tenant_uid",
+        headerName: "UID",
+        flex: 1,
+    },
+    {
+        field: "tenant_first_name",
+        headerName: "First Name",
+        flex: 1,
+    },
+    {
+        field: "tenant_last_name",
+        headerName: "Last Name",
+        flex: 1,
+    },
+    {
+        field: "tenant_email",
+        headerName: "Email",
+        flex: 1,
+    },
+    {
+        field: "tenant_phone_number",
+        headerName: "Phone Number",
+        flex: 1,
+    },
+    {
+        field: "lt_responsibility",
+        headerName: "Responsibility",
+        flex: 1,
+    },
+]
+
   const valueToDayMap = new Map(Array.from(daytoValueMap, ([key, value]) => [value, key]));
 
   const checkRequiredFields = () => {
@@ -630,15 +664,18 @@ const TenantLease = () => {
   }
 
   const handleRenewLease = async () => {
+    console.log('inside handleRenewLease');
     try {
       setShowMissingFieldsPrompt(false);
       if (!checkRequiredFields()) {
+        console.log('is it inside !checkRequiredFields');
         setShowMissingFieldsPrompt(true);
         return;
       }
       setShowSpinner(true);
 
       const leaseApplicationFormData = new FormData();
+      console.log('created leaseApplicationFormData');
       leaseApplicationFormData.append("lease_property_id", property.property_id);
       leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");
       leaseApplicationFormData.append("lease_effective_date", startDate.format("MM-DD-YYYY"));
@@ -665,25 +702,61 @@ const TenantLease = () => {
       leaseApplicationFormData.append("lease_vehicles", JSON.stringify(leaseVehicles));
 let date = new Date();
       leaseApplicationFormData.append("lease_application_date", formatDate(date.toLocaleDateString()));
+      console.log('before tenant id leaseApplicationFormData', property);
+      if (property?.tenants) {
+        try {
+          // Safely parse the tenants data
+          const parsedData = JSON.parse(property.tenants);
       
-//       const parsedData = JSON.parse(property?.tenants);
+          // Collect all tenant_uid as an array
+          let tenantUIDs = parsedData.map(tenant => tenant.tenant_uid);
+      
+          // Log for debugging
+          console.log('Collected tenant UIDs:', tenantUIDs);
+      
+          // Append tenant_uid array to the form data as a list of array
+          if(application?.lease_status === "RENEW NEW"){
 
-// // Access the tenant_uid
-// const tenantUID = parsedData[0].tenant_uid;
+            leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify(tenantUIDs));
+          } else{
 
-leaseApplicationFormData.append("tenant_uid", property.tenant_uid);
+            leaseApplicationFormData.append("tenant_uid", tenantUIDs.join(','));
+          }
+        } catch (error) {
+          // Handle JSON parse errors
+          console.error("Error parsing tenants data: ", error);
+      
+          // Append the property.tenant_uid as fallback
+          if(application?.lease_status === "RENEW NEW"){
 
+          leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify([property.tenant_uid]));
+          
+          }else{
+            leaseApplicationFormData.append("tenant_uid", property.tenant_uid);
+          }
+        }
+      } else {
+        // If 'tenants' field is not available, append property.tenant_uid as a single value array
+        if(application?.lease_status === "RENEW NEW"){
+          leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify([property.tenant_uid]));
+        }else{
+          leaseApplicationFormData.append("tenant_uid", property?.tenant_uid);
+      }
+    }
 
       const hasMissingType = !checkFileTypeSelected();
       // console.log("HAS MISSING TYPE", hasMissingType);
 
       if (hasMissingType) {
+        console.log('inside hasMissingType');
         setShowMissingFileTypePrompt(true);
         setShowSpinner(false);
         return;
       }
 
       if (leaseFiles.length) {
+
+        console.log('inside leaseFiles.length');
         const documentsDetails = [];
         [...leaseFiles].forEach((file, i) => {
           leaseApplicationFormData.append(`file_${i}`, file, file.name);
@@ -697,32 +770,32 @@ leaseApplicationFormData.append("tenant_uid", property.tenant_uid);
           documentsDetails.push(documentObject);
         });
         leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
+
+        
       }
 
-      // for (let [key, value] of leaseApplicationFormData.entries()) {
-      //   console.log(key, value);
-      // }
+      if(application?.lease_status === "RENEW NEW"){
+        leaseApplicationFormData.append("lease_uid", application.lease_uid);
+        await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+          method: "PUT",
+          body: leaseApplicationFormData,
+        });
 
-      // await fetch(
-      //   `http://localhost:4000/leaseApplication`,
-      //   {
-      //     method: "PUT",
-      //     body: leaseApplicationFormData
-      //   }
-      // );
-const leaseApplicationUpdateFormData = new FormData();
-leaseApplicationUpdateFormData.append("lease_uid", application.lease_uid);
-leaseApplicationUpdateFormData.append("lease_renew_status", "PM RENEW REQUESTED");
-
-      await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
-        method: "PUT",
-        body: leaseApplicationUpdateFormData,
-      });
+      } else {
+        const leaseApplicationUpdateFormData = new FormData();
+        leaseApplicationUpdateFormData.append("lease_uid", application.lease_uid);
+        leaseApplicationUpdateFormData.append("lease_renew_status", "PM RENEW REQUESTED");
+        
+              await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+                method: "PUT",
+                body: leaseApplicationUpdateFormData,
+              });
 
       await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "POST",
         body: leaseApplicationFormData,
       });
+      }
 
       const receiverPropertyMapping = {
         [application.tenant_uid]: [property.property_uid],
@@ -755,6 +828,63 @@ leaseApplicationUpdateFormData.append("lease_renew_status", "PM RENEW REQUESTED"
       setShowSpinner(false);
     }
   };
+
+  const [newUtilities, setNewUtilities] = useState([]);
+const [utilities, setUtilities] = useState([]);
+const [remainingUtils, setRemainingUtils] = useState([]);
+
+const utilitiesMap = new Map([
+  ["050-000001", "electricity"],
+  ["050-000002", "water"],
+  ["050-000003", "gas"],
+  ["050-000004", "trash"],
+  ["050-000005", "sewer"],
+  ["050-000006", "internet"],
+  ["050-000007", "cable"],
+  ["050-000008", "hoa dues"],
+  ["050-000009", "security system"],
+  ["050-000010", "pest control"],
+  ["050-000011", "gardener"],
+  ["050-000012", "maintenance"],
+]);
+
+const handleNewUtilityChange = (e, newUtility, utilityIndex) => {
+  const { value } = e.target;
+  setNewUtilities((prevUtilities) => {
+    const updatedUtilities = [...prevUtilities];
+    const toChange = { ...updatedUtilities[utilityIndex], utility_payer_id: value === 'owner' ? '050-000041' : '050-000043' };
+    updatedUtilities[utilityIndex] = toChange;
+    return updatedUtilities;
+  });
+};
+
+// Fetch utilities data when loading the component
+useEffect(() => {
+  const utils = JSON.parse(property.property_utilities); // Assuming `property.property_utilities` contains the utilities data
+  if (utils === null) {
+    setUtilities([]);
+    setNewUtilities([]);
+  } else {
+    setUtilities(utils);
+    setNewUtilities(utils);
+  }
+
+  const newUtilityIds = utils !== null ? new Set(utils.map((utility) => utility.utility_type_id)) : null;
+  let missingUtilitiesMap = new Map();
+
+  if (newUtilityIds) {
+    for (const [key, value] of utilitiesMap) {
+      if (!newUtilityIds.has(key)) {
+        missingUtilitiesMap.set(key, value);
+      }
+    }
+  } else {
+    missingUtilitiesMap = utilitiesMap;
+  }
+
+  setRemainingUtils(missingUtilitiesMap);
+}, [property]);
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -790,9 +920,11 @@ leaseApplicationUpdateFormData.append("lease_renew_status", "PM RENEW REQUESTED"
         </Box>
   
         {/* Lease Details Section */}
+        <Paper sx={{  marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
+
         <Accordion defaultExpanded sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-    <Typography variant="h6" sx={{ fontWeight: "bold", color: "#302A68" }}>Lease Details</Typography>
+    <Typography variant="h6" sx={{ fontWeight: "bold"}}>Lease Details</Typography>
   </AccordionSummary>
   <AccordionDetails sx={{ padding: "20px", borderRadius: "10px" }}>
     {/* First row: Owner, Tenant, Rent Status */}
@@ -810,7 +942,7 @@ leaseApplicationUpdateFormData.append("lease_renew_status", "PM RENEW REQUESTED"
       <Grid item xs={6} sm={3}>
         <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>Rent Status</Typography>
         <Typography sx={{ fontSize: "14px", fontWeight: "400", color: "#302A68" }}>
-          {property.property_available_to_rent === 1 ? "Not Rented" : "Rented"}
+          {property.rent_status}
         </Typography>
       </Grid>
     </Grid>
@@ -896,26 +1028,174 @@ leaseApplicationUpdateFormData.append("lease_renew_status", "PM RENEW REQUESTED"
       <Grid item xs={6} sm={3}>
         <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>End Lease Notice</Typography>
         <TextField
-          name="endLeaseNotice"
-          value={`${endLeaseNoticePeriod} days before`}
-          variant="filled"
-          InputProps={{
-            disableUnderline: true,
-            sx: { backgroundColor: "#FFFFFF", borderRadius: "10px", height: "40px" },
-          }}
-          sx={{
-            "& .MuiFilledInput-root": {
-              backgroundColor: "#FFFFFF",
-              borderRadius: "10px",
-              height: "40px",
-            },
-          }}
-        />
+  name="endLeaseNoticePeriod"
+  value={endLeaseNoticePeriod}
+  onChange={(e) => setEndLeaseNoticePeriod(e.target.value)}
+  variant="outlined" // Use outlined for a similar look
+  fullWidth
+  size="small"
+  placeholder=""
+  InputProps={{
+    style: {
+      fontSize: 14, // Adjust font size
+      padding: "2px", // Adjust padding to make it look like the date picker
+      backgroundColor: "#FFFFFF",
+      borderRadius: "10px", // Rounded corners like the date picker
+    },
+  }}
+  sx={{
+    "& .MuiOutlinedInput-root": {
+      "&:hover fieldset": {
+        borderColor: "#6e6e6e", // Same hover behavior
+      },
+    },
+    width: "100%",
+    backgroundColor: "#FFFFFF", // Background same as date picker
+    borderRadius: "10px", // Same rounded corners
+  }}
+/>
+
+            
       </Grid>
     </Grid>
   </AccordionDetails>
 </Accordion>
+</Paper>
+<Paper sx={{ marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
+  <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
+    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+        Tenant Details
+      </Typography>
+    </AccordionSummary>
+    <AccordionDetails sx={{ padding: "20px", borderRadius: "10px" }}>
+      {/* Display tenant details */}
+      {console.log('--application details in tenant---', application)}
+      {console.log('--property details in tenant---', property)}
+
+      {/* Check if managerInitiatedRenew is true */}
+      {managerInitiatedRenew && application.tenants ? (
+        // Parse tenants if managerInitiatedRenew is true
+        (() => {
+          try {
+            const parsedTenants = JSON.parse(application.tenants);
+
+            return parsedTenants.length > 0 ? (
+              parsedTenants.map((tenant, index) => (
+                <Grid container spacing={2} key={index} sx={{ marginBottom: "20px" }}>
+                  <Grid item xs={6}>
+                    <Typography sx={{ fontWeight: 'bold' }}>First Name:</Typography>
+                    <Typography>{tenant.tenant_first_name || 'N/A'}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography sx={{ fontWeight: 'bold' }}>Last Name:</Typography>
+                    <Typography>{tenant.tenant_last_name || 'N/A'}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography sx={{ fontWeight: 'bold' }}>Email:</Typography>
+                    <Typography>{tenant.tenant_email || 'N/A'}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography sx={{ fontWeight: 'bold' }}>Phone Number:</Typography>
+                    <Typography>{tenant.tenant_phone_number || 'N/A'}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography sx={{ fontWeight: 'bold' }}>Responsibility:</Typography>
+                    <Typography>{tenant.lt_responsibility ? `${tenant.lt_responsibility * 100}%` : 'N/A'}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography sx={{ fontWeight: 'bold' }}>Address:</Typography>
+                    <Typography>{application.tenant_address || 'N/A'}, {application.tenant_city || 'N/A'}, {application.tenant_state || 'N/A'}, {application.tenant_zip || 'N/A'}</Typography>
+                  </Grid>
+                </Grid>
+              ))
+            ) : (
+              <Typography>No Tenant Data Available</Typography>
+            );
+          } catch (error) {
+            console.error('Error parsing tenant data:', error);
+            return <Typography>Invalid Tenant Data</Typography>;
+          }
+        })()
+      ) : (
+        // Display data from `application` directly if `managerInitiatedRenew` is false
+        application ? (
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <Typography sx={{ fontWeight: 'bold' }}>First Name:</Typography>
+              <Typography>{application.tenant_first_name || 'N/A'}</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography sx={{ fontWeight: 'bold' }}>Last Name:</Typography>
+              <Typography>{application.tenant_last_name || 'N/A'}</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography sx={{ fontWeight: 'bold' }}>Email:</Typography>
+              <Typography>{application.tenant_email || 'N/A'}</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography sx={{ fontWeight: 'bold' }}>Phone Number:</Typography>
+              <Typography>{application.tenant_phone_number || 'N/A'}</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography sx={{ fontWeight: 'bold' }}>Address:</Typography>
+              <Typography>{application.tenant_address || 'N/A'}, {application.tenant_city || 'N/A'}, {application.tenant_state || 'N/A'}, {application.tenant_zip || 'N/A'}</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography sx={{ fontWeight: 'bold' }}>Responsibility:</Typography>
+              <Typography>{application.lt_responsibility ? `${application.lt_responsibility * 100}%` : 'N/A'}</Typography>
+            </Grid>
+          </Grid>
+        ) : (
+          <Typography>No Tenant Data Available</Typography>
+        )
+      )}
+    </AccordionDetails>
+  </Accordion>
+</Paper>
+
+
+<Paper sx={{ marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
+  <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
+    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+      <Typography variant="h6" sx={{ fontWeight: "bold" }}>Income Details</Typography>
+    </AccordionSummary>
+    <AccordionDetails sx={{ padding: "20px", borderRadius: "10px" }}>
+      {application?.lease_income ? (
+        <>
+          {/* Parse the JSON string and map the income details */}
+          {JSON.parse(application.lease_income).map((income, index) => (
+            <Grid container spacing={2} key={index}>
+              <Grid item xs={6}>
+                <Typography sx={{ fontWeight: 'bold' }}>Company name:</Typography>
+                <Typography>{income.companyName || 'N/A'}</Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography sx={{ fontWeight: 'bold' }}>Job Title:</Typography>
+                <Typography>{income.jobTitle || 'N/A'}</Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography sx={{ fontWeight: 'bold' }}>Amount:</Typography>
+                <Typography>{income.salary || 'N/A'}</Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography sx={{ fontWeight: 'bold' }}>Amount Frequency:</Typography>
+                <Typography>{income.frequency || 'N/A'}</Typography>
+              </Grid>
+            </Grid>
+          ))}
+        </>
+      ) : (
+        <Typography>No Income Data Available</Typography>
+      )}
+    </AccordionDetails>
+  </Accordion>
+</Paper>
+
+
 {/* Occupancy Details Section */}
+<Paper sx={{  marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
+        
         <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px" }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography variant="h6" sx={{ fontWeight: "bold" }}>Occupancy Details</Typography>
@@ -941,8 +1221,10 @@ leaseApplicationUpdateFormData.append("lease_renew_status", "PM RENEW REQUESTED"
             </Grid>
           </AccordionDetails>
         </Accordion>
-  
+        </Paper>
         {/* Fees Section */}
+        <Paper sx={{  marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
+        
         <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px" }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography variant="h6" sx={{ fontWeight: "bold" }}>Fees</Typography>
@@ -951,26 +1233,46 @@ leaseApplicationUpdateFormData.append("lease_renew_status", "PM RENEW REQUESTED"
             <LeaseFees startDate={startDate} leaseFees={fees} isEditable={true} setLeaseFees={setFees} setDeleteFees={setDeleteFees} />
           </AccordionDetails>
         </Accordion>
-  
+        </Paper>
         {/* Documents Section */}
-        {/* <Box marginTop={"20px"}>
-          <Documents 
-            setIsPreviousFileChange={setIsPreviousFileChange} 
-            documents={leaseDocuments} 
-            setDocuments={setLeaseDocuments} 
-            deletedDocsUrl={deletedDocsUrl} 
-            setDeleteDocsUrl={setDeletedDocsUrl} 
-            contractFiles={leaseFiles} 
-            setContractFiles={setLeaseFiles} 
-            contractFileTypes={leaseFileTypes} 
-            setContractFileTypes={setLeaseFileTypes} 
-            isAccord={false} 
-            isEditable={true}
-          />
-        </Box>
-   */}
+        <Paper sx={{  marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
+        <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
+  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+    <Typography
+      variant="h6" sx={{ fontWeight: "bold" }}
+    >
+      Documents
+    </Typography>
+  </AccordionSummary>
+
+  <AccordionDetails>
+    <Box marginTop={"20px"}>
+      <Documents 
+        setIsPreviousFileChange={setIsPreviousFileChange} 
+        documents={leaseDocuments} 
+        setDocuments={setLeaseDocuments} 
+        deletedDocsUrl={deletedDocsUrl} 
+        setDeleteDocsUrl={setDeletedDocsUrl} 
+        contractFiles={leaseFiles} 
+        setContractFiles={setLeaseFiles} 
+        contractFileTypes={leaseFileTypes} 
+        setContractFileTypes={setLeaseFileTypes} 
+        isAccord={false} 
+        isEditable={true}
+      />
+    </Box>
+  </AccordionDetails>
+</Accordion>
+</Paper>
+                    <Paper sx={{  marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
+                        <UtilitiesManager newUtilities={newUtilities} utils={utilities}
+                            utilitiesMap={utilitiesMap} handleNewUtilityChange={handleNewUtilityChange}
+                            remainingUtils={remainingUtils} setRemainingUtils={setRemainingUtils}
+                            setNewUtilities={setNewUtilities} fromTenantLease={true}/>
+                    </Paper>
+
         {/* Submit Button */}
-        <Grid item xs={12} sx={{ textAlign: "center", paddingBottom: 5 }}>
+        <Grid item xs={12} sx={{ textAlign: "center", paddingBottom: 5,  marginBottom: "20px", marginTop: "20px"  }}>
           <Button
             onClick={application?.lease_status === "NEW" ? handleCreateLease : handleRenewLease}
             sx={{

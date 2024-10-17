@@ -423,7 +423,6 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees, setDeleteFees, startDa
           renderCell: (params) => <Typography>{`$ ${params.row.perDay_late_fee}`}</Typography>,
         },
       ];
-
   const rowsWithId = leaseFees.map((row, index) => ({
     ...row,
     id: row.id ? index : index,

@@ -32,7 +32,7 @@ export default function TenantApplication(props) {
   const [property, setProperty] = useState([]);
   const [status, setStatus] = useState("");
   const [lease, setLease] = useState([]);
-  // console.log("in tenant application status", status);
+  console.log("in tenant application status", status);
   // console.log("lease", lease);
   // console.log("property", property);
 
@@ -382,12 +382,30 @@ export default function TenantApplication(props) {
       const leaseApplicationData = new FormData();
 
       leaseApplicationData.append("lease_property_id", property.property_uid);
-      if (status === "RENEW" ) {
+      if (status === "RENEW") {
+        const updateLeaseData = new FormData();
+        updateLeaseData.append("lease_uid", lease[0].lease_uid);
+        updateLeaseData.append("lease_renew_status", "RENEW REQUESTED");
+  
+        const updateLeaseResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+          method: "PUT",
+          body: updateLeaseData,
+        });
+  
+        if (!updateLeaseResponse.ok) {
+          throw new Error("Failed to update lease status to RENEW.");
+        }
+  
         leaseApplicationData.append("lease_status", "RENEW NEW");
-      }
-      else {
+      } else {
         leaseApplicationData.append("lease_status", "NEW");
       }
+      // if (status === "RENEW" ) {
+      //   leaseApplicationData.append("lease_status", "RENEW NEW");
+      // }
+      // else {
+      //   leaseApplicationData.append("lease_status", "NEW");
+      // }
       leaseApplicationData.append("lease_assigned_contacts", JSON.stringify([getProfileId()]));
       leaseApplicationData.append("lease_income", JSON.stringify(selectedJobs));
       const documentsDetails = [];
@@ -474,6 +492,10 @@ export default function TenantApplication(props) {
       const leaseApplicationResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "POST",
         body: leaseApplicationData,
+      });
+
+      leaseApplicationData.forEach((value, key) => {
+        console.log(`${key}: ${value}`);
       });
 
       const annoucementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
@@ -979,26 +1001,24 @@ export const VehicleDataGrid = ({ vehicles }) => {
 }
 
 export const EmploymentDataGrid = ({ tenantProfile, selectedJobs, setSelectedJobs, leaseStatus, lease }) => {
-  // If leaseStatus is PROCESSING or ACTIVE, use the lease's job information (lease_income)
-  console.log("lease lease emp", leaseStatus);
   const employmentData =
     leaseStatus === "PROCESSING" || leaseStatus === "ACTIVE" || leaseStatus === "NEW"
       ? (lease?.[0]?.lease_income ? JSON.parse(lease[0].lease_income) : [])
       : (tenantProfile?.tenant_employment ? JSON.parse(tenantProfile.tenant_employment) : []);
 
   const handleJobSelection = (job, isChecked) => {
-    if (isChecked) {
-      setSelectedJobs([...selectedJobs, job]);
-    } else {
-      setSelectedJobs(selectedJobs.filter((selectedJob) => selectedJob.companyName !== job.companyName));
-    }
+    setSelectedJobs((prevSelectedJobs) => {
+      if (isChecked) {
+        return [...prevSelectedJobs, job];
+      } else {
+        return prevSelectedJobs.filter((selectedJob) => selectedJob.companyName !== job.companyName);
+      }
+    });
   };
 
-  useEffect(() => {
-    if (selectedJobs.length === 0 && employmentData.length > 0) {
-      setSelectedJobs(employmentData);
-    }
-  }, [employmentData, selectedJobs, setSelectedJobs]);
+  // useEffect(() => {
+  //     setSelectedJobs(employmentData);
+  // }, [employmentData, selectedJobs, setSelectedJobs]);
 
   return (
     <Box sx={{ padding: '10px' }}>
@@ -1034,3 +1054,5 @@ export const EmploymentDataGrid = ({ tenantProfile, selectedJobs, setSelectedJob
     </Box>
   );
 };
+
+
