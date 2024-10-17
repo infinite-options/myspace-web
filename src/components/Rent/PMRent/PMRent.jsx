@@ -34,7 +34,7 @@ export default function PMRent({ setLHS, onPropertyInRentWidgetClicked, setIniti
   // }, [rentDetailIndexList]);
 
   const handleViewAllClick = () => {
-    setLHS("List"); 
+    setLHS("List");
   };
 
   useEffect(() => {
@@ -59,7 +59,7 @@ export default function PMRent({ setLHS, onPropertyInRentWidgetClicked, setIniti
           case "UNPAID":
             not_paid.push(data);
             break;
-          case "PAID PARTIALLY":
+          case "PARTIALLY PAID":
             partial_paid.push(data);
             break;
           case "PAID LATE":

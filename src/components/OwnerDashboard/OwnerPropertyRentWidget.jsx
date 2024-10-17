@@ -7,7 +7,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 export default function OwnerPropertyRentWidget(props) {
   // console.log("In Owner Property Rent Widget ");
-  const isMediumScreen = useMediaQuery('(max-width:1200px)');
+  const isMediumScreen = useMediaQuery("(max-width:1200px)");
   const navigate = useNavigate();
   const { propertyRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
   // console.log("In OwnerPropertyRentWidget Selected Role: ", selectedRole);
@@ -23,7 +23,7 @@ export default function OwnerPropertyRentWidget(props) {
   // console.log(unpaidCount);
   unpaidCount = unpaidCount ? unpaidCount.num : 0;
 
-  let partialPaidCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "PAID PARTIALLY") : 0;
+  let partialPaidCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "PARTIALLY PAID") : 0;
   partialPaidCount = partialPaidCount ? partialPaidCount.num : 0;
 
   let paidLateCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "PAID LATE") : 0;
@@ -44,7 +44,7 @@ export default function OwnerPropertyRentWidget(props) {
 
   let data = [
     { rent_status: "not paid", number: unpaidCount, fill: "#A52A2A" },
-    { rent_status: "paid partially", number: partialPaidCount, fill: "#FF8A00" },
+    { rent_status: "partially paid", number: partialPaidCount, fill: "#FF8A00" },
     { rent_status: "paid late", number: paidLateCount, fill: "#FFC85C" },
     { rent_status: "paid on time", number: paidCount, fill: "#3D5CAC" },
     { rent_status: "vacant", number: vacantCount, fill: "#160449" },
@@ -65,8 +65,8 @@ export default function OwnerPropertyRentWidget(props) {
     const num = data.find((item) => item.fill === color)?.number;
     const capitalizedStatus = status ? capitalizeWords(status) : "";
     return (
-      <span 
-        style={{ 
+      <span
+        style={{
           color: "#160449",
           fontFamily: "Source Sans Pro",
           fontSize: "18px",
@@ -83,27 +83,27 @@ export default function OwnerPropertyRentWidget(props) {
 
   const renderDefaultLegendText = (value, entry) => {
     return <span style={{ color: "#160449", fontFamily: "Source Sans Pro", fontSize: "18px" }}>No properties</span>;
-  };  
- 
+  };
+
   return (
-    <Grid container style={{ backgroundColor: "#F2F2F2", borderRadius: "10px", height: "100%", alignContent: "flex-start", }}>
-      <Grid item xs={12} style={{ display: "flex", justifyContent: "center", height: '50px', }}>
+    <Grid container style={{ backgroundColor: "#F2F2F2", borderRadius: "10px", height: "100%", alignContent: "flex-start" }}>
+      <Grid item xs={12} style={{ display: "flex", justifyContent: "center", height: "50px" }}>
         <Typography variant='h5' sx={{ fontWeight: "bold", paddingTop: "15px", color: "#160449" }}>
           Property Rent 589
         </Typography>
       </Grid>
       <Grid item xs={12}>
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width='100%' height={300}>
           {totalPropertiesCount > 0 ? (
             <PieChart
               width={400}
               height={250}
-              margin={{ 
+              margin={{
                 top: 50,
                 // right: 30,
-                right: isMediumScreen? 20 : 50,
-                left: isMediumScreen? 20 : 50,
-                bottom: 40 
+                right: isMediumScreen ? 20 : 50,
+                left: isMediumScreen ? 20 : 50,
+                bottom: 40,
               }}
             >
               <Pie
@@ -119,7 +119,7 @@ export default function OwnerPropertyRentWidget(props) {
                 filter='url(#shadow)'
                 // onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
                 // onClick={() => navigate("/properties", { state: { showPropertyForm: true } })} - PM Changed
-                onClick={() => navigate("/properties", { state: { showPropertyForm: true , showRHS: "PropertyNavigator"} })}
+                onClick={() => navigate("/properties", { state: { showPropertyForm: true, showRHS: "PropertyNavigator" } })}
               >
                 {data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
@@ -132,9 +132,9 @@ export default function OwnerPropertyRentWidget(props) {
                 // layout='vertical'
                 // align='right'
                 // verticalAlign='top'
-                layout={isMediumScreen ? 'horizontal' : 'vertical'}
-                align={isMediumScreen ? 'center' : 'right'}                
-                verticalAlign={isMediumScreen ? 'bottom' : 'middle'}
+                layout={isMediumScreen ? "horizontal" : "vertical"}
+                align={isMediumScreen ? "center" : "right"}
+                verticalAlign={isMediumScreen ? "bottom" : "middle"}
                 iconSize={15}
                 padding={5}
                 formatter={renderColorfulLegendText}
@@ -180,10 +180,7 @@ export default function OwnerPropertyRentWidget(props) {
                 onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
               >
                 View all {totalPropertiesCount}
-                <tspan 
-                  x={isMediumScreen ? 155 : 120} 
-                  y={isMediumScreen ? 105 : 157}
-                >
+                <tspan x={isMediumScreen ? 155 : 120} y={isMediumScreen ? 105 : 157}>
                   properties 98
                 </tspan>
               </text>

@@ -111,7 +111,7 @@ const PaymentProcessing = () => {
         setShowSpinner(true);
         try {
     
-          const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowTransactions/${userProfileId}/new`);
+          const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowTransactions/${userProfileId}/payment`);
           console.log("Manager Cashflow Data: ", cashflow.data);
           setShowSpinner(false);
           return cashflow.data?.result;
@@ -138,7 +138,9 @@ const PaymentProcessing = () => {
     };
 
     useEffect(() => {
-        fetchCashflowTransactions(profileId)
+      setShowSpinner(true)
+        
+      fetchCashflowTransactions(profileId)
         .then((data) => {        
           const dataWithIndex = data?.map((item, index) => (
             {
@@ -146,6 +148,7 @@ const PaymentProcessing = () => {
               'index': index,
             }
           ))
+          setShowSpinner(false)
           setCashflowTransactionsData(dataWithIndex);        
         })
         .catch((error) => {
@@ -178,14 +181,14 @@ const PaymentProcessing = () => {
                     selectedProperty={"ALL"}
                   />
                 )}
-                {currentWindow === "PAY_BILLS" && <PaymentsManager setSelectedPayment={setSelectedPayment} setCurrentWindow={setCurrentWindow} page={"paymentProcessing"} selectedRowsForPayBills={selectedRowsForPayBills}/>}                                
+                {currentWindow === "PAY_BILLS" && <PaymentsManager setSelectedPayment={setSelectedPayment} setCurrentWindow={setCurrentWindow} page={"paymentProcessing"} selectedRowsForPayBills={selectedRowsForPayBills} transactionsData={cashflowTransactionsData}/>}                                
                 {/* {currentWindow === "VERIFY_PAYMENTS" && <VerifyPayments />} */}
                 
                 {currentWindow === "MAKE_PAYMENT" && <MakePayment selectedPayment={selectedPayment} refreshCashflowData={refreshCashflowData} setCurrentWindow={setCurrentWindow} />}  
                 {currentWindow === "SELECT_PAYMENT" && <ManagerSelectPayment selectedPayment={selectedPayment} selectedPurGroup={selectedPurGroup} />}                             
               </Grid>
 
-              {currentWindow === "VERIFY_PAYMENTS" && <VerifyPayments2 selectedPurchaseRow={selectedPurchasegrp} />}
+              {currentWindow === "VERIFY_PAYMENTS" && <VerifyPayments2 selectedPurchaseRow={selectedPurchasegrp}  transactionsData={cashflowTransactionsData} />}
             </Grid>
           </Container>
         </ThemeProvider>
