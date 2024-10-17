@@ -91,6 +91,7 @@ const TenantDashboard = () => {
   const [filteredMaintenanceRequests, setFilteredMaintenanceRequests] = useState([]);
   const [allBalanceDetails, setAllBalanceDetails] = useState([]);
   const [reload, setReload] = useState(false);
+  const [relatedLease, setRelatedLease] = useState(null);
 
   useEffect(() => {
     // Whenever this component is mounted or navigated to, reset the right pane
@@ -187,28 +188,48 @@ const TenantDashboard = () => {
   const handleSelectProperty = (property) => {
     setSelectedProperty(property);
     updateLeaseDetails(property.property_uid);
-    // fetchCashflowDetails();
-    // fetchPaymentHistory(property.property_uid);
-    // fetchBalanceDetails(property.property_uid);
+  
+    if (leaseDetailsData) {
+      const leasesForProperty = leaseDetailsData.filter(
+        (lease) => lease.property_uid === property.property_uid
+      );
 
-    const filteredBalanceDetails = allBalanceDetails.filter(
-      (detail) => 
-        detail.propertyUid === property.property_uid && 
-        (detail.purchaseStatus === "UNPAID" || detail.purchaseStatus === "PARTIALLY PAID")
-    );
-    setBalanceDetails(filteredBalanceDetails);
-
-    const filteredRequests = maintenanceRequestsNew?.filter((request) => request.lease_property_id === property.property_uid);
-    setFilteredMaintenanceRequests(filteredRequests);
-
+      console.log("lease rrr", leasesForProperty);
+  
+      // Find if there's a lease in the "RENEW PROCESSING" state for the selected property
+      const renewProcessingLease = leasesForProperty.find(
+        (lease) => lease.lease_status === "RENEW PROCESSING"
+      );
+      setRelatedLease(renewProcessingLease || null);
+    }
+  
+    if (allBalanceDetails) {
+      const filteredBalanceDetails = allBalanceDetails.filter(
+        (detail) =>
+          detail.propertyUid === property.property_uid &&
+          (detail.purchaseStatus === "UNPAID" || detail.purchaseStatus === "PARTIALLY PAID")
+      );
+      setBalanceDetails(filteredBalanceDetails);
+    }
+  
+    if (maintenanceRequestsNew) {
+      const filteredRequests = maintenanceRequestsNew.filter(
+        (request) => request.lease_property_id === property.property_uid
+      );
+      setFilteredMaintenanceRequests(filteredRequests);
+    }
+  
     if (rightPane?.type === "paymentHistory") {
-      const updatedPaymentHistory = paymentHistory.filter((detail) => detail.pur_property_id === property.property_uid);
+      const updatedPaymentHistory = paymentHistory.filter(
+        (detail) => detail.pur_property_id === property.property_uid
+      );
       setRightPane({
         type: "paymentHistory",
         state: { data: updatedPaymentHistory },
       });
     }
   };
+  
 
   const updateLeaseDetails = (propertyUid) => {
     const leaseForProperty = leaseDetailsData.find((ld) => ld.property_uid === propertyUid);
@@ -435,7 +456,7 @@ const TenantDashboard = () => {
                   <>
                     {/* Lease Details: Aligns with Account Balance */}
                     <Grid item xs={12} md={6} sx={{ flex: 1 }}>
-                      <LeaseDetails leaseDetails={leaseDetails} setRightPane={setRightPane} selectedProperty={selectedProperty}/>
+                      <LeaseDetails leaseDetails={leaseDetails} setRightPane={setRightPane} selectedProperty={selectedProperty} relatedLease={relatedLease}/>
                     </Grid>
 
                     {/* Maintenance and Management Details: Match height with Lease Details */}
@@ -680,8 +701,8 @@ const AnnouncementsPM = ({ announcements, setRightPane }) => {
   );
 };
 
-const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty }) => {
-  console.log("Lease Details", leaseDetails);
+const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty, relatedLease }) => {
+  console.log("Lease Details", relatedLease);
   const { getProfileId } = useUser();
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -703,6 +724,20 @@ const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty }) => {
 
   // Check if Renew Lease button should be visible (if within 2x notice period)
   const showRenewLeaseButton = daysUntilLeaseEnd <= 2 * noticePeriod && leaseDetails?.lease_renew_status !== "RENEW NEW";
+  const isEndingOrEarlyTermination = leaseDetails?.lease_renew_status === "ENDING" || leaseDetails?.lease_renew_status === "EARLY TERMINATION"; 
+
+  const handleViewRenewProcessingLease = () => {
+    if (relatedLease) {
+      setRightPane({
+        type: "tenantLeases",
+        state: {
+          data: relatedLease,
+          status: "RENEW PROCESSING",
+          lease: relatedLease,
+        },
+      });
+    }
+  };
 
   const handleRenewLease = async () => {
     // try {
@@ -861,15 +896,18 @@ const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty }) => {
               </Stack>
             </Stack>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', marginTop: "auto" }}>
-            <Button 
-              variant="contained" 
-              color="secondary" 
-              onClick={handleEndLease}
-              size="small"
-              sx={{ width: 'fit-content', padding: '5px 10px' }}
-            >
-              End Lease
-            </Button>
+            {!isEndingOrEarlyTermination && (
+              <Button 
+                variant="contained" 
+                color="secondary" 
+                onClick={handleEndLease}
+                size="small"
+                sx={{ width: 'fit-content', padding: '5px 10px' }}
+              >
+                End Lease
+              </Button>
+            )}
+
             
             {leaseDetails?.lease_renew_status === "RENEW REQUESTED" ? (
               <Box mt={2}> {/* Add margin top to create space between elements */}
@@ -885,6 +923,15 @@ const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty }) => {
                   </Button>
                 </Box>
               )
+            )}
+            {relatedLease && (
+              <Button 
+                variant="contained" 
+                color="primary" 
+                onClick={handleViewRenewProcessingLease}
+              >
+                View Renew Processing Lease
+              </Button>
             )}
           </Box>
           </Box>

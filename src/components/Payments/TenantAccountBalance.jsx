@@ -46,35 +46,35 @@ const TenantAccountBalance = ({
   const balanceDue = parseFloat(balanceDetails[0]?.amountDue || 0);
   // console.log("balance details", balanceDetails);
 
-  useEffect(() => {
-    if (selectedProperty) {
-      // Filter the leases for the selected property
-      const leasesForProperty = leaseDetailsData.filter(
-        (lease) => lease.property_uid === selectedProperty.property_uid
-      );
+  // useEffect(() => {
+  //   if (selectedProperty) {
+  //     // Filter the leases for the selected property
+  //     const leasesForProperty = leaseDetailsData.filter(
+  //       (lease) => lease.property_uid === selectedProperty.property_uid
+  //     );
 
-      // Find if there's a lease in the "RENEW PROCESSING" state for the selected property
-      const renewProcessingLease = leasesForProperty.find(
-        (lease) => lease.lease_status === "RENEW PROCESSING"
-      );
+  //     // Find if there's a lease in the "RENEW PROCESSING" state for the selected property
+  //     const renewProcessingLease = leasesForProperty.find(
+  //       (lease) => lease.lease_status === "RENEW PROCESSING"
+  //     );
 
-      // If a renew processing lease exists, set it to relatedLease
-      setRelatedLease(renewProcessingLease || null);
-    }
-  }, [selectedProperty, leaseDetailsData]);
+  //     // If a renew processing lease exists, set it to relatedLease
+  //     setRelatedLease(renewProcessingLease || null);
+  //   }
+  // }, [selectedProperty, leaseDetailsData]);
 
-  const handleViewRenewProcessingLease = () => {
-    if (relatedLease) {
-      setRightPane({
-        type: "tenantLeases",
-        state: {
-          data: relatedLease,
-          status: "RENEW PROCESSING",
-          lease: relatedLease,
-        },
-      });
-    }
-  };
+  // const handleViewRenewProcessingLease = () => {
+  //   if (relatedLease) {
+  //     setRightPane({
+  //       type: "tenantLeases",
+  //       state: {
+  //         data: relatedLease,
+  //         status: "RENEW PROCESSING",
+  //         lease: relatedLease,
+  //       },
+  //     });
+  //   }
+  // };
 
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -390,7 +390,7 @@ const TenantAccountBalance = ({
           </Button>
         )}
 
-      {relatedLease && (
+      {/* {relatedLease && (
         <Button
           variant="contained"
           color="primary"
@@ -398,7 +398,7 @@ const TenantAccountBalance = ({
         >
           View Renewed Lease
         </Button>
-      )}
+      )} */}
 
         {/* Payment History Button */}
         {from !== "selectPayment" && leaseDetails?.lease_status === "ACTIVE" && (
