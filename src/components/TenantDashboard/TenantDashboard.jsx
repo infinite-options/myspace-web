@@ -198,8 +198,9 @@ const TenantDashboard = () => {
   
       // Find if there's a lease in the "RENEW PROCESSING" state for the selected property
       const renewProcessingLease = leasesForProperty.find(
-        (lease) => lease.lease_status === "RENEW PROCESSING"
+        (lease) => lease.lease_status === "RENEW PROCESSING" || lease.lease_status === "RENEW NEW"
       );
+      console.log("check here", renewProcessingLease);
       setRelatedLease(renewProcessingLease || null);
     }
   
@@ -702,7 +703,7 @@ const AnnouncementsPM = ({ announcements, setRightPane }) => {
 };
 
 const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty, relatedLease }) => {
-  console.log("Lease Details", relatedLease);
+  console.log("Lease Details renewal", relatedLease);
   const { getProfileId } = useUser();
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -738,6 +739,18 @@ const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty, relatedLea
       });
     }
   };
+
+  const handleViewRenewLease = () => {
+    console.log("related Lease", relatedLease);
+    setRightPane({
+      type: "tenantApplication",
+      state: {
+        data: relatedLease,
+        status: relatedLease.lease_status,
+        lease: relatedLease,
+      },
+    })
+  }
 
   const handleRenewLease = async () => {
     // try {
@@ -895,45 +908,52 @@ const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty, relatedLea
                 <Typography>{noticePeriod} days</Typography>
               </Stack>
             </Stack>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', marginTop: "auto" }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: "auto" }}>
             {!isEndingOrEarlyTermination && (
               <Button 
                 variant="contained" 
                 color="secondary" 
                 onClick={handleEndLease}
                 size="small"
-                sx={{ width: 'fit-content', padding: '5px 10px' }}
+                sx={{ padding: '5px 10px', marginRight: "10px" }}
               >
                 End Lease
               </Button>
             )}
 
-            
-            {leaseDetails?.lease_renew_status === "RENEW REQUESTED" ? (
-              <Box mt={2}> {/* Add margin top to create space between elements */}
-                <Typography variant="body1" color="text.secondary">
-                  Lease renewal has been requested
-                </Typography>
-              </Box>
+            {relatedLease?.lease_status === "RENEW NEW" ? (
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "#FFD700",
+                  color: "#FFFFF", 
+                  textTransform: "none",
+                  marginLeft: "10px"         
+                }}
+                onClick={handleViewRenewLease}
+              >
+                RENEWAL APPLICATION
+              </Button>
             ) : (
-              showRenewLeaseButton && (
-                <Box mt={2}> {/* Add margin top to create space between elements */}
-                  <Button variant="contained" color="primary" onClick={handleRenewLease}>
-                    Renew Lease
-                  </Button>
-                </Box>
+              showRenewLeaseButton && relatedLease?.lease_status !== "RENEW PROCESSING" && (
+                <Button variant="contained" color="primary" onClick={handleRenewLease} sx={{ marginLeft: "10px" }}>
+                  Renew Lease
+                </Button>
               )
             )}
-            {relatedLease && (
+
+            {relatedLease && relatedLease.lease_status === "RENEW PROCESSING" && (
               <Button 
                 variant="contained" 
                 color="primary" 
                 onClick={handleViewRenewProcessingLease}
+                sx={{ marginLeft: "10px" }}
               >
-                View Renew Processing Lease
+                View Renewal Lease
               </Button>
             )}
           </Box>
+
           </Box>
           </>
         )}

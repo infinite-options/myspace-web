@@ -760,7 +760,7 @@ export default function TenantApplication(props) {
                       Submit
                     </Typography>
                   </Button>}
-                {(status == null || status === "" || status === "NEW" || status === "REJECTED" || status === "RESCIND" || status === "RENEW") &&
+                {(status == null || status === "" || status === "NEW" || status === "REJECTED" || status === "RESCIND" || status === "RENEW" || status === "RENEW NEW") &&
                 <Button
                   variant='contained'
                   sx={{
@@ -786,7 +786,7 @@ export default function TenantApplication(props) {
                 }
             </Box>
 
-            {status && status === "NEW" ? (
+            {status && (status === "NEW" || status === "RENEW NEW") ? (
                 <>
                   <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                     <Button
