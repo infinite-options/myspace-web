@@ -72,7 +72,7 @@ export default function PropertyRentWidget(props) {
   // console.log(unpaidCount);
   unpaidCount = unpaidCount ? unpaidCount.num : 0;
 
-  let partialPaidCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "PAID PARTIALLY") : 0;
+  let partialPaidCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "PARTIALLY PAID") : 0;
   partialPaidCount = partialPaidCount ? partialPaidCount.num : 0;
 
   let paidLateCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "PAID LATE") : 0;
@@ -93,7 +93,7 @@ export default function PropertyRentWidget(props) {
 
   let data = [
     { rent_status: "not paid", number: unpaidCount, fill: "#A52A2A" },
-    { rent_status: "paid partially", number: partialPaidCount, fill: "#FF8A00" },
+    { rent_status: "partially paid", number: partialPaidCount, fill: "#FF8A00" },
     { rent_status: "paid late", number: paidLateCount, fill: "#FFC85C" },
     { rent_status: "paid on time", number: paidCount, fill: "#3D5CAC" },
     { rent_status: "vacant", number: vacantCount, fill: "#160449" },
@@ -236,7 +236,7 @@ export default function PropertyRentWidget(props) {
                   //   console.log("navigating to propertyDetail - i, propertiesList - ", index, propertyList);
                   //   navigate(`/properties`, { state: { index, propertyList, rawPropertyData } });
                   // }}
-                  onClick={() => navigate("/properties", { state: { showLHS: "Rent", showRHS: "PropertyNavigator", showOnlyListings: false, } })}
+                  onClick={() => navigate("/properties", { state: { showLHS: "Rent", showRHS: "PropertyNavigator", showOnlyListings: false } })}
                 >
                   {`${property.property_address}${property.property_unit ? `, Unit ${property.property_unit}` : ""}`}
                 </MenuItem>
@@ -281,7 +281,7 @@ export default function PropertyRentWidget(props) {
               paddingAngle={0}
               dataKey='number'
               filter='url(#shadow)'
-              onClick={() => navigate("/properties", { state: { showLHS: "List", showRHS: "PropertyNavigator", showOnlyListings: false, } })}
+              onClick={() => navigate("/properties", { state: { showLHS: "List", showRHS: "PropertyNavigator", showOnlyListings: false } })}
             >
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
@@ -299,7 +299,7 @@ export default function PropertyRentWidget(props) {
                 fill: "#160449",
                 fontWeight: "bold",
               }}
-              onClick={() => navigate("/properties", { state: { showLHS: "List", showRHS: "PropertyNavigator", showOnlyListings: false, } })}
+              onClick={() => navigate("/properties", { state: { showLHS: "List", showRHS: "PropertyNavigator", showOnlyListings: false } })}
             >
               View all {totalPropertiesCount}
               <tspan x={130} y={145}>
@@ -328,7 +328,7 @@ export default function PropertyRentWidget(props) {
               paddingAngle={0}
               dataKey='number'
               filter='url(#shadow)'
-              onClick={() => navigate("/properties", { state: { showLHS: "List", showRHS: "PropertyNavigator", showOnlyListings: false, } })}
+              onClick={() => navigate("/properties", { state: { showLHS: "List", showRHS: "PropertyNavigator", showOnlyListings: false } })}
             >
               {defaultData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={3} />
@@ -376,7 +376,7 @@ export default function PropertyRentWidget(props) {
           //   navigate(propertyRoutingBasedOnSelectedRole());
           // }}
           // onClick={() => navigate("/properties", { state: { showLHS: "List", showRHS: "PropertyNavigator" } })}
-          onClick={() => navigate("/properties", { state: { showLHS: "List", showRHS: "PropertyNavigator", showOnlyListings: true, } })}
+          onClick={() => navigate("/properties", { state: { showLHS: "List", showRHS: "PropertyNavigator", showOnlyListings: true } })}
         >
           View {vacantCount} Property Listings
         </Button>
