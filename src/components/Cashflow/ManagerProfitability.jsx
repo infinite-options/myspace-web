@@ -22,6 +22,7 @@ import {
   TableRow,
   Container,
   Tooltip,
+  Menu, MenuItem
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -75,6 +76,9 @@ const ManagerProfitability = ({
   revenueList,
   expenseList,
   view,
+  ownerList,
+  setSelectedOwnerId,
+  selectedOwnerId,
   totalCashflowValueByType,
   expectedCashflowValueByType,
   allCashflowData,
@@ -111,7 +115,8 @@ const ManagerProfitability = ({
   const [profitsExpanded, setProfitsExpanded] = useState(true);
   const [revenueExpanded, setRevenueExpanded] = useState(true);
   const [expenseExpanded, setExpenseExpanded] = useState(true);
-  console.log("inside cashflow - view - ", view)
+  // console.log("inside cashflow - view - ", view)
+  
   const [tab, setTab] = useState( "profit");
   const [headerTab, setHeaderTab] = useState("current_month");
   const [ total, setTotal] = useState();
@@ -137,6 +142,7 @@ const ManagerProfitability = ({
   const [cashflowExpand, setCashflowExpand] = useState(true)
   const [cashflowRevenueExpand, setCashflowRevenueExpand] = useState(true)
   const [ cashflowExpenseExpand, setCashflowExpanseExpand] = useState(true)
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleSelectTab = (tab_name) => {
     setTab(tab_name);
@@ -697,7 +703,26 @@ const ManagerProfitability = ({
       );
     }
         
-}
+  }
+
+  const handleOwnerChange = (ownerId) => {
+    // console.log("ManagerCashflowWidget - handlePropertyChange - value - ", propertyUID);
+    setSelectedOwnerId(ownerId);
+    // setPropertyButtonName("View all Properties");
+    setAnchorEl(null);
+  };
+
+  const handleSelectOwner = (event) => {
+    if (selectedOwnerId !== "All Owner") {
+      setSelectedOwnerId("All Owner");
+    } else if (selectedOwnerId === "All Owner") {
+      setAnchorEl(event.currentTarget);
+    }
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
 
 
@@ -819,10 +844,47 @@ const ManagerProfitability = ({
               setShowSelectMonth={setShowSelectMonth}
             />
             {selectedRole === "MANAGER" && (
-              <Button sx={{ textTransform: "capitalize", width: "150px" }} onClick={() => {}}>
-                <img src={AllOwnerIcon} alt='All Owners' style={{ width: "10px", height: "10px" }} />
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>All Owners</Typography>
-              </Button>
+              <>
+                <Button
+                  variant='outlined'
+                  id='revenue'
+                  style={{
+                    width: "150px",
+                    fontSize: "13px",
+                    marginBottom: "10px",
+                    color: "#3D5CAC",
+                    fontSize: "13px",
+                    marginBottom: "10px",
+                    borderRadius: "5px",
+                  }}
+                  // onClick={viewProperties}
+                  onClick={handleSelectOwner}
+                >
+                  <img src={AllOwnerIcon} alt='All Owners' style={{ width: "10px", height: "10px" }} />
+                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>{selectedOwnerId}</Typography>
+                </Button>
+                {ownerList && (<Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                >
+                  {Object.entries(ownerList)?.map(([ownerID, ownerInfo], index) => (
+                    <MenuItem
+                      key={ownerID}
+                      value={ownerID}
+                      onClick={() => {
+                        handleOwnerChange(ownerID);
+                      }}
+                    >
+                      {ownerInfo?.owner_first_name} {ownerInfo?.owner_last_name}
+                    </MenuItem>
+                  ))}
+                </Menu>)}
+              </>
+              // <Button sx={{ textTransform: "capitalize", width: "150px" }} onClick={() => {}}>
+              //   <img src={AllOwnerIcon} alt='All Owners' style={{ width: "10px", height: "10px" }} />
+              //   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>All Owners</Typography>
+              // </Button>
             )}
           </Box>
 
