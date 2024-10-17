@@ -32,7 +32,7 @@ export default function TenantApplication(props) {
   const [property, setProperty] = useState([]);
   const [status, setStatus] = useState("");
   const [lease, setLease] = useState([]);
-  // console.log("in tenant application status", status);
+  console.log("in tenant application status", status);
   // console.log("lease", lease);
   // console.log("property", property);
 
@@ -387,14 +387,14 @@ export default function TenantApplication(props) {
         updateLeaseData.append("lease_uid", lease[0].lease_uid);
         updateLeaseData.append("lease_renew_status", "RENEW REQUESTED");
   
-        const updateLeaseResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
-          method: "PUT",
-          body: updateLeaseData,
-        });
+        // const updateLeaseResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+        //   method: "PUT",
+        //   body: updateLeaseData,
+        // });
   
-        if (!updateLeaseResponse.ok) {
-          throw new Error("Failed to update lease status to RENEW.");
-        }
+        // if (!updateLeaseResponse.ok) {
+        //   throw new Error("Failed to update lease status to RENEW.");
+        // }
   
         leaseApplicationData.append("lease_status", "RENEW NEW");
       } else {
@@ -489,9 +489,13 @@ export default function TenantApplication(props) {
       // console.log("----dhyey ---- leaseApplication payload - ", leaseApplicationData)
       
 
-      const leaseApplicationResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
-        method: "POST",
-        body: leaseApplicationData,
+      // const leaseApplicationResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+      //   method: "POST",
+      //   body: leaseApplicationData,
+      // });
+
+      leaseApplicationData.forEach((value, key) => {
+        console.log(`${key}: ${value}`);
       });
 
       const annoucementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
@@ -513,16 +517,16 @@ export default function TenantApplication(props) {
         }),
       });
 
-      Promise.all([annoucementsResponse, leaseApplicationResponse]).then((values) => {
-        // navigate("/listings"); // send success data back to the propertyInfo page
-        if (props.from === "PropertyInfo") {
-          props.setRightPane({ type: "listings" });
-          props.setReload(prev => !prev);
-        } else {
-          props.setRightPane("");
-          props.setReload(prev => !prev);
-        }
-      });
+      // Promise.all([annoucementsResponse, leaseApplicationResponse]).then((values) => {
+      //   // navigate("/listings"); // send success data back to the propertyInfo page
+      //   if (props.from === "PropertyInfo") {
+      //     props.setRightPane({ type: "listings" });
+      //     props.setReload(prev => !prev);
+      //   } else {
+      //     props.setRightPane("");
+      //     props.setReload(prev => !prev);
+      //   }
+      // });
     } catch (error) {
       console.log("Error submitting application:", error);
       alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
@@ -997,26 +1001,24 @@ export const VehicleDataGrid = ({ vehicles }) => {
 }
 
 export const EmploymentDataGrid = ({ tenantProfile, selectedJobs, setSelectedJobs, leaseStatus, lease }) => {
-  // If leaseStatus is PROCESSING or ACTIVE, use the lease's job information (lease_income)
-  console.log("lease lease emp", leaseStatus);
   const employmentData =
     leaseStatus === "PROCESSING" || leaseStatus === "ACTIVE" || leaseStatus === "NEW"
       ? (lease?.[0]?.lease_income ? JSON.parse(lease[0].lease_income) : [])
       : (tenantProfile?.tenant_employment ? JSON.parse(tenantProfile.tenant_employment) : []);
 
   const handleJobSelection = (job, isChecked) => {
-    if (isChecked) {
-      setSelectedJobs([...selectedJobs, job]);
-    } else {
-      setSelectedJobs(selectedJobs.filter((selectedJob) => selectedJob.companyName !== job.companyName));
-    }
+    setSelectedJobs((prevSelectedJobs) => {
+      if (isChecked) {
+        return [...prevSelectedJobs, job];
+      } else {
+        return prevSelectedJobs.filter((selectedJob) => selectedJob.companyName !== job.companyName);
+      }
+    });
   };
 
-  useEffect(() => {
-    if (selectedJobs.length === 0 && employmentData.length > 0) {
-      setSelectedJobs(employmentData);
-    }
-  }, [employmentData, selectedJobs, setSelectedJobs]);
+  // useEffect(() => {
+  //     setSelectedJobs(employmentData);
+  // }, [employmentData, selectedJobs, setSelectedJobs]);
 
   return (
     <Box sx={{ padding: '10px' }}>
@@ -1052,3 +1054,5 @@ export const EmploymentDataGrid = ({ tenantProfile, selectedJobs, setSelectedJob
     </Box>
   );
 };
+
+
