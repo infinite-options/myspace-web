@@ -715,21 +715,34 @@ let date = new Date();
           console.log('Collected tenant UIDs:', tenantUIDs);
       
           // Append tenant_uid array to the form data as a list of array
-          leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify(tenantUIDs));
-          leaseApplicationFormData.append("tenant_uid", tenantUIDs.join(','));
+          if(application?.lease_status === "RENEW NEW"){
+
+            leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify(tenantUIDs));
+          } else{
+
+            leaseApplicationFormData.append("tenant_uid", tenantUIDs.join(','));
+          }
         } catch (error) {
           // Handle JSON parse errors
           console.error("Error parsing tenants data: ", error);
       
           // Append the property.tenant_uid as fallback
+          if(application?.lease_status === "RENEW NEW"){
+
           leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify([property.tenant_uid]));
-          leaseApplicationFormData.append("tenant_uid", property.tenant_uid);
+          
+          }else{
+            leaseApplicationFormData.append("tenant_uid", property.tenant_uid);
+          }
         }
       } else {
         // If 'tenants' field is not available, append property.tenant_uid as a single value array
-        leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify([property.tenant_uid]));
-        leaseApplicationFormData.append("tenant_uid", property?.tenant_uid);
+        if(application?.lease_status === "RENEW NEW"){
+          leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify([property.tenant_uid]));
+        }else{
+          leaseApplicationFormData.append("tenant_uid", property?.tenant_uid);
       }
+    }
 
       const hasMissingType = !checkFileTypeSelected();
       // console.log("HAS MISSING TYPE", hasMissingType);
@@ -761,8 +774,6 @@ let date = new Date();
         
       }
 
-
-      console.log('---application?.lease_status---', application?.lease_status);
       if(application?.lease_status === "RENEW NEW"){
         leaseApplicationFormData.append("lease_uid", application.lease_uid);
         await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
