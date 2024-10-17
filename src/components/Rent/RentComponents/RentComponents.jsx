@@ -303,7 +303,7 @@ export function RentAccordion(props) {
       case "UNPAID":
         return "Not Paid";
       case "PARTIALLY PAID":
-        return "PARTIALLY PAID";
+        return "Partially Paid";
       case "PAID LATE":
         return "Paid Late";
       case "PAID":
