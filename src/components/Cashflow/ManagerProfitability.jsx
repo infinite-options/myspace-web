@@ -1433,7 +1433,6 @@ const ManagerProfitability = ({
                             sx={{
                               backgroundColor: theme.palette.primary.main,
                               boxShadow: "none",
-                              marginY: "10px"
                             }}
                             key={index}
                           >
