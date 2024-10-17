@@ -125,7 +125,7 @@ const TenantLease = () => {
   const navigate = useNavigate();
   const { getProfileId } = useUser();
   const { state } = useLocation();
-  const { application, property } = state;
+  const { application, property, managerInitiatedRenew = false } = state;
   const { getList, } = useContext(ListsContext);	
 	const feeFrequencies = getList("frequency");
   console.log("Property: ", property);
@@ -709,23 +709,26 @@ let date = new Date();
           const parsedData = JSON.parse(property.tenants);
       
           // Collect all tenant_uid as an array
-          const tenantUIDs = parsedData.map(tenant => tenant.tenant_uid);
+          let tenantUIDs = parsedData.map(tenant => tenant.tenant_uid);
       
           // Log for debugging
           console.log('Collected tenant UIDs:', tenantUIDs);
       
           // Append tenant_uid array to the form data as a list of array
           leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify(tenantUIDs));
+          leaseApplicationFormData.append("tenant_uid", tenantUIDs.join(','));
         } catch (error) {
           // Handle JSON parse errors
           console.error("Error parsing tenants data: ", error);
       
           // Append the property.tenant_uid as fallback
           leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify([property.tenant_uid]));
+          leaseApplicationFormData.append("tenant_uid", property.tenant_uid);
         }
       } else {
         // If 'tenants' field is not available, append property.tenant_uid as a single value array
         leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify([property.tenant_uid]));
+        leaseApplicationFormData.append("tenant_uid", property?.tenant_uid);
       }
 
       const hasMissingType = !checkFileTypeSelected();
@@ -754,6 +757,8 @@ let date = new Date();
           documentsDetails.push(documentObject);
         });
         leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
+
+        
       }
 
 
@@ -775,7 +780,6 @@ let date = new Date();
                 body: leaseApplicationUpdateFormData,
               });
 
-              leaseApplicationFormData.append("tenant_uid", property.tenant_uid);
       await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "POST",
         body: leaseApplicationFormData,
@@ -1046,93 +1050,137 @@ useEffect(() => {
   </AccordionDetails>
 </Accordion>
 </Paper>
-<Paper sx={{  marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
+<Paper sx={{ marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
+  <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
+    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+        Tenant Details
+      </Typography>
+    </AccordionSummary>
+    <AccordionDetails sx={{ padding: "20px", borderRadius: "10px" }}>
+      {/* Display tenant details */}
+      {console.log('--application details in tenant---', application)}
+      {console.log('--property details in tenant---', property)}
 
-<Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
-  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography
-          variant="h6" sx={{ fontWeight: "bold" }}
-        >
-          Tenant Details
-        </Typography>
-  </AccordionSummary>
-  <AccordionDetails sx={{ padding: "20px", borderRadius: "10px" }}>
-    {/* Display tenant details directly from the property fields */}
-    {property ? (
-      <Grid container spacing={2}>
-        <Grid item xs={6}>
-          <Typography sx={{ fontWeight: 'bold' }}>First Name:</Typography>
-          <Typography>{property.tenant_first_name || 'N/A'}</Typography>
-        </Grid>
-        <Grid item xs={6}>
-          <Typography sx={{ fontWeight: 'bold' }}>Last Name:</Typography>
-          <Typography>{property.tenant_last_name || 'N/A'}</Typography>
-        </Grid>
-        <Grid item xs={6}>
-          <Typography sx={{ fontWeight: 'bold' }}>Email:</Typography>
-          <Typography>{property.tenant_email || 'N/A'}</Typography>
-        </Grid>
-        <Grid item xs={6}>
-          <Typography sx={{ fontWeight: 'bold' }}>Phone Number:</Typography>
-          <Typography>{property.tenant_phone_number || 'N/A'}</Typography>
-        </Grid>
-        <Grid item xs={6}>
-          <Typography sx={{ fontWeight: 'bold' }}>Address:</Typography>
-          <Typography>{property.tenant_address || 'N/A'}, {property.tenant_city || 'N/A'}, {property.tenant_state || 'N/A'}, {property.tenant_zip || 'N/A'}</Typography>
-        </Grid>
-        <Grid item xs={6}>
-          <Typography sx={{ fontWeight: 'bold' }}>Responsibility:</Typography>
-          <Typography>{property.lt_responsibility ? `${property.lt_responsibility * 100}%` : 'N/A'}</Typography>
-        </Grid>
+      {/* Check if managerInitiatedRenew is true */}
+      {managerInitiatedRenew && application.tenants ? (
+        // Parse tenants if managerInitiatedRenew is true
+        (() => {
+          try {
+            const parsedTenants = JSON.parse(application.tenants);
 
-      </Grid>
-    ) : (
-      <Typography>No Tenant Data Available</Typography>
-    )}
-  </AccordionDetails>
-</Accordion>
+            return parsedTenants.length > 0 ? (
+              parsedTenants.map((tenant, index) => (
+                <Grid container spacing={2} key={index} sx={{ marginBottom: "20px" }}>
+                  <Grid item xs={6}>
+                    <Typography sx={{ fontWeight: 'bold' }}>First Name:</Typography>
+                    <Typography>{tenant.tenant_first_name || 'N/A'}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography sx={{ fontWeight: 'bold' }}>Last Name:</Typography>
+                    <Typography>{tenant.tenant_last_name || 'N/A'}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography sx={{ fontWeight: 'bold' }}>Email:</Typography>
+                    <Typography>{tenant.tenant_email || 'N/A'}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography sx={{ fontWeight: 'bold' }}>Phone Number:</Typography>
+                    <Typography>{tenant.tenant_phone_number || 'N/A'}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography sx={{ fontWeight: 'bold' }}>Responsibility:</Typography>
+                    <Typography>{tenant.lt_responsibility ? `${tenant.lt_responsibility * 100}%` : 'N/A'}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography sx={{ fontWeight: 'bold' }}>Address:</Typography>
+                    <Typography>{application.tenant_address || 'N/A'}, {application.tenant_city || 'N/A'}, {application.tenant_state || 'N/A'}, {application.tenant_zip || 'N/A'}</Typography>
+                  </Grid>
+                </Grid>
+              ))
+            ) : (
+              <Typography>No Tenant Data Available</Typography>
+            );
+          } catch (error) {
+            console.error('Error parsing tenant data:', error);
+            return <Typography>Invalid Tenant Data</Typography>;
+          }
+        })()
+      ) : (
+        // Display data from `application` directly if `managerInitiatedRenew` is false
+        application ? (
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <Typography sx={{ fontWeight: 'bold' }}>First Name:</Typography>
+              <Typography>{application.tenant_first_name || 'N/A'}</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography sx={{ fontWeight: 'bold' }}>Last Name:</Typography>
+              <Typography>{application.tenant_last_name || 'N/A'}</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography sx={{ fontWeight: 'bold' }}>Email:</Typography>
+              <Typography>{application.tenant_email || 'N/A'}</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography sx={{ fontWeight: 'bold' }}>Phone Number:</Typography>
+              <Typography>{application.tenant_phone_number || 'N/A'}</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography sx={{ fontWeight: 'bold' }}>Address:</Typography>
+              <Typography>{application.tenant_address || 'N/A'}, {application.tenant_city || 'N/A'}, {application.tenant_state || 'N/A'}, {application.tenant_zip || 'N/A'}</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography sx={{ fontWeight: 'bold' }}>Responsibility:</Typography>
+              <Typography>{application.lt_responsibility ? `${application.lt_responsibility * 100}%` : 'N/A'}</Typography>
+            </Grid>
+          </Grid>
+        ) : (
+          <Typography>No Tenant Data Available</Typography>
+        )
+      )}
+    </AccordionDetails>
+  </Accordion>
 </Paper>
 
-<Paper sx={{  marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
 
-<Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
-  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography
-          variant="h6" sx={{ fontWeight: "bold" }}
-        >
-          Income Details
-        </Typography>
-  </AccordionSummary>
-  <AccordionDetails sx={{ padding: "20px", borderRadius: "10px" }}>
-    {/* Display tenant details directly from the property fields */}
-    {property ? (
-      <Grid container spacing={2}>
-        <Grid item xs={6}>
-          <Typography sx={{ fontWeight: 'bold' }}>Company name:</Typography>
-          <Typography>{property.
-tenant_current_job_company
- || 'N/A'}</Typography>
-        </Grid>
-        <Grid item xs={6}>
-          <Typography sx={{ fontWeight: 'bold' }}>Job Title:</Typography>
-          <Typography>{property.tenant_current_job_title || 'N/A'}</Typography>
-        </Grid>
-        <Grid item xs={6}>
-          <Typography sx={{ fontWeight: 'bold' }}>Amount:</Typography>
-          <Typography>{property.tenant_current_salary || 'N/A'}</Typography>
-        </Grid>
-        <Grid item xs={6}>
-          <Typography sx={{ fontWeight: 'bold' }}>Amount Frequency:</Typography>
-          <Typography>{property.tenant_salary_frequency || 'N/A'}</Typography>
-        </Grid>
-
-      </Grid>
-    ) : (
-      <Typography>No Income Data Available</Typography>
-    )}
-  </AccordionDetails>
-</Accordion>
+<Paper sx={{ marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
+  <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
+    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+      <Typography variant="h6" sx={{ fontWeight: "bold" }}>Income Details</Typography>
+    </AccordionSummary>
+    <AccordionDetails sx={{ padding: "20px", borderRadius: "10px" }}>
+      {application?.lease_income ? (
+        <>
+          {/* Parse the JSON string and map the income details */}
+          {JSON.parse(application.lease_income).map((income, index) => (
+            <Grid container spacing={2} key={index}>
+              <Grid item xs={6}>
+                <Typography sx={{ fontWeight: 'bold' }}>Company name:</Typography>
+                <Typography>{income.companyName || 'N/A'}</Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography sx={{ fontWeight: 'bold' }}>Job Title:</Typography>
+                <Typography>{income.jobTitle || 'N/A'}</Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography sx={{ fontWeight: 'bold' }}>Amount:</Typography>
+                <Typography>{income.salary || 'N/A'}</Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography sx={{ fontWeight: 'bold' }}>Amount Frequency:</Typography>
+                <Typography>{income.frequency || 'N/A'}</Typography>
+              </Grid>
+            </Grid>
+          ))}
+        </>
+      ) : (
+        <Typography>No Income Data Available</Typography>
+      )}
+    </AccordionDetails>
+  </Accordion>
 </Paper>
+
 
 {/* Occupancy Details Section */}
 <Paper sx={{  marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
