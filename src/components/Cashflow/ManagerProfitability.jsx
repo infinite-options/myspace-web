@@ -22,6 +22,7 @@ import {
   TableRow,
   Container,
   Tooltip,
+  Menu, MenuItem
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -75,6 +76,9 @@ const ManagerProfitability = ({
   revenueList,
   expenseList,
   view,
+  ownerList,
+  setSelectedOwnerId,
+  selectedOwnerId,
   totalCashflowValueByType,
   expectedCashflowValueByType,
   allCashflowData,
@@ -111,7 +115,8 @@ const ManagerProfitability = ({
   const [profitsExpanded, setProfitsExpanded] = useState(true);
   const [revenueExpanded, setRevenueExpanded] = useState(true);
   const [expenseExpanded, setExpenseExpanded] = useState(true);
-  console.log("inside cashflow - view - ", view)
+  // console.log("inside cashflow - view - ", view)
+  
   const [tab, setTab] = useState( "profit");
   const [headerTab, setHeaderTab] = useState("current_month");
   const [ total, setTotal] = useState();
@@ -137,6 +142,7 @@ const ManagerProfitability = ({
   const [cashflowExpand, setCashflowExpand] = useState(true)
   const [cashflowRevenueExpand, setCashflowRevenueExpand] = useState(true)
   const [ cashflowExpenseExpand, setCashflowExpanseExpand] = useState(true)
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleSelectTab = (tab_name) => {
     setTab(tab_name);
@@ -335,7 +341,7 @@ const ManagerProfitability = ({
     {
       field: "verified",
       headerName: "Verified",
-      flex: 1.5,
+      flex: 1.2,
       renderCell: (params) => {
         const verificationStatus = getVerificationStatus(params.row);
         const fontColor = getVerificationStatusColor(verificationStatus);
@@ -368,16 +374,18 @@ const ManagerProfitability = ({
     {
       field: "pur_amount_due",
       headerName: "Expected",
-      flex: 1,
-      renderCell: (params) => <span style={{fontSize: theme.typography.smallFont}}>$ {params.row.pur_amount_due !== null ? parseFloat(params.row.pur_amount_due).toFixed(2) : parseFloat(0).toFixed(2)}</span>,
+      flex: 1.2,
+      headerAlign: "right",
+      renderCell: (params) => <Box sx={{fontSize: theme.typography.smallFont, width:"100%", textAlign:"right"}}>$ {params.row.pur_amount_due !== null ? parseFloat(params.row.pur_amount_due).toFixed(2) : parseFloat(0).toFixed(2)}</Box>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
       field: "total_paid",
       headerName: "Actual",
-      flex: 1,
+      flex: 1.2,
+      headerAlign: "right",
       renderCell: (params) => (
-        <span style={{ textAlign: "right", display: "block", fontSize: theme.typography.smallFont }}>$ {params.row.total_paid !== null ? parseFloat(params.row.total_paid).toFixed(2) : parseFloat(0).toFixed(2)}</span>
+        <Box sx={{ textAlign: "right", width:"100%", fontSize: theme.typography.smallFont }}>$ {params.row.total_paid !== null ? parseFloat(params.row.total_paid).toFixed(2) : parseFloat(0).toFixed(2)}</Box>
       ),
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
@@ -695,7 +703,26 @@ const ManagerProfitability = ({
       );
     }
         
-}
+  }
+
+  const handleOwnerChange = (ownerId) => {
+    // console.log("ManagerCashflowWidget - handlePropertyChange - value - ", propertyUID);
+    setSelectedOwnerId(ownerId);
+    // setPropertyButtonName("View all Properties");
+    setAnchorEl(null);
+  };
+
+  const handleSelectOwner = (event) => {
+    if (selectedOwnerId !== "All Owner") {
+      setSelectedOwnerId("All Owner");
+    } else if (selectedOwnerId === "All Owner") {
+      setAnchorEl(event.currentTarget);
+    }
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
 
 
@@ -817,17 +844,54 @@ const ManagerProfitability = ({
               setShowSelectMonth={setShowSelectMonth}
             />
             {selectedRole === "MANAGER" && (
-              <Button sx={{ textTransform: "capitalize", width: "150px" }} onClick={() => {}}>
-                <img src={AllOwnerIcon} alt='All Owners' style={{ width: "10px", height: "10px" }} />
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>All Owners</Typography>
-              </Button>
+              <>
+                <Button
+                  variant='outlined'
+                  id='revenue'
+                  style={{
+                    width: "150px",
+                    fontSize: "13px",
+                    marginBottom: "10px",
+                    color: "#3D5CAC",
+                    fontSize: "13px",
+                    marginBottom: "10px",
+                    borderRadius: "5px",
+                  }}
+                  // onClick={viewProperties}
+                  onClick={handleSelectOwner}
+                >
+                  <img src={AllOwnerIcon} alt='All Owners' style={{ width: "10px", height: "10px" }} />
+                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>{selectedOwnerId}</Typography>
+                </Button>
+                {ownerList && (<Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                >
+                  {Object.entries(ownerList)?.map(([ownerID, ownerInfo], index) => (
+                    <MenuItem
+                      key={ownerID}
+                      value={ownerID}
+                      onClick={() => {
+                        handleOwnerChange(ownerID);
+                      }}
+                    >
+                      {ownerInfo?.owner_first_name} {ownerInfo?.owner_last_name}
+                    </MenuItem>
+                  ))}
+                </Menu>)}
+              </>
+              // <Button sx={{ textTransform: "capitalize", width: "150px" }} onClick={() => {}}>
+              //   <img src={AllOwnerIcon} alt='All Owners' style={{ width: "10px", height: "10px" }} />
+              //   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>All Owners</Typography>
+              // </Button>
             )}
           </Box>
 
           {/* Filter buttons */}
           <Grid container item xs={12} marginTop={15} marginBottom={5}>
             <Grid container item xs={8} display={"flex"} direction={"row"}>
-              <Grid container justifyContent='center' item xs={2} marginRight={6}>
+              <Grid container justifyContent='center' item xs={1.5} marginRight={6}>
                 <Button
                   sx={{
                     width: "90px",
@@ -842,10 +906,10 @@ const ManagerProfitability = ({
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit</Typography>
                 </Button>
               </Grid>
-              <Grid container justifyContent='center' item xs={2} marginRight={6}>
+              <Grid container justifyContent='center' item xs={2.5} marginRight={6}>
                 <Button
                   sx={{
-                    width: "90px",
+                    width: "120px",
                     backgroundColor: tab === "by_sort" ? "#3D5CAC" : "#9EAED6",
                     textTransform: "none",
                     "&:hover": {
@@ -857,7 +921,7 @@ const ManagerProfitability = ({
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit By Type</Typography>
                 </Button>
               </Grid>
-              <Grid container justifyContent='center' item xs={2} marginRight={6}>
+              <Grid container justifyContent='center' item xs={1.3} marginRight={6}>
                 <Button
                   sx={{
                     width: "90px",
@@ -872,10 +936,10 @@ const ManagerProfitability = ({
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Cashflow</Typography>
                 </Button>
               </Grid>
-              <Grid container justifyContent='center' item xs={2} marginRight={6}>
+              <Grid container justifyContent='center' item xs={2.8} marginRight={6}>
                 <Button
                   sx={{
-                    width: "200px",
+                    width: "150px",
                     backgroundColor: tab === "type" ? "#3D5CAC" : "#9EAED6",
                     textTransform: "none",
                     "&:hover": {
@@ -1431,7 +1495,6 @@ const ManagerProfitability = ({
                             sx={{
                               backgroundColor: theme.palette.primary.main,
                               boxShadow: "none",
-                              marginY: "10px"
                             }}
                             key={index}
                           >
@@ -2458,26 +2521,24 @@ function StatementTable(props) {
                 }}
                 key={category}
               >
-                <AccordionSummary sx={{ flexDirection: "row-reverse" }} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: "#160449" }}>
-                            {" "}
-                            {category} {getCategoryCount(category, false)}{" "}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: "#160449" }}>${value ? parseFloat(value).toFixed(2) : 0}</Typography>
-                        </TableCell>
-                        <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: value !== value ? theme.palette.priority.high : "#160449", }}>${value ? parseFloat(value).toFixed(2) : 0}</Typography>
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                  </Table>
-                </AccordionSummary>
+                <Grid container item xs={12}>
+                  <Grid container justifyContent='flex-start' item xs={8}>
+                    <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: "#160449" }}>
+                          {" "}
+                          {category} {getCategoryCount(category, false)}{" "}
+                        </Typography>
+                      </AccordionSummary>
+                    </Grid>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: "#160449" }}>${value ? parseFloat(value).toFixed(2) : 0}</Typography>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: value !== value ? theme.palette.priority.high : "#160449", }}>${value ? parseFloat(value).toFixed(2) : 0}</Typography>
+                  </Grid>
+                </Grid>
                 <AccordionDetails>
                   <Table>
                     <TableBody>{getCategoryItems(category, false, navigateType)}</TableBody>
@@ -2498,30 +2559,28 @@ function StatementTable(props) {
                 }}
                 key={category}
               >
-                <AccordionSummary sx={{ flexDirection: "space-between" }} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell sx={{ width: "500px" }}>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: "#160449" }}>
-                            {" "}
-                            {category} {getCategoryCount(category, true)}{" "}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align='right'>
-                          <Typography sx={{ textAlign: "right", fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, width: "150px", color: "#160449" }}>
-                            ${value ? parseFloat(value).toFixed(2) : 0}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: categoryTotalMapping[category] !== value ? theme.palette.priority.high : "#160449", }}>
-                            ${categoryTotalMapping[category] ? parseFloat(categoryTotalMapping[category]).toFixed(2) : 0}
-                          </Typography>
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                  </Table>
-                </AccordionSummary>
+                <Grid container item xs={12}>
+                  <Grid container justifyContent='flex-start' item xs={8}>
+                    <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: "#160449" }}>
+                          {" "}
+                          {category} {getCategoryCount(category, true)}{" "}
+                        </Typography>
+                      </AccordionSummary>
+                    </Grid>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ textAlign: "right", fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, width: "150px", color: "#160449" }}>
+                      ${value ? parseFloat(value).toFixed(2) : 0}
+                    </Typography>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: categoryTotalMapping[category] !== value ? theme.palette.priority.high : "#160449", }}>
+                      ${categoryTotalMapping[category] ? parseFloat(categoryTotalMapping[category]).toFixed(2) : 0}
+                    </Typography>
+                  </Grid>
+                </Grid>
                 <AccordionDetails>
                   <Table>
                     <TableBody>{getCategoryItems(category, true)}</TableBody>
@@ -3220,7 +3279,7 @@ function NewStatmentTableForByCashflow(props){
     {
       field: "verified",
       headerName: "Verified",
-      flex: 1.5,
+      flex: 1,
       renderCell: (params) => {
         const verificationStatus = getVerificationStatus(params.row);
         const fontColor = getVerificationStatusColor(verificationStatus);
@@ -3253,16 +3312,18 @@ function NewStatmentTableForByCashflow(props){
     {
       field: "pur_amount_due",
       headerName: "Expected",
-      flex: 1,
-      renderCell: (params) => <span style={{fontSize: theme.typography.smallFont}}>$ {params.row.pur_amount_due !== null ? parseFloat(params.row.pur_amount_due).toFixed(2) : parseFloat(0).toFixed(2)}</span>,
+      flex: 1.2,
+      headerAlign: "right",
+      renderCell: (params) => <Box sx={{fontSize: theme.typography.smallFont, width: "100%", textAlign:"right"}}>$ {params.row.pur_amount_due !== null ? parseFloat(params.row.pur_amount_due).toFixed(2) : parseFloat(0).toFixed(2)}</Box>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
       field: "total_paid",
       headerName: "Actual",
-      flex: 1,
+      flex: 1.2,
+      headerAlign: "right",
       renderCell: (params) => (
-        <span style={{ textAlign: "right", display: "block", fontSize: theme.typography.smallFont }}>$ {params.row.total_paid !== null ? parseFloat(params.row.total_paid).toFixed(2) : parseFloat(0).toFixed(2)}</span>
+        <Box sx={{ textAlign: "right", width:"100%", fontSize: theme.typography.smallFont }}>$ {params.row.total_paid !== null ? parseFloat(params.row.total_paid).toFixed(2) : parseFloat(0).toFixed(2)}</Box>
       ),
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
@@ -3429,28 +3490,26 @@ function NewStatmentTableForByCashflow(props){
                 }}
                 key={category}
               >
-                <AccordionSummary sx={{ flexDirection: "row-reverse" }} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>
+                <Grid container item xs={12}>
+                  <Grid container justifyContent='flex-start' item xs={8}>
+                    <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                           <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: theme.typography.common.blue }}>
                             {" "}
                             {category} {getCategoryCount(category, false)}{" "}
                           </Typography>
-                        </TableCell>
-                        <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: theme.typography.common.blue }}>${value ? parseFloat(value).toFixed(2) : 0}</Typography>
-                        </TableCell>
-                        <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: value !== value ? theme.palette.priority.high : theme.typography.common.blue, }}>
-                            ${value ? parseFloat(value).toFixed(2) : 0}
-                          </Typography>
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                  </Table>
-                </AccordionSummary>
+                      </AccordionSummary>
+                    </Grid>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: theme.typography.common.blue }}>${value ? parseFloat(value).toFixed(2) : 0}</Typography>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: value !== value ? theme.palette.priority.high : theme.typography.common.blue, }}>
+                      ${value ? parseFloat(value).toFixed(2) : 0}
+                    </Typography>
+                  </Grid>
+                </Grid>
                 <AccordionDetails>
                   {getCategoryItems(category, false, navigateType)}
                 </AccordionDetails>
@@ -3469,30 +3528,28 @@ function NewStatmentTableForByCashflow(props){
                 }}
                 key={category}
               >
-                <AccordionSummary sx={{ flexDirection: "space-between" }} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell sx={{ width: "500px" }}>
+                <Grid container item xs={12}>
+                  <Grid container justifyContent='flex-start' item xs={8}>
+                    <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                           <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: theme.typography.common.blue }}>
                             {" "}
                             {category} {getCategoryCount(category, true)}{" "}
                           </Typography>
-                        </TableCell>
-                        <TableCell align='right'>
-                          <Typography sx={{ textAlign: "right", fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, width: "150px", color: theme.typography.common.blue }}>
-                            ${value ? parseFloat(value).toFixed(2) : 0}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: categoryTotalMapping[category] !== value? theme.palette.priority.high : theme.typography.common.blue, }}>
-                            ${categoryTotalMapping[category] ? parseFloat(categoryTotalMapping[category]).toFixed(2) : 0}
-                          </Typography>
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                  </Table>
-                </AccordionSummary>
+                      </AccordionSummary>
+                    </Grid>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ textAlign: "right", fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, width: "150px", color: theme.typography.common.blue }}>
+                      ${value ? parseFloat(value).toFixed(2) : 0}
+                    </Typography>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: categoryTotalMapping[category] !== value? theme.palette.priority.high : theme.typography.common.blue, }}>
+                      ${categoryTotalMapping[category] ? parseFloat(categoryTotalMapping[category]).toFixed(2) : 0}
+                    </Typography>
+                  </Grid>
+                </Grid>
                 <AccordionDetails>
                   <Table>
                     <TableBody>{getCategoryItems(category, true)}</TableBody>

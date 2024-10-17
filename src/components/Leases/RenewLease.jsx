@@ -378,7 +378,7 @@ const handleDeleteButtonClick = () => {
 
 // use this for renew button
 const handleEditLease = () => {
-    navigate("/tenantLease", { state: { page: "edit_lease", application: currentLease,  property: currentLease } });
+    navigate("/tenantLease", { state: { page: "edit_lease", application: currentLease,  property: currentLease, managerInitiatedRenew: true } });
     console.log("---on renew---", currentLease);
   };
 

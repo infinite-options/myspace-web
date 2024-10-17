@@ -17,6 +17,7 @@ import Grid from "@mui/material/Grid";
 import EmailIcon from "../Property/messageIconDark.png";
 import PhoneIcon from "../Property/phoneIconDark.png";
 import AES from "crypto-js/aes";
+import encUtf8 from 'crypto-js/enc-utf8';
 import CloseIcon from "@mui/icons-material/Close";
 import Documents from "../Leases/Documents";
 import WaiverForm from "../Leases/WaiverForm";
@@ -145,6 +146,19 @@ const TenantApplicationNav = (props) => {
     onBackClick();
   };
 
+  const decryptedSSN = (() => {
+    try {
+      if (application?.tenant_ssn) {
+        const decrypted = AES.decrypt(application.tenant_ssn, process.env.REACT_APP_ENKEY)?.toString(encUtf8);
+        return decrypted.slice(-4); // Get the last 4 digits of the SSN
+      }
+      return "****"; // Fallback if tenant_ssn is not available
+    } catch (error) {
+      console.error("Decryption error:", error);
+      return "****"; // Return masked SSN in case of an error
+    }
+  })();
+
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -200,7 +214,7 @@ const TenantApplicationNav = (props) => {
       <Box sx={{ padding: "10px" }}>
         <Typography sx={{ fontWeight: "bold", color: "#160449", marginBottom: "10px" }}>CONFIDENTIAL INFO</Typography>
         <Typography display="block" sx={{ color: "#3D5CAC" }}>SSN:</Typography>
-        <Typography display="block" sx={{ color: "#160449" }}>***-**-{AES.decrypt(application.tenant_ssn, process.env.REACT_APP_ENKEY)?.toString()?.slice(-4)}</Typography>
+        <Typography display="block" sx={{ color: "#160449" }}>***-**-{decryptedSSN}</Typography>
         <Typography display="block" sx={{ color: "#3D5CAC" }}>DL:</Typography>
         <Typography display="block" sx={{ color: "#160449" }}>
   {application.tenant_drivers_license_number 
@@ -455,7 +469,7 @@ const TenantApplicationNav = (props) => {
             </Paper>
            {/* Action Buttons */}
            <Stack direction='row' alignItems='center' justifyContent='space-around' sx={{ padding: "30px 0", paddingRight: "15px" }}>
-                      {application.lease_status === "NEW" && (
+                      {(application.lease_status === "NEW"|| application.lease_status === "RENEW NEW") && (
                         <Button
                           onClick={handleRejectLease}
                           sx={{
@@ -471,7 +485,7 @@ const TenantApplicationNav = (props) => {
                           {"Reject Tenant"}
                         </Button>
                       )}
-                      {application.lease_status === "PROCESSING" && (
+                      {(application.lease_status === "PROCESSING" || application.lease_status === "RENEW PROCESSING") && (
                         <div>
                           <Button
                             onClick={handleWithdrawLease}
@@ -506,7 +520,7 @@ const TenantApplicationNav = (props) => {
                           </Button>
                         </div>
                       )}
-                      {application.lease_status !== "PROCESSING" && (
+                      {application.lease_status !== "PROCESSING" && application.lease_status !== "RENEW PROCESSING" && (
                         <Button
                           onClick={handleCreateLease}
                           sx={{

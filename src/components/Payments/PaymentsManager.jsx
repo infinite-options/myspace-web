@@ -310,18 +310,18 @@ export default function PaymentsManager(props) {
             .filter(item => (verifiedPurGroups.includes(item.pur_group)))
             .filter( item => (item.pur_payer.startsWith("600") || item.pur_payer.startsWith("110")))
             .filter( item => {
-              const actual = parseFloat(item.actual? item.actual : "0");
-              const expected = parseFloat(item.expected? item.expected : "0");
+              const total_paid = parseFloat(item.total_paid? item.total_paid : "0");
+              const pur_amount_due = parseFloat(item.pur_amount_due? item.pur_amount_due : "0");
               
-              return actual !== expected;
+              return total_paid !== pur_amount_due;
             });
 
     var total = 0;
     for (const item of transactions) {
       if (item.pur_payer.startsWith("110")) {
-        total -= parseFloat(item.expected);
+        total -= parseFloat(item.pur_amount_due);
       } else if (item.pur_payer.startsWith("600")) {
-        total += parseFloat(item.expected);
+        total += parseFloat(item.pur_amount_due);
       }
     }
     return total;
@@ -363,24 +363,25 @@ export default function PaymentsManager(props) {
     setShowSpinner(false);
   };
 
-  const fetchTransactionsData = async () => {
+  const fetchTransactionsData =  () => {
     // console.log("In fetchTransactionsData");
     setShowSpinner(true);
     try {
-      const res = await axios.get(`${APIConfig.baseURL.dev}/cashflowTransactions/${getProfileId()}/new`);      
+        // const res = await axios.get(`${APIConfig.baseURL.dev}/cashflowTransactions/${getProfileId()}/payment`);      
 
-      const data = res.data?.result;      
+        // const data = res.data?.result;      
 
-      
+        
 
-      const dataWithIndex = data?.map((item, index) => (
-        {
-          ...item,
-          'index': index,
-        }
-      ))
-      
-
+        // const dataWithIndex = data?.map((item, index) => (
+        //   {
+        //     ...item,
+        //     'index': index,
+        //   }
+        // ))
+        
+        const dataWithIndex = props.transactionsData;
+          
         // console.log("setting transactions data - ", dataWithIndex);
         setTransactionsData(dataWithIndex);
         const total = getTransactionsTotal(dataWithIndex);
@@ -388,7 +389,7 @@ export default function PaymentsManager(props) {
 
         const dataByProperty = groupDataByKey(dataWithIndex, "pur_property_id", false)
         const dataByOwner = groupDataByKey(dataWithIndex, "pur_receiver", true)
-        // console.log("---dhyey--- successfully filter data - ", dataByProperty);
+        console.log("---dhyey--- successfully filter data - ", dataByProperty);
         setTransactionDataByProeprty(dataByProperty)
         setTransactionDataByOwner(dataByOwner)
 
@@ -408,6 +409,10 @@ export default function PaymentsManager(props) {
     fetchTransactionsData();
   }, []);
 
+  useEffect(()=>{
+    fetchTransactionsData();
+  }, [props.transactionsData])
+  
   const handlePaymentNotesChange = (event) => {
     setPaymentNotes(event.target.value);
   };
@@ -967,10 +972,10 @@ function TransactionsTable(props) {
             .filter(item => (verifiedPurGroups.includes(item.pur_group)))
             .filter( item => (item.pur_payer.startsWith("600") || item.pur_payer.startsWith("110")))
             .filter( item => {
-              const actual = parseFloat(item.actual? item.actual : "0");
-              const expected = parseFloat(item.expected? item.expected : "0");
+              const total_paid = parseFloat(item.total_paid? item.total_paid : "0");
+              const pur_amount_due = parseFloat(item.pur_amount_due? item.pur_amount_due : "0");
               
-              return actual !== expected;
+              return total_paid !== pur_amount_due;
             });
 
   }
@@ -1018,7 +1023,7 @@ function TransactionsTable(props) {
       setPaymentDueResult(
         filteredData.map((item) => ({
           ...item,
-          pur_amount_due: parseFloat(item.expected),
+          pur_amount_due: parseFloat(item.pur_amount_due),
         }))
       );
 
@@ -1035,13 +1040,16 @@ function TransactionsTable(props) {
   
         let paymentItemData = paymentDueResult.find((element) => element.index === item);
         console.log("ROHIT - 687 - paymentItemData - ", paymentItemData);
-        const purchaseIDs = JSON.parse(paymentItemData.purchase_ids);
+        // const purchaseIDs = paymentItemData.purchase_uid;
         
-        JSON.parse(paymentItemData?.transactions).forEach(element => {
-          if(purchaseIDs.includes(element.purchase_uid)){
-            purchase_uid_mapping.push({ purchase_uid: element.purchase_uid, pur_amount_due: element.pur_amount_due.toFixed(2) });
-          }
-        });
+        // JSON.parse(paymentItemData?.transactions).forEach(element => {
+        //   if(purchaseIDs.includes(element.purchase_uid)){
+        //     purchase_uid_mapping.push({ purchase_uid: element.purchase_uid, pur_amount_due: element.pur_amount_due.toFixed(2) });
+        //   }
+        // });
+        const purchaseIDs = paymentItemData.purchase_uid;
+        purchase_uid_mapping.push({ purchase_uid: purchaseIDs, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
+        
         // purchaseIDs.forEach( purID => {
         // });
         
@@ -1134,7 +1142,7 @@ function TransactionsTable(props) {
     //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     // },
     {
-      field: "expected",
+      field: "pur_amount_due",
       headerName: "Expected",
       flex: 1.5,
       headerStyle: {
@@ -1157,7 +1165,7 @@ function TransactionsTable(props) {
       headerAlign: 'right',
     },
     {
-      field: "actual",
+      field: "total_paid",
       headerName: "Actual",
       flex: 1,
       headerStyle: {
@@ -1221,13 +1229,25 @@ function TransactionsTable(props) {
     if (removedRows.length > 0) {
       // console.log("Removed rows: ", removedRows);
       let removedPayments = [];
+      let relatedRows = [];
+
       removedRows.forEach((item, index) => {
         let removedPayment = paymentDueResult.find((row) => row.index === item);
+        let relatedPayments = []
+
+        if(removedPayment){
+          relatedPayments = paymentDueResult.filter((row) => row.pur_group === removedPayment.pur_group);
+          relatedRows = relatedPayments.map((payment) => payment.index);
+        }
 
         removedPayments.push(removedPayment);
+        removedPayments.push(relatedPayments)
       });
       // console.log("removedPayments - ", removedPayments);
-      setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.payment_uid)));
+      const allRowRemove = [...new Set([...removedRows, ...relatedRows])];
+
+      updatedRowSelectionModel = updatedRowSelectionModel.filter((payment) => !allRowRemove.includes(payment));
+      setSelectedPayments((prevState) => prevState.filter((payment) => !allRowRemove.includes(payment.index)));
     }
     // setSelectedRows(newRowSelectionModel);
     setSelectedRows(updatedRowSelectionModel);

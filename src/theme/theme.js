@@ -210,7 +210,7 @@ const theme = createTheme({
   colorStatusPaymentHistoryTenant: [
     { color: "#435DAE", status: "PAID" },
     { color: "#FF8A00", status: "PAID LATE" },
-    { color: "#FFC614", status: "PAID PARTIALLY" },
+    { color: "#FFC614", status: "PARTIALLY PAID" },
   ],
   colorStatusPMO_old: [
     { color: "#B62C2A", status: "New Requests", mapping: "NEW" },

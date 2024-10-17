@@ -143,7 +143,7 @@ export default function PropertiesList(props) {
   }, [propertyIndex, propertyList,]);
 
   useEffect(() => { 
-    // console.log("74 - props.showOnlyListings - ", props.showOnlyListings)       
+    // console.log("74 - props.showOnlyListings - ", propertyList);       
     const returnIndex = returnIndexFromContext || 0;
     if(props.showOnlyListings && props.showOnlyListings === true){
       const onlyListings = propertyList?.filter( property => property.rent_status === "VACANT")
@@ -236,8 +236,10 @@ export default function PropertiesList(props) {
       }
 
       return count
-    }else{
-      return property.applicationsCount ?? 0;
+    }else {
+      return property.applications
+        ? property.applications.filter(app => app.lease_status.includes("NEW")).length
+        : 0;
     }
   }
 

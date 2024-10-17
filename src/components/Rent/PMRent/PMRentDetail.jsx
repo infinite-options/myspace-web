@@ -47,7 +47,7 @@ function PMRentDetail(props) {
     switch (status) {
       case "UNPAID":
         return propertiesData ? propertiesData.unpaid : [];
-      case "PAID PARTIALLY":
+      case "PARTIALLY PAID":
         return propertiesData ? propertiesData.partial : [];
       case "PAID LATE":
         return propertiesData ? propertiesData.late : [];
@@ -107,7 +107,7 @@ function PMRentDetail(props) {
           case "UNPAID":
             not_paid.push(data);
             break;
-          case "PAID PARTIALLY":
+          case "PARTIALLY PAID":
             partial_paid.push(data);
             break;
           case "PAID LATE":
@@ -136,7 +136,7 @@ function PMRentDetail(props) {
       case "UNPAID":
         property = propertiesData.unpaid;
         break;
-      case "PAID PARTIALLY":
+      case "PARTIALLY PAID":
         property = propertiesData.partial;
         break;
       case "PAID LATE":
@@ -179,7 +179,7 @@ function PMRentDetail(props) {
   //     case "UNPAID":
   //       property = rentData.unpaid;
   //       break;
-  //     case "PAID PARTIALLY":
+  //     case "PARTIALLY PAID":
   //       property = rentData.partial;
   //       break;
   //     case "PAID LATE":
@@ -237,9 +237,9 @@ function PMRentDetail(props) {
           title={"Unpaid"}
         />
         <RentDetailNavbarTab
-          style={getStatusColor("PAID PARTIALLY")}
+          style={getStatusColor("PARTIALLY PAID")}
           update={() => {
-            setPropertyStatus("PAID PARTIALLY");
+            setPropertyStatus("PARTIALLY PAID");
             setIndex(0);
           }}
           title={"Partially Paid"}
