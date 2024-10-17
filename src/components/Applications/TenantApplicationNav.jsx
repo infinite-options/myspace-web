@@ -469,7 +469,7 @@ const TenantApplicationNav = (props) => {
             </Paper>
            {/* Action Buttons */}
            <Stack direction='row' alignItems='center' justifyContent='space-around' sx={{ padding: "30px 0", paddingRight: "15px" }}>
-                      {application.lease_status === "NEW" && (
+                      {(application.lease_status === "NEW"|| application.lease_status === "RENEW NEW") && (
                         <Button
                           onClick={handleRejectLease}
                           sx={{
@@ -485,7 +485,7 @@ const TenantApplicationNav = (props) => {
                           {"Reject Tenant"}
                         </Button>
                       )}
-                      {application.lease_status === "PROCESSING" && (
+                      {(application.lease_status === "PROCESSING" || application.lease_status === "RENEW PROCESSING") && (
                         <div>
                           <Button
                             onClick={handleWithdrawLease}
@@ -520,7 +520,7 @@ const TenantApplicationNav = (props) => {
                           </Button>
                         </div>
                       )}
-                      {application.lease_status !== "PROCESSING" && (
+                      {application.lease_status !== "PROCESSING" && application.lease_status !== "RENEW PROCESSING" && (
                         <Button
                           onClick={handleCreateLease}
                           sx={{
