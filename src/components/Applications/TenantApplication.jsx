@@ -359,6 +359,7 @@ export default function TenantApplication(props) {
     return `${month}-${day}-${year}`;
   }
 
+
   // useEffect(() => {
   //   if (props.status !== "NEW" && tenantProfile?.selected_jobs) {
   //     console.log("in here");
@@ -761,17 +762,47 @@ export default function TenantApplication(props) {
                     </Typography>
                   </Button>}
                 {(status == null || status === "" || status === "NEW" || status === "REJECTED" || status === "RESCIND" || status === "RENEW" || status === "RENEW NEW") &&
-                <Button
-                  variant='contained'
-                  sx={{
-                    backgroundColor: "#CB8E8E",
-                    textTransform: "none",
-                    borderRadius: "5px",
-                    display: "flex",
-                    width: "45%",
-                  }}
-                  onClick={() => props.setRightPane({ type: "tenantApplicationEdit", state: { profileData: tenantProfile, lease: lease?lease : [], lease_uid: lease.length > 0 ? lease[0].lease_uid : null, setRightPane: props.setRightPane, property: property, from: props.from, tenantDocuments : tenantDocuments, setTenantDocuments : setTenantDocuments, oldVehicles : vehicles, setOldVehicles : setVehicles, adultOccupants : adultOccupants, setAdultOccupants, setAdultOccupants, petOccupants : petOccupants, setPetOccupants : setPetOccupants, childOccupants : childOccupants, setChildOccupants : setChildOccupants, extraUploadDocument : extraUploadDocument, setExtraUploadDocument : setExtraUploadDocument, extraUploadDocumentType : extraUploadDocumentType, setExtraUploadDocumentType : setExtraUploadDocumentType, deleteDocuments : deleteDocuments },})}
-                >
+                  <Button
+                    variant='contained'
+                    sx={{
+                      backgroundColor: "#CB8E8E",
+                      textTransform: "none",
+                      borderRadius: "5px",
+                      display: "flex",
+                      width: "45%",
+                    }}
+                    onClick={() =>
+                      props.setRightPane({
+                        type: "tenantApplicationEdit",
+                        state: {
+                          profileData: tenantProfile,
+                          lease: lease ? lease : [],
+                          lease_uid: lease.length > 0 ? lease[0].lease_uid : null,
+                          setRightPane: props.setRightPane,
+                          property: property,
+                          from: props.from,
+                          tenantDocuments: tenantDocuments,
+                          setTenantDocuments: setTenantDocuments,
+                          oldVehicles: vehicles,
+                          setOldVehicles: setVehicles,
+                          adultOccupants: adultOccupants,
+                          setAdultOccupants: setAdultOccupants,
+                          petOccupants: petOccupants,
+                          setPetOccupants: setPetOccupants,
+                          childOccupants: childOccupants,
+                          setChildOccupants: setChildOccupants,
+                          extraUploadDocument: extraUploadDocument,
+                          setExtraUploadDocument: setExtraUploadDocument,
+                          extraUploadDocumentType: extraUploadDocumentType,
+                          setExtraUploadDocumentType: setExtraUploadDocumentType,
+                          deleteDocuments: deleteDocuments,
+                          selectedJobs: selectedJobs,  
+                          setSelectedJobs: setSelectedJobs, 
+                          status: status,
+                        },
+                      })
+                    }
+                  >
                   <Typography
                     sx={{
                       fontWeight: theme.typography.primary.fontWeight,

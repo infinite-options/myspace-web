@@ -107,25 +107,27 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
 
     const handleSave = () => {
         const numericPhone = currentRow.phone_number.replace(/\D/g, '');
-
+    
         if (isEditing) {
-            if (isRowModified(adults[currentRow['id']], currentRow)===true){
+            if (isRowModified(adults[currentRow['id']], currentRow)) {
                 const updatedRow = adults.map(adult => (adult.id === currentRow.id ? currentRow : adult));
-                //Save adults back in DB without ID field
                 const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
-                // setModifiedData((prev) => [...prev, {key:'lease_adults', value:rowWithoutId}]);
-                setModifiedData((prev) => [...prev, {key: dataKey, value:rowWithoutId}]);
+    
+                // Check if `prev` is an array before spreading it
+                setModifiedData((prev) => Array.isArray(prev) ? [...prev, { key: dataKey, value: rowWithoutId }] : [{ key: dataKey, value: rowWithoutId }]);
                 setIsUpdated(true);
             } else {
                 showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
             }
-            
         } else {
-            const {id, ...newRowwithoutid} = currentRow
-            setModifiedData((prev) => [...prev, {key: dataKey, value:[...leaseAdults, { ...newRowwithoutid}]}])
+            const { id, ...newRowWithoutId } = currentRow;
+    
+            // Check if `prev` is an array before spreading it
+            setModifiedData((prev) => Array.isArray(prev) ? [...prev, { key: dataKey, value: [...leaseAdults, newRowWithoutId] }] : [{ key: dataKey, value: [...leaseAdults, newRowWithoutId] }]);
             setIsUpdated(true);
         }
     };
+    
 
     const handleEditClick = (row) => {
         setCurrentRow(row);
@@ -260,7 +262,7 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
                         fontSize: theme.typography.small,
                     }}
                 >
-                    <span style={{ flexGrow: 1, textAlign: 'center' }}>Occupancy Details 1</span>
+                    <span style={{ flexGrow: 1, textAlign: 'center' }}>Occupancy Details</span>
                     <Button onClick={handleClose} sx={{ ml: 'auto' }}>
                         <Close sx={{
                             color: theme.typography.primary.black,
