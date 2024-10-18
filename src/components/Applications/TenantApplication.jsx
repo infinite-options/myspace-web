@@ -386,7 +386,7 @@ export default function TenantApplication(props) {
       if (status === "RENEW") {
         const updateLeaseData = new FormData();
         updateLeaseData.append("lease_uid", lease[0].lease_uid);
-        updateLeaseData.append("lease_renew_status", "RENEW REQUESTED");
+        updateLeaseData.append("lease_renew_status", "TRUE"); // HERE CHANGE FOR lease_renew_status -- RENEW REQUESTED
   
         const updateLeaseResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
           method: "PUT",
