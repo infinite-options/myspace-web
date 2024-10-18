@@ -105,7 +105,7 @@ function groupByProperty(array) {
       delta_cashflow: deltaCashflow,
       percent_delta_cashflow: percentDeltaCashflow.toFixed(2),
     };
-    console.log("ROHIT - 56 - cashflowItem - ", cashflowItem);
+    // console.log("ROHIT - 56 - cashflowItem - ", cashflowItem);
 
     // console.log("ashflowItem - ", cashflowItem);
     cashflowByProperty.push(cashflowItem);
@@ -522,11 +522,11 @@ const OwnerContactDetailsHappinessMatrix = () => {
   };
 
   return (
-    <>      
+    <>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color='inherit' />        
+        <CircularProgress color='inherit' />
       </Backdrop>
-      <ThemeProvider theme={theme}>        
+      <ThemeProvider theme={theme}>
         <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px", marginTop: "10px", backgroundColor: "#FFFFFF" }}>
           <Grid container columnSpacing={5} sx={{ marginTop: "10px" }}>
             {!isMobile && (
@@ -692,7 +692,15 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
   );
 };
 
-const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowDetails, filteredCashflowDetailsByProperty, filteredCashflowDetailsByPropertyByMonth, setShowSpinner, }) => {
+const OwnerContactDetail = ({
+  contactDetails,
+  index,
+  setIndex,
+  filteredCashflowDetails,
+  filteredCashflowDetailsByProperty,
+  filteredCashflowDetailsByPropertyByMonth,
+  setShowSpinner,
+}) => {
   const { getProfileId } = useUser();
   const [propertiesData, setPropertiesData] = useState([]);
   const [contractsData, setContractsData] = useState([]);
@@ -736,7 +744,7 @@ const OwnerContactDetail = ({ contactDetails, index, setIndex, filteredCashflowD
     await getPropertiesData();
     await getContractsData();
     setShowSpinner(false);
-  }
+  };
 
   useEffect(() => {
     loadData();
@@ -1133,9 +1141,16 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
 
   function getPaymentStatusColor(paymentStatus, property) {
     // console.log("214 - property - ", property);
-    if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property?.property_available_to_rent && property?.property_available_to_rent === 1)) {
+    if (
+      (paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") &&
+      property?.property_available_to_rent &&
+      property?.property_available_to_rent === 1
+    ) {
       return paymentStatusColorMap["Vacant"];
-    } else if((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property?.property_available_to_rent == null || property?.property_available_to_rent === 0)){
+    } else if (
+      (paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") &&
+      (property?.property_available_to_rent == null || property?.property_available_to_rent === 0)
+    ) {
       return paymentStatusColorMap["Not Listed"];
     } else {
       const status = paymentStatusMap[paymentStatus];
@@ -1143,10 +1158,17 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
     }
   }
 
-  function getPaymentStatus(paymentStatus, property) {    
-    if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property?.property_available_to_rent && property?.property_available_to_rent === 1)) {
+  function getPaymentStatus(paymentStatus, property) {
+    if (
+      (paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") &&
+      property?.property_available_to_rent &&
+      property?.property_available_to_rent === 1
+    ) {
       return paymentStatusMap["VACANT"];
-    } else if((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property?.property_available_to_rent == null || property?.property_available_to_rent === 0)){
+    } else if (
+      (paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") &&
+      (property?.property_available_to_rent == null || property?.property_available_to_rent === 0)
+    ) {
       return paymentStatusMap["NOT LISTED"];
     } else {
       const status = paymentStatusMap[paymentStatus];

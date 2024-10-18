@@ -21,7 +21,7 @@ export default function VerifyPayments(props) {
   //   console.log("In VerifyPayments.jsx");
 
   const { user, getProfileId, roleName, selectedRole } = useUser();
-  const [selectedProperty, setSelectedProperty] = useState(props.propertyID)
+  const [selectedProperty, setSelectedProperty] = useState(props.propertyID);
 
   const [moneyPayable, setMoneyPayable] = useState([]);
 
@@ -156,9 +156,9 @@ function BalanceDetailsTable(props) {
     if (data && data.length > 0) {
       setSelectedPayments(data);
       let filteredRows = [];
-      if(props.selectedProperty != null){
-        filteredRows = data?.filter( item => item.pur_property_id === props.selectedProperty)
-      }else {
+      if (props.selectedProperty != null) {
+        filteredRows = data?.filter((item) => item.pur_property_id === props.selectedProperty);
+      } else {
         filteredRows = data;
       }
       setSelectedRows(filteredRows.map((row) => row.payment_uid));
@@ -335,7 +335,7 @@ function BalanceDetailsTable(props) {
     const addedRows = newRowSelectionModel.filter((rowId) => !selectedRows.includes(rowId));
     const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
 
-    console.log("ROHIT - addedRows - ", addedRows);
+    // console.log("ROHIT - addedRows - ", addedRows);
 
     let updatedRowSelectionModel = [...newRowSelectionModel];
 
@@ -350,7 +350,9 @@ function BalanceDetailsTable(props) {
 
         if (addedPayment) {
           // const relatedPayments = paymentDueResult.filter((row) => row.payment_intent === addedPayment.payment_intent);
-          const relatedPayments = paymentDueResult.filter((row) => (row.paid_by + row.payment_date + row.payment_intent) === (addedPayment.paid_by + addedPayment.payment_date + addedPayment.payment_intent));
+          const relatedPayments = paymentDueResult.filter(
+            (row) => row.paid_by + row.payment_date + row.payment_intent === addedPayment.paid_by + addedPayment.payment_date + addedPayment.payment_intent
+          );
 
           newPayments = [...newPayments, ...relatedPayments];
           const relatedRowIds = relatedPayments.map((payment) => payment.payment_uid);
