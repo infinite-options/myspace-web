@@ -44,6 +44,7 @@ import { DataGrid, GridRow } from "@mui/x-data-grid";
 import MaintenanceWidget from "../Dashboard-Components/Maintenance/MaintenanceWidget";
 import { PropertyListings } from "../Property/PropertyListings";
 import PropertyInfo from "../Property/PropertyInfo";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import TenantApplication from "../Applications/TenantApplication";
 import TenantApplicationEdit from "../Applications/TenantApplicationEdit";
 import TenantLeases from "../Leases/TenantLeases/TenantLeases";
@@ -85,6 +86,8 @@ const TenantDashboard = () => {
   const [showPropertyListings, setShowPropertyListings] = useState(false);
   const [rightPane, setRightPane] = useState("");
   const rightPaneRef = useRef(null);
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [viewRHS, setViewRHS] = useState(false)
   
   const [loading, setLoading] = useState(true);
   const [balanceDetails, setBalanceDetails] = useState([]);
@@ -283,6 +286,8 @@ const TenantDashboard = () => {
   };
 
   const handleMakePayment = () => {
+    setViewRHS(true)
+
     const paymentHistoryForProperty = allBalanceDetails.filter((detail) => detail.propertyUid === selectedProperty.property_uid);
 
     // console.log("Payment History for Make Payment:", paymentHistoryForProperty);
@@ -347,7 +352,7 @@ const TenantDashboard = () => {
           return <TenantLeases {...rightPane.state} setRightPane={setRightPane} setReload={setReload} />;
         case "payment":
           return (
-            <PaymentsPM data={rightPane.state.data} setRightPane={setRightPane} selectedProperty={selectedProperty} leaseDetails={leaseDetails} balanceDetails={balanceDetails} />
+            <PaymentsPM isMobile={isMobile} setViewRHS={setViewRHS} data={rightPane.state.data} setRightPane={setRightPane} selectedProperty={selectedProperty} leaseDetails={leaseDetails} balanceDetails={balanceDetails} />
           );
         case "addtenantmaintenance":
           return <AddTenantMaintenanceItem {...rightPane.state} setRightPane={setRightPane} setReload={setReload} />;
@@ -397,7 +402,7 @@ const TenantDashboard = () => {
       <Container>
         <Grid container spacing={3}>
           {/* Top Section: Welcome Message and Search Icon */}
-          <Grid item xs={12} sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          {(!isMobile || !viewRHS) && (<Grid item xs={12} sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <Typography
               sx={{
                 fontSize: { xs: "22px", sm: "28px", md: "32px" },
@@ -419,11 +424,11 @@ const TenantDashboard = () => {
               <SearchIcon />
               {"Search Property"}
             </Button>
-          </Grid>
+          </Grid>)}
 
           <Grid container spacing={3}>
             {/* Left-hand side: Account Balance */}
-            <Grid item xs={12} md={4} sx={{ display: "flex", flexDirection: "column" }}>
+            {(!isMobile || !viewRHS) && (<Grid item xs={12} md={4} sx={{ display: "flex", flexDirection: "column" }}>
               <TenantAccountBalance
                 propertyData={propertyListingData}
                 selectedProperty={selectedProperty}
@@ -436,14 +441,14 @@ const TenantDashboard = () => {
                 handleMakePayment={handleMakePayment}
                 sx={{ flex: 1 }} // Ensures this grows to match the height of the right-hand side
               />
-            </Grid>
+            </Grid>)}
 
             {/* Right-hand side */}
             <Grid item xs={12} md={8} x={{ flexDirection: "column" }}>
               {/* Top section: Announcements */}
-              <Grid item xs={12}>
+              {(!isMobile || !viewRHS) && (<Grid item xs={12}>
                 <AnnouncementsPM announcements={announcements} setRightPane={setRightPane} />
-              </Grid>
+              </Grid>)}
 
               {/* Bottom section containing Lease, Maintenance, and Management Details */}
               <Grid container spacing={3} sx={{ marginTop: "1px" }}>
@@ -1287,7 +1292,7 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
   );
 };
 
-function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanceDetails }) {
+function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanceDetails, isMobile, setViewRHS }) {
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
@@ -1383,6 +1388,11 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
     setDialogOpen(false);
   };
 
+  const handleBackClick = () => {
+    setViewRHS(false);
+    setRightPane("") 
+  };
+
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -1409,7 +1419,10 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
                     backgroundColor: theme.palette.primary.main,
                   }}
                 >
-                  <Stack direction='row' justifyContent='space-between'>
+                  <Stack direction='row'>
+                    {isMobile && (<Button onClick={handleBackClick}>
+                      <ArrowBackIcon sx={{ color: theme.typography.primary.black, width: "20px", height: "20px", margin:"0px", marginRight: "10px" }}/>
+                    </Button>)}
                     <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
                       Payment
                     </Typography>
@@ -1716,9 +1729,13 @@ function TenantBalanceTablePM(props) {
   ];
 
   return (
-    <>
+    <Box sx={{ width: "100%", height: 200, overflowX: "auto" }}>
       {paymentDueResult.length > 0 && (
         <DataGrid
+          sx={{
+            width: "100%",
+            minWidth: "700px",
+          }}
           rows={paymentDueResult}
           columns={columnsList}
           pageSizeOptions={[10, 50, 100]}
@@ -1729,7 +1746,7 @@ function TenantBalanceTablePM(props) {
           getRowId={(row) => row.purchase_uid}
         />
       )}
-    </>
+    </Box>
   );
 }
 
