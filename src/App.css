@@ -139,6 +139,7 @@
   src: url("./fonts/Source_Sans_3/SourceSans3-VariableFont_wght.ttf") format("opentype");
 }
 
+/* for bold fonts in safari */
 * {
   font-synthesis: none !important;
 }
