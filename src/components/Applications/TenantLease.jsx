@@ -133,7 +133,7 @@ const TenantLease = () => {
   const [showSpinner, setShowSpinner] = useState(false);
   // Intermediate variables to calculate the initial dates
   let initialStartDate, initialEndDate, initialMoveInDate;
-
+  console.log("In Tenant Lease page", page);
   if (page === "create_lease") {
     initialStartDate = dayjs();
     initialEndDate = dayjs().add(1, "year").subtract(1, "day");
@@ -143,9 +143,23 @@ const TenantLease = () => {
     initialEndDate = application.lease_end ? dayjs(application.lease_end) : dayjs().add(1, "year").subtract(1, "day");
     initialMoveInDate = application.lease_move_in_date ? dayjs(application.lease_move_in_date) : dayjs();
   } else if (page === "renew_lease") {
-    initialStartDate = application.lease_end ? dayjs(application.lease_end).add(1, "day") : dayjs();
-    initialEndDate = initialStartDate.add(1, "year").subtract(1, "day");
-    initialMoveInDate = initialStartDate;
+    // Calculate the duration between lease_start and lease_end
+  const leaseStartDate = dayjs(property.lease_start);
+  const leaseEndDate = dayjs(property.lease_end);
+  console.log("In Tenant Lease leaseStartDate", leaseStartDate);
+  
+  const duration = leaseEndDate.diff(leaseStartDate, 'day');  // Duration in days
+  
+  // Set the start date to remain same as lease_start
+  initialStartDate = leaseStartDate;
+  console.log("In Tenant Lease initialStartDate", initialStartDate);
+  console.log("In Tenant Lease duration", duration);
+  // Set the new end date to be initialStartDate + duration
+  console.log("In Tenant Lease initialEndDate", initialStartDate.add(duration, "days"));
+  initialEndDate = leaseEndDate.add(duration, "day");
+  console.log("In Tenant Lease initialEndDate", initialEndDate);
+  // Set move-in date same as the start date
+  initialMoveInDate = initialStartDate;
   }
 
   // Set state using intermediate variables
