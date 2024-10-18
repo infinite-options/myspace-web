@@ -280,7 +280,7 @@ export default function PropertyRentWidget(props) {
               outerRadius={90}
               paddingAngle={0}
               dataKey='number'
-              filter='url(#shadow)'
+              // filter='url(#shadow)'
               onClick={() => navigate("/properties", { state: { showLHS: "List", showRHS: "PropertyNavigator", showOnlyListings: false } })}
             >
               {data.map((entry, index) => (
