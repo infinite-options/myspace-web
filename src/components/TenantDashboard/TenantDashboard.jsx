@@ -428,8 +428,11 @@ const TenantDashboard = () => {
 
           <Grid container spacing={3}>
             {/* Left-hand side: Account Balance */}
-            {(!isMobile || !viewRHS) && (<Grid item xs={12} md={4} sx={{ display: "flex", flexDirection: "column" }}>
+            <Grid item xs={12} md={4} sx={{ display: "flex", flexDirection: "column" }}>
               <TenantAccountBalance
+                isMobile={isMobile}
+                viewRHS={viewRHS}
+                setViewRHS={setViewRHS}
                 propertyData={propertyListingData}
                 selectedProperty={selectedProperty}
                 setSelectedProperty={handleSelectProperty}
@@ -441,7 +444,7 @@ const TenantDashboard = () => {
                 handleMakePayment={handleMakePayment}
                 sx={{ flex: 1 }} // Ensures this grows to match the height of the right-hand side
               />
-            </Grid>)}
+            </Grid>
 
             {/* Right-hand side */}
             <Grid item xs={12} md={8} x={{ flexDirection: "column" }}>
