@@ -125,16 +125,33 @@ const TenantLease = () => {
   const navigate = useNavigate();
   const { getProfileId } = useUser();
   const { state } = useLocation();
-  const { application, property, managerInitiatedRenew = false } = state;
+  const { page, application, property, managerInitiatedRenew = false } = state;
   const { getList, } = useContext(ListsContext);	
 	const feeFrequencies = getList("frequency");
   console.log("Property: ", property);
   console.log("Application: ", application);
   const [showSpinner, setShowSpinner] = useState(false);
-  const [startDate, setStartDate] = useState(application.lease_start ? dayjs(application.lease_start) : dayjs());
-  const [endDate, setEndDate] = useState(application.lease_end ? dayjs(application.lease_end) : dayjs().add(1, "year").subtract(1, "day"));
-  const [moveInDate, setMoveInDate] = useState(dayjs()); // fix me
+  // Intermediate variables to calculate the initial dates
+  let initialStartDate, initialEndDate, initialMoveInDate;
 
+  if (page === "create_lease") {
+    initialStartDate = dayjs();
+    initialEndDate = dayjs().add(1, "year").subtract(1, "day");
+    initialMoveInDate = initialStartDate;
+  } else if (page === "edit_lease") {
+    initialStartDate = application.lease_start ? dayjs(application.lease_start) : dayjs();
+    initialEndDate = application.lease_end ? dayjs(application.lease_end) : dayjs().add(1, "year").subtract(1, "day");
+    initialMoveInDate = application.lease_move_in_date ? dayjs(application.lease_move_in_date) : dayjs();
+  } else if (page === "renew_lease") {
+    initialStartDate = application.lease_end ? dayjs(application.lease_end).add(1, "day") : dayjs();
+    initialEndDate = initialStartDate.add(1, "year").subtract(1, "day");
+    initialMoveInDate = initialStartDate;
+  }
+
+  // Set state using intermediate variables
+  const [startDate, setStartDate] = useState(initialStartDate);
+  const [endDate, setEndDate] = useState(initialEndDate);
+  const [moveInDate, setMoveInDate] = useState(initialMoveInDate);
   const [noOfOccupants, setNoOfOccupants] = useState(1);
   const [endLeaseNoticePeriod, setEndLeaseNoticePeriod] = useState(application.lease_end_notice_period ? application.lease_end_notice_period : 30);
 

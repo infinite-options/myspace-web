@@ -117,6 +117,10 @@ const TenantApplicationNav = (props) => {
   const handleEditLease = () => {
     navigate("/tenantLease", { state: { page: "edit_lease", application, property } });
   };
+  const handleRenewLease = () => {
+    navigate("/tenantLease", { state: { page: "renew_lease", application, property } });
+  };
+  
 
   const handleWithdrawLease = async () => {
     const leaseApplicationFormData = new FormData();
@@ -520,6 +524,22 @@ const TenantApplicationNav = (props) => {
                             {"Edit Lease"}
                           </Button>
                         </div>
+                      )}
+                      {application.lease_status === "RENEW NEW" && (
+                        <Button
+                          onClick={handleRenewLease}
+                          sx={{
+                            backgroundColor: "#9EAED6",
+                            color: "#160449",
+                            textTransform: "none",
+                            width: "120px",
+                            "&:hover, &:focus, &:active": {
+                              backgroundColor: "#9EAED6",
+                            },
+                          }}
+                        >
+                          {"Renew Lease"}
+                        </Button>
                       )}
                       {application.lease_status !== "PROCESSING" && application.lease_status !== "RENEW PROCESSING" && (
                         <Button
