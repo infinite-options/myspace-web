@@ -35,13 +35,22 @@ export default function ManagementDetailsComponent({
   handleManageContractClick,
 }) {
   // console.log("---dhyey-- inside new component -", activeContract)
+  const { defaultContractFees, allContracts, currentContractUID, currentContractPropertyUID, isChange, setIsChange, fetchContracts,  } = useContext(ManagementContractContext);     
+  const { fetchProperties } = useContext(PropertiesContext);  
   const [selectedPreviewFile, setSelectedPreviewFile] = useState(null);
   const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
   const navigate = useNavigate();
   const [showEndContractDialog, setShowEndContractDialog] = useState(false);
+  const [showManagerEndContractDialog, setShowManagerEndContractDialog] = useState(false);
   const [showRenewContractDialog, setShowRenewContractDialog] = useState(false);
+  const [contractEndNotice, setContractEndNotice] = useState(activeContract?.contract_end_notice_period? Number(activeContract?.contract_end_notice_period) : 30);
 
   // console.log("ROHIT - currentProperty?.maintenance - ", currentProperty?.maintenance);
+
+  useEffect(() => {
+    console.log("ROHIT - activeContract - ", activeContract);
+    setContractEndNotice(activeContract?.contract_end_notice_period? Number(activeContract?.contract_end_notice_period) : 30)
+  }, [activeContract]);
 
   const maintenanceGroupedByStatus = currentProperty?.maintenance?.reduce((acc, request) => {
     const status = request.maintenance_status;
