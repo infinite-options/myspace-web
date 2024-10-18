@@ -515,7 +515,7 @@ export default function PropertyNavigator({
       return theme.palette.priority.clear;
     } else if (value === "UNPAID") {
       return theme.palette.priority.high;
-    } else if (value === "PARTAILLY PAID") {
+    } else if (value === "PARTIALLY PAID") {
       return theme.palette.priority.medium;
     } else if (value === "PAID LATE" || "NO MANAGER") {
       return theme.palette.priority.low;
