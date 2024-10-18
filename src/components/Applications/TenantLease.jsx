@@ -696,6 +696,7 @@ const TenantLease = () => {
       console.log('created leaseApplicationFormData');
       leaseApplicationFormData.append("lease_property_id", property.property_id);
       leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");
+      leaseApplicationFormData.append("lease_renew_status", "TRUE");
       leaseApplicationFormData.append("lease_effective_date", startDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_start", startDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_end", endDate.format("MM-DD-YYYY"));
@@ -703,9 +704,9 @@ const TenantLease = () => {
       leaseApplicationFormData.append("lease_move_in_date", moveInDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_end_notice_period", endLeaseNoticePeriod);
       
-      if(deleteFees?.length > 0){
-        leaseApplicationFormData.append("delete_fees", JSON.stringify(deleteFees));
-      }
+      // if(deleteFees?.length > 0){
+      //   leaseApplicationFormData.append("delete_fees", JSON.stringify(deleteFees));
+      // }
 
       if(deletedDocsUrl && deletedDocsUrl?.length !== 0){
         leaseApplicationFormData.append("delete_documents", JSON.stringify(deletedDocsUrl));
