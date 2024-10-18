@@ -125,16 +125,33 @@ const TenantLease = () => {
   const navigate = useNavigate();
   const { getProfileId } = useUser();
   const { state } = useLocation();
-  const { application, property, managerInitiatedRenew = false } = state;
+  const { page, application, property, managerInitiatedRenew = false } = state;
   const { getList, } = useContext(ListsContext);	
 	const feeFrequencies = getList("frequency");
   console.log("Property: ", property);
   console.log("Application: ", application);
   const [showSpinner, setShowSpinner] = useState(false);
-  const [startDate, setStartDate] = useState(application.lease_start ? dayjs(application.lease_start) : dayjs());
-  const [endDate, setEndDate] = useState(application.lease_end ? dayjs(application.lease_end) : dayjs().add(1, "year").subtract(1, "day"));
-  const [moveInDate, setMoveInDate] = useState(dayjs()); // fix me
+  // Intermediate variables to calculate the initial dates
+  let initialStartDate, initialEndDate, initialMoveInDate;
 
+  if (page === "create_lease") {
+    initialStartDate = dayjs();
+    initialEndDate = dayjs().add(1, "year").subtract(1, "day");
+    initialMoveInDate = initialStartDate;
+  } else if (page === "edit_lease") {
+    initialStartDate = application.lease_start ? dayjs(application.lease_start) : dayjs();
+    initialEndDate = application.lease_end ? dayjs(application.lease_end) : dayjs().add(1, "year").subtract(1, "day");
+    initialMoveInDate = application.lease_move_in_date ? dayjs(application.lease_move_in_date) : dayjs();
+  } else if (page === "renew_lease") {
+    initialStartDate = application.lease_end ? dayjs(application.lease_end).add(1, "day") : dayjs();
+    initialEndDate = initialStartDate.add(1, "year").subtract(1, "day");
+    initialMoveInDate = initialStartDate;
+  }
+
+  // Set state using intermediate variables
+  const [startDate, setStartDate] = useState(initialStartDate);
+  const [endDate, setEndDate] = useState(initialEndDate);
+  const [moveInDate, setMoveInDate] = useState(initialMoveInDate);
   const [noOfOccupants, setNoOfOccupants] = useState(1);
   const [endLeaseNoticePeriod, setEndLeaseNoticePeriod] = useState(application.lease_end_notice_period ? application.lease_end_notice_period : 30);
 
@@ -152,6 +169,7 @@ const TenantLease = () => {
   const [fees, setFees] = useState([]);
 
   const [leaseDocuments, setLeaseDocuments] = useState(JSON.parse(application?.lease_documents));
+  
   const [leaseFiles, setLeaseFiles] = useState([]);
   const [leaseFileTypes, setLeaseFileTypes] = useState([]);
 
@@ -678,15 +696,17 @@ const TenantLease = () => {
       console.log('created leaseApplicationFormData');
       leaseApplicationFormData.append("lease_property_id", property.property_id);
       leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");
+      leaseApplicationFormData.append("lease_renew_status", "TRUE");
       leaseApplicationFormData.append("lease_effective_date", startDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_start", startDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_end", endDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_fees", JSON.stringify(fees));
       leaseApplicationFormData.append("lease_move_in_date", moveInDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_end_notice_period", endLeaseNoticePeriod);
-      if(deleteFees?.length > 0){
-        leaseApplicationFormData.append("delete_fees", JSON.stringify(deleteFees));
-      }
+      
+      // if(deleteFees?.length > 0){
+      //   leaseApplicationFormData.append("delete_fees", JSON.stringify(deleteFees));
+      // }
 
       if(deletedDocsUrl && deletedDocsUrl?.length !== 0){
         leaseApplicationFormData.append("delete_documents", JSON.stringify(deletedDocsUrl));
@@ -700,7 +720,8 @@ const TenantLease = () => {
       leaseApplicationFormData.append("lease_children", JSON.stringify(leaseChildren));
       leaseApplicationFormData.append("lease_pets", JSON.stringify(leasePets));
       leaseApplicationFormData.append("lease_vehicles", JSON.stringify(leaseVehicles));
-let date = new Date();
+
+      let date = new Date();
       leaseApplicationFormData.append("lease_application_date", formatDate(date.toLocaleDateString()));
       console.log('before tenant id leaseApplicationFormData', property);
       if (property?.tenants) {
@@ -790,6 +811,21 @@ let date = new Date();
                 method: "PUT",
                 body: leaseApplicationUpdateFormData,
               });
+              let index = -1
+              if(leaseDocuments && leaseDocuments.length !== 0){
+                [...leaseDocuments].forEach((file, i) => {
+                  index++;
+                  const documentObject = {
+                      link : file.link,
+                      fileType: file.fileType,
+                      filename: file.filename,
+                      contentType: file.contentType,
+                  };
+                  leaseApplicationFormData.append(`file_${index}`, JSON.stringify(documentObject));
+              });
+              }
+              leaseApplicationFormData.append("lease_documents_details", JSON.stringify(leaseDocuments));
+      
 
       await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "POST",
@@ -1201,6 +1237,7 @@ useEffect(() => {
             <Typography variant="h6" sx={{ fontWeight: "bold" }}>Occupancy Details</Typography>
           </AccordionSummary>
           <AccordionDetails>
+          <Box sx={{ padding: "10px", overflowX: "auto" }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>Adults</Typography>
@@ -1219,6 +1256,7 @@ useEffect(() => {
                 <VehiclesDataGrid data={leaseVehicles} />
               </Grid>
             </Grid>
+            </Box>
           </AccordionDetails>
         </Accordion>
         </Paper>
