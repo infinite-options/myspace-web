@@ -26,7 +26,7 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
     const [showEndContractDialog, setShowEndContractDialog] = useState(false);
     const [showRenewContractDialog, setShowRenewContractDialog] = useState(false);
 
-    console.log("ROHIT - currentProperty?.maintenance - ", currentProperty?.maintenance);
+    // console.log("ROHIT - currentProperty?.maintenance - ", currentProperty?.maintenance);
 
     const maintenanceGroupedByStatus = currentProperty?.maintenance?.reduce((acc, request) => {
         const status = request.maintenance_status;
@@ -300,7 +300,7 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
                     </Grid>}
 
                     {
-                        selectedRole === "OWNER" && (
+                        (selectedRole === "OWNER" || selectedRole === "MANAGER") && (
                             <Grid container item spacing={2} sx={{ marginTop: '3px', marginBottom: '5px',}}>
                                 
                                 <Grid 
@@ -488,7 +488,7 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
                         </Grid>
                     </Grid>
 
-                    <Grid container item spacing={2}>
+                    {/* <Grid container item spacing={2}>
                         <Grid item xs={6}>
                         <Typography
                             sx={{
@@ -502,7 +502,7 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
                         </Grid>
                         <Grid item xs={6}>
                             {
-                                Object.values(maintenanceGroupedByStatus)?.map( status => {
+                                maintenanceGroupedByStatus && Object.values(maintenanceGroupedByStatus)?.map( status => {
                                     return (
                                         <IconButton 
                                             sx={{marginLeft: "1.5px", paddingTop: "3px"}} 
@@ -514,7 +514,7 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
                                 })
                             }
                         </Grid>
-                    </Grid>
+                    </Grid> */}
                 
                 </Grid>
             </CardContent>
