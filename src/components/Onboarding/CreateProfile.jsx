@@ -176,7 +176,8 @@ const CreateProfile = () => {
   };
 
   const createUserProfile = async (userUID, userData) => {
-    // console.log("createUserProfile - USER UID - ", userUID);
+    console.log("createUserProfile - USER UID - ", userUID);
+    console.log("createUserProfile - userData - ", userData);
     // console.log("createUserProfile - user.role -",  user.role)
     selectRole(user.role);
     const payload = getPayload(user.role, userUID);
@@ -390,7 +391,7 @@ const CreateProfile = () => {
           } else {
             setAuthData(responseJSON.result);
 
-            createUserProfile(responseJSON.result.user.user_uid);
+            createUserProfile(responseJSON.result.user.user_uid, responseJSON.result.user);
             // setShowSpinner(false);
             // navigate(`/onboardingRouter`, { state: { isPrivate:false } });
             console.log("Success:", responseJSON);
