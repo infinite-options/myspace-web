@@ -350,15 +350,23 @@ function getTotalRevenueByType(data, month, year, expected) {
     return acc;
   }, 0.0);
 
+  let totalRentDueOwner = revenueItems?.reduce((acc, revenue) => {
+    if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "RENT DUE OWNER") {
+      return acc + parseFloat(revenue[key]);
+    }
+    return acc;
+  }, 0.0);
+
   return {
-    RENT: totalRent,
-    DEPOSIT: totalDeposits,
-    "EXTRA CHARGE": totalExtraCharges,
-    UTILITIES: totalUtilities,
-    "LATE FEE": totalLateFee,
-    MAINTENANCE: totalMaintenance,
-    REPAIRS: totalRepairs,
-    OTHER: totalOther
+    RENT: parseFloat(totalRent).toFixed(2),
+    DEPOSIT: parseFloat(totalDeposits).toFixed(2),
+    "EXTRA CHARGE": parseFloat(totalExtraCharges).toFixed(2),
+    UTILITIES: parseFloat(totalUtilities).toFixed(2),
+    "LATE FEE": parseFloat(totalLateFee).toFixed(2),
+    MAINTENANCE: parseFloat(totalMaintenance).toFixed(2),
+    REPAIRS: parseFloat(totalRepairs).toFixed(2),
+    OTHER: parseFloat(totalOther).toFixed(2),
+    "RENT DUE OWNER" : parseFloat(totalRentDueOwner).toFixed(2),
   };
 }
 
@@ -439,15 +447,15 @@ function getTotalExpenseByType(data, month, year, expected) {
   }, 0.0);
 
   return {
-    MAINTENANCE: totalMaintenance,
-    REPAIRS: totalRepairs,
-    MORTGAGE: totalMortgage,
-    TAXES: totalTaxes,
-    INSURANCE: totalInsurance,
-    UTILITIES: totalUtilities,
-    MANAGEMENT: totalManagement,
-    "BILL POSTING": totalBillPosting,
-    OTHER : totalOther
+    MAINTENANCE: parseFloat(totalMaintenance).toFixed(2),
+    REPAIRS: parseFloat(totalRepairs).toFixed(2),
+    MORTGAGE: parseFloat(totalMortgage).toFixed(2),
+    TAXES: parseFloat(totalTaxes).toFixed(2),
+    INSURANCE: parseFloat(totalInsurance).toFixed(2),
+    UTILITIES: parseFloat(totalUtilities).toFixed(2),
+    MANAGEMENT: parseFloat(totalManagement).toFixed(2),
+    "BILL POSTING": parseFloat(totalBillPosting).toFixed(2),
+    OTHER : parseFloat(totalOther).toFixed(2),
   };
 }
 
@@ -515,15 +523,23 @@ function getTotalRevenueByTypeByProperty(data, month, year, expected, propertyId
     return acc;
   }, 0.0);
 
+  let totalRentDueOwner = revenueItems?.reduce((acc, revenue) => {
+    if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "RENT DUE OWNER") {
+      return acc + parseFloat(revenue[key]);
+    }
+    return acc;
+  }, 0.0);
+
   return {
-    RENT: totalRent,
-    DEPOSIT: totalDeposits,
-    "EXTRA CHARGE": totalExtraCharges,
-    UTILITIES: totalUtilities,
-    "LATE FEE": totalLateFee,
-    MAINTENANCE: totalMaintenance,
-    REPAIRS: totalRepairs,
-    OTHER: totalOther
+    RENT: parseFloat(totalRent).toFixed(2),
+    DEPOSIT: parseFloat(totalDeposits).toFixed(2),
+    "EXTRA CHARGE": parseFloat(totalExtraCharges).toFixed(2),
+    UTILITIES: parseFloat(totalUtilities).toFixed(2),
+    "LATE FEE": parseFloat(totalLateFee).toFixed(2),
+    MAINTENANCE: parseFloat(totalMaintenance).toFixed(2),
+    REPAIRS: parseFloat(totalRepairs).toFixed(2),
+    OTHER: parseFloat(totalOther).toFixed(2),
+    "RENT DUE OWNER" : parseFloat(totalRentDueOwner).toFixed(2),
   };
 }
 
@@ -604,15 +620,15 @@ function getTotalExpenseByTypeByProperty(data, month, year, expected, propertyId
   }, 0.0);
 
   return {
-    MAINTENANCE: totalMaintenance,
-    REPAIRS: totalRepairs,
-    MORTGAGE: totalMortgage,
-    TAXES: totalTaxes,
-    INSURANCE: totalInsurance,
-    UTILITIES: totalUtilities,
-    MANAGEMENT: totalManagement,
-    "BILL POSTING": totalBillPosting,
-    OTHER : totalOther
+    MAINTENANCE: parseFloat(totalMaintenance).toFixed(2),
+    REPAIRS: parseFloat(totalRepairs).toFixed(2),
+    MORTGAGE: parseFloat(totalMortgage).toFixed(2),
+    TAXES: parseFloat(totalTaxes).toFixed(2),
+    INSURANCE: parseFloat(totalInsurance).toFixed(2),
+    UTILITIES: parseFloat(totalUtilities).toFixed(2),
+    MANAGEMENT: parseFloat(totalManagement).toFixed(2),
+    "BILL POSTING": parseFloat(totalBillPosting).toFixed(2),
+    OTHER : parseFloat(totalOther).toFixed(2),
   };
 }
 

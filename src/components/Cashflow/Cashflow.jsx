@@ -856,23 +856,12 @@ const CashflowDetails = ({
                           <Grid container justifyContent='flex-start' item xs={isMobile? 6: 8}>
                             <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.common.fontWeight, ...(isMobile? {fontSize: "12px" } :{}) }}>
+                                <Typography sx={{ color: theme.typography.primary.black, cursor:"pointer", fontWeight: theme.typography.common.fontWeight, ...(isMobile? {fontSize: "12px", width: "150px", } :{}) }} 
+                                  onClick={(e) => {navigate("/properties", { state: { currentProperty: property?.propertyInfo?.property_id } });}}
+                                >
                                   {`${property?.propertyInfo?.property_address}`} {property?.propertyInfo?.property_unit && ", Unit - "}
                                   {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
                                 </Typography>
-                                <Button
-                                  sx={{
-                                    padding: "0px",
-                                    marginLeft: isMobile? "5px" : "10px",
-                                    color: "#160449",
-                                    "&:hover": {
-                                      color: "#FFFFFF",
-                                    },
-                                  }}
-                                  onClick={(e) => {navigate("/properties", { state: { currentProperty: property?.propertyInfo?.property_id } });}}
-                                >
-                                  <Typography sx={{ fontWeight: theme.typography.common.fontWeight, textTransform: "none", ...(isMobile? {fontSize: "12px" } :{}) }}>View</Typography>
-                                </Button>
                               </AccordionSummary>
                             </Grid>
                           </Grid>
@@ -1228,19 +1217,19 @@ function StatementTable(props) {
       <>
         {activeView !== "Cashflow" && (<TableRow>
           <TableCell>
-            <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, marginLeft: "25px" }}>Property UID</Typography>
+            <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, marginLeft: isMobile? "10px" : "25px"  }}>Property UID</Typography>
           </TableCell>
           <TableCell>
-            <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>Property Address</Typography>
+            <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>Property Address</Typography>
           </TableCell>
           <TableCell>
-            <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>Property Unit</Typography>
+            <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>Property Unit</Typography>
           </TableCell>
           <TableCell align='right'>
-            <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>Expected</Typography>
+            <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>Expected</Typography>
           </TableCell>
           <TableCell align='right'>
-            <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, marginRight: "25px" }}>Actual</Typography>
+            <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, marginLeft: isMobile? "10px" : "25px"  }}>Actual</Typography>
           </TableCell>
         </TableRow>)}
 
@@ -1249,7 +1238,7 @@ function StatementTable(props) {
             <TableRow key={index} onClick={() => handleNavigation(type, item)}>
               <TableCell></TableCell>
               <TableCell>
-                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }} onClick={() => {
+                <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }} onClick={() => {
                     navigate("/properties", {
                       state: { currentProperty: item.pur_property_id}
                     });
@@ -1259,12 +1248,12 @@ function StatementTable(props) {
                 </Typography>
               </TableCell>
               <TableCell>
-                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
                   ${item["expected"] ? item["expected"] : 0}
                 </Typography>
               </TableCell>
               <TableCell>
-                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
                   ${item["actual"] ? item["actual"] : 0}
                 </Typography>
               </TableCell>
@@ -1274,23 +1263,23 @@ function StatementTable(props) {
 
               <TableRow key={`${item.property_uid}-${index}`} sx={{}}>
                 <TableCell>
-                  <Typography sx={{ fontSize: theme.typography.smallFont, marginLeft: "25px" }}>{item.pur_property_id ? item.pur_property_id : ""}</Typography>
+                  <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, marginLeft: isMobile? "10px" : "25px" }}>{item.pur_property_id ? item.pur_property_id : ""}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography sx={{ fontSize: theme.typography.smallFont, cursor:"pointer" }} onClick={() => {
+                  <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, cursor:"pointer" }} onClick={() => {
                     navigate("/properties", {
                       state: { currentProperty: item.pur_property_id}
                     });
                   }}>{item.property_address? item.property_address : ""}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography sx={{ fontSize: theme.typography.smallFont }}>{item.property_unit ? item.property_unit : ""}</Typography>
+                  <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont }}>{item.property_unit ? item.property_unit : ""}</Typography>
                 </TableCell>
                 <TableCell align='right'>
                   {/* {property.individual_purchase.map((p) => {
                       total_amount_due += (p.pur_amount_due? p.pur_amount_due : 0)
                   })} */}
-                  <Typography sx={{ fontSize: theme.typography.smallFont }}>
+                  <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont }}>
                     ${item.expected ? item.expected : 0}
                   </Typography>
                 </TableCell>
@@ -1298,7 +1287,7 @@ function StatementTable(props) {
                   {/* {property.individual_purchase.map((p) => {
                       total_amount_paid += (p.total_paid ? p.total_paid : 0)
                   })} */}
-                  <Typography sx={{ fontSize: theme.typography.smallFont, marginRight: "25px" }}>
+                  <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, marginRight: isMobile? "10px" : "25px" }}>
                     ${item.actual?item.actual:0}
                   </Typography>
                 </TableCell>
@@ -1323,26 +1312,24 @@ function StatementTable(props) {
                 }}
                 key={category}
               >
-                <AccordionSummary sx={{ flexDirection: "row-reverse" }} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, ...(isMobile? {fontSize: "12px" } :{})}}>
-                            {" "}
-                            {category} {getCategoryCount(category)}{" "}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, ...(isMobile? {fontSize: "12px" } :{}) }}>${value ? value : 0}</Typography>
-                        </TableCell>
-                        <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, ...(isMobile? {fontSize: "12px" } :{}) }}>${value ? value : 0}</Typography>
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                  </Table>
-                </AccordionSummary>
+                <Grid container item xs={12}>
+                  <Grid container justifyContent='flex-start' item xs={isMobile? 6: 8}>
+                    <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, ...(isMobile? {fontSize: "12px" } :{})}}>
+                          {" "}
+                          {category} {getCategoryCount(category)}{" "}
+                        </Typography>
+                      </AccordionSummary>
+                    </Grid>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={isMobile? 3 : 2}>
+                    <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, ...(isMobile? {fontSize: "12px" } :{}) }}>${value ? value : 0}</Typography>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={isMobile? 3 : 2}>
+                    <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, ...(isMobile? {fontSize: "12px" } :{}) }}>${value ? value : 0}</Typography>
+                  </Grid>
+                </Grid>
                 <AccordionDetails>
                   <Table>
                     <TableBody>{getCategoryItems(category, navigateType)}</TableBody>
@@ -1363,30 +1350,28 @@ function StatementTable(props) {
                 }}
                 key={category}
               >
-                <AccordionSummary sx={{ flexDirection: "space-between" }} expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell sx={{ width: "150px" }}>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, ...(isMobile? {fontSize: "12px" } :{}) }}>
-                            {" "}
-                            {category} {getCategoryCount(category)}{" "}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, width: "250px", ...(isMobile? {fontSize: "12px" } :{}) }}>
-                            ${value ? value : 0}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, ...(isMobile? {fontSize: "12px" } :{}) }}>
-                            ${categoryTotalMapping[category] ? categoryTotalMapping[category] : 0}
-                          </Typography>
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                  </Table>
-                </AccordionSummary>
+                <Grid container item xs={12}>
+                  <Grid container justifyContent='flex-start' item xs={isMobile? 6: 8}>
+                    <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, ...(isMobile? {fontSize: "12px" } :{}) }}>
+                          {" "}
+                          {category} {getCategoryCount(category)}{" "}
+                        </Typography>
+                      </AccordionSummary>
+                    </Grid>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={isMobile? 3 : 2}>
+                    <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, ...(isMobile? {fontSize: "12px" } :{}) }}>
+                      ${value ? value : 0}
+                    </Typography>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={isMobile? 3 : 2}>
+                    <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, ...(isMobile? {fontSize: "12px" } :{}) }}>
+                      ${categoryTotalMapping[category] ? categoryTotalMapping[category] : 0}
+                    </Typography>
+                  </Grid>
+                </Grid>
                 <AccordionDetails>
                   <Table>
                     <TableBody>{getCategoryItems(category)}</TableBody>
