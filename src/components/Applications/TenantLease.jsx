@@ -152,6 +152,7 @@ const TenantLease = () => {
   const [fees, setFees] = useState([]);
 
   const [leaseDocuments, setLeaseDocuments] = useState(JSON.parse(application?.lease_documents));
+  
   const [leaseFiles, setLeaseFiles] = useState([]);
   const [leaseFileTypes, setLeaseFileTypes] = useState([]);
 
@@ -684,6 +685,7 @@ const TenantLease = () => {
       leaseApplicationFormData.append("lease_fees", JSON.stringify(fees));
       leaseApplicationFormData.append("lease_move_in_date", moveInDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_end_notice_period", endLeaseNoticePeriod);
+      
       if(deleteFees?.length > 0){
         leaseApplicationFormData.append("delete_fees", JSON.stringify(deleteFees));
       }
@@ -700,7 +702,8 @@ const TenantLease = () => {
       leaseApplicationFormData.append("lease_children", JSON.stringify(leaseChildren));
       leaseApplicationFormData.append("lease_pets", JSON.stringify(leasePets));
       leaseApplicationFormData.append("lease_vehicles", JSON.stringify(leaseVehicles));
-let date = new Date();
+
+      let date = new Date();
       leaseApplicationFormData.append("lease_application_date", formatDate(date.toLocaleDateString()));
       console.log('before tenant id leaseApplicationFormData', property);
       if (property?.tenants) {
@@ -790,6 +793,21 @@ let date = new Date();
                 method: "PUT",
                 body: leaseApplicationUpdateFormData,
               });
+              let index = -1
+              if(leaseDocuments && leaseDocuments.length !== 0){
+                [...leaseDocuments].forEach((file, i) => {
+                  index++;
+                  const documentObject = {
+                      link : file.link,
+                      fileType: file.fileType,
+                      filename: file.filename,
+                      contentType: file.contentType,
+                  };
+                  leaseApplicationFormData.append(`file_${index}`, JSON.stringify(documentObject));
+              });
+              }
+              leaseApplicationFormData.append("lease_documents_details", JSON.stringify(leaseDocuments));
+      
 
       await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "POST",
