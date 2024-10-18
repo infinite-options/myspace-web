@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Box, Grid, Typography, Button, IconButton, Badge, Card, CardContent, Dialog, DialogActions, DialogTitle, DialogContent, ToolTip } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { DataGrid } from "@mui/x-data-grid";
@@ -15,18 +15,31 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { ReactComponent as CalendarIcon } from '../../images/datetime.svg';
 
 import axios from "axios";
+import APIConfig from '../../utils/APIConfig';
 import { useUser } from '../../contexts/UserContext';
+import ManagementContractContext from '../../contexts/ManagementContractContext';
+import PropertiesContext from '../../contexts/PropertiesContext';
 
 
 export default function ManagementDetailsComponent({activeContract, currentProperty, currentIndex, selectedRole, handleViewPMQuotesRequested, newContractCount, sentContractCount, handleOpenMaintenancePage, onShowSearchManager, handleViewContractClick, handleManageContractClick}){
-    // console.log("---dhyey-- inside new component -", activeContract)    
+    // console.log("---dhyey-- inside new component -", activeContract) 
+    const { defaultContractFees, allContracts, currentContractUID, currentContractPropertyUID, isChange, setIsChange, fetchContracts,  } = useContext(ManagementContractContext);     
+    const { fetchProperties } = useContext(PropertiesContext);     
     const [selectedPreviewFile, setSelectedPreviewFile] = useState(null)
     const [previewDialogOpen, setPreviewDialogOpen] = useState(false) 
     const navigate = useNavigate();    
     const [showEndContractDialog, setShowEndContractDialog] = useState(false);
+    const [showManagerEndContractDialog, setShowManagerEndContractDialog] = useState(false);
     const [showRenewContractDialog, setShowRenewContractDialog] = useState(false);
+    const [contractEndNotice, setContractEndNotice] = useState(activeContract?.contract_end_notice_period? Number(activeContract?.contract_end_notice_period) : 30);
 
-    // console.log("ROHIT - currentProperty?.maintenance - ", currentProperty?.maintenance);
+    useEffect(() => {
+        console.log("ROHIT - activeContract - ", activeContract);
+        setContractEndNotice(activeContract?.contract_end_notice_period? Number(activeContract?.contract_end_notice_period) : 30)
+    }, [activeContract]);
+    
+
+    console.log("ROHIT - currentProperty - ", currentProperty);
 
     const maintenanceGroupedByStatus = currentProperty?.maintenance?.reduce((acc, request) => {
         const status = request.maintenance_status;
@@ -41,7 +54,7 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
     }, {});
 
     console.log("ROHIT - maintenanceGroupedByStatus - ", maintenanceGroupedByStatus);
-    
+        
 
     const handleFileClick = (file)=>{
         setSelectedPreviewFile(file)
@@ -52,6 +65,40 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
         setPreviewDialogOpen(false)
         setSelectedPreviewFile(null)
       }
+
+      const handleManagerEndContractClick = (endDate) => {
+        const formattedDate = endDate.format('MM-DD-YYYY');
+        // console.log("handleEndContractClick - formattedDate - ", formattedDate);
+        
+        
+        const formData = new FormData();	            
+        
+        // formData.append("contract_uid", currentContractUID);    
+        formData.append("contract_uid", activeContract?.contract_uid);    
+        formData.append("contract_renew_status", "ENDING");
+        formData.append("contract_early_end_date", formattedDate);
+        
+        
+          const url = `${APIConfig.baseURL.dev}/contracts`;
+        // const url = `http://localhost:4000/contracts`;
+    
+        fetch(url, {
+          method: "PUT",	
+          body: formData,
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            } else {
+              // console.log("Data updated successfully");
+                  setIsChange(false);
+                  fetchProperties();
+            }
+          })
+          .catch((error) => {
+            console.error("There was a problem with the fetch operation:", error);
+          });
+      };
 
     return (
     <>
@@ -217,15 +264,32 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
                         </Grid>
                         <Grid item xs={6}>
                         <Box display="flex" alignItems="center" justifyContent={"space-between"}>
-                            {currentProperty?.contract_status === "ACTIVE" ? (<Typography
-                                sx={{
-                                    color: theme.palette.success.main,
-                                    fontWeight: theme.typography.secondary.fontWeight,
-                                    fontSize: theme.typography.smallFont,
-                                }}
-                            >
-                                ACTIVE
-                            </Typography>) : (
+                            {currentProperty?.contract_status === "ACTIVE" ? (
+                                <>
+                                    <Typography
+                                        sx={{
+                                            color: theme.palette.success.main,
+                                            fontWeight: theme.typography.secondary.fontWeight,
+                                            fontSize: theme.typography.smallFont,
+                                        }}
+                                    >
+                                        ACTIVE
+                                    </Typography>
+                                    {currentProperty?.contract_renew_status && (currentProperty?.contract_renew_status === "ENDING" || currentProperty?.contract_renew_status.includes("RENEW")) && 
+                                        (
+                                            <Typography
+                                                sx={{
+                                                    color: currentProperty?.contract_renew_status?.includes("RENEW")? "#FF8A00" : "#A52A2A",
+                                                    fontWeight: theme.typography.secondary.fontWeight,
+                                                    fontSize: theme.typography.smallFont,
+                                                }}
+                                            >
+                                                {currentProperty?.contract_renew_status?.includes("RENEW") ? " RENEWING" : currentProperty?.contract_renew_status }
+                                            </Typography>
+                                        )
+                                    }
+                                </>
+                            ) : (
                                 <Typography
                                     sx={{
                                         color: "#3D5CAC",
@@ -235,7 +299,7 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
                                 >
                                     No Contract
                                 </Typography>)}
-                            {currentProperty?.contract_status === "ACTIVE" && selectedRole === "MANAGER" && 
+                            {/* {currentProperty?.contract_status === "ACTIVE" && selectedRole === "MANAGER" && 
                             <Button
                                 onClick={() => {                                    
                                         handleManageContractClick(currentProperty.contract_uid, currentProperty.contract_property_id )                                                                        
@@ -264,7 +328,7 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
                             >
                                 {"Manage Contract"}
                             </Typography>
-                            </Button>}
+                            </Button>} */}
                         </Box>
                         </Grid>
                     </Grid>
@@ -314,7 +378,15 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
                                     }}
                                 >   
                                     <Button
-                                        onClick={() => setShowEndContractDialog(true)}
+                                        onClick={() => {
+                                            if(selectedRole === "OWNER"){
+                                                setShowEndContractDialog(true)
+                                            } else if (selectedRole === "MANAGER") {
+                                                setShowManagerEndContractDialog(true)
+                                            }
+                                            
+                                            
+                                        }}
                                         variant='outlined'
                                         sx={{
                                             background: "#3D5CAC",
@@ -352,7 +424,13 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
                                     }}
                                 >                                
                                     <Button
-                                        onClick={() => setShowRenewContractDialog(true)}
+                                        onClick={() => {
+                                            if(selectedRole === "OWNER"){                                                                                            
+                                                setShowRenewContractDialog(true)
+                                            } else if (selectedRole === "MANAGER"){
+                                                handleManageContractClick(currentProperty.contract_uid, currentProperty.contract_property_id )
+                                            }
+                                        }}
                                         variant='outlined'
                                         sx={{
                                             background: "#3D5CAC",
@@ -525,6 +603,11 @@ export default function ManagementDetailsComponent({activeContract, currentPrope
             handleClose={() => setShowEndContractDialog(false)}            
             contract={activeContract}
         />
+        {showManagerEndContractDialog && (
+            <Box>
+                <ManagerEndContractDialog open={showManagerEndContractDialog} handleClose={() => setShowManagerEndContractDialog(false)} onEndContract={handleManagerEndContractClick} noticePeriod={contractEndNotice} />
+            </Box>
+        )}
 
         <RenewContractDialog 
             open={showRenewContractDialog} 
@@ -824,9 +907,9 @@ const EndContractDialog = ({ open, handleClose, contract }) => {
                     <Grid container>                                   
                         <Grid container item xs={12} sx={{marginTop: '10px', }}>
                             <Grid item xs={12}>
-                                <Typography sx={{fontWeight: 'bold', color: 'red'}}>
+                                {/* <Typography sx={{fontWeight: 'bold', color: 'red'}}>
                                     DEBUG - notice period is 30 days by default if not specified.
-                                </Typography>
+                                </Typography> */}
                                 <Typography sx={{fontWeight: 'bold', color: 'red'}}>
                                     Contract UID - {contract?.contract_uid}
                                 </Typography>
@@ -869,6 +952,116 @@ const EndContractDialog = ({ open, handleClose, contract }) => {
         </form>
     );
   }
+
+function ManagerEndContractDialog({ open, handleClose, onEndContract, noticePeriod, }) {	
+
+const noticePeriodDays = parseInt(noticePeriod, 10);
+const minEndDate = dayjs().add(noticePeriodDays, 'day')
+// console.log("minEndDate - ", minEndDate);
+const formattedMinEndDate = minEndDate.format('MM/DD/YYYY')
+    
+const [earlyEndDate, setEarlyEndDate] = useState(minEndDate);
+    
+
+    
+
+    const handleEndContract = (event) => {
+        event.preventDefault();
+        
+        onEndContract(earlyEndDate);
+        handleClose();
+    };
+
+    return (
+        <form 
+    onSubmit={handleEndContract}
+    >
+            <Dialog
+                open={open}
+                onClose={handleClose}				
+                maxWidth="xl"
+                sx={{
+                    '& .MuiDialog-paper': {
+                        width: '60%',
+                        maxWidth: 'none',
+                    },
+                }}
+            >
+        <DialogTitle sx={{ justifyContent: 'center',}}>        
+            End Current Contract        
+        </DialogTitle>
+        <DialogContent>
+        <Grid container>
+            <Grid item xs={12}>
+            {/* <Typography sx={{width: 'auto', color: 'red'}}>
+                {`DEBUG - Notice period is 30 days by default if not specified.`}
+            </Typography> */}
+            <Typography sx={{width: 'auto',}}>
+                {`The notice period to end this contract is ${noticePeriod} days. The earliest possible end date is ${formattedMinEndDate}.`}
+            </Typography>
+            </Grid>            
+            <Grid container item xs={5} sx={{marginTop: '10px', }}>
+            <Grid item xs={12}>
+                <Typography sx={{fontWeight: 'bold', color: '#3D5CAC'}}>
+                    Please select contract end date
+                </Typography>
+            </Grid>
+            <Grid item xs={12}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                    value={earlyEndDate}
+                    minDate={minEndDate}
+                    onChange={(v) => setEarlyEndDate(v)}
+                    slots={{
+                    openPickerIcon: CalendarIcon,
+                    }}
+                    slotProps={datePickerSlotProps}
+                />
+                </LocalizationProvider>
+            </Grid>
+            </Grid>
+            <Grid item xs={12} sx={{marginTop: '15px', }}>
+            <Typography sx={{width: 'auto',}}>
+                {`Are you sure you want to end this contract?`}
+            </Typography>
+            </Grid>
+        </Grid>
+
+        </DialogContent>
+                
+                <DialogActions>					
+                    <Button
+                        type="submit"
+                        onClick={handleEndContract}
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: '#160449',                
+                            },
+            backgroundColor: '#3D5CAC',
+                            color: '#FFFFFF',
+            fontWeight: 'bold',
+                        }}
+                    >
+                        Yes
+                    </Button>
+        <Button
+                        onClick={handleClose}
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: '#160449',                
+                            },
+            backgroundColor: '#3D5CAC',
+                            color: '#FFFFFF',
+            fontWeight: 'bold',
+                        }}
+                    >
+                        No
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </form>
+    );
+}
 
 
 const RenewContractDialog = ({ open, handleClose, contract }) => {	

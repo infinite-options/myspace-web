@@ -806,112 +806,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 	);
 }
 
-function EndContractDialog({ open, handleClose, onEndContract, noticePeriod, }) {	
 
-  const noticePeriodDays = parseInt(noticePeriod, 10);
-  const minEndDate = dayjs().add(noticePeriodDays, 'day')
-  // console.log("minEndDate - ", minEndDate);
-  const formattedMinEndDate = minEndDate.format('MM/DD/YYYY')
-	
-  const [earlyEndDate, setEarlyEndDate] = useState(minEndDate);
-	
-
-	
-
-	const handleEndContract = (event) => {
-		event.preventDefault();
-		
-		onEndContract(earlyEndDate);
-		handleClose();
-	};
-
-	return (
-		<form 
-      onSubmit={handleEndContract}
-    >
-			<Dialog
-				open={open}
-				onClose={handleClose}				
-				maxWidth="xl"
-				sx={{
-					'& .MuiDialog-paper': {
-						width: '60%',
-						maxWidth: 'none',
-					},
-				}}
-			>
-        <DialogTitle sx={{ justifyContent: 'center',}}>        
-              End Current Contract        
-        </DialogTitle>
-        <DialogContent>
-          <Grid container>
-            <Grid item xs={12}>
-              <Typography sx={{width: 'auto',}}>
-                {`The notice period to end this contract is ${noticePeriod} days, and the earliest possible end date is ${formattedMinEndDate}.`}
-              </Typography>
-            </Grid>            
-            <Grid container item xs={3} sx={{marginTop: '10px', }}>
-              <Grid item xs={12}>
-                <Typography sx={{fontWeight: 'bold', color: '#3D5CAC'}}>
-                  End Date
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    value={earlyEndDate}
-                    minDate={minEndDate}
-                    onChange={(v) => setEarlyEndDate(v)}
-                    slots={{
-                      openPickerIcon: CalendarIcon,
-                    }}
-                    slotProps={datePickerSlotProps}
-                  />
-                </LocalizationProvider>
-              </Grid>
-            </Grid>
-            <Grid item xs={12} sx={{marginTop: '15px', }}>
-              <Typography sx={{width: 'auto',}}>
-                {`Are you sure you want to end this contract?`}
-              </Typography>
-            </Grid>
-          </Grid>
-
-        </DialogContent>
-				
-				<DialogActions>					
-					<Button
-						type="submit"
-						onClick={handleEndContract}
-						sx={{
-							'&:hover': {
-								backgroundColor: '#160449',                
-							},
-              backgroundColor: '#3D5CAC',
-							color: '#FFFFFF',
-              fontWeight: 'bold',
-						}}
-					>
-						Yes
-					</Button>
-          <Button
-						onClick={handleClose}
-						sx={{
-							'&:hover': {
-								backgroundColor: '#160449',                
-							},
-              backgroundColor: '#3D5CAC',
-							color: '#FFFFFF',
-              fontWeight: 'bold',
-						}}
-					>
-						No
-					</Button>
-				</DialogActions>
-			</Dialog>
-		</form>
-	);
-}
 
 const PropertyCard = (props) => {
   const navigate = useNavigate();
@@ -932,7 +827,7 @@ const PropertyCard = (props) => {
   const [showEditFeeDialog, setShowEditFeeDialog] = useState(false);
   const [showAddContactDialog, setShowAddContactDialog] = useState(false);
   const [showEditContactDialog, setShowEditContactDialog] = useState(false);
-  const [showEndContractDialog, setShowEndContractDialog] = useState(false);
+//   const [showEndContractDialog, setShowEndContractDialog] = useState(false);
   const [showMissingFileTypePrompt, setShowMissingFileTypePrompt] = useState(false);
   const [showInvalidEndDatePrompt, setShowInvalidEndDatePrompt] = useState(false);
   const [showInvalidStartDatePrompt, setShowInvalidStartDatePrompt] = useState(false);
@@ -1525,37 +1420,7 @@ const PropertyCard = (props) => {
   };
 
 
-  const handleEndContractClick = (endDate) => {
-    const formattedDate = endDate.format('MM-DD-YYYY');
-    // console.log("handleEndContractClick - formattedDate - ", formattedDate);
-    
-    
-    const formData = new FormData();	            
-    
-    formData.append("contract_uid", currentContractUID);    
-    formData.append("contract_status", "ENDING");
-    formData.append("contract_early_end_date", formattedDate);
-    
-    
-  	const url = `${APIConfig.baseURL.dev}/contracts`;
-    // const url = `http://localhost:4000/contracts`;
-
-    fetch(url, {
-      method: "PUT",	
-      body: formData,
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        } else {
-          // console.log("Data updated successfully");
-		      setIsChange(false)		      
-        }
-      })
-      .catch((error) => {
-        console.error("There was a problem with the fetch operation:", error);
-      });
-  };
+ 
   
   const handleCreateNewContractClick = () => {    
 	if(!isChange || isChange === false){
@@ -1574,6 +1439,7 @@ const PropertyCard = (props) => {
     formData.append("contract_name", contractName);
     formData.append("contract_start_date", contractStartDate.format("MM-DD-YYYY"));
     formData.append("contract_end_date", contractEndDate.format("MM-DD-YYYY"));
+	formData.append("contract_end_notice_period", contractEndNotice);
     formData.append("contract_fees", contractFeesJSONString);
     formData.append("contract_status", "SENT");
     formData.append("contract_assigned_contacts", contractContactsJSONString);
@@ -2505,7 +2371,8 @@ return (
 						sx={{
 							display: 'flex',
 							flexDirection: 'row',
-							justifyContent: 'space-between',
+							// justifyContent: 'space-between',
+							justifyContent: 'center',
 							alignItems: 'center',
 							paddingTop: '10px',
 							marginBottom: '7px',
@@ -2516,7 +2383,7 @@ return (
 						
 						
 							
-						<Button
+						{/* <Button
 							variant="contained"
 							sx={{
 								backgroundColor: '#CB8E8E',
@@ -2541,7 +2408,7 @@ return (
 							>
 								{'End Contract'}
 							</Typography>
-						</Button>
+						</Button> */}
 
 						<Button
 							variant="contained"
@@ -2610,11 +2477,11 @@ return (
 					/>
 				</Box>
 			)}
-      {showEndContractDialog && (
+      {/* {showEndContractDialog && (
 				<Box>
 					<EndContractDialog open={showEndContractDialog} handleClose={() => setShowEndContractDialog(false)} onEndContract={handleEndContractClick} noticePeriod={contractEndNotice} />
 				</Box>
-			)}
+			)} */}
       <GenericDialog
         isOpen={isDialogOpen}
         title={dialogTitle}
