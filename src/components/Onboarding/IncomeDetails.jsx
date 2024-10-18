@@ -7,6 +7,8 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { makeStyles } from '@material-ui/core/styles';
+import GenericDialog from '../GenericDialog';
+import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
     textField: {
@@ -25,12 +27,14 @@ const useStyles = makeStyles((theme) => ({
 
 const IncomeDetails = ({ employmentList, setEmploymentList, salaryFrequencies }) => {
     const classes = useStyles();
+    const [showSpinner, setShowSpinner] = useState(false);
     const [open, setOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [currentRow, setCurrentRow] = useState({ jobTitle: "", companyName: "", salary: "", frequency: "" });
-    const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const [snackbarMessage, setSnackbarMessage] = useState('');
-    const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [dialogTitle, setDialogTitle] = useState('');
+    const [dialogMessage, setDialogMessage] = useState('');
+    const [dialogSeverity, setDialogSeverity] = useState('info');
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
@@ -39,45 +43,87 @@ const IncomeDetails = ({ employmentList, setEmploymentList, salaryFrequencies })
         setIsEditing(false);
     };
 
-    const handleSnackbarClose = () => setSnackbarOpen(false);
+    const handleDialogClose = () => setDialogOpen(false);
 
     const handleAddClick = () => {
         setIsEditing(false);
         handleOpen();
     };
 
-    const handleEditClick = (job) => {
+    const handleEditClick = (job, index) => {
         setIsEditing(true);
-        setCurrentRow(job);
+        console.log("currentrow", job, index);
+        setCurrentRow({ ...job, index });
         handleOpen();
     };
 
-    const handleSave = () => {
-        if (isEditing) {
-            const updatedList = employmentList.map((income) =>
-                income.jobTitle === currentRow.jobTitle && income.companyName === currentRow.companyName
-                    ? currentRow
-                    : income
-            );
-            setEmploymentList(updatedList);
-            setSnackbarMessage("Income details updated successfully");
-        } else {
-            setEmploymentList([...employmentList, currentRow]);
-            setSnackbarMessage("Income added successfully");
-        }
-        setSnackbarSeverity('success');
-        setSnackbarOpen(true);
-        handleClose();
+    // const handleChange = (index, field, value) => {
+    //     const updatedList = [...employmentList];
+    //     updatedList[index] = { ...updatedList[index], [field]: value };
+    
+    //     setEmploymentList(updatedList);
+    
+    //     // console.log("Updated Employment List:", updatedList);
+    // };
+
+    const handleChange = (field, value) => {
+        setCurrentRow(prevRow => ({
+            ...prevRow,
+            [field]: value
+        }));
     };
 
+    const handleSave = async () => {
+        const updatedList = [...employmentList];
+        console.log("updated list", updatedList);
+
+        if (isEditing) {
+            updatedList[currentRow.index] = { ...currentRow };
+        } else {
+            updatedList.push({ ...currentRow });
+        }
+    
+        console.log("updated list 2", updatedList);
+        setEmploymentList(updatedList);
+    
+        const profileFormData = new FormData();
+        console.log("tenant emp7", updatedList);
+        profileFormData.append("tenant_employment", JSON.stringify(updatedList));
+    
+        try {
+            setShowSpinner(true);
+            await axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+    
+            setDialogTitle('Success');
+            setDialogMessage(isEditing ? "Income details updated successfully." : "Income added successfully.");
+            setDialogSeverity('success');
+        } catch (error) {
+            console.error("Error updating employment data:", error);
+            setDialogTitle('Error');
+            setDialogMessage("Error updating employment data. Please try again.");
+            setDialogSeverity('error');
+        } finally {
+            setShowSpinner(false);
+            setDialogOpen(true);
+            handleClose();
+        }
+    };
+    
+    
+    
     const handleDeleteClick = (job) => {
         const updatedList = employmentList.filter(
             (income) => income.jobTitle !== job.jobTitle || income.companyName !== job.companyName
         );
         setEmploymentList(updatedList);
-        setSnackbarMessage("Income removed successfully");
-        setSnackbarSeverity('success');
-        setSnackbarOpen(true);
+        setDialogTitle('Success');
+        setDialogMessage("Income removed successfully.");
+        setDialogSeverity('success');
+        setDialogOpen(true);
     };
 
     return (
@@ -124,7 +170,7 @@ const IncomeDetails = ({ employmentList, setEmploymentList, salaryFrequencies })
                         <Typography variant="body2">Frequency: {job.frequency}</Typography>
                     </Box>
                     <Box>
-                        <Button onClick={() => handleEditClick(job)} sx={{ marginRight: 1 }}>
+                        <Button onClick={() => handleEditClick(job, index)} sx={{ marginRight: 1 }}>
                             <EditIcon sx={{ color: "#3D5CAC" }} />
                         </Button>
                         <Button onClick={() => handleDeleteClick(job)}>
@@ -141,53 +187,54 @@ const IncomeDetails = ({ employmentList, setEmploymentList, salaryFrequencies })
                 </DialogTitle>
                 <DialogContent>
                     <Grid container spacing={2}>
-                        <Grid item xs={6}>
-                            <TextField
-                                className={classes.textField}
-                                margin="dense"
-                                label="Job Title"
-                                fullWidth
-                                value={currentRow.jobTitle}
-                                onChange={(e) => setCurrentRow({ ...currentRow, jobTitle: e.target.value })}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <TextField
-                                className={classes.textField}
-                                margin="dense"
-                                label="Company Name"
-                                fullWidth
-                                value={currentRow.companyName}
-                                onChange={(e) => setCurrentRow({ ...currentRow, companyName: e.target.value })}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <TextField
-                                className={classes.textField}
-                                margin="dense"
-                                label="Salary"
-                                fullWidth
-                                value={currentRow.salary}
-                                onChange={(e) => setCurrentRow({ ...currentRow, salary: e.target.value })}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <FormControl margin="dense" fullWidth variant="outlined">
-                                <InputLabel>Frequency</InputLabel>
-                                <Select
-                                    className={classes.select}
-                                    label="Frequency"
-                                    value={currentRow.frequency}
-                                    onChange={(e) => setCurrentRow({ ...currentRow, frequency: e.target.value })}
-                                >
-                                    {salaryFrequencies.map((freq) => (
-                                        <MenuItem key={freq.list_uid} value={freq.list_item}>
-                                            {freq.list_item}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
+                    <Grid item xs={6}>
+                        <TextField
+                            className={classes.textField}
+                            margin="dense"
+                            label="Company Name"
+                            fullWidth
+                            value={currentRow.companyName}
+                            onChange={(e) => handleChange("companyName", e.target.value)}
+                        />
+                    </Grid>
+
+                    <Grid item xs={6}>
+                        <TextField
+                            className={classes.textField}
+                            margin="dense"
+                            label="Job Title"
+                            fullWidth
+                            value={currentRow.jobTitle}
+                            onChange={(e) => handleChange("jobTitle", e.target.value)}
+                        />
+                    </Grid>
+
+                    <Grid item xs={6}>
+                        <TextField
+                            className={classes.textField}
+                            margin="dense"
+                            label="Salary"
+                            fullWidth
+                            value={currentRow.salary}
+                            onChange={(e) => handleChange("salary", e.target.value)}
+                        />
+                    </Grid>
+
+                    <FormControl margin="dense" fullWidth variant="outlined">
+                        <InputLabel>Frequency</InputLabel>
+                        <Select
+                            className={classes.select}
+                            label="Frequency"
+                            value={currentRow.frequency}
+                            onChange={(e) => handleChange("frequency", e.target.value)}
+                        >
+                            {salaryFrequencies.map((freq) => (
+                                <MenuItem key={freq.list_uid} value={freq.list_item}>
+                                    {freq.list_item}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                     </Grid>
                 </DialogContent>
                 <DialogActions>
@@ -200,13 +247,18 @@ const IncomeDetails = ({ employmentList, setEmploymentList, salaryFrequencies })
                 </DialogActions>
             </Dialog>
 
-            {/* Snackbar for feedback */}
-            <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-                <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
-                    <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
-                    {snackbarMessage}
-                </Alert>
-            </Snackbar>
+            <GenericDialog
+                isOpen={dialogOpen}
+                title={dialogTitle}
+                contextText={dialogMessage}
+                actions={[
+                    {
+                        label: "OK",
+                        onClick: handleDialogClose,
+                    },
+                ]}
+                severity={dialogSeverity}
+            />
         </Box>
     );
 };

@@ -76,11 +76,11 @@ import PropertiesContext from "../../contexts/PropertiesContext";
 import ListsContext from "../../contexts/ListsContext.js";
 import ManagementDetailsComponent from "./ManagementDetailsComponent.jsx";
 
-import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy, } from "../../utils/fees";
+import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy } from "../../utils/fees";
 
 const getAppColor = (app) => {
   if (app.lease_status.includes("RENEW")) {
-    return '#2E7D32'; // Return green if lease_status contains 'RENEW'
+    return "#2E7D32"; // Return green if lease_status contains 'RENEW'
   } else if (app.lease_status === "REJECTED") {
     return "#A52A2A"; // Red color for rejected
   } else if (app.lease_status === "REFUSED") {
@@ -115,13 +115,13 @@ export default function PropertyNavigator({
   const navigate = useNavigate();
   const { getList } = useContext(ListsContext);
   const { getProfileId, isManager, roleName, selectedRole } = useUser();
-  
+
   const propertiesContext = useContext(PropertiesContext);
   const {
     propertyList: propertyListFromContext,
     allRentStatus: allRentStatusFromContext,
     allContracts: allContractsFromContext,
-    returnIndex: returnIndexFromContext,    
+    returnIndex: returnIndexFromContext,
   } = propertiesContext || {};
 
   const propertyList = propertyListFromContext || [];
@@ -320,13 +320,13 @@ export default function PropertyNavigator({
       var count = 0;
       var newContractCount = 0;
       var sentContractCount = 0;
-      console.log("ROHIT - PropertyNavigator - allContracts - ", allContracts);
-      console.log("ROHIT - PropertyNavigator - propertyId - ", propertyId);      
+      // console.log("ROHIT - PropertyNavigator - allContracts - ", allContracts);
+      // console.log("ROHIT - PropertyNavigator - propertyId - ", propertyId);
       const filtered = allContracts?.filter((contract) => {
         const contractPropertyID = contract.property_id || contract.property_uid;
-        return contractPropertyID === propertyId
+        return contractPropertyID === propertyId;
       });
-      console.log("ROHIT - PropertyNavigator - filtered - ", filtered);
+      // console.log("ROHIT - PropertyNavigator - filtered - ", filtered);
       const active = filtered?.filter((contract) => contract.contract_status === "ACTIVE");
       // console.log("322 - PropertyNavigator - filtered contracts - ", filtered);
       filtered.forEach((contract) => {
@@ -339,7 +339,7 @@ export default function PropertyNavigator({
           newContractCount++;
         }
       });
-      console.log("ROHIT - PropertyNavigator - Active contract - ", active);
+      // console.log("ROHIT - PropertyNavigator - Active contract - ", active);
       setContractsNewSent(count);
       setContractsData(allContracts);
       setActiveContracts(active);
@@ -515,7 +515,7 @@ export default function PropertyNavigator({
       return theme.palette.priority.clear;
     } else if (value === "UNPAID") {
       return theme.palette.priority.high;
-    } else if (value === "PARTAILLY PAID") {
+    } else if (value === "PARTIALLY PAID") {
       return theme.palette.priority.medium;
     } else if (value === "PAID LATE" || "NO MANAGER") {
       return theme.palette.priority.low;
@@ -934,20 +934,19 @@ export default function PropertyNavigator({
     setIsReadOnly(true); // Set read-only mode for Info button click
     handleOpen(); // Open the dialog
   };
-  
 
   const applnColumns = [
     // { field: "appliance_uid", headerName: "UID", width: 80 },
-    { field: "appliance_item", headerName: "Appliance",  flex: 1},
+    { field: "appliance_item", headerName: "Appliance", flex: 1 },
     // { field: "appliance_desc", headerName: "Description", width: 80 },
     // { field: "appliance_manufacturer", headerName: "Manufacturer", width: 80 },
     //{ field: "appliance_purchased_from", headerName: "Purchased From", width: 80 },
-    { field: "appliance_purchased", headerName: "Purchased On", flex: 1},
+    { field: "appliance_purchased", headerName: "Purchased On", flex: 1 },
     //{ field: "appliance_purchase_order", headerName: "Purchase Order Number", width: 80 },
-    { field: "appliance_installed", headerName: "Installed On", flex: 1},
+    { field: "appliance_installed", headerName: "Installed On", flex: 1 },
     //{ field: "appliance_serial_num", headerName: "Serial Number", width: 80 },
     //{ field: "appliance_model_num", headerName: "Model Number", width: 80 },
-    { field: "appliance_warranty_till", headerName: "Warranty Till", flex: 1},
+    { field: "appliance_warranty_till", headerName: "Warranty Till", flex: 1 },
     //{ field: "appliance_warranty_info", headerName: "Warranty Info", width: 80 },
     //{ field: "appliance_url", headerName: "URLs", width: 80 },
     //{ field: "appliance_images", headerName: "Image", width: 100, renderCell: ImageCell }, //appliance_favorite_image needs to be added
@@ -958,8 +957,8 @@ export default function PropertyNavigator({
       width: 120,
       renderCell: (params) => {
         return (
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-             <IconButton onClick={() => handleInfoClick(params.row)}>
+          <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+            <IconButton onClick={() => handleInfoClick(params.row)}>
               <InfoIcon />
             </IconButton>
             <IconButton onClick={() => handleEditClick(params.row)}>
@@ -1577,17 +1576,16 @@ export default function PropertyNavigator({
                               minWidth: "150px",
                               minHeight: "35px",
                               width: "100%",
-                              cursor: 'pointer',
+                              cursor: "pointer",
                             }}
                             onClick={() => {
-                              console.log("ROHIT - here1");
-                              console.log("ROHIT - here1 = getPaymentStatus(property?.rent_status, property) -", getPaymentStatus(property?.rent_status, property));
-                              
-                              if(getPaymentStatus(property?.rent_status, property) === "Vacant - Not Listed"){
-                                
-                                onAddListingClick("create_listing")
-                              } else if(getPaymentStatus(property?.rent_status, property) === "No Manager"){
-                                console.log("ROHIT - here2");
+                              // console.log("ROHIT - here1");
+                              // console.log("ROHIT - here1 = getPaymentStatus(property?.rent_status, property) -", getPaymentStatus(property?.rent_status, property));
+
+                              if (getPaymentStatus(property?.rent_status, property) === "Vacant - Not Listed") {
+                                onAddListingClick("create_listing");
+                              } else if (getPaymentStatus(property?.rent_status, property) === "No Manager") {
+                                // console.log("ROHIT - here2");
                                 onShowSearchManager(1);
                               }
                             }}
@@ -2035,58 +2033,58 @@ export default function PropertyNavigator({
                               }}
                             >
                               {property.applications.map((app, index) => (
-                              <Button
-                              key={index}
-                              onClick={() => handleAppClick(index)}
-                              sx={{
-                                backgroundColor: getAppColor(app),
-                                color: "#FFFFFF",
-                                textTransform: "none",
-                                width: "100%",
-                                height: "70px",
-                                display: "flex",
-                                flexDirection: "column",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                marginBottom: 2,
-                                "&:hover, &:focus, &:active": {
-                                  backgroundColor: getAppColor(app),
-                                },
-                              }}
-                            >
-                              {/* Box for full name and date on one line */}
-                              <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%" }}>
-                                <Typography
+                                <Button
+                                  key={index}
+                                  onClick={() => handleAppClick(index)}
                                   sx={{
-                                    fontSize: theme.typography.smallFont,
-                                    mr: 1,
+                                    backgroundColor: getAppColor(app),
+                                    color: "#FFFFFF",
+                                    textTransform: "none",
+                                    width: "100%",
+                                    height: "70px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    marginBottom: 2,
+                                    "&:hover, &:focus, &:active": {
+                                      backgroundColor: getAppColor(app),
+                                    },
                                   }}
                                 >
-                                  {app.tenant_first_name + " " + app.tenant_last_name + " "}
-                                </Typography>
-                                <Typography
-                                  sx={{
-                                    fontWeight: "bold",
-                                    fontSize: theme.typography.smallFont,
-                                  }}
-                                >
-                                  {app.lease_application_date}
-                                </Typography>
-                              </Box>
-                            
-                              {/* Box for status on the next line */}
-                              <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
-                                <Typography
-                                  sx={{
-                                    fontWeight: "bold",
-                                    fontSize: theme.typography.smallFont,
-                                  }}
-                                >
-                                  {app.lease_status}
-                                </Typography>
-                              </Box>
-                            </Button>
-                            ))}
+                                  {/* Box for full name and date on one line */}
+                                  <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%" }}>
+                                    <Typography
+                                      sx={{
+                                        fontSize: theme.typography.smallFont,
+                                        mr: 1,
+                                      }}
+                                    >
+                                      {app.tenant_first_name + " " + app.tenant_last_name + " "}
+                                    </Typography>
+                                    <Typography
+                                      sx={{
+                                        fontWeight: "bold",
+                                        fontSize: theme.typography.smallFont,
+                                      }}
+                                    >
+                                      {app.lease_application_date}
+                                    </Typography>
+                                  </Box>
+
+                                  {/* Box for status on the next line */}
+                                  <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
+                                    <Typography
+                                      sx={{
+                                        fontWeight: "bold",
+                                        fontSize: theme.typography.smallFont,
+                                      }}
+                                    >
+                                      {app.lease_status}
+                                    </Typography>
+                                  </Box>
+                                </Button>
+                              ))}
                             </AccordionDetails>
                           </Accordion>
                         </Grid>
@@ -2543,7 +2541,7 @@ export default function PropertyNavigator({
           {/* Appliances grid */}
           <Grid item xs={12} md={12} sx={{ pt: "10px" }}>
             <Card sx={{ backgroundColor: color, height: "100%" }}>
-              <Box sx={{ width: "100%"}}>
+              <Box sx={{ width: "100%" }}>
                 <Box
                   sx={{
                     display: "flex",
@@ -2623,16 +2621,10 @@ export default function PropertyNavigator({
                   </Alert>
                 </Snackbar>
                 <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>{isReadOnly ? "View Appliance" : isEditing ? "Edit Appliance" : "Add New Appliance"}</DialogTitle><DialogContent>
+                  <DialogTitle>{isReadOnly ? "View Appliance" : isEditing ? "Edit Appliance" : "Add New Appliance"}</DialogTitle>
+                  <DialogContent>
                     {/* Appliance UID */}
-  <TextField
-    margin='dense'
-    label='Appliance UID'
-    fullWidth
-    variant='outlined'
-    value={currentApplRow?.appliance_uid || ""}
-    disabled={isReadOnly}
-  />
+                    <TextField margin='dense' label='Appliance UID' fullWidth variant='outlined' value={currentApplRow?.appliance_uid || ""} disabled={isReadOnly} />
                     <FormControl margin='dense' fullWidth variant='outlined' sx={{ marginTop: "10px" }}>
                       <InputLabel required>Appliance Type</InputLabel>
                       <Select
@@ -2696,72 +2688,71 @@ export default function PropertyNavigator({
                             }}
                           >
                             <ImageList ref={scrollRef} sx={{ display: "flex", flexWrap: "nowrap" }} cols={5}>
-  {currentApplRow.appliance_images ? (
-    currentApplRow.appliance_images.map((image, index) => (
-      <ImageListItem
-        key={index}
-        sx={{
-          width: "auto",
-          flex: "0 0 auto",
-          border: "1px solid #ccc",
-          margin: "0 2px",
-          position: "relative",
-        }}
-      >
-        <img
-          src={image}
-          alt={`maintenance-${index}`}
-          style={{
-            height: "150px",
-            width: "150px",
-            objectFit: "cover",
-          }}
-        />
-        
-        {/* Conditionally render delete icon if not read-only */}
-        {!isReadOnly && (
-          <Box sx={{ position: "absolute", top: 0, right: 0 }}>
-            <IconButton
-              onClick={() => handleDelete(index)}
-              sx={{
-                color: deletedIcons[index] ? "red" : "black",
-                backgroundColor: "rgba(255, 255, 255, 0.7)",
-                "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.9)",
-                },
-                margin: "2px",
-              }}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </Box>
-        )}
+                              {currentApplRow.appliance_images ? (
+                                currentApplRow.appliance_images.map((image, index) => (
+                                  <ImageListItem
+                                    key={index}
+                                    sx={{
+                                      width: "auto",
+                                      flex: "0 0 auto",
+                                      border: "1px solid #ccc",
+                                      margin: "0 2px",
+                                      position: "relative",
+                                    }}
+                                  >
+                                    <img
+                                      src={image}
+                                      alt={`maintenance-${index}`}
+                                      style={{
+                                        height: "150px",
+                                        width: "150px",
+                                        objectFit: "cover",
+                                      }}
+                                    />
 
-        {/* Conditionally render favorite icon if not read-only */}
-        {!isReadOnly && (
-          <Box sx={{ position: "absolute", bottom: 0, left: 0 }}>
-            <IconButton
-              onClick={() => handleFavorite(index)}
-              sx={{
-                color: favoriteIcons[index] ? "red" : "black",
-                backgroundColor: "rgba(255, 255, 255, 0.7)",
-                "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.9)",
-                },
-                margin: "2px",
-              }}
-            >
-              {favoriteIcons[index] ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-            </IconButton>
-          </Box>
-        )}
-      </ImageListItem>
-    ))
-  ) : (
-    <></>
-  )}
-</ImageList>
+                                    {/* Conditionally render delete icon if not read-only */}
+                                    {!isReadOnly && (
+                                      <Box sx={{ position: "absolute", top: 0, right: 0 }}>
+                                        <IconButton
+                                          onClick={() => handleDelete(index)}
+                                          sx={{
+                                            color: deletedIcons[index] ? "red" : "black",
+                                            backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                            "&:hover": {
+                                              backgroundColor: "rgba(255, 255, 255, 0.9)",
+                                            },
+                                            margin: "2px",
+                                          }}
+                                        >
+                                          <DeleteIcon />
+                                        </IconButton>
+                                      </Box>
+                                    )}
 
+                                    {/* Conditionally render favorite icon if not read-only */}
+                                    {!isReadOnly && (
+                                      <Box sx={{ position: "absolute", bottom: 0, left: 0 }}>
+                                        <IconButton
+                                          onClick={() => handleFavorite(index)}
+                                          sx={{
+                                            color: favoriteIcons[index] ? "red" : "black",
+                                            backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                            "&:hover": {
+                                              backgroundColor: "rgba(255, 255, 255, 0.9)",
+                                            },
+                                            margin: "2px",
+                                          }}
+                                        >
+                                          {favoriteIcons[index] ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                                        </IconButton>
+                                      </Box>
+                                    )}
+                                  </ImageListItem>
+                                ))
+                              ) : (
+                                <></>
+                              )}
+                            </ImageList>
                           </Box>
                         </Box>
                         <IconButton onClick={() => handleScroll("right")}>
@@ -2770,16 +2761,16 @@ export default function PropertyNavigator({
                       </Box>
                     )}
                     {!isReadOnly && (
-  <ImageUploader
-    selectedImageList={selectedImageList}
-    setSelectedImageList={setSelectedImageList}
-    page={"Add"}
-    setDeletedImageList={setDeletedImageList}
-    setFavImage={setFavImage}
-    favImage={favImage}
-    updateFavoriteIcons={handleUpdateFavoriteIcons}
-  />
-)}
+                      <ImageUploader
+                        selectedImageList={selectedImageList}
+                        setSelectedImageList={setSelectedImageList}
+                        page={"Add"}
+                        setDeletedImageList={setDeletedImageList}
+                        setFavImage={setFavImage}
+                        favImage={favImage}
+                        updateFavoriteIcons={handleUpdateFavoriteIcons}
+                      />
+                    )}
                     <TextField
                       margin='dense'
                       label='Description'
@@ -2979,49 +2970,50 @@ export default function PropertyNavigator({
                     />
                   </DialogContent>
                   <DialogActions sx={{ alignContent: "center", justifyContent: "center" }}>
-    {isReadOnly ? (
-      // Show "Close" button only if it's read-only
-      <IconButton onClick={handleClose} sx={{ position: 'absolute', top: 8, right: 8 }}>
-        <CloseIcon />
-      </IconButton>
-    ) : (
-      // Show "Cancel" and "Save" buttons if not read-only
-      <>
-        <Button
-          variant='outlined'
-          sx={{
-            background: "#3D5CAC",
-            color: theme.palette.background.default,
-            cursor: "pointer",
-            textTransform: "none",
-            width: "30%",
-            fontWeight: theme.typography.secondary.fontWeight,
-            fontSize: theme.typography.smallFont,
-          }}
-          size='small'
-          onClick={handleClose}
-        >
-          Cancel
-        </Button>
-        <Button
-          variant='outlined'
-          sx={{
-            background: "#3D5CAC",
-            color: theme.palette.background.default,
-            cursor: "pointer",
-            textTransform: "none",
-            width: "30%",
-            fontWeight: theme.typography.secondary.fontWeight,
-            fontSize: theme.typography.smallFont,
-          }}
-          size='small'
-          onClick={handleAddAppln}
-        >
-          Save
-        </Button>
-      </>
-    )}
-  </DialogActions></Dialog>
+                    {isReadOnly ? (
+                      // Show "Close" button only if it's read-only
+                      <IconButton onClick={handleClose} sx={{ position: "absolute", top: 8, right: 8 }}>
+                        <CloseIcon />
+                      </IconButton>
+                    ) : (
+                      // Show "Cancel" and "Save" buttons if not read-only
+                      <>
+                        <Button
+                          variant='outlined'
+                          sx={{
+                            background: "#3D5CAC",
+                            color: theme.palette.background.default,
+                            cursor: "pointer",
+                            textTransform: "none",
+                            width: "30%",
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                          size='small'
+                          onClick={handleClose}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          variant='outlined'
+                          sx={{
+                            background: "#3D5CAC",
+                            color: theme.palette.background.default,
+                            cursor: "pointer",
+                            textTransform: "none",
+                            width: "30%",
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                          size='small'
+                          onClick={handleAddAppln}
+                        >
+                          Save
+                        </Button>
+                      </>
+                    )}
+                  </DialogActions>
+                </Dialog>
               </Box>
             </Card>
           </Grid>

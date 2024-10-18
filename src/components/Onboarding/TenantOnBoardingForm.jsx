@@ -992,30 +992,26 @@ const closeDialog = () => {
         });
         profileFormData.append("tenant_uid", profileData.tenant_uid);
 
-        axios
-          .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, headers)
-          .then((response) => {
-            console.log("Data updated successfully", response);
-            openDialog("Success","Your profile has been successfully updated.", "success");
-            handleUpdate();
-            setShowSpinner(false);
-          })
-          .catch((error) => {
-            setShowSpinner(false);
-            openDialog("Error","Cannot update your profile. Please try again", "error");
-            if (error.response) {
-              console.log(error.response.data);
-            }
-          });
+        await axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, headers);
+        setIsDialogOpen(true);
+        setDialogTitle("Success");
+        setDialogMessage("Your profile has been successfully updated.");
+        setDialogSeverity("success");
+        handleUpdate();
         setShowSpinner(false);
-        setModifiedData([]);
       } else {
-        openDialog("Warning","You haven't made any changes to the form. Please save after changing the data. (TBT)", "error"); // Abhinav change here
+        setIsDialogOpen(true);
+        setDialogTitle("Warning");
+        setDialogMessage("You haven't made any changes to the form. Please save after changing the data.");
+        setDialogSeverity("error");
       }
     } catch (error) {
-      openDialog("Error","Cannot update the lease. Please try again", "error");
-      console.log("Cannot Update the lease", error);
       setShowSpinner(false);
+      setIsDialogOpen(true);
+      setDialogTitle("Error");
+      setDialogMessage("Cannot update your profile. Please try again.");
+      setDialogSeverity("error");
+      console.log("Cannot Update the lease", error);
     }
   };
 
@@ -1075,27 +1071,25 @@ const closeDialog = () => {
   
         // Send the API request
         await axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, { headers });
-  
-        console.log("Data updated successfully");
-        openDialog("Success", "Your profile has been successfully updated.", "success");
+
+        setIsDialogOpen(true);
+        setDialogTitle("Success");
+        setDialogMessage("Your profile has been successfully updated.");
+        setDialogSeverity("success");
         handleUpdate();
-  
-        // Reset state after successful save
-        setModifiedData([]);
-        setuploadedFiles([]);
-        setUploadedFileTypes([]);
-        setDeletedFiles([]);
-        setIsPreviousFileChange(false);
+        setShowSpinner(false);
       } else {
-        openDialog("Warning", "You haven't made any changes to the form. Please save after changing the data.", "error");
+        setIsDialogOpen(true);
+        setDialogTitle("Warning");
+        setDialogMessage("You haven't made any changes to the form. Please save after changing the data.");
+        setDialogSeverity("error");
       }
-  
     } catch (error) {
       setShowSpinner(false);
-      openDialog("Error", "Cannot update your profile. Please try again", "error");
-      console.log("Cannot Update the lease", error);
-    } finally {
-      setShowSpinner(false);
+      setIsDialogOpen(true);
+      setDialogTitle("Error");
+      setDialogMessage("Cannot update your profile. Please try again.");
+      setDialogSeverity("error");
     }
   };
   
@@ -1834,7 +1828,7 @@ const closeDialog = () => {
 
       <Grid container justifyContent='center' item xs={12}>
         <Button variant='contained' color='primary' onClick={handleNextStep} disabled={nextStepDisabled} sx={{ mb: 2, backgroundColor: "#3D5CAC" }}>
-          <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Save</Typography>
+          <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Save 1</Typography>
         </Button>
       </Grid>
 

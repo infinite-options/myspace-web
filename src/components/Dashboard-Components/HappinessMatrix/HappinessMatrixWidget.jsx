@@ -6,7 +6,7 @@ import theme from "../../../theme/theme";
 import { useNavigate } from "react-router-dom";
 import CustomImage from "./CustomImage";
 
-function HappinessMatrixWidget(props) { 
+function HappinessMatrixWidget(props) {
   const navigate = useNavigate();
   // const chartWidth = 400;
   // const chartHeight = 350;
@@ -19,26 +19,24 @@ function HappinessMatrixWidget(props) {
   // console.log("happiness data initial2", happinessData.matrix_data.result[0]);
 
   const getBorderColor = (x, y) => {
-    let quarter;      
+    let quarter;
     if (x < -50 && y > -50) {
-      return "#FF8A00" //orange
+      return "#FF8A00"; //orange
     } else if (x < -50 && y < -50) {
       return "#D22B2B";
     } else if (x > -50 && y < -50) {
-      return "#FFC85C";    
+      return "#FFC85C";
     } else if (x > -50 && y > -50) {
-      return "#006400"
-    }
-    else{
+      return "#006400";
+    } else {
       return "#000000";
     }
 
-      // orange - upper left
-      // red - lower left
-      // yellow - lower right
-      // green - upper right
-
-  }
+    // orange - upper left
+    // red - lower left
+    // yellow - lower right
+    // green - upper right
+  };
 
   const adjustPoints = (points) => {
     const margin = 5;
@@ -75,7 +73,7 @@ function HappinessMatrixWidget(props) {
         y: -y,
         ...owner,
         color: getBorderColor(x, -y),
-        photo: owner.owner_photo_url? owner.owner_photo_url : null,
+        photo: owner.owner_photo_url ? owner.owner_photo_url : null,
         name: `${owner.owner_first_name} ${owner.owner_last_name}`,
       };
 
@@ -88,12 +86,10 @@ function HappinessMatrixWidget(props) {
     setPointsToPlot(adjustedPoints);
   }, [props.happinessData]);
 
-  
-
   const [pointsToPlot, setPointsToPlot] = useState([]);
 
   useEffect(() => {
-    console.log("ROHIT - pointsToPlot - ", pointsToPlot);
+    // console.log("ROHIT - pointsToPlot - ", pointsToPlot);
   }, [pointsToPlot]);
 
   const axisLabelStyle = {
@@ -156,42 +152,41 @@ function HappinessMatrixWidget(props) {
               >
                 {/* <CartesianGrid /> */}
                 <YAxis
-  type='number'
-  dataKey='x' // Now vacancy percentage is plotted on the Y-axis
-  name='Vacancies'
-  axisLine={false}
-  tickLine={false}
-  style={axisLabelStyle}
-  domain={[-100, 0]} // Adjust this if necessary for vacancy percentage
-  label={{
-    value: "Vacancy %",
-    angle: -90,
-    position: "insideLeft",
-    offset: 10,
-    fill: "#160449",
-    fontSize: 14,
-    fontWeight: "bold",
-  }}
-/>
+                  type='number'
+                  dataKey='x' // Now vacancy percentage is plotted on the Y-axis
+                  name='Vacancies'
+                  axisLine={false}
+                  tickLine={false}
+                  style={axisLabelStyle}
+                  domain={[-100, 0]} // Adjust this if necessary for vacancy percentage
+                  label={{
+                    value: "Vacancy %",
+                    angle: -90,
+                    position: "insideLeft",
+                    offset: 10,
+                    fill: "#160449",
+                    fontSize: 14,
+                    fontWeight: "bold",
+                  }}
+                />
 
-<XAxis
-  type='number'
-  dataKey='y' // Now cashflow percentage is plotted on the X-axis
-  name='Delta Cashflow'
-  axisLine={false}
-  tickLine={false}
-  style={axisLabelStyle}
-  domain={[-100, 0]} // Adjust this if necessary for cashflow percentage
-  label={{
-    value: "Delta Cashflow %",
-    position: "insideBottom",
-    offset: -5,
-    fill: "#160449",
-    fontSize: 14,
-    fontWeight: "bold",
-  }}
-/>
-
+                <XAxis
+                  type='number'
+                  dataKey='y' // Now cashflow percentage is plotted on the X-axis
+                  name='Delta Cashflow'
+                  axisLine={false}
+                  tickLine={false}
+                  style={axisLabelStyle}
+                  domain={[-100, 0]} // Adjust this if necessary for cashflow percentage
+                  label={{
+                    value: "Delta Cashflow %",
+                    position: "insideBottom",
+                    offset: -5,
+                    fill: "#160449",
+                    fontSize: 14,
+                    fontWeight: "bold",
+                  }}
+                />
 
                 <Tooltip
                   cursor={{ strokeDasharray: "3 3" }}
@@ -231,9 +226,9 @@ function HappinessMatrixWidget(props) {
                       onClick={() => handlePointClick(props.payload)}
                       happinessData={happinessData}
                       contactDetails={contactDetails}
-                       page={page}
-                       setHappinessData={setHappinessData}
-                       setOwnerUID={setOwnerUID}
+                      page={page}
+                      setHappinessData={setHappinessData}
+                      setOwnerUID={setOwnerUID}
                       // setIndex={setIndex}
                       isClicked={props.payload.index === clickedIndex}
                       isVisible={!hiddenPoints.includes(props.payload.index)}

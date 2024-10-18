@@ -15,20 +15,24 @@ function ManagementContractDetails(props) {
   const navigate = useNavigate();
   // const propertiesContext = useContext(PropertiesContext);
 
-  const { currentContractUID, currentContractPropertyUID, contractRequests: contractRequestsFromContext, allContracts: allContractsFromContext, } = useContext(ManagementContractContext);
+  const {
+    currentContractUID,
+    currentContractPropertyUID,
+    contractRequests: contractRequestsFromContext,
+    allContracts: allContractsFromContext,
+  } = useContext(ManagementContractContext);
   const [contractRequests, setContractRequests] = useState([]);
 
   useEffect(() => {
-    if(props.page && props.page === "properties"){
+    if (props.page && props.page === "properties") {
       setContractRequests(allContractsFromContext);
     } else {
       setContractRequests(contractRequestsFromContext);
     }
-
   }, [props.page, contractRequestsFromContext, allContractsFromContext]);
 
   useEffect(() => {
-    console.log("ROHIT - contractRequests - ", contractRequests);
+    // console.log("ROHIT - contractRequests - ", contractRequests);
   }, [contractRequests]);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -99,10 +103,9 @@ function ManagementContractDetails(props) {
   }, []);
 
   const handleBackBtn = () => {
-    if(props.page && props.page === "properties" && props.handleBackClick ){
+    if (props.page && props.page === "properties" && props.handleBackClick) {
       props.handleBackClick();
-    }
-    else {
+    } else {
       navigate(-1);
     }
   };
@@ -176,12 +179,8 @@ function ManagementContractDetails(props) {
                 Contract UID: {currentContractUID}
                 {/* {contactsTab} */}
               </Typography>
-            </Box>                        
-            <PropertyCard 
-              data={filteredPropertiesData[index] ? filteredPropertiesData[index] : []}
-              navigatingFrom={props.navigatingFrom} 
-              handleBackBtn={handleBackBtn}
-            />
+            </Box>
+            <PropertyCard data={filteredPropertiesData[index] ? filteredPropertiesData[index] : []} navigatingFrom={props.navigatingFrom} handleBackBtn={handleBackBtn} />
           </Box>
         </Grid>
       </Container>

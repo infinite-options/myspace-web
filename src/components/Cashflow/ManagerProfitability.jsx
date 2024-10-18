@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo  } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   Paper,
   DialogContent,
@@ -22,7 +22,8 @@ import {
   TableRow,
   Container,
   Tooltip,
-  Menu, MenuItem
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -116,10 +117,10 @@ const ManagerProfitability = ({
   const [revenueExpanded, setRevenueExpanded] = useState(true);
   const [expenseExpanded, setExpenseExpanded] = useState(true);
   // console.log("inside cashflow - view - ", view)
-  
-  const [tab, setTab] = useState( "profit");
+
+  const [tab, setTab] = useState("profit");
   const [headerTab, setHeaderTab] = useState("current_month");
-  const [ total, setTotal] = useState();
+  const [total, setTotal] = useState();
   const [paymentNotes, setPaymentNotes] = useState("");
   const [paymentData, setPaymentData] = useState({
     currency: "usd",
@@ -139,9 +140,9 @@ const ManagerProfitability = ({
   const [selectedPayments, setSelectedPayments] = useState([]);
 
   const [sortBy, setSortBy] = useState("");
-  const [cashflowExpand, setCashflowExpand] = useState(true)
-  const [cashflowRevenueExpand, setCashflowRevenueExpand] = useState(true)
-  const [ cashflowExpenseExpand, setCashflowExpanseExpand] = useState(true)
+  const [cashflowExpand, setCashflowExpand] = useState(true);
+  const [cashflowRevenueExpand, setCashflowRevenueExpand] = useState(true);
+  const [cashflowExpenseExpand, setCashflowExpanseExpand] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleSelectTab = (tab_name) => {
@@ -156,8 +157,8 @@ const ManagerProfitability = ({
   const currentYear = date.getFullYear();
 
   useEffect(() => {
-    handleSelectTab(view)
-  }, [view])
+    handleSelectTab(view);
+  }, [view]);
 
   const handleViewPropertyClick = (e, property_uid) => {
     e.stopPropagation();
@@ -170,7 +171,7 @@ const ManagerProfitability = ({
     if (pur_amount_due < 0) {
       pur_amount_due *= -1;
     }
-    if(total_paid < 0){
+    if (total_paid < 0) {
       total_paid *= -1;
     }
 
@@ -252,7 +253,7 @@ const ManagerProfitability = ({
       field: "purchase_type",
       headerName: "Purchase Type",
       flex: 1.5,
-      renderCell: (params) => <span style={{fontSize: theme.typography.smallFont}}>{params.row.purchase_type !== null ? params.row.purchase_type : "-"}</span>,
+      renderCell: (params) => <span style={{ fontSize: theme.typography.smallFont }}>{params.row.purchase_type !== null ? params.row.purchase_type : "-"}</span>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     // {
@@ -287,7 +288,7 @@ const ManagerProfitability = ({
               overflow: "hidden",
               textOverflow: "ellipsis",
               maxWidth: "100%",
-              fontSize: theme.typography.smallFont
+              fontSize: theme.typography.smallFont,
             }}
           >
             {params.row.pur_group !== null ? params.row.pur_group : "-"}
@@ -308,7 +309,7 @@ const ManagerProfitability = ({
               overflow: "hidden",
               textOverflow: "ellipsis",
               maxWidth: "100%",
-              fontSize: theme.typography.smallFont
+              fontSize: theme.typography.smallFont,
             }}
           >
             {params.row.pur_payer !== null ? params.row.pur_payer : "-"}
@@ -329,7 +330,7 @@ const ManagerProfitability = ({
               overflow: "hidden",
               textOverflow: "ellipsis",
               maxWidth: "100%",
-              fontSize: theme.typography.smallFont
+              fontSize: theme.typography.smallFont,
             }}
           >
             {params.row.pur_receiver !== null ? params.row.pur_receiver : "-"}
@@ -376,7 +377,11 @@ const ManagerProfitability = ({
       headerName: "Expected",
       flex: 1.2,
       headerAlign: "right",
-      renderCell: (params) => <Box sx={{fontSize: theme.typography.smallFont, width:"100%", textAlign:"right"}}>$ {params.row.pur_amount_due !== null ? parseFloat(params.row.pur_amount_due).toFixed(2) : parseFloat(0).toFixed(2)}</Box>,
+      renderCell: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont, width: "100%", textAlign: "right" }}>
+          $ {params.row.pur_amount_due !== null ? parseFloat(params.row.pur_amount_due).toFixed(2) : parseFloat(0).toFixed(2)}
+        </Box>
+      ),
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
@@ -385,7 +390,9 @@ const ManagerProfitability = ({
       flex: 1.2,
       headerAlign: "right",
       renderCell: (params) => (
-        <Box sx={{ textAlign: "right", width:"100%", fontSize: theme.typography.smallFont }}>$ {params.row.total_paid !== null ? parseFloat(params.row.total_paid).toFixed(2) : parseFloat(0).toFixed(2)}</Box>
+        <Box sx={{ textAlign: "right", width: "100%", fontSize: theme.typography.smallFont }}>
+          $ {params.row.total_paid !== null ? parseFloat(params.row.total_paid).toFixed(2) : parseFloat(0).toFixed(2)}
+        </Box>
       ),
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
@@ -414,14 +421,12 @@ const ManagerProfitability = ({
     const rows = getRowWithIds(data);
 
     const sortedRows = rows.sort((a, b) => {
-
       if (a.pur_group < b.pur_group) return -1;
       if (a.pur_group > b.pur_group) return 1;
-      
-      if (a.pur_type_code < b.pur_type_code) return -1; 
-      if (a.pur_type_code > b.pur_type_code) return 1; 
 
-    
+      if (a.pur_type_code < b.pur_type_code) return -1;
+      if (a.pur_type_code > b.pur_type_code) return 1;
+
       return 0; // If both fields are equal
     });
 
@@ -488,70 +493,104 @@ const ManagerProfitability = ({
       headerName: "Status",
       flex: 1.2,
       renderCell: (params) => <Box sx={commonStyles}>{params.row.payment_status !== null ? params.row.payment_status : "-"}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
-    },    
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
+    },
     {
       field: "purchase_type",
       headerName: "Type",
       flex: 0.8,
       renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "purchase_group",
       headerName: "Group",
       flex: 1,
       renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "month",
       headerName: "Month",
       flex: 0.7,
       renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "year",
       headerName: "Year",
       flex: 0.5,
       renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "purchase_date",
       headerName: "Purchase Date",
       flex: 1,
       renderCell: (params) => <Box sx={commonStyles}>{params.row.purchase_date !== null ? params.row.purchase_date.split(" ")[0] : "-"}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "expected",
       headerName: "Expected",
       flex: 0.7,
       renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "owner_payment",
       headerName: "Owner Payment",
       flex: 0.7,
       renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "management_fee",
       headerName: "Management Fee",
       flex: 0.7,
       renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
   ];
 
   const getNewRowWithIds = (data) => {
     // const revenueData = data?.filter((item) => item.pur_payer.startsWith("350"))
-    
-
 
     const rowsId = data?.map((row, index) => ({
       ...row,
@@ -559,10 +598,10 @@ const ManagerProfitability = ({
     }));
 
     return rowsId;
-  }
+  };
 
   const GetNewDataGrid = (data) => {
-    const filteredData = data?.filter((item) => item.payment_status === "UNPAID" || item.payment_status === "PARTIALLY PAID")
+    const filteredData = data?.filter((item) => item.payment_status === "UNPAID" || item.payment_status === "PARTIALLY PAID");
 
     const groupedData = filteredData.reduce((acc, item) => {
       if (!acc[item.pur_group]) {
@@ -578,11 +617,11 @@ const ManagerProfitability = ({
       let expected = 0;
       let management_fee = 0;
       let other_expense = 0;
-    
+
       // Check if all items in this group have 'payment_status' === "PAID"
       // const allPaid = groupedData[group].every(item => item.purchase_type === "Deposit");
-      const has350Payer = groupedData[group].some(item => item.pur_payer.startsWith("350"));
-    
+      const has350Payer = groupedData[group].some((item) => item.pur_payer.startsWith("350"));
+
       // If all items are paid, skip this group
       // if (allPaid) {
       //   return acc;
@@ -591,49 +630,43 @@ const ManagerProfitability = ({
       if (!has350Payer) {
         return acc;
       }
-    
-    
-      let allTransactions = []
-      let purchase_ids = []
+
+      let allTransactions = [];
+      let purchase_ids = [];
       let purchase_group;
       let purchase_type;
       let purchase_date;
       let month, year;
       let payment_status;
 
-      groupedData[group].forEach(item => {
+      groupedData[group].forEach((item) => {
         const pur_payer = item.pur_payer;
         const pur_type = item.purchase_type;
-    
+
         if (pur_payer.startsWith("350")) {
           purchase_type = item.purchase_type;
           purchase_date = item.purchase_date;
           month = item.cf_month;
           year = item.cf_year;
-          payment_status = item.payment_status
-          if(item.payment_status === "PARTIALLY PAID"){
-            expected += parseFloat(item.amt_remaining)
-          }else{
-
-            expected += parseFloat(item.pur_amount_due?item.pur_amount_due : "0.00");
+          payment_status = item.payment_status;
+          if (item.payment_status === "PARTIALLY PAID") {
+            expected += parseFloat(item.amt_remaining);
+          } else {
+            expected += parseFloat(item.pur_amount_due ? item.pur_amount_due : "0.00");
           }
-        }
-    
-        else if (pur_payer.startsWith("110") && pur_type === "Management") {
-          management_fee += parseFloat(item.pur_amount_due?item.pur_amount_due : "0.00");
-        }
-    
-        else if (pur_payer.startsWith("110") && pur_type !== "Management") {
-          other_expense += parseFloat(item.pur_amount_due?item.pur_amount_due : "0.00");
+        } else if (pur_payer.startsWith("110") && pur_type === "Management") {
+          management_fee += parseFloat(item.pur_amount_due ? item.pur_amount_due : "0.00");
+        } else if (pur_payer.startsWith("110") && pur_type !== "Management") {
+          other_expense += parseFloat(item.pur_amount_due ? item.pur_amount_due : "0.00");
         }
 
-        purchase_ids.push(item.purchase_uid)
-        allTransactions.push(item)
+        purchase_ids.push(item.purchase_uid);
+        allTransactions.push(item);
         purchase_group = item.pur_group;
       });
-    
+
       const owner_payment = parseFloat(expected - management_fee - other_expense);
-    
+
       // Push the aggregated object for this group into the result if it passes the conditions
       acc.push({
         pur_group: group,
@@ -642,52 +675,49 @@ const ManagerProfitability = ({
         other_expense,
         owner_payment,
         purchase_type: purchase_type,
-        purchase_ids : JSON.stringify(purchase_ids),
+        purchase_ids: JSON.stringify(purchase_ids),
         allTransactions,
         purchase_group,
-        purchase_date : purchase_date,
+        purchase_date: purchase_date,
         payment_status,
         month,
-        year
+        year,
       });
-    
+
       return acc;
     }, []);
 
-
     const rows = getNewRowWithIds(result);
 
-    if(rows?.length > 0){
+    if (rows?.length > 0) {
       return (
-        
-          <DataGrid
-            rows={rows}
-            columns={newTransactionColumn}
-            hideFooter={true}
-            autoHeight
-            rowHeight={35}
-            sx={{
-              marginTop: "10px",
-              "& .MuiDataGrid-columnHeaders": {
-                minHeight: "35px !important",
-                maxHeight: "35px !important",
-                height: 35,
-              }
-              
-            }}
-          />
+        <DataGrid
+          rows={rows}
+          columns={newTransactionColumn}
+          hideFooter={true}
+          autoHeight
+          rowHeight={35}
+          sx={{
+            marginTop: "10px",
+            "& .MuiDataGrid-columnHeaders": {
+              minHeight: "35px !important",
+              maxHeight: "35px !important",
+              height: 35,
+            },
+          }}
+        />
       );
-    }else{
+    } else {
       return (
         <Box
           sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginBottom: '7px',
-            width: '100%',
-            height:"30px"
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            marginBottom: "7px",
+            width: "100%",
+            height: "30px",
           }}
         >
           <Typography
@@ -702,8 +732,7 @@ const ManagerProfitability = ({
         </Box>
       );
     }
-        
-  }
+  };
 
   const handleOwnerChange = (ownerId) => {
     // console.log("ManagerCashflowWidget - handlePropertyChange - value - ", propertyUID);
@@ -723,9 +752,6 @@ const ManagerProfitability = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-
-
 
   return (
     <>
@@ -863,23 +889,21 @@ const ManagerProfitability = ({
                   <img src={AllOwnerIcon} alt='All Owners' style={{ width: "10px", height: "10px" }} />
                   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>{selectedOwnerId}</Typography>
                 </Button>
-                {ownerList && (<Menu
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  onClose={handleClose}
-                >
-                  {Object.entries(ownerList)?.map(([ownerID, ownerInfo], index) => (
-                    <MenuItem
-                      key={ownerID}
-                      value={ownerID}
-                      onClick={() => {
-                        handleOwnerChange(ownerID);
-                      }}
-                    >
-                      {ownerInfo?.owner_first_name} {ownerInfo?.owner_last_name}
-                    </MenuItem>
-                  ))}
-                </Menu>)}
+                {ownerList && (
+                  <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+                    {Object.entries(ownerList)?.map(([ownerID, ownerInfo], index) => (
+                      <MenuItem
+                        key={ownerID}
+                        value={ownerID}
+                        onClick={() => {
+                          handleOwnerChange(ownerID);
+                        }}
+                      >
+                        {ownerInfo?.owner_first_name} {ownerInfo?.owner_last_name}
+                      </MenuItem>
+                    ))}
+                  </Menu>
+                )}
               </>
               // <Button sx={{ textTransform: "capitalize", width: "150px" }} onClick={() => {}}>
               //   <img src={AllOwnerIcon} alt='All Owners' style={{ width: "10px", height: "10px" }} />
@@ -1017,13 +1041,21 @@ const ManagerProfitability = ({
                               <Grid container justifyContent='flex-start' item xs={8}>
                                 <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}
+                                    <Typography
+                                      sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}
                                       onClick={(e) => handleViewPropertyClick(e, property?.propertyInfo?.property_id)}
                                     >
                                       {`${property?.propertyInfo?.property_address}`} {property?.propertyInfo?.property_unit && ", Unit - "}
                                       {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
                                     </Typography>
-                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, marginLeft: 10, fontSize: theme.typography.smallFont }}>
+                                    <Typography
+                                      sx={{
+                                        color: theme.typography.common.blue,
+                                        fontWeight: theme.typography.common.fontWeight,
+                                        marginLeft: 10,
+                                        fontSize: theme.typography.smallFont,
+                                      }}
+                                    >
                                       {`${property?.propertyInfo?.property_id}`}
                                     </Typography>
                                     {/* <Button
@@ -1048,11 +1080,13 @@ const ManagerProfitability = ({
                                 </Typography>
                               </Grid>
                               <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                                <Typography sx={{ 
-                                  color: property?.actualProfit !== property?.expectedProfit 
-                                        ? theme.palette.priority.high 
-                                        : theme.typography.common.blue, 
-                                  fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
+                                <Typography
+                                  sx={{
+                                    color: property?.actualProfit !== property?.expectedProfit ? theme.palette.priority.high : theme.typography.common.blue,
+                                    fontWeight: theme.typography.common.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                  }}
+                                >
                                   ${property?.actualProfit ? property?.actualProfit?.toFixed(2) : "0.00"}
                                 </Typography>
                               </Grid>
@@ -1144,7 +1178,14 @@ const ManagerProfitability = ({
                                       {`${property?.propertyInfo?.property_address},`} {property?.propertyInfo?.property_unit && "Unit - "}
                                       {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
                                     </Typography>
-                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, marginLeft: 10, fontSize: theme.typography.smallFont }}>
+                                    <Typography
+                                      sx={{
+                                        color: theme.typography.common.blue,
+                                        fontWeight: theme.typography.common.fontWeight,
+                                        marginLeft: 10,
+                                        fontSize: theme.typography.smallFont,
+                                      }}
+                                    >
                                       {`${property?.propertyInfo?.property_id}`}
                                     </Typography>
                                   </AccordionSummary>
@@ -1157,10 +1198,13 @@ const ManagerProfitability = ({
                                 </Typography>
                               </Grid>
                               <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                                <Typography sx={{ color: property?.totalActual !== property?.totalExpected 
-                                    ? theme.palette.priority.high 
-                                    : theme.typography.common.blue, 
-                                    fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
+                                <Typography
+                                  sx={{
+                                    color: property?.totalActual !== property?.totalExpected ? theme.palette.priority.high : theme.typography.common.blue,
+                                    fontWeight: theme.typography.common.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                  }}
+                                >
                                   ${property?.totalActual ? property?.totalActual?.toFixed(2) : "0.00"}
                                 </Typography>
                               </Grid>
@@ -1243,7 +1287,14 @@ const ManagerProfitability = ({
                                       {`${property?.propertyInfo?.property_address},`} {property?.propertyInfo?.property_unit && "Unit - "}
                                       {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
                                     </Typography>
-                                    <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, marginLeft: 10, fontSize: theme.typography.smallFont }}>
+                                    <Typography
+                                      sx={{
+                                        color: theme.typography.common.blue,
+                                        fontWeight: theme.typography.common.fontWeight,
+                                        marginLeft: 10,
+                                        fontSize: theme.typography.smallFont,
+                                      }}
+                                    >
                                       {`${property?.propertyInfo?.property_id}`}
                                     </Typography>
                                   </AccordionSummary>
@@ -1255,10 +1306,13 @@ const ManagerProfitability = ({
                                 </Typography>
                               </Grid>
                               <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                                <Typography sx={{ color: property?.totalActual !== property?.totalExpected 
-                                    ? theme.palette.priority.high 
-                                    : theme.typography.common.blue, 
-                                    fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
+                                <Typography
+                                  sx={{
+                                    color: property?.totalActual !== property?.totalExpected ? theme.palette.priority.high : theme.typography.common.blue,
+                                    fontWeight: theme.typography.common.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                  }}
+                                >
                                   ${property?.totalActual ? property?.totalActual?.toFixed(2) : "0.00"}
                                 </Typography>
                               </Grid>
@@ -1291,76 +1345,75 @@ const ManagerProfitability = ({
             </>
           )}
 
-          {tab === "type" && (<>
-            
-            {/* For Cashflow */}
-            <Accordion
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                boxShadow: "none",
-              }}
-              expanded={cashflowExpand}
-              onChange={()=>{
-                setCashflowExpand((prev) => !prev)
-              }}
-            >
-              <Grid container item xs={12}>
-                <Grid container justifyContent='flex-start' item xs={8}>
-                  <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                      <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month} Cashflow</Typography>
-                    </AccordionSummary>
+          {tab === "type" && (
+            <>
+              {/* For Cashflow */}
+              <Accordion
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  boxShadow: "none",
+                }}
+                expanded={cashflowExpand}
+                onChange={() => {
+                  setCashflowExpand((prev) => !prev);
+                }}
+              >
+                <Grid container item xs={12}>
+                  <Grid container justifyContent='flex-start' item xs={8}>
+                    <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month} Cashflow</Typography>
+                      </AccordionSummary>
+                    </Grid>
                   </Grid>
-                </Grid>
-                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                  <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
                       ${cashFlowtotal && cashFlowtotal?.totalExpectedProfit ? cashFlowtotal?.totalExpectedProfit?.toFixed(2) : "0.00"}
-                  </Typography>
-                </Grid>
-                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                    ${cashFlowtotal && cashFlowtotal?.totalActualProfit ? cashFlowtotal?.totalActualProfit?.toFixed(2) : "0.00"}
-                  </Typography>
-                </Grid>
-              </Grid>
-
-
-              <AccordionDetails>
-                {/* <RevenueTable totalRevenueByType={revenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/>             */}
-                <NewStatmentTableForByCashflow
-                  uid={uid}
-                  categoryTotalMapping={totalCashflowValueByType}
-                  allItems={allCashflowData}
-                  activeView={"ExpectedCashflow"}
-                  tableType='Profit'
-                  categoryExpectedTotalMapping={expectedCashflowValueByType}
-                  month={month}
-                  year={year}
-                />
-              </AccordionDetails>
-            </Accordion>
-            
-            {/* For Revenue */}
-            <Accordion
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                boxShadow: "none",
-              }}
-              expanded={cashflowRevenueExpand}
-              onChange={()=>{
-                setCashflowRevenueExpand((prev) => !prev)
-              }}
-            >
-              <Grid container item xs={12}>
-                <Grid container justifyContent='flex-start' item xs={8}>
-                  <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                      <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month} Revenue</Typography>
-                    </AccordionSummary>
+                    </Typography>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                      ${cashFlowtotal && cashFlowtotal?.totalActualProfit ? cashFlowtotal?.totalActualProfit?.toFixed(2) : "0.00"}
+                    </Typography>
                   </Grid>
                 </Grid>
-                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                  <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+
+                <AccordionDetails>
+                  {/* <RevenueTable totalRevenueByType={revenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/>             */}
+                  <NewStatmentTableForByCashflow
+                    uid={uid}
+                    categoryTotalMapping={totalCashflowValueByType}
+                    allItems={allCashflowData}
+                    activeView={"ExpectedCashflow"}
+                    tableType='Profit'
+                    categoryExpectedTotalMapping={expectedCashflowValueByType}
+                    month={month}
+                    year={year}
+                  />
+                </AccordionDetails>
+              </Accordion>
+
+              {/* For Revenue */}
+              <Accordion
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  boxShadow: "none",
+                }}
+                expanded={cashflowRevenueExpand}
+                onChange={() => {
+                  setCashflowRevenueExpand((prev) => !prev);
+                }}
+              >
+                <Grid container item xs={12}>
+                  <Grid container justifyContent='flex-start' item xs={8}>
+                    <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month} Revenue</Typography>
+                      </AccordionSummary>
+                    </Grid>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
                       ${" "}
                       {"ExpectedCashflow" === "Cashflow"
                         ? totalRevenueByMonth
@@ -1369,94 +1422,100 @@ const ManagerProfitability = ({
                         : expectedRevenueByMonth
                         ? expectedRevenueByMonth.toFixed(2)
                         : "0.00"}
-                  </Typography>
-                </Grid>
-                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                    ${" "}
-                    {"Cashflow" === "Cashflow" ? (totalRevenueByMonth ? totalRevenueByMonth.toFixed(2) : "0.00") : expectedRevenueByMonth ? expectedRevenueByMonth.toFixed(2) : "0.00"}
-                  </Typography>
-                </Grid>
-              </Grid>
-
-
-              <AccordionDetails>
-                {/* <RevenueTable totalRevenueByType={revenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/>             */}
-                <NewStatmentTableForByCashflow
-
-                  uid={uid}
-                  categoryTotalMapping={revenueByTypeForView}
-                  allItems={revenueList}
-                  activeView={"ExpectedCashflow"}
-                  tableType='Revenue'
-                  categoryExpectedTotalMapping={expectedRevenueByTypeForView}
-                  month={month}
-                  year={year}
-                />
-              </AccordionDetails>
-            </Accordion>
-
-            {/* For expense */}
-            <Accordion
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                boxShadow: "none",
-              }}
-              expanded={cashflowExpenseExpand}
-              onChange={()=>{
-                setCashflowExpanseExpand((prev) => !prev)
-              }}
-            >
-              <Grid container item xs={12}>
-                <Grid container justifyContent='flex-start' item xs={8}>
-                  <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                      <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month} Expense</Typography>
-                    </AccordionSummary>
+                    </Typography>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                      ${" "}
+                      {"Cashflow" === "Cashflow"
+                        ? totalRevenueByMonth
+                          ? totalRevenueByMonth.toFixed(2)
+                          : "0.00"
+                        : expectedRevenueByMonth
+                        ? expectedRevenueByMonth.toFixed(2)
+                        : "0.00"}
+                    </Typography>
                   </Grid>
                 </Grid>
-                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                  <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                    ${" "}
-                    {"ExpectedCashflow" === "Cashflow"
-                      ? totalExpenseByMonth
-                        ? totalExpenseByMonth.toFixed(2)
-                        : "0.00"
-                      : expectedExpenseByMonth
-                      ? expectedExpenseByMonth.toFixed(2)
-                      : "0.00"}
-                  </Typography>
-                </Grid>
-                <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                  <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
-                    ${" "}
-                    {"Cashflow" === "Cashflow"
-                      ? totalExpenseByMonth
-                        ? totalExpenseByMonth.toFixed(2)
-                        : "0.00"
-                      : expectedExpenseByMonth
-                      ? expectedExpenseByMonth.toFixed(2)
-                      : "0.00"}
-                  </Typography>
-                </Grid>
-              </Grid>
 
-              <AccordionDetails>
-                <NewStatmentTableForByCashflow
-                  categoryTotalMapping={expenseByTypeForView}
-                  allItems={expenseList}
-                  activeView={"ExpectedCashflow"}
-                  tableType='Expense'
-                  categoryExpectedTotalMapping={expectedExpenseByTypeForView}
-                  month={month}
-                  year={year}
-                />
-              </AccordionDetails>
-            </Accordion>
-          </>)}
+                <AccordionDetails>
+                  {/* <RevenueTable totalRevenueByType={revenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/>             */}
+                  <NewStatmentTableForByCashflow
+                    uid={uid}
+                    categoryTotalMapping={revenueByTypeForView}
+                    allItems={revenueList}
+                    activeView={"ExpectedCashflow"}
+                    tableType='Revenue'
+                    categoryExpectedTotalMapping={expectedRevenueByTypeForView}
+                    month={month}
+                    year={year}
+                  />
+                </AccordionDetails>
+              </Accordion>
 
-          {tab === "profit" && (<>
-            <Accordion
+              {/* For expense */}
+              <Accordion
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  boxShadow: "none",
+                }}
+                expanded={cashflowExpenseExpand}
+                onChange={() => {
+                  setCashflowExpanseExpand((prev) => !prev);
+                }}
+              >
+                <Grid container item xs={12}>
+                  <Grid container justifyContent='flex-start' item xs={8}>
+                    <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month} Expense</Typography>
+                      </AccordionSummary>
+                    </Grid>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                      ${" "}
+                      {"ExpectedCashflow" === "Cashflow"
+                        ? totalExpenseByMonth
+                          ? totalExpenseByMonth.toFixed(2)
+                          : "0.00"
+                        : expectedExpenseByMonth
+                        ? expectedExpenseByMonth.toFixed(2)
+                        : "0.00"}
+                    </Typography>
+                  </Grid>
+                  <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
+                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>
+                      ${" "}
+                      {"Cashflow" === "Cashflow"
+                        ? totalExpenseByMonth
+                          ? totalExpenseByMonth.toFixed(2)
+                          : "0.00"
+                        : expectedExpenseByMonth
+                        ? expectedExpenseByMonth.toFixed(2)
+                        : "0.00"}
+                    </Typography>
+                  </Grid>
+                </Grid>
+
+                <AccordionDetails>
+                  <NewStatmentTableForByCashflow
+                    categoryTotalMapping={expenseByTypeForView}
+                    allItems={expenseList}
+                    activeView={"ExpectedCashflow"}
+                    tableType='Expense'
+                    categoryExpectedTotalMapping={expectedExpenseByTypeForView}
+                    month={month}
+                    year={year}
+                  />
+                </AccordionDetails>
+              </Accordion>
+            </>
+          )}
+
+          {tab === "profit" && (
+            <>
+              <Accordion
                 sx={{
                   backgroundColor: theme.palette.primary.main,
                   boxShadow: "none",
@@ -1502,7 +1561,8 @@ const ManagerProfitability = ({
                               <Grid container justifyContent='flex-start' item xs={8}>
                                 <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont}}
+                                    <Typography
+                                      sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}
                                       onClick={(e) => handleViewPropertyClick(e, property?.propertyInfo?.property_id)}
                                     >
                                       {`${property?.propertyInfo?.property_address}`} {property?.propertyInfo?.property_unit && ", Unit - "}
@@ -1520,7 +1580,13 @@ const ManagerProfitability = ({
                                 </Typography>
                               </Grid>
                               <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                                <Typography sx={{ color: property?.totalActual !== property?.totalExpected ? theme.palette.priority.high : "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
+                                <Typography
+                                  sx={{
+                                    color: property?.totalActual !== property?.totalExpected ? theme.palette.priority.high : "#160449",
+                                    fontWeight: theme.typography.common.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                  }}
+                                >
                                   ${property?.totalActual ? property?.totalActual?.toFixed(2) : "0.00"}
                                 </Typography>
                               </Grid>
@@ -1559,13 +1625,10 @@ const ManagerProfitability = ({
                               </Grid>
                             </AccordionDetails> */}
                             <AccordionDetails>
-                              <Grid container item xs={12} direction="column" justifyContent="space-between" style={{ height: '100%' }}>
-                                
+                              <Grid container item xs={12} direction='column' justifyContent='space-between' style={{ height: "100%" }}>
                                 {/* Unpaid Rent Section */}
                                 <Grid container item marginY={10}>
-                                  <Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}>
-                                    Unpaid Rent
-                                  </Typography>
+                                  <Typography sx={{ fontWeight: "bold", color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}>Unpaid Rent</Typography>
                                   <Grid item xs={12} sx={{ overflowX: "auto" }}>
                                     {GetNewDataGrid(property?.rentItems)}
                                   </Grid>
@@ -1573,51 +1636,44 @@ const ManagerProfitability = ({
 
                                 {/* Unverified Section */}
                                 <Grid container item marginY={10}>
-                                  <Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}>
-                                    Unverified
-                                  </Typography>
-                                  <BalanceDetailsTable 
-                                    data={property?.payments !== undefined ? property?.payments : []} 
+                                  <Typography sx={{ fontWeight: "bold", color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}>Unverified</Typography>
+                                  <BalanceDetailsTable
+                                    data={property?.payments !== undefined ? property?.payments : []}
                                     revenueData={property?.rentItems}
-                                    selectedPurchaseRow={""} 
-                                    setPaymentData={setPaymentData} 
-                                    setSelectedPayments={setSelectedPayments} 
+                                    selectedPurchaseRow={""}
+                                    setPaymentData={setPaymentData}
+                                    setSelectedPayments={setSelectedPayments}
                                     selectedProperty={selectedProperty}
-                                    fetchPaymentsData={fecthPaymentVerification} 
+                                    fetchPaymentsData={fecthPaymentVerification}
                                     sortBy={sortBy}
                                   />
                                 </Grid>
 
                                 {/* Pay Owner Section */}
                                 <Grid container item>
-                                  <Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}>
-                                    Pay Owner
-                                  </Typography>
-                                  <TransactionsTable 
-                                    data={property?.rentItems? property.rentItems : []} 
-                                    total={total} 
-                                    setTotal={setTotal} 
-                                    setPaymentData={setPaymentData} 
+                                  <Typography sx={{ fontWeight: "bold", color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}>Pay Owner</Typography>
+                                  <TransactionsTable
+                                    data={property?.rentItems ? property.rentItems : []}
+                                    total={total}
+                                    setTotal={setTotal}
+                                    setPaymentData={setPaymentData}
                                     setSelectedItems={setSelectedItems}
                                   />
                                 </Grid>
-
                               </Grid>
                             </AccordionDetails>
                           </Accordion>
                         </>
                       );
-                    })
-                  }
+                    })}
                 </AccordionDetails>
+              </Accordion>
 
-            </Accordion>
+              <Box width={"100%"} height={"20px"}>
+                <hr></hr>
+              </Box>
 
-            <Box width={"100%"} height={"20px"}>
-              <hr></hr>
-            </Box>
-
-            <Accordion
+              <Accordion
                 sx={{
                   backgroundColor: theme.palette.primary.main,
                   boxShadow: "none",
@@ -1663,7 +1719,10 @@ const ManagerProfitability = ({
                               <Grid container justifyContent='flex-start' item xs={8}>
                                 <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }} onClick={(e) => handleViewPropertyClick(e, property?.propertyInfo?.property_id)}>
+                                    <Typography
+                                      sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}
+                                      onClick={(e) => handleViewPropertyClick(e, property?.propertyInfo?.property_id)}
+                                    >
                                       {`${property?.propertyInfo?.property_address}`} {property?.propertyInfo?.property_unit && ", Unit - "}
                                       {property?.propertyInfo?.property_unit && property?.propertyInfo?.property_unit}
                                     </Typography>
@@ -1682,7 +1741,13 @@ const ManagerProfitability = ({
                                 </Typography>
                               </Grid>
                               <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                                <Typography sx={{ color: property?.totalActual !== property?.totalExpected ? theme.palette.priority.high : theme.typography.common.blue,  fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }}>
+                                <Typography
+                                  sx={{
+                                    color: property?.totalActual !== property?.totalExpected ? theme.palette.priority.high : theme.typography.common.blue,
+                                    fontWeight: theme.typography.common.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                  }}
+                                >
                                   ${property?.totalActual ? property?.totalActual?.toFixed(2) : "0.00"}
                                 </Typography>
                               </Grid>
@@ -1698,8 +1763,9 @@ const ManagerProfitability = ({
                       );
                     })}
                 </AccordionDetails>
-            </Accordion>
-          </>)}
+              </Accordion>
+            </>
+          )}
 
           {tab === "by_type" && (
             <>
@@ -1838,8 +1904,6 @@ const ManagerProfitability = ({
             </>
           )}
 
-
-
           {tab === "by_property" && (
             <>
               <Accordion
@@ -1936,8 +2000,6 @@ const ManagerProfitability = ({
                     })}
                 </AccordionDetails>
               </Accordion>
-
-              
 
               {/* <Accordion
                 sx={{
@@ -2288,7 +2350,6 @@ const ManagerProfitability = ({
               </Accordion> */}
             </>
           )}
-          
         </Paper>
       </Box>
     </>
@@ -2461,10 +2522,14 @@ function StatementTable(props) {
                 </Typography>
               </TableCell>
               <TableCell>
-                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${item["pur_amount_due"] ? parseFloat(item["pur_amount_due"]).toFixed(2) : 0}</Typography>
+                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                  ${item["pur_amount_due"] ? parseFloat(item["pur_amount_due"]).toFixed(2) : 0}
+                </Typography>
               </TableCell>
               <TableCell>
-                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${item["total_paid"] ? parseFloat(item["total_paid"]).toFixed(2) : 0}</Typography>
+                <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                  ${item["total_paid"] ? parseFloat(item["total_paid"]).toFixed(2) : 0}
+                </Typography>
               </TableCell>
             </TableRow>
           ) : (
@@ -2533,10 +2598,20 @@ function StatementTable(props) {
                     </Grid>
                   </Grid>
                   <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                    <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: "#160449" }}>${value ? parseFloat(value).toFixed(2) : 0}</Typography>
+                    <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: "#160449" }}>
+                      ${value ? parseFloat(value).toFixed(2) : 0}
+                    </Typography>
                   </Grid>
                   <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                    <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: value !== value ? theme.palette.priority.high : "#160449", }}>${value ? parseFloat(value).toFixed(2) : 0}</Typography>
+                    <Typography
+                      sx={{
+                        fontSize: theme.typography.smallFont,
+                        fontWeight: theme.typography.primary.fontWeight,
+                        color: value !== value ? theme.palette.priority.high : "#160449",
+                      }}
+                    >
+                      ${value ? parseFloat(value).toFixed(2) : 0}
+                    </Typography>
                   </Grid>
                 </Grid>
                 <AccordionDetails>
@@ -2571,12 +2646,20 @@ function StatementTable(props) {
                     </Grid>
                   </Grid>
                   <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                    <Typography sx={{ textAlign: "right", fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, width: "150px", color: "#160449" }}>
+                    <Typography
+                      sx={{ textAlign: "right", fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, width: "150px", color: "#160449" }}
+                    >
                       ${value ? parseFloat(value).toFixed(2) : 0}
                     </Typography>
                   </Grid>
                   <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                    <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: categoryTotalMapping[category] !== value ? theme.palette.priority.high : "#160449", }}>
+                    <Typography
+                      sx={{
+                        fontSize: theme.typography.smallFont,
+                        fontWeight: theme.typography.primary.fontWeight,
+                        color: categoryTotalMapping[category] !== value ? theme.palette.priority.high : "#160449",
+                      }}
+                    >
                       ${categoryTotalMapping[category] ? parseFloat(categoryTotalMapping[category]).toFixed(2) : 0}
                     </Typography>
                   </Grid>
@@ -2595,7 +2678,7 @@ function StatementTable(props) {
   );
 }
 
-function NewStatmentTable(props){
+function NewStatmentTable(props) {
   const navigate = useNavigate();
 
   const activeView = props.activeView;
@@ -2615,8 +2698,6 @@ function NewStatmentTable(props){
   function handleNavigation(type, item) {
     navigate(type, { state: { itemToEdit: item, edit: true } });
   }
-
-  
 
   const getVerificationForManagerPayment = (pur) => {
     const total_paid = pur.total_paid ? parseFloat(pur.total_paid) : 0;
@@ -2902,22 +2983,22 @@ function NewStatmentTable(props){
   const groupItemsByProperty = (filteredItems) => {
     return filteredItems.reduce((acc, item) => {
       const propertyKey = item.pur_property_id;
-  
+
       if (!acc[propertyKey]) {
         acc[propertyKey] = {
-          items: [],         
-          totalExpected: 0,   
-          totalActual: 0,     
+          items: [],
+          totalExpected: 0,
+          totalActual: 0,
         };
       }
-  
+
       acc[propertyKey].items.push(item);
-  
+
       acc[propertyKey].totalExpected += parseFloat(item.pur_amount_due || 0);
       acc[propertyKey].totalActual += parseFloat(item.total_paid || 0);
-      
+
       return acc;
-    }, {});  
+    }, {});
   };
 
   function getCategoryItems(category, isExpected, type) {
@@ -2941,45 +3022,41 @@ function NewStatmentTable(props){
 
     return (
       <>
-        {
-          Object.keys(groupedItemsByProperty).map((propertyId, index)=>(
-            <Accordion
-              sx={{
-                backgroundColor: "transparent",
-                boxShadow: "none",
-                marginBottom: "15px"
-              }}
-                key={index}
-              >
-                <AccordionSummary expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell sx={{ width: "555px" }}>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-                            {groupedItemsByProperty[propertyId].items[0].property_address}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-                            ${groupedItemsByProperty[propertyId].totalExpected ? parseFloat(groupedItemsByProperty[propertyId].totalExpected).toFixed(2) : 0}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-                            ${groupedItemsByProperty[propertyId].totalActual ? parseFloat(groupedItemsByProperty[propertyId].totalActual).toFixed(2) : 0}
-                          </Typography>
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                  </Table>
-                </AccordionSummary>
-                <AccordionDetails>
-                  {getDataGrid(groupedItemsByProperty[propertyId].items)}
-                </AccordionDetails>
-            </Accordion>
-          ))
-        } 
+        {Object.keys(groupedItemsByProperty).map((propertyId, index) => (
+          <Accordion
+            sx={{
+              backgroundColor: "transparent",
+              boxShadow: "none",
+              marginBottom: "15px",
+            }}
+            key={index}
+          >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />} onClick={(e) => e.stopPropagation()}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ width: "555px" }}>
+                      <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                        {groupedItemsByProperty[propertyId].items[0].property_address}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align='right'>
+                      <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                        ${groupedItemsByProperty[propertyId].totalExpected ? parseFloat(groupedItemsByProperty[propertyId].totalExpected).toFixed(2) : 0}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align='right'>
+                      <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                        ${groupedItemsByProperty[propertyId].totalActual ? parseFloat(groupedItemsByProperty[propertyId].totalActual).toFixed(2) : 0}
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+              </Table>
+            </AccordionSummary>
+            <AccordionDetails>{getDataGrid(groupedItemsByProperty[propertyId].items)}</AccordionDetails>
+          </Accordion>
+        ))}
         {/* {getDataGrid(filteredIitems)} */}
       </>
     );
@@ -3009,18 +3086,20 @@ function NewStatmentTable(props){
                           </Typography>
                         </TableCell>
                         <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? parseFloat(value).toFixed(2) : 0}</Typography>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                            ${value ? parseFloat(value).toFixed(2) : 0}
+                          </Typography>
                         </TableCell>
                         <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? parseFloat(value).toFixed(2) : 0}</Typography>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
+                            ${value ? parseFloat(value).toFixed(2) : 0}
+                          </Typography>
                         </TableCell>
                       </TableRow>
                     </TableHead>
                   </Table>
                 </AccordionSummary>
-                <AccordionDetails>
-                  {getCategoryItems(category, false, navigateType)}
-                </AccordionDetails>
+                <AccordionDetails>{getCategoryItems(category, false, navigateType)}</AccordionDetails>
               </Accordion>
             );
           })}
@@ -3074,7 +3153,7 @@ function NewStatmentTable(props){
   );
 }
 
-function NewStatmentTableForByCashflow(props){
+function NewStatmentTableForByCashflow(props) {
   const navigate = useNavigate();
 
   const activeView = props.activeView;
@@ -3094,8 +3173,6 @@ function NewStatmentTableForByCashflow(props){
   function handleNavigation(type, item) {
     navigate(type, { state: { itemToEdit: item, edit: true } });
   }
-
-  
 
   const getVerificationForManagerPayment = (pur) => {
     const total_paid = pur.total_paid ? parseFloat(pur.total_paid) : 0;
@@ -3183,14 +3260,14 @@ function NewStatmentTableForByCashflow(props){
       field: "property_address",
       headerName: "Address",
       flex: 2,
-      renderCell: (params) => <span style={{fontSize: theme.typography.smallFont}}>{params.row.property_address !== null ? params.row.property_address : "-"}</span>,
+      renderCell: (params) => <span style={{ fontSize: theme.typography.smallFont }}>{params.row.property_address !== null ? params.row.property_address : "-"}</span>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
       field: "purchase_type",
       headerName: "Type",
       flex: 1,
-      renderCell: (params) => <span style={{fontSize: theme.typography.smallFont}}>{params.row.purchase_type !== null ? params.row.purchase_type : "-"}</span>,
+      renderCell: (params) => <span style={{ fontSize: theme.typography.smallFont }}>{params.row.purchase_type !== null ? params.row.purchase_type : "-"}</span>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     // {
@@ -3225,7 +3302,7 @@ function NewStatmentTableForByCashflow(props){
               overflow: "hidden",
               textOverflow: "ellipsis",
               maxWidth: "100%",
-              fontSize: theme.typography.smallFont
+              fontSize: theme.typography.smallFont,
             }}
           >
             {params.row.pur_group !== null ? params.row.pur_group : "-"}
@@ -3246,7 +3323,7 @@ function NewStatmentTableForByCashflow(props){
               overflow: "hidden",
               textOverflow: "ellipsis",
               maxWidth: "100%",
-              fontSize: theme.typography.smallFont
+              fontSize: theme.typography.smallFont,
             }}
           >
             {params.row.pur_payer !== null ? params.row.pur_payer : "-"}
@@ -3267,7 +3344,7 @@ function NewStatmentTableForByCashflow(props){
               overflow: "hidden",
               textOverflow: "ellipsis",
               maxWidth: "100%",
-              fontSize: theme.typography.smallFont
+              fontSize: theme.typography.smallFont,
             }}
           >
             {params.row.pur_receiver !== null ? params.row.pur_receiver : "-"}
@@ -3314,7 +3391,11 @@ function NewStatmentTableForByCashflow(props){
       headerName: "Expected",
       flex: 1.2,
       headerAlign: "right",
-      renderCell: (params) => <Box sx={{fontSize: theme.typography.smallFont, width: "100%", textAlign:"right"}}>$ {params.row.pur_amount_due !== null ? parseFloat(params.row.pur_amount_due).toFixed(2) : parseFloat(0).toFixed(2)}</Box>,
+      renderCell: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont, width: "100%", textAlign: "right" }}>
+          $ {params.row.pur_amount_due !== null ? parseFloat(params.row.pur_amount_due).toFixed(2) : parseFloat(0).toFixed(2)}
+        </Box>
+      ),
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
@@ -3323,7 +3404,9 @@ function NewStatmentTableForByCashflow(props){
       flex: 1.2,
       headerAlign: "right",
       renderCell: (params) => (
-        <Box sx={{ textAlign: "right", width:"100%", fontSize: theme.typography.smallFont }}>$ {params.row.total_paid !== null ? parseFloat(params.row.total_paid).toFixed(2) : parseFloat(0).toFixed(2)}</Box>
+        <Box sx={{ textAlign: "right", width: "100%", fontSize: theme.typography.smallFont }}>
+          $ {params.row.total_paid !== null ? parseFloat(params.row.total_paid).toFixed(2) : parseFloat(0).toFixed(2)}
+        </Box>
       ),
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
@@ -3387,22 +3470,22 @@ function NewStatmentTableForByCashflow(props){
   const groupItemsByProperty = (filteredItems) => {
     return filteredItems.reduce((acc, item) => {
       const propertyKey = item.pur_property_id;
-  
+
       if (!acc[propertyKey]) {
         acc[propertyKey] = {
-          items: [],         
-          totalExpected: 0,   
-          totalActual: 0,     
+          items: [],
+          totalExpected: 0,
+          totalActual: 0,
         };
       }
-  
+
       acc[propertyKey].items.push(item);
-  
+
       acc[propertyKey].totalExpected += parseFloat(item.pur_amount_due || 0);
       acc[propertyKey].totalActual += parseFloat(item.total_paid || 0);
-      
+
       return acc;
-    }, {});  
+    }, {});
   };
 
   function getCategoryItems(category, isExpected, type) {
@@ -3424,7 +3507,7 @@ function NewStatmentTableForByCashflow(props){
 
     // const groupedItemsByProperty = groupItemsByProperty(filteredIitems);
 
-    if (filteredIitems.length > 0){
+    if (filteredIitems.length > 0) {
       return (
         <>
           {
@@ -3466,14 +3549,12 @@ function NewStatmentTableForByCashflow(props){
             //   </Accordion>
             // ))
             getDataGrid(filteredIitems)
-          } 
+          }
           {/* {getDataGrid(filteredIitems)} */}
         </>
       );
-    }else{
-      return(
-        <></>
-      );
+    } else {
+      return <></>;
     }
   }
 
@@ -3494,25 +3575,31 @@ function NewStatmentTableForByCashflow(props){
                   <Grid container justifyContent='flex-start' item xs={8}>
                     <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: theme.typography.common.blue }}>
-                            {" "}
-                            {category} {getCategoryCount(category, false)}{" "}
-                          </Typography>
+                        <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: theme.typography.common.blue }}>
+                          {" "}
+                          {category} {getCategoryCount(category, false)}{" "}
+                        </Typography>
                       </AccordionSummary>
                     </Grid>
                   </Grid>
                   <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                    <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: theme.typography.common.blue }}>${value ? parseFloat(value).toFixed(2) : 0}</Typography>
+                    <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: theme.typography.common.blue }}>
+                      ${value ? parseFloat(value).toFixed(2) : 0}
+                    </Typography>
                   </Grid>
                   <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                    <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: value !== value ? theme.palette.priority.high : theme.typography.common.blue, }}>
+                    <Typography
+                      sx={{
+                        fontSize: theme.typography.smallFont,
+                        fontWeight: theme.typography.primary.fontWeight,
+                        color: value !== value ? theme.palette.priority.high : theme.typography.common.blue,
+                      }}
+                    >
                       ${value ? parseFloat(value).toFixed(2) : 0}
                     </Typography>
                   </Grid>
                 </Grid>
-                <AccordionDetails>
-                  {getCategoryItems(category, false, navigateType)}
-                </AccordionDetails>
+                <AccordionDetails>{getCategoryItems(category, false, navigateType)}</AccordionDetails>
               </Accordion>
             );
           })}
@@ -3532,20 +3619,34 @@ function NewStatmentTableForByCashflow(props){
                   <Grid container justifyContent='flex-start' item xs={8}>
                     <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: theme.typography.common.blue }}>
-                            {" "}
-                            {category} {getCategoryCount(category, true)}{" "}
-                          </Typography>
+                        <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: theme.typography.common.blue }}>
+                          {" "}
+                          {category} {getCategoryCount(category, true)}{" "}
+                        </Typography>
                       </AccordionSummary>
                     </Grid>
                   </Grid>
                   <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                    <Typography sx={{ textAlign: "right", fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, width: "150px", color: theme.typography.common.blue }}>
+                    <Typography
+                      sx={{
+                        textAlign: "right",
+                        fontSize: theme.typography.smallFont,
+                        fontWeight: theme.typography.primary.fontWeight,
+                        width: "150px",
+                        color: theme.typography.common.blue,
+                      }}
+                    >
                       ${value ? parseFloat(value).toFixed(2) : 0}
                     </Typography>
                   </Grid>
                   <Grid container alignContent='center' justifyContent='flex-end' item xs={2}>
-                    <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, color: categoryTotalMapping[category] !== value? theme.palette.priority.high : theme.typography.common.blue, }}>
+                    <Typography
+                      sx={{
+                        fontSize: theme.typography.smallFont,
+                        fontWeight: theme.typography.primary.fontWeight,
+                        color: categoryTotalMapping[category] !== value ? theme.palette.priority.high : theme.typography.common.blue,
+                      }}
+                    >
                       ${categoryTotalMapping[category] ? parseFloat(categoryTotalMapping[category]).toFixed(2) : 0}
                     </Typography>
                   </Grid>
@@ -3573,9 +3674,9 @@ function TransactionsTable(props) {
   const [paymentDueResult, setPaymentDueResult] = useState([]);
   const [paymentDueResultMap, setPaymentDueResultMap] = useState([]); // index to row mapping for quick lookup.
 
-   const [sortModel, setSortModel] = useState([
-    { field: 'pur_group', sort: 'asc', },
-    { field: 'pur_payer', sort: 'asc', }
+  const [sortModel, setSortModel] = useState([
+    { field: "pur_group", sort: "asc" },
+    { field: "pur_payer", sort: "asc" },
   ]);
 
   const commonStyles = {
@@ -3593,14 +3694,13 @@ function TransactionsTable(props) {
   }, [selectedRows]);
 
   const filterTransactions = (data) => {
+    const verifiedPurGroups = [];
 
-    const verifiedPurGroups = []
-
-    data.forEach(transaction => {
-      if(!verifiedPurGroups.includes(transaction.pur_group) && transaction.verified && transaction.verified.toLowerCase() === "verified" ){
+    data.forEach((transaction) => {
+      if (!verifiedPurGroups.includes(transaction.pur_group) && transaction.verified && transaction.verified.toLowerCase() === "verified") {
         verifiedPurGroups.push(transaction.pur_group);
       }
-    })
+    });
 
     const groupedData = data.reduce((acc, item) => {
       if (verifiedPurGroups.includes(item.pur_group)) {
@@ -3612,65 +3712,60 @@ function TransactionsTable(props) {
       return acc;
     }, {});
 
-    console.log("ROHIT - 631 - vgroupByPurchaseGroup - ", groupedData);
-
-    
+    // console.log("ROHIT - 631 - vgroupByPurchaseGroup - ", groupedData);
 
     let result = Object.keys(groupedData).reduce((acc, group) => {
       let received_amt = 0;
       let management_fee = 0;
       let other_expense = 0;
-    
+
       // Check if all items in this group have 'payment_status' === "PAID"
-      const allPaid = groupedData[group].every(item => item.payment_status === "PAID");
-    
+      const allPaid = groupedData[group].every((item) => item.payment_status === "PAID");
+
       // If all items are paid, skip this group
       if (allPaid) {
         return acc;
       }
 
-      const hasPartiallyPaid = groupedData[group].some(item => item.payment_status === "PARTIALLY PAID");
+      const hasPartiallyPaid = groupedData[group].some((item) => item.payment_status === "PARTIALLY PAID");
 
-      if(hasPartiallyPaid){
+      if (hasPartiallyPaid) {
         return acc;
       }
-    
-      let allTransactions = []
-      let purchase_ids = []
+
+      let allTransactions = [];
+      let purchase_ids = [];
       let purchase_group;
       let purchase_type;
       let month, year;
       let purchase_date;
       let pur_receiver;
 
-      groupedData[group].forEach(item => {
+      groupedData[group].forEach((item) => {
         const pur_payer = item.pur_payer;
         const pur_type = item.purchase_type;
-    
+
         if (pur_payer.startsWith("350")) {
           purchase_type = item.purchase_type;
           purchase_date = item.purchase_date;
           month = item.cf_month;
           year = item.cf_year;
           received_amt += parseFloat(item.total_paid);
-        }
-        else if (pur_payer.startsWith("110") && pur_type === "Management") {
-          management_fee += parseFloat(item.pur_amount_due?item.pur_amount_due : "0.00");
-        }
-        else if (pur_payer.startsWith("110") && pur_type !== "Management") {
-          other_expense += parseFloat(item.pur_amount_due?item.pur_amount_due : "0.00");
-        }
-        else if(pur_payer.startsWith("600")){
+        } else if (pur_payer.startsWith("110") && pur_type === "Management") {
+          management_fee += parseFloat(item.pur_amount_due ? item.pur_amount_due : "0.00");
+        } else if (pur_payer.startsWith("110") && pur_type !== "Management") {
+          other_expense += parseFloat(item.pur_amount_due ? item.pur_amount_due : "0.00");
+        } else if (pur_payer.startsWith("600")) {
           pur_receiver = item.pur_receiver;
         }
 
-        purchase_ids.push(item.purchase_uid)
-        allTransactions.push(item)
+        purchase_ids.push(item.purchase_uid);
+        allTransactions.push(item);
         purchase_group = item.pur_group;
       });
-    
+
       const owner_payment = parseFloat(received_amt - management_fee - other_expense);
-    
+
       // Push the aggregated object for this group into the result if it passes the conditions
       acc.push({
         pur_group: group,
@@ -3679,15 +3774,15 @@ function TransactionsTable(props) {
         other_expense,
         owner_payment,
         purchase_type: purchase_type,
-        purchase_ids : JSON.stringify(purchase_ids),
+        purchase_ids: JSON.stringify(purchase_ids),
         allTransactions,
         purchase_group,
         purchase_date,
         pur_receiver,
         month,
-        year
+        year,
       });
-    
+
       return acc;
     }, []);
 
@@ -3700,52 +3795,48 @@ function TransactionsTable(props) {
     }, {});
 
     const filteredValues = Object.keys(newData).reduce((acc, key) => {
-      const hasNon350Payer = newData[key].every(item => !item.pur_payer.startsWith("350"));
-      
+      const hasNon350Payer = newData[key].every((item) => !item.pur_payer.startsWith("350"));
+
       if (hasNon350Payer) {
         acc.push(...newData[key]); // Push the values instead of key-value pairs
       }
-      
+
       return acc;
     }, []);
 
-    filteredValues.forEach(transaction => {
-      if(transaction.pur_payer.startsWith("110") && !verifiedPurGroups.includes(transaction.pur_group) && transaction.payment_status?.toLowerCase() === "unpaid"){
-        let purchase_ids = [transaction.purchase_uid]
+    filteredValues.forEach((transaction) => {
+      if (transaction.pur_payer.startsWith("110") && !verifiedPurGroups.includes(transaction.pur_group) && transaction.payment_status?.toLowerCase() === "unpaid") {
+        let purchase_ids = [transaction.purchase_uid];
         result.push({
           ...transaction,
-          received_amt: 0.00,
+          received_amt: 0.0,
           management_fee: transaction.pur_amount_due,
-          owner_payment: 0.00,
+          owner_payment: 0.0,
           allTransactions: [transaction],
           purchase_group: transaction.pur_group,
           month: transaction.cf_month,
           year: transaction.cf_year,
-          purchase_ids : JSON.stringify(purchase_ids),
-          pur_receiver: transaction.pur_payer
-        })
+          purchase_ids: JSON.stringify(purchase_ids),
+          pur_receiver: transaction.pur_payer,
+        });
       }
-    })
+    });
 
-    
+    // console.log("ROHIT - 631 - result - ", result);
 
-    console.log("ROHIT - 631 - result - ", result);
+    return result;
 
-    return result
-
-
-    // return data            
+    // return data
     //         // .filter(item => (item.verified && item.verified.toLowerCase() === "verified"));
     //         .filter(item => (verifiedPurGroups.includes(item.pur_group)))
     //         .filter( item => (item.pur_payer.startsWith("600") || item.pur_payer.startsWith("110")))
     //         .filter( item => {
     //           const actual = parseFloat(item.actual? item.actual : "0");
     //           const expected = parseFloat(item.expected? item.expected : "0");
-              
+
     //           return actual !== expected;
     //         });
-
-  }
+  };
 
   useEffect(() => {
     if (data && data.length > 0) {
@@ -3756,7 +3847,7 @@ function TransactionsTable(props) {
       setPaymentDueResult(
         filteredData.map((item, index) => ({
           ...item,
-          index : index,
+          index: index,
         }))
       );
     }
@@ -3771,12 +3862,12 @@ function TransactionsTable(props) {
       // console.log("item in loop", item)
 
       let paymentItemData = paymentDueResult.find((element) => element.index === item);
-      console.log("ROHIT - 687 - paymentItemData - ", paymentItemData);
+      // console.log("ROHIT - 687 - paymentItemData - ", paymentItemData);
       const purchaseIDs = JSON.parse(paymentItemData.purchase_ids);
-      purchaseIDs.forEach( purID => {
+      purchaseIDs.forEach((purID) => {
         purchase_uid_mapping.push({ purchase_uid: purID, pur_amount_due: paymentItemData.owner_payment.toFixed(2) });
       });
-      
+
       // console.log("payment item data", paymentItemData);
 
       // total += parseFloat(paymentItemData.pur_amount_due);
@@ -3787,7 +3878,7 @@ function TransactionsTable(props) {
       //   total += parseFloat(paymentItemData.pur_amount_due);
       // }
 
-      total += parseFloat(paymentItemData.owner_payment)
+      total += parseFloat(paymentItemData.owner_payment);
     }
     // console.log("selectedRows useEffect - total - ", total);
     // console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
@@ -3822,90 +3913,126 @@ function TransactionsTable(props) {
     }
   };
 
-  const columnsList = [    
+  const columnsList = [
     {
       field: "pur_receiver",
       headerName: "Owner ID",
       flex: 0.8,
       renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "purchase_type",
       headerName: "Type",
       flex: 0.8,
       renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "purchase_group",
       headerName: "Group",
       flex: 1,
       renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "month",
       headerName: "Month",
       flex: 0.7,
       renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "year",
       headerName: "Year",
       flex: 0.5,
       renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "purchase_date",
       headerName: "Purchase Date",
       flex: 1,
-      renderCell: (params) => <Box sx={commonStyles}>{(params.value !== undefined || params.value !== null) ? params.value.split(" ")[0] : "-"}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value !== undefined || params.value !== null ? params.value.split(" ")[0] : "-"}</Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "received_amt",
       headerName: "Amount Received",
       flex: 0.7,
       renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "owner_payment",
       headerName: "Owner Payment",
       flex: 0.7,
       renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "management_fee",
       headerName: "Management Fee",
       flex: 0.7,
       renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
   ];
 
   const handleSelectionModelChange = (newRowSelectionModel) => {
-    console.log("ROHIT - newRowSelectionModel - ", newRowSelectionModel);
-    console.log("ROHIT - paymentDueResult - ", paymentDueResult);
-    console.log("ROHIT -  selectedRows - ", selectedRows);
+    // console.log("ROHIT - newRowSelectionModel - ", newRowSelectionModel);
+    // console.log("ROHIT - paymentDueResult - ", paymentDueResult);
+    // console.log("ROHIT -  selectedRows - ", selectedRows);
 
     const addedRows = newRowSelectionModel.filter((rowId) => !selectedRows.includes(rowId));
     const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
 
     let updatedRowSelectionModel = [...newRowSelectionModel];
 
-    console.log("ROHIT -  addedRows - ", addedRows);
+    // console.log("ROHIT -  addedRows - ", addedRows);
 
     if (addedRows.length > 0) {
       // console.log("Added rows: ", addedRows);
       let newPayments = [];
-      
+
       addedRows.forEach((item, index) => {
-        console.log("ROHIT - item - ", item)
+        // console.log("ROHIT - item - ", item)
         // const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
         const addedPayment = paymentDueResult.find((row) => row.index === item);
         // console.log("ROHIT - addedPayment - ", addedPayment)
@@ -3944,34 +4071,39 @@ function TransactionsTable(props) {
   if (paymentDueResult.length > 0) {
     return (
       <>
-          <Grid item xs={12} sx={{ overflowX: "auto" }}>
-            <DataGrid
-              rows={paymentDueResult}
-              columns={columnsList}
-              initialState={{
-                pagination: {
-                  paginationModel: {
-                    pageSize: 100,
-                  },
-                  sorting: {
-                    sortModel: [{ field: 'pur_group', sort: 'asc' }, { field: 'pur_payer', sort: 'asc' }]
-                  }
+        <Grid item xs={12} sx={{ overflowX: "auto" }}>
+          <DataGrid
+            rows={paymentDueResult}
+            columns={columnsList}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 100,
                 },
-              }}          
-              // getRowId={(row) => row.purchase_uid}
-              getRowId={(row) => row.index}
-              pageSizeOptions={[10, 50, 100]}
-              checkboxSelection
-              // disableRowSelectionOnClick
-              rowSelectionModel={selectedRows}
-              onRowSelectionModelChange={handleSelectionModelChange}
-              sortModel={sortModel}
-              onSortModelChange={(newSortModel) => setSortModel(newSortModel)}
-              sx={{
+                sorting: {
+                  sortModel: [
+                    { field: "pur_group", sort: "asc" },
+                    { field: "pur_payer", sort: "asc" },
+                  ],
+                },
+              },
+            }}
+            // getRowId={(row) => row.purchase_uid}
+            getRowId={(row) => row.index}
+            pageSizeOptions={[10, 50, 100]}
+            checkboxSelection
+            // disableRowSelectionOnClick
+            rowSelectionModel={selectedRows}
+            onRowSelectionModelChange={handleSelectionModelChange}
+            sortModel={sortModel}
+            onSortModelChange={(newSortModel) => setSortModel(newSortModel)}
+            sx={
+              {
                 // minWidth: "700px"
-              }}
-            />
-          </Grid>
+              }
+            }
+          />
+        </Grid>
         {/* {selectedRows.length > 0 && (
           <div>Total selected amount: ${selectedRows.reduce((total, rowId) => total + parseFloat(paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due), 0)}</div>
         )} */}
@@ -3987,77 +4119,81 @@ function TransactionsTable(props) {
               }}
             >
               Total Paid: ${" "}
-              {selectedRows.reduce((total, selectedIndex) => {
-                // const payment = paymentDueResult.find((row) => row.index === selectedIndex);
-                const payment = paymentDueResultMap[selectedIndex];
-                if(payment){
-                  const amountDue = payment?.owner_payment;
-                  // const isExpense = payment.pur_cf_type === "expense";
+              {selectedRows
+                .reduce((total, selectedIndex) => {
+                  // const payment = paymentDueResult.find((row) => row.index === selectedIndex);
+                  const payment = paymentDueResultMap[selectedIndex];
+                  if (payment) {
+                    const amountDue = payment?.owner_payment;
+                    // const isExpense = payment.pur_cf_type === "expense";
 
-                  // Adjust the total based on whether the payment is an expense or revenue
-                  // return total + (isExpense ? -amountDue : amountDue);
+                    // Adjust the total based on whether the payment is an expense or revenue
+                    // return total + (isExpense ? -amountDue : amountDue);
 
-                  // if (payment.pur_payer.startsWith("110")) {
-                  //   return total - amountDue;
-                  // } else if (payment.pur_payer.startsWith("600")) {
-                        // return total + amountDue;
-                  // }
+                    // if (payment.pur_payer.startsWith("110")) {
+                    //   return total - amountDue;
+                    // } else if (payment.pur_payer.startsWith("600")) {
+                    // return total + amountDue;
+                    // }
 
-                  return total + amountDue;
-                  // return total + 0;
-                }
-                return total + 0
-              }, 0)?.toFixed(2)}
+                    return total + amountDue;
+                    // return total + 0;
+                  }
+                  return total + 0;
+                }, 0)
+                ?.toFixed(2)}
             </Typography>
           </Grid>
 
           <Grid item xs={3} alignItems='right'>
             <Button
-                  sx={{
-                    width: "170px",
-                    backgroundColor: "#3D5CAC",
-                    textTransform: "none",
-                    "&:hover": {
-                      backgroundColor: "#3D5CAC",
-                    },
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    const selectedPurchaseGroup = selectedPayments.map(payment => payment.purchase_group);
-                    console.log("selected purchase group -- ", selectedPurchaseGroup)
-                    navigate("/paymentProcessing", { state: { currentWindow: "PAY_BILLS", selectedRows: selectedPurchaseGroup } });
-                  }}
-                >
-                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#ffffff" }}>Pay Owner</Typography>
-                </Button>
+              sx={{
+                width: "170px",
+                backgroundColor: "#3D5CAC",
+                textTransform: "none",
+                "&:hover": {
+                  backgroundColor: "#3D5CAC",
+                },
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                const selectedPurchaseGroup = selectedPayments.map((payment) => payment.purchase_group);
+                console.log("selected purchase group -- ", selectedPurchaseGroup);
+                navigate("/paymentProcessing", { state: { currentWindow: "PAY_BILLS", selectedRows: selectedPurchaseGroup } });
+              }}
+            >
+              <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#ffffff" }}>Pay Owner</Typography>
+            </Button>
           </Grid>
         </Grid>
       </>
     );
   } else {
-    return <>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginBottom: '7px',
-          width: '100%',
-          height:"30px"
-        }}
-      >
-        <Typography
+    return (
+      <>
+        <Box
           sx={{
-            color: "#A9A9A9",
-            fontWeight: theme.typography.primary.fontWeight,
-            fontSize: "15px",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            marginBottom: "7px",
+            width: "100%",
+            height: "30px",
           }}
         >
-          No Transactions
-        </Typography>
-      </Box>
-    </>;
+          <Typography
+            sx={{
+              color: "#A9A9A9",
+              fontWeight: theme.typography.primary.fontWeight,
+              fontSize: "15px",
+            }}
+          >
+            No Transactions
+          </Typography>
+        </Box>
+      </>
+    );
   }
 }
 
@@ -4077,7 +4213,6 @@ function BalanceDetailsTable(props) {
   };
 
   const filterTransactions = (data) => {
-
     // const verifiedPurGroups = []
 
     // data.forEach(transaction => {
@@ -4098,10 +4233,10 @@ function BalanceDetailsTable(props) {
     //   let received_amt = 0;
     //   let management_fee = 0;
     //   let other_expense = 0;
-    
+
     //   // Check if all items in this group have 'payment_status' === "PAID"
     //   const allPaid = groupedData[group].every(item => item.payment_status === "PAID");
-    
+
     //   // If all items are paid, skip this group
     //   if (allPaid) {
     //     return acc;
@@ -4112,7 +4247,7 @@ function BalanceDetailsTable(props) {
     //   if(hasPartiallyPaid){
     //     return acc;
     //   }
-    
+
     //   let allTransactions = []
     //   let purchase_ids = []
     //   let purchase_group;
@@ -4124,7 +4259,7 @@ function BalanceDetailsTable(props) {
     //   groupedData[group].forEach(item => {
     //     const pur_payer = item.pur_payer;
     //     const pur_type = item.purchase_type;
-    
+
     //     if (pur_payer.startsWith("350")) {
     //       purchase_type = item.purchase_type;
     //       purchase_date = item.purchase_date;
@@ -4146,9 +4281,9 @@ function BalanceDetailsTable(props) {
     //     allTransactions.push(item)
     //     purchase_group = item.pur_group;
     //   });
-    
+
     //   const owner_payment = parseFloat(received_amt - management_fee - other_expense);
-    
+
     //   // Push the aggregated object for this group into the result if it passes the conditions
     //   acc.push({
     //     pur_group: group,
@@ -4165,7 +4300,7 @@ function BalanceDetailsTable(props) {
     //     month,
     //     year
     //   });
-    
+
     //   return acc;
     // }, []);
 
@@ -4173,32 +4308,32 @@ function BalanceDetailsTable(props) {
       let received_amt = 0;
       let management_fee = 0;
       let other_expense = 0;
-    
+
       // Check if all items in this group have 'payment_status' === "PAID"
-      const allPaid = groupedData[group].every(item => item.payment_status === "PAID");
-    
+      const allPaid = groupedData[group].every((item) => item.payment_status === "PAID");
+
       // If all items are paid, skip this group
       if (allPaid) {
         return acc;
       }
-    
-      const hasPartiallyPaid = groupedData[group].some(item => item.payment_status === "PARTIALLY PAID");
-    
+
+      const hasPartiallyPaid = groupedData[group].some((item) => item.payment_status === "PARTIALLY PAID");
+
       if (hasPartiallyPaid) {
         return acc;
       }
-    
+
       let purchase_type;
       let purchase_group;
       let month, year;
       let purchase_date;
       let pur_receiver;
       let purchase_ids = [];
-    
-      groupedData[group].forEach(item => {
+
+      groupedData[group].forEach((item) => {
         const pur_payer = item.pur_payer;
         const pur_type = item.purchase_type;
-    
+
         if (pur_payer.startsWith("350")) {
           purchase_type = item.purchase_type;
           purchase_date = item.purchase_date;
@@ -4206,62 +4341,59 @@ function BalanceDetailsTable(props) {
           year = item.cf_year;
           received_amt += parseFloat(item.total_paid);
         } else if (pur_payer.startsWith("110") && pur_type === "Management") {
-          management_fee += parseFloat(item.pur_amount_due?item.pur_amount_due : "0.00");
+          management_fee += parseFloat(item.pur_amount_due ? item.pur_amount_due : "0.00");
         } else if (pur_payer.startsWith("110") && pur_type !== "Management") {
-          other_expense += parseFloat(item.pur_amount_due?item.pur_amount_due : "0.00");
+          other_expense += parseFloat(item.pur_amount_due ? item.pur_amount_due : "0.00");
         } else if (pur_payer.startsWith("600")) {
           pur_receiver = item.pur_receiver;
         }
-    
+
         purchase_ids.push(item.purchase_uid);
         purchase_group = item.pur_group;
       });
-    
+
       const owner_payment = parseFloat(received_amt - management_fee - other_expense);
-    
+
       // Assign the aggregated object for this group as a key-value pair
       acc[purchase_group] = {
         owner_payment,
         management_fee,
-        other_expense
+        other_expense,
       };
-    
+
       return acc;
     }, {});
 
-    return result
-
-  }
+    return result;
+  };
 
   const defaultSortModel = [
     {
-      field: "pur_property_id", 
+      field: "pur_property_id",
       sort: "asc",
     },
   ];
 
   const byPropertySortModel = [
     {
-      field: "pur_property_id", 
+      field: "pur_property_id",
       sort: "asc",
     },
   ];
 
   const byPayerSortModel = [
     {
-      field: "paid_by", 
+      field: "paid_by",
       sort: "asc",
     },
   ];
 
   const [sortModel, setSortModel] = useState([
     {
-      field: "payment_uid", 
+      field: "payment_uid",
       sort: "asc",
     },
   ]);
-
-
 
   // useEffect(() => {
   //   console.log("selectedPayments - ", selectedPayments);
@@ -4273,59 +4405,47 @@ function BalanceDetailsTable(props) {
   }, [props.data]);
 
   useEffect(() => {
-    props.setSelectedPayments( (prevState) => {
-        const updatedPaymentData = prevState?.filter(
-            (payment) => selectedPayments.some((selected) => selected.id === payment.id)
-        );
+    props.setSelectedPayments((prevState) => {
+      const updatedPaymentData = prevState?.filter((payment) => selectedPayments.some((selected) => selected.id === payment.id));
 
-        const newPayments = selectedPayments.filter(
-            (selected) => !updatedPaymentData.some((payment) => payment.id === selected.id)
-          );
-        return [
-            ...updatedPaymentData, 
-            ...newPayments,
-        ];
-    })
+      const newPayments = selectedPayments.filter((selected) => !updatedPaymentData.some((payment) => payment.id === selected.id));
+      return [...updatedPaymentData, ...newPayments];
+    });
   }, [selectedPayments]);
 
-  useEffect(() => {    
-    if(props.sortBy) {
-        switch(props.sortBy){
-            case "BY_PROPERTY":
-                setSortModel(byPropertySortModel);
-                break;
-            case "BY_PAYER":
-                setSortModel(byPayerSortModel);
-                break;
-            default:
-                setSortModel(defaultSortModel);
-                break;
-        }
+  useEffect(() => {
+    if (props.sortBy) {
+      switch (props.sortBy) {
+        case "BY_PROPERTY":
+          setSortModel(byPropertySortModel);
+          break;
+        case "BY_PAYER":
+          setSortModel(byPayerSortModel);
+          break;
+        default:
+          setSortModel(defaultSortModel);
+          break;
+      }
     }
   }, [props.sortBy]);
 
   useEffect(() => {
     if (data && data.length > 0) {
       // setSelectedPayments(data);
-      setSelectedPayments([])
+      setSelectedPayments([]);
       let filteredRows = [];
 
-      if(props.selectedProperty != null || props.selectedProperty !== "ALL"){
-        filteredRows = data?.filter( item => item.pur_property_id === props.selectedProperty)
-      }else {
+      if (props.selectedProperty != null || props.selectedProperty !== "ALL") {
+        filteredRows = data?.filter((item) => item.pur_property_id === props.selectedProperty);
+      } else {
         filteredRows = data;
       }
-      
-      const expense = filterTransactions(props.revenueData)
 
-      if(selectedPurchaseGroup && selectedPurchaseGroup !== ""){
-        setSelectedRows(
-          filteredRows
-            .filter((row) => row.pur_group === selectedPurchaseGroup)
-            .map((row) => row.payment_id) 
-        );
-      
-      }else{
+      const expense = filterTransactions(props.revenueData);
+
+      if (selectedPurchaseGroup && selectedPurchaseGroup !== "") {
+        setSelectedRows(filteredRows.filter((row) => row.pur_group === selectedPurchaseGroup).map((row) => row.payment_id));
+      } else {
         setSelectedRows([]);
       }
 
@@ -4337,13 +4457,10 @@ function BalanceDetailsTable(props) {
           // pur_amount_due: parseFloat(item.pur_amount_due?item.pur_amount_due : "0.00"),
         }))
       );
-
-      
-
-    }else if(data && data.length === 0){
-      setPaymentDueResult([])
-      setSelectedPayments([])
-      setSelectedRows([])
+    } else if (data && data.length === 0) {
+      setPaymentDueResult([]);
+      setSelectedPayments([]);
+      setSelectedRows([]);
     }
   }, [data]);
 
@@ -4375,54 +4492,75 @@ function BalanceDetailsTable(props) {
     }
   };
 
-    
-
   const columnsList = [
-    
     //
     {
       field: "total_paid",
       headerName: "Total Paid",
       flex: 0.8,
-      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2) || 0.00}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
-    }, 
+      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2) || 0.0}</Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
+    },
     {
       field: "purchase_type",
       headerName: "Type",
       flex: 0.8,
       renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "pur_group",
       headerName: "Group",
       flex: 1,
       renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "cf_month",
       headerName: "Month",
       flex: 0.7,
       renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "cf_year",
       headerName: "Year",
       flex: 0.5,
       renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
-        field: "payment_date",
-        headerName: "Payment Date",
-        flex: 1,
-        renderCell: (params) => <Box sx={commonStyles}>{params.value? params.value.split(" ")[0] : "-"}</Box>,
-        renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      field: "payment_date",
+      headerName: "Payment Date",
+      flex: 1,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value ? params.value.split(" ")[0] : "-"}</Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
-    
+
     // {
     //   field: "pur_notes",
     //   headerName: "Notes",
@@ -4440,7 +4578,7 @@ function BalanceDetailsTable(props) {
     //   headerName: "Paid By",
     //   flex: 2,
     //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    // },    
+    // },
     // {
     //   field: "pur_amount_due",
     //   headerName: "Amount Due",
@@ -4451,24 +4589,36 @@ function BalanceDetailsTable(props) {
       field: "pay_amount",
       headerName: "Pay Amount",
       flex: 0.7,
-      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2) || 0.00}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2) || 0.0}</Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
-    
+
     {
       field: "owner_payment",
       headerName: "Owner Payment",
       flex: 0.7,
-      renderCell: (params) => <Box sx={commonStyles}>{params.value? parseFloat(params.value).toFixed(2) : "-"}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderCell: (params) => <Box sx={commonStyles}>{params.value ? parseFloat(params.value).toFixed(2) : "-"}</Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "management_fee",
       headerName: "Management Fee",
       flex: 0.7,
-      renderCell: (params) => <Box sx={commonStyles}>{params.value? parseFloat(params.value).toFixed(2) : "-"}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
-    },    
+      renderCell: (params) => <Box sx={commonStyles}>{params.value ? parseFloat(params.value).toFixed(2) : "-"}</Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
+    },
     // {
     //     field: "payment_verify",
     //     headerName: "Payment Verify",
@@ -4506,7 +4656,6 @@ function BalanceDetailsTable(props) {
 
     let updatedRowSelectionModel = [...newRowSelectionModel];
 
-
     if (addedRows.length > 0) {
       // console.log("Added rows: ", addedRows);
       let newPayments = [];
@@ -4518,7 +4667,9 @@ function BalanceDetailsTable(props) {
 
         if (addedPayment) {
           // const relatedPayments = paymentDueResult.filter((row) => row.payment_intent === addedPayment.payment_intent);
-          const relatedPayments = paymentDueResult.filter((row) => (row.pur_payer + row.payment_date + row.payment_intent) === (addedPayment.pur_payer + addedPayment.payment_date + addedPayment.payment_intent));
+          const relatedPayments = paymentDueResult.filter(
+            (row) => row.pur_payer + row.payment_date + row.payment_intent === addedPayment.pur_payer + addedPayment.payment_date + addedPayment.payment_intent
+          );
 
           newPayments = [...newPayments, ...relatedPayments];
           const relatedRowIds = relatedPayments.map((payment) => payment.payment_id);
@@ -4539,15 +4690,17 @@ function BalanceDetailsTable(props) {
 
       removedRows.forEach((item, index) => {
         let removedPayment = paymentDueResult.find((row) => row.payment_id === item);
-        let relatedPayments = []
+        let relatedPayments = [];
 
-        if(removedPayment){
-          relatedPayments = paymentDueResult.filter((row) => (row.pur_payer + row.payment_date + row.payment_intent) === (removedPayment.pur_payer + removedPayment.payment_date + removedPayment.payment_intent));
+        if (removedPayment) {
+          relatedPayments = paymentDueResult.filter(
+            (row) => row.pur_payer + row.payment_date + row.payment_intent === removedPayment.pur_payer + removedPayment.payment_date + removedPayment.payment_intent
+          );
           relatedRows = relatedPayments.map((payment) => payment.payment_id);
         }
 
         removedPayments.push(removedPayment);
-        removedPayments.push(relatedPayments)
+        removedPayments.push(relatedPayments);
       });
       const allRowRemove = [...new Set([...removedRows, ...relatedRows])];
 
@@ -4606,9 +4759,11 @@ function BalanceDetailsTable(props) {
                 },
               },
             }}
-            sx={{
-              // minWidth: "1000px"
-            }}
+            sx={
+              {
+                // minWidth: "1000px"
+              }
+            }
             getRowId={(row) => row.payment_id}
             // getRowId={(row) => {
             //   const rowId = row.payment_uid;
@@ -4626,7 +4781,7 @@ function BalanceDetailsTable(props) {
             onRowClick={(row) => {
               // handleOnClickNavigateToMaintenance(row);
             }}
-              sortModel={sortModel}
+            sortModel={sortModel}
 
             //   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
           />
@@ -4654,7 +4809,7 @@ function BalanceDetailsTable(props) {
                 fontWeight: theme.typography.medium.fontWeight,
                 fontSize: theme.typography.smallFont,
                 fontFamily: "Source Sans Pro",
-                marginLeft: "20px"
+                marginLeft: "20px",
               }}
             >
               {/* $ {selectedRows.reduce((total, rowId) => total + paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due, 0)} */}$ {totalVerified}
@@ -4662,7 +4817,7 @@ function BalanceDetailsTable(props) {
           </Grid>
 
           <Grid item xs={3} alignItems='right'>
-          {/* <Button
+            {/* <Button
               variant='outlined'
               id='complete_verification'
               // className={classes.button}
@@ -4710,32 +4865,32 @@ function BalanceDetailsTable(props) {
       </>
     );
   } else {
-    return <>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginBottom: '7px',
-          width: '100%',
-          height:"30px"
-        }}
-      >
-        <Typography
+    return (
+      <>
+        <Box
           sx={{
-            color: "#A9A9A9",
-            fontWeight: theme.typography.primary.fontWeight,
-            fontSize: "15px",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            marginBottom: "7px",
+            width: "100%",
+            height: "30px",
           }}
         >
-          No Verification Remaining 
-        </Typography>
-      </Box>
-  </>;;
+          <Typography
+            sx={{
+              color: "#A9A9A9",
+              fontWeight: theme.typography.primary.fontWeight,
+              fontSize: "15px",
+            }}
+          >
+            No Verification Remaining
+          </Typography>
+        </Box>
+      </>
+    );
   }
 }
-
-
 
 export default ManagerProfitability;

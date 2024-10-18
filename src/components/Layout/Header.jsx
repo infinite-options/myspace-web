@@ -30,11 +30,11 @@ function Header(props) {
   const [anchorEl, setAnchorEl] = useState(null);
 
   useEffect(() => {
-    console.log("ROHIT - isMenuOpen - ", isMenuOpen);
+    // console.log("ROHIT - isMenuOpen - ", isMenuOpen);
   }, [isMenuOpen]);
 
   useEffect(() => {
-    console.log("ROHIT - selectedRole - ", selectedRole);
+    // console.log("ROHIT - selectedRole - ", selectedRole);
   }, [selectedRole]);
 
   const desiredOrder = ["MANAGER", "OWNER", "TENANT", "MAINTENANCE", "PM_EMPLOYEE", "MAINT_EMPLOYEE"];
@@ -49,7 +49,7 @@ function Header(props) {
   const handleMenuToggle = (event) => {
     setAnchorEl(event.currentTarget);
     // setIsMenuOpen(!isMenuOpen);
-    setIsMenuOpen(prevState => !prevState);
+    setIsMenuOpen((prevState) => !prevState);
   };
 
   const handleButtonClick = (role) => {
@@ -70,13 +70,12 @@ function Header(props) {
         window.dispatchEvent(new Event("removeworkermaintenanceRequestSelected"));
       }, 0);
     }
-    if(role === "TENANT"){
-      navigate(dashboardUrl, {state: {from:"tenantHeader"}})
+    if (role === "TENANT") {
+      navigate(dashboardUrl, { state: { from: "tenantHeader" } });
     }
-    if(role === "OWNER"){
-      navigate(dashboardUrl, {state : {from : "ownerHeader"}})
-
-    }else{
+    if (role === "OWNER") {
+      navigate(dashboardUrl, { state: { from: "ownerHeader" } });
+    } else {
       navigate(dashboardUrl);
     }
 
@@ -103,12 +102,12 @@ function Header(props) {
   }, [isMobile]);
 
   const googleLoginButtonStyle = {
-    width: '112px',
+    width: "112px",
     background: "#FFFFFF",
-    color: "#000000",    
+    color: "#000000",
     "&:hover": {
-      backgroundColor: darken("#FFFFFF", 0.3)
-    }
+      backgroundColor: darken("#FFFFFF", 0.3),
+    },
   };
 
   return (
@@ -140,7 +139,7 @@ function Header(props) {
               </Toolbar>
             </AppBar>
             {!isMobile && sortedRoles.length > 0 && (
-              <Toolbar style={{ justifyContent: "center", padding: "0 20px", backgroundColor: "#3D5CAC", color: "#FFFFFF", gap: "200px", }}>
+              <Toolbar style={{ justifyContent: "center", padding: "0 20px", backgroundColor: "#3D5CAC", color: "#FFFFFF", gap: "200px" }}>
                 {sortedRoles.map((role) => (
                   <Button
                     key={role}
@@ -178,7 +177,7 @@ function Header(props) {
                 }}
               >
                 {sortedRoles.map((role) => (
-                  <MenuItem 
+                  <MenuItem
                     key={role}
                     onClick={() => handleButtonClick(role)}
                     sx={{
@@ -213,11 +212,11 @@ function Header(props) {
                   <Logo />
                 </div>
                 <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-                  <Box sx={{ display: { xs: "none", md: "flex" }, gap: "25px" }}>                    
-                    <GoogleLogin buttonStyle={googleLoginButtonStyle} buttonText={"Login"}/>
+                  <Box sx={{ display: { xs: "none", md: "flex" }, gap: "25px" }}>
+                    <GoogleLogin buttonStyle={googleLoginButtonStyle} buttonText={"Login"} />
                     <Button
-                      variant='contained'                      
-                      onClick={() => navigate("/", { state: { showEmail: true,} })}                      
+                      variant='contained'
+                      onClick={() => navigate("/", { state: { showEmail: true } })}
                       sx={{ minWidth: "112px", background: "#FFFFFF", color: theme.palette.primary.main, "&:hover": { backgroundColor: darken("#FFFFFF", 0.3) } }}
                     >
                       <Typography
@@ -252,10 +251,14 @@ function Header(props) {
             </AppBar>
             {isMenuOpen && (
               <Box sx={{ position: "absolute", top: "64px", right: "10px", backgroundColor: "white", borderRadius: "4px", boxShadow: "0 2px 8px rgba(0,0,0,0.1)", zIndex: "1000" }}>
-                <Button variant='outlined' sx={{ display: "block", width: "100%", fontWeight: "bold", color: "#000000", "&:hover": { color: "#FFFFFF"} }} onClick={() => navigate("/")}>
+                <Button
+                  variant='outlined'
+                  sx={{ display: "block", width: "100%", fontWeight: "bold", color: "#000000", "&:hover": { color: "#FFFFFF" } }}
+                  onClick={() => navigate("/")}
+                >
                   Login
                 </Button>
-                <Button variant='outlined' sx={{ width: "100%", color: "#000000", fontWeight: "bold", "&:hover": { color: "#FFFFFF"}  }} onClick={() => navigate("/newUser")}>
+                <Button variant='outlined' sx={{ width: "100%", color: "#000000", fontWeight: "bold", "&:hover": { color: "#FFFFFF" } }} onClick={() => navigate("/newUser")}>
                   Create Account
                 </Button>
               </Box>

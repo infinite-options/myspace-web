@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { Container, Grid } from "@mui/material";
 import axios from "axios";
@@ -25,30 +25,30 @@ const ContactsPM = () => {
   const fetchData = async () => {
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
     const response = await axios.get(url);
-    
+
     let data;
     switch (selectedRole) {
       case "MANAGER":
         data = response.data["management_contacts"];
-        if(!contactsTab){
+        if (!contactsTab) {
           setContactsTab("Owner");
-        }        
+        }
         break;
       case "OWNER":
         data = response.data["owner_contacts"];
-        if(!contactsTab){
+        if (!contactsTab) {
           setContactsTab("Manager");
         }
         break;
       case "TENANT":
         data = response.data["tenant_contacts"];
-        if(!contactsTab){
+        if (!contactsTab) {
           setContactsTab("Manager");
         }
         break;
       case "MAINTENANCE":
         data = response.data["maintenance_contacts"];
-        if(!contactsTab){
+        if (!contactsTab) {
           setContactsTab("Manager");
         }
         break;
@@ -56,7 +56,7 @@ const ContactsPM = () => {
         data = [];
         console.error("Unexpected role or no contacts found for this role");
     }
-    
+
     setContactsData(data);
   };
 
@@ -65,95 +65,60 @@ const ContactsPM = () => {
   }, []);
 
   useEffect(() => {
-    console.log("ROHIT - currentIndex - ", currentIndex);
+    // console.log("ROHIT - currentIndex - ", currentIndex);
   }, [currentIndex]);
 
   useEffect(() => {
     if (location.state && contactsData) {
-      
-
       let newTab = contactsTabState;
       let newIndex = 0;
-      console.log("ROHIT - here 1")
-  
-      if (newTab === "Manager" && managerIdState) {
-        const managerIndex = contactsData?.managers?.findIndex(
-          (manager) => manager.business_uid === managerIdState
-        );
+      // console.log("ROHIT - here 1")
 
-        
+      if (newTab === "Manager" && managerIdState) {
+        const managerIndex = contactsData?.managers?.findIndex((manager) => manager.business_uid === managerIdState);
+
         newIndex = managerIndex >= 0 ? managerIndex : 0;
       } else if (newTab === "Tenant" && tenantId && selectedRole !== "TENANT") {
-        console.log("ROHIT - here 2");
-        const tenantIndex = contactsData?.tenants?.findIndex(
-          (tenant) => tenant.tenant_uid === tenantId
-        );
-        console.log("ROHIT - tenantIndex - ", tenantIndex);
-        newIndex = tenantIndex >= 0 ? tenantIndex : 0; 
-      }else if(newTab === "Owner" && ownerId){
-        const ownerIndex = contactsData?.owners?.findIndex(
-          (owner) => owner.owner_uid === ownerId
-        );
-        newIndex = ownerIndex >= 0? ownerIndex : 0
+        // console.log("ROHIT - here 2");
+        const tenantIndex = contactsData?.tenants?.findIndex((tenant) => tenant.tenant_uid === tenantId);
+        // console.log("ROHIT - tenantIndex - ", tenantIndex);
+        newIndex = tenantIndex >= 0 ? tenantIndex : 0;
+      } else if (newTab === "Owner" && ownerId) {
+        const ownerIndex = contactsData?.owners?.findIndex((owner) => owner.owner_uid === ownerId);
+        newIndex = ownerIndex >= 0 ? ownerIndex : 0;
       }
-  
+
       setContactsTab(newTab);
       setCurrentIndex(newIndex);
     }
   }, [location.state, contactsData, selectedRole]);
-  
+
   // useEffect(() => {
-  //   if (contactsTab) {      
+  //   if (contactsTab) {
   //     setCurrentIndex(0); // Reset to the first item whenever the tab changes
   //   }
   // }, [contactsTab]);
-  useEffect(() => {  
-    console.log("ROHIT - 103 - contactsTab - ", contactsTab)  
-    console.log("ROHIT - 103 - prevContactsTabRef.current - ", prevContactsTabRef.current)  
-    
+  useEffect(() => {
+    // console.log("ROHIT - 103 - contactsTab - ", contactsTab)
+    // console.log("ROHIT - 103 - prevContactsTabRef.current - ", prevContactsTabRef.current)
+
     if (contactsTab !== prevContactsTabRef.current) {
       setCurrentIndex(0);
     }
-    
+
     prevContactsTabRef.current = contactsTab;
-
   }, [contactsTab]);
-
 
   const renderContactDetail = () => {
     switch (contactsTab) {
       case "Owner":
-        return (
-          <OwnerContactDetail
-            data={contactsData?.owners}
-            currentIndex={currentIndex}
-            setCurrentIndex={setCurrentIndex}
-          />
-        );
+        return <OwnerContactDetail data={contactsData?.owners} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />;
       case "Tenant":
-        return (
-          <TenantContactDetail
-            data={contactsData?.tenants}
-            currentIndex={currentIndex}
-            setCurrentIndex={setCurrentIndex}
-          />
-        );
+        return <TenantContactDetail data={contactsData?.tenants} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />;
       case "Maintenance":
-        return (
-          <MaintenanceContactDetail
-            data={contactsData?.maintenance}
-            currentIndex={currentIndex}
-            setCurrentIndex={setCurrentIndex}
-          />
-        );
+        return <MaintenanceContactDetail data={contactsData?.maintenance} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />;
       case "Employee":
-        return (
-          <EmployeeContactDetail
-            data={contactsData?.employees}
-            currentIndex={currentIndex}
-            setCurrentIndex={setCurrentIndex}
-          />
-        );
+        return <EmployeeContactDetail data={contactsData?.employees} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />;
       case "Manager":
         return (
           <ManagerContactDetail
@@ -170,17 +135,11 @@ const ContactsPM = () => {
   };
 
   return (
-    <Container disableGutters maxWidth="lg">
+    <Container disableGutters maxWidth='lg'>
       <Grid container>
         <Grid container item xs={12} md={4}>
           <Grid item xs={12} sx={{ padding: "5px", height: "100%" }}>
-            <ContactsList
-              data={contactsData}
-              tab={contactsTab}
-              setTab={setContactsTab}
-              currentIndex={currentIndex}
-              setCurrentIndex={setCurrentIndex}
-            />
+            <ContactsList data={contactsData} tab={contactsTab} setTab={setContactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
           </Grid>
         </Grid>
         <Grid container item xs={12} md={8}>
