@@ -1379,9 +1379,17 @@ const PropertyCard = (props) => {
     //     "contract_status": "REFUSED"
     // };
 
+	let newContractStatus = "REFUSED"
+
+	if(contractStatus === "SENT"){
+		newContractStatus = "WITHDRAW"
+	}
+	// console.log("newContractStatus - ", newContractStatus);	
+
     const formData = new FormData();
-    formData.append("contract_uid", contractUID);
-    formData.append("contract_status", "REFUSED");
+    formData.append("contract_uid", currentContractUID);
+    // formData.append("contract_status", "REFUSED");
+	formData.append("contract_status", newContractStatus);
 
     // console.log("Declined offer. Data sent - ", formData);
 
@@ -2457,7 +2465,7 @@ return (
 									textTransform: 'none',
 								}}
 							>
-								{contractStatus === 'NEW' ? 'Decline Offer' : 'Withdraw Offer 1'}
+								{contractStatus === 'NEW' ? 'Decline Offer' : 'Withdraw Quote 1'}
 							</Typography>
 						</Button>
 						</>

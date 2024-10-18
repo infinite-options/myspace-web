@@ -164,6 +164,9 @@ export default function ManagerCashflow() {
   const [allCashflowData, setAllCashflowData] = useState([])
   const [totalCashflowValueByType, setTotalCashflowValueByType] = useState({})
   const [expectedCashflowValueByType, setExpectedCashflowValueByType] = useState({})
+  const [ownerList, setOwnerList] = useState(null)
+  // const []
+  const [selectedOwnerId, setSelectedOwnerId] = useState("All Owner")
 
 
   //ROHIT - remove this function
@@ -1016,6 +1019,52 @@ export default function ManagerCashflow() {
       filteredProfitData = allProfitData?.filter((item) => item.pur_property_id === selectedProperty);
       // console.log("filteredProfitData - ", filteredProfitData);
     }
+
+    if(selectedOwnerId !== "All Owner"){
+
+      const groupedByPurGroup = filteredProfitData?.reduce((acc, item) => {
+        const groupKey = item.pur_group;
+        if (!acc[groupKey]) {
+          acc[groupKey] = [];
+        }
+        acc[groupKey].push(item);  // Add item to the respective group
+        return acc;
+      }, {});
+      
+
+      const finalList = Object.values(groupedByPurGroup).filter(group => 
+        group.some(item => item.pur_payer === selectedOwnerId || item.pur_receiver === selectedOwnerId)
+      );
+
+      filteredProfitData = finalList?.flat();
+
+      console.log("filteredData list - ", filteredProfitData)
+      
+    }else{
+      // console.log(" filteredProfitData list - ", filteredProfitData)      
+      const ownerInfoMap = filteredProfitData?.reduce((acc, item) => {
+        let ownerID = "";
+
+        if (item.pur_payer.startsWith("110")){
+          ownerID = item.pur_payer;
+        }else if(item.pur_receiver.startsWith("110")){
+          ownerID = item.pur_receiver
+        }  
+
+        if (ownerID !== "" && !acc[ownerID]) {
+          acc[ownerID] = {
+            owner_first_name: item.owner_first_name, 
+            owner_last_name: item.owner_last_name    
+          };
+        }
+      
+        return acc;
+      }, {});
+
+      setOwnerList(ownerInfoMap)
+
+      console.log(" owner list - ", ownerInfoMap)
+    }
     
     // const profitDatacurrentMonth = filteredProfitData;
     const profitDatacurrentMonth = filteredProfitData?.filter((item) => item.cf_month === month && item.cf_year === year); 
@@ -1632,7 +1681,7 @@ export default function ManagerCashflow() {
 
     console.log("revenue data for manager by property - ", revenueDataForManagerByProperty)
 
-  }, [month, year, cashflowData, selectedProperty]);
+  }, [month, year, cashflowData, selectedProperty, selectedOwnerId]);
 
   useEffect(() => {
     
@@ -2393,6 +2442,10 @@ export default function ManagerCashflow() {
                 rentsByProperty={rentsByProperty}
                 payoutsTotal={payoutsTotal}
                 payouts={payouts}
+
+                ownerList={ownerList}
+                selectedOwnerId={selectedOwnerId}
+                setSelectedOwnerId={setSelectedOwnerId}
                 
                 profitsCurrentYear = {profitsCurrentYear}
                 profitsTotalCurrentYear = {profitsTotalCurrentYear}

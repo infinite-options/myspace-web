@@ -9,7 +9,9 @@ const Forbidden = () => {
   const { user} = useUser();
 
   useEffect(() => {
-    window.location.reload();
+    if(user){
+      window.location.reload();
+    }
   }, [user]);
 
 
