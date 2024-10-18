@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Typography, Box, Stack, Paper, Button, ThemeProvider, Grid, Container, InputBase, IconButton, Avatar, Badge } from "@mui/material";
 import theme from "../../theme/theme";
@@ -20,8 +20,7 @@ import PropertyForm from "../Property/PropertyForm";
 import PropertiesSearch from "./PropertiesSearch";
 import PMRent from "../Rent/PMRent/PMRent";
 
-import PropertiesContext from '../../contexts/PropertiesContext';
-
+import PropertiesContext from "../../contexts/PropertiesContext";
 
 const paymentStatusColorMap = {
   "Paid On Time": theme.palette.priority.clear,
@@ -38,18 +37,20 @@ const paymentStatusMap = {
   UNPAID: "Not Paid",
   "PAID LATE": "Paid Late",
   PAID: "Paid On Time",
-  Partial: "Partially Paid",
+  "PARTIALLY PAID": "Partially Paid",
   VACANT: "Vacant",
   "NOT LISTED": "Vacant - Not Listed",
   "NO MANAGER": "No Manager",
 };
 
-
 export function getPaymentStatusColor(paymentStatus, property) {
   // console.log("214 - property - ", property);
-  if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property?.property_available_to_rent && property?.property_available_to_rent === 1)) {
+  if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && property?.property_available_to_rent && property?.property_available_to_rent === 1) {
     return paymentStatusColorMap["Vacant"];
-  } else if((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property?.property_available_to_rent == null || property?.property_available_to_rent === 0)){
+  } else if (
+    (paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") &&
+    (property?.property_available_to_rent == null || property?.property_available_to_rent === 0)
+  ) {
     return paymentStatusColorMap["Not Listed"];
   } else {
     const status = paymentStatusMap[paymentStatus];
@@ -57,10 +58,13 @@ export function getPaymentStatusColor(paymentStatus, property) {
   }
 }
 
-export function getPaymentStatus(paymentStatus, property) {    
-  if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property?.property_available_to_rent && property?.property_available_to_rent === 1)) {
+export function getPaymentStatus(paymentStatus, property) {
+  if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && property?.property_available_to_rent && property?.property_available_to_rent === 1) {
     return paymentStatusMap["VACANT"];
-  } else if((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && (property?.property_available_to_rent == null || property?.property_available_to_rent === 0)){
+  } else if (
+    (paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") &&
+    (property?.property_available_to_rent == null || property?.property_available_to_rent === 0)
+  ) {
     return paymentStatusMap["NOT LISTED"];
   } else {
     const status = paymentStatusMap[paymentStatus];
@@ -69,26 +73,26 @@ export function getPaymentStatus(paymentStatus, property) {
 }
 
 export default function PropertiesList(props) {
-  // console.log("In Property List: ", props.propertyList);  
+  // console.log("In Property List: ", props.propertyList);
   const location = useLocation();
   let navigate = useNavigate();
   const { getProfileId, selectedRole } = useUser();
-  // const { propertyList, returnIndex, setReturnIndex, setCurrentPropertyID, setCurrentProperty  } = useContext(PropertiesContext); 
+  // const { propertyList, returnIndex, setReturnIndex, setCurrentPropertyID, setCurrentProperty  } = useContext(PropertiesContext);
 
   const propertiesContext = useContext(PropertiesContext);
-	const {
-	  propertyList: propertyListFromContext,	  
+  const {
+    propertyList: propertyListFromContext,
     returnIndex: returnIndexFromContext,
     setReturnIndex,
     setCurrentPropertyID,
     setCurrentProperty,
-    allContracts: allContractsFromContext,    	  
-	} = propertiesContext || {};
-  
-	const propertyList = propertyListFromContext || [];		  
-	const returnIndex = returnIndexFromContext || 0;  
-  const allcontracts = allContractsFromContext || []
-	
+    allContracts: allContractsFromContext,
+  } = propertiesContext || {};
+
+  const propertyList = propertyListFromContext || [];
+  const returnIndex = returnIndexFromContext || 0;
+  const allcontracts = allContractsFromContext || [];
+
   console.log("ROHIT - PropertiesList - returnIndex - ", returnIndex);
   // const [propertyList, setPropertyList] = useState([]);
   const [displayedItems, setDisplayedItems] = useState([]);
@@ -125,8 +129,7 @@ export default function PropertiesList(props) {
     pageSize: 15,
     page: 0,
   });
-  
-  
+
   useEffect(() => {
     //set current page in datagrid
     // Calculate the page based on the current index and page size
@@ -140,32 +143,32 @@ export default function PropertiesList(props) {
         page: calculatedPage,
       });
     }
-  }, [propertyIndex, propertyList,]);
+  }, [propertyIndex, propertyList]);
 
-  useEffect(() => { 
-    // console.log("74 - props.showOnlyListings - ", propertyList);       
+  useEffect(() => {
+    // console.log("74 - props.showOnlyListings - ", propertyList);
     const returnIndex = returnIndexFromContext || 0;
-    if(props.showOnlyListings && props.showOnlyListings === true){
-      const onlyListings = propertyList?.filter( property => property.rent_status === "VACANT")
-      setDisplayedItems(onlyListings);      
+    if (props.showOnlyListings && props.showOnlyListings === true) {
+      const onlyListings = propertyList?.filter((property) => property.rent_status === "VACANT");
+      setDisplayedItems(onlyListings);
     } else {
       setDisplayedItems(propertyList);
     }
 
-    setPropertyIndex(returnIndex || 0); 
-    // setCurrentRowIndex(propertyList[0].property_uid)   
+    setPropertyIndex(returnIndex || 0);
+    // setCurrentRowIndex(propertyList[0].property_uid)
     setLHS(props.LHS);
     setIsDataReady(true);
 
-  // }, [props.LHS, returnIndex, propertyList, props.showOnlyListings]);  
-  }, [props.LHS, propertyList, props.showOnlyListings, returnIndexFromContext]);  
+    // }, [props.LHS, returnIndex, propertyList, props.showOnlyListings]);
+  }, [props.LHS, propertyList, props.showOnlyListings, returnIndexFromContext]);
 
   useEffect(() => {
     console.log("displayedItems changed - ", displayedItems);
-    if(displayedItems && displayedItems.length > 0){
+    if (displayedItems && displayedItems.length > 0) {
       const firstItem = displayedItems[0];
       const i = propertyList?.findIndex((p) => p.property_uid === firstItem.property_uid);
-      if(returnIndex === 0){
+      if (returnIndex === 0) {
         setReturnIndex(i);
       }
 
@@ -173,15 +176,14 @@ export default function PropertiesList(props) {
         onPropertyInRentWidgetClicked(initialPropInRent);
       }
     }
-
   }, [displayedItems]);
 
   const onPropertyClick = (params) => {
     const property = params.row;
     // const i = displayedItems.findIndex((p) => p.property_uid === property.property_uid);
     const i = propertyList?.findIndex((p) => p.property_uid === property.property_uid);
-    // console.log("List Item Clicked", property, i, displayedItems);    
-    setPropertyIndex(property.id);  
+    // console.log("List Item Clicked", property, i, displayedItems);
+    setPropertyIndex(property.id);
     setReturnIndex(i);
     setCurrentPropertyID(property.property_uid);
     setCurrentProperty(property);
@@ -193,12 +195,12 @@ export default function PropertiesList(props) {
     if (displayedItems.length > 0) {
       const i = displayedItems.findIndex((p) => p.property_uid === property_uid);
       // console.log("onPropertyInRentWidgetClicked Clicked", property_uid, i, displayedItems);
-      setPropertyIndex(i);      
-      setReturnIndex(i)
+      setPropertyIndex(i);
+      setReturnIndex(i);
       setCurrentPropertyID(property_uid);
       setCurrentProperty(displayedItems[i]);
     }
-  };  
+  };
 
   const getRowSpacing = React.useCallback((params) => {
     return {
@@ -220,11 +222,10 @@ export default function PropertiesList(props) {
   }
 
   function getNumOfApplications(property) {
-    if(property.rent_status === "NO MANAGER"){
+    if (property.rent_status === "NO MANAGER") {
       var count = 0;
 
-      if(allcontracts){
-
+      if (allcontracts) {
         const propertyId = property?.property_uid;
         const filtered = allcontracts?.filter((contract) => contract.property_id === propertyId);
         // console.log("--dhyey---322 - PropertyNavigator - filtered contracts - ", filtered);
@@ -232,14 +233,12 @@ export default function PropertiesList(props) {
           if (contract.contract_status == "SENT") {
             count++;
           }
-        }); 
+        });
       }
 
-      return count
-    }else {
-      return property.applications
-        ? property.applications.filter(app => app.lease_status.includes("NEW")).length
-        : 0;
+      return count;
+    } else {
+      return property.applications ? property.applications.filter((app) => app.lease_status.includes("NEW")).length : 0;
     }
   }
 
@@ -254,7 +253,7 @@ export default function PropertiesList(props) {
         return property.property_favorite_image;
       } else if (imageArray.length !== 0) {
         return imageArray[0];
-      }else {
+      } else {
         return propertyImage;
       }
     } else if (imageArray != null && imageArray?.length !== 0) {
@@ -272,7 +271,7 @@ export default function PropertiesList(props) {
             color: theme.typography.common.blue,
             fontWeight: theme.typography.primary.fontWeight,
             fontSize: "11px",
-            margin: "0px", 
+            margin: "0px",
             padding: "0px",
             textAlign: "center",
             verticalAlign: "middle",
@@ -305,12 +304,11 @@ export default function PropertiesList(props) {
     }
   }
 
-
-  const [rows, setRows ] = useState(convertDataToRows(displayedItems));
+  const [rows, setRows] = useState(convertDataToRows(displayedItems));
 
   useEffect(() => {
     setRows(convertDataToRows(displayedItems));
-  }, [displayedItems])
+  }, [displayedItems]);
 
   const columns = [
     {
@@ -332,8 +330,8 @@ export default function PropertiesList(props) {
             src={`${getCoverPhoto(params.row)}?${Date.now()}`}
             alt='property image'
             style={{
-              width: "100%",  // Ensures the image takes full width
-              height: "auto",  // Maintain aspect ratio
+              width: "100%", // Ensures the image takes full width
+              height: "auto", // Maintain aspect ratio
             }}
           />
         </Box>
@@ -467,10 +465,9 @@ export default function PropertiesList(props) {
     setAddressSortOrder(addressSortOrder === "asc" ? "desc" : "asc");
     props.handleSorting(sortedList);
     // props.onDataChange(0);
-    setReturnIndex(0)
+    setReturnIndex(0);
     setCurrentPropertyID(null);
     setCurrentProperty(null);
-    
   }
 
   function sortByZip() {
@@ -481,7 +478,7 @@ export default function PropertiesList(props) {
     setZipSortOrder(zipSortOrder === "asc" ? "desc" : "asc");
     props.handleSorting(sortedList);
     // props.onDataChange(0);
-    setReturnIndex(0)
+    setReturnIndex(0);
     setCurrentPropertyID(null);
     setCurrentProperty(null);
   }
@@ -508,105 +505,105 @@ export default function PropertiesList(props) {
   }
 
   return (
-      <Grid item xs={12} md={12}>
-        <Box
+    <Grid item xs={12} md={12}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          width: "100%",
+          height: "100%",
+        }}
+      >
+        <Paper
           sx={{
-            display: "flex",
-            justifyContent: "center",
+            marginTop: "15px",
+            backgroundColor: theme.palette.primary.main,
             width: "100%",
-            height: "100%",
+            maxWidth: "800px",
           }}
         >
-          <Paper
-            sx={{
-              marginTop: "15px",
-              backgroundColor: theme.palette.primary.main,
-              width: "100%", 
-              maxWidth: "800px", 
-            }}
-          >
-            <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ padding: theme.spacing(2), position: "relative" }}>
-              <Box sx={{ flex: 1 }} />
-              <Box position='absolute' left='50%' sx={{ transform: "translateX(-50%)" }}>
-                <Typography
-                  sx={{
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.primary.fontWeight,
-                    fontSize: theme.typography.largeFont,
-                  }}
-                >
-                  All Properties PM
-                </Typography>
+          <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ padding: theme.spacing(2), position: "relative" }}>
+            <Box sx={{ flex: 1 }} />
+            <Box position='absolute' left='50%' sx={{ transform: "translateX(-50%)" }}>
+              <Typography
+                sx={{
+                  color: theme.typography.primary.black,
+                  fontWeight: theme.typography.primary.fontWeight,
+                  fontSize: theme.typography.largeFont,
+                }}
+              >
+                All Properties PM
+              </Typography>
+            </Box>
+            <Button position='absolute' right={0} sx={{ "&:hover, &:focus, &:active": { background: theme.palette.primary.main } }} onClick={props.onAddPropertyClick}>
+              <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
+            </Button>
+          </Stack>
+
+          <Box sx={{ padding: "10px" }}>
+            {LHS === "Rent" && isDataReady === true ? (
+              <Box sx={{ marginTop: "20px" }}>
+                <Grid item xs={12} md={12}>
+                  <PMRent setLHS={setLHS} onPropertyInRentWidgetClicked={onPropertyInRentWidgetClicked} setInitialPropInRent={setInitialPropInRent} />
+                </Grid>
               </Box>
-              <Button position='absolute' right={0} sx={{ "&:hover, &:focus, &:active": { background: theme.palette.primary.main } }} onClick={props.onAddPropertyClick}>
-                <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
-              </Button>
-            </Stack>
-    
-            <Box sx={{ padding: "10px" }}>
-              {LHS === "Rent" && isDataReady === true ? (
-                <Box sx={{ marginTop: "20px" }}>
-                  <Grid item xs={12} md={12}>
-                    <PMRent setLHS={setLHS} onPropertyInRentWidgetClicked={onPropertyInRentWidgetClicked} setInitialPropInRent={setInitialPropInRent} />
-                  </Grid>
-                </Box>
-              ) : (
-                <>
-                  <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ position: "relative" }}>
+            ) : (
+              <>
+                <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ position: "relative" }}>
                   {/* New Buttons */}
-                    <Box sx={{ display: "flex", width: "100%", alignItems: "center", justifyContent: "space-between", padding: "0px 10px" }}>
-                      <Button
-                        onClick={sortByZip}
-                        sx={{
-                          background: "#3D5CAC",
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                          cursor: "pointer",
-                          textTransform: "none",
-                          minWidth: "100px", // Fixed width for the button
-                          minHeight: "35px",
-                        }}
-                        size='small'
-                      >
-                        Zip
-                      </Button>
-                      <Button
-                        onClick={sortByAddress}
-                        variant='outlined'
-                        sx={{
-                          background: "#3D5CAC",
-                          color: theme.palette.background.default,
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                          cursor: "pointer",
-                          textTransform: "none",
-                          minWidth: "100px", 
-                          minHeight: "35px",
-                        }}
-                        size='small'
-                      >
-                        Address
-                      </Button>
-                      <Button
-                        onClick={sortByStatus}
-                        sx={{
-                          background: "#3D5CAC",
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                          cursor: "pointer",
-                          textTransform: "none",
-                          minWidth: "100px", // Fixed width for the button
-                          minHeight: "35px",
-                        }}
-                        size='small'
-                      >
-                        Rent Status
-                      </Button>
-                    </Box>
-                  </Stack>
-                  <PropertiesSearch propertyList={propertyList} setFilteredItems={setDisplayedItems} sx={{ width: "100%" }} />
-    
-                  <Box sx={{ marginTop: "20px" }}>
+                  <Box sx={{ display: "flex", width: "100%", alignItems: "center", justifyContent: "space-between", padding: "0px 10px" }}>
+                    <Button
+                      onClick={sortByZip}
+                      sx={{
+                        background: "#3D5CAC",
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                        cursor: "pointer",
+                        textTransform: "none",
+                        minWidth: "100px", // Fixed width for the button
+                        minHeight: "35px",
+                      }}
+                      size='small'
+                    >
+                      Zip
+                    </Button>
+                    <Button
+                      onClick={sortByAddress}
+                      variant='outlined'
+                      sx={{
+                        background: "#3D5CAC",
+                        color: theme.palette.background.default,
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                        cursor: "pointer",
+                        textTransform: "none",
+                        minWidth: "100px",
+                        minHeight: "35px",
+                      }}
+                      size='small'
+                    >
+                      Address
+                    </Button>
+                    <Button
+                      onClick={sortByStatus}
+                      sx={{
+                        background: "#3D5CAC",
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                        cursor: "pointer",
+                        textTransform: "none",
+                        minWidth: "100px", // Fixed width for the button
+                        minHeight: "35px",
+                      }}
+                      size='small'
+                    >
+                      Rent Status
+                    </Button>
+                  </Box>
+                </Stack>
+                <PropertiesSearch propertyList={propertyList} setFilteredItems={setDisplayedItems} sx={{ width: "100%" }} />
+
+                <Box sx={{ marginTop: "20px" }}>
                   <DataGrid
                     getRowHeight={() => "auto"}
                     rows={rows}
@@ -615,7 +612,7 @@ export default function PropertiesList(props) {
                     // pageSizeOptions={[15, 20, 25]}
                     // pageSize={pageSize}
                     // page={page}
-                    // pagination                    
+                    // pagination
                     // onPaginationModelChange={(newModel) => {
                     //   setPage(newModel.page || 0);
                     //   setPageSize(newModel.pageSize || 15);
@@ -649,8 +646,7 @@ export default function PropertiesList(props) {
                         backgroundColor: "#ffffff !important",
                       },
                       [`& .${gridClasses.row}`]: {
-                        bgcolor: (row) =>
-                          row.id === propertyIndex ? "#ffffff" : theme.palette.form.main, // White for selected row
+                        bgcolor: (row) => (row.id === propertyIndex ? "#ffffff" : theme.palette.form.main), // White for selected row
                         "&:before": {
                           content: '""',
                           display: "block",
@@ -667,13 +663,12 @@ export default function PropertiesList(props) {
                       },
                     }}
                   />
-
-                  </Box>
-                </>
-              )}
-            </Box>
-          </Paper>
-        </Box>
-      </Grid>
-    );    
+                </Box>
+              </>
+            )}
+          </Box>
+        </Paper>
+      </Box>
+    </Grid>
+  );
 }

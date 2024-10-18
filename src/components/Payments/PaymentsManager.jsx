@@ -388,10 +388,10 @@ export default function PaymentsManager(props) {
         setTotalTransactions(total);
 
         const dataByProperty = groupDataByKey(dataWithIndex, "pur_property_id", false)
-        // const dataByOwner = groupDataByKey(dataWithIndex, "pur_receiver", true)
+        const dataByOwner = groupDataByKey(dataWithIndex, "pur_receiver", true)
         console.log("---dhyey--- successfully filter data - ", dataByProperty);
         setTransactionDataByProeprty(dataByProperty)
-        // setTransactionDataByOwner(dataByOwner)
+        setTransactionDataByOwner(dataByOwner)
 
 
       // totalMoneyPaidUpdate(moneyPaidData);      
@@ -749,7 +749,7 @@ export default function PaymentsManager(props) {
                           </>
                         ))
                       )} */}
-                      {/* {tab === "by_owner" && (
+                      {tab === "by_owner" && (
                         Object.keys(transactionDataByOwner)?.map((ownerID, index) => (
                           <React.Fragment key={ownerID}>
                             <br />
@@ -798,7 +798,7 @@ export default function PaymentsManager(props) {
                             <br />
                           </React.Fragment>
                         ))
-                      )} */}
+                      )}
                     </Stack>
                   </Paper>
                 )}
@@ -1229,13 +1229,25 @@ function TransactionsTable(props) {
     if (removedRows.length > 0) {
       // console.log("Removed rows: ", removedRows);
       let removedPayments = [];
+      let relatedRows = [];
+
       removedRows.forEach((item, index) => {
         let removedPayment = paymentDueResult.find((row) => row.index === item);
+        let relatedPayments = []
+
+        if(removedPayment){
+          relatedPayments = paymentDueResult.filter((row) => row.pur_group === removedPayment.pur_group);
+          relatedRows = relatedPayments.map((payment) => payment.index);
+        }
 
         removedPayments.push(removedPayment);
+        removedPayments.push(relatedPayments)
       });
       // console.log("removedPayments - ", removedPayments);
-      setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.payment_uid)));
+      const allRowRemove = [...new Set([...removedRows, ...relatedRows])];
+
+      updatedRowSelectionModel = updatedRowSelectionModel.filter((payment) => !allRowRemove.includes(payment));
+      setSelectedPayments((prevState) => prevState.filter((payment) => !allRowRemove.includes(payment.index)));
     }
     // setSelectedRows(newRowSelectionModel);
     setSelectedRows(updatedRowSelectionModel);
