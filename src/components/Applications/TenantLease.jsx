@@ -1236,6 +1236,7 @@ useEffect(() => {
             <Typography variant="h6" sx={{ fontWeight: "bold" }}>Occupancy Details</Typography>
           </AccordionSummary>
           <AccordionDetails>
+          <Box sx={{ padding: "10px", overflowX: "auto" }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>Adults</Typography>
@@ -1254,6 +1255,7 @@ useEffect(() => {
                 <VehiclesDataGrid data={leaseVehicles} />
               </Grid>
             </Grid>
+            </Box>
           </AccordionDetails>
         </Accordion>
         </Paper>
