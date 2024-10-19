@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditable }) => {
+const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditable, isMobile }) => {
     const { getList, } = useContext(ListsContext);	
 	const feeBases = getList("basis");
 	const feeFrequencies = getList("frequency");	
@@ -386,11 +386,12 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
                                     color: "#160449",
                                     fontWeight: theme.typography.primary.fontWeight,
                                     fontSize: theme.typography.small,
-                                    textAlign: 'center',
+                                    width: "100%",
+                                    textAlign: isMobile? "left" : 'center',
                                     paddingBottom: "10px",
                                     paddingTop: "5px",
                                     flexGrow: 1,
-                                    paddingLeft: "50px"
+                                    paddingLeft: isMobile ? "5px" : "50px"
                                 }}
                             >
                                 Fee Details
