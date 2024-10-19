@@ -43,7 +43,7 @@ import ReturnButtonIcon from '../Property/refundIcon.png';
 import APIConfig from '../../utils/APIConfig';
 import ListsContext from "../../contexts/ListsContext";
 
-export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem, newTenantMaintenanceState, setRightPane, setReload}){   
+export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem, newTenantMaintenanceState, setRightPane, setReload, isMobile, setViewRHS}){   
     console.log("---closeAddTenantMaintenanceItem---", closeAddTenantMaintenanceItem); 
     const location = useLocation();
     let navigate = useNavigate();
@@ -123,6 +123,9 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
 
     const handleBackButton = () => {
         console.log("handleBackButton");
+        if(isMobile){
+            setViewRHS(false)
+        }
         setRightPane("");
     }
 

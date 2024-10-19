@@ -55,7 +55,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { useMaintenance } from '../../contexts/MaintenanceContext';
 import ListsContext from '../../contexts/ListsContext';
 
-export default function EditMaintenanceItem({setRefersh, setRightPane, maintenanceRequest, propertyAddress}) {
+export default function EditMaintenanceItem({setRefersh, setRightPane, maintenanceRequest, propertyAddress, setViewRHS}) {
 	console.log("inside edit component");
 	const location = useLocation();
 	const { getList, } = useContext(ListsContext);	
@@ -269,7 +269,10 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 
 	const handleBackButton = () => {
 		console.log('handleBackButton');
-		if(isMobile){navigate(-1);
+		if(isMobile){
+			setViewRHS(false)
+			// navigate(-1);
+			setRightPane("");
         } else {
 			if(selectedRole === "TENANT"){
 

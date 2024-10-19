@@ -249,7 +249,7 @@ export default function OwnerDashboard() {
                     </IconButton>
                   </Box>
                   <Box sx={{ paddingTop: "10px" }}>
-                    <Announcements sentAnnouncementData={announcementSentData} recvAnnouncementData={announcementRecvData}/>
+                    <Announcements sentAnnouncementData={announcementSentData} recvAnnouncementData={announcementRecvData} />
                   </Box>
                 </Grid>)}
               </>

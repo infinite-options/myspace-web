@@ -10,10 +10,11 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import theme from "../../theme/theme";
 import dayjs from 'dayjs';
 import { useUser } from "../../contexts/UserContext";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import APIConfig from "../../utils/APIConfig";
 import axios from 'axios'; 
 
-const TenantEndLeaseButton = ({ leaseDetails, setRightPane }) => {
+const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS }) => {
     const [open, setOpen] = useState(false);
     const {getProfileId } = useUser();
     const [confirmationText, setConfirmationText] = useState("");
@@ -80,6 +81,9 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane }) => {
     const handleConfirm = () => {
         handleEndLease();
         setOpen(false);
+        if(isMobile){
+            setViewRHS(false)
+        }
         setRightPane("");
     };
 
@@ -107,6 +111,9 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane }) => {
     };
 
     const handleCancel = () => {
+        if(isMobile){
+            setViewRHS(false)
+        }
         setRightPane("");
     };
 
@@ -152,13 +159,20 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane }) => {
             });
     };
 
+    const handleBack = () => {
+        if(isMobile){
+          setViewRHS(false)
+        }
+        setRightPane("");
+      };
+
     return (
         <Box
             style={{
                 display: "flex",
                 justifyContent: "center",
                 width: "100%",
-                height: "100%",
+                // height: "100%",
             }}
         >
             <Paper
@@ -172,7 +186,16 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane }) => {
                     <CircularProgress color="inherit" />
                 </Backdrop>
                 <Grid container sx={{ marginTop: '1px', marginBottom: '15px', alignItems: 'center', justifyContent: 'center' }} rowSpacing={4}>
-                    <Grid item xs={12} md={12}>
+                    <Grid item xs={12} md={12} display={"flex"} direction={"row"} justifyContent={"center"}>
+                        {isMobile && (<Button onClick={handleBack}>
+                            <ArrowBackIcon
+                                sx={{
+                                color: theme.typography.common.blue,
+                                fontSize: "25px",
+                                // margin: "5px",
+                                }}
+                            />
+                        </Button>)}
                         <Typography
                             sx={{
                                 color: "#160449",
@@ -188,6 +211,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane }) => {
                     <Grid item xs={12} md={12}>
                         <Typography
                             sx={{
+                                ...(isMobile? {padding: "2px"} : {}),
                                 color: "#160449",
                                 fontWeight: theme.typography.primary.fontWeight,
                                 fontSize: theme.typography.smallFont,
@@ -216,7 +240,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane }) => {
                         </Box>
                     )}
                     <Grid item xs={12} md={12}>
-                        <Paper sx={{ padding: "10px", backgroundColor: color, width: '95%', margin: '10px 10px 0px 10px' }} >
+                        <Paper sx={{ padding: "10px", backgroundColor: color, width: '95%', margin: isMobile ? "10px 10px 0px 0px" : '10px 10px 0px 10px' }} >
                             <FormControl sx={{ width: '100%' }}>
                                 <RadioGroup
                                     aria-labelledby="demo-controlled-radio-buttons-group"
@@ -250,7 +274,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane }) => {
                     </Grid>
 
                     <Grid item xs={12} md={12}>
-                        <Paper sx={{ padding: "10px", backgroundColor: color, width: '95%', margin: '10px 10px 0px 10px' }} >
+                        <Paper sx={{ padding: "10px", backgroundColor: color, width: '95%', margin: isMobile ? "10px 10px 0px 0px" : '10px 10px 0px 10px' }} >
                             <FormControl sx={{ width: '100%' }}>
                                 <RadioGroup
                                     aria-labelledby="demo-controlled-radio-buttons-group"
@@ -324,7 +348,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane }) => {
                     </Grid>
 
                     <Grid item xs={12} md={12}>
-                        <Paper sx={{ padding: "10px", backgroundColor: color, width: '95%', margin: '10px 10px 0px 10px' }} >
+                        <Paper sx={{ padding: "10px", backgroundColor: color, width: '95%', margin: isMobile ? "10px 10px 0px 0px" : '10px 10px 0px 10px'}} >
                             <FormControl sx={{ width: '100%' }}>
                                 <RadioGroup
                                     aria-labelledby="demo-controlled-radio-buttons-group"
@@ -358,7 +382,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane }) => {
                     </Grid>
                 </Grid>
 
-                <Grid container sx={{ marginBottom: "5px", alignItems: "center", marginTop: '10px' }}>
+                <Grid container sx={{ marginBottom: "5px", alignItems: "center", marginTop: isMobile ? "20px" : "10px"}}>
                     <Grid item xs={3} />
                     <Grid item xs={2}>
                         <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC" }}>Move-Out Date</Typography>
@@ -376,7 +400,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane }) => {
                     </Grid>
                 </Grid>
 
-                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '10px' }}>
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '10px', marginTop: isMobile ? "20px" : "0px"}}>
                     <Button
                         sx={{
                             marginRight: '5px', background: "#D4736D",

@@ -12,6 +12,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import defaultPropertyImage from "./paintedLadies.jpeg";
 import PropertiesMap from "../Maps/PropertiesMap";
 import APIConfig from "../../utils/APIConfig";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
 
 const SearchBar = ({ propertyList, setFilteredItems, ...props }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -277,7 +279,7 @@ const FilterButtons = ({ propertyList, filteredItems, setFilteredItems, ...props
   );
 };
 
-const PropertyListings = ({ setRightPane }) => {
+const PropertyListings = ({ setRightPane, isMobile, setViewRHS }) => {
   const [propertyData, setPropertyData] = useState([]);
   const [userLeases, setUserLeases] = useState([]);
   const [tenantLeaseDetails, setTenantLeaseDetails] = useState([]);
@@ -337,6 +339,13 @@ const PropertyListings = ({ setRightPane }) => {
     setDisplayProperties(sortedProperties);
   };
 
+  const handleBack = () => {
+    if(isMobile){
+      setViewRHS(false)
+    }
+    setRightPane("");
+  };
+
 
   return (
     <div>
@@ -375,6 +384,15 @@ const PropertyListings = ({ setRightPane }) => {
             }}
           >
             <Stack direction='row' justifyContent='center' alignItems='center' position='relative' sx={{ paddingBottom: "25px", paddingTop: "15px" }}>
+              {isMobile && (<Button onClick={handleBack}>
+                <ArrowBackIcon
+                  sx={{
+                    color: theme.typography.common.blue,
+                    fontSize: "30px",
+                    margin: "5px",
+                  }}
+                />
+              </Button>)}
               <Box direction='row' justifyContent='center' alignItems='center'>
                 <Typography
                   sx={{
@@ -399,13 +417,13 @@ const PropertyListings = ({ setRightPane }) => {
                   sx={{
                     color: theme.typography.common.blue,
                     fontWeight: theme.typography.common.fontWeight,
-                    fontSize: theme.typography.largeFont,
+                    ...(isMobile ? {}  : {fontSize: theme.typography.largeFont,}),
                   }}
                 >
                   Map
                   <LocationOn
                     sx={{
-                      fontSize: theme.typography.largeFont,
+                      ...(isMobile ? {}  : {fontSize: theme.typography.largeFont,}),
                     }}
                   />
                 </Typography>
@@ -415,13 +433,13 @@ const PropertyListings = ({ setRightPane }) => {
                   sx={{
                     color: theme.typography.common.blue,
                     fontWeight: theme.typography.common.fontWeight,
-                    fontSize: theme.typography.largeFont,
+                    ...(isMobile ? {}  : {fontSize: theme.typography.largeFont,}),
                   }}
                 >
                   Saved Search
                   <TurnedInNot
                     sx={{
-                      fontSize: theme.typography.largeFont,
+                      ...(isMobile ? {}  : {fontSize: theme.typography.largeFont,}),
                     }}
                   />
                 </Typography>

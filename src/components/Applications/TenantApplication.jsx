@@ -545,6 +545,9 @@ export default function TenantApplication(props) {
 
   const handleCloseButton = (e) => {
     e.preventDefault();
+    if(props.isMobile){
+      props.setViewRHS(false)
+    }
     props.setRightPane?.("");
   };
 
