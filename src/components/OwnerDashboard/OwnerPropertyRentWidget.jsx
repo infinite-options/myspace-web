@@ -109,7 +109,7 @@ export default function OwnerPropertyRentWidget(props) {
               <Pie
                 data={data}
                 // cx={70}
-                cx={isMediumScreen ? 135 : 70}
+                cx={isMediumScreen ? 200 : 70}
                 // cy={78}
                 cy={isMediumScreen ? 48 : 100}
                 innerRadius={55}
@@ -166,7 +166,7 @@ export default function OwnerPropertyRentWidget(props) {
               />
 
               <text
-                x={isMediumScreen ? 155 : 120}
+                x={isMediumScreen ? 220 : 120}
                 y={isMediumScreen ? 93 : 145}
                 textAnchor='middle'
                 dominantBaseline='middle'
@@ -180,7 +180,7 @@ export default function OwnerPropertyRentWidget(props) {
                 onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
               >
                 View all {totalPropertiesCount}
-                <tspan x={isMediumScreen ? 155 : 120} y={isMediumScreen ? 105 : 157}>
+                <tspan x={isMediumScreen ? 220 : 120} y={isMediumScreen ? 105 : 157}>
                   properties 98
                 </tspan>
               </text>

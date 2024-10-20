@@ -136,13 +136,12 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
     }
 
     // return tenantPayment.verified ? tenantPayment.verified : "unverified";
-    return getVerificationForTenantPayment(tenantPayment)
+    return getVerificationForTenantPayment(tenantPayment);
   };
 
   async function fetchCashflowTransactions(userProfileId, month, year) {
     setShowSpinner(true);
     try {
-
       const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowTransactions/${userProfileId}/new`);
       // console.log("Manager Cashflow Data: ", cashflow.data);
       setShowSpinner(false);
@@ -151,23 +150,21 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
       console.error("Error fetching cashflow data:", error);
       setShowSpinner(false);
     }
-}
+  }
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchCashflowTransactions(profileId)
-        .then((data) => {        
-          const dataWithIndex = data?.map((item, index) => (
-            {
-              ...item,
-              'index': index,
-            }
-          ))
-          setTransactionsData(dataWithIndex);        
-        })
-        .catch((error) => {
+      .then((data) => {
+        const dataWithIndex = data?.map((item, index) => ({
+          ...item,
+          index: index,
+        }));
+        setTransactionsData(dataWithIndex);
+      })
+      .catch((error) => {
         console.error("Error fetching cashflow data:", error);
-        });  
-  },[])
+      });
+  }, []);
   //   useEffect(() => {
   //     console.log("rentsByProperty - ", rentsByProperty);
   //   }, [rentsByProperty]);
@@ -488,7 +485,6 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
     setSelectedPayment({ paymentData: paymentData, total: parseFloat(total.toFixed(1)), selectedItems: [], paymentMethodInfo: {} });
 
     setCurrentWindow("SELECT_PAYMENT");
-
   };
 
   return (
@@ -525,7 +521,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
               >
                 {/* Back button */}
                 <Button
-                  onClick={() => navigate(-1)} 
+                  onClick={() => navigate(-1)}
                   startIcon={<ArrowBackIcon />}
                   sx={{
                     marginTop: "10px",
@@ -533,8 +529,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
                     fontWeight: "bold",
                     fontSize: "16px",
                   }}
-                >
-                </Button>
+                ></Button>
                 <Stack direction='row' justifyContent='center'>
                   <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
                     {month} {year} Transactions
@@ -766,18 +761,20 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
   );
 }
 
-const VerifiedButton = ({ isVerified, isPaid, isPayable, purGroup, }) => {
+const VerifiedButton = ({ isVerified, isPaid, isPayable, purGroup }) => {
   const navigate = useNavigate();
   return (
     <Button
       onClick={() => {
-        console.log("ROHIT - purGroup - ", purGroup)
+        // console.log("ROHIT - purGroup - ", purGroup)
         const propertyID = purGroup.transactions[0]?.pur_property_id;
-        console.log("ROHIT - propertyID - ", propertyID)
+        // console.log("ROHIT - propertyID - ", propertyID)
         if (!isVerified) {
-          navigate("/paymentVerification", {state: {
-            propertyID: propertyID,
-          }});
+          navigate("/paymentVerification", {
+            state: {
+              propertyID: propertyID,
+            },
+          });
         }
       }}
       sx={{

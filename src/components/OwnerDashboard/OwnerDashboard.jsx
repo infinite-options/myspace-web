@@ -74,6 +74,7 @@ export default function OwnerDashboard() {
   const [announcementRecvData, setAnnouncementRecvData] = useState([])
 
   const [view, setView] = useState("dashboard");
+  const [viewRHS, setViewRHS] = useState(false)
   const [showReferralWelcomeDialog, setShowReferralWelcomeDialog] = useState(false);
   // console.log("getProfileId()", getProfileId());
   useEffect(() => {
@@ -215,7 +216,10 @@ export default function OwnerDashboard() {
                                 fontWeight: "bold",
                                 cursor: "pointer"
                               }}
-                              onClick={() => setView("announcements")}
+                              onClick={() => {
+                                isMobile ? setViewRHS(true) : setViewRHS(false)
+                                setView("announcements")
+                              }}
                             >
                               {isMobile ? `(${announcementRecvData.length + announcementSentData.length})` : `View all (${announcementRecvData.length + announcementSentData.length})`}
                             </Box>
@@ -235,10 +239,10 @@ export default function OwnerDashboard() {
               </>
             ) : (
               <>
-                <Grid item xs={12} md={4}>
+                {(!isMobile || !viewRHS) && (<Grid item xs={12} md={4}>
                   <CashflowWidget page={"OwnerDashboard"} data={cashflowStatusData} allProperties={propertList} originalData={cashflowStatusData}/>
-                </Grid>
-                <Grid item xs={12} md={8}>
+                </Grid>)}
+                {(!isMobile || viewRHS) && (<Grid item xs={12} md={8}>
                   <Box sx={{ display: "flex", alignItems: "center", paddingTop: "10px" }}>
                     <IconButton onClick={() => setView("dashboard")} sx={{ marginRight: "10px" }}>
                       <ArrowBackIcon />
@@ -247,7 +251,7 @@ export default function OwnerDashboard() {
                   <Box sx={{ paddingTop: "10px" }}>
                     <Announcements sentAnnouncementData={announcementSentData} recvAnnouncementData={announcementRecvData}/>
                   </Box>
-                </Grid>
+                </Grid>)}
               </>
             )}
           </Grid>

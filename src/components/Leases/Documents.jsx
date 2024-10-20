@@ -119,7 +119,7 @@ const Documents = ({ fromRenew, documents, setDocuments, setDeleteDocsUrl, setIs
 
     //update setDocuments
     if (isEditing === true) {
-      // console.log("current row is", currentRow);
+      console.log("current row is", currentRow);
       
       // remove id of currentRow before adding to it
       // const docswithoutid = currentRow.map(({ id, ...rest }) => rest);

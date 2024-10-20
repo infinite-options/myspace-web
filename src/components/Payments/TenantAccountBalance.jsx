@@ -37,6 +37,9 @@ const TenantAccountBalance = ({
   onPaymentHistoryNavigate,
   handleMakePayment,
   setRightPane,
+  isMobile,
+  viewRHS,
+  setViewRHS,
   from,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -143,6 +146,9 @@ const TenantAccountBalance = ({
 
   const handlePropertySelect = (property) => { // 1
     if (property.lease_status) {
+    if(isMobile){
+      setViewRHS(false)
+    }
     setSelectedProperty(property);
     handleClose();
     }
@@ -330,7 +336,7 @@ const TenantAccountBalance = ({
         )}  
 
         {/* Payment or Application Button */}
-        {from !== "selectPayment" && (
+        {(!isMobile || !viewRHS) && (from !== "selectPayment") && (
           <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", margin: "20px" }}>
             <Button
               variant='contained'
@@ -360,7 +366,7 @@ const TenantAccountBalance = ({
         )}
 
         {/* Balance Details */}
-        {balanceDue > 0 && !(leaseDetails?.lease_status === "NEW" || leaseDetails?.lease_status === "PROCESSING") && (
+        {(!isMobile || !viewRHS) && balanceDue > 0 && !(leaseDetails?.lease_status === "NEW" || leaseDetails?.lease_status === "PROCESSING") && (
           <>
             <Typography sx={{ fontSize: "18px", fontWeight: "bold", color: "#160449", padding: "3px" }}>Balance Details</Typography>
             <Box sx={{ padding: "10px", maxHeight: "200px", overflowY: "auto", width: "100%", backgroundColor: "#f0f0f0", overflowX: "auto" }}>
@@ -392,7 +398,7 @@ const TenantAccountBalance = ({
           </>
         )}
 
-        {leaseDetails?.lease_status === "PROCESSING" && (
+        {(!isMobile || !viewRHS) && leaseDetails?.lease_status === "PROCESSING" && (
           <Button
             variant='contained'
             sx={{
@@ -427,7 +433,7 @@ const TenantAccountBalance = ({
       )} */}
 
         {/* Payment History Button */}
-        {from !== "selectPayment" && leaseDetails?.lease_status === "ACTIVE" && (
+        {(!isMobile || !viewRHS) && from !== "selectPayment" && leaseDetails?.lease_status === "ACTIVE" && (
           <Box sx={{ display: "flex", justifyContent: "center", marginTop: "10px" }}>
             <Button
               variant='outlined'
@@ -453,7 +459,7 @@ const TenantAccountBalance = ({
           </Box>
         )}
 
-        {from === "selectPayment" && (
+        {(!isMobile || !viewRHS) && from === "selectPayment" && (
           <Box sx={{ display: "flex", justifyContent: "center", marginTop: "10px" }}>
             <Button
               variant='outlined'
@@ -480,7 +486,7 @@ const TenantAccountBalance = ({
         )}
       </Box>
           {/* Payment Details and Management Details for NEW or PROCESSING status */}
-        {(leaseDetails?.lease_status === "NEW" || leaseDetails?.lease_status === "PROCESSING") && (
+        {(!isMobile || !viewRHS) && (leaseDetails?.lease_status === "NEW" || leaseDetails?.lease_status === "PROCESSING") && (
         <Box sx={{padding: "10px"}}>
           <Typography variant='h6' sx={{ fontWeight: "bold", color: "#160449", marginBottom: "20px", fontSize: "20px", textAlign: "center" }}>
             Rent Details

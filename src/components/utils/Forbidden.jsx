@@ -9,7 +9,7 @@ const Forbidden = () => {
   const { user} = useUser();
 
   useEffect(() => {
-    if(user){
+    if(user){ // added if statement for safari
       window.location.reload();
     }
   }, [user]);
