@@ -32,7 +32,7 @@ export default function TenantApplication(props) {
   const [property, setProperty] = useState([]);
   const [status, setStatus] = useState("");
   const [lease, setLease] = useState([]);
-  console.log("in tenant application status", status);
+  // console.log("in tenant application status", status);
   // console.log("lease", lease);
   // console.log("property", property);
 
@@ -117,7 +117,7 @@ export default function TenantApplication(props) {
     };
   
     fetchData();
-  }, [props.data]);
+  }, [props.data, props.reload]);
   
 
   const [showWithdrawLeaseDialog, setShowWithdrawLeaseDialog] = useState(false);
@@ -249,7 +249,7 @@ export default function TenantApplication(props) {
       const data = await response.json();
       const tenantProfileData = data.profile.result[0];
       setTenantProfile(tenantProfileData);
-      console.log("tenantProfileData", tenantProfileData);
+      // console.log("tenantProfileData", tenantProfileData);
     };
     getTenantProfileInformation();
   }, []);
@@ -352,7 +352,7 @@ export default function TenantApplication(props) {
 
   function formatDate(dateString) {
     const date = new Date(dateString);
-    console.log('check date', dateString, date)
+    // console.log('check date', dateString, date)
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     const year = date.getFullYear();
@@ -372,7 +372,7 @@ export default function TenantApplication(props) {
     // console.log("Application Submitted")
     // console.log("should call /annoucements")
     // console.log("should call /leases")
-    console.log("lease status", status);
+    // console.log("lease status", status);
     try {
       let date = new Date();
 
@@ -726,83 +726,85 @@ export default function TenantApplication(props) {
             </Box>
 
             <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  paddingTop: "10px",
-                  marginTop: "20px",
-                  marginBottom: "7px",
-                  width: "100%",
-                }}
-              >
-                {(status == null || status === "" || status === "REJECTED" || status === "RESCIND" || status === "RENEW") &&
-                  <Button
-                    variant='contained'
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                paddingTop: "10px",
+                marginTop: "20px",
+                marginBottom: "7px",
+                width: "100%",
+              }}
+            >
+              {(status == null || status === "" || status === "REJECTED" || status === "RESCIND" || status === "RENEW") && (
+                <Button
+                  variant="contained"
+                  sx={{
+                    backgroundColor: "#9EAED6",
+                    textTransform: "none",
+                    borderRadius: "5px",
+                    display: "flex",
+                    width: "45%",
+                    marginRight: "10px",
+                  }}
+                  onClick={() => handleApplicationSubmit()}
+                >
+                  <Typography
                     sx={{
-                      backgroundColor: "#9EAED6",
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: "14px",
+                      color: "#FFFFFF",
                       textTransform: "none",
-                      borderRadius: "5px",
-                      display: "flex",
-                      width: "45%",
-                      marginRight: "10px"
                     }}
-                    onClick={() => handleApplicationSubmit()}
                   >
-                    <Typography
-                      sx={{
-                        fontWeight: theme.typography.primary.fontWeight,
-                        fontSize: "14px",
-                        color: "#FFFFFF",
-                        textTransform: "none",
-                      }}
-                    >
-                      Submit
-                    </Typography>
-                  </Button>}
-                {(status == null || status === "" || status === "NEW" || status === "REJECTED" || status === "RESCIND" || status === "RENEW" || status === "RENEW NEW") &&
-                  <Button
-                    variant='contained'
-                    sx={{
-                      backgroundColor: "#CB8E8E",
-                      textTransform: "none",
-                      borderRadius: "5px",
-                      display: "flex",
-                      width: "45%",
-                    }}
-                    onClick={() =>
-                      props.setRightPane({
-                        type: "tenantApplicationEdit",
-                        state: {
-                          profileData: tenantProfile,
-                          lease: lease ? lease : [],
-                          lease_uid: lease.length > 0 ? lease[0].lease_uid : null,
-                          setRightPane: props.setRightPane,
-                          property: property,
-                          from: props.from,
-                          tenantDocuments: tenantDocuments,
-                          setTenantDocuments: setTenantDocuments,
-                          oldVehicles: vehicles,
-                          setOldVehicles: setVehicles,
-                          adultOccupants: adultOccupants,
-                          setAdultOccupants: setAdultOccupants,
-                          petOccupants: petOccupants,
-                          setPetOccupants: setPetOccupants,
-                          childOccupants: childOccupants,
-                          setChildOccupants: setChildOccupants,
-                          extraUploadDocument: extraUploadDocument,
-                          setExtraUploadDocument: setExtraUploadDocument,
-                          extraUploadDocumentType: extraUploadDocumentType,
-                          setExtraUploadDocumentType: setExtraUploadDocumentType,
-                          deleteDocuments: deleteDocuments,
-                          selectedJobs: selectedJobs,  
-                          setSelectedJobs: setSelectedJobs, 
-                          status: status,
-                        },
-                      })
-                    }
-                  >
+                    Submit
+                  </Typography>
+                </Button>
+              )}
+              
+              {(status == null || status === "" || status === "NEW" || status === "REJECTED" || status === "RESCIND" || status === "RENEW" || status === "RENEW NEW") && (
+                <Button
+                  variant="contained"
+                  sx={{
+                    backgroundColor: "#CB8E8E",
+                    textTransform: "none",
+                    borderRadius: "5px",
+                    display: "flex",
+                    width: "45%",
+                  }}
+                  onClick={() =>
+                    props.setRightPane({
+                      type: "tenantApplicationEdit",
+                      state: {
+                        profileData: tenantProfile,
+                        lease: lease ? lease : [],
+                        lease_uid: lease.length > 0 ? lease[0].lease_uid : null,
+                        setRightPane: props.setRightPane,
+                        property: property,
+                        from: props.from,
+                        tenantDocuments: tenantDocuments,
+                        setTenantDocuments: setTenantDocuments,
+                        oldVehicles: vehicles,
+                        setOldVehicles: setVehicles,
+                        adultOccupants: adultOccupants,
+                        setAdultOccupants: setAdultOccupants,
+                        petOccupants: petOccupants,
+                        setPetOccupants: setPetOccupants,
+                        childOccupants: childOccupants,
+                        setChildOccupants: setChildOccupants,
+                        extraUploadDocument: extraUploadDocument,
+                        setExtraUploadDocument: setExtraUploadDocument,
+                        extraUploadDocumentType: extraUploadDocumentType,
+                        setExtraUploadDocumentType: setExtraUploadDocumentType,
+                        deleteDocuments: deleteDocuments,
+                        selectedJobs: selectedJobs,
+                        setSelectedJobs: setSelectedJobs,
+                        status: status,
+                      },
+                    })
+                  }
+                >
                   <Typography
                     sx={{
                       fontWeight: theme.typography.primary.fontWeight,
@@ -814,9 +816,42 @@ export default function TenantApplication(props) {
                     Edit
                   </Typography>
                 </Button>
-                }
+              )}
+
+              {(status === "NEW" || status === "RENEW NEW") && (
+                <Button
+                  variant="contained"
+                  sx={{
+                    backgroundColor: "#ffe230",
+                    color: "#160449",
+                    fontWeight: theme.typography.medium.fontWeight,
+                    fontSize: "14px",
+                    textTransform: "none",
+                    borderRadius: "5px",
+                    display: "flex",
+                    width: "45%",
+                    marginLeft: "10px",
+                    ":hover": {
+                      color: "white",
+                    },
+                  }}
+                  onClick={() => setShowWithdrawLeaseDialog(true)}
+                >
+                  <Typography
+                    sx={{
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: "14px",
+                      color: "#160449",
+                      textTransform: "none",
+                    }}
+                  >
+                    Withdraw
+                  </Typography>
+                </Button>
+              )}
             </Box>
 
+{/* 
             {status && (status === "NEW" || status === "RENEW NEW") ? (
                 <>
                   <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
@@ -841,7 +876,7 @@ export default function TenantApplication(props) {
                     </Button>
                   </Grid>
                 </>
-            ) : null}
+            ) : null} */}
             
             {showWithdrawLeaseDialog && (
                 <Dialog
@@ -1032,6 +1067,7 @@ export const VehicleDataGrid = ({ vehicles }) => {
 }
 
 export const EmploymentDataGrid = ({ tenantProfile, selectedJobs, setSelectedJobs, leaseStatus, lease }) => {
+  console.log("lease", lease);
   const employmentData =
     leaseStatus === "PROCESSING" || leaseStatus === "ACTIVE" || leaseStatus === "NEW"
       ? (lease?.[0]?.lease_income ? JSON.parse(lease[0].lease_income) : [])

@@ -178,10 +178,15 @@ const TenantDashboard = () => {
   }, [reload]);
 
   useEffect(() => {
+    console.log("propertydata test", propertyListingData.lease_status);
     if (propertyListingData.length > 0 && !selectedProperty) {
-      const firstProperty = propertyListingData[0];
-      setSelectedProperty(firstProperty);
-      handleSelectProperty(firstProperty);
+      // const firstProperty = propertyListingData[0];
+      const firstProperty = propertyListingData.find((property) => property.lease_status !== null);
+      console.log("first property", firstProperty);
+      if (firstProperty) {
+        setSelectedProperty(firstProperty);
+        handleSelectProperty(firstProperty);
+      }
     }
   }, [propertyListingData]);
 
