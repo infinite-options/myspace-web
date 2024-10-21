@@ -714,11 +714,12 @@ export default function PMQuotesRequested(props) {
   };
 
   const viewAllProperties = () => {
-    if (isDesktop) {
-      handleBackClick();
-    } else {
-      navigate(-1);
-    }
+    // if (isDesktop) {
+    //   handleBackClick();
+    // } else {
+    //   navigate(-1);
+    // }
+    handleBackClick();
   };
 
   const handleDialogClose = () => {
@@ -1644,16 +1645,19 @@ export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee, handle
   // console.log("-- inside fee data grid - ", rowsWithId);
 
   return (
-    <DataGrid
-      rows={rowsWithId}
-      columns={columns}
-      sx={{        
-        marginTop: "10px",
-      }}
-      autoHeight
-      rowHeight={50} 
-      hideFooter={true}
-    />
+    <Box sx={{width: "100%", overflowX: "auto"}}>
+      <DataGrid
+        rows={rowsWithId}
+        columns={columns}
+        sx={{
+          minWidth: "600px",        
+          marginTop: "10px",
+        }}
+        autoHeight
+        rowHeight={50} 
+        hideFooter={true}
+      />
+    </Box>
   );
 };
 
@@ -1744,16 +1748,19 @@ const LocationsDataGrid = ({ data }) => {
 
   return (
     <>
-      <DataGrid
-        rows={data}
-        getRowId={(fee) => fee.id}
-        columns={columns}
-        sx={{
-          // border: "0px",
-          marginTop: '10px',
-        }}
-        hideFooter={true}
-      />
+      <Box sx={{width: "100%", overflowX: "auto"}}>
+        <DataGrid
+          rows={data}
+          getRowId={(fee) => fee.id}
+          columns={columns}
+          sx={{
+            // border: "0px",
+            minWidth: "600px",
+            marginTop: '10px',
+          }}
+          hideFooter={true}
+        />
+      </Box>
     </>
   );
 };

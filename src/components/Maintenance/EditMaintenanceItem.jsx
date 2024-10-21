@@ -140,7 +140,21 @@ export default function EditMaintenanceItem({setRefersh, setRightPane, maintenan
         setMaintainanceImages,
     } = useMaintenance();
 
-    if (!isMobile && !maintenanceRequest) {
+    // if (!isMobile && !maintenanceRequest) {
+    //     // Use context state in desktop view when maintenanceRequest is not provided
+    //     testIssue1 = testIssue;
+    //     testProperty1 = testProperty;
+    //     testIssueItem1 = testIssueItem;
+    //     testCost1 = testCost;
+    //     testTitle1 = testTitle;
+    //     testPriority1 = testPriority;
+    //     completionStatus1 = completionStatus;
+    //     requestUid1 = requestUid;
+    //     propID1 = propID;
+    //     maintainanceImages = contextmaintainanceImages;
+    //     maintainanceFavImage = contextmaintainanceFavImage;
+    // }
+	if (!maintenanceRequest) {
         // Use context state in desktop view when maintenanceRequest is not provided
         testIssue1 = testIssue;
         testProperty1 = testProperty;
@@ -270,9 +284,18 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 	const handleBackButton = () => {
 		console.log('handleBackButton');
 		if(isMobile){
-			setViewRHS(false)
+			if(setViewRHS){
+				setViewRHS(false)
+			}
+
+			if(selectedRole === "TENANT"){
+
+				setRightPane({type: ""})
+			}
+
+			setEditMaintenanceView(false);
 			// navigate(-1);
-			setRightPane("");
+			// setRightPane("");
         } else {
 			if(selectedRole === "TENANT"){
 

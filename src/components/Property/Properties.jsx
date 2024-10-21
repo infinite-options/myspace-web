@@ -19,7 +19,7 @@ import PMQuotesRequested from "./PMQuotesRequested";
 import RequestQuotes from "./RequestQuotes";
 import AddListing from "./AddListing";
 import ManagerDetails from "./ManagerDetails";
-
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import PropertiesContext from "../../contexts/PropertiesContext";
 import ManagementContractContext from "../../contexts/ManagementContractContext";
@@ -190,6 +190,10 @@ function Properties() {
   const [RHS, setRHS] = useState(location.state?.showRHS || "PropertyNavigator");
   const [page, setPage] = useState("");
   const [tabStatus, SetTabStatus] = useState(0)
+  const [viewRHS, setViewRHS] = useState(false);
+
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   // console.log("View RETURN INDEX : ", returnIndex);
 
   // console.log("propertyIndex at the beginning 1: ", propertyIndex);
@@ -294,6 +298,10 @@ function Properties() {
   };
 
   const handleListClick = (newData) => {
+    if(isMobile){
+      setViewRHS(true)
+    }
+
     console.log("handleListClick - newData - ", newData);    
     setReturnIndex(newData);
     // console.log("View leases RETURN INDEX : ", returnIndex);
@@ -392,7 +400,7 @@ function Properties() {
       ) : (
       <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
         <Grid container spacing={4}>
-          <Grid item xs={12} md={4}>            
+          {(!isMobile || !viewRHS) && (<Grid item xs={12} md={4}>            
             <PropertiesList              
               LHS={LHS}              
               isDesktop={isDesktop}              
@@ -400,11 +408,12 @@ function Properties() {
               onAddPropertyClick={handleAddPropertyClick}
               handleSorting={handleSorting}
               setRHS={setRHS}
+              setViewRHS={setViewRHS}
               showOnlyListings={showOnlyListings}
             />
-          </Grid>
+          </Grid>)}
 
-          <Grid item xs={12} md={8}>
+          {(!isMobile || viewRHS) && (<Grid item xs={12} md={8}>
           {(RHS === "AddProperty" || (dataload && propertyList.length === 0)) ? (
               <PropertyForm
                 onBack={handleBackClick}                
@@ -431,6 +440,7 @@ function Properties() {
                   setManagerDetailsState={setManagerDetailsState}
                   handleViewManagerDetailsClick={handleViewManagerDetailsClick}
                   showOnlyListings={showOnlyListings}
+                  setViewRHS={setViewRHS}
                 />
               )}
               {RHS === "EditProperty" && (
@@ -516,7 +526,7 @@ function Properties() {
               )}
             </>
             )}
-          </Grid>
+          </Grid>)}
         </Grid>
       </Container> )}
     </ThemeProvider>    

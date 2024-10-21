@@ -178,11 +178,12 @@ export default function MaintenanceManager() {
   }, [location.state]);
 
   function navigateToAddMaintenanceItem() {
-    if (isMobile) {
-      navigate("/addMaintenanceItem");
-    } else {
-      setshowNewMaintenance(true);
-    }
+    // if (isMobile) {
+    //   navigate("/addMaintenanceItem");
+    // } else {
+    //   setshowNewMaintenance(true);
+    // }
+    setshowNewMaintenance(true);
   }
 
   useEffect(() => {
@@ -313,22 +314,26 @@ export default function MaintenanceManager() {
   }, []);
 
   const handleRowClick = async (index, row) => {
-    if (isMobile) {
-      navigate(`/maintenance/detail`, {
-        state: {
-          maintenance_request_index: index,
-          status: row.maintenance_status,
-          maintenanceItemsForStatus: maintenanceData[row.maintenance_status],
-          allMaintenanceData: maintenanceData,
-        },
-      });
-    } else {
-      await setSelectedRequestIndex(index);
-      await setSelectedStatus(row.maintenance_status);
-      setMaintenanceItemsForStatus(maintenanceData[row.maintenance_status]);
-      setAllMaintenanceData(maintenanceData);
+    // if (isMobile) {
+    //   navigate(`/maintenance/detail`, {
+    //     state: {
+    //       maintenance_request_index: index,
+    //       status: row.maintenance_status,
+    //       maintenanceItemsForStatus: maintenanceData[row.maintenance_status],
+    //       allMaintenanceData: maintenanceData,
+    //     },
+    //   });
+    // } else {
+    //   await setSelectedRequestIndex(index);
+    //   await setSelectedStatus(row.maintenance_status);
+    //   setMaintenanceItemsForStatus(maintenanceData[row.maintenance_status]);
+    //   setAllMaintenanceData(maintenanceData);
 
-    }
+    // }
+    await setSelectedRequestIndex(index);
+    await setSelectedStatus(row.maintenance_status);
+    setMaintenanceItemsForStatus(maintenanceData[row.maintenance_status]);
+    setAllMaintenanceData(maintenanceData);
   };
   
   const handleBackButton = () => {
@@ -522,8 +527,43 @@ export default function MaintenanceManager() {
               </div>
             </Paper>
           </Grid>
-
-          {!isMobile && (
+          
+          <Grid item xs={12} md={8}>
+              {editMaintenanceView && selectedRole === "MANAGER" ? (
+                <EditMaintenanceItem setRefersh = {setRefresh}/>
+              ) : showNewMaintenance || isAddingNewMaintenance ? (
+                <AddMaintenanceItem setRefersh = {setRefresh} onBack={() => {setshowNewMaintenance(false); setIsAddingNewMaintenance(false);}} />
+              ) : quoteRequestView && selectedRole === "MANAGER" ? (
+                <>
+                  <QuoteRequestForm setRefresh = {setRefresh}/>
+                </>
+              ) : quoteAcceptView && selectedRole === "MANAGER" ? (
+                <>
+                  <QuoteAcceptForm  setRefresh = {setRefresh}/>
+                </>
+              ) : rescheduleView && selectedRole === "MANAGER" ? (
+                <>
+                  <RescheduleMaintenance setRefresh = {setRefresh}
+                  />
+                </>
+              ) : payMaintenanceView && selectedRole === "MANAGER" ? (
+                <>
+                  <PayMaintenanceForm setRefresh = {setRefresh}
+                    />
+                </>
+              ) : (
+                Object.keys(maintenanceData).length > 0 && (
+                  <MaintenanceRequestDetailNew
+                    maintenance_request_index={selectedRequestIndex}
+                    status={selectedStatus}
+                    maintenanceItemsForStatus={maintenanceData[selectedStatus]}
+                    allMaintenancefilteredData={newDataObject}
+                    setRefresh = {setRefresh}
+                  />
+                )
+              )}
+          </Grid>
+          {/* {!isMobile && (
             <Grid item xs={12} md={8}>
               {editMaintenanceView && selectedRole === "MANAGER" ? (
                 <EditMaintenanceItem setRefersh = {setRefresh}/>
@@ -559,7 +599,7 @@ export default function MaintenanceManager() {
                 )
               )}
             </Grid>
-          )}
+          )} */}
         </Grid>
       </Container>
     </ThemeProvider>

@@ -164,11 +164,12 @@ export function MaintenanceOwner() {
   newDataObject["CANCELLED"] = [];
 
   function navigateToAddMaintenanceItem() {
-    if (isMobile) {
-      navigate("/addMaintenanceItem", { state: { month, year, propertyId } });
-    } else {
-      setshowNewMaintenance(true);
-    }
+    // if (isMobile) {
+    //   navigate("/addMaintenanceItem", { state: { month, year, propertyId } });
+    // } else {
+    //   setshowNewMaintenance(true);
+    // }
+    setshowNewMaintenance(true);
   }
 
   useEffect(() => {
@@ -312,24 +313,29 @@ export function MaintenanceOwner() {
   }, []); // Empty dependency array ensures this runs only once when the component mounts
 
   const handleRowClick = async (index, row) => {
-    if (isMobile) {
-      navigate(`/maintenance/detail`, {
-        state: {
-          maintenance_request_index: index,
-          status: row.maintenance_status,
-          maintenanceItemsForStatus: maintenanceData[row.maintenance_status],
-          allMaintenanceData: maintenanceData,
-        },
-      });
-    } else {
-      // Save data to session storage
+    // if (isMobile) {
+    //   navigate(`/maintenance/detail`, {
+    //     state: {
+    //       maintenance_request_index: index,
+    //       status: row.maintenance_status,
+    //       maintenanceItemsForStatus: maintenanceData[row.maintenance_status],
+    //       allMaintenanceData: maintenanceData,
+    //     },
+    //   });
+    // } else {
+    //   // Save data to session storage
 
-      await setSelectedRequestIndex(index);
-      await setSelectedStatus(row.maintenance_status);
-      setMaintenanceItemsForStatus(maintenanceData[row.maintenance_status]);
-      setAllMaintenanceData(maintenanceData);
+    //   await setSelectedRequestIndex(index);
+    //   await setSelectedStatus(row.maintenance_status);
+    //   setMaintenanceItemsForStatus(maintenanceData[row.maintenance_status]);
+    //   setAllMaintenanceData(maintenanceData);
 
-    }
+    // }
+    await setSelectedRequestIndex(index);
+    await setSelectedStatus(row.maintenance_status);
+    setMaintenanceItemsForStatus(maintenanceData[row.maintenance_status]);
+    setAllMaintenanceData(maintenanceData);
+
   };
 
   const handleBackButton = () => {
@@ -503,8 +509,44 @@ export function MaintenanceOwner() {
               </div>
             </Paper>
           </Grid>
+          
+          <Grid item xs={12} md={7}>
+              {editMaintenanceView && selectedRole === "OWNER" ? (
+                <EditMaintenanceItem setRefersh = {setRefresh} />
+              ) : showNewMaintenance && selectedRole === "OWNER" ? (
+                <AddMaintenanceItem setRefersh = {setRefresh}  onBack={() => setshowNewMaintenance(false)} />
+              ) : quoteRequestView && selectedRole === "OWNER" ? (
+                <>
+                  <QuoteRequestForm setRefresh = {setRefresh}/>
+                </>
+              ) : quoteAcceptView && selectedRole === "OWNER" ? (
+                <>
+                  <QuoteAcceptForm setRefresh = {setRefresh}/>
+                </>
+              ) : rescheduleView && selectedRole === "OWNER" ? (
+                <>
+                  <RescheduleMaintenance setRefresh = {setRefresh}
+                  />
+                </>
+              ) : payMaintenanceView && selectedRole === "OWNER" ? (
+                <>
+                  <PayMaintenanceForm setRefresh = {setRefresh}
+                     />
+                </>
+              ) : (
+                Object.keys(maintenanceData).length > 0 && (
+                  <MaintenanceRequestDetailNew
+                    maintenance_request_index={selectedRequestIndex}
+                    status={selectedStatus}
+                    maintenanceItemsForStatus={maintenanceData[selectedStatus]}
+                    allMaintenancefilteredData={newDataObject}
+                    setRefresh = {setRefresh}
+                  />
+                )
+              )}
+          </Grid>
 
-          {!isMobile && (
+          {/* {!isMobile && (
             <Grid item xs={7}>
               {editMaintenanceView && selectedRole === "OWNER" ? (
                 <EditMaintenanceItem setRefersh = {setRefresh} />
@@ -540,7 +582,7 @@ export function MaintenanceOwner() {
                 )
               )}
             </Grid>
-          )}
+          )} */}
         </Grid>
       </Container>)}
     </ThemeProvider>

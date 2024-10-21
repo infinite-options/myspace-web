@@ -143,43 +143,61 @@ export default function MaintenanceRequestNavigatorNew({
 		maintainanceImages,
 		maintainanceFavImage
 	  ) {
-		if (isMobile) {
-		  navigate('/editMaintenanceItem', {
-			state: {
-			  testIssue,
-			  testProperty,
-			  testIssueItem,
-			  testCost,
-			  testTitle,
-			  testPriority,
-			  completionStatus,
-			  requestUid,
-			  propID,
-			  month,
-			  year,
-			},
-		  });
-		} else {
-		  // Use context setters instead of sessionStorage
-		  setTestIssue(testIssue);
-		  setTestProperty(testProperty);
-		  setTestIssueItem(testIssueItem);
-		  setTestCost(testCost);
-		  setTestTitle(testTitle);
-		  setTestPriority(testPriority);
-		  setCompletionStatus(completionStatus);
-		  setRequestUid(requestUid);
-		  setPropID(propID);
-		  setMaintainanceImages(maintainanceImages);
-		  setMaintainanceFavImage(maintainanceFavImage);
+		// if (isMobile) {
+		//   navigate('/editMaintenanceItem', {
+		// 	state: {
+		// 	  testIssue,
+		// 	  testProperty,
+		// 	  testIssueItem,
+		// 	  testCost,
+		// 	  testTitle,
+		// 	  testPriority,
+		// 	  completionStatus,
+		// 	  requestUid,
+		// 	  propID,
+		// 	  month,
+		// 	  year,
+		// 	},
+		//   });
+		// } else {
+		//   // Use context setters instead of sessionStorage
+		//   setTestIssue(testIssue);
+		//   setTestProperty(testProperty);
+		//   setTestIssueItem(testIssueItem);
+		//   setTestCost(testCost);
+		//   setTestTitle(testTitle);
+		//   setTestPriority(testPriority);
+		//   setCompletionStatus(completionStatus);
+		//   setRequestUid(requestUid);
+		//   setPropID(propID);
+		//   setMaintainanceImages(maintainanceImages);
+		//   setMaintainanceFavImage(maintainanceFavImage);
 	  
-		  // Use these context setters for selectedRequestIndex and selectedStatus
-		  setSelectedRequestIndex(requestIndex);
-		  setSelectedStatus(status);
+		//   // Use these context setters for selectedRequestIndex and selectedStatus
+		//   setSelectedRequestIndex(requestIndex);
+		//   setSelectedStatus(status);
 		  
-		  // Use this context setter for the view
-		  setEditMaintenanceView(true);
-		}
+		//   // Use this context setter for the view
+		//   setEditMaintenanceView(true);
+		// }
+		setTestIssue(testIssue);
+		setTestProperty(testProperty);
+		setTestIssueItem(testIssueItem);
+		setTestCost(testCost);
+		setTestTitle(testTitle);
+		setTestPriority(testPriority);
+		setCompletionStatus(completionStatus);
+		setRequestUid(requestUid);
+		setPropID(propID);
+		setMaintainanceImages(maintainanceImages);
+		setMaintainanceFavImage(maintainanceFavImage);
+	
+		// Use these context setters for selectedRequestIndex and selectedStatus
+		setSelectedRequestIndex(requestIndex);
+		setSelectedStatus(status);
+		
+		// Use this context setter for the view
+		setEditMaintenanceView(true);
 	  }
 	  
 
@@ -578,31 +596,31 @@ export default function MaintenanceRequestNavigatorNew({
 											</Select>
 										</FormControl>
 									</Typography>
-									<Grid container spacing={2} sx={{ marginTop: 1 }}>
+									<Grid container spacing={2} sx={{ marginTop: 1, width:"100%"}}>
 										<Grid item xs={6}>
 											<Typography component="div" variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
-												<strong style={{ minWidth: '150px' }}>Reported By:</strong> {data?.maintenance_request_created_by}
+												<strong style={{ minWidth: isMobile ? "10px" : '150px' }}>Reported By:</strong> {data?.maintenance_request_created_by}
 											</Typography>
 											<Typography component="div" variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
-												<strong style={{ minWidth: '150px' }}>Tenant:</strong> {tenantName}
+												<strong style={{ minWidth: isMobile ? "10px" : '150px', ...(isMobile ? {marginRight : "10px"} : {}) }}>Tenant:</strong> {tenantName}
 											</Typography>
 											<Typography component="div" variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 1 }}>
-												<strong style={{ minWidth: '150px' }}>Owner:</strong>{' '}
+												<strong style={{ minWidth: isMobile ? "10px" : '150px', ...(isMobile ? {marginRight : "10px"} : {}) }}>Owner:</strong>{' '}
 												{data?.owner_first_name + ' ' + data?.owner_last_name}
 											</Typography>
 										</Grid>
 										<Grid item xs={6}>
 											<Typography component="div" variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
-												<strong style={{ minWidth: '150px' }}>Reported On:</strong>{' '}
+												<strong style={{ minWidth: isMobile ? "10px" : '150px' }}>Reported On:</strong>{' '}
 												{dayjs(data?.maintenance_request_created_date).format('MM-DD-YYYY')}
 											</Typography>
 											<Typography component="div" variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
-												<strong style={{ minWidth: '150px' }}>Days Open:</strong>{' '}
+												<strong style={{ minWidth: isMobile ? "10px" : '150px' }}>Days Open:</strong>{' '}
 												{dayjs().diff(dayjs(data?.maintenance_request_created_date), 'day')}{' '}
 												days
 											</Typography>
 											<Typography component="div" variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 1 }}>
-												<strong style={{ minWidth: '150px' }}>Maintenance ID:</strong> {data?.maintenance_request_uid}
+												<strong style={{ minWidth: isMobile ? "10px" : '150px' }}>Maintenance ID:</strong> {data?.maintenance_request_uid}
 											</Typography>
 										</Grid>
 									</Grid>

@@ -89,12 +89,14 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
   const colorStatus = getColorStatusBasedOnSelectedRole();
   const [fromProperty, setFromProperty] = useState(location.state?.fromProperty || false);
   
-  const [value, setValue] = useState(colorStatus.findIndex((item) => item.status === (isMobile ? location.state.status : selectedStatus)));
+  // const [value, setValue] = useState(colorStatus.findIndex((item) => item.status === (isMobile ? location.state.status : selectedStatus)));
+  const [value, setValue] = useState(colorStatus.findIndex((item) => item.status === selectedStatus));
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
   const [filteredQuotes, setFilteredQuotes] = useState([]);
   const [navParams, setNavParams] = useState({});
-  const allData = isMobile ? location.state.allMaintenanceData : allMaintenancefilteredData;
+  // const allData = isMobile ? location.state.allMaintenanceData : allMaintenancefilteredData;
+  const allData = allMaintenancefilteredData;
 
   const isDesktop = location.state?.isDesktop || false;
   const propertyIndex = location.state?.index || -1;
@@ -362,7 +364,7 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
                           sx={{
                             color: theme.typography.primary.grey,
                             fontWeight: theme.typography.secondary.fontWeight,
-                            fontSize: isMobile ? 8 : theme.typography.smallFont,
+                            fontSize: isMobile ? "8px" : theme.typography.smallFont,
                           }}
                         >
                           {title}
