@@ -254,7 +254,7 @@ const IncomeDetails = ({ employmentList, setEmploymentList, salaryFrequencies })
                 <DialogActions>
                     <Button
                     onClick={handleSave}
-                    style={{ backgroundColor: 'yellow', color: 'black' }}
+                    style={{ color: 'white', backgroundColor: "#3D5CAC" }}
                     variant="contained"
                     >
                     Save
