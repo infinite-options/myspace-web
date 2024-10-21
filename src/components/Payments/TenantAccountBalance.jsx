@@ -47,7 +47,10 @@ const TenantAccountBalance = ({
   const navigate = useNavigate();
   const open = Boolean(anchorEl);
   const balanceDue = parseFloat(balanceDetails[0]?.amountDue || 0);
-  // console.log("balance details", balanceDetails);
+  console.log("property", selectedProperty);
+  console.log("lease", leaseDetails);
+  console.log("propertydata", propertyData);
+  console.log("leasedetaisldata", leaseDetailsData);
 
   // useEffect(() => {
   //   if (selectedProperty) {
@@ -126,7 +129,7 @@ const TenantAccountBalance = ({
   };
 
   const handleback = () => {
-    console.log("go back");
+    // console.log("go back");
     navigate("/tenantDashboard");
   };
 
@@ -136,24 +139,44 @@ const TenantAccountBalance = ({
     return balanceDue > 0 ? "#A52A2A" : "#3D5CAC"; // Red for balance due, default for no balance
   };
 
-  const handlePropertySelect = (property) => {
+  const getTextColor = () => {
+    if (leaseDetails?.lease_status === "NEW") return "#000000";
+    return "#FFFFFF";
+  }
+
+  const handlePropertySelect = (property) => { // 1
+    if (property.lease_status) {
     if(isMobile){
       setViewRHS(false)
     }
     setSelectedProperty(property);
     handleClose();
+    }
   }
 
   const uniquePropertiesMap = new Map();
   propertyData.forEach((property) => {
-    const propertyLease = leaseDetailsData.find((ld) => ld.property_uid === property.property_uid);
+    //lease_status is null don't bother
+    if (property.lease_status) {
+      const propertyLease = leaseDetailsData.find((ld) => ld.property_uid === property.property_uid);
 
-    if (!uniquePropertiesMap.has(property.property_uid)) {
-      uniquePropertiesMap.set(property.property_uid, propertyLease);
-    }
+      if (!uniquePropertiesMap.has(property.property_uid) && propertyLease.lease_status) {
+        uniquePropertiesMap.set(property.property_uid, propertyLease);
+      }
+  }
   });
 
   const uniqueProperties = Array.from(uniquePropertiesMap.values()); 
+  // console.log("unique property", uniqueProperties);
+
+  const selectedPropertyData = propertyData.find(
+    (property) => property.lt_lease_id === leaseDetails?.lease_uid
+  );
+
+  const earliestDueDate = selectedPropertyData?.earliest_due_date
+  ? new Date(selectedPropertyData.earliest_due_date).toLocaleDateString()
+  : null; 
+
 
   const totalBalanceDue = balanceDetails.reduce((acc, detail) => acc + parseFloat(detail.amountDue || 0), 0);
 
@@ -306,9 +329,11 @@ const TenantAccountBalance = ({
             {`${selectedProperty?.property_uid}`}
         </Typography>
 
-        {(!isMobile || !viewRHS) && (<Box sx={{ fontSize: "20px", fontWeight: "600", color: "#160449", marginLeft: "5px", opacity: "50%", alignItems: "center", alignContent: "center" }}>
-          Due: {selectedProperty?.earliest_due_date ? selectedProperty.earliest_due_date.split(" ")[0] : "Contact Property Manager"}
-        </Box>)}
+        {earliestDueDate && (
+          <Box sx={{ fontSize: "20px", fontWeight: "600", color: "#160449", marginLeft: "5px", opacity: "50%", alignItems: "center", alignContent: "center" }}>
+            Due: {earliestDueDate}
+          </Box>
+        )}  
 
         {/* Payment or Application Button */}
         {(!isMobile || !viewRHS) && (from !== "selectPayment") && (
@@ -317,7 +342,8 @@ const TenantAccountBalance = ({
               variant='contained'
               sx={{
                 backgroundColor: getButtonColor(), // Dynamically set button color
-                color: "#fff",
+                // color: "#fff",
+                color: getTextColor(),
                 fontWeight: "bold",
               }}
               onClick={

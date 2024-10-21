@@ -18,7 +18,7 @@ import { useUser } from "../../contexts/UserContext";
 import CloseIcon from "@mui/icons-material/Close";
 
 
-export default function TenantApplicationEdit({ profileData, lease, lease_uid, setRightPane, property, from, tenantDocuments, setTenantDocuments, oldVehicles, setOldVehicles, adultOccupants, setAdultOccupants, petOccupants, setPetOccupants, childOccupants, setChildOccupants, extraUploadDocument, setExtraUploadDocument, extraUploadDocumentType, setExtraUploadDocumentType, deleteDocuments, selectedJobs, setSelectedJobs }) {
+export default function TenantApplicationEdit({ profileData, lease, lease_uid, setRightPane, property, from, tenantDocuments, setTenantDocuments, oldVehicles, setOldVehicles, adultOccupants, setAdultOccupants, petOccupants, setPetOccupants, childOccupants, setChildOccupants, extraUploadDocument, setExtraUploadDocument, extraUploadDocumentType, setExtraUploadDocumentType, deleteDocuments }) {
     const [adults, setAdults] = useState(adultOccupants? adultOccupants : []);
     const [children, setChildren] = useState(childOccupants? childOccupants : []);
     const [pets, setPets] = useState(petOccupants? petOccupants : []);
@@ -42,8 +42,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
     const [ occupantsExpanded, setOccupantsExpanded ] = useState(true);
     const [employmentExpanded, setEmploymentExpanded] = useState(true);
     const [documentsExpanded, setDocumentsExpanded] = useState(true); 
-
-    console.log("tenant emp", lease[0].lease_income);
+    const [selectedJobs, setSelectedJobs] = useState("[]");
 
 
     // const getListDetails = async () => {
@@ -113,7 +112,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
     // };
 
     const showSnackbar = (message, severity) => {
-        console.log("Inside show snackbar");
+        // console.log("Inside show snackbar");
         setSnackbarMessage(message);
         setSnackbarSeverity(severity);
         setSnackbarOpen(true);
@@ -136,7 +135,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
     // }, []);
 
     useEffect(() => {
-        console.log("calling profileData useEffect");
+        // console.log("calling profileData useEffect");
 
         // setIsSave(false);
         // setProfileData();
@@ -303,8 +302,9 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
     // };
 
     const updateLeaseData = async () => {
+        console.log("try", selectedJobs);
         try {
-            if (adults?.length > 0 || pets?.length > 0 || children?.length > 0 || vehicles?.length > 0 || isPreviousFileChange || deletedFiles?.length > 0 || uploadedFiles?.length > 0) {
+            if (adults?.length > 0 || pets?.length > 0 || children?.length > 0 || vehicles?.length > 0 || isPreviousFileChange || deletedFiles?.length > 0 || uploadedFiles?.length > 0 || selectedJobs?.length > 0) {
                 setShowSpinner(true);
                 const headers = {
                     "Access-Control-Allow-Origin": "*",
@@ -399,12 +399,19 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                 leaseApplicationFormData.append("lease_pets", JSON.stringify(pets));
                 leaseApplicationFormData.append("lease_vehicles", JSON.stringify(vehicles));
 
+                console.log("selected jobs", selectedJobs);
+
+                if (selectedJobs?.length > 0) {
+                    // console.log(JSON.stringify(selectedJobs));
+                    leaseApplicationFormData.append("lease_income", JSON.stringify(selectedJobs));
+                }    
+
                 // console.log(lease_uid)
                 leaseApplicationFormData.append('lease_uid', lease_uid); // Here is the problem when upload new docs because there is no lease right now and it require lease_uid
 
                 axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
                     .then((response) => {
-                        console.log('Data updated successfullyyy', response);
+                        // console.log('Data updated successfullyyy', response);
                         showSnackbar("Your lease application has been successfully updated.", "success");
                         setIsReload((prev) => !prev);
                         setShowSpinner(false);
@@ -538,7 +545,6 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                                 <EmploymentDataGrid
                                     profileData = {profileData}
                                     employmentDataT={lease?.[0]?.lease_income ? JSON.parse(lease[0].lease_income) : []}
-                                    selectedJobs={selectedJobs}
                                     setSelectedJobs={setSelectedJobs}
                                 />
                                 </AccordionDetails>
@@ -703,7 +709,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
     )
 }
 
-export const EmploymentDataGrid = ({ profileData, employmentDataT }) => {
+export const EmploymentDataGrid = ({ profileData, employmentDataT, setSelectedJobs }) => {
     const employmentData = profileData?.tenant_employment 
       ? JSON.parse(profileData.tenant_employment)
       : [];
@@ -713,10 +719,14 @@ export const EmploymentDataGrid = ({ profileData, employmentDataT }) => {
     );
 
     const handleJobSelection = (index) => {
-      setCheckedJobs(prevJobs =>
-        prevJobs.map((job, i) => i === index ? { ...job, checked: !job.checked } : job)
-      );
-    };
+        const updatedJobs = checkedJobs.map((job, i) =>
+          i === index ? { ...job, checked: !job.checked } : job
+        );
+        setCheckedJobs(updatedJobs);
+  
+        const selectedJobs = updatedJobs.filter(job => job.checked);
+        setSelectedJobs(selectedJobs);
+      };
 
     return (
       <Box sx={{ padding: "10px" }}>
