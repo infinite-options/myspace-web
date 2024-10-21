@@ -403,7 +403,7 @@ export default function ManagementDetailsComponent({
                                             
                                             
                                         }}
-                                        variant='outlined'
+                                        variant='contained'
                                         sx={{
                                             background: "#3D5CAC",
                                             color: theme.palette.background.default,
@@ -447,7 +447,7 @@ export default function ManagementDetailsComponent({
                                                 handleManageContractClick(currentProperty.contract_uid, currentProperty.contract_property_id )
                                             }
                                         }}
-                                        variant='outlined'
+                                        variant='contained'
                                         sx={{
                                             background: "#3D5CAC",
                                             color: theme.palette.background.default,

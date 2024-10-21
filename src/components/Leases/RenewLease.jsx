@@ -582,7 +582,7 @@ return (
 
                         <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
                             <Button
-                                variant="outlined"
+                                variant="contained"
                                 sx={{
                                     background: "#ffa500",
                                     color: theme.palette.background.default,
@@ -617,7 +617,7 @@ return (
 
                         <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
                             <Button
-                                variant="outlined"
+                                variant="contained"
                                 sx={{
                                     background: "#D4736D",
                                     color: theme.palette.background.default,

@@ -22,7 +22,7 @@ const RenewLeaseButton = ({ theme, handleRenewLease, leaseData, setIsPageUpdateO
     return (
         <div>
             <Button
-                variant="outlined"
+                variant="contained"
                 sx={{
                     background: "#6788B3", 
                     color: theme.palette.background.default,
@@ -77,7 +77,7 @@ const RenewLeaseButton = ({ theme, handleRenewLease, leaseData, setIsPageUpdateO
                         size="small">
                         Cancel
                     </Button>
-                    <Button onClick={handleConfirm} autoFocus variant="outlined"
+                    <Button onClick={handleConfirm} autoFocus variant="contained"
                         sx={{
                             background: "#6788B3",
                             color: theme.palette.background.default,

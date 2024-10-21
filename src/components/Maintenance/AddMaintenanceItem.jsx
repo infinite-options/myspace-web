@@ -70,7 +70,7 @@ export default function AddMaintenanceItem({setRefersh, onBack}) {
 
 	const PriorityToggleButton = ({ value, onClick, isSelected }) => (
 		<Button
-			variant="outlined"
+			variant="outlined" //exception
 			size="small"
 			onClick={() => onClick(value)}
 			sx={{

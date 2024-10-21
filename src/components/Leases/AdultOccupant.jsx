@@ -13,8 +13,9 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { makeStyles } from '@material-ui/core/styles';
-import { Close } from '@mui/icons-material';
 import DataValidator from "../DataValidator";
+import Close from '@mui/icons-material/Close';
+import { IconButton } from '@mui/material';
 import { formatPhoneNumber, formatSSN, formatEIN, identifyTaxIdType, maskNumber, } from '../Onboarding/helper.js';
 
 const useStyles = makeStyles((theme) => ({
@@ -51,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isEditable }) => {
-    console.log('Inside Adult occupants', leaseAdults, relationships);
+    // console.log('Inside Adult occupants', leaseAdults, relationships);
     const [adults, setAdults] = useState([]);
     const [open, setOpen] = useState(false);
     const [currentRow, setCurrentRow] = useState(null);
@@ -263,11 +264,8 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
                     }}
                 >
                     <span style={{ flexGrow: 1, textAlign: 'center' }}>Occupancy Details</span>
-                    <Button onClick={handleClose} sx={{ ml: 'auto' }}>
-                        <Close sx={{
-                            color: theme.typography.primary.black,
-                            fontSize: '20px',
-                        }} />
+                    <Button onClick={handleClose}>
+                        <Close variant="icon"/>
                     </Button>
                 </DialogTitle>
                 <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
@@ -291,6 +289,9 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
                                 fullWidth
                                 required
                                 variant="outlined"
+                                InputLabelProps={{
+                                    style: { color: 'black'}
+                                }}
                                 value={currentRow?.name || ''}
                                 onChange={(e) => setCurrentRow({ ...currentRow, name: e.target.value })}
                                 sx={{backgroundColor: '#D6D5DA',}}
@@ -305,6 +306,9 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
                                 fullWidth
                                 required
                                 variant="outlined"
+                                InputLabelProps={{
+                                    style: { color: 'black'}
+                                }}
                                 value={currentRow?.last_name || ''}
                                 onChange={(e) => setCurrentRow({ ...currentRow, last_name: e.target.value })}
                                 sx={{backgroundColor: '#D6D5DA',}}
@@ -324,6 +328,9 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
                                 fullWidth
                                 required
                                 variant="outlined"
+                                InputLabelProps={{
+                                    style: { color: 'black'}
+                                }}
                                 value={currentRow?.email || ''}
                                 onChange={(e) => setCurrentRow({ ...currentRow, email: e.target.value })}
                                 sx={{backgroundColor: '#D6D5DA',}}
@@ -337,6 +344,9 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
                             fullWidth
                             required
                             variant="outlined"
+                            InputLabelProps={{
+                                style: { color: 'black'}
+                            }}
                             value={currentRow?.phone_number || ''}
                             onChange={handlePhoneNumberChange} // Updated
                             sx={{backgroundColor: '#D6D5DA',}}
@@ -355,6 +365,9 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
                                 label="Drivers License"
                                 fullWidth
                                 variant="outlined"
+                                InputLabelProps={{
+                                    style: { color: 'black'}
+                                }}
                                 value={currentRow?.tenant_drivers_license_number || ''}
                                 onChange={(e) => setCurrentRow({ ...currentRow, tenant_drivers_license_number: e.target.value })}
                                 sx={{backgroundColor: '#D6D5DA',}}
@@ -367,36 +380,45 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
                             label="Social Security Number"
                             fullWidth
                             variant="outlined"
+                            InputLabelProps={{
+                                style: { color: 'black'}
+                            }}
                             value={currentRow?.tenant_ssn || ''}
                             onChange={handleSSNChange} // Updated
                             sx={{backgroundColor: '#D6D5DA',}}
                         />
                         </Grid>
                         <Grid item md={6}>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DatePicker
-                                    label="Date Of Birth"
-                                    value={currentRow?.dob ? dayjs(currentRow.dob) : null}
-                                    onChange={(e) => {
-                                        const formattedDate = e ? e.format("MM-DD-YYYY") : null;
-                                        setCurrentRow({ ...currentRow, dob: formattedDate })
-                                    }
-                                    }
-                                    sx={{ marginTop: "8px", backgroundColor: '#D6D5DA', width:'450px'}}
-                                    fullWidth
-                                    InputLabelProps={{
-                                        sx: {
-                                          fontSize: '10px',
-                                        },
-                                      }}
-                                    
-                                />
-                            </LocalizationProvider>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                            label="Date Of Birth" // Label for the DatePicker
+                            value={currentRow?.dob ? dayjs(currentRow.dob) : null}
+                            onChange={(e) => {
+                            const formattedDate = e ? e.format("MM-DD-YYYY") : null;
+                            setCurrentRow({ ...currentRow, dob: formattedDate });
+                            }}
+                            sx={{
+                            marginTop: "8px",
+                            backgroundColor: '#D6D5DA',
+                            width: '450px',
+                            '& .MuiInputLabel-root': {
+                                color: 'black', 
+                            },
+                            '& .MuiInputLabel-root.Mui-focused': {
+                                color: 'black', 
+                            },
+                            '& .MuiInputLabel-root.MuiInputLabel-shrink': {
+                                color: 'black', 
+                            },
+                            }}
+                            fullWidth
+                        />
+                        </LocalizationProvider>
                         </Grid>
 
                         <Grid item md={6}>
                             <FormControl margin="dense" fullWidth variant="outlined" sx={{ height: "30px" }}>
-                                <InputLabel required>
+                                <InputLabel required style={{color: 'black'}}>
                                     Relationship
                                 </InputLabel>
                                 <Select
@@ -422,19 +444,16 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
                 </DialogContent>
                 {/* <DialogActions> */}
                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '10px' }}>
-                    <Button
+                    <Button variant= "contained"
                         sx={{
-                            marginRight: '5px', background: "#FFC614",
-                            color: "#160449",
+                            marginRight: '5px', background: "#3D5CAC",
+                            color: "white",
                             cursor: "pointer",
                             width: "100px",
                             height: "31px",
                             fontWeight: theme.typography.secondary.fontWeight,
                             fontSize: theme.typography.smallFont,
                             textTransform: 'none',
-                            '&:hover': {
-                                backgroundColor: '#fabd00',
-                            },
                         }}
                         onClick={handleSave} color="primary">
                         Save

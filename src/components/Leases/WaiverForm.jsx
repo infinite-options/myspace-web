@@ -194,10 +194,10 @@ const WaiverForm = () => {
     
                 <Grid item xs={12}>
                   <Stack direction="row" justifyContent="center" spacing={2}>
-                    <Button variant="contained" color="primary" type="submit">
+                    <Button variant="contained" type="submit">
                       Submit
                     </Button>
-                    <Button variant="outlined" onClick={() => navigate('/tenantDashboard')}>
+                    <Button variant="contained" onClick={() => navigate('/tenantDashboard')}>
                       Cancel
                     </Button>
                   </Stack>
