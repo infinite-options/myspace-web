@@ -277,7 +277,7 @@ export default function TenantApplication(props) {
     }
 
     if(props?.childOccupants){
-      setChildOccupants(props.childOccupants)
+      setChildOccupants(props.childOccupants);
     }else{
       formatTenantChildOccupants();
     }
@@ -339,7 +339,7 @@ export default function TenantApplication(props) {
       withdrawLeaseData.append("lease_property_id", property.property_uid);
     }
     withdrawLeaseData.append("lease_status", "WITHDRAWN");
-    
+
     withdrawLeaseData.forEach((value, key) => {
       console.log(`${key}: ${value}`);
     });

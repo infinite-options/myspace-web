@@ -442,7 +442,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane }) => {
                             size="small">
                             Cancel
                         </Button>
-                        <Button onClick={handleConfirm} autoFocus variant="outlined"
+                        <Button onClick={handleConfirm} autoFocus variant="contained"
                             sx={{
                                 background: "#6788B3",
                                 color: "#160449",

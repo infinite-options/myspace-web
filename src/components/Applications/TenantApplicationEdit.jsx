@@ -720,6 +720,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
 
                     <Grid container justifyContent='center' item xs={11} md={11}>
                         <Button
+                            variant="contained"
                             sx={{
                                 backgroundColor: '#3D5CAC',                                
                             }}

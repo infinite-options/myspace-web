@@ -554,9 +554,11 @@ export default function PropertiesList(props) {
                   <Box sx={{ display: "flex", width: "100%", alignItems: "center", justifyContent: "space-between", padding: "0px 10px" }}>
                     <Button
                       onClick={sortByZip}
+                      variant="contained"
                       sx={{
                         background: "#3D5CAC",
                         fontWeight: theme.typography.secondary.fontWeight,
+                        color: theme.palette.background.default,
                         fontSize: theme.typography.smallFont,
                         cursor: "pointer",
                         textTransform: "none",
@@ -569,7 +571,7 @@ export default function PropertiesList(props) {
                     </Button>
                     <Button
                       onClick={sortByAddress}
-                      variant='outlined'
+                      variant='contained'
                       sx={{
                         background: "#3D5CAC",
                         color: theme.palette.background.default,
@@ -586,9 +588,11 @@ export default function PropertiesList(props) {
                     </Button>
                     <Button
                       onClick={sortByStatus}
+                      variant = 'contained'
                       sx={{
                         background: "#3D5CAC",
                         fontWeight: theme.typography.secondary.fontWeight,
+                        color: theme.palette.background.default,
                         fontSize: theme.typography.smallFont,
                         cursor: "pointer",
                         textTransform: "none",

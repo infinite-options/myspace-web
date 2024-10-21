@@ -1828,7 +1828,7 @@ const closeDialog = () => {
 
       <Grid container justifyContent='center' item xs={12}>
         <Button variant='contained' color='primary' onClick={handleNextStep} disabled={nextStepDisabled} sx={{ mb: 2, backgroundColor: "#3D5CAC" }}>
-          <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Save 1</Typography>
+          <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Save</Typography>
         </Button>
       </Grid>
 

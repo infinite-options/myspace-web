@@ -102,7 +102,7 @@ const ManagerSelectPayment = ({ selectedPayment, selectedPurGroup, }) => {
                         }}
                     >
                         <Typography
-                        variant="outlined"
+                        variant="contained"
                         style={{
                             textTransform: "none",
                             color: "#FFFFFF",

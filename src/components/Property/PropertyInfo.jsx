@@ -675,7 +675,7 @@ const PropertyInfo = (props) => {
                       }}
                       onClick={() => setShowScheduler(true)}
                     >
-                      Schedule
+                      Schedule 1
                     </Button>
                   </Box>
                 </LocalizationProvider>
