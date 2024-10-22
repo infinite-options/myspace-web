@@ -505,6 +505,9 @@ const TenantLease = () => {
   const valueToDayMap = new Map(Array.from(daytoValueMap, ([key, value]) => [value, key]));
 
   const checkRequiredFields = () => {
+    if (fees.length === 0) {
+      return false;
+    }
     let retVal = true;
     fees.map((fee) => {
       if (
@@ -572,6 +575,7 @@ const TenantLease = () => {
     try {
       setShowMissingFieldsPrompt(false);
       if (!checkRequiredFields()) {
+        console.log("check here -- error no fees");
         setShowMissingFieldsPrompt(true);
         return;
       }

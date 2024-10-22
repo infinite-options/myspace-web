@@ -744,6 +744,7 @@ const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty, relatedLea
           data: relatedLease,
           status: "RENEW PROCESSING",
           lease: relatedLease,
+          oldLeaseUid: leaseDetails.lease_uid,
         },
       });
     }
@@ -919,7 +920,7 @@ const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty, relatedLea
               </Stack>
               <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: "auto" }}>
                 {!isEndingOrEarlyTermination && (
-                  <Button variant='contained' onClick={handleEndLease} size='small' sx={{ padding: "5px 10px", marginRight: "10px" }}>
+                  <Button variant='contained' onClick={handleEndLease} size='small' sx={{ padding: "5px 10px", marginRight: "10px", backgroundColor: "#3D5CAC", fontWeight: "bold"}}>
                     End Lease
                   </Button>
                 )}
@@ -927,9 +928,11 @@ const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty, relatedLea
                 {relatedLease?.lease_status === "RENEW NEW" ? (
                   <Button
                     variant='contained'
+                    size='small'
                     sx={{
                       backgroundColor: "#FFD700",
                       color: "#FFFFF",
+                      fontWeight: "bold",
                       textTransform: "none",
                       marginLeft: "10px",
                     }}
@@ -940,14 +943,14 @@ const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty, relatedLea
                 ) : (
                   showRenewLeaseButton &&
                   relatedLease?.lease_status !== "RENEW PROCESSING" && (
-                    <Button variant='contained' color='primary' onClick={handleRenewLease} sx={{ marginLeft: "10px" }}>
+                    <Button variant='contained' color='primary' size='small' onClick={handleRenewLease} sx={{ marginLeft: "10px", fontWeight: "bold" }}>
                       Renew Lease
                     </Button>
                   )
                 )}
 
                 {relatedLease && relatedLease.lease_status === "RENEW PROCESSING" && (
-                  <Button variant='contained' color='primary' onClick={handleViewRenewProcessingLease} sx={{ marginLeft: "10px" }}>
+                  <Button variant='contained' color='primary' size='small' onClick={handleViewRenewProcessingLease} sx={{ marginLeft: "10px", fontWeight: "bold" }}>
                     View Renewal Lease
                   </Button>
                 )}
@@ -1016,7 +1019,7 @@ const MaintenanceDetails = ({ maintenanceRequests, onPropertyClick, selectedProp
       sx={{
         padding: "20px",
         backgroundColor: "#f0f0f0",
-        borderRadius: "12px",
+        borderRadius: "8px",
         fontFamily: "Source Sans Pro",
         maxWidth: "400px",
         margin: "auto",
@@ -1103,6 +1106,7 @@ const ManagementDetails = ({ leaseDetails }) => {
         padding: "24px",
         backgroundColor: "#f0f0f0",
         margin: "auto",
+        borderRadius: "8px"
       }}
     >
       {/* Title */}

@@ -56,11 +56,13 @@ function TenantLeases(props) {
   const [childrenOccupants, setChildrenOccupants] = useState([]);
   const [fees, setFees] = useState([]);
   const [signedLease, setSignedLease] = useState(null);
+  const [prevLeaseId, setPrevLeaseId] = useState(null);
 
   const [managerID, setManagerID ] = useState("");
 
   useEffect(() => {
-    console.log("Props passed to TenantLeases: ", props);
+    console.log("Props passed to TenantLeases: ", props.oldLeaseUid);
+    setPrevLeaseId(props.oldLeaseUid);
     setProperty(props.property);
     setLease(props.lease);
   }, [props.property, props.lease]);
@@ -289,6 +291,28 @@ function TenantLeases(props) {
       }
     };
 
+    const sendRenewalStatus = async () => {
+      const renewalFormData = new FormData();
+      renewalFormData.append("lease_uid", prevLeaseId);
+      renewalFormData.append("lease_renew_status", "RENEWED");
+  
+      try {
+        const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+          method: "PUT",
+          body: renewalFormData,
+        });
+        const data = await response.json();
+        console.log("Renewal status updated:", data);
+        if (data?.code === 200) {
+          console.log("Lease renewal successfully updated.");
+        } else {
+          console.log("Failed to update lease renewal status:", data);
+        }
+      } catch (error) {
+        console.log("Error updating lease renewal status:", error);
+      }
+    };
+
     try {
       var lease_status = "APPROVED"; // Abhinav - Tenant Approved
       // var status = "TENANT APPROVED";
@@ -317,6 +341,8 @@ function TenantLeases(props) {
       console.log('Divyy', data);
       if (data.lease_docs.code === 200) {
         alert("You have successfully Accepted the lease.");
+        //don';t send announcemnt twice
+        await sendRenewalStatus();
         await sendAnnouncement();
         props.setRightPane({ type: "" });
         props.setReload(prev => !prev);

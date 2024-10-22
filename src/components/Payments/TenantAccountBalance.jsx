@@ -436,7 +436,7 @@ const TenantAccountBalance = ({
         {(!isMobile || !viewRHS) && from !== "selectPayment" && leaseDetails?.lease_status === "ACTIVE" && (
           <Box sx={{ display: "flex", justifyContent: "center", marginTop: "10px" }}>
             <Button
-              variant='outlined'
+              variant='contained'
               sx={{
                 marginTop: "10px",
                 backgroundColor: "#3D5CAC",
