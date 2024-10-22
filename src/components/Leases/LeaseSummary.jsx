@@ -11,6 +11,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { getDateAdornmentString } from '../../utils/dates';
+import useMediaQuery from "@mui/material/useMediaQuery";
 import dayjs from "dayjs";
 
 const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newStartDate, newEndDate, isEditable }) => {
@@ -20,6 +21,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
     const [open, setOpen] = useState(false);
     const [startDate, setStartDate] = useState(newStartDate);
     const [endDate, setEndDate] = useState(newEndDate);
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     useEffect(() => {
         //set images
@@ -239,147 +241,293 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid item xs={0} md={0.5} />
-                <Grid item md={3}>
-                    <Grid container marginTop="10px">
-                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                            <Typography sx={{
-                                textTransform: 'none',
-                                color: "#160449",
-                                fontWeight: theme.typography.secondary.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                            }}>Lease Start</Typography>
-                        </Grid>
-                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                            <Typography sx={{
-                                textTransform: 'none',
-                                color: "#160449",
-                                fontWeight: theme.typography.light.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                            }}>{currentLease.lease_start}</Typography>
-                        </Grid>
-                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                            <Typography sx={{
-                                textTransform: 'none',
-                                color: "#160449",
-                                fontWeight: theme.typography.secondary.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                            }}>Lease End</Typography>
-                        </Grid>
-                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                            <Typography sx={{
-                                textTransform: 'none',
-                                color: "#160449",
-                                fontWeight: theme.typography.light.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                            }}>{formatDate(currentLease.lease_end)}</Typography>
-                        </Grid>
-                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                            <Typography sx={{
-                                textTransform: 'none',
-                                color: "#160449",
-                                fontWeight: theme.typography.secondary.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                            }}>Move In</Typography>
-                        </Grid>
-                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                            <Typography sx={{
-                                textTransform: 'none',
-                                color: "#160449",
-                                fontWeight: theme.typography.light.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                            }}>{currentLease.lease_move_in_date}</Typography>
-                        </Grid>
-                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                            <Typography sx={{
-                                textTransform: 'none',
-                                color: "#160449",
-                                fontWeight: theme.typography.secondary.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                            }}>Move Out</Typography>
-                        </Grid>
-                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                            <Typography sx={{
-                                textTransform: 'none',
-                                color: "#160449",
-                                fontWeight: theme.typography.light.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                            }}>TBD</Typography>
-                        </Grid>
-                    </Grid>
-                </Grid>
-                <Grid item xs={0} md={0.5} />
-                <Grid item md={4}>
-                    <Grid container marginTop="10px">
-                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                            <Typography sx={{
-                                textTransform: 'none',
-                                color: "#160449",
-                                fontWeight: theme.typography.secondary.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                            }}>Rent</Typography>
-                        </Grid>
-                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                            <Typography sx={{
-                                textTransform: 'none',
-                                color: "#160449",
-                                fontWeight: theme.typography.light.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                            }}>${rent.charge}</Typography>
-                        </Grid>
-
-                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                            <Typography sx={{
-                                textTransform: 'none',
-                                color: "#160449",
-                                fontWeight: theme.typography.secondary.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                            }}>Frequency</Typography>
-                        </Grid>
-                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                            <Typography sx={{
-                                textTransform: 'none',
-                                color: "#160449",
-                                fontWeight: theme.typography.light.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                            }}>{rent.frequency}</Typography>
-                        </Grid>
-
-                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                            <Typography sx={{
-                                textTransform: 'none',
-                                color: "#160449",
-                                fontWeight: theme.typography.secondary.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                            }}>Available to Pay</Typography>
-                        </Grid>
-                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                            <Typography sx={{
-                                textTransform: 'none',
-                                color: "#160449",
-                                fontWeight: theme.typography.light.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                            }}>{rent.available_topay} Days Before</Typography>
-                        </Grid>
-
-                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                            <Typography sx={{
-                                textTransform: 'none',
-                                color: "#160449",
-                                fontWeight: theme.typography.secondary.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                            }}>Due Date</Typography>
-                        </Grid>
-                        <Grid item md={6} sx={{ marginBottom: "10px" }}>
-                            <Typography sx={{
-                                textTransform: 'none',
-                                color: "#160449",
-                                fontWeight: theme.typography.light.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                            }}>{rent.due_by} {getDateAdornmentString(rent.due_by)}</Typography>
+                {isMobile && (<Grid display={"flex"} direction={"row"} marginLeft={"10px"}>
+                    {/* <Grid item xs={0} md={0.5} /> */}
+                    <Grid item xs={6} md={3}>
+                        <Grid container marginTop="10px">
+                            <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                <Typography sx={{
+                                    textTransform: 'none',
+                                    color: "#160449",
+                                    fontWeight: theme.typography.secondary.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                }}>Lease Start</Typography>
+                            </Grid>
+                            <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                <Typography sx={{
+                                    textTransform: 'none',
+                                    color: "#160449",
+                                    fontWeight: theme.typography.light.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                }}>{currentLease.lease_start}</Typography>
+                            </Grid>
+                            <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                <Typography sx={{
+                                    textTransform: 'none',
+                                    color: "#160449",
+                                    fontWeight: theme.typography.secondary.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                }}>Lease End</Typography>
+                            </Grid>
+                            <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                <Typography sx={{
+                                    textTransform: 'none',
+                                    color: "#160449",
+                                    fontWeight: theme.typography.light.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                }}>{formatDate(currentLease.lease_end)}</Typography>
+                            </Grid>
+                            <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                <Typography sx={{
+                                    textTransform: 'none',
+                                    color: "#160449",
+                                    fontWeight: theme.typography.secondary.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                }}>Move In</Typography>
+                            </Grid>
+                            <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                <Typography sx={{
+                                    textTransform: 'none',
+                                    color: "#160449",
+                                    fontWeight: theme.typography.light.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                }}>{currentLease.lease_move_in_date}</Typography>
+                            </Grid>
+                            <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                <Typography sx={{
+                                    textTransform: 'none',
+                                    color: "#160449",
+                                    fontWeight: theme.typography.secondary.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                }}>Move Out</Typography>
+                            </Grid>
+                            <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                <Typography sx={{
+                                    textTransform: 'none',
+                                    color: "#160449",
+                                    fontWeight: theme.typography.light.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                }}>TBD</Typography>
+                            </Grid>
                         </Grid>
                     </Grid>
-                </Grid>
+                    {/* <Grid item xs={0} md={0.5} /> */}
+                    <Grid item xs={6} md={4}>
+                        <Grid container marginTop="10px">
+                            <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                <Typography sx={{
+                                    textTransform: 'none',
+                                    color: "#160449",
+                                    fontWeight: theme.typography.secondary.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                }}>Rent</Typography>
+                            </Grid>
+                            <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                <Typography sx={{
+                                    textTransform: 'none',
+                                    color: "#160449",
+                                    fontWeight: theme.typography.light.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                }}>${rent.charge}</Typography>
+                            </Grid>
+
+                            <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                <Typography sx={{
+                                    textTransform: 'none',
+                                    color: "#160449",
+                                    fontWeight: theme.typography.secondary.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                }}>Frequency</Typography>
+                            </Grid>
+                            <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                <Typography sx={{
+                                    textTransform: 'none',
+                                    color: "#160449",
+                                    fontWeight: theme.typography.light.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                }}>{rent.frequency}</Typography>
+                            </Grid>
+
+                            <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                <Typography sx={{
+                                    textTransform: 'none',
+                                    color: "#160449",
+                                    fontWeight: theme.typography.secondary.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                }}>Available to Pay</Typography>
+                            </Grid>
+                            <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                <Typography sx={{
+                                    textTransform: 'none',
+                                    color: "#160449",
+                                    fontWeight: theme.typography.light.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                }}>{rent.available_topay} Days Before</Typography>
+                            </Grid>
+
+                            <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                <Typography sx={{
+                                    textTransform: 'none',
+                                    color: "#160449",
+                                    fontWeight: theme.typography.secondary.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                }}>Due Date</Typography>
+                            </Grid>
+                            <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                <Typography sx={{
+                                    textTransform: 'none',
+                                    color: "#160449",
+                                    fontWeight: theme.typography.light.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                }}>{rent.due_by} {getDateAdornmentString(rent.due_by)}</Typography>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>)}
+                {!isMobile && (
+                    <>
+                        <Grid item xs={0} md={0.5} />
+                        <Grid item xs={6} md={3}>
+                            <Grid container marginTop="10px">
+                                <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                    <Typography sx={{
+                                        textTransform: 'none',
+                                        color: "#160449",
+                                        fontWeight: theme.typography.secondary.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                    }}>Lease Start</Typography>
+                                </Grid>
+                                <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                    <Typography sx={{
+                                        textTransform: 'none',
+                                        color: "#160449",
+                                        fontWeight: theme.typography.light.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                    }}>{currentLease.lease_start}</Typography>
+                                </Grid>
+                                <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                    <Typography sx={{
+                                        textTransform: 'none',
+                                        color: "#160449",
+                                        fontWeight: theme.typography.secondary.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                    }}>Lease End</Typography>
+                                </Grid>
+                                <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                    <Typography sx={{
+                                        textTransform: 'none',
+                                        color: "#160449",
+                                        fontWeight: theme.typography.light.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                    }}>{formatDate(currentLease.lease_end)}</Typography>
+                                </Grid>
+                                <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                    <Typography sx={{
+                                        textTransform: 'none',
+                                        color: "#160449",
+                                        fontWeight: theme.typography.secondary.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                    }}>Move In</Typography>
+                                </Grid>
+                                <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                    <Typography sx={{
+                                        textTransform: 'none',
+                                        color: "#160449",
+                                        fontWeight: theme.typography.light.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                    }}>{currentLease.lease_move_in_date}</Typography>
+                                </Grid>
+                                <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                    <Typography sx={{
+                                        textTransform: 'none',
+                                        color: "#160449",
+                                        fontWeight: theme.typography.secondary.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                    }}>Move Out</Typography>
+                                </Grid>
+                                <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                    <Typography sx={{
+                                        textTransform: 'none',
+                                        color: "#160449",
+                                        fontWeight: theme.typography.light.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                    }}>TBD</Typography>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid item xs={0} md={0.5} />
+                        <Grid item xs={6} md={4}>
+                            <Grid container marginTop="10px">
+                                <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                    <Typography sx={{
+                                        textTransform: 'none',
+                                        color: "#160449",
+                                        fontWeight: theme.typography.secondary.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                    }}>Rent</Typography>
+                                </Grid>
+                                <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                    <Typography sx={{
+                                        textTransform: 'none',
+                                        color: "#160449",
+                                        fontWeight: theme.typography.light.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                    }}>${rent.charge}</Typography>
+                                </Grid>
+
+                                <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                    <Typography sx={{
+                                        textTransform: 'none',
+                                        color: "#160449",
+                                        fontWeight: theme.typography.secondary.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                    }}>Frequency</Typography>
+                                </Grid>
+                                <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                    <Typography sx={{
+                                        textTransform: 'none',
+                                        color: "#160449",
+                                        fontWeight: theme.typography.light.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                    }}>{rent.frequency}</Typography>
+                                </Grid>
+
+                                <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                    <Typography sx={{
+                                        textTransform: 'none',
+                                        color: "#160449",
+                                        fontWeight: theme.typography.secondary.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                    }}>Available to Pay</Typography>
+                                </Grid>
+                                <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                    <Typography sx={{
+                                        textTransform: 'none',
+                                        color: "#160449",
+                                        fontWeight: theme.typography.light.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                    }}>{rent.available_topay} Days Before</Typography>
+                                </Grid>
+
+                                <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                    <Typography sx={{
+                                        textTransform: 'none',
+                                        color: "#160449",
+                                        fontWeight: theme.typography.secondary.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                    }}>Due Date</Typography>
+                                </Grid>
+                                <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                    <Typography sx={{
+                                        textTransform: 'none',
+                                        color: "#160449",
+                                        fontWeight: theme.typography.light.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                    }}>{rent.due_by} {getDateAdornmentString(rent.due_by)}</Typography>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </>)}
             </Grid>
         </Paper>
     )

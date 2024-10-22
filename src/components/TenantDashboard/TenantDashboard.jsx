@@ -98,6 +98,9 @@ const TenantDashboard = () => {
 
   useEffect(() => {
     // Whenever this component is mounted or navigated to, reset the right pane
+    if(isMobile){
+      setViewRHS(false)
+    }
     setRightPane("");
   }, [location]);
   // const fetchCashflowDetails = async () => {
@@ -275,13 +278,18 @@ const TenantDashboard = () => {
   // };
 
   const handlePaymentHistoryNavigate = () => {
+    if(isMobile){
+      setViewRHS(true)
+    }
     const paymentHistoryForProperty = paymentHistory.filter((detail) => detail.pur_property_id === selectedProperty.property_uid);
     // console.log("testing", paymentHistoryForProperty);
     setRightPane({ type: "paymentHistory", state: { data: paymentHistoryForProperty } });
   };
 
   const handleMakePayment = () => {
-    setViewRHS(true);
+    if(isMobile){
+      setViewRHS(true);
+    }
 
     const paymentHistoryForProperty = allBalanceDetails.filter((detail) => detail.propertyUid === selectedProperty.property_uid);
 
@@ -320,6 +328,9 @@ const TenantDashboard = () => {
   };
 
   const handleMaintenanceLegendClick = () => {
+    if(isMobile){
+      setViewRHS(true)
+    }
     setRightPane({
       type: "propertyMaintenanceRequests",
       state: { data: maintenanceStatus, propertyId: selectedProperty?.property_uid },
@@ -327,6 +338,9 @@ const TenantDashboard = () => {
   };
 
   const handleBack = () => {
+    if(isMobile){
+      setViewRHS(false)
+    }
     setRightPane("");
   };
 
@@ -334,13 +348,13 @@ const TenantDashboard = () => {
     if (rightPane?.type) {
       switch (rightPane.type) {
         case "paymentHistory":
-          return <TenantPaymentHistoryTable data={rightPane.state.data} setRightPane={setRightPane} onBack={handleBack} />;
+          return <TenantPaymentHistoryTable data={rightPane.state.data} setRightPane={setRightPane} onBack={handleBack} isMobile={isMobile} />;
         case "listings":
-          return <PropertyListings setRightPane={setRightPane} />;
+          return <PropertyListings setRightPane={setRightPane} isMobile={isMobile} setViewRHS={setViewRHS}/>;
         case "propertyInfo":
           return <PropertyInfo {...rightPane.state} setRightPane={setRightPane} />;
         case "tenantApplication":
-          return <TenantApplication {...rightPane.state} setRightPane={setRightPane} setReload={setReload} />;
+          return <TenantApplication {...rightPane.state} setRightPane={setRightPane} setReload={setReload} isMobile={isMobile} setViewRHS={setViewRHS} from={isMobile ? "accwidget" : ""}/>;
         case "tenantApplicationEdit":
           return <TenantApplicationEdit {...rightPane.state} setRightPane={setRightPane} />;
         case "tenantLeases":
@@ -358,7 +372,7 @@ const TenantDashboard = () => {
             />
           );
         case "addtenantmaintenance":
-          return <AddTenantMaintenanceItem {...rightPane.state} setRightPane={setRightPane} setReload={setReload} />;
+          return <AddTenantMaintenanceItem {...rightPane.state} setRightPane={setRightPane} setReload={setReload} isMobile={isMobile} setViewRHS={setViewRHS} />;
         case "propertyMaintenanceRequests":
           return (
             <PropertyMaintenanceRequests
@@ -367,12 +381,15 @@ const TenantDashboard = () => {
               onAdd={handleAddMaintenanceClick}
               setRightPane={setRightPane}
               selectedProperty={selectedProperty}
+              isMobile={isMobile}
+              setViewRHS={setViewRHS}
             />
           );
         case "editmaintenance":
           return (
             <EditMaintenanceItem
               setRightPane={setRightPane}
+              setViewRHS={setViewRHS}
               maintenanceRequest={rightPane.state.maintenanceRequest}
               currentPropertyId={rightPane.state.currentPropertyId}
               propertyAddress={rightPane.state.propertyAddress}
@@ -381,7 +398,7 @@ const TenantDashboard = () => {
         case "announcements":
           return <Announcements setRightPane={setRightPane} />;
         case "tenantEndLease":
-          return <TenantEndLeaseButton leaseDetails={rightPane.state.leaseDetails} setRightPane={setRightPane} />;
+          return <TenantEndLeaseButton leaseDetails={rightPane.state.leaseDetails} setRightPane={setRightPane} isMobile={isMobile} setViewRHS={setViewRHS} />;
         default:
           return null;
       }
@@ -398,12 +415,12 @@ const TenantDashboard = () => {
   }
 
   return (
-    <Box sx={{ backgroundColor: "#fff", padding: "30px" }}>
+    <Box sx={{ backgroundColor: "#fff", padding: isMobile ? "15px" : "30px"}}>
       <Container>
-        <Grid container spacing={3}>
+        <Grid container spacing={isMobile ? 0 : 3}>
           {/* Top Section: Welcome Message and Search Icon */}
           {(!isMobile || !viewRHS) && (
-            <Grid item xs={12} sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <Grid item xs={12} sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px"}}>
               <Typography
                 sx={{
                   fontSize: { xs: "22px", sm: "28px", md: "32px" },
@@ -420,15 +437,20 @@ const TenantDashboard = () => {
                   textTransform: "none",
                   whiteSpace: "nowrap",
                 }}
-                onClick={() => setRightPane({ type: "listings" })}
+                onClick={() => {
+                  if(isMobile){
+                    setViewRHS(true)
+                  }
+                  setRightPane({ type: "listings" })
+                }}
               >
                 <SearchIcon />
-                {"Search Property"}
+                {!isMobile && "Search Property"}
               </Button>
             </Grid>
           )}
 
-          <Grid container spacing={3}>
+          <Grid container spacing={isMobile ? 2 : 3}>
             {/* Left-hand side: Account Balance */}
             <Grid item xs={12} md={4} sx={{ display: "flex", flexDirection: "column" }}>
               <TenantAccountBalance
@@ -453,7 +475,7 @@ const TenantDashboard = () => {
               {/* Top section: Announcements */}
               {(!isMobile || !viewRHS) && (
                 <Grid item xs={12}>
-                  <AnnouncementsPM announcements={announcements} setRightPane={setRightPane} />
+                  <AnnouncementsPM announcements={announcements} setRightPane={setRightPane} isMobile={isMobile} setViewRHS={setViewRHS}/>
                 </Grid>
               )}
 
@@ -468,11 +490,11 @@ const TenantDashboard = () => {
                   <>
                     {/* Lease Details: Aligns with Account Balance */}
                     <Grid item xs={12} md={6} sx={{ flex: 1 }}>
-                      <LeaseDetails leaseDetails={leaseDetails} setRightPane={setRightPane} selectedProperty={selectedProperty} relatedLease={relatedLease} />
+                      <LeaseDetails isMobile={isMobile} setViewRHS={setViewRHS} leaseDetails={leaseDetails} setRightPane={setRightPane} selectedProperty={selectedProperty} relatedLease={relatedLease} />
                     </Grid>
 
                     {/* Maintenance and Management Details: Match height with Lease Details */}
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={6} sx={{marginBottom: isMobile ? "50px" : "0px"}}>
                       <Grid container spacing={3}>
                         <Grid item xs={12}>
                           <MaintenanceDetails
@@ -481,9 +503,11 @@ const TenantDashboard = () => {
                             leaseDetails={leaseDetails}
                             onPropertyClick={handleMaintenanceLegendClick}
                             setRightPane={setRightPane}
+                            isMobile={isMobile}
+                            setViewRHS={setViewRHS}
                           />
                         </Grid>
-                        <Grid item xs={12} sx={{ marginTop: "5px" }}>
+                        <Grid item xs={12} sx={{ marginTop: "5px",}}>
                           <ManagementDetails leaseDetails={leaseDetails} />
                         </Grid>
                       </Grid>
@@ -499,7 +523,7 @@ const TenantDashboard = () => {
   );
 };
 
-function TenantPaymentHistoryTable({ data, setRightPane, onBack }) {
+function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
   console.log("data for table", data);
 
   const columns = [
@@ -580,6 +604,8 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack }) {
         padding: "20px",
         backgroundColor: "#f0f0f0",
         borderRadius: "8px",
+        overflowX: 'auto',
+        marginBottom: isMobile? "10px" : "0px",
       }}
     >
       <Box sx={{ display: "flex", justifyContent: "flex-start", marginBottom: "10px" }}>
@@ -608,6 +634,8 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack }) {
           }}
           getRowId={(row) => row.payment_uid} // Use payment_uid as the unique identifier
           sx={{
+            width: "100%",
+            minWidth: "700px",
             backgroundColor: "#f0f0f0",
           }}
         />
@@ -620,7 +648,7 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack }) {
   );
 }
 
-const AnnouncementsPM = ({ announcements, setRightPane }) => {
+const AnnouncementsPM = ({ announcements, setRightPane, isMobile, setViewRHS }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // Handle previous announcement
@@ -634,6 +662,9 @@ const AnnouncementsPM = ({ announcements, setRightPane }) => {
   };
 
   const handleViewAllClick = () => {
+    if(isMobile){
+      setViewRHS(true)
+    }
     setRightPane({ type: "announcements", state: { data: announcements } });
   };
 
@@ -711,7 +742,7 @@ const AnnouncementsPM = ({ announcements, setRightPane }) => {
   );
 };
 
-const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty, relatedLease }) => {
+const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty, relatedLease, isMobile, setViewRHS }) => {
   console.log("Lease Details renewal", relatedLease);
   const { getProfileId } = useUser();
   const [isFlipped, setIsFlipped] = useState(false);
@@ -737,6 +768,9 @@ const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty, relatedLea
   const isEndingOrEarlyTermination = leaseDetails?.lease_renew_status === "ENDING" || leaseDetails?.lease_renew_status === "EARLY TERMINATION";
 
   const handleViewRenewProcessingLease = () => {
+    if(isMobile){
+      setViewRHS(true)
+    }
     if (relatedLease) {
       setRightPane({
         type: "tenantLeases",
@@ -752,6 +786,9 @@ const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty, relatedLea
 
   const handleViewRenewLease = () => {
     console.log("related Lease", relatedLease);
+    if(isMobile){
+      setViewRHS(true)
+    }
     setRightPane({
       type: "tenantApplication",
       state: {
@@ -763,6 +800,9 @@ const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty, relatedLea
   };
 
   const handleRenewLease = async () => {
+    if(isMobile){
+      setViewRHS(true)
+    }
     // try {
     //   const currentDate = new Date();
 
@@ -806,6 +846,9 @@ const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty, relatedLea
   };
 
   const handleEndLease = () => {
+    if(isMobile){
+      setViewRHS(true)
+    }
     setRightPane({
       type: "tenantEndLease",
       state: {
@@ -978,7 +1021,7 @@ const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty, relatedLea
   );
 };
 
-const MaintenanceDetails = ({ maintenanceRequests, onPropertyClick, selectedProperty, leaseDetails, setRightPane }) => {
+const MaintenanceDetails = ({ maintenanceRequests, onPropertyClick, selectedProperty, leaseDetails, setRightPane, isMobile, setViewRHS }) => {
   // console.log("Maintenance Requests:", maintenanceRequests);
   const maintenanceStatusCounts = {
     "New Requests": maintenanceRequests?.filter((item) => item.maintenance_status.trim().toUpperCase() === "NEW REQUEST").reduce((sum, item) => sum + (item.num || 0), 0), // Sum `num` values
@@ -1027,7 +1070,8 @@ const MaintenanceDetails = ({ maintenanceRequests, onPropertyClick, selectedProp
     >
       {/* Header with Title and Add Button */}
       <Grid container alignItems='center' justifyContent='space-between' mb={2}>
-        <Grid item xs={10} sx={{ textAlign: "center" }}>
+        <Grid item xs={2}></Grid>
+        <Grid item xs={8} sx={{ textAlign: "center" }}>
           <Typography variant='h6' sx={{ fontWeight: "bold", color: "#160449", fontSize: "20px" }}>
             Maintenance
           </Typography>
@@ -1133,7 +1177,7 @@ const ManagementDetails = ({ leaseDetails }) => {
   );
 };
 
-const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, propertyId, onAdd, setRightPane }) => {
+const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, propertyId, onAdd, setRightPane, isMobile, setViewRHS }) => {
   // console.log("maintenancestatus", maintenanceStatus);
   const [expandedRows, setExpandedRows] = useState({});
 
@@ -1174,6 +1218,9 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
   };
 
   const handleBack = () => {
+    if(isMobile){
+      setViewRHS(false)
+    }
     setRightPane("");
   };
 

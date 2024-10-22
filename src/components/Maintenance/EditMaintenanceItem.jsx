@@ -55,7 +55,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { useMaintenance } from '../../contexts/MaintenanceContext';
 import ListsContext from '../../contexts/ListsContext';
 
-export default function EditMaintenanceItem({setRefersh, setRightPane, maintenanceRequest, propertyAddress}) {
+export default function EditMaintenanceItem({setRefersh, setRightPane, maintenanceRequest, propertyAddress, setViewRHS}) {
 	console.log("inside edit component");
 	const location = useLocation();
 	const { getList, } = useContext(ListsContext);	
@@ -140,7 +140,21 @@ export default function EditMaintenanceItem({setRefersh, setRightPane, maintenan
         setMaintainanceImages,
     } = useMaintenance();
 
-    if (!isMobile && !maintenanceRequest) {
+    // if (!isMobile && !maintenanceRequest) {
+    //     // Use context state in desktop view when maintenanceRequest is not provided
+    //     testIssue1 = testIssue;
+    //     testProperty1 = testProperty;
+    //     testIssueItem1 = testIssueItem;
+    //     testCost1 = testCost;
+    //     testTitle1 = testTitle;
+    //     testPriority1 = testPriority;
+    //     completionStatus1 = completionStatus;
+    //     requestUid1 = requestUid;
+    //     propID1 = propID;
+    //     maintainanceImages = contextmaintainanceImages;
+    //     maintainanceFavImage = contextmaintainanceFavImage;
+    // }
+	if (!maintenanceRequest) {
         // Use context state in desktop view when maintenanceRequest is not provided
         testIssue1 = testIssue;
         testProperty1 = testProperty;
@@ -269,7 +283,19 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 
 	const handleBackButton = () => {
 		console.log('handleBackButton');
-		if(isMobile){navigate(-1);
+		if(isMobile){
+			if(setViewRHS){
+				setViewRHS(false)
+			}
+
+			if(selectedRole === "TENANT"){
+
+				setRightPane({type: ""})
+			}
+
+			setEditMaintenanceView(false);
+			// navigate(-1);
+			// setRightPane("");
         } else {
 			if(selectedRole === "TENANT"){
 
@@ -979,12 +1005,12 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 								
 
 								{/* Submit Button */}
-								<Grid item xs={12}>
+								<Grid item xs={12} display={"flex"} justifyContent={"center"}>
 									<Button
 										variant="contained"
 										color="primary"
 										type="submit"
-										sx={{ backgroundColor: '#9EAED6' }}
+										sx={{ backgroundColor: '#9EAED6'}}
 									>
 										<Typography
 											sx={{

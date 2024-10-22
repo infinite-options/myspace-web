@@ -188,6 +188,7 @@ export default function PropertiesList(props) {
     setCurrentPropertyID(property.property_uid);
     setCurrentProperty(property);
     props.setRHS("PropertyNavigator");
+    props.setViewRHS(true)
   };
 
   const onPropertyInRentWidgetClicked = (property_uid) => {

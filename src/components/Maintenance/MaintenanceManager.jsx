@@ -158,6 +158,7 @@ export default function MaintenanceManager() {
   const [showSpinner, setShowSpinner] = useState(false);
   const [filterPropertyList, setFilterPropertyList] = useState([]);
   const [maintenanceItemQuotes, setMaintenanceItemQuotes] = useState([]);
+  const [viewRHS, setViewRHS] = useState(false)
 
   const businessId = user.businesses.MAINTENANCE.business_uid;
 
@@ -170,6 +171,7 @@ export default function MaintenanceManager() {
 
   const [isAddingNewMaintenance, setIsAddingNewMaintenance] = useState(false);
   const [showNewMaintenance, setshowNewMaintenance] = useState(false);
+ 
 
   useEffect(() => {
     if (location.state?.showAddMaintenance) {
@@ -178,11 +180,15 @@ export default function MaintenanceManager() {
   }, [location.state]);
 
   function navigateToAddMaintenanceItem() {
-    if (isMobile) {
-      navigate("/addMaintenanceItem");
-    } else {
-      setshowNewMaintenance(true);
+    // if (isMobile) {
+    //   navigate("/addMaintenanceItem");
+    // } else {
+    //   setshowNewMaintenance(true);
+    // }
+    if(isMobile){
+      setViewRHS(true)
     }
+    setshowNewMaintenance(true);
   }
 
   useEffect(() => {
@@ -313,21 +319,29 @@ export default function MaintenanceManager() {
   }, []);
 
   const handleRowClick = async (index, row) => {
-    if (isMobile) {
-      navigate(`/maintenance/detail`, {
-        state: {
-          maintenance_request_index: index,
-          status: row.maintenance_status,
-          maintenanceItemsForStatus: maintenanceData[row.maintenance_status],
-          allMaintenanceData: maintenanceData,
-        },
-      });
-    } else {
-      await setSelectedRequestIndex(index);
-      await setSelectedStatus(row.maintenance_status);
-      setMaintenanceItemsForStatus(maintenanceData[row.maintenance_status]);
-      setAllMaintenanceData(maintenanceData);
+    // if (isMobile) {
+    //   navigate(`/maintenance/detail`, {
+    //     state: {
+    //       maintenance_request_index: index,
+    //       status: row.maintenance_status,
+    //       maintenanceItemsForStatus: maintenanceData[row.maintenance_status],
+    //       allMaintenanceData: maintenanceData,
+    //     },
+    //   });
+    // } else {
+    //   await setSelectedRequestIndex(index);
+    //   await setSelectedStatus(row.maintenance_status);
+    //   setMaintenanceItemsForStatus(maintenanceData[row.maintenance_status]);
+    //   setAllMaintenanceData(maintenanceData);
 
+    // }
+    // console.log("clicked on row - ", index, row, maintenanceData, newDataObject)
+    await setSelectedRequestIndex(index);
+    await setSelectedStatus(row.maintenance_status);
+    setMaintenanceItemsForStatus(maintenanceData[row.maintenance_status]);
+    setAllMaintenanceData(maintenanceData);
+    if(isMobile){
+      setViewRHS(true)
     }
   };
   
@@ -347,7 +361,7 @@ export default function MaintenanceManager() {
       </Backdrop>
       <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
         <Grid container sx={{ padding: "10px" }}>
-          <Grid
+          {(!isMobile || !viewRHS) && (<Grid
             item
             xs={12}
             md={4}
@@ -362,7 +376,8 @@ export default function MaintenanceManager() {
               style={{
                 margin: "5px",
                 backgroundColor: theme.palette.primary.main,
-                width: "95%",
+                width: "98%",
+                paddingRight: isMobile ? "5px" : "10px",
                 paddingTop: "10px",
                 paddingBottom: "30px",
               }}
@@ -521,9 +536,45 @@ export default function MaintenanceManager() {
                 })}
               </div>
             </Paper>
-          </Grid>
-
-          {!isMobile && (
+          </Grid>)}
+          
+          {(!isMobile || viewRHS) && (<Grid item xs={12} md={8}>
+              {editMaintenanceView && selectedRole === "MANAGER" ? (
+                <EditMaintenanceItem setRefersh = {setRefresh}/>
+              ) : showNewMaintenance || isAddingNewMaintenance ? (
+                <AddMaintenanceItem setRefersh = {setRefresh} onBack={() => {setshowNewMaintenance(false); setIsAddingNewMaintenance(false); setViewRHS(false)}} />
+              ) : quoteRequestView && selectedRole === "MANAGER" ? (
+                <>
+                  <QuoteRequestForm setRefresh = {setRefresh}/>
+                </>
+              ) : quoteAcceptView && selectedRole === "MANAGER" ? (
+                <>
+                  <QuoteAcceptForm  setRefresh = {setRefresh}/>
+                </>
+              ) : rescheduleView && selectedRole === "MANAGER" ? (
+                <>
+                  <RescheduleMaintenance setRefresh = {setRefresh}
+                  />
+                </>
+              ) : payMaintenanceView && selectedRole === "MANAGER" ? (
+                <>
+                  <PayMaintenanceForm setRefresh = {setRefresh}
+                    />
+                </>
+              ) : (
+                Object.keys(maintenanceData).length > 0 && (
+                  <MaintenanceRequestDetailNew
+                    maintenance_request_index={selectedRequestIndex}
+                    status={selectedStatus}
+                    setViewRHS={setViewRHS}
+                    maintenanceItemsForStatus={maintenanceData[selectedStatus]}
+                    allMaintenancefilteredData={maintenanceData}
+                    setRefresh = {setRefresh}
+                  />
+                )
+              )}
+          </Grid>)}
+          {/* {!isMobile && (
             <Grid item xs={12} md={8}>
               {editMaintenanceView && selectedRole === "MANAGER" ? (
                 <EditMaintenanceItem setRefersh = {setRefresh}/>
@@ -559,7 +610,7 @@ export default function MaintenanceManager() {
                 )
               )}
             </Grid>
-          )}
+          )} */}
         </Grid>
       </Container>
     </ThemeProvider>

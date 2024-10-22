@@ -1,6 +1,8 @@
 import { Box, Typography, Button, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect} from "react";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import theme from "../../../theme/theme";
 
 export default function RevenueWidget({ revenueData, cashflowStatusData }) {
   // console.log("In Revenue Widget ", revenueData);
@@ -9,6 +11,7 @@ export default function RevenueWidget({ revenueData, cashflowStatusData }) {
   let currentDate = new Date();
   let currentMonth = currentDate.toLocaleString("default", { month: "long" });  
   let currentYear = currentDate.getFullYear().toString();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [currentMonthExpense, setCurrentMonthExpense] = useState(null);
   const [currentMonthRevenue, setCurrentMonthRevenue] = useState(null);
@@ -58,16 +61,16 @@ export default function RevenueWidget({ revenueData, cashflowStatusData }) {
             }}
           >
             <Grid container>
-              <Grid item xs={8}>
-                <Typography sx={{ fontWeight: "bold" }}>{currentMonth} Cashflow (Expected vs Actual)</Typography>
+              <Grid item xs={isMobile? 6.8: 8}>
+                <Typography sx={{width:"100%", textAlign: "left", fontWeight: "bold" }}>{currentMonth} Cashflow (Expected vs Actual)</Typography>
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={isMobile? 2.5 : 2}>
                 {/* <Typography sx={{ fontWeight: "bold" }}>{profit? profit.toFixed(2) : '0.00'}</Typography> */}
-                <Typography sx={{ fontWeight: "bold" }}>{currentMonthProfit?.pur_amount_due?.toFixed(2) || '0.00'}</Typography>
+                <Typography sx={{width:"100%", textAlign: "right", fontWeight: "bold" }}>{currentMonthProfit?.pur_amount_due?.toFixed(2) || '0.00'}</Typography>
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={isMobile? 2.5 : 2}>
                 {/* <Typography sx={{ fontWeight: "bold" }}>{profitReceived? profitReceived.toFixed(2) : '0.00'}</Typography> */}
-                <Typography sx={{ fontWeight: "bold" }}>{currentMonthProfit?.total_paid?.toFixed(2) || '0.00'}</Typography>
+                <Typography sx={{width:"100%", textAlign: "right", fontWeight: "bold" }}>{currentMonthProfit?.total_paid?.toFixed(2) || '0.00'}</Typography>
               </Grid>
             </Grid>
           </Grid>
@@ -83,16 +86,16 @@ export default function RevenueWidget({ revenueData, cashflowStatusData }) {
             }}
           >
             <Grid container>
-              <Grid item xs={8}>
-                <Typography sx={{ fontWeight: "bold" }}>{currentMonth} Revenue (Expected vs Actual)</Typography>
+              <Grid item xs={isMobile? 6.8: 8}>
+                <Typography sx={{width:"100%", textAlign: "left", fontWeight: "bold" }}>{currentMonth} Revenue (Expected vs Actual)</Typography>
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={isMobile? 2.5: 2}>
                 {/* <Typography sx={{ fontWeight: "bold" }}>{revenue ? revenue : '0.00'}</Typography> */}
-                <Typography sx={{ fontWeight: "bold" }}>{currentMonthRevenue?.pur_amount_due || '0.00'}</Typography>
+                <Typography sx={{width:"100%", textAlign: "right", fontWeight: "bold" }}>{currentMonthRevenue?.pur_amount_due || '0.00'}</Typography>
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={isMobile? 2.5: 2}>
                 {/* <Typography sx={{ fontWeight: "bold" }}>{revenueReceived ? revenueReceived : '0.00'}</Typography> */}
-                <Typography sx={{ fontWeight: "bold" }}>{currentMonthRevenue?.total_paid || '0.00'}</Typography>
+                <Typography sx={{width:"100%", textAlign: "right", fontWeight: "bold" }}>{currentMonthRevenue?.total_paid || '0.00'}</Typography>
               </Grid>
             </Grid>
           </Grid>
@@ -107,27 +110,27 @@ export default function RevenueWidget({ revenueData, cashflowStatusData }) {
             }}
           >
             <Grid container>
-              <Grid item xs={8}>
-                <Typography sx={{ fontWeight: "bold" }}>{currentMonth} Expenses (Expected vs Actual)</Typography>
+              <Grid item xs={isMobile? 6.8: 8}>
+                <Typography sx={{width:"100%", textAlign: "left", fontWeight: "bold" }}>{currentMonth} Expenses (Expected vs Actual)</Typography>
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={isMobile? 2.5: 2}>
                 {/* <Typography sx={{ fontWeight: "bold" }}>{expenses ? expenses : '0.00'}</Typography> */}
-                <Typography sx={{ fontWeight: "bold" }}>{currentMonthExpense?.pur_amount_due || '0.00'}</Typography>
+                <Typography sx={{width:"100%", textAlign: "right", fontWeight: "bold" }}>{currentMonthExpense?.pur_amount_due || '0.00'}</Typography>
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={isMobile? 2.5: 2}>
                 {/* <Typography sx={{ fontWeight: "bold" }}>{expensesReceived ? expensesReceived : '0.00'}</Typography> */}
-                <Typography sx={{ fontWeight: "bold" }}>{currentMonthExpense?.total_paid || '0.00'}</Typography>
+                <Typography sx={{width:"100%", textAlign: "right", fontWeight: "bold" }}>{currentMonthExpense?.total_paid || '0.00'}</Typography>
               </Grid>
             </Grid>
           </Grid>
         </Grid>
 
-        <Grid container item xs={12} md={3} direction='row' justifyContent='center' alignItems='center' sx={{ padding: "10px" }}>
-          <Grid item xs={6} md={12} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <Grid container item xs={12} md={3} direction='row' justifyContent='space-evenly' alignItems="center" sx={{ padding: "10px" }}>
+          <Grid item xs={3} md={12} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
             <Button
               variant='contained'
               sx={{
-                width: "60%",
+                width: isMobile? "90%" : "60%",
                 // marginTop: '10px',
                 backgroundColor: "#A9AAAB",
                 color: "#19084B",
@@ -148,7 +151,7 @@ export default function RevenueWidget({ revenueData, cashflowStatusData }) {
               Pay Bills
             </Button>
           </Grid>
-          <Grid item xs={6} md={12} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <Grid item xs={4} md={12} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
             <Button
               onClick={(e) => {
                 e.stopPropagation();
@@ -157,7 +160,7 @@ export default function RevenueWidget({ revenueData, cashflowStatusData }) {
               }}
               variant='contained'
               sx={{
-                width: "60%",
+                width: isMobile? "90%" : "60%",
                 // marginTop: '10px',
                 backgroundColor: "#A9AAAB",
                 color: "#19084B",
@@ -172,7 +175,7 @@ export default function RevenueWidget({ revenueData, cashflowStatusData }) {
               Transactions!
             </Button>
           </Grid>
-          <Grid item xs={6} md={12} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <Grid item xs={5} md={12} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
             <Button
               onClick={(e) => {
                 e.stopPropagation();                
@@ -181,7 +184,7 @@ export default function RevenueWidget({ revenueData, cashflowStatusData }) {
               }}
               variant='contained'
               sx={{
-                width: "60%",
+                width: isMobile? "90%" : "60%",
                 // marginTop: '10px',
                 backgroundColor: "#A9AAAB",
                 color: "#19084B",

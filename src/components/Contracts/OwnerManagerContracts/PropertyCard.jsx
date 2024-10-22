@@ -2005,8 +2005,8 @@ return (
         }}
       >    
 			
-		<Grid container columnGap={6} sx={{marginTop: '10px', }}>
-			<Grid item container direction="row" xs={6.5} sx={{justifyContent: 'center', }}>
+		<Grid container columnGap={0} sx={{marginTop: '10px', justifyContent: "space-evenly"}}>
+			<Grid item container direction="row" xs={10.75} md={5.5} sx={{justifyContent: 'center', }}>
 				<Grid item xs={12}>
 					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
 						Management Agreement Name
@@ -2027,7 +2027,7 @@ return (
 				
 
 			</Grid>
-			<Grid item container direction="row" xs={2.5} sx={{justifyContent: 'center', }}>
+			<Grid item container direction="row" xs={5} md={2.5} sx={{justifyContent: 'center', }}>
 				<Grid item xs={12}>
 					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
 						Start Date
@@ -2047,7 +2047,8 @@ return (
 					</LocalizationProvider>
 				</Grid>
 			</Grid>
-			<Grid item container direction="row" xs={2.5} sx={{justifyContent: 'center', }}>
+			{/* <Grid item container xs={2} md={0}></Grid> */}
+			<Grid item container direction="row" xs={5} md={2.5} sx={{justifyContent: 'center', }}>
 				<Grid item xs={12}>
 					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
 						End Date
@@ -2089,7 +2090,7 @@ return (
 			</Grid>
 
 		</Grid>			
-    <Grid container item xs={12}  sx={{marginTop: '10px', }}>      			    
+    <Grid container item xs={12}  sx={{marginTop: '10px', justifyContent: "space-evenly"}}>      			    
       <Grid item container direction="row" xs={3.5} sx={{justifyContent: 'center', }}>
 				<Grid item xs={12}>					
 				</Grid>
@@ -2132,10 +2133,10 @@ return (
           />				
 				</Grid>
       </Grid>
-      <Grid item xs={1.85}>
+      {/* <Grid item xs={1.85}>
 
-      </Grid>
-      <Grid item container direction="row" xs={2.55} sx={{justifyContent: 'flex-start', }}>
+      </Grid> */}
+      <Grid item container direction="row" xs={4} sx={{justifyContent: 'flex-start', }}>
 				<Grid item xs={12}>
 					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
 						Contract End Notice

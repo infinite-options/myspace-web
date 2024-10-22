@@ -49,7 +49,7 @@ function a11yProps(index) {
   };
 }
 
-export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData, setRefresh }) {
+export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData, setRefresh, setViewRHS }) {
   const {
     selectedRequestIndex,
     selectedStatus,
@@ -87,14 +87,27 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
   }
 
   const colorStatus = getColorStatusBasedOnSelectedRole();
+  if (isMobile) {
+    colorStatus.forEach(item => {
+      if (item.status === "New Requests") {
+        item.status = "New";
+      }
+      if (item.status === "Info Requested") {
+        item.status = "Info";
+      }
+    });
+  }
+
   const [fromProperty, setFromProperty] = useState(location.state?.fromProperty || false);
   
-  const [value, setValue] = useState(colorStatus.findIndex((item) => item.status === (isMobile ? location.state.status : selectedStatus)));
+  // const [value, setValue] = useState(colorStatus.findIndex((item) => item.status === (isMobile ? location.state.status : selectedStatus)));
+  const [value, setValue] = useState(colorStatus.findIndex((item) => item.status.toUpperCase() === selectedStatus.toUpperCase()));
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
   const [filteredQuotes, setFilteredQuotes] = useState([]);
   const [navParams, setNavParams] = useState({});
-  const allData = isMobile ? location.state.allMaintenanceData : allMaintenancefilteredData;
+  // const allData = isMobile ? location.state.allMaintenanceData : allMaintenancefilteredData;
+  const allData = allMaintenancefilteredData;
 
   const isDesktop = location.state?.isDesktop || false;
   const propertyIndex = location.state?.index || -1;
@@ -131,6 +144,8 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
       } else {
         navigate(-1);
       }
+    } else if(isMobile && setViewRHS){
+      setViewRHS(false)
     } else {
       navigate(maintenanceRoutingBasedOnSelectedRole());
     }
@@ -215,6 +230,7 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
         temp[index] = isGrey;
         return temp;
       });
+      console.log("ohhh here its mistake -- ", index)
       let firstTab = temp.indexOf(0);
       let lastTab = temp.lastIndexOf(0);
       setTabs({ firstTab, lastTab });
@@ -262,7 +278,7 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
   return (
     <ThemeProvider theme={theme}>
       <Box
-        style={{
+        sx={{
           display: "flex",
           justifyContent: "center",
           width: "100%",
@@ -271,7 +287,7 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
         }}
       >
         <Paper
-          style={{
+          sx={{
             margin: "5px",
             backgroundColor: theme.palette.primary.main,
             width: "100%",
@@ -351,9 +367,9 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
                       {...a11yProps(index)}
                       sx={{
                         backgroundColor: color,
-                        borderTopLeftRadius: "10px",
-                        borderTopRightRadius: "10px",
-                        height: "10%",
+                        borderTopLeftRadius: "0px",
+                        borderTopRightRadius: "0px",
+                        height: isMobile ? "0px" : "1px",
                         minWidth: "5px",
                         padding: "0px",
                       }}
@@ -362,7 +378,7 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
                           sx={{
                             color: theme.typography.primary.grey,
                             fontWeight: theme.typography.secondary.fontWeight,
-                            fontSize: isMobile ? 8 : theme.typography.smallFont,
+                            fontSize: isMobile ? "8px" : theme.typography.smallFont,
                           }}
                         >
                           {title}

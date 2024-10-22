@@ -205,6 +205,7 @@ export default function MaintenanceStatusTable({ status, color, maintenanceItems
                             // pageSizeOptions={[5]}
                             onRowClick={(params) => {
                                 const index = maintenanceItemsForStatus.findIndex(row => row.maintenance_request_uid === params.row.maintenance_request_uid);
+                                
                                 onRowClick(index, params.row);
                             }}
                             getRowClassName={(params) => (

@@ -69,6 +69,7 @@ import ImageListItem from "@mui/material/ImageListItem";
 
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { CollectionsBookmarkRounded } from "@mui/icons-material";
@@ -108,6 +109,7 @@ export default function PropertyNavigator({
   onAddListingClick,
   handleViewManagerDetailsClick,
   props,
+  setViewRHS
 }) {
   // console.log("In Property Navigator", onEditClick);
   // console.log(index, propertyList);
@@ -157,6 +159,8 @@ export default function PropertyNavigator({
 
   const [selectedImageList, setSelectedImageList] = useState([]);
   const [isReadOnly, setIsReadOnly] = useState(false);
+
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   // console.log("PropertyNavigator - location state allRentStatus - ", allRentStatus);
 
@@ -437,6 +441,12 @@ export default function PropertyNavigator({
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
+
+  const handleBackButton = () => {
+    if(isMobile && setViewRHS){
+      setViewRHS(false)
+    }
+  }
 
   // const handleManagerChange = () => {
   //   // if (property && property.business_uid) {
@@ -1066,6 +1076,12 @@ export default function PropertyNavigator({
           height: "100%",
         }}
       >
+        {isMobile && (<Box>
+          <Button onClick={handleBackButton} sx={{color: "black", fontSize: theme.typography.smallFont}}>
+            <ArrowBackIcon sx={{ color: "#000000", width: "15px", height: "15px", margin: "0px" }} /> Back
+          </Button>
+        </Box>)}
+
         {/* Property Navigator Header Including Address and x of y Properties */}
         <Grid container sx={{ marginTop: "15px", alignItems: "center", justifyContent: "center" }}>
           <Grid item md={1} xs={2} sx={{ display: "flex", justifyContent: "center" }}>
@@ -1199,7 +1215,7 @@ export default function PropertyNavigator({
                               elevation: "0",
                               boxShadow: "none",
                               flexGrow: 1,
-                              objectFit: "cover",
+                              objectFit: isMobile ? "contain" : "cover",
                               width: "100%",
                               height: "100px",
                             }}
@@ -1419,7 +1435,7 @@ export default function PropertyNavigator({
                   </Grid>
                   {/* End Middle Column with Property Details */}
                   {/* Buttons */}
-                  <Grid item xs={12} md={3.5}>
+                  <Grid item xs={12} md={3.5} marginTop={isMobile? 5 : 0}>
                     <Grid container spacing={2}>
                       <Grid item xs={12}>
                         {property && property?.property_available_to_rent === 1 && (property.lease_status == null || property.lease_status !== "ACTIVE") && (
@@ -1491,7 +1507,7 @@ export default function PropertyNavigator({
                               </Box>
                             </Box>
                           )}
-                        {property &&
+                        {property && property.lease_status && property.lease_status !== "ACTIVE" &&
                           (property?.property_available_to_rent === 0 || property?.property_available_to_rent == null) &&
                           property.business_uid != null &&
                           property.business_uid !== "" && (
@@ -1562,7 +1578,7 @@ export default function PropertyNavigator({
                         )}
                       </Grid>
                       <Grid item xs={12}>
-                        <Box sx={{ pb: 40 }}>
+                        <Box sx={{ pb: isMobile? 5 : 40}}>
                           <Box
                             sx={{
                               display: "flex",
@@ -1607,7 +1623,7 @@ export default function PropertyNavigator({
                         </Box>
                       </Grid>
                       <Grid item xs={12}>
-                        <Box>
+                        <Box sx={{pb: isMobile ? 5 : 0,}}>
                           {/* Edit Property Button */}
                           <Button
                             variant='contained'
@@ -1689,7 +1705,7 @@ export default function PropertyNavigator({
                             size='small'
                             onClick={() => onAddListingClick("edit_listing")}
                           >
-                            <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px", margin: "5px" }} />
+                            <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px",}} />
                             <Typography
                               sx={{
                                 textTransform: "none",
@@ -2491,6 +2507,7 @@ export default function PropertyNavigator({
                   alignItems: "center",
                   justifyContent: "space-around",
                   width: "100%",
+                  overflowX: "auto"
                 }}
               >
                 <DataGrid
@@ -2508,6 +2525,7 @@ export default function PropertyNavigator({
                   getRowId={(row) => row.rent_detail_index}
                   pageSizeOptions={[12]}
                   sx={{
+                    minWidth: "700px",
                     "& .MuiDataGrid-cell": {
                       justifyContent: "center",
                       alignItems: "center",
@@ -2541,7 +2559,7 @@ export default function PropertyNavigator({
           {/* Appliances grid */}
           <Grid item xs={12} md={12} sx={{ pt: "10px" }}>
             <Card sx={{ backgroundColor: color, height: "100%" }}>
-              <Box sx={{ width: "100%" }}>
+              <Box sx={{ width: "100%"}}>
                 <Box
                   sx={{
                     display: "flex",
@@ -2600,21 +2618,24 @@ export default function PropertyNavigator({
                     <AddIcon sx={{ color: "black", fontSize: "24px" }} />
                   </IconButton>
                 </Box>
-                <DataGrid
-                  rows={appliances}
-                  columns={applnColumns}
-                  pageSize={5}
-                  getRowId={(row) => row.appliance_uid}
-                  autoHeight
-                  sx={{
-                    fontSize: "10px",
-                    "& .wrap-text": {
-                      whiteSpace: "normal !important",
-                      wordWrap: "break-word !important",
-                      overflow: "visible !important",
-                    },
-                  }}
-                />
+                <Box sx={{width : "100%", overflowX : "auto"}}>
+                  <DataGrid
+                    rows={appliances}
+                    columns={applnColumns}
+                    pageSize={5}
+                    getRowId={(row) => row.appliance_uid}
+                    autoHeight
+                    sx={{
+                      minWidth: "700px",
+                      fontSize: "10px",
+                      "& .wrap-text": {
+                        whiteSpace: "normal !important",
+                        wordWrap: "break-word !important",
+                        overflow: "visible !important",
+                      },
+                    }}
+                  />
+                </Box>
                 <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
                   <Alert onClose={handleSnackbarClose} severity='error' sx={{ width: "100%" }}>
                     Please fill in all required fields.
