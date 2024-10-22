@@ -82,7 +82,7 @@ export async function maintenanceOwnerDataCollectAndProcess(setMaintenanceData, 
       dataObject["CANCELLED"].push(item);
     }
 
-    setMaintenanceData((prevData) => ({
+    await setMaintenanceData((prevData) => ({
       ...prevData,
       ...dataObject,
     }));
@@ -131,6 +131,7 @@ export function MaintenanceOwner() {
   const [year, setYear] = useState(null);
   const [showSpinner, setShowSpinner] = useState(false);
   const [filterPropertyList, setFilterPropertyList] = useState([]);
+  const [viewRHS, setViewRHS] = useState(false)
 
   // const [selectedRequestIndex, setSelectedRequestIndex] = useState(0);
   // const [selectedStatus, setSelectedStatus] = useState("NEW REQUEST");
@@ -169,6 +170,9 @@ export function MaintenanceOwner() {
     // } else {
     //   setshowNewMaintenance(true);
     // }
+    if(isMobile){
+      setViewRHS(true)
+    }
     setshowNewMaintenance(true);
   }
 
@@ -176,10 +180,11 @@ export function MaintenanceOwner() {
     if (maintenanceData) {
       const propertyList = [];
       const addedAddresses = [];
+      console.log("maintenace data owner side --- ", maintenanceData)
       for (const key in maintenanceData) {
         for (const item of maintenanceData[key]) {
-          if (!addedAddresses.includes(item.property_id)) {
-            addedAddresses.push(item.property_id);
+          if (!addedAddresses.includes(item.property_address)) {
+            addedAddresses.push(item.property_address);
             if (!propertyList.includes(item.property_address)) {
               propertyList.push({
                 property_uid: item.property_id,
@@ -331,10 +336,15 @@ export function MaintenanceOwner() {
     //   setAllMaintenanceData(maintenanceData);
 
     // }
+    // console.log("clicked on row - ", index, row, maintenanceData, newDataObject)
+    
     await setSelectedRequestIndex(index);
     await setSelectedStatus(row.maintenance_status);
-    setMaintenanceItemsForStatus(maintenanceData[row.maintenance_status]);
-    setAllMaintenanceData(maintenanceData);
+    await setMaintenanceItemsForStatus(maintenanceData[row.maintenance_status]);
+    await setAllMaintenanceData(maintenanceData);
+    if(isMobile){
+      setViewRHS(true)
+    }
 
   };
 
@@ -357,11 +367,11 @@ export function MaintenanceOwner() {
       ): (
       <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
         <Grid container sx={{ padding: "10px" }}>
-          <Grid
+          {(!isMobile || !viewRHS) && (<Grid
             item
             xs={12}
-            sm={5}
-            style={{
+            md={5}
+            sx={{
               display: "flex",
               justifyContent: "center",
               width: "100%",
@@ -369,152 +379,153 @@ export function MaintenanceOwner() {
             }}
           >
             <Paper
-              style={{
-                margin: "5px",
-                backgroundColor: theme.palette.primary.main,
-                width: "95%",
-                paddingTop: "10px",
-                paddingBottom: "30px",
-              }}
-            >
-              <Stack
-                direction='row'
-                justifyContent='space-between'
-                alignItems='center'
                 sx={{
-                  paddingBottom: "20px",
-                  paddingLeft: "0px",
-                  paddingRight: "0px",
+                  margin: "5px",
+                  backgroundColor: theme.palette.primary.main,
+                  width: "98%",
+                  marginRight: isMobile ? "5px" : "10px",
+                  paddingTop: "10px",
+                  paddingBottom: "30px",
                 }}
               >
-                <Box component='span' display='flex' justifyContent='flex-start' alignItems='flex-start' position='relative'>
-                  <Button onClick={handleBackButton}>
-                    <ArrowBackIcon
+                <Stack
+                  direction='row'
+                  justifyContent='space-between'
+                  alignItems='center'
+                  sx={{
+                    paddingBottom: "20px",
+                    paddingLeft: "0px",
+                    paddingRight: "0px",
+                  }}
+                >
+                  <Box component='span' display='flex' justifyContent='flex-start' alignItems='flex-start' position='relative'>
+                    <Button onClick={handleBackButton}>
+                      <ArrowBackIcon
+                        sx={{
+                          color: theme.typography.common.blue,
+                          fontSize: "30px",
+                          margin: "5px",
+                        }}
+                      />
+                    </Button>
+                  </Box>
+                  <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative' flex={1}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.primary.fontWeight,
+                        fontSize: theme.typography.largeFont,
+                      }}
+                    >
+                      Maintenance
+                    </Typography>
+                  </Box>
+                  <Box position='relative' display='flex' justifyContent='flex-end' alignItems='center'>
+                    <Button onClick={() => navigateToAddMaintenanceItem()} id='addMaintenanceButton'>
+                      <AddIcon
+                        sx={{
+                          color: theme.typography.common.blue,
+                          fontSize: "30px",
+                          margin: "5px",
+                        }}
+                      />
+                    </Button>
+                  </Box>
+                </Stack>
+                <Box component='span' m={2} display='flex' justifyContent='space-between' alignItems='center'>
+                  <Button sx={{ textTransform: "capitalize" }} onClick={() => setShowSelectMonth(true)}>
+                    <CalendarTodayIcon
                       sx={{
                         color: theme.typography.common.blue,
-                        fontSize: "30px",
+                        fontWeight: theme.typography.common.fontWeight,
+                        fontSize: theme.typography.smallFont,
                         margin: "5px",
                       }}
                     />
-                  </Button>
-                </Box>
-                <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative' flex={1}>
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.primary.fontWeight,
-                      fontSize: theme.typography.largeFont,
-                    }}
-                  >
-                    Maintenance
-                  </Typography>
-                </Box>
-                <Box position='relative' display='flex' justifyContent='flex-end' alignItems='center'>
-                  <Button onClick={() => navigateToAddMaintenanceItem()} id='addMaintenanceButton'>
-                    <AddIcon
+                    <Typography
                       sx={{
                         color: theme.typography.common.blue,
-                        fontSize: "30px",
+                        fontWeight: theme.typography.common.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      {displayFilterString(month, year)}
+                    </Typography>
+                  </Button>
+                  <Button sx={{ textTransform: "capitalize" }} onClick={() => setShowPropertyFilter(true)}>
+                    <HomeWorkIcon
+                      sx={{
+                        color: theme.typography.common.blue,
+                        fontWeight: theme.typography.common.fontWeight,
+                        fontSize: theme.typography.smallFont,
                         margin: "5px",
                       }}
                     />
+                    <Typography
+                      sx={{
+                        color: theme.typography.common.blue,
+                        fontWeight: theme.typography.common.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      {displayPropertyFilterTitle(filterPropertyList)}
+                    </Typography>
                   </Button>
+
+                  <SelectMonthComponent
+                    month={month}
+                    showSelectMonth={showSelectMonth}
+                    setShowSelectMonth={setShowSelectMonth}
+                    setMonth={setMonth}
+                    setYear={setYear}
+                  ></SelectMonthComponent>
+                  <SelectPropertyFilter
+                    showPropertyFilter={showPropertyFilter}
+                    setShowPropertyFilter={setShowPropertyFilter}
+                    filterList={filterPropertyList}
+                    setFilterList={setFilterPropertyList}
+                  />
                 </Box>
-              </Stack>
-              <Box component='span' m={2} display='flex' justifyContent='space-between' alignItems='center'>
-                <Button sx={{ textTransform: "capitalize" }} onClick={() => setShowSelectMonth(true)}>
-                  <CalendarTodayIcon
-                    sx={{
-                      color: theme.typography.common.blue,
-                      fontWeight: theme.typography.common.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                      margin: "5px",
-                    }}
-                  />
-                  <Typography
-                    sx={{
-                      color: theme.typography.common.blue,
-                      fontWeight: theme.typography.common.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                    }}
-                  >
-                    {displayFilterString(month, year)}
-                  </Typography>
-                </Button>
-                <Button sx={{ textTransform: "capitalize" }} onClick={() => setShowPropertyFilter(true)}>
-                  <HomeWorkIcon
-                    sx={{
-                      color: theme.typography.common.blue,
-                      fontWeight: theme.typography.common.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                      margin: "5px",
-                    }}
-                  />
-                  <Typography
-                    sx={{
-                      color: theme.typography.common.blue,
-                      fontWeight: theme.typography.common.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                    }}
-                  >
-                    {displayPropertyFilterTitle(filterPropertyList)}
-                  </Typography>
-                </Button>
 
-                <SelectMonthComponent
-                  month={month}
-                  showSelectMonth={showSelectMonth}
-                  setShowSelectMonth={setShowSelectMonth}
-                  setMonth={setMonth}
-                  setYear={setYear}
-                ></SelectMonthComponent>
-                <SelectPropertyFilter
-                  showPropertyFilter={showPropertyFilter}
-                  setShowPropertyFilter={setShowPropertyFilter}
-                  filterList={filterPropertyList}
-                  setFilterList={setFilterPropertyList}
-                />
-              </Box>
+                <div
+                  style={{
+                    borderRadius: "10px",
 
-              <div
-                style={{
-                  borderRadius: "10px",
+                    margin: "20px",
+                  }}
+                >
+                  {colorStatus.map((item, index) => {
+                    let mappingKey = item.mapping;
 
-                  margin: "20px",
-                }}
-              >
-                {colorStatus.map((item, index) => {
-                  let mappingKey = item.mapping;
+                    let maintenanceArray = maintenanceData[mappingKey] || [];
 
-                  let maintenanceArray = maintenanceData[mappingKey] || [];
+                    let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList);
 
-                  let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList);
+                    for (const item of filteredArray) {
+                      newDataObject[mappingKey].push(item);
+                    }
 
-                  for (const item of filteredArray) {
-                    newDataObject[mappingKey].push(item);
-                  }
-
-                  return (
-                    <MaintenanceStatusTable
-                      key={index}
-                      status={item.status}
-                      color={item.color}
-                      maintenanceItemsForStatus={filteredArray}
-                      allMaintenanceData={maintenanceData}
-                      maintenanceRequestsCount={maintenanceArray}
-                      onRowClick={handleRowClick}
-                    />
-                  );
-                })}
-              </div>
+                    return (
+                      <MaintenanceStatusTable
+                        key={index}
+                        status={item.status}
+                        color={item.color}
+                        maintenanceItemsForStatus={filteredArray}
+                        allMaintenanceData={newDataObject}
+                        maintenanceRequestsCount={filteredArray}
+                        onRowClick={handleRowClick}
+                      />
+                    );
+                  })}
+                </div>
             </Paper>
-          </Grid>
+          </Grid>)}
           
-          <Grid item xs={12} md={7}>
+          {(!isMobile || viewRHS) && (<Grid item xs={12} md={7}>
               {editMaintenanceView && selectedRole === "OWNER" ? (
                 <EditMaintenanceItem setRefersh = {setRefresh} />
               ) : showNewMaintenance && selectedRole === "OWNER" ? (
-                <AddMaintenanceItem setRefersh = {setRefresh}  onBack={() => setshowNewMaintenance(false)} />
+                <AddMaintenanceItem setRefersh = {setRefresh}  onBack={() => {setshowNewMaintenance(false); setViewRHS(false)}} />
               ) : quoteRequestView && selectedRole === "OWNER" ? (
                 <>
                   <QuoteRequestForm setRefresh = {setRefresh}/>
@@ -538,13 +549,14 @@ export function MaintenanceOwner() {
                   <MaintenanceRequestDetailNew
                     maintenance_request_index={selectedRequestIndex}
                     status={selectedStatus}
+                    setViewRHS={setViewRHS}
                     maintenanceItemsForStatus={maintenanceData[selectedStatus]}
-                    allMaintenancefilteredData={newDataObject}
+                    allMaintenancefilteredData={maintenanceData}
                     setRefresh = {setRefresh}
                   />
                 )
               )}
-          </Grid>
+          </Grid>)}
 
           {/* {!isMobile && (
             <Grid item xs={7}>

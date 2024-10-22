@@ -1005,12 +1005,12 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 								
 
 								{/* Submit Button */}
-								<Grid item xs={12}>
+								<Grid item xs={12} display={"flex"} justifyContent={"center"}>
 									<Button
 										variant="contained"
 										color="primary"
 										type="submit"
-										sx={{ backgroundColor: '#9EAED6' }}
+										sx={{ backgroundColor: '#9EAED6'}}
 									>
 										<Typography
 											sx={{

@@ -1215,7 +1215,7 @@ export default function PropertyNavigator({
                               elevation: "0",
                               boxShadow: "none",
                               flexGrow: 1,
-                              objectFit: "cover",
+                              objectFit: isMobile ? "contain" : "cover",
                               width: "100%",
                               height: "100px",
                             }}
@@ -1435,7 +1435,7 @@ export default function PropertyNavigator({
                   </Grid>
                   {/* End Middle Column with Property Details */}
                   {/* Buttons */}
-                  <Grid item xs={12} md={3.5}>
+                  <Grid item xs={12} md={3.5} marginTop={isMobile? 5 : 0}>
                     <Grid container spacing={2}>
                       <Grid item xs={12}>
                         {property && property?.property_available_to_rent === 1 && (property.lease_status == null || property.lease_status !== "ACTIVE") && (
@@ -1507,7 +1507,7 @@ export default function PropertyNavigator({
                               </Box>
                             </Box>
                           )}
-                        {property &&
+                        {property && property.lease_status && property.lease_status !== "ACTIVE" &&
                           (property?.property_available_to_rent === 0 || property?.property_available_to_rent == null) &&
                           property.business_uid != null &&
                           property.business_uid !== "" && (
@@ -1578,7 +1578,7 @@ export default function PropertyNavigator({
                         )}
                       </Grid>
                       <Grid item xs={12}>
-                        <Box sx={{ pb: 40 }}>
+                        <Box sx={{ pb: isMobile? 5 : 40}}>
                           <Box
                             sx={{
                               display: "flex",
@@ -1623,7 +1623,7 @@ export default function PropertyNavigator({
                         </Box>
                       </Grid>
                       <Grid item xs={12}>
-                        <Box>
+                        <Box sx={{pb: isMobile ? 5 : 0,}}>
                           {/* Edit Property Button */}
                           <Button
                             variant='outlined'
@@ -1705,7 +1705,7 @@ export default function PropertyNavigator({
                             size='small'
                             onClick={() => onAddListingClick("edit_listing")}
                           >
-                            <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px", margin: "5px" }} />
+                            <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px",}} />
                             <Typography
                               sx={{
                                 textTransform: "none",

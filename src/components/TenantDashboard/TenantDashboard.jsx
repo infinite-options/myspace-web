@@ -445,7 +445,7 @@ const TenantDashboard = () => {
                 }}
               >
                 <SearchIcon />
-                {"Search Property"}
+                {!isMobile && "Search Property"}
               </Button>
             </Grid>
           )}
@@ -494,7 +494,7 @@ const TenantDashboard = () => {
                     </Grid>
 
                     {/* Maintenance and Management Details: Match height with Lease Details */}
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={6} sx={{marginBottom: isMobile ? "50px" : "0px"}}>
                       <Grid container spacing={3}>
                         <Grid item xs={12}>
                           <MaintenanceDetails
@@ -507,7 +507,7 @@ const TenantDashboard = () => {
                             setViewRHS={setViewRHS}
                           />
                         </Grid>
-                        <Grid item xs={12} sx={{ marginTop: "5px" }}>
+                        <Grid item xs={12} sx={{ marginTop: "5px",}}>
                           <ManagementDetails leaseDetails={leaseDetails} />
                         </Grid>
                       </Grid>
@@ -1067,7 +1067,8 @@ const MaintenanceDetails = ({ maintenanceRequests, onPropertyClick, selectedProp
     >
       {/* Header with Title and Add Button */}
       <Grid container alignItems='center' justifyContent='space-between' mb={2}>
-        <Grid item xs={10} sx={{ textAlign: "center" }}>
+        <Grid item xs={2}></Grid>
+        <Grid item xs={8} sx={{ textAlign: "center" }}>
           <Typography variant='h6' sx={{ fontWeight: "bold", color: "#160449", fontSize: "20px" }}>
             Maintenance
           </Typography>

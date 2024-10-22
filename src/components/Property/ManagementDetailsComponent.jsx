@@ -13,6 +13,7 @@ import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { ReactComponent as CalendarIcon } from "../../images/datetime.svg";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import axios from "axios";
 import APIConfig from '../../utils/APIConfig';
@@ -956,8 +957,10 @@ function ManagerEndContractDialog({ open, handleClose, onEndContract, noticePeri
 
 const noticePeriodDays = parseInt(noticePeriod, 10);
 const minEndDate = dayjs().add(noticePeriodDays, 'day')
+const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 // console.log("minEndDate - ", minEndDate);
 const formattedMinEndDate = minEndDate.format('MM/DD/YYYY')
+
     
 const [earlyEndDate, setEarlyEndDate] = useState(minEndDate);
     
@@ -981,7 +984,7 @@ const [earlyEndDate, setEarlyEndDate] = useState(minEndDate);
                 maxWidth="xl"
                 sx={{
                     '& .MuiDialog-paper': {
-                        width: '60%',
+                        width: isMobile? '75%' : '60%',
                         maxWidth: 'none',
                     },
                 }}
@@ -999,30 +1002,30 @@ const [earlyEndDate, setEarlyEndDate] = useState(minEndDate);
                 {`The notice period to end this contract is ${noticePeriod} days. The earliest possible end date is ${formattedMinEndDate}.`}
             </Typography>
             </Grid>            
-            <Grid container item xs={5} sx={{marginTop: '10px', }}>
-            <Grid item xs={12}>
-                <Typography sx={{fontWeight: 'bold', color: '#3D5CAC'}}>
-                    Please select contract end date
-                </Typography>
-            </Grid>
-            <Grid item xs={12}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                    value={earlyEndDate}
-                    minDate={minEndDate}
-                    onChange={(v) => setEarlyEndDate(v)}
-                    slots={{
-                    openPickerIcon: CalendarIcon,
-                    }}
-                    slotProps={datePickerSlotProps}
-                />
-                </LocalizationProvider>
-            </Grid>
+            <Grid container item xs={12} md={5} sx={{marginTop: '10px', }}>
+              <Grid item xs={12}>
+                  <Typography sx={{fontWeight: 'bold', color: '#3D5CAC'}}>
+                      Please select contract end date
+                  </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                      value={earlyEndDate}
+                      minDate={minEndDate}
+                      onChange={(v) => setEarlyEndDate(v)}
+                      slots={{
+                      openPickerIcon: CalendarIcon,
+                      }}
+                      slotProps={datePickerSlotProps}
+                  />
+                  </LocalizationProvider>
+              </Grid>
             </Grid>
             <Grid item xs={12} sx={{marginTop: '15px', }}>
-            <Typography sx={{width: 'auto',}}>
-                {`Are you sure you want to end this contract?`}
-            </Typography>
+              <Typography sx={{width: 'auto',}}>
+                  {`Are you sure you want to end this contract?`}
+              </Typography>
             </Grid>
         </Grid>
 

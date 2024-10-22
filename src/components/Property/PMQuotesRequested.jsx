@@ -361,7 +361,7 @@ export default function PMQuotesRequested(props) {
           sx={{
             padding: "13px",
             backgroundColor: "#D6D5DA",
-            borderRadius: "10px",
+            borderRadius: "0px 0px 10px 10px",
           }}
         >
           <TextField
@@ -885,7 +885,7 @@ export default function PMQuotesRequested(props) {
               >
                 <Box
                   sx={{
-                    padding: "15px",
+                    padding: "0px",
                   }}
                 >
                   {loading ? (
@@ -1467,6 +1467,7 @@ function SearchManagerDocumentCard(props){
                       variant="contained"
                       sx={{
                         textTransform: "none",
+                        width: "100%",
                         background: "#3D5CAC",
                         color: theme.palette.background.default,
                         borderRadius: "10px 10px 10px 10px",
