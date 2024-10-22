@@ -2,6 +2,20 @@ import { createTheme, alpha } from "@mui/material/styles";
 
 const theme = createTheme({
   components: {
+    MuiSvgIcon: {
+      variants: [
+        {
+          props: { variant: 'icon' }, 
+          style: {
+            fontSize: '30px',
+            color: "#3D5CAC",
+            '&:hover': {
+              color: "#160449",
+            },
+          },
+        },
+      ],
+    },
     MuiAccordion: {
       styleOverrides: {
         root: {
@@ -45,7 +59,7 @@ const theme = createTheme({
     },
     MuiButton: {
       styleOverrides: {
-        root: {
+        contained: {
           // "&:hover, &:focus, &:active": {
           "&:hover, &:active": {
             backgroundColor: "#160449",

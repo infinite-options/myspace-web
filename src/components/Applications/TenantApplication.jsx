@@ -277,7 +277,7 @@ export default function TenantApplication(props) {
     }
 
     if(props?.childOccupants){
-      setChildOccupants(props.childOccupants)
+      setChildOccupants(props.childOccupants);
     }else{
       formatTenantChildOccupants();
     }
@@ -332,8 +332,17 @@ export default function TenantApplication(props) {
 
   function handleWithdrawLease() {
     const withdrawLeaseData = new FormData();
-    withdrawLeaseData.append("lease_uid", lease.lease_uid);
+    if (lease[0].lease_uid) {
+      withdrawLeaseData.append("lease_uid", lease[0].lease_uid);
+    }
+    else {
+      withdrawLeaseData.append("lease_property_id", property.property_uid);
+    }
     withdrawLeaseData.append("lease_status", "WITHDRAWN");
+
+    withdrawLeaseData.forEach((value, key) => {
+      console.log(`${key}: ${value}`);
+    });
 
     const withdrawLeaseResponse = fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
       method: "PUT",
@@ -775,6 +784,9 @@ export default function TenantApplication(props) {
                     borderRadius: "5px",
                     display: "flex",
                     width: "45%",
+                    ":hover": {
+                      backgroundColor: "#E6B7B7",
+                    }
                   }}
                   onClick={() =>
                     props.setRightPane({
@@ -835,7 +847,8 @@ export default function TenantApplication(props) {
                     width: "45%",
                     marginLeft: "10px",
                     ":hover": {
-                      color: "white",
+                      backgroundColor: "#ffeb99",
+                      color: "#160449",
                     },
                   }}
                   onClick={() => setShowWithdrawLeaseDialog(true)}
@@ -1075,6 +1088,8 @@ export const EmploymentDataGrid = ({ tenantProfile, selectedJobs, setSelectedJob
     leaseStatus === "PROCESSING" || leaseStatus === "ACTIVE" || leaseStatus === "NEW"
       ? (lease?.[0]?.lease_income ? JSON.parse(lease[0].lease_income) : [])
       : (tenantProfile?.tenant_employment ? JSON.parse(tenantProfile.tenant_employment) : []);
+  
+  const employmentDataArray = Array.isArray(employmentData) ? employmentData : [];
 
   const handleJobSelection = (job, isChecked) => {
     setSelectedJobs((prevSelectedJobs) => {
@@ -1093,33 +1108,37 @@ export const EmploymentDataGrid = ({ tenantProfile, selectedJobs, setSelectedJob
   return (
     <Box sx={{ padding: '10px' }}>
       <Grid container spacing={2}>
-        {employmentData.map((job, index) => (
-          <Grid item xs={12} key={index}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              {(leaseStatus == null || leaseStatus === "" || leaseStatus === "REJECTED" || leaseStatus === "RESCIND" || leaseStatus === "RENEW") && (
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={selectedJobs.some((selectedJob) => selectedJob.companyName === job.companyName)}
-                      onChange={(e) => handleJobSelection(job, e.target.checked)}
-                    />
-                  }
-                  label=""
-                />
-              )}
+        {employmentDataArray.length > 0 ? (
+          employmentDataArray.map((job, index) => (
+            <Grid item xs={12} key={index}>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                {(leaseStatus == null || leaseStatus === "" || leaseStatus === "REJECTED" || leaseStatus === "RESCIND" || leaseStatus === "RENEW") && (
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={selectedJobs.some((selectedJob) => selectedJob.companyName === job.companyName)}
+                        onChange={(e) => handleJobSelection(job, e.target.checked)}
+                      />
+                    }
+                    label=""
+                  />
+                )}
 
-              <Box sx={{ flex: 1 }}>
-                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                  Job Title: {job.jobTitle}
-                </Typography>
-                <Typography variant="body2">Company: {job.companyName}</Typography>
-                <Typography variant="body2">Salary: ${job.salary}</Typography>
-                <Typography variant="body2">Frequency: {job.frequency}</Typography>
+                <Box sx={{ flex: 1 }}>
+                  <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                    Job Title: {job.jobTitle}
+                  </Typography>
+                  <Typography variant="body2">Company: {job.companyName}</Typography>
+                  <Typography variant="body2">Salary: ${job.salary}</Typography>
+                  <Typography variant="body2">Frequency: {job.frequency}</Typography>
+                </Box>
               </Box>
-            </Box>
-            <Divider sx={{ marginTop: '10px', marginBottom: '10px' }} />
-          </Grid>
-        ))}
+              <Divider sx={{ marginTop: '10px', marginBottom: '10px' }} />
+            </Grid>
+          ))
+        ) : (
+          <Typography variant="body2">No employment data available.</Typography>
+        )}
       </Grid>
     </Box>
   );

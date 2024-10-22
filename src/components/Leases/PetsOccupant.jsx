@@ -285,6 +285,7 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
                                     style: {
                                         // fontSize: '10px',
                                         textAlign: 'center',
+                                        color: 'black',
                                     },
                                 }}
                                 sx={{ backgroundColor: '#D6D5DA', }}
@@ -304,6 +305,7 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
                                     style: {
                                         // fontSize: '10px',
                                         textAlign: 'center',
+                                        color: 'black',
                                     },
                                 }}
                                 sx={{ backgroundColor: '#D6D5DA', }}
@@ -322,6 +324,7 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
                                     style: {
                                         // fontSize: '10px',
                                         textAlign: 'center',
+                                        color: 'black',
                                     },
                                 }}
                                 sx={{ backgroundColor: '#D6D5DA', }}
@@ -340,6 +343,7 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
                                     style: {
                                         // fontSize: '10px',
                                         textAlign: 'center',
+                                        color: 'black',
                                     },
                                 }}
                                 sx={{ backgroundColor: '#D6D5DA', }}
@@ -357,6 +361,7 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
                                 InputLabelProps={{
                                     style: {
                                         // fontSize: '10px',
+                                        color: 'black',
                                         textAlign: 'center',
                                     },
                                 }}
@@ -375,6 +380,7 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
                                 InputLabelProps={{
                                     style: {
                                         // fontSize: '10px',
+                                        color: 'black',
                                         textAlign: 'center',
                                     },
                                 }}
@@ -385,19 +391,17 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
                 </DialogContent>
                 {/* <DialogActions> */}
                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '10px' }}>
-                    <Button
+                    <Button variant='contained'
                         sx={{
-                            marginRight: '5px', background: "#FFC614",
-                            color: "#160449",
+                            marginRight: '5px',
+                            background: "#3D5CAC",
+                            color: "white",
                             cursor: "pointer",
                             width: "100px",
                             height: "31px",
                             fontWeight: theme.typography.secondary.fontWeight,
                             fontSize: theme.typography.smallFont,
                             textTransform: 'none',
-                            '&:hover': {
-                                backgroundColor: '#fabd00',
-                            },
                         }}
                         onClick={handleSave} color="primary">
                         Save

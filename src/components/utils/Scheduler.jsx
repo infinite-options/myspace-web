@@ -189,6 +189,7 @@ const Scheduler = ({
       </Box>
       <DialogActions sx={{ justifyContent: "center" }}>
         <Button
+          variant = "contained"
           sx={{
             backgroundColor: "#3D5CAC",
             fontSize: 20,

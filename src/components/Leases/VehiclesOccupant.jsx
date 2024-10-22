@@ -320,6 +320,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                                     style: {
                                         // fontSize: '10px',
                                         textAlign: 'center',
+                                        color: 'black'
                                     },
                                 }}
                                 sx={{ backgroundColor: '#D6D5DA', }}
@@ -338,6 +339,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                                     style: {
                                         // fontSize: '10px',
                                         textAlign: 'center',
+                                        color: 'black'
                                     },
                                 }}
                                 sx={{ backgroundColor: '#D6D5DA', }}
@@ -357,6 +359,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                                     style: {
                                         // fontSize: '10px',
                                         textAlign: 'center',
+                                        color: 'black'
                                     },
                                 }}
                                 sx={{ backgroundColor: '#D6D5DA', }}
@@ -374,7 +377,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                                     variant="outlined"
                                     value={currentRow?.state.toUpperCase() || ''}
                                     onChange={(e) => setCurrentRow({ ...currentRow, state: e.target.value })}
-                                    sx={{ backgroundColor: '#D6D5DA' }}
+                                    sx={{ backgroundColor: '#D6D5DA', color: 'black' }}
                                 >
                                     {states && states.map((state) => (
                                         <MenuItem key={state.list_uid} value={state.list_item}>
@@ -413,6 +416,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                                     backgroundColor: '#D6D5DA',
                                     height: "55px",
                                     borderRadius: "5px",
+                                    color: 'black',
                                     border: '1px solid grey',
                                     ".MuiFilledInput-root": {
                                         padding: "0 12px",
@@ -451,19 +455,16 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                 </DialogContent>
                 {/* <DialogActions> */}
                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '10px' }}>
-                    <Button
+                    <Button variant='contained'
                         sx={{
-                            marginRight: '5px', background: "#FFC614",
-                            color: "#160449",
+                            marginRight: '5px', background: "#3D5CAC",
+                            color: "white",
                             cursor: "pointer",
                             width: "100px",
                             height: "31px",
                             fontWeight: theme.typography.secondary.fontWeight,
                             fontSize: theme.typography.smallFont,
                             textTransform: 'none',
-                            '&:hover': {
-                                backgroundColor: '#fabd00',
-                            },
                         }}
                         onClick={handleSave} color="primary">
                         Save

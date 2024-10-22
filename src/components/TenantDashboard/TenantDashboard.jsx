@@ -962,7 +962,7 @@ const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty, relatedLea
               </Stack>
               <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: "auto" }}>
                 {!isEndingOrEarlyTermination && (
-                  <Button variant='contained' color='secondary' onClick={handleEndLease} size='small' sx={{ padding: "5px 10px", marginRight: "10px" }}>
+                  <Button variant='contained' onClick={handleEndLease} size='small' sx={{ padding: "5px 10px", marginRight: "10px" }}>
                     End Lease
                   </Button>
                 )}
@@ -1577,6 +1577,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
                   <Stack direction='row' justifyContent='center' mt={4}>
                     <Button
                       disabled={paymentOption === "partial" && !partialAmount}
+                      variant="contained"
                       sx={{
                         marginTop: "10px",
                         backgroundColor: "#3D5CAC",

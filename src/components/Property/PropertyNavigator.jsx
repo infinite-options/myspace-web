@@ -1626,7 +1626,7 @@ export default function PropertyNavigator({
                         <Box sx={{pb: isMobile ? 5 : 0,}}>
                           {/* Edit Property Button */}
                           <Button
-                            variant='outlined'
+                            variant='contained'
                             sx={{
                               background: "#3D5CAC",
                               color: theme.palette.background.default,
@@ -1662,7 +1662,7 @@ export default function PropertyNavigator({
                       {selectedRole === "MANAGER" && property && property?.property_available_to_rent !== 1 && (
                         <Grid item xs={12}>
                           <Button
-                            variant='outlined'
+                            variant='contained'
                             sx={{
                               background: "#3D5CAC",
                               color: theme.palette.background.default,
@@ -1692,7 +1692,7 @@ export default function PropertyNavigator({
                       {selectedRole === "MANAGER" && property && property?.property_available_to_rent === 1 && (
                         <Grid item xs={12}>
                           <Button
-                            variant='outlined'
+                            variant='contained'
                             sx={{
                               background: "#3D5CAC",
                               color: theme.palette.background.default,
@@ -2994,13 +2994,13 @@ export default function PropertyNavigator({
                     {isReadOnly ? (
                       // Show "Close" button only if it's read-only
                       <IconButton onClick={handleClose} sx={{ position: "absolute", top: 8, right: 8 }}>
-                        <CloseIcon />
+                        <CloseIcon variant="icon"/>
                       </IconButton>
                     ) : (
                       // Show "Cancel" and "Save" buttons if not read-only
                       <>
                         <Button
-                          variant='outlined'
+                          variant='contained'
                           sx={{
                             background: "#3D5CAC",
                             color: theme.palette.background.default,
@@ -3016,7 +3016,7 @@ export default function PropertyNavigator({
                           Cancel
                         </Button>
                         <Button
-                          variant='outlined'
+                          variant='contained'
                           sx={{
                             background: "#3D5CAC",
                             color: theme.palette.background.default,

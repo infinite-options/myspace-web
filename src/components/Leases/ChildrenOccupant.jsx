@@ -269,10 +269,7 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
                 >
                     <span style={{ flexGrow: 1, textAlign: 'center' }}>Occupancy Details</span>
                     <Button onClick={handleClose} sx={{ ml: 'auto' }}>
-                        <Close sx={{
-                            color: theme.typography.primary.black,
-                            fontSize: '20px',
-                        }} />
+                        <Close variant="icon" />
                     </Button>
                 </DialogTitle>
                 <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
@@ -296,16 +293,14 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
                                 margin="dense"
                                 label="First Name"
                                 fullWidth
+                                required
                                 variant="outlined"
+                                InputLabelProps={{
+                                    style: { color: 'black'}
+                                }}
                                 value={currentRow?.name || ''}
                                 onChange={(e) => setCurrentRow({ ...currentRow, name: e.target.value })}
-                                // InputLabelProps={{
-                                //     style: {
-                                //         fontSize: '10px',
-                                //         textAlign: 'center',
-                                //     },
-                                // }}
-                                sx={{ backgroundColor: '#D6D5DA', }}
+                                sx={{backgroundColor: '#D6D5DA'}}
                             />
                         </Grid>
 
@@ -315,16 +310,14 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
                                 margin="dense"
                                 label="Last Name"
                                 fullWidth
+                                required
                                 variant="outlined"
+                                InputLabelProps={{
+                                    style: { color: 'black'}
+                                }}
                                 value={currentRow?.last_name || ''}
                                 onChange={(e) => setCurrentRow({ ...currentRow, last_name: e.target.value })}
-                                // InputLabelProps={{
-                                //     style: {
-                                //         fontSize: '10px',
-                                //         textAlign: 'center',
-                                //     },
-                                // }}
-                                sx={{ backgroundColor: '#D6D5DA', }}
+                                sx={{backgroundColor: '#D6D5DA',}}
                             />
                         </Grid>
 
@@ -339,40 +332,30 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
                                 margin="dense"
                                 label="Email"
                                 fullWidth
+                                required
                                 variant="outlined"
+                                InputLabelProps={{
+                                    style: { color: 'black'}
+                                }}
                                 value={currentRow?.email || ''}
                                 onChange={(e) => setCurrentRow({ ...currentRow, email: e.target.value })}
-                                // InputLabelProps={{
-                                //     style: {
-                                //         fontSize: '10px',
-                                //         textAlign: 'center',
-                                //     },
-                                // }}
-                                sx={{ backgroundColor: '#D6D5DA', }}
+                                sx={{backgroundColor: '#D6D5DA',}}
                             />
                         </Grid>
                         <Grid item md={6}>
                             <TextField
-                                className={classes.textField}
-                                margin="dense"
-                                label="Phone Number"
-                                fullWidth
-                                variant="outlined"
-                                value={currentRow?.phone_number || ''}
-                                onChange={(e) => setCurrentRow({ ...currentRow, phone_number: e.target.value })}
-                                // InputProps={{
-                                //     style: {
-                                //         height: '30px',
-                                //         padding: '0 14px',
-                                //     },
-                                // }}
-                                // InputLabelProps={{
-                                //     style: {
-                                //         fontSize: '10px',
-                                //         textAlign: 'center',
-                                //     },
-                                // }}
-                                sx={{ backgroundColor: '#D6D5DA', }}
+                            className={classes.textField}
+                            margin="dense"
+                            label="Phone Number"
+                            fullWidth
+                            required
+                            variant="outlined"
+                            InputLabelProps={{
+                                style: { color: 'black'}
+                            }}
+                            value={currentRow?.phone_number || ''}
+                            // onChange={handlePhoneNumberChange} // Updated
+                            sx={{backgroundColor: '#D6D5DA',}}
                             />
                         </Grid>
 
@@ -383,28 +366,35 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
                         </Grid>
                         <Grid item md={6}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DatePicker
-                                    label="Date Of Birth"
-                                    value={currentRow?.dob ? dayjs(currentRow.dob) : null}
-                                    onChange={(e) => {
-                                        const formattedDate = e ? e.format("MM-DD-YYYY") : null;
-                                        setCurrentRow({ ...currentRow, dob: formattedDate })
-                                    }
-                                    }
-                                    sx={{ marginTop: "10px", backgroundColor: '#D6D5DA', width: '450px' }}
-                                    fullWidth
-                                // InputLabelProps={{
-                                //     sx: {
-                                //         fontSize: '10px',
-                                //     },
-                                // }}
-                                />
+                            <DatePicker
+                                label="Date Of Birth" // Label for the DatePicker
+                                value={currentRow?.dob ? dayjs(currentRow.dob) : null}
+                                onChange={(e) => {
+                                const formattedDate = e ? e.format("MM-DD-YYYY") : null;
+                                setCurrentRow({ ...currentRow, dob: formattedDate });
+                                }}
+                                sx={{
+                                marginTop: "8px",
+                                backgroundColor: '#D6D5DA',
+                                width: '450px',
+                                '& .MuiInputLabel-root': {
+                                    color: 'black',
+                                },
+                                '& .MuiInputLabel-root.Mui-focused': {
+                                    color: 'black', 
+                                },
+                                '& .MuiInputLabel-root.MuiInputLabel-shrink': {
+                                    color: 'black',
+                                },
+                                }}
+                                fullWidth
+                            />
                             </LocalizationProvider>
                         </Grid>
 
                         <Grid item md={6}>
                             <FormControl margin="dense" fullWidth variant="outlined" sx={{ height: "30px" }}>
-                                <InputLabel>
+                                <InputLabel required style={{color: 'black'}}>
                                     Relationship
                                 </InputLabel>
                                 <Select

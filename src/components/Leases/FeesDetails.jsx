@@ -870,7 +870,7 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
                                 </Grid>
                             </DialogContent>
                             <DialogActions sx={{ alignContent: "center", justifyContent: "center" }}>
-                                <Button variant="outlined"
+                                <Button variant="contained"
                                     sx={{
                                         marginRight: '5px', background: "#FFC614",
                                         color: "#160449",
@@ -889,7 +889,7 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
                                 </Button>
                                 {isEditing &&
                                     <>
-                                        <Button variant="outlined"
+                                        <Button variant="contained"
                                             sx={{
                                                 background: "#F87C7A",
                                                 color: "#160449",
