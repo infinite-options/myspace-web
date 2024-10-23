@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const TenantDetails = ({ tenantWithId, setTenantWithId }) => {
+const TenantDetails = ({ tenantWithId, setTenantWithId, isMobile }) => {
     const classes = useStyles();
     const [rows, setRows] = useState([]);
     const [open, setOpen] = useState(false);
@@ -211,11 +211,12 @@ const TenantDetails = ({ tenantWithId, setTenantWithId }) => {
                                     color: "#160449",
                                     fontWeight: theme.typography.primary.fontWeight,
                                     fontSize: theme.typography.small,
-                                    textAlign: 'center',
+                                    width: "100%",
+                                    textAlign: isMobile ? "left" : "center",
                                     paddingBottom: "10px",
                                     paddingTop: "5px",
                                     flexGrow: 1,
-                                    paddingLeft: "50px"
+                                    paddingLeft: isMobile? "5px" : "50px"
                                 }}
                             >
                                 Tenant Details
@@ -242,31 +243,35 @@ const TenantDetails = ({ tenantWithId, setTenantWithId }) => {
                     </Grid>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <DataGrid
-                        rows={rows}
-                        columns={tenantColumns}
-                        hideFooter={true}
-                        rowsPerPageOptions={[]}
-                        getRowId={(row) => row.tenant_uid}
-                        sx={{
-                            '& .MuiDataGrid-columnHeader': {
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                color: "#160449",
-                            },
-                            '& .MuiDataGrid-columnHeaderTitle': {
-                                font: "bold",
-                                width: '100%',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                fontWeight: "bold",
-                            },
-                            '& .MuiDataGrid-cell': {
-                                color: "#160449",
-                                // fontWeight: "bold",
-                            },
-                        }}
-                    />
+                    <Box sx={{overflowX: "auto"}}>
+                        <DataGrid
+                            rows={rows}
+                            columns={tenantColumns}
+                            hideFooter={true}
+                            rowsPerPageOptions={[]}
+                            getRowId={(row) => row.tenant_uid}
+                            sx={{
+                                width: "100%",
+                                minWidth: "700px",
+                                '& .MuiDataGrid-columnHeader': {
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    color: "#160449",
+                                },
+                                '& .MuiDataGrid-columnHeaderTitle': {
+                                    font: "bold",
+                                    width: '100%',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    fontWeight: "bold",
+                                },
+                                '& .MuiDataGrid-cell': {
+                                    color: "#160449",
+                                    // fontWeight: "bold",
+                                },
+                            }}
+                        />
+                    </Box>
                 </AccordionDetails>
             </Accordion>
             <Modal

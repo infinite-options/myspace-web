@@ -20,20 +20,19 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const groupDataByKey = (data, key) => {
-    // console.log("ROHIT - data - ", data);
-    const groupedByKey = {};
+  // console.log("ROHIT - data - ", data);
+  const groupedByKey = {};
 
-    data?.forEach(payment => {
-        const dataKey = payment[key];
-        if(!groupedByKey[dataKey]){
-            groupedByKey[dataKey] = [];
-        }
-        groupedByKey[dataKey].push(payment)
-    })
+  data?.forEach((payment) => {
+    const dataKey = payment[key];
+    if (!groupedByKey[dataKey]) {
+      groupedByKey[dataKey] = [];
+    }
+    groupedByKey[dataKey].push(payment);
+  });
 
-    return groupedByKey;
-}
-
+  return groupedByKey;
+};
 
 export default function VerifyPayments2(props) {
   //   console.log("In VerifyPayments.jsx");
@@ -42,27 +41,27 @@ export default function VerifyPayments2(props) {
   const navigate = useNavigate();
   const profileId = getProfileId();
 
-  const [selectedProperty, setSelectedProperty] = useState(props.propertyID)
+  const [selectedProperty, setSelectedProperty] = useState(props.propertyID);
   const selectedPurchaserow = props.selectedPurchaseRow || "";
 
   const [moneyPayable, setMoneyPayable] = useState([]);
   const [dataByProperty, setDataByProperty] = useState([]);
   const [dataByPayer, setDataByPayer] = useState([]);
   const [dataByPaymentIntent, setDataByPaymentIntent] = useState([]);
-  const [unpaidRentData, setUnpaidRentData] = useState([])
-  const [unpaidRentDataByProperty, setUnpaidRentDataByProperty] = useState([])
-  const [unpaidRentDataByPayer, setUnpaidRentDataByPayer] = useState([])
-  const [unpaidRentDataTotal, setUnpaidRentDataTotal] = useState({})
+  const [unpaidRentData, setUnpaidRentData] = useState([]);
+  const [unpaidRentDataByProperty, setUnpaidRentDataByProperty] = useState([]);
+  const [unpaidRentDataByPayer, setUnpaidRentDataByPayer] = useState([]);
+  const [unpaidRentDataTotal, setUnpaidRentDataTotal] = useState({});
 
   const [showSpinner, setShowSpinner] = useState(false);
   const [paymentNotes, setPaymentNotes] = useState("");
   const [totalPayable, setTotalPayable] = useState(0);
   const currentDate = new Date();
-  const currentMonth = currentDate.toLocaleString('default', { month: 'long' });
+  const currentMonth = currentDate.toLocaleString("default", { month: "long" });
   const currentYear = currentDate.getFullYear().toString();
 
   const [month, setMonth] = useState(props.month || currentMonth);
-  const [year, setYear] = useState(props.year || currentYear);  
+  const [year, setYear] = useState(props.year || currentYear);
 
   const [paymentData, setPaymentData] = useState({
     currency: "usd",
@@ -77,15 +76,14 @@ export default function VerifyPayments2(props) {
 
   const [sortBy, setSortBy] = useState("");
   const [tab, setTab] = useState("DEFAULT");
-  const [unpaidRentTab, setUnpaidRentTab] = useState("Default")
-
+  const [unpaidRentTab, setUnpaidRentTab] = useState("Default");
 
   useEffect(() => {
     console.log("Payments", moneyPayable);
   }, [moneyPayable]);
 
   useEffect(() => {
-    console.log("ROHIT - 74 - selectedPayments - ", selectedPayments);
+    // console.log("ROHIT - 74 - selectedPayments - ", selectedPayments);
   }, [selectedPayments]);
 
   function totalMoneyPayable(moneyPayable) {
@@ -114,26 +112,26 @@ export default function VerifyPayments2(props) {
       const groupedByProperty = groupDataByKey(moneyPayableData, "pur_property_id");
       const groupedByPayer = groupDataByKey(moneyPayableData, "pur_payer");
       const groupedByPaymentIntent = groupDataByKey(moneyPayableData, "payment_intent");
-      console.log("ROHIT - groupedByProperty - ", groupedByProperty);
+      // console.log("ROHIT - groupedByProperty - ", groupedByProperty);
       // console.log("ROHIT - groupedByPayer - ", groupedByPayer);
       setDataByProperty(groupedByProperty);
       setDataByPayer(groupedByPayer);
-      setDataByPaymentIntent(groupedByPaymentIntent)
+      setDataByPaymentIntent(groupedByPaymentIntent);
     } catch (error) {
       console.error("Error fetching payment data:", error);
     }
     setShowSpinner(false);
   };
 
-  const fetchTransactionsData =  () => {
+  const fetchTransactionsData = () => {
     // if(props.transactionsData){
     //   setCashflowData(props.transactionsData);
     // }
-    if(props.transactionsData){
+    if (props.transactionsData) {
       const profitDataCurrentYear = props.transactionsData?.filter((item) => item.cf_year === year);
-  
-      const revenueDataForManager = profitDataCurrentYear?.filter((item) => item.pur_payer === profileId || item.pur_receiver === profileId)
-  
+
+      const revenueDataForManager = profitDataCurrentYear?.filter((item) => item.pur_payer === profileId || item.pur_receiver === profileId);
+
       const revenueDataForManagerByProperty = revenueDataForManager?.reduce((acc, item) => {
         const propertyUID = item.pur_property_id;
         const propertyInfo = {
@@ -141,31 +139,28 @@ export default function VerifyPayments2(props) {
           property_address: item.property_address,
           property_unit: item.property_unit,
         };
-        
+
         // const totalExpected = parseFloat(item.pur_amount_due) || 0;
         // const totalActual = parseFloat(item.total_paid) || 0;
-        let totalExpected =  0;
+        let totalExpected = 0;
         let totalActual = 0;
-  
-        if(item.cf_month === month && item.cf_year === year && item.purchase_type !== "Deposit"){
-  
+
+        if (item.cf_month === month && item.cf_year === year && item.purchase_type !== "Deposit") {
           if (item.pur_payer.startsWith("110")) {
             totalActual = parseFloat(item.total_paid) || 0;
-            totalExpected = parseFloat(item.pur_amount_due?item.pur_amount_due : 0.00) || 0;
+            totalExpected = parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0) || 0;
           } else {
             totalActual = 0;
-            totalExpected = 0
+            totalExpected = 0;
           }
-        
+
           // if (item.pur_payer.startsWith("600")) {
           //   totalExpected = -(parseFloat(item.pur_amount_due) || 0);
           // } else {
           //   totalExpected = parseFloat(item.pur_amount_due) || 0;
           // }
         }
-        
-      
-  
+
         if (!acc[propertyUID]) {
           // acc[propertyUID] = [];
           acc[propertyUID] = {
@@ -175,17 +170,17 @@ export default function VerifyPayments2(props) {
             totalActual: 0,
           };
         }
-  
+
         acc[propertyUID].rentItems.push(item);
         acc[propertyUID].totalExpected += totalExpected;
         acc[propertyUID].totalActual += totalActual;
-  
+
         return acc;
       }, {});
 
       const revenueDataForManagerByPayer = revenueDataForManager?.reduce((acc, item) => {
         const payerUID = item.pur_payer;
-        
+
         if (!payerUID.startsWith("350")) {
           return acc;
         }
@@ -193,20 +188,20 @@ export default function VerifyPayments2(props) {
         const payerInfo = {
           payer_id: item.pur_payer, // If there's any field for payer's name, you can update this
         };
-        
+
         let totalExpected = 0;
         let totalActual = 0;
-      
-        if(item.cf_month === month && item.cf_year === year && item.purchase_type !== "Deposit"){
+
+        if (item.cf_month === month && item.cf_year === year && item.purchase_type !== "Deposit") {
           if (item.pur_payer.startsWith("110")) {
             totalActual = parseFloat(item.total_paid) || 0;
-            totalExpected = parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.00) || 0;
+            totalExpected = parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0) || 0;
           } else {
             totalActual = 0;
             totalExpected = 0;
           }
         }
-      
+
         if (!acc[payerUID]) {
           acc[payerUID] = {
             payerInfo: payerInfo,
@@ -215,40 +210,38 @@ export default function VerifyPayments2(props) {
             totalActual: 0,
           };
         }
-      
+
         acc[payerUID].rentItems.push(item);
         acc[payerUID].totalExpected += totalExpected;
         acc[payerUID].totalActual += totalActual;
-      
+
         return acc;
       }, {});
 
       const filteredItems = revenueDataForManager?.filter(
-        (item) =>
-          item.pur_payer.startsWith("350") &&
-          (item.payment_status === "UNPAID" || item.payment_status === "PARTIALLY PAID")
+        (item) => item.pur_payer.startsWith("350") && (item.payment_status === "UNPAID" || item.payment_status === "PARTIALLY PAID")
       );
-      
+
       const totals = filteredItems?.reduce(
         (acc, item) => {
-          acc.amt_remaining += parseFloat(item.pur_amount_due) || 0; 
-          acc.total_paid += parseFloat(item.total_paid) || 0; 
+          acc.amt_remaining += parseFloat(item.pur_amount_due) || 0;
+          acc.total_paid += parseFloat(item.total_paid) || 0;
           return acc;
         },
         { amt_remaining: 0, total_paid: 0 }
       );
 
-      setUnpaidRentDataTotal(totals)
+      setUnpaidRentDataTotal(totals);
 
-      setUnpaidRentData(revenueDataForManager)
+      setUnpaidRentData(revenueDataForManager);
 
-      setUnpaidRentDataByProperty(revenueDataForManagerByProperty)
+      setUnpaidRentDataByProperty(revenueDataForManagerByProperty);
 
-      setUnpaidRentDataByPayer(revenueDataForManagerByPayer)
-  
-      console.log(" ---- DEBUG ---- inside VerifyPayment2 page - ", totals)
+      setUnpaidRentDataByPayer(revenueDataForManagerByPayer);
+
+      console.log(" ---- DEBUG ---- inside VerifyPayment2 page - ", totals);
     }
-  }
+  };
 
   const handleViewPropertyClick = (e, property_uid) => {
     e.stopPropagation();
@@ -271,9 +264,9 @@ export default function VerifyPayments2(props) {
     fetchTransactionsData();
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchTransactionsData();
-  }, [props.transactionsData])
+  }, [props.transactionsData]);
 
   const commonStyles = {
     color: theme.typography.primary.black,
@@ -287,72 +280,126 @@ export default function VerifyPayments2(props) {
       headerName: "Status",
       flex: 1,
       renderCell: (params) => <Box sx={commonStyles}>{params.row.payment_status !== null ? params.row.payment_status : "-"}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
-    },    
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
+    },
     {
       field: "purchase_type",
       headerName: "Type",
       flex: 0.8,
       renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
-    },   
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
+    },
     {
       field: "property_address",
       headerName: "Property",
       flex: 1.8,
-      renderCell: (params) => <Box sx={{...commonStyles, cursor: "pointer"}} onClick={(e) => handleViewPropertyClick(e, params.row.property_uid)}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderCell: (params) => (
+        <Box sx={{ ...commonStyles, cursor: "pointer" }} onClick={(e) => handleViewPropertyClick(e, params.row.property_uid)}>
+          {params.value}
+        </Box>
+      ),
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "purchase_payer",
       headerName: "Tenant Id",
       flex: 0.8,
-      renderCell: (params) => <Box sx={{...commonStyles, cursor: "pointer"}} onClick={(e) => handleTenantClick(params.row.purchase_payer)}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
-    }, 
+      renderCell: (params) => (
+        <Box sx={{ ...commonStyles, cursor: "pointer" }} onClick={(e) => handleTenantClick(params.row.purchase_payer)}>
+          {params.value}
+        </Box>
+      ),
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
+    },
     {
       field: "cf_month",
       headerName: "Month",
       flex: 0.7,
       renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "cf_year",
       headerName: "Year",
       flex: 0.5,
       renderCell: (params) => <Box sx={commonStyles}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "pur_due_date",
       headerName: "Pur Due Date",
       flex: 0.8,
-      renderCell: (params) => <Box sx={{...commonStyles, color: new Date(params.row.pur_due_date) < new Date() ? 'red' : 'green'}}>{params.row.purchase_due_date !== null ? (params.row.pur_due_date.includes(" ") ?  params.row.pur_due_date.split(" ")[0] : params.row.pur_due_date ) : "-"}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderCell: (params) => (
+        <Box sx={{ ...commonStyles, color: new Date(params.row.pur_due_date) < new Date() ? "red" : "green" }}>
+          {params.row.purchase_due_date !== null ? (params.row.pur_due_date.includes(" ") ? params.row.pur_due_date.split(" ")[0] : params.row.pur_due_date) : "-"}
+        </Box>
+      ),
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "total_amount",
       headerName: "Total Amount Due",
       flex: 1,
       headerAlign: "right",
-      renderCell: (params) => <Box sx={commonStyles} textAlign={"right"} width={"100%"}>{parseFloat(params.value).toFixed(2)}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderCell: (params) => (
+        <Box sx={commonStyles} textAlign={"right"} width={"100%"}>
+          {parseFloat(params.value).toFixed(2)}
+        </Box>
+      ),
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "amount_received",
       headerName: "Amount Paid",
       flex: 1,
       headerAlign: "right",
-      renderCell: (params) => <Box sx={commonStyles} textAlign={"right"} width={"100%"}>{parseFloat(params.value).toFixed(2)}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont}}><strong>{params.colDef.headerName}</strong></Box>,
-    },    
+      renderCell: (params) => (
+        <Box sx={commonStyles} textAlign={"right"} width={"100%"}>
+          {parseFloat(params.value).toFixed(2)}
+        </Box>
+      ),
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
+    },
   ];
 
   const getNewRowWithIds = (data) => {
     // const revenueData = data?.filter((item) => item.pur_payer.startsWith("350"))
-    
-
 
     const rowsId = data?.map((row, index) => ({
       ...row,
@@ -360,10 +407,10 @@ export default function VerifyPayments2(props) {
     }));
 
     return rowsId;
-  }
+  };
 
   const GetNewDataGrid = (data) => {
-    const filteredData = data?.filter((item) => item.payment_status === "UNPAID" || item.payment_status === "PARTIALLY PAID")
+    const filteredData = data?.filter((item) => item.payment_status === "UNPAID" || item.payment_status === "PARTIALLY PAID");
 
     const groupedData = filteredData.reduce((acc, item) => {
       if (!acc[item.pur_group]) {
@@ -379,11 +426,11 @@ export default function VerifyPayments2(props) {
       let expected = 0;
       let management_fee = 0;
       let other_expense = 0;
-    
+
       // Check if all items in this group have 'payment_status' === "PAID"
       // const allPaid = groupedData[group].every(item => item.purchase_type === "Deposit");
-      const has350Payer = groupedData[group].some(item => item.pur_payer.startsWith("350"));
-    
+      const has350Payer = groupedData[group].some((item) => item.pur_payer.startsWith("350"));
+
       // If all items are paid, skip this group
       // if (allPaid) {
       //   return acc;
@@ -392,10 +439,9 @@ export default function VerifyPayments2(props) {
       if (!has350Payer) {
         return acc;
       }
-    
-    
-      let allTransactions = []
-      let purchase_ids = []
+
+      let allTransactions = [];
+      let purchase_ids = [];
       let purchase_group;
       let purchase_type;
       let purchase_due_date;
@@ -407,51 +453,46 @@ export default function VerifyPayments2(props) {
       let total_amount;
       let property_uid;
 
-      groupedData[group].forEach(item => {
+      groupedData[group].forEach((item) => {
         const pur_type = item.purchase_type;
         const pur_payer = item.pur_payer;
-        property_address = item.property_address
-        property_uid = item.pur_property_id
-    
+        property_address = item.property_address;
+        property_uid = item.pur_property_id;
+
         if (pur_payer.startsWith("350")) {
           amount_remaining = item.amt_remaining;
-          amount_received = item.total_paid ? item.total_paid : 0.00;
+          amount_received = item.total_paid ? item.total_paid : 0.0;
           total_amount = item.pur_amount_due;
           purchase_payer = item.pur_payer;
           purchase_type = item.purchase_type;
           purchase_due_date = item.pur_due_date;
           cf_month = item.cf_month;
           cf_year = item.cf_year;
-          payment_status = item.payment_status
+          payment_status = item.payment_status;
 
-          if(item.payment_status === "PARTIALLY PAID"){
-            expected += parseFloat(item.amt_remaining)
-          }else{
-
-            expected += parseFloat(item.pur_amount_due?item.pur_amount_due : "0.00");
+          if (item.payment_status === "PARTIALLY PAID") {
+            expected += parseFloat(item.amt_remaining);
+          } else {
+            expected += parseFloat(item.pur_amount_due ? item.pur_amount_due : "0.00");
           }
-        }
-    
-        else if (pur_payer.startsWith("110") && pur_type === "Management") {
-          management_fee += parseFloat(item.pur_amount_due?item.pur_amount_due : "0.00");
-        }
-    
-        else if (pur_payer.startsWith("110") && pur_type !== "Management") {
-          other_expense += parseFloat(item.pur_amount_due?item.pur_amount_due : "0.00");
+        } else if (pur_payer.startsWith("110") && pur_type === "Management") {
+          management_fee += parseFloat(item.pur_amount_due ? item.pur_amount_due : "0.00");
+        } else if (pur_payer.startsWith("110") && pur_type !== "Management") {
+          other_expense += parseFloat(item.pur_amount_due ? item.pur_amount_due : "0.00");
         }
 
-        purchase_ids.push(item.purchase_uid)
-        allTransactions.push(item)
+        purchase_ids.push(item.purchase_uid);
+        allTransactions.push(item);
         purchase_group = item.pur_group;
       });
-    
+
       const owner_payment = parseFloat(expected - management_fee - other_expense);
-    
+
       // Push the aggregated object for this group into the result if it passes the conditions
       acc.push({
         purchase_type: purchase_type,
         purchase_group,
-        pur_due_date : purchase_due_date,
+        pur_due_date: purchase_due_date,
         payment_status,
         cf_month,
         cf_year,
@@ -460,52 +501,49 @@ export default function VerifyPayments2(props) {
         property_address,
         purchase_payer,
         total_amount,
-        property_uid
+        property_uid,
       });
-    
+
       return acc;
     }, []);
 
-
     const rows = getNewRowWithIds(result);
 
-    if(rows?.length > 0){
+    if (rows?.length > 0) {
       return (
-        
-          <DataGrid
-            rows={rows}
-            columns={newTransactionColumn}
-            hideFooter={true}
-            autoHeight
-            rowHeight={35}
-            sortModel={[
-              {
-                field: 'pur_due_date',
-                sort: 'asc',
-              },
-            ]}
-            sx={{
-              marginTop: "10px",
-              "& .MuiDataGrid-columnHeaders": {
-                minHeight: "35px !important",
-                maxHeight: "35px !important",
-                height: 35,
-              }
-              
-            }}
-          />
+        <DataGrid
+          rows={rows}
+          columns={newTransactionColumn}
+          hideFooter={true}
+          autoHeight
+          rowHeight={35}
+          sortModel={[
+            {
+              field: "pur_due_date",
+              sort: "asc",
+            },
+          ]}
+          sx={{
+            marginTop: "10px",
+            "& .MuiDataGrid-columnHeaders": {
+              minHeight: "35px !important",
+              maxHeight: "35px !important",
+              height: 35,
+            },
+          }}
+        />
       );
-    }else{
+    } else {
       return (
         <Box
           sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginBottom: '7px',
-            width: '100%',
-            height:"30px"
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            marginBottom: "7px",
+            width: "100%",
+            height: "30px",
           }}
         >
           <Typography
@@ -520,8 +558,7 @@ export default function VerifyPayments2(props) {
         </Box>
       );
     }
-        
-}
+  };
 
   return (
     <>
@@ -545,9 +582,8 @@ export default function VerifyPayments2(props) {
                   boxShadow: "none",
                 }}
               >
-
                 {/* for unpaid Rent */}
-                <Paper 
+                <Paper
                   sx={{
                     margin: "25px",
                     padding: 20,
@@ -560,54 +596,49 @@ export default function VerifyPayments2(props) {
                       Unpaid Rent
                     </Typography>
                     <Button
-                        sx={{
-                            width: "150px",
-                            backgroundColor: unpaidRentTab === "Default" ? "#3D5CAC" : "#9EAED6",
-                            textTransform: "none",
-                            "&:hover": {
-                                backgroundColor: unpaidRentTab === "Default" ? "#3D5CAC" : "#9EAED6",
-                            },
-                        }}
-
-                        onClick={() => {
-                                setUnpaidRentTab("Default");
-                                
-                            }}
-                        >
-                        <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Default</Typography>
-                    </Button> 
+                      sx={{
+                        width: "150px",
+                        backgroundColor: unpaidRentTab === "Default" ? "#3D5CAC" : "#9EAED6",
+                        textTransform: "none",
+                        "&:hover": {
+                          backgroundColor: unpaidRentTab === "Default" ? "#3D5CAC" : "#9EAED6",
+                        },
+                      }}
+                      onClick={() => {
+                        setUnpaidRentTab("Default");
+                      }}
+                    >
+                      <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Default</Typography>
+                    </Button>
                     <Button
-                        sx={{
-                            width: "150px",
-                            backgroundColor: unpaidRentTab === "By_Property" ? "#3D5CAC" : "#9EAED6",
-                            textTransform: "none",
-                            "&:hover": {
-                                backgroundColor: unpaidRentTab === "By_Property" ? "#3D5CAC" : "#9EAED6",
-                            },
-                        }}
-
-                        onClick={() => {
-                            setUnpaidRentTab("By_Property");
-                                
-                          }}
-                        >
-                        <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Property</Typography>
-                    </Button> 
+                      sx={{
+                        width: "150px",
+                        backgroundColor: unpaidRentTab === "By_Property" ? "#3D5CAC" : "#9EAED6",
+                        textTransform: "none",
+                        "&:hover": {
+                          backgroundColor: unpaidRentTab === "By_Property" ? "#3D5CAC" : "#9EAED6",
+                        },
+                      }}
+                      onClick={() => {
+                        setUnpaidRentTab("By_Property");
+                      }}
+                    >
+                      <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Property</Typography>
+                    </Button>
                     <Button
-                        sx={{
-                            width: "150px",
-                            backgroundColor: unpaidRentTab === "By_Payer" ? "#3D5CAC" : "#9EAED6",
-                            textTransform: "none",
-                            "&:hover": {
-                                backgroundColor: unpaidRentTab === "By_Payer" ? "#3D5CAC" : "#9EAED6",
-                            },
-                        }}
-
-                        onClick={() => {
-                            setUnpaidRentTab("By_Payer");                            
-                        }}
-                        >
-                        <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Payer</Typography>
+                      sx={{
+                        width: "150px",
+                        backgroundColor: unpaidRentTab === "By_Payer" ? "#3D5CAC" : "#9EAED6",
+                        textTransform: "none",
+                        "&:hover": {
+                          backgroundColor: unpaidRentTab === "By_Payer" ? "#3D5CAC" : "#9EAED6",
+                        },
+                      }}
+                      onClick={() => {
+                        setUnpaidRentTab("By_Payer");
+                      }}
+                    >
+                      <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Payer</Typography>
                     </Button>
                     <Typography
                       sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
@@ -618,48 +649,33 @@ export default function VerifyPayments2(props) {
                       sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
                     >
                       ${parseFloat(unpaidRentDataTotal.total_paid).toFixed(2)}
-                    </Typography> 
+                    </Typography>
                   </Stack>
 
-
                   <Stack marginTop={"20px"}>
-                    {
-                      unpaidRentTab === "Default" && (
-                        GetNewDataGrid(unpaidRentData)
-                      )
-                    }
-                    {
-                      unpaidRentTab === "By_Property" && (
-                        Object.values(unpaidRentDataByProperty)?.map( property => (
-                          <>
-                              <br />
-                              <Grid item xs={12}>
-                                  <Typography sx={{fontWeight: 'bold', color: "#160449"}}>
-                                      Property ID: {property.propertyInfo.property_id}
-                                  </Typography>
-                              </Grid>
-                              {GetNewDataGrid(property.rentItems)} 
-                              <br />
-                          </>
-                        ))                       
-                      )
-                    }
-                    {
-                      unpaidRentTab === "By_Payer" && (
-                        Object.values(unpaidRentDataByPayer)?.map( payer => (
-                          <>
-                              <br />
-                              <Grid item xs={12}>
-                                  <Typography sx={{fontWeight: 'bold', color: "#160449"}}>
-                                      Payer ID: {payer.payerInfo.payer_id}
-                                  </Typography>
-                              </Grid>
-                              {GetNewDataGrid(payer.rentItems)} 
-                              <br />
-                          </>
-                        ))    
-                      )
-                    }
+                    {unpaidRentTab === "Default" && GetNewDataGrid(unpaidRentData)}
+                    {unpaidRentTab === "By_Property" &&
+                      Object.values(unpaidRentDataByProperty)?.map((property) => (
+                        <>
+                          <br />
+                          <Grid item xs={12}>
+                            <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Property ID: {property.propertyInfo.property_id}</Typography>
+                          </Grid>
+                          {GetNewDataGrid(property.rentItems)}
+                          <br />
+                        </>
+                      ))}
+                    {unpaidRentTab === "By_Payer" &&
+                      Object.values(unpaidRentDataByPayer)?.map((payer) => (
+                        <>
+                          <br />
+                          <Grid item xs={12}>
+                            <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Payer ID: {payer.payerInfo.payer_id}</Typography>
+                          </Grid>
+                          {GetNewDataGrid(payer.rentItems)}
+                          <br />
+                        </>
+                      ))}
                   </Stack>
                 </Paper>
 
@@ -671,81 +687,75 @@ export default function VerifyPayments2(props) {
                     backgroundColor: theme.palette.primary.main,
                     // height: "25%",
                   }}
-                >                    
+                >
                   <Stack direction='row' justifyContent='space-between'>
                     <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
                       Verify Payments 2
                     </Typography>
                     <Button
-                        sx={{
-                            width: "150px",
-                            backgroundColor: tab === "DEFAULT" ? "#3D5CAC" : "#9EAED6",
-                            textTransform: "none",
-                            "&:hover": {
-                                backgroundColor: tab === "DEFAULT" ? "#3D5CAC" : "#9EAED6",
-                            },
-                        }}
-
-                        onClick={() => {
-                                setSortBy("DEFAULT");
-                                setTab("DEFAULT");
-                                
-                            }}
-                        >
-                        <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Default</Typography>
-                    </Button> 
+                      sx={{
+                        width: "150px",
+                        backgroundColor: tab === "DEFAULT" ? "#3D5CAC" : "#9EAED6",
+                        textTransform: "none",
+                        "&:hover": {
+                          backgroundColor: tab === "DEFAULT" ? "#3D5CAC" : "#9EAED6",
+                        },
+                      }}
+                      onClick={() => {
+                        setSortBy("DEFAULT");
+                        setTab("DEFAULT");
+                      }}
+                    >
+                      <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Default</Typography>
+                    </Button>
                     <Button
-                        sx={{
-                            width: "150px",
-                            backgroundColor: tab === "BY_PROPERTY" ? "#3D5CAC" : "#9EAED6",
-                            textTransform: "none",
-                            "&:hover": {
-                                backgroundColor: tab === "BY_PROPERTY" ? "#3D5CAC" : "#9EAED6",
-                            },
-                        }}
-
-                        onClick={() => {
-                                setSortBy("BY_PROPERTY");
-                                setTab("BY_PROPERTY");
-                                
-                            }}
-                        >
-                        <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Property</Typography>
-                    </Button> 
+                      sx={{
+                        width: "150px",
+                        backgroundColor: tab === "BY_PROPERTY" ? "#3D5CAC" : "#9EAED6",
+                        textTransform: "none",
+                        "&:hover": {
+                          backgroundColor: tab === "BY_PROPERTY" ? "#3D5CAC" : "#9EAED6",
+                        },
+                      }}
+                      onClick={() => {
+                        setSortBy("BY_PROPERTY");
+                        setTab("BY_PROPERTY");
+                      }}
+                    >
+                      <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Property</Typography>
+                    </Button>
                     <Button
-                        sx={{
-                            width: "150px",
-                            backgroundColor: tab === "BY_PAYER" ? "#3D5CAC" : "#9EAED6",
-                            textTransform: "none",
-                            "&:hover": {
-                                backgroundColor: tab === "BY_PAYER" ? "#3D5CAC" : "#9EAED6",
-                            },
-                        }}
-
-                        onClick={() => {
-                            setSortBy("BY_PAYER");
-                            setTab("BY_PAYER");                            
-                        }}
-                        >
-                        <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Payer</Typography>
-                    </Button> 
+                      sx={{
+                        width: "150px",
+                        backgroundColor: tab === "BY_PAYER" ? "#3D5CAC" : "#9EAED6",
+                        textTransform: "none",
+                        "&:hover": {
+                          backgroundColor: tab === "BY_PAYER" ? "#3D5CAC" : "#9EAED6",
+                        },
+                      }}
+                      onClick={() => {
+                        setSortBy("BY_PAYER");
+                        setTab("BY_PAYER");
+                      }}
+                    >
+                      <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Payer</Typography>
+                    </Button>
                     <Button
-                        sx={{
-                            width: "150px",
-                            backgroundColor: tab === "BY_PAYMENT_INTENT" ? "#3D5CAC" : "#9EAED6",
-                            textTransform: "none",
-                            "&:hover": {
-                                backgroundColor: tab === "BY_PAYMENT_INTENT" ? "#3D5CAC" : "#9EAED6",
-                            },
-                        }}
-
-                        onClick={() => {
-                            setSortBy("BY_PAYMENT_INTENT");
-                            setTab("BY_PAYMENT_INTENT");                            
-                        }}
-                        >
-                        <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Payment Intent</Typography>
-                    </Button> 
+                      sx={{
+                        width: "150px",
+                        backgroundColor: tab === "BY_PAYMENT_INTENT" ? "#3D5CAC" : "#9EAED6",
+                        textTransform: "none",
+                        "&:hover": {
+                          backgroundColor: tab === "BY_PAYMENT_INTENT" ? "#3D5CAC" : "#9EAED6",
+                        },
+                      }}
+                      onClick={() => {
+                        setSortBy("BY_PAYMENT_INTENT");
+                        setTab("BY_PAYMENT_INTENT");
+                      }}
+                    >
+                      <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Payment Intent</Typography>
+                    </Button>
                     <Typography
                       sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
                     >
@@ -753,62 +763,75 @@ export default function VerifyPayments2(props) {
                     </Typography>
                   </Stack>
 
-                    
                   <Stack marginTop={"20px"}>
-                    {
-                        tab === "DEFAULT" && (
-                            <BalanceDetailsTable data={moneyPayable} selectedPurchaseRow={selectedPurchaserow} setPaymentData={setPaymentData}  setSelectedPayments={setSelectedPayments} fetchPaymentsData={fetchPaymentsData} selectedProperty={selectedProperty} sortBy={sortBy} />
-                        )
-                    }
-                    {
-                        tab === "BY_PROPERTY" && (                            
-                            Object.values(dataByProperty)?.map( propertyPayments => (
-                                <>
-                                    <br />
-                                    <Grid item xs={12}>
-                                        <Typography sx={{fontWeight: 'bold', color: "#160449"}}>
-                                            Property ID: {propertyPayments[0].pur_property_id}
-                                        </Typography>
-                                    </Grid>
-                                    <BalanceDetailsTable data={propertyPayments} selectedPurchaseRow={selectedPurchaserow} setPaymentData={setPaymentData} setSelectedPayments={setSelectedPayments} fetchPaymentsData={fetchPaymentsData} selectedProperty={selectedProperty} sortBy={sortBy} />
-                                    <br />
-                                </>
-                            ))
-                        )
-                    }
-                    {
-                        tab === "BY_PAYER" && (                            
-                            Object.values(dataByPayer)?.map( paymentItems => (
-                                <>
-                                    <br />
-                                    <Grid item xs={12}>
-                                        <Typography sx={{fontWeight: 'bold', color: "#160449"}}>
-                                            Payer ID: {paymentItems[0].pur_payer}
-                                        </Typography>
-                                    </Grid>
-                                    <BalanceDetailsTable data={paymentItems} selectedPurchaseRow={selectedPurchaserow} setPaymentData={setPaymentData} setSelectedPayments={setSelectedPayments} fetchPaymentsData={fetchPaymentsData} selectedProperty={selectedProperty} sortBy={sortBy} />
-                                    <br />
-                                </>
-                            ))
-                        )
-                    }                    
-                    {
-                        tab === "BY_PAYMENT_INTENT" && (                            
-                            Object.values(dataByPaymentIntent)?.map( paymentItems => (
-                                <>
-                                    <br />
-                                    <Grid item xs={12}>
-                                        <Typography sx={{fontWeight: 'bold', color: "#160449"}}>
-                                            Payment Intent: {paymentItems[0].payment_intent}
-                                        </Typography>
-                                    </Grid>
-                                    <BalanceDetailsTable data={paymentItems} selectedPurchaseRow={selectedPurchaserow} setPaymentData={setPaymentData} setSelectedPayments={setSelectedPayments} fetchPaymentsData={fetchPaymentsData} selectedProperty={selectedProperty} sortBy={sortBy} />
-                                    <br />
-                                </>
-                            ))
-                        )
-                    }
-                    
+                    {tab === "DEFAULT" && (
+                      <BalanceDetailsTable
+                        data={moneyPayable}
+                        selectedPurchaseRow={selectedPurchaserow}
+                        setPaymentData={setPaymentData}
+                        setSelectedPayments={setSelectedPayments}
+                        fetchPaymentsData={fetchPaymentsData}
+                        selectedProperty={selectedProperty}
+                        sortBy={sortBy}
+                      />
+                    )}
+                    {tab === "BY_PROPERTY" &&
+                      Object.values(dataByProperty)?.map((propertyPayments) => (
+                        <>
+                          <br />
+                          <Grid item xs={12}>
+                            <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Property ID: {propertyPayments[0].pur_property_id}</Typography>
+                          </Grid>
+                          <BalanceDetailsTable
+                            data={propertyPayments}
+                            selectedPurchaseRow={selectedPurchaserow}
+                            setPaymentData={setPaymentData}
+                            setSelectedPayments={setSelectedPayments}
+                            fetchPaymentsData={fetchPaymentsData}
+                            selectedProperty={selectedProperty}
+                            sortBy={sortBy}
+                          />
+                          <br />
+                        </>
+                      ))}
+                    {tab === "BY_PAYER" &&
+                      Object.values(dataByPayer)?.map((paymentItems) => (
+                        <>
+                          <br />
+                          <Grid item xs={12}>
+                            <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Payer ID: {paymentItems[0].pur_payer}</Typography>
+                          </Grid>
+                          <BalanceDetailsTable
+                            data={paymentItems}
+                            selectedPurchaseRow={selectedPurchaserow}
+                            setPaymentData={setPaymentData}
+                            setSelectedPayments={setSelectedPayments}
+                            fetchPaymentsData={fetchPaymentsData}
+                            selectedProperty={selectedProperty}
+                            sortBy={sortBy}
+                          />
+                          <br />
+                        </>
+                      ))}
+                    {tab === "BY_PAYMENT_INTENT" &&
+                      Object.values(dataByPaymentIntent)?.map((paymentItems) => (
+                        <>
+                          <br />
+                          <Grid item xs={12}>
+                            <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Payment Intent: {paymentItems[0].payment_intent}</Typography>
+                          </Grid>
+                          <BalanceDetailsTable
+                            data={paymentItems}
+                            selectedPurchaseRow={selectedPurchaserow}
+                            setPaymentData={setPaymentData}
+                            setSelectedPayments={setSelectedPayments}
+                            fetchPaymentsData={fetchPaymentsData}
+                            selectedProperty={selectedProperty}
+                            sortBy={sortBy}
+                          />
+                          <br />
+                        </>
+                      ))}
                   </Stack>
                 </Paper>
               </Paper>
@@ -832,28 +855,28 @@ function BalanceDetailsTable(props) {
 
   const defaultSortModel = [
     {
-      field: "pur_property_id", 
+      field: "pur_property_id",
       sort: "asc",
     },
   ];
 
   const byPropertySortModel = [
     {
-      field: "pur_property_id", 
+      field: "pur_property_id",
       sort: "asc",
     },
   ];
 
   const byPayerSortModel = [
     {
-      field: "paid_by", 
+      field: "paid_by",
       sort: "asc",
     },
   ];
 
   const [sortModel, setSortModel] = useState([
     {
-      field: "payment_uid", 
+      field: "payment_uid",
       sort: "asc",
     },
   ]);
@@ -873,34 +896,27 @@ function BalanceDetailsTable(props) {
   }, [props.data]);
 
   useEffect(() => {
-    props.setSelectedPayments( (prevState) => {
-        const updatedPaymentData = prevState?.filter(
-            (payment) => selectedPayments.some((selected) => selected.id === payment.id)
-        );
+    props.setSelectedPayments((prevState) => {
+      const updatedPaymentData = prevState?.filter((payment) => selectedPayments.some((selected) => selected.id === payment.id));
 
-        const newPayments = selectedPayments.filter(
-            (selected) => !updatedPaymentData.some((payment) => payment.id === selected.id)
-          );
-        return [
-            ...updatedPaymentData, 
-            ...newPayments,
-        ];
-    })
+      const newPayments = selectedPayments.filter((selected) => !updatedPaymentData.some((payment) => payment.id === selected.id));
+      return [...updatedPaymentData, ...newPayments];
+    });
   }, [selectedPayments]);
 
-  useEffect(() => {    
-    if(props.sortBy) {
-        switch(props.sortBy){
-            case "BY_PROPERTY":
-                setSortModel(byPropertySortModel);
-                break;
-            case "BY_PAYER":
-                setSortModel(byPayerSortModel);
-                break;
-            default:
-                setSortModel(defaultSortModel);
-                break;
-        }
+  useEffect(() => {
+    if (props.sortBy) {
+      switch (props.sortBy) {
+        case "BY_PROPERTY":
+          setSortModel(byPropertySortModel);
+          break;
+        case "BY_PAYER":
+          setSortModel(byPayerSortModel);
+          break;
+        default:
+          setSortModel(defaultSortModel);
+          break;
+      }
     }
   }, [props.sortBy]);
 
@@ -908,20 +924,15 @@ function BalanceDetailsTable(props) {
     if (data && data.length > 0) {
       setSelectedPayments(data);
       let filteredRows = [];
-      if(props.selectedProperty != null){
-        filteredRows = data?.filter( item => item.pur_property_id === props.selectedProperty)
-      }else {
+      if (props.selectedProperty != null) {
+        filteredRows = data?.filter((item) => item.pur_property_id === props.selectedProperty);
+      } else {
         filteredRows = data;
       }
-      
-      if(selectedPurchaseGroup && selectedPurchaseGroup !== ""){
-        setSelectedRows(
-          filteredRows
-            .filter((row) => row.pur_group === selectedPurchaseGroup)
-            .map((row) => row.payment_uid) 
-        );
-      
-      }else{
+
+      if (selectedPurchaseGroup && selectedPurchaseGroup !== "") {
+        setSelectedRows(filteredRows.filter((row) => row.pur_group === selectedPurchaseGroup).map((row) => row.payment_uid));
+      } else {
         setSelectedRows(filteredRows.map((row) => row.payment_uid));
       }
 
@@ -962,78 +973,116 @@ function BalanceDetailsTable(props) {
     }
   };
 
-    
-
   const columnsList = [
     {
-        field: "total_paid",
-        headerName: "Total Paid",
-        flex: 3,
-        renderCell: (params) => <Box sx={{...commonStyles}}>{params.value}</Box>,
-        renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      field: "total_paid",
+      headerName: "Total Paid",
+      flex: 3,
+      renderCell: (params) => <Box sx={{ ...commonStyles }}>{params.value}</Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
-        field: "payment_intent",
-        headerName: "Payment Intent",
-        flex: 3,
-        renderCell: (params) => <Box sx={{...commonStyles}}>{params.value}</Box>,
-        renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      field: "payment_intent",
+      headerName: "Payment Intent",
+      flex: 3,
+      renderCell: (params) => <Box sx={{ ...commonStyles }}>{params.value}</Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "payment_uid",
       headerName: "Payment UID",
       flex: 3,
-      renderCell: (params) => <Box sx={{...commonStyles}}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderCell: (params) => <Box sx={{ ...commonStyles }}>{params.value}</Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "paid_by",
       headerName: "Paid By",
       flex: 3,
-      renderCell: (params) => <Box sx={{...commonStyles}}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderCell: (params) => <Box sx={{ ...commonStyles }}>{params.value}</Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "payment_date",
       headerName: "Payment Date",
       flex: 5,
-      renderCell: (params) => <Box sx={{...commonStyles}}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderCell: (params) => <Box sx={{ ...commonStyles }}>{params.value}</Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "purchase_uid",
       headerName: "Pur UID",
       flex: 2.5,
-      renderCell: (params) => <Box sx={{...commonStyles}}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderCell: (params) => <Box sx={{ ...commonStyles }}>{params.value}</Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "pur_group",
       headerName: "Pur Group",
       flex: 2.5,
-      renderCell: (params) => <Box sx={{...commonStyles}}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderCell: (params) => <Box sx={{ ...commonStyles }}>{params.value}</Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "pur_property_id",
       headerName: "Property UID",
       flex: 3,
-      renderCell: (params) => <Box sx={{...commonStyles}}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderCell: (params) => <Box sx={{ ...commonStyles }}>{params.value}</Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "purchase_type",
       headerName: "Purchase Type",
       flex: 2,
-      renderCell: (params) => <Box sx={{...commonStyles}}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderCell: (params) => <Box sx={{ ...commonStyles }}>{params.value}</Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "pur_description",
       headerName: "Description",
       flex: 2,
-      renderCell: (params) => <Box sx={{...commonStyles}}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderCell: (params) => <Box sx={{ ...commonStyles }}>{params.value}</Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     // {
     //   field: "pur_notes",
@@ -1052,28 +1101,40 @@ function BalanceDetailsTable(props) {
     //   headerName: "Paid By",
     //   flex: 2,
     //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    // },    
+    // },
     {
       field: "payment_method",
       headerName: "Payment Method",
       flex: 2,
-      renderCell: (params) => <Box sx={{...commonStyles}}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderCell: (params) => <Box sx={{ ...commonStyles }}>{params.value}</Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "pur_amount_due",
       headerName: "Amount Due",
       flex: 2,
-      renderCell: (params) => <Box sx={{...commonStyles}}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
+      renderCell: (params) => <Box sx={{ ...commonStyles }}>{params.value}</Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
     },
     {
       field: "pay_amount",
       headerName: "Pay Amount",
       flex: 2,
-      renderCell: (params) => <Box sx={{...commonStyles}}>{params.value}</Box>,
-      renderHeader: (params) => <Box sx={{fontSize: theme.typography.smallFont,}}><strong>{params.colDef.headerName}</strong></Box>,
-    },    
+      renderCell: (params) => <Box sx={{ ...commonStyles }}>{params.value}</Box>,
+      renderHeader: (params) => (
+        <Box sx={{ fontSize: theme.typography.smallFont }}>
+          <strong>{params.colDef.headerName}</strong>
+        </Box>
+      ),
+    },
     // {
     //     field: "payment_verify",
     //     headerName: "Payment Verify",
@@ -1106,7 +1167,7 @@ function BalanceDetailsTable(props) {
     const addedRows = newRowSelectionModel.filter((rowId) => !selectedRows.includes(rowId));
     const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
 
-    console.log("ROHIT - addedRows - ", addedRows);
+    // console.log("ROHIT - addedRows - ", addedRows);
 
     let updatedRowSelectionModel = [...newRowSelectionModel];
 
@@ -1121,7 +1182,9 @@ function BalanceDetailsTable(props) {
 
         if (addedPayment) {
           // const relatedPayments = paymentDueResult.filter((row) => row.payment_intent === addedPayment.payment_intent);
-          const relatedPayments = paymentDueResult.filter((row) => (row.paid_by + row.payment_date + row.payment_intent) === (addedPayment.paid_by + addedPayment.payment_date + addedPayment.payment_intent));
+          const relatedPayments = paymentDueResult.filter(
+            (row) => row.paid_by + row.payment_date + row.payment_intent === addedPayment.paid_by + addedPayment.payment_date + addedPayment.payment_intent
+          );
 
           newPayments = [...newPayments, ...relatedPayments];
           const relatedRowIds = relatedPayments.map((payment) => payment.payment_uid);
@@ -1142,16 +1205,17 @@ function BalanceDetailsTable(props) {
 
       removedRows.forEach((item, index) => {
         let removedPayment = paymentDueResult.find((row) => row.payment_uid === item);
-        let relatedPayments = []
+        let relatedPayments = [];
 
-        if(removedPayment){
-          relatedPayments = paymentDueResult.filter((row) => (row.paid_by + row.payment_date + row.payment_intent) === (removedPayment.paid_by + removedPayment.payment_date + removedPayment.payment_intent));
+        if (removedPayment) {
+          relatedPayments = paymentDueResult.filter(
+            (row) => row.paid_by + row.payment_date + row.payment_intent === removedPayment.paid_by + removedPayment.payment_date + removedPayment.payment_intent
+          );
           relatedRows = relatedPayments.map((payment) => payment.payment_uid);
         }
 
         removedPayments.push(removedPayment);
-        removedPayments.push(relatedPayments)
-
+        removedPayments.push(relatedPayments);
       });
       const allRowRemove = [...new Set([...removedRows, ...relatedRows])];
 
@@ -1231,7 +1295,7 @@ function BalanceDetailsTable(props) {
             }
             // handleOnClickNavigateToMaintenance(row);
           }}
-            sortModel={sortModel}
+          sortModel={sortModel}
 
           //   onRowClick={(row) => handleOnClickNavigateToMaintenance(row)}
         />

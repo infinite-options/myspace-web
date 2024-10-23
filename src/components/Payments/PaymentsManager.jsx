@@ -1,8 +1,22 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Box, ThemeProvider, Paper, Button, Typography, Stack, Grid, TextField, IconButton, Divider, Checkbox, Container,  Accordion,
+import {
+  Box,
+  ThemeProvider,
+  Paper,
+  Button,
+  Typography,
+  Stack,
+  Grid,
+  TextField,
+  IconButton,
+  Divider,
+  Checkbox,
+  Container,
+  Accordion,
   AccordionSummary,
-  AccordionDetails, } from "@mui/material";
+  AccordionDetails,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import theme from "../../theme/theme";
 import { alpha, makeStyles } from "@material-ui/core/styles";
@@ -34,36 +48,35 @@ const groupDataByKey = (data, key, byOwner) => {
   // console.log("ROHIT - data - ", data);
   const groupedByKey = {};
 
-  if(!byOwner){
-    data?.forEach(payment => {
-        const dataKey = payment[key];
-        if(!groupedByKey[dataKey]){
-            groupedByKey[dataKey] = [];
-        }
-        groupedByKey[dataKey].push(payment)
-    })
-  }else{
+  if (!byOwner) {
+    data?.forEach((payment) => {
+      const dataKey = payment[key];
+      if (!groupedByKey[dataKey]) {
+        groupedByKey[dataKey] = [];
+      }
+      groupedByKey[dataKey].push(payment);
+    });
+  } else {
     data?.forEach((item) => {
       const ownerId = item.property_owner_id;
       const propertyId = item.pur_property_id;
-  
+
       if (ownerId.startsWith("110")) {
-  
         if (!groupedByKey[ownerId]) {
           groupedByKey[ownerId] = {};
         }
-  
+
         if (!groupedByKey[ownerId][propertyId]) {
           groupedByKey[ownerId][propertyId] = [];
         }
-  
+
         groupedByKey[ownerId][propertyId].push(item);
       }
     });
   }
 
   return groupedByKey;
-}
+};
 
 function DashboardTab(props) {
   return (
@@ -89,7 +102,7 @@ export default function PaymentsManager(props) {
   const location = useLocation();
   const { user, getProfileId, roleName, selectedRole } = useUser();
 
-  const {setSelectedPayment, setCurrentWindow, page} = props;
+  const { setSelectedPayment, setCurrentWindow, page } = props;
 
   const managerCashflowWidgetData = location.state?.managerCashflowWidgetData;
   const accountBalanceWidgetData = location.state?.accountBalanceWidgetData;
@@ -102,7 +115,7 @@ export default function PaymentsManager(props) {
   const [moneyToBePaid, setMoneyToBePaid] = useState([]);
   const [moneyToBeReceived, setMoneyToBeReceived] = useState([]);
   const [moneyPayable, setMoneyPayable] = useState([]);
-  const [selectedRowsForTransaction, setSelectedRowsForTransaction] = useState(props.selectedRowsForPayBills || [])
+  const [selectedRowsForTransaction, setSelectedRowsForTransaction] = useState(props.selectedRowsForPayBills || []);
 
   const [transactionsData, setTransactionsData] = useState([]);
   const [totalTransactions, setTotalTransactions] = useState(0);
@@ -111,7 +124,7 @@ export default function PaymentsManager(props) {
   const [paymentNotes, setPaymentNotes] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
   const [total, setTotal] = useState(0);
-  const [globalTotal, setGlobalTotal] = useState({})
+  const [globalTotal, setGlobalTotal] = useState({});
   const [totalPaid, setTotalPaid] = useState(0);
   const [totalReceived, setTotalReceived] = useState(0);
   const [totalToBePaid, setTotalToBePaid] = useState(0);
@@ -119,13 +132,13 @@ export default function PaymentsManager(props) {
   const [totalPayable, setTotalPayable] = useState(0);
   const [isHeaderChecked, setIsHeaderChecked] = useState(true);
   const [paymentMethodInfo, setPaymentMethodInfo] = useState({});
-  const [tab, setTab] = useState("by_property")
-  const [sortBy, setSortBy] = useState("by_property")
-  const [cashFlowTotal, setCashFlowTotal] = useState(0)
-  const [globalCashFlowTotal, setGlobalCashFlowTotal] = useState({})
+  const [tab, setTab] = useState("by_property");
+  const [sortBy, setSortBy] = useState("by_property");
+  const [cashFlowTotal, setCashFlowTotal] = useState(0);
+  const [globalCashFlowTotal, setGlobalCashFlowTotal] = useState({});
 
-  const [transactionDataByProeprty, setTransactionDataByProeprty] = useState({})
-  const [transactionDataByOwner, setTransactionDataByOwner] = useState({})
+  const [transactionDataByProeprty, setTransactionDataByProeprty] = useState({});
+  const [transactionDataByOwner, setTransactionDataByOwner] = useState({});
 
   const [paymentData, setPaymentData] = useState({
     currency: "usd",
@@ -153,17 +166,17 @@ export default function PaymentsManager(props) {
     // payment_summary: {
     //     total: "0.0"
     // },
-  })
+  });
 
   useEffect(() => {
-    console.log("ROHIT - 96 - paymentData - ", paymentData);
+    // console.log("ROHIT - 96 - paymentData - ", paymentData);
   }, [paymentData]);
 
   let customer_uid = getProfileId();
   let customer_role = customer_uid.substring(0, 3);
-  console.log("Profile Info: ", getProfileId());
-  console.log("Customer UID: ", customer_uid);
-  console.log("Customer Role: ", customer_role);
+  // console.log("Profile Info: ", getProfileId());
+  // console.log("Customer UID: ", customer_uid);
+  // console.log("Customer Role: ", customer_role);
   // console.log("Customer UID: ", paymentData);
   // console.log("Customer UID: ", paymentData.customer_uid);
   // console.log("User Info: ", user);
@@ -181,36 +194,31 @@ export default function PaymentsManager(props) {
   // }, [transactionsData]);
 
   const handleTotalChange = (propertyId, newTotal) => {
-
     setGlobalTotal((prevTotals) => {
       const updatedTotals = {
         ...prevTotals,
-        [propertyId]: newTotal, 
+        [propertyId]: newTotal,
       };
-      
+
       const updatedTotal = Object.values(updatedTotals).reduce((acc, val) => acc + val, 0);
-      setTotal(updatedTotal); 
+      setTotal(updatedTotal);
 
       return updatedTotals;
     });
-  }
+  };
 
   const handlePaymentDataChange = (propertyId, newTotal, newPurchaseIds) => {
-
     setGlobalPaymentData((prevTotals) => {
-      const updatedPaymentData  = {
+      const updatedPaymentData = {
         ...prevTotals,
         [propertyId]: {
           balance: newTotal,
-          purchase_uids: [...newPurchaseIds]
-        }, 
+          purchase_uids: [...newPurchaseIds],
+        },
       };
-      
-      const updatedOverallBalance = Object.values(updatedPaymentData).reduce(
-        (acc, data) => acc + parseFloat(data.balance || 0),
-        0
-      );
-      
+
+      const updatedOverallBalance = Object.values(updatedPaymentData).reduce((acc, data) => acc + parseFloat(data.balance || 0), 0);
+
       // const allPurchaseIdsSet = new Set([...allPurchaseIds, ...newPurchaseIds]);
       // console.log("check here .... - ", updatedPaymentData)
       const updatedPurchaseIds = Object.values(updatedPaymentData).reduce((acc, data) => {
@@ -221,26 +229,25 @@ export default function PaymentsManager(props) {
         ...prevData,
         balance: updatedOverallBalance,
         purchase_uids: updatedPurchaseIds,
-      }))
+      }));
 
       return updatedPaymentData;
     });
-  }
+  };
 
   const handleTotalCashFlowChange = (propertyId, newTotal) => {
-
     setGlobalCashFlowTotal((prevTotals) => {
       const updatedTotals = {
         ...prevTotals,
-        [propertyId]: newTotal, 
+        [propertyId]: newTotal,
       };
-      
+
       const updatedTotal = Object.values(updatedTotals).reduce((acc, val) => acc + val, 0);
-      setCashFlowTotal(updatedTotal); 
+      setCashFlowTotal(updatedTotal);
 
       return updatedTotals;
     });
-  }
+  };
 
   function totalMoneyPaidUpdate(moneyPaid) {
     var total = 0;
@@ -286,35 +293,32 @@ export default function PaymentsManager(props) {
   function totalMoneyToBeReceivedUpdate(moneyToBeReceived) {
     var total = 0;
     for (const item of moneyToBeReceived) {
-      total += parseFloat(item.pur_amount_due);     
+      total += parseFloat(item.pur_amount_due);
     }
     setTotalToBeReceived(total);
   }
 
   function getTransactionsTotal(data) {
-    const verifiedPurGroups = []
+    const verifiedPurGroups = [];
 
-    data.forEach(transaction => {
-      if(!verifiedPurGroups.includes(transaction.pur_group) && transaction.verified && transaction.verified.toLowerCase() === "verified" ){
+    data.forEach((transaction) => {
+      if (!verifiedPurGroups.includes(transaction.pur_group) && transaction.verified && transaction.verified.toLowerCase() === "verified") {
         verifiedPurGroups.push(transaction.pur_group);
       }
-    })
+    });
 
     // console.log("ROHIT - 179 - verifiedPurGroups - ", verifiedPurGroups);
 
+    const transactions = data
+      // .filter(item => (item.verified && item.verified.toLowerCase() === "verified"));
+      .filter((item) => verifiedPurGroups.includes(item.pur_group))
+      .filter((item) => item.pur_payer.startsWith("600") || item.pur_payer.startsWith("110"))
+      .filter((item) => {
+        const total_paid = parseFloat(item.total_paid ? item.total_paid : "0");
+        const pur_amount_due = parseFloat(item.pur_amount_due ? item.pur_amount_due : "0");
 
-
-
-    const transactions =  data            
-            // .filter(item => (item.verified && item.verified.toLowerCase() === "verified"));
-            .filter(item => (verifiedPurGroups.includes(item.pur_group)))
-            .filter( item => (item.pur_payer.startsWith("600") || item.pur_payer.startsWith("110")))
-            .filter( item => {
-              const total_paid = parseFloat(item.total_paid? item.total_paid : "0");
-              const pur_amount_due = parseFloat(item.pur_amount_due? item.pur_amount_due : "0");
-              
-              return total_paid !== pur_amount_due;
-            });
+        return total_paid !== pur_amount_due;
+      });
 
     var total = 0;
     for (const item of transactions) {
@@ -363,38 +367,35 @@ export default function PaymentsManager(props) {
     setShowSpinner(false);
   };
 
-  const fetchTransactionsData =  () => {
+  const fetchTransactionsData = () => {
     // console.log("In fetchTransactionsData");
     setShowSpinner(true);
     try {
-        // const res = await axios.get(`${APIConfig.baseURL.dev}/cashflowTransactions/${getProfileId()}/payment`);      
+      // const res = await axios.get(`${APIConfig.baseURL.dev}/cashflowTransactions/${getProfileId()}/payment`);
 
-        // const data = res.data?.result;      
+      // const data = res.data?.result;
 
-        
+      // const dataWithIndex = data?.map((item, index) => (
+      //   {
+      //     ...item,
+      //     'index': index,
+      //   }
+      // ))
 
-        // const dataWithIndex = data?.map((item, index) => (
-        //   {
-        //     ...item,
-        //     'index': index,
-        //   }
-        // ))
-        
-        const dataWithIndex = props.transactionsData;
-          
-        // console.log("setting transactions data - ", dataWithIndex);
-        setTransactionsData(dataWithIndex);
-        const total = getTransactionsTotal(dataWithIndex);
-        setTotalTransactions(total);
+      const dataWithIndex = props.transactionsData;
 
-        const dataByProperty = groupDataByKey(dataWithIndex, "pur_property_id", false)
-        const dataByOwner = groupDataByKey(dataWithIndex, "pur_receiver", true)
-        console.log("---dhyey--- successfully filter data - ", dataByProperty);
-        setTransactionDataByProeprty(dataByProperty)
-        setTransactionDataByOwner(dataByOwner)
+      // console.log("setting transactions data - ", dataWithIndex);
+      setTransactionsData(dataWithIndex);
+      const total = getTransactionsTotal(dataWithIndex);
+      setTotalTransactions(total);
 
+      const dataByProperty = groupDataByKey(dataWithIndex, "pur_property_id", false);
+      const dataByOwner = groupDataByKey(dataWithIndex, "pur_receiver", true);
+      console.log("---dhyey--- successfully filter data - ", dataByProperty);
+      setTransactionDataByProeprty(dataByProperty);
+      setTransactionDataByOwner(dataByOwner);
 
-      // totalMoneyPaidUpdate(moneyPaidData);      
+      // totalMoneyPaidUpdate(moneyPaidData);
     } catch (error) {
       console.error("Error fetching transactions data:", error);
     }
@@ -409,10 +410,10 @@ export default function PaymentsManager(props) {
     fetchTransactionsData();
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchTransactionsData();
-  }, [props.transactionsData])
-  
+  }, [props.transactionsData]);
+
   const handlePaymentNotesChange = (event) => {
     setPaymentNotes(event.target.value);
   };
@@ -564,26 +565,26 @@ export default function PaymentsManager(props) {
                           onClick={() => {
                             // paymentData.business_code = paymentNotes;
                             const updatedPaymentData = { ...paymentData, business_code: paymentNotes };
-                             console.log("In Payments.jsx and passing paymentData to SelectPayment.jsx: ", paymentData);
-                            console.log("In Payments.jsx and passing paymentMethodInfo to SelectPayment.jsx: ", paymentMethodInfo); 
-                            console.log("cashflow - ", cashFlowTotal)                           
+                            console.log("In Payments.jsx and passing paymentData to SelectPayment.jsx: ", paymentData);
+                            console.log("In Payments.jsx and passing paymentMethodInfo to SelectPayment.jsx: ", paymentMethodInfo);
+                            console.log("cashflow - ", cashFlowTotal);
                             // if(page != null && page === "paymentProcessing"){
                             //   setSelectedPayment({ paymentData: updatedPaymentData, total: total, selectedItems: selectedItems, paymentMethodInfo: paymentMethodInfo });
                             //   setCurrentWindow("MAKE_PAYMENT");
                             // }
                             // else {
-                              
-                              navigate("/selectPayment", {
-                                state: {
-                                  paymentData: updatedPaymentData,
-                                  total: total,
-                                  cashFlowTotal: cashFlowTotal,
-                                  selectedItems: selectedItems,
-                                  paymentMethodInfo: paymentMethodInfo,
-                                  managerCashflowWidgetData: managerCashflowWidgetData,
-                                  accountBalanceWidgetData: accountBalanceWidgetData,
-                                },
-                              });
+
+                            navigate("/selectPayment", {
+                              state: {
+                                paymentData: updatedPaymentData,
+                                total: total,
+                                cashFlowTotal: cashFlowTotal,
+                                selectedItems: selectedItems,
+                                paymentMethodInfo: paymentMethodInfo,
+                                managerCashflowWidgetData: managerCashflowWidgetData,
+                                accountBalanceWidgetData: accountBalanceWidgetData,
+                              },
+                            });
                           }}
                         >
                           <Typography
@@ -679,40 +680,36 @@ export default function PaymentsManager(props) {
                       </Typography>
                       <Button
                         sx={{
-                            width: "150px",
+                          width: "150px",
+                          backgroundColor: tab === "by_property" ? "#3D5CAC" : "#9EAED6",
+                          textTransform: "none",
+                          "&:hover": {
                             backgroundColor: tab === "by_property" ? "#3D5CAC" : "#9EAED6",
-                            textTransform: "none",
-                            "&:hover": {
-                                backgroundColor: tab === "by_property" ? "#3D5CAC" : "#9EAED6",
-                            },
+                          },
                         }}
-
                         onClick={() => {
-                                setSortBy("by_property");
-                                setTab("by_property");
-                                
-                            }}
-                        >
-                          <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Property</Typography>
-                      </Button> 
+                          setSortBy("by_property");
+                          setTab("by_property");
+                        }}
+                      >
+                        <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Property</Typography>
+                      </Button>
                       <Button
-                          sx={{
-                              width: "150px",
-                              backgroundColor: tab === "by_owner" ? "#3D5CAC" : "#9EAED6",
-                              textTransform: "none",
-                              "&:hover": {
-                                  backgroundColor: tab === "by_owner" ? "#3D5CAC" : "#9EAED6",
-                              },
-                          }}
-
-                          onClick={() => {
-                                  setSortBy("by_owner");
-                                  setTab("by_owner");
-                                  
-                              }}
-                          >
-                          <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Owner</Typography>
-                      </Button> 
+                        sx={{
+                          width: "150px",
+                          backgroundColor: tab === "by_owner" ? "#3D5CAC" : "#9EAED6",
+                          textTransform: "none",
+                          "&:hover": {
+                            backgroundColor: tab === "by_owner" ? "#3D5CAC" : "#9EAED6",
+                          },
+                        }}
+                        onClick={() => {
+                          setSortBy("by_owner");
+                          setTab("by_owner");
+                        }}
+                      >
+                        <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Owner</Typography>
+                      </Button>
                       <Typography
                         sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
                       >
@@ -721,20 +718,26 @@ export default function PaymentsManager(props) {
                     </Stack>
 
                     <Stack>
-                      {tab === "by_property" && (
-                        Object.values(transactionDataByProeprty)?.map( propertyPayments => (
+                      {tab === "by_property" &&
+                        Object.values(transactionDataByProeprty)?.map((propertyPayments) => (
                           <>
-                              <br />
-                              <Grid item xs={12} marginBottom={10}>
-                                  <Typography sx={{fontWeight: 'bold', color: "#160449"}}>
-                                      Property: {propertyPayments[0].property_address}
-                                  </Typography>
-                              </Grid>
-                              <TransactionsTable data={propertyPayments} cashFlowTotal={globalCashFlowTotal[propertyPayments[0].pur_property_id]} setCashFlowTotal={(newTotal) => handleTotalCashFlowChange(propertyPayments[0].pur_property_id, newTotal)} total={globalTotal[propertyPayments[0].pur_property_id]} setTotal={(newTotal) => handleTotalChange(propertyPayments[0].pur_property_id, newTotal)} setPaymentData={(newTotal, purchase_ids) => handlePaymentDataChange(propertyPayments[0].pur_property_id, newTotal, purchase_ids)} setSelectedItems={setSelectedItems} selectedRowsForTransaction={selectedRowsForTransaction}/>
-                              <br />
+                            <br />
+                            <Grid item xs={12} marginBottom={10}>
+                              <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Property: {propertyPayments[0].property_address}</Typography>
+                            </Grid>
+                            <TransactionsTable
+                              data={propertyPayments}
+                              cashFlowTotal={globalCashFlowTotal[propertyPayments[0].pur_property_id]}
+                              setCashFlowTotal={(newTotal) => handleTotalCashFlowChange(propertyPayments[0].pur_property_id, newTotal)}
+                              total={globalTotal[propertyPayments[0].pur_property_id]}
+                              setTotal={(newTotal) => handleTotalChange(propertyPayments[0].pur_property_id, newTotal)}
+                              setPaymentData={(newTotal, purchase_ids) => handlePaymentDataChange(propertyPayments[0].pur_property_id, newTotal, purchase_ids)}
+                              setSelectedItems={setSelectedItems}
+                              selectedRowsForTransaction={selectedRowsForTransaction}
+                            />
+                            <br />
                           </>
-                        ))
-                      )}
+                        ))}
                       {/* {tab === "by_owner" && (
                         Object.keys(transactionDataByOwner)?.map((ownerID, index) => (
                           <>
@@ -749,14 +752,12 @@ export default function PaymentsManager(props) {
                           </>
                         ))
                       )} */}
-                      {tab === "by_owner" && (
+                      {tab === "by_owner" &&
                         Object.keys(transactionDataByOwner)?.map((ownerID, index) => (
                           <React.Fragment key={ownerID}>
                             <br />
                             <Grid item xs={12} marginBottom={10}>
-                              <Typography sx={{ fontWeight: 'bold', color: "#160449" }}>
-                                Owner ID: {ownerID}
-                              </Typography>
+                              <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Owner ID: {ownerID}</Typography>
                             </Grid>
 
                             {Object.keys(transactionDataByOwner[ownerID])?.map((propertyID) => (
@@ -764,17 +765,13 @@ export default function PaymentsManager(props) {
                                 sx={{
                                   backgroundColor: theme.palette.primary.main,
                                   boxShadow: "none",
-                                  marginY: "10px"
+                                  marginY: "10px",
                                 }}
                                 key={propertyID}
                               >
                                 <Grid container justifyContent='flex-start' item xs={8}>
                                   <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
-                                    <AccordionSummary
-                                      expandIcon={<ExpandMoreIcon />}
-                                      aria-controls={`panel-${propertyID}-content`}
-                                      id={`panel-${propertyID}-header`}
-                                    >
+                                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls={`panel-${propertyID}-content`} id={`panel-${propertyID}-header`}>
                                       <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
                                         Property: {transactionDataByOwner[ownerID][propertyID][0].property_address}
                                       </Typography>
@@ -783,12 +780,16 @@ export default function PaymentsManager(props) {
                                 </Grid>
 
                                 <AccordionDetails>
-                                  <TransactionsTable 
-                                    data={transactionDataByOwner[ownerID][propertyID]} 
-                                    cashFlowTotal={globalCashFlowTotal[transactionDataByOwner[ownerID][propertyID][0].pur_property_id]} setCashFlowTotal={(newTotal) => handleTotalCashFlowChange(transactionDataByOwner[ownerID][propertyID][0].pur_property_id, newTotal)}
-                                    total={globalTotal[transactionDataByOwner[ownerID][propertyID][0].pur_property_id]} setTotal={(newTotal) => handleTotalChange(transactionDataByOwner[ownerID][propertyID][0].pur_property_id, newTotal)}
-                                    setPaymentData={(newTotal, purchase_ids) => handlePaymentDataChange(transactionDataByOwner[ownerID][propertyID][0].pur_property_id, newTotal, purchase_ids)} 
-                                    setSelectedItems={setSelectedItems} 
+                                  <TransactionsTable
+                                    data={transactionDataByOwner[ownerID][propertyID]}
+                                    cashFlowTotal={globalCashFlowTotal[transactionDataByOwner[ownerID][propertyID][0].pur_property_id]}
+                                    setCashFlowTotal={(newTotal) => handleTotalCashFlowChange(transactionDataByOwner[ownerID][propertyID][0].pur_property_id, newTotal)}
+                                    total={globalTotal[transactionDataByOwner[ownerID][propertyID][0].pur_property_id]}
+                                    setTotal={(newTotal) => handleTotalChange(transactionDataByOwner[ownerID][propertyID][0].pur_property_id, newTotal)}
+                                    setPaymentData={(newTotal, purchase_ids) =>
+                                      handlePaymentDataChange(transactionDataByOwner[ownerID][propertyID][0].pur_property_id, newTotal, purchase_ids)
+                                    }
+                                    setSelectedItems={setSelectedItems}
                                     selectedRowsForTransaction={selectedRowsForTransaction}
                                   />
                                 </AccordionDetails>
@@ -797,8 +798,7 @@ export default function PaymentsManager(props) {
 
                             <br />
                           </React.Fragment>
-                        ))
-                      )}
+                        ))}
                     </Stack>
                   </Paper>
                 )}
@@ -920,27 +920,26 @@ export default function PaymentsManager(props) {
 function TransactionsTable(props) {
   // console.log("In BalanceDetailTable", props);
   const [data, setData] = useState([]);
-  const [selectedRows, setSelectedRows] = useState([])
+  const [selectedRows, setSelectedRows] = useState([]);
   const [selectedPayments, setSelectedPayments] = useState([]);
   const [paymentDueResult, setPaymentDueResult] = useState([]);
   const [paymentDueResultMap, setPaymentDueResultMap] = useState([]); // index to row mapping for quick lookup.
 
   const [sortModel, setSortModel] = useState([
-    { field: 'pur_group', sort: 'asc', },
-    { field: 'pur_payer', sort: 'asc', }
+    { field: "pur_group", sort: "asc" },
+    { field: "pur_payer", sort: "asc" },
   ]);
 
   const filterTransactions = (data) => {
+    const verifiedPurGroups = [];
 
-    const verifiedPurGroups = []
-
-    data.forEach(transaction => {
-      if(!verifiedPurGroups.includes(transaction.pur_group) && transaction.verified && transaction.verified.toLowerCase() === "verified" ){
+    data.forEach((transaction) => {
+      if (!verifiedPurGroups.includes(transaction.pur_group) && transaction.verified && transaction.verified.toLowerCase() === "verified") {
         verifiedPurGroups.push(transaction.pur_group);
       }
-    })
+    });
 
-    console.log("ROHIT - 631 - verifiedPurGroups - ", verifiedPurGroups);
+    // console.log("ROHIT - 631 - verifiedPurGroups - ", verifiedPurGroups);
 
     const newData = data.reduce((acc, item) => {
       if (!acc[item.pur_group]) {
@@ -951,59 +950,53 @@ function TransactionsTable(props) {
     }, {});
 
     const filteredValues = Object.keys(newData).reduce((acc, key) => {
-      const hasNon350Payer = newData[key].every(item => !item.pur_payer.startsWith("350"));
-      
+      const hasNon350Payer = newData[key].every((item) => !item.pur_payer.startsWith("350"));
+
       if (hasNon350Payer) {
         acc.push(...newData[key]); // Push the values instead of key-value pairs
       }
-      
+
       return acc;
     }, []);
 
-    filteredValues.forEach(transaction => {
-      if(transaction.pur_payer.startsWith("110") && !verifiedPurGroups.includes(transaction.pur_group) && transaction.payment_status?.toLowerCase() === "unpaid"){
-        verifiedPurGroups.push(transaction.pur_group)
+    filteredValues.forEach((transaction) => {
+      if (transaction.pur_payer.startsWith("110") && !verifiedPurGroups.includes(transaction.pur_group) && transaction.payment_status?.toLowerCase() === "unpaid") {
+        verifiedPurGroups.push(transaction.pur_group);
       }
-    })
+    });
 
+    return (
+      data
+        // .filter(item => (item.verified && item.verified.toLowerCase() === "verified"));
+        .filter((item) => verifiedPurGroups.includes(item.pur_group))
+        .filter((item) => item.pur_payer.startsWith("600") || item.pur_payer.startsWith("110"))
+        .filter((item) => {
+          const total_paid = parseFloat(item.total_paid ? item.total_paid : "0");
+          const pur_amount_due = parseFloat(item.pur_amount_due ? item.pur_amount_due : "0");
 
-    return data            
-            // .filter(item => (item.verified && item.verified.toLowerCase() === "verified"));
-            .filter(item => (verifiedPurGroups.includes(item.pur_group)))
-            .filter( item => (item.pur_payer.startsWith("600") || item.pur_payer.startsWith("110")))
-            .filter( item => {
-              const total_paid = parseFloat(item.total_paid? item.total_paid : "0");
-              const pur_amount_due = parseFloat(item.pur_amount_due? item.pur_amount_due : "0");
-              
-              return total_paid !== pur_amount_due;
-            });
+          return total_paid !== pur_amount_due;
+        })
+    );
+  };
 
-  }
-
-   useEffect(() => {
-     setData(props.data);
-   }, [props.data]);
-
-   
+  useEffect(() => {
+    setData(props.data);
+  }, [props.data]);
 
   // useEffect(() => {
   //   // console.log("ROHIT - selectedRows - ", selectedRows);
   // }, [selectedRows]);
 
-
   useEffect(() => {
     if (data && data.length > 0) {
-      console.log("ROHIT - 814 - without filteredData - ", data, " for property - ", data[0].pur_property_id);
+      // console.log("ROHIT - 814 - without filteredData - ", data, " for property - ", data[0].pur_property_id);
       const filteredData = filterTransactions(data);
       // setSelectedRows(filteredData.map((row) => row.index));
       // setSelectedRows([]);
-      if(props.selectedRowsForTransaction && props.selectedRowsForTransaction !== ""){
-        
-        const filtereRow = filteredData
-        .filter((row) => props.selectedRowsForTransaction.includes(row.pur_group))
-        .map((row) => row.index) 
+      if (props.selectedRowsForTransaction && props.selectedRowsForTransaction !== "") {
+        const filtereRow = filteredData.filter((row) => props.selectedRowsForTransaction.includes(row.pur_group)).map((row) => row.index);
 
-        console.log("selected rows - ", props.selectedRowsForTransaction, " calling for property - ", data[0].pur_property_id)
+        console.log("selected rows - ", props.selectedRowsForTransaction, " calling for property - ", data[0].pur_property_id);
 
         setSelectedRows(filtereRow);
         // setSelectedRows((prevSelectedRows) => {
@@ -1013,10 +1006,9 @@ function TransactionsTable(props) {
         //   return Array.from(new Set(combinedRows));
         // });
 
-        console.log("after set selected rows inside data useeffect - ", selectedRows)
-      
-      }else{
-        console.log("---- here-----")
+        console.log("after set selected rows inside data useeffect - ", selectedRows);
+      } else {
+        console.log("---- here-----");
         setSelectedRows([]);
       }
 
@@ -1026,53 +1018,50 @@ function TransactionsTable(props) {
           pur_amount_due: parseFloat(item.pur_amount_due),
         }))
       );
-
     }
   }, [data]);
 
   useEffect(() => {
     var total = 0;
     var cashflow = 0;
-  
-      let purchase_uid_mapping = [];
-  
-      for (const item of selectedRows) {
-  
-        let paymentItemData = paymentDueResult.find((element) => element.index === item);
-        console.log("ROHIT - 687 - paymentItemData - ", paymentItemData);
-        // const purchaseIDs = paymentItemData.purchase_uid;
-        
-        // JSON.parse(paymentItemData?.transactions).forEach(element => {
-        //   if(purchaseIDs.includes(element.purchase_uid)){
-        //     purchase_uid_mapping.push({ purchase_uid: element.purchase_uid, pur_amount_due: element.pur_amount_due.toFixed(2) });
-        //   }
-        // });
-        const purchaseIDs = paymentItemData.purchase_uid;
-        purchase_uid_mapping.push({ purchase_uid: purchaseIDs, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
-        
-        // purchaseIDs.forEach( purID => {
-        // });
-        
-        // console.log("payment item data", paymentItemData);
-  
-        cashflow += parseFloat(paymentItemData.pur_amount_due);
-        // Adjust total based on pur_cf_type
-        if (paymentItemData.pur_payer.startsWith("110")) {
-          total -= parseFloat(paymentItemData.pur_amount_due);
-        } else if (paymentItemData.pur_payer.startsWith("600")) {
-          total += parseFloat(paymentItemData.pur_amount_due);
-        }
-  
-        // total += parseFloat(paymentItemData.pur_amount_due)
+
+    let purchase_uid_mapping = [];
+
+    for (const item of selectedRows) {
+      let paymentItemData = paymentDueResult.find((element) => element.index === item);
+      // console.log("ROHIT - 687 - paymentItemData - ", paymentItemData);
+      // const purchaseIDs = paymentItemData.purchase_uid;
+
+      // JSON.parse(paymentItemData?.transactions).forEach(element => {
+      //   if(purchaseIDs.includes(element.purchase_uid)){
+      //     purchase_uid_mapping.push({ purchase_uid: element.purchase_uid, pur_amount_due: element.pur_amount_due.toFixed(2) });
+      //   }
+      // });
+      const purchaseIDs = paymentItemData.purchase_uid;
+      purchase_uid_mapping.push({ purchase_uid: purchaseIDs, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
+
+      // purchaseIDs.forEach( purID => {
+      // });
+
+      // console.log("payment item data", paymentItemData);
+
+      cashflow += parseFloat(paymentItemData.pur_amount_due);
+      // Adjust total based on pur_cf_type
+      if (paymentItemData.pur_payer.startsWith("110")) {
+        total -= parseFloat(paymentItemData.pur_amount_due);
+      } else if (paymentItemData.pur_payer.startsWith("600")) {
+        total += parseFloat(paymentItemData.pur_amount_due);
       }
-      console.log("selectedRows useEffect - total - ", total);
-      console.log("selectedRows useEffect - cashFlow total - ", cashflow);
-      console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
 
-      props.setTotal(total);
-      props.setCashFlowTotal(cashflow)
-      props.setPaymentData(total.toFixed(2), purchase_uid_mapping);
+      // total += parseFloat(paymentItemData.pur_amount_due)
+    }
+    console.log("selectedRows useEffect - total - ", total);
+    console.log("selectedRows useEffect - cashFlow total - ", cashflow);
+    console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
 
+    props.setTotal(total);
+    props.setCashFlowTotal(cashflow);
+    props.setPaymentData(total.toFixed(2), purchase_uid_mapping);
   }, [selectedRows]);
 
   useEffect(() => {
@@ -1098,7 +1087,7 @@ function TransactionsTable(props) {
     }
   };
 
-  const columnsList = [    
+  const columnsList = [
     {
       field: "pur_payer",
       headerName: "Pur Payer",
@@ -1156,13 +1145,13 @@ function TransactionsTable(props) {
             display: "flex",
             flexDirection: "row",
             justifyContent: "flex-end",
-            color:  params.row.pur_payer.startsWith("600")? "red" : "green"
+            color: params.row.pur_payer.startsWith("600") ? "red" : "green",
           }}
-        >                    
-          { params.row.pur_payer.startsWith("600")? `${parseFloat(params.value).toFixed(2)}` : `(${parseFloat(params.value).toFixed(2)})`}
+        >
+          {params.row.pur_payer.startsWith("600") ? `${parseFloat(params.value).toFixed(2)}` : `(${parseFloat(params.value).toFixed(2)})`}
         </Box>
       ),
-      headerAlign: 'right',
+      headerAlign: "right",
     },
     {
       field: "total_paid",
@@ -1180,39 +1169,39 @@ function TransactionsTable(props) {
             flexDirection: "row",
             justifyContent: "flex-end",
           }}
-        >                    
-          { params.value? `${parseFloat(params.value).toFixed(2)}` : '0'}
+        >
+          {params.value ? `${parseFloat(params.value).toFixed(2)}` : "0"}
         </Box>
       ),
-      headerAlign: 'right',
+      headerAlign: "right",
     },
   ];
 
   const handleSelectionModelChange = (newRowSelectionModel) => {
-    console.log("ROHIT - newRowSelectionModel - ", newRowSelectionModel);
-    console.log("ROHIT - paymentDueResult - ", paymentDueResult);
-    console.log("ROHIT -  selectedRows - ", selectedRows);
+    // console.log("ROHIT - newRowSelectionModel - ", newRowSelectionModel);
+    // console.log("ROHIT - paymentDueResult - ", paymentDueResult);
+    // console.log("ROHIT -  selectedRows - ", selectedRows);
 
     const addedRows = newRowSelectionModel.filter((rowId) => !selectedRows.includes(rowId));
     const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
 
     let updatedRowSelectionModel = [...newRowSelectionModel];
 
-    console.log("ROHIT -  addedRows - ", addedRows);
+    // console.log("ROHIT -  addedRows - ", addedRows);
 
     if (addedRows.length > 0) {
       // console.log("Added rows: ", addedRows);
       let newPayments = [];
-      
+
       addedRows.forEach((item, index) => {
-        console.log("ROHIT - item - ", item)
+        // console.log("ROHIT - item - ", item)
         // const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
         const addedPayment = paymentDueResult.find((row) => row.index === item);
-        console.log("ROHIT - addedPayment - ", addedPayment)
+        // console.log("ROHIT - addedPayment - ", addedPayment)
 
         if (addedPayment) {
           const relatedPayments = paymentDueResult.filter((row) => row.pur_group === addedPayment.pur_group);
-          console.log("ROHIT - relatedPayments - ", relatedPayments)
+          // console.log("ROHIT - relatedPayments - ", relatedPayments)
 
           newPayments = [...newPayments, ...relatedPayments];
           const relatedRowIds = relatedPayments.map((payment) => payment.index);
@@ -1233,15 +1222,15 @@ function TransactionsTable(props) {
 
       removedRows.forEach((item, index) => {
         let removedPayment = paymentDueResult.find((row) => row.index === item);
-        let relatedPayments = []
+        let relatedPayments = [];
 
-        if(removedPayment){
+        if (removedPayment) {
           relatedPayments = paymentDueResult.filter((row) => row.pur_group === removedPayment.pur_group);
           relatedRows = relatedPayments.map((payment) => payment.index);
         }
 
         removedPayments.push(removedPayment);
-        removedPayments.push(relatedPayments)
+        removedPayments.push(relatedPayments);
       });
       // console.log("removedPayments - ", removedPayments);
       const allRowRemove = [...new Set([...removedRows, ...relatedRows])];
@@ -1266,10 +1255,13 @@ function TransactionsTable(props) {
                 pageSize: 100,
               },
               sorting: {
-                sortModel: [{ field: 'pur_group', sort: 'asc' }, { field: 'pur_payer', sort: 'asc' }]
-              }
+                sortModel: [
+                  { field: "pur_group", sort: "asc" },
+                  { field: "pur_payer", sort: "asc" },
+                ],
+              },
             },
-          }}          
+          }}
           // getRowId={(row) => row.purchase_uid}
           getRowId={(row) => row.index}
           pageSizeOptions={[10, 50, 100]}
@@ -1309,54 +1301,58 @@ function TransactionsTable(props) {
               }}
             >
               ${" "}
-              {selectedRows.reduce((total, selectedIndex) => {
-                // const payment = paymentDueResult.find((row) => row.index === selectedIndex);
-                const payment = paymentDueResultMap[selectedIndex];
-                if(payment){
-                  const amountDue = payment?.pur_amount_due;
-                  // const isExpense = payment.pur_cf_type === "expense";
+              {selectedRows
+                .reduce((total, selectedIndex) => {
+                  // const payment = paymentDueResult.find((row) => row.index === selectedIndex);
+                  const payment = paymentDueResultMap[selectedIndex];
+                  if (payment) {
+                    const amountDue = payment?.pur_amount_due;
+                    // const isExpense = payment.pur_cf_type === "expense";
 
-                  // Adjust the total based on whether the payment is an expense or revenue
-                  // return total + (isExpense ? -amountDue : amountDue);
+                    // Adjust the total based on whether the payment is an expense or revenue
+                    // return total + (isExpense ? -amountDue : amountDue);
 
-                  if (payment.pur_payer.startsWith("110")) {
-                    return total - amountDue;
-                  } else if (payment.pur_payer.startsWith("600")) {
-                    return total + amountDue;
+                    if (payment.pur_payer.startsWith("110")) {
+                      return total - amountDue;
+                    } else if (payment.pur_payer.startsWith("600")) {
+                      return total + amountDue;
+                    }
+                    // return total + 0;
                   }
-                  // return total + 0;
-                }
-                return total + 0
-              }, 0)?.toFixed(2)}
+                  return total + 0;
+                }, 0)
+                ?.toFixed(2)}
             </Typography>
           </Grid>
         </Grid>
       </>
     );
   } else {
-    return <>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginBottom: '7px',
-          width: '100%',
-          height:"70px"
-        }}
-      >
-        <Typography
+    return (
+      <>
+        <Box
           sx={{
-            color: "#A9A9A9",
-            fontWeight: theme.typography.primary.fontWeight,
-            fontSize: "15px",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            marginBottom: "7px",
+            width: "100%",
+            height: "70px",
           }}
         >
-          No Transactions
-        </Typography>
-      </Box>
-    </>;
+          <Typography
+            sx={{
+              color: "#A9A9A9",
+              fontWeight: theme.typography.primary.fontWeight,
+              fontSize: "15px",
+            }}
+          >
+            No Transactions
+          </Typography>
+        </Box>
+      </>
+    );
   }
 }
 
@@ -1745,7 +1741,6 @@ function TenantBalanceTable(props) {
       headerName: "Purchase Amount Due",
       flex: 1,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>$ ${parseFloat(params.value).toFixed(2)}</Box>,
-      
     },
     {
       field: "property_address",

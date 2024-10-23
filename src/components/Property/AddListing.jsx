@@ -47,6 +47,7 @@ import ImageListItem from "@mui/material/ImageListItem";
 
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import APIConfig from "../../utils/APIConfig";
 
@@ -128,7 +129,7 @@ export default function AddListing(props) {
   const [imagesTobeDeleted, setImagesTobeDeleted] = useState([]);
   const [deletedIcons, setDeletedIcons] = useState(new Array(JSON.parse(propertyData.property_images).length).fill(false));
   const [favoriteIcons, setFavoriteIcons] = useState(JSON.parse(propertyData.property_images).map((image) => image === propertyData.property_favorite_image));  
-
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   // useEffect(() => {
   //   console.log("deletedImageList - ", deletedImageList);
   // }, [deletedImageList]);
@@ -680,17 +681,18 @@ export default function AddListing(props) {
       >
         <Paper
           style={{
-            margin: "30px",
-            padding: theme.spacing(2),
+            marginTop: "15px",
+            // padding: theme.spacing(2),
             backgroundColor: theme.palette.form.main,
-            width: "85%",
-            [theme.breakpoints.down("sm")]: {
-              width: "80%",
-            },
-            [theme.breakpoints.up("sm")]: {
-              width: "50%",
-            },
-            paddingTop: "10px",
+            width: "80%",
+            // [theme.breakpoints.down("sm")]: {
+            //   width: "80%",
+            // },
+            // [theme.breakpoints.up("sm")]: {
+            //   width: "50%",
+            // },
+            // paddingTop: "10px",
+            padding: "25px"
           }}
         >
           <Stack direction='row' justifyContent='center' alignItems='center' position='relative'>
@@ -1014,24 +1016,36 @@ export default function AddListing(props) {
 
         <Paper
           style={{
-            margin: "30px",
-            padding: theme.spacing(2),
+            // margin: "30px",
+            // padding: theme.spacing(2),
+            // backgroundColor: theme.palette.form.main,
+            // width: "85%", // Occupy full width with 25px margins on each side
+            // [theme.breakpoints.down("sm")]: {
+            //   width: "80%",
+            // },
+            // [theme.breakpoints.up("sm")]: {
+            //   width: "50%",
+            // },
+            // paddingTop: "10px",
+            marginTop: "15px",
+            // padding: theme.spacing(2),
             backgroundColor: theme.palette.form.main,
-            width: "85%", // Occupy full width with 25px margins on each side
-            [theme.breakpoints.down("sm")]: {
-              width: "80%",
-            },
-            [theme.breakpoints.up("sm")]: {
-              width: "50%",
-            },
-            paddingTop: "10px",
+            width: "80%",
+            // [theme.breakpoints.down("sm")]: {
+            //   width: "80%",
+            // },
+            // [theme.breakpoints.up("sm")]: {
+            //   width: "50%",
+            // },
+            // paddingTop: "10px",
+            padding: "25px"
           }}
         >
           <Stack
             direction='column'
             justifyContent='center'
             alignItems='center'
-            padding='25px'
+            // padding='25px'
             sx={{
               display: "flex",
             }}
@@ -1114,24 +1128,36 @@ export default function AddListing(props) {
 
         <Paper
           style={{
-            margin: "30px",
-            padding: theme.spacing(2),
+            // margin: "30px",
+            // padding: theme.spacing(2),
+            // backgroundColor: theme.palette.form.main,
+            // width: "85%", // Occupy full width with 25px margins on each side
+            // [theme.breakpoints.down("sm")]: {
+            //   width: "80%",
+            // },
+            // [theme.breakpoints.up("sm")]: {
+            //   width: "50%",
+            // },
+            // paddingTop: "10px",
+            marginTop: "15px",
+            // padding: theme.spacing(2),
             backgroundColor: theme.palette.form.main,
-            width: "85%", // Occupy full width with 25px margins on each side
-            [theme.breakpoints.down("sm")]: {
-              width: "80%",
-            },
-            [theme.breakpoints.up("sm")]: {
-              width: "50%",
-            },
-            paddingTop: "10px",
+            width: "80%",
+            // [theme.breakpoints.down("sm")]: {
+            //   width: "80%",
+            // },
+            // [theme.breakpoints.up("sm")]: {
+            //   width: "50%",
+            // },
+            // paddingTop: "10px",
+            padding: "25px"
           }}
         >
           <Stack
             direction='column'
             justifyContent='left'
             alignItems='left'
-            padding='25px'
+            // padding='25px'
             sx={{
               display: "flex",
             }}
@@ -1229,24 +1255,36 @@ export default function AddListing(props) {
 
         <Paper
           style={{
-            margin: "30px",
-            padding: theme.spacing(2),
+            // margin: "30px",
+            // padding: theme.spacing(2),
+            // backgroundColor: theme.palette.form.main,
+            // width: "85%", // Occupy full width with 25px margins on each side
+            // [theme.breakpoints.down("sm")]: {
+            //   width: "80%",
+            // },
+            // [theme.breakpoints.up("sm")]: {
+            //   width: "50%",
+            // },
+            // paddingTop: "10px",
+            marginTop: "15px",
+            // padding: theme.spacing(2),
             backgroundColor: theme.palette.form.main,
-            width: "85%", // Occupy full width with 25px margins on each side
-            [theme.breakpoints.down("sm")]: {
-              width: "80%",
-            },
-            [theme.breakpoints.up("sm")]: {
-              width: "50%",
-            },
-            paddingTop: "10px",
+            width: "80%",
+            // [theme.breakpoints.down("sm")]: {
+            //   width: "80%",
+            // },
+            // [theme.breakpoints.up("sm")]: {
+            //   width: "50%",
+            // },
+            // paddingTop: "10px",
+            padding: "25px"
           }}
         >
           <Stack
             direction='column'
             justifyContent='left'
             alignItems='left'
-            padding='25px'
+            // padding='25px'
             sx={{
               display: "flex",
             }}
@@ -1342,6 +1380,7 @@ export default function AddListing(props) {
           alignItems='center'
           sx={{
             display: "flex",
+            marginTop: "15px",
           }}
         >
           <Box

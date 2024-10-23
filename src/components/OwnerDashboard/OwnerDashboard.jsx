@@ -189,7 +189,7 @@ export default function OwnerDashboard() {
                             <Typography
                               sx={{
                                 color: "#160449",
-                                fontSize: { xs: "18px", sm: "18px", md: "24px" },
+                                fontSize: { xs: "24px", sm: "24px", md: "24px" },
                                 fontWeight: "bold",
                               }}
                             >
@@ -249,7 +249,7 @@ export default function OwnerDashboard() {
                     </IconButton>
                   </Box>
                   <Box sx={{ paddingTop: "10px" }}>
-                    <Announcements sentAnnouncementData={announcementSentData} recvAnnouncementData={announcementRecvData}/>
+                    <Announcements sentAnnouncementData={announcementSentData} recvAnnouncementData={announcementRecvData} />
                   </Box>
                 </Grid>)}
               </>

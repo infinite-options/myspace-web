@@ -205,7 +205,7 @@ export default function PropertyRentWidget(props) {
             }}
           >
             <CalendarIcon stroke='#3D5CAC' width='20' height='20' style={{ marginRight: "4px" }} />
-            {!isMobile && "Last 30 days"}
+            { "Last 30 days"}
           </Button>
         </Grid>
         <Grid item xs={6}>
@@ -225,7 +225,7 @@ export default function PropertyRentWidget(props) {
             onClick={handleSelectPropertyClick}
           >
             <HomeIcon fill='#3D5CAC' width='15' height='15' style={{ marginRight: "4px" }} />
-            {!isMobile && "Select Property"}
+            {"Select Property"}
           </Button>
           <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
             {propertyList.map((property, index) => {

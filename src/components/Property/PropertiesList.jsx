@@ -93,7 +93,7 @@ export default function PropertiesList(props) {
   const returnIndex = returnIndexFromContext || 0;
   const allcontracts = allContractsFromContext || [];
 
-  console.log("ROHIT - PropertiesList - returnIndex - ", returnIndex);
+  // console.log("ROHIT - PropertiesList - returnIndex - ", returnIndex);
   // const [propertyList, setPropertyList] = useState([]);
   const [displayedItems, setDisplayedItems] = useState([]);
   const [citySortOrder, setCitySortOrder] = useState("asc");
@@ -133,10 +133,10 @@ export default function PropertiesList(props) {
   useEffect(() => {
     //set current page in datagrid
     // Calculate the page based on the current index and page size
-    console.log("ROHIT - PropertiesList - propertyIndex - ", propertyIndex);
+    // console.log("ROHIT - PropertiesList - propertyIndex - ", propertyIndex);
     if (propertyList.length > 0 && propertyIndex !== null) {
       const calculatedPage = Math.floor(propertyIndex / 15);
-      console.log("ROHIT - PropertiesList - calculatedPage - ", calculatedPage);
+      // console.log("ROHIT - PropertiesList - calculatedPage - ", calculatedPage);
       // setPage(calculatedPage); // Update the current page
       setPaginationModel({
         pageSize: 15,
@@ -188,6 +188,7 @@ export default function PropertiesList(props) {
     setCurrentPropertyID(property.property_uid);
     setCurrentProperty(property);
     props.setRHS("PropertyNavigator");
+    props.setViewRHS(true)
   };
 
   const onPropertyInRentWidgetClicked = (property_uid) => {
@@ -554,9 +555,11 @@ export default function PropertiesList(props) {
                   <Box sx={{ display: "flex", width: "100%", alignItems: "center", justifyContent: "space-between", padding: "0px 10px" }}>
                     <Button
                       onClick={sortByZip}
+                      variant="contained"
                       sx={{
                         background: "#3D5CAC",
                         fontWeight: theme.typography.secondary.fontWeight,
+                        color: theme.palette.background.default,
                         fontSize: theme.typography.smallFont,
                         cursor: "pointer",
                         textTransform: "none",
@@ -569,7 +572,7 @@ export default function PropertiesList(props) {
                     </Button>
                     <Button
                       onClick={sortByAddress}
-                      variant='outlined'
+                      variant='contained'
                       sx={{
                         background: "#3D5CAC",
                         color: theme.palette.background.default,
@@ -586,9 +589,11 @@ export default function PropertiesList(props) {
                     </Button>
                     <Button
                       onClick={sortByStatus}
+                      variant = 'contained'
                       sx={{
                         background: "#3D5CAC",
                         fontWeight: theme.typography.secondary.fontWeight,
+                        color: theme.palette.background.default,
                         fontSize: theme.typography.smallFont,
                         cursor: "pointer",
                         textTransform: "none",

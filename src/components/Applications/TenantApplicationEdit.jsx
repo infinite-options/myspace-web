@@ -18,7 +18,7 @@ import { useUser } from "../../contexts/UserContext";
 import CloseIcon from "@mui/icons-material/Close";
 
 
-export default function TenantApplicationEdit({ profileData, lease, lease_uid, setRightPane, property, from, tenantDocuments, setTenantDocuments, oldVehicles, setOldVehicles, adultOccupants, setAdultOccupants, petOccupants, setPetOccupants, childOccupants, setChildOccupants, extraUploadDocument, setExtraUploadDocument, extraUploadDocumentType, setExtraUploadDocumentType, deleteDocuments, selectedJobs, setSelectedJobs }) {
+export default function TenantApplicationEdit({ profileData, lease, lease_uid, setRightPane, property, from, tenantDocuments, setTenantDocuments, oldVehicles, setOldVehicles, adultOccupants, setAdultOccupants, petOccupants, setPetOccupants, childOccupants, setChildOccupants, extraUploadDocument, setExtraUploadDocument, extraUploadDocumentType, setExtraUploadDocumentType, deleteDocuments }) {
     const [adults, setAdults] = useState(adultOccupants? adultOccupants : []);
     const [children, setChildren] = useState(childOccupants? childOccupants : []);
     const [pets, setPets] = useState(petOccupants? petOccupants : []);
@@ -42,8 +42,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
     const [ occupantsExpanded, setOccupantsExpanded ] = useState(true);
     const [employmentExpanded, setEmploymentExpanded] = useState(true);
     const [documentsExpanded, setDocumentsExpanded] = useState(true); 
-
-    console.log("tenant emp", lease[0].lease_income);
+    const [selectedJobs, setSelectedJobs] = useState("[]");
 
 
     // const getListDetails = async () => {
@@ -113,7 +112,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
     // };
 
     const showSnackbar = (message, severity) => {
-        console.log("Inside show snackbar");
+        // console.log("Inside show snackbar");
         setSnackbarMessage(message);
         setSnackbarSeverity(severity);
         setSnackbarOpen(true);
@@ -136,7 +135,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
     // }, []);
 
     useEffect(() => {
-        console.log("calling profileData useEffect");
+        // console.log("calling profileData useEffect");
 
         // setIsSave(false);
         // setProfileData();
@@ -303,8 +302,9 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
     // };
 
     const updateLeaseData = async () => {
+        console.log("try", selectedJobs);
         try {
-            if (adults?.length > 0 || pets?.length > 0 || children?.length > 0 || vehicles?.length > 0 || isPreviousFileChange || deletedFiles?.length > 0 || uploadedFiles?.length > 0) {
+            if (adults?.length > 0 || pets?.length > 0 || children?.length > 0 || vehicles?.length > 0 || isPreviousFileChange || deletedFiles?.length > 0 || uploadedFiles?.length > 0 || selectedJobs?.length > 0) {
                 setShowSpinner(true);
                 const headers = {
                     "Access-Control-Allow-Origin": "*",
@@ -399,12 +399,19 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                 leaseApplicationFormData.append("lease_pets", JSON.stringify(pets));
                 leaseApplicationFormData.append("lease_vehicles", JSON.stringify(vehicles));
 
+                console.log("selected jobs", selectedJobs);
+
+                if (selectedJobs?.length > 0) {
+                    // console.log(JSON.stringify(selectedJobs));
+                    leaseApplicationFormData.append("lease_income", JSON.stringify(selectedJobs));
+                }    
+
                 // console.log(lease_uid)
                 leaseApplicationFormData.append('lease_uid', lease_uid); // Here is the problem when upload new docs because there is no lease right now and it require lease_uid
 
                 axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
                     .then((response) => {
-                        console.log('Data updated successfullyyy', response);
+                        // console.log('Data updated successfullyyy', response);
                         showSnackbar("Your lease application has been successfully updated.", "success");
                         setIsReload((prev) => !prev);
                         setShowSpinner(false);
@@ -470,6 +477,26 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
             setRightPane?.({ type: "tenantApplication", state: updatedState });
         }
     };
+
+    const handleSaveButton = async (e) => {
+        e.preventDefault();
+        await updateLeaseData();  // Trigger the PUT request to save data
+        const updatedState = {
+            data: property,
+            status: lease_uid === null ? "" : lease[0].lease_status,
+            lease: lease_uid === null ? [] : lease[0],
+            from: from,
+            tenantDocuments: documents, // Updated documents
+            vehicles: vehicles, // Updated vehicles
+            adultOccupants: adults, // Updated adult occupants
+            petOccupants: pets, // Updated pet occupants
+            childOccupants: children, // Updated child occupants
+            extraUploadDocument: uploadedFiles, // Uploaded files
+            extraUploadDocumentType: uploadedFileTypes, // Uploaded file types
+            deleteDocuments: deletedFiles, // Deleted files
+        };
+        setRightPane?.({ type: "tenantApplication", state: updatedState });
+    };
     
 
     return (
@@ -497,13 +524,13 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                             Your changes will be saved to the Lease Application without impacting your profile.
                         </Typography>
                     </Grid>
-                    <Grid item xs={1} md={1}>
+                    {/* <Grid item xs={1} md={1}>
                         <Box>
                             <Button onClick={(e) => handleCloseButton(e)}>
                                 <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px" }} />
                             </Button>
                         </Box>
-                    </Grid>
+                    </Grid> */}
                     <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
                         <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
                             <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
@@ -538,7 +565,6 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                                 <EmploymentDataGrid
                                     profileData = {profileData}
                                     employmentDataT={lease?.[0]?.lease_income ? JSON.parse(lease[0].lease_income) : []}
-                                    selectedJobs={selectedJobs}
                                     setSelectedJobs={setSelectedJobs}
                                 />
                                 </AccordionDetails>
@@ -632,36 +658,44 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                     </Grid>
                     
                     {/* documents details */}
-                    <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
-                    <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={documentsExpanded} onChange={() => setDocumentsExpanded((prev) => !prev)}>
-                        <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="documents-content" id="documents-header">
-                            <Typography sx={{ color: "#160449", fontWeight: theme.typography.primary.fontWeight, fontSize: "20px" }}>
+                    <Grid container direction="column" spacing={2} sx={{ padding: '10px' }}>
+                    <Grid item>
+                        <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={documentsExpanded} onChange={() => setDocumentsExpanded((prev) => !prev)}>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="documents-content" id="documents-header">
+                            <Typography
+                                sx={{
+                                    color: "#160449",
+                                    fontWeight: theme.typography.primary.fontWeight,
+                                    fontSize: "20px",
+                                    textAlign: "center",
+                                    paddingBottom: "10px",
+                                    paddingTop: "5px",
+                                    flexGrow: 1,
+                                }}
+                                paddingTop='5px'
+                                paddingBottom='10px'
+                            >
                                 Document Details
                             </Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Grid item xs={12} md={12}>
-                            <Documents
-                                documents={documents}
-                                setDocuments={setDocuments}
-                                setContractFiles={setuploadedFiles}
-                                // editOrUpdateLease={editOrUpdateTenant}
-                                // documentsRef={documentsRef}
-                                setDeleteDocsUrl={setDeletedFiles}
-                                // setDeletedFiles={setDeletedFiles}
-                                // modifiedData={modifiedData}
-                                isAccord={true}
-                                contractFiles={uploadedFiles}
-                                contractFileTypes={uploadedFileTypes}
-                                setContractFileTypes={setUploadedFileTypes}
-                                setIsPreviousFileChange={setIsPreviousFileChange}
-                                // setModifiedData={setModifiedData}
-                                // dataKey={"tenant_documents"}
-                            />
-                            </Grid>
-                        </AccordionDetails>
-                    </Accordion>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <Documents
+                                    documents={documents}
+                                    setDocuments={setDocuments}
+                                    setContractFiles={setuploadedFiles}
+                                    setDeleteDocsUrl={setDeletedFiles}
+                                    isAccord={true}
+                                    contractFiles={uploadedFiles}
+                                    contractFileTypes={uploadedFileTypes}
+                                    setContractFileTypes={setUploadedFileTypes}
+                                    setIsPreviousFileChange={setIsPreviousFileChange}
+                                />
+                            </AccordionDetails>
+                        </Accordion>
                     </Grid>
+                </Grid>
+
+
                         {/* <Grid item xs={12} md={12}>
                             <Typography>Documents</Typography>
                         <Documents
@@ -686,10 +720,11 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
 
                     <Grid container justifyContent='center' item xs={11} md={11}>
                         <Button
+                            variant="contained"
                             sx={{
                                 backgroundColor: '#3D5CAC',                                
                             }}
-                            onClick={(e) => handleCloseButton(e)}
+                            onClick={handleSaveButton}
                         >
                             <Typography sx={{ textTransform: 'none', fontWeight: 'bold', color: "#FFFFFF",}}>
                                 {lease_uid == null? "Return to Application" : "Save & Return"}
@@ -703,7 +738,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
     )
 }
 
-export const EmploymentDataGrid = ({ profileData, employmentDataT }) => {
+export const EmploymentDataGrid = ({ profileData, employmentDataT, setSelectedJobs }) => {
     const employmentData = profileData?.tenant_employment 
       ? JSON.parse(profileData.tenant_employment)
       : [];
@@ -713,10 +748,14 @@ export const EmploymentDataGrid = ({ profileData, employmentDataT }) => {
     );
 
     const handleJobSelection = (index) => {
-      setCheckedJobs(prevJobs =>
-        prevJobs.map((job, i) => i === index ? { ...job, checked: !job.checked } : job)
-      );
-    };
+        const updatedJobs = checkedJobs.map((job, i) =>
+          i === index ? { ...job, checked: !job.checked } : job
+        );
+        setCheckedJobs(updatedJobs);
+  
+        const selectedJobs = updatedJobs.filter(job => job.checked);
+        setSelectedJobs(selectedJobs);
+      };
 
     return (
       <Box sx={{ padding: "10px" }}>

@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Documents = ({ fromRenew, documents, setDocuments, setDeleteDocsUrl, setIsPreviousFileChange, isAccord=false, contractFiles, setContractFiles, contractFileTypes, setContractFileTypes, isEditable=true, customName, customUploadingName }) => {
+const Documents = ({ fromRenew, documents, setDocuments, setDeleteDocsUrl, setIsPreviousFileChange, isAccord=false, contractFiles, setContractFiles, contractFileTypes, setContractFileTypes, isEditable=true, customName, customUploadingName, isMobile }) => {
 
   const { getList, } = useContext(ListsContext);	
   
@@ -1186,20 +1186,23 @@ const Documents = ({ fromRenew, documents, setDocuments, setDeleteDocsUrl, setIs
 				// 		))}
 				// 	</Box>
 				// </Box>
-
-          <DataGrid
-            rows={rowsWithId}
-            columns={docsColumns}
-            sx={{
-              // minHeight:"100px",
-              // height:"100px",
-              // maxHeight:"100%",
-              marginTop: "10px",
-            }}
-            autoHeight
-            rowHeight={50} 
-            hideFooter={true}
-          />
+          <Box sx={{overflowX : "auto"}}>
+            <DataGrid
+              rows={rowsWithId}
+              columns={docsColumns}
+              sx={{
+                // minHeight:"100px",
+                // height:"100px",
+                // maxHeight:"100%",
+                minWidth: "500px",
+                width: "100%",
+                marginTop: "10px",
+              }}
+              autoHeight
+              rowHeight={50} 
+              hideFooter={true}
+            />
+          </Box>
         ) : (
           <>
             <Box

@@ -9,6 +9,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { makeStyles } from '@material-ui/core/styles';
 import GenericDialog from '../GenericDialog';
 import axios from 'axios';
+import { useUser } from '../../contexts/UserContext';
 
 const useStyles = makeStyles((theme) => ({
     textField: {
@@ -35,6 +36,7 @@ const IncomeDetails = ({ employmentList, setEmploymentList, salaryFrequencies })
     const [dialogTitle, setDialogTitle] = useState('');
     const [dialogMessage, setDialogMessage] = useState('');
     const [dialogSeverity, setDialogSeverity] = useState('info');
+    const { user, getProfileId } = useUser();
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
@@ -88,6 +90,7 @@ const IncomeDetails = ({ employmentList, setEmploymentList, salaryFrequencies })
     
         const profileFormData = new FormData();
         console.log("tenant emp7", updatedList);
+        profileFormData.append("tenant_uid", getProfileId());
         profileFormData.append("tenant_employment", JSON.stringify(updatedList));
     
         try {
@@ -189,39 +192,49 @@ const IncomeDetails = ({ employmentList, setEmploymentList, salaryFrequencies })
                     <Grid container spacing={2}>
                     <Grid item xs={6}>
                         <TextField
-                            className={classes.textField}
-                            margin="dense"
-                            label="Company Name"
-                            fullWidth
-                            value={currentRow.companyName}
-                            onChange={(e) => handleChange("companyName", e.target.value)}
+                        className={classes.textField}
+                        margin="dense"
+                        label="Company Name"
+                        InputLabelProps={{
+                            style: { color: 'black' },
+                        }}
+                        fullWidth
+                        value={currentRow.firstName}
+                        onChange={(e) => handleChange("companyName", e.target.value)}
                         />
                     </Grid>
 
                     <Grid item xs={6}>
                         <TextField
-                            className={classes.textField}
-                            margin="dense"
-                            label="Job Title"
-                            fullWidth
-                            value={currentRow.jobTitle}
-                            onChange={(e) => handleChange("jobTitle", e.target.value)}
+                        className={classes.textField}
+                        margin="dense"
+                        label="Job Title"
+                        InputLabelProps={{
+                            style: { color: 'black' },
+                        }}
+                        fullWidth
+                        value={currentRow.lastName}
+                        onChange={(e) => handleChange("jobTitle", e.target.value)}
                         />
                     </Grid>
 
                     <Grid item xs={6}>
                         <TextField
-                            className={classes.textField}
-                            margin="dense"
-                            label="Salary"
-                            fullWidth
-                            value={currentRow.salary}
-                            onChange={(e) => handleChange("salary", e.target.value)}
+                        className={classes.textField}
+                        margin="dense"
+                        label="Salary"
+                        InputLabelProps={{
+                            style: { color: 'black' },
+                        }}
+                        fullWidth
+                        value={currentRow.email}
+                        onChange={(e) => handleChange("salary", e.target.value)}
                         />
                     </Grid>
 
-                    <FormControl margin="dense" fullWidth variant="outlined">
-                        <InputLabel>Frequency</InputLabel>
+                    <Grid item xs={6}>
+                        <FormControl margin="dense" fullWidth variant="outlined">
+                        <InputLabel style={{ color: 'black' }}>Frequency</InputLabel>
                         <Select
                             className={classes.select}
                             label="Frequency"
@@ -229,23 +242,29 @@ const IncomeDetails = ({ employmentList, setEmploymentList, salaryFrequencies })
                             onChange={(e) => handleChange("frequency", e.target.value)}
                         >
                             {salaryFrequencies.map((freq) => (
-                                <MenuItem key={freq.list_uid} value={freq.list_item}>
-                                    {freq.list_item}
-                                </MenuItem>
+                            <MenuItem key={freq.list_uid} value={freq.list_item}>
+                                {freq.list_item}
+                            </MenuItem>
                             ))}
                         </Select>
-                    </FormControl>
+                        </FormControl>
+                    </Grid>
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleSave} color="primary" variant="contained">
-                        Save
+                    <Button
+                    onClick={handleSave}
+                    style={{ color: 'white', backgroundColor: "#3D5CAC" }}
+                    variant="contained"
+                    >
+                    Save
                     </Button>
                     <Button onClick={handleClose} color="secondary">
-                        Cancel
+                    Cancel
                     </Button>
                 </DialogActions>
             </Dialog>
+
 
             <GenericDialog
                 isOpen={dialogOpen}

@@ -32,7 +32,7 @@ export default function TenantApplication(props) {
   const [property, setProperty] = useState([]);
   const [status, setStatus] = useState("");
   const [lease, setLease] = useState([]);
-  console.log("in tenant application status", status);
+  // console.log("in tenant application status", status);
   // console.log("lease", lease);
   // console.log("property", property);
 
@@ -117,7 +117,7 @@ export default function TenantApplication(props) {
     };
   
     fetchData();
-  }, [props.data]);
+  }, [props.data, props.reload]);
   
 
   const [showWithdrawLeaseDialog, setShowWithdrawLeaseDialog] = useState(false);
@@ -249,7 +249,7 @@ export default function TenantApplication(props) {
       const data = await response.json();
       const tenantProfileData = data.profile.result[0];
       setTenantProfile(tenantProfileData);
-      console.log("tenantProfileData", tenantProfileData);
+      // console.log("tenantProfileData", tenantProfileData);
     };
     getTenantProfileInformation();
   }, []);
@@ -277,7 +277,7 @@ export default function TenantApplication(props) {
     }
 
     if(props?.childOccupants){
-      setChildOccupants(props.childOccupants)
+      setChildOccupants(props.childOccupants);
     }else{
       formatTenantChildOccupants();
     }
@@ -332,8 +332,17 @@ export default function TenantApplication(props) {
 
   function handleWithdrawLease() {
     const withdrawLeaseData = new FormData();
-    withdrawLeaseData.append("lease_uid", lease.lease_uid);
+    if (lease[0].lease_uid) {
+      withdrawLeaseData.append("lease_uid", lease[0].lease_uid);
+    }
+    else {
+      withdrawLeaseData.append("lease_property_id", property.property_uid);
+    }
     withdrawLeaseData.append("lease_status", "WITHDRAWN");
+
+    withdrawLeaseData.forEach((value, key) => {
+      console.log(`${key}: ${value}`);
+    });
 
     const withdrawLeaseResponse = fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
       method: "PUT",
@@ -352,7 +361,7 @@ export default function TenantApplication(props) {
 
   function formatDate(dateString) {
     const date = new Date(dateString);
-    console.log('check date', dateString, date)
+    // console.log('check date', dateString, date)
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     const year = date.getFullYear();
@@ -372,7 +381,7 @@ export default function TenantApplication(props) {
     // console.log("Application Submitted")
     // console.log("should call /annoucements")
     // console.log("should call /leases")
-    console.log("lease status", status);
+    // console.log("lease status", status);
     try {
       let date = new Date();
 
@@ -545,6 +554,9 @@ export default function TenantApplication(props) {
 
   const handleCloseButton = (e) => {
     e.preventDefault();
+    if(props.isMobile){
+      props.setViewRHS(false)
+    }
     props.setRightPane?.("");
   };
 
@@ -726,83 +738,88 @@ export default function TenantApplication(props) {
             </Box>
 
             <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  paddingTop: "10px",
-                  marginTop: "20px",
-                  marginBottom: "7px",
-                  width: "100%",
-                }}
-              >
-                {(status == null || status === "" || status === "REJECTED" || status === "RESCIND" || status === "RENEW") &&
-                  <Button
-                    variant='contained'
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                paddingTop: "10px",
+                marginTop: "20px",
+                marginBottom: "7px",
+                width: "100%",
+              }}
+            >
+              {(status == null || status === "" || status === "REJECTED" || status === "RESCIND" || status === "RENEW") && (
+                <Button
+                  variant="contained"
+                  sx={{
+                    backgroundColor: "#9EAED6",
+                    textTransform: "none",
+                    borderRadius: "5px",
+                    display: "flex",
+                    width: "45%",
+                    marginRight: "10px",
+                  }}
+                  onClick={() => handleApplicationSubmit()}
+                >
+                  <Typography
                     sx={{
-                      backgroundColor: "#9EAED6",
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: "14px",
+                      color: "#FFFFFF",
                       textTransform: "none",
-                      borderRadius: "5px",
-                      display: "flex",
-                      width: "45%",
-                      marginRight: "10px"
                     }}
-                    onClick={() => handleApplicationSubmit()}
                   >
-                    <Typography
-                      sx={{
-                        fontWeight: theme.typography.primary.fontWeight,
-                        fontSize: "14px",
-                        color: "#FFFFFF",
-                        textTransform: "none",
-                      }}
-                    >
-                      Submit
-                    </Typography>
-                  </Button>}
-                {(status == null || status === "" || status === "NEW" || status === "REJECTED" || status === "RESCIND" || status === "RENEW" || status === "RENEW NEW") &&
-                  <Button
-                    variant='contained'
-                    sx={{
-                      backgroundColor: "#CB8E8E",
-                      textTransform: "none",
-                      borderRadius: "5px",
-                      display: "flex",
-                      width: "45%",
-                    }}
-                    onClick={() =>
-                      props.setRightPane({
-                        type: "tenantApplicationEdit",
-                        state: {
-                          profileData: tenantProfile,
-                          lease: lease ? lease : [],
-                          lease_uid: lease.length > 0 ? lease[0].lease_uid : null,
-                          setRightPane: props.setRightPane,
-                          property: property,
-                          from: props.from,
-                          tenantDocuments: tenantDocuments,
-                          setTenantDocuments: setTenantDocuments,
-                          oldVehicles: vehicles,
-                          setOldVehicles: setVehicles,
-                          adultOccupants: adultOccupants,
-                          setAdultOccupants: setAdultOccupants,
-                          petOccupants: petOccupants,
-                          setPetOccupants: setPetOccupants,
-                          childOccupants: childOccupants,
-                          setChildOccupants: setChildOccupants,
-                          extraUploadDocument: extraUploadDocument,
-                          setExtraUploadDocument: setExtraUploadDocument,
-                          extraUploadDocumentType: extraUploadDocumentType,
-                          setExtraUploadDocumentType: setExtraUploadDocumentType,
-                          deleteDocuments: deleteDocuments,
-                          selectedJobs: selectedJobs,  
-                          setSelectedJobs: setSelectedJobs, 
-                          status: status,
-                        },
-                      })
+                    Submit
+                  </Typography>
+                </Button>
+              )}
+              
+              {(status == null || status === "" || status === "NEW" || status === "REJECTED" || status === "RESCIND" || status === "RENEW" || status === "RENEW NEW") && (
+                <Button
+                  variant="contained"
+                  sx={{
+                    backgroundColor: "#CB8E8E",
+                    textTransform: "none",
+                    borderRadius: "5px",
+                    display: "flex",
+                    width: "45%",
+                    ":hover": {
+                      backgroundColor: "#E6B7B7",
                     }
-                  >
+                  }}
+                  onClick={() =>
+                    props.setRightPane({
+                      type: "tenantApplicationEdit",
+                      state: {
+                        profileData: tenantProfile,
+                        lease: lease ? lease : [],
+                        lease_uid: lease.length > 0 ? lease[0].lease_uid : null,
+                        setRightPane: props.setRightPane,
+                        property: property,
+                        from: props.from,
+                        tenantDocuments: tenantDocuments,
+                        setTenantDocuments: setTenantDocuments,
+                        oldVehicles: vehicles,
+                        setOldVehicles: setVehicles,
+                        adultOccupants: adultOccupants,
+                        setAdultOccupants: setAdultOccupants,
+                        petOccupants: petOccupants,
+                        setPetOccupants: setPetOccupants,
+                        childOccupants: childOccupants,
+                        setChildOccupants: setChildOccupants,
+                        extraUploadDocument: extraUploadDocument,
+                        setExtraUploadDocument: setExtraUploadDocument,
+                        extraUploadDocumentType: extraUploadDocumentType,
+                        setExtraUploadDocumentType: setExtraUploadDocumentType,
+                        deleteDocuments: deleteDocuments,
+                        selectedJobs: selectedJobs,
+                        setSelectedJobs: setSelectedJobs,
+                        status: status,
+                      },
+                    })
+                  }
+                >
                   <Typography
                     sx={{
                       fontWeight: theme.typography.primary.fontWeight,
@@ -814,9 +831,43 @@ export default function TenantApplication(props) {
                     Edit
                   </Typography>
                 </Button>
-                }
+              )}
+
+              {(status === "NEW" || status === "RENEW NEW") && (
+                <Button
+                  variant="contained"
+                  sx={{
+                    backgroundColor: "#ffe230",
+                    color: "#160449",
+                    fontWeight: theme.typography.medium.fontWeight,
+                    fontSize: "14px",
+                    textTransform: "none",
+                    borderRadius: "5px",
+                    display: "flex",
+                    width: "45%",
+                    marginLeft: "10px",
+                    ":hover": {
+                      backgroundColor: "#ffeb99",
+                      color: "#160449",
+                    },
+                  }}
+                  onClick={() => setShowWithdrawLeaseDialog(true)}
+                >
+                  <Typography
+                    sx={{
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: "14px",
+                      color: "#160449",
+                      textTransform: "none",
+                    }}
+                  >
+                    Withdraw
+                  </Typography>
+                </Button>
+              )}
             </Box>
 
+{/* 
             {status && (status === "NEW" || status === "RENEW NEW") ? (
                 <>
                   <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
@@ -841,7 +892,7 @@ export default function TenantApplication(props) {
                     </Button>
                   </Grid>
                 </>
-            ) : null}
+            ) : null} */}
             
             {showWithdrawLeaseDialog && (
                 <Dialog
@@ -1032,10 +1083,13 @@ export const VehicleDataGrid = ({ vehicles }) => {
 }
 
 export const EmploymentDataGrid = ({ tenantProfile, selectedJobs, setSelectedJobs, leaseStatus, lease }) => {
+  console.log("lease", lease);
   const employmentData =
     leaseStatus === "PROCESSING" || leaseStatus === "ACTIVE" || leaseStatus === "NEW"
       ? (lease?.[0]?.lease_income ? JSON.parse(lease[0].lease_income) : [])
       : (tenantProfile?.tenant_employment ? JSON.parse(tenantProfile.tenant_employment) : []);
+  
+  const employmentDataArray = Array.isArray(employmentData) ? employmentData : [];
 
   const handleJobSelection = (job, isChecked) => {
     setSelectedJobs((prevSelectedJobs) => {
@@ -1054,33 +1108,37 @@ export const EmploymentDataGrid = ({ tenantProfile, selectedJobs, setSelectedJob
   return (
     <Box sx={{ padding: '10px' }}>
       <Grid container spacing={2}>
-        {employmentData.map((job, index) => (
-          <Grid item xs={12} key={index}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              {(leaseStatus == null || leaseStatus === "" || leaseStatus === "REJECTED" || leaseStatus === "RESCIND" || leaseStatus === "RENEW") && (
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={selectedJobs.some((selectedJob) => selectedJob.companyName === job.companyName)}
-                      onChange={(e) => handleJobSelection(job, e.target.checked)}
-                    />
-                  }
-                  label=""
-                />
-              )}
+        {employmentDataArray.length > 0 ? (
+          employmentDataArray.map((job, index) => (
+            <Grid item xs={12} key={index}>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                {(leaseStatus == null || leaseStatus === "" || leaseStatus === "REJECTED" || leaseStatus === "RESCIND" || leaseStatus === "RENEW") && (
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={selectedJobs.some((selectedJob) => selectedJob.companyName === job.companyName)}
+                        onChange={(e) => handleJobSelection(job, e.target.checked)}
+                      />
+                    }
+                    label=""
+                  />
+                )}
 
-              <Box sx={{ flex: 1 }}>
-                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                  Job Title: {job.jobTitle}
-                </Typography>
-                <Typography variant="body2">Company: {job.companyName}</Typography>
-                <Typography variant="body2">Salary: ${job.salary}</Typography>
-                <Typography variant="body2">Frequency: {job.frequency}</Typography>
+                <Box sx={{ flex: 1 }}>
+                  <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                    Job Title: {job.jobTitle}
+                  </Typography>
+                  <Typography variant="body2">Company: {job.companyName}</Typography>
+                  <Typography variant="body2">Salary: ${job.salary}</Typography>
+                  <Typography variant="body2">Frequency: {job.frequency}</Typography>
+                </Box>
               </Box>
-            </Box>
-            <Divider sx={{ marginTop: '10px', marginBottom: '10px' }} />
-          </Grid>
-        ))}
+              <Divider sx={{ marginTop: '10px', marginBottom: '10px' }} />
+            </Grid>
+          ))
+        ) : (
+          <Typography variant="body2">No employment data available.</Typography>
+        )}
       </Grid>
     </Box>
   );

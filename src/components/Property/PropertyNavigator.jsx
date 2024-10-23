@@ -69,6 +69,7 @@ import ImageListItem from "@mui/material/ImageListItem";
 
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { CollectionsBookmarkRounded } from "@mui/icons-material";
@@ -76,11 +77,11 @@ import PropertiesContext from "../../contexts/PropertiesContext";
 import ListsContext from "../../contexts/ListsContext.js";
 import ManagementDetailsComponent from "./ManagementDetailsComponent.jsx";
 
-import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy, } from "../../utils/fees";
+import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy } from "../../utils/fees";
 
 const getAppColor = (app) => {
   if (app.lease_status.includes("RENEW")) {
-    return '#2E7D32'; // Return green if lease_status contains 'RENEW'
+    return "#2E7D32"; // Return green if lease_status contains 'RENEW'
   } else if (app.lease_status === "REJECTED") {
     return "#A52A2A"; // Red color for rejected
   } else if (app.lease_status === "REFUSED") {
@@ -108,6 +109,7 @@ export default function PropertyNavigator({
   onAddListingClick,
   handleViewManagerDetailsClick,
   props,
+  setViewRHS
 }) {
   // console.log("In Property Navigator", onEditClick);
   // console.log(index, propertyList);
@@ -115,13 +117,13 @@ export default function PropertyNavigator({
   const navigate = useNavigate();
   const { getList } = useContext(ListsContext);
   const { getProfileId, isManager, roleName, selectedRole } = useUser();
-  
+
   const propertiesContext = useContext(PropertiesContext);
   const {
     propertyList: propertyListFromContext,
     allRentStatus: allRentStatusFromContext,
     allContracts: allContractsFromContext,
-    returnIndex: returnIndexFromContext,    
+    returnIndex: returnIndexFromContext,
   } = propertiesContext || {};
 
   const propertyList = propertyListFromContext || [];
@@ -157,6 +159,8 @@ export default function PropertyNavigator({
 
   const [selectedImageList, setSelectedImageList] = useState([]);
   const [isReadOnly, setIsReadOnly] = useState(false);
+
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   // console.log("PropertyNavigator - location state allRentStatus - ", allRentStatus);
 
@@ -320,13 +324,13 @@ export default function PropertyNavigator({
       var count = 0;
       var newContractCount = 0;
       var sentContractCount = 0;
-      console.log("ROHIT - PropertyNavigator - allContracts - ", allContracts);
-      console.log("ROHIT - PropertyNavigator - propertyId - ", propertyId);      
+      // console.log("ROHIT - PropertyNavigator - allContracts - ", allContracts);
+      // console.log("ROHIT - PropertyNavigator - propertyId - ", propertyId);
       const filtered = allContracts?.filter((contract) => {
         const contractPropertyID = contract.property_id || contract.property_uid;
-        return contractPropertyID === propertyId
+        return contractPropertyID === propertyId;
       });
-      console.log("ROHIT - PropertyNavigator - filtered - ", filtered);
+      // console.log("ROHIT - PropertyNavigator - filtered - ", filtered);
       const active = filtered?.filter((contract) => contract.contract_status === "ACTIVE");
       // console.log("322 - PropertyNavigator - filtered contracts - ", filtered);
       filtered.forEach((contract) => {
@@ -339,7 +343,7 @@ export default function PropertyNavigator({
           newContractCount++;
         }
       });
-      console.log("ROHIT - PropertyNavigator - Active contract - ", active);
+      // console.log("ROHIT - PropertyNavigator - Active contract - ", active);
       setContractsNewSent(count);
       setContractsData(allContracts);
       setActiveContracts(active);
@@ -437,6 +441,12 @@ export default function PropertyNavigator({
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
+
+  const handleBackButton = () => {
+    if(isMobile && setViewRHS){
+      setViewRHS(false)
+    }
+  }
 
   // const handleManagerChange = () => {
   //   // if (property && property.business_uid) {
@@ -934,20 +944,19 @@ export default function PropertyNavigator({
     setIsReadOnly(true); // Set read-only mode for Info button click
     handleOpen(); // Open the dialog
   };
-  
 
   const applnColumns = [
     // { field: "appliance_uid", headerName: "UID", width: 80 },
-    { field: "appliance_item", headerName: "Appliance",  flex: 1},
+    { field: "appliance_item", headerName: "Appliance", flex: 1 },
     // { field: "appliance_desc", headerName: "Description", width: 80 },
     // { field: "appliance_manufacturer", headerName: "Manufacturer", width: 80 },
     //{ field: "appliance_purchased_from", headerName: "Purchased From", width: 80 },
-    { field: "appliance_purchased", headerName: "Purchased On", flex: 1},
+    { field: "appliance_purchased", headerName: "Purchased On", flex: 1 },
     //{ field: "appliance_purchase_order", headerName: "Purchase Order Number", width: 80 },
-    { field: "appliance_installed", headerName: "Installed On", flex: 1},
+    { field: "appliance_installed", headerName: "Installed On", flex: 1 },
     //{ field: "appliance_serial_num", headerName: "Serial Number", width: 80 },
     //{ field: "appliance_model_num", headerName: "Model Number", width: 80 },
-    { field: "appliance_warranty_till", headerName: "Warranty Till", flex: 1},
+    { field: "appliance_warranty_till", headerName: "Warranty Till", flex: 1 },
     //{ field: "appliance_warranty_info", headerName: "Warranty Info", width: 80 },
     //{ field: "appliance_url", headerName: "URLs", width: 80 },
     //{ field: "appliance_images", headerName: "Image", width: 100, renderCell: ImageCell }, //appliance_favorite_image needs to be added
@@ -958,8 +967,8 @@ export default function PropertyNavigator({
       width: 120,
       renderCell: (params) => {
         return (
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-             <IconButton onClick={() => handleInfoClick(params.row)}>
+          <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+            <IconButton onClick={() => handleInfoClick(params.row)}>
               <InfoIcon />
             </IconButton>
             <IconButton onClick={() => handleEditClick(params.row)}>
@@ -1067,6 +1076,12 @@ export default function PropertyNavigator({
           height: "100%",
         }}
       >
+        {isMobile && (<Box>
+          <Button onClick={handleBackButton} sx={{color: "black", fontSize: theme.typography.smallFont}}>
+            <ArrowBackIcon sx={{ color: "#000000", width: "15px", height: "15px", margin: "0px" }} /> Back
+          </Button>
+        </Box>)}
+
         {/* Property Navigator Header Including Address and x of y Properties */}
         <Grid container sx={{ marginTop: "15px", alignItems: "center", justifyContent: "center" }}>
           <Grid item md={1} xs={2} sx={{ display: "flex", justifyContent: "center" }}>
@@ -1200,7 +1215,7 @@ export default function PropertyNavigator({
                               elevation: "0",
                               boxShadow: "none",
                               flexGrow: 1,
-                              objectFit: "cover",
+                              objectFit: isMobile ? "contain" : "cover",
                               width: "100%",
                               height: "100px",
                             }}
@@ -1420,7 +1435,7 @@ export default function PropertyNavigator({
                   </Grid>
                   {/* End Middle Column with Property Details */}
                   {/* Buttons */}
-                  <Grid item xs={12} md={3.5}>
+                  <Grid item xs={12} md={3.5} marginTop={isMobile? 5 : 0}>
                     <Grid container spacing={2}>
                       <Grid item xs={12}>
                         {property && property?.property_available_to_rent === 1 && (property.lease_status == null || property.lease_status !== "ACTIVE") && (
@@ -1492,7 +1507,7 @@ export default function PropertyNavigator({
                               </Box>
                             </Box>
                           )}
-                        {property &&
+                        {property && property.lease_status && property.lease_status !== "ACTIVE" &&
                           (property?.property_available_to_rent === 0 || property?.property_available_to_rent == null) &&
                           property.business_uid != null &&
                           property.business_uid !== "" && (
@@ -1563,7 +1578,7 @@ export default function PropertyNavigator({
                         )}
                       </Grid>
                       <Grid item xs={12}>
-                        <Box sx={{ pb: 40 }}>
+                        <Box sx={{ pb: isMobile? 5 : 40}}>
                           <Box
                             sx={{
                               display: "flex",
@@ -1577,17 +1592,16 @@ export default function PropertyNavigator({
                               minWidth: "150px",
                               minHeight: "35px",
                               width: "100%",
-                              cursor: 'pointer',
+                              cursor: "pointer",
                             }}
                             onClick={() => {
-                              console.log("ROHIT - here1");
-                              console.log("ROHIT - here1 = getPaymentStatus(property?.rent_status, property) -", getPaymentStatus(property?.rent_status, property));
-                              
-                              if(getPaymentStatus(property?.rent_status, property) === "Vacant - Not Listed"){
-                                
-                                onAddListingClick("create_listing")
-                              } else if(getPaymentStatus(property?.rent_status, property) === "No Manager"){
-                                console.log("ROHIT - here2");
+                              // console.log("ROHIT - here1");
+                              // console.log("ROHIT - here1 = getPaymentStatus(property?.rent_status, property) -", getPaymentStatus(property?.rent_status, property));
+
+                              if (getPaymentStatus(property?.rent_status, property) === "Vacant - Not Listed") {
+                                onAddListingClick("create_listing");
+                              } else if (getPaymentStatus(property?.rent_status, property) === "No Manager") {
+                                // console.log("ROHIT - here2");
                                 onShowSearchManager(1);
                               }
                             }}
@@ -1609,10 +1623,10 @@ export default function PropertyNavigator({
                         </Box>
                       </Grid>
                       <Grid item xs={12}>
-                        <Box>
+                        <Box sx={{pb: isMobile ? 5 : 0,}}>
                           {/* Edit Property Button */}
                           <Button
-                            variant='outlined'
+                            variant='contained'
                             sx={{
                               background: "#3D5CAC",
                               color: theme.palette.background.default,
@@ -1648,7 +1662,7 @@ export default function PropertyNavigator({
                       {selectedRole === "MANAGER" && property && property?.property_available_to_rent !== 1 && (
                         <Grid item xs={12}>
                           <Button
-                            variant='outlined'
+                            variant='contained'
                             sx={{
                               background: "#3D5CAC",
                               color: theme.palette.background.default,
@@ -1678,7 +1692,7 @@ export default function PropertyNavigator({
                       {selectedRole === "MANAGER" && property && property?.property_available_to_rent === 1 && (
                         <Grid item xs={12}>
                           <Button
-                            variant='outlined'
+                            variant='contained'
                             sx={{
                               background: "#3D5CAC",
                               color: theme.palette.background.default,
@@ -1691,7 +1705,7 @@ export default function PropertyNavigator({
                             size='small'
                             onClick={() => onAddListingClick("edit_listing")}
                           >
-                            <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px", margin: "5px" }} />
+                            <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px",}} />
                             <Typography
                               sx={{
                                 textTransform: "none",
@@ -2035,58 +2049,58 @@ export default function PropertyNavigator({
                               }}
                             >
                               {property.applications.map((app, index) => (
-                              <Button
-                              key={index}
-                              onClick={() => handleAppClick(index)}
-                              sx={{
-                                backgroundColor: getAppColor(app),
-                                color: "#FFFFFF",
-                                textTransform: "none",
-                                width: "100%",
-                                height: "70px",
-                                display: "flex",
-                                flexDirection: "column",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                marginBottom: 2,
-                                "&:hover, &:focus, &:active": {
-                                  backgroundColor: getAppColor(app),
-                                },
-                              }}
-                            >
-                              {/* Box for full name and date on one line */}
-                              <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%" }}>
-                                <Typography
+                                <Button
+                                  key={index}
+                                  onClick={() => handleAppClick(index)}
                                   sx={{
-                                    fontSize: theme.typography.smallFont,
-                                    mr: 1,
+                                    backgroundColor: getAppColor(app),
+                                    color: "#FFFFFF",
+                                    textTransform: "none",
+                                    width: "100%",
+                                    height: "70px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    marginBottom: 2,
+                                    "&:hover, &:focus, &:active": {
+                                      backgroundColor: getAppColor(app),
+                                    },
                                   }}
                                 >
-                                  {app.tenant_first_name + " " + app.tenant_last_name + " "}
-                                </Typography>
-                                <Typography
-                                  sx={{
-                                    fontWeight: "bold",
-                                    fontSize: theme.typography.smallFont,
-                                  }}
-                                >
-                                  {app.lease_application_date}
-                                </Typography>
-                              </Box>
-                            
-                              {/* Box for status on the next line */}
-                              <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
-                                <Typography
-                                  sx={{
-                                    fontWeight: "bold",
-                                    fontSize: theme.typography.smallFont,
-                                  }}
-                                >
-                                  {app.lease_status}
-                                </Typography>
-                              </Box>
-                            </Button>
-                            ))}
+                                  {/* Box for full name and date on one line */}
+                                  <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%" }}>
+                                    <Typography
+                                      sx={{
+                                        fontSize: theme.typography.smallFont,
+                                        mr: 1,
+                                      }}
+                                    >
+                                      {app.tenant_first_name + " " + app.tenant_last_name + " "}
+                                    </Typography>
+                                    <Typography
+                                      sx={{
+                                        fontWeight: "bold",
+                                        fontSize: theme.typography.smallFont,
+                                      }}
+                                    >
+                                      {app.lease_application_date}
+                                    </Typography>
+                                  </Box>
+
+                                  {/* Box for status on the next line */}
+                                  <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
+                                    <Typography
+                                      sx={{
+                                        fontWeight: "bold",
+                                        fontSize: theme.typography.smallFont,
+                                      }}
+                                    >
+                                      {app.lease_status}
+                                    </Typography>
+                                  </Box>
+                                </Button>
+                              ))}
                             </AccordionDetails>
                           </Accordion>
                         </Grid>
@@ -2493,6 +2507,7 @@ export default function PropertyNavigator({
                   alignItems: "center",
                   justifyContent: "space-around",
                   width: "100%",
+                  overflowX: "auto"
                 }}
               >
                 <DataGrid
@@ -2510,6 +2525,7 @@ export default function PropertyNavigator({
                   getRowId={(row) => row.rent_detail_index}
                   pageSizeOptions={[12]}
                   sx={{
+                    minWidth: "700px",
                     "& .MuiDataGrid-cell": {
                       justifyContent: "center",
                       alignItems: "center",
@@ -2602,37 +2618,34 @@ export default function PropertyNavigator({
                     <AddIcon sx={{ color: "black", fontSize: "24px" }} />
                   </IconButton>
                 </Box>
-                <DataGrid
-                  rows={appliances}
-                  columns={applnColumns}
-                  pageSize={5}
-                  getRowId={(row) => row.appliance_uid}
-                  autoHeight
-                  sx={{
-                    fontSize: "10px",
-                    "& .wrap-text": {
-                      whiteSpace: "normal !important",
-                      wordWrap: "break-word !important",
-                      overflow: "visible !important",
-                    },
-                  }}
-                />
+                <Box sx={{width : "100%", overflowX : "auto"}}>
+                  <DataGrid
+                    rows={appliances}
+                    columns={applnColumns}
+                    pageSize={5}
+                    getRowId={(row) => row.appliance_uid}
+                    autoHeight
+                    sx={{
+                      minWidth: "700px",
+                      fontSize: "10px",
+                      "& .wrap-text": {
+                        whiteSpace: "normal !important",
+                        wordWrap: "break-word !important",
+                        overflow: "visible !important",
+                      },
+                    }}
+                  />
+                </Box>
                 <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
                   <Alert onClose={handleSnackbarClose} severity='error' sx={{ width: "100%" }}>
                     Please fill in all required fields.
                   </Alert>
                 </Snackbar>
                 <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>{isReadOnly ? "View Appliance" : isEditing ? "Edit Appliance" : "Add New Appliance"}</DialogTitle><DialogContent>
+                  <DialogTitle>{isReadOnly ? "View Appliance" : isEditing ? "Edit Appliance" : "Add New Appliance"}</DialogTitle>
+                  <DialogContent>
                     {/* Appliance UID */}
-  <TextField
-    margin='dense'
-    label='Appliance UID'
-    fullWidth
-    variant='outlined'
-    value={currentApplRow?.appliance_uid || ""}
-    disabled={isReadOnly}
-  />
+                    <TextField margin='dense' label='Appliance UID' fullWidth variant='outlined' value={currentApplRow?.appliance_uid || ""} disabled={isReadOnly} />
                     <FormControl margin='dense' fullWidth variant='outlined' sx={{ marginTop: "10px" }}>
                       <InputLabel required>Appliance Type</InputLabel>
                       <Select
@@ -2696,72 +2709,71 @@ export default function PropertyNavigator({
                             }}
                           >
                             <ImageList ref={scrollRef} sx={{ display: "flex", flexWrap: "nowrap" }} cols={5}>
-  {currentApplRow.appliance_images ? (
-    currentApplRow.appliance_images.map((image, index) => (
-      <ImageListItem
-        key={index}
-        sx={{
-          width: "auto",
-          flex: "0 0 auto",
-          border: "1px solid #ccc",
-          margin: "0 2px",
-          position: "relative",
-        }}
-      >
-        <img
-          src={image}
-          alt={`maintenance-${index}`}
-          style={{
-            height: "150px",
-            width: "150px",
-            objectFit: "cover",
-          }}
-        />
-        
-        {/* Conditionally render delete icon if not read-only */}
-        {!isReadOnly && (
-          <Box sx={{ position: "absolute", top: 0, right: 0 }}>
-            <IconButton
-              onClick={() => handleDelete(index)}
-              sx={{
-                color: deletedIcons[index] ? "red" : "black",
-                backgroundColor: "rgba(255, 255, 255, 0.7)",
-                "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.9)",
-                },
-                margin: "2px",
-              }}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </Box>
-        )}
+                              {currentApplRow.appliance_images ? (
+                                currentApplRow.appliance_images.map((image, index) => (
+                                  <ImageListItem
+                                    key={index}
+                                    sx={{
+                                      width: "auto",
+                                      flex: "0 0 auto",
+                                      border: "1px solid #ccc",
+                                      margin: "0 2px",
+                                      position: "relative",
+                                    }}
+                                  >
+                                    <img
+                                      src={image}
+                                      alt={`maintenance-${index}`}
+                                      style={{
+                                        height: "150px",
+                                        width: "150px",
+                                        objectFit: "cover",
+                                      }}
+                                    />
 
-        {/* Conditionally render favorite icon if not read-only */}
-        {!isReadOnly && (
-          <Box sx={{ position: "absolute", bottom: 0, left: 0 }}>
-            <IconButton
-              onClick={() => handleFavorite(index)}
-              sx={{
-                color: favoriteIcons[index] ? "red" : "black",
-                backgroundColor: "rgba(255, 255, 255, 0.7)",
-                "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.9)",
-                },
-                margin: "2px",
-              }}
-            >
-              {favoriteIcons[index] ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-            </IconButton>
-          </Box>
-        )}
-      </ImageListItem>
-    ))
-  ) : (
-    <></>
-  )}
-</ImageList>
+                                    {/* Conditionally render delete icon if not read-only */}
+                                    {!isReadOnly && (
+                                      <Box sx={{ position: "absolute", top: 0, right: 0 }}>
+                                        <IconButton
+                                          onClick={() => handleDelete(index)}
+                                          sx={{
+                                            color: deletedIcons[index] ? "red" : "black",
+                                            backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                            "&:hover": {
+                                              backgroundColor: "rgba(255, 255, 255, 0.9)",
+                                            },
+                                            margin: "2px",
+                                          }}
+                                        >
+                                          <DeleteIcon />
+                                        </IconButton>
+                                      </Box>
+                                    )}
 
+                                    {/* Conditionally render favorite icon if not read-only */}
+                                    {!isReadOnly && (
+                                      <Box sx={{ position: "absolute", bottom: 0, left: 0 }}>
+                                        <IconButton
+                                          onClick={() => handleFavorite(index)}
+                                          sx={{
+                                            color: favoriteIcons[index] ? "red" : "black",
+                                            backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                            "&:hover": {
+                                              backgroundColor: "rgba(255, 255, 255, 0.9)",
+                                            },
+                                            margin: "2px",
+                                          }}
+                                        >
+                                          {favoriteIcons[index] ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                                        </IconButton>
+                                      </Box>
+                                    )}
+                                  </ImageListItem>
+                                ))
+                              ) : (
+                                <></>
+                              )}
+                            </ImageList>
                           </Box>
                         </Box>
                         <IconButton onClick={() => handleScroll("right")}>
@@ -2770,16 +2782,16 @@ export default function PropertyNavigator({
                       </Box>
                     )}
                     {!isReadOnly && (
-  <ImageUploader
-    selectedImageList={selectedImageList}
-    setSelectedImageList={setSelectedImageList}
-    page={"Add"}
-    setDeletedImageList={setDeletedImageList}
-    setFavImage={setFavImage}
-    favImage={favImage}
-    updateFavoriteIcons={handleUpdateFavoriteIcons}
-  />
-)}
+                      <ImageUploader
+                        selectedImageList={selectedImageList}
+                        setSelectedImageList={setSelectedImageList}
+                        page={"Add"}
+                        setDeletedImageList={setDeletedImageList}
+                        setFavImage={setFavImage}
+                        favImage={favImage}
+                        updateFavoriteIcons={handleUpdateFavoriteIcons}
+                      />
+                    )}
                     <TextField
                       margin='dense'
                       label='Description'
@@ -2979,49 +2991,50 @@ export default function PropertyNavigator({
                     />
                   </DialogContent>
                   <DialogActions sx={{ alignContent: "center", justifyContent: "center" }}>
-    {isReadOnly ? (
-      // Show "Close" button only if it's read-only
-      <IconButton onClick={handleClose} sx={{ position: 'absolute', top: 8, right: 8 }}>
-        <CloseIcon />
-      </IconButton>
-    ) : (
-      // Show "Cancel" and "Save" buttons if not read-only
-      <>
-        <Button
-          variant='outlined'
-          sx={{
-            background: "#3D5CAC",
-            color: theme.palette.background.default,
-            cursor: "pointer",
-            textTransform: "none",
-            width: "30%",
-            fontWeight: theme.typography.secondary.fontWeight,
-            fontSize: theme.typography.smallFont,
-          }}
-          size='small'
-          onClick={handleClose}
-        >
-          Cancel
-        </Button>
-        <Button
-          variant='outlined'
-          sx={{
-            background: "#3D5CAC",
-            color: theme.palette.background.default,
-            cursor: "pointer",
-            textTransform: "none",
-            width: "30%",
-            fontWeight: theme.typography.secondary.fontWeight,
-            fontSize: theme.typography.smallFont,
-          }}
-          size='small'
-          onClick={handleAddAppln}
-        >
-          Save
-        </Button>
-      </>
-    )}
-  </DialogActions></Dialog>
+                    {isReadOnly ? (
+                      // Show "Close" button only if it's read-only
+                      <IconButton onClick={handleClose} sx={{ position: "absolute", top: 8, right: 8 }}>
+                        <CloseIcon variant="icon"/>
+                      </IconButton>
+                    ) : (
+                      // Show "Cancel" and "Save" buttons if not read-only
+                      <>
+                        <Button
+                          variant='contained'
+                          sx={{
+                            background: "#3D5CAC",
+                            color: theme.palette.background.default,
+                            cursor: "pointer",
+                            textTransform: "none",
+                            width: "30%",
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                          size='small'
+                          onClick={handleClose}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          variant='contained'
+                          sx={{
+                            background: "#3D5CAC",
+                            color: theme.palette.background.default,
+                            cursor: "pointer",
+                            textTransform: "none",
+                            width: "30%",
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                          size='small'
+                          onClick={handleAddAppln}
+                        >
+                          Save
+                        </Button>
+                      </>
+                    )}
+                  </DialogActions>
+                </Dialog>
               </Box>
             </Card>
           </Grid>

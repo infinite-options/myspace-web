@@ -1682,9 +1682,25 @@ const closeDialog = () => {
       <Grid item xs={12}>
         <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={empinfoExpanded} onChange={() => setEmpinfoExpanded(prevState => !prevState)}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='income-details-content' id='income-details-header'>
-            <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
+          <Grid container justifyContent='center'>
+          <Grid item md={11.5}>
+            <Typography
+              sx={{
+                color: "#160449",
+                fontWeight: theme.typography.primary.fontWeight,
+                fontSize: "24px",
+                textAlign: "center",
+                paddingBottom: "10px",
+                paddingTop: "5px",
+                flexGrow: 1,
+              }}
+              paddingTop='5px'
+              paddingBottom='10px'
+            >
               Income Details
             </Typography>
+          </Grid>
+          </Grid>
           </AccordionSummary>
           <AccordionDetails>
             <IncomeDetails
@@ -1828,7 +1844,7 @@ const closeDialog = () => {
 
       <Grid container justifyContent='center' item xs={12}>
         <Button variant='contained' color='primary' onClick={handleNextStep} disabled={nextStepDisabled} sx={{ mb: 2, backgroundColor: "#3D5CAC" }}>
-          <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Save 1</Typography>
+          <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Save</Typography>
         </Button>
       </Grid>
 

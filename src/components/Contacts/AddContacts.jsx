@@ -93,7 +93,7 @@ const AddContacts = (props) => {
                         </Box>
                         <Box position="absolute" right={0}>
                             <Button onClick={handleFormClose}>
-                                <Close
+                                <Close variant="icon"
                                     sx={{
                                         color: theme.typography.common.blue,
                                         fontWeight:

@@ -15,20 +15,24 @@ function ManagementContractDetails(props) {
   const navigate = useNavigate();
   // const propertiesContext = useContext(PropertiesContext);
 
-  const { currentContractUID, currentContractPropertyUID, contractRequests: contractRequestsFromContext, allContracts: allContractsFromContext, } = useContext(ManagementContractContext);
+  const {
+    currentContractUID,
+    currentContractPropertyUID,
+    contractRequests: contractRequestsFromContext,
+    allContracts: allContractsFromContext,
+  } = useContext(ManagementContractContext);
   const [contractRequests, setContractRequests] = useState([]);
 
   useEffect(() => {
-    if(props.page && props.page === "properties"){
+    if (props.page && props.page === "properties") {
       setContractRequests(allContractsFromContext);
     } else {
       setContractRequests(contractRequestsFromContext);
     }
-
   }, [props.page, contractRequestsFromContext, allContractsFromContext]);
 
   useEffect(() => {
-    console.log("ROHIT - contractRequests - ", contractRequests);
+    // console.log("ROHIT - contractRequests - ", contractRequests);
   }, [contractRequests]);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -99,10 +103,9 @@ function ManagementContractDetails(props) {
   }, []);
 
   const handleBackBtn = () => {
-    if(props.page && props.page === "properties" && props.handleBackClick ){
+    if (props.page && props.page === "properties" && props.handleBackClick) {
       props.handleBackClick();
-    }
-    else {
+    } else {
       navigate(-1);
     }
   };
@@ -112,23 +115,19 @@ function ManagementContractDetails(props) {
   }
   return (
     <ThemeProvider theme={theme}>
-      {/* <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-          <CircularProgress color='inherit' />
-        </Backdrop> */}
-      <Container maxWidth='lg' sx={{ height: "100%" }}>
-        <Grid container item xs={12} sx={{ height: "100%" }}>
-          <Box
+      <Box
             sx={{
               backgroundColor: "#F2F2F2",
-              borderRadius: "10px",
+              // borderRadius: "10px",
               // marginTop: "15px",
               padding: "15px",
               // height: '100%',
-              width: "100%",
+              // width: "100%",
+              overflowX: "hidden",
               fontFamily: "Source Sans Pro",
             }}
           >
-            {/* Back button and management contract */}
+            
             <Stack
               flexDirection='row'
               justifyContent='flex-start'
@@ -161,7 +160,7 @@ function ManagementContractDetails(props) {
               </Box>
             </Stack>
 
-            {/* Contract Uid display */}
+            
             <Box
               sx={{
                 display: "flex",
@@ -174,17 +173,80 @@ function ManagementContractDetails(props) {
                 }}
               >
                 Contract UID: {currentContractUID}
-                {/* {contactsTab} */}
+                
               </Typography>
-            </Box>                        
-            <PropertyCard 
-              data={filteredPropertiesData[index] ? filteredPropertiesData[index] : []}
-              navigatingFrom={props.navigatingFrom} 
-              handleBackBtn={handleBackBtn}
-            />
+            </Box>
+            <PropertyCard data={filteredPropertiesData[index] ? filteredPropertiesData[index] : []} navigatingFrom={props.navigatingFrom} handleBackBtn={handleBackBtn} />
+      </Box>
+      {/* <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+          <CircularProgress color='inherit' />
+        </Backdrop> */}
+      {/* <Stack sx={{ height: "100%", width: "100%" }}>
+        <Grid container item xs={12} sx={{ height: "100%" }}>
+          <Box
+            sx={{
+              backgroundColor: "#F2F2F2",
+              borderRadius: "10px",
+              // marginTop: "15px",
+              padding: "15px",
+              // height: '100%',
+              width: "100%",
+              fontFamily: "Source Sans Pro",
+            }}
+          >
+            
+            <Stack
+              flexDirection='row'
+              justifyContent='flex-start'
+              alignItems='center'
+              sx={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Button sx={{ padding: "0", minWidth: "150px" }} onClick={handleBackBtn}>
+                <svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                  <path
+                    d='M4 8L2.58579 9.41421L1.17157 8L2.58579 6.58579L4 8ZM9 21C7.89543 21 7 20.1046 7 19C7 17.8954 7.89543 17 9 17L9 21ZM7.58579 14.4142L2.58579 9.41421L5.41421 6.58579L10.4142 11.5858L7.58579 14.4142ZM2.58579 6.58579L7.58579 1.58579L10.4142 4.41421L5.41421 9.41421L2.58579 6.58579ZM4 6L14.5 6L14.5 10L4 10L4 6ZM14.5 21L9 21L9 17L14.5 17L14.5 21ZM22 13.5C22 17.6421 18.6421 21 14.5 21L14.5 17C16.433 17 18 15.433 18 13.5L22 13.5ZM14.5 6C18.6421 6 22 9.35786 22 13.5L18 13.5C18 11.567 16.433 10 14.5 10L14.5 6Z'
+                    fill='#3D5CAC'
+                  />
+                </svg>
+              </Button>
+              <Box
+                sx={{
+                  fontSize: "20px",
+                  fontWeight: "bold",
+                  color: "text.darkblue",
+                  padding: "0",
+                  minWidth: "300px",
+                }}
+              >
+                Management Contract MCD
+              </Box>
+            </Stack>
+
+            
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontWeight: theme.typography.primary.fontWeight,
+                }}
+              >
+                Contract UID: {currentContractUID}
+                
+              </Typography>
+            </Box>
+            <PropertyCard data={filteredPropertiesData[index] ? filteredPropertiesData[index] : []} navigatingFrom={props.navigatingFrom} handleBackBtn={handleBackBtn} />
           </Box>
         </Grid>
-      </Container>
+      </Stack> */}
     </ThemeProvider>
   );
 }

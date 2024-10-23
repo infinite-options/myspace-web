@@ -22,6 +22,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import TenantDetails from "./TenantDetails";
 import UtilitiesManager from "./Utilities";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import FeesDetails from "./FeesDetails";
 import LeaseSummary from "./LeaseSummary";
 import { getDateAdornmentString } from "../../utils/dates";
@@ -71,6 +72,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
     const [states, setStates] = useState([]);
     const [uploadedFiles, setuploadedFiles] = useState([]);
     const [showSpinner, setShowSpinner] = useState(false);
+
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     const [modifiedData, setModifiedData] = useState([]);
     const [isPreviousFileChange, setIsPreviousFileChange] = useState(false)
@@ -475,17 +478,17 @@ return (
                 {tenantWithId && tenantWithId.length > 0 && (
                     <Grid item xs={12} md={12}>
                         <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                            <TenantDetails tenantWithId={tenantWithId} setTenantWithId={setTenantWithId} />
+                            <TenantDetails isMobile={isMobile} tenantWithId={tenantWithId} setTenantWithId={setTenantWithId} />
                         </Paper>
                     </Grid>
                 )}
                 <Grid item xs={12} md={12}>
                     <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
                         {selectedRole === "OWNER" && leaseFees &&
-                            <FeesDetails isEditable={false} getDateAdornmentString={getDateAdornmentString} leaseFees={leaseFees} setLeaseFees={setLeaseFees} />
+                            <FeesDetails isMobile={isMobile} isEditable={false} getDateAdornmentString={getDateAdornmentString} leaseFees={leaseFees} setLeaseFees={setLeaseFees} />
                         }
                         {selectedRole !== "OWNER" && leaseFees &&
-                            <FeesDetails isEditable={true} getDateAdornmentString={getDateAdornmentString} leaseFees={leaseFees} setLeaseFees={setLeaseFees} />
+                            <FeesDetails isMobile={isMobile} isEditable={true} getDateAdornmentString={getDateAdornmentString} leaseFees={leaseFees} setLeaseFees={setLeaseFees} />
                         } 
                     </Paper>
                 </Grid>
@@ -504,11 +507,12 @@ return (
                                                 color: "#160449",
                                                 fontWeight: theme.typography.primary.fontWeight,
                                                 fontSize: theme.typography.small,
-                                                textAlign: 'center',
+                                                width: "100%",
+                                                textAlign: isMobile? "left" : 'center',
                                                 paddingBottom: "10px",
                                                 paddingTop: "5px",
                                                 flexGrow: 1,
-                                                paddingLeft: "50px",
+                                                paddingLeft: isMobile? "5px" : "50px",
                                             }}
                                             paddingTop="5px"
                                             paddingBottom="10px"
@@ -551,8 +555,8 @@ return (
                 </Grid>
                 <Grid item xs={12} md={12}>
                     <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                        {selectedRole === "OWNER" && <Documents fromRenew={true} isEditable={false} setIsPreviousFileChange={setIsPreviousFileChange} documents={documents} setDocuments={setDocuments} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_documents"} />}
-                        {selectedRole !== "OWNER" && <Documents fromRenew={true} isEditable={true} setIsPreviousFileChange={setIsPreviousFileChange} documents={documents} setDocuments={setDocuments} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_documents"} />}
+                        {selectedRole === "OWNER" && <Documents isMobile={isMobile} fromRenew={true} isEditable={false} setIsPreviousFileChange={setIsPreviousFileChange} documents={documents} setDocuments={setDocuments} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_documents"} />}
+                        {selectedRole !== "OWNER" && <Documents isMobile={isMobile} fromRenew={true} isEditable={true} setIsPreviousFileChange={setIsPreviousFileChange} documents={documents} setDocuments={setDocuments} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_documents"} />}
                     </Paper>
                 </Grid>
 
@@ -578,7 +582,7 @@ return (
 
                         <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
                             <Button
-                                variant="outlined"
+                                variant="contained"
                                 sx={{
                                     background: "#ffa500",
                                     color: theme.palette.background.default,
@@ -613,7 +617,7 @@ return (
 
                         <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
                             <Button
-                                variant="outlined"
+                                variant="contained"
                                 sx={{
                                     background: "#D4736D",
                                     color: theme.palette.background.default,

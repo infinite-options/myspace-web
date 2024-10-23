@@ -361,7 +361,7 @@ export default function PMQuotesRequested(props) {
           sx={{
             padding: "13px",
             backgroundColor: "#D6D5DA",
-            borderRadius: "10px",
+            borderRadius: "0px 0px 10px 10px",
           }}
         >
           <TextField
@@ -714,11 +714,12 @@ export default function PMQuotesRequested(props) {
   };
 
   const viewAllProperties = () => {
-    if (isDesktop) {
-      handleBackClick();
-    } else {
-      navigate(-1);
-    }
+    // if (isDesktop) {
+    //   handleBackClick();
+    // } else {
+    //   navigate(-1);
+    // }
+    handleBackClick();
   };
 
   const handleDialogClose = () => {
@@ -884,7 +885,7 @@ export default function PMQuotesRequested(props) {
               >
                 <Box
                   sx={{
-                    padding: "15px",
+                    padding: "0px",
                   }}
                 >
                   {loading ? (
@@ -1466,6 +1467,7 @@ function SearchManagerDocumentCard(props){
                       variant="contained"
                       sx={{
                         textTransform: "none",
+                        width: "100%",
                         background: "#3D5CAC",
                         color: theme.palette.background.default,
                         borderRadius: "10px 10px 10px 10px",
@@ -1644,16 +1646,19 @@ export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee, handle
   // console.log("-- inside fee data grid - ", rowsWithId);
 
   return (
-    <DataGrid
-      rows={rowsWithId}
-      columns={columns}
-      sx={{        
-        marginTop: "10px",
-      }}
-      autoHeight
-      rowHeight={50} 
-      hideFooter={true}
-    />
+    <Box sx={{width: "100%", overflowX: "auto"}}>
+      <DataGrid
+        rows={rowsWithId}
+        columns={columns}
+        sx={{
+          minWidth: "600px",        
+          marginTop: "10px",
+        }}
+        autoHeight
+        rowHeight={50} 
+        hideFooter={true}
+      />
+    </Box>
   );
 };
 
@@ -1744,16 +1749,19 @@ const LocationsDataGrid = ({ data }) => {
 
   return (
     <>
-      <DataGrid
-        rows={data}
-        getRowId={(fee) => fee.id}
-        columns={columns}
-        sx={{
-          // border: "0px",
-          marginTop: '10px',
-        }}
-        hideFooter={true}
-      />
+      <Box sx={{width: "100%", overflowX: "auto"}}>
+        <DataGrid
+          rows={data}
+          getRowId={(fee) => fee.id}
+          columns={columns}
+          sx={{
+            // border: "0px",
+            minWidth: "600px",
+            marginTop: '10px',
+          }}
+          hideFooter={true}
+        />
+      </Box>
     </>
   );
 };
