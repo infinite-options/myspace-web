@@ -28,7 +28,7 @@ export function CustomTabPanel(props) {
   return (
     <div role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} {...other}>
       {value === index && (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: 0 }}>
           <Typography>{children}</Typography>
         </Box>
       )}
@@ -230,7 +230,7 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
         temp[index] = isGrey;
         return temp;
       });
-      console.log("ohhh here its mistake -- ", index)
+      // console.log("ohhh here its mistake -- ", index)
       let firstTab = temp.indexOf(0);
       let lastTab = temp.lastIndexOf(0);
       setTabs({ firstTab, lastTab });
@@ -347,7 +347,6 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
                     border: "0px",
                     minWidth: "5px",
                     height: "10px",
-                    padding: "0px",
                   },
                 }}
                 sx={{
@@ -372,6 +371,7 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
                         height: isMobile ? "0px" : "1px",
                         minWidth: "5px",
                         padding: "0px",
+                        borderRadius: '10px', 
                       }}
                       label={
                         <Typography
@@ -389,25 +389,18 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
                 })}
               </Tabs>
               {colorStatus.map((item, index) => (
-                <div key={index}>
+                <div key={index}  sx={{
+                  padding: "0px",
+                }}>
                   <CustomTabPanel
                     key={index}
                     value={value}
                     index={index}
-                    style={{
-                      backgroundColor: item.color,
-                      borderBottomRightRadius: "10px",
-                      borderBottomLeftRadius: "10px",
-                      paddingBottom: "5px",
-                      borderRadius: "5px",
-                    }}
                   >
                     <Grid
                       sx={{
                         backgroundColor: theme.palette.primary.main,
                         justifyContent: "center",
-                        marginLeft: "5px",
-                        marginRight: "5px",
                         paddingBottom: "0px",
                       }}
                     >

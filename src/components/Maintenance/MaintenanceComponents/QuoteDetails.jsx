@@ -12,6 +12,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 import NoImageAvailable from '../../../images/NoImageAvailable.png';
 import Documents from '../../Leases/Documents';
+import theme from "../../../theme/theme";
 
 const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem, fetchAndUpdateQuotes, setRefresh}) => {
     // console.log('----QuoteDetails maintenanceQuotesForItem----', maintenanceItem);
@@ -321,102 +322,90 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                                         </Grid>
                                         <Grid item xs={12}>
                                         
-								<Box
-									sx={{
-										display: 'flex',
-										alignItems: 'center',
-										justifyContent: 'center',
-										padding: 2,
-									}}
-								>
-									<IconButton
-										onClick={() => handleScroll('left')}
-										disabled={scrollPosition === 0}
-									>
-										<ArrowBackIosIcon />
-									</IconButton>
-									<Box
-										sx={{
-											display: 'flex',
-											overflowX: 'auto',
-											scrollbarWidth: 'none',
-											msOverflowStyle: 'none',
-											'&::-webkit-scrollbar': {
-												display: 'none',
-											},
-										}}
-									>
-										<Box
-											sx={{
-												display: 'flex',
-												overflowX: 'auto',
-												scrollbarWidth: 'none',
-												msOverflowStyle: 'none',
-												'&::-webkit-scrollbar': {
-													display: 'none',
-												},
-											}}
-										>
-										<ImageList 
-    ref={scrollRef}
-    sx={{ display: 'flex', flexWrap: 'nowrap' }} 
-    cols={5}
->
-    {JSON.parse(item.quote_maintenance_images)?.length > 0 ? (
-        JSON.parse(item.quote_maintenance_images).map((image, index) => (
-            <ImageListItem
-                key={index}
-                sx={{
-                    width: 'auto',
-                    flex: '0 0 auto',
-                    border: '1px solid #ccc',
-                    margin: '0 2px',
-                    position: 'relative', // Added to position icons
-                }}
-            >
-                <img
-                    src={image}
-                    alt={`maintenance-${index}`}
-                    style={{
-                        height: '150px',
-                        width: '150px',
-                        objectFit: 'cover',
-                    }}
-                />
-            </ImageListItem>
-        ))
-    ) : (
-        <ImageListItem
+                                        <Box sx={{ paddingTop: '10px' }}>
+    <Typography variant="body2" gutterBottom sx={{  color: "#160449",
+                          fontWeight: "bold",
+                          fontSize: "20px",
+                          paddingBottom: "10px",
+                          paddingTop: "5px",
+                          flexGrow: 1,}}>
+        Quote Images:
+    </Typography>
+    <Box
+        sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 2,
+        }}
+    >
+        <IconButton onClick={() => handleScroll('left')} disabled={scrollPosition === 0}>
+            <ArrowBackIosIcon />
+        </IconButton>
+        <Box
             sx={{
-                width: 'auto',
-                flex: '0 0 auto',
-                border: '1px solid #ccc',
-                margin: '0 2px',
-                position: 'relative',
+                display: 'flex',
+                overflowX: 'auto',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+                '&::-webkit-scrollbar': {
+                    display: 'none',
+                },
             }}
         >
-            <img
-                src={NoImageAvailable}
-                alt="No images available"
-                style={{
-                    height: '150px',
-                    width: '150px',
-                    objectFit: 'cover',
-                }}
-            />
-        </ImageListItem>
-    )}
-</ImageList>
-										</Box>
-									</Box>
-									<IconButton onClick={() => handleScroll('right')}>
-										<ArrowForwardIosIcon />
-									</IconButton>
-								</Box>
-							
-									
-
-								</Grid>
+            <ImageList ref={scrollRef} sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
+                {JSON.parse(item.quote_maintenance_images)?.length > 0 ? (
+                    JSON.parse(item.quote_maintenance_images).map((image, index) => (
+                        <ImageListItem
+                            key={index}
+                            sx={{
+                                width: 'auto',
+                                flex: '0 0 auto',
+                                border: '1px solid #ccc',
+                                margin: '0 2px',
+                                position: 'relative', // Added to position icons
+                            }}
+                        >
+                            <img
+                                src={image}
+                                alt={`maintenance-${index}`}
+                                style={{
+                                    height: '150px',
+                                    width: '150px',
+                                    objectFit: 'cover',
+                                }}
+                            />
+                        </ImageListItem>
+                    ))
+                ) : (
+                    <ImageListItem
+                        sx={{
+                            width: 'auto',
+                            flex: '0 0 auto',
+                            border: '1px solid #ccc',
+                            margin: '0 2px',
+                            position: 'relative',
+                        }}
+                    >
+                        <img
+                            src={NoImageAvailable}
+                            alt="No images available"
+                            style={{
+                                height: '150px',
+                                width: '150px',
+                                objectFit: 'cover',
+                            }}
+                        />
+                    </ImageListItem>
+                )}
+            </ImageList>
+        </Box>
+        <IconButton onClick={() => handleScroll('right')}>
+            <ArrowForwardIosIcon />
+        </IconButton>
+    </Box>
+</Box>
+</Grid>
                                     </Grid>
                                 </Box>
                             ))}

@@ -379,12 +379,12 @@ export default function MaintenanceRequestNavigatorNew({
 					flexDirection: 'column',
 					justifyContent: 'center',
 					width: '100%',
-					marginTop: theme.spacing(2),
+					// marginTop: theme.spacing(2),
 					backgroundColor: theme.palette.primary.main,
 					borderRadius: '10px',
 				}}
 			>
-				<Stack direction="column" justifyContent="center" alignItems="center" spacing={2}>
+				<Stack sx={{ backgroundColor: color }}direction="column" justifyContent="center" alignItems="center" spacing={2} >
 					<Typography
 					 component="div" 
 						sx={{

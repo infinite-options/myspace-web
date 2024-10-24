@@ -330,11 +330,24 @@ export default function MaintenanceDashboard2() {
                     <Grid item xs={12} md={6} sx={{ marginBottom: "0px", marginTop: "0px" }}>
                       <RadialBarChart data={graphData} />
                     </Grid>
-                    <Grid item xs={12} md={6} sx={{ marginBottom: "15px", marginTop: "25px" }}>
-                      <MaintenanceCashflowWidget data={cashflowData}></MaintenanceCashflowWidget>
-                    </Grid>
+                    {!isMobile && (
+              <Grid item xs={12} md={6} sx={{ marginBottom: "15px", marginTop: "25px" }}>
+                <MaintenanceCashflowWidget data={cashflowData} />
+              </Grid>
+            )}
                   </Grid>
                 </Grid>
+                {isMobile && (
+          <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", 
+          display: "flex",
+          justifyContent: "center",  // Horizontally center the widget
+          alignItems: "center",      // Vertically center the widget
+          borderRadius: "10px",
+          marginTop: "20px",
+       }}>
+            <MaintenanceCashflowWidget data={cashflowData} />
+          </Grid>
+        )}
                 <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", borderRadius: "10px", height: "600px" }}>
                   <Stack direction='row' justifyContent='center' width='100%' sx={{ marginBottom: "15px", marginTop: "15px" }}>
                     <Typography variant='h5' sx={{ fontWeight: "bold", color: "#160449" }}>
