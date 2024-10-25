@@ -277,7 +277,7 @@ function ManagerCashflowWidget({
   const [month, setMonth] = useState(currentMonth);
   const [year, setYear] = useState(currentYear);
   const { user, getProfileId } = useUser();
-  const [showSpinner, setShowSpinner] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(true);
   const profileId = getProfileId();
 
   //   const expenseCurrentMonth = data?.result?.find( (item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "expense")
@@ -402,6 +402,8 @@ function ManagerCashflowWidget({
     // setLast12Months(last12months);
     // setTotalRevenueByMonth(50);  // This works.  Problem:  currentMonthYearRevenue is returning 0
 
+    setShowSpinner(true)
+
     setProfits(profitsTotal);
     // console.log("profitsTotal - ", profitsTotal);
     // setProfitsCurMonth(profitsTotal?.filter((item) => item.cf_month === month && item.cf_year === year))
@@ -423,6 +425,7 @@ function ManagerCashflowWidget({
     // let revenue = getRevenueData(graphData);
     // setCashflowData(cashflow);
     // setRevenueData(revenue);
+    setShowSpinner(false)
   }, [profitsTotal, rentsTotal, payoutsTotal, propsMonth, propsYear, graphData]);
 
   const handlePropertyChange = (propertyUID) => {
@@ -469,20 +472,9 @@ function ManagerCashflowWidget({
 
   return (
     <ThemeProvider theme={theme}>
-      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+      {showSpinner ? (<Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 2 }} open={showSpinner}>
         <CircularProgress color='inherit' />
-      </Backdrop>
-      {/* <div
-        className="cf-widget-main"
-        onClick={() =>
-          navigate("/cashflow", {
-            state: {
-              month,
-              year,
-            },
-          })
-        }
-      > */}
+      </Backdrop>):(
       <Container sx={{ backgroundColor: "#F2F2F2", borderRadius: "5px", marginTop: "2px" }}>
         <Grid
           container
@@ -900,8 +892,7 @@ function ManagerCashflowWidget({
             </Grid>
           </Grid>
         </Grid>
-      </Container>
-      {/* </div> */}
+      </Container>)}
     </ThemeProvider>
   );
 }

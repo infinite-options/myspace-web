@@ -545,7 +545,7 @@ const ManagerProfitability = ({
     },
     {
       field: "purchase_date",
-      headerName: "Purchase Date",
+      headerName: "Purchase Due Date",
       flex: 1,
       renderCell: (params) => <Box sx={commonStyles}>{params.row.purchase_date !== null ? params.row.purchase_date.split(" ")[0] : "-"}</Box>,
       renderHeader: (params) => (
@@ -645,7 +645,7 @@ const ManagerProfitability = ({
 
         if (pur_payer.startsWith("350")) {
           purchase_type = item.purchase_type;
-          purchase_date = item.purchase_date;
+          purchase_date = item.pur_due_date;
           month = item.cf_month;
           year = item.cf_year;
           payment_status = item.payment_status;
@@ -956,7 +956,7 @@ const ManagerProfitability = ({
                       backgroundColor: tab === "profit" ? "#3D5CAC" : "#9EAED6",
                     },
                   }}
-                  onClick={() => handleSelectTab("profit")}
+                  onClick={() => {handleSelectTab("profit")}}
                 >
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit</Typography>
                 </Button>
@@ -971,7 +971,7 @@ const ManagerProfitability = ({
                       backgroundColor: tab === "by_sort" ? "#3D5CAC" : "#9EAED6",
                     },
                   }}
-                  onClick={() => handleSelectTab("by_sort")}
+                  onClick={() => {handleSelectTab("by_sort")}}
                 >
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit By Type</Typography>
                 </Button>
@@ -986,7 +986,7 @@ const ManagerProfitability = ({
                       backgroundColor: tab === "by_cashflow" ? "#3D5CAC" : "#9EAED6",
                     },
                   }}
-                  onClick={() => handleSelectTab("by_cashflow")}
+                  onClick={() => {handleSelectTab("by_cashflow")}}
                 >
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Cashflow</Typography>
                 </Button>
@@ -1552,7 +1552,7 @@ const ManagerProfitability = ({
                   boxShadow: "none",
                 }}
                 expanded={profitsExpanded}
-                onChange={() => setProfitsExpanded((prevState) => !prevState)}
+                onChange={() => {setProfitsExpanded((prevState) => !prevState)}}
               >
                 <Grid container item xs={12}>
                   <Grid container justifyContent='flex-start' item xs={8}>
@@ -1669,11 +1669,11 @@ const ManagerProfitability = ({
                                 <Grid container item marginY={10} xs={12} overflow={"hidden"}>
                                   <Typography sx={{ fontWeight: "bold", color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}>Unverified</Typography>
                                   <BalanceDetailsTable
-                                    data={property?.payments !== undefined ? property?.payments : []}
-                                    revenueData={property?.rentItems}
+                                    data={property?.payments? property?.payments : []}
+                                    revenueData={property?.rentItems ? property.rentItems : []}
                                     selectedPurchaseRow={""}
                                     setPaymentData={setPaymentData}
-                                    setSelectedPayments={setSelectedPayments}
+                                    setSelectedItems={setSelectedItems}
                                     selectedProperty={selectedProperty}
                                     fetchPaymentsData={fecthPaymentVerification}
                                     sortBy={sortBy}
@@ -3697,7 +3697,7 @@ function NewStatmentTableForByCashflow(props) {
 }
 
 function TransactionsTable(props) {
-  // console.log("In BalanceDetailTable", props);
+  // console.log("In TransactionTable", props);
   const [data, setData] = useState(props.data);
   const navigate = useNavigate();
   const [selectedRows, setSelectedRows] = useState([]);
@@ -3778,7 +3778,7 @@ function TransactionsTable(props) {
 
         if (pur_payer.startsWith("350")) {
           purchase_type = item.purchase_type;
-          purchase_date = item.purchase_date;
+          purchase_date = item.pur_due_date;
           month = item.cf_month;
           year = item.cf_year;
           received_amt += parseFloat(item.total_paid);
@@ -4002,7 +4002,7 @@ function TransactionsTable(props) {
     },
     {
       field: "purchase_date",
-      headerName: "Purchase Date",
+      headerName: "Purchase Due Date",
       flex: 1,
       renderCell: (params) => <Box sx={commonStyles}>{params.value !== undefined || params.value !== null ? params.value.split(" ")[0] : "-"}</Box>,
       renderHeader: (params) => (
@@ -4230,7 +4230,7 @@ function TransactionsTable(props) {
 
 function BalanceDetailsTable(props) {
   // console.log("In BalanceDetailTable", props);
-  const [data, setData] = useState({});
+  const [data, setData] = useState(props.data);
   const selectedPurchaseGroup = props.selectedPurchaseRow || "";
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedPayments, setSelectedPayments] = useState([]);
@@ -4429,14 +4429,14 @@ function BalanceDetailsTable(props) {
   // useEffect(() => {
   //   console.log("selectedPayments - ", selectedPayments);
   // }, [selectedPayments]);
-
   useEffect(() => {
     // console.log(" inside use effect of unverified data- ", props.data)
     setData(props.data);
   }, [props.data]);
 
   useEffect(() => {
-    props.setSelectedPayments((prevState) => {
+    console.log("debug selecte payment -- " )
+    props.setSelectedItems((prevState) => {
       const updatedPaymentData = prevState?.filter((payment) => selectedPayments.some((selected) => selected.id === payment.id));
 
       const newPayments = selectedPayments.filter((selected) => !updatedPaymentData.some((payment) => payment.id === selected.id));
@@ -4461,9 +4461,10 @@ function BalanceDetailsTable(props) {
   }, [props.sortBy]);
 
   useEffect(() => {
+  console.log("--DEBUG Data - " );
     if (data && data.length > 0) {
       // setSelectedPayments(data);
-      setSelectedPayments([]);
+      // setSelectedPayments([]);
       let filteredRows = [];
 
       if (props.selectedProperty != null || props.selectedProperty !== "ALL") {
@@ -4490,13 +4491,13 @@ function BalanceDetailsTable(props) {
       );
     } else if (data && data.length === 0) {
       setPaymentDueResult([]);
-      setSelectedPayments([]);
+      // setSelectedPayments([]);
       setSelectedRows([]);
     }
   }, [data]);
 
   useEffect(() => {
-    // console.log("selectedRows - ", selectedRows);
+    console.log("selectedRows - ", selectedRows);
     const total = selectedRows?.reduce((total, rowId) => {
       const payment = paymentDueResult.find((row) => row.payment_id === rowId);
       // console.log("payment - ", payment);
