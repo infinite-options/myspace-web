@@ -1059,7 +1059,7 @@ export default function ManagerCashflow() {
     const payoutsCurrentMonth = profitDatacurrentMonth?.filter((item) => item.pur_payer === profileId);
     const payoutsCurrentYear = profitDataCurrentYear?.filter((item) => item.pur_payer === profileId);
 
-    const revenueDataForManager = profitDataCurrentYear?.filter((item) => item.pur_payer === profileId || item.pur_receiver === profileId);
+    const revenueDataForManager = profitDatacurrentMonth?.filter((item) => item.pur_payer === profileId || item.pur_receiver === profileId);
     // setRevenueDataForManager(revenueDataForManager);
     const revenueList = rentDataCurrentMonth?.filter((item) => item.purchase_type.toUpperCase() !== "DEPOSIT");
 
@@ -2349,7 +2349,7 @@ export default function ManagerCashflow() {
         <CircularProgress color='inherit' />
       </Backdrop>
 
-      <Container maxWidth='lg' sx={{ paddingTop: "10px", height: "90vh" }}>
+      <Container maxWidth='lg' sx={{ paddingTop: "10px", height: "90vh", }}>
         <Grid container spacing={6} sx={{ height: "90%" }}>
           <Grid item xs={12} md={4}>
             <ManagerCashflowWidget

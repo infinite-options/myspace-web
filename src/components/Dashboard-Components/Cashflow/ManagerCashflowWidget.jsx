@@ -553,7 +553,7 @@ function ManagerCashflowWidget({
                   onClick={handleSelectProperty}
                 >
                   <HomeIcon fill='#3D5CAC' width='15' height='15' style={{ marginRight: "4px" }} />
-                  {!isMobile && `${propertyButtonName}`}
+                  {`${propertyButtonName}`}
                 </Button>
                 <Menu
                   anchorEl={anchorEl}
@@ -578,7 +578,7 @@ function ManagerCashflowWidget({
                   {/* </Select> */}
                 </Menu>
               </Grid>
-              <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "flex-start" }}>
+              <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "flex-end" }}>
                 {/* <Button
                   variant='outlined'
                   id='all_properties'
@@ -638,7 +638,7 @@ function ManagerCashflowWidget({
                 <Grid item xs={5} sx={{ padding: "5px", display: "flex" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>{`Profit`}</Typography>
                 </Grid>
-                <Grid item xs={3} sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
+                <Grid item xs={3} sx={{ padding: "5px", display: "flex", justifyContent: "flex-end" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
                     {/* ${(profits?.pur_amount_due != null && revenueCurrentMonth?.pur_amount_due != null ) ? (parseFloat(revenueCurrentMonth.pur_amount_due) - parseFloat(expenseCurrentMonth.pur_amount_due)).toFixed(2) : 0} */}
                     {cfPeriodButtonName === "Last 12 Months" && <>${profits?.totalExpectedProfit ? parseFloat(profits?.totalExpectedProfit).toFixed(2) : "0.00"}</>}
@@ -648,7 +648,7 @@ function ManagerCashflowWidget({
                   </Typography>
                 </Grid>
                 <Grid item xs={1}></Grid>
-                <Grid container item xs={3} justifyContent='center' sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
+                <Grid container item xs={3} justifyContent='flex-end' sx={{ padding: "5px", display: "flex", justifyContent: "flex-end" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
                     {cfPeriodButtonName === "Last 12 Months" && <>${profits?.totalActualProfit ? parseFloat(profits?.totalActualProfit).toFixed(2) : "0.00"}</>}
                     {cfPeriodButtonName === "Current Month" && <>${last12MonthsTotals?.totalProfit ? parseFloat(last12MonthsTotals?.totalProfit).toFixed(2) : "0.00"}</>}
@@ -659,7 +659,7 @@ function ManagerCashflowWidget({
                 <Grid item xs={5} sx={{ padding: "5px", display: "flex" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>{`Cashflow`}</Typography>
                 </Grid>
-                <Grid item xs={3} sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
+                <Grid item xs={3} sx={{ padding: "5px", display: "flex", justifyContent: "flex-end" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
                     {/* ${(profits?.pur_amount_due != null && revenueCurrentMonth?.pur_amount_due != null ) ? (parseFloat(revenueCurrentMonth.pur_amount_due) - parseFloat(expenseCurrentMonth.pur_amount_due)).toFixed(2) : 0} */}
                     {cfPeriodButtonName === "Last 12 Months" && <>${parseFloat(rents?.totalExpected - payouts?.totalExpected).toFixed(2)}</>}
@@ -669,7 +669,7 @@ function ManagerCashflowWidget({
                   </Typography>
                 </Grid>
                 <Grid item xs={1}></Grid>
-                <Grid container item xs={3} justifyContent='center' sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
+                <Grid container item xs={3} justifyContent='flex-end' sx={{ padding: "5px", display: "flex", justifyContent: "flex-end" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
                     {cfPeriodButtonName === "Last 12 Months" && <>${parseFloat(rents?.totalActual - payouts?.totalActual).toFixed(2)}</>}
                     {cfPeriodButtonName === "Current Month" && <>${last12MonthsTotals?.totalCashflow ? parseFloat(last12MonthsTotals?.totalCashflow).toFixed(2) : "0.00"}</>}
@@ -682,7 +682,7 @@ function ManagerCashflowWidget({
                 <Grid item xs={5} sx={{ padding: "5px", display: "flex" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>{`Revenue`}</Typography>{" "}
                 </Grid>
-                <Grid item xs={3} sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
+                <Grid item xs={3} sx={{ padding: "5px", display: "flex", justifyContent: "flex-end" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
                     {/* ${rents?.totalExpected ? parseFloat(rents?.totalExpected).toFixed(2) : "0.00"} */}
 
@@ -693,7 +693,7 @@ function ManagerCashflowWidget({
                   </Typography>
                 </Grid>
                 <Grid item xs={1}></Grid>
-                <Grid container item xs={3} justifyContent='center' sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
+                <Grid container item xs={3} justifyContent='flex-end' sx={{ padding: "5px", display: "flex", justifyContent: "flex-end" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
                     {/* ${rents?.totalActual ? parseFloat(rents?.totalActual).toFixed(2) : "0.00"} */}
                     {cfPeriodButtonName === "Last 12 Months" && <>${rents?.totalActual ? parseFloat(rents?.totalActual).toFixed(2) : "0.00"}</>}
@@ -706,7 +706,7 @@ function ManagerCashflowWidget({
                 <Grid item xs={5} sx={{ padding: "5px", display: "flex" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>{`Expense`}</Typography>
                 </Grid>
-                <Grid item xs={3} sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
+                <Grid item xs={3} sx={{ padding: "5px", display: "flex", justifyContent: "flex-end" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
                     {/* ${payouts?.totalExpected ? parseFloat(payouts?.totalExpected).toFixed(2) : "0.00"} */}
 
@@ -717,7 +717,7 @@ function ManagerCashflowWidget({
                   </Typography>
                 </Grid>
                 <Grid item xs={1}></Grid>
-                <Grid container item xs={3} justifyContent='center' sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
+                <Grid container item xs={3} justifyContent='flex-end' sx={{ padding: "5px", display: "flex", justifyContent: "flex-end" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
                     {/* ${payouts?.totalActual ? parseFloat(payouts?.totalActual).toFixed(2) : "0.00"} */}
 
@@ -730,7 +730,7 @@ function ManagerCashflowWidget({
                 <Grid item xs={5} sx={{ padding: "5px", display: "flex" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>{`Deposit`}</Typography>
                 </Grid>
-                <Grid item xs={3} sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
+                <Grid item xs={3} sx={{ padding: "5px", display: "flex", justifyContent: "flex-end" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
                     {/* ${(profits?.pur_amount_due != null && revenueCurrentMonth?.pur_amount_due != null ) ? (parseFloat(revenueCurrentMonth.pur_amount_due) - parseFloat(expenseCurrentMonth.pur_amount_due)).toFixed(2) : 0} */}
                     {cfPeriodButtonName === "Last 12 Months" && <>${totalDeposit?.totalExpected ? parseFloat(totalDeposit?.totalExpected).toFixed(2) : "0.00"}</>}
@@ -740,7 +740,7 @@ function ManagerCashflowWidget({
                   </Typography>
                 </Grid>
                 <Grid item xs={1}></Grid>
-                <Grid container item xs={3} justifyContent='center' sx={{ padding: "5px", display: "flex", justifyContent: "center" }}>
+                <Grid container item xs={3} justifyContent='flex-end' sx={{ padding: "5px", display: "flex", justifyContent: "flex-end" }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight }}>
                     {cfPeriodButtonName === "Last 12 Months" && <>${totalDeposit?.totalActual ? parseFloat(totalDeposit?.totalActual).toFixed(2) : "0.00"}</>}
                     {cfPeriodButtonName === "Current Month" && <>${last12MonthsTotals?.totalDeposit ? parseFloat(last12MonthsTotals?.totalDeposit).toFixed(2) : "0.00"}</>}

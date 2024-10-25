@@ -691,21 +691,24 @@ const ManagerProfitability = ({
 
     if (rows?.length > 0) {
       return (
-        <DataGrid
-          rows={rows}
-          columns={newTransactionColumn}
-          hideFooter={true}
-          autoHeight
-          rowHeight={35}
-          sx={{
-            marginTop: "10px",
-            "& .MuiDataGrid-columnHeaders": {
-              minHeight: "35px !important",
-              maxHeight: "35px !important",
-              height: 35,
-            },
-          }}
-        />
+        <Box sx={{overflowX: "auto"}}>
+          <DataGrid
+            rows={rows}
+            columns={newTransactionColumn}
+            hideFooter={true}
+            autoHeight
+            rowHeight={35}
+            sx={{
+              marginTop: "10px",
+              minWidth: "700px",
+              "& .MuiDataGrid-columnHeaders": {
+                minHeight: "35px !important",
+                maxHeight: "35px !important",
+                height: 35,
+              },
+            }}
+          />
+        </Box>
       );
     } else {
       return (
@@ -845,6 +848,7 @@ const ManagerProfitability = ({
               </Button>
               <Button
                 sx={{
+                  marginRight: "30px",
                   backgroundColor: headerTab === "current_month" ? "#3D5CAC" : "#9EAED6",
                   textTransform: "none",
                   "&:hover": {
@@ -858,6 +862,33 @@ const ManagerProfitability = ({
                 }}
               >
                 <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>{currentMonth}</Typography>
+              </Button>
+              <Button
+                sx={{
+                  backgroundColor: headerTab === "next_month" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: headerTab === "next_month" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => {
+                  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+                  let monthIndex = monthNames.indexOf(currentMonth);
+
+                  if (monthIndex === 11) {
+                    // If current month is December
+                    setMonth("January");
+                    setYear((currentYear + 1).toString());
+                  } else {
+                    setMonth(monthNames[monthIndex + 1]);
+                    setYear(currentYear.toString());
+                  }
+
+                  setHeaderTab("next_month");
+                }}
+              >
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Next Month</Typography>
               </Button>
             </Box>
 
@@ -945,7 +976,7 @@ const ManagerProfitability = ({
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit By Type</Typography>
                 </Button>
               </Grid>
-              <Grid container justifyContent='center' item xs={1.3} marginRight={6}>
+              <Grid container justifyContent='center' item xs={1.5} marginRight={6}>
                 <Button
                   sx={{
                     width: "90px",
@@ -960,7 +991,7 @@ const ManagerProfitability = ({
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Cashflow</Typography>
                 </Button>
               </Grid>
-              <Grid container justifyContent='center' item xs={2.8} marginRight={6}>
+              <Grid container justifyContent='center' item xs={3} marginRight={6}>
                 <Button
                   sx={{
                     width: "150px",
@@ -1635,7 +1666,7 @@ const ManagerProfitability = ({
                                 </Grid>
 
                                 {/* Unverified Section */}
-                                <Grid container item marginY={10}>
+                                <Grid container item marginY={10} xs={12} overflow={"hidden"}>
                                   <Typography sx={{ fontWeight: "bold", color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}>Unverified</Typography>
                                   <BalanceDetailsTable
                                     data={property?.payments !== undefined ? property?.payments : []}
@@ -1650,7 +1681,7 @@ const ManagerProfitability = ({
                                 </Grid>
 
                                 {/* Pay Owner Section */}
-                                <Grid container item>
+                                <Grid container item xs={12} overflow={"hidden"}>
                                   <Typography sx={{ fontWeight: "bold", color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}>Pay Owner</Typography>
                                   <TransactionsTable
                                     data={property?.rentItems ? property.rentItems : []}
@@ -4099,7 +4130,7 @@ function TransactionsTable(props) {
             onSortModelChange={(newSortModel) => setSortModel(newSortModel)}
             sx={
               {
-                // minWidth: "700px"
+                minWidth: "700px"
               }
             }
           />
@@ -4107,7 +4138,7 @@ function TransactionsTable(props) {
         {/* {selectedRows.length > 0 && (
           <div>Total selected amount: ${selectedRows.reduce((total, rowId) => total + parseFloat(paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due), 0)}</div>
         )} */}
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems='center' sx={{ paddingTop: "15px" }}>
+        <Grid container item xs={12} rowSpacing={1} alignItems='center' sx={{ paddingTop: "15px" }}>
           <Grid item xs={1} alignItems='center'></Grid>
           <Grid item xs={7} alignItems='center'>
             <Typography
@@ -4145,7 +4176,7 @@ function TransactionsTable(props) {
             </Typography>
           </Grid>
 
-          <Grid item xs={3} alignItems='right'>
+          <Grid item xs={3} alignItems='right' width={"100%"}>
             <Button
               sx={{
                 width: "170px",
@@ -4761,7 +4792,7 @@ function BalanceDetailsTable(props) {
             }}
             sx={
               {
-                // minWidth: "1000px"
+                minWidth: "700px"
               }
             }
             getRowId={(row) => row.payment_id}
