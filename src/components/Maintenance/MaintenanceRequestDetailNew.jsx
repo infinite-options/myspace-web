@@ -371,7 +371,7 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
                         height: isMobile ? "0px" : "1px",
                         minWidth: "5px",
                         padding: "0px",
-                        borderRadius: '10px', 
+                        borderRadius: "10px 10px 0px 0px"
                       }}
                       label={
                         <Typography

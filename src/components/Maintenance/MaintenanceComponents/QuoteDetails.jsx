@@ -324,11 +324,11 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                                         
                                         <Box sx={{ paddingTop: '10px' }}>
     <Typography variant="body2" gutterBottom sx={{  color: "#160449",
-                          fontWeight: "bold",
-                          fontSize: "20px",
-                          paddingBottom: "10px",
-                          paddingTop: "5px",
-                          flexGrow: 1,}}>
+                  fontWeight: theme.typography.primary.fontWeight,
+                  fontSize: "18px",
+                  paddingBottom: "5px",
+                  paddingTop: "5px",
+                  marginTop:"10px",}}>
         Quote Images:
     </Typography>
     <Box

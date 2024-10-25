@@ -461,249 +461,144 @@ const Documents = ({ fromRenew, documents, setDocuments, setDeleteDocsUrl, setIs
   if(isAccord){
     return (
       <>
-        <Accordion sx={{ backgroundColor: '#F0F0F0', boxShadow: "none" }} expanded={expanded} onChange={() => setExpanded(prevState => !prevState)}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="documents-content" id="documents-header">
-            <Grid container justifyContent='ceneter'>
-  
-                {/* Document Text */}
-                {
-                  customName != "" && (
-                    <Grid item md={11.2}>
-                      <Typography
-                        sx={{
-                          color: "#160449",
-                          fontWeight: "bold",
-                          fontSize: "20px",
-                          textAlign: "center",
-                          paddingBottom: "10px",
-                          paddingTop: "5px",
-                          flexGrow: 1,
-                          paddingLeft: "50px",
-                        }}
-                        // paddingTop='5px'
-                        // paddingBottom='10px'
-                      >
-                        {customName}
-                      </Typography>
-                    </Grid>
-                  )
-                }
-                
-  
-                {/* Add Icon button */}
-                <Grid item md={0.5}>
-                  {/* Add Icon */}
-                  <Button
-                    sx={{
-                      "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
-                      cursor: "pointer",
-                      textTransform: "none",
-                      minWidth: "40px",
-                      minHeight: "40px",
-                      width: "40px",
-                      marginTop:'5px',
-                      fontWeight: theme.typography.secondary.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                    }}
-                    size="small"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setcurrentRow({
-                        filename: "",
-                        type: "",
-                        link: "",
-                      });
-                      setIsEditing(false);
-                      handleOpen();
-                    }}
-                  >
-                    <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "24px" }} />
-                  </Button>
-                </Grid>
-            </Grid>
-          </AccordionSummary>
-          <AccordionDetails>
-            {/*  */}
-            {documents && documents.length ? (
-              // <Box
-              //   sx={{
-              //     display: 'flex',
-              //     flexDirection: 'row',
-              //     justifyContent: 'space-between',
-              //     alignItems: 'center',
-              //     marginBottom: '7px',
-              //     width: '100%',
-              //   }}
-              // >
-              //   <Box
-              //     sx={{
-              //       fontSize: '15px',
-              //       fontWeight: 'bold',
-              //       paddingTop: '10px',
-              //       paddingLeft: '5px',
-              //       color: '#3D5CAC',
-              //       width: '100%',
-              //     }}
-              //   >
-              //     {/* Previously Uploaded Documents: */}
-              //     <Box
-              //       sx={{
-              //         display: 'flex',
-              //         flexDirection: 'row',
-              //         alignItems: 'center',
-              //         justifyContent: 'space-between',
-              //         paddingTop: '5px',
-              //         marginY:"7px",
-              //         color: 'black',
-              //       }}
-              //     >
-              //       <Box sx={{width:"30%"}}>Filename</Box>
-              //       <Box sx={{width:"20%"}}>Content Type</Box>
-              //       <Box sx={{width:"20%"}}>File Type</Box>
-              //       <Box sx={{width:"15%"}}></Box>
-              //     </Box>
-              //     {[...documents].map((doc, i) => (
-              //       <>
-              //       {/* {console.log("details of doc-", doc)} */}
-              //         <Box
-              //           key={i}
-              //           sx={{
-              //             display: 'flex',
-              //             flexDirection: 'row',
-              //             alignItems: 'center',
-              //             justifyContent: 'space-between',
-              //           }}
-              //         >
-              //           <Box sx={{width:"30%"}}>
-              //             {/* <a href={doc.link} target="_blank" rel="noopener noreferrer"> */}
-              //               <Box
-              //                 sx={{
-              //                   // height: '40px',
-              //                   width: '100%',
-              //                   cursor: 'pointer', // Change cursor to indicate clickability
-              //                   color: '#3D5CAC',
-              //                 }}
-              //                 onClick={()=>{handleFileClick(doc)}}
-              //               >
-              //                 {doc.filename}
-              //               </Box>
-              //             {/* </a> */}
-              //           </Box>
-              //           <Box sx={{width:"20%"}}>{doc.contentType ? doc.contentType : ""}</Box>
-              //           <Box sx={{width:"20%"}}>{doc.fileType}</Box>
-              //           <Box sx={{width:"15%", display: 'flex', justifyContent: 'center'}}>
-              //             {/* Edit icon */}
-              //             <Button
-              //                 variant="text"
-              //                 onClick={(event) => {
-              //                   // setcurrentRow({...doc})
-              //                   handleEditClick({...doc})
-              //                   // handleDeletePrevUploadedFile(doc.link, i);
-              //                 }}
-              //                 sx={{
-              //                   // width: '120px',
-              //                   cursor: 'pointer',
-              //                   fontSize: '14px',
-              //                   fontWeight: 'bold',
-              //                   color: '#3D5CAC',
-              //                   '&:hover': {
-              //                     backgroundColor: 'transparent', // Set to the same color as the default state
-              //                   },
-              //                 }}
-              //               >
-              //                 <EditIcon sx={{ fontSize: '19px', color: '#3D5CAC'}} />
-              //             </Button>
-  
-              //             {/* Delete icon */}
-              //             <Button
-              //               variant="text"
-              //               onClick={(event) => {
-              //                 setcurrentRow({...doc})
-              //                 handleDeleteClick()
-              //                 // handleDeletePrevUploadedFile(doc.link, i);
-              //               }}
-              //               sx={{
-              //                 // width: '120px',
-              //                 cursor: 'pointer',
-              //                 fontSize: '14px',
-              //                 fontWeight: 'bold',
-              //                 color: '#3D5CAC',
-              //                 '&:hover': {
-              //                   backgroundColor: 'transparent', // Set to the same color as the default state
-              //                 },
-              //               }}
-              //             >
-              //               <DeleteIcon sx={{ fontSize: 19, color: '#3D5CAC' }} />
-              //             </Button>
-              //           </Box>
-              //         </Box>
-              //       </>
-              //     ))}
-              //   </Box>
-              // </Box>
-              <DataGrid
-                rows={rowsWithId}
-                columns={docsColumns}
-                hideFooter={true}
-                autoHeight
-                rowHeight={50}
-                sx={{
-                  marginTop:"10px"
-                }}
-              />
-            ) : (
-              <></>
-            )}
-
-            {/* contract files section */}
-            {contractFiles && contractFiles?.length? (
-              <Box
-                sx={{
-                  fontSize: '15px',
-                  fontWeight: 'bold',
-                  padding: '5px',
-                  color: '#3D5CAC',
-                  width: '100%',
-                }}
-              >
-                <Typography
-                    sx={{
-                      color: "#160449",
-                      fontWeight: theme.typography.primary.fontWeight,
-                      fontSize: "18px",
-                      paddingBottom: "5px",
-                      paddingTop: "5px",
-                      marginTop:"10px"
-                    }}
-                  >
-                    {customUploadingName? customUploadingName : "Uploading Documents:"}
-                </Typography>
-              </Box>
-            ):(
-              <></>
-            )}
-
-            {contractFiles?.length ? (
-              <DataGrid
-              rows={uploadRowsWithId}
-              columns={uploadDocsColumns}
+       <>
+  {/* Container with custom styles */}
+  <Grid item xs={12} columnSpacing={6} rowGap={4} sx={{ position: "relative" }}>
+    
+    {/* Header section */}
+    <Grid 
+      item 
+      xs={12} 
+      sx={{ 
+        backgroundColor: "#F0F0F0", 
+        borderRadius: "10px", 
+        boxShadow: "none"
+      }}
+    >
+      <Grid container justifyContent='center'>
+        
+        {/* Document Text */}
+        {customName !== "" && (
+          <Grid item md={11.2}>
+            <Typography
               sx={{
-                // minHeight:"100px",
-                // height:"100px",
-                // maxHeight:"100%",
-                marginTop: "10px",
+                color: "#160449",
+                fontWeight: "bold",
+                fontSize: "20px",
+                textAlign: "center",
+                paddingBottom: "10px",
+                paddingTop: "5px",
+                flexGrow: 1,
+                paddingLeft: "50px",
               }}
-              autoHeight
-              rowHeight={50} 
-              hideFooter={true}
-            />
-            ) : (
-              <></>
-            )}
-          </AccordionDetails>
-        </Accordion>
-  
-        <Modal open={open} onClose={handleClose} aria-labelledby="add-document-modal" aria-describedby="add-document-description">
+            >
+              {customName}
+            </Typography>
+          </Grid>
+        )}
+
+        {/* Add Icon button */}
+        <Grid item md={0.5}>
+          <Button
+            sx={{
+              "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
+              cursor: "pointer",
+              textTransform: "none",
+              minWidth: "40px",
+              minHeight: "40px",
+              width: "40px",
+              marginTop: '5px',
+              fontWeight: theme.typography.secondary.fontWeight,
+              fontSize: theme.typography.smallFont,
+            }}
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              setcurrentRow({ filename: "", type: "", link: "" });
+              setIsEditing(false);
+              handleOpen();
+            }}
+          >
+            <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "24px" }} />
+          </Button>
+        </Grid>
+      </Grid>
+    </Grid>
+
+    {/* Content section */}
+    <Grid 
+      item 
+      xs={12} 
+      sx={{ 
+        backgroundColor: "#F0F0F0", 
+        borderRadius: "10px", 
+        marginTop: "10px", 
+        padding: "20px"
+      }}
+    >
+      {/* Check if documents are available */}
+      {documents && documents.length ? (
+        <DataGrid
+          rows={rowsWithId}
+          columns={docsColumns}
+          hideFooter={true}
+          autoHeight
+          rowHeight={50}
+          sx={{
+            marginTop: "10px"
+          }}
+        />
+      ) : (
+        <></>
+      )}
+
+      {/* Contract files section */}
+      {contractFiles && contractFiles?.length ? (
+        <Box
+          sx={{
+            fontSize: '15px',
+            fontWeight: 'bold',
+            padding: '5px',
+            color: '#3D5CAC',
+            width: '100%',
+          }}
+        >
+          <Typography
+            sx={{
+              color: "#160449",
+              fontWeight: theme.typography.primary.fontWeight,
+              fontSize: "18px",
+              paddingBottom: "5px",
+              paddingTop: "5px",
+              marginTop: "10px"
+            }}
+          >
+            {customUploadingName ? customUploadingName : "Uploading Documents:"}
+          </Typography>
+        </Box>
+      ) : (
+        <></>
+      )}
+
+      {/* Check if there are contract files */}
+      {contractFiles?.length ? (
+        <DataGrid
+          rows={uploadRowsWithId}
+          columns={uploadDocsColumns}
+          sx={{
+            marginTop: "10px",
+          }}
+          autoHeight
+          rowHeight={50} 
+          hideFooter={true}
+        />
+      ) : (
+        <></>
+      )}
+    </Grid>
+  </Grid>
+</>
+ <Modal open={open} onClose={handleClose} aria-labelledby="add-document-modal" aria-describedby="add-document-description">
           <Box
             sx={{
               position: "absolute",
@@ -1213,7 +1108,7 @@ const Documents = ({ fromRenew, documents, setDocuments, setDeleteDocsUrl, setIs
                 alignItems: 'center',
                 marginBottom: '7px',
                 width: '100%',
-                height:"100px"
+                height:"30px"
               }}
             >
               <Typography
