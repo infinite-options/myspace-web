@@ -545,7 +545,7 @@ const ManagerProfitability = ({
     },
     {
       field: "purchase_date",
-      headerName: "Purchase Date",
+      headerName: "Purchase Due Date",
       flex: 1,
       renderCell: (params) => <Box sx={commonStyles}>{params.row.purchase_date !== null ? params.row.purchase_date.split(" ")[0] : "-"}</Box>,
       renderHeader: (params) => (
@@ -645,7 +645,7 @@ const ManagerProfitability = ({
 
         if (pur_payer.startsWith("350")) {
           purchase_type = item.purchase_type;
-          purchase_date = item.purchase_date;
+          purchase_date = item.pur_due_date;
           month = item.cf_month;
           year = item.cf_year;
           payment_status = item.payment_status;
@@ -691,21 +691,24 @@ const ManagerProfitability = ({
 
     if (rows?.length > 0) {
       return (
-        <DataGrid
-          rows={rows}
-          columns={newTransactionColumn}
-          hideFooter={true}
-          autoHeight
-          rowHeight={35}
-          sx={{
-            marginTop: "10px",
-            "& .MuiDataGrid-columnHeaders": {
-              minHeight: "35px !important",
-              maxHeight: "35px !important",
-              height: 35,
-            },
-          }}
-        />
+        <Box sx={{overflowX: "auto"}}>
+          <DataGrid
+            rows={rows}
+            columns={newTransactionColumn}
+            hideFooter={true}
+            autoHeight
+            rowHeight={35}
+            sx={{
+              marginTop: "10px",
+              minWidth: "700px",
+              "& .MuiDataGrid-columnHeaders": {
+                minHeight: "35px !important",
+                maxHeight: "35px !important",
+                height: 35,
+              },
+            }}
+          />
+        </Box>
       );
     } else {
       return (
@@ -845,6 +848,7 @@ const ManagerProfitability = ({
               </Button>
               <Button
                 sx={{
+                  marginRight: "30px",
                   backgroundColor: headerTab === "current_month" ? "#3D5CAC" : "#9EAED6",
                   textTransform: "none",
                   "&:hover": {
@@ -858,6 +862,33 @@ const ManagerProfitability = ({
                 }}
               >
                 <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>{currentMonth}</Typography>
+              </Button>
+              <Button
+                sx={{
+                  backgroundColor: headerTab === "next_month" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: headerTab === "next_month" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => {
+                  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+                  let monthIndex = monthNames.indexOf(currentMonth);
+
+                  if (monthIndex === 11) {
+                    // If current month is December
+                    setMonth("January");
+                    setYear((currentYear + 1).toString());
+                  } else {
+                    setMonth(monthNames[monthIndex + 1]);
+                    setYear(currentYear.toString());
+                  }
+
+                  setHeaderTab("next_month");
+                }}
+              >
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Next Month</Typography>
               </Button>
             </Box>
 
@@ -925,7 +956,7 @@ const ManagerProfitability = ({
                       backgroundColor: tab === "profit" ? "#3D5CAC" : "#9EAED6",
                     },
                   }}
-                  onClick={() => handleSelectTab("profit")}
+                  onClick={() => {handleSelectTab("profit")}}
                 >
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit</Typography>
                 </Button>
@@ -940,12 +971,12 @@ const ManagerProfitability = ({
                       backgroundColor: tab === "by_sort" ? "#3D5CAC" : "#9EAED6",
                     },
                   }}
-                  onClick={() => handleSelectTab("by_sort")}
+                  onClick={() => {handleSelectTab("by_sort")}}
                 >
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit By Type</Typography>
                 </Button>
               </Grid>
-              <Grid container justifyContent='center' item xs={1.3} marginRight={6}>
+              <Grid container justifyContent='center' item xs={1.5} marginRight={6}>
                 <Button
                   sx={{
                     width: "90px",
@@ -955,12 +986,12 @@ const ManagerProfitability = ({
                       backgroundColor: tab === "by_cashflow" ? "#3D5CAC" : "#9EAED6",
                     },
                   }}
-                  onClick={() => handleSelectTab("by_cashflow")}
+                  onClick={() => {handleSelectTab("by_cashflow")}}
                 >
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Cashflow</Typography>
                 </Button>
               </Grid>
-              <Grid container justifyContent='center' item xs={2.8} marginRight={6}>
+              <Grid container justifyContent='center' item xs={3} marginRight={6}>
                 <Button
                   sx={{
                     width: "150px",
@@ -1521,7 +1552,7 @@ const ManagerProfitability = ({
                   boxShadow: "none",
                 }}
                 expanded={profitsExpanded}
-                onChange={() => setProfitsExpanded((prevState) => !prevState)}
+                onChange={() => {setProfitsExpanded((prevState) => !prevState)}}
               >
                 <Grid container item xs={12}>
                   <Grid container justifyContent='flex-start' item xs={8}>
@@ -1635,14 +1666,14 @@ const ManagerProfitability = ({
                                 </Grid>
 
                                 {/* Unverified Section */}
-                                <Grid container item marginY={10}>
+                                <Grid container item marginY={10} xs={12} overflow={"hidden"}>
                                   <Typography sx={{ fontWeight: "bold", color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}>Unverified</Typography>
                                   <BalanceDetailsTable
-                                    data={property?.payments !== undefined ? property?.payments : []}
-                                    revenueData={property?.rentItems}
+                                    data={property?.payments? property?.payments : []}
+                                    revenueData={property?.rentItems ? property.rentItems : []}
                                     selectedPurchaseRow={""}
                                     setPaymentData={setPaymentData}
-                                    setSelectedPayments={setSelectedPayments}
+                                    setSelectedItems={setSelectedItems}
                                     selectedProperty={selectedProperty}
                                     fetchPaymentsData={fecthPaymentVerification}
                                     sortBy={sortBy}
@@ -1650,7 +1681,7 @@ const ManagerProfitability = ({
                                 </Grid>
 
                                 {/* Pay Owner Section */}
-                                <Grid container item>
+                                <Grid container item xs={12} overflow={"hidden"}>
                                   <Typography sx={{ fontWeight: "bold", color: theme.typography.common.blue, fontSize: theme.typography.smallFont }}>Pay Owner</Typography>
                                   <TransactionsTable
                                     data={property?.rentItems ? property.rentItems : []}
@@ -3666,7 +3697,7 @@ function NewStatmentTableForByCashflow(props) {
 }
 
 function TransactionsTable(props) {
-  // console.log("In BalanceDetailTable", props);
+  // console.log("In TransactionTable", props);
   const [data, setData] = useState(props.data);
   const navigate = useNavigate();
   const [selectedRows, setSelectedRows] = useState([]);
@@ -3747,7 +3778,7 @@ function TransactionsTable(props) {
 
         if (pur_payer.startsWith("350")) {
           purchase_type = item.purchase_type;
-          purchase_date = item.purchase_date;
+          purchase_date = item.pur_due_date;
           month = item.cf_month;
           year = item.cf_year;
           received_amt += parseFloat(item.total_paid);
@@ -3971,7 +4002,7 @@ function TransactionsTable(props) {
     },
     {
       field: "purchase_date",
-      headerName: "Purchase Date",
+      headerName: "Purchase Due Date",
       flex: 1,
       renderCell: (params) => <Box sx={commonStyles}>{params.value !== undefined || params.value !== null ? params.value.split(" ")[0] : "-"}</Box>,
       renderHeader: (params) => (
@@ -4099,7 +4130,7 @@ function TransactionsTable(props) {
             onSortModelChange={(newSortModel) => setSortModel(newSortModel)}
             sx={
               {
-                // minWidth: "700px"
+                minWidth: "700px"
               }
             }
           />
@@ -4107,7 +4138,7 @@ function TransactionsTable(props) {
         {/* {selectedRows.length > 0 && (
           <div>Total selected amount: ${selectedRows.reduce((total, rowId) => total + parseFloat(paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due), 0)}</div>
         )} */}
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems='center' sx={{ paddingTop: "15px" }}>
+        <Grid container item xs={12} rowSpacing={1} alignItems='center' sx={{ paddingTop: "15px" }}>
           <Grid item xs={1} alignItems='center'></Grid>
           <Grid item xs={7} alignItems='center'>
             <Typography
@@ -4145,7 +4176,7 @@ function TransactionsTable(props) {
             </Typography>
           </Grid>
 
-          <Grid item xs={3} alignItems='right'>
+          <Grid item xs={3} alignItems='right' width={"100%"}>
             <Button
               sx={{
                 width: "170px",
@@ -4199,7 +4230,7 @@ function TransactionsTable(props) {
 
 function BalanceDetailsTable(props) {
   // console.log("In BalanceDetailTable", props);
-  const [data, setData] = useState({});
+  const [data, setData] = useState(props.data);
   const selectedPurchaseGroup = props.selectedPurchaseRow || "";
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedPayments, setSelectedPayments] = useState([]);
@@ -4398,14 +4429,14 @@ function BalanceDetailsTable(props) {
   // useEffect(() => {
   //   console.log("selectedPayments - ", selectedPayments);
   // }, [selectedPayments]);
-
   useEffect(() => {
     // console.log(" inside use effect of unverified data- ", props.data)
     setData(props.data);
   }, [props.data]);
 
   useEffect(() => {
-    props.setSelectedPayments((prevState) => {
+    console.log("debug selecte payment -- " )
+    props.setSelectedItems((prevState) => {
       const updatedPaymentData = prevState?.filter((payment) => selectedPayments.some((selected) => selected.id === payment.id));
 
       const newPayments = selectedPayments.filter((selected) => !updatedPaymentData.some((payment) => payment.id === selected.id));
@@ -4430,9 +4461,10 @@ function BalanceDetailsTable(props) {
   }, [props.sortBy]);
 
   useEffect(() => {
+  console.log("--DEBUG Data - " );
     if (data && data.length > 0) {
       // setSelectedPayments(data);
-      setSelectedPayments([]);
+      // setSelectedPayments([]);
       let filteredRows = [];
 
       if (props.selectedProperty != null || props.selectedProperty !== "ALL") {
@@ -4459,13 +4491,13 @@ function BalanceDetailsTable(props) {
       );
     } else if (data && data.length === 0) {
       setPaymentDueResult([]);
-      setSelectedPayments([]);
+      // setSelectedPayments([]);
       setSelectedRows([]);
     }
   }, [data]);
 
   useEffect(() => {
-    // console.log("selectedRows - ", selectedRows);
+    console.log("selectedRows - ", selectedRows);
     const total = selectedRows?.reduce((total, rowId) => {
       const payment = paymentDueResult.find((row) => row.payment_id === rowId);
       // console.log("payment - ", payment);
@@ -4761,7 +4793,7 @@ function BalanceDetailsTable(props) {
             }}
             sx={
               {
-                // minWidth: "1000px"
+                minWidth: "700px"
               }
             }
             getRowId={(row) => row.payment_id}
