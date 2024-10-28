@@ -116,7 +116,7 @@ export default function OwnerPropertyRentWidget(props) {
                 outerRadius={80}
                 paddingAngle={0}
                 dataKey='number'
-                filter='url(#shadow)'
+                //filter='url(#shadow)'
                 // onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
                 // onClick={() => navigate("/properties", { state: { showPropertyForm: true } })} - PM Changed
                 onClick={() => navigate("/properties", { state: { showPropertyForm: true, showRHS: "PropertyNavigator" } })}
