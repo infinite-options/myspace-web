@@ -2424,7 +2424,7 @@ return (
 								},
 							}}
 							onClick={handleCreateNewContractClick}
-							disabled={!contractName || !contractStartDate || !contractEndDate || !contractFees}
+							disabled={!isChange || isChange === false || !contractName || !contractStartDate || !contractEndDate || !contractFees}
 						>
 							<Typography
 								sx={{
