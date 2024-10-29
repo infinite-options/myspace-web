@@ -25,6 +25,7 @@ import UtilitiesManager from "./Utilities";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import FeesDetails from "./FeesDetails";
 import LeaseSummary from "./LeaseSummary";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { getDateAdornmentString } from "../../utils/dates";
 
 import ListsContext from "../../contexts/ListsContext";
@@ -40,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClicked, handleUpdate, onReviewRenewal }) {
+export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClicked, handleUpdate, onReviewRenewal, setViewRHS }) {
     const navigate = useNavigate();
     const { getList, } = useContext(ListsContext);	
     const classes = useStyles();
@@ -393,6 +394,11 @@ const handleEditLease = () => {
     }
 };
 
+const handleBackButton = () => {
+    if(isMobile && setViewRHS){
+      setViewRHS(false)
+    }
+  }
 
 return (
     <Box
@@ -416,6 +422,11 @@ return (
             <Grid container sx={{ marginTop: '15px', marginBottom: '15px', alignItems: 'center', justifyContent: 'center' }}>
                 <Grid item xs={12} md={12}>
                     <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", paddingBottom: "10px" }}>
+                        {isMobile && (<Box>
+                            <Button onClick={handleBackButton} sx={{color: "black", fontSize: theme.typography.smallFont}}>
+                                <ArrowBackIcon sx={{ color: "#000000", width: "25px", height: "15px", margin: "0px" }} />
+                            </Button>
+                        </Box>)}
                         <Typography
                             sx={{
                                 color: "#160449",

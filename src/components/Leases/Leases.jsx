@@ -434,7 +434,7 @@ export default function Leases(props) {
               (currentMonth === 12 && currentYear + 1 === endYear && endMonth === 1)) {
               tabColor = "#FFC614";
             }
-            return <LeaseMonth key={i} data={[date, leases]} style={[tabColor]} setSelectedLeaseId={props.setSelectedLeaseId} />;
+            return <LeaseMonth key={i} data={[date, leases]} style={[tabColor]} setSelectedLeaseId={props.setSelectedLeaseId} setViewRHS={props.setViewRHS}/>;
           })}
         </Box>
         <Modal open={open} onClose={handle_property_checkbox_close} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
@@ -560,7 +560,7 @@ function LeaseMonth(props) {
         }}
       >
         {leaseData.map((lease, i) => (
-          <LeaseComponent key={i} data={lease} setSelectedLeaseId={props.setSelectedLeaseId} />
+          <LeaseComponent key={i} data={lease} setSelectedLeaseId={props.setSelectedLeaseId} setViewRHS={props.setViewRHS}/>
         ))}
       </Box>
     </Box>
@@ -632,7 +632,9 @@ function LeaseComponent(props) {
           //   },
           // });
           console.log('click event', props.setSelectedLeaseId);
-
+          if(props.setViewRHS){
+            props.setViewRHS(true)
+          }
           props.setSelectedLeaseId(leaseData.lease_uid);
           sessionStorage.setItem("selectedLeaseId", leaseData.lease_uid);
         }}
