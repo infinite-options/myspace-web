@@ -15,7 +15,7 @@ import theme from "../../theme/theme";
 // import { useUser } from "../../contexts/UserContext";
 import CircularProgress from "@mui/material/CircularProgress";
 import Backdrop from "@mui/material/Backdrop";
-
+import useMediaQuery from "@mui/material/useMediaQuery";
 // import APIConfig from "../../utils/APIConfig";
 import ManagementContractDetails from "../Contracts/OwnerManagerContracts/ManagementContractDetails";
 import { ManagementContractProvider } from "../../contexts/ManagementContractContext";
@@ -34,6 +34,9 @@ export default function PMQuotesList() {
   // console.log("contractRequests from context - ", contractRequests)
 
   const [showSpinner, setShowSpinner] = useState(dataLoaded);
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const [viewRHS, setViewRHS] = useState(false)
 
   useEffect(() => {
     setShowSpinner(!dataLoaded);
@@ -69,13 +72,13 @@ export default function PMQuotesList() {
         </Backdrop>
         <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
           <Grid container spacing={4}>
-            <Grid item xs={12} md={4}>
-              <QuotesList />
-            </Grid>
+            {(!isMobile || !viewRHS) && (<Grid item xs={12} md={4}>
+              <QuotesList setViewRHS={setViewRHS}/>
+            </Grid>)}
 
-            <Grid item xs={12} md={8}>
-              <ManagementContractDetails navigatingFrom={navigatingFrom} />
-            </Grid>
+            {((!isMobile || viewRHS)) && (<Grid item xs={12} md={8}>
+              <ManagementContractDetails navigatingFrom={navigatingFrom} setViewRHS={setViewRHS}/>
+            </Grid>)}
           </Grid>
         </Container>
       </ThemeProvider>    
@@ -161,6 +164,7 @@ const QuotesList = (props) => {
                   <Grid item xs={12} key={index} sx={{marginBottom: 0}} >
                     <ContractCard 
                       key={index}
+                      setViewRHS={props.setViewRHS}
                       contract={contract}                      
                     />
                   </Grid>
@@ -217,6 +221,9 @@ function ContractCard(props) {
           if(isChange){
             setShowGoBackDialog(true)
           }else{
+            if(props.setViewRHS){
+              props.setViewRHS(true)
+            }
             updateContractUID(contract.contract_uid);
             updateContractPropertyUID(contract.contract_property_id);          
           }
