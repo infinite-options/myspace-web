@@ -37,9 +37,10 @@ const FilePreviewDialog = ({file, onClose }) => {
         <Box
             ref={previewRef}
             sx={{
-                position: 'fixed',
-                top: '100px',
-                left: '65%',
+                position: 'relative',
+
+                top: '-500px',
+                left: '15%',
                 width: '500px',
                 height: '500px',
                 backgroundColor: 'white',
