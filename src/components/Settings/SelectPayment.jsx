@@ -266,17 +266,30 @@ export default function SelectPayment(props) {
     };
 
     // Make the POST request
+    let payment = {...paymentData,
+      payment_summary: {
+        ...paymentData.payment_summary,
+        total: parseFloat(totalBalance.toFixed(2))
+      }
+    }
+
+    let resultOfResponse;
+
     setShowSpinner(true);
     try {
       const response = await fetch(payment_url[selectedMethod], {
         // Use http instead of https
         method: "POST",
         headers,
-        body: JSON.stringify(paymentData),
+        body: JSON.stringify(payment),
       });
 
+      resultOfResponse = await response.text()    // because response has only url so we can't convert into json
+
       if (response.ok) {
-        // console.log("Post request was successful");
+
+        
+        console.log("Post request was successful - ", resultOfResponse);
         // Handle the successful response here
       } else {
         // console.error("Post request failed");
@@ -288,7 +301,10 @@ export default function SelectPayment(props) {
     setShowSpinner(false);
     // console.log("Completed Bank Transfer Handler Function");
     // navigate
-    navigate("/PaymentConfirmation", { state: { paymentData } });
+    if (resultOfResponse){ 
+      window.location.href = resultOfResponse
+    }
+    // navigate("/PaymentConfirmation", { state: { paymentData } });
   }
 
   function update_fee(e) {
@@ -328,11 +344,19 @@ export default function SelectPayment(props) {
     console.log("selectedMethod", selectedMethod);
     console.log("Payment total", totalBalance);
     console.log("Convenience Fee", convenience_fee);
-    console.log("PaymentData: ", { ...paymentData, total: parseFloat(totalBalance.toFixed(2)) });
+    console.log("PaymentData: ", { total: parseFloat(totalBalance.toFixed(2)) });
 
     // e.preventDefault();
-    setPaymentData({ ...paymentData, total: parseFloat(totalBalance.toFixed(2)) });
+    // setPaymentData({ ...paymentData, total: parseFloat(totalBalance.toFixed(2)) });
     // paymentData.payment_summary.total = parseFloat(totalBalance.toFixed(2));
+
+    setPaymentData({
+      ...paymentData,
+      payment_summary: {
+        ...paymentData.payment_summary,
+        total: parseFloat(totalBalance.toFixed(2))
+      }
+    });
 
     if (selectedMethod === "Bank Transfer") bank_transfer_handler();
     else if (selectedMethod === "Credit Card") {

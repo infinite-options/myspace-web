@@ -1384,6 +1384,9 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
     item_uid: "320-000054",
     balance: "0.0",
     purchase_uids: [],
+    payment_summary: {
+      total: "17.00"
+    }
   });
 
   useEffect(() => {
