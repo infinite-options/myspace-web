@@ -732,7 +732,7 @@ export default function TenantApplication(props) {
                 <Typography sx={{ fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue}}>Documents</Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ padding: "30px" }}>
-                <Documents documents={tenantDocuments} setDocuments={setTenantDocuments} isEditable={false} isAccord={false} contractFiles={extraUploadDocument} contractFileTypes={extraUploadDocumentType}/>
+                <Documents setRightPane={props.setRightPane} documents={tenantDocuments} setDocuments={setTenantDocuments} isEditable={false} isAccord={false} contractFiles={extraUploadDocument} contractFileTypes={extraUploadDocumentType}/>
               </AccordionDetails>
             </Accordion>
             </Box>
