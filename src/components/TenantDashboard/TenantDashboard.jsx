@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Accordion,
@@ -63,6 +63,7 @@ import GenericDialog from "../GenericDialog";
 import TenantEndLeaseButton from "./TenantEndLeaseButton";
 import FilePreviewDialog from "../Leases/FilePreviewDialog";
 import CloseIcon from '@mui/icons-material/Close';
+import LeaseIcon from "../Property/leaseIcon.png";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -494,7 +495,7 @@ const TenantDashboard = () => {
                   <>
                     {/* Lease Details: Aligns with Account Balance */}
                     <Grid item xs={12} md={6} sx={{ flex: 1 }}>
-                      <LeaseDetails isMobile={isMobile} setViewRHS={setViewRHS} leaseDetails={leaseDetails} setRightPane={setRightPane} selectedProperty={selectedProperty} relatedLease={relatedLease} />
+                      <LeaseDetails isMobile={isMobile} setViewRHS={setViewRHS} leaseDetails={leaseDetails} rightPane={rightPane} setRightPane={setRightPane} selectedProperty={selectedProperty} relatedLease={relatedLease} />
                     </Grid>
 
                     {/* Maintenance and Management Details: Match height with Lease Details */}
@@ -746,8 +747,9 @@ const AnnouncementsPM = ({ announcements, setRightPane, isMobile, setViewRHS }) 
   );
 };
 
-const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty, relatedLease, isMobile, setViewRHS }) => {
-  console.log("Lease Details renewal", relatedLease);
+const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty, relatedLease, isMobile, setViewRHS }) => {
+  // console.log("Lease Details renewal", relatedLease);
+  console.log("Lease Details rightPane", rightPane);
   const { getProfileId } = useUser();
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -863,6 +865,23 @@ const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty, relatedLea
     });
   };
 
+  const leaseDocumentsArray = useMemo(() => {
+    try {
+      return JSON.parse(leaseDetails?.lease_documents || "[]");
+    } catch (error) {
+      console.error("Failed to parse lease documents:", error);
+      return [];
+    }
+  }, [leaseDetails?.lease_documents]);
+
+  const openPreviewPane = (file) => {
+    setRightPane({
+        type: "filePreview",
+        file: file,
+        onClose: () => setRightPane({ type: "" })
+    });
+};
+
   return (
     <Paper
       elevation={3}
@@ -944,6 +963,30 @@ const LeaseDetails = ({ leaseDetails, setRightPane, selectedProperty, relatedLea
                   <Typography>Rent:</Typography>
                   <Typography>${leaseDetails?.property_listed_rent || "N/A"}</Typography>
                 </Stack>
+                <Stack direction="row" justifyContent="space-between">
+  <Typography>Lease Documents:</Typography>
+  {leaseDocumentsArray.length > 0 && (
+    <Stack direction="row" spacing={1}>
+      {leaseDocumentsArray.map((document, index) => (
+        <Button
+          key={index}
+          sx={{
+            padding: "0px",
+            "&:hover": {
+              backgroundColor: theme.palette.form.main,
+            },
+          }}
+          title={document.filename} // Shows filename on hover
+          className=".MuiButton-icon"
+          onClick={() => openPreviewPane(document)}
+        >
+          <img src={LeaseIcon} alt="Lease Icon" />
+        </Button>
+      ))}
+    </Stack>
+  )}
+</Stack>
+
                 <Stack direction='row' justifyContent='space-between'>
                   <Typography>Start Date:</Typography>
                   <Typography>{leaseDetails?.lease_start || "N/A"}</Typography>
