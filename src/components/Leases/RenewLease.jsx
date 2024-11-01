@@ -2,7 +2,7 @@ import React from "react";
 import { useEffect, useState, useRef, useContext, } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
-    Typography, Box, Paper, Grid, Accordion, AccordionSummary, AccordionDetails, Button, Snackbar, Alert, AlertTitle
+    Typography, Box, IconButton, Paper, Grid, Accordion, AccordionSummary, AccordionDetails, Button, Snackbar, Alert, AlertTitle
 } from "@mui/material";
 import dayjs from "dayjs";
 import { makeStyles } from "@material-ui/core/styles";
@@ -26,7 +26,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import FeesDetails from "./FeesDetails";
 import LeaseSummary from "./LeaseSummary";
 import { getDateAdornmentString } from "../../utils/dates";
-
+import CloseIcon from '@mui/icons-material/Close';
 import ListsContext from "../../contexts/ListsContext";
 
 const useStyles = makeStyles((theme) => ({
@@ -78,6 +78,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
     const [modifiedData, setModifiedData] = useState([]);
     const [isPreviousFileChange, setIsPreviousFileChange] = useState(false)
 
+    const [rightPane, setRightPane] = useState({type: "tenantApplication" }); 
 
     useEffect(() => {
         setShowSpinner(true);
@@ -413,245 +414,393 @@ return (
             <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <Grid container sx={{ marginTop: '15px', marginBottom: '15px', alignItems: 'center', justifyContent: 'center' }}>
-                <Grid item xs={12} md={12}>
-                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", paddingBottom: "10px" }}>
-                        <Typography
-                            sx={{
-                                color: "#160449",
-                                fontWeight: theme.typography.primary.fontWeight,
-                                fontSize: theme.typography.largeFont,
-                                textAlign: 'center'
-                            }}
-                        >
-                            {currentLease.property_address} {currentLease.property_unit}, {currentLease.property_city} {currentLease.property_state} {currentLease.property_zip}
-                        </Typography>
-                        {signedLease && <Button
-                            sx={{
-                                padding: "0px",
-                                '&:hover': {
-                                    backgroundColor: theme.palette.form.main,
-                                },
-                            }}
-                            className=".MuiButton-icon"
-                            onClick={() =>
-                                window.open(signedLease.link, "_blank", "rel=noopener noreferrer")
-                            }
-                        >
-                            <img src={LeaseIcon} />
-                        </Button>}
-                    </Box>
-                    <Box sx={{ display: "block" }}>
-                        <Typography
-                            sx={{
-                                color: "#160449",
-                                fontWeight: theme.typography.primary.fontWeight,
-                                fontSize: theme.typography.largeFont,
-                                textAlign: 'center'
-                            }}
-                        >
-                            {currentLease.lease_property_id}
-                        </Typography>
-                    </Box>
-                    <Box sx={{ display: "block" }}>
-                        <Typography
-                            sx={{
-                                color: "#160449",
-                                fontWeight: theme.typography.primary.fontWeight,
-                                fontSize: theme.typography.largeFont,
-                                textAlign: 'center'
-                            }}
-                        >
-                            {currentLease.lease_uid}
-                        </Typography>
-                    </Box>
-                </Grid>
-                {/* Start */}
-                <Grid item xs={12} md={12}>
-                    {selectedRole === "OWNER" && <LeaseSummary currentLease={currentLease} rent={rent} setNewStartDate={setNewStartDate} setNewEndDate={setNewEndDate}
-                        newStartDate={newStartDate} newEndDate={newEndDate} isEditable={false}/>}
-                    {selectedRole !== "OWNER" && <LeaseSummary currentLease={currentLease} rent={rent} setNewStartDate={setNewStartDate} setNewEndDate={setNewEndDate}
-                        newStartDate={newStartDate} newEndDate={newEndDate} isEditable={true}/>}
-                </Grid>
-                {/* End */}
+            {rightPane.type === "tenantApplication" && (
+                   <Grid container sx={{ marginTop: '15px', marginBottom: '15px', alignItems: 'center', justifyContent: 'center' }}>
+                   <Grid item xs={12} md={12}>
+                       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", paddingBottom: "10px" }}>
+                           <Typography
+                               sx={{
+                                   color: "#160449",
+                                   fontWeight: theme.typography.primary.fontWeight,
+                                   fontSize: theme.typography.largeFont,
+                                   textAlign: 'center'
+                               }}
+                           >
+                               {currentLease.property_address} {currentLease.property_unit}, {currentLease.property_city} {currentLease.property_state} {currentLease.property_zip}
+                           </Typography>
+                           {signedLease && <Button
+                               sx={{
+                                   padding: "0px",
+                                   '&:hover': {
+                                       backgroundColor: theme.palette.form.main,
+                                   },
+                               }}
+                               className=".MuiButton-icon"
+                               onClick={() =>
+                                   window.open(signedLease.link, "_blank", "rel=noopener noreferrer")
+                               }
+                           >
+                               <img src={LeaseIcon} />
+                           </Button>}
+                       </Box>
+                       <Box sx={{ display: "block" }}>
+                           <Typography
+                               sx={{
+                                   color: "#160449",
+                                   fontWeight: theme.typography.primary.fontWeight,
+                                   fontSize: theme.typography.largeFont,
+                                   textAlign: 'center'
+                               }}
+                           >
+                               {currentLease.lease_property_id}
+                           </Typography>
+                       </Box>
+                       <Box sx={{ display: "block" }}>
+                           <Typography
+                               sx={{
+                                   color: "#160449",
+                                   fontWeight: theme.typography.primary.fontWeight,
+                                   fontSize: theme.typography.largeFont,
+                                   textAlign: 'center'
+                               }}
+                           >
+                               {currentLease.lease_uid}
+                           </Typography>
+                       </Box>
+                   </Grid>
+                   {/* Start */}
+                   <Grid item xs={12} md={12}>
+                       {selectedRole === "OWNER" && <LeaseSummary currentLease={currentLease} rent={rent} setNewStartDate={setNewStartDate} setNewEndDate={setNewEndDate}
+                           newStartDate={newStartDate} newEndDate={newEndDate} isEditable={false}/>}
+                       {selectedRole !== "OWNER" && <LeaseSummary currentLease={currentLease} rent={rent} setNewStartDate={setNewStartDate} setNewEndDate={setNewEndDate}
+                           newStartDate={newStartDate} newEndDate={newEndDate} isEditable={true}/>}
+                   </Grid>
+                   {/* End */}
+   
+                   {tenantWithId && tenantWithId.length > 0 && (
+                       <Grid item xs={12} md={12}>
+                           <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
+                               <TenantDetails isMobile={isMobile} tenantWithId={tenantWithId} setTenantWithId={setTenantWithId} />
+                           </Paper>
+                       </Grid>
+                   )}
+                   <Grid item xs={12} md={12}>
+                       <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
+                           {selectedRole === "OWNER" && leaseFees &&
+                               <FeesDetails isMobile={isMobile} isEditable={false} getDateAdornmentString={getDateAdornmentString} leaseFees={leaseFees} setLeaseFees={setLeaseFees} />
+                           }
+                           {selectedRole !== "OWNER" && leaseFees &&
+                               <FeesDetails isMobile={isMobile} isEditable={true} getDateAdornmentString={getDateAdornmentString} leaseFees={leaseFees} setLeaseFees={setLeaseFees} />
+                           } 
+                       </Paper>
+                   </Grid>
+                   <Grid item xs={12} md={12}>
+                       <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
+                           <Accordion sx={{ backgroundColor: color }}>
+                               <AccordionSummary
+                                   expandIcon={<ExpandMoreIcon />}
+                                   aria-controls="occupants-content"
+                                   id="occupants-header"
+                               >
+                                   <Grid container>
+                                       <Grid item md={11.2}>
+                                           <Typography
+                                               sx={{
+                                                   color: "#160449",
+                                                   fontWeight: theme.typography.primary.fontWeight,
+                                                   fontSize: theme.typography.small,
+                                                   width: "100%",
+                                                   textAlign: isMobile? "left" : 'center',
+                                                   paddingBottom: "10px",
+                                                   paddingTop: "5px",
+                                                   flexGrow: 1,
+                                                   paddingLeft: isMobile? "5px" : "50px",
+                                               }}
+                                               paddingTop="5px"
+                                               paddingBottom="10px"
+                                           >
+                                               Occupants Details
+                                           </Typography>
+                                       </Grid>
+                                       <Grid item md={0.5} />
+                                   </Grid>
+   
+                               </AccordionSummary>
+                               <AccordionDetails>
+                                   {selectedRole === "OWNER" && leaseAdults &&
+                                       <AdultOccupant isEditable={false} leaseAdults={leaseAdults} relationships={relationships} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_adults"}/>
+                                   }
+                                   {selectedRole !== "OWNER" && leaseAdults &&
+                                       <AdultOccupant isEditable={true} leaseAdults={leaseAdults} relationships={relationships} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_adults"}/>
+                                   }
+                                   {selectedRole === "OWNER" && leaseChildren &&
+                                       <ChildrenOccupant isEditable={false} leaseChildren={leaseChildren} relationships={relationships} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData}  dataKey={"lease_children"}/>
+                                   }
+                                   {selectedRole !== "OWNER" && leaseChildren &&
+                                       <ChildrenOccupant isEditable={true} leaseChildren={leaseChildren} relationships={relationships} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData}  dataKey={"lease_children"}/>
+                                   }
+                                   {selectedRole === "OWNER" && leasePets &&
+                                       <PetsOccupant isEditable={false} leasePets={leasePets} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_pets"}/>
+                                   }
+                                   {selectedRole !== "OWNER" && leasePets &&
+                                       <PetsOccupant isEditable={true} leasePets={leasePets} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_pets"}/>
+                                   }
+                                   {selectedRole === "OWNER" && leaseVehicles &&
+                                       <VehiclesOccupant isEditable={false} leaseVehicles={leaseVehicles} states={states} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_vehicles"}/>
+                                   }
+                                   {selectedRole !== "OWNER" && leaseVehicles &&
+                                       <VehiclesOccupant isEditable={true} leaseVehicles={leaseVehicles} states={states} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_vehicles"}/>
+                                   }
+                               </AccordionDetails>
+                           </Accordion>
+                       </Paper>
+                   </Grid>
+                   <Grid item xs={12} md={12}>
+                       <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
+                           {selectedRole === "OWNER" && <Documents setRightPane={setRightPane} isMobile={isMobile} fromRenew={true} isEditable={false} setIsPreviousFileChange={setIsPreviousFileChange} documents={documents} setDocuments={setDocuments} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_documents"} />}
+                           {selectedRole !== "OWNER" && <Documents setRightPane={setRightPane} isMobile={isMobile} fromRenew={true} isEditable={true} setIsPreviousFileChange={setIsPreviousFileChange} documents={documents} setDocuments={setDocuments} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_documents"} />}
+                       </Paper>
+                   </Grid>
+   
+                   <Grid item xs={12} md={12}>
+                       <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
+                           <UtilitiesManager newUtilities={newUtilities} utils={utilities}
+                               utilitiesMap={utilitiesMap} handleNewUtilityChange={handleNewUtilityChange}
+                               remainingUtils={remainingUtils} setRemainingUtils={setRemainingUtils}
+                               setNewUtilities={setNewUtilities} />
+                       </Paper>
+                   </Grid>
+   
+                   <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                       <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
+                           <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
+                           {snackbarMessage}
+                       </Alert>
+                   </Snackbar>
+   
+                   {selectedRole !== "OWNER" && <Grid item xs={12} md={12}>
+                       <Grid container sx={{ alignItems: "center", justifyContent: "center" }} spacing={2}>
+                           
+   
+                           <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                               <Button
+                                   variant="contained"
+                                   sx={{
+                                       background: "#ffa500",
+                                       color: theme.palette.background.default,
+                                       cursor: "pointer",
+                                       textTransform: "none",
+                                       minWidth: "150px",
+                                       minHeight: "35px",
+                                       display: "flex",
+                                       alignItems: "center",
+                                       justifyContent: "center",
+                                       '&:hover': {
+                                           background: '#ffc04d',
+                                       },
+                                   }}
+                                   onClick={handleEditLease}
+                                   size="small"
+                               >
+                                   <Typography sx={{
+                                       textTransform: "none",
+                                       color: theme.typography.primary.black,
+                                       fontWeight: theme.typography.secondary.fontWeight,
+                                       fontSize: theme.typography.smallFont,
+                                       whiteSpace: "nowrap",
+                                       marginLeft: "1%",
+                                   }}>
+                                       {currentLease.lease_renew_status === "PM RENEW REQUESTED" || currentLease.lease_renew_status === "RENEW REQUESTED" ? 
+                       "Review Renewal Application" : 
+                       "Renew Lease"}
+                                   </Typography>
+                               </Button>
+                           </Grid>
+   
+                           <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                               <Button
+                                   variant="contained"
+                                   sx={{
+                                       background: "#D4736D",
+                                       color: theme.palette.background.default,
+                                       cursor: "pointer",
+                                       textTransform: "none",
+                                       minWidth: "150px",
+                                       minHeight: "35px",
+                                       display: "flex",
+                                       alignItems: "center",
+                                       justifyContent: "center",
+                                       '&:hover': {
+                                           background: '#DEA19C',
+                                       },
+                                   }}
+                                   size="small"
+                                   onClick={handleDeleteButtonClick}
+                               >
+                                   <Typography sx={{
+                                       textTransform: "none",
+                                       color: theme.typography.primary.black,
+                                       fontWeight: theme.typography.secondary.fontWeight,
+                                       fontSize: theme.typography.smallFont,
+                                       whiteSpace: "nowrap",
+                                       marginLeft: "1%",
+                                   }}>
+                                       End Lease
+                                   </Typography>
+                               </Button>
+                           </Grid>
+                       </Grid>
+                   </Grid>}
+                   
+                   </Grid>
+           
+            )}
 
-                {tenantWithId && tenantWithId.length > 0 && (
-                    <Grid item xs={12} md={12}>
-                        <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                            <TenantDetails isMobile={isMobile} tenantWithId={tenantWithId} setTenantWithId={setTenantWithId} />
-                        </Paper>
-                    </Grid>
-                )}
-                <Grid item xs={12} md={12}>
-                    <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                        {selectedRole === "OWNER" && leaseFees &&
-                            <FeesDetails isMobile={isMobile} isEditable={false} getDateAdornmentString={getDateAdornmentString} leaseFees={leaseFees} setLeaseFees={setLeaseFees} />
-                        }
-                        {selectedRole !== "OWNER" && leaseFees &&
-                            <FeesDetails isMobile={isMobile} isEditable={true} getDateAdornmentString={getDateAdornmentString} leaseFees={leaseFees} setLeaseFees={setLeaseFees} />
-                        } 
-                    </Paper>
-                </Grid>
-                <Grid item xs={12} md={12}>
-                    <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                        <Accordion sx={{ backgroundColor: color }}>
-                            <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls="occupants-content"
-                                id="occupants-header"
-                            >
-                                <Grid container>
-                                    <Grid item md={11.2}>
-                                        <Typography
-                                            sx={{
-                                                color: "#160449",
-                                                fontWeight: theme.typography.primary.fontWeight,
-                                                fontSize: theme.typography.small,
-                                                width: "100%",
-                                                textAlign: isMobile? "left" : 'center',
-                                                paddingBottom: "10px",
-                                                paddingTop: "5px",
-                                                flexGrow: 1,
-                                                paddingLeft: isMobile? "5px" : "50px",
-                                            }}
-                                            paddingTop="5px"
-                                            paddingBottom="10px"
-                                        >
-                                            Occupants Details
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item md={0.5} />
-                                </Grid>
-
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                {selectedRole === "OWNER" && leaseAdults &&
-                                    <AdultOccupant isEditable={false} leaseAdults={leaseAdults} relationships={relationships} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_adults"}/>
-                                }
-                                {selectedRole !== "OWNER" && leaseAdults &&
-                                    <AdultOccupant isEditable={true} leaseAdults={leaseAdults} relationships={relationships} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_adults"}/>
-                                }
-                                {selectedRole === "OWNER" && leaseChildren &&
-                                    <ChildrenOccupant isEditable={false} leaseChildren={leaseChildren} relationships={relationships} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData}  dataKey={"lease_children"}/>
-                                }
-                                {selectedRole !== "OWNER" && leaseChildren &&
-                                    <ChildrenOccupant isEditable={true} leaseChildren={leaseChildren} relationships={relationships} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData}  dataKey={"lease_children"}/>
-                                }
-                                {selectedRole === "OWNER" && leasePets &&
-                                    <PetsOccupant isEditable={false} leasePets={leasePets} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_pets"}/>
-                                }
-                                {selectedRole !== "OWNER" && leasePets &&
-                                    <PetsOccupant isEditable={true} leasePets={leasePets} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_pets"}/>
-                                }
-                                {selectedRole === "OWNER" && leaseVehicles &&
-                                    <VehiclesOccupant isEditable={false} leaseVehicles={leaseVehicles} states={states} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_vehicles"}/>
-                                }
-                                {selectedRole !== "OWNER" && leaseVehicles &&
-                                    <VehiclesOccupant isEditable={true} leaseVehicles={leaseVehicles} states={states} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_vehicles"}/>
-                                }
-                            </AccordionDetails>
-                        </Accordion>
-                    </Paper>
-                </Grid>
-                <Grid item xs={12} md={12}>
-                    <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                        {selectedRole === "OWNER" && <Documents isMobile={isMobile} fromRenew={true} isEditable={false} setIsPreviousFileChange={setIsPreviousFileChange} documents={documents} setDocuments={setDocuments} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_documents"} />}
-                        {selectedRole !== "OWNER" && <Documents isMobile={isMobile} fromRenew={true} isEditable={true} setIsPreviousFileChange={setIsPreviousFileChange} documents={documents} setDocuments={setDocuments} editOrUpdateLease={editOrUpdateLease} setModifiedData={setModifiedData} modifiedData={modifiedData} dataKey={"lease_documents"} />}
-                    </Paper>
-                </Grid>
-
-                <Grid item xs={12} md={12}>
-                    <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                        <UtilitiesManager newUtilities={newUtilities} utils={utilities}
-                            utilitiesMap={utilitiesMap} handleNewUtilityChange={handleNewUtilityChange}
-                            remainingUtils={remainingUtils} setRemainingUtils={setRemainingUtils}
-                            setNewUtilities={setNewUtilities} />
-                    </Paper>
-                </Grid>
-
-                <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-                    <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
-                        <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
-                        {snackbarMessage}
-                    </Alert>
-                </Snackbar>
-
-                {selectedRole !== "OWNER" && <Grid item xs={12} md={12}>
-                    <Grid container sx={{ alignItems: "center", justifyContent: "center" }} spacing={2}>
-                        
-
-                        <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
-                            <Button
-                                variant="contained"
-                                sx={{
-                                    background: "#ffa500",
-                                    color: theme.palette.background.default,
-                                    cursor: "pointer",
-                                    textTransform: "none",
-                                    minWidth: "150px",
-                                    minHeight: "35px",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    '&:hover': {
-                                        background: '#ffc04d',
-                                    },
-                                }}
-                                onClick={handleEditLease}
-                                size="small"
-                            >
-                                <Typography sx={{
-                                    textTransform: "none",
-                                    color: theme.typography.primary.black,
-                                    fontWeight: theme.typography.secondary.fontWeight,
-                                    fontSize: theme.typography.smallFont,
-                                    whiteSpace: "nowrap",
-                                    marginLeft: "1%",
-                                }}>
-                                    {currentLease.lease_renew_status === "PM RENEW REQUESTED" || currentLease.lease_renew_status === "RENEW REQUESTED" ? 
-                    "Review Renewal Application" : 
-                    "Renew Lease"}
-                                </Typography>
-                            </Button>
-                        </Grid>
-
-                        <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
-                            <Button
-                                variant="contained"
-                                sx={{
-                                    background: "#D4736D",
-                                    color: theme.palette.background.default,
-                                    cursor: "pointer",
-                                    textTransform: "none",
-                                    minWidth: "150px",
-                                    minHeight: "35px",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    '&:hover': {
-                                        background: '#DEA19C',
-                                    },
-                                }}
-                                size="small"
-                                onClick={handleDeleteButtonClick}
-                            >
-                                <Typography sx={{
-                                    textTransform: "none",
-                                    color: theme.typography.primary.black,
-                                    fontWeight: theme.typography.secondary.fontWeight,
-                                    fontSize: theme.typography.smallFont,
-                                    whiteSpace: "nowrap",
-                                    marginLeft: "1%",
-                                }}>
-                                    End Lease
-                                </Typography>
-                            </Button>
-                        </Grid>
-                    </Grid>
-                </Grid>}
-            </Grid>
-        </Paper>
+            {rightPane.type === "filePreview" && (
+                   <Grid container sx={{ marginTop: '15px', marginBottom: '15px', alignItems: 'center', justifyContent: 'center' }}>
+                   <Grid item xs={12} md={12}>
+                       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", paddingBottom: "10px" }}>
+                           <Typography
+                               sx={{
+                                   color: "#160449",
+                                   fontWeight: theme.typography.primary.fontWeight,
+                                   fontSize: theme.typography.largeFont,
+                                   textAlign: 'center'
+                               }}
+                           >
+                               {currentLease.property_address} {currentLease.property_unit}, {currentLease.property_city} {currentLease.property_state} {currentLease.property_zip}
+                           </Typography>
+                           {signedLease && <Button
+                               sx={{
+                                   padding: "0px",
+                                   '&:hover': {
+                                       backgroundColor: theme.palette.form.main,
+                                   },
+                               }}
+                               className=".MuiButton-icon"
+                               onClick={() =>
+                                   window.open(signedLease.link, "_blank", "rel=noopener noreferrer")
+                               }
+                           >
+                               <img src={LeaseIcon} />
+                           </Button>}
+                       </Box>
+                       <Box sx={{ display: "block" }}>
+                           <Typography
+                               sx={{
+                                   color: "#160449",
+                                   fontWeight: theme.typography.primary.fontWeight,
+                                   fontSize: theme.typography.largeFont,
+                                   textAlign: 'center'
+                               }}
+                           >
+                               {currentLease.lease_property_id}
+                           </Typography>
+                       </Box>
+                       <Box sx={{ display: "block" }}>
+                           <Typography
+                               sx={{
+                                   color: "#160449",
+                                   fontWeight: theme.typography.primary.fontWeight,
+                                   fontSize: theme.typography.largeFont,
+                                   textAlign: 'center'
+                               }}
+                           >
+                               {currentLease.lease_uid}
+                           </Typography>
+                       </Box>
+                   </Grid>
+                 
+                   <DocumentPreview file={rightPane.file} onClose={rightPane.onClose} />
+                   </Grid>
+           
+            )}
+         </Paper>
     </Box >
 
 );
 }
+
+function DocumentPreview({ file, onClose  }) {
+    const previewRef = useRef(null);
+      const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  
+      const handleMouseDown = (e) => {
+          const preview = previewRef.current;
+          if (preview) {
+            const shiftX = e.clientX - preview.getBoundingClientRect().left;
+            const shiftY = e.clientY - preview.getBoundingClientRect().top;
+      
+            setDragOffset({ x: shiftX, y: shiftY });
+      
+            const onMouseMove = (e) => {
+              const newX = e.clientX - dragOffset.x;
+              const newY = e.clientY - dragOffset.y;
+      
+              preview.style.left = `${newX}px`;
+              preview.style.top = `${newY}px`;
+            };
+      
+            const onMouseUp = () => {
+              document.removeEventListener('mousemove', onMouseMove);
+              document.removeEventListener('mouseup', onMouseUp);
+            };
+      
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+          }
+        };
+  
+    return (
+     <Box
+      sx={{
+          width: '100%',
+          height: '500px',
+          backgroundColor: 'white',
+          boxShadow: 3,
+          borderRadius: 2, // Rounded edges for the outer box
+          overflow: 'hidden', // Ensures rounded corners are applied to content
+      }}
+      onMouseDown={handleMouseDown}
+  >
+  <Box
+      sx={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding:"10px",
+      backgroundColor: '#f0f0f0',
+      }}
+  >
+      <Typography variant="h6">{file?.filename || 'File Preview'}</Typography>
+      <IconButton onClick={onClose}>
+          <CloseIcon />
+      </IconButton>
+  </Box>
+  <Box
+      sx={{
+      height: '100%',
+      width: '100%',
+      overflowY: 'auto',
+      // padding: "1px",
+      }}
+  >
+      {file ? (
+          <iframe
+              src={file.link}
+              width="100%"
+              height="100%"
+              title="File Preview"
+              style={{
+                border: 'none',
+                borderBottomLeftRadius: 8, // Rounded bottom left corner
+                borderBottomRightRadius: 8, // Rounded bottom right corner
+              }}
+          />
+      ) : (
+          <Typography>No file selected</Typography>
+      )}
+  </Box>
+  </Box>
+  );
+  }
