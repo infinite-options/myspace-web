@@ -483,7 +483,7 @@ const TenantDashboard = () => {
               <Grid container spacing={3} sx={{ marginTop: "1px" }}>
                 {rightPane?.type ? (
                   /* Render the rightPane component if available */
-                  <Grid item xs={12} sx={{ flex: 1 }} ref={rightPaneRef}>
+                  <Grid item xs={12} sx={{ flex: 1 }} ref={rightPaneRef} marginBottom={isMobile ? "40px" : "0px"}>
                     {renderRightPane()}
                   </Grid>
                 ) : (
