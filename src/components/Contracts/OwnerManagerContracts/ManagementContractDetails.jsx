@@ -103,6 +103,9 @@ function ManagementContractDetails(props) {
   }, []);
 
   const handleBackBtn = () => {
+    if(props.setViewRHS){
+      props.setViewRHS(false)
+    }
     if (props.page && props.page === "properties" && props.handleBackClick) {
       props.handleBackClick();
     } else {

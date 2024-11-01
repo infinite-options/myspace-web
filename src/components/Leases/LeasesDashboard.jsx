@@ -9,6 +9,7 @@ import axios from "axios";
 import theme from "../../theme/theme";
 import RenewLease from "./RenewLease";
 import { useUser } from '../../contexts/UserContext';
+import useMediaQuery from "@mui/material/useMediaQuery";
 import EndLeaseButton from "./EndLeaseButton";
 import TenantApplicationNav from "../Applications/TenantApplicationNav";
 
@@ -22,6 +23,8 @@ export default function LeasesDashboard() {
     const [viewMode, setViewMode] = useState("default"); // New state for view mode
     const [applicationIndex, setApplicationIndex] = useState(0); // New state for application index
     const [propertyList, setPropertyList] = useState([]);
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+    const [viewRHS, setViewRHS] = useState(false)
 
     const fetchProperties = async () => {
         const profileId = getProfileId();
@@ -123,38 +126,46 @@ export default function LeasesDashboard() {
                         <CircularProgress color="inherit" />
                     </Backdrop>
                 ) : (<Grid container spacing={5}>
-                    <Grid item xs={12} md={leaseDetails && leaseDetails.length > 0 ? 4 : 12}>
-                        <Leases leaseDetails={leaseDetails} setSelectedLeaseId={setSelectedLeaseId} />
-                    </Grid>
-                    {viewMode === "default" && selectedLeaseId != null && (
-                            <Grid item xs={12} md={8}>
-                                <RenewLease
-                                    leaseDetails={leaseDetails}
-                                    selectedLeaseId={selectedLeaseId}
-                                    handleUpdate={() => setIsUpdate(!isUpdate)}
-                                    onReviewRenewal={handleReviewRenewal} // Pass callback to handle view change
-                                />
-                            </Grid>
+                        {(!isMobile || !viewRHS) && (<Grid item xs={12} md={leaseDetails && leaseDetails.length > 0 ? 4 : 12}>
+                            <Leases leaseDetails={leaseDetails} setSelectedLeaseId={setSelectedLeaseId} setViewRHS={setViewRHS}/>
+                        </Grid>)}
+
+                        {(!isMobile || viewRHS) && viewMode === "default" && selectedLeaseId != null && (
+                                <Grid item xs={12} md={8}>
+                                    <RenewLease
+                                        setViewRHS={setViewRHS}
+                                        leaseDetails={leaseDetails}
+                                        selectedLeaseId={selectedLeaseId}
+                                        handleUpdate={() => setIsUpdate(!isUpdate)}
+                                        onReviewRenewal={handleReviewRenewal} // Pass callback to handle view change
+                                    />
+                                </Grid>
                         )}
 
                         {/* Show TenantApplicationNav when viewMode is 'reviewApplication' */}
                         {console.log('---propertyList---', propertyList, selectedLeaseId)}
 
-                        {viewMode === "reviewApplication" && applicationIndex != null && (
+                        {(!isMobile || viewRHS) && viewMode === "reviewApplication" && applicationIndex != null && (
                             <Grid item xs={12} md={8}>
                                 <TenantApplicationNav
                                     index={applicationIndex}
                                     propertyIndex={applicationIndex}
                                     property={propertyList.find(property => property.lease_uid === selectedLeaseId)}
                                     isDesktop={true}
-                                    onBackClick={() => setViewMode("default")} // Switch back to default view
+                                    onBackClick={() => {
+                                        if(setViewRHS){
+                                            setViewRHS(false)
+                                        }
+                                        setViewMode("default")
+                                    }} // Switch back to default view
                                 />
                             </Grid>
                         )}
-                    {selectedLeaseId != null && isEndClicked === true && (<Grid item xs={12} md={8}>
-                        <EndLeaseButton theme={theme} leaseDetails={leaseDetails} selectedLeaseId={selectedLeaseId} setIsEndClicked={setIsEndClicked} handleUpdate={handleUpdate}/>
+
+                        {(!isMobile || viewRHS) && selectedLeaseId != null && isEndClicked === true && (<Grid item xs={12} md={8}>
+                            <EndLeaseButton theme={theme} leaseDetails={leaseDetails} selectedLeaseId={selectedLeaseId} setIsEndClicked={setIsEndClicked} handleUpdate={handleUpdate}/>
+                        </Grid>)}
                     </Grid>)}
-                </Grid>)}
             </Container>
         </ThemeProvider>
     )

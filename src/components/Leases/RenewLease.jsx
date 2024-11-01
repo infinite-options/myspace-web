@@ -25,6 +25,7 @@ import UtilitiesManager from "./Utilities";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import FeesDetails from "./FeesDetails";
 import LeaseSummary from "./LeaseSummary";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { getDateAdornmentString } from "../../utils/dates";
 import CloseIcon from '@mui/icons-material/Close';
 import ListsContext from "../../contexts/ListsContext";
@@ -40,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClicked, handleUpdate, onReviewRenewal }) {
+export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClicked, handleUpdate, onReviewRenewal, setViewRHS }) {
     const navigate = useNavigate();
     const { getList, } = useContext(ListsContext);	
     const classes = useStyles();
@@ -394,6 +395,11 @@ const handleEditLease = () => {
     }
 };
 
+const handleBackButton = () => {
+    if(isMobile && setViewRHS){
+      setViewRHS(false)
+    }
+  }
 
 return (
     <Box
