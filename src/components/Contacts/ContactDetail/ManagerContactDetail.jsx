@@ -45,11 +45,12 @@ import refundIcon from "../../Property/refundIcon.png"
 
 
 
-const ManagerContactDetail = ({ data, currentIndex, setCurrentIndex, propertyIndex, fromPage }) => {
+const ManagerContactDetail = ({ data, currentIndex, setCurrentIndex, propertyIndex, fromPage, setViewRHS }) => {
 
     const { selectedRole, getProfileId } = useUser();  
     const [ contactDetails, setContactDetails ] = useState([]);
     let navigate = useNavigate();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   
     useEffect(() => {
       setContactDetails(data);
@@ -72,7 +73,9 @@ const ManagerContactDetail = ({ data, currentIndex, setCurrentIndex, propertyInd
                   "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
                 }}
                 onClick={() => {
-                  if(fromPage && propertyIndex >= 0){
+                  if(isMobile && setViewRHS){
+                    setViewRHS(false)
+                  }else if(fromPage && propertyIndex >= 0){
                     navigate("/properties", { state: { index : propertyIndex } });
                   }else{
                     navigate(-1)

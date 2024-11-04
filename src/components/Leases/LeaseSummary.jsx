@@ -231,7 +231,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                                         elevation: '0',
                                         boxShadow: 'none',
                                         flexGrow: 1,
-                                        objectFit: 'cover',
+                                        objectFit: isMobile ? "contain" : "cover",
                                         width: '100%',
                                         height: '100px',
                                         marginTop: "5px"

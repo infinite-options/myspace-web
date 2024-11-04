@@ -423,7 +423,18 @@ return (
             {rightPane.type === "tenantApplication" && (
                    <Grid container sx={{ marginTop: '15px', marginBottom: '15px', alignItems: 'center', justifyContent: 'center' }}>
                    <Grid item xs={12} md={12}>
-                       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", paddingBottom: "10px" }}>
+                       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", paddingBottom: "10px"}}>
+                            {isMobile && (<Box position={"absolute"} left={0}>
+                                <Button onClick={handleBackButton}>
+                                    <ArrowBackIcon
+                                        sx={{
+                                            color: "#160449",
+                                            fontSize: "25px",
+                                            margin: "5px",
+                                        }}
+                                    />
+                                </Button>
+                            </Box>)}
                            <Typography
                                sx={{
                                    color: "#160449",
@@ -432,7 +443,7 @@ return (
                                    textAlign: 'center'
                                }}
                            >
-                               {currentLease.property_address} {currentLease.property_unit}, {currentLease.property_city} {currentLease.property_state} {currentLease.property_zip}
+                               {currentLease.property_address} {currentLease.property_unit}, <br></br>{currentLease.property_city} {currentLease.property_state}, {currentLease.property_zip}
                            </Typography>
                            {signedLease && <Button
                                sx={{

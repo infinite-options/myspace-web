@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Modal, Box, Checkbox, Paper } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Modal, Box, Checkbox, Paper, Button, Stack } from "@mui/material";
 import axios from "axios";
 import React from "react";
 import { useEffect, useState } from "react";
@@ -7,8 +7,10 @@ import AllOwnerIcon from "./AllOwnerIcon.png";
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useLocation, useNavigate } from "react-router-dom";
 import theme from "../../theme/theme";
+import { useMediaQuery } from "@mui/material";
 
 import APIConfig from "../../utils/APIConfig";
 
@@ -19,6 +21,8 @@ export default function Leases(props) {
   // console.log("Selected Role: ", selectedRole);
 
   const [open, setOpen] = useState(false);
+  let navigate = useNavigate();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [owner_checkbox_open, set_owner_checkbox_open] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
   const currentMonth = new Date().getMonth() + 1; // Adding 1 because getMonth() returns 0-based index
@@ -261,16 +265,40 @@ export default function Leases(props) {
             paddingRight: "20px",
           }}
         >
-          <Box
+          <Stack
+            direction='row'
+            justifyContent='space-between'
+            alignItems='center'
             sx={{
-              color: "#160449",
-              textAlign: "center",
-              fontSize: "20px",
-              fontWeight: "bold",
+              paddingBottom: "20px",
+              paddingLeft: "0px",
+              paddingRight: "0px",
             }}
           >
-            Leases Expiring
-          </Box>
+            {isMobile && (<Box component='span' display='flex' justifyContent='flex-start' alignItems='flex-start' position='relative'>
+              <Button onClick={() => {navigate(-1)}}>
+                <ArrowBackIcon
+                  sx={{
+                    color: "#160449",
+                    fontSize: "25px",
+                    margin: "5px",
+                  }}
+                />
+              </Button>
+            </Box>)}
+            <Box 
+              component='span' 
+              sx={{
+                color: "#160449",
+                fontSize: "20px",
+                fontWeight: "bold",
+                paddingRight: isMobile ? "40px" : "0px" 
+              }} 
+              display='flex' justifyContent='center' alignItems='center' position='relative' flex={2}
+            >
+              Leases Expiring            
+            </Box >
+          </Stack>
           <Box
             sx={{
               display: "flex",

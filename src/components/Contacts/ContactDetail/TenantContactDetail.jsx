@@ -34,6 +34,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import EmailIcon from '../../Property/messageIconDark.png';
 import PhoneIcon from '../../Property/phoneIconDark.png';
 import AddressIcon from '../../Property/addressIconDark.png';
+import refundIcon from "../../Property/refundIcon.png"
 import maintenanceIcon from '../../Property/maintenanceIcon.png';
 import User_fill from '../../../images/User_fill_dark.png';
 import { maskSSN, maskEIN, formattedPhoneNumber } from '../../utils/privacyMasking';
@@ -49,11 +50,13 @@ import ContactsList from '../ContactsList';
 
 import ProfileInformation from './ProfileInformation';
 
-const TenantContactDetail = ({ data, currentIndex, setCurrentIndex }) => {
+const TenantContactDetail = ({ data, currentIndex, setCurrentIndex, propertyIndex, fromPage, setViewRHS }) => {
 	const { selectedRole, getProfileId } = useUser();
 	const [propertiesData, setPropertiesData] = useState([]);
 	const [contractsData, setContractsData] = useState([]);
 	const [contactDetails, setContactDetails] = useState([]);
+	let navigate = useNavigate();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
 	useEffect(() => {
 		setContactDetails(data);
@@ -113,6 +116,26 @@ const TenantContactDetail = ({ data, currentIndex, setCurrentIndex }) => {
 			}}
 		>
 			<Grid item xs={12} container justifyContent="center" sx={{ height: '50px' }}>
+				<Button
+					sx={{
+					textTransform: "none",
+					color: theme.typography.common.blue,
+					fontWeight: theme.typography.common.fontWeight,
+					fontSize: "16px",
+					"&:hover, &:focus, &:active": { background: theme.palette.primary.main },
+					}}
+					onClick={() => {
+						if(isMobile && setViewRHS){
+							setViewRHS(false)
+						}else if(fromPage && propertyIndex >= 0){
+							navigate("/properties", { state: { index : propertyIndex } });
+						}else{
+							navigate(-1)
+						}
+					}}
+				>
+					<img src={refundIcon} style={{ width: "25px", height: "25px", margin: "5px" }} />
+				</Button>
 				<Typography sx={{ fontSize: '35px', fontWeight: 'bold', color: '#160449' }}>Tenant Contact</Typography>
 			</Grid>
 			<Grid item xs={12} container justifyContent="center">

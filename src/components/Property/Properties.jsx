@@ -322,6 +322,9 @@ function Properties() {
     // console.log("View leases before before Index: ", propertyIndex);  // Shows the selected Property
     // console.log("View leases before: ", propertyList[propertyIndex]); // Shows the Property List details of the selected Property
     // console.log("View leases", propertyList[propertyIndex].lease_uid);  // Shows the specific Lease UID
+    if(isMobile){
+      setViewRHS(true)
+    }
     setRHS("AddProperty");
   };
 
@@ -339,6 +342,9 @@ function Properties() {
   };
 
   const handleBackClick = () => {
+    if(isMobile){
+      setViewRHS(true)
+    }
     setRHS("PropertyNavigator");
   };
 

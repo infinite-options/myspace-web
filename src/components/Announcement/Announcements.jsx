@@ -15,7 +15,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import APIConfig from "../../utils/APIConfig";
 
-export default function Announcements({sentAnnouncementData, recvAnnouncementData}) {
+export default function Announcements({sentAnnouncementData, recvAnnouncementData, setView, handleBack}) {
   // console.log("intial commit");
   const { user, getProfileId, selectedRole, selectRole, Name } = useUser();
   const [announcementData, setAnnouncementData] = useState([]);
@@ -203,6 +203,17 @@ export default function Announcements({sentAnnouncementData, recvAnnouncementDat
     setSnackbarOpen(true);
   };
 
+  const handleBackButton = () => {
+    if(selectedRole === "OWNER" && setView){
+      setView("dashboard")
+      // navigate("/ownerDashboard")
+    }else if(selectedRole === "MANAGER"){
+      navigate("/managerDashboard")
+    }else if(selectedRole === "TENANT" && handleBack){
+      handleBack()
+    }
+  }
+
   return (
     <div className='announcement-container'>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -213,17 +224,31 @@ export default function Announcements({sentAnnouncementData, recvAnnouncementDat
         sx={{
           display: "flex",
           flexDirection: "row",
-          justifyContent: "space-evenly",
+          justifyContent: "space-between",
           width: "100%",
         }}
       >
+        <Box component='span' display='flex' justifyContent='flex-start' alignItems='flex-start' position='relative'>
+          <Button onClick={handleBackButton}>
+            <ArrowBackIcon
+              sx={{
+                color: "black",
+                fontSize: "30px",
+                margin: "5px",
+              }}
+            />
+          </Button>
+        </Box>
         <Box
           className='announcement-title-text'
           sx={{
-            width: "95%",
+            width: "100%",
             display: "flex",
             flexDirection: "row",
             justifyContent: "center",
+            alignItems: "center",
+            position: "relative",
+            flex: 1
           }}
         >
           <Box className='announcement-title-text'>{"Announcements 1"}</Box>
@@ -245,6 +270,7 @@ export default function Announcements({sentAnnouncementData, recvAnnouncementDat
             display: "flex",
             flexDirection: "row",
             justifyContent: "flex-end",
+            position: "relative",
           }}
         >
           <Button

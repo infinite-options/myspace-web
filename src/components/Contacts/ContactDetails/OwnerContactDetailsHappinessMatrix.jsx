@@ -17,6 +17,7 @@ import AddressIcon from "../../Property/addressIconDark.png";
 import maintenanceIcon from "../../Property/maintenanceIcon.png";
 import { maskSSN, maskEIN } from "../../utils/privacyMasking";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import refundIcon from "../../Property/refundIcon.png"
 import CryptoJS from "crypto-js";
 
 // function maskSSNnew(ssn) {
@@ -701,10 +702,13 @@ const OwnerContactDetail = ({
   filteredCashflowDetailsByProperty,
   filteredCashflowDetailsByPropertyByMonth,
   setShowSpinner,
+  propertyIndex, fromPage, setViewRHS
 }) => {
   const { getProfileId } = useUser();
   const [propertiesData, setPropertiesData] = useState([]);
   const [contractsData, setContractsData] = useState([]);
+  let navigate = useNavigate();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   console.log("OwnerContactDetail - filteredCashflowDetails - ", filteredCashflowDetails);
   console.log("OwnerContactDetail - filteredCashflowDetailsByProperty - ", filteredCashflowDetailsByProperty);
@@ -754,6 +758,26 @@ const OwnerContactDetail = ({
   return (
     <Grid container sx={{ backgroundColor: theme.palette.primary.main, borderRadius: "10px", padding: "10px" }}>
       <Grid item xs={12} container justifyContent='center' sx={{ height: "50px" }}>
+        <Button
+          sx={{
+          textTransform: "none",
+          color: theme.typography.common.blue,
+          fontWeight: theme.typography.common.fontWeight,
+          fontSize: "16px",
+          "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
+          }}
+          onClick={() => {
+            if(isMobile && setViewRHS){
+              setViewRHS(false)
+            }else if(fromPage && propertyIndex >= 0){
+              navigate("/properties", { state: { index : propertyIndex } });
+            }else{
+              navigate(-1)
+            }
+          }}
+        >
+          <img src={refundIcon} style={{ width: "25px", height: "25px", margin: "5px" }} />
+        </Button>
         <Typography sx={{ fontSize: "35px", fontWeight: "bold", color: "#160449" }}>Owner Contact</Typography>
       </Grid>
       <Grid item xs={12} container justifyContent='center'>

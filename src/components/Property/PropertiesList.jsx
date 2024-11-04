@@ -12,6 +12,8 @@ import { get } from "../utils/api";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { DataGrid, gridClasses } from "@mui/x-data-grid";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import APIConfig from "../../utils/APIConfig";
 import PropertyDetail from "./PropertyDetail";
 import PropertyDetail2 from "./PropertyDetail2";
@@ -113,6 +115,7 @@ export default function PropertiesList(props) {
   // const [returnIndex, setReturnIndex] = useState(0);
   const [initialPropInRent, setInitialPropInRent] = useState("");
   const [isDataReady, setIsDataReady] = useState(false);
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   // console.log("In Property List - propertyList outside: ", propertyList);
   // console.log("In Property List - displayList outside: ", displayedItems);
@@ -524,7 +527,24 @@ export default function PropertiesList(props) {
           }}
         >
           <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ padding: theme.spacing(2), position: "relative" }}>
-            <Box sx={{ flex: 1 }} />
+            {!isMobile && (<Box sx={{ flex: 1 }} />)}
+            {isMobile && (<Box component='span' display='flex' justifyContent='flex-start' alignItems='flex-start' position='relative' flex={"1"}>
+              <Button onClick={() => {
+                if(selectedRole === "OWNER"){
+                  navigate("/ownerDashboard")
+                }else if(selectedRole === "MANAGER"){
+                  navigate("/managerDashboard")
+                }
+              }}>
+                <ArrowBackIcon
+                  sx={{
+                    color: theme.typography.primary.black,
+                    fontSize: "30px",
+                    margin: "5px",
+                  }}
+                />
+              </Button>
+            </Box>)}
             <Box position='absolute' left='50%' sx={{ transform: "translateX(-50%)" }}>
               <Typography
                 sx={{

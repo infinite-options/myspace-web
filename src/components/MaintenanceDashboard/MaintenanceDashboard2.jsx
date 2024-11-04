@@ -318,23 +318,23 @@ export default function MaintenanceDashboard2() {
                     </Typography>
                   </Stack>
                   <Grid 
-  container
-  sx={{
-    display: "flex",
-    flexDirection: isMobile ? "column" : "row", // Switch layout direction based on screen size
-    justifyContent: "space-between",
-  }}
-  rowSpacing={isMobile ? 300 : 200}  // Add spacing between rows in mobile
-  columnSpacing={isMobile ? 0 : 10}  // Remove column spacing in mobile
-  >
+                    container
+                    sx={{
+                      display: "flex",
+                      flexDirection: isMobile ? "column" : "row", // Switch layout direction based on screen size
+                      justifyContent: "space-between",
+                    }}
+                    rowSpacing={isMobile ? 30 : 200}  // Add spacing between rows in mobile
+                    columnSpacing={isMobile ? 0 : 10}  // Remove column spacing in mobile
+                  >
                     <Grid item xs={12} md={6} sx={{ marginBottom: "0px", marginTop: "0px" }}>
                       <RadialBarChart data={graphData} />
                     </Grid>
                     {!isMobile && (
-              <Grid item xs={12} md={6} sx={{ marginBottom: "15px", marginTop: "25px" }}>
-                <MaintenanceCashflowWidget data={cashflowData} />
-              </Grid>
-            )}
+                      <Grid item xs={12} md={6} sx={{ marginBottom: "15px", marginTop: "25px" }}>
+                        <MaintenanceCashflowWidget data={cashflowData} />
+                      </Grid>
+                    )}
                   </Grid>
                 </Grid>
                 {isMobile && (

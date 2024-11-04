@@ -401,7 +401,7 @@ const TenantDashboard = () => {
             />
           );
         case "announcements":
-          return <Announcements setRightPane={setRightPane} />;
+          return <Announcements handleBack={handleBack}/>;
         case "tenantEndLease":
           return <TenantEndLeaseButton leaseDetails={rightPane.state.leaseDetails} setRightPane={setRightPane} isMobile={isMobile} setViewRHS={setViewRHS} />;
         default:
