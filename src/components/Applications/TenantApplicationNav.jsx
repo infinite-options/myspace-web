@@ -467,7 +467,7 @@ const TenantApplicationNav = (props) => {
 {/* Documents */}
             <Paper  elevation={2} sx={{ backgroundColor: theme.palette.form.main, padding: "20px"}}>
        
-                    <Documents documents={applicationDocuments} setDocuments={setApplicationDocuments} isEditable={false} isAccord={false} customName={"APPLICATION DOCUMENTS:"} />
+                    <Documents setRHS={props.setRHS}setSelectedDocument={props.setSelectedDocument} documents={applicationDocuments} setDocuments={setApplicationDocuments} isEditable={false} isAccord={false} customName={"APPLICATION DOCUMENTS:"} />
                
 
                   
