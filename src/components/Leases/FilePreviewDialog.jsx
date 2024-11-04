@@ -39,7 +39,7 @@ const FilePreviewDialog = ({file, onClose }) => {
             sx={{
                 position: 'relative',
 
-                top: '-500px',
+                top: '-400px',
                 left: '15%',
                 width: '500px',
                 height: '500px',
