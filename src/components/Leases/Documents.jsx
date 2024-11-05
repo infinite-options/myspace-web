@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Documents = ({ setRightPane, fromRenew, documents, setDocuments, setDeleteDocsUrl, setIsPreviousFileChange, isAccord=false, contractFiles, setContractFiles, contractFileTypes, setContractFileTypes, isEditable=true, customName, customUploadingName, isMobile }) => {
+const Documents = ({ setRightPane,setRHS, setSelectedDocument, fromRenew, documents, setDocuments, setDeleteDocsUrl, setIsPreviousFileChange, isAccord=false, contractFiles, setContractFiles, contractFileTypes, setContractFileTypes, isEditable=true, customName, customUploadingName, isMobile }) => {
 
   const { getList, } = useContext(ListsContext);	
   
@@ -458,7 +458,13 @@ const Documents = ({ setRightPane, fromRenew, documents, setDocuments, setDelete
   const handleFileClick = (file)=>{
     if(setRightPane){
       openPreviewPane(file);
-    } else {
+    } else if(setRHS){
+setRHS("filePreview");
+setSelectedDocument({
+  file: file,
+  onClose: () => setRHS("Applications") // go back to tenant application
+});
+    }else {
 
     setSelectedPreviewFile(file)
     setPreviewDialogOpen(true)
