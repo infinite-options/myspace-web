@@ -467,7 +467,7 @@ const PropertyListings = ({ setRightPane, isMobile, setViewRHS }) => {
             <Stack sx={{ padding: 5 }}>
               <PropertiesMap properties={displayProperties} onMarkerClick={handleMarkerClick}/>
             </Stack>
-            <Stack alignItems='center' justifyContent='center' sx={{ marginTop: "20px" }}>
+            {/* <Stack alignItems='center' justifyContent='center' sx={{ marginTop: "20px" }}>
               <Button
                 variant='contained'
                 sx={{
@@ -480,7 +480,7 @@ const PropertyListings = ({ setRightPane, isMobile, setViewRHS }) => {
               >
                 Reset Listings
               </Button>
-            </Stack>
+            </Stack> */}
             {displayProperties.length > 0 &&
               displayProperties.map((property, index) => {
                 var status = "";

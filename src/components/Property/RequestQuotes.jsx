@@ -314,7 +314,8 @@ const RequestQuotes = (props) => {
               <Box sx={{ padding: "10px" }}></Box>
               <Box
                 sx={{
-                  height: "295px",
+                  flex: 1,
+                  // height: "100%",
                   overflow: "auto",
                   paddingBottom: "20px",
                 }}
