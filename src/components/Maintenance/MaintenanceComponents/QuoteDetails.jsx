@@ -13,6 +13,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import NoImageAvailable from '../../../images/NoImageAvailable.png';
 import Documents from '../../Leases/Documents';
 import theme from "../../../theme/theme";
+import { DataGrid } from '@mui/x-data-grid';
 
 const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem, fetchAndUpdateQuotes, setRefresh}) => {
     // console.log('----QuoteDetails maintenanceQuotesForItem----', maintenanceItem);
@@ -38,16 +39,45 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
     const renderParts = (item) => {
         try {
             const expenses = JSON.parse(item.quote_services_expenses);
-            console.log('Expenses:', expenses);
+            // console.log('Expenses:', expenses);
+            const partsWithIDs = [];
             if (expenses.parts && expenses.parts.length > 0) {
+                expenses.parts.forEach((part, index) => {
+                    partsWithIDs.push({
+                        ...part,
+                        ID: index,
+                    });
+                });
+
+                // console.log('expenses.parts - ', expenses.parts);
                 const partsTotal = expenses.parts.reduce((total, part) => {
                     const cost = parseFloat(part.cost);
                     const quantity = parseFloat(part.quantity);
                     return total + (cost * quantity);
                 }, 0);
+
+                const columns = [                    
+                    {
+                      field: 'part',
+                      headerName: 'Part',
+                      width: 150,
+                    //   editable: true,
+                    },
+                    {
+                      field: 'quantity',
+                      headerName: 'Quantity',
+                      width: 150,                                            
+                    },
+                    {
+                      field: 'cost',
+                      headerName: 'Cost',                      
+                      width: 110,  
+                      valueFormatter: (params) => `$${params.value}`                    
+                    },                    
+                ];
                 return (
                     <Grid container sx={{ paddingTop: '10px' }} spacing={2}>
-                        {expenses.parts.map((part, index) => (
+                        {/* {expenses.parts.map((part, index) => (
                             <React.Fragment key={index}>
                                 <Grid item xs={4}>
                                     <Typography variant="body2" sx={{ color: '#2c2a75' }}>
@@ -65,7 +95,37 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                                     </Typography>
                                 </Grid>
                             </React.Fragment>
-                        ))}
+                        ))} */}
+                        <Grid item xs={12} sx={{marginBottom: '10px',}}>
+                            <DataGrid
+                                // rows={expenses.parts}
+                                rows={partsWithIDs}
+                                getRowId={row => row.ID}
+                                rowHeight={30}
+                                columnHeaderHeight={30}
+                                columns={columns}
+                                initialState={{
+                                    pagination: {
+                                        paginationModel: {
+                                            pageSize: 5,
+                                        },
+                                    },
+                                }}
+                                pageSizeOptions={[5]}                                     
+                                hideFooter={true}                       
+                                disableRowSelectionOnClick
+                                sx={{
+                                    '& .MuiDataGrid-cell': {
+                                        color: '#160449',                                        
+                                    },                                    
+                                    '& .MuiDataGrid-columnHeaderTitle': {
+                                        lineHeight: 'normal',
+                                        fontWeight: 'bold',
+                                        color: '#160449',
+                                    },
+                                }}
+                            />
+                        </Grid>
                         <Grid item xs={6}>
                             <Typography variant="body2" sx={{ color: '#2c2a75'}}>
                                 Parts Total:

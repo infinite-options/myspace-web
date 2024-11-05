@@ -65,7 +65,7 @@ function a11yProps(index) {
   }
 
 
-export default function WorkerMaintenanceRequestDetail({maintenance_request_index, propstatus, propmaintenanceItemsForStatus, alldata, maintenance_request_uid, setShowMaintenanceDetail}){
+export default function WorkerMaintenanceRequestDetail({maintenance_request_index, propstatus, propmaintenanceItemsForStatus, alldata, maintenance_request_uid, setShowMaintenanceDetail, refreshMaintenanceData}){
     console.log("----inside WorkerMaintenanceRequestDetail----");
     // console.log(maintenance_request_index, propstatus);
     const location = useLocation();
@@ -365,11 +365,11 @@ export default function WorkerMaintenanceRequestDetail({maintenance_request_inde
                                     : null
                                 }
                                  {colorStatus[value]?.mapping === "ACCEPTED" ?
-                                    <WorkerQuotesAccepted maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
+                                    <WorkerQuotesAccepted maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} refreshMaintenanceData={refreshMaintenanceData} />
                                     : null
                                 }
                                 {colorStatus[value]?.mapping === "SCHEDULED" ?
-                                    <WorkerScheduledMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
+                                    <WorkerScheduledMaintenance maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} refreshMaintenanceData={refreshMaintenanceData} />
                                     : null
                                 }
                                 {colorStatus[value]?.mapping === "FINISHED" ?

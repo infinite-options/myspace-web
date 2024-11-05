@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Modal, Box, Typography, Grid, RadioGroup, FormControlLabel, Radio, FormControl } from '@mui/material';
+import { Button, Modal, Box, Typography, Grid, RadioGroup, FormControlLabel, Radio, FormControl, IconButton, } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from "@mui/x-date-pickers";
@@ -95,8 +96,14 @@ function DateTimePickerModal(props) {
     }
     else if (props.completeTicket) {
         console.log("complete ticket", props.maintenanceItem.maintenance_request_uid, props.maintenanceItem.quote_info, availabilityDate, availabilityTime)
-        props.completeTicket(props.maintenanceItem.maintenance_request_uid, props.maintenanceItem.quote_info, availabilityDate, availabilityTime).then(
-            handleClose
+        props.completeTicket(props.maintenanceItem.maintenance_request_uid, props.maintenanceItem.quote_info, availabilityDate, availabilityTime).then( () =>
+            {
+                handleClose();
+                // if(props.refreshMaintenanceData){
+                //     props.refreshMaintenanceData();
+                // }
+                
+            }
         )
     } else{
         props.handleSubmit(props.maintenanceItem.maintenance_request_uid, availabilityDate, availabilityTime).then(
@@ -112,11 +119,31 @@ function DateTimePickerModal(props) {
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-      >
+      >        
         <Box sx={style}>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-                Close Ticket
-            </Typography>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                }}
+            >
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                    Close Ticket
+                </Typography>
+                <IconButton
+						onClick={handleClose}
+						sx={{
+							position: 'absolute',
+							top: 8,
+							right: 8,
+							color: '#3D5CAC',
+						}}
+					>
+						<CloseIcon />
+                </IconButton>
+
+            </Box>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
             {props.completeTicket ? (
                     <Grid container columnSpacing={5} padding={4} sx={{justifyContent: "left"}}>

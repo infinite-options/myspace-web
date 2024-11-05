@@ -26,8 +26,9 @@ export default function CompleteButton(props){
     let setShowMessage = props.setShowMessage;
     let setMessage = props.setMessage;
     let quotes = props.quotes;
-    let setRefresh = props.setRefresh; // Assuming setRefresh is passed as a prop
+    let setRefresh = props.setRefresh; // Assuming setRefresh is passed as a prop    
 
+    
     async function handleComplete(id, quotes, date, time){
         console.log("handleComplete quotes", quotes)
         let role = roleName();
@@ -45,7 +46,7 @@ export default function CompleteButton(props){
             }
     
             if (maintenanceItem.maintenance_assigned_business === getProfileId()){
-                CompleteTicket(id, date);
+                await CompleteTicket(id, date);
             } else if (maintenanceItem.maintenance_assigned_business !== getProfileId()){
                 if (maintenanceItem.maintenance_assigned_business === null){
                     try {
@@ -58,22 +59,22 @@ export default function CompleteButton(props){
                             body: formData,
                         });
                         if (response.status === 200) {
-                            CompleteTicket(id);
+                            await CompleteTicket(id);
                         }
                     } catch (error){
                         console.log("error", error);
                     }
                 } else {
-                    CompleteTicket(id, date);
+                    await CompleteTicket(id, date);
                     if (maintenanceItem.quote_status_ranked !== "FINISHED" && rankedQuote){
-                        FinishQuote(rankedQuote.maintenance_quote_uid);
+                        await FinishQuote(rankedQuote.maintenance_quote_uid);
                     }
                 }
             }
         } else if (role === "Maintenance" || role === "Maintenance Employee"){
-            FinishQuote(maintenanceItem.maintenance_quote_uid);
+            await FinishQuote(maintenanceItem.maintenance_quote_uid);
             if (maintenanceItem.maintenance_assigned_business === getProfileId()){
-                CompleteTicket(id);
+                await CompleteTicket(id);
             }
         } else {
             console.log("Unsupported role is trying to complete a ticket");
@@ -83,8 +84,12 @@ export default function CompleteButton(props){
         if (setRefresh) {
             setRefresh(true);
         }
+        if(props.refreshMaintenanceData){
+            props.refreshMaintenanceData();
+        }        
     }
 
+  
     function handleCancel(id, quotes){
         if (quotes && quotes.length > 0){
             for (let i = 0; i < quotes.length; i++){
@@ -137,6 +142,7 @@ export default function CompleteButton(props){
                 time={""}
                 completeTicket={handleComplete}
                 cancelTicket={handleCancel}
+                // refreshMaintenanceData={refreshMaintenanceData}
             />
         </>
     );

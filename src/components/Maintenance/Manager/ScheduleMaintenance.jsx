@@ -216,16 +216,16 @@ export default function ScheduleMaintenance({ maintenanceItem,navigateParams, qu
 				<CircularProgress color="inherit" />
 			</Backdrop>
 		<Box
-  sx={{
-    display: 'flex', 
-    alignItems: 'center',  // Flexbox for horizontal alignment
-    justifyContent: 'center',  // Ensures space between buttons
-    flexWrap: 'nowrap',  // Prevent wrapping on larger screens
-    gap: 15,  // Space between buttons
-    width: '100%',
-    padding: '20px',
-  }}
->
+			sx={{
+				display: 'flex', 
+				alignItems: 'center',  // Flexbox for horizontal alignment
+				justifyContent: 'center',  // Ensures space between buttons
+				flexWrap: 'nowrap',  // Prevent wrapping on larger screens
+				gap: 15,  // Space between buttons
+				width: '100%',
+				padding: '20px',
+			}}
+		>
 			
 			
 				<Button

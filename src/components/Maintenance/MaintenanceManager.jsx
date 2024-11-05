@@ -27,7 +27,7 @@ import { gridColumnsTotalWidthSelector } from "@mui/x-data-grid";
 
 import { useMaintenance } from "../../contexts/MaintenanceContext";
 
-export async function maintenanceManagerDataCollectAndProcess(maintenanceData, setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData) {
+export async function maintenanceManagerDataCollectAndProcess(maintenanceData, setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, selectedStatus,  setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData) {
   // console.log('is it in maintenanceManagerDataCollectAndProcess----');
   const dataObject = {};
   
@@ -100,9 +100,14 @@ export async function maintenanceManagerDataCollectAndProcess(maintenanceData, s
 
     // Determine the initial status based on the arrays
     const initialStatus = determineInitialStatus(array1, array2, array3, array4, array5, array6);
-    setSelectedStatus(initialStatus);
+    if(selectedStatus === ''){
+      setSelectedStatus(initialStatus);
+      setMaintenanceItemsForStatus(dataObject[initialStatus]);
+    } else {
+      setMaintenanceItemsForStatus(dataObject[getKeyForSelectedStatus(selectedStatus)]);
+    }
     // console.log('---what is set here---', maintenanceData);
-    setMaintenanceItemsForStatus(dataObject[initialStatus]);
+    
     setAllMaintenanceData(dataObject);
 
     setShowSpinner(false);
@@ -124,6 +129,24 @@ function determineInitialStatus(array1, array2, array3, array4, array5, array6) 
   } else if (array5 && array5.length > 0) {
     return "COMPLETED";
   } else if (array6 && array6.length > 0) {
+    return "PAID";
+  } else {
+    return "NEW REQUEST"; // Default to "NEW REQUEST" if all arrays are empty
+  }
+}
+
+const getKeyForSelectedStatus = (status) => {
+  if (status === "New Requests") {
+    return "NEW REQUEST";
+  } else if (status === "Quotes Requested") {
+    return "QUOTES REQUESTED";
+  } else if (status === "Quotes Accepted") {
+    return "QUOTES ACCEPTED";
+  } else if (status === "Scheduled") {
+    return "SCHEDULED";
+  } else if (status === "Completed") {
+    return "COMPLETED";
+  } else if (status === "Paid") {
     return "PAID";
   } else {
     return "NEW REQUEST"; // Default to "NEW REQUEST" if all arrays are empty
@@ -163,6 +186,8 @@ export default function MaintenanceManager() {
   const businessId = user.businesses.MAINTENANCE.business_uid;
 
   const { selectedRequestIndex, setSelectedRequestIndex, selectedStatus, setSelectedStatus, maintenanceItemsForStatus, setMaintenanceItemsForStatus, allMaintenanceData, setAllMaintenanceData } = useMaintenance();
+
+  // console.log("selectedStatus - ", selectedStatus);
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [cookies] = useCookies(["selectedRole"]);
@@ -307,14 +332,14 @@ export default function MaintenanceManager() {
 
   useEffect(() => {
     let profileId = getProfileId();
-    maintenanceManagerDataCollectAndProcess(maintenanceData, setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData);
+    maintenanceManagerDataCollectAndProcess(maintenanceData, setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, selectedStatus, setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData);
     setRefresh(false);
   }, [refresh]);
 
   useEffect(() => {
     const handleMaintenanceUpdate = () => {
       let profileId = getProfileId();
-      maintenanceManagerDataCollectAndProcess(maintenanceData, setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData);
+      maintenanceManagerDataCollectAndProcess(maintenanceData, setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, selectedStatus,  setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData);
     };
   }, []);
 

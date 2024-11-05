@@ -14,9 +14,9 @@ export default async function CompleteTicket(maintenance_request_uid, date="", s
             method: 'PUT',
             body: formData
         });
-
+        
         if (response.code === 200) {
-            return true;
+            return true;            
         }
     } catch (error){
         console.log("error", error)
