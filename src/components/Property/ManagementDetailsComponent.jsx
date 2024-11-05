@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Box, Grid, Typography, Button, IconButton, Badge, Card, CardContent, Dialog, DialogActions, DialogTitle, DialogContent, ToolTip } from "@mui/material";
+import { Box, Grid, Typography, Button, IconButton, Badge, Card, CardContent, Dialog, DialogActions, DialogTitle, DialogContent, ToolTip, } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 import SearchIcon from "@mui/icons-material/Search";
 import { DataGrid } from "@mui/x-data-grid";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
@@ -381,7 +382,7 @@ export default function ManagementDetailsComponent({
                     </Grid>}
 
                     {
-                        (selectedRole === "OWNER" || selectedRole === "MANAGER") && (
+                        (selectedRole === "OWNER" || selectedRole === "MANAGER") && (activeContract) &&  (
                             <Grid container item spacing={2} sx={{ marginTop: '3px', marginBottom: '5px',}}>
                                 
                                 <Grid 
@@ -867,7 +868,18 @@ const EndContractDialog = ({ open, handleClose, contract }) => {
                 }}
             >
                 <DialogTitle sx={{ justifyContent: 'center',}}>        
-                    End Current Contract        
+                    End Current Contract
+                    <IconButton
+                      onClick={handleClose}
+                      sx={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 8,
+                        color: '#3D5CAC',
+                      }}
+                    >
+                      <CloseIcon />
+                  </IconButton>   
                 </DialogTitle>
                 <DialogContent>
                     <Grid container>                                   

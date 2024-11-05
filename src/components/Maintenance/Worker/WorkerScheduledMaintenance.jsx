@@ -31,7 +31,7 @@ import WorkerQuoteView from "../MaintenanceComponents/WorkerQuoteView";
 import RescheduleButton from "../MaintenanceComponents/RescheduleButton";
 import CompleteButton from "../MaintenanceComponents/CompleteButton";
 
-export default function WorkerScheduledMaintenance({maintenanceItem}){
+export default function WorkerScheduledMaintenance({maintenanceItem, refreshMaintenanceData}){
     
     const location = useLocation();
     const navigate = useNavigate();
@@ -86,7 +86,7 @@ export default function WorkerScheduledMaintenance({maintenanceItem}){
       <RescheduleButton maintenanceItem={maintenanceItem} isWorkerMaintenance={true} />
     </Grid>
     <Grid item>
-      <CompleteButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage} />
+      <CompleteButton maintenanceItem={maintenanceItem} setShowMessage={setShowMessage} setMessage={setMessage} refreshMaintenanceData={refreshMaintenanceData} />
     </Grid>
 </Grid>
 

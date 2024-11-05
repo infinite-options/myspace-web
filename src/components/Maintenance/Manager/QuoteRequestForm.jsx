@@ -53,6 +53,8 @@ export default function QuoteRequestForm({ setRefresh }) {
 		navigationParams = location.state.navigateParams;
 	}
 
+	// console.log("navigationParams - ", navigationParams);
+
 	const alreadyRequestedQuotes = location.state?.quotes || [];
 
 	useEffect(() => {
@@ -82,6 +84,7 @@ export default function QuoteRequestForm({ setRefresh }) {
 	}
 
 	function handleBackButton() {
+		
 		// console.log("handleBackButton")
 		let maintenance_request_index = navigationParams.maintenanceRequestIndex;
 		let status = navigationParams.status;

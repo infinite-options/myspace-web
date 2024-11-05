@@ -257,6 +257,11 @@ export default function MaintenanceDashboard2() {
     setShowMaintenanceDetail(true);
   };
 
+  const refreshMaintenanceData = () => {    
+    getMaintenanceData();
+    setShowMaintenanceDetail(false);
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -306,6 +311,7 @@ export default function MaintenanceDashboard2() {
                 alldata={sessionData.alldata}
                 maintenance_request_uid={sessionData.maintenance_request_uid}
                 setShowMaintenanceDetail={setShowMaintenanceDetail}
+                refreshMaintenanceData={refreshMaintenanceData}
               />
             </Grid>
           ) : (

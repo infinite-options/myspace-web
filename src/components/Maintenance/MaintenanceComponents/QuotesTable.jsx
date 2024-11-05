@@ -12,7 +12,7 @@ import {
 	TableRow,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import theme from '../../../theme/theme';
 import { useNavigate } from 'react-router-dom';
@@ -33,7 +33,19 @@ export default function QuotesTable({ maintenanceItem, onQuoteSelect, navigatePa
 	let tableCell = { padding: '0px', margin: '0px' };
 
 	const [expanded, setExpanded] = useState(false);
-	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+	const [selectedRowId, setSelectedRowId] = useState(null);
+	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));	
+
+	useEffect(() => {
+		if (maintenanceQuotesForItem.length > 0) {
+			setSelectedRowId(maintenanceQuotesForItem[0].maintenance_quote_uid);
+		}
+	}, [maintenanceQuotesForItem]);
+
+	const handleRowClick = (params) => {		
+		setSelectedRowId(params.row.maintenance_quote_uid);
+		handleViewQuotesNavigate(params.row.maintenance_quote_uid, params);
+	};	
 
 	const handleChange = () => {
 		setExpanded(!expanded);
@@ -48,12 +60,12 @@ export default function QuotesTable({ maintenanceItem, onQuoteSelect, navigatePa
 	];
 
 	const handleViewQuotesNavigate = (quote_id, params) => {
-		console.log('In handleViewQuotesNavigate');
-		console.log('quotes: ', maintenanceQuotesForItem);
-		console.log(
-			'index: ',
-			maintenanceQuotesForItem.findIndex((item) => item.maintenance_quote_uid === quote_id)
-		);
+		// console.log('In handleViewQuotesNavigate');
+		// console.log('quotes: ', maintenanceQuotesForItem);
+		// console.log(
+		// 	'index: ',
+		// 	maintenanceQuotesForItem.findIndex((item) => item.maintenance_quote_uid === quote_id)
+		// );
 		if (isMobile) {
 			navigate('/quoteAccept', {
 				state: {
@@ -64,7 +76,7 @@ export default function QuotesTable({ maintenanceItem, onQuoteSelect, navigatePa
 				},
 			});
 		} else {
-      console.log('inside else Quotes table---', onQuoteSelect);
+    //   console.log('inside else Quotes table---', onQuoteSelect);
 		const selectedIndex = maintenanceQuotesForItem.findIndex(item => item.maintenance_quote_uid === params.row.maintenance_quote_uid);
         onQuoteSelect(selectedIndex);
     
@@ -103,9 +115,31 @@ export default function QuotesTable({ maintenanceItem, onQuoteSelect, navigatePa
 							},
 							'& .MuiDataGrid-columnSeparator': {
 								display: 'none', // Remove vertical borders in the header
+							},							
+							'& .MuiDataGrid-row': {
+								'&.Mui-selected': {
+									backgroundColor: '#92A9CB',
+									'&:hover': {
+										// backgroundColor: '#6788B3',
+										backgroundColor: '#92A9CB',
+									},
+								},
 							},
+							'& .MuiDataGrid-row--selected': {
+								backgroundColor: '#92A9CB',
+								'&:hover': {
+									backgroundColor: '#92A9CB',
+								},
+							},
+							"& .MuiDataGrid-cell:focus-within, & .MuiDataGrid-cell:focus": {
+								outline: "none !important",
+							},
+							
 						}}
-						onRowClick={(params) => handleViewQuotesNavigate(params.row.maintenance_quote_uid, params)}
+						onRowClick={handleRowClick}
+						getRowClassName={(params) =>
+							params.row.maintenance_quote_uid === selectedRowId ? 'MuiDataGrid-row--selected' : ''
+						}
 					/>
 				) : null}
 			</Grid>
