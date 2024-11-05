@@ -41,14 +41,13 @@ const FilePreviewDialog = ({file, onClose }) => {
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)', // center the box
-                    width: { xs: '90%', sm: '500px' }, // responsive width based on screen size
-                    height: { xs: '90%', sm: '700px' }, // responsive height
+                    width: { xs: '90%', sm: '500px', md:'700px' }, // responsive width based on screen size
+                    height: { xs: '90%', sm: '700px', md:'900px' }, // responsive height
                     backgroundColor: 'white',
                     boxShadow: 3,
                     borderRadius: 2,
                     zIndex: 130,
                 }}
-                onMouseDown={handleMouseDown}
         >
         <Box
             sx={{
