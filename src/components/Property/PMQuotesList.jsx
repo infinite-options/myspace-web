@@ -20,7 +20,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import ManagementContractDetails from "../Contracts/OwnerManagerContracts/ManagementContractDetails";
 import { ManagementContractProvider } from "../../contexts/ManagementContractContext";
 import ManagementContractContext from "../../contexts/ManagementContractContext";
-
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 
 
@@ -88,8 +88,9 @@ export default function PMQuotesList() {
 //LHS
 const QuotesList = (props) => {  
   const { contractRequests } = useContext(ManagementContractContext); 
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  let navigate = useNavigate(); 
   
-
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -104,15 +105,29 @@ const QuotesList = (props) => {
               spacing={2}
               p={2}
             >
-              <Typography
-                sx={{
-                  color: "#160449",
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: theme.typography.largeFont,
-                }}
-              >
-                All Property Management Requests
-              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", paddingBottom: "15px"}}>
+                {isMobile && (<Box position={"absolute"} left={0}>
+                    <Button onClick={() => {navigate(-1)}}>
+                        <ArrowBackIcon
+                            sx={{
+                                color: "#160449",
+                                fontSize: "20px",
+                                margin: "5px",
+                                paddingRight: "10px"
+                            }}
+                        />
+                    </Button>
+                </Box>)}
+                <Typography
+                  sx={{
+                    color: "#160449",
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: theme.typography.largeFont,
+                  }}
+                >
+                  All Property Management Requests
+                </Typography>
+              </Box>
           </Stack>
           <Stack
             direction='column'

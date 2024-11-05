@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-// import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import theme from "../../../theme/theme";
 // import "./../../css/contacts.css";
 import { ThemeProvider, Box, Paper, Stack, Typography, Button, InputAdornment, TextField, Card, CardContent, Accordion, AccordionSummary, AccordionDetails, Chip } from "@mui/material";
@@ -28,6 +28,8 @@ import {
 // import AddressIcon from "../../Property/addressIconDark.png";
 // import maintenanceIcon from "../../Property/maintenanceIcon.png";
 import User_fill from "../../../images/User_fill_dark.png";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import refundIcon from "../../Property/refundIcon.png"
 // import { maskSSN, maskEIN, formattedPhoneNumber } from "../../utils/privacyMasking";
 
 
@@ -39,12 +41,14 @@ import User_fill from "../../../images/User_fill_dark.png";
 import ProfileInformation from "./ProfileInformation";
 
 
-const EmployeeContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
+const EmployeeContactDetail = ({ data, currentIndex, setCurrentIndex, propertyIndex, fromPage, setViewRHS }) => {
 
     const { selectedRole, getProfileId } = useUser();
     const [ propertiesData, setPropertiesData ] = useState([]);
     const [ contractsData, setContractsData ] = useState([]);
     const [ contactDetails, setContactDetails ] = useState([]);
+    let navigate = useNavigate();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     // console.log("DATA EMPLOYESS", data);
   
@@ -55,6 +59,26 @@ const EmployeeContactDetail = ({ data, currentIndex, setCurrentIndex,  }) => {
     return (
       <Grid container sx={{backgroundColor: theme.palette.primary.main,  borderRadius: '10px', padding: '10px', }}>                
           <Grid item xs={12} container justifyContent="center" sx={{ height: '50px',  }}>
+              <Button
+                sx={{
+                textTransform: "none",
+                color: theme.typography.common.blue,
+                fontWeight: theme.typography.common.fontWeight,
+                fontSize: "16px",
+                "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
+                }}
+                onClick={() => {
+                  if(isMobile && setViewRHS){
+                    setViewRHS(false)
+                  }else if(fromPage && propertyIndex >= 0){
+                    navigate("/properties", { state: { index : propertyIndex } });
+                  }else{
+                    navigate(-1)
+                  }
+                }}
+              >
+                <img src={refundIcon} style={{ width: "25px", height: "25px", margin: "5px" }} />
+              </Button>
               <Typography sx={{fontSize: '35px', fontWeight: 'bold', color: '#160449' }}>
                   Employee Contact
               </Typography>

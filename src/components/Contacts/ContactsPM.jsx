@@ -9,6 +9,8 @@ import TenantContactDetail from "./ContactDetail/TenantContactDetail";
 import OwnerContactDetail from "./ContactDetail/OwnerContactDetail";
 import MaintenanceContactDetail from "./ContactDetail/MaintenanceContactDetail";
 import EmployeeContactDetail from "./ContactDetail/EmployeeContactDetail";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import theme from "../../theme/theme";
 import ManagerContactDetail from "./ContactDetail/ManagerContactDetail";
 
 const ContactsPM = () => {
@@ -19,6 +21,9 @@ const ContactsPM = () => {
   const prevContactsTabRef = useRef(location.state?.contactsTab);
   const [contactsData, setContactsData] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [viewRHS, setViewRHS] = useState(false)
+
   // const [propertyIndex, setPropertyIndex] = useState(location?.state?.index);
   const [managerId, setManagerId] = useState(null);
 
@@ -112,13 +117,13 @@ const ContactsPM = () => {
   const renderContactDetail = () => {
     switch (contactsTab) {
       case "Owner":
-        return <OwnerContactDetail data={contactsData?.owners} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />;
+        return <OwnerContactDetail data={contactsData?.owners} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} fromPage={location?.state?.fromPage} propertyIndex={location?.state?.index} setViewRHS={setViewRHS}/>;
       case "Tenant":
-        return <TenantContactDetail data={contactsData?.tenants} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />;
+        return <TenantContactDetail data={contactsData?.tenants} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} fromPage={location?.state?.fromPage} propertyIndex={location?.state?.index} setViewRHS={setViewRHS}/>;
       case "Maintenance":
-        return <MaintenanceContactDetail data={contactsData?.maintenance} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />;
+        return <MaintenanceContactDetail data={contactsData?.maintenance} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} fromPage={location?.state?.fromPage} propertyIndex={location?.state?.index} setViewRHS={setViewRHS}/>;
       case "Employee":
-        return <EmployeeContactDetail data={contactsData?.employees} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />;
+        return <EmployeeContactDetail data={contactsData?.employees} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} fromPage={location?.state?.fromPage} propertyIndex={location?.state?.index} setViewRHS={setViewRHS}/>;
       case "Manager":
         return (
           <ManagerContactDetail
@@ -127,6 +132,7 @@ const ContactsPM = () => {
             propertyIndex={location?.state?.index}
             currentIndex={currentIndex}
             setCurrentIndex={setCurrentIndex}
+            setViewRHS={setViewRHS}
           />
         );
       default:
@@ -137,16 +143,16 @@ const ContactsPM = () => {
   return (
     <Container disableGutters maxWidth='lg'>
       <Grid container>
-        <Grid container item xs={12} md={4}>
+      {(!isMobile || !viewRHS) && (<Grid container item xs={12} md={4}>
           <Grid item xs={12} sx={{ padding: "5px", height: "100%" }}>
-            <ContactsList data={contactsData} tab={contactsTab} setTab={setContactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
+            <ContactsList data={contactsData} tab={contactsTab} setTab={setContactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} setViewRHS={setViewRHS}/>
           </Grid>
-        </Grid>
-        <Grid container item xs={12} md={8}>
+        </Grid>)}
+        {(!isMobile || viewRHS) && (<Grid container item xs={12} md={8}>
           <Grid item xs={12} sx={{ padding: "5px" }}>
             {renderContactDetail()}
           </Grid>
-        </Grid>
+        </Grid>)}
       </Grid>
     </Container>
   );

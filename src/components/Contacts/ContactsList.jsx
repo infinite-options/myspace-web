@@ -28,6 +28,7 @@ import PhoneIcon from "../Property/phoneIconDark.png";
 import AddressIcon from "../Property/addressIconDark.png";
 import maintenanceIcon from "../Property/maintenanceIcon.png";
 import User_fill from "../../images/User_fill_dark.png";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { maskSSN, maskEIN, formattedPhoneNumber } from "../utils/privacyMasking";
 
 
@@ -125,12 +126,14 @@ const tabsManager = [
   });
 
 
-const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex }) => {
+const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex, setViewRHS }) => {
     console.log("In ContactsList - data - ", data)
     const { getProfileId, selectedRole } = useUser();
     const [contactsTab, setContactsTab] = useState(tab);
     const [ownerData, setOwnerData] = useState([]);
     const [tenantData, setTenantData] = useState([]);
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
     // const [maintenanceData, setMaintenanceData] = useState([]);
     const [allOwnersData, setAllOwnersData] = useState(data?.owners);
     const [displayedOwnersData, setDisplayedOwnersData] = useState(data?.owners);
@@ -211,6 +214,9 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex }) => 
   
     const handleSetSelectedCard = (selectedData, index) => {
       console.log("In handleSelectionCard: ", selectedData, index);
+      if(isMobile && setViewRHS){
+        setViewRHS(true)
+      }
       setCurrentIndex(index);
       let dataDetails;
       switch (contactsTab) {
@@ -276,9 +282,22 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex }) => 
         >
           <Container disableGutters maxWidth="lg" sx={{height: "100%", width: '100%', }}>     
             <Grid container justifyContent='center' sx={{padding: '10px 10px', width: '100%'}}>
-              <Typography sx={{ fontSize: '35px', color: '#160449', fontWeight: 'bold', marginBottom: '20px', }}>
-                Contacts
-              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", paddingBottom: "15px"}}>
+                {isMobile && (<Box position={"absolute"} left={0}>
+                    <Button onClick={() => {navigate(-1)}}>
+                        <ArrowBackIcon
+                            sx={{
+                                color: "#160449",
+                                fontSize: "25px",
+                                margin: "5px",
+                            }}
+                        />
+                    </Button>
+                </Box>)}
+                <Typography sx={{ fontSize: '35px', color: '#160449', fontWeight: 'bold', textAlign: "center"}}>
+                  Contacts
+                </Typography>
+              </Box>
               <Grid container item xs={12} justifyContent='center' >
                 <TextField 
                   value={searchTerm}

@@ -1076,11 +1076,13 @@ export default function PropertyNavigator({
           height: "100%",
         }}
       >
-        {isMobile && (<Box>
-          <Button onClick={handleBackButton} sx={{color: "black", fontSize: theme.typography.smallFont}}>
-            <ArrowBackIcon sx={{ color: "#000000", width: "15px", height: "15px", margin: "0px" }} /> Back
-          </Button>
-        </Box>)}
+        {isMobile && (
+          <Box sx={{display: "flex", justifyContent: "flex-end"}}>
+            <Button onClick={handleBackButton}>
+              <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px" }} />
+            </Button>
+          </Box>
+        )}
 
         {/* Property Navigator Header Including Address and x of y Properties */}
         <Grid container sx={{ marginTop: "15px", alignItems: "center", justifyContent: "center" }}>

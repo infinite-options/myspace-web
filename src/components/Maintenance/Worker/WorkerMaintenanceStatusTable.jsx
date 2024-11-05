@@ -246,7 +246,7 @@ const [data, setdata] = useState({});
             },
           }}
           expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
-          onClick={(e) => e.stopPropagation()}
+          // onClick={(e) => e.stopPropagation()}
         >
           <div
             style={{
@@ -260,7 +260,7 @@ const [data, setdata] = useState({});
               width: "100%",
               paddingRight: "10px",
               alignItems: "center",
-              position: "sticky",
+              // position: "sticky",
               paddingTop: "5px",
               paddingLeft: "15px",
             }}

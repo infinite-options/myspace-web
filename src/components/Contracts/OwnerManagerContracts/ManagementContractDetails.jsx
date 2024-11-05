@@ -9,10 +9,12 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 import PropertyCard from "./PropertyCard";
 import ManagementContractContext from "../../../contexts/ManagementContractContext";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 function ManagementContractDetails(props) {
   console.log("In ManagementContractDetails.jsx - props - ", props);
   const navigate = useNavigate();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   // const propertiesContext = useContext(PropertiesContext);
 
   const {
@@ -103,13 +105,14 @@ function ManagementContractDetails(props) {
   }, []);
 
   const handleBackBtn = () => {
-    if(props.setViewRHS){
+    if(isMobile && props.setViewRHS){
       props.setViewRHS(false)
-    }
-    if (props.page && props.page === "properties" && props.handleBackClick) {
-      props.handleBackClick();
-    } else {
-      navigate(-1);
+    }else{
+      if (props.page && props.page === "properties" && props.handleBackClick) {
+        props.handleBackClick();
+      } else {
+        navigate(-1);
+      }
     }
   };
 
