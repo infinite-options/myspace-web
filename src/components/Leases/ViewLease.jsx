@@ -71,7 +71,7 @@ function formatDate(date) {
 }
 
 const ViewLease = (props) => {
-  console.log("---props in viewlease---", props);
+  console.log("---props in                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ---", props);
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();

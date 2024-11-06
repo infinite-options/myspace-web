@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, } from "react";
+import React, { useState, useEffect, useRef, useContext, } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Typography, Box, Stack, Paper, Button, ThemeProvider, Grid, Container, InputBase, IconButton, Avatar, Badge } from "@mui/material";
 import theme from "../../theme/theme";
@@ -23,8 +23,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import PropertiesContext from "../../contexts/PropertiesContext";
 import ManagementContractContext from "../../contexts/ManagementContractContext";
-
-
+import CloseIcon from '@mui/icons-material/Close';
 
 function Properties() {
   const location = useLocation();
@@ -82,7 +81,7 @@ function Properties() {
 
   const [managerDetailsState, setManagerDetailsState] = useState(null);
   const [newPropertyUid,setNewPropertyUid]=useState("");
-
+  const [selectedDocument,setSelectedDocument]=useState("")
   
   // const [ currentProperty, setCurrentProperty ] = useState(location?.state?.currentProperty? location?.state?.currentProperty : null);
 
@@ -477,9 +476,15 @@ function Properties() {
                   propertyIndex={applicationIndex}
                   property={propertyList[returnIndex]}
                   isDesktop={isDesktop}
-                  onBackClick={handleBackClick} 
+                  onBackClick={handleBackClick}
+                  setRHS={setRHS} 
+                  setSelectedDocument={setSelectedDocument}
                 />
               )}
+              {RHS === "filePreview" && (
+                <DocumentPreview file={selectedDocument.file} onClose={selectedDocument.onClose} />
+              )}
+          
               {RHS === "CreateContract" && (
                 <ManagementContractDetails                  
                 />
@@ -540,3 +545,87 @@ function Properties() {
 }
 
 export default Properties;
+
+function DocumentPreview({ file, onClose  }) {
+  const previewRef = useRef(null);
+    const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+
+    const handleMouseDown = (e) => {
+        const preview = previewRef.current;
+        if (preview) {
+          const shiftX = e.clientX - preview.getBoundingClientRect().left;
+          const shiftY = e.clientY - preview.getBoundingClientRect().top;
+    
+          setDragOffset({ x: shiftX, y: shiftY });
+    
+          const onMouseMove = (e) => {
+            const newX = e.clientX - dragOffset.x;
+            const newY = e.clientY - dragOffset.y;
+    
+            preview.style.left = `${newX}px`;
+            preview.style.top = `${newY}px`;
+          };
+    
+          const onMouseUp = () => {
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+          };
+    
+          document.addEventListener('mousemove', onMouseMove);
+          document.addEventListener('mouseup', onMouseUp);
+        }
+      };
+
+  return (
+   <Box
+    sx={{
+        width: '100%',
+        height: '150%',
+        backgroundColor: 'white',
+        boxShadow: 3,
+        borderRadius: 2, // Rounded edges for the outer box
+        overflow: 'hidden', // Ensures rounded corners are applied to content
+    }}
+    onMouseDown={handleMouseDown}
+>
+<Box
+    sx={{
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding:"10px",
+    backgroundColor: '#f0f0f0',
+    }}
+>
+    <Typography variant="h6">{file?.filename || 'File Preview'}</Typography>
+    <IconButton onClick={onClose}>
+        <CloseIcon />
+    </IconButton>
+</Box>
+<Box
+    sx={{
+    height: '100%',
+    width: '100%',
+    overflowY: 'auto',
+    // padding: "1px",
+    }}
+>
+    {file ? (
+        <iframe
+            src={file.link}
+            width="100%"
+            height="100%"
+            title="File Preview"
+            style={{
+              border: 'none',
+              borderBottomLeftRadius: 8, // Rounded bottom left corner
+              borderBottomRightRadius: 8, // Rounded bottom right corner
+            }}
+        />
+    ) : (
+        <Typography>No file selected</Typography>
+    )}
+</Box>
+</Box>
+);
+}

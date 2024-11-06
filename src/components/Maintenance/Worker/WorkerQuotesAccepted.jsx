@@ -34,7 +34,7 @@ import DateTimePickerModal from "../../DateTimePicker";
 
 import APIConfig from "../../../utils/APIConfig";
 
-export default function WorkerQuotesAccepted({maintenanceItem}){
+export default function WorkerQuotesAccepted({maintenanceItem, refreshMaintenanceData}){
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
     const [showSpinner, setShowSpinner] = useState(false);
@@ -85,10 +85,10 @@ export default function WorkerQuotesAccepted({maintenanceItem}){
                 });
 
                 const responseData = await response.json();
-                console.log(responseData);
+                // console.log(responseData);
                 if (response.status === 200) {
                     console.log("success")
-                    changeQuoteStatus()
+                    changeQuoteStatus();
                 } else{
                     console.log("error setting status")
                 }
@@ -110,10 +110,12 @@ export default function WorkerQuotesAccepted({maintenanceItem}){
                 });
                 const responseData = await response.json();
                 console.log(responseData)
-                if (responseData.code === 200){
-                    console.log("Ticket Status Changed")
-                    alert("Ticket Status Changed to SCHEDULED")
-                    navigate('/workerMaintenance')
+                // if (responseData.code === 200){
+                if (response.status === 200){
+                    // console.log("Ticket Status Changed")
+                    // alert("Ticket Status Changed to SCHEDULED")
+                    refreshMaintenanceData();
+                    // navigate('/workerMaintenance')
                 }
             } catch(error){
                 console.log("error", error)
@@ -122,7 +124,7 @@ export default function WorkerQuotesAccepted({maintenanceItem}){
         }
         setShowScheduler(false);
 
-        changeMaintenanceRequestStatus();
+        changeMaintenanceRequestStatus();        
     }
 
     async function handleComplete(id){
