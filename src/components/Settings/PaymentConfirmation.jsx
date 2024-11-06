@@ -98,7 +98,9 @@ export default function PaymentConfirmation() {
         setPaymentMethod(resultOfResponse.payment_method)
 
       } else if(resultOfResponse.status === "processing"){
-        setPaymentProcess(true)
+        // setPaymentProcess(true)
+          await new Promise(resolve => setTimeout(resolve, 3000));
+          await getPaymentStatus();
       
       }else{
         setPaymentFailed(true)
@@ -107,6 +109,8 @@ export default function PaymentConfirmation() {
     } catch (error) {
       console.error("An error occurred while making the POST request", error);
     }
+
+    // setPaymentProcess(false)
 
     setShowSpinner(false)
   }
