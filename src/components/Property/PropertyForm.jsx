@@ -181,15 +181,13 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 	const [totalOwnership, setTotalOwnership] = useState(0);
 
 	const handleOwnershipChange = (event) => {
-
 		console.log(event.target.value, parseFloat(event.target.value));
 		const value = parseFloat(event.target.value);
 		setOwnershipPercentage(value);
 	};
 
 	useEffect(() => {
-			setTotalOwnership(ownershipPercentage);
-		
+		setTotalOwnership(ownershipPercentage);
 	}, [ownershipPercentage]); // Runs every time ownershipPercentage changes
 
 	const handleNewOwnerChange = (field, value) => {
@@ -199,7 +197,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 	const addNewOwner = async () => {
 		if (totalOwnership + newOwner.percentage <= 100) {
 			setOtherOwners((prev) => [...prev, newOwner]);
-			setTotalOwnership(totalOwnership +  newOwner.percentage);
+			setTotalOwnership(totalOwnership + newOwner.percentage);
 			setNewOwner({ firstName: '', lastName: '', email: '', phone: '', percentage: 0 });
 		} else {
 			alert('Total ownership percentage cannot exceed 100% here.');
