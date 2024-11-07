@@ -564,7 +564,7 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
                 style={{
                   borderRadius: "5px",
                   backgroundColor: "#FFFFFF",
-                  height: isMobile && todayData?.length === 0 ? 100 : 460,
+                  height: (isMobile || todayData?.length === 0) ? 150 : 460,
                   width: "85%",
                   margin: "auto",
                   padding: '10px',
