@@ -122,26 +122,20 @@ const TenantDashboard = () => {
   }, [leaseDetailsData]);
 
   const fetchData = async () => {
+    setLoading(true);
+
     try {
-      setLoading(true); // Set loading to true before fetching data
+       // Set loading to true before fetching data
       const profileId = getProfileId();
       if (!profileId) return;
 
       const dashboardResponse = await fetch(`${APIConfig.baseURL.dev}/dashboard/${profileId}`);
       const dashboardData = await dashboardResponse.json();
 
-      // console.log("Dashboard data", dashboardData);
-
       if (dashboardData) {
         console.log("Dashboard inside check", dashboardData.property?.result);
         setPropertyListingData(dashboardData.property?.result);
 
-        // const filteredPropertyDetails = dashboardData.property?.result.filter(
-        //   (lease) =>
-        //     !lease.lease_status.includes("RENEW NEW") &&
-        //     !lease.lease_status.includes("RENEW PROCESSING")
-        // );
-        // setPropertyListingData(filteredPropertyDetails);
 
         setLeaseDetailsData(dashboardData.leaseDetails?.result);
         setMaintenanceRequestsNew(dashboardData.maintenanceRequests?.result);
@@ -173,10 +167,11 @@ const TenantDashboard = () => {
         // Save all balance details to state
         setAllBalanceDetails(allBalanceDetails);
       }
+
     } catch (error) {
       console.error("Error fetching data: ", error);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -187,17 +182,35 @@ const TenantDashboard = () => {
   }, [reload]);
 
   useEffect(() => {
-    console.log("propertydata test", propertyListingData.lease_status);
+    // setLoading(true)
+    // console.log("first property - ", selectedProperty)
+    // console.log("propertydata test", propertyListingData.lease_status);
     if (propertyListingData.length > 0 && !selectedProperty) {
       // const firstProperty = propertyListingData[0];
       const firstProperty = propertyListingData.find((property) => property.lease_status !== null);
-      console.log("first property", firstProperty);
+      // console.log("first property", firstProperty);
       if (firstProperty) {
         setSelectedProperty(firstProperty);
         handleSelectProperty(firstProperty);
       }
     }
+
+    // setLoading(false)
   }, [propertyListingData]);
+
+  useEffect(() => {
+    if (
+      propertyListingData &&
+      leaseDetailsData &&
+      maintenanceRequestsNew &&
+      maintenanceStatus &&
+      announcements &&
+      paymentHistory &&
+      allBalanceDetails
+    ) {
+      setLoading(false);
+    }
+  }, [propertyListingData, leaseDetailsData, maintenanceRequestsNew, maintenanceStatus, announcements, paymentHistory, allBalanceDetails]);
 
   const handleSelectProperty = (property) => {
     setSelectedProperty(property);
@@ -411,16 +424,24 @@ const TenantDashboard = () => {
     return null;
   };
 
-  if (loading) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+  //       <CircularProgress />
+  //     </Box>
+  //   );
+  // }
 
   return (
     <Box sx={{ backgroundColor: "#fff", padding: isMobile ? "15px" : "30px"}}>
+      {loading ? (
+      // <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      //   <CircularProgress />
+      // </Box>
+        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
+          <CircularProgress color='inherit' />
+        </Backdrop>
+      ) : (
       <Container>
         <Grid container spacing={isMobile ? 0 : 3}>
           {/* Top Section: Welcome Message and Search Icon */}
@@ -523,7 +544,7 @@ const TenantDashboard = () => {
             </Grid>
           </Grid>
         </Grid>
-      </Container>
+      </Container>)}
     </Box>
   );
 };
@@ -1605,12 +1626,12 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
                             height: "40px",
                             "& .MuiInputBase-root": {
                               padding: "5px",
-                              color: "#000",
+                              color: "#00000099",
                             },
                             "& .MuiInputLabel-root": {
                               fontSize: "12px",
                               top: "-4px",
-                              color: "#000",
+                              color: "#00000099",
                             },
                           }}
                           InputProps={{
@@ -1649,7 +1670,22 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
                     </Button>
                   </Stack>
                   <Stack direction='row' justifyContent='center' m={2} sx={{ paddingTop: "25px", paddingBottom: "15px" }}>
-                    <TextField variant='filled' fullWidth={true} multiline={true} value={paymentNotes} onChange={handlePaymentNotesChange} label='Payment Notes' />
+                    <TextField
+                      variant='filled'
+                      fullWidth={true}
+                      multiline={true}
+                      value={paymentNotes}
+                      onChange={handlePaymentNotesChange}
+                      label='Payment Notes'
+                      sx={{
+                        "& .MuiInputLabel-root": {
+                          color: "#00000099", 
+                        },
+                        "& .MuiInputLabel-root.Mui-focused, & .MuiInputLabel-root.MuiFormLabel-filled": {
+                          color: "#00000099",
+                        },
+                      }}
+                    />
                   </Stack>
                 </Paper>
 
