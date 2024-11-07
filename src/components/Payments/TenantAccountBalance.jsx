@@ -223,7 +223,7 @@ const TenantAccountBalance = ({
   }
 
   return (
-    <Paper sx={{ padding: "30px", backgroundColor: "#f0f0f0", borderRadius: "8px", flex: 1 }}>
+    <Paper sx={{ padding: "30px", backgroundColor: "#f0f0f0", borderRadius: "8px", flex: 1}}>
       <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
         <Typography variant='h6' sx={{ fontWeight: "bold", color: "#160449" }}>
           Account Balance

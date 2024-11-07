@@ -212,13 +212,26 @@ const TenantDashboard = () => {
 
     if (leaseDetailsData) {
       const leasesForProperty = leaseDetailsData.filter((lease) => lease.property_uid === property.property_uid);
+  
+      console.log("Leases for property:", leasesForProperty);
+  
+      // Find the correct lease to set as relatedLease
+      if (leasesForProperty.length > 1) {
+        const firstLease = leasesForProperty[0];
+        const secondLease = leasesForProperty[1];
 
-      console.log("lease rrr", leasesForProperty);
-
-      // Find if there's a lease in the "RENEW PROCESSING" state for the selected property
-      const renewProcessingLease = leasesForProperty.find((lease) => lease.lease_status === "RENEW PROCESSING" || lease.lease_status === "RENEW NEW");
-      console.log("check here", renewProcessingLease);
-      setRelatedLease(renewProcessingLease || null);
+        console.log("first lease", firstLease.lease_status, firstLease.lease_renew_status);
+        console.log("second lease", secondLease);
+        console.log("lease details check", leaseDetails);
+  
+        if (firstLease.lease_status === "INACTIVE" && firstLease.lease_renew_status === "RENEWED" && secondLease.lease_status === "ACTIVE") {
+          setLeaseDetails(secondLease || null);
+        } else {
+          setLeaseDetails(secondLease || null);
+        }
+      } else {
+        setRelatedLease(leasesForProperty[0] || null);
+      }
     }
 
     if (allBalanceDetails) {
@@ -427,8 +440,9 @@ const TenantDashboard = () => {
   }
 
   return (
-    <Box sx={{ backgroundColor: "#fff", padding: isMobile ? "15px" : "30px"}}>
-      <Container>
+    // <Box sx={{ backgroundColor: "#fff", padding: isMobile ? "15px" : "30px"}}>
+    <ThemeProvider theme={theme}>
+      <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
         <Grid container spacing={isMobile ? 0 : 3}>
           {/* Top Section: Welcome Message and Search Icon */}
           {(!isMobile || !viewRHS) && (
@@ -464,7 +478,7 @@ const TenantDashboard = () => {
 
           <Grid container spacing={isMobile ? 2 : 3}>
             {/* Left-hand side: Account Balance */}
-            <Grid item xs={12} md={4} sx={{ display: "flex", flexDirection: "column" }}>
+            <Grid item xs={12} md={4} sx={{ display: "flex", flexDirection: "column"}}>
               <TenantAccountBalance
                 isMobile={isMobile}
                 viewRHS={viewRHS}
@@ -486,7 +500,7 @@ const TenantDashboard = () => {
             <Grid item xs={12} md={8} x={{ flexDirection: "column" }}>
               {/* Top section: Announcements */}
               {(!isMobile || !viewRHS) && (
-                <Grid item xs={12}>
+                <Grid item xs={12} sx={{paddingLeft: "15px"}}>
                   <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", paddingBottom: "40px", borderRadius: "10px", height: "100%" }}>
                     <Grid
                       container
@@ -556,8 +570,8 @@ const TenantDashboard = () => {
                 </Grid>
               )}
 
-              {/* Bottom section containing Lease, Maintenance, and Management Details */}
-              <Grid container spacing={3} sx={{ marginTop: "1px" }}>
+              {/* Bottom section containing Lease, Maintenance, and Management Details - Abhinav here layouting */}
+              <Grid container spacing={3} sx={{ marginTop: "1px", paddingLeft: "15px", paddingTop: "10px"}}> 
                 {rightPane?.type ? (
                   /* Render the rightPane component if available */
                   <Grid item xs={12} sx={{ flex: 1 }} ref={rightPaneRef} marginBottom={isMobile ? "40px" : "0px"}>
@@ -566,7 +580,7 @@ const TenantDashboard = () => {
                 ) : (
                   <>
                     {/* Lease Details: Aligns with Account Balance */}
-                    <Grid item xs={12} md={6} sx={{ flex: 1 }}>
+                    <Grid item xs={12} md={6} sx={{ flex: 1, paddingRight: "15px" }}>
                       <LeaseDetails isMobile={isMobile} setViewRHS={setViewRHS} leaseDetails={leaseDetails} rightPane={rightPane} setRightPane={setRightPane} selectedProperty={selectedProperty} relatedLease={relatedLease} />
                     </Grid>
 
@@ -584,7 +598,7 @@ const TenantDashboard = () => {
                             setViewRHS={setViewRHS}
                           />
                         </Grid>
-                        <Grid item xs={12} sx={{ marginTop: "5px",}}>
+                        <Grid item xs={12} sx={{ marginTop: "15px"}}>
                           <ManagementDetails leaseDetails={leaseDetails} />
                         </Grid>
                       </Grid>
@@ -596,7 +610,8 @@ const TenantDashboard = () => {
           </Grid>
         </Grid>
       </Container>
-    </Box>
+      </ThemeProvider>
+      // </Box>
   );
 };
 
@@ -724,100 +739,6 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
     </Paper>
   );
 }
-
-const AnnouncementsPM = ({ announcements, setRightPane, isMobile, setViewRHS }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  // Handle previous announcement
-  const handlePrev = () => {
-    setCurrentIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : announcements.length - 1));
-  };
-
-  // Handle next announcement
-  const handleNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex < announcements.length - 1 ? prevIndex + 1 : 0));
-  };
-
-  const handleViewAllClick = () => {
-    if(isMobile){
-      setViewRHS(true)
-    }
-    setRightPane({ type: "announcements", state: { data: announcements } });
-  };
-
-  // Check if there are announcements
-  const hasAnnouncements = announcements && announcements.length > 0;
-
-  return (
-    <Paper
-      sx={{
-        padding: "20px",
-        backgroundColor: "#f0f0f0",
-        borderRadius: "8px",
-        position: "relative",
-      }}
-    >
-      <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ marginBottom: "10px" }}>
-        <Typography variant='h6' sx={{ fontWeight: "bold", color: "#160449" }}>
-          Announcements
-        </Typography>
-        <Button sx={{ color: "#3D5CAC", fontSize: "14px" }} onClick={handleViewAllClick}>
-          View All [{announcements?.length || 0}]
-        </Button>
-      </Stack>
-
-      {hasAnnouncements ? (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            position: "relative",
-            paddingX: 2,
-          }}
-        >
-          {/* Left Arrow */}
-          <IconButton onClick={handlePrev} sx={{ position: "absolute", left: 0, zIndex: 1 }}>
-            <ArrowBackIosNewIcon sx={{ color: "#3D5CAC" }} />
-          </IconButton>
-
-          {/* Announcement Card */}
-          <Paper
-            sx={{
-              padding: "20px",
-              flex: 1,
-              marginX: 4,
-              borderRadius: "8px",
-              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              textAlign: "center",
-            }}
-          >
-            <Typography variant='subtitle2' sx={{ color: "#160449", fontWeight: "bold" }}>
-              {announcements[currentIndex]?.announcement_title}
-            </Typography>
-            <Typography variant='body2' sx={{ color: "#666", marginTop: 1, textAlign: "left" }}>
-              {announcements[currentIndex]?.announcement_msg || "No additional details available."}
-            </Typography>
-            <Typography variant='caption' sx={{ color: "#999", marginTop: 1, textAlign: "left" }}>
-              {new Date(announcements[currentIndex]?.announcement_date).toLocaleString()}
-              {" announcement_uid : "}
-              {announcements[currentIndex].announcement_uid}
-            </Typography>
-          </Paper>
-
-          {/* Right Arrow */}
-          <IconButton onClick={handleNext} sx={{ position: "absolute", right: 0, zIndex: 1 }}>
-            <ArrowForwardIosIcon sx={{ color: "#3D5CAC" }} />
-          </IconButton>
-        </Box>
-      ) : (
-        <Typography sx={{ marginTop: "10px", color: "#333" }}>No announcements available at the moment.</Typography>
-      )}
-    </Paper>
-  );
-};
 
 const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty, relatedLease, isMobile, setViewRHS }) => {
   // console.log("Lease Details renewal", relatedLease);
@@ -960,8 +881,8 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
       sx={{
         padding: "20px",
         backgroundColor: "#f0f0f0",
-        height: "93%",
         position: "relative",
+        height: "95%",
         borderRadius: "7px",
         // transition: 'transform 0.6s',
         // transformStyle: 'preserve-3d',
@@ -1036,28 +957,28 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                   <Typography>${leaseDetails?.property_listed_rent || "N/A"}</Typography>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
-  <Typography>Lease Documents:</Typography>
-  {leaseDocumentsArray.length > 0 && (
-    <Stack direction="row" spacing={1}>
-      {leaseDocumentsArray.map((document, index) => (
-        <Button
-          key={index}
-          sx={{
-            padding: "0px",
-            "&:hover": {
-              backgroundColor: theme.palette.form.main,
-            },
-          }}
-          title={document.filename} // Shows filename on hover
-          className=".MuiButton-icon"
-          onClick={() => openPreviewPane(document)}
-        >
-          <img src={LeaseIcon} alt="Lease Icon" />
-        </Button>
-      ))}
-    </Stack>
-  )}
-</Stack>
+                <Typography>Lease Documents:</Typography>
+                {leaseDocumentsArray.length > 0 && (
+                  <Stack direction="row" spacing={1}>
+                    {leaseDocumentsArray.map((document, index) => (
+                      <Button
+                        key={index}
+                        sx={{
+                          padding: "0px",
+                          "&:hover": {
+                            backgroundColor: theme.palette.form.main,
+                          },
+                        }}
+                        title={document.filename} // Shows filename on hover
+                        className=".MuiButton-icon"
+                        onClick={() => openPreviewPane(document)}
+                      >
+                        <img src={LeaseIcon} alt="Lease Icon" />
+                      </Button>
+                    ))}
+                  </Stack>
+                )}
+              </Stack>
 
                 <Stack direction='row' justifyContent='space-between'>
                   <Typography>Start Date:</Typography>
@@ -1082,7 +1003,17 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
               </Stack>
               <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: "auto" }}>
                 {!isEndingOrEarlyTermination && (
-                  <Button variant='contained' onClick={handleEndLease} size='small' sx={{ padding: "5px 10px", marginRight: "10px", backgroundColor: "#3D5CAC", fontWeight: "bold"}}>
+                  // <Button variant='contained' onClick={handleEndLease} size='small' sx={{ padding: "5px 10px", marginRight: "10px", backgroundColor: "#3D5CAC", fontWeight: "bold"}}>
+                  <Button 
+                  variant='contained' 
+                  size='small' 
+                  onClick={handleEndLease} 
+                  sx={{  
+                    fontWeight: "bold", 
+                    backgroundColor: "#3D5CAC", 
+                    color: "white",
+                  }}
+                >
                     End Lease
                   </Button>
                 )}
@@ -1105,9 +1036,19 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                 ) : (
                   showRenewLeaseButton &&
                   relatedLease?.lease_status !== "RENEW PROCESSING" && (
-                    <Button variant='contained' color='primary' size='small' onClick={handleRenewLease} sx={{ marginLeft: "10px", fontWeight: "bold" }}>
-                      Renew Lease
-                    </Button>
+                <Button 
+                  variant='contained' 
+                  size='small' 
+                  onClick={handleRenewLease} 
+                  sx={{ 
+                    marginLeft: "10px", 
+                    fontWeight: "bold", 
+                    backgroundColor: "#3D5CAC", 
+                    color: "white",
+                  }}
+                >
+                  Renew Lease
+                </Button>
                   )
                 )}
 
@@ -1289,6 +1230,10 @@ const ManagementDetails = ({ leaseDetails }) => {
         </Stack>
         <Stack direction='row' justifyContent='space-between'>
           <Typography>Phone:</Typography>
+          <Typography>{business_phone_number || "N/A"}</Typography>
+        </Stack>
+        <Stack direction='row' justifyContent='space-between'>
+          <Typography>Emergency Phone:</Typography>
           <Typography>{business_phone_number || "N/A"}</Typography>
         </Stack>
       </Stack>
