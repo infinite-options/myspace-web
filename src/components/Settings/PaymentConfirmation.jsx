@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from "react";
+import React, { Component, useEffect, useState, useRef } from "react";
 import {
   Paper,
   Radio,
@@ -56,14 +56,16 @@ const useStyles = makeStyles((theme) => ({
 export default function PaymentConfirmation() {
   const location=useLocation()
   const { getProfileId, paymentRoutingBasedOnSelectedRole, selectedRole } = useUser();
+  const hasRun = useRef(false);
+
   // const paymentNote=location.state.paymentData.business_code;
   // const paymentData = location.state?.paymentData;
   const [showSpinner, setShowSpinner] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false)
   const [paymentFailed, setPaymentFailed] = useState(false)
   const [paymentProcess, setPaymentProcess] = useState(false)
-  const [paymentIntent, setPaymentIntent] = useState("")
-  const [paymentMethod, setPaymentMethod] = useState("")
+  // const [paymentIntent, setPaymentIntent] = useState("")
+  // const [paymentMethod, setPaymentMethod] = useState("")
 
   // console.log("inside payment confirmaton page - ", paymentData)
 
@@ -93,9 +95,10 @@ export default function PaymentConfirmation() {
       // console.log(resultOfResponse)
 
       if (response.ok && resultOfResponse.status === "succeeded") {
-        setPaymentSuccess(true)
-        setPaymentIntent(resultOfResponse.client_secret)
-        setPaymentMethod(resultOfResponse.payment_method)
+        // setPaymentSuccess(true)
+        // setPaymentIntent(resultOfResponse.client_secret)
+        // setPaymentMethod(resultOfResponse.payment_method)
+        handleSubmit(resultOfResponse.client_secret, resultOfResponse.payment_method)
 
       } else if(resultOfResponse.status === "processing"){
         // setPaymentProcess(true)
@@ -116,19 +119,20 @@ export default function PaymentConfirmation() {
   }
 
   useEffect(()=>{
-    // const timer = setTimeout(() => {
-    //   setShowSpinner(true)
-    // }, 2000);
+    if (hasRun.current) {
+      return; 
+    }
+    hasRun.current = true;
 
-    // clearTimeout(timer);
-    
-    // setShowSpinner(false)
+    console.log("hello inside first useeffect")
 
     getPaymentStatus()
 
   }, [])
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (paymentIntent, paymentMethod, e) => {
+    console.log("paymentIntent - ", paymentIntent)
+    console.log("payment method - ", paymentMethod)
     setShowSpinner(true)
 
     let paymentData = {
@@ -157,6 +161,7 @@ export default function PaymentConfirmation() {
     }).then((e) => {
       console.log("successfully called make payment endpoint ")
       navigate("/tenantDashboard")
+      // setShowSpinner(false)
     });
 
     setShowSpinner(false)
