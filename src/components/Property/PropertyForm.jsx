@@ -187,18 +187,22 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		setOwnershipPercentage(value);
 	};
 
+	useEffect(() => {
+			setTotalOwnership(ownershipPercentage);
+		
+	}, [ownershipPercentage]); // Runs every time ownershipPercentage changes
+
 	const handleNewOwnerChange = (field, value) => {
 		setNewOwner((prev) => ({ ...prev, [field]: value }));
 	};
 
-	const addNewOwner = () => {
-		console.log(totalOwnership + newOwner.percentage);
-		if (totalOwnership + ownershipPercentage + newOwner.percentage <= 100) {
+	const addNewOwner = async () => {
+		if (totalOwnership + newOwner.percentage <= 100) {
 			setOtherOwners((prev) => [...prev, newOwner]);
-			setTotalOwnership(totalOwnership+ ownershipPercentage + newOwner.percentage);
+			setTotalOwnership(totalOwnership +  newOwner.percentage);
 			setNewOwner({ firstName: '', lastName: '', email: '', phone: '', percentage: 0 });
 		} else {
-			alert('Total ownership percentage cannot exceed 100%.');
+			alert('Total ownership percentage cannot exceed 100% here.');
 		}
 	};
 
@@ -1363,6 +1367,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 																/>
 															</TableCell>
 															<TableCell>
+																{totalOwnership}
 																<Button
 																	variant="contained"
 																	fullWidth
