@@ -157,6 +157,8 @@ export default function MaintenanceDashboard2() {
         }).sort((a, b) => new Date(parseDate(a.maintenance_scheduled_date)) - new Date(parseDate(b.maintenance_scheduled_date)));
       }
 
+      console.log("ROHIT - filteredTodayData - ", filteredTodayData);
+
       const fixedOrder = [
         { label: "Quotes Requested", color: "#DB9687" },
         { label: "Quotes Submitted", color: "#CEA892" },
@@ -316,10 +318,11 @@ export default function MaintenanceDashboard2() {
             </Grid>
           ) : (
             <>
-              <Grid item xs={12} md={8} columnSpacing={6} rowGap={4} sx={{ position: "relative" }}>
+              {/* <Grid item xs={12} md={8} columnSpacing={6} rowGap={4} sx={{ position: "relative" }}> */}
+              <Grid item xs={12} md={8} columnSpacing={6} rowGap={4}>
                 <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", borderRadius: "10px", height: "400px" }}>
                   <Stack direction='row' justifyContent='center' width='100%' sx={{ marginBottom: "15px", marginTop: "0px" }}>
-                    <Typography variant='h5' sx={{ fontWeight: "bold", color: "#160449" }}>
+                    <Typography variant='h5' sx={{ fontWeight: "bold", color: "#160449", marginTop: '20px', }}>
                       Current Activity
                     </Typography>
                   </Stack>
@@ -355,8 +358,8 @@ export default function MaintenanceDashboard2() {
           </Grid>
         )}
                 <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", borderRadius: "10px", height: "600px" }}>
-                  <Stack direction='row' justifyContent='center' width='100%' sx={{ marginBottom: "15px", marginTop: "15px" }}>
-                    <Typography variant='h5' sx={{ fontWeight: "bold", color: "#160449" }}>
+                  <Stack direction='row' justifyContent='center' width='100%' sx={{ marginBottom: "15px", marginTop: "15px", }}>
+                    <Typography variant='h5' sx={{ fontWeight: "bold", color: "#160449", marginTop: '20px', }}>
                       Revenue
                     </Typography>
                   </Stack>
@@ -372,6 +375,8 @@ export default function MaintenanceDashboard2() {
 }
 
 const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, allMaintenanceStatusData, onSelectRequest }) => {
+  let navigate = useNavigate();  
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [showSpinner, setShowSpinner] = useState(false);
   const convertTimeTo12HourFormat = (time) => {
     const [hours, minutes] = time.split(":");
@@ -381,6 +386,8 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
 
     return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit", hour12: true });
   };
+
+  console.log("ROHIT - todayData - ", todayData);
 
   const colors = ["#B33A3A", "#FFAA00", "#FFC107"];
 
@@ -450,7 +457,38 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
 
   const filteredMaintenanceRequests = filterCheckedAddresses(maintenanceRequests, filterPropertyList);
 
+  console.log("ROHIT - filteredMaintenanceRequests - ", filteredMaintenanceRequests);
+
   //console.log('----filteredMaintenanceRequests-----', filteredMaintenanceRequests);
+
+  async function handleRequestDetailPage(maintenance_request_index, status, property_uid, maintenance_request_uid) {
+     //rohit - fix
+     const data ={} //rohit - delete this
+    // console.log("handleRequestDetailPage")
+    //console.log("maintenance_request_index", maintenance_request_index)
+    //console.log("status", status);
+    //console.log("maintenanceItemsForStatus", maintenanceItemsForStatus);
+    //console.log("inside func allMaintenanceData", allMaintenanceData);
+    if (isMobile) {
+
+      navigate(`/workerMaintenance/detail`, {
+        state: {
+          maintenance_request_index,
+          status,
+          maintenanceItemsForStatus: maintenanceRequests[status],
+          data,
+          maintenance_request_uid,
+        },
+      });
+    } else {
+      onSelectRequest(
+        maintenance_request_index, 
+        status, 
+        maintenanceRequests[status], 
+        data, 
+        maintenance_request_uid
+      )	}
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -526,9 +564,10 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
                 style={{
                   borderRadius: "5px",
                   backgroundColor: "#FFFFFF",
-                  height: 240,
-                  width: "90%",
+                  height: (isMobile || todayData?.length === 0) ? 150 : 460,
+                  width: "85%",
                   margin: "auto",
+                  padding: '10px',
                 }}
               >
                 <Grid item xs={12}>
@@ -543,47 +582,60 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
                     todayData.map((row, index) => {
                       const formattedTime = convertTimeTo12HourFormat(row.maintenance_scheduled_time);
                       return (
-                        <Box
-                          key={index}
-                          sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            backgroundColor: colors[index % colors.length], // Use the desired background color
-                            color: "white", // Use the desired text color
-                            borderRadius: "10px",
-                            marginBottom: 2,
-                            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", // Add shadow for better appearance
-                          }}
-                        >
-                          <Box
+                        <>
+                          
+                          <Grid
+                            container
+                            key={index}
                             sx={{
-                              display: "flex",
-                              flexDirection: "row",
-                              justifyContent: "flex-start",
-                              alignItems: "center",
+                                backgroundColor: colors[index % colors.length], // Background color based on index
+                                color: "white",
+                                borderRadius: "10px",
+                                marginBottom: 2,
+                                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", // Shadow for better appearance
+                                padding: 2, // Add padding for spacing inside the Grid item
+                            }}
+                            onClick={() => {
+                              const key = row.maintenance_status
+                              const index = filteredMaintenanceRequests[key].findIndex((item) => item.maintenance_request_uid === row.maintenance_request_uid);
+                              handleRequestDetailPage(index, row.maintenance_status, row.maintenance_property_id, row.maintenance_request_uid);
                             }}
                           >
-                            <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>{formattedTime}</Typography>
-                            <Box
-                              sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                maxWidth: "calc(100% - 4rem)", // Adjust based on the layout needs
-
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                marginLeft: 1,
-                              }}
-                            >
-                              <Typography sx={{ marginLeft: 6, fontSize: "0.8rem" }}>
-                                <strong>Address:</strong> {row.property_address}, {row.property_city}, {row.property_state} {row.property_zip}
-                              </Typography>
-                              <Typography sx={{ marginLeft: 6, marginTop: 1, fontSize: "0.8rem" }}>
-                                <strong>Issue:</strong> {row.maintenance_title}
-                              </Typography>
-                            </Box>
-                          </Box>
-                        </Box>
+                            <Grid item xs={12} sm={3} display="flex" alignItems="center">
+                                <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>{formattedTime}</Typography>
+                            </Grid>
+                            
+                            <Grid container item xs={12} sm={9} direction="row" sx={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+                              <Grid container item xs={12} direction="row" sx={{ overflow: "hidden",}}>
+                                <Grid item xs={3}>
+                                  <Typography sx={{ fontSize: "0.8rem" }}>
+                                      <strong>Address:</strong>
+                                  </Typography>
+                                </Grid>
+                                <Grid container item direction="column" xs={9}>
+                                  <Typography sx={{ marginLeft: 1, fontSize: "0.8rem" }}>
+                                      {row.property_address}
+                                  </Typography>
+                                  <Typography sx={{ marginLeft: 1, fontSize: "0.8rem" }}>
+                                      {row.property_city}, {row.property_state} {row.property_zip}
+                                  </Typography>
+                                </Grid>    
+                              </Grid>
+                              <Grid container item xs={12} direction="row" sx={{ overflow: "hidden",}}>
+                                <Grid item xs={3}>
+                                  <Typography sx={{ fontSize: "0.8rem" }}>
+                                      <strong>Issue:</strong>
+                                  </Typography>
+                                </Grid>
+                                <Grid container item direction="column" xs={9}>
+                                  <Typography sx={{ marginLeft: 1, fontSize: "0.8rem" }}>
+                                    {row.maintenance_title}
+                                  </Typography>                                  
+                                </Grid>    
+                              </Grid>                                                                 
+                            </Grid>                            
+                          </Grid>
+                        </>
                       );
                     })
                   )}
@@ -672,7 +724,7 @@ const WorkOrdersAccordion = ({ maintenanceRequests, allMaintenanceStatusData, on
 
   return (
     <>
-      <Grid item xs={12} sx={{ width: "90%", margin: "auto" }}>
+      <Grid item xs={12} sx={{ width: "90%", margin: "auto", }}>
         {colorStatus.map((item, index) => {
           let mappingKey = item.mapping;
           let maintenanceArray = maintenanceRequests[mappingKey] || [];

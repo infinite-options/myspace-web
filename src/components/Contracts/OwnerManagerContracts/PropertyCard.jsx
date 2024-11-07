@@ -845,7 +845,7 @@ const PropertyCard = (props) => {
   const [contractStartDate, setContractStartDate] = useState(dayjs());
   const [contractEndDate, setContractEndDate] = useState(dayjs());
   const [contractEndNotice, setContractEndNotice] = useState(30);
-  const [continueM2M, setContinueM2M] = useState(1); // 0 -  1- continue m2m 2 - renews automatically 
+  const [continueM2M, setContinueM2M] = useState(0); // 0 -  1- continue m2m 2 - renews automatically 
   const [contractStatus, setContractStatus] = useState(null);
   const [contractFees, setContractFees] = useState([]);
 //   const [defaultContractFees, setDefaultContractFees] = useState([]);
@@ -2019,8 +2019,8 @@ return (
 						value={contractName}
 						onChange={handleContractNameChange}
 						required						
-            InputProps={textFieldInputProps}
-            sx={textFieldSX}
+            			InputProps={textFieldInputProps}
+            			sx={textFieldSX}
 					>						
 					</TextField>
 				</Grid>
@@ -2046,8 +2046,7 @@ return (
 						/>
 					</LocalizationProvider>
 				</Grid>
-			</Grid>
-			{/* <Grid item container xs={2} md={0}></Grid> */}
+			</Grid>			
 			<Grid item container direction="row" xs={5} md={2.5} sx={{justifyContent: 'center', }}>
 				<Grid item xs={12}>
 					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
@@ -2062,28 +2061,8 @@ return (
 							onChange={handleEndDateChange}
 							slots={{
 								openPickerIcon: CalendarIcon,
-							}}
-              // sx={{
-              //   height: '40px',
-              // }}
-							// slotProps={{
-							// 	textField: {
-							// 		size: 'small',
-							// 		style: {
-							// 			width: '100%',
-							// 			fontSize: 24,
-							// 			backgroundColor: '#FFFFFF',
-							// 			// borderRadius: "10px !important",
-							// 			borderRadius: '10px',
-							// 			border: '1px solid #3D5CAC',
-							// 			// border: "10px solid green",
-							// 			input: {
-							// 				// border: '1px solid black', // Ensure input border is black
-							// 			},
-							// 		},
-							// 	},
-							// }}
-              slotProps={datePickerSlotProps}
+							}}              
+              				slotProps={datePickerSlotProps}
 						/>
 					</LocalizationProvider>
 				</Grid>
@@ -2102,9 +2081,13 @@ return (
             control={
               <Checkbox
                 checked={continueM2M === 1 ? true : false}
-                onChange={() => {
-                  setContinueM2M(1)
-                }}
+                onChange={(event) => {
+					if (event.target.checked) {
+						setContinueM2M(1);
+					} else {
+						setContinueM2M(0);
+					}
+				}}
                 inputProps={{ 'aria-label': 'controlled' }}
               />	          
             } 
@@ -2123,9 +2106,13 @@ return (
             control={
               <Checkbox
                 checked={continueM2M === 2 ? true : false}
-                onChange={() => {
-                  setContinueM2M(2)
-                }}
+                onChange={(event) => {
+					if (event.target.checked) {
+						setContinueM2M(2);
+					} else {
+						setContinueM2M(0);
+					}
+				}}
                 inputProps={{ 'aria-label': 'controlled' }}
               />	          
             } 

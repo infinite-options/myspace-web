@@ -284,7 +284,8 @@ export default function SelectPayment(props) {
         body: JSON.stringify(payment),
       });
 
-      resultOfResponse = await response.text()    // because response has only url so we can't convert into json
+      resultOfResponse = await response.json()    // because response has only url so we can't convert into json
+      console.log(resultOfResponse)
 
       if (response.ok) {
 
@@ -301,17 +302,43 @@ export default function SelectPayment(props) {
     setShowSpinner(false);
     // console.log("Completed Bank Transfer Handler Function");
     // navigate
+    localStorage.setItem('pay_purchase_id', JSON.stringify(payment.purchase_uids));
+    localStorage.setItem('pay_fee', convenience_fee);
+    localStorage.setItem('pay_total', totalBalance);
+    localStorage.setItem('cashflow_total', cashFlowTotal);
+    localStorage.setItem('payment_notes', payment.business_code);
+    localStorage.setItem('payment_type', selectedMethod);
+    localStorage.setItem('session_id', resultOfResponse.id);
+
     if (resultOfResponse){ 
-      window.location.href = resultOfResponse
+      window.location.href = resultOfResponse.url
     }
-    // navigate("/PaymentConfirmation", { state: { paymentData } });
+
+    // let paymentIntent = "BankTransfer";
+    // let paymentMethod = "BankTransfer";
+
+    // let payment_request_payload = {
+    //   pay_purchase_id: payment.purchase_uids,
+    //   pay_fee: convenience_fee,
+    //   pay_total: totalBalance,
+    //   cashflow_total: cashFlowTotal,    //payment.balance
+    //   payment_notes: payment.business_code,
+    //   pay_charge_id: "stripe transaction key",
+    //   payment_type: selectedMethod,
+    //   payment_verify: "Unverified",
+    //   paid_by: getProfileId(),
+    //   payment_intent: paymentIntent,
+    //   payment_method: paymentMethod,
+    // };
+
+    // navigate("/PaymentConfirmation", { state: { paymentData: payment_request_payload } });
   }
 
   function update_fee(e) {
     // console.log("--debug update_fee -->", selectedMethod);
     let fee = 0;
     if (e.target.value === "Bank Transfer") {
-      fee = Math.max(parseFloat((balance * 0.008).toFixed(2)), 5);
+      fee = Math.min(parseFloat((balance * 0.008).toFixed(2)), 5);
     } else if (e.target.value === "Credit Card") {
       fee = parseFloat((balance * 0.03).toFixed(2));
     }

@@ -164,11 +164,13 @@ const [data, setdata] = useState({});
               }
           }
           return filteredRequests;
-      };
-      const filteredMaintenanceRequests = filterMaintenanceRequests(allMaintenanceStatusData, Array.from(addresses));
+        };
+        const filteredMaintenanceRequests = filterMaintenanceRequests(allMaintenanceStatusData, Array.from(addresses));
 
         //console.log('-----data inside workerMaintenanceTable----', data);
         //console.log('-----filteredRequests inside workerMaintenanceTable----', filteredMaintenanceRequests);
+
+        console.log('ROHIT - statusTable - filteredMaintenanceRequests - ', filteredMaintenanceRequests);
 
         const statusMappings = [
           { status: 'Quotes Requested', mapping: 'REQUESTED' },

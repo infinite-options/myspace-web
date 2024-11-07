@@ -78,6 +78,7 @@ import ListsContext from "../../contexts/ListsContext.js";
 import ManagementDetailsComponent from "./ManagementDetailsComponent.jsx";
 
 import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy } from "../../utils/fees";
+import ReferTenantDialog from "../Referral/ReferTenantDialog.jsx";
 
 const getAppColor = (app) => {
   if (app.lease_status.includes("RENEW")) {
@@ -142,6 +143,7 @@ export default function PropertyNavigator({
   const [rentFee, setrentFee] = useState({});
   const [appliances, setAppliances] = useState([]);
   const [open, setOpen] = useState(false);
+  const [showReferTenantDialog, setShowReferTenantDialog] = useState(false);
   const [currentApplRow, setcurrentApplRow] = useState(null);
   const [modifiedApplRow, setModifiedApplRow] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -324,13 +326,13 @@ export default function PropertyNavigator({
       var count = 0;
       var newContractCount = 0;
       var sentContractCount = 0;
-      // console.log("ROHIT - PropertyNavigator - allContracts - ", allContracts);
-      // console.log("ROHIT - PropertyNavigator - propertyId - ", propertyId);
+      // console.log("PropertyNavigator - allContracts - ", allContracts);
+      // console.log("PropertyNavigator - propertyId - ", propertyId);
       const filtered = allContracts?.filter((contract) => {
         const contractPropertyID = contract.property_id || contract.property_uid;
         return contractPropertyID === propertyId;
       });
-      // console.log("ROHIT - PropertyNavigator - filtered - ", filtered);
+      // console.log("PropertyNavigator - filtered - ", filtered);
       const active = filtered?.filter((contract) => contract.contract_status === "ACTIVE");
       // console.log("322 - PropertyNavigator - filtered contracts - ", filtered);
       filtered.forEach((contract) => {
@@ -343,7 +345,7 @@ export default function PropertyNavigator({
           newContractCount++;
         }
       });
-      // console.log("ROHIT - PropertyNavigator - Active contract - ", active);
+      // console.log("PropertyNavigator - Active contract - ", active);
       setContractsNewSent(count);
       setContractsData(allContracts);
       setActiveContracts(active);
@@ -1596,14 +1598,10 @@ export default function PropertyNavigator({
                               width: "100%",
                               cursor: "pointer",
                             }}
-                            onClick={() => {
-                              // console.log("ROHIT - here1");
-                              // console.log("ROHIT - here1 = getPaymentStatus(property?.rent_status, property) -", getPaymentStatus(property?.rent_status, property));
-
+                            onClick={() => {                                                            
                               if (getPaymentStatus(property?.rent_status, property) === "Vacant - Not Listed") {
                                 onAddListingClick("create_listing");
-                              } else if (getPaymentStatus(property?.rent_status, property) === "No Manager") {
-                                // console.log("ROHIT - here2");
+                              } else if (getPaymentStatus(property?.rent_status, property) === "No Manager") {                                
                                 onShowSearchManager(1);
                               }
                             }}
@@ -1898,13 +1896,49 @@ export default function PropertyNavigator({
                         >
                           {tenant_detail}
                         </Typography>
-                        <KeyboardArrowRightIcon
-                          sx={{
-                            color: theme.typography.common.blue,
-                            cursor: "pointer",
-                          }}
-                          onClick={() => handleTenantClick(property.tenant_uid)}
-                        />
+                        {
+                          selectedRole === "MANAGER" && tenant_detail === "No Tenant" ? (
+                            <Button
+                                onClick={() => {                                    
+                                    setShowReferTenantDialog(true);                                    
+                                }}
+                                variant='contained'
+                                sx={{
+                                    marginLeft: '25px',
+                                    background: "#3D5CAC",
+                                    color: theme.palette.background.default,
+                                    cursor: "pointer",
+                                    paddingX:"10px",
+                                    textTransform: "none",
+                                    maxWidth: "120px", // Fixed width for the button
+                                    maxHeight: "100%",
+                                }}
+                                size='small'
+                            >
+                              <Typography
+                                  sx={{
+                                  textTransform: "none",
+                                  color: "#FFFFFF",
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: "12px",
+                                  whiteSpace: "nowrap",
+                                  //   marginLeft: "1%", // Adjusting margin for icon and text
+                                  }}
+                              >
+                                  {"Refer Tenant"}
+                              </Typography>
+                            </Button>                                
+                          ) : (
+                            <KeyboardArrowRightIcon
+                              sx={{
+                                color: theme.typography.common.blue,
+                                cursor: "pointer",
+                              }}
+                              onClick={() => handleTenantClick(property.tenant_uid)}
+                            />
+                          )
+                        }
+                        
                       </Box>
                     </Grid>
                     <Grid item xs={6}>
@@ -3037,6 +3071,14 @@ export default function PropertyNavigator({
                     )}
                   </DialogActions>
                 </Dialog>
+                {
+                  <ReferTenantDialog 
+                    open={showReferTenantDialog}
+                    onClose={() => setShowReferTenantDialog(false)}
+                    setShowSpinner={setShowSpinner}
+                    property={property}
+                  />
+                } 
               </Box>
             </Card>
           </Grid>
