@@ -558,6 +558,7 @@ const CashflowDetails = ({
               </Button>
               <Button
                 sx={{
+                  marginRight: isMobile? "10px" :"30px",
                   backgroundColor: headerTab === "current_month" ? "#3D5CAC" : "#9EAED6",
                   textTransform: "none",
                   "&:hover": {
@@ -571,6 +572,37 @@ const CashflowDetails = ({
                 }}
               >
                 <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>{currentMonth}</Typography>
+              </Button>
+              <Button
+                sx={{
+                  marginRight: isMobile? "10px" :"30px",
+                  backgroundColor: headerTab === "next_month" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: headerTab === "next_month" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => {
+                  const monthNames = [
+                    "January", "February", "March", "April", "May", "June", 
+                    "July", "August", "September", "October", "November", "December"
+                  ];
+
+                  let monthIndex = monthNames.indexOf(currentMonth);
+
+                  if (monthIndex === 11) { // If current month is January
+                    setMonth("January");
+                    setYear((currentYear + 1).toString());
+                  } else {
+                    setMonth(monthNames[monthIndex + 1]);
+                    setYear(currentYear.toString());
+                  }
+                
+                  setHeaderTab("next_month")
+                  
+                }}
+              >
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Next Month</Typography>
               </Button>
             </Box>
 
