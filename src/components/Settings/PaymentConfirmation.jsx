@@ -64,6 +64,7 @@ export default function PaymentConfirmation() {
   const [paymentSuccess, setPaymentSuccess] = useState(false)
   const [paymentFailed, setPaymentFailed] = useState(false)
   const [paymentProcess, setPaymentProcess] = useState(false)
+  const [FailedMessage, setFailedMessage] = useState("")
   // const [paymentIntent, setPaymentIntent] = useState("")
   // const [paymentMethod, setPaymentMethod] = useState("")
 
@@ -106,8 +107,8 @@ export default function PaymentConfirmation() {
           await getPaymentStatus();
       
       }else{
+        setFailedMessage(resultOfResponse.failure_message)
         setPaymentFailed(true)
-        console.log("Transaction Failed") 
       }
     } catch (error) {
       console.error("An error occurred while making the POST request", error);
@@ -191,7 +192,8 @@ export default function PaymentConfirmation() {
           </Button>)}
           {paymentProcess && (<Typography> Payment is in process ..... refresh</Typography>)}
           {paymentFailed && (<Box>
-            <Typography>Payment is Failed....</Typography>
+            <Typography>Payment has Failed!!</Typography>
+            <Typography>{FailedMessage}</Typography>
             <Button
               variant='contained'
               onClick={()=>{navigate("/tenantDashboard")}}
