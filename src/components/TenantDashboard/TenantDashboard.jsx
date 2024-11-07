@@ -1576,7 +1576,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
       business_code: paymentNotes,
       balance: paymentOption === "partial" ? partialAmount : total, // Check here for partial amount getting passed into balance - Abhinav
     };
-    console.log("check here", updatedPaymentData);
+    // console.log("check here", updatedPaymentData);
     navigate("/selectPayment", {
       state: {
         paymentData: updatedPaymentData,
@@ -1815,7 +1815,7 @@ function TenantBalanceTablePM(props) {
 
   useEffect(() => {
     setData(props.data);
-    console.log("props", props);
+    // console.log("props", props);
   }, [props.data]);
 
   useEffect(() => {
@@ -1834,15 +1834,26 @@ function TenantBalanceTablePM(props) {
     let total = 0;
     let purchase_uid_mapping = [];
 
-    for (const item of selectedRows) {
+    let sortedPaymentItems = selectedRows.map((item) => {
       let paymentItemData = paymentDueResult.find((element) => element.purchase_uid === item);
-      purchase_uid_mapping.push({ purchase_uid: item, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
+      return {
+        purchase_uid: item,
+        description: paymentItemData.description,
+        pur_amount_due: paymentItemData.pur_amount_due,
+        pur_cf_type: paymentItemData.pur_cf_type,
+        dueDate: new Date(paymentItemData.dueDate)
+      };
+    }).sort((a, b) => a.dueDate - b.dueDate);
+    
+
+    for (const item of sortedPaymentItems) {
+      purchase_uid_mapping.push({ purchase_uid: item.purchase_uid, pur_amount_due: item.pur_amount_due.toFixed(2), description: item.description});
 
       // Adjust total based on pur_cf_type
-      if (paymentItemData.pur_cf_type === "revenue") {
-        total += parseFloat(paymentItemData.pur_amount_due);
-      } else if (paymentItemData.pur_cf_type === "expense") {
-        total -= parseFloat(paymentItemData.pur_amount_due);
+      if (item.pur_cf_type === "revenue") {
+        total += parseFloat(item.pur_amount_due);
+      } else if (item.pur_cf_type === "expense") {
+        total -= parseFloat(item.pur_amount_due);
       }
     }
 
