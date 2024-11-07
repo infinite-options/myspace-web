@@ -36,6 +36,7 @@ import { Table, TableHead, TableBody, TableRow, TableCell, TableContainer } from
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import defaultHouseImage from "../Property/defaultHouseImage.png";
+import NewCardSlider from "../Announcement/NewCardSlider";
 import { useUser } from "../../contexts/UserContext";
 import APIConfig from "../../utils/APIConfig";
 import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
@@ -99,6 +100,10 @@ const TenantDashboard = () => {
   const [reload, setReload] = useState(false);
   const [relatedLease, setRelatedLease] = useState(null);
 
+  const [announcementSentData, setAnnouncementSentData] = useState([]);
+  const [announcementRecvData, setAnnouncementRecvData] = useState([]);
+  const [view, setView] = useState("dashboard"); 
+
   useEffect(() => {
     // Whenever this component is mounted or navigated to, reset the right pane
     if(isMobile){
@@ -148,6 +153,8 @@ const TenantDashboard = () => {
         setMaintenanceStatus(dashboardData.maintenanceStatus?.result);
         setAnnouncements(dashboardData.announcementsReceived?.result);
         setPaymentHistory(dashboardData.tenantPayments?.result);
+        setAnnouncementRecvData(dashboardData.announcementsReceived?.result || []);
+        setAnnouncementSentData(dashboardData.announcementsSent?.result || []);
 
         // Set first property as selected, if available
         // const firstProperty = dashboardData.property?.result[0];
@@ -480,7 +487,72 @@ const TenantDashboard = () => {
               {/* Top section: Announcements */}
               {(!isMobile || !viewRHS) && (
                 <Grid item xs={12}>
-                  <AnnouncementsPM announcements={announcements} setRightPane={setRightPane} isMobile={isMobile} setViewRHS={setViewRHS}/>
+                  <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", paddingBottom: "40px", borderRadius: "10px", height: "100%" }}>
+                    <Grid
+                      container
+                      direction='row'
+                      sx={{
+                        paddingTop: "10px",
+                        paddingBottom: "10px",
+                      }}
+                    >
+                      <Grid item xs={2}></Grid>
+                      <Grid item xs={8}>
+                        <Box
+                          sx={{
+                            flexGrow: 1,
+                            display: "flex",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              color: "#160449",
+                              fontSize: { xs: "24px", sm: "24px", md: "24px" },
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Announcements
+                          </Typography>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={2}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            zIndex: 1,
+                            flex: 1,
+                            height: "100%",
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              color: "#007AFF",
+                              fontSize: "15px",
+                              paddingRight: "25px",
+                              fontWeight: "bold",
+                              cursor: "pointer"
+                            }}
+                            onClick={() => {
+                              isMobile ? setViewRHS(true) : setViewRHS(false)
+                              setView("announcements")
+                            }}
+                          >
+                            {isMobile ? `(${announcementRecvData.length + announcementSentData.length})` : `View all (${announcementRecvData.length + announcementSentData.length})`}
+                          </Box>
+                        </Box>
+                      </Grid>
+                    </Grid>
+                    {announcementRecvData.length > 0 ? (
+                      <NewCardSlider announcementList={announcementRecvData} isMobile={isMobile} />
+                    ) : (
+                      <Box sx={{ display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "235px" }}>
+                        <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" } }}>No Announcements</Typography>
+                      </Box>
+                    )}
+                  </Grid>
                 </Grid>
               )}
 

@@ -57,6 +57,15 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS 
   const [settingsChanged, setSettingsChanged] = useState(false);
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
   const [newRole, setNewRole] = useState("");
+  const [primaryRole, setPrimaryRole] = useState(user.primary_role || ""); 
+  const [availableRoles, setAvailableRoles] = useState([]); 
+  const allRoles = ["MANAGER", "PM_EMPLOYEE", "OWNER", "TENANT", "MAINTENANCE", "MAINT_EMPLOYEE"];
+  const [showPrimaryRoleDropdown, setShowPrimaryRoleDropdown] = useState(false);
+
+  const handlePrimaryRoleLinkClick = () => {
+    setShowPrimaryRoleDropdown(!showPrimaryRoleDropdown);
+  };
+
 
   const CustomSwitch = styled(Switch)(({ theme }) => ({
     '& .MuiSwitch-switchBase.Mui-checked': {
@@ -87,6 +96,44 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS 
       setSettingsChanged(false);
     }
   }, [settingsChanged]);
+
+  useEffect(() => {
+    // Initialize roles from cookies.user.role
+    const rolesFromCookies = cookies.user?.role ? cookies.user.role.split(",") : [];
+    setAvailableRoles(rolesFromCookies);
+  }, [cookies.user?.role]);
+
+  const handlePrimaryRoleChange = (event) => {
+    const selectedRole = event.target.value;
+    setPrimaryRole(selectedRole);
+  
+    const updatedRoles = [selectedRole, ...availableRoles.filter(role => role !== selectedRole)].join(",");
+    console.log(`Updated roles with primary role: ${updatedRoles}`);
+  
+    updatePrimaryRoleInBackend(updatedRoles);
+  };
+
+  const updatePrimaryRoleInBackend = async (updatedRoles) => {
+    try {
+      const response = await axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo", {
+        user_uid: cookies.user.user_uid,
+        role: updatedRoles,
+      });
+  
+      if (response.status === 200) {
+        console.log("Primary role updated successfully");
+        setCookie("user", { ...cookies.user, role: updatedRoles }, { path: "/" }); // Update the cookie with new roles
+      } else {
+        console.error("Failed to update primary role");
+      }
+    } catch (error) {
+      console.error("Error updating primary role:", error);
+    }
+  };
+  
+  const getAvailableRolesForSelection = () => {
+    return allRoles.filter((role) => !availableRoles.includes(role));
+  };
 
   // useEffect(() => {
     
@@ -270,28 +317,41 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS 
           </Link>
         </Grid>
 
-        <Grid container justifyContent='space-between' alignContent='center' item xs={12} sx={{marginTop: '15px', }}>
-          <Link href="#" underline="hover" onClick={handleAddRoleLinkClick} sx={{ color: "#3D5CAC" }}>
+        <Grid container alignItems="center" item xs={12} sx={{ marginTop: "15px" }}>
+          <Link href="#" underline="hover" onClick={handleAddRoleLinkClick} sx={{ color: "#3D5CAC", marginRight: "15px" }}>
             Add Role
           </Link>
+          {showRoleDropdown && (
+            <Box className={classes.settingsItem}>
+              <select value={newRole} onChange={handleRoleSelect}>
+                <option value="">Select Role</option>
+                {allRoles.filter((role) => !availableRoles.includes(role)).map((role, index) => (
+                  <option key={index} value={role}>
+                    {role}
+                  </option>
+                ))}
+              </select>
+            </Box>
+          )}
         </Grid>
-        {showRoleDropdown && (
-          <Grid container justifyContent='space-between' alignContent='center' item xs={12} sx={{marginTop: '15px', }}>
-            
-              <Box className={classes.settingsItem}>
-                <select value={newRole} onChange={handleRoleSelect}>
-                  <option value="">Select Role</option>
-                  <option value="MANAGER">Manager</option>
-                  <option value="PM_EMPLOYEE">Property Manager - Employee</option>
-                  <option value="OWNER">Owner</option>
-                  <option value="TENANT">Tenant</option>
-                  <option value="MAINTENANCE">Maintenance</option>
-                  <option value="MAINT_EMPLOYEE">Maintenance - Employee</option>
-                </select>
-              </Box>
-            
-          </Grid>
-        )}
+
+        <Grid container alignItems="center" item xs={12} sx={{ marginTop: "15px" }}>
+          <Link href="#" underline="hover" onClick={handlePrimaryRoleLinkClick} sx={{ color: "#3D5CAC", marginRight: "15px" }}>
+            {primaryRole || "Select Primary Role"}
+          </Link>
+          {showPrimaryRoleDropdown && (
+            <Box>
+              <select value={primaryRole} onChange={handlePrimaryRoleChange}>
+                {availableRoles.map((role, index) => (
+                  <option key={index} value={role}>
+                    {role}
+                  </option>
+                ))}
+              </select>
+            </Box>
+          )}
+        </Grid>
+
         <Grid container justifyContent='space-between' alignContent='center' item xs={12} sx={{marginTop: '15px', }}>
           <Link href="#" underline="hover" onClick={handleChangePasswordClick} sx={{ color: "#3D5CAC" }}>
             Change password
