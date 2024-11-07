@@ -39,13 +39,14 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
     const renderParts = (item) => {
         try {
             const expenses = JSON.parse(item.quote_services_expenses);
-            // console.log('Expenses:', expenses);
+            console.log('Expenses:', expenses);
             const partsWithIDs = [];
             if (expenses.parts && expenses.parts.length > 0) {
                 expenses.parts.forEach((part, index) => {
                     partsWithIDs.push({
                         ...part,
                         ID: index,
+                        cost: parseFloat(part.cost),
                     });
                 });
 
@@ -60,20 +61,50 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                     {
                       field: 'part',
                       headerName: 'Part',
-                      width: 150,
+                      width: 220,
                     //   editable: true,
                     },
                     {
                       field: 'quantity',
                       headerName: 'Quantity',
-                      width: 150,                                            
+                      headerAlign: 'right',
+                      width: 100,
+                      renderCell: (params) => (
+                        <Box sx={{ textAlign: 'right', width: '100%' }}>
+                            {params.formattedValue}
+                        </Box>
+                      ),                                            
                     },
                     {
                       field: 'cost',
-                      headerName: 'Cost',                      
-                      width: 110,  
-                      valueFormatter: (params) => `$${params.value}`                    
-                    },                    
+                      headerName: 'Cost',
+                      headerAlign: 'right',                      
+                      width: 100,  
+                      valueFormatter: (params) => `$${params.value.toFixed(2)}`,
+                      renderCell: (params) => (
+                        <Box sx={{ textAlign: 'right', width: '100%' }}>
+                            {params.formattedValue}
+                        </Box>
+                    ),                                          
+                    },             
+                    {
+                        field: 'totalCost',
+                        headerName: 'Total Cost',
+                        headerAlign: 'right',
+                        width: 150,
+                        valueGetter: (params) => params.row.cost * params.row.quantity,
+                        valueFormatter: (params) => `$${params.value.toFixed(2)}`,
+                        renderCell: (params) => (
+                            <Box sx={{ textAlign: 'right', width: '100%' }}>
+                                {params.formattedValue}
+                            </Box>
+                        ),
+                        // renderHeader: (params) => (
+                        //     <Box sx={{ textAlign: 'right', width: '100%' }}>
+                        //         Total Cost
+                        //     </Box>
+                        // ),
+                    },       
                 ];
                 return (
                     <Grid container sx={{ paddingTop: '10px' }} spacing={2}>
@@ -96,46 +127,54 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                                 </Grid>
                             </React.Fragment>
                         ))} */}
-                        <Grid item xs={12} sx={{marginBottom: '10px',}}>
-                            <DataGrid
-                                // rows={expenses.parts}
-                                rows={partsWithIDs}
-                                getRowId={row => row.ID}
-                                rowHeight={30}
-                                columnHeaderHeight={30}
-                                columns={columns}
-                                initialState={{
-                                    pagination: {
-                                        paginationModel: {
-                                            pageSize: 5,
+                        <Grid 
+                            container
+                            direction='row'
+                            item
+                            xs={12}
+                            sx={{
+                                borderRadius: '5px',
+                                backgroundColor: '#F2F2F2',
+                                margin: '10px',                                
+                            }}
+
+                        >
+                            <Grid item xs={12} sx={{margin: '10px',}}>
+                                <DataGrid
+                                    // rows={expenses.parts}
+                                    rows={partsWithIDs}
+                                    getRowId={row => row.ID}
+                                    rowHeight={30}
+                                    columnHeaderHeight={30}
+                                    columns={columns}
+                                    initialState={{
+                                        pagination: {
+                                            paginationModel: {
+                                                pageSize: 5,
+                                            },
                                         },
-                                    },
-                                }}
-                                pageSizeOptions={[5]}                                     
-                                hideFooter={true}                       
-                                disableRowSelectionOnClick
-                                sx={{
-                                    '& .MuiDataGrid-cell': {
-                                        color: '#160449',                                        
-                                    },                                    
-                                    '& .MuiDataGrid-columnHeaderTitle': {
-                                        lineHeight: 'normal',
-                                        fontWeight: 'bold',
-                                        color: '#160449',
-                                    },
-                                }}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Typography variant="body2" sx={{ color: '#2c2a75'}}>
-                                Parts Total:
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Typography variant="body2" sx={{ color: '#2c2a75'}}>
-                                ${partsTotal.toFixed(2)}
-                            </Typography>
-                        </Grid>
+                                    }}
+                                    pageSizeOptions={[5]}                                     
+                                    hideFooter={true}                       
+                                    disableRowSelectionOnClick                                
+                                    sx={{
+                                        '& .MuiDataGrid-cell': {
+                                            color: '#160449',                                        
+                                        },                                    
+                                        '& .MuiDataGrid-columnHeaderTitle': {
+                                            lineHeight: 'normal',
+                                            fontWeight: 'bold',
+                                            color: '#160449',
+                                        },
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={12} sx={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', paddingRight: '8%', marginTop: '10px', marginBottom: '10px',}}>
+                                <Typography variant="body2" sx={{ color: '#2c2a75', fontWeight: 'bold', }}>
+                                    Parts Total: ${partsTotal.toFixed(2)}
+                                </Typography>
+                            </Grid>
+                        </Grid>                                                
                     </Grid>
                 );
             } else {
@@ -272,7 +311,9 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                             p: 3,
                             backgroundColor: '#ffffff',
                             borderRadius: '10px',
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                            // boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                            boxShadow: 'none',
+                            border: 'none',
                         }}
                     >
                         <Carousel
@@ -282,8 +323,22 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                             indicators={false}
                             onChange={(now, previous) => setCurrentIndex(now)}
                             sx={{ width: '100%', 
-                            height: '400px',  // Set the desired fixed height here
-                            overflow: 'auto' // Ensure content doesn't overflow
+                            height: '400px', 
+                            overflow: 'auto',
+                            '&::-webkit-scrollbar': {
+                                width: '4px',
+                                height: '4px',
+                            },
+                            '&::-webkit-scrollbar-track': {
+                                background: 'transparent',
+                            },
+                            '&::-webkit-scrollbar-thumb': {
+                                backgroundColor: '#888',
+                                borderRadius: '10px',
+                            },
+                            '&::-webkit-scrollbar-thumb:hover': {
+                                backgroundColor: '#555',
+                            },
                          }}
                         >
                             {maintenanceQuotesForItem.map((item, index) => (
@@ -343,7 +398,7 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                                                 <Grid item xs={6}>
                                                     <Typography variant="body2" sx={{ color: '#2c2a75' }}>
                                                         $
-                                                        {JSON.parse(item?.quote_services_expenses)?.labor[0]?.rate || 0}
+                                                        {Number(JSON.parse(item?.quote_services_expenses)?.labor[0]?.rate || 0).toFixed(2)}
                                                     </Typography>
                                                 </Grid>
                                             </Grid>
@@ -356,7 +411,7 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                                         </Grid>
                                         <Grid item xs={6}>
                                             <Typography variant="body2" gutterBottom sx={{ color: '#2c2a75', fontWeight: 'bold'  }}>
-                                                <strong>${item.quote_total_estimate}</strong>
+                                                <strong>${item.quote_total_estimate ? parseFloat(item.quote_total_estimate).toFixed(2) : '0.00'}</strong>
                                             </Typography>
                                         </Grid>
                                         {item?.maintenance_request_status === 'SCHEDULED' ? (

@@ -77,36 +77,40 @@ export default function OwnerDashboard() {
   const [viewRHS, setViewRHS] = useState(false)
   const [showReferralWelcomeDialog, setShowReferralWelcomeDialog] = useState(false);
   // console.log("getProfileId()", getProfileId());
-  useEffect(() => {
+
+  const fetchData = async () => {
     setShowSpinner(true); // Show spinner when data fetching starts
-    const fetchData = async () => {
-      if (!getProfileId()) {
-        return;
-      }
-      // console.log("getProfileId*", getProfileId());
-      if (!getProfileId()) {
-        let newRole = "OWNER";
-        navigate("/addNewRole", { state: { user_uid: user.user_uid, newRole } });
-      }
-      
-      const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
-      const jsonData = await response.json();
+    if (!getProfileId()) {
+      setShowSpinner(false);
+      return;
+    }
+    // console.log("getProfileId*", getProfileId());
+    // if (!getProfileId()) {
+    //   let newRole = "OWNER";
+    //   navigate("/addNewRole", { state: { user_uid: user.user_uid, newRole } });
+    // }
+    
+    const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
+    const jsonData = await response.json();
 
-      // const announcementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`);
-      // const announcementsResponseData = await announcementsResponse.json();
+    // const announcementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`);
+    // const announcementsResponseData = await announcementsResponse.json();
 
-      let announcementsReceivedData = jsonData?.announcementsReceived?.result;
-      setAnnouncementRecvData(announcementsReceivedData || ["Card 1", "Card 2", "Card 3", "Card 4", "Card 5"]);
+    let announcementsReceivedData = jsonData?.announcementsReceived?.result;
+    setAnnouncementRecvData(announcementsReceivedData || ["Card 1", "Card 2", "Card 3", "Card 4", "Card 5"]);
 
-      setAnnouncementSentData(jsonData?.announcementsSent?.result);
-      setPropertyList(jsonData?.properties?.result);
+    setAnnouncementSentData(jsonData?.announcementsSent?.result);
+    setPropertyList(jsonData?.properties?.result);
 
-      setMaintenanceStatusData(jsonData.maintenanceStatus.result);
-      setCashflowStatusData(jsonData.cashflowStatus);
-      setRentStatus(jsonData.rentStatus.result);
-      setLeaseStatus(jsonData.leaseStatus.result);
-      setShowSpinner(false); // Hide spinner when data is loaded
-    };
+    setMaintenanceStatusData(jsonData.maintenanceStatus.result);
+    setCashflowStatusData(jsonData.cashflowStatus);
+    setRentStatus(jsonData.rentStatus.result);
+    setLeaseStatus(jsonData.leaseStatus.result);
+    setShowSpinner(false); // Hide spinner when data is loaded
+  };
+
+  useEffect(() => {    
+    
     fetchData();
     const signedUpWithReferral = localStorage.getItem("signedUpWithReferral");
     if (signedUpWithReferral && signedUpWithReferral === "true") {
@@ -114,6 +118,16 @@ export default function OwnerDashboard() {
       localStorage.removeItem("signedUpWithReferral");
     }
   }, []);
+
+  useEffect(() => {    
+    
+    fetchData();
+    const signedUpWithReferral = localStorage.getItem("signedUpWithReferral");
+    if (signedUpWithReferral && signedUpWithReferral === "true") {
+      setShowReferralWelcomeDialog(true);
+      localStorage.removeItem("signedUpWithReferral");
+    }
+  }, [user]);
 
   useEffect(() => {
     if(location?.state?.from){

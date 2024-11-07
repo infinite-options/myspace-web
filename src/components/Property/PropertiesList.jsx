@@ -572,7 +572,7 @@ export default function PropertiesList(props) {
               <>
                 <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ position: "relative" }}>
                   {/* New Buttons */}
-                  <Box sx={{ display: "flex", width: "100%", alignItems: "center", justifyContent: "space-between", padding: "0px 10px" }}>
+                  <Box sx={{ display: "flex", width: "100%", alignItems: "center", justifyContent: "space-between", padding: "0px 10px", paddingBottom: "10px" }}>
                     <Button
                       onClick={sortByZip}
                       variant="contained"

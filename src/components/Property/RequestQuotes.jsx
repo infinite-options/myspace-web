@@ -265,7 +265,7 @@ const RequestQuotes = (props) => {
               sx={{
                 position: "relative",
                 backgroundColor: "background.gray",
-                paddingBottom: "5%",
+                paddingBottom: "1%",
               }}
             >
               <Box
@@ -314,9 +314,10 @@ const RequestQuotes = (props) => {
               <Box sx={{ padding: "10px" }}></Box>
               <Box
                 sx={{
-                  height: "295px",
+                  flex: 1,
+                  // height: "100%",
                   overflow: "auto",
-                  paddingBottom: "20px",
+                  paddingBottom: "10px",
                 }}
               >
                 <Box
@@ -325,7 +326,7 @@ const RequestQuotes = (props) => {
                     backgroundColor: "#D6D5DA",
                     borderRadius: "10px",
                     justifyContent: "center",
-                    marginBottom: "20px",
+                    // marginBottom: "20px",
                   }}
                 >
                   {properties.map((property) => (
@@ -356,7 +357,7 @@ const RequestQuotes = (props) => {
                 width: `40%`,
                 height: `5%`,
                 left: `30%`,
-                top: `30%`,
+                // top: `30%`,
                 borderRadius: "10px 10px 10px 10px",
               }}
               onClick={handleRequestQuotes}

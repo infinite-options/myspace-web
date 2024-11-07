@@ -90,6 +90,41 @@ const QuotesList = (props) => {
   const { contractRequests } = useContext(ManagementContractContext); 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   let navigate = useNavigate(); 
+
+  const [sortedContracts, setSortedContracts] = useState([]);
+  const [sortField, setSortField] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc");
+
+  useEffect(() => {
+    let sorted = [...contractRequests];
+
+    if (sortField === "owner") {
+      sorted.sort((a, b) => {
+        const ownerA = a.owner_first_name.toLowerCase() + a.owner_last_name.toLowerCase();
+        const ownerB = b.owner_first_name.toLowerCase() + b.owner_last_name.toLowerCase();
+        return sortOrder === "asc" ? ownerA.localeCompare(ownerB) : ownerB.localeCompare(ownerA);
+      });
+    } else if (sortField === "address") {
+      sorted.sort((a, b) => {
+        const addressA = a.property_address.toLowerCase();
+        const addressB = b.property_address.toLowerCase();
+        return sortOrder === "asc" ? addressA.localeCompare(addressB) : addressB.localeCompare(addressA);
+      });
+    } else if (sortField === "status") {
+      sorted.sort((a, b) => {
+        const statusA = a.contract_status.toLowerCase();
+        const statusB = b.contract_status.toLowerCase();
+        return sortOrder === "asc" ? statusA.localeCompare(statusB) : statusB.localeCompare(statusA);
+      });
+    }
+
+    setSortedContracts(sorted);
+  }, [contractRequests, sortField, sortOrder]);
+
+  const toggleSortOrder = () => {
+    setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
+  };
+
   
   return (
     <>
@@ -128,6 +163,68 @@ const QuotesList = (props) => {
                   All Property Management Requests
                 </Typography>
               </Box>
+              <Stack direction="row" justifyContent="space-between" sx={{ padding: "0px 10px" }}>
+            <Button
+              variant="contained"
+              sx={{
+                background: "#3D5CAC",
+                fontWeight: theme.typography.secondary.fontWeight,
+                color: theme.palette.background.default,
+                fontSize: theme.typography.smallFont,
+                cursor: "pointer",
+                textTransform: "none",
+                minWidth: "100px", // Fixed width for the button
+                minHeight: "35px",
+              }}
+              size='small'
+              onClick={() => {
+                setSortField("owner");
+                toggleSortOrder();
+              }}
+            >
+              Owner
+            </Button>
+            <Button
+              variant="contained"
+              sx={{
+                background: "#3D5CAC",
+                fontWeight: theme.typography.secondary.fontWeight,
+                color: theme.palette.background.default,
+                fontSize: theme.typography.smallFont,
+                cursor: "pointer",
+                textTransform: "none",
+                minWidth: "100px", // Fixed width for the button
+                minHeight: "35px",
+              }}
+              size='small'
+              onClick={() => {
+                setSortField("address");
+                toggleSortOrder();
+              }}
+            >
+              Address
+            </Button>
+            <Button
+              variant="contained"
+              sx={{
+                background: "#3D5CAC",
+                fontWeight: theme.typography.secondary.fontWeight,
+                color: theme.palette.background.default,
+                fontSize: theme.typography.smallFont,
+                cursor: "pointer",
+                textTransform: "none",
+                minWidth: "100px", // Fixed width for the button
+                minHeight: "35px",
+              }}
+              size='small'
+              onClick={() => {
+                setSortField("status");
+                toggleSortOrder();
+              }}
+            >
+              Status
+            </Button>
+        </Stack>
           </Stack>
           <Stack
             direction='column'
@@ -175,15 +272,16 @@ const QuotesList = (props) => {
                     gap: "10px",  
                   }}
                 >
-                {contractRequests?.map((contract, index) => (
-                  <Grid item xs={12} key={index} sx={{marginBottom: 0}} >
-                    <ContractCard 
-                      key={index}
-                      setViewRHS={props.setViewRHS}
-                      contract={contract}                      
-                    />
-                  </Grid>
-                ))}
+              {/* Render sorted contracts */}
+              {sortedContracts?.map((contract, index) => (
+                <Grid item xs={12} key={index} sx={{ marginBottom: 0 }}>
+                  <ContractCard
+                    key={index}
+                    setViewRHS={props.setViewRHS}
+                    contract={contract}
+                  />
+                </Grid>
+              ))}
               </Stack>
             </Stack>
           </Stack>
