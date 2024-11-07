@@ -220,7 +220,7 @@ const closeDialog = () => {
   // useEffect(() => {
   //   console.log("modifiedData - ", modifiedData);
   // }, [modifiedData]);
-
+  
   const updateModifiedData = (updatedItem) => {
     setModifiedData((prev) => {
       const existingKeyIndex = prev.findIndex((item) => item.key === updatedItem.key);
@@ -639,7 +639,19 @@ const closeDialog = () => {
                     className={classes.root}
                     onChange={(e) => handleFeeChange(e, row.id)}
                     InputProps={{
-                      endAdornment: <InputAdornment position='end'>%</InputAdornment>,
+                      endAdornment: (
+                        <InputAdornment 
+                          position='end'
+                          sx={{
+                            marginTop: '15px',
+                          }} 
+                        >
+                          %
+                        </InputAdornment>
+                      ),
+                      sx: {
+                        height: '30px',
+                      }
                     }}
                   />
                 </Stack>
@@ -696,6 +708,7 @@ const closeDialog = () => {
             <Button
               aria-label='delete'
               sx={{
+                marginTop: '10px',
                 color: "#000000",
                 fontWeight: "bold",
                 "&:hover": {
@@ -1239,16 +1252,17 @@ const closeDialog = () => {
   
     // Business information validation (only if not just adding a payment method)
     if (!isAddingPaymentMethod) {
-      if (!firstName) newErrors.firstName = "First name is required";
-      if (!lastName) newErrors.lastName = "Last name is required";
+      // if (!firstName) newErrors.firstName = "First name is required";
+      // if (!lastName) newErrors.lastName = "Last name is required";
+      if (!businessName) newErrors.businessName = "Business name is required";
       if (!address) newErrors.address = "Address is required";
       if (!email) newErrors.email = "Email is required";
       if (!phoneNumber) newErrors.phoneNumber = "Phone Number is required";
-      if (!ssn) newErrors.ssn = "SSN is required";
+      if (!ein) newErrors.ein = "Tax ID is required";
   
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
-        openDialog("Alert", "Please enter all required fields", "info");
+        openDialog("Alert", "Please correct the errors", "info");
         return;
       }
   
@@ -1267,8 +1281,8 @@ const closeDialog = () => {
         openDialog("Alert", "Please enter a valid zip code", "info");
         return false;
       }
-  
-      if ((taxIDType === "EIN" && !DataValidator.ein_validate(ssn)) || (taxIDType === "SSN" && !DataValidator.ssn_validate(ssn))) {
+        
+      if ((taxIDType === "EIN" && !DataValidator.ein_validate(ein)) || (taxIDType === "SSN" && !DataValidator.ssn_validate(ein))) {
         openDialog("Alert", "Please enter a valid Tax ID", "info");
         return false;
       }
@@ -1307,79 +1321,10 @@ const closeDialog = () => {
     console.log("handleUpdate called");
     setIsSave(true);
   };
-
-  const editOrUpdateProfile = async () => {
-    console.log("inside editOrUpdateProfile", modifiedData);
-    try {
-      if (modifiedData.length > 0) {
-        setShowSpinner(true);
-        const headers = {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "*",
-          "Access-Control-Allow-Headers": "*",
-          "Access-Control-Allow-Credentials": "*",
-        };
-
-        const profileFormData = new FormData();
-
-        // const feesJSON = JSON.stringify(leaseFees)
-        // leaseApplicationFormData.append("lease_fees", feesJSON);
-        // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
-        modifiedData.forEach((item) => {
-          console.log(`Key: ${item.key}`);
-          if (item.key === "uploadedFiles") {
-            console.log("uploadedFiles", item.value);
-            if (item.value.length) {
-              const documentsDetails = [];
-              [...item.value].forEach((file, i) => {
-                profileFormData.append(`file_${i}`, file.file, file.name);
-                const fileType = "pdf";
-                const documentObject = {
-                  // file: file,
-                  fileIndex: i,
-                  fileName: file.name,
-                  contentType: file.contentType,
-                  // type: file.type,
-                };
-                documentsDetails.push(documentObject);
-              });
-              profileFormData.append("tenant_documents_details", JSON.stringify(documentsDetails));
-            }
-          } else {
-            profileFormData.append(item.key, JSON.stringify(item.value));
-          }
-        });
-        profileFormData.append("pm_employee_id", profileData.tenant_uid);
-
-        axios
-          .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, headers)
-          .then((response) => {
-            console.log("Data updated successfully", response);
-            openDialog("Success", "Your profile has been successfully updated.", "success");
-            handleUpdate();
-            setShowSpinner(false);
-          })
-          .catch((error) => {
-            setShowSpinner(false);
-            openDialog("Error","Cannot update your profile. Please try again", "error");
-            if (error.response) {
-              console.log(error.response.data);
-            }
-          });
-        setShowSpinner(false);
-        setModifiedData([]);
-      } else {
-        openDialog("Alert","You haven't made any changes to the form. Please save after changing the data.", "error");
-      }
-    } catch (error) {
-      openDialog("Error","Cannot update the lease. Please try again", "error");
-      console.log("Cannot Update the lease", error);
-      setShowSpinner(false);
-    }
-  };
+  
 
   const saveProfile = async () => {
-    console.log("inside saveProfile", modifiedData);
+    // console.log("inside saveProfile", modifiedData);
     try {
       if (modifiedData.length > 0) {
         setShowSpinner(true);
@@ -1395,11 +1340,25 @@ const closeDialog = () => {
         // const feesJSON = JSON.stringify(leaseFees)
         // leaseApplicationFormData.append("lease_fees", feesJSON);
         // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
+
+        // profileFormData.append("business_uid", profileData.business_uid);
+        // profileFormData.append("employee_uid", profileData.employee_uid);
+        let hasEmployeeFields = false;
+        let hasBusinessFields = false;
+
         modifiedData.forEach((item) => {
           console.log(`Key: ${item.key}`);
+          if(hasBusinessFields === false && item.key.startsWith("business")) hasBusinessFields = true;
+          if(hasEmployeeFields === false && item.key.startsWith("employee")) hasEmployeeFields = true;
           profileFormData.append(item.key, item.value);
-        });
-        profileFormData.append("owner_uid", profileData.owner_uid);
+        });                
+        if (hasBusinessFields) {
+          profileFormData.append("business_uid", profileData.business_uid);
+        }
+        if (hasEmployeeFields) {
+          profileFormData.append("employee_uid", profileData.employee_uid);
+        }
+        
 
         axios
           .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, headers)

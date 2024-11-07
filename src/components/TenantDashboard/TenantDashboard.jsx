@@ -184,7 +184,7 @@ const TenantDashboard = () => {
     fetchData();
     //fetchCashflowDetails();
     setReload(false);
-  }, [reload]);
+  }, [reload, user]);
 
   useEffect(() => {
     console.log("propertydata test", propertyListingData.lease_status);

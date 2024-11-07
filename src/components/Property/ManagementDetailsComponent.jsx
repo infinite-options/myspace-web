@@ -47,10 +47,10 @@ export default function ManagementDetailsComponent({
   const [showRenewContractDialog, setShowRenewContractDialog] = useState(false);
   const [contractEndNotice, setContractEndNotice] = useState(activeContract?.contract_end_notice_period? Number(activeContract?.contract_end_notice_period) : 30);
 
-  // console.log("ROHIT - currentProperty?.maintenance - ", currentProperty?.maintenance);
+  // console.log("currentProperty?.maintenance - ", currentProperty?.maintenance);
 
   useEffect(() => {
-    console.log("ROHIT - activeContract - ", activeContract);
+    // console.log("activeContract - ", activeContract);
     setContractEndNotice(activeContract?.contract_end_notice_period? Number(activeContract?.contract_end_notice_period) : 30)
   }, [activeContract]);
 
@@ -66,7 +66,7 @@ export default function ManagementDetailsComponent({
     return acc;
   }, {});
 
-  // console.log("ROHIT - maintenanceGroupedByStatus - ", maintenanceGroupedByStatus);
+  // console.log("maintenanceGroupedByStatus - ", maintenanceGroupedByStatus);
 
   const handleFileClick = (file) => {
     setSelectedPreviewFile(file);
@@ -139,7 +139,7 @@ export default function ManagementDetailsComponent({
               </IconButton>
               <IconButton
                 onClick={() => {
-                  // console.log("ROHIT - newContractCount - ", newContractCount);
+                  // console.log("newContractCount - ", newContractCount);
                   if (newContractCount === 0) {
                     onShowSearchManager();
                   } else {
@@ -793,17 +793,17 @@ const EndContractDialog = ({ open, handleClose, contract }) => {
   const [contractEndDate, setContractEndDate] = useState(contract?.contract_end_date ? new Date(contract?.contract_end_date) : null);
   const today = new Date();
   const noticePeriod = contract?.contract_notice_period || 30;
-  // console.log("ROHIT - noticePeriod - ", noticePeriod);
+  // console.log("noticePeriod - ", noticePeriod);
   const [selectedEndDate, setSelectedEndDate] = useState(dayjs(contractEndDate));
 
   useEffect(() => {
-    // console.log("ROHIT - selectedEndDate - ", selectedEndDate);
+    // console.log("selectedEndDate - ", selectedEndDate);
     setContractEndDate(contract?.contract_end_date ? new Date(contract?.contract_end_date) : null);
   }, [contract]);
 
   useEffect(() => {
-    // console.log("ROHIT - selectedEndDate - ", selectedEndDate);
-    // console.log("ROHIT - contractEndDate - noticePeriod - ", new Date(contractEndDate?.getTime() - noticePeriod * ONE_DAY_MS));
+    // console.log("selectedEndDate - ", selectedEndDate);
+    // console.log("contractEndDate - noticePeriod - ", new Date(contractEndDate?.getTime() - noticePeriod * ONE_DAY_MS));
     setSelectedEndDate(dayjs(contractEndDate));
   }, [contractEndDate]);
 
@@ -959,7 +959,8 @@ const EndContractDialog = ({ open, handleClose, contract }) => {
                     >
                         Keep Existing Contract
                     </Button>
-                </DialogActions>
+                                       
+                </DialogActions>                
             </Dialog>
         </form>
     );
@@ -1085,17 +1086,17 @@ const RenewContractDialog = ({ open, handleClose, contract }) => {
   const [contractEndDate, setContractEndDate] = useState(contract?.contract_end_date ? new Date(contract?.contract_end_date) : null);
   const today = new Date();
   const noticePeriod = contract?.contract_notice_period || 30;
-  // console.log("ROHIT - noticePeriod - ", noticePeriod);
+  // console.log("noticePeriod - ", noticePeriod);
   const [selectedEndDate, setSelectedEndDate] = useState(dayjs(contractEndDate));
 
   useEffect(() => {
-    // console.log("ROHIT - selectedEndDate - ", selectedEndDate);
+    // console.log("selectedEndDate - ", selectedEndDate);
     setContractEndDate(contract?.contract_end_date ? new Date(contract?.contract_end_date) : null);
   }, [contract]);
 
   useEffect(() => {
-    // console.log("ROHIT - selectedEndDate - ", selectedEndDate);
-    // console.log("ROHIT - contractEndDate - noticePeriod - ", new Date(contractEndDate?.getTime() - noticePeriod * ONE_DAY_MS));
+    // console.log("selectedEndDate - ", selectedEndDate);
+    // console.log("contractEndDate - noticePeriod - ", new Date(contractEndDate?.getTime() - noticePeriod * ONE_DAY_MS));
     setSelectedEndDate(dayjs(contractEndDate));
   }, [contractEndDate]);
 
@@ -1184,7 +1185,20 @@ const RenewContractDialog = ({ open, handleClose, contract }) => {
           },
         }}
       >
-        <DialogTitle sx={{ justifyContent: "center" }}>Renew Current Contract</DialogTitle>
+        <DialogTitle sx={{ justifyContent: "center" }}>
+          Renew Current Contract
+          <IconButton
+            onClick={handleClose}
+            sx={{
+              position: 'absolute',
+              top: 8,
+              right: 8,
+              color: '#3D5CAC',
+            }}
+          >
+            <CloseIcon />
+          </IconButton>   
+        </DialogTitle>
         <DialogContent>
           <Grid container>
             <Grid container item xs={12} sx={{ marginTop: "10px" }}>
