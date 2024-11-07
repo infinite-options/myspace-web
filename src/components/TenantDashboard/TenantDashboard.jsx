@@ -1530,7 +1530,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
   });
 
   useEffect(() => {
-    console.log("data", data);
+    console.log("data from paymentPM", data);
     const filteredUnpaidData = data.filter((item) => item.purchaseStatus === "UNPAID" || item.purchaseStatus === "PARTIALLY PAID");
     setUnpaidData(filteredUnpaidData);
 
@@ -1705,6 +1705,9 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
                               top: "-4px",
                               color: "#00000099",
                             },
+                            "& .MuiInputLabel-root.Mui-focused, & .MuiInputLabel-root.MuiFormLabel-filled": {
+                              color: "#00000099",
+                            },
                           }}
                           InputProps={{
                             style: {
@@ -1738,7 +1741,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
                       }}
                       onClick={handleNavigateToSelectPayment}
                     >
-                      <Typography sx={{ textTransform: "none", color: "#FFFFFF", fontSize: "18px", fontWeight: "600" }}>Select Payment</Typography>
+                      <Typography sx={{ textTransform: "none", color: "#FFFFFF", fontSize: "18px", fontWeight: "600" }}>Make Payment</Typography>
                     </Button>
                   </Stack>
                   <Stack direction='row' justifyContent='center' m={2} sx={{ paddingTop: "25px", paddingBottom: "15px" }}>
