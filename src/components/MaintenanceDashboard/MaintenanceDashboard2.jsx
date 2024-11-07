@@ -157,8 +157,6 @@ export default function MaintenanceDashboard2() {
         }).sort((a, b) => new Date(parseDate(a.maintenance_scheduled_date)) - new Date(parseDate(b.maintenance_scheduled_date)));
       }
 
-      console.log("ROHIT - filteredTodayData - ", filteredTodayData);
-
       const fixedOrder = [
         { label: "Quotes Requested", color: "#DB9687" },
         { label: "Quotes Submitted", color: "#CEA892" },
@@ -376,6 +374,7 @@ export default function MaintenanceDashboard2() {
 
 const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, allMaintenanceStatusData, onSelectRequest }) => {
   let navigate = useNavigate();  
+  const colorStatus = theme.colorStatusMM;
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [showSpinner, setShowSpinner] = useState(false);
   const convertTimeTo12HourFormat = (time) => {
@@ -386,8 +385,7 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
 
     return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit", hour12: true });
   };
-
-  console.log("ROHIT - todayData - ", todayData);
+  
 
   const colors = ["#B33A3A", "#FFAA00", "#FFC107"];
 
@@ -395,7 +393,7 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
   const [showPropertyFilter, setShowPropertyFilter] = useState(false);
   const [month, setMonth] = useState(null);
   const [year, setYear] = useState(null);
-  const [filterPropertyList, setFilterPropertyList] = useState([]);
+  const [filterPropertyList, setFilterPropertyList] = useState([]);  
 
   useEffect(() => {
     if (maintenanceRequests) {
@@ -456,15 +454,93 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
   };
 
   const filteredMaintenanceRequests = filterCheckedAddresses(maintenanceRequests, filterPropertyList);
+  
 
-  console.log("ROHIT - filteredMaintenanceRequests - ", filteredMaintenanceRequests);
+  let maintenanceRequestsByQuoteStatus = {}; // Quotes Requested, Quotes submitted etc.
+  let maintenanceRequestsByStatus = {}; // ACCEPTED, FINISHED etc.
+  const filterAllMaintenanceData = (filteredMaintenanceRequests) => {    
+    // if(filteredMaintenanceRequests == null || Object.keys(filteredMaintenanceRequests)?.length === 0){
+    //   return;
+    // }
+    try {
+      //const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${getProfileId()}`);
+      //const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/600-000012`);
+      //const data = await response.json();
+      //console.log('-----data inside workerMaintenanceTable----', data);
+     
+
+      const addresses = new Set();
+      for (const status in filteredMaintenanceRequests.result) {          
+          if (Array.isArray(filteredMaintenanceRequests.result[status]?.maintenance_items)) {            
+            filteredMaintenanceRequests.result[status]?.maintenance_items.forEach(item => {
+                  addresses.add(item.property_address);
+              });
+          }
+      }
+      
+
+      const filterMaintenanceRequests = (allMaintenanceStatusData, address) => {        
+        const filteredRequests = {};
+        for (const status in allMaintenanceStatusData.result) {            
+            // Check if maintenance_items exists and is an array
+            if (allMaintenanceStatusData.result[status].maintenance_items.length > 0) {
+                
+                filteredRequests[status] = {
+                  ...allMaintenanceStatusData.result[status],
+                  maintenance_items: allMaintenanceStatusData.result[status].maintenance_items.filter(item => address.includes(item.property_address))
+                  
+              };
+            } else {
+                filteredRequests[status] = {
+                    ...allMaintenanceStatusData.result[status],
+                    maintenance_items: []
+                };
+            }
+        }        
+        return filteredRequests;
+      };
+      const data = filterMaintenanceRequests(filteredMaintenanceRequests, Array.from(addresses));
+
+      //console.log('-----data inside workerMaintenanceTable----', data);
+      //console.log('-----filteredRequests inside workerMaintenanceTable----', filteredMaintenanceRequests);
+      
+
+      const statusMappings = [
+        { status: 'Quotes Requested', mapping: 'REQUESTED' },
+        { status: 'Quotes Submitted', mapping: 'SUBMITTED' },
+        { status: 'Quotes Accepted', mapping: 'ACCEPTED' },
+        { status: 'Scheduled', mapping: 'SCHEDULED' },
+        { status: 'Finished', mapping: 'FINISHED' },
+        { status: 'Paid', mapping: 'PAID' },
+      ];
+
+      const result = {};
+      const tempdata = {};
+
+      statusMappings.forEach((mapping) => {
+        const key = mapping.mapping;
+        if (data[key]) {
+          result[mapping.status] = data[key].maintenance_items;
+          tempdata[key] = data[key].maintenance_items;
+        }
+      });
+      //console.log('status table---', result);
+            
+      maintenanceRequestsByQuoteStatus = result;
+      maintenanceRequestsByStatus = tempdata;      
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  filterAllMaintenanceData(allMaintenanceStatusData);
 
   //console.log('----filteredMaintenanceRequests-----', filteredMaintenanceRequests);
 
-  async function handleRequestDetailPage(maintenance_request_index, status, property_uid, maintenance_request_uid) {
-     //rohit - fix
-     const data ={} //rohit - delete this
-    // console.log("handleRequestDetailPage")
+  async function handleRequestDetailPage(maintenance_request_index, mapping, property_uid, maintenance_request_uid) {        
+    const colorStatusItem = colorStatus?.find(item => item.mapping === mapping)
+    const status = colorStatusItem.status;    
+    
     //console.log("maintenance_request_index", maintenance_request_index)
     //console.log("status", status);
     //console.log("maintenanceItemsForStatus", maintenanceItemsForStatus);
@@ -475,8 +551,8 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
         state: {
           maintenance_request_index,
           status,
-          maintenanceItemsForStatus: maintenanceRequests[status],
-          data,
+          maintenanceItemsForStatus: maintenanceRequestsByQuoteStatus[status],
+          maintenanceRequestsByStatus,
           maintenance_request_uid,
         },
       });
@@ -484,8 +560,8 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
       onSelectRequest(
         maintenance_request_index, 
         status, 
-        maintenanceRequests[status], 
-        data, 
+        maintenanceRequestsByQuoteStatus[status], 
+        maintenanceRequestsByStatus, 
         maintenance_request_uid
       )	}
   }
@@ -556,7 +632,13 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
             </Grid>
 
             <Grid item xs={12}>
-              <WorkOrdersAccordion maintenanceRequests={filteredMaintenanceRequests} allMaintenanceStatusData={allMaintenanceStatusData} onSelectRequest={onSelectRequest} />
+              <WorkOrdersAccordion 
+                maintenanceRequests={filteredMaintenanceRequests}                
+                allMaintenanceStatusData={allMaintenanceStatusData}
+                onSelectRequest={onSelectRequest} 
+                maintenanceRequestsByQuoteStatus={maintenanceRequestsByQuoteStatus}
+                maintenanceRequestsByStatus={maintenanceRequestsByStatus}
+              />
             </Grid>
             <Grid item xs={12} sx={{ padding: "20px 0px 20px 0px" }}>
               <Paper
@@ -708,19 +790,19 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
   );
 };
 
-const WorkOrdersAccordion = ({ maintenanceRequests, allMaintenanceStatusData, onSelectRequest }) => {
-  const colorStatus = theme.colorStatusMM;
+const WorkOrdersAccordion = ({ maintenanceRequests, maintenanceRequestsByQuoteStatus, maintenanceRequestsByStatus, allMaintenanceStatusData, onSelectRequest }) => {
+  const colorStatus = theme.colorStatusMM;  
   const [query, setQuery] = useState("");
 
-  function handleFilter(filterString, searchArray) {
-    let filteredArray = [];
-    if (filterString === "All" || filterString === "") {
-      filteredArray = searchArray;
-    } else {
-      filteredArray = searchArray.filter((item) => item.maintenance_title === filterString);
-    }
-    return filteredArray;
-  }
+  // function handleFilter(filterString, searchArray) {
+  //   let filteredArray = [];
+  //   if (filterString === "All" || filterString === "") {
+  //     filteredArray = searchArray;
+  //   } else {
+  //     filteredArray = searchArray.filter((item) => item.maintenance_title === filterString);
+  //   }
+  //   return filteredArray;
+  // }
 
   return (
     <>
@@ -728,7 +810,7 @@ const WorkOrdersAccordion = ({ maintenanceRequests, allMaintenanceStatusData, on
         {colorStatus.map((item, index) => {
           let mappingKey = item.mapping;
           let maintenanceArray = maintenanceRequests[mappingKey] || [];
-          let filteredArray = handleFilter(query, maintenanceRequests[mappingKey]);
+          // let filteredArray = handleFilter(query, maintenanceRequests[mappingKey]);
 
           return (
             <WorkerMaintenanceStatusTable
@@ -737,6 +819,8 @@ const WorkOrdersAccordion = ({ maintenanceRequests, allMaintenanceStatusData, on
               color={item.color}
               maintenanceItemsForStatus={maintenanceArray}
               allMaintenanceData={maintenanceRequests}
+              maintenanceRequestsByQuoteStatus={maintenanceRequestsByQuoteStatus}
+              maintenanceRequestsByStatus={maintenanceRequestsByStatus}              
               allMaintenanceStatusData={allMaintenanceStatusData}
               maintenanceRequestsCount={maintenanceArray}
               onSelectRequest={onSelectRequest}

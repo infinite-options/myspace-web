@@ -159,7 +159,7 @@ function PartsTableReadOnly({parts, setParts}){
 }
 
 export default function QuoteDetailInfo({maintenanceItem}){
-    // console.log('inside detailinfo----', maintenanceItem);
+    // console.log('inside QuoteDetailInfo - maintenanceItem - ', maintenanceItem);
     const { roleName } = useUser();
 
     const location = useLocation();

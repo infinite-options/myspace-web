@@ -84,8 +84,7 @@ export default function WorkerMaintenanceRequestDetail({maintenance_request_inde
     const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState(isMobile ? location.state.maintenanceItemsForStatus : propmaintenanceItemsForStatus);
     const allData = isMobile ? location.state.data : alldata;
     const [maintenanceRequestId, setMaintenanceRequestId] =  useState(isMobile ? location.state.maintenance_request_uid: maintenance_request_uid);
-    
-
+        
     useEffect(() => {
         if (!isMobile) {
           setMaintenanceRequestIndex(maintenance_request_index);

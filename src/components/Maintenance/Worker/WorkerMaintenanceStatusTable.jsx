@@ -30,15 +30,16 @@ export const getChipColor = (priority) => {
   }
 };
 
-export default function WorkerMaintenanceStatusTable({ status, color, maintenanceItemsForStatus, allMaintenanceData, allMaintenanceStatusData, maintenanceRequestsCount, onSelectRequest }) {
+export default function WorkerMaintenanceStatusTable({ status, color, maintenanceItemsForStatus, allMaintenanceData, allMaintenanceStatusData, maintenanceRequestsByQuoteStatus, maintenanceRequestsByStatus, maintenanceRequestsCount, onSelectRequest }) {
   // console.log('--inside table---', maintenanceRequestsCount);
   const location = useLocation();
   let navigate = useNavigate();
   const { user, getProfileId, } = useUser();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  //console.log("MaintenanceStatusTable", maintenanceItemsForStatus);
-	const [maintenanceRequests, setMaintenanceRequests] = useState({});
-const [data, setdata] = useState({});
+  //console.log("MaintenanceStatusTable", maintenanceItemsForStatus);	
+  let maintenanceRequests = maintenanceRequestsByQuoteStatus;
+  let data = maintenanceRequestsByStatus;
+
   const tableTextStyle = {
     backgroundColor: color,
     color: "#FFFFFF",
@@ -124,84 +125,6 @@ const [data, setdata] = useState({});
       },
     },
   ];
-
-  useEffect(() => {
-    //console.log('======inside useEffect of mainstatus=====');
-    const fetchData = async () => {
-      try {
-        //const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${getProfileId()}`);
-        //const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/600-000012`);
-        //const data = await response.json();
-        //console.log('-----data inside workerMaintenanceTable----', data);
-       
-
-        const addresses = new Set();
-    for (const status in allMaintenanceData) {
-        if (Array.isArray(allMaintenanceData[status])) {
-          allMaintenanceData[status].forEach(item => {
-                addresses.add(item.property_address);
-            });
-        }
-    }
-
-        const filterMaintenanceRequests = (allMaintenanceStatusData, address) => {
-          const filteredRequests = {};
-          for (const status in allMaintenanceStatusData.result) {
-              
-              // Check if maintenance_items exists and is an array
-              if (allMaintenanceStatusData.result[status].maintenance_items.length > 0) {
-                  
-                  filteredRequests[status] = {
-                    ...allMaintenanceStatusData.result[status],
-                    maintenance_items: allMaintenanceStatusData.result[status].maintenance_items.filter(item => address.includes(item.property_address))
-                    
-                };
-              } else {
-                  filteredRequests[status] = {
-                      ...allMaintenanceStatusData.result[status],
-                      maintenance_items: []
-                  };
-              }
-          }
-          return filteredRequests;
-        };
-        const filteredMaintenanceRequests = filterMaintenanceRequests(allMaintenanceStatusData, Array.from(addresses));
-
-        //console.log('-----data inside workerMaintenanceTable----', data);
-        //console.log('-----filteredRequests inside workerMaintenanceTable----', filteredMaintenanceRequests);
-
-        console.log('ROHIT - statusTable - filteredMaintenanceRequests - ', filteredMaintenanceRequests);
-
-        const statusMappings = [
-          { status: 'Quotes Requested', mapping: 'REQUESTED' },
-          { status: 'Quotes Submitted', mapping: 'SUBMITTED' },
-          { status: 'Quotes Accepted', mapping: 'ACCEPTED' },
-          { status: 'Scheduled', mapping: 'SCHEDULED' },
-          { status: 'Finished', mapping: 'FINISHED' },
-          { status: 'Paid', mapping: 'PAID' },
-        ];
-
-        const result = {};
-        const tempdata = {};
-
-        statusMappings.forEach((mapping) => {
-          const key = mapping.mapping;
-          if (filteredMaintenanceRequests[key]) {
-            result[mapping.status] = filteredMaintenanceRequests[key].maintenance_items;
-            tempdata[key] = filteredMaintenanceRequests[key].maintenance_items;
-          }
-        });
-        //console.log('status table---', result);
-
-        await setMaintenanceRequests(result);
-        await setdata(tempdata);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
-  }, [allMaintenanceData]); // Empty dependency array means this effect runs once, similar to componentDidMount
 
   async function handleRequestDetailPage(maintenance_request_index, property_uid, maintenance_request_uid) {
     
