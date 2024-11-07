@@ -15,21 +15,10 @@ import {
   Grid,
 } from "@mui/material";
 import theme from "../../theme/theme";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import UTurnLeftIcon from "@mui/icons-material/UTurnLeft";
 import { useLocation, useNavigate } from "react-router-dom";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import AddIcon from "@mui/icons-material/Add";
 import { alpha, makeStyles } from "@material-ui/core/styles";
-import PayPal from "../../images/PayPal.png";
-import Zelle from "../../images/Zelle.png";
-import Venmo from "../../images/Venmo.png";
-import Chase from "../../images/Chase.png";
-import Stripe from "../../images/Stripe.png";
-import ApplePay from "../../images/ApplePay.png";
-import { margin } from "@mui/system";
 import { useUser } from "../../contexts/UserContext";
 import APIConfig from "../../utils/APIConfig";
 
@@ -58,17 +47,9 @@ export default function PaymentConfirmation() {
   const { getProfileId, paymentRoutingBasedOnSelectedRole, selectedRole } = useUser();
   const hasRun = useRef(false);
 
-  // const paymentNote=location.state.paymentData.business_code;
-  // const paymentData = location.state?.paymentData;
   const [showSpinner, setShowSpinner] = useState(false);
-  const [paymentSuccess, setPaymentSuccess] = useState(false)
   const [paymentFailed, setPaymentFailed] = useState(false)
-  const [paymentProcess, setPaymentProcess] = useState(false)
   const [FailedMessage, setFailedMessage] = useState("")
-  // const [paymentIntent, setPaymentIntent] = useState("")
-  // const [paymentMethod, setPaymentMethod] = useState("")
-
-  // console.log("inside payment confirmaton page - ", paymentData)
 
   const classes = useStyles();
   const navigate = useNavigate();
@@ -92,17 +73,12 @@ export default function PaymentConfirmation() {
         body: JSON.stringify(data),
       });
 
-      let resultOfResponse = await response.json()    // because response has only url so we can't convert into json
-      // console.log(resultOfResponse)
+      let resultOfResponse = await response.json()    
 
       if (response.ok && resultOfResponse.status === "succeeded") {
-        // setPaymentSuccess(true)
-        // setPaymentIntent(resultOfResponse.client_secret)
-        // setPaymentMethod(resultOfResponse.payment_method)
         handleSubmit(resultOfResponse.client_secret, resultOfResponse.payment_method)
 
       } else if(resultOfResponse.status === "processing"){
-        // setPaymentProcess(true)
           await new Promise(resolve => setTimeout(resolve, 3000));
           await getPaymentStatus();
       
@@ -125,15 +101,11 @@ export default function PaymentConfirmation() {
     }
     hasRun.current = true;
 
-    console.log("hello inside first useeffect")
-
     getPaymentStatus()
 
   }, [])
 
   const handleSubmit = async (paymentIntent, paymentMethod, e) => {
-    console.log("paymentIntent - ", paymentIntent)
-    console.log("payment method - ", paymentMethod)
     setShowSpinner(true)
 
     let paymentData = {
@@ -152,7 +124,6 @@ export default function PaymentConfirmation() {
     };
 
     await fetch(`${APIConfig.baseURL.dev}/makePayment`, {
-      // await fetch("http://localhost:4000/makePayment2", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -160,7 +131,6 @@ export default function PaymentConfirmation() {
       body: JSON.stringify(paymentData),
 
     }).then((e) => {
-      console.log("successfully called make payment endpoint ")
       navigate("/tenantDashboard")
       // setShowSpinner(false)
     });
@@ -177,20 +147,6 @@ export default function PaymentConfirmation() {
 
       <Grid container xs={12}>
         <Grid container item xs={12} display={"flex"} justifyContent={"center"} alignItems={"center"}>
-          {paymentSuccess && (<Button
-            variant='contained'
-            onClick={handleSubmit}
-            sx={{
-              backgroundColor: "#3D5CAC",
-              color: theme.palette.background.default,
-              width: "200px", // Center the button horizontally
-              borderRadius: "10px", // Rounded corners
-              margin: "10px", // Add some spacing to the top
-            }}
-          >
-            Confirm Payment
-          </Button>)}
-          {paymentProcess && (<Typography> Payment is in process ..... refresh</Typography>)}
           {paymentFailed && (<Box>
             <Typography>Payment has Failed!!</Typography>
             <Typography>{FailedMessage}</Typography>

@@ -127,26 +127,20 @@ const TenantDashboard = () => {
   }, [leaseDetailsData]);
 
   const fetchData = async () => {
+    setLoading(true);
+
     try {
-      setLoading(true); // Set loading to true before fetching data
+       // Set loading to true before fetching data
       const profileId = getProfileId();
       if (!profileId) return;
 
       const dashboardResponse = await fetch(`${APIConfig.baseURL.dev}/dashboard/${profileId}`);
       const dashboardData = await dashboardResponse.json();
 
-      // console.log("Dashboard data", dashboardData);
-
       if (dashboardData) {
         console.log("Dashboard inside check", dashboardData.property?.result);
         setPropertyListingData(dashboardData.property?.result);
 
-        // const filteredPropertyDetails = dashboardData.property?.result.filter(
-        //   (lease) =>
-        //     !lease.lease_status.includes("RENEW NEW") &&
-        //     !lease.lease_status.includes("RENEW PROCESSING")
-        // );
-        // setPropertyListingData(filteredPropertyDetails);
 
         setLeaseDetailsData(dashboardData.leaseDetails?.result);
         setMaintenanceRequestsNew(dashboardData.maintenanceRequests?.result);
@@ -180,10 +174,11 @@ const TenantDashboard = () => {
         // Save all balance details to state
         setAllBalanceDetails(allBalanceDetails);
       }
+
     } catch (error) {
       console.error("Error fetching data: ", error);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -194,17 +189,35 @@ const TenantDashboard = () => {
   }, [reload, user]);
 
   useEffect(() => {
-    console.log("propertydata test", propertyListingData.lease_status);
+    // setLoading(true)
+    // console.log("first property - ", selectedProperty)
+    // console.log("propertydata test", propertyListingData.lease_status);
     if (propertyListingData.length > 0 && !selectedProperty) {
       // const firstProperty = propertyListingData[0];
       const firstProperty = propertyListingData.find((property) => property.lease_status !== null);
-      console.log("first property", firstProperty);
+      // console.log("first property", firstProperty);
       if (firstProperty) {
         setSelectedProperty(firstProperty);
         handleSelectProperty(firstProperty);
       }
     }
+
+    // setLoading(false)
   }, [propertyListingData]);
+
+  useEffect(() => {
+    if (
+      propertyListingData &&
+      leaseDetailsData &&
+      maintenanceRequestsNew &&
+      maintenanceStatus &&
+      announcements &&
+      paymentHistory &&
+      allBalanceDetails
+    ) {
+      setLoading(false);
+    }
+  }, [propertyListingData, leaseDetailsData, maintenanceRequestsNew, maintenanceStatus, announcements, paymentHistory, allBalanceDetails]);
 
   const handleSelectProperty = (property) => {
     setSelectedProperty(property);
@@ -431,13 +444,13 @@ const TenantDashboard = () => {
     return null;
   };
 
-  if (loading) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+  //       <CircularProgress />
+  //     </Box>
+  //   );
+  // }
 
   return (
     // <Box sx={{ backgroundColor: "#fff", padding: isMobile ? "15px" : "30px"}}>
@@ -1454,7 +1467,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
   });
 
   useEffect(() => {
-    console.log("data", data);
+    console.log("data from paymentPM", data);
     const filteredUnpaidData = data.filter((item) => item.purchaseStatus === "UNPAID" || item.purchaseStatus === "PARTIALLY PAID");
     setUnpaidData(filteredUnpaidData);
 
@@ -1500,7 +1513,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
       business_code: paymentNotes,
       balance: paymentOption === "partial" ? partialAmount : total, // Check here for partial amount getting passed into balance - Abhinav
     };
-    console.log("check here", updatedPaymentData);
+    // console.log("check here", updatedPaymentData);
     navigate("/selectPayment", {
       state: {
         paymentData: updatedPaymentData,
@@ -1622,12 +1635,15 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
                             height: "40px",
                             "& .MuiInputBase-root": {
                               padding: "5px",
-                              color: "#000",
+                              color: "#00000099",
                             },
                             "& .MuiInputLabel-root": {
                               fontSize: "12px",
                               top: "-4px",
-                              color: "#000",
+                              color: "#00000099",
+                            },
+                            "& .MuiInputLabel-root.Mui-focused, & .MuiInputLabel-root.MuiFormLabel-filled": {
+                              color: "#00000099",
                             },
                           }}
                           InputProps={{
@@ -1662,11 +1678,26 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
                       }}
                       onClick={handleNavigateToSelectPayment}
                     >
-                      <Typography sx={{ textTransform: "none", color: "#FFFFFF", fontSize: "18px", fontWeight: "600" }}>Select Payment</Typography>
+                      <Typography sx={{ textTransform: "none", color: "#FFFFFF", fontSize: "18px", fontWeight: "600" }}>Make Payment</Typography>
                     </Button>
                   </Stack>
                   <Stack direction='row' justifyContent='center' m={2} sx={{ paddingTop: "25px", paddingBottom: "15px" }}>
-                    <TextField variant='filled' fullWidth={true} multiline={true} value={paymentNotes} onChange={handlePaymentNotesChange} label='Payment Notes' />
+                    <TextField
+                      variant='filled'
+                      fullWidth={true}
+                      multiline={true}
+                      value={paymentNotes}
+                      onChange={handlePaymentNotesChange}
+                      label='Payment Notes'
+                      sx={{
+                        "& .MuiInputLabel-root": {
+                          color: "#00000099", 
+                        },
+                        "& .MuiInputLabel-root.Mui-focused, & .MuiInputLabel-root.MuiFormLabel-filled": {
+                          color: "#00000099",
+                        },
+                      }}
+                    />
                   </Stack>
                 </Paper>
 
@@ -1721,7 +1752,7 @@ function TenantBalanceTablePM(props) {
 
   useEffect(() => {
     setData(props.data);
-    console.log("props", props);
+    // console.log("props", props);
   }, [props.data]);
 
   useEffect(() => {
@@ -1740,15 +1771,26 @@ function TenantBalanceTablePM(props) {
     let total = 0;
     let purchase_uid_mapping = [];
 
-    for (const item of selectedRows) {
+    let sortedPaymentItems = selectedRows.map((item) => {
       let paymentItemData = paymentDueResult.find((element) => element.purchase_uid === item);
-      purchase_uid_mapping.push({ purchase_uid: item, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
+      return {
+        purchase_uid: item,
+        description: paymentItemData.description,
+        pur_amount_due: paymentItemData.pur_amount_due,
+        pur_cf_type: paymentItemData.pur_cf_type,
+        dueDate: new Date(paymentItemData.dueDate)
+      };
+    }).sort((a, b) => a.dueDate - b.dueDate);
+    
+
+    for (const item of sortedPaymentItems) {
+      purchase_uid_mapping.push({ purchase_uid: item.purchase_uid, pur_amount_due: item.pur_amount_due.toFixed(2), description: item.description});
 
       // Adjust total based on pur_cf_type
-      if (paymentItemData.pur_cf_type === "revenue") {
-        total += parseFloat(paymentItemData.pur_amount_due);
-      } else if (paymentItemData.pur_cf_type === "expense") {
-        total -= parseFloat(paymentItemData.pur_amount_due);
+      if (item.pur_cf_type === "revenue") {
+        total += parseFloat(item.pur_amount_due);
+      } else if (item.pur_cf_type === "expense") {
+        total -= parseFloat(item.pur_amount_due);
       }
     }
 
