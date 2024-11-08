@@ -1090,15 +1090,21 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
     )
 }
 
-export const EmploymentDataGrid = ({ profileData, employmentDataT, setSelectedJobs }) => {
+export const EmploymentDataGrid = ({ profileData, employmentDataT = [], setSelectedJobs }) => {
+    const parsedEmploymentDataT = Array.isArray(employmentDataT) ? employmentDataT : [];
+
     const employmentData = profileData?.tenant_employment 
         ? JSON.parse(profileData.tenant_employment)
         : [];
 
+    console.log("employmentData", parsedEmploymentDataT);
+
     const [checkedJobs, setCheckedJobs] = useState(() => 
         employmentData.map(job => ({
             ...job,
-            checked: employmentDataT.some(leaseJob => leaseJob.jobTitle === job.jobTitle && leaseJob.companyName === job.companyName)
+            checked: parsedEmploymentDataT.length > 0 
+                ? parsedEmploymentDataT.some(leaseJob => leaseJob.jobTitle === job.jobTitle && leaseJob.companyName === job.companyName)
+                : false 
         }))
     );
 
@@ -1115,34 +1121,37 @@ export const EmploymentDataGrid = ({ profileData, employmentDataT, setSelectedJo
     return (
         <Box sx={{ padding: "10px" }}>
             <Grid container spacing={2}>
-                {checkedJobs.map((job, index) => (
-                    <Grid item xs={12} key={index}>
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={job.checked}
-                                        onChange={() => handleJobSelection(index)}
-                                    />
-                                }
-                                label=""
-                            />
-                            <Box sx={{ flex: 1 }}>
-                                <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                                    Job Title: {job.jobTitle}
-                                </Typography>
-                                <Typography variant="body2">Company: {job.companyName}</Typography>
-                                <Typography variant="body2">Salary: ${job.salary}</Typography>
-                                <Typography variant="body2">Frequency: {job.frequency}</Typography>
+                {checkedJobs.length > 0 ? (
+                    checkedJobs.map((job, index) => (
+                        <Grid item xs={12} key={index}>
+                            <Box sx={{ display: "flex", alignItems: "center" }}>
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={job.checked}
+                                            onChange={() => handleJobSelection(index)}
+                                        />
+                                    }
+                                    label=""
+                                />
+                                <Box sx={{ flex: 1 }}>
+                                    <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                                        Job Title: {job.jobTitle}
+                                    </Typography>
+                                    <Typography variant="body2">Company: {job.companyName}</Typography>
+                                    <Typography variant="body2">Salary: ${job.salary}</Typography>
+                                    <Typography variant="body2">Frequency: {job.frequency}</Typography>
+                                </Box>
                             </Box>
-                        </Box>
-                        <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
-                    </Grid>
-                ))}
+                            <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
+                        </Grid>
+                    ))
+                ) : (
+                    <Typography variant="body2" sx={{ textAlign: "center", width: "100%" }}>
+                        No employment data available.
+                    </Typography>
+                )}
             </Grid>
         </Box>
     );
 };
-
-
-
