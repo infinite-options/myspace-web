@@ -56,7 +56,8 @@ import GenericDialog from "../GenericDialog";
 // import PetsOccupant from "../Leases/PetsOccupant";
 // import VehiclesOccupant from "../Leases/VehiclesOccupant";
 // import Documents from "../Leases/Documents";
-
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiFilledInput-root": {
@@ -96,6 +97,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
   const [dialogTitle, setDialogTitle] = useState("");
   const [dialogMessage, setDialogMessage] = useState("");
   const [dialogSeverity, setDialogSeverity] = useState("info");
+  const [showPassword, setShowPassword] = useState(false); 
 
   const openDialog = (title, message, severity) => {
     setDialogTitle(title); // Set custom title
@@ -1148,7 +1150,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                     <TextField
                       fullWidth
                       // value={mask}
-                      value={ssn}
+                      value= {showPassword ? ssn : '***-**-****'} 
                       // onChange={(e) => setSsn(e.target.value)}
                       // onChange={handleSSNChange}
                       onChange={(e) => handleTaxIDChange(e.target.value, true)}
@@ -1157,6 +1159,17 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                       className={classes.root}
                       InputProps={{
                         className: errors.ssn || !ssn ? classes.errorBorder : "",
+                        endAdornment: (
+                          <InputAdornment position='end' style={{ marginRight: "8px", marginTop: "10px" }} >
+                            <IconButton
+                              aria-label='toggle password visibility'
+                              onClick={() => setShowPassword((show) => !show)}
+                              edge='end'
+                            >
+                              {showPassword ? <VisibilityOff style={{ fontSize: "20px"}}/> : <Visibility style={{ fontSize: "20px"  }}/>}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
                       }}
                       required
                     ></TextField>
