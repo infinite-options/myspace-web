@@ -47,10 +47,11 @@ const TenantAccountBalance = ({
   const navigate = useNavigate();
   const open = Boolean(anchorEl);
   const balanceDue = parseFloat(balanceDetails[0]?.amountDue || 0);
-  console.log("property", selectedProperty);
-  console.log("lease", leaseDetails);
-  console.log("propertydata", propertyData);
-  console.log("leasedetaisldata", leaseDetailsData);
+  // console.log("property 1", selectedProperty.property_uid);
+  // // console.log()
+  // console.log("lease", leaseDetails);
+  // console.log("propertydata", propertyData);
+  // console.log("leasedetaisldata", leaseDetailsData);
 
   // useEffect(() => {
   //   if (selectedProperty) {
@@ -91,6 +92,7 @@ const TenantAccountBalance = ({
   };
 
   const returnLeaseStatusColor = (status) => {
+    // console.log("status", status);
     const statusColorMapping = {
       ACTIVE: "#3D5CAC",
       REFUSED: "#FF8832",
@@ -102,7 +104,7 @@ const TenantAccountBalance = ({
       ENDED: "#000000",
       RESCIND: "#FF8832",
     };
-    return status ? statusColorMapping[status] : "#ddd";
+    return status ? statusColorMapping[status] : "#000";
   };
 
   const handleViewTenantApplication = () => {
@@ -158,16 +160,32 @@ const TenantAccountBalance = ({
   propertyData.forEach((property) => {
     //lease_status is null don't bother
     if (property.lease_status) {
-      const propertyLease = leaseDetailsData.find((ld) => ld.property_uid === property.property_uid);
 
-      if (!uniquePropertiesMap.has(property.property_uid) && propertyLease.lease_status) {
-        uniquePropertiesMap.set(property.property_uid, propertyLease);
-      }
+      // const propertyLease = leaseDetailsData.find((ld) => ld.property_uid === property.property_uid);
+      const propertyLease = leaseDetailsData
+        .filter((ld) => ld.property_uid === property.property_uid)
+        .sort((a,b) => {
+          if (a.lease_status === "ACTIVE" && b.lease_status!== "ACTIVE") {
+            return -1;
+          } else if (b.lease_status === "ACTIVE" && a.lease_status !== "ACTIVE") {
+            return 1;
+          }
+          return 0;
+        });
+        // console.log("after filtering", propertyLease);
+        if (propertyLease.length > 0 && !uniquePropertiesMap.has(property.property_uid)) {
+          uniquePropertiesMap.set(property.property_uid, propertyLease[0]);
+        }
+
+      // if (!uniquePropertiesMap.has(property.property_uid) && propertyLease.lease_status) {
+      //   uniquePropertiesMap.set(property.property_uid, propertyLease);
+      // }
   }
   });
 
   const uniqueProperties = Array.from(uniquePropertiesMap.values()); 
   // console.log("unique property", uniqueProperties);
+  // console.log("lease details test", leaseDetails);
 
   const selectedPropertyData = propertyData.find(
     (property) => property.lt_lease_id === leaseDetails?.lease_uid
@@ -223,7 +241,7 @@ const TenantAccountBalance = ({
   }
 
   return (
-    <Paper sx={{ padding: "30px", backgroundColor: "#f0f0f0", borderRadius: "8px", flex: 1}}>
+    <Paper sx={{ padding: "15px", backgroundColor: "#f0f0f0", borderRadius: "8px", flex: 1}}>
       <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
         <Typography variant='h6' sx={{ fontWeight: "bold", color: "#160449" }}>
           Account Balance
@@ -261,6 +279,9 @@ const TenantAccountBalance = ({
           >
             <CircleIcon
               sx={{
+                // color: leaseDetails?.lease_status === "INACTIVE" && relatedLease?.lease_status === "ACTIVE"
+                // ? returnLeaseStatusColor(relatedLease.lease_status)
+                // : returnLeaseStatusColor(leaseDetails?.lease_status),
                 color: returnLeaseStatusColor(leaseDetails?.lease_status),
                 marginRight: "8px",
                 fontSize: "16px",
