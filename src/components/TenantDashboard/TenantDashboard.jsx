@@ -65,6 +65,7 @@ import TenantEndLeaseButton from "./TenantEndLeaseButton";
 import FilePreviewDialog from "../Leases/FilePreviewDialog";
 import CloseIcon from '@mui/icons-material/Close';
 import LeaseIcon from "../Property/leaseIcon.png";
+import { Type } from "ajv/dist/compile/util";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -222,11 +223,17 @@ const TenantDashboard = () => {
   const handleSelectProperty = (property) => {
     setSelectedProperty(property);
     updateLeaseDetails(property.property_uid);
+    // console.log("leasedetailsdata", leaseDetailsData);
 
     if (leaseDetailsData) {
       const leasesForProperty = leaseDetailsData.filter((lease) => lease.property_uid === property.property_uid);
   
       console.log("Leases for property:", leasesForProperty);
+
+    //   const renewProcessingLease = leasesForProperty.find((lease) => lease.lease_status === "RENEW PROCESSING" || lease.lease_status === "RENEW NEW");
+    //   console.log("check here", renewProcessingLease);
+    //   setRelatedLease(renewProcessingLease || null);
+    // }
   
       // Find the correct lease to set as relatedLease
       if (leasesForProperty.length > 1) {
@@ -237,10 +244,13 @@ const TenantDashboard = () => {
         console.log("second lease", secondLease);
         console.log("lease details check", leaseDetails);
   
-        if (firstLease.lease_status === "INACTIVE" && firstLease.lease_renew_status === "RENEWED" && secondLease.lease_status === "ACTIVE") {
+        if (firstLease.lease_status === "INACTIVE" && secondLease.lease_status === "ACTIVE") {
           setLeaseDetails(secondLease || null);
+          console.log("here  check 2");
         } else {
-          setLeaseDetails(secondLease || null);
+          setLeaseDetails(firstLease || null);
+          setRelatedLease(secondLease || null);
+          console.log("here  check 1");
         }
       } else {
         setRelatedLease(leasesForProperty[0] || null);
@@ -270,6 +280,7 @@ const TenantDashboard = () => {
 
   const updateLeaseDetails = (propertyUid) => {
     const leaseForProperty = leaseDetailsData.find((ld) => ld.property_uid === propertyUid);
+    console.log("property lease for property", leaseForProperty);
     setLeaseDetails(leaseForProperty);
 
     if (leaseForProperty?.lease_status === "NEW") {
@@ -455,6 +466,14 @@ const TenantDashboard = () => {
   return (
     // <Box sx={{ backgroundColor: "#fff", padding: isMobile ? "15px" : "30px"}}>
     <ThemeProvider theme={theme}>
+      {loading ? (
+      // <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      //   <CircularProgress />
+      // </Box>
+        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
+          <CircularProgress color='inherit' />
+        </Backdrop>
+      ) : (
       <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
         <Grid container spacing={isMobile ? 0 : 3}>
           {/* Top Section: Welcome Message and Search Icon */}
@@ -491,7 +510,7 @@ const TenantDashboard = () => {
 
           <Grid container spacing={isMobile ? 2 : 3}>
             {/* Left-hand side: Account Balance */}
-            <Grid item xs={12} md={4} sx={{ display: "flex", flexDirection: "column"}}>
+            <Grid item xs={12} md={4} sx={{ display: "flex", flexDirection: "column", flex: 1}}>
               <TenantAccountBalance
                 isMobile={isMobile}
                 viewRHS={viewRHS}
@@ -510,7 +529,7 @@ const TenantDashboard = () => {
             </Grid>
 
             {/* Right-hand side */}
-            <Grid item xs={12} md={8} x={{ flexDirection: "column" }}>
+            <Grid item xs={12} md={8}>
               {/* Top section: Announcements */}
               {(!isMobile || !viewRHS) && (
                 <Grid item xs={12} sx={{paddingLeft: "15px"}}>
@@ -533,9 +552,10 @@ const TenantDashboard = () => {
                           }}
                         >
                           <Typography
+                            variant='h6'
                             sx={{
                               color: "#160449",
-                              fontSize: { xs: "24px", sm: "24px", md: "24px" },
+                              // fontSize: { xs: "24px", sm: "24px", md: "24px" },
                               fontWeight: "bold",
                             }}
                           >
@@ -564,7 +584,7 @@ const TenantDashboard = () => {
                             }}
                             onClick={() => {
                               isMobile ? setViewRHS(true) : setViewRHS(false)
-                              setView("announcements")
+                              setRightPane({ type: "announcements" })
                             }}
                           >
                             {isMobile ? `(${announcementRecvData.length + announcementSentData.length})` : `View all (${announcementRecvData.length + announcementSentData.length})`}
@@ -583,8 +603,8 @@ const TenantDashboard = () => {
                 </Grid>
               )}
 
-              {/* Bottom section containing Lease, Maintenance, and Management Details - Abhinav here layouting */}
-              <Grid container spacing={3} sx={{ marginTop: "1px", paddingLeft: "15px", paddingTop: "10px"}}> 
+              {/* Bottom section containing Lease, Maintenance, and Management Details - Abhinav here layouting, margin 1px */}
+              <Grid container spacing={3} sx={{ paddingLeft: "15px", paddingTop: "15px"}}> 
                 {rightPane?.type ? (
                   /* Render the rightPane component if available */
                   <Grid item xs={12} sx={{ flex: 1 }} ref={rightPaneRef} marginBottom={isMobile ? "40px" : "0px"}>
@@ -593,13 +613,13 @@ const TenantDashboard = () => {
                 ) : (
                   <>
                     {/* Lease Details: Aligns with Account Balance */}
-                    <Grid item xs={12} md={6} sx={{ flex: 1, paddingRight: "15px" }}>
+                    <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column", flex: 1, paddingRight: "15px"}}>
                       <LeaseDetails isMobile={isMobile} setViewRHS={setViewRHS} leaseDetails={leaseDetails} rightPane={rightPane} setRightPane={setRightPane} selectedProperty={selectedProperty} relatedLease={relatedLease} />
                     </Grid>
 
                     {/* Maintenance and Management Details: Match height with Lease Details */}
                     <Grid item xs={12} md={6} sx={{marginBottom: isMobile ? "50px" : "0px"}}>
-                      <Grid container spacing={3}>
+                      <Grid>
                         <Grid item xs={12}>
                           <MaintenanceDetails
                             maintenanceRequests={filteredMaintenanceRequests}
@@ -622,7 +642,7 @@ const TenantDashboard = () => {
             </Grid>
           </Grid>
         </Grid>
-      </Container>
+      </Container>)}
       </ThemeProvider>
       // </Box>
   );
@@ -713,7 +733,7 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
         marginBottom: isMobile? "10px" : "0px",
       }}
     >
-      <Box sx={{ display: "flex", justifyContent: "flex-start", marginBottom: "10px" }}>
+      <Box sx={{ display: "flex", marginBottom: "10px", alignItems: "center" }}>
         <Button onClick={onBack}>
           <ArrowBackIcon
             sx={{
@@ -723,6 +743,9 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
             }}
           />
         </Button>
+        <Typography variant='h6' sx={{ fontWeight: "bold", color: "#160449", fontSize: "20px", textAlign: "center"}}>
+            Payment History
+        </Typography>
       </Box>
       {data && data.length > 0 ? (
         <DataGrid
@@ -895,7 +918,8 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
         padding: "20px",
         backgroundColor: "#f0f0f0",
         position: "relative",
-        height: "95%",
+        // height: "95%",
+        flex: 1,
         borderRadius: "7px",
         // transition: 'transform 0.6s',
         // transformStyle: 'preserve-3d',
@@ -1066,7 +1090,17 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                 )}
 
                 {relatedLease && relatedLease.lease_status === "RENEW PROCESSING" && (
-                  <Button variant='contained' color='primary' size='small' onClick={handleViewRenewProcessingLease} sx={{ marginLeft: "10px", fontWeight: "bold" }}>
+                  <Button 
+                  variant='contained' 
+                  size='small' 
+                  onClick={handleViewRenewProcessingLease} 
+                  sx={{ 
+                    marginLeft: "10px", 
+                    fontWeight: "bold", 
+                    backgroundColor: "#76B148", 
+                    color: "white",
+                  }}
+                >
                     View Renewal Lease
                   </Button>
                 )}
@@ -1556,7 +1590,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
               >
                 <Paper
                   sx={{
-                    padding: "20px",
+                    padding: "10px",
                     borderRadius: "8px",
                     backgroundColor: theme.palette.primary.main,
                   }}
@@ -1666,39 +1700,44 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
                       disabled={paymentOption === "partial" && !partialAmount}
                       variant="contained"
                       sx={{
-                        marginTop: "10px",
+                        // marginTop: "10px",
                         backgroundColor: "#3D5CAC",
                         color: "#fff",
                         borderRadius: "5px",
-                        padding: "8px 16px",
+                        // padding: "8px 16px",
                         minWidth: "120px",
                         boxShadow: "none",
                         textTransform: "none",
-                        fontSize: "13px",
+                        // fontSize: "13px",
                       }}
                       onClick={handleNavigateToSelectPayment}
                     >
-                      <Typography sx={{ textTransform: "none", color: "#FFFFFF", fontSize: "18px", fontWeight: "600" }}>Make Payment</Typography>
+                      <Typography sx={{ textTransform: "none", color: "#FFFFFF", fontSize: "15px", fontWeight: "600" }}>Make Payment</Typography>
                     </Button>
                   </Stack>
-                  <Stack direction='row' justifyContent='center' m={2} sx={{ paddingTop: "25px", paddingBottom: "15px" }}>
-                    <TextField
-                      variant='filled'
-                      fullWidth={true}
-                      multiline={true}
-                      value={paymentNotes}
-                      onChange={handlePaymentNotesChange}
-                      label='Payment Notes'
-                      sx={{
-                        "& .MuiInputLabel-root": {
-                          color: "#00000099", 
-                        },
-                        "& .MuiInputLabel-root.Mui-focused, & .MuiInputLabel-root.MuiFormLabel-filled": {
-                          color: "#00000099",
-                        },
-                      }}
-                    />
-                  </Stack>
+                  <Stack direction='row' justifyContent='center' m={2} sx={{ paddingTop: "15px", paddingBottom: "15px" }}>
+                  <TextField
+                    variant='filled'
+                    fullWidth={true}
+                    multiline={true}
+                    rows={1} // Adjust this to control the number of rows (height)
+                    value={paymentNotes}
+                    onChange={handlePaymentNotesChange}
+                    label='Payment Notes'
+                    sx={{
+                      "& .MuiInputLabel-root": {
+                        color: "#00000099",
+                      },
+                      "& .MuiInputLabel-root.Mui-focused, & .MuiInputLabel-root.MuiFormLabel-filled": {
+                        color: "#00000099",
+                      },
+                      "& .MuiFilledInput-root": {
+                        paddingTop: "8px", // Reduce padding inside the text field
+                        paddingBottom: "10px", // Reduce padding inside the text field
+                      },
+                    }}
+                  />
+                </Stack>
                 </Paper>
 
                 {/* Balance Details */}
@@ -1876,7 +1915,7 @@ function TenantBalanceTablePM(props) {
   ];
 
   return (
-    <Box sx={{ width: "100%", height: 200, overflowX: "auto" }}>
+    <Box sx={{ width: "100%", flex: 1, overflowX: "auto" }}>
       {paymentDueResult.length > 0 && (
         <DataGrid
           sx={{
