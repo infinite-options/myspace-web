@@ -58,6 +58,8 @@ import GenericDialog from "../GenericDialog";
 // import { add } from "date-fns";
 // import { changeSectionValueFormat } from "@mui/x-date-pickers/internals/hooks/useField/useField.utils";
 // import { id } from "date-fns/locale";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -1389,6 +1391,8 @@ const closeDialog = () => {
 
   const [showMasked, setShowMasked] = useState(true);
   const displaySsn = showMasked ? newmaskNumber(ein) : formatSSN(ein);
+  const [showSSNEIN, setshowSSNEIN] = useState(false); 
+  const [showEmpSsn, setshowEmpSsn] = useState(false); 
 
   return (
     <>
@@ -1666,7 +1670,7 @@ const closeDialog = () => {
                       <TextField
                         fullWidth
                         // value={mask}
-                        value={ein} 
+                        value={showSSNEIN? ein : "***-**-****"} 
                         // onChange={(e) => setSsn(e.target.value)}
                         onChange={(e) => handleTaxIDChange(e.target.value, true)} 
                         variant='filled'
@@ -1674,11 +1678,17 @@ const closeDialog = () => {
                         className={classes.root}
                         InputProps={{
                           className: errors.ein || !ein ? classes.errorBorder : '',
-                          // endAdornment: (
-                          //   <IconButton onClick={() => setShowMasked(!showMasked)}>
-                          //     {showMasked ? "Show" : "Hide"}
-                          //   </IconButton>
-                          // ),
+                          endAdornment: (
+                            <InputAdornment position='end' style={{ marginRight: "8px", marginTop: "10px" }} >
+                              <IconButton
+                                aria-label='toggle password visibility'
+                                onClick={() => setshowSSNEIN((show) => !show)}
+                                edge='end'
+                              >
+                                {showSSNEIN ? <VisibilityOff style={{ fontSize: "20px"}}/> : <Visibility style={{ fontSize: "20px"  }}/>}
+                              </IconButton>
+                            </InputAdornment>
+                          ),
                         }}
                         required
                       ></TextField>
@@ -2026,15 +2036,25 @@ const closeDialog = () => {
                     <TextField
                       fullWidth
                       // value={mask}
-                      value={empSsn}
+                      value={showEmpSsn? empSsn : "***-**-****"}
                       // onChange={(e) => setSsn(e.target.value)}
                       onChange={handleEmpSSNChange}
                       variant='filled'
                       placeholder='SSN'
                       className={classes.root}
-                      // InputProps={{
-                      //   className: errors.empSsn ? classes.errorBorder : '',
-                      // }}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position='end' style={{ marginRight: "8px", marginTop: "10px" }} >
+                            <IconButton
+                              aria-label='toggle password visibility'
+                              onClick={() => setshowEmpSsn((show) => !show)}
+                              edge='end'
+                            >
+                              {showEmpSsn ? <VisibilityOff style={{ fontSize: "20px"}}/> : <Visibility style={{ fontSize: "20px"  }}/>}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
                       // required
                     ></TextField>
                   </Grid>
