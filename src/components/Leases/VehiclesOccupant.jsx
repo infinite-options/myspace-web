@@ -145,7 +145,24 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                 const updatedRow = vehicles.map(veh => (veh.id === currentRow.id ? currentRow : veh));
                 //Save pets back in DB without ID field
                 const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
-                setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
+                // setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
+                setModifiedData((prev) => {
+                    if (Array.isArray(prev)) {
+                      const existingIndex = prev.findIndex((item) => item.key === dataKey);
+                      
+                      if (existingIndex > -1) {
+                        const updatedData = [...prev];
+                        updatedData[existingIndex] = {
+                          ...updatedData[existingIndex],
+                          value: rowWithoutId,
+                        };
+                        return updatedData;
+                      } else {
+                        return [...prev, { key: dataKey, value: rowWithoutId }];
+                      }
+                    }
+                    return [{ key: dataKey, value: rowWithoutId }];
+                  });
                 setIsUpdated(true);
             } else {
                 showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
@@ -153,7 +170,22 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
 
         } else {
             const {id, ...newRowwithoutid} = currentRow
-            setModifiedData((prev) => [...prev, { key: dataKey, value: [...leaseVehicles, { ...newRowwithoutid }] }])
+            // setModifiedData((prev) => [...prev, { key: dataKey, value: [...leaseVehicles, { ...newRowwithoutid }] }])
+            setModifiedData((prev) => {
+                if (Array.isArray(prev)) {
+                  const existingIndex = prev.findIndex((item) => item.key === dataKey);
+                  if (existingIndex > -1) {
+                    const updatedData = [...prev];
+                    updatedData[existingIndex] = {
+                      ...updatedData[existingIndex],
+                      value: [...leaseVehicles, newRowwithoutid],
+                    };
+                    return updatedData;
+                  }
+                  return [...prev, { key: dataKey, value: [...leaseVehicles, newRowwithoutid] }];
+                }
+                return [{ key: dataKey, value: [...leaseVehicles, newRowwithoutid] }];
+            });
             setIsUpdated(true);
         }
     };
@@ -167,7 +199,25 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
     const handleDelete = (id) => {
         const filtered = vehicles.filter(veh => veh.id !== currentRow.id);
         const rowWithoutId = filtered.map(({ id, ...rest }) => rest);
-        setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
+        // setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
+        setModifiedData((prev) => {
+            if (Array.isArray(prev)) {
+              const existingIndex = prev.findIndex((item) => item.key === dataKey);
+          
+              if (existingIndex > -1) {
+                const updatedData = [...prev];
+                updatedData[existingIndex] = {
+                  ...updatedData[existingIndex],
+                  value: rowWithoutId,
+                };
+                return updatedData;
+              } else {
+                return [...prev, { key: dataKey, value: rowWithoutId }];
+              }
+            }
+            return [{ key: dataKey, value: rowWithoutId }];
+          });
+          
         setIsUpdated(true);
     };
 
