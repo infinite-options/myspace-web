@@ -28,7 +28,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { useUser } from '../../../contexts/UserContext';
 import theme from '../../../theme/theme';
 import { DataGrid } from "@mui/x-data-grid";
-
+import useMediaQuery from "@mui/material/useMediaQuery";
 // import ImageCarousel from '../../ImageCarousel';
 import defaultHouseImage from '../../Property/defaultHouseImage.png';
 import ChatIcon from '@mui/icons-material/Chat';
@@ -813,7 +813,7 @@ const PropertyCard = (props) => {
   const { getProfileId } = useUser();
   const { defaultContractFees, allContracts, currentContractUID, currentContractPropertyUID, isChange, setIsChange, fetchContracts} = useContext(ManagementContractContext);  
   console.log("PropertyCard - props - ", props);
-  
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [propertyData, setPropertyData] = useState(props.data);
 //   const timeDiff = props.timeDifference;
@@ -1799,45 +1799,45 @@ return (
         </Box> */}
 		</Grid>
 		<Grid item xs={12}>
-		<Box
-				sx={{
-					display: 'flex',
-					padding: '5px',
-					justifyContent: 'space-evenly',
-					alignItems: 'center',
-					fontSize: '20px',
-					color: '#160449',
-					// color: '#3D5CAC',
-				}}
-			>
-				<Box
+			<Box
 					sx={{
-						fontSize: '16px',
-						fontWeight: '600',
+						display: 'flex',
+						padding: '5px',
+						justifyContent: 'space-evenly',
+						alignItems: 'center',
+						fontSize: '20px',
+						color: '#160449',
+						// color: '#3D5CAC',
 					}}
 				>
-					{/* {getProperties(propertyStatus).length > 0 ? (`${getProperties(propertyStatus)[index].property_address}, ${(getProperties(propertyStatus)[index].property_unit !== null && getProperties(propertyStatus)[index].property_unit !== '' ? (getProperties(propertyStatus)[index].property_unit + ',') : (''))} ${getProperties(propertyStatus)[index].property_city} ${getProperties(propertyStatus)[index].property_state} ${getProperties(propertyStatus)[index].property_zip}`) : (<></>)} */}
-					{/* 789 Maple Lane, San Diego, CA 92101, USA */}
-					{propertyData?.property_unit ? (
-						<span>
-							{propertyData.property_address}
-							{', Unit - '}
-							{propertyData.property_unit}
-							{', '}
-							{propertyData.property_city}
-							{', '}
-							{propertyData.property_state} {propertyData.property_zip}
-						</span>
-					) : (
-						<span>
-							{propertyData.property_address}
-							{', '}
-							{propertyData.property_city}
-							{', '}
-							{propertyData.property_state} {propertyData.property_zip}
-						</span>
-					)}
-				</Box>
+					<Box
+						sx={{
+							fontSize: '16px',
+							fontWeight: '600',
+						}}
+					>
+						{/* {getProperties(propertyStatus).length > 0 ? (`${getProperties(propertyStatus)[index].property_address}, ${(getProperties(propertyStatus)[index].property_unit !== null && getProperties(propertyStatus)[index].property_unit !== '' ? (getProperties(propertyStatus)[index].property_unit + ',') : (''))} ${getProperties(propertyStatus)[index].property_city} ${getProperties(propertyStatus)[index].property_state} ${getProperties(propertyStatus)[index].property_zip}`) : (<></>)} */}
+						{/* 789 Maple Lane, San Diego, CA 92101, USA */}
+						{propertyData?.property_unit ? (
+							<span>
+								{propertyData.property_address}
+								{', Unit - '}
+								{propertyData.property_unit}
+								{', '}
+								{propertyData.property_city}
+								{', '}
+								{propertyData.property_state} {propertyData.property_zip}
+							</span>
+						) : (
+							<span>
+								{propertyData.property_address}
+								{', '}
+								{propertyData.property_city}
+								{', '}
+								{propertyData.property_state} {propertyData.property_zip}
+							</span>
+						)}
+					</Box>
 			</Box>
 
 		</Grid>
@@ -2266,7 +2266,8 @@ return (
 			{contractAssignedContacts?.length !== 0 ? (				
 				<DataGrid
 					rows={contactRowsWithId}
-					columns={ContactColumns}
+					// columns={ContactColumns}
+					columns={isMobile ? ContactColumns.map(column => ({ ...column, minWidth: 150 })) : ContactColumns}
 					sx={{
 					// minHeight:"100px",
 					// height:"100px",
