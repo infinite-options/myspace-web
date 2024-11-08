@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isEditable }) => {
+const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isEditable }) => {
     // console.log('Inside Adult occupants', leaseAdults, relationships);
     const [adults, setAdults] = useState([]);
     const [open, setOpen] = useState(false);
@@ -115,7 +115,7 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
                 const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
     
                 // Check if `prev` is an array before spreading it
-                setModifiedData((prev) => Array.isArray(prev) ? [...prev, { key: dataKey, value: rowWithoutId }] : [{ key: dataKey, value: rowWithoutId }]);
+                setModifiedData((prev) => Array.isArray(prev) ? [...prev, { key: dataKey, value: rowWithoutId }] : [{ key: dataKey, value: rowWithoutId }]);                
                 setIsUpdated(true);
             } else {
                 showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");

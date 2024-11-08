@@ -1900,7 +1900,13 @@ export default function PropertyNavigator({
                           selectedRole === "MANAGER" && tenant_detail === "No Tenant" ? (
                             <Button
                                 onClick={() => {                                    
-                                    setShowReferTenantDialog(true);                                    
+                                    // setShowReferTenantDialog(true);                                    
+                                    const application = {
+                                      lease_status: "NEW",
+                                    };
+                                    // console.log("application - ", application);
+                                    // console.log("property - ", property);
+                                    navigate("/tenantLease", { state: { page: "refer_tenant", application, property } });
                                 }}
                                 variant='contained'
                                 sx={{

@@ -111,6 +111,8 @@ const TenantApplicationNav = (props) => {
     navigate("/managerDashboard");
   };
   const handleCreateLease = () => {
+    // console.log("application - ", application);
+    // console.log("property - ", property);
     navigate("/tenantLease", { state: { page: "create_lease", application, property } });
   };
 
@@ -196,371 +198,371 @@ const TenantApplicationNav = (props) => {
 
 
               {/* Contact and Confidential Info */}
-<Paper sx={{ backgroundColor: theme.palette.form.main, padding: "20px", marginBottom: "10px" }}>
-  <Grid container spacing={2} sx={{ padding: "0px" }}>
-    <Grid item xs={12} sm={6}>
-      <Box >
-        <Typography sx={{ fontWeight: "bold", color: "#160449", marginBottom: "10px" }}>CONTACT INFORMATION</Typography>
-        <Typography display="block">
-          <img src={EmailIcon} alt="email" style={{ marginRight: "10px" }} />
-          {application.tenant_email}
-        </Typography>
-        <Typography display="block">
-          <img src={PhoneIcon} alt="phone" style={{ marginRight: "10px" }} />
-          {application.tenant_phone_number}
-        </Typography>
-        <Typography display="block">
-          {application.tenant_address}, {application.tenant_city}, {application.tenant_state} {application.tenant_zip}
-        </Typography>
-      </Box>
-    </Grid>
+              <Paper sx={{ backgroundColor: theme.palette.form.main, padding: "20px", marginBottom: "10px" }}>
+                <Grid container spacing={2} sx={{ padding: "0px" }}>
+                  <Grid item xs={12} sm={6}>
+                    <Box >
+                      <Typography sx={{ fontWeight: "bold", color: "#160449", marginBottom: "10px" }}>CONTACT INFORMATION</Typography>
+                      <Typography display="block">
+                        <img src={EmailIcon} alt="email" style={{ marginRight: "10px" }} />
+                        {application.tenant_email}
+                      </Typography>
+                      <Typography display="block">
+                        <img src={PhoneIcon} alt="phone" style={{ marginRight: "10px" }} />
+                        {application.tenant_phone_number}
+                      </Typography>
+                      <Typography display="block">
+                        {application.tenant_address}, {application.tenant_city}, {application.tenant_state} {application.tenant_zip}
+                      </Typography>
+                    </Box>
+                  </Grid>
 
-    <Grid item xs={12} sm={6}>
-      <Box sx={{ padding: "10px" }}>
-        <Typography sx={{ fontWeight: "bold", color: "#160449", marginBottom: "10px" }}>CONFIDENTIAL INFO</Typography>
-        <Typography display="block" sx={{ color: "#3D5CAC" }}>SSN:</Typography>
-        <Typography display="block" sx={{ color: "#160449" }}>***-**-{decryptedSSN}</Typography>
-        <Typography display="block" sx={{ color: "#3D5CAC" }}>DL:</Typography>
-        <Typography display="block" sx={{ color: "#160449" }}>
-  {application.tenant_drivers_license_number 
-    ? `${application.tenant_drivers_license_number} / ${application.tenant_drivers_license_state}`
-    : "Not available"}
-</Typography></Box>
-    </Grid>
-  </Grid>
-</Paper>
-
-{/* Job Details */}
-<Paper sx={{ backgroundColor: theme.palette.form.main, padding: "20px", marginBottom: "10px", borderRadius: "10px" }}>
-  <Typography sx={{fontWeight: "bold", color: "#160449", marginBottom: "10px"}}>
-    INCOME DETAILS
-  </Typography>
-  
-  {/* Parsing the stringified JSON data */}
-  {JSON.parse(application?.lease_income).map((income, index) => (
-    <Grid container spacing={2} key={index} sx={{ marginBottom: "10px", padding: "10px", backgroundColor: theme.palette.form.main, borderRadius: "5px" }}>
-      <Grid item xs={3}>
-        <Typography sx={{ color: "#3D5CAC"}}>Income Title</Typography>
-        <Typography>{income.jobTitle}</Typography>
-      </Grid>
-      <Grid item xs={3}>
-        <Typography sx={{ color: "#3D5CAC"}}>Amount</Typography>
-        <Typography>{income.salary}</Typography>
-      </Grid>
-      <Grid item xs={3}>
-        <Typography sx={{ color: "#3D5CAC" }}>Amount Frequency</Typography>
-        <Typography>{income.frequency}</Typography>
-      </Grid>
-      <Grid item xs={3}>
-        <Typography sx={{ color: "#3D5CAC" }}>Company Name</Typography>
-        <Typography>{income.companyName}</Typography>
-      </Grid>
-    </Grid>
-  ))}
-</Paper>
-
-{/* Occupant Details */}
-<Paper elevation={2} sx={{ backgroundColor: theme.palette.form.main, padding: "20px", marginBottom: "10px" }}>
-  <Typography sx={{ fontWeight: "bold", color: "#160449", marginBottom: "10px" }}>OCCUPANT DETAILS</Typography>
-  <Grid container spacing={2}>
-    <Grid item xs={3}>
-      <Typography display="block" sx={{ color: "#3D5CAC" }}>Adults:</Typography>
-      <Typography display="block">{adultOccupants.length}</Typography>
-    </Grid>
-    <Grid item xs={3}>
-      <Typography display="block" sx={{ color: "#3D5CAC" }}>Children:</Typography>
-      <Typography display="block">{childOccupants.length}</Typography>
-    </Grid>
-    <Grid item xs={3}>
-      <Typography display="block" sx={{ color: "#3D5CAC" }}>Pets:</Typography>
-      <Typography display="block">{petOccupants.length}</Typography>
-    </Grid>
-    <Grid item xs={3}>
-      <Typography display="block" sx={{ color: "#3D5CAC" }}>Vehicles:</Typography>
-      <Typography display="block">{vehicles.length}</Typography>
-    </Grid>
-    
-    <Accordion sx={{ marginTop: '20px', backgroundColor: theme.palette.form.main, width: { xs: '100%', sm: '100%', md: '100%' }}}>
-    <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls="occupants-content"
-                                id="occupants-header"
-                            >
-                        <Typography
-                          sx={{
-                            justifySelf: "center",
-                            color: theme.typography.primary.black,
-                            fontWeight: theme.typography.primary.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                          }}
-                        >
-                          Adults
-                        </Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                        {adultOccupants && adultOccupants?.length >0 ? <AdultDataGrid adults={adultOccupants}/> : 
-                          <>
-                            <Box
-                              sx={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                marginBottom: '7px',
-                                width: '100%',
-                                height:"70px"
-                              }}
-                            >
-                              <Typography
-                                sx={{
-                                color: "#A9A9A9",
-                                fontWeight: theme.typography.primary.fontWeight,
-                                fontSize: "15px",
-                                }}
-                              >
-                                No Adults
-                              </Typography>
-                            </Box>
-                          </>
-                        }
-                          </AccordionDetails>
-                      </Accordion>
-                      
-                      
-                      <Accordion sx={{ marginTop: '20px', backgroundColor: theme.palette.form.main, width: { xs: '100%', sm: '100%', md: '100%' }}}>
-    <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls="occupants-content"
-                                id="occupants-header"
-                            > 
-                          <Typography
-                            sx={{
-                              justifySelf: "center",
-                              color: theme.typography.primary.black,
-                              fontWeight: theme.typography.primary.fontWeight,
-                              fontSize: theme.typography.smallFont,
-                            }}
-                          >
-                          Children
-                        </Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                        {childOccupants && childOccupants?.length >0 ? <ChildDataGrid children={childOccupants}/> : 
-                          <>
-                            <Box
-                              sx={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                marginBottom: '7px',
-                                width: '100%',
-                                height:"70px"
-                              }}
-                            >
-                              <Typography
-                                sx={{
-                                color: "#A9A9A9",
-                                fontWeight: theme.typography.primary.fontWeight,
-                                fontSize: "15px",
-                                }}
-                              >
-                                No Child
-                              </Typography>
-                            </Box>
-                          </>
-                        }
-                        </AccordionDetails>
-                      </Accordion>
-                      <Accordion sx={{ marginTop: '20px', backgroundColor: theme.palette.form.main, width: { xs: '100%', sm: '100%', md: '100%' }}}>
-    <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls="occupants-content"
-                                id="occupants-header"
-                            > 
-                        <Typography
-                            sx={{
-                              justifySelf: "center",
-                              color: theme.typography.primary.black,
-                              fontWeight: theme.typography.primary.fontWeight,
-                              fontSize: theme.typography.smallFont,
-                            }}
-                          >
-                          Pets
-                        </Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                        {petOccupants && petOccupants?.length >0 ? <PetDataGrid pets={petOccupants}/> : 
-                          <>
-                            <Box
-                              sx={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                marginBottom: '7px',
-                                width: '100%',
-                                height:"70px"
-                              }}
-                            >
-                              <Typography
-                                sx={{
-                                color: "#A9A9A9",
-                                fontWeight: theme.typography.primary.fontWeight,
-                                fontSize: "15px",
-                                }}
-                              >
-                                No Pets
-                              </Typography>
-                            </Box>
-                          </>
-                        }
-                        </AccordionDetails>
-                      </Accordion>
-                      <Accordion sx={{ marginTop: '20px', backgroundColor: theme.palette.form.main, width: { xs: '100%', sm: '100%', md: '100%' }}}>
-    <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls="occupants-content"
-                                id="occupants-header"
-                            > 
-                        <Typography
-                            sx={{
-                              justifySelf: "center",
-                              color: theme.typography.primary.black,
-                              fontWeight: theme.typography.primary.fontWeight,
-                              fontSize: theme.typography.smallFont,
-                            }}
-                          >
-                          Vehicles
-                        </Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                        {vehicles && vehicles?.length >0 ? <VehicleDataGrid vehicles={vehicles}/> : 
-                          <>
-                            <Box
-                              sx={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                marginBottom: '7px',
-                                width: '100%',
-                                height:"70px"
-                              }}
-                            >
-                              <Typography
-                                sx={{
-                                color: "#A9A9A9",
-                                fontWeight: theme.typography.primary.fontWeight,
-                                fontSize: "15px",
-                                }}
-                              >
-                                No Vehicles
-                              </Typography>
-                            </Box>
-                          </>
-                        }
-                        </AccordionDetails>
-                      </Accordion>
-  </Grid>
-</Paper>
-{/* Documents */}
-            <Paper  elevation={2} sx={{ backgroundColor: theme.palette.form.main, padding: "20px"}}>
-       
-                    <Documents setRHS={props.setRHS}setSelectedDocument={props.setSelectedDocument} documents={applicationDocuments} setDocuments={setApplicationDocuments} isEditable={false} isAccord={false} customName={"APPLICATION DOCUMENTS:"} />
-               
-
-                  
-            </Paper>
-           {/* Action Buttons */}
-           <Stack direction='row' alignItems='center' justifyContent='space-around' sx={{ padding: "30px 0", paddingRight: "15px" }}>
-                      {(application.lease_status === "NEW"|| application.lease_status === "RENEW NEW") && (
-                        <Button
-                          onClick={handleRejectLease}
-                          sx={{
-                            backgroundColor: "#CB8E8E",
-                            color: "#160449",
-                            textTransform: "none",
-                            width: "120px",
-                            "&:hover, &:focus, &:active": {
-                              backgroundColor: "#CB8E8E",
-                            },
-                          }}
-                        >
-                          {"Reject Tenant"}
-                        </Button>
-                      )}
-                      {(application.lease_status === "PROCESSING" || application.lease_status === "RENEW PROCESSING") && (
-                        <div>
-                          <Button
-                            onClick={handleWithdrawLease}
-                            sx={{
-                              backgroundColor: "#CB8E8E",
-                              color: "#FFFFFF",
-                              textTransform: "none",
-                              width: "160px",
-                              marginRight: "10px",
-                              marginRight: "30px",
-                              whiteSpace: "nowrap",
-                              "&:hover, &:focus, &:active": {
-                                backgroundColor: "#bb6b6b",
-                              },
-                            }}
-                          >
-                            {"Withdraw Lease"}
-                          </Button>
-                          <Button
-                            onClick={handleEditLease}
-                            sx={{
-                              backgroundColor: "#9EAED6",
-                              color: "#FFFFFF",
-                              textTransform: "none",
-                              width: "120px",
-                              "&:hover, &:focus, &:active": {
-                                backgroundColor: "#6780bf",
-                              },
-                            }}
-                          >
-                            {"Edit Lease"}
-                          </Button>
-                        </div>
-                      )}
-                      {application.lease_status === "RENEW NEW" && (
-                        <Button
-                          onClick={handleRenewLease}
-                          sx={{
-                            backgroundColor: "#9EAED6",
-                            color: "#160449",
-                            textTransform: "none",
-                            width: "120px",
-                            "&:hover, &:focus, &:active": {
-                              backgroundColor: "#9EAED6",
-                            },
-                          }}
-                        >
-                          {"Renew Lease"}
-                        </Button>
-                      )}
-                      {application.lease_status !== "PROCESSING" && application.lease_status !== "RENEW PROCESSING"  && application.lease_status !== "RENEW NEW"&& (
-                        <Button
-                          onClick={handleCreateLease}
-                          sx={{
-                            backgroundColor: "#9EAED6",
-                            color: "#160449",
-                            textTransform: "none",
-                            width: "120px",
-                            "&:hover, &:focus, &:active": {
-                              backgroundColor: "#9EAED6",
-                            },
-                          }}
-                        >
-                          {"New Lease"}
-                        </Button>
-                      )}
-                    </Stack></Box>
+                  <Grid item xs={12} sm={6}>
+                    <Box sx={{ padding: "10px" }}>
+                      <Typography sx={{ fontWeight: "bold", color: "#160449", marginBottom: "10px" }}>CONFIDENTIAL INFO</Typography>
+                      <Typography display="block" sx={{ color: "#3D5CAC" }}>SSN:</Typography>
+                      <Typography display="block" sx={{ color: "#160449" }}>***-**-{decryptedSSN}</Typography>
+                      <Typography display="block" sx={{ color: "#3D5CAC" }}>DL:</Typography>
+                      <Typography display="block" sx={{ color: "#160449" }}>
+                {application.tenant_drivers_license_number 
+                  ? `${application.tenant_drivers_license_number} / ${application.tenant_drivers_license_state}`
+                  : "Not available"}
+              </Typography></Box>
+                  </Grid>
+                </Grid>
               </Paper>
-            </Box>
-          </Stack>
+
+              {/* Job Details */}
+              <Paper sx={{ backgroundColor: theme.palette.form.main, padding: "20px", marginBottom: "10px", borderRadius: "10px" }}>
+                <Typography sx={{fontWeight: "bold", color: "#160449", marginBottom: "10px"}}>
+                  INCOME DETAILS
+                </Typography>
+                
+                {/* Parsing the stringified JSON data */}
+                {JSON.parse(application?.lease_income).map((income, index) => (
+                  <Grid container spacing={2} key={index} sx={{ marginBottom: "10px", padding: "10px", backgroundColor: theme.palette.form.main, borderRadius: "5px" }}>
+                    <Grid item xs={3}>
+                      <Typography sx={{ color: "#3D5CAC"}}>Income Title</Typography>
+                      <Typography>{income.jobTitle}</Typography>
+                    </Grid>
+                    <Grid item xs={3}>
+                      <Typography sx={{ color: "#3D5CAC"}}>Amount</Typography>
+                      <Typography>{income.salary}</Typography>
+                    </Grid>
+                    <Grid item xs={3}>
+                      <Typography sx={{ color: "#3D5CAC" }}>Amount Frequency</Typography>
+                      <Typography>{income.frequency}</Typography>
+                    </Grid>
+                    <Grid item xs={3}>
+                      <Typography sx={{ color: "#3D5CAC" }}>Company Name</Typography>
+                      <Typography>{income.companyName}</Typography>
+                    </Grid>
+                  </Grid>
+                ))}
+              </Paper>
+
+              {/* Occupant Details */}
+              <Paper elevation={2} sx={{ backgroundColor: theme.palette.form.main, padding: "20px", marginBottom: "10px" }}>
+                <Typography sx={{ fontWeight: "bold", color: "#160449", marginBottom: "10px" }}>OCCUPANT DETAILS</Typography>
+                <Grid container spacing={2}>
+                  <Grid item xs={3}>
+                    <Typography display="block" sx={{ color: "#3D5CAC" }}>Adults:</Typography>
+                    <Typography display="block">{adultOccupants.length}</Typography>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Typography display="block" sx={{ color: "#3D5CAC" }}>Children:</Typography>
+                    <Typography display="block">{childOccupants.length}</Typography>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Typography display="block" sx={{ color: "#3D5CAC" }}>Pets:</Typography>
+                    <Typography display="block">{petOccupants.length}</Typography>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Typography display="block" sx={{ color: "#3D5CAC" }}>Vehicles:</Typography>
+                    <Typography display="block">{vehicles.length}</Typography>
+                  </Grid>
+                  
+                  <Accordion sx={{ marginTop: '20px', backgroundColor: theme.palette.form.main, width: { xs: '100%', sm: '100%', md: '100%' }}}>
+                  <AccordionSummary
+                                              expandIcon={<ExpandMoreIcon />}
+                                              aria-controls="occupants-content"
+                                              id="occupants-header"
+                                          >
+                                      <Typography
+                                        sx={{
+                                          justifySelf: "center",
+                                          color: theme.typography.primary.black,
+                                          fontWeight: theme.typography.primary.fontWeight,
+                                          fontSize: theme.typography.smallFont,
+                                        }}
+                                      >
+                                        Adults
+                                      </Typography>
+                                      </AccordionSummary>
+                                      <AccordionDetails>
+                                      {adultOccupants && adultOccupants?.length >0 ? <AdultDataGrid adults={adultOccupants}/> : 
+                                        <>
+                                          <Box
+                                            sx={{
+                                              display: 'flex',
+                                              flexDirection: 'row',
+                                              justifyContent: 'center',
+                                              alignItems: 'center',
+                                              marginBottom: '7px',
+                                              width: '100%',
+                                              height:"70px"
+                                            }}
+                                          >
+                                            <Typography
+                                              sx={{
+                                              color: "#A9A9A9",
+                                              fontWeight: theme.typography.primary.fontWeight,
+                                              fontSize: "15px",
+                                              }}
+                                            >
+                                              No Adults
+                                            </Typography>
+                                          </Box>
+                                        </>
+                                      }
+                                        </AccordionDetails>
+                                    </Accordion>
+                                    
+                                    
+                                    <Accordion sx={{ marginTop: '20px', backgroundColor: theme.palette.form.main, width: { xs: '100%', sm: '100%', md: '100%' }}}>
+                  <AccordionSummary
+                                              expandIcon={<ExpandMoreIcon />}
+                                              aria-controls="occupants-content"
+                                              id="occupants-header"
+                                          > 
+                                        <Typography
+                                          sx={{
+                                            justifySelf: "center",
+                                            color: theme.typography.primary.black,
+                                            fontWeight: theme.typography.primary.fontWeight,
+                                            fontSize: theme.typography.smallFont,
+                                          }}
+                                        >
+                                        Children
+                                      </Typography>
+                                      </AccordionSummary>
+                                      <AccordionDetails>
+                                      {childOccupants && childOccupants?.length >0 ? <ChildDataGrid children={childOccupants}/> : 
+                                        <>
+                                          <Box
+                                            sx={{
+                                              display: 'flex',
+                                              flexDirection: 'row',
+                                              justifyContent: 'center',
+                                              alignItems: 'center',
+                                              marginBottom: '7px',
+                                              width: '100%',
+                                              height:"70px"
+                                            }}
+                                          >
+                                            <Typography
+                                              sx={{
+                                              color: "#A9A9A9",
+                                              fontWeight: theme.typography.primary.fontWeight,
+                                              fontSize: "15px",
+                                              }}
+                                            >
+                                              No Child
+                                            </Typography>
+                                          </Box>
+                                        </>
+                                      }
+                                      </AccordionDetails>
+                                    </Accordion>
+                                    <Accordion sx={{ marginTop: '20px', backgroundColor: theme.palette.form.main, width: { xs: '100%', sm: '100%', md: '100%' }}}>
+                  <AccordionSummary
+                                              expandIcon={<ExpandMoreIcon />}
+                                              aria-controls="occupants-content"
+                                              id="occupants-header"
+                                          > 
+                                      <Typography
+                                          sx={{
+                                            justifySelf: "center",
+                                            color: theme.typography.primary.black,
+                                            fontWeight: theme.typography.primary.fontWeight,
+                                            fontSize: theme.typography.smallFont,
+                                          }}
+                                        >
+                                        Pets
+                                      </Typography>
+                                      </AccordionSummary>
+                                      <AccordionDetails>
+                                      {petOccupants && petOccupants?.length >0 ? <PetDataGrid pets={petOccupants}/> : 
+                                        <>
+                                          <Box
+                                            sx={{
+                                              display: 'flex',
+                                              flexDirection: 'row',
+                                              justifyContent: 'center',
+                                              alignItems: 'center',
+                                              marginBottom: '7px',
+                                              width: '100%',
+                                              height:"70px"
+                                            }}
+                                          >
+                                            <Typography
+                                              sx={{
+                                              color: "#A9A9A9",
+                                              fontWeight: theme.typography.primary.fontWeight,
+                                              fontSize: "15px",
+                                              }}
+                                            >
+                                              No Pets
+                                            </Typography>
+                                          </Box>
+                                        </>
+                                      }
+                                      </AccordionDetails>
+                                    </Accordion>
+                                    <Accordion sx={{ marginTop: '20px', backgroundColor: theme.palette.form.main, width: { xs: '100%', sm: '100%', md: '100%' }}}>
+                  <AccordionSummary
+                                              expandIcon={<ExpandMoreIcon />}
+                                              aria-controls="occupants-content"
+                                              id="occupants-header"
+                                          > 
+                                      <Typography
+                                          sx={{
+                                            justifySelf: "center",
+                                            color: theme.typography.primary.black,
+                                            fontWeight: theme.typography.primary.fontWeight,
+                                            fontSize: theme.typography.smallFont,
+                                          }}
+                                        >
+                                        Vehicles
+                                      </Typography>
+                                      </AccordionSummary>
+                                      <AccordionDetails>
+                                      {vehicles && vehicles?.length >0 ? <VehicleDataGrid vehicles={vehicles}/> : 
+                                        <>
+                                          <Box
+                                            sx={{
+                                              display: 'flex',
+                                              flexDirection: 'row',
+                                              justifyContent: 'center',
+                                              alignItems: 'center',
+                                              marginBottom: '7px',
+                                              width: '100%',
+                                              height:"70px"
+                                            }}
+                                          >
+                                            <Typography
+                                              sx={{
+                                              color: "#A9A9A9",
+                                              fontWeight: theme.typography.primary.fontWeight,
+                                              fontSize: "15px",
+                                              }}
+                                            >
+                                              No Vehicles
+                                            </Typography>
+                                          </Box>
+                                        </>
+                                      }
+                                      </AccordionDetails>
+                                    </Accordion>
+                </Grid>
+              </Paper>
+              {/* Documents */}
+              <Paper  elevation={2} sx={{ backgroundColor: theme.palette.form.main, padding: "20px"}}>
+        
+                      <Documents setRHS={props.setRHS}setSelectedDocument={props.setSelectedDocument} documents={applicationDocuments} setDocuments={setApplicationDocuments} isEditable={false} isAccord={false} customName={"APPLICATION DOCUMENTS:"} />
+                
+
+                    
+              </Paper>
+              {/* Action Buttons */}
+              <Stack direction='row' alignItems='center' justifyContent='space-around' sx={{ padding: "30px 0", paddingRight: "15px" }}>
+                          {(application.lease_status === "NEW"|| application.lease_status === "RENEW NEW") && (
+                            <Button
+                              onClick={handleRejectLease}
+                              sx={{
+                                backgroundColor: "#CB8E8E",
+                                color: "#160449",
+                                textTransform: "none",
+                                width: "120px",
+                                "&:hover, &:focus, &:active": {
+                                  backgroundColor: "#CB8E8E",
+                                },
+                              }}
+                            >
+                              {"Reject Tenant"}
+                            </Button>
+                          )}
+                          {(application.lease_status === "PROCESSING" || application.lease_status === "RENEW PROCESSING") && (
+                            <div>
+                              <Button
+                                onClick={handleWithdrawLease}
+                                sx={{
+                                  backgroundColor: "#CB8E8E",
+                                  color: "#FFFFFF",
+                                  textTransform: "none",
+                                  width: "160px",
+                                  marginRight: "10px",
+                                  marginRight: "30px",
+                                  whiteSpace: "nowrap",
+                                  "&:hover, &:focus, &:active": {
+                                    backgroundColor: "#bb6b6b",
+                                  },
+                                }}
+                              >
+                                {"Withdraw Lease"}
+                              </Button>
+                              <Button
+                                onClick={handleEditLease}
+                                sx={{
+                                  backgroundColor: "#9EAED6",
+                                  color: "#FFFFFF",
+                                  textTransform: "none",
+                                  width: "120px",
+                                  "&:hover, &:focus, &:active": {
+                                    backgroundColor: "#6780bf",
+                                  },
+                                }}
+                              >
+                                {"Edit Lease"}
+                              </Button>
+                            </div>
+                          )}
+                          {application.lease_status === "RENEW NEW" && (
+                            <Button
+                              onClick={handleRenewLease}
+                              sx={{
+                                backgroundColor: "#9EAED6",
+                                color: "#160449",
+                                textTransform: "none",
+                                width: "120px",
+                                "&:hover, &:focus, &:active": {
+                                  backgroundColor: "#9EAED6",
+                                },
+                              }}
+                            >
+                              {"Renew Lease"}
+                            </Button>
+                          )}
+                          {application.lease_status !== "PROCESSING" && application.lease_status !== "RENEW PROCESSING"  && application.lease_status !== "RENEW NEW"&& (
+                            <Button
+                              onClick={handleCreateLease}
+                              sx={{
+                                backgroundColor: "#9EAED6",
+                                color: "#160449",
+                                textTransform: "none",
+                                width: "120px",
+                                "&:hover, &:focus, &:active": {
+                                  backgroundColor: "#9EAED6",
+                                },
+                              }}
+                            >
+                              {"New Lease"}
+                            </Button>
+                          )}
+                        </Stack></Box>
+                  </Paper>
+                </Box>
+              </Stack>
         </Paper>
       </Box>
     </ThemeProvider>

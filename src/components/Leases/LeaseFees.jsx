@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const LeaseFees = ({ leaseFees, isEditable, setLeaseFees, setDeleteFees, startDate }) => {
+const LeaseFees = ({ leaseFees, titleFontSize, isEditable, setLeaseFees, setDeleteFees, startDate }) => {
   // console.log("lease fees", leaseFees);
   const classes = useStyles();
   const [open, setOpen] = useState(false);
@@ -604,7 +604,7 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees, setDeleteFees, startDa
             sx={{
               color: "#160449",
               fontWeight: "bold",
-              fontSize: "18px",
+              fontSize: titleFontSize ? titleFontSize :  "18px",
               paddingBottom: "5px",
               paddingTop: "5px",
               marginTop: "10px",
@@ -647,7 +647,7 @@ const LeaseFees = ({ leaseFees, isEditable, setLeaseFees, setDeleteFees, startDa
           rows={rowsWithId}
           columns={columns}
           sx={{
-            marginTop: "10px",
+            // marginTop: "10px",
             minWidth: "1000px",
           }}
           rowHeight={30}
