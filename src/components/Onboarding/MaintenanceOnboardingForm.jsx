@@ -59,6 +59,8 @@ import Documents from "../Leases/Documents";
 
 import ListsContext from "../../contexts/ListsContext";
 import GenericDialog from "../GenericDialog";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -1264,6 +1266,9 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
     }
   };
 
+  const [showSSN, setShowSSN] = useState(false);
+  const [showempSsn, setShowempSsn] = useState(false);
+
   return (
     <>
       <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", cursor: "pointer", marginBottom: "10px", padding: "10px" }}>
@@ -1538,7 +1543,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     <TextField
                       fullWidth
                       // value={mask}
-                      value={ein}
+                      value={showSSN ? ein : "***-**-****"}
                       // onChange={(e) => setSsn(e.target.value)}
                       // onChange={handleEINChange}
                       onChange={(e) => handleTaxIDChange(e.target.value, true)}
@@ -1547,6 +1552,17 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                       className={classes.root}
                       InputProps={{
                         className: errors.ein || !ein ? classes.errorBorder : '',
+                        endAdornment: (
+                          <InputAdornment position='end' style={{ marginRight: "8px", marginTop: "10px" }} >
+                            <IconButton
+                              aria-label='toggle password visibility'
+                              onClick={() => setShowSSN((show) => !show)}
+                              edge='end'
+                            >
+                              {showSSN ? <VisibilityOff style={{ fontSize: "20px"}}/> : <Visibility style={{ fontSize: "20px"  }}/>}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
                       }}
                       required
                     ></TextField>
@@ -1881,15 +1897,26 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                   <TextField
                     fullWidth
                     // value={mask}
-                    value={empSsn}
+                    value={showempSsn? empSsn : "***-**-****"}
                     // onChange={(e) => setSsn(e.target.value)}
                     onChange={handleEmpSSNChange}
                     variant='filled'
                     placeholder='SSN'
                     className={classes.root}
-                    // InputProps={{
-                    //   className: errors.empSsn ? classes.errorBorder : '',
-                    // }}
+                    InputProps={{
+                      // className: errors.empSsn ? classes.errorBorder : '',
+                      endAdornment: (
+                        <InputAdornment position='end' style={{ marginRight: "8px", marginTop: "10px" }} >
+                          <IconButton
+                            aria-label='toggle password visibility'
+                            onClick={() => setShowempSsn((show) => !show)}
+                            edge='end'
+                          >
+                            {showempSsn ? <VisibilityOff style={{ fontSize: "20px"}}/> : <Visibility style={{ fontSize: "20px"  }}/>}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
                     // required
                   ></TextField>
                 </Grid>
