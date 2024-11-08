@@ -32,6 +32,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from '@mui/icons-material/Delete';
 import LeaseIcon from "../Property/leaseIcon.png";
 import { Close } from "@mui/icons-material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import ManagementContractContext from "../../contexts/ManagementContractContext";
 import axios from 'axios';
@@ -68,6 +69,7 @@ const Documents = ({ setRightPane,setRHS, setSelectedDocument, fromRenew, docume
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [isUpdated, setIsUpdated] = useState(false);
+  const isMobileView = useMediaQuery(theme.breakpoints.down("sm"));
   // const [contentTypes, setContentTypes] = useState([]);
   const [ expanded, setExpanded ] = useState(true);
   // const [preview, setPreview] = useState(null)
@@ -559,7 +561,8 @@ setSelectedDocument({
       {documents && documents.length ? (
         <DataGrid
           rows={rowsWithId}
-          columns={docsColumns}
+          // columns={docsColumns}
+          columns={isMobileView ? docsColumns.map(column => ({ ...column, minWidth: 150 })) : docsColumns}
           hideFooter={true}
           autoHeight
           rowHeight={50}
@@ -603,7 +606,8 @@ setSelectedDocument({
       {contractFiles?.length ? (
         <DataGrid
           rows={uploadRowsWithId}
-          columns={uploadDocsColumns}
+          // columns={uploadDocsColumns}
+          columns={isMobileView ? uploadDocsColumns.map(column => ({ ...column, minWidth: 150 })) : uploadDocsColumns}
           sx={{
             marginTop: "10px",
           }}
@@ -624,7 +628,7 @@ setSelectedDocument({
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
-              width: 841,
+              width: isMobileView ? "100vw" : 841,
               height: 500,
               bgcolor: "background.paper",
               border: "2px solid #000",
@@ -675,7 +679,7 @@ setSelectedDocument({
             {/* Container with all fields */}
             <Grid container columnSpacing={8}>
               <Grid item md={1} />
-              <Grid item md={5}>
+              <Grid item xs={4} md={5}>
                 <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", marginTop: "10px" }}>
                   {"Document Name  "}
                   <span style={{ color: "red" }}>*</span>
@@ -775,7 +779,7 @@ setSelectedDocument({
               {/* <Grid item md={0.5} /> */}
   
               {/* PDF Preview */}
-              <Grid item md={5}>
+              <Grid item xs={6} md={5}>
                 <Box sx={{ marginTop: "10px", backgroundColor: "#D9D9D9" }}>
                   <iframe src={filePreview} width="100%" height="322px" title="File Preview" />
                 </Box>
@@ -1103,7 +1107,7 @@ setSelectedDocument({
           <Box sx={{overflowX : "auto"}}>
             <DataGrid
               rows={rowsWithId}
-              columns={docsColumns}
+              columns={isMobileView ? docsColumns.map(column => ({ ...column, minWidth: 150 })) : docsColumns}
               sx={{
                 // minHeight:"100px",
                 // height:"100px",
@@ -1174,7 +1178,8 @@ setSelectedDocument({
         {contractFiles?.length ? (
           <DataGrid
           rows={uploadRowsWithId}
-          columns={uploadDocsColumns}
+          // columns={uploadDocsColumns}
+          columns={isMobileView ? uploadDocsColumns.map(column => ({ ...column, minWidth: 150 })) : uploadDocsColumns}
           sx={{
             // minHeight:"100px",
             // height:"100px",
@@ -1196,7 +1201,7 @@ setSelectedDocument({
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
-              width: 841,
+              width: isMobileView ? "100vw" : "841px",
               height: 500,
               bgcolor: "background.paper",
               border: "2px solid #000",
@@ -1247,7 +1252,7 @@ setSelectedDocument({
             {/* Container with all fields */}
             <Grid container columnSpacing={8}>
               <Grid item md={1} />
-              <Grid item md={5}>
+              <Grid item xs={4} md={5}>
                 <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", marginTop: "10px" }}>
                   {"Document Name  "}
                   <span style={{ color: "red" }}>*</span>
@@ -1348,7 +1353,7 @@ setSelectedDocument({
               {/* <Grid item md={0.5} /> */}
   
               {/* PDF Preview */}
-              <Grid item md={5}>
+              <Grid item xs={6} md={5}>
                 <Box sx={{ marginTop: "10px", backgroundColor: "#D9D9D9" }}>
                   <iframe src={filePreview} width="100%" height="322px" title="File Preview" />
                 </Box>

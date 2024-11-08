@@ -47,6 +47,7 @@ import ChaseIcon from "../../images/Chase.png";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useCookies } from "react-cookie";
+import useMediaQuery from "@mui/material/useMediaQuery";
 // import DashboardTab from "../TenantDashboard/NewDashboardTab";
 import APIConfig from "../../utils/APIConfig";
 
@@ -84,6 +85,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   const { getList, } = useContext(ListsContext);	
   const classes = useStyles();
   const [cookies, setCookie] = useCookies(["default_form_vals"]);
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const cookiesData = cookies["default_form_vals"];
   const navigate = useNavigate();
   const [showSpinner, setShowSpinner] = useState(false);
@@ -531,7 +533,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   const renderMaintenanceServices = () => {
     return services.map((row, index) => (
       <>
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id}>
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id} overflowX={"auto"} minWidth = {isMobile ? "650px" : "0px"}>
           <Grid item xs={3}>
             <Stack spacing={-2} m={2}>
               <Typography
@@ -685,7 +687,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
 
   const renderServiceLocations = () => {
     return locations?.map((row, index) => (
-      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id}>
+      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id} overflowX={"auto"} minWidth = {isMobile ? "650px" : "0px"}>
           <Grid item xs={3}>
             <Stack spacing={-2} m={2}>
               <Typography
@@ -821,7 +823,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   const renderPaymentMethods = () => {
     return paymentMethodsArray.map((method, index) => (
       <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={index}>
-        <Grid item xs={1}>
+        <Grid item xs={1.3} sm={1}>
           <Checkbox name={method.name.toLowerCase().replace(/\s/g, "_")} checked={method.state?.checked} onChange={handleChangeChecked} />
         </Grid>
         {/* {
@@ -832,13 +834,13 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
           )
         } */}
 
-        <Grid container alignContent='center' item xs={1}>
+        <Grid container alignContent='center' item xs={1.3} sm={1}>
           <img src={method.icon} alt={method.name} />
         </Grid>
 
         {method.name === "Bank Account" ? (
           <>
-            <Grid item xs={5}>
+            <Grid item xs={4} sm={5}>
               <TextField
                 name={`${method.name.toLowerCase().replace(/\s/g, "_")}_account`}
                 value={method.state?.account_number}
@@ -854,7 +856,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                 required
               />
             </Grid>
-            <Grid item xs={5}>
+            <Grid item xs={4} sm={5}>
               <TextField
                 name={`${method.name.toLowerCase().replace(/\s/g, "_")}_routing`}
                 value={method.state?.routing_number}
@@ -868,7 +870,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
             </Grid>
           </>
         ) : (
-          <Grid item xs={10}>
+          <Grid item xs={8} sm={10}>
             <TextField
               name={method.name.toLowerCase().replace(/\s/g, "_")}
               value={method.state?.value}
@@ -1272,7 +1274,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
             Maintenance Profile Information
           </Typography>
           <Grid container item xs={12}>
-            <Grid container alignContent='center' item xs={3}>
+            <Grid container alignContent='center' item xs={12} md={3}>
               <Grid container justifyContent='center' item xs={12}>
                 {photo && photo.image ? (
                   <img
@@ -1309,7 +1311,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                 </Button>
               </Grid>
             </Grid>
-            <Grid item xs={9}>
+            <Grid item xs={12} md={9} marginTop={isMobile? "20px" : "0px"}>
               <Grid item xs={12}>
                 <Typography
                   sx={{
@@ -1339,7 +1341,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                 </Grid>
               </Grid>
               <Grid container item xs={12} columnSpacing={4}>
-                <Grid container item xs={5.5}>
+                <Grid container item xs={5} md={5.5}>
                   <Grid item xs={12}>
                     <Typography
                       sx={{
@@ -1360,7 +1362,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     />
                   </Grid>
                 </Grid>
-                <Grid container item xs={2}>
+                <Grid container item xs={1.5} md={2}>
                   <Grid item xs={12}>
                     <Typography
                       sx={{
@@ -1399,7 +1401,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                   </Grid>
                 </Grid>
 
-                <Grid container item xs={1}>
+                <Grid container item xs={1.5} md={1}>
                   <Grid item xs={12}>
                     <Typography
                       sx={{
@@ -1416,7 +1418,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                   </Grid>
                 </Grid>
 
-                <Grid container item xs={1.5}>
+                <Grid container item xs={2} md={1.5}>
                   <Grid item xs={12}>
                     <Typography
                       sx={{
@@ -1425,7 +1427,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                         width: "100%",
                       }}
                     >
-                      {"Zip Code"}
+                      {isMobile ? "Zip" : "Zip Code"}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -1492,8 +1494,8 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
               </Grid>
 
               <Grid container item xs={12} columnSpacing={4}>
-                <Grid container item xs={6}>
-                  <Grid item xs={6}>
+                <Grid container item xs={7.5} sm={6}>
+                  <Grid item xs={4} sm={6}>
                     <Typography
                       sx={{
                         color: theme.typography.common.blue,
@@ -1504,7 +1506,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                       {"Tax ID (EIN or SSN)"}
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>                  
+                  <Grid item xs={8} sm={6}>                  
                   <RadioGroup aria-label='taxIDType' name='announctax_id_typeementType' value={taxIDType} onChange={(e) => setTaxIDType(e.target.value)} row>
                     <FormControlLabel 
                       value='SSN'
@@ -1582,7 +1584,13 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
           </Grid>
         </Grid>
         <Grid container item xs={12}>
-          {renderMaintenanceServices()}
+          <Box
+            sx={{
+              overflowX : "auto"
+            }}
+          >
+            {renderMaintenanceServices()}
+          </Box>
         </Grid>
       </Grid>
 
@@ -1610,7 +1618,13 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
           </Grid>
         </Grid>
         <Grid container item xs={12}>
-          {renderServiceLocations()}
+          <Box
+            sx={{
+              overflowX : "auto"
+            }}
+          >
+            {renderServiceLocations()}
+          </Box>
         </Grid>
       </Grid>
 
@@ -1630,7 +1644,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
           Maintenance Personal Information
         </Typography>
         <Grid container item xs={12}>
-          <Grid container alignContent='center' item xs={3}>
+          <Grid container alignContent='center' item xs={12} md={3}>
             <Grid container justifyContent='center' item xs={12}>
               {employeePhoto && employeePhoto.image ? (
                 <img
@@ -1667,7 +1681,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
               </Button>
             </Grid>
           </Grid>
-          <Grid container item xs={9} columnSpacing={2}>
+          <Grid container item xs={12} md={9} marginTop={isMobile? "20px" : "0px"} >
             <Grid item xs={6}>
               <Typography
                 sx={{
@@ -1723,7 +1737,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
               </Grid>
             </Grid>
             <Grid container item xs={12} columnSpacing={4}>
-              <Grid container item xs={3}>
+              <Grid container item  xs={5} md={5.5}>
                 <Grid item xs={12}>
                   <Typography
                     sx={{
@@ -1739,7 +1753,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                   <AddressAutocompleteInput onAddressSelect={handlePersonalAddressSelect} gray={true} defaultValue={address} />
                 </Grid>
               </Grid>
-              <Grid container item xs={2}>
+              <Grid container item xs={1.5} md={2}>
                 <Grid item xs={12}>
                   <Typography
                     sx={{
@@ -1772,7 +1786,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                 </Grid>
               </Grid>
 
-              <Grid container item xs={2}>
+              <Grid container item xs={1.5} md={1}>
                 <Grid item xs={12}>
                   <Typography
                     sx={{
@@ -1789,7 +1803,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                 </Grid>
               </Grid>
 
-              <Grid container item xs={3}>
+              <Grid container item  xs={2} md={1.5}>
                 <Grid item xs={12}>
                   <Typography
                     sx={{
@@ -1798,7 +1812,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                       width: "100%",
                     }}
                   >
-                    {"Zip Code"}
+                    {isMobile ? "Zip" : "Zip Code"}
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>

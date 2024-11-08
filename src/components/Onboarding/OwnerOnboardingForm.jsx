@@ -46,6 +46,7 @@ import VenmoIcon from "../../images/Venmo.png";
 import Stripe from "../../images/Stripe.png";
 import ApplePay from "../../images/ApplePay.png";
 import ChaseIcon from "../../images/Chase.png";
+import useMediaQuery from "@mui/material/useMediaQuery";
 // import CloseIcon from "@mui/icons-material/Close";
 import { useCookies } from "react-cookie";
 import APIConfig from "../../utils/APIConfig";
@@ -156,6 +157,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
   const [modifiedData, setModifiedData] = useState([]);
 
   const [isUpdate, setIsUpdate] = useState(false);
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -410,7 +412,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
         columnSpacing={{ xs: 1, sm: 2, md: 3 }}
         key={method.paymentMethod_uid || index}
       >
-        <Grid item xs={1}>
+        <Grid item xs={1.3} sm={1}>
           <Checkbox
             name={`${method.paymentMethod_type}_${method.paymentMethod_uid}`}
             checked={method.checked} // Use the checked state
@@ -418,7 +420,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
           />
         </Grid>
   
-        <Grid container alignContent="center" item xs={1}>
+        <Grid container alignContent="center" item xs={1.3} sm={1}>
           {method.paymentMethod_type ? (
             <img src={getIconForMethod(method.paymentMethod_type)} alt={method.paymentMethod_type} />
           ) : null}
@@ -490,7 +492,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                 </Grid>
               </>
             ) : (
-              <Grid item xs={9}>
+              <Grid item xs={8} sm={9}>
                 <TextField
                   name={`${method.paymentMethod_type}_${method.paymentMethod_uid}`}
                   value={method.paymentMethod_name || ""}
@@ -865,7 +867,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
             Owner Profile Information
           </Typography>
           <Grid container item xs={12}>
-            <Grid container alignContent='center' item xs={3}>
+            <Grid container alignContent='center' item xs={12} md={3}>
               <Grid container justifyContent='center' item xs={12}>
                 {photo && photo.image ? (
                   <img
@@ -902,7 +904,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                 </Button>
               </Grid>
             </Grid>
-            <Grid container item xs={9} columnSpacing={2}>
+            <Grid container item xs={12} md={9} columnSpacing={2} marginTop={isMobile ? "20px" : ""}>
               <Grid item xs={6}>
                 <Typography
                   sx={{
@@ -957,8 +959,9 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                   />
                 </Grid>
               </Grid>
+
               <Grid container item xs={12} columnSpacing={4}>
-                <Grid container item xs={5.5}>
+                <Grid container item xs={5} md={5.5}>
                   <Grid item xs={12}>
                     <Typography
                       sx={{
@@ -974,7 +977,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                     <AddressAutocompleteInput onAddressSelect={handleAddressSelect} gray={true} defaultValue={address} isRequired={true} />
                   </Grid>
                 </Grid>
-                <Grid container item xs={2}>
+                <Grid container item xs={1.5} md={2}>
                   <Grid item xs={12}>
                     <Typography
                       sx={{
@@ -1007,7 +1010,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                   </Grid>
                 </Grid>
 
-                <Grid container item xs={1}>
+                <Grid container item xs={1.5} md={1}>
                   <Grid item xs={12}>
                     <Typography
                       sx={{
@@ -1024,7 +1027,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                   </Grid>
                 </Grid>
 
-                <Grid container item xs={1.5}>
+                <Grid container item xs={2} md={1.5}>
                   <Grid item xs={12}>
                     <Typography
                       sx={{
@@ -1033,7 +1036,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                         width: "100%",
                       }}
                     >
-                      {"Zip Code"}
+                      {isMobile ? "Zip" : "Zip Code"}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -1100,8 +1103,8 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
               </Grid>
 
               <Grid container item xs={12} columnSpacing={4}>
-                <Grid container item xs={6}>
-                  <Grid item xs={6}>
+                <Grid container item xs={7.5} sm={6}>
+                  <Grid item xs={4} sm={6}>
                     <Typography
                       sx={{
                         color: theme.typography.common.blue,
@@ -1112,7 +1115,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                       {"Tax ID (SSN or EIN)"}
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={8} sm={6}>
                     <RadioGroup aria-label='taxIDType' name='announctax_id_typeementType' value={taxIDType} onChange={(e) => setTaxIDType(e.target.value)} row>
                       <FormControlLabel
                         value='SSN'
