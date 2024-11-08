@@ -61,6 +61,9 @@ import ListsContext from "../../contexts/ListsContext";
 import GenericDialog from "../GenericDialog";
 import IncomeDetails from "./IncomeDetails";
 
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiFilledInput-root": {
@@ -1127,7 +1130,7 @@ const closeDialog = () => {
     // Update tenant_employment in modifiedData
     updateModifiedData({ key: "tenant_employment", value: updatedList });
   };
-
+  const [showSsn, setShowSsn] = useState(false);
   return (
     <>
       <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", cursor: "pointer", marginBottom: "10px", padding: "10px" }}>
@@ -1473,7 +1476,7 @@ const closeDialog = () => {
                     <TextField
                       fullWidth
                       // value={mask}
-                      value={ssn}
+                      value={showSsn ? ssn : "***-**-****"}
                       // onChange={(e) => setSsn(e.target.value)}
                       // onChange={handleSSNChange}
                       onChange={(e) => handleTaxIDChange(e.target.value, true)}
@@ -1482,6 +1485,17 @@ const closeDialog = () => {
                       className={classes.root}
                       InputProps={{
                         className: errors.ssn || !ssn ? classes.errorBorder : '',
+                        endAdornment: (
+                          <InputAdornment position='end' style={{ marginRight: "8px", marginTop: "10px" }} >
+                            <IconButton
+                              aria-label='toggle password visibility'
+                              onClick={() => setShowSsn((show) => !show)}
+                              edge='end'
+                            >
+                              {showSsn ? <VisibilityOff style={{ fontSize: "20px"}}/> : <Visibility style={{ fontSize: "20px"  }}/>}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
                       }}
                       required
                     ></TextField>
