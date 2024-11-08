@@ -115,9 +115,28 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
             if (isRowModified(adults[currentRow['id']], currentRow)) {
                 const updatedRow = adults.map(adult => (adult.id === currentRow.id ? currentRow : adult));
                 const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
-    
+                
+                // console.log("--- DEBUG -- rows without id in edit adult - ", rowWithoutId)
+                // console.log("--- DEBUG -- modified data - ", modifiedData)
                 // Check if `prev` is an array before spreading it
-                setModifiedData((prev) => Array.isArray(prev) ? [...prev, { key: dataKey, value: rowWithoutId }] : [{ key: dataKey, value: rowWithoutId }]);
+                // setModifiedData((prev) => Array.isArray(prev) ? [...prev, { key: dataKey, value: rowWithoutId }] : [{ key: dataKey, value: rowWithoutId }]);
+                setModifiedData((prev) => {
+                    if (Array.isArray(prev)) {
+                      const existingIndex = prev.findIndex((item) => item.key === dataKey);
+                      
+                      if (existingIndex > -1) {
+                        const updatedData = [...prev];
+                        updatedData[existingIndex] = {
+                          ...updatedData[existingIndex],
+                          value: rowWithoutId,
+                        };
+                        return updatedData;
+                      } else {
+                        return [...prev, { key: dataKey, value: rowWithoutId }];
+                      }
+                    }
+                    return [{ key: dataKey, value: rowWithoutId }];
+                  });
                 setIsUpdated(true);
             } else {
                 showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
@@ -126,7 +145,24 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
             const { id, ...newRowWithoutId } = currentRow;
     
             // Check if `prev` is an array before spreading it
-            setModifiedData((prev) => Array.isArray(prev) ? [...prev, { key: dataKey, value: [...leaseAdults, newRowWithoutId] }] : [{ key: dataKey, value: [...leaseAdults, newRowWithoutId] }]);
+            // console.log("--- DEBUG -- rows without id in add adult - ", newRowWithoutId)
+            // console.log("--- DEBUG -- modified data - ", modifiedData)
+            // setModifiedData((prev) => Array.isArray(prev) ? [...prev, { key: dataKey, value: [...leaseAdults, newRowWithoutId] }] : [{ key: dataKey, value: [...leaseAdults, newRowWithoutId] }]);
+            setModifiedData((prev) => {
+                if (Array.isArray(prev)) {
+                  const existingIndex = prev.findIndex((item) => item.key === dataKey);
+                  if (existingIndex > -1) {
+                    const updatedData = [...prev];
+                    updatedData[existingIndex] = {
+                      ...updatedData[existingIndex],
+                      value: [...leaseAdults, newRowWithoutId],
+                    };
+                    return updatedData;
+                  }
+                  return [...prev, { key: dataKey, value: [...leaseAdults, newRowWithoutId] }];
+                }
+                return [{ key: dataKey, value: [...leaseAdults, newRowWithoutId] }];
+            });
             setIsUpdated(true);
         }
     };
@@ -141,7 +177,26 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
     const handleDelete = () => {
         const filtered = adults.filter(adult => adult.id !== currentRow.id);
         const rowWithoutId = filtered.map(({ id, ...rest }) => rest);
-        setModifiedData((prev) => [...prev, {key: dataKey, value:rowWithoutId}]);
+
+        setModifiedData((prev) => {
+            if (Array.isArray(prev)) {
+              const existingIndex = prev.findIndex((item) => item.key === dataKey);
+          
+              if (existingIndex > -1) {
+                const updatedData = [...prev];
+                updatedData[existingIndex] = {
+                  ...updatedData[existingIndex],
+                  value: rowWithoutId,
+                };
+                return updatedData;
+              } else {
+                return [...prev, { key: dataKey, value: rowWithoutId }];
+              }
+            }
+            return [{ key: dataKey, value: rowWithoutId }];
+          });
+
+        // setModifiedData((prev) => [...prev, {key: dataKey, value:rowWithoutId}]);
         setIsUpdated(true);
     };
 
