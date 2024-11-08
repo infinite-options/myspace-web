@@ -6,6 +6,7 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
+import useMediaQuery from "@mui/material/useMediaQuery";
 import DeleteIcon from '@mui/icons-material/Delete';
 import theme from "../../theme/theme";
 import { Close } from '@mui/icons-material';
@@ -84,6 +85,7 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
     const [isUpdated, setIsUpdated] = useState(false);
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     useEffect(() => {
         console.log('inside mod', modifiedData);
@@ -220,7 +222,7 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
             {leasePets && leasePets.length > 0 &&
                 <DataGrid
                     rows={pets}
-                    columns={columns}
+                    columns={isMobile ? columns.map(column => ({ ...column, minWidth: 150 })) : columns}
                     hideFooter={true}
                     getRowId={(row) => row.id}
                     autoHeight
@@ -272,7 +274,7 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
                 </Snackbar>
                 <DialogContent>
                     <Grid container columnSpacing={6}>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -292,7 +294,7 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
                             />
                         </Grid>
 
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -311,7 +313,7 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
                                 sx={{ backgroundColor: '#D6D5DA', }}
                             />
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -330,7 +332,7 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
                                 sx={{ backgroundColor: '#D6D5DA', }}
                             />
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -349,7 +351,7 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
                                 sx={{ backgroundColor: '#D6D5DA', }}
                             />
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -368,7 +370,7 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
                                 sx={{ backgroundColor: '#D6D5DA', }}
                             />
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"

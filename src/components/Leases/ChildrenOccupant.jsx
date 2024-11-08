@@ -9,6 +9,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import theme from "../../theme/theme";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
@@ -87,6 +88,7 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const [isUpdated, setIsUpdated] = useState(false);
 
 
@@ -242,7 +244,7 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
             {leaseChildren && leaseChildren.length > 0 &&
                 <DataGrid
                     rows={children}
-                    columns={columns}
+                    columns={isMobile ? columns.map(column => ({ ...column, minWidth: 150 })) : columns}
                     hideFooter={true}
                     getRowId={(row) => row.id}
                     autoHeight
@@ -291,14 +293,14 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
                 </Snackbar>
                 <DialogContent>
                     <Grid container columnSpacing={6}>
-                        <Grid item md={12} sx={{ marginTop: '20px' }}>
+                        <Grid item xs={12} sx={{ marginTop: '20px' }}>
                             <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
                                 Resident Name
                             </Typography>
                         </Grid>
 
 
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -315,7 +317,7 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
                             />
                         </Grid>
 
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -332,12 +334,12 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
                             />
                         </Grid>
 
-                        <Grid item md={12} sx={{ marginTop: '20px' }}>
+                        <Grid item xs={12} sx={{ marginTop: '20px' }}>
                             <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
                                 Contact Info
                             </Typography>
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -353,7 +355,7 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
                                 sx={{backgroundColor: '#D6D5DA',}}
                             />
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                             className={classes.textField}
                             margin="dense"
@@ -371,12 +373,12 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
                             />
                         </Grid>
 
-                        <Grid item md={12} sx={{ marginTop: '20px' }}>
+                        <Grid item xs={12} sx={{ marginTop: '20px' }}>
                             <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
                                 Details
                             </Typography>
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker
                                 label="Date Of Birth" // Label for the DatePicker
@@ -388,7 +390,7 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
                                 sx={{
                                 marginTop: "8px",
                                 backgroundColor: '#D6D5DA',
-                                width: '450px',
+                                width: isMobile? "100%" : '450px',
                                 '& .MuiInputLabel-root': {
                                     color: 'black',
                                 },
@@ -404,7 +406,7 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
                             </LocalizationProvider>
                         </Grid>
 
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <FormControl margin="dense" fullWidth variant="outlined" sx={{ height: "30px" }}>
                                 <InputLabel required style={{color: 'black'}}>
                                     Relationship

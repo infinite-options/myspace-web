@@ -10,6 +10,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import theme from "../../theme/theme";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { Close } from '@mui/icons-material';
@@ -88,6 +89,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
     const [isUpdated, setIsUpdated] = useState(false);
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
 
     useEffect(() => {
@@ -232,7 +234,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
             {leaseVehicles && leaseVehicles.length > 0 &&
                 <DataGrid
                     rows={vehicles}
-                    columns={columns}
+                    columns={isMobile ? columns.map(column => ({ ...column, minWidth: 150 })) : columns}
                     hideFooter={true}
                     getRowId={(row) => row.id}
                     autoHeight
@@ -284,7 +286,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                 </Snackbar>
                 <DialogContent>
                     <Grid container columnSpacing={6}>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DatePicker
                                     label="Year"
@@ -297,7 +299,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                                         setCurrentRow({ ...currentRow, year: formattedDate })
                                     }
                                     }
-                                    sx={{ marginTop: "10px", backgroundColor: '#D6D5DA', width: '450px' }}
+                                    sx={{ marginTop: "10px", backgroundColor: '#D6D5DA', width: isMobile? "100%" :'450px'}}
                                     fullWidth
                                     InputLabelProps={{
                                         sx: {
@@ -307,7 +309,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                                 />
                             </LocalizationProvider>
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -326,7 +328,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                                 sx={{ backgroundColor: '#D6D5DA', }}
                             />
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -346,7 +348,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                             />
                         </Grid>
 
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -365,7 +367,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                                 sx={{ backgroundColor: '#D6D5DA', }}
                             />
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <FormControl margin="dense" fullWidth variant="outlined" sx={{ marginTop: "10px" }}>
                                 <InputLabel>State</InputLabel>
                                 <Select
@@ -387,7 +389,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                                 </Select>
                             </FormControl>
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             {/* <TextField
                                 className={classes.textField}
                                 margin="dense"

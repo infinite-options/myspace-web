@@ -32,6 +32,7 @@ import {
   AlertTitle,
   RadioGroup,
   Radio,
+  Box,
 } from "@mui/material";
 // import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { makeStyles } from "@material-ui/core/styles";
@@ -44,6 +45,7 @@ import ChaseIcon from "../../images/Chase.png";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useCookies } from "react-cookie";
+import useMediaQuery from "@mui/material/useMediaQuery";
 // import DashboardTab from "../TenantDashboard/NewDashboardTab";
 import APIConfig from "../../utils/APIConfig";
 import { BeachAccessOutlined } from "@mui/icons-material";
@@ -94,6 +96,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
   const [cookies, setCookie] = useCookies(["default_form_vals"]);
   const cookiesData = cookies["default_form_vals"];
   const navigate = useNavigate();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   
   const [showSpinner, setShowSpinner] = useState(false);
   const [addPhotoImg, setAddPhotoImg] = useState();
@@ -539,9 +542,9 @@ const closeDialog = () => {
 
   const renderManagementFees = () => {
     return fees?.map((row, index) => (
-      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id}>
+      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id} overflowX={"auto"} minWidth = {isMobile ? "650px" : "0px"}>
           <Grid item xs={3}>
-            <Stack spacing={-2} m={2}>
+            <Stack spacing={isMobile ? 1 : -2} m={2}>
               <Typography
                 sx={{
                   color: theme.typography.common.blue,
@@ -563,7 +566,7 @@ const closeDialog = () => {
             </Stack>
           </Grid>
           <Grid item xs={2.5}>
-            <Stack spacing={-2} m={2}>
+            <Stack spacing={isMobile ? 1 : -2} m={2}>
               <Typography
                 sx={{
                   color: theme.typography.common.blue,
@@ -592,7 +595,7 @@ const closeDialog = () => {
             </Stack>
           </Grid>
           <Grid item xs={2}>
-            <Stack spacing={-2} m={2}>
+            <Stack spacing={isMobile ? 1 : -2} m={2}>
               <Typography
                 sx={{
                   color: theme.typography.common.blue,
@@ -621,7 +624,7 @@ const closeDialog = () => {
           {row.fee_type === "PERCENT" && (
             <>
               <Grid item xs={1.5}>
-                <Stack spacing={-2} m={2}>
+                <Stack spacing={isMobile ? 1 : -2} m={2}>
                   <Typography
                     sx={{
                       color: theme.typography.common.blue,
@@ -657,7 +660,7 @@ const closeDialog = () => {
                 </Stack>
               </Grid>
               <Grid item xs={2}>
-                <Stack spacing={-2} m={2}>
+                <Stack spacing={isMobile ? 1 : -2} m={2}>
                   <Typography
                     sx={{
                       color: theme.typography.common.blue,
@@ -689,7 +692,7 @@ const closeDialog = () => {
           {row.fee_type === "FLAT-RATE" && (
             <>
               <Grid item xs={2}>
-                <Stack spacing={-2} m={2}>
+                <Stack spacing={isMobile ? 1 : -2} m={2}>
                   <Typography
                     sx={{
                       color: theme.typography.common.blue,
@@ -786,7 +789,7 @@ const closeDialog = () => {
 
   const renderServiceLocations = () => {
     return locations?.map((row, index) => (
-      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id}>
+      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id} overflowX={"auto"} minWidth = {isMobile ? "650px" : "0px"}>
           <Grid item xs={4}>
             <Stack spacing={-2} m={2}>
               <Typography
@@ -971,7 +974,7 @@ const closeDialog = () => {
         columnSpacing={{ xs: 1, sm: 2, md: 3 }}
         key={method.paymentMethod_uid || index}
       >
-        <Grid item xs={1}>
+        <Grid item xs={1.3} sm={1}>
           <Checkbox
             name={`${method.paymentMethod_type}_${method.paymentMethod_uid}`}
             checked={method.checked} // Use the checked state
@@ -979,7 +982,7 @@ const closeDialog = () => {
           />
         </Grid>
   
-        <Grid container alignContent="center" item xs={1}>
+        <Grid container alignContent="center" item xs={1.3} sm={1}>
           {method.paymentMethod_type ? (
             <img src={getIconForMethod(method.paymentMethod_type)} alt={method.paymentMethod_type} />
           ) : null}
@@ -1051,7 +1054,7 @@ const closeDialog = () => {
                 </Grid>
               </>
             ) : (
-              <Grid item xs={9}>
+              <Grid item xs={8} sm={9}>
                 <TextField
                   name={`${method.paymentMethod_type}_${method.paymentMethod_uid}`}
                   value={method.paymentMethod_name || ""}
@@ -1399,7 +1402,7 @@ const closeDialog = () => {
               Property Manager Profile Information
             </Typography>
             <Grid container item xs={12}>
-              <Grid container alignContent='center' item xs={3}>
+              <Grid container alignContent='center' item xs={12} md={3}>
                 <Grid container justifyContent='center' item xs={12}>
                   {photo && photo.image ? (
                     <img
@@ -1437,7 +1440,7 @@ const closeDialog = () => {
                   </Button>
                 </Grid>
               </Grid>
-              <Grid item xs={9}>
+              <Grid item xs={12} md={9} marginTop={isMobile? "20px" : "0px"}>
                 <Grid item xs={12}>
                   <Typography
                     sx={{
@@ -1467,7 +1470,7 @@ const closeDialog = () => {
                   </Grid>
                 </Grid>
                 <Grid container item xs={12} columnSpacing={4}>
-                  <Grid container item xs={5.5}>
+                  <Grid container item xs={5} md={5.5}>
                     <Grid item xs={12}>
                       <Typography
                         sx={{
@@ -1488,7 +1491,7 @@ const closeDialog = () => {
                       />
                     </Grid>
                   </Grid>
-                  <Grid container item xs={2}>
+                  <Grid container item xs={1.5} md={2}>
                     <Grid item xs={12}>
                       <Typography
                         sx={{
@@ -1527,7 +1530,7 @@ const closeDialog = () => {
                     </Grid>
                   </Grid>
 
-                  <Grid container item xs={1}>
+                  <Grid container item xs={1.5} md={1}>
                     <Grid item xs={12}>
                       <Typography
                         sx={{
@@ -1544,7 +1547,7 @@ const closeDialog = () => {
                     </Grid>
                   </Grid>
 
-                  <Grid container item xs={1.5}>
+                  <Grid container item xs={2} md={1.5}>
                     <Grid item xs={12}>
                       <Typography
                         sx={{
@@ -1553,7 +1556,7 @@ const closeDialog = () => {
                           width: "100%",
                         }}
                       >
-                        {"Zip Code"}
+                        {isMobile ? "Zip" : "Zip Code"}
                       </Typography>
                     </Grid>
                     <Grid item xs={12}>
@@ -1620,8 +1623,8 @@ const closeDialog = () => {
                 </Grid>
 
                 <Grid container item xs={12} columnSpacing={4}>
-                  <Grid container item xs={6}>
-                    <Grid item xs={6}>
+                  <Grid container item xs={7.5} sm={6}>
+                    <Grid item xs={4} sm={6}>
                       <Typography
                         sx={{
                           color: theme.typography.common.blue,
@@ -1632,7 +1635,7 @@ const closeDialog = () => {
                         {"Tax ID (EIN or SSN)"}
                       </Typography>
                     </Grid>
-                    <Grid item xs={6}>                    
+                    <Grid item xs={8} sm={6}>                    
                     <RadioGroup aria-label='taxIDType' name='announctax_id_typeementType' value={taxIDType} onChange={(e) => setTaxIDType(e.target.value)} row>
                       <FormControlLabel 
                         value='SSN'
@@ -1711,7 +1714,15 @@ const closeDialog = () => {
             </Grid>
           </Grid>
           <Grid container item xs={12}>
-            {renderManagementFees()}
+            <Box
+              sx={{
+                overflowX: "auto",
+                
+              }}
+            >
+              {renderManagementFees()}
+            </Box>
+
           </Grid>
         </Grid>
 
@@ -1736,7 +1747,13 @@ const closeDialog = () => {
             </Grid>
           </Grid>
           <Grid container item xs={12}>
-            {renderServiceLocations()}
+            <Box
+              sx={{
+                overflowX : "auto"
+              }}
+            >
+              {renderServiceLocations()}
+            </Box>
           </Grid>
         </Grid>
 
@@ -1784,7 +1801,7 @@ const closeDialog = () => {
             Property Manager Personal Information
           </Typography>
           <Grid container item xs={12}>
-            <Grid container alignContent='center' item xs={3}>
+            <Grid container alignContent='center' item xs={12} md={3}>
               <Grid container justifyContent='center' item xs={12}>
                 {employeePhoto && employeePhoto.image ? (
                   <img
@@ -1822,7 +1839,7 @@ const closeDialog = () => {
                 </Button>
               </Grid>
             </Grid>
-            <Grid item xs={9}>
+            <Grid item xs={12} md={9} marginTop={isMobile? "20px" : "0px"}>
               <Grid item xs={12}>
                 <Typography
                   sx={{
@@ -1868,7 +1885,7 @@ const closeDialog = () => {
                 </Grid>
               </Grid>
               <Grid container item xs={12} columnSpacing={4}>
-                <Grid container item xs={5.5}>
+                <Grid container item xs={5} md={5.5}>
                   <Grid item xs={12}>
                     <Typography
                       sx={{
@@ -1884,7 +1901,7 @@ const closeDialog = () => {
                     <AddressAutocompleteInput onAddressSelect={handlePersonalAddressSelect} gray={true} defaultValue={empAddress} />
                   </Grid>
                 </Grid>
-                <Grid container item xs={2}>
+                <Grid container item xs={1.5} md={2}>
                   <Grid item xs={12}>
                     <Typography
                       sx={{
@@ -1917,7 +1934,7 @@ const closeDialog = () => {
                   </Grid>
                 </Grid>
 
-                <Grid container item xs={1}>
+                <Grid container item xs={1.5} md={1}>
                   <Grid item xs={12}>
                     <Typography
                       sx={{
@@ -1934,7 +1951,7 @@ const closeDialog = () => {
                   </Grid>
                 </Grid>
 
-                <Grid container item xs={1.5}>
+                <Grid container item xs={2} md={1.5}>
                   <Grid item xs={12}>
                     <Typography
                       sx={{
@@ -1943,7 +1960,7 @@ const closeDialog = () => {
                         width: "100%",
                       }}
                     >
-                      {"Zip Code"}
+                      {isMobile ? "Zip" : "Zip Code"}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
