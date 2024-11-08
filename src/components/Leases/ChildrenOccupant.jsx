@@ -14,6 +14,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { Close } from '@mui/icons-material';
 import { makeStyles } from '@material-ui/core/styles';
+import { formatPhoneNumber, formatSSN, formatEIN, identifyTaxIdType, maskNumber, } from '../Onboarding/helper.js';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -128,6 +129,16 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
 
     const handleSnackbarClose = () => {
         setSnackbarOpen(false);
+    };
+
+    const handlePhoneNumberChange = (e) => {
+        let input = e.target.value;
+        const formattedPhone = formatPhoneNumber(input);
+        const numericPhone = formattedPhone.replace(/\D/g, '');
+
+        if (numericPhone.length <= 10) {
+            setCurrentRow({ ...currentRow, phone_number: formattedPhone });
+        }
     };
 
     const handleSave = () => {
@@ -267,7 +278,7 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
                         fontSize: theme.typography.small,
                     }}
                 >
-                    <span style={{ flexGrow: 1, textAlign: 'center' }}>Occupancy Details</span>
+                    <span style={{ flexGrow: 1, textAlign: 'center' }}>Occupancy Details 2</span>
                     <Button onClick={handleClose} sx={{ ml: 'auto' }}>
                         <Close variant="icon" />
                     </Button>
@@ -354,7 +365,8 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
                                 style: { color: 'black'}
                             }}
                             value={currentRow?.phone_number || ''}
-                            // onChange={handlePhoneNumberChange} // Updated
+                            onChange={handlePhoneNumberChange} // Updated
+                            //onChange={(e) => setCurrentRow({ ...currentRow, phone_number: e.target.value })}
                             sx={{backgroundColor: '#D6D5DA',}}
                             />
                         </Grid>

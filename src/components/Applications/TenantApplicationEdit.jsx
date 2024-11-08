@@ -16,9 +16,11 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useUser } from "../../contexts/UserContext";
 import CloseIcon from "@mui/icons-material/Close";
+import ListsContext from "../../contexts/ListsContext";
 
 
 export default function TenantApplicationEdit({ profileData, lease, lease_uid, setRightPane, property, from, tenantDocuments, setTenantDocuments, oldVehicles, setOldVehicles, adultOccupants, setAdultOccupants, petOccupants, setPetOccupants, childOccupants, setChildOccupants, extraUploadDocument, setExtraUploadDocument, extraUploadDocumentType, setExtraUploadDocumentType, deleteDocuments }) {
+    // const { getList, } = useContext(ListsContext);
     const [adults, setAdults] = useState(adultOccupants? adultOccupants : []);
     const [children, setChildren] = useState(childOccupants? childOccupants : []);
     const [pets, setPets] = useState(petOccupants? petOccupants : []);
@@ -480,7 +482,9 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
 
     const handleSaveButton = async (e) => {
         e.preventDefault();
-        await updateLeaseData();  // Trigger the PUT request to save data
+        if (lease_uid) {
+            await updateLeaseData();  // Trigger the PUT request to save data
+        }
         const updatedState = {
             data: property,
             status: lease_uid === null ? "" : lease[0].lease_status,
@@ -495,6 +499,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
             extraUploadDocumentType: uploadedFileTypes, // Uploaded file types
             deleteDocuments: deletedFiles, // Deleted files
         };
+        console.log("updated state", updatedState);
         setRightPane?.({ type: "tenantApplication", state: updatedState });
     };
     
@@ -538,6 +543,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                         </Alert>
                     </Snackbar>
 
+                    {/* {lease_uid && ( */}
                     <Grid container justifyContent="center" sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
                         <Grid item xs={12}>
                             <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={employmentExpanded} onChange={() => setEmploymentExpanded((prev) => !prev)}>
@@ -571,6 +577,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                             </Accordion>
                         </Grid>
                     </Grid>
+                    {/* )} */}
 
                     {/* occupancy details*/}
                     <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
