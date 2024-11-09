@@ -285,7 +285,7 @@ const TenantDashboard = () => {
 
     if (leaseForProperty?.lease_status === "NEW") {
       setRightPane({
-        type: "tenantApplication",
+        type: "tenantApplicationEdit",
         state: {
           data: leaseForProperty,
           status: leaseForProperty.lease_status,

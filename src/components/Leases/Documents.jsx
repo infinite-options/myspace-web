@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Documents = ({ setRightPane,setRHS, setSelectedDocument, fromRenew, documents, setDocuments, setDeleteDocsUrl, setIsPreviousFileChange, isAccord=false, contractFiles, setContractFiles, contractFileTypes, setContractFileTypes, isEditable=true, customName, customUploadingName, isMobile }) => {
+const Documents = ({ setRightPane,setRHS, setSelectedDocument, fromRenew, documents, setDocuments, setDeleteDocsUrl, setIsPreviousFileChange, isAccord=false, contractFiles, setContractFiles, contractFileTypes, setContractFileTypes, isEditable=true, customName, customUploadingName, isMobile, plusIconColor, plusIconSize}) => {
 
   const { getList, } = useContext(ListsContext);	
   
@@ -482,146 +482,146 @@ setSelectedDocument({
   if(isAccord){
     return (
       <>
-       <>
-  {/* Container with custom styles */}
-  <Grid item xs={12} columnSpacing={6} rowGap={4} sx={{ position: "relative" }}>
-    
-    {/* Header section */}
-    <Grid 
-      item 
-      xs={12} 
-      sx={{ 
-        backgroundColor: "#F0F0F0", 
-        borderRadius: "10px", 
-        boxShadow: "none"
-      }}
-    >
-      <Grid container justifyContent='center'>
-        
-        {/* Document Text */}
-        {customName !== "" && (
-          <Grid item md={11.2}>
-            <Typography
-              sx={{
-                color: "#160449",
-                fontWeight: "bold",
-                fontSize: "20px",
-                textAlign: "center",
-                paddingBottom: "10px",
-                paddingTop: "5px",
-                flexGrow: 1,
-                paddingLeft: "50px",
+        <>
+          {/* Container with custom styles */}
+          <Grid item xs={12} columnSpacing={6} rowGap={4} sx={{ position: "relative" }}>
+            
+            {/* Header section */}
+            <Grid 
+              item 
+              xs={12} 
+              sx={{ 
+                backgroundColor: "#F0F0F0", 
+                borderRadius: "10px", 
+                boxShadow: "none"
               }}
             >
-              {customName}
-            </Typography>
+              <Grid container justifyContent='center'>
+                
+                {/* Document Text */}
+                {customName !== "" && (
+                  <Grid item md={11.2}>
+                    <Typography
+                      sx={{
+                        color: "#160449",
+                        fontWeight: "bold",
+                        fontSize: "20px",
+                        textAlign: "center",
+                        paddingBottom: "10px",
+                        paddingTop: "5px",
+                        flexGrow: 1,
+                        paddingLeft: "50px",
+                      }}
+                    >
+                      {customName}
+                    </Typography>
+                  </Grid>
+                )}
+
+                {/* Add Icon button */}
+                <Grid item md={0.5}>
+                  <Button
+                    sx={{
+                      "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
+                      cursor: "pointer",
+                      textTransform: "none",
+                      minWidth: "40px",
+                      minHeight: "40px",
+                      width: "40px",
+                      marginTop: '5px',
+                      fontWeight: theme.typography.secondary.fontWeight,
+                      fontSize: theme.typography.smallFont,
+                    }}
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setcurrentRow({ filename: "", type: "", link: "" });
+                      setIsEditing(false);
+                      handleOpen();
+                    }}
+                  >
+                    <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "24px" }} />
+                  </Button>
+                </Grid>
+              </Grid>
+            </Grid>
+
+            {/* Content section */}
+            <Grid 
+              item 
+              xs={12} 
+              sx={{ 
+                backgroundColor: "#F0F0F0", 
+                borderRadius: "10px", 
+                marginTop: "10px", 
+                padding: "20px"
+              }}
+            >
+              {/* Check if documents are available */}
+              {documents && documents.length ? (
+                <DataGrid
+                  rows={rowsWithId}
+                  // columns={docsColumns}
+                  columns={isMobileView ? docsColumns.map(column => ({ ...column, minWidth: 150 })) : docsColumns}
+                  hideFooter={true}
+                  autoHeight
+                  rowHeight={50}
+                  sx={{
+                    marginTop: "10px"
+                  }}
+                />
+              ) : (
+                <></>
+              )}
+
+              {/* Contract files section */}
+              {contractFiles && contractFiles?.length ? (
+                <Box
+                  sx={{
+                    fontSize: '15px',
+                    fontWeight: 'bold',
+                    padding: '5px',
+                    color: '#3D5CAC',
+                    width: '100%',
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      color: "#160449",
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: "18px",
+                      paddingBottom: "5px",
+                      paddingTop: "5px",
+                      marginTop: "10px"
+                    }}
+                  >
+                    {customUploadingName ? customUploadingName : "Uploading Documents:"}
+                  </Typography>
+                </Box>
+              ) : (
+                <></>
+              )}
+
+              {/* Check if there are contract files */}
+              {contractFiles?.length ? (
+                <DataGrid
+                  rows={uploadRowsWithId}
+                  // columns={uploadDocsColumns}
+                  columns={isMobileView ? uploadDocsColumns.map(column => ({ ...column, minWidth: 150 })) : uploadDocsColumns}
+                  sx={{
+                    marginTop: "10px",
+                  }}
+                  autoHeight
+                  rowHeight={50} 
+                  hideFooter={true}
+                />
+              ) : (
+                <></>
+              )}
+            </Grid>
           </Grid>
-        )}
-
-        {/* Add Icon button */}
-        <Grid item md={0.5}>
-          <Button
-            sx={{
-              "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
-              cursor: "pointer",
-              textTransform: "none",
-              minWidth: "40px",
-              minHeight: "40px",
-              width: "40px",
-              marginTop: '5px',
-              fontWeight: theme.typography.secondary.fontWeight,
-              fontSize: theme.typography.smallFont,
-            }}
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation();
-              setcurrentRow({ filename: "", type: "", link: "" });
-              setIsEditing(false);
-              handleOpen();
-            }}
-          >
-            <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "24px" }} />
-          </Button>
-        </Grid>
-      </Grid>
-    </Grid>
-
-    {/* Content section */}
-    <Grid 
-      item 
-      xs={12} 
-      sx={{ 
-        backgroundColor: "#F0F0F0", 
-        borderRadius: "10px", 
-        marginTop: "10px", 
-        padding: "20px"
-      }}
-    >
-      {/* Check if documents are available */}
-      {documents && documents.length ? (
-        <DataGrid
-          rows={rowsWithId}
-          // columns={docsColumns}
-          columns={isMobileView ? docsColumns.map(column => ({ ...column, minWidth: 150 })) : docsColumns}
-          hideFooter={true}
-          autoHeight
-          rowHeight={50}
-          sx={{
-            marginTop: "10px"
-          }}
-        />
-      ) : (
-        <></>
-      )}
-
-      {/* Contract files section */}
-      {contractFiles && contractFiles?.length ? (
-        <Box
-          sx={{
-            fontSize: '15px',
-            fontWeight: 'bold',
-            padding: '5px',
-            color: '#3D5CAC',
-            width: '100%',
-          }}
-        >
-          <Typography
-            sx={{
-              color: "#160449",
-              fontWeight: theme.typography.primary.fontWeight,
-              fontSize: "18px",
-              paddingBottom: "5px",
-              paddingTop: "5px",
-              marginTop: "10px"
-            }}
-          >
-            {customUploadingName ? customUploadingName : "Uploading Documents:"}
-          </Typography>
-        </Box>
-      ) : (
-        <></>
-      )}
-
-      {/* Check if there are contract files */}
-      {contractFiles?.length ? (
-        <DataGrid
-          rows={uploadRowsWithId}
-          // columns={uploadDocsColumns}
-          columns={isMobileView ? uploadDocsColumns.map(column => ({ ...column, minWidth: 150 })) : uploadDocsColumns}
-          sx={{
-            marginTop: "10px",
-          }}
-          autoHeight
-          rowHeight={50} 
-          hideFooter={true}
-        />
-      ) : (
-        <></>
-      )}
-    </Grid>
-  </Grid>
-</>
- <Modal open={open} onClose={handleClose} aria-labelledby="add-document-modal" aria-describedby="add-document-description">
+        </>
+        <Modal open={open} onClose={handleClose} aria-labelledby="add-document-modal" aria-describedby="add-document-description">
           <Box
             sx={{
               position: "absolute",
@@ -951,7 +951,7 @@ setSelectedDocument({
 						}}
 					>
 						<label htmlFor="file-upload" style={{ cursor: 'pointer' }}>
-              <AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
+              <AddIcon sx={{ fontSize: plusIconSize ? plusIconSize : 20, color: plusIconColor ? plusIconColor : '#3D5CAC' }} />
 						</label>
 						<input
 							id="file-upload"

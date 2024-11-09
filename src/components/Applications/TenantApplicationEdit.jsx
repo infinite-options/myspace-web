@@ -23,22 +23,38 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
+import { json } from "react-router-dom";
 
 
-export default function TenantApplicationEdit({ profileData, lease, lease_uid, setRightPane, property, from, tenantDocuments, setTenantDocuments, oldVehicles, setOldVehicles, adultOccupants, setAdultOccupants, petOccupants, setPetOccupants, childOccupants, setChildOccupants, extraUploadDocument, setExtraUploadDocument, extraUploadDocumentType, setExtraUploadDocumentType, deleteDocuments, status }) {
+export default function TenantApplicationEdit(props) {
     const { getList, } = useContext(ListsContext);
-    console.log("profile data", profileData);
-    const [adults, setAdults] = useState(adultOccupants? adultOccupants : []);
-    const [children, setChildren] = useState(childOccupants? childOccupants : []);
-    const [pets, setPets] = useState(petOccupants? petOccupants : []);
-    const [vehicles, setVehicles] = useState(oldVehicles ? oldVehicles : []);
-    const [documents, setDocuments] = useState(tenantDocuments? tenantDocuments : []);
+    // console.log("profile data", profileData);
+    // const [adults, setAdults] = useState(adultOccupants? adultOccupants : []);
+    // const [children, setChildren] = useState(childOccupants? childOccupants : []);
+    // const [pets, setPets] = useState(petOccupants? petOccupants : []);
+    // const [vehicles, setVehicles] = useState(oldVehicles ? oldVehicles : []);
+    // const [documents, setDocuments] = useState(tenantDocumentsa? tenantDocumentsa : []);
+    const [vehicles, setVehicles] = useState(null);
+    const [adultOccupants, setAdultOccupants] = useState(null);
+    const [petOccupants, setPetOccupants] = useState(null);
+    const [childOccupants, setChildOccupants] = useState(null);
     const documentsRef = useRef([]);
-    const [uploadedFiles, setuploadedFiles] = useState(extraUploadDocument? extraUploadDocument : []);
-    const [uploadedFileTypes, setUploadedFileTypes] = useState(extraUploadDocumentType? extraUploadDocumentType : []);
-    const [deletedFiles, setDeletedFiles] = useState(deleteDocuments? deleteDocuments : []);
+    // const [uploadedFiles, setuploadedFiles] = useState(extraUploadDocument? extraUploadDocument : []);
+    // const [uploadedFileTypes, setUploadedFileTypes] = useState(extraUploadDocumentType? extraUploadDocumentType : []);
+    const [extraUploadDocument, setExtraUploadDocument] = useState([]);
+    const [extraUploadDocumentType, setExtraUploadDocumentType] = useState([]);
+    // const [deletedFiles, setDeletedFiles] = useState(deleteDocuments? deleteDocuments : []);
     const [relationships, setRelationships] = useState([]);
     const [states, setStates] = useState([]);
+    const [property, setProperty] = useState([]);
+    const [status, setStatus] = useState("");
+    const [lease, setLease] = useState([]);
+    const [tenantProfile, setTenantProfile] = useState(null);
+    const [formattedAddress, setFormattedAddress] = useState("");
+    const [deleteDocuments, setDeleteDocuments] = useState([]);
+    const [tenantDocuments, setTenantDocuments] = useState([]);
+    const [isEmployeChange, setIsEmployeChange] = useState(false)
+
     const [modifiedData, setModifiedData] = useState([]);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -51,7 +67,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
     const [ occupantsExpanded, setOccupantsExpanded ] = useState(true);
     const [employmentExpanded, setEmploymentExpanded] = useState(true);
     const [documentsExpanded, setDocumentsExpanded] = useState(true); 
-    const [selectedJobs, setSelectedJobs] = useState("[]");
+    const [selectedJobs, setSelectedJobs] = useState([]);
 
 
     // const getListDetails = async () => {
@@ -143,13 +159,178 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
 
     // }, []);
 
+    function formatAddress() {
+        return `${props.data.property_address} ${props.data.property_unit} ${props.data.property_city} ${props.data.property_state} ${props.data.property_zip}`;
+    }
+
+    function formatTenantVehicleInfo() {
+        if (lease.length === 0) {
+          let info = tenantProfile && tenantProfile.tenant_vehicle_info ? JSON.parse(tenantProfile.tenant_vehicle_info) : [];
+          setVehicles(info);
+        } else {
+          let info = JSON.parse(lease[0].lease_vehicles);
+          setVehicles(info);
+          // for (const vehicle of info){
+          //     console.log(vehicle)
+          // }
+        }
+    }
+
+    function formatTenantAdultOccupants() {
+    if (lease.length === 0) {
+        let info = tenantProfile && tenantProfile.tenant_adult_occupants ? JSON.parse(tenantProfile.tenant_adult_occupants) : [];
+        setAdultOccupants(info);
+    } else {
+        // console.log(tenantProfile?.tenant_adult_occupants)
+        let info = JSON.parse(lease[0].lease_adults);
+        setAdultOccupants(info);
+        // for (const occupant of info){
+        //     console.log(occupant)
+        // }
+    }
+    }
+
+    function formatTenantPetOccupants() {
+    if (lease.length === 0) {
+        let info = tenantProfile && tenantProfile.tenant_pet_occupants ? JSON.parse(tenantProfile.tenant_pet_occupants) : [];
+        setPetOccupants(info);
+    } else {
+        let info = JSON.parse(lease[0].lease_pets);
+        setPetOccupants(info);
+        // for (const pet of info){
+        //     console.log(pet)
+        // }
+    }
+    }
+    
+    function formatTenantChildOccupants() {
+    if (lease.length === 0) {
+        let info = tenantProfile && tenantProfile.tenant_children_occupants ? JSON.parse(tenantProfile.tenant_children_occupants) : [];
+        setChildOccupants(info);
+    } else {
+        let info = JSON.parse(lease[0].lease_children);
+        setChildOccupants(info);
+        // for (const child of info){
+        //     console.log(child)
+        // }
+    }
+    }
+
+    useEffect(() => {
+        console.log("fetch from lease endpoint")
+        const fetchData = async () => {
+          try {
+            setShowSpinner(true); // Start the spinner before loading data
+      
+            // Fetch lease details asynchronously
+            const leaseResponse = await axios.get(
+              `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`
+            );
+            
+            const fetchedLease = leaseResponse.data["Lease_Details"].result.filter(
+              (lease) => lease.lease_uid === props.lease.lease_uid
+            );
+            
+            console.log("fetched lease - ", fetchedLease)
+            setLease(fetchedLease);
+      
+            // Fetch tenant profile information asynchronously
+            const profileResponse = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
+            const profileData = await profileResponse.json();
+            setTenantProfile(profileData.profile.result[0]);
+      
+            // Set other properties after all data is fetched
+            setProperty(props.data);
+            setStatus(props.status);
+      
+            // Format and set address
+            const address = formatAddress();
+            setFormattedAddress(address);
+      
+          } catch (error) {
+            console.error("Error fetching data", error);
+          } finally {
+            setShowSpinner(false); // Stop the spinner after all data is loaded
+          }
+        };
+      
+        fetchData();
+    }, [props.data, props.reload]);
+
     useEffect(() => {
         // console.log("calling profileData useEffect");
 
         // setIsSave(false);
         // setProfileData();
+        setShowSpinner(true)
+        const getTenantProfileInformation = async () => {
+            const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
+            const data = await response.json();
+            const tenantProfileData = data.profile.result[0];
+            setTenantProfile(tenantProfileData);
+            console.log("tenantProfileData", tenantProfileData);
+        };
+        getTenantProfileInformation();
+
         getListDetails()
+
+        setShowSpinner(false)
     }, []);
+
+    useEffect(() => {
+
+        // console.log("---dhyey--- props data for property - ", lease)
+        setShowSpinner(true)
+
+        if(props?.vehicles){
+          setVehicles(props.vehicles)
+        }else{
+          formatTenantVehicleInfo();
+        }
+    
+        if(props?.adultOccupants){
+          setAdultOccupants(props.adultOccupants)
+        }else{
+          formatTenantAdultOccupants();
+        }
+    
+        if(props?.petOccupants){
+          setPetOccupants(props.petOccupants)
+        }else{
+          formatTenantPetOccupants();
+        }
+    
+        if(props?.childOccupants){
+          setChildOccupants(props.childOccupants);
+        }else{
+          formatTenantChildOccupants();
+        }
+    
+        if(props?.extraUploadDocument){
+          setExtraUploadDocument(props.extraUploadDocument)
+        }
+    
+        if(props?.extraUploadDocumentType){
+          setExtraUploadDocumentType(props.extraUploadDocumentType)
+        }
+    
+        if(props?.deleteDocuments){
+          setDeleteDocuments(props.deleteDocuments)
+        }
+    
+        if(props?.tenantDocuments){
+          setTenantDocuments(props.tenantDocuments)
+        }else{
+          if (lease.length === 0) {
+            setTenantDocuments(tenantProfile ? JSON.parse(tenantProfile.tenant_documents) : []);
+          } else {
+            setTenantDocuments(lease && lease.length > 0 ? JSON.parse(lease[0]?.lease_documents) : []);
+          }
+        }
+
+        setShowSpinner(false)
+    
+    }, [lease, tenantProfile]);
 
     const editOrUpdateLease = async () => {
         // console.log('--dhyey-- inside edit lease - ', modifiedData);
@@ -192,18 +373,18 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                     // }
                     
                     if(item.key === "lease_adults"){
-                        // setAdultOccupants(item.value)
-                        setAdults(item.value)
+                        setAdultOccupants(item.value)
+                        // setAdults(item.value)
                     }
                     
                     if(item.key === "lease_children" ){
-                        // setChildOccupants(item.value)
-                        setChildren(item.value)
+                        setChildOccupants(item.value)
+                        // setChildren(item.value)
                     }
                     
                     if(item.key === "lease_pets"){
-                        // setPetOccupants(item.value)
-                        setPets(item.value)
+                        setPetOccupants(item.value)
+                        // setPets(item.value)
                     }
                     
                     if(item.key === "lease_vehicles"){
@@ -311,10 +492,16 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
     //     }
     // };
 
+    const checkIsEqual = (arr1, arr2) => {
+        if (arr1.length !== arr2.length) {
+            return false;
+        }
+        return JSON.stringify(arr1) === JSON.stringify(arr2);
+    }
+
     const updateLeaseData = async () => {
-        console.log("try", selectedJobs);
         try {
-            if (adults?.length > 0 || pets?.length > 0 || children?.length > 0 || vehicles?.length > 0 || isPreviousFileChange || deletedFiles?.length > 0 || uploadedFiles?.length > 0 || selectedJobs?.length > 0) {
+            if (!checkIsEqual(adultOccupants, JSON.parse(lease[0].lease_adults)) || !checkIsEqual(petOccupants, JSON.parse(lease[0].lease_pets)) || !checkIsEqual(childOccupants, JSON.parse(lease[0].lease_children)) || !checkIsEqual(vehicles, JSON.parse(lease[0].lease_vehicles)) || isPreviousFileChange || deleteDocuments?.length > 0 || extraUploadDocument?.length > 0 || isEmployeChange) {
                 setShowSpinner(true);
                 const headers = {
                     "Access-Control-Allow-Origin": "*",
@@ -378,20 +565,20 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                 // });
 
                 if(isPreviousFileChange){
-                    leaseApplicationFormData.append("lease_documents", JSON.stringify(documents));
+                    leaseApplicationFormData.append("lease_documents", JSON.stringify(tenantDocuments));
                 }
 
-                if(deletedFiles && deletedFiles?.length !== 0){
-                    leaseApplicationFormData.append("delete_documents", JSON.stringify(deletedFiles));
+                if(deleteDocuments && deleteDocuments?.length !== 0){
+                    leaseApplicationFormData.append("delete_documents", JSON.stringify(deleteDocuments));
                 }
 
-                if (uploadedFiles && uploadedFiles?.length) {
+                if (extraUploadDocument && extraUploadDocument?.length) {
 
                     const documentsDetails = [];
-                    [...uploadedFiles].forEach((file, i) => {
+                    [...extraUploadDocument].forEach((file, i) => {
               
                       leaseApplicationFormData.append(`file_${i}`, file);
-                      const fileType = uploadedFileTypes[i] || "";
+                      const fileType = extraUploadDocumentType[i] || "";
                       const documentObject = {
                         // file: file,
                         fileIndex: i, //may not need fileIndex - will files be appended in the same order?
@@ -404,20 +591,22 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                     leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
                 }
 
-                leaseApplicationFormData.append("lease_adults", JSON.stringify(adults));
-                leaseApplicationFormData.append("lease_children", JSON.stringify(children));
-                leaseApplicationFormData.append("lease_pets", JSON.stringify(pets));
+                leaseApplicationFormData.append("lease_adults", JSON.stringify(adultOccupants));
+                leaseApplicationFormData.append("lease_children", JSON.stringify(childOccupants));
+                leaseApplicationFormData.append("lease_pets", JSON.stringify(petOccupants));
                 leaseApplicationFormData.append("lease_vehicles", JSON.stringify(vehicles));
 
-                console.log("selected jobs", selectedJobs);
+                // console.log("selected jobs", selectedJobs);
 
                 if (selectedJobs?.length > 0) {
                     // console.log(JSON.stringify(selectedJobs));
                     leaseApplicationFormData.append("lease_income", JSON.stringify(selectedJobs));
+                }else if(selectedJobs?.length === 0 && JSON.parse(lease[0]?.lease_income).length > 0){
+                    leaseApplicationFormData.append("lease_income", JSON.stringify(selectedJobs));
                 }    
 
                 // console.log(lease_uid)
-                leaseApplicationFormData.append('lease_uid', lease_uid); // Here is the problem when upload new docs because there is no lease right now and it require lease_uid
+                leaseApplicationFormData.append('lease_uid', lease[0].lease_uid); // Here is the problem when upload new docs because there is no lease right now and it require lease_uid
 
                 axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
                     .then((response) => {
@@ -434,10 +623,11 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                         }
                     });
                 setShowSpinner(false);
+                setIsEmployeChange(false)
                 setModifiedData([]);
-                setuploadedFiles([]);
-                setUploadedFileTypes([]);
-                setDeletedFiles([]);
+                setExtraUploadDocument([]);
+                setExtraUploadDocumentType([]);
+                setDeleteDocuments([]);
 
             } else {
                 showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
@@ -451,64 +641,66 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
 
     const handleCloseButton = (e) => {
         e.preventDefault();
-        if (lease_uid !== null) {
+        if (lease[0].lease_uid !== null) {
             updateLeaseData().then(() => {
                 const updatedState = {
                     data: property,
-                    status: lease_uid === null ? "" : lease[0].lease_status,
-                    lease: lease_uid === null ? [] : lease[0],
-                    from: from,
-                    tenantDocuments: documents, // Updated documents
+                    status: lease[0].lease_uid === null ? "" : lease[0].lease_status,
+                    lease: lease[0].lease_uid === null ? [] : lease[0],
+                    from: props.from,
+                    tenantDocuments: tenantDocuments, // Updated documents
                     vehicles: vehicles, // Updated vehicles
-                    adultOccupants: adults, // Updated adult occupants
-                    petOccupants: pets, // Updated pet occupants
-                    childOccupants: children, // Updated child occupants
-                    extraUploadDocument: uploadedFiles, // Uploaded files
-                    extraUploadDocumentType: uploadedFileTypes, // Uploaded file types
-                    deleteDocuments: deletedFiles, // Deleted files
+                    adultOccupants: adultOccupants, // Updated adult occupants
+                    petOccupants: petOccupants, // Updated pet occupants
+                    childOccupants: childOccupants, // Updated child occupants
+                    extraUploadDocument: extraUploadDocument, // Uploaded files
+                    extraUploadDocumentType: extraUploadDocumentType, // Uploaded file types
+                    deleteDocuments: deleteDocuments, // Deleted files
                 };
-                setRightPane?.({ type: "tenantApplication", state: updatedState });
+                props.setRightPane?.({ type: "tenantApplication", state: updatedState });
             });
         } else {
             const updatedState = {
                 data: property,
-                status: lease_uid === null ? "" : lease[0].lease_status,
-                lease: lease_uid === null ? [] : lease[0],
-                from: from,
-                tenantDocuments: documents,
+                status: lease[0].lease_uid === null ? "" : lease[0].lease_status,
+                lease: lease[0].lease_uid === null ? [] : lease[0],
+                from: props.from,
+                tenantDocuments: tenantDocuments,
                 vehicles: vehicles,
-                adultOccupants: adults,
-                petOccupants: pets,
-                childOccupants: children,
-                extraUploadDocument: uploadedFiles,
-                extraUploadDocumentType: uploadedFileTypes,
-                deleteDocuments: deletedFiles,
+                adultOccupants: adultOccupants,
+                petOccupants: petOccupants,
+                childOccupants: childOccupants,
+                extraUploadDocument: extraUploadDocument,
+                extraUploadDocumentType: extraUploadDocumentType,
+                deleteDocuments: deleteDocuments,
             };
-            setRightPane?.({ type: "tenantApplication", state: updatedState });
+            props.setRightPane?.({ type: "tenantApplication", state: updatedState });
         }
     };
 
     const handleSaveButton = async (e) => {
         e.preventDefault();
-        if (lease_uid) {
+        if (lease[0]?.lease_uid) {
             await updateLeaseData();  // Trigger the PUT request to save data
+        }else{
+            await handleApplicationSubmit();
         }
-        const updatedState = {
-            data: property,
-            status: lease_uid === null ? "" : lease[0].lease_status,
-            lease: lease_uid === null ? [] : lease[0],
-            from: from,
-            tenantDocuments: documents, // Updated documents
-            vehicles: vehicles, // Updated vehicles
-            adultOccupants: adults, // Updated adult occupants
-            petOccupants: pets, // Updated pet occupants
-            childOccupants: children, // Updated child occupants
-            extraUploadDocument: uploadedFiles, // Uploaded files
-            extraUploadDocumentType: uploadedFileTypes, // Uploaded file types
-            deleteDocuments: deletedFiles, // Deleted files
-        };
-        console.log("updated state", updatedState);
-        setRightPane?.({ type: "tenantApplication", state: updatedState });
+        // const updatedState = {
+        //     data: property,
+        //     status: lease[0].lease_uid === null ? "" : lease[0].lease_status,
+        //     lease: lease[0].lease_uid === null ? [] : lease[0],
+        //     from: props.from,
+        //     tenantDocuments: tenantDocuments, // Updated documents
+        //     vehicles: vehicles, // Updated vehicles
+        //     adultOccupants: adultOccupants, // Updated adult occupants
+        //     petOccupants: petOccupants, // Updated pet occupants
+        //     childOccupants: childOccupants, // Updated child occupants
+        //     extraUploadDocument: extraUploadDocument, // Uploaded files
+        //     extraUploadDocumentType: extraUploadDocumentType, // Uploaded file types
+        //     deleteDocuments: deleteDocuments, // Deleted files
+        // };
+        // console.log("updated state", updatedState);
+        // props.setRightPane?.({ type: "tenantApplication", state: updatedState });
     };
 
 
@@ -524,45 +716,45 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
         }
       };
 
-      const [showWithdrawLeaseDialog, setShowWithdrawLeaseDialog] = useState(false);
+    const [showWithdrawLeaseDialog, setShowWithdrawLeaseDialog] = useState(false);
 
-      const getListDetails = () => {    
-          const relationships = getList("relationships");
-          const states = getList("states");
-          setRelationships(relationships);
-          setStates(states);    		
-        };
-  
-      function handleWithdrawLease() {
-          const withdrawLeaseData = new FormData();
-          if (lease[0].lease_uid) {
-            withdrawLeaseData.append("lease_uid", lease[0].lease_uid);
-          }
-          else {
-            withdrawLeaseData.append("lease_property_id", property.property_uid);
-          }
-          withdrawLeaseData.append("lease_status", "WITHDRAWN");
-      
-          withdrawLeaseData.forEach((value, key) => {
-            console.log(`${key}: ${value}`);
-          });
-      
-          const withdrawLeaseResponse = fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
-            method: "PUT",
-            body: withdrawLeaseData,
-          });
-      
-          Promise.all([withdrawLeaseResponse]).then((values) => {
-            //navigate("/listings"); // send success data back to the propertyInfo page
-            if (from === "PropertyInfo") {
-              setRightPane({ type: "listings" });
-              console.log("lease set right pane")
-            } else {
-              setRightPane("");
-              console.log("set right pane to nothing")
-            }
-          });
+    const getListDetails = () => {    
+        const relationships = getList("relationships");
+        const states = getList("states");
+        setRelationships(relationships);
+        setStates(states);    		
+    };
+
+    function handleWithdrawLease() {
+        const withdrawLeaseData = new FormData();
+        if (lease[0].lease_uid) {
+        withdrawLeaseData.append("lease_uid", lease[0].lease_uid);
         }
+        else {
+        withdrawLeaseData.append("lease_property_id", property.property_uid);
+        }
+        withdrawLeaseData.append("lease_status", "WITHDRAWN");
+    
+        withdrawLeaseData.forEach((value, key) => {
+        console.log(`${key}: ${value}`);
+        });
+    
+        const withdrawLeaseResponse = fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+        method: "PUT",
+        body: withdrawLeaseData,
+        });
+    
+        Promise.all([withdrawLeaseResponse]).then((values) => {
+        //navigate("/listings"); // send success data back to the propertyInfo page
+        if (props.from === "PropertyInfo") {
+            props.setRightPane({ type: "listings" });
+            console.log("lease set right pane")
+        } else {
+            props.setRightPane("");
+            console.log("set right pane to nothing")
+        }
+        });
+    }
 
     function formatDate(dateString) {
         const date = new Date(dateString);
@@ -571,9 +763,9 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
         const day = String(date.getDate()).padStart(2, '0');
         const year = date.getFullYear();
         return `${month}-${day}-${year}`;
-      }
+    }
 
-      const handleApplicationSubmit = async () => {
+    const handleApplicationSubmit = async () => {
         try {
             let date = new Date();
             const receiverPropertyMapping = {
@@ -583,7 +775,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
             const leaseApplicationData = new FormData();
             leaseApplicationData.append("lease_property_id", property.property_uid);
     
-            if (lease.lease_status === "RENEW") {
+            if (lease[0].lease_status === "RENEW") {
                 const updateLeaseData = new FormData();
                 updateLeaseData.append("lease_uid", lease[0].lease_uid);
                 updateLeaseData.append("lease_renew_status", "TRUE");
@@ -636,14 +828,14 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                 });
             }
     
-            if (deletedFiles && deletedFiles.length !== 0) {
-                leaseApplicationData.append("delete_documents", JSON.stringify(deletedFiles));
+            if (deleteDocuments && deleteDocuments.length !== 0) {
+                leaseApplicationData.append("delete_documents", JSON.stringify(deleteDocuments));
             }
     
             // Use the updated state values for occupancy details
-            leaseApplicationData.append("lease_adults", JSON.stringify(adults));
-            leaseApplicationData.append("lease_children", JSON.stringify(children));
-            leaseApplicationData.append("lease_pets", JSON.stringify(pets));
+            leaseApplicationData.append("lease_adults", JSON.stringify(adultOccupants));
+            leaseApplicationData.append("lease_children", JSON.stringify(childOccupants));
+            leaseApplicationData.append("lease_pets", JSON.stringify(petOccupants));
             leaseApplicationData.append("lease_vehicles", JSON.stringify(vehicles));
             
             leaseApplicationData.append("lease_referred", "[]");
@@ -674,10 +866,10 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
             });
     
             Promise.all([annoucementsResponse, leaseApplicationResponse]).then(() => {
-                if (from === "PropertyInfo") {
-                    setRightPane({ type: "listings" });
+                if (props.from === "PropertyInfo") {
+                    props.setRightPane({ type: "listings" });
                 } else {
-                    setRightPane("");
+                    props.setRightPane("");
                 }
             });
         } catch (error) {
@@ -685,9 +877,6 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
             alert("We were unable to send the notification through text, but a notification was sent through the app.");
         }
     };
-    
-    
-    
 
     return (
         <ThemeProvider theme={theme}>
@@ -704,13 +893,13 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                     <CircularProgress color="inherit" />
                 </Backdrop>
                 <Grid container>
-                    <Grid item xs={11} md={11}>
-                        <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
-                            Tenant Application Edit
+                    <Grid item xs={12} md={12}>
+                        <Typography align='center' gutterBottom sx={{ fontSize: theme.typography.largeFont, fontWeight: "bold", color: "#1f1f1f" }}>
+                            Rental Application
                         </Typography>
                     </Grid>
-                    <Grid item xs={11} md={11}>
-                        <Typography align='center' gutterBottom sx={{ fontSize: "16px", fontWeight: "bold", color: "#1f1f1f" }}>                            
+                    <Grid item xs={12} md={12}>
+                        <Typography align='center' gutterBottom sx={{ fontSize: theme.typography.smallFont, fontWeight: "bold", color: "#1f1f1f" }}>                            
                             Your changes will be saved to the Lease Application without impacting your profile.
                         </Typography>
                     </Grid>
@@ -737,32 +926,43 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                         backgroundColor: "#f0f0f0", 
                         borderRadius: '8px',
                         margin: "auto", 
-                        minHeight: "50px"
+                        minHeight: "50px",
+                        // boxShadow: "none" 
                         }}>
                         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography sx={{ fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue }}>
+                        <Typography sx={{
+                            // fontWeight: theme.typography.primary.fontWeight,
+                            // fontSize: "20px",
+                            // textAlign: "center",
+                            // paddingBottom: "10px",
+                            // paddingTop: "5px",
+                            // flexGrow: 1,
+                            // // paddingLeft: "50px",
+                            // color: "#160449", 
+                            fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue
+                        }}>
                             Applicant Personal Details
                         </Typography>
                         </AccordionSummary>
                         <AccordionDetails sx={{ padding: "30px" }}> {/* Increased padding */}
                         <Grid container spacing={3}> {/* Increased spacing */}
                             <Grid item xs={6}>
-                            <Typography>Name: {profileData?.tenant_first_name} {profileData?.tenant_last_name}</Typography>
+                            <Typography>Name: {tenantProfile?.tenant_first_name} {tenantProfile?.tenant_last_name}</Typography>
                             </Grid>
                             <Grid item xs={6}>
-                            <Typography>Email: {profileData?.tenant_email}</Typography>
+                            <Typography>Email: {tenantProfile?.tenant_email}</Typography>
                             </Grid>
                             <Grid item xs={6}>
-                            <Typography>Phone: {profileData?.tenant_phone_number}</Typography>
+                            <Typography>Phone: {tenantProfile?.tenant_phone_number}</Typography>
                             </Grid>
                             <Grid item xs={6}>
-                            <Typography>SSN: {profileData?.tenant_ssn ? getDecryptedSSN(profileData.tenant_ssn) : "No SSN provided"}</Typography>
+                            <Typography>SSN: {tenantProfile?.tenant_ssn ? getDecryptedSSN(tenantProfile.tenant_ssn) : "No SSN provided"}</Typography>
                             </Grid>
                             <Grid item xs={6}>
-                            <Typography>License #: {profileData?.tenant_drivers_license_number}</Typography>
+                            <Typography>License #: {tenantProfile?.tenant_drivers_license_number}</Typography>
                             </Grid>
                             <Grid item xs={6}>
-                            <Typography>License State: {profileData?.tenant_drivers_license_state}</Typography>
+                            <Typography>License State: {tenantProfile?.tenant_drivers_license_state}</Typography>
                             </Grid>
                         </Grid>
                         </AccordionDetails>
@@ -771,31 +971,39 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
 
                     <Grid container justifyContent="center" sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
                         <Grid item xs={12}>
-                            <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={employmentExpanded} onChange={() => setEmploymentExpanded((prev) => !prev)}>
+                            <Accordion sx={{ marginBottom: "20px", 
+                                backgroundColor: "#f0f0f0", 
+                                borderRadius: '8px',
+                                margin: "auto", // Center the accordion
+                                minHeight: "50px" }} 
+                                expanded={employmentExpanded} onChange={() => setEmploymentExpanded((prev) => !prev)}
+                            >
                                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="employment-content" id="employment-header">
                                     <Grid container>
                                         <Grid item md={11.2}>
                                             <Typography
                                                 sx={{
-                                                    color: "#160449",
-                                                    fontWeight: theme.typography.primary.fontWeight,
-                                                    fontSize: "20px",
-                                                    textAlign: "center",
-                                                    paddingBottom: "10px",
-                                                    paddingTop: "5px",
-                                                    flexGrow: 1,
-                                                    paddingLeft: "50px"
+                                                    fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue
+                                                    // color: "#160449",
+                                                    // fontWeight: theme.typography.primary.fontWeight,
+                                                    // fontSize: "20px",
+                                                    // textAlign: "center",
+                                                    // paddingBottom: "10px",
+                                                    // paddingTop: "5px",
+                                                    // flexGrow: 1,
+                                                    // paddingLeft: "50px"
                                                 }}
                                             >
-                                                Employment Details
+                                                Applicant Job Details
                                             </Typography>
                                         </Grid>
                                     </Grid>
                                 </AccordionSummary>
                                 <AccordionDetails>
                                 <EmploymentDataGrid
-                                    profileData = {profileData}
-                                    employmentDataT={lease?.[0]?.lease_income ? JSON.parse(lease[0].lease_income) : []}
+                                    profileData = {tenantProfile}
+                                    setIsEmployeChange = {setIsEmployeChange}
+                                    employmentDataT={lease[0]?.lease_income ? JSON.parse(lease[0]?.lease_income) : []}
                                     setSelectedJobs={setSelectedJobs}
                                 />
                                 </AccordionDetails>
@@ -807,20 +1015,28 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                     {/* occupancy details*/}
                     <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
                         <Grid item xs={12}>
-                            <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={occupantsExpanded} onChange={() => setOccupantsExpanded(prevState => !prevState)}>
+                            <Accordion sx={{ marginBottom: "20px", 
+                                    backgroundColor: "#f0f0f0", 
+                                    borderRadius: '8px',
+                                    margin: "auto", // Center the accordion
+                                    minHeight: "50px" 
+                                }} 
+                                expanded={occupantsExpanded} onChange={() => setOccupantsExpanded(prevState => !prevState)}
+                            >
                                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='occupants-content' id='occupants-header'>
                                     <Grid container>
                                         <Grid item md={11.2}>
                                             <Typography
                                                 sx={{
-                                                    color: "#160449",
-                                                    fontWeight: theme.typography.primary.fontWeight,
-                                                    fontSize: "20px",
-                                                    textAlign: "center",
-                                                    paddingBottom: "10px",
-                                                    paddingTop: "5px",
-                                                    flexGrow: 1,
-                                                    paddingLeft: "50px",
+                                                    fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue
+                                                    // color: "#160449",
+                                                    // fontWeight: theme.typography.primary.fontWeight,
+                                                    // fontSize: "20px",
+                                                    // textAlign: "center",
+                                                    // paddingBottom: "10px",
+                                                    // paddingTop: "5px",
+                                                    // flexGrow: 1,
+                                                    // paddingLeft: "50px",
                                                 }}
                                                 paddingTop='5px'
                                                 paddingBottom='10px'
@@ -832,9 +1048,9 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                                     </Grid>
                                 </AccordionSummary>
                                 <AccordionDetails>
-                                    {adults && (
+                                    {adultOccupants && (
                                         <AdultOccupant
-                                            leaseAdults={adults}
+                                            leaseAdults={adultOccupants}
                                             relationships={relationships}
                                             // editOrUpdateLease={lease_uid !== null ? editOrUpdateLease : editOrUpdateTenant}
                                             editOrUpdateLease={editOrUpdateLease}
@@ -845,9 +1061,9 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                                             isEditable={true}
                                         />
                                     )}
-                                    {children && (
+                                    {childOccupants && (
                                         <ChildrenOccupant
-                                            leaseChildren={children}
+                                            leaseChildren={childOccupants}
                                             relationships={relationships}
                                             // editOrUpdateLease={lease_uid !== null ? editOrUpdateLease : editOrUpdateTenant}
                                             editOrUpdateLease={editOrUpdateLease}
@@ -858,9 +1074,9 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                                             isEditable={true}
                                         />
                                     )}
-                                    {pets && (
+                                    {petOccupants && (
                                         <PetsOccupant
-                                            leasePets={pets}
+                                            leasePets={petOccupants}
                                             // editOrUpdateLease={lease_uid !== null ? editOrUpdateLease : editOrUpdateTenant}
                                             editOrUpdateLease={editOrUpdateLease}
                                             modifiedData={modifiedData}
@@ -880,7 +1096,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                                             setModifiedData={setModifiedData}
                                             // dataKey={lease_uid !== null ? "lease_vehicles" : "tenant_vehicle_info"}
                                             dataKey={"lease_vehicles"}
-                                            ownerOptions={[...adults, ...children]}
+                                            ownerOptions={[...adultOccupants, ...childOccupants]}
                                             isEditable={true}
                                         />
                                     )}
@@ -890,42 +1106,51 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                     </Grid>
                     
                     {/* documents details */}
-                    <Grid container direction="column" spacing={2} sx={{ padding: '10px' }}>
-                    <Grid item>
-                        <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={documentsExpanded} onChange={() => setDocumentsExpanded((prev) => !prev)}>
+                    <Grid container direction="column"  justifyContent="center" spacing={2} sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+                    <Grid item xs={12}>
+                        <Accordion sx={{marginBottom: "20px", 
+                                backgroundColor: "#f0f0f0", 
+                                borderRadius: '8px',
+                                margin: "auto", // Center the accordion
+                                minHeight: "50px" 
+                            }} 
+                            expanded={documentsExpanded} onChange={() => setDocumentsExpanded((prev) => !prev)}
+                        >
                             <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="documents-content" id="documents-header">
                             <Typography
                                 sx={{
-                                    color: "#160449",
-                                    fontWeight: theme.typography.primary.fontWeight,
-                                    fontSize: "20px",
-                                    textAlign: "center",
-                                    paddingBottom: "10px",
-                                    paddingTop: "5px",
-                                    flexGrow: 1,
+                                    fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue
+                                    // color: "#160449",
+                                    // fontWeight: theme.typography.primary.fontWeight,
+                                    // fontSize: "20px",
+                                    // textAlign: "center",
+                                    // paddingBottom: "10px",
+                                    // paddingTop: "5px",
+                                    // flexGrow: 1,
                                 }}
-                                paddingTop='5px'
-                                paddingBottom='10px'
                             >
                                 Document Details
                             </Typography>
                             </AccordionSummary>
                             <AccordionDetails>
                                 <Documents
-                                    documents={documents}
-                                    setDocuments={setDocuments}
-                                    setContractFiles={setuploadedFiles}
-                                    setDeleteDocsUrl={setDeletedFiles}
-                                    isAccord={true}
-                                    contractFiles={uploadedFiles}
-                                    contractFileTypes={uploadedFileTypes}
-                                    setContractFileTypes={setUploadedFileTypes}
+                                    documents={tenantDocuments}
+                                    setDocuments={setTenantDocuments}
+                                    customName={"Application Documents"}
+                                    setContractFiles={setExtraUploadDocument}
+                                    setDeleteDocsUrl={setDeleteDocuments}
+                                    isAccord={false}
+                                    plusIconColor={ theme.typography.primary.black}
+                                    plusIconSize= {"18px"}
+                                    contractFiles={extraUploadDocument}
+                                    contractFileTypes={extraUploadDocumentType}
+                                    setContractFileTypes={setExtraUploadDocumentType}
                                     setIsPreviousFileChange={setIsPreviousFileChange}
                                 />
                             </AccordionDetails>
                         </Accordion>
                     </Grid>
-                </Grid>
+                    </Grid>
 
 
                         {/* <Grid item xs={12} md={12}>
@@ -950,23 +1175,59 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                         </Grid>
                     </Grid> */}
 
-                    <Grid container justifyContent='center' item xs={11} md={11}>
-                        <Button
-                            variant="contained"
-                            sx={{
-                                backgroundColor: '#3D5CAC',                                
-                            }}
-                            onClick={handleSaveButton}
-                        >
-                            <Typography sx={{ textTransform: 'none', fontWeight: 'bold', color: "#FFFFFF",}}>
-                                {lease_uid == null? "Return to Application" : "Save & Return"}
-                            </Typography>
+                    <Grid container xs={12} flexDirection={"row"}>
+                        <Grid container justifyContent='center' item xs={12}>
+                            <Button
+                                variant="contained"
+                                sx={{
+                                    width: "30%",
+                                    fontSize: "16px",
+                                    backgroundColor: '#3D5CAC',
+                                    borderRadius: "5px",
+                                    marginRight: "20px"                                
+                                }}
+                                onClick={handleSaveButton}
+                            >
+                                <Typography sx={{ textTransform: 'none', fontWeight: theme.typography.primary.fontWeight, color: "#FFFFFF",}}>
+                                    {props.lease?.lease_uid == null? "Submit" : "Update Application"}
+                                </Typography>
 
-                        </Button>
+                            </Button>
+                            {(status === "NEW" || status === "RENEW NEW") && (
+                                <Button
+                                    variant="contained"
+                                    sx={{
+                                        backgroundColor: "#ffe230",
+                                        color: "#160449",
+                                        fontWeight: theme.typography.medium.fontWeight,
+                                        borderRadius: "5px",
+                                        display: "flex",
+                                        width: "30%",
+                                        ":hover": {
+                                            backgroundColor: "#ffeb99",
+                                            color: "#160449",
+                                        },
+                                    }}
+                                    onClick={() => setShowWithdrawLeaseDialog(true)}
+                                >
+                                    <Typography
+                                        sx={{
+                                        fontWeight: theme.typography.primary.fontWeight,
+                                        fontSize: "16px",
+                                        color: "#160449",
+                                        textTransform: "none",
+                                        }}
+                                    >
+                                        Withdraw
+                                    </Typography>
+                                </Button>
+                            )}
+                        </Grid>
                     </Grid>
 
+
                     {/* From tenant application -- Abhinav Changes */}
-                    {(status === null || status === "" || status === "NEW" || status === "RENEW") && (
+                    {/* {(status === null || status === "" || status === "NEW" || status === "RENEW") && (
                     <Grid>
                         <Button
                             variant="contained"
@@ -992,39 +1253,8 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                             </Typography>
                         </Button>
                     </Grid>
-                    )}
-                {(status === "NEW" || status === "RENEW NEW") && (
-                <Button
-                  variant="contained"
-                  sx={{
-                    backgroundColor: "#ffe230",
-                    color: "#160449",
-                    fontWeight: theme.typography.medium.fontWeight,
-                    fontSize: "14px",
-                    textTransform: "none",
-                    borderRadius: "5px",
-                    display: "flex",
-                    width: "45%",
-                    marginLeft: "10px",
-                    ":hover": {
-                      backgroundColor: "#ffeb99",
-                      color: "#160449",
-                    },
-                  }}
-                  onClick={() => setShowWithdrawLeaseDialog(true)}
-                >
-                  <Typography
-                    sx={{
-                      fontWeight: theme.typography.primary.fontWeight,
-                      fontSize: "14px",
-                      color: "#160449",
-                      textTransform: "none",
-                    }}
-                  >
-                    Withdraw
-                  </Typography>
-                </Button>
-              )}
+                    )} */}
+                    
                 </Grid>
 
                 {showWithdrawLeaseDialog && (
@@ -1090,23 +1320,14 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
     )
 }
 
-export const EmploymentDataGrid = ({ profileData, employmentDataT = [], setSelectedJobs }) => {
-    const parsedEmploymentDataT = Array.isArray(employmentDataT) ? employmentDataT : [];
+export const EmploymentDataGrid = ({ profileData, employmentDataT = [], setSelectedJobs, setIsEmployeChange }) => {
+    // const parsedEmploymentDataT = Array.isArray(employmentDataT) ? employmentDataT : [];
 
-    const employmentData = profileData?.tenant_employment 
-        ? JSON.parse(profileData.tenant_employment)
-        : [];
+    const [employmentData, setEmploymentData] = useState([]);
 
-    console.log("employmentData", parsedEmploymentDataT);
+    const [parsedEmploymentDataT, setParsedEmploymentDataT] = useState([])
 
-    const [checkedJobs, setCheckedJobs] = useState(() => 
-        employmentData.map(job => ({
-            ...job,
-            checked: parsedEmploymentDataT.length > 0 
-                ? parsedEmploymentDataT.some(leaseJob => leaseJob.jobTitle === job.jobTitle && leaseJob.companyName === job.companyName)
-                : false 
-        }))
-    );
+    const [checkedJobs, setCheckedJobs] = useState([]);
 
     const handleJobSelection = (index) => {
         const updatedJobs = checkedJobs.map((job, i) =>
@@ -1115,8 +1336,39 @@ export const EmploymentDataGrid = ({ profileData, employmentDataT = [], setSelec
         setCheckedJobs(updatedJobs);
 
         const selectedJobs = updatedJobs.filter(job => job.checked);
+        // console.log("selected jobs - ", selectedJobs)
         setSelectedJobs(selectedJobs);
+        setIsEmployeChange(true)
     };
+
+    useEffect(()=>{
+
+        if(checkedJobs.length === 0){
+            const updateJobs = employmentData.map(job => ({
+                ...job,
+                checked: parsedEmploymentDataT && parsedEmploymentDataT.length > 0 
+                    ? parsedEmploymentDataT.some(
+                        leaseJob => 
+                            leaseJob.jobTitle === job.jobTitle && 
+                            leaseJob.companyName === job.companyName
+                      )
+                    : false
+            }));
+
+            setCheckedJobs(updateJobs);
+
+            const selectedJobs = updateJobs.filter(job => job.checked);
+            setSelectedJobs(selectedJobs);
+        }
+
+    }, [parsedEmploymentDataT, employmentData])
+
+    useEffect(()=>{
+        if(profileData?.tenant_employment !== employmentData && parsedEmploymentDataT !== employmentDataT){
+            setEmploymentData(profileData?.tenant_employment ? JSON.parse(profileData.tenant_employment): [])
+            setParsedEmploymentDataT(employmentDataT ? employmentDataT : [])
+        }
+    }, [profileData, employmentDataT])
 
     return (
         <Box sx={{ padding: "10px" }}>
