@@ -76,8 +76,8 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isEditable }) => {
-    console.log('Inside Children occupants', leaseChildren);
+const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isEditable }) => {
+    // console.log('Inside Children occupants', leaseChildren);
     const [children, setChildren] = useState([]);
     const [open, setOpen] = useState(false);
     const [currentRow, setCurrentRow] = useState(null);
@@ -105,8 +105,9 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
         if (leaseChildren && leaseChildren.length > 0) {
             console.log('leaseChildren', leaseChildren, typeof (leaseChildren));
             //Need Id for datagrid
-            const childrenWithIds = leaseChildren.map((child, index) => ({ ...child, id: index }));
-            setChildren(childrenWithIds);
+            // const childrenWithIds = leaseChildren.map((child, index) => ({ ...child, id: index }));
+            // setChildren(childrenWithIds);
+            setChildren(leaseChildren);
         }
     }, [leaseChildren]);
 
@@ -167,6 +168,15 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
                     return [{ key: dataKey, value: rowWithoutId }];
                   });
                 setIsUpdated(true);
+                if(setLeaseChildren){
+                    setLeaseChildren((prevLeaseChildren) =>
+                        prevLeaseChildren.map((child) => 
+                            child.id === currentRow.id 
+                                ? { ...child, ...currentRow }
+                                : child
+                        )
+                    );
+                }
             } else {
                 showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
             }
@@ -190,6 +200,12 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
                 return [{ key: dataKey, value: [...leaseChildren, newRowwithoutid] }];
             });
             setIsUpdated(true);
+            if(setLeaseChildren){
+                setLeaseChildren((prevLeaseChildren) => [                    
+                    ...prevLeaseChildren,
+                    currentRow,
+                ]);
+            }
         }
     };
 
@@ -282,7 +298,7 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
                     }}
                     onClick={() => {
                         setCurrentRow({
-                            id: null, name: '', last_name: '', dob: '', email: '', phone_number: '', relationship: '',
+                            id: children?.length + 1, name: '', last_name: '', dob: '', email: '', phone_number: '', relationship: '',
                             tenant_drivers_license_number: "", tenant_ssn: ""
                         });
                         handleOpen();

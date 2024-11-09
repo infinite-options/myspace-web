@@ -25,13 +25,23 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 
 
-export default function TenantApplicationEdit({ profileData, lease, lease_uid, setRightPane, property, from, tenantDocuments, setTenantDocuments, oldVehicles, setOldVehicles, adultOccupants, setAdultOccupants, petOccupants, setPetOccupants, childOccupants, setChildOccupants, extraUploadDocument, setExtraUploadDocument, extraUploadDocumentType, setExtraUploadDocumentType, deleteDocuments, status }) {
+export default function TenantApplicationEdit({ profileData, lease, lease_uid, setRightPane, property, from, tenantDocuments, setTenantDocuments, oldVehicles, setOldVehicles, adultOccupants, setAdultOccupants, petOccupants, setPetOccupants, childOccupants, setChildOccupants, extraUploadDocument, setExtraUploadDocument, extraUploadDocumentType, setExtraUploadDocumentType, deleteDocuments, status }) {    
     const { getList, } = useContext(ListsContext);
     console.log("profile data", profileData);
-    const [adults, setAdults] = useState(adultOccupants? adultOccupants : []);
-    const [children, setChildren] = useState(childOccupants? childOccupants : []);
-    const [pets, setPets] = useState(petOccupants? petOccupants : []);
-    const [vehicles, setVehicles] = useState(oldVehicles ? oldVehicles : []);
+    // const [adults, setAdults] = useState(adultOccupants? adultOccupants : []);
+    // const [children, setChildren] = useState(childOccupants? childOccupants : []);
+    // const [pets, setPets] = useState(petOccupants? petOccupants : []);
+    // const [vehicles, setVehicles] = useState(oldVehicles ? oldVehicles : []);
+
+    const adultsWithIds = adultOccupants ? adultOccupants?.map((adult, index) => ({...adult, id: index + 1,})) : [];
+    const childrenWithIds = childOccupants ? childOccupants?.map((child, index) => ({...child, id: index + 1,})) : [];
+    const petsWithIds = petOccupants ? petOccupants?.map((pet, index) => ({...pet, id: index + 1,})) : [];
+    const vehiclesWithIds = oldVehicles ? oldVehicles?.map((veh, index) => ({...veh, id: index + 1,})) : [];
+    const [adults, setAdults] = useState(adultsWithIds);
+    const [children, setChildren] = useState(childrenWithIds);
+    const [pets, setPets] = useState(petsWithIds);
+    const [vehicles, setVehicles] = useState(vehiclesWithIds);
+
     const [documents, setDocuments] = useState(tenantDocuments? tenantDocuments : []);
     const documentsRef = useRef([]);
     const [uploadedFiles, setuploadedFiles] = useState(extraUploadDocument? extraUploadDocument : []);
@@ -191,25 +201,25 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                     //     }
                     // }
                     
-                    if(item.key === "lease_adults"){
-                        // setAdultOccupants(item.value)
-                        setAdults(item.value)
-                    }
+                    // if(item.key === "lease_adults"){
+                    //     // setAdultOccupants(item.value)
+                    //     setAdults(item.value)
+                    // }
                     
-                    if(item.key === "lease_children" ){
-                        // setChildOccupants(item.value)
-                        setChildren(item.value)
-                    }
+                    // if(item.key === "lease_children" ){
+                    //     // setChildOccupants(item.value)
+                    //     setChildren(item.value)
+                    // }
                     
-                    if(item.key === "lease_pets"){
-                        // setPetOccupants(item.value)
-                        setPets(item.value)
-                    }
+                    // if(item.key === "lease_pets"){
+                    //     // setPetOccupants(item.value)
+                    //     setPets(item.value)
+                    // }
                     
-                    if(item.key === "lease_vehicles"){
-                        // setOldVehicles(item.value)
-                        setVehicles(item.value)
-                    }
+                    // if(item.key === "lease_vehicles"){
+                    //     // setOldVehicles(item.value)
+                    //     setVehicles(item.value)
+                    // }
 
                     // if(item.key === "lease_documents"){
                     //     setTenantDocuments(item.value)
@@ -835,6 +845,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                                     {adults && (
                                         <AdultOccupant
                                             leaseAdults={adults}
+                                            setLeaseAdults={setAdults}
                                             relationships={relationships}
                                             // editOrUpdateLease={lease_uid !== null ? editOrUpdateLease : editOrUpdateTenant}
                                             editOrUpdateLease={editOrUpdateLease}
@@ -848,6 +859,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                                     {children && (
                                         <ChildrenOccupant
                                             leaseChildren={children}
+                                            setLeaseChildren={setChildren}
                                             relationships={relationships}
                                             // editOrUpdateLease={lease_uid !== null ? editOrUpdateLease : editOrUpdateTenant}
                                             editOrUpdateLease={editOrUpdateLease}
@@ -861,6 +873,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                                     {pets && (
                                         <PetsOccupant
                                             leasePets={pets}
+                                            setLeasePets={setPets}
                                             // editOrUpdateLease={lease_uid !== null ? editOrUpdateLease : editOrUpdateTenant}
                                             editOrUpdateLease={editOrUpdateLease}
                                             modifiedData={modifiedData}
@@ -873,6 +886,7 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                                     {vehicles && (
                                         <VehiclesOccupant
                                             leaseVehicles={vehicles}
+                                            setLeaseVehicles={setVehicles}
                                             states={states}
                                             // editOrUpdateLease={lease_uid !== null ? editOrUpdateLease : editOrUpdateTenant}
                                             editOrUpdateLease={editOrUpdateLease}
