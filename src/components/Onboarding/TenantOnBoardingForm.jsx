@@ -46,6 +46,7 @@ import VenmoIcon from "../../images/Venmo.png";
 import Stripe from "../../images/Stripe.png";
 import ApplePay from "../../images/ApplePay.png";
 import ChaseIcon from "../../images/Chase.png";
+import useMediaQuery from "@mui/material/useMediaQuery";
 // import CloseIcon from "@mui/icons-material/Close";
 import { useCookies } from "react-cookie";
 // import DashboardTab from "../TenantDashboard/NewDashboardTab";
@@ -60,6 +61,9 @@ import Documents from "../Leases/Documents";
 import ListsContext from "../../contexts/ListsContext";
 import GenericDialog from "../GenericDialog";
 import IncomeDetails from "./IncomeDetails";
+
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -173,6 +177,7 @@ const closeDialog = () => {
   const [modifiedData, setModifiedData] = useState([]);
 
   const [isUpdate, setIsUpdate] = useState(false);
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -550,7 +555,7 @@ const closeDialog = () => {
         columnSpacing={{ xs: 1, sm: 2, md: 3 }}
         key={method.paymentMethod_uid || index}
       >
-        <Grid item xs={1}>
+        <Grid item xs={1.3} sm={1}>
           <Checkbox
             name={`${method.paymentMethod_type}_${method.paymentMethod_uid}`}
             checked={method.checked} // Use the checked state
@@ -558,7 +563,7 @@ const closeDialog = () => {
           />
         </Grid>
   
-        <Grid container alignContent="center" item xs={1}>
+        <Grid container alignContent="center" item xs={1.3} sm={1}>
           {method.paymentMethod_type ? (
             <img src={getIconForMethod(method.paymentMethod_type)} alt={method.paymentMethod_type} />
           ) : null}
@@ -630,7 +635,7 @@ const closeDialog = () => {
                 </Grid>
               </>
             ) : (
-              <Grid item xs={9}>
+              <Grid item xs={8} sm={9}>
                 <TextField
                   name={`${method.paymentMethod_type}_${method.paymentMethod_uid}`}
                   value={method.paymentMethod_name || ""}
@@ -1158,7 +1163,7 @@ const closeDialog = () => {
     // Update tenant_employment in modifiedData
     updateModifiedData({ key: "tenant_employment", value: updatedList });
   };
-
+  const [showSsn, setShowSsn] = useState(false);
   return (
     <>
       <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", cursor: "pointer", marginBottom: "10px", padding: "10px" }}>
@@ -1167,7 +1172,7 @@ const closeDialog = () => {
             Tenant Profile Information
           </Typography>
           <Grid container item xs={12}>
-            <Grid container alignContent='center' item xs={3}>
+            <Grid container alignContent='center' item xs={12} md={3}>
               <Grid container justifyContent='center' item xs={12}>
                 {photo && photo.image ? (
                   <img
@@ -1204,7 +1209,7 @@ const closeDialog = () => {
                 </Button>
               </Grid>
             </Grid>
-            <Grid item xs={9}>
+            <Grid item xs={12} md={9} marginTop={isMobile? "20px" : "0px"}>
               <Grid item xs={12}>
                 <Typography
                   sx={{
@@ -1249,7 +1254,7 @@ const closeDialog = () => {
                 </Grid>
               </Grid>
               <Grid container item xs={12} columnSpacing={4}>
-                <Grid container item xs={5.5}>
+                <Grid container item xs={5} md={5.5}>
                   <Grid item xs={12}>
                     <Typography
                       sx={{
@@ -1270,7 +1275,7 @@ const closeDialog = () => {
                     />
                   </Grid>
                 </Grid>
-                <Grid container item xs={2}>
+                <Grid container item xs={1.5} md={2}>
                   <Grid item xs={12}>
                     <Typography
                       sx={{
@@ -1309,7 +1314,7 @@ const closeDialog = () => {
                   </Grid>
                 </Grid>
 
-                <Grid container item xs={1}>
+                <Grid container item xs={1.5} md={1}>
                   <Grid item xs={12}>
                     <Typography
                       sx={{
@@ -1326,7 +1331,7 @@ const closeDialog = () => {
                   </Grid>
                 </Grid>
 
-                <Grid container item xs={1.5}>
+                <Grid container item xs={2} md={1.5}>
                   <Grid item xs={12}>
                     <Typography
                       sx={{
@@ -1335,7 +1340,7 @@ const closeDialog = () => {
                         width: "100%",
                       }}
                     >
-                      {"Zip Code"}
+                      {isMobile ? "Zip" : "Zip Code"}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -1453,8 +1458,8 @@ const closeDialog = () => {
               </Grid>
 
               <Grid container item xs={12} columnSpacing={4}>
-                <Grid container item xs={6}>
-                  <Grid item xs={6}>
+                <Grid container item xs={7.5} sm={6}>
+                  <Grid item xs={4} sm={6}>
                     <Typography
                       sx={{
                         color: theme.typography.common.blue,
@@ -1465,7 +1470,7 @@ const closeDialog = () => {
                       {"SSN"}
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={8} sm={6}>
                   {/* <Select name='tax_id_type' value={taxIDType} size='small' fullWidth onChange={(e) => setTaxIDType(e.target.value)} placeholder='Select Tax ID Type' className={classes.select}>
                     <MenuItem value='SSN'>SSN</MenuItem>
                     <MenuItem value='EIN'>EIN</MenuItem>
@@ -1504,7 +1509,7 @@ const closeDialog = () => {
                     <TextField
                       fullWidth
                       // value={mask}
-                      value={ssn}
+                      value={showSsn ? ssn : "***-**-****"}
                       // onChange={(e) => setSsn(e.target.value)}
                       // onChange={handleSSNChange}
                       onChange={(e) => handleTaxIDChange(e.target.value, true)}
@@ -1513,6 +1518,17 @@ const closeDialog = () => {
                       className={classes.root}
                       InputProps={{
                         className: errors.ssn || !ssn ? classes.errorBorder : '',
+                        endAdornment: (
+                          <InputAdornment position='end' style={{ marginRight: "8px", marginTop: "10px" }} >
+                            <IconButton
+                              aria-label='toggle password visibility'
+                              onClick={() => setShowSsn((show) => !show)}
+                              edge='end'
+                            >
+                              {showSsn ? <VisibilityOff style={{ fontSize: "20px"}}/> : <Visibility style={{ fontSize: "20px"  }}/>}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
                       }}
                       required
                     ></TextField>
@@ -1561,7 +1577,7 @@ const closeDialog = () => {
       </AccordionDetails>
     </Accordion>
   </Grid>
-</Grid>
+      </Grid>
 
 
     {/* <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
@@ -1709,43 +1725,44 @@ const closeDialog = () => {
           </Grid>
         </Grid> */}
 
-    <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
-      <Grid item xs={12}>
-        <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={empinfoExpanded} onChange={() => setEmpinfoExpanded(prevState => !prevState)}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='income-details-content' id='income-details-header'>
-          <Grid container justifyContent='center'>
-          <Grid item md={11.5}>
-            <Typography
-              sx={{
-                color: "#160449",
-                fontWeight: theme.typography.primary.fontWeight,
-                fontSize: "24px",
-                textAlign: "center",
-                paddingBottom: "10px",
-                paddingTop: "5px",
-                flexGrow: 1,
-              }}
-              paddingTop='5px'
-              paddingBottom='10px'
-            >
-              Income Details
-            </Typography>
-          </Grid>
-          </Grid>
-          </AccordionSummary>
-          <AccordionDetails>
-            <IncomeDetails
-              employmentList={employmentList}
-              setEmploymentList={(newList) => {
-                setEmploymentList(newList);
-                updateModifiedData({ key: "tenant_employment", value: newList });
-              }}
-              salaryFrequencies={salaryFrequencies}
-            />
-          </AccordionDetails>
-        </Accordion>
+      <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+        <Grid item xs={12}>
+          <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={empinfoExpanded} onChange={() => setEmpinfoExpanded(prevState => !prevState)}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='income-details-content' id='income-details-header'>
+            <Grid container justifyContent='center'>
+            <Grid item md={11.5}>
+              <Typography
+                sx={{
+                  color: "#160449",
+                  fontWeight: theme.typography.primary.fontWeight,
+                  fontSize: "24px",
+                  textAlign: "center",
+                  paddingBottom: "10px",
+                  paddingTop: "5px",
+                  flexGrow: 1,
+                }}
+                paddingTop='5px'
+                paddingBottom='10px'
+              >
+                Income Details
+              </Typography>
+            </Grid>
+            </Grid>
+            </AccordionSummary>
+            <AccordionDetails>
+              <IncomeDetails
+                employmentList={employmentList}
+                setEmploymentList={(newList) => {
+                  setEmploymentList(newList);
+                  updateModifiedData({ key: "tenant_employment", value: newList });
+                }}
+                salaryFrequencies={salaryFrequencies}
+              />
+            </AccordionDetails>
+          </Accordion>
+        </Grid>
       </Grid>
-    </Grid>
+
       <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
         <Grid item xs={12}>
           <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={occupancyExpanded} onChange={() => setOccupancyExpanded(prevState => !prevState)}>
@@ -1870,7 +1887,7 @@ const closeDialog = () => {
       </AccordionDetails>
     </Accordion>
   </Grid>
-</Grid>
+      </Grid>
 
 
       <Grid container justifyContent='center' item xs={12}>

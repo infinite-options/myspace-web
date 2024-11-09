@@ -6,6 +6,7 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
+import useMediaQuery from "@mui/material/useMediaQuery";
 import DeleteIcon from '@mui/icons-material/Delete';
 import theme from "../../theme/theme";
 import { Close } from '@mui/icons-material';
@@ -84,6 +85,7 @@ const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, setModifiedD
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
     const [isUpdated, setIsUpdated] = useState(false);
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     useEffect(() => {
         console.log('inside mod', modifiedData);
@@ -132,7 +134,25 @@ const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, setModifiedD
                 const updatedRow = pets.map(pet => (pet.id === currentRow.id ? currentRow : pet));
                 //Save pets back in DB without ID field
                 const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
-                setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
+                // setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
+                setModifiedData((prev) => {
+                    if (Array.isArray(prev)) {
+                      const existingIndex = prev.findIndex((item) => item.key === dataKey);
+                      
+                      if (existingIndex > -1) {
+                        const updatedData = [...prev];
+                        updatedData[existingIndex] = {
+                          ...updatedData[existingIndex],
+                          value: rowWithoutId,
+                        };
+                        return updatedData;
+                      } else {
+                        return [...prev, { key: dataKey, value: rowWithoutId }];
+                      }
+                    }
+                    return [{ key: dataKey, value: rowWithoutId }];
+                  });
+
                 setIsUpdated(true);
                 if(setLeasePets){
                     setLeasePets((prevLeasePets) =>
@@ -149,7 +169,22 @@ const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, setModifiedD
 
         } else {
             const {id, ...newRowwithoutid} = currentRow
-            setModifiedData((prev) => [...prev, { key: dataKey, value: [...leasePets, { ...newRowwithoutid }] }])
+            // setModifiedData((prev) => [...prev, { key: dataKey, value: [...leasePets, { ...newRowwithoutid }] }])
+            setModifiedData((prev) => {
+                if (Array.isArray(prev)) {
+                  const existingIndex = prev.findIndex((item) => item.key === dataKey);
+                  if (existingIndex > -1) {
+                    const updatedData = [...prev];
+                    updatedData[existingIndex] = {
+                      ...updatedData[existingIndex],
+                      value: [...leasePets, newRowwithoutid],
+                    };
+                    return updatedData;
+                  }
+                  return [...prev, { key: dataKey, value: [...leasePets, newRowwithoutid] }];
+                }
+                return [{ key: dataKey, value: [...leasePets, newRowwithoutid] }];
+            });
             setIsUpdated(true);
             if(setLeasePets){
                 setLeasePets((prevLeasePets) => [             
@@ -169,7 +204,24 @@ const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, setModifiedD
     const handleDelete = (id) => {
         const filtered = pets.filter(pet => pet.id !== currentRow.id);
         const rowWithoutId = filtered.map(({ id, ...rest }) => rest);
-        setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
+        // setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
+        setModifiedData((prev) => {
+            if (Array.isArray(prev)) {
+              const existingIndex = prev.findIndex((item) => item.key === dataKey);
+          
+              if (existingIndex > -1) {
+                const updatedData = [...prev];
+                updatedData[existingIndex] = {
+                  ...updatedData[existingIndex],
+                  value: rowWithoutId,
+                };
+                return updatedData;
+              } else {
+                return [...prev, { key: dataKey, value: rowWithoutId }];
+              }
+            }
+            return [{ key: dataKey, value: rowWithoutId }];
+          });
         setIsUpdated(true);
     };
 
@@ -236,7 +288,7 @@ const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, setModifiedD
             {leasePets && leasePets.length > 0 &&
                 <DataGrid
                     rows={pets}
-                    columns={columns}
+                    columns={isMobile ? columns.map(column => ({ ...column, minWidth: 150 })) : columns}
                     hideFooter={true}
                     getRowId={(row) => row.id}
                     autoHeight
@@ -288,7 +340,7 @@ const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, setModifiedD
                 </Snackbar>
                 <DialogContent>
                     <Grid container columnSpacing={6}>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -308,7 +360,7 @@ const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, setModifiedD
                             />
                         </Grid>
 
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -327,7 +379,7 @@ const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, setModifiedD
                                 sx={{ backgroundColor: '#D6D5DA', }}
                             />
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -346,7 +398,7 @@ const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, setModifiedD
                                 sx={{ backgroundColor: '#D6D5DA', }}
                             />
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -365,7 +417,7 @@ const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, setModifiedD
                                 sx={{ backgroundColor: '#D6D5DA', }}
                             />
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -384,7 +436,7 @@ const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, setModifiedD
                                 sx={{ backgroundColor: '#D6D5DA', }}
                             />
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"

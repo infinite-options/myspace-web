@@ -8,6 +8,7 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import theme from "../../theme/theme";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -59,6 +60,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
     const [isEditing, setIsEditing] = useState(false);
     const color = theme.palette.form.main;
     const classes = useStyles();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -126,9 +128,28 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
                     );
                 }
                 
-    
+                
+                // console.log("--- DEBUG -- rows without id in edit adult - ", rowWithoutId)
+                // console.log("--- DEBUG -- modified data - ", modifiedData)
                 // Check if `prev` is an array before spreading it
-                setModifiedData((prev) => Array.isArray(prev) ? [...prev, { key: dataKey, value: rowWithoutId }] : [{ key: dataKey, value: rowWithoutId }]);                
+                // setModifiedData((prev) => Array.isArray(prev) ? [...prev, { key: dataKey, value: rowWithoutId }] : [{ key: dataKey, value: rowWithoutId }]);
+                setModifiedData((prev) => {
+                    if (Array.isArray(prev)) {
+                      const existingIndex = prev.findIndex((item) => item.key === dataKey);
+                      
+                      if (existingIndex > -1) {
+                        const updatedData = [...prev];
+                        updatedData[existingIndex] = {
+                          ...updatedData[existingIndex],
+                          value: rowWithoutId,
+                        };
+                        return updatedData;
+                      } else {
+                        return [...prev, { key: dataKey, value: rowWithoutId }];
+                      }
+                    }
+                    return [{ key: dataKey, value: rowWithoutId }];
+                  });
                 setIsUpdated(true);
             } else {
                 showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
@@ -139,7 +160,9 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
             // console.log("139 - currentRow - ", currentRow);
     
             // Check if `prev` is an array before spreading it
-            setModifiedData((prev) => Array.isArray(prev) ? [...prev, { key: dataKey, value: [...leaseAdults, newRowWithoutId] }] : [{ key: dataKey, value: [...leaseAdults, newRowWithoutId] }]);            
+            // console.log("--- DEBUG -- rows without id in add adult - ", newRowWithoutId)
+            // console.log("--- DEBUG -- modified data - ", modifiedData)
+            // setModifiedData((prev) => Array.isArray(prev) ? [...prev, { key: dataKey, value: [...leaseAdults, newRowWithoutId] }] : [{ key: dataKey, value: [...leaseAdults, newRowWithoutId] }]);            
             if(setLeaseAdults){
                 setLeaseAdults((prevLeaseAdults) => [
                     // ...prevLeaseAdults.filter(adult => !Array.isArray(adult)),
@@ -147,6 +170,21 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
                     currentRow,
                 ]);
             }
+            setModifiedData((prev) => {
+                if (Array.isArray(prev)) {
+                  const existingIndex = prev.findIndex((item) => item.key === dataKey);
+                  if (existingIndex > -1) {
+                    const updatedData = [...prev];
+                    updatedData[existingIndex] = {
+                      ...updatedData[existingIndex],
+                      value: [...leaseAdults, newRowWithoutId],
+                    };
+                    return updatedData;
+                  }
+                  return [...prev, { key: dataKey, value: [...leaseAdults, newRowWithoutId] }];
+                }
+                return [{ key: dataKey, value: [...leaseAdults, newRowWithoutId] }];
+            });
             setIsUpdated(true);
         }
     };
@@ -161,7 +199,26 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
     const handleDelete = () => {
         const filtered = adults.filter(adult => adult.id !== currentRow.id);
         const rowWithoutId = filtered.map(({ id, ...rest }) => rest);
-        setModifiedData((prev) => [...prev, {key: dataKey, value:rowWithoutId}]);
+
+        setModifiedData((prev) => {
+            if (Array.isArray(prev)) {
+              const existingIndex = prev.findIndex((item) => item.key === dataKey);
+          
+              if (existingIndex > -1) {
+                const updatedData = [...prev];
+                updatedData[existingIndex] = {
+                  ...updatedData[existingIndex],
+                  value: rowWithoutId,
+                };
+                return updatedData;
+              } else {
+                return [...prev, { key: dataKey, value: rowWithoutId }];
+              }
+            }
+            return [{ key: dataKey, value: rowWithoutId }];
+          });
+
+        // setModifiedData((prev) => [...prev, {key: dataKey, value:rowWithoutId}]);
         setIsUpdated(true);
     };
 
@@ -249,7 +306,8 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
             {leaseAdults && leaseAdults.length > 0 &&
                 <DataGrid
                     rows={adults}
-                    columns={columns}
+                    // columns={columns}
+                    columns={isMobile ? columns.map(column => ({ ...column, minWidth: 150 })) : columns}
                     hideFooter={true}
                     getRowId={(row) => row.id}
                     autoHeight
@@ -298,12 +356,12 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
                     </Snackbar>
                 <DialogContent>
                     <Grid container columnSpacing={6}>
-                        <Grid item md={12} sx={{ marginTop: '20px' }}>
+                        <Grid item xs={12} md={12} sx={{ marginTop: '20px' }}>
                             <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
                                 Resident Name
                             </Typography>
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6} md={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -320,7 +378,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
                             />
                         </Grid>
 
-                        <Grid item md={6}>
+                        <Grid item xs={6} md={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -337,12 +395,12 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
                             />
                         </Grid>
 
-                        <Grid item md={12} sx={{ marginTop: '20px' }}>
+                        <Grid item xs={12} md={12} sx={{ marginTop: '20px' }}>
                             <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
                                 Contact Info
                             </Typography>
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -358,7 +416,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
                                 sx={{backgroundColor: '#D6D5DA',}}
                             />
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                         <TextField
                             className={classes.textField}
                             margin="dense"
@@ -375,12 +433,12 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
                         />
                         </Grid>
 
-                        <Grid item md={12} sx={{ marginTop: '20px' }}>
+                        <Grid item xs={12} sx={{ marginTop: '20px' }}>
                             <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
                                 Details
                             </Typography>
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -395,7 +453,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
                                 sx={{backgroundColor: '#D6D5DA',}}
                             />
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                         <TextField
                             className={classes.textField}
                             margin="dense"
@@ -410,7 +468,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
                             sx={{backgroundColor: '#D6D5DA',}}
                         />
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
                             label="Date Of Birth" // Label for the DatePicker
@@ -422,7 +480,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
                             sx={{
                             marginTop: "8px",
                             backgroundColor: '#D6D5DA',
-                            width: '450px',
+                            width: isMobile ? "100%" : '450px',
                             '& .MuiInputLabel-root': {
                                 color: 'black', 
                             },
@@ -438,7 +496,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
                         </LocalizationProvider>
                         </Grid>
 
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <FormControl margin="dense" fullWidth variant="outlined" sx={{ height: "30px" }}>
                                 <InputLabel required style={{color: 'black'}}>
                                     Relationship
@@ -452,7 +510,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
                                     variant="outlined"
                                     value={currentRow?.relationship || ''}
                                     onChange={(e) => setCurrentRow({ ...currentRow, relationship: e.target.value })}
-                                    sx={{ backgroundColor: '#D6D5DA' }}
+                                    sx={{ backgroundColor: '#D6D5DA', }}
                                 >
                                     {relationships && relationships.map((reln) => (
                                         <MenuItem key={reln.list_uid} value={reln.list_item}>

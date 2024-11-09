@@ -9,11 +9,13 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import theme from "../../theme/theme";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { Close } from '@mui/icons-material';
 import { makeStyles } from '@material-ui/core/styles';
+import { formatPhoneNumber, formatSSN, formatEIN, identifyTaxIdType, maskNumber, } from '../Onboarding/helper.js';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -86,6 +88,7 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const [isUpdated, setIsUpdated] = useState(false);
 
 
@@ -131,13 +134,39 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
         setSnackbarOpen(false);
     };
 
+    const handlePhoneNumberChange = (e) => {
+        let input = e.target.value;
+        const formattedPhone = formatPhoneNumber(input);
+        const numericPhone = formattedPhone.replace(/\D/g, '');
+
+        if (numericPhone.length <= 10) {
+            setCurrentRow({ ...currentRow, phone_number: formattedPhone });
+        }
+    };
+
     const handleSave = () => {
         if (isEditing) {
             if (isRowModified(children[currentRow['id']], currentRow) === true) {
                 const updatedRow = children.map(child => (child.id === currentRow.id ? currentRow : child));
-                //Save children back in DB without ID field
                 const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
-                setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
+                // setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
+                setModifiedData((prev) => {
+                    if (Array.isArray(prev)) {
+                      const existingIndex = prev.findIndex((item) => item.key === dataKey);
+                      
+                      if (existingIndex > -1) {
+                        const updatedData = [...prev];
+                        updatedData[existingIndex] = {
+                          ...updatedData[existingIndex],
+                          value: rowWithoutId,
+                        };
+                        return updatedData;
+                      } else {
+                        return [...prev, { key: dataKey, value: rowWithoutId }];
+                      }
+                    }
+                    return [{ key: dataKey, value: rowWithoutId }];
+                  });
                 setIsUpdated(true);
                 if(setLeaseChildren){
                     setLeaseChildren((prevLeaseChildren) =>
@@ -154,7 +183,22 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
 
         } else {
             const {id, ...newRowwithoutid} = currentRow
-            setModifiedData((prev) => [...prev, { key: dataKey, value: [...leaseChildren, { ...newRowwithoutid }] }]);
+            // setModifiedData((prev) => [...prev, { key: dataKey, value: [...leaseChildren, { ...newRowwithoutid }] }]);
+            setModifiedData((prev) => {
+                if (Array.isArray(prev)) {
+                  const existingIndex = prev.findIndex((item) => item.key === dataKey);
+                  if (existingIndex > -1) {
+                    const updatedData = [...prev];
+                    updatedData[existingIndex] = {
+                      ...updatedData[existingIndex],
+                      value: [...leaseChildren, newRowwithoutid],
+                    };
+                    return updatedData;
+                  }
+                  return [...prev, { key: dataKey, value: [...leaseChildren, newRowwithoutid] }];
+                }
+                return [{ key: dataKey, value: [...leaseChildren, newRowwithoutid] }];
+            });
             setIsUpdated(true);
             if(setLeaseChildren){
                 setLeaseChildren((prevLeaseChildren) => [                    
@@ -174,7 +218,25 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
     const handleDelete = (id) => {
         const filtered = children.filter(child => child.id !== currentRow.id);
         const rowWithoutId = filtered.map(({ id, ...rest }) => rest);
-        setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
+        // setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
+        setModifiedData((prev) => {
+            if (Array.isArray(prev)) {
+              const existingIndex = prev.findIndex((item) => item.key === dataKey);
+          
+              if (existingIndex > -1) {
+                const updatedData = [...prev];
+                updatedData[existingIndex] = {
+                  ...updatedData[existingIndex],
+                  value: rowWithoutId,
+                };
+                return updatedData;
+              } else {
+                return [...prev, { key: dataKey, value: rowWithoutId }];
+              }
+            }
+            return [{ key: dataKey, value: rowWithoutId }];
+          });
+
         setIsUpdated(true);
     };
 
@@ -247,7 +309,7 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
             {leaseChildren && leaseChildren.length > 0 &&
                 <DataGrid
                     rows={children}
-                    columns={columns}
+                    columns={isMobile ? columns.map(column => ({ ...column, minWidth: 150 })) : columns}
                     hideFooter={true}
                     getRowId={(row) => row.id}
                     autoHeight
@@ -283,7 +345,7 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
                         fontSize: theme.typography.small,
                     }}
                 >
-                    <span style={{ flexGrow: 1, textAlign: 'center' }}>Occupancy Details</span>
+                    <span style={{ flexGrow: 1, textAlign: 'center' }}>Occupancy Details 2</span>
                     <Button onClick={handleClose} sx={{ ml: 'auto' }}>
                         <Close variant="icon" />
                     </Button>
@@ -296,14 +358,14 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
                 </Snackbar>
                 <DialogContent>
                     <Grid container columnSpacing={6}>
-                        <Grid item md={12} sx={{ marginTop: '20px' }}>
+                        <Grid item xs={12} sx={{ marginTop: '20px' }}>
                             <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
                                 Resident Name
                             </Typography>
                         </Grid>
 
 
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -320,7 +382,7 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
                             />
                         </Grid>
 
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -337,12 +399,12 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
                             />
                         </Grid>
 
-                        <Grid item md={12} sx={{ marginTop: '20px' }}>
+                        <Grid item xs={12} sx={{ marginTop: '20px' }}>
                             <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
                                 Contact Info
                             </Typography>
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -358,7 +420,7 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
                                 sx={{backgroundColor: '#D6D5DA',}}
                             />
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                             className={classes.textField}
                             margin="dense"
@@ -370,17 +432,18 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
                                 style: { color: 'black'}
                             }}
                             value={currentRow?.phone_number || ''}
-                            // onChange={handlePhoneNumberChange} // Updated
+                            onChange={handlePhoneNumberChange} // Updated
+                            //onChange={(e) => setCurrentRow({ ...currentRow, phone_number: e.target.value })}
                             sx={{backgroundColor: '#D6D5DA',}}
                             />
                         </Grid>
 
-                        <Grid item md={12} sx={{ marginTop: '20px' }}>
+                        <Grid item xs={12} sx={{ marginTop: '20px' }}>
                             <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", }}>
                                 Details
                             </Typography>
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker
                                 label="Date Of Birth" // Label for the DatePicker
@@ -392,7 +455,7 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
                                 sx={{
                                 marginTop: "8px",
                                 backgroundColor: '#D6D5DA',
-                                width: '450px',
+                                width: isMobile? "100%" : '450px',
                                 '& .MuiInputLabel-root': {
                                     color: 'black',
                                 },
@@ -408,7 +471,7 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
                             </LocalizationProvider>
                         </Grid>
 
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <FormControl margin="dense" fullWidth variant="outlined" sx={{ height: "30px" }}>
                                 <InputLabel required style={{color: 'black'}}>
                                     Relationship

@@ -10,6 +10,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import theme from "../../theme/theme";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { Close } from '@mui/icons-material';
@@ -88,6 +89,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
     const [isUpdated, setIsUpdated] = useState(false);
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
 
     useEffect(() => {
@@ -144,7 +146,24 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                 const updatedRow = vehicles.map(veh => (veh.id === currentRow.id ? currentRow : veh));
                 //Save pets back in DB without ID field
                 const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
-                setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
+                // setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
+                setModifiedData((prev) => {
+                    if (Array.isArray(prev)) {
+                      const existingIndex = prev.findIndex((item) => item.key === dataKey);
+                      
+                      if (existingIndex > -1) {
+                        const updatedData = [...prev];
+                        updatedData[existingIndex] = {
+                          ...updatedData[existingIndex],
+                          value: rowWithoutId,
+                        };
+                        return updatedData;
+                      } else {
+                        return [...prev, { key: dataKey, value: rowWithoutId }];
+                      }
+                    }
+                    return [{ key: dataKey, value: rowWithoutId }];
+                  });
                 setIsUpdated(true);
                 if(setLeaseVehicles){
                     setLeaseVehicles((prevLeaseVehicles) =>
@@ -161,7 +180,22 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
 
         } else {
             const {id, ...newRowwithoutid} = currentRow
-            setModifiedData((prev) => [...prev, { key: dataKey, value: [...leaseVehicles, { ...newRowwithoutid }] }])
+            // setModifiedData((prev) => [...prev, { key: dataKey, value: [...leaseVehicles, { ...newRowwithoutid }] }])
+            setModifiedData((prev) => {
+                if (Array.isArray(prev)) {
+                  const existingIndex = prev.findIndex((item) => item.key === dataKey);
+                  if (existingIndex > -1) {
+                    const updatedData = [...prev];
+                    updatedData[existingIndex] = {
+                      ...updatedData[existingIndex],
+                      value: [...leaseVehicles, newRowwithoutid],
+                    };
+                    return updatedData;
+                  }
+                  return [...prev, { key: dataKey, value: [...leaseVehicles, newRowwithoutid] }];
+                }
+                return [{ key: dataKey, value: [...leaseVehicles, newRowwithoutid] }];
+            });
             setIsUpdated(true);
             if(setLeaseVehicles){
                 setLeaseVehicles((prevLeaseVehicles) => [                    
@@ -181,7 +215,25 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
     const handleDelete = (id) => {
         const filtered = vehicles.filter(veh => veh.id !== currentRow.id);
         const rowWithoutId = filtered.map(({ id, ...rest }) => rest);
-        setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
+        // setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
+        setModifiedData((prev) => {
+            if (Array.isArray(prev)) {
+              const existingIndex = prev.findIndex((item) => item.key === dataKey);
+          
+              if (existingIndex > -1) {
+                const updatedData = [...prev];
+                updatedData[existingIndex] = {
+                  ...updatedData[existingIndex],
+                  value: rowWithoutId,
+                };
+                return updatedData;
+              } else {
+                return [...prev, { key: dataKey, value: rowWithoutId }];
+              }
+            }
+            return [{ key: dataKey, value: rowWithoutId }];
+          });
+          
         setIsUpdated(true);
     };
 
@@ -248,7 +300,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
             {leaseVehicles && leaseVehicles.length > 0 &&
                 <DataGrid
                     rows={vehicles}
-                    columns={columns}
+                    columns={isMobile ? columns.map(column => ({ ...column, minWidth: 150 })) : columns}
                     hideFooter={true}
                     getRowId={(row) => row.id}
                     autoHeight
@@ -300,7 +352,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                 </Snackbar>
                 <DialogContent>
                     <Grid container columnSpacing={6}>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DatePicker
                                     label="Year"
@@ -313,7 +365,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                                         setCurrentRow({ ...currentRow, year: formattedDate })
                                     }
                                     }
-                                    sx={{ marginTop: "10px", backgroundColor: '#D6D5DA', width: '450px' }}
+                                    sx={{ marginTop: "10px", backgroundColor: '#D6D5DA', width: isMobile? "100%" :'450px'}}
                                     fullWidth
                                     InputLabelProps={{
                                         sx: {
@@ -323,7 +375,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                                 />
                             </LocalizationProvider>
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -342,7 +394,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                                 sx={{ backgroundColor: '#D6D5DA', }}
                             />
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -362,7 +414,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                             />
                         </Grid>
 
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <TextField
                                 className={classes.textField}
                                 margin="dense"
@@ -381,7 +433,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                                 sx={{ backgroundColor: '#D6D5DA', }}
                             />
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             <FormControl margin="dense" fullWidth variant="outlined" sx={{ marginTop: "10px" }}>
                                 <InputLabel>State</InputLabel>
                                 <Select
@@ -403,7 +455,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                                 </Select>
                             </FormControl>
                         </Grid>
-                        <Grid item md={6}>
+                        <Grid item xs={6}>
                             {/* <TextField
                                 className={classes.textField}
                                 margin="dense"
