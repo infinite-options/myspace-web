@@ -1,8 +1,8 @@
-import { useState, useEffect, useContext, useRef, } from "react";
+import { useState, useEffect, useContext, useRef, Fragment } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import theme from "../../theme/theme";
-import { ThemeProvider, Paper, FormControlLabel, Checkbox } from "@mui/material";
+import { ThemeProvider, Paper, FormControlLabel, Checkbox, Radio, Menu, } from "@mui/material";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
@@ -37,6 +37,7 @@ import ListsContext from "../../contexts/ListsContext";
 import LeaseFees from "../Leases/LeaseFees";
 import { Accordion, AccordionSummary, AccordionDetails, IconButton } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import AddIcon from "@mui/icons-material/Add";
 import Slider from "react-slick";  // Add react-slick for image slider
 import UtilitiesManager from "../../components/Leases/Utilities";
@@ -283,6 +284,134 @@ const TenantLease = () => {
     setStates(states);    		
   };
 
+  const defaultUtilities = {
+    electricity: "owner",
+    trash: "owner",
+    water: "owner",
+    internet: "owner",
+    gas: "owner",
+  };
+
+  const utilitiesMap = new Map([
+    ["050-000001", "electricity"],
+    ["050-000002", "water"],
+    ["050-000003", "gas"],
+    ["050-000004", "trash"],
+    ["050-000005", "sewer"],
+    ["050-000006", "internet"],
+    ["050-000007", "cable"],
+    ["050-000008", "hoa_dues"],
+    ["050-000009", "security_system"],
+    ["050-000010", "pest_control"],
+    ["050-000011", "gardener"],
+    ["050-000012", "maintenance"],
+  ]);
+
+  const entitiesMap = new Map([
+    ["050-000041", "owner"],
+    ["050-000042", "property manager"],
+    ["050-000043", "tenant"],
+    ["050-000049", "user"],
+  ]);  
+
+  const reverseUtilitiesMap = new Map(Array.from(utilitiesMap, ([key, value]) => [value, key]));
+  const reverseEntitiesMap = new Map(Array.from(entitiesMap, ([key, value]) => [value, key]));
+
+  const [isDefaultUtilities, setIsDefaultUtilities] = useState(false);
+  const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
+  const [newUtilitiesPaidBy, setNewUtilitiesPaidBy] = useState({});
+  const [hasUtilitiesChanges, setHasUtilitiesChanges] = useState(false);
+  const [addUtilityAnchorElement, setAddUtilityAnchorElement] = useState(null);  
+  const keysNotInUtilitiesMap = Array.from(utilitiesMap.values()).filter((utility) => !(utility in mappedUtilitiesPaidBy));
+
+  // useEffect(() => {
+  //   console.log("newUtilitiesPaidBy - ", newUtilitiesPaidBy);
+  // }, [newUtilitiesPaidBy]);
+
+  // useEffect(() => {
+  //   console.log("mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
+  // }, [mappedUtilitiesPaidBy]);
+
+  const formatUtilityName = (utility) => {
+    const formattedUtility = utility.replace(/_/g, " ");
+    return formattedUtility.charAt(0).toUpperCase() + formattedUtility.slice(1);
+  };
+
+  const handleAddUtilityButtonClick = (event) => {
+    setAddUtilityAnchorElement(event.currentTarget);
+  };
+
+  const handleAddUtilityClose = () => {
+    setAddUtilityAnchorElement(null);
+  };
+
+  const handleAddUtility = (utility) => {
+    const updatedMappedUtilities = { ...mappedUtilitiesPaidBy };
+    updatedMappedUtilities[utility] = "owner";
+    setMappedUtilitiesPaidBy(updatedMappedUtilities);
+
+    const updatedNewUtilitiesMappedBy = { ...newUtilitiesPaidBy };
+    updatedNewUtilitiesMappedBy[utility] = "owner";
+    setNewUtilitiesPaidBy(updatedNewUtilitiesMappedBy);
+
+    console.log(`Adding utility: ${utility}`);
+    handleAddUtilityClose();
+  };
+
+  
+
+  const mapUIDsToUtilities = (propertyUtilities) => {    
+    if (!propertyUtilities) {
+      return {};
+    }
+    console.log("----- in mapUIDsToUtilities, input - ", propertyUtilities);
+    const mappedUtilities = {};
+    for (const key of Object.keys(propertyUtilities)) {
+      const utilityName = utilitiesMap.get(key);
+      const entityName = entitiesMap.get(propertyUtilities[key]);
+
+      if (utilityName && entityName) {
+        mappedUtilities[utilityName] = entityName;
+      }
+    }
+
+    console.log("----- in mapUIDsToUtilities, mappedUtilities - ", mappedUtilities);
+    return mappedUtilities;
+  };
+
+  const utilitiesObject = JSON.parse(property.property_utilities);
+  let utilitiesInUIDForm = {};
+  let mappedUtilities2 = {};
+
+  const handleUtilityChange = (utility, entity) => {
+    const utilityObject = { [utility]: `${entity}` };
+    setHasUtilitiesChanges(true);
+    // console.log("----- handleUtilityChange called - ", utilityObject);    
+
+    setMappedUtilitiesPaidBy((prevState) => ({
+      ...prevState,
+      [utility]: prevState.hasOwnProperty(utility) ? entity : prevState[utility],
+    }));    
+    setNewUtilitiesPaidBy((prevState) => ({
+      ...(prevState.hasOwnProperty(utility) ? { ...prevState, [utility]: entity } : prevState),
+    }));
+  };
+
+  const mapUtilitiesAndEntitiesToUIDs = (utilitiesObject) => {
+    const mappedResults = {};
+
+    for (const [key, value] of Object.entries(utilitiesObject)) {
+      const utilityUID = reverseUtilitiesMap.get(key);
+      const entityUID = reverseEntitiesMap.get(value);
+
+      if (utilityUID && entityUID) {
+        mappedResults[utilityUID] = entityUID;
+      }
+    }
+
+    return mappedResults;
+  };
+
   useEffect(() => {
     const getLeaseFees = () => {
       console.log('is it here---', property, application);
@@ -342,6 +471,25 @@ const TenantLease = () => {
     getLeaseFees();
     getOccupants();
     getListDetails();
+
+
+    //*************************************UTILITIES********************************************************* */
+    if (utilitiesObject) {      
+      for (const utility of utilitiesObject) {
+        console.log(utility.utility_type_id, utility.utility_payer_id);
+        utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
+      }
+      // console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
+      
+      mappedUtilities2 = mapUIDsToUtilities(utilitiesInUIDForm);
+      // console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
+      // console.log("   ", mappedUtilities2);      
+      setMappedUtilitiesPaidBy(mappedUtilities2);
+    } else {
+      setMappedUtilitiesPaidBy(defaultUtilities);
+      setIsDefaultUtilities(true);
+    }   
+    //******************************************************************************************************* */
   }, []);
 
   // const addFeeRow = () => {
@@ -660,6 +808,26 @@ const TenantLease = () => {
     return true;
   };
 
+  const putUtilitiesData = async () => {
+    if (hasUtilitiesChanges) {
+      const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
+      const utilitiesFormData = new FormData();
+      utilitiesFormData.append("property_uid", property.property_uid);
+      utilitiesFormData.append("property_utility", utilitiesJSONString);
+
+      setShowSpinner(true);
+      await fetch(`${APIConfig.baseURL.dev}/utilities`, {
+        method: "PUT",
+        body: utilitiesFormData,
+      });
+      setShowSpinner(false);
+
+      console.log("Utilities changes saved.");
+    } else {
+      console.log("No changes for utilities.");
+    }
+  };
+
   const handleCreateLease = async () => {
     try {
       setShowMissingFieldsPrompt(false);
@@ -729,6 +897,9 @@ const TenantLease = () => {
       //     body: leaseApplicationFormData
       //   }
       // );
+      if (hasUtilitiesChanges) {
+        await putUtilitiesData();
+      }
       await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "PUT",
         body: leaseApplicationFormData,
@@ -963,20 +1134,6 @@ const TenantLease = () => {
   const [utilities, setUtilities] = useState([]);
   const [remainingUtils, setRemainingUtils] = useState([]);
 
-  const utilitiesMap = new Map([
-    ["050-000001", "electricity"],
-    ["050-000002", "water"],
-    ["050-000003", "gas"],
-    ["050-000004", "trash"],
-    ["050-000005", "sewer"],
-    ["050-000006", "internet"],
-    ["050-000007", "cable"],
-    ["050-000008", "hoa dues"],
-    ["050-000009", "security system"],
-    ["050-000010", "pest control"],
-    ["050-000011", "gardener"],
-    ["050-000012", "maintenance"],
-  ]);
 
   const handleNewUtilityChange = (e, newUtility, utilityIndex) => {
     const { value } = e.target;
@@ -1912,11 +2069,97 @@ const TenantLease = () => {
             </AccordionDetails>
           </Accordion>
         </Paper>
-        <Paper sx={{  marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
-            <UtilitiesManager newUtilities={newUtilities} utils={utilities}
-                utilitiesMap={utilitiesMap} handleNewUtilityChange={handleNewUtilityChange}
-                remainingUtils={remainingUtils} setRemainingUtils={setRemainingUtils}
-                setNewUtilities={setNewUtilities} fromTenantLease={true}/>
+        <Paper sx={{  marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main, }}>
+        <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>                        
+            <Grid container columnSpacing={2} rowSpacing={3}>
+              <Grid item xs={12}>
+                <Typography
+                  variant="h6" sx={{ fontWeight: "bold" }}
+                >
+                    Utilities
+                </Typography>
+              </Grid>
+            </Grid>
+          </AccordionSummary>
+
+          <AccordionDetails>
+            <Grid container columnSpacing={2} rowSpacing={3} sx={{padding: '10px',}}>
+              {isDefaultUtilities && (
+                <Grid item xs={12}>
+                  <Typography sx={{ fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.smallFont }}>{`<--Displaying Default Utilities-->`}</Typography>
+                </Grid>
+              )}
+              {Object.entries(mappedUtilitiesPaidBy).length > 0
+                ? Object.entries(mappedUtilitiesPaidBy).map(([utility, selectedValue]) => (
+                    <Fragment key={utility}>
+                      <Grid item xs={6}>
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
+                          {formatUtilityName(utility)}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <FormControlLabel
+                          value='owner'
+                          control={<Radio checked={selectedValue === "owner"} onChange={() => handleUtilityChange(utility, "owner")} />}
+                          label='Owner'
+                        />
+                        <FormControlLabel
+                          value='tenant'
+                          control={<Radio checked={selectedValue === "tenant"} onChange={() => handleUtilityChange(utility, "tenant")} />}
+                          label='Tenant'
+                        />
+                      </Grid>
+                    </Fragment>
+                  ))
+                : Object.entries(defaultUtilities).map(([utility, selectedValue]) => (
+                    <Fragment key={utility}>
+                      <Grid item xs={6}>
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
+                          {formatUtilityName(utility)}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <FormControlLabel
+                          value='owner'
+                          control={<Radio checked={selectedValue === "owner"} onChange={() => handleUtilityChange(utility, "owner")} />}
+                          label='Owner'
+                        />
+                        <FormControlLabel
+                          value='tenant'
+                          control={<Radio checked={selectedValue === "tenant"} onChange={() => handleUtilityChange(utility, "tenant")} />}
+                          label='Tenant'
+                        />
+                      </Grid>
+                    </Fragment>
+                  ))
+              }
+              <Grid item xs={12}>
+                <Button
+                  variant='outlined'
+                  onClick={handleAddUtilityButtonClick}
+                  sx={{
+                    backgroundColor: "#3D5CAC",
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    textTransform: "none",
+                  }}
+                >
+                  Add Utility <ArrowDropDownIcon />
+                </Button>
+                <Menu anchorEl={addUtilityAnchorElement} open={Boolean(addUtilityAnchorElement)} onClose={handleAddUtilityClose}>
+                  {keysNotInUtilitiesMap.map((utility, index) => (
+                    <MenuItem key={index} onClick={() => handleAddUtility(utility)}>
+                      {formatUtilityName(utility)}
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </Grid>  
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
+            
+                              
         </Paper>
 
         {/* Submit Button */}
