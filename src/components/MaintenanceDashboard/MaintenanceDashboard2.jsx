@@ -232,7 +232,7 @@ export default function MaintenanceDashboard2() {
     // console.log("user - ", user);
     if (prevUserStateRef.current !== userState) {
       prevUserStateRef.current = userState;
-      console.log("User state has deeply changed:", userState);
+      // console.log("User state has deeply changed:", userState);
       if (dataLoaded === false) {
         setShowSpinner(true);
         if (selectedRole === "MAINT_EMPLOYEE") dashboard_id = user.businesses?.MAINTENANCE?.business_uid || user?.maint_supervisor;
@@ -257,10 +257,10 @@ export default function MaintenanceDashboard2() {
     setShowMaintenanceDetail(true);
   };
 
-  const refreshMaintenanceData = () => {    
+  const refreshMaintenanceData = () => {
     getMaintenanceData();
     setShowMaintenanceDetail(false);
-  }
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -320,19 +320,19 @@ export default function MaintenanceDashboard2() {
               <Grid item xs={12} md={8} columnSpacing={6} rowGap={4}>
                 <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", borderRadius: "10px", height: "400px" }}>
                   <Stack direction='row' justifyContent='center' width='100%' sx={{ marginBottom: "15px", marginTop: "0px" }}>
-                    <Typography variant='h5' sx={{ fontWeight: "bold", color: "#160449", marginTop: '20px', }}>
+                    <Typography variant='h5' sx={{ fontWeight: "bold", color: "#160449", marginTop: "20px" }}>
                       Current Activity
                     </Typography>
                   </Stack>
-                  <Grid 
+                  <Grid
                     container
                     sx={{
                       display: "flex",
                       flexDirection: isMobile ? "column" : "row", // Switch layout direction based on screen size
                       justifyContent: "space-between",
                     }}
-                    rowSpacing={isMobile ? 30 : 200}  // Add spacing between rows in mobile
-                    columnSpacing={isMobile ? 0 : 10}  // Remove column spacing in mobile
+                    rowSpacing={isMobile ? 30 : 200} // Add spacing between rows in mobile
+                    columnSpacing={isMobile ? 0 : 10} // Remove column spacing in mobile
                   >
                     <Grid item xs={12} md={6} sx={{ marginBottom: "0px", marginTop: "0px" }}>
                       <RadialBarChart data={graphData} />
@@ -345,19 +345,24 @@ export default function MaintenanceDashboard2() {
                   </Grid>
                 </Grid>
                 {isMobile && (
-          <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", 
-          display: "flex",
-          justifyContent: "center",  // Horizontally center the widget
-          alignItems: "center",      // Vertically center the widget
-          borderRadius: "10px",
-          marginTop: "20px",
-       }}>
-            <MaintenanceCashflowWidget data={cashflowData} />
-          </Grid>
-        )}
+                  <Grid
+                    item
+                    xs={12}
+                    sx={{
+                      backgroundColor: "#F2F2F2",
+                      display: "flex",
+                      justifyContent: "center", // Horizontally center the widget
+                      alignItems: "center", // Vertically center the widget
+                      borderRadius: "10px",
+                      marginTop: "20px",
+                    }}
+                  >
+                    <MaintenanceCashflowWidget data={cashflowData} />
+                  </Grid>
+                )}
                 <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", borderRadius: "10px", height: "600px" }}>
-                  <Stack direction='row' justifyContent='center' width='100%' sx={{ marginBottom: "15px", marginTop: "15px", }}>
-                    <Typography variant='h5' sx={{ fontWeight: "bold", color: "#160449", marginTop: '20px', }}>
+                  <Stack direction='row' justifyContent='center' width='100%' sx={{ marginBottom: "15px", marginTop: "15px" }}>
+                    <Typography variant='h5' sx={{ fontWeight: "bold", color: "#160449", marginTop: "20px" }}>
                       Revenue
                     </Typography>
                   </Stack>
@@ -373,9 +378,9 @@ export default function MaintenanceDashboard2() {
 }
 
 const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, allMaintenanceStatusData, onSelectRequest }) => {
-  let navigate = useNavigate();  
+  let navigate = useNavigate();
   const colorStatus = theme.colorStatusMM;
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [showSpinner, setShowSpinner] = useState(false);
   const convertTimeTo12HourFormat = (time) => {
     const [hours, minutes] = time.split(":");
@@ -385,7 +390,6 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
 
     return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit", hour12: true });
   };
-  
 
   const colors = ["#B33A3A", "#FFAA00", "#FFC107"];
 
@@ -393,7 +397,7 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
   const [showPropertyFilter, setShowPropertyFilter] = useState(false);
   const [month, setMonth] = useState(null);
   const [year, setYear] = useState(null);
-  const [filterPropertyList, setFilterPropertyList] = useState([]);  
+  const [filterPropertyList, setFilterPropertyList] = useState([]);
 
   useEffect(() => {
     if (maintenanceRequests) {
@@ -454,11 +458,10 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
   };
 
   const filteredMaintenanceRequests = filterCheckedAddresses(maintenanceRequests, filterPropertyList);
-  
 
   let maintenanceRequestsByQuoteStatus = {}; // Quotes Requested, Quotes submitted etc.
   let maintenanceRequestsByStatus = {}; // ACCEPTED, FINISHED etc.
-  const filterAllMaintenanceData = (filteredMaintenanceRequests) => {    
+  const filterAllMaintenanceData = (filteredMaintenanceRequests) => {
     // if(filteredMaintenanceRequests == null || Object.keys(filteredMaintenanceRequests)?.length === 0){
     //   return;
     // }
@@ -467,51 +470,46 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
       //const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/600-000012`);
       //const data = await response.json();
       //console.log('-----data inside workerMaintenanceTable----', data);
-     
 
       const addresses = new Set();
-      for (const status in filteredMaintenanceRequests.result) {          
-          if (Array.isArray(filteredMaintenanceRequests.result[status]?.maintenance_items)) {            
-            filteredMaintenanceRequests.result[status]?.maintenance_items.forEach(item => {
-                  addresses.add(item.property_address);
-              });
-          }
+      for (const status in filteredMaintenanceRequests.result) {
+        if (Array.isArray(filteredMaintenanceRequests.result[status]?.maintenance_items)) {
+          filteredMaintenanceRequests.result[status]?.maintenance_items.forEach((item) => {
+            addresses.add(item.property_address);
+          });
+        }
       }
-      
 
-      const filterMaintenanceRequests = (allMaintenanceStatusData, address) => {        
+      const filterMaintenanceRequests = (allMaintenanceStatusData, address) => {
         const filteredRequests = {};
-        for (const status in allMaintenanceStatusData.result) {            
-            // Check if maintenance_items exists and is an array
-            if (allMaintenanceStatusData.result[status].maintenance_items.length > 0) {
-                
-                filteredRequests[status] = {
-                  ...allMaintenanceStatusData.result[status],
-                  maintenance_items: allMaintenanceStatusData.result[status].maintenance_items.filter(item => address.includes(item.property_address))
-                  
-              };
-            } else {
-                filteredRequests[status] = {
-                    ...allMaintenanceStatusData.result[status],
-                    maintenance_items: []
-                };
-            }
-        }        
+        for (const status in allMaintenanceStatusData.result) {
+          // Check if maintenance_items exists and is an array
+          if (allMaintenanceStatusData.result[status].maintenance_items.length > 0) {
+            filteredRequests[status] = {
+              ...allMaintenanceStatusData.result[status],
+              maintenance_items: allMaintenanceStatusData.result[status].maintenance_items.filter((item) => address.includes(item.property_address)),
+            };
+          } else {
+            filteredRequests[status] = {
+              ...allMaintenanceStatusData.result[status],
+              maintenance_items: [],
+            };
+          }
+        }
         return filteredRequests;
       };
       const data = filterMaintenanceRequests(filteredMaintenanceRequests, Array.from(addresses));
 
       //console.log('-----data inside workerMaintenanceTable----', data);
       //console.log('-----filteredRequests inside workerMaintenanceTable----', filteredMaintenanceRequests);
-      
 
       const statusMappings = [
-        { status: 'Quotes Requested', mapping: 'REQUESTED' },
-        { status: 'Quotes Submitted', mapping: 'SUBMITTED' },
-        { status: 'Quotes Accepted', mapping: 'ACCEPTED' },
-        { status: 'Scheduled', mapping: 'SCHEDULED' },
-        { status: 'Finished', mapping: 'FINISHED' },
-        { status: 'Paid', mapping: 'PAID' },
+        { status: "Quotes Requested", mapping: "REQUESTED" },
+        { status: "Quotes Submitted", mapping: "SUBMITTED" },
+        { status: "Quotes Accepted", mapping: "ACCEPTED" },
+        { status: "Scheduled", mapping: "SCHEDULED" },
+        { status: "Finished", mapping: "FINISHED" },
+        { status: "Paid", mapping: "PAID" },
       ];
 
       const result = {};
@@ -525,11 +523,11 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
         }
       });
       //console.log('status table---', result);
-            
+
       maintenanceRequestsByQuoteStatus = result;
-      maintenanceRequestsByStatus = tempdata;      
+      maintenanceRequestsByStatus = tempdata;
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     }
   };
 
@@ -537,16 +535,15 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
 
   //console.log('----filteredMaintenanceRequests-----', filteredMaintenanceRequests);
 
-  async function handleRequestDetailPage(maintenance_request_index, mapping, property_uid, maintenance_request_uid) {        
-    const colorStatusItem = colorStatus?.find(item => item.mapping === mapping)
-    const status = colorStatusItem.status;    
-    
+  async function handleRequestDetailPage(maintenance_request_index, mapping, property_uid, maintenance_request_uid) {
+    const colorStatusItem = colorStatus?.find((item) => item.mapping === mapping);
+    const status = colorStatusItem.status;
+
     //console.log("maintenance_request_index", maintenance_request_index)
     //console.log("status", status);
     //console.log("maintenanceItemsForStatus", maintenanceItemsForStatus);
     //console.log("inside func allMaintenanceData", allMaintenanceData);
     if (isMobile) {
-
       navigate(`/workerMaintenance/detail`, {
         state: {
           maintenance_request_index,
@@ -557,13 +554,8 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
         },
       });
     } else {
-      onSelectRequest(
-        maintenance_request_index, 
-        status, 
-        maintenanceRequestsByQuoteStatus[status], 
-        maintenanceRequestsByStatus, 
-        maintenance_request_uid
-      )	}
+      onSelectRequest(maintenance_request_index, status, maintenanceRequestsByQuoteStatus[status], maintenanceRequestsByStatus, maintenance_request_uid);
+    }
   }
 
   return (
@@ -632,10 +624,10 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
             </Grid>
 
             <Grid item xs={12}>
-              <WorkOrdersAccordion 
-                maintenanceRequests={filteredMaintenanceRequests}                
+              <WorkOrdersAccordion
+                maintenanceRequests={filteredMaintenanceRequests}
                 allMaintenanceStatusData={allMaintenanceStatusData}
-                onSelectRequest={onSelectRequest} 
+                onSelectRequest={onSelectRequest}
                 maintenanceRequestsByQuoteStatus={maintenanceRequestsByQuoteStatus}
                 maintenanceRequestsByStatus={maintenanceRequestsByStatus}
               />
@@ -646,10 +638,10 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
                 style={{
                   borderRadius: "5px",
                   backgroundColor: "#FFFFFF",
-                  height: (isMobile || todayData?.length === 0) ? 150 : 460,
+                  height: isMobile || todayData?.length === 0 ? 150 : 460,
                   width: "85%",
                   margin: "auto",
-                  padding: '10px',
+                  padding: "10px",
                 }}
               >
                 <Grid item xs={12}>
@@ -665,57 +657,52 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
                       const formattedTime = convertTimeTo12HourFormat(row.maintenance_scheduled_time);
                       return (
                         <>
-                          
                           <Grid
                             container
                             key={index}
                             sx={{
-                                backgroundColor: colors[index % colors.length], // Background color based on index
-                                color: "white",
-                                borderRadius: "10px",
-                                marginBottom: 2,
-                                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", // Shadow for better appearance
-                                padding: 2, // Add padding for spacing inside the Grid item
+                              backgroundColor: colors[index % colors.length], // Background color based on index
+                              color: "white",
+                              borderRadius: "10px",
+                              marginBottom: 2,
+                              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", // Shadow for better appearance
+                              padding: 2, // Add padding for spacing inside the Grid item
                             }}
                             onClick={() => {
-                              const key = row.maintenance_status
+                              const key = row.maintenance_status;
                               const index = filteredMaintenanceRequests[key].findIndex((item) => item.maintenance_request_uid === row.maintenance_request_uid);
                               handleRequestDetailPage(index, row.maintenance_status, row.maintenance_property_id, row.maintenance_request_uid);
                             }}
                           >
-                            <Grid item xs={12} sm={3} display="flex" alignItems="center">
-                                <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>{formattedTime}</Typography>
+                            <Grid item xs={12} sm={3} display='flex' alignItems='center'>
+                              <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>{formattedTime}</Typography>
                             </Grid>
-                            
-                            <Grid container item xs={12} sm={9} direction="row" sx={{ overflow: "hidden", textOverflow: "ellipsis" }}>
-                              <Grid container item xs={12} direction="row" sx={{ overflow: "hidden",}}>
+
+                            <Grid container item xs={12} sm={9} direction='row' sx={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+                              <Grid container item xs={12} direction='row' sx={{ overflow: "hidden" }}>
                                 <Grid item xs={3}>
                                   <Typography sx={{ fontSize: "0.8rem" }}>
-                                      <strong>Address:</strong>
+                                    <strong>Address:</strong>
                                   </Typography>
                                 </Grid>
-                                <Grid container item direction="column" xs={9}>
+                                <Grid container item direction='column' xs={9}>
+                                  <Typography sx={{ marginLeft: 1, fontSize: "0.8rem" }}>{row.property_address}</Typography>
                                   <Typography sx={{ marginLeft: 1, fontSize: "0.8rem" }}>
-                                      {row.property_address}
+                                    {row.property_city}, {row.property_state} {row.property_zip}
                                   </Typography>
-                                  <Typography sx={{ marginLeft: 1, fontSize: "0.8rem" }}>
-                                      {row.property_city}, {row.property_state} {row.property_zip}
-                                  </Typography>
-                                </Grid>    
+                                </Grid>
                               </Grid>
-                              <Grid container item xs={12} direction="row" sx={{ overflow: "hidden",}}>
+                              <Grid container item xs={12} direction='row' sx={{ overflow: "hidden" }}>
                                 <Grid item xs={3}>
                                   <Typography sx={{ fontSize: "0.8rem" }}>
-                                      <strong>Issue:</strong>
+                                    <strong>Issue:</strong>
                                   </Typography>
                                 </Grid>
-                                <Grid container item direction="column" xs={9}>
-                                  <Typography sx={{ marginLeft: 1, fontSize: "0.8rem" }}>
-                                    {row.maintenance_title}
-                                  </Typography>                                  
-                                </Grid>    
-                              </Grid>                                                                 
-                            </Grid>                            
+                                <Grid container item direction='column' xs={9}>
+                                  <Typography sx={{ marginLeft: 1, fontSize: "0.8rem" }}>{row.maintenance_title}</Typography>
+                                </Grid>
+                              </Grid>
+                            </Grid>
                           </Grid>
                         </>
                       );
@@ -791,7 +778,7 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
 };
 
 const WorkOrdersAccordion = ({ maintenanceRequests, maintenanceRequestsByQuoteStatus, maintenanceRequestsByStatus, allMaintenanceStatusData, onSelectRequest }) => {
-  const colorStatus = theme.colorStatusMM;  
+  const colorStatus = theme.colorStatusMM;
   const [query, setQuery] = useState("");
 
   // function handleFilter(filterString, searchArray) {
@@ -806,7 +793,7 @@ const WorkOrdersAccordion = ({ maintenanceRequests, maintenanceRequestsByQuoteSt
 
   return (
     <>
-      <Grid item xs={12} sx={{ width: "90%", margin: "auto", }}>
+      <Grid item xs={12} sx={{ width: "90%", margin: "auto" }}>
         {colorStatus.map((item, index) => {
           let mappingKey = item.mapping;
           let maintenanceArray = maintenanceRequests[mappingKey] || [];
@@ -820,7 +807,7 @@ const WorkOrdersAccordion = ({ maintenanceRequests, maintenanceRequestsByQuoteSt
               maintenanceItemsForStatus={maintenanceArray}
               allMaintenanceData={maintenanceRequests}
               maintenanceRequestsByQuoteStatus={maintenanceRequestsByQuoteStatus}
-              maintenanceRequestsByStatus={maintenanceRequestsByStatus}              
+              maintenanceRequestsByStatus={maintenanceRequestsByStatus}
               allMaintenanceStatusData={allMaintenanceStatusData}
               maintenanceRequestsCount={maintenanceArray}
               onSelectRequest={onSelectRequest}

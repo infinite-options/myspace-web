@@ -35,7 +35,7 @@ const useStyles = makeStyles({
 });
 
 function ManagerDashboard() {
-  console.log("Rendering Manager Dashboard");
+  // console.log("Rendering Manager Dashboard");
 
   const navigate = useNavigate();
   const { getProfileId, user, selectedRole } = useUser();
