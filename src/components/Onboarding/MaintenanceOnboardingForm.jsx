@@ -50,10 +50,6 @@ import { useCookies } from "react-cookie";
 // import DashboardTab from "../TenantDashboard/NewDashboardTab";
 import APIConfig from "../../utils/APIConfig";
 
-// import AdultOccupant from "../Leases/AdultOccupant";
-// import ChildrenOccupant from "../Leases/ChildrenOccupant";
-// import PetsOccupant from "../Leases/PetsOccupant";
-// import VehiclesOccupant from "../Leases/VehiclesOccupant";
 import Documents from "../Leases/Documents";
 // import { add } from "date-fns";
 

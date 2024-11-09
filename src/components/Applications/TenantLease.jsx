@@ -223,10 +223,14 @@ const TenantLease = () => {
     }
   ]);
   // const [adults, setAdults] = useState([{ id: 1, name: "", lastName: "", relation: "", dob: "" }]);
+  // const [children, setChildren] = useState([{ id: 1, name: "", lastName: "", relation: "", dob: "" }]);
+  // const [pets, setPets] = useState([{ id: 1, name: "", breed: "", type: "", weight: "" }]);
+  // const [vehicles, setVehicles] = useState([{ id: 1, make: "", model: "", year: "", license: "", state: "" }]);
   const [adults, setAdults] = useState([]);
-  const [children, setChildren] = useState([{ id: 1, name: "", lastName: "", relation: "", dob: "" }]);
-  const [pets, setPets] = useState([{ id: 1, name: "", breed: "", type: "", weight: "" }]);
-  const [vehicles, setVehicles] = useState([{ id: 1, make: "", model: "", year: "", license: "", state: "" }]);
+  const [children, setChildren] = useState([]);
+  const [pets, setPets] = useState([]);
+  const [vehicles, setVehicles] = useState([]);
+
   const adultsRef = useRef(adults);
   const childrenRef = useRef(children);
   const petsRef = useRef(pets);
@@ -256,13 +260,21 @@ const TenantLease = () => {
     propertyImage = images.length > 0 ? images[0] : defaultHouseImage;
   }
 
-  useEffect(() => {
-    console.log("leaseAdults - ", leaseAdults)
-    console.log("leaseChildren - ", leaseChildren)
-    console.log("leasePets - ", leasePets)
-    console.log("leaseVehicles - ", leaseVehicles)
+  // useEffect(() => {
+  //   console.log("260 - leaseAdults - ", leaseAdults)
+  //   console.log("260 - leaseChildren - ", leaseChildren)
+  //   console.log("260 - leasePets - ", leasePets)
+  //   console.log("260 - leaseVehicles - ", leaseVehicles)
 
-  }, [leaseAdults, leaseChildren, leasePets, leaseVehicles]);
+  // }, [leaseAdults, leaseChildren, leasePets, leaseVehicles]);
+
+  // useEffect(() => {
+  //   console.log("268 - adults - ", adults)
+  //   console.log("268 - children - ", children)
+  //   console.log("268 - pets - ", pets)
+  //   console.log("268 - vehicles - ", vehicles)
+
+  // }, [adults, children, pets, vehicles]);
 
   const getListDetails = () => {    
     const relationships = getList("relationships");    
@@ -1808,11 +1820,11 @@ const TenantLease = () => {
                       adultsRef={adultsRef}
                       modifiedData={modifiedData}
                       setModifiedData={setModifiedData}
-                      dataKey={"tenant_adult_occupants"}
+                      dataKey={"lease_adult_occupants"}
                       isEditable={true}
                     />
                   )}
-                  {/* {children && (
+                  {children && (
                     <ChildrenOccupant
                       leaseChildren={children}
                       setLeaseChildren={setChildren}
@@ -1821,7 +1833,7 @@ const TenantLease = () => {
                       childrenRef={childrenRef}
                       modifiedData={modifiedData}
                       setModifiedData={setModifiedData}
-                      dataKey={"tenant_children_occupants"}
+                      dataKey={"lease_children_occupants"}
                       isEditable={true}
                     />
                   )}
@@ -1833,7 +1845,7 @@ const TenantLease = () => {
                       petsRef={petsRef}
                       modifiedData={modifiedData}
                       setModifiedData={setModifiedData}
-                      dataKey={"tenant_pet_occupants"}
+                      dataKey={"lease_pet_occupants"}
                       isEditable={true}
                     />
                   )}
@@ -1846,11 +1858,11 @@ const TenantLease = () => {
                       vehiclesRef={vehiclesRef}
                       modifiedData={modifiedData}
                       setModifiedData={setModifiedData}
-                      dataKey={"tenant_vehicle_info"}
+                      dataKey={"lease_vehicle_info"}
                       ownerOptions={[...adults, ...children]}
                       isEditable={true}
                     />
-                  )} */}
+                  )}
                 </>
               )
             }

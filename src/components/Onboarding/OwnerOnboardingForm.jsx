@@ -51,10 +51,6 @@ import { useCookies } from "react-cookie";
 import APIConfig from "../../utils/APIConfig";
 import ListsContext from "../../contexts/ListsContext";
 import GenericDialog from "../GenericDialog";
-// import AdultOccupant from "../Leases/AdultOccupant";
-// import ChildrenOccupant from "../Leases/ChildrenOccupant";
-// import PetsOccupant from "../Leases/PetsOccupant";
-// import VehiclesOccupant from "../Leases/VehiclesOccupant";
 // import Documents from "../Leases/Documents";
 
 const useStyles = makeStyles((theme) => ({

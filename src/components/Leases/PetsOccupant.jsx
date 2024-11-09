@@ -71,8 +71,8 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isEditable }) => {
-    console.log('Inside Pets occupants', leasePets);
+const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isEditable }) => {
+    // console.log('Inside Pets occupants', leasePets);
     const [pets, setPets] = useState([]);
     const [open, setOpen] = useState(false);
     const [currentRow, setCurrentRow] = useState(null);
@@ -97,8 +97,9 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
         if (leasePets && leasePets.length > 0) {
             console.log('leasePets', leasePets, typeof (leasePets));
             //Need Id for datagrid
-            const petsWithIds = leasePets.map((pet, index) => ({ ...pet, id: index }));
-            setPets(petsWithIds);
+            // const petsWithIds = leasePets.map((pet, index) => ({ ...pet, id: index }));
+            // setPets(petsWithIds);
+            setPets(leasePets);
         }
     }, [leasePets]);
 
@@ -133,6 +134,15 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
                 const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
                 setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
                 setIsUpdated(true);
+                if(setLeasePets){
+                    setLeasePets((prevLeasePets) =>
+                        prevLeasePets.map((pet) => 
+                            pet.id === currentRow.id 
+                                ? { ...pet, ...currentRow }
+                                : pet
+                        )
+                    );
+                }
             } else {
                 showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
             }
@@ -141,6 +151,12 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
             const {id, ...newRowwithoutid} = currentRow
             setModifiedData((prev) => [...prev, { key: dataKey, value: [...leasePets, { ...newRowwithoutid }] }])
             setIsUpdated(true);
+            if(setLeasePets){
+                setLeasePets((prevLeasePets) => [             
+                    ...prevLeasePets,
+                    currentRow,
+                ]);
+            }
         }
     };
 
@@ -213,7 +229,7 @@ const PetsOccupant = ({ leasePets, editOrUpdateLease, setModifiedData, modifiedD
                         fontSize: theme.typography.smallFont,
                         margin: "5px",
                     }}
-                    onClick={() => { setCurrentRow({ id: null, name: '', last_name: '', type: '', breed: '', weight: '', owner: '' }); handleOpen(); }}>
+                    onClick={() => { setCurrentRow({ id: pets?.length + 1, name: '', last_name: '', type: '', breed: '', weight: '', owner: '' }); handleOpen(); }}>
                     <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
                 </Button>}
             </Box>

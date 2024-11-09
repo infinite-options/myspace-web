@@ -366,10 +366,41 @@ const closeDialog = () => {
       setLicenseState(profileData.tenant_drivers_license_state || "");
       setLicenseExp(profileData.tenant_drivers_license_exp || "");
 
-      setAdults(JSON.parse(profileData.tenant_adult_occupants) || []);
-      setChildren(JSON.parse(profileData.tenant_children_occupants) || []);
-      setPets(JSON.parse(profileData.tenant_pet_occupants) || []);
-      setVehicles(JSON.parse(profileData.tenant_vehicle_info) || []);
+      // setAdults(JSON.parse(profileData.tenant_adult_occupants) || []);
+      const parsedAdults = JSON.parse(profileData.tenant_adult_occupants) || [];
+      setAdults(parsedAdults?.map((adult, index) => {
+        return {
+          ...adult,
+          id: index + 1,
+        }
+      }));
+      
+      // setChildren(JSON.parse(profileData.tenant_children_occupants) || []);
+      const parsedChildren = JSON.parse(profileData.tenant_children_occupants) || [];
+      setChildren(parsedChildren?.map((child, index) => {
+        return {
+          ...child,
+          id: index + 1,
+        }
+      }));
+      
+      // setPets(JSON.parse(profileData.tenant_pet_occupants) || []);
+      const parsedPets = JSON.parse(profileData.tenant_pet_occupants) || [];
+      setPets(parsedPets?.map((pet, index) => {
+        return {
+          ...pet,
+          id: index + 1,
+        }
+      }));
+
+      // setVehicles(JSON.parse(profileData.tenant_vehicle_info) || []);
+      const parsedVehicles = JSON.parse(profileData.tenant_vehicle_info) || [];
+      setVehicles(parsedVehicles?.map((vehicle, index) => {
+        return {
+          ...vehicle,
+          id: index + 1,
+        }
+      }));
 
       const parsedDocs = JSON.parse(profileData.tenant_documents);
       // console.log("parsedDocs - ", parsedDocs);
