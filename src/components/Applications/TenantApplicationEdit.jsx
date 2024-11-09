@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import {
     ThemeProvider, Box, Paper, Typography, Grid, Snackbar, Alert, AlertTitle, Accordion, AccordionSummary, AccordionDetails, FormControlLabel, Checkbox, Divider,
     Button
@@ -17,10 +17,17 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useUser } from "../../contexts/UserContext";
 import CloseIcon from "@mui/icons-material/Close";
 import ListsContext from "../../contexts/ListsContext";
+import CryptoJS from "crypto-js";
+import AES from "crypto-js/aes";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
 
 
-export default function TenantApplicationEdit({ profileData, lease, lease_uid, setRightPane, property, from, tenantDocuments, setTenantDocuments, oldVehicles, setOldVehicles, adultOccupants, setAdultOccupants, petOccupants, setPetOccupants, childOccupants, setChildOccupants, extraUploadDocument, setExtraUploadDocument, extraUploadDocumentType, setExtraUploadDocumentType, deleteDocuments }) {
-    // const { getList, } = useContext(ListsContext);
+export default function TenantApplicationEdit({ profileData, lease, lease_uid, setRightPane, property, from, tenantDocuments, setTenantDocuments, oldVehicles, setOldVehicles, adultOccupants, setAdultOccupants, petOccupants, setPetOccupants, childOccupants, setChildOccupants, extraUploadDocument, setExtraUploadDocument, extraUploadDocumentType, setExtraUploadDocumentType, deleteDocuments, status }) {
+    const { getList, } = useContext(ListsContext);
+    console.log("profile data", profileData);
     const [adults, setAdults] = useState(adultOccupants? adultOccupants : []);
     const [children, setChildren] = useState(childOccupants? childOccupants : []);
     const [pets, setPets] = useState(petOccupants? petOccupants : []);
@@ -141,7 +148,8 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
 
         // setIsSave(false);
         // setProfileData();
-    }, [lease_uid, isReload]);
+        getListDetails()
+    }, []);
 
     const editOrUpdateLease = async () => {
         // console.log('--dhyey-- inside edit lease - ', modifiedData);
@@ -502,6 +510,183 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
         console.log("updated state", updatedState);
         setRightPane?.({ type: "tenantApplication", state: updatedState });
     };
+
+
+    //everything from here -- Abhinav 
+    const getDecryptedSSN = (encryptedSSN) => {
+        try {
+          const decrypted = AES.decrypt(encryptedSSN, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8);
+          // console.log("getDecryptedSSN - decrypted - ", decrypted.toString());
+          return "***-**-" + decrypted.toString().slice(-4);
+        } catch (error) {
+          console.error('Error decrypting SSN:', error);
+          return '';
+        }
+      };
+
+      const [showWithdrawLeaseDialog, setShowWithdrawLeaseDialog] = useState(false);
+
+      const getListDetails = () => {    
+          const relationships = getList("relationships");
+          const states = getList("states");
+          setRelationships(relationships);
+          setStates(states);    		
+        };
+  
+      function handleWithdrawLease() {
+          const withdrawLeaseData = new FormData();
+          if (lease[0].lease_uid) {
+            withdrawLeaseData.append("lease_uid", lease[0].lease_uid);
+          }
+          else {
+            withdrawLeaseData.append("lease_property_id", property.property_uid);
+          }
+          withdrawLeaseData.append("lease_status", "WITHDRAWN");
+      
+          withdrawLeaseData.forEach((value, key) => {
+            console.log(`${key}: ${value}`);
+          });
+      
+          const withdrawLeaseResponse = fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+            method: "PUT",
+            body: withdrawLeaseData,
+          });
+      
+          Promise.all([withdrawLeaseResponse]).then((values) => {
+            //navigate("/listings"); // send success data back to the propertyInfo page
+            if (from === "PropertyInfo") {
+              setRightPane({ type: "listings" });
+              console.log("lease set right pane")
+            } else {
+              setRightPane("");
+              console.log("set right pane to nothing")
+            }
+          });
+        }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        // console.log('check date', dateString, date)
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${month}-${day}-${year}`;
+      }
+
+      const handleApplicationSubmit = async () => {
+        try {
+            let date = new Date();
+            const receiverPropertyMapping = {
+                [property.contract_business_id]: [property.contract_property_id],
+            };
+    
+            const leaseApplicationData = new FormData();
+            leaseApplicationData.append("lease_property_id", property.property_uid);
+    
+            if (lease.lease_status === "RENEW") {
+                const updateLeaseData = new FormData();
+                updateLeaseData.append("lease_uid", lease[0].lease_uid);
+                updateLeaseData.append("lease_renew_status", "TRUE");
+    
+                const updateLeaseResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+                    method: "PUT",
+                    body: updateLeaseData,
+                });
+    
+                if (!updateLeaseResponse.ok) {
+                    throw new Error("Failed to update lease status to RENEW.");
+                }
+                leaseApplicationData.append("lease_status", "RENEW NEW");
+            } else {
+                leaseApplicationData.append("lease_status", "NEW");
+            }
+    
+            leaseApplicationData.append("lease_assigned_contacts", JSON.stringify([getProfileId()]));
+            leaseApplicationData.append("lease_income", JSON.stringify(selectedJobs));
+    
+            let index = -1;
+            const documentsDetails = [];
+    
+            if (extraUploadDocument && extraUploadDocument.length !== 0) {
+                [...extraUploadDocument].forEach((file, i) => {
+                    index++;
+                    leaseApplicationData.append(`file_${index}`, file, file.name);
+                    const contentType = extraUploadDocumentType[i] || "";
+                    const documentObject = {
+                        fileIndex: index,
+                        fileName: file.name,
+                        contentType: contentType,
+                    };
+                    documentsDetails.push(documentObject);
+                });
+            }
+    
+            leaseApplicationData.append("lease_documents_details", JSON.stringify(documentsDetails));
+    
+            if (tenantDocuments && tenantDocuments.length !== 0) {
+                [...tenantDocuments].forEach((file, i) => {
+                    index++;
+                    const documentObject = {
+                        link: file.link,
+                        fileType: file.fileType,
+                        filename: file.filename,
+                        contentType: file.contentType,
+                    };
+                    leaseApplicationData.append(`file_${index}`, JSON.stringify(documentObject));
+                });
+            }
+    
+            if (deletedFiles && deletedFiles.length !== 0) {
+                leaseApplicationData.append("delete_documents", JSON.stringify(deletedFiles));
+            }
+    
+            // Use the updated state values for occupancy details
+            leaseApplicationData.append("lease_adults", JSON.stringify(adults));
+            leaseApplicationData.append("lease_children", JSON.stringify(children));
+            leaseApplicationData.append("lease_pets", JSON.stringify(pets));
+            leaseApplicationData.append("lease_vehicles", JSON.stringify(vehicles));
+            
+            leaseApplicationData.append("lease_referred", "[]");
+            leaseApplicationData.append("lease_fees", "[]");
+            leaseApplicationData.append("lease_application_date", formatDate(date.toLocaleDateString()));
+            leaseApplicationData.append("tenant_uid", getProfileId());
+    
+            const leaseApplicationResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+                method: "POST",
+                body: leaseApplicationData,
+            });
+    
+            const annoucementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    announcement_title: "New Tenant Application",
+                    announcement_msg: "You have a new tenant application for your property",
+                    announcement_sender: getProfileId(),
+                    announcement_date: date.toDateString(),
+                    announcement_properties: JSON.stringify(receiverPropertyMapping),
+                    announcement_mode: "LEASE",
+                    announcement_receiver: [property.contract_business_id],
+                    announcement_type: ["Email", "Text"],
+                }),
+            });
+    
+            Promise.all([annoucementsResponse, leaseApplicationResponse]).then(() => {
+                if (from === "PropertyInfo") {
+                    setRightPane({ type: "listings" });
+                } else {
+                    setRightPane("");
+                }
+            });
+        } catch (error) {
+            console.error("Error submitting application:", error);
+            alert("We were unable to send the notification through text, but a notification was sent through the app.");
+        }
+    };
+    
+    
     
 
     return (
@@ -543,7 +728,47 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
                         </Alert>
                     </Snackbar>
 
-                    {/* {lease_uid && ( */}
+                    {/* {lease_uid && ( -- Abhinav new change*/}
+                    <Box sx={{ padding: "10px" }}>
+                    <Accordion 
+                        defaultExpanded 
+                        sx={{
+                        marginBottom: "20px", 
+                        backgroundColor: "#f0f0f0", 
+                        borderRadius: '8px',
+                        margin: "auto", 
+                        minHeight: "50px"
+                        }}>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography sx={{ fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue }}>
+                            Applicant Personal Details
+                        </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails sx={{ padding: "30px" }}> {/* Increased padding */}
+                        <Grid container spacing={3}> {/* Increased spacing */}
+                            <Grid item xs={6}>
+                            <Typography>Name: {profileData?.tenant_first_name} {profileData?.tenant_last_name}</Typography>
+                            </Grid>
+                            <Grid item xs={6}>
+                            <Typography>Email: {profileData?.tenant_email}</Typography>
+                            </Grid>
+                            <Grid item xs={6}>
+                            <Typography>Phone: {profileData?.tenant_phone_number}</Typography>
+                            </Grid>
+                            <Grid item xs={6}>
+                            <Typography>SSN: {profileData?.tenant_ssn ? getDecryptedSSN(profileData.tenant_ssn) : "No SSN provided"}</Typography>
+                            </Grid>
+                            <Grid item xs={6}>
+                            <Typography>License #: {profileData?.tenant_drivers_license_number}</Typography>
+                            </Grid>
+                            <Grid item xs={6}>
+                            <Typography>License State: {profileData?.tenant_drivers_license_state}</Typography>
+                            </Grid>
+                        </Grid>
+                        </AccordionDetails>
+                    </Accordion>
+                    </Box>
+
                     <Grid container justifyContent="center" sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
                         <Grid item xs={12}>
                             <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={employmentExpanded} onChange={() => setEmploymentExpanded((prev) => !prev)}>
@@ -739,61 +964,194 @@ export default function TenantApplicationEdit({ profileData, lease, lease_uid, s
 
                         </Button>
                     </Grid>
+
+                    {/* From tenant application -- Abhinav Changes */}
+                    {(status === null || status === "" || status === "NEW" || status === "RENEW") && (
+                    <Grid>
+                        <Button
+                            variant="contained"
+                            sx={{
+                                backgroundColor: "#9EAED6",
+                                textTransform: "none",
+                                borderRadius: "5px",
+                                display: "flex",
+                                width: "45%",
+                                marginRight: "10px",
+                            }}
+                            onClick={() => handleApplicationSubmit()}
+                            >
+                            <Typography
+                                sx={{
+                                fontWeight: theme.typography.primary.fontWeight,
+                                fontSize: "14px",
+                                color: "#FFFFFF",
+                                textTransform: "none",
+                                }}
+                            >
+                                Submit
+                            </Typography>
+                        </Button>
+                    </Grid>
+                    )}
+                {(status === "NEW" || status === "RENEW NEW") && (
+                <Button
+                  variant="contained"
+                  sx={{
+                    backgroundColor: "#ffe230",
+                    color: "#160449",
+                    fontWeight: theme.typography.medium.fontWeight,
+                    fontSize: "14px",
+                    textTransform: "none",
+                    borderRadius: "5px",
+                    display: "flex",
+                    width: "45%",
+                    marginLeft: "10px",
+                    ":hover": {
+                      backgroundColor: "#ffeb99",
+                      color: "#160449",
+                    },
+                  }}
+                  onClick={() => setShowWithdrawLeaseDialog(true)}
+                >
+                  <Typography
+                    sx={{
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: "14px",
+                      color: "#160449",
+                      textTransform: "none",
+                    }}
+                  >
+                    Withdraw
+                  </Typography>
+                </Button>
+              )}
                 </Grid>
+
+                {showWithdrawLeaseDialog && (
+                <Dialog
+                  open={showWithdrawLeaseDialog}
+                  onClose={() => setShowWithdrawLeaseDialog(false)}
+                  aria-labelledby='alert-dialog-title'
+                  aria-describedby='alert-dialog-description'
+                >
+                  <DialogContent>
+                    <DialogContentText
+                      id='alert-dialog-description'
+                      sx={{
+                        fontWeight: theme.typography.common.fontWeight,
+                        paddingTop: "10px",
+                      }}
+                    >
+                      Are you sure you want to withdraw your application for {property.property_address} {property.property_unit}?
+                    </DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                    <Box
+                      sx={{
+                        width: "100%",
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Button
+                        onClick={() => handleWithdrawLease()}
+                        sx={{
+                          color: "white",
+                          backgroundColor: "#3D5CAC80",
+                          ":hover": {
+                            backgroundColor: "#3D5CAC",
+                          },
+                          marginRight: "10px",
+                        }}
+                        autoFocus
+                      >
+                        Yes
+                      </Button>
+                      <Button
+                        onClick={() => setShowWithdrawLeaseDialog(false)}
+                        sx={{
+                          color: "white",
+                          backgroundColor: "#3D5CAC80",
+                          ":hover": {
+                            backgroundColor: "#3D5CAC",
+                          },
+                          marginLeft: "10px",
+                        }}
+                      >
+                        No
+                      </Button>
+                    </Box>
+                  </DialogActions>
+                </Dialog>
+            )}
             </Paper>
         </ThemeProvider>
     )
 }
 
-export const EmploymentDataGrid = ({ profileData, employmentDataT, setSelectedJobs }) => {
+export const EmploymentDataGrid = ({ profileData, employmentDataT = [], setSelectedJobs }) => {
+    const parsedEmploymentDataT = Array.isArray(employmentDataT) ? employmentDataT : [];
+
     const employmentData = profileData?.tenant_employment 
-      ? JSON.parse(profileData.tenant_employment)
-      : [];
+        ? JSON.parse(profileData.tenant_employment)
+        : [];
+
+    console.log("employmentData", parsedEmploymentDataT);
 
     const [checkedJobs, setCheckedJobs] = useState(() => 
-      employmentData.map(job => ({ ...job, checked: false }))
+        employmentData.map(job => ({
+            ...job,
+            checked: parsedEmploymentDataT.length > 0 
+                ? parsedEmploymentDataT.some(leaseJob => leaseJob.jobTitle === job.jobTitle && leaseJob.companyName === job.companyName)
+                : false 
+        }))
     );
 
     const handleJobSelection = (index) => {
         const updatedJobs = checkedJobs.map((job, i) =>
-          i === index ? { ...job, checked: !job.checked } : job
+            i === index ? { ...job, checked: !job.checked } : job
         );
         setCheckedJobs(updatedJobs);
-  
+
         const selectedJobs = updatedJobs.filter(job => job.checked);
         setSelectedJobs(selectedJobs);
-      };
+    };
 
     return (
-      <Box sx={{ padding: "10px" }}>
-        <Grid container spacing={2}>
-          {checkedJobs.map((job, index) => (
-            <Grid item xs={12} key={index}>
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={job.checked}
-                      onChange={() => handleJobSelection(index)}
-                    />
-                  }
-                  label=""
-                />
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                    Job Title: {job.jobTitle}
-                  </Typography>
-                  <Typography variant="body2">Company: {job.companyName}</Typography>
-                  <Typography variant="body2">Salary: ${job.salary}</Typography>
-                  <Typography variant="body2">Frequency: {job.frequency}</Typography>
-                </Box>
-              </Box>
-              <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
+        <Box sx={{ padding: "10px" }}>
+            <Grid container spacing={2}>
+                {checkedJobs.length > 0 ? (
+                    checkedJobs.map((job, index) => (
+                        <Grid item xs={12} key={index}>
+                            <Box sx={{ display: "flex", alignItems: "center" }}>
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={job.checked}
+                                            onChange={() => handleJobSelection(index)}
+                                        />
+                                    }
+                                    label=""
+                                />
+                                <Box sx={{ flex: 1 }}>
+                                    <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                                        Job Title: {job.jobTitle}
+                                    </Typography>
+                                    <Typography variant="body2">Company: {job.companyName}</Typography>
+                                    <Typography variant="body2">Salary: ${job.salary}</Typography>
+                                    <Typography variant="body2">Frequency: {job.frequency}</Typography>
+                                </Box>
+                            </Box>
+                            <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
+                        </Grid>
+                    ))
+                ) : (
+                    <Typography variant="body2" sx={{ textAlign: "center", width: "100%" }}>
+                        No employment data available.
+                    </Typography>
+                )}
             </Grid>
-          ))}
-        </Grid>
-      </Box>
+        </Box>
     );
 };
-
-

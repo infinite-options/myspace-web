@@ -952,7 +952,7 @@ export default function TenantApplication(props) {
                   </DialogActions>
                 </Dialog>
             )}
-            </Box>
+        </Box>
       </Paper>)}
     </ThemeProvider>
   );

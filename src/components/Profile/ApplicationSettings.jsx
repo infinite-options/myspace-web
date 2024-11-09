@@ -144,8 +144,8 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS 
   // }, [user]);
 
   const handleAddRoleLinkClick = () => {
-    // setShowRoleDropdown(!showRoleDropdown);
-    setShowRoleDropdown(true);
+    setShowRoleDropdown(!showRoleDropdown);
+    // setShowRoleDropdown(true);
   };
 
   const handleRoleSelect = (event) => {
@@ -318,26 +318,28 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS 
         </Grid>
 
         <Grid container alignItems="center" item xs={12} sx={{ marginTop: "15px" }}>
-          <Link href="#" underline="hover" onClick={handleAddRoleLinkClick} sx={{ color: "#3D5CAC", marginRight: "15px" }}>
-            Add Role
-          </Link>
-          {showRoleDropdown && (
-            <Box className={classes.settingsItem}>
-              <select value={newRole} onChange={handleRoleSelect}>
-                <option value="">Select Role</option>
-                {allRoles.filter((role) => !availableRoles.includes(role)).map((role, index) => (
+        <Link href="#" underline="hover" onClick={handleAddRoleLinkClick} sx={{ color: "#3D5CAC", marginRight: "15px" }}>
+          Add Role
+        </Link>
+        {showRoleDropdown && (
+          <Box>
+            <select value={newRole} onChange={handleRoleSelect}>
+              <option value="">Select Role</option>
+              {allRoles
+                .filter((role) => !availableRoles.includes(role))
+                .map((role, index) => (
                   <option key={index} value={role}>
                     {role}
                   </option>
                 ))}
-              </select>
-            </Box>
-          )}
+            </select>
+          </Box>
+        )}
         </Grid>
 
         <Grid container alignItems="center" item xs={12} sx={{ marginTop: "15px" }}>
           <Link href="#" underline="hover" onClick={handlePrimaryRoleLinkClick} sx={{ color: "#3D5CAC", marginRight: "15px" }}>
-            {primaryRole || "Select Primary Role"}
+            {primaryRole || "Primary Role"}
           </Link>
           {showPrimaryRoleDropdown && (
             <Box>

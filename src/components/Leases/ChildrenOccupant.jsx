@@ -147,9 +147,25 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
         if (isEditing) {
             if (isRowModified(children[currentRow['id']], currentRow) === true) {
                 const updatedRow = children.map(child => (child.id === currentRow.id ? currentRow : child));
-                //Save children back in DB without ID field
                 const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
-                setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
+                // setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
+                setModifiedData((prev) => {
+                    if (Array.isArray(prev)) {
+                      const existingIndex = prev.findIndex((item) => item.key === dataKey);
+                      
+                      if (existingIndex > -1) {
+                        const updatedData = [...prev];
+                        updatedData[existingIndex] = {
+                          ...updatedData[existingIndex],
+                          value: rowWithoutId,
+                        };
+                        return updatedData;
+                      } else {
+                        return [...prev, { key: dataKey, value: rowWithoutId }];
+                      }
+                    }
+                    return [{ key: dataKey, value: rowWithoutId }];
+                  });
                 setIsUpdated(true);
             } else {
                 showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
@@ -157,7 +173,22 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
 
         } else {
             const {id, ...newRowwithoutid} = currentRow
-            setModifiedData((prev) => [...prev, { key: dataKey, value: [...leaseChildren, { ...newRowwithoutid }] }]);
+            // setModifiedData((prev) => [...prev, { key: dataKey, value: [...leaseChildren, { ...newRowwithoutid }] }]);
+            setModifiedData((prev) => {
+                if (Array.isArray(prev)) {
+                  const existingIndex = prev.findIndex((item) => item.key === dataKey);
+                  if (existingIndex > -1) {
+                    const updatedData = [...prev];
+                    updatedData[existingIndex] = {
+                      ...updatedData[existingIndex],
+                      value: [...leaseChildren, newRowwithoutid],
+                    };
+                    return updatedData;
+                  }
+                  return [...prev, { key: dataKey, value: [...leaseChildren, newRowwithoutid] }];
+                }
+                return [{ key: dataKey, value: [...leaseChildren, newRowwithoutid] }];
+            });
             setIsUpdated(true);
         }
     };
@@ -171,7 +202,25 @@ const ChildrenOccupant = ({ leaseChildren, relationships, editOrUpdateLease, set
     const handleDelete = (id) => {
         const filtered = children.filter(child => child.id !== currentRow.id);
         const rowWithoutId = filtered.map(({ id, ...rest }) => rest);
-        setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
+        // setModifiedData((prev) => [...prev, { key: dataKey, value: rowWithoutId }]);
+        setModifiedData((prev) => {
+            if (Array.isArray(prev)) {
+              const existingIndex = prev.findIndex((item) => item.key === dataKey);
+          
+              if (existingIndex > -1) {
+                const updatedData = [...prev];
+                updatedData[existingIndex] = {
+                  ...updatedData[existingIndex],
+                  value: rowWithoutId,
+                };
+                return updatedData;
+              } else {
+                return [...prev, { key: dataKey, value: rowWithoutId }];
+              }
+            }
+            return [{ key: dataKey, value: rowWithoutId }];
+          });
+
         setIsUpdated(true);
     };
 
