@@ -111,9 +111,12 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
     useEffect(() => {
         if (leaseVehicles && leaseVehicles.length > 0) {
             //Need Id for datagrid
-            // const vehWithIds = leaseVehicles.map((veh, index) => ({ ...veh, id: index }));
-            // setVehicles(vehWithIds);
-            setVehicles(leaseVehicles);
+            if(!setLeaseVehicles){
+                const vehWithIds = leaseVehicles.map((veh, index) => ({ ...veh, id: index }));
+                setVehicles(vehWithIds);
+            }else{
+                setVehicles(leaseVehicles);
+            }
         }
     }, [leaseVehicles]);
 

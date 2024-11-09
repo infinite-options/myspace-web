@@ -80,9 +80,12 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
         if (leaseAdults && leaseAdults.length > 0) {
             // console.log('leaseAdults', leaseAdults, typeof (leaseAdults));
             //Need Id for datagrid
-            // const adultsWithIds = leaseAdults.map((adult, index) => ({ ...adult, id: index }));
-            // setAdults(adultsWithIds);            
-            setAdults(leaseAdults);            
+            if(!setLeaseAdults){
+                const adultsWithIds = leaseAdults.map((adult, index) => ({ ...adult, id: index }));
+                setAdults(adultsWithIds);            
+            }else{
+                setAdults(leaseAdults);            
+            }
         }
     }, [leaseAdults]);
 

@@ -105,9 +105,12 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
         if (leaseChildren && leaseChildren.length > 0) {
             console.log('leaseChildren', leaseChildren, typeof (leaseChildren));
             //Need Id for datagrid
-            // const childrenWithIds = leaseChildren.map((child, index) => ({ ...child, id: index }));
-            // setChildren(childrenWithIds);
-            setChildren(leaseChildren);
+            if(!setLeaseChildren){
+                const childrenWithIds = leaseChildren.map((child, index) => ({ ...child, id: index }));
+                setChildren(childrenWithIds);
+            }else{
+                setChildren(leaseChildren);
+            }
         }
     }, [leaseChildren]);
 

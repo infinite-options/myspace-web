@@ -99,9 +99,12 @@ const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, setModifiedD
         if (leasePets && leasePets.length > 0) {
             console.log('leasePets', leasePets, typeof (leasePets));
             //Need Id for datagrid
-            // const petsWithIds = leasePets.map((pet, index) => ({ ...pet, id: index }));
-            // setPets(petsWithIds);
-            setPets(leasePets);
+            if(!setLeasePets){
+                const petsWithIds = leasePets.map((pet, index) => ({ ...pet, id: index }));
+                setPets(petsWithIds);
+            }else{
+                setPets(leasePets);
+            }
         }
     }, [leasePets]);
 
