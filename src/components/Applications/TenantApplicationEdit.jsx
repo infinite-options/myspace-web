@@ -387,10 +387,10 @@ export default function TenantApplicationEdit(props) {
                         // setPets(item.value)
                     }
                     
-                    if(item.key === "lease_vehicles"){
-                        // setOldVehicles(item.value)
-                        setVehicles(item.value)
-                    }
+                    // if(item.key === "lease_vehicles"){
+                    //     // setOldVehicles(item.value)
+                    //     setVehicles(item.value)
+                    // }
 
                     // if(item.key === "lease_documents"){
                     //     setTenantDocuments(item.value)
@@ -1089,6 +1089,7 @@ export default function TenantApplicationEdit(props) {
                                     {vehicles && (
                                         <VehiclesOccupant
                                             leaseVehicles={vehicles}
+                                            setLeaseVehicles={setVehicles}
                                             states={states}
                                             // editOrUpdateLease={lease_uid !== null ? editOrUpdateLease : editOrUpdateTenant}
                                             editOrUpdateLease={editOrUpdateLease}

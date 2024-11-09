@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Documents = ({ setRightPane,setRHS, setSelectedDocument, fromRenew, documents, setDocuments, setDeleteDocsUrl, setIsPreviousFileChange, isAccord=false, contractFiles, setContractFiles, contractFileTypes, setContractFileTypes, isEditable=true, customName, customUploadingName, isMobile, plusIconColor, plusIconSize}) => {
+const Documents = ({ setRightPane,setRHS, setSelectedDocument, fromRenew, documents, setDocuments, setDeleteDocsUrl, setIsPreviousFileChange, isAccord=false, contractFiles, setContractFiles, contractFileTypes, setContractFileTypes, isEditable=true, customName, customUploadingName, isMobile, titleFontSize, plusIconColor, plusIconSize}) => {
 
   const { getList, } = useContext(ListsContext);	
   
@@ -482,41 +482,41 @@ setSelectedDocument({
   if(isAccord){
     return (
       <>
-        <>
-          {/* Container with custom styles */}
-          <Grid item xs={12} columnSpacing={6} rowGap={4} sx={{ position: "relative" }}>
-            
-            {/* Header section */}
-            <Grid 
-              item 
-              xs={12} 
-              sx={{ 
-                backgroundColor: "#F0F0F0", 
-                borderRadius: "10px", 
-                boxShadow: "none"
+       <>
+  {/* Container with custom styles */}
+  <Grid item xs={12} columnSpacing={6} rowGap={4} sx={{ position: "relative" }}>
+    
+    {/* Header section */}
+    <Grid 
+      item 
+      xs={12} 
+      sx={{ 
+        backgroundColor: "#F0F0F0", 
+        borderRadius: "10px", 
+        boxShadow: "none"
+      }}
+    >
+      <Grid container justifyContent='center'>
+        
+        {/* Document Text */}
+        {customName !== "" && (
+          <Grid item md={11.2}>
+            <Typography
+              sx={{
+                color: "#160449",
+                fontWeight: "bold",
+                fontSize: titleFontSize ? titleFontSize :  "20px",
+                textAlign: "center",
+                paddingBottom: "10px",
+                paddingTop: "5px",
+                flexGrow: 1,
+                paddingLeft: "50px",
               }}
             >
-              <Grid container justifyContent='center'>
-                
-                {/* Document Text */}
-                {customName !== "" && (
-                  <Grid item md={11.2}>
-                    <Typography
-                      sx={{
-                        color: "#160449",
-                        fontWeight: "bold",
-                        fontSize: "20px",
-                        textAlign: "center",
-                        paddingBottom: "10px",
-                        paddingTop: "5px",
-                        flexGrow: 1,
-                        paddingLeft: "50px",
-                      }}
-                    >
-                      {customName}
-                    </Typography>
-                  </Grid>
-                )}
+              {customName}
+            </Typography>
+          </Grid>
+        )}
 
                 {/* Add Icon button */}
                 <Grid item md={0.5}>
@@ -929,7 +929,7 @@ setSelectedDocument({
                 sx={{
                   color: "#160449",
                   fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: "18px",
+                  fontSize: titleFontSize ? titleFontSize : "18px",
                   paddingBottom: "5px",
                   paddingTop: "5px",
                   marginTop:"10px"

@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isEditable }) => {
+const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isEditable }) => {
     // console.log('Inside Adult occupants', leaseAdults, relationships);
     const [adults, setAdults] = useState([]);
     const [open, setOpen] = useState(false);
@@ -78,10 +78,11 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
 
     useEffect(() => {
         if (leaseAdults && leaseAdults.length > 0) {
-            console.log('leaseAdults', leaseAdults, typeof (leaseAdults));
+            // console.log('leaseAdults', leaseAdults, typeof (leaseAdults));
             //Need Id for datagrid
-            const adultsWithIds = leaseAdults.map((adult, index) => ({ ...adult, id: index }));
-            setAdults(adultsWithIds);
+            // const adultsWithIds = leaseAdults.map((adult, index) => ({ ...adult, id: index }));
+            // setAdults(adultsWithIds);            
+            setAdults(leaseAdults);            
         }
     }, [leaseAdults]);
 
@@ -109,12 +110,24 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
     };
 
     const handleSave = () => {
-        const numericPhone = currentRow.phone_number.replace(/\D/g, '');
-    
+        const numericPhone = currentRow.phone_number.replace(/\D/g, '');        
         if (isEditing) {
             if (isRowModified(adults[currentRow['id']], currentRow)) {
                 const updatedRow = adults.map(adult => (adult.id === currentRow.id ? currentRow : adult));
                 const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
+               
+
+                // console.log("129 - updatedRow - ", updatedRow);
+                if(setLeaseAdults){
+                    setLeaseAdults((prevLeaseAdults) =>
+                        prevLeaseAdults.map((adult) => 
+                            adult.id === currentRow.id 
+                                ? { ...adult, ...currentRow }
+                                : adult
+                        )
+                    );
+                }
+                
                 
                 // console.log("--- DEBUG -- rows without id in edit adult - ", rowWithoutId)
                 // console.log("--- DEBUG -- modified data - ", modifiedData)
@@ -143,11 +156,20 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
             }
         } else {
             const { id, ...newRowWithoutId } = currentRow;
+
+            // console.log("139 - currentRow - ", currentRow);
     
             // Check if `prev` is an array before spreading it
             // console.log("--- DEBUG -- rows without id in add adult - ", newRowWithoutId)
             // console.log("--- DEBUG -- modified data - ", modifiedData)
-            // setModifiedData((prev) => Array.isArray(prev) ? [...prev, { key: dataKey, value: [...leaseAdults, newRowWithoutId] }] : [{ key: dataKey, value: [...leaseAdults, newRowWithoutId] }]);
+            // setModifiedData((prev) => Array.isArray(prev) ? [...prev, { key: dataKey, value: [...leaseAdults, newRowWithoutId] }] : [{ key: dataKey, value: [...leaseAdults, newRowWithoutId] }]);            
+            if(setLeaseAdults){
+                setLeaseAdults((prevLeaseAdults) => [
+                    // ...prevLeaseAdults.filter(adult => !Array.isArray(adult)),
+                    ...prevLeaseAdults,
+                    currentRow,
+                ]);
+            }
             setModifiedData((prev) => {
                 if (Array.isArray(prev)) {
                   const existingIndex = prev.findIndex((item) => item.key === dataKey);
@@ -274,7 +296,7 @@ const AdultOccupant = ({ leaseAdults, relationships, editOrUpdateLease, setModif
                     }}
                     onClick={() => {
                         setCurrentRow({
-                            name: '', last_name: '', dob: '', email: '', phone_number: '',
+                            id: adults?.length + 1, name: '', last_name: '', dob: '', email: '', phone_number: '',
                             relationship: '', tenant_drivers_license_number: "", tenant_ssn: ""
                         }); handleOpen();
                     }}>

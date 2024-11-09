@@ -52,10 +52,6 @@ import { BeachAccessOutlined } from "@mui/icons-material";
 
 import ListsContext from "../../contexts/ListsContext";
 import GenericDialog from "../GenericDialog";
-// import AdultOccupant from "../Leases/AdultOccupant";
-// import ChildrenOccupant from "../Leases/ChildrenOccupant";
-// import PetsOccupant from "../Leases/PetsOccupant";
-// import VehiclesOccupant from "../Leases/VehiclesOccupant";
 // import Documents from "../Leases/Documents";
 // import { add } from "date-fns";
 // import { changeSectionValueFormat } from "@mui/x-date-pickers/internals/hooks/useField/useField.utils";

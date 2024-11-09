@@ -1900,7 +1900,13 @@ export default function PropertyNavigator({
                           selectedRole === "MANAGER" && tenant_detail === "No Tenant" ? (
                             <Button
                                 onClick={() => {                                    
-                                    setShowReferTenantDialog(true);                                    
+                                    // setShowReferTenantDialog(true);                                    
+                                    const application = {
+                                      lease_status: "NEW",
+                                    };
+                                    // console.log("application - ", application);
+                                    // console.log("property - ", property);
+                                    navigate("/tenantLease", { state: { page: "refer_tenant", application, property } });
                                 }}
                                 variant='contained'
                                 sx={{
@@ -2029,7 +2035,8 @@ export default function PropertyNavigator({
                         {rentFee ? "$" + rentFee.perDay_late_fee : "-"}
                       </Typography>
                     </Grid>
-
+                    {/* this is lease tables */ }
+                    {/* {<FeesSmallDataGrid data={propertyData[currentIndex].leaseFees}/>} */}
                     {property && property.applications.length > 0 && (
                       <>
                         <Grid item xs={12} md={12}>
@@ -3089,3 +3096,92 @@ export default function PropertyNavigator({
     </Paper>
   );
 }
+
+
+export const FeesSmallDataGrid = ({ data }) => {
+
+  const commonStyles = {
+    color: theme.typography.primary.black,
+    fontWeight: theme.typography.light.fontWeight,
+    fontSize: theme.typography.smallFont,
+  };
+
+
+  const columns = [
+    {
+      field: "frequency",
+      headerName: "Frequency",
+      flex: 1,
+      renderHeader: (params) => (
+        <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>
+      ),
+      renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
+    },
+    {
+      field: "fee_name",
+      headerName: "Name",
+      flex: 1.2,
+      renderHeader: (params) => (
+        <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>
+      ),
+      renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
+    },
+    {
+      field: "charge",
+      headerName: "Amount",
+      flex: 0.8,
+      renderHeader: (params) => (
+        <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>
+      ),
+      renderCell: (params) => {
+        const feeType = params.row?.fee_type;
+        const charge = params.value;
+
+        return (
+          <Typography sx={commonStyles}>
+            {feeType === "PERCENT" ? `${charge}%` : feeType === "FLAT-RATE" ? `$${charge}` : `$${charge}`}
+          </Typography>
+        );
+      },
+    },
+  ];
+
+  // State to store rows with unique id
+  const [rowsWithId, setRowsWithId] = useState([]);
+
+  // useEffect to update rowsWithId when data changes
+  useEffect(() => {
+    if (Array.isArray(JSON.parse(data))) {
+      const updatedRows = JSON.parse(data).map((row, index) => ({
+        ...row,
+        id: row.leaseFees_uid || index, // Ensure unique id
+      }));
+      setRowsWithId(updatedRows);
+    } else {
+      setRowsWithId([]); // Fallback if data is not an array
+    }
+  }, [data]);
+
+  return (
+    <Box sx={{ height: '100%', width: '100%' }}> {/* Adjust height and width as needed */}
+      <DataGrid
+        rows={rowsWithId}
+        columns={columns}
+        sx={{
+          marginY: "5px",
+          overflow: "auto",
+          "& .MuiDataGrid-columnHeaders": {
+            minHeight: "35px !important",
+            maxHeight: "35px !important",
+            height: 35,
+          },
+        }}
+        autoHeight
+        rowHeight={35}
+        hideFooter
+      />
+    </Box>
+  );
+};
+
+

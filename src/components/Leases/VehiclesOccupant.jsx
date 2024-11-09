@@ -111,8 +111,9 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
     useEffect(() => {
         if (leaseVehicles && leaseVehicles.length > 0) {
             //Need Id for datagrid
-            const vehWithIds = leaseVehicles.map((veh, index) => ({ ...veh, id: index }));
-            setVehicles(vehWithIds);
+            // const vehWithIds = leaseVehicles.map((veh, index) => ({ ...veh, id: index }));
+            // setVehicles(vehWithIds);
+            setVehicles(leaseVehicles);
         }
     }, [leaseVehicles]);
 
@@ -164,6 +165,15 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                     return [{ key: dataKey, value: rowWithoutId }];
                   });
                 setIsUpdated(true);
+                if(setLeaseVehicles){
+                    setLeaseVehicles((prevLeaseVehicles) =>
+                        prevLeaseVehicles.map((veh) => 
+                            veh.id === currentRow.id 
+                                ? { ...veh, ...currentRow }
+                                : veh
+                        )
+                    );
+                }
             } else {
                 showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
             }
@@ -187,6 +197,12 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                 return [{ key: dataKey, value: [...leaseVehicles, newRowwithoutid] }];
             });
             setIsUpdated(true);
+            if(setLeaseVehicles){
+                setLeaseVehicles((prevLeaseVehicles) => [                    
+                    ...prevLeaseVehicles,
+                    currentRow,
+                ]);
+            }
         }
     };
 
@@ -277,7 +293,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                         fontSize: theme.typography.smallFont,
                         margin: "5px",
                     }}
-                    onClick={() => { setCurrentRow({ id: null, year: '', make: '', model: '', license: '', state: '', owner: '' }); handleOpen(); }}>
+                    onClick={() => { setCurrentRow({ id: vehicles?.length + 1, year: '', make: '', model: '', license: '', state: '', owner: '' }); handleOpen(); }}>
                     <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "18px" }} />
                 </Button>}
             </Box>

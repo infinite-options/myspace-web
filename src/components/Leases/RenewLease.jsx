@@ -387,11 +387,11 @@ const handleEditLease = () => {
         if (onReviewRenewal) {
             const applicationIndex = leaseDetails.findIndex(lease => lease.lease_uid === selectedLeaseId);
             onReviewRenewal(applicationIndex); // Pass the index to the parent component
-            console.log("---on renew---", currentLease);
+            // console.log("---on renew---", currentLease);
         }
     } else {
         navigate("/tenantLease", { state: { page: "renew_lease", application: currentLease, property: currentLease, managerInitiatedRenew: true } });
-        console.log("---on renew---", currentLease);
+        // console.log("---on renew---", currentLease);
     }
 };
 

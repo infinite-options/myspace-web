@@ -17,6 +17,8 @@ import {
   TableCell,
   TableBody,
   TextField,
+  TableContainer,
+  TableHead,
   InputAdornment,
 } from "@mui/material";
 import { CalendarToday, Close, Description, ExpandMore } from "@mui/icons-material";
@@ -237,11 +239,9 @@ const ViewLease = (props) => {
   }, [returnIndex, props.propertyList, allLeases]);  
 
   const handleRenewLease = () => {
-    navigate("/editLease", {
-      state: {
-        leaseData: leaseData,
-      },
-    });
+    console.log('leaseData----', leaseData);
+    navigate("/tenantLease", { state: { page: "renew_lease", application: leaseData, property: leaseData } });
+        
   };
 
   const handleCloseButton = (e) => {
@@ -467,58 +467,53 @@ const ViewLease = (props) => {
 
                 {/* Rent details */}
                 <Grid item xs={12}>
-                  <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>
-                    <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Rent Details</Typography>
-                    {leaseFees.map((item, index) => (
-                      <Grid container direction={"row"} key={index} sx={{ paddingBottom: "10px" }}>
-                        {/* fees name */}
-                        <Grid item xs={12} sx={{ paddingTop: "5px", paddingBottom: "5px" }}>
-                          <Typography sx={{ color: "#3D5CAC", fontSize: "26px", fontWeight: 700 }}>{item.fee_name ? item.fee_name : "None"}</Typography>
-                        </Grid>
-
-                        {/* fees details */}
-                        <Grid container sx={{ marginLeft: "15px" }}>
-                          <Grid item xs={6}>
-                            <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Amount</Typography>
-                            <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {`$${item.charge}` || "None"}</Typography>
-                          </Grid>
-                          <Grid item xs={6}>
-                            <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Frequency</Typography>
-                            <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}> {item.frequency ? item.frequency : "None"}</Typography>
-                          </Grid>
-                          <Grid item xs={6}>
-                            <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Rent Due Date</Typography>
-                            <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}>{item.due_by ? `${item.due_by} of month` : "None"}</Typography>
-                            
-                          </Grid>
-                          <Grid item xs={6}>
-                            <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Available to Pay</Typography>
-                            <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}>
-                              {" "}
-                              {item.available_topay ? `${item.available_topay} days before` : "None"}
-                            </Typography>
-                            
-                          </Grid>
-                          <Grid item xs={6}>
-                            <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Late Fee After</Typography>
-                            <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}>{item.late_by ? `${item.late_by} days` : "None"}</Typography>
-                          </Grid>
-                          <Grid item xs={6}>
-                            <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>One Time Fee</Typography>
-                            <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}>{`$${item.late_fee}` ?? "None"}</Typography>
-                          </Grid>
-                          <Grid item xs={6}/>
-                          <Grid item xs={6}>
-                            <Typography sx={{ color: "#3D5CAC", fontSize: "18px", fontWeight: 700 }}>Per Day Late Fee</Typography>
-                            <Typography sx={{ color: "#000000", fontSize: "16px", fontWeight: 500, opacity: "80%" }}>{`$${item.perDay_late_fee}` ?? "None"}</Typography>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    ))}
-                  </Box>
-                </Grid>
-
-                {/* Occupancy details */}
+  <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>
+    <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>
+      Rent Details
+    </Typography>
+    <DataGrid
+      autoHeight
+      rows={leaseFees.map((item, index) => ({ id: index, ...item }))}
+      columns={[
+        {
+          field: "fee_name",
+          headerName: "Fee Name",
+          flex: 1,
+          minWidth: 120,
+          headerAlign: "center",
+          align: "center",
+          renderCell: (params) => (
+            <Box
+              sx={{
+                maxWidth: 200, // Adjust width as needed
+                whiteSpace: "normal", // Allows wrapping
+                overflow: "visible",
+              }}
+            >
+              {params.value || "None"}
+            </Box>
+          ),
+        },
+        { field: "charge", headerName: "Amount", flex: 1, minWidth: 100, headerAlign: "center", align: "center", renderCell: (params) => (params.value ? `$${params.value}` : "None") },
+        { field: "frequency", headerName: "Frequency", flex: 1, minWidth: 120, headerAlign: "center", align: "center", renderCell: (params) => params.value || "None" },
+        { field: "due_by", headerName: "Rent Due Date", flex: 1, minWidth: 150, headerAlign: "center", align: "center", renderCell: (params) => (params.value ? `${params.value} of month` : "None") },
+        { field: "available_topay", headerName: "Available to Pay", flex: 1, minWidth: 150, headerAlign: "center", align: "center", renderCell: (params) => (params.value ? `${params.value} days before` : "None") },
+        { field: "late_by", headerName: "Late Fee After", flex: 1, minWidth: 150, headerAlign: "center", align: "center", renderCell: (params) => (params.value ? `${params.value} days` : "None") },
+        { field: "late_fee", headerName: "One Time Fee", flex: 1, minWidth: 120, headerAlign: "center", align: "center", renderCell: (params) => (params.value ? `$${params.value}` : "None") },
+        { field: "perDay_late_fee", headerName: "Per Day Late Fee", flex: 1, minWidth: 150, headerAlign: "center", align: "center", renderCell: (params) => (params.value ? `$${params.value}` : "None") },
+      ]}
+      disableColumnMenu
+      hideFooter
+      sx={{
+        marginTop: "15px",
+        "& .MuiDataGrid-columnHeaders": { color: "#3D5CAC", fontWeight: 700, whiteSpace: "normal", lineHeight: "1.2", fontSize: "16px" },
+        "& .MuiDataGrid-cell": { color: "#000000", opacity: "80%" },
+        "& .MuiDataGrid-root": { border: "none" },
+      }}
+    />
+  </Box>
+</Grid>
+{/* Occupancy details */}
                 <Grid item xs={12}>
                   <Box sx={{ backgroundColor: "#F2F2F2", display: "flex", flexDirection: "column", padding: "25px", borderRadius: "5px" }}>
                     <Typography sx={{ fontSize: { xs: "24px", sm: "24px", md: "24px", lg: "24px" }, fontWeight: "bold", color: "#160449" }}>Occupancy Details</Typography>
