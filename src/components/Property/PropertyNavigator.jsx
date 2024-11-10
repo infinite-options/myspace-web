@@ -110,7 +110,7 @@ export default function PropertyNavigator({
   onAddListingClick,
   handleViewManagerDetailsClick,
   props,
-  setViewRHS
+  setViewRHS,
 }) {
   // console.log("In Property Navigator", onEditClick);
   // console.log(index, propertyList);
@@ -303,8 +303,8 @@ export default function PropertyNavigator({
     const parsedPropertyImages = propertyList && propertyList[nextIndex] && propertyList[nextIndex].property_images ? JSON.parse(propertyList[nextIndex].property_images) : [];
     setImages(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
     setContractsData(allContracts);
-    console.log("parsedPropertyImages - ", parsedPropertyImages);
-    console.log("propertyList[nextIndex].property_favorite_image - ", propertyList[nextIndex]?.property_favorite_image);
+    // console.log("parsedPropertyImages - ", parsedPropertyImages);
+    // console.log("propertyList[nextIndex].property_favorite_image - ", propertyList[nextIndex]?.property_favorite_image);
     let favImageIndex = null;
     if (propertyList && propertyList[nextIndex] && propertyList[nextIndex].property_favorite_image) {
       favImageIndex = parsedPropertyImages.findIndex((url) => url === propertyList[nextIndex].property_favorite_image);
@@ -353,7 +353,7 @@ export default function PropertyNavigator({
       setSentContractCount(sentContractCount);
 
       const rentDetails = getRentStatus();
-      console.log("rentDetails - ", rentDetails);
+      // console.log("rentDetails - ", rentDetails);
       setpropertyRentStatus(rentDetails);
 
       if (property.leaseFees !== null) {
@@ -365,8 +365,8 @@ export default function PropertyNavigator({
       }
 
       const propertyApplicances = JSON.parse(propertyData[currentIndex].appliances);
-      console.log("Appliances ****", propertyApplicances);
-      console.log("applianceUIDToCategoryMap is %%", applianceUIDToCategoryMap);
+      // console.log("Appliances ****", propertyApplicances);
+      // console.log("applianceUIDToCategoryMap is %%", applianceUIDToCategoryMap);
       if (property.appliances != null) {
         setAppliances(propertyApplicances);
 
@@ -445,10 +445,10 @@ export default function PropertyNavigator({
   };
 
   const handleBackButton = () => {
-    if(isMobile && setViewRHS){
-      setViewRHS(false)
+    if (isMobile && setViewRHS) {
+      setViewRHS(false);
     }
-  }
+  };
 
   // const handleManagerChange = () => {
   //   // if (property && property.business_uid) {
@@ -499,7 +499,7 @@ export default function PropertyNavigator({
       const formatData = (data) => {
         return data.map((item, index) => {
           // console.log("item - ", item.rent_detail_index);
-          console.log("Latest Data Formatted to catch SPLIT Issue: ", item.latest_date);
+          // console.log("Latest Data Formatted to catch SPLIT Issue: ", item.latest_date);
           return {
             ...item,
             // idx: index,
@@ -633,7 +633,7 @@ export default function PropertyNavigator({
     await setInitialApplData(row);
     await setcurrentApplRow(row);
     await setModifiedApplRow({ appliance_uid: row.appliance_uid });
-    console.log("---currentApplRow?.appliance_favorite_image---", row);
+    // console.log("---currentApplRow?.appliance_favorite_image---", row);
     await setFavImage(currentApplRow?.appliance_favorite_image);
     await setIsEditing(true);
     await handleOpen();
@@ -999,11 +999,11 @@ export default function PropertyNavigator({
         return image === currentApplRow.appliance_favorite_image;
       });
       setFavoriteIcons(newFavoriteIcons);
-      console.log("Favorite Icons Updated:", newFavoriteIcons);
+      // console.log("Favorite Icons Updated:", newFavoriteIcons);
     }
   }, [currentApplRow, propertyData, currentIndex]);
 
-  console.log("Favorite Icons:", favoriteIcons);
+  // console.log("Favorite Icons:", favoriteIcons);
 
   const handleDelete = (index) => {
     const updatedDeletedIcons = [...deletedIcons];
@@ -1013,7 +1013,7 @@ export default function PropertyNavigator({
     const imageToDelete = currentApplRow.appliance_images[index];
     setImagesTobeDeleted((prev) => [...prev, imageToDelete]);
 
-    console.log("Delete image at index:", deletedIcons);
+    // console.log("Delete image at index:", deletedIcons);
   };
 
   const handleFavorite = (index) => {
@@ -1030,7 +1030,7 @@ export default function PropertyNavigator({
       }))
     );
 
-    console.log(`Favorite image at index: ${index}`);
+    // console.log(`Favorite image at index: ${index}`);
   };
 
   const handleUpdateFavoriteIcons = () => {
@@ -1040,9 +1040,9 @@ export default function PropertyNavigator({
   const handleTenantClick = (tenantId) => {
     if (selectedRole === "MANAGER" || selectedRole === "OWNER") {
       if (tenant_detail === "No Tenant") {
-        console.log("There is no tenant");
+        // console.log("There is no tenant");
       } else {
-        console.log("Else statement for if there is a tenant");
+        // console.log("Else statement for if there is a tenant");
         navigate("/ContactsPM", {
           state: {
             contactsTab: "Tenant",
@@ -1055,7 +1055,7 @@ export default function PropertyNavigator({
 
   appliances.forEach((row) => {
     if (!row.appliance_uid) {
-      console.error("Missing appliance_uid for row:", row);
+      // console.error("Missing appliance_uid for row:", row);
     }
   });
 
@@ -1079,7 +1079,7 @@ export default function PropertyNavigator({
         }}
       >
         {isMobile && (
-          <Box sx={{display: "flex", justifyContent: "flex-end"}}>
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
             <Button onClick={handleBackButton}>
               <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px" }} />
             </Button>
@@ -1439,7 +1439,7 @@ export default function PropertyNavigator({
                   </Grid>
                   {/* End Middle Column with Property Details */}
                   {/* Buttons */}
-                  <Grid item xs={12} md={3.5} marginTop={isMobile? 5 : 0}>
+                  <Grid item xs={12} md={3.5} marginTop={isMobile ? 5 : 0}>
                     <Grid container spacing={2}>
                       <Grid item xs={12}>
                         {property && property?.property_available_to_rent === 1 && (property.lease_status == null || property.lease_status !== "ACTIVE") && (
@@ -1511,7 +1511,9 @@ export default function PropertyNavigator({
                               </Box>
                             </Box>
                           )}
-                        {property && property.lease_status && property.lease_status !== "ACTIVE" &&
+                        {property &&
+                          property.lease_status &&
+                          property.lease_status !== "ACTIVE" &&
                           (property?.property_available_to_rent === 0 || property?.property_available_to_rent == null) &&
                           property.business_uid != null &&
                           property.business_uid !== "" && (
@@ -1582,7 +1584,7 @@ export default function PropertyNavigator({
                         )}
                       </Grid>
                       <Grid item xs={12}>
-                        <Box sx={{ pb: isMobile? 5 : 40}}>
+                        <Box sx={{ pb: isMobile ? 5 : 40 }}>
                           <Box
                             sx={{
                               display: "flex",
@@ -1598,10 +1600,10 @@ export default function PropertyNavigator({
                               width: "100%",
                               cursor: "pointer",
                             }}
-                            onClick={() => {                                                            
+                            onClick={() => {
                               if (getPaymentStatus(property?.rent_status, property) === "Vacant - Not Listed") {
                                 onAddListingClick("create_listing");
-                              } else if (getPaymentStatus(property?.rent_status, property) === "No Manager") {                                
+                              } else if (getPaymentStatus(property?.rent_status, property) === "No Manager") {
                                 onShowSearchManager(1);
                               }
                             }}
@@ -1623,7 +1625,7 @@ export default function PropertyNavigator({
                         </Box>
                       </Grid>
                       <Grid item xs={12}>
-                        <Box sx={{pb: isMobile ? 5 : 0,}}>
+                        <Box sx={{ pb: isMobile ? 5 : 0 }}>
                           {/* Edit Property Button */}
                           <Button
                             variant='contained'
@@ -1705,7 +1707,7 @@ export default function PropertyNavigator({
                             size='small'
                             onClick={() => onAddListingClick("edit_listing")}
                           >
-                            <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px",}} />
+                            <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
                             <Typography
                               sx={{
                                 textTransform: "none",
@@ -1896,55 +1898,52 @@ export default function PropertyNavigator({
                         >
                           {tenant_detail}
                         </Typography>
-                        {
-                          selectedRole === "MANAGER" && tenant_detail === "No Tenant" ? (
-                            <Button
-                                onClick={() => {                                    
-                                    // setShowReferTenantDialog(true);                                    
-                                    const application = {
-                                      lease_status: "NEW",
-                                    };
-                                    // console.log("application - ", application);
-                                    // console.log("property - ", property);
-                                    navigate("/tenantLease", { state: { page: "refer_tenant", application, property } });
-                                }}
-                                variant='contained'
-                                sx={{
-                                    marginLeft: '25px',
-                                    background: "#3D5CAC",
-                                    color: theme.palette.background.default,
-                                    cursor: "pointer",
-                                    paddingX:"10px",
-                                    textTransform: "none",
-                                    maxWidth: "120px", // Fixed width for the button
-                                    maxHeight: "100%",
-                                }}
-                                size='small'
-                            >
-                              <Typography
-                                  sx={{
-                                  textTransform: "none",
-                                  color: "#FFFFFF",
-                                  fontWeight: theme.typography.secondary.fontWeight,
-                                  fontSize: "12px",
-                                  whiteSpace: "nowrap",
-                                  //   marginLeft: "1%", // Adjusting margin for icon and text
-                                  }}
-                              >
-                                  {"Refer Tenant"}
-                              </Typography>
-                            </Button>                                
-                          ) : (
-                            <KeyboardArrowRightIcon
+                        {selectedRole === "MANAGER" && tenant_detail === "No Tenant" ? (
+                          <Button
+                            onClick={() => {
+                              // setShowReferTenantDialog(true);
+                              const application = {
+                                lease_status: "NEW",
+                              };
+                              // console.log("application - ", application);
+                              // console.log("property - ", property);
+                              navigate("/tenantLease", { state: { page: "refer_tenant", application, property } });
+                            }}
+                            variant='contained'
+                            sx={{
+                              marginLeft: "25px",
+                              background: "#3D5CAC",
+                              color: theme.palette.background.default,
+                              cursor: "pointer",
+                              paddingX: "10px",
+                              textTransform: "none",
+                              maxWidth: "120px", // Fixed width for the button
+                              maxHeight: "100%",
+                            }}
+                            size='small'
+                          >
+                            <Typography
                               sx={{
-                                color: theme.typography.common.blue,
-                                cursor: "pointer",
+                                textTransform: "none",
+                                color: "#FFFFFF",
+                                fontWeight: theme.typography.secondary.fontWeight,
+                                fontSize: "12px",
+                                whiteSpace: "nowrap",
+                                //   marginLeft: "1%", // Adjusting margin for icon and text
                               }}
-                              onClick={() => handleTenantClick(property.tenant_uid)}
-                            />
-                          )
-                        }
-                        
+                            >
+                              {"Refer Tenant"}
+                            </Typography>
+                          </Button>
+                        ) : (
+                          <KeyboardArrowRightIcon
+                            sx={{
+                              color: theme.typography.common.blue,
+                              cursor: "pointer",
+                            }}
+                            onClick={() => handleTenantClick(property.tenant_uid)}
+                          />
+                        )}
                       </Box>
                     </Grid>
                     <Grid item xs={6}>
@@ -2035,7 +2034,7 @@ export default function PropertyNavigator({
                         {rentFee ? "$" + rentFee.perDay_late_fee : "-"}
                       </Typography>
                     </Grid>
-                    {/* this is lease tables */ }
+                    {/* this is lease tables */}
                     {/* {<FeesSmallDataGrid data={propertyData[currentIndex].leaseFees}/>} */}
                     {property && property.applications.length > 0 && (
                       <>
@@ -2550,7 +2549,7 @@ export default function PropertyNavigator({
                   alignItems: "center",
                   justifyContent: "space-around",
                   width: "100%",
-                  overflowX: "auto"
+                  overflowX: "auto",
                 }}
               >
                 <DataGrid
@@ -2602,7 +2601,7 @@ export default function PropertyNavigator({
           {/* Appliances grid */}
           <Grid item xs={12} md={12} sx={{ pt: "10px" }}>
             <Card sx={{ backgroundColor: color, height: "100%" }}>
-              <Box sx={{ width: "100%"}}>
+              <Box sx={{ width: "100%" }}>
                 <Box
                   sx={{
                     display: "flex",
@@ -2661,7 +2660,7 @@ export default function PropertyNavigator({
                     <AddIcon sx={{ color: "black", fontSize: "24px" }} />
                   </IconButton>
                 </Box>
-                <Box sx={{width : "100%", overflowX : "auto"}}>
+                <Box sx={{ width: "100%", overflowX: "auto" }}>
                   <DataGrid
                     rows={appliances}
                     columns={applnColumns}
@@ -3037,7 +3036,7 @@ export default function PropertyNavigator({
                     {isReadOnly ? (
                       // Show "Close" button only if it's read-only
                       <IconButton onClick={handleClose} sx={{ position: "absolute", top: 8, right: 8 }}>
-                        <CloseIcon variant="icon"/>
+                        <CloseIcon variant='icon' />
                       </IconButton>
                     ) : (
                       // Show "Cancel" and "Save" buttons if not read-only
@@ -3078,14 +3077,7 @@ export default function PropertyNavigator({
                     )}
                   </DialogActions>
                 </Dialog>
-                {
-                  <ReferTenantDialog 
-                    open={showReferTenantDialog}
-                    onClose={() => setShowReferTenantDialog(false)}
-                    setShowSpinner={setShowSpinner}
-                    property={property}
-                  />
-                } 
+                {<ReferTenantDialog open={showReferTenantDialog} onClose={() => setShowReferTenantDialog(false)} setShowSpinner={setShowSpinner} property={property} />}
               </Box>
             </Card>
           </Grid>
@@ -3097,51 +3089,38 @@ export default function PropertyNavigator({
   );
 }
 
-
 export const FeesSmallDataGrid = ({ data }) => {
-
   const commonStyles = {
     color: theme.typography.primary.black,
     fontWeight: theme.typography.light.fontWeight,
     fontSize: theme.typography.smallFont,
   };
 
-
   const columns = [
     {
       field: "frequency",
       headerName: "Frequency",
       flex: 1,
-      renderHeader: (params) => (
-        <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>
-      ),
+      renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
       renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
     },
     {
       field: "fee_name",
       headerName: "Name",
       flex: 1.2,
-      renderHeader: (params) => (
-        <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>
-      ),
+      renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
       renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
     },
     {
       field: "charge",
       headerName: "Amount",
       flex: 0.8,
-      renderHeader: (params) => (
-        <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>
-      ),
+      renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
       renderCell: (params) => {
         const feeType = params.row?.fee_type;
         const charge = params.value;
 
-        return (
-          <Typography sx={commonStyles}>
-            {feeType === "PERCENT" ? `${charge}%` : feeType === "FLAT-RATE" ? `$${charge}` : `$${charge}`}
-          </Typography>
-        );
+        return <Typography sx={commonStyles}>{feeType === "PERCENT" ? `${charge}%` : feeType === "FLAT-RATE" ? `$${charge}` : `$${charge}`}</Typography>;
       },
     },
   ];
@@ -3163,7 +3142,9 @@ export const FeesSmallDataGrid = ({ data }) => {
   }, [data]);
 
   return (
-    <Box sx={{ height: '100%', width: '100%' }}> {/* Adjust height and width as needed */}
+    <Box sx={{ height: "100%", width: "100%" }}>
+      {" "}
+      {/* Adjust height and width as needed */}
       <DataGrid
         rows={rowsWithId}
         columns={columns}
@@ -3183,5 +3164,3 @@ export const FeesSmallDataGrid = ({ data }) => {
     </Box>
   );
 };
-
-

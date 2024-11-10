@@ -8,11 +8,10 @@ import { ReactComponent as HomeIcon } from "../../../images/home_icon.svg";
 import { ReactComponent as CalendarIcon } from "../../../images/calendar_icon.svg";
 
 export default function MaintenanceWidget({ maintenanceData, onMaintenanceClick }) {
-  console.log("In MaintenanceWidget", maintenanceData);
+  // console.log("In MaintenanceWidget", maintenanceData);
   const navigate = useNavigate();
   const { maintenanceRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
   const [isAddingNewMaintenance, setIsAddingNewMaintenance] = useState(false);
-
 
   // console.log("Role: ", user);
   // console.log("Selected Role: ", selectedRole);
@@ -27,7 +26,7 @@ export default function MaintenanceWidget({ maintenanceData, onMaintenanceClick 
   // TODO: We need to make the /maintenanceRequests endpoint return the data in the format we need for the Status component
   useEffect(() => {
     const dataObject = {};
-    console.log("maintenanceData", maintenanceData);
+    // console.log("maintenanceData", maintenanceData);
     for (const item of maintenanceData) {
       // console.log(item)
       if (!dataObject[item.maintenance_status]) {
@@ -55,7 +54,7 @@ export default function MaintenanceWidget({ maintenanceData, onMaintenanceClick 
       return theme.colorStatusO;
     }
   }
-  
+
   const isEmptyObject = (obj) => {
     return obj && Object.keys(obj).length === 0 && obj.constructor === Object;
   };
@@ -99,17 +98,17 @@ export default function MaintenanceWidget({ maintenanceData, onMaintenanceClick 
             variant='outlined'
             onClick={(e) => {
               e.stopPropagation();
-              if(selectedRole === "MANAGER"){
+              if (selectedRole === "MANAGER") {
                 navigate("/managerMaintenance", {
                   state: {
                     showAddMaintenance: true,
-                  }
+                  },
                 });
-              } else if (selectedRole === "OWNER"){
+              } else if (selectedRole === "OWNER") {
                 navigate("/ownerMaintenance", {
                   state: {
                     showAddMaintenance: true,
-                  }
+                  },
                 });
               }
             }}
@@ -124,7 +123,7 @@ export default function MaintenanceWidget({ maintenanceData, onMaintenanceClick 
           sx={{
             padding: "0",
             borderRadius: "10px",
-            margin: "0",            
+            margin: "0",
           }}
         >
           {colorStatus?.map((item, index) => (
@@ -143,7 +142,7 @@ export default function MaintenanceWidget({ maintenanceData, onMaintenanceClick 
                 borderBottomRightRadius: index === colorStatus.length - 1 ? "10px" : "0",
                 marginTop: index === 0 ? "5px" : "0",
                 marginBottom: "0px",
-                height: '55px',                
+                height: "55px",
               }}
             >
               <Grid container justifyContent='space-between' alignItems='center'>

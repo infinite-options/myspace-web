@@ -167,7 +167,7 @@ export default function PropertiesList(props) {
   }, [props.LHS, propertyList, props.showOnlyListings, returnIndexFromContext]);
 
   useEffect(() => {
-    console.log("displayedItems changed - ", displayedItems);
+    // console.log("displayedItems changed - ", displayedItems);
     if (displayedItems && displayedItems.length > 0) {
       const firstItem = displayedItems[0];
       const i = propertyList?.findIndex((p) => p.property_uid === firstItem.property_uid);
@@ -191,7 +191,7 @@ export default function PropertiesList(props) {
     setCurrentPropertyID(property.property_uid);
     setCurrentProperty(property);
     props.setRHS("PropertyNavigator");
-    props.setViewRHS(true)
+    props.setViewRHS(true);
   };
 
   const onPropertyInRentWidgetClicked = (property_uid) => {
@@ -527,24 +527,28 @@ export default function PropertiesList(props) {
           }}
         >
           <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ padding: theme.spacing(2), position: "relative" }}>
-            {!isMobile && (<Box sx={{ flex: 1 }} />)}
-            {isMobile && (<Box component='span' display='flex' justifyContent='flex-start' alignItems='flex-start' position='relative' flex={"1"}>
-              <Button onClick={() => {
-                if(selectedRole === "OWNER"){
-                  navigate("/ownerDashboard")
-                }else if(selectedRole === "MANAGER"){
-                  navigate("/managerDashboard")
-                }
-              }}>
-                <ArrowBackIcon
-                  sx={{
-                    color: theme.typography.primary.black,
-                    fontSize: "30px",
-                    margin: "5px",
+            {!isMobile && <Box sx={{ flex: 1 }} />}
+            {isMobile && (
+              <Box component='span' display='flex' justifyContent='flex-start' alignItems='flex-start' position='relative' flex={"1"}>
+                <Button
+                  onClick={() => {
+                    if (selectedRole === "OWNER") {
+                      navigate("/ownerDashboard");
+                    } else if (selectedRole === "MANAGER") {
+                      navigate("/managerDashboard");
+                    }
                   }}
-                />
-              </Button>
-            </Box>)}
+                >
+                  <ArrowBackIcon
+                    sx={{
+                      color: theme.typography.primary.black,
+                      fontSize: "30px",
+                      margin: "5px",
+                    }}
+                  />
+                </Button>
+              </Box>
+            )}
             <Box position='absolute' left='50%' sx={{ transform: "translateX(-50%)" }}>
               <Typography
                 sx={{
@@ -575,7 +579,7 @@ export default function PropertiesList(props) {
                   <Box sx={{ display: "flex", width: "100%", alignItems: "center", justifyContent: "space-between", padding: "0px 10px", paddingBottom: "10px" }}>
                     <Button
                       onClick={sortByZip}
-                      variant="contained"
+                      variant='contained'
                       sx={{
                         background: "#3D5CAC",
                         fontWeight: theme.typography.secondary.fontWeight,
@@ -609,7 +613,7 @@ export default function PropertiesList(props) {
                     </Button>
                     <Button
                       onClick={sortByStatus}
-                      variant = 'contained'
+                      variant='contained'
                       sx={{
                         background: "#3D5CAC",
                         fontWeight: theme.typography.secondary.fontWeight,
