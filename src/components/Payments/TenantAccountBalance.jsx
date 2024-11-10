@@ -109,7 +109,7 @@ const TenantAccountBalance = ({
 
   const handleViewTenantApplication = () => {
     setRightPane({
-      type: "tenantApplication",
+      type: "tenantApplicationEdit",
       state: {
         data: leaseDetails,
         lease: leaseDetails,
