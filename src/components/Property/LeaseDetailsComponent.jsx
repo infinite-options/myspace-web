@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Box, Grid, Typography, Button, IconButton, Badge, Card, CardContent, Dialog, DialogActions, DialogTitle, DialogContent, ToolTip, } from "@mui/material";
-import CloseIcon from '@mui/icons-material/Close';
+import { Box, Grid, Typography, Button, IconButton, Badge, Card, CardContent, Dialog, DialogActions, DialogTitle, DialogContent, ToolTip } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
 import { DataGrid } from "@mui/x-data-grid";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
@@ -17,14 +17,15 @@ import { ReactComponent as CalendarIcon } from "../../images/datetime.svg";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import axios from "axios";
-import APIConfig from '../../utils/APIConfig';
-import { useUser } from '../../contexts/UserContext';
-import ManagementContractContext from '../../contexts/ManagementContractContext';
-import PropertiesContext from '../../contexts/PropertiesContext';
+import APIConfig from "../../utils/APIConfig";
+import { useUser } from "../../contexts/UserContext";
+import PropertiesContext from "../../contexts/PropertiesContext";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-
-export default function ManagementDetailsComponent({
-  activeContract,
+export default function LeaseDetailsComponent({
   currentProperty,
   currentIndex,
   selectedRole,
@@ -35,24 +36,31 @@ export default function ManagementDetailsComponent({
   onShowSearchManager,
   handleViewContractClick,
   handleManageContractClick,
+  handleAppClick,
+  getAppColor,
 }) {
-  // console.log("---dhyey-- inside new component -", activeContract)
-  const { defaultContractFees, allContracts, currentContractUID, currentContractPropertyUID, isChange, setIsChange, fetchContracts,  } = useContext(ManagementContractContext);     
-  const { fetchProperties } = useContext(PropertiesContext);  
+  // console.log("---dhyey-- inside new component -", activeLease)
+  // const { defaultContractFees, allContracts, currentContractUID, currentContractPropertyUID, isChange, setIsChange, fetchContracts,  } = useContext(LeaseContractContext);
+  const { fetchProperties } = useContext(PropertiesContext);
   const [selectedPreviewFile, setSelectedPreviewFile] = useState(null);
   const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
   const navigate = useNavigate();
   const [showEndContractDialog, setShowEndContractDialog] = useState(false);
   const [showManagerEndContractDialog, setShowManagerEndContractDialog] = useState(false);
   const [showRenewContractDialog, setShowRenewContractDialog] = useState(false);
-  const [contractEndNotice, setContractEndNotice] = useState(activeContract?.contract_end_notice_period? Number(activeContract?.contract_end_notice_period) : 30);
+  const [contractEndNotice, setContractEndNotice] = useState(currentProperty?.lease_end_notice_period ? Number(currentProperty?.lease_end_notice_period) : 30);
+
+  const tenant_detail =
+    currentProperty && currentProperty.lease_start && currentProperty.tenant_uid ? `${currentProperty.tenant_first_name} ${currentProperty.tenant_last_name}` : "No Tenant";
+  const activeLease = currentProperty.lease_status;
+  const [isChange, setIsChange] = useState(false);
 
   // console.log("currentProperty?.maintenance - ", currentProperty?.maintenance);
 
-  useEffect(() => {
-    // console.log("activeContract - ", activeContract);
-    setContractEndNotice(activeContract?.contract_end_notice_period? Number(activeContract?.contract_end_notice_period) : 30)
-  }, [activeContract]);
+  // useEffect(() => {
+  //   // console.log("activeLease - ", activeLease);
+  //   setContractEndNotice(currentProperty?.lease_end_notice_period ? Number(currentProperty?.lease_end_notice_period) : 30);
+  // }, [activeLease]);
 
   const maintenanceGroupedByStatus = currentProperty?.maintenance?.reduce((acc, request) => {
     const status = request.maintenance_status;
@@ -78,41 +86,39 @@ export default function ManagementDetailsComponent({
     setSelectedPreviewFile(null);
   };
 
-      const handleManagerEndContractClick = (endDate) => {
-        const formattedDate = endDate.format('MM-DD-YYYY');
-        // console.log("handleEndContractClick - formattedDate - ", formattedDate);
-        
-        
-        const formData = new FormData();	            
-        
-        // formData.append("contract_uid", currentContractUID);    
-        formData.append("contract_uid", activeContract?.contract_uid);    
-        formData.append("contract_renew_status", "ENDING");
-        formData.append("contract_early_end_date", formattedDate);
-        
-        
-          const url = `${APIConfig.baseURL.dev}/contracts`;
-        // const url = `http://localhost:4000/contracts`;
-    
-        fetch(url, {
-          method: "PUT",	
-          body: formData,
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("Network response was not ok");
-            } else {
-              // console.log("Data updated successfully");
-                  setIsChange(false);
-                  fetchProperties();
-            }
-          })
-          .catch((error) => {
-            console.error("There was a problem with the fetch operation:", error);
-          });
-      };
+  const handleManagerEndContractClick = (endDate) => {
+    const formattedDate = endDate.format("MM-DD-YYYY");
+    // console.log("handleEndContractClick - formattedDate - ", formattedDate);
 
-    return (
+    const formData = new FormData();
+
+    // formData.append("contract_uid", currentContractUID);
+    formData.append("lease_uid", currentProperty?.lease_uid);
+    formData.append("lease_renew_status", "ENDING");
+    formData.append("lease_early_end_date", formattedDate);
+
+    const url = `${APIConfig.baseURL.dev}/leaseApplication`;
+    // const url = `http://localhost:4000/leaseApplication`;
+
+    fetch(url, {
+      method: "PUT",
+      body: formData,
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        } else {
+          // console.log("Data updated successfully");
+          setIsChange(false);
+          fetchProperties();
+        }
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+      });
+  };
+
+  return (
     <>
       <Card sx={{ backgroundColor: theme.palette.form.main, height: "100%" }}>
         <Box sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
@@ -126,42 +132,8 @@ export default function ManagementDetailsComponent({
               // flexGrow: 1
             }}
           >
-            Management Details
+            Lease Details
           </Typography>
-          {selectedRole === "OWNER" && (
-            <Box sx={{ display: "flex", justifyContent: "space-evenly", alignItems: "center" }}>
-              <IconButton
-                onClick={() => {
-                  handleViewPMQuotesRequested(1);
-                }}
-              >
-                <SearchIcon />
-              </IconButton>
-              <IconButton
-                onClick={() => {
-                  // console.log("newContractCount - ", newContractCount);
-                  if (newContractCount === 0) {
-                    onShowSearchManager();
-                  } else {
-                    handleViewPMQuotesRequested(0);
-                  }
-                }}
-                sx={{ marginRight: "10px" }}
-              >
-                <Badge badgeContent={newContractCount || 0} color='error' showZero />
-              </IconButton>
-              <IconButton
-                onClick={() => {
-                  if (sentContractCount && sentContractCount > 0) {
-                    handleViewPMQuotesRequested(0);
-                  }
-                }}
-                sx={{ marginRight: "10px" }}
-              >
-                <Badge badgeContent={sentContractCount || 0} color='warning' showZero />
-              </IconButton>
-            </Box>
-          )}
         </Box>
         <CardContent>
           <Grid container spacing={3}>
@@ -176,11 +148,11 @@ export default function ManagementDetailsComponent({
                       fontSize: theme.typography.smallFont,
                     }}
                   >
-                    Property Manager:
+                    Tenant:
                   </Typography>
                 </Grid>
                 <Grid item xs={6}>
-                  {activeContract ? (
+                  {activeLease ? (
                     <Box display='flex' justifyContent='space-between' alignItems='center'>
                       <Typography
                         sx={{
@@ -189,16 +161,16 @@ export default function ManagementDetailsComponent({
                           fontSize: theme.typography.smallFont,
                         }}
                       >
-                        {activeContract?.business_name}
+                        {tenant_detail}
                       </Typography>
                       <KeyboardArrowRightIcon
                         sx={{ color: "blue", cursor: "pointer" }}
                         onClick={() => {
-                          if (activeContract && activeContract.business_uid) {
+                          if (activeLease && currentProperty.tenant_uid) {
                             navigate("/ContactsPM", {
                               state: {
-                                contactsTab: "Manager",
-                                managerId: activeContract.business_uid,
+                                contactsTab: "Tenant",
+                                tenantId: currentProperty.tenant_uid,
                                 fromPage: true,
                                 index: currentIndex,
                               },
@@ -216,7 +188,7 @@ export default function ManagementDetailsComponent({
                           fontSize: theme.typography.smallFont,
                         }}
                       >
-                        No Manager Selected
+                        No Tenant Selected
                       </Typography>
                     </Box>
                   )}
@@ -235,7 +207,7 @@ export default function ManagementDetailsComponent({
                       fontSize: theme.typography.smallFont,
                     }}
                   >
-                    Property Owner:
+                    Tenant:
                   </Typography>
                 </Grid>
                 <Grid item xs={6}>
@@ -247,16 +219,16 @@ export default function ManagementDetailsComponent({
                         fontSize: theme.typography.smallFont,
                       }}
                     >
-                      {currentProperty ? `${currentProperty.owner_first_name} ${currentProperty.owner_last_name}` : "-"}
+                      {tenant_detail}
                     </Typography>
                     <KeyboardArrowRightIcon
                       sx={{ color: "blue", cursor: "pointer" }}
                       onClick={() => {
-                        if (activeContract && activeContract.business_uid) {
+                        if (activeLease && currentProperty.tenant_uid) {
                           navigate("/ContactsPM", {
                             state: {
-                              contactsTab: "Owner",
-                              ownerId: currentProperty.owner_uid,
+                              contactsTab: "Tenant",
+                              tenentId: currentProperty.tenant_uid,
                             },
                           });
                         }
@@ -267,57 +239,57 @@ export default function ManagementDetailsComponent({
               </Grid>
             )}
 
-                    {/* Contract Status */}
-                    <Grid container item spacing={2}>
-                        <Grid item xs={6}>
-                        <Typography
+            {/* Lease Status */}
+            <Grid container item spacing={2}>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  Lease Status:
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Box display='flex' alignItems='center' justifyContent={"space-between"}>
+                  {currentProperty?.lease_status === "ACTIVE" ? (
+                    <>
+                      <Typography
+                        sx={{
+                          color: theme.palette.success.main,
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        ACTIVE
+                      </Typography>
+                      {currentProperty?.lease_renew_status &&
+                        (currentProperty?.lease_renew_status === "PM RENEW REQUESTED" || currentProperty?.lease_renew_status.includes("RENEW REQUESTED")) && (
+                          <Typography
                             sx={{
-                                color: theme.typography.primary.black,
-                                fontWeight: theme.typography.secondary.fontWeight,
-                                fontSize: theme.typography.smallFont,
+                              color: currentProperty?.lease_renew_status?.includes("RENEW") ? "#FF8A00" : "#A52A2A",
+                              fontWeight: theme.typography.secondary.fontWeight,
+                              fontSize: theme.typography.smallFont,
                             }}
-                        >
-                            Contract Status:
-                        </Typography>
-                        </Grid>
-                        <Grid item xs={6}>
-                        <Box display="flex" alignItems="center" justifyContent={"space-between"}>
-                            {currentProperty?.contract_status === "ACTIVE" ? (
-                                <>
-                                    <Typography
-                                        sx={{
-                                            color: theme.palette.success.main,
-                                            fontWeight: theme.typography.secondary.fontWeight,
-                                            fontSize: theme.typography.smallFont,
-                                        }}
-                                    >
-                                        ACTIVE
-                                    </Typography>
-                                    {currentProperty?.contract_renew_status && (currentProperty?.contract_renew_status === "ENDING" || currentProperty?.contract_renew_status.includes("RENEW")) && 
-                                        (
-                                            <Typography
-                                                sx={{
-                                                    color: currentProperty?.contract_renew_status?.includes("RENEW")? "#FF8A00" : "#A52A2A",
-                                                    fontWeight: theme.typography.secondary.fontWeight,
-                                                    fontSize: theme.typography.smallFont,
-                                                }}
-                                            >
-                                                {currentProperty?.contract_renew_status?.includes("RENEW") ? " RENEWING" : currentProperty?.contract_renew_status }
-                                            </Typography>
-                                        )
-                                    }
-                                </>
-                            ) : (
-                                <Typography
-                                    sx={{
-                                        color: "#3D5CAC",
-                                        fontWeight: theme.typography.secondary.fontWeight,
-                                        fontSize: theme.typography.smallFont,
-                                    }}
-                                >
-                                    No Contract
-                                </Typography>)}
-                            {/* {currentProperty?.contract_status === "ACTIVE" && selectedRole === "MANAGER" && 
+                          >
+                            {currentProperty?.lease_renew_status?.includes("RENEW") ? " RENEWING" : currentProperty?.lease_renew_status}
+                          </Typography>
+                        )}
+                    </>
+                  ) : (
+                    <Typography
+                      sx={{
+                        color: "#3D5CAC",
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      No Lease
+                    </Typography>
+                  )}
+                  {/* {currentProperty?.contract_status === "ACTIVE" && selectedRole === "MANAGER" && 
                             <Button
                                 onClick={() => {                                    
                                         handleManageContractClick(currentProperty.contract_uid, currentProperty.contract_property_id )                                                                        
@@ -347,140 +319,12 @@ export default function ManagementDetailsComponent({
                                 {"Manage Contract"}
                             </Typography>
                             </Button>} */}
-                        </Box>
-                        </Grid>
-                    </Grid>
+                </Box>
+              </Grid>
+            </Grid>
 
-                    {/* Contract Term */}
-                    {activeContract && <Grid container item spacing={2}>
-                        <Grid item xs={6}>
-                        <Typography
-                            sx={{
-                                color: theme.typography.primary.black,
-                                fontWeight: theme.typography.secondary.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                            }}
-                        >
-                            Contract Term:
-                        </Typography>
-                        </Grid>
-                        <Grid item xs={6}>
-                        <Typography
-                            sx={{
-                                color: theme.typography.primary.black,
-                                fontWeight: theme.typography.light.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                            }}
-                        >
-                            {activeContract?.contract_start_date} 
-                            <span style={{ fontWeight: 'bold', margin:"0 10px"}}>
-                                to
-                            </span> 
-                            {activeContract?.contract_end_date}
-                        </Typography>
-                        </Grid>
-                    </Grid>}
-
-                    {
-                        (selectedRole === "OWNER" || selectedRole === "MANAGER") && (activeContract) &&  (
-                            <Grid container item spacing={2} sx={{ marginTop: '3px', marginBottom: '5px',}}>
-                                
-                                <Grid 
-                                    item
-                                    xs={6}
-                                    sx={{
-                                        display: "flex", 
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        height: "100%",
-                                    }}
-                                >   
-                                    <Button
-                                        onClick={() => {
-                                            if(selectedRole === "OWNER"){
-                                                setShowEndContractDialog(true)
-                                            } else if (selectedRole === "MANAGER") {
-                                                setShowManagerEndContractDialog(true)
-                                            }
-                                            
-                                            
-                                        }}
-                                        variant='contained'
-                                        sx={{
-                                            background: "#3D5CAC",
-                                            color: theme.palette.background.default,
-                                            cursor: "pointer",
-                                            paddingX:"10px",
-                                            textTransform: "none",
-                                            maxWidth: "120px", // Fixed width for the button
-                                            maxHeight: "100%",
-                                        }}
-                                        size='small'
-                                    >
-                                        <Typography
-                                            sx={{
-                                            textTransform: "none",
-                                            color: "#FFFFFF",
-                                            fontWeight: theme.typography.secondary.fontWeight,
-                                            fontSize: "12px",
-                                            whiteSpace: "nowrap",
-                                            //   marginLeft: "1%", // Adjusting margin for icon and text
-                                            }}
-                                        >
-                                            {"End Contract"}
-                                        </Typography>
-                                    </Button>                                
-                                </Grid>
-                                <Grid 
-                                    item
-                                    xs={6}
-                                    sx={{
-                                        display: "flex", 
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        height: "100%",
-                                    }}
-                                >                                
-                                    <Button
-                                        onClick={() => {
-                                            if(selectedRole === "OWNER"){                                                                                            
-                                                setShowRenewContractDialog(true)
-                                            } else if (selectedRole === "MANAGER"){
-                                                handleManageContractClick(currentProperty.contract_uid, currentProperty.contract_property_id )
-                                            }
-                                        }}
-                                        variant='contained'
-                                        sx={{
-                                            background: "#3D5CAC",
-                                            color: theme.palette.background.default,
-                                            cursor: "pointer",
-                                            paddingX:"10px",
-                                            textTransform: "none",
-                                            maxWidth: "120px", // Fixed width for the button
-                                            maxHeight: "100%",
-                                        }}
-                                        size='small'
-                                    >
-                                        <Typography
-                                            sx={{
-                                            textTransform: "none",
-                                            color: "#FFFFFF",
-                                            fontWeight: theme.typography.secondary.fontWeight,
-                                            fontSize: "12px",
-                                            whiteSpace: "nowrap",
-                                            //   marginLeft: "1%", // Adjusting margin for icon and text
-                                            }}
-                                        >
-                                            {"Renew Contract"}
-                                        </Typography>
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        )
-                    }
-
-            {/* Management Fees */}
-            {activeContract && (
+            {/* Lease Term */}
+            {activeLease && (
               <Grid container item spacing={2}>
                 <Grid item xs={6}>
                   <Typography
@@ -490,16 +334,139 @@ export default function ManagementDetailsComponent({
                       fontSize: theme.typography.smallFont,
                     }}
                   >
-                    Management Fees:
+                    Lease Term:
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    sx={{
+                      color: theme.typography.primary.black,
+                      fontWeight: theme.typography.light.fontWeight,
+                      fontSize: theme.typography.smallFont,
+                    }}
+                  >
+                    {currentProperty?.lease_start_date}
+                    <span style={{ fontWeight: "bold", margin: "0 10px" }}>to</span>
+                    {currentProperty?.lease_end_date}
                   </Typography>
                 </Grid>
               </Grid>
             )}
 
-            {activeContract && (
+            {(selectedRole === "OWNER" || selectedRole === "MANAGER") && activeLease && (
+              <Grid container item spacing={2} sx={{ marginTop: "3px", marginBottom: "5px" }}>
+                <Grid
+                  item
+                  xs={6}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                  }}
+                >
+                  <Button
+                    onClick={() => {
+                      if (selectedRole === "OWNER") {
+                        setShowEndContractDialog(true);
+                      } else if (selectedRole === "MANAGER") {
+                        setShowManagerEndContractDialog(true);
+                      }
+                    }}
+                    variant='contained'
+                    sx={{
+                      background: "#3D5CAC",
+                      color: theme.palette.background.default,
+                      cursor: "pointer",
+                      paddingX: "10px",
+                      textTransform: "none",
+                      maxWidth: "120px", // Fixed width for the button
+                      maxHeight: "100%",
+                    }}
+                    size='small'
+                  >
+                    <Typography
+                      sx={{
+                        textTransform: "none",
+                        color: "#FFFFFF",
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: "12px",
+                        whiteSpace: "nowrap",
+                        //   marginLeft: "1%", // Adjusting margin for icon and text
+                      }}
+                    >
+                      {"End Lease"}
+                    </Typography>
+                  </Button>
+                </Grid>
+                <Grid
+                  item
+                  xs={6}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                  }}
+                >
+                  <Button
+                    onClick={() => {
+                      if (selectedRole === "OWNER") {
+                        setShowRenewContractDialog(true);
+                      } else if (selectedRole === "MANAGER") {
+                        handleManageContractClick(currentProperty.contract_uid, currentProperty.contract_property_id);
+                      }
+                    }}
+                    variant='contained'
+                    sx={{
+                      background: "#3D5CAC",
+                      color: theme.palette.background.default,
+                      cursor: "pointer",
+                      paddingX: "10px",
+                      textTransform: "none",
+                      maxWidth: "120px", // Fixed width for the button
+                      maxHeight: "100%",
+                    }}
+                    size='small'
+                  >
+                    <Typography
+                      sx={{
+                        textTransform: "none",
+                        color: "#FFFFFF",
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: "12px",
+                        whiteSpace: "nowrap",
+                        //   marginLeft: "1%", // Adjusting margin for icon and text
+                      }}
+                    >
+                      {"Renew Lease"}
+                    </Typography>
+                  </Button>
+                </Grid>
+              </Grid>
+            )}
+
+            {/* Lease Fees */}
+            {activeLease && (
               <Grid container item spacing={2}>
-                {activeContract?.contract_fees ? (
-                  <FeesSmallDataGrid data={JSON.parse(activeContract?.contract_fees)} />
+                <Grid item xs={6}>
+                  <Typography
+                    sx={{
+                      color: theme.typography.primary.black,
+                      fontWeight: theme.typography.secondary.fontWeight,
+                      fontSize: theme.typography.smallFont,
+                    }}
+                  >
+                    Lease Fees:
+                  </Typography>
+                </Grid>
+              </Grid>
+            )}
+
+            {activeLease && (
+              <Grid container item spacing={2}>
+                {currentProperty?.leaseFees ? (
+                  <FeesSmallDataGrid data={JSON.parse(currentProperty?.leaseFees)} />
                 ) : (
                   <Box
                     sx={{
@@ -527,8 +494,8 @@ export default function ManagementDetailsComponent({
               </Grid>
             )}
 
-            {/* Contract Documents */}
-            {activeContract && (
+            {/* Lease Documents */}
+            {activeLease && (
               <Grid container item spacing={2}>
                 <Grid item xs={6}>
                   <Typography
@@ -538,16 +505,16 @@ export default function ManagementDetailsComponent({
                       fontSize: theme.typography.smallFont,
                     }}
                   >
-                    Contract Documents:
+                    Lease Documents:
                   </Typography>
                 </Grid>
               </Grid>
             )}
 
-            {activeContract && (
+            {activeLease && (
               <Grid container item>
-                {activeContract?.contract_documents ? (
-                  <DocumentSmallDataGrid data={JSON.parse(activeContract?.contract_documents)} handleFileClick={handleFileClick} />
+                {currentProperty?.lease_documents ? (
+                  <DocumentSmallDataGrid data={JSON.parse(currentProperty?.lease_documents)} handleFileClick={handleFileClick} />
                 ) : (
                   <Box
                     sx={{
@@ -568,37 +535,125 @@ export default function ManagementDetailsComponent({
                         fontSize: theme.typography.smallFont,
                       }}
                     >
-                      No Document
+                      No Documents
                     </Typography>
                   </Box>
                 )}
               </Grid>
             )}
 
-            {/* Open Maintenance Tickets */}
-            <Grid container item spacing={2}>
-              <Grid item xs={6}>
-                <Typography
-                  sx={{
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                  }}
-                >
-                  Open Maintenance Tickets:
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <IconButton
-                  sx={{ marginLeft: "1.5px", paddingTop: "3px" }}
-                  onClick={() => {
-                    handleOpenMaintenancePage();
-                  }}
-                >
-                  <Badge badgeContent={currentProperty?.maintenance?.length || 0} color='error' showZero />
-                </IconButton>
-              </Grid>
-            </Grid>
+            {currentProperty && currentProperty.applications.length > 0 && (
+              <>
+                <Grid item xs={12} md={12}>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Typography
+                      sx={{
+                        textTransform: "none",
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                        paddingRight: "103px",
+                      }}
+                    >
+                      Applications:
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <Badge
+                        color='success'
+                        badgeContent={currentProperty.applications.filter((app) => app.lease_status.includes("NEW") || app.lease_status.includes("PROCESSING")).length}
+                        showZero
+                        sx={{
+                          paddingRight: "50px",
+                        }}
+                      />
+                    </Box>
+                  </Box>
+                </Grid>
+                <Grid item xs={12} md={12}>
+                  <Accordion theme={theme} sx={{ backgroundColor: "#e6e6e6", marginLeft: "-5px" }}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='panel1-content' id='panel1-header'>
+                      <Typography
+                        sx={{
+                          textTransform: "none",
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        View All Applications
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        padding: "0px 5px 5px 5px",
+                      }}
+                    >
+                      {currentProperty.applications.map((app, index) => (
+                        <Button
+                          key={index}
+                          onClick={() => handleAppClick(index)}
+                          sx={{
+                            backgroundColor: getAppColor(app),
+                            color: "#FFFFFF",
+                            textTransform: "none",
+                            width: "100%",
+                            height: "70px",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            marginBottom: 2,
+                            "&:hover, &:focus, &:active": {
+                              backgroundColor: getAppColor(app),
+                            },
+                          }}
+                        >
+                          {/* Box for full name and date on one line */}
+                          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%" }}>
+                            <Typography
+                              sx={{
+                                fontSize: theme.typography.smallFont,
+                                mr: 1,
+                              }}
+                            >
+                              {app.tenant_first_name + " " + app.tenant_last_name + " "}
+                            </Typography>
+                            <Typography
+                              sx={{
+                                fontWeight: "bold",
+                                fontSize: theme.typography.smallFont,
+                              }}
+                            >
+                              {app.lease_application_date}
+                            </Typography>
+                          </Box>
+
+                          {/* Box for status on the next line */}
+                          <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
+                            <Typography
+                              sx={{
+                                fontWeight: "bold",
+                                fontSize: theme.typography.smallFont,
+                              }}
+                            >
+                              {app.lease_status}
+                            </Typography>
+                          </Box>
+                        </Button>
+                      ))}
+                    </AccordionDetails>
+                  </Accordion>
+                </Grid>
+              </>
+            )}
 
             {/* <Grid container item spacing={2}>
                         <Grid item xs={6}>
@@ -627,28 +682,24 @@ export default function ManagementDetailsComponent({
                             }
                         </Grid>
                     </Grid> */}
-                
-                </Grid>
-            </CardContent>
-        </Card>
-        {previewDialogOpen && selectedPreviewFile && <FilePreviewDialog file={selectedPreviewFile} onClose={handlePreviewDialogClose}/>}
-        <EndContractDialog 
-            open={showEndContractDialog} 
-            handleClose={() => setShowEndContractDialog(false)}            
-            contract={activeContract}
-        />
-        {showManagerEndContractDialog && (
-            <Box>
-                <ManagerEndContractDialog open={showManagerEndContractDialog} handleClose={() => setShowManagerEndContractDialog(false)} onEndContract={handleManagerEndContractClick} noticePeriod={contractEndNotice} />
-            </Box>
-        )}
-
-        <RenewContractDialog 
-            open={showRenewContractDialog} 
-            handleClose={() => setShowRenewContractDialog(false)}            
-            contract={activeContract}
-        />    </>
-    );
+          </Grid>
+        </CardContent>
+      </Card>
+      {previewDialogOpen && selectedPreviewFile && <FilePreviewDialog file={selectedPreviewFile} onClose={handlePreviewDialogClose} />}
+      <EndContractDialog open={showEndContractDialog} handleClose={() => setShowEndContractDialog(false)} contract={activeLease} />
+      {showManagerEndContractDialog && (
+        <Box>
+          <ManagerEndContractDialog
+            open={showManagerEndContractDialog}
+            handleClose={() => setShowManagerEndContractDialog(false)}
+            onEndContract={handleManagerEndContractClick}
+            noticePeriod={contractEndNotice}
+          />
+        </Box>
+      )}
+      <RenewContractDialog open={showRenewContractDialog} handleClose={() => setShowRenewContractDialog(false)} contract={activeLease} />{" "}
+    </>
+  );
 }
 
 export const FeesSmallDataGrid = ({ data }) => {
@@ -682,19 +733,19 @@ export const FeesSmallDataGrid = ({ data }) => {
         const feeType = params.row?.fee_type;
         const charge = params.value;
 
-        return <Typography sx={commonStyles}>{feeType === "PERCENT" ? `${charge}%` : feeType === "FLAT-RATE" ? `$${charge}` : charge}</Typography>;
+        return <Typography sx={commonStyles}>{charge}</Typography>;
       },
     },
     {
-      field: "of",
-      headerName: "Of",
+      field: "fee_type",
+      headerName: "fee_type",
       flex: 1,
       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
       renderCell: (params) => {
         const feeType = params.row?.fee_type;
-        const of = params.value;
+        const fee_type = params.value;
 
-        return <Typography sx={commonStyles}>{of === null || of === undefined || of === "" ? (feeType === "FLAT-RATE" ? "Flat-Rate" : "-") : `${of}`}</Typography>;
+        return <Typography sx={commonStyles}>{fee_type}</Typography>;
       },
     },
   ];
@@ -849,235 +900,208 @@ const EndContractDialog = ({ open, handleClose, contract }) => {
       console.error(error);
     }
 
-        handleClose();
-    };
-  
-    return (
-        <form 
-            onSubmit={handleEndContract}
-        >
-            <Dialog
-                open={open}
-                onClose={handleClose}				
-                maxWidth="xl"
-                sx={{
-                    '& .MuiDialog-paper': {
-                        width: '60%',
-                        maxWidth: 'none',
-                    },
-                }}
-            >
-                <DialogTitle sx={{ justifyContent: 'center',}}>        
-                    End Current Contract
-                    <IconButton
-                      onClick={handleClose}
-                      sx={{
-                        position: 'absolute',
-                        top: 8,
-                        right: 8,
-                        color: '#3D5CAC',
-                      }}
-                    >
-                      <CloseIcon />
-                  </IconButton>   
-                </DialogTitle>
-                <DialogContent>
-                    <Grid container>                                   
-                        <Grid container item xs={12} sx={{marginTop: '10px', }}>
-                            <Grid item xs={12}>
-                                <Typography sx={{fontWeight: 'bold', color: '#3D5CAC'}}>
-                                    This contract is scheduled to end on {contract?.contract_end_date}.
-                                </Typography>
-                            </Grid>                        
-                        </Grid>
-                        <Grid item xs={12} sx={{marginTop: '15px', }}>
-                            <Typography sx={{width: 'auto',}}>
-                                Please select the desired end date.
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                    <Grid container item xs={3} sx={{marginTop: '10px', }}>
-                        <Grid item xs={12}>
-                            <Typography sx={{fontWeight: 'bold', color: '#3D5CAC'}}>
-                                End Date
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker
-                                value={selectedEndDate}
-                                // minDate={minEndDate}
-                                onChange={(v) => setSelectedEndDate(v)}
-                                slots={{
-                                openPickerIcon: CalendarIcon,
-                                }}
-                                slotProps={datePickerSlotProps}
-                            />
-                            </LocalizationProvider>
-                        </Grid>
-                    </Grid>
-                    <Grid container>                                   
-                        <Grid container item xs={12} sx={{marginTop: '10px', }}>
-                            <Grid item xs={12}>
-                                {/* <Typography sx={{fontWeight: 'bold', color: 'red'}}>
-                                    DEBUG - notice period is 30 days by default if not specified.
-                                </Typography> */}
-                                <Typography sx={{fontWeight: 'bold', color: 'red'}}>
-                                    Contract UID - {contract?.contract_uid}
-                                </Typography>
-                            </Grid>                        
-                        </Grid>                        
-                    </Grid>
+    handleClose();
+  };
 
-                </DialogContent>
-                
-                <DialogActions>					
-                    <Button
-                        type="submit"
-                        onClick={handleEndContract}
-                        sx={{
-                            '&:hover': {
-                                backgroundColor: '#160449',                
-                            },
-                            backgroundColor: '#3D5CAC',
-                            color: '#FFFFFF',
-                            fontWeight: 'bold',
-                        }}
-                    >
-                        End Contract
-                    </Button>
-                    <Button
-                        onClick={handleClose}
-                        sx={{
-                            '&:hover': {
-                                backgroundColor: '#160449',                
-                            },
-                            backgroundColor: '#3D5CAC',
-                            color: '#FFFFFF',
-                            fontWeight: 'bold',
-                        }}
-                    >
-                        Keep Existing Contract
-                    </Button>
-                                       
-                </DialogActions>                
-            </Dialog>
-        </form>
-    );
-  }
-
-function ManagerEndContractDialog({ open, handleClose, onEndContract, noticePeriod, }) {	
-
-const noticePeriodDays = parseInt(noticePeriod, 10);
-const minEndDate = dayjs().add(noticePeriodDays, 'day')
-const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-// console.log("minEndDate - ", minEndDate);
-const formattedMinEndDate = minEndDate.format('MM/DD/YYYY')
-
-    
-const [earlyEndDate, setEarlyEndDate] = useState(minEndDate);
-    
-
-    
-
-    const handleEndContract = (event) => {
-        event.preventDefault();
-        
-        onEndContract(earlyEndDate);
-        handleClose();
-    };
-
-    return (
-        <form 
-    onSubmit={handleEndContract}
-    >
-            <Dialog
-                open={open}
-                onClose={handleClose}				
-                maxWidth="xl"
-                sx={{
-                    '& .MuiDialog-paper': {
-                        width: isMobile? '75%' : '60%',
-                        maxWidth: 'none',
-                    },
-                }}
-            >
-        <DialogTitle sx={{ justifyContent: 'center',}}>        
-            End Current Contract        
+  return (
+    <form onSubmit={handleEndContract}>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        maxWidth='xl'
+        sx={{
+          "& .MuiDialog-paper": {
+            width: "60%",
+            maxWidth: "none",
+          },
+        }}
+      >
+        <DialogTitle sx={{ justifyContent: "center" }}>
+          End Current Contract
+          <IconButton
+            onClick={handleClose}
+            sx={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+              color: "#3D5CAC",
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
         </DialogTitle>
         <DialogContent>
-        <Grid container>
+          <Grid container>
+            <Grid container item xs={12} sx={{ marginTop: "10px" }}>
+              <Grid item xs={12}>
+                <Typography sx={{ fontWeight: "bold", color: "#3D5CAC" }}>This contract is scheduled to end on {contract?.contract_end_date}.</Typography>
+              </Grid>
+            </Grid>
+            <Grid item xs={12} sx={{ marginTop: "15px" }}>
+              <Typography sx={{ width: "auto" }}>Please select the desired end date.</Typography>
+            </Grid>
+          </Grid>
+          <Grid container item xs={3} sx={{ marginTop: "10px" }}>
             <Grid item xs={12}>
-            {/* <Typography sx={{width: 'auto', color: 'red'}}>
+              <Typography sx={{ fontWeight: "bold", color: "#3D5CAC" }}>End Date</Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  value={selectedEndDate}
+                  // minDate={minEndDate}
+                  onChange={(v) => setSelectedEndDate(v)}
+                  slots={{
+                    openPickerIcon: CalendarIcon,
+                  }}
+                  slotProps={datePickerSlotProps}
+                />
+              </LocalizationProvider>
+            </Grid>
+          </Grid>
+          <Grid container>
+            <Grid container item xs={12} sx={{ marginTop: "10px" }}>
+              <Grid item xs={12}>
+                {/* <Typography sx={{fontWeight: 'bold', color: 'red'}}>
+                                    DEBUG - notice period is 30 days by default if not specified.
+                                </Typography> */}
+                <Typography sx={{ fontWeight: "bold", color: "red" }}>Contract UID - {contract?.contract_uid}</Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+        </DialogContent>
+
+        <DialogActions>
+          <Button
+            type='submit'
+            onClick={handleEndContract}
+            sx={{
+              "&:hover": {
+                backgroundColor: "#160449",
+              },
+              backgroundColor: "#3D5CAC",
+              color: "#FFFFFF",
+              fontWeight: "bold",
+            }}
+          >
+            End Contract
+          </Button>
+          <Button
+            onClick={handleClose}
+            sx={{
+              "&:hover": {
+                backgroundColor: "#160449",
+              },
+              backgroundColor: "#3D5CAC",
+              color: "#FFFFFF",
+              fontWeight: "bold",
+            }}
+          >
+            Keep Existing Contract
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </form>
+  );
+};
+
+function ManagerEndContractDialog({ open, handleClose, onEndContract, noticePeriod }) {
+  const noticePeriodDays = parseInt(noticePeriod, 10);
+  const minEndDate = dayjs().add(noticePeriodDays, "day");
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  // console.log("minEndDate - ", minEndDate);
+  const formattedMinEndDate = minEndDate.format("MM/DD/YYYY");
+
+  const [earlyEndDate, setEarlyEndDate] = useState(minEndDate);
+
+  const handleEndContract = (event) => {
+    event.preventDefault();
+
+    onEndContract(earlyEndDate);
+    handleClose();
+  };
+
+  return (
+    <form onSubmit={handleEndContract}>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        maxWidth='xl'
+        sx={{
+          "& .MuiDialog-paper": {
+            width: isMobile ? "75%" : "60%",
+            maxWidth: "none",
+          },
+        }}
+      >
+        <DialogTitle sx={{ justifyContent: "center" }}>End Current Contract</DialogTitle>
+        <DialogContent>
+          <Grid container>
+            <Grid item xs={12}>
+              {/* <Typography sx={{width: 'auto', color: 'red'}}>
                 {`DEBUG - Notice period is 30 days by default if not specified.`}
             </Typography> */}
-            <Typography sx={{width: 'auto',}}>
+              <Typography sx={{ width: "auto" }}>
                 {`The notice period to end this contract is ${noticePeriod} days. The earliest possible end date is ${formattedMinEndDate}.`}
-            </Typography>
-            </Grid>            
-            <Grid container item xs={12} md={5} sx={{marginTop: '10px', }}>
-              <Grid item xs={12}>
-                  <Typography sx={{fontWeight: 'bold', color: '#3D5CAC'}}>
-                      Please select contract end date
-                  </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                      value={earlyEndDate}
-                      minDate={minEndDate}
-                      onChange={(v) => setEarlyEndDate(v)}
-                      slots={{
-                      openPickerIcon: CalendarIcon,
-                      }}
-                      slotProps={datePickerSlotProps}
-                  />
-                  </LocalizationProvider>
-              </Grid>
-            </Grid>
-            <Grid item xs={12} sx={{marginTop: '15px', }}>
-              <Typography sx={{width: 'auto',}}>
-                  {`Are you sure you want to end this contract?`}
               </Typography>
             </Grid>
-        </Grid>
-
+            <Grid container item xs={12} md={5} sx={{ marginTop: "10px" }}>
+              <Grid item xs={12}>
+                <Typography sx={{ fontWeight: "bold", color: "#3D5CAC" }}>Please select contract end date</Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    value={earlyEndDate}
+                    minDate={minEndDate}
+                    onChange={(v) => setEarlyEndDate(v)}
+                    slots={{
+                      openPickerIcon: CalendarIcon,
+                    }}
+                    slotProps={datePickerSlotProps}
+                  />
+                </LocalizationProvider>
+              </Grid>
+            </Grid>
+            <Grid item xs={12} sx={{ marginTop: "15px" }}>
+              <Typography sx={{ width: "auto" }}>{`Are you sure you want to end this contract?`}</Typography>
+            </Grid>
+          </Grid>
         </DialogContent>
-                
-                <DialogActions>					
-                    <Button
-                        type="submit"
-                        onClick={handleEndContract}
-                        sx={{
-                            '&:hover': {
-                                backgroundColor: '#160449',                
-                            },
-            backgroundColor: '#3D5CAC',
-                            color: '#FFFFFF',
-            fontWeight: 'bold',
-                        }}
-                    >
-                        Yes
-                    </Button>
-        <Button
-                        onClick={handleClose}
-                        sx={{
-                            '&:hover': {
-                                backgroundColor: '#160449',                
-                            },
-            backgroundColor: '#3D5CAC',
-                            color: '#FFFFFF',
-            fontWeight: 'bold',
-                        }}
-                    >
-                        No
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </form>
-    );
-}
 
+        <DialogActions>
+          <Button
+            type='submit'
+            onClick={handleEndContract}
+            sx={{
+              "&:hover": {
+                backgroundColor: "#160449",
+              },
+              backgroundColor: "#3D5CAC",
+              color: "#FFFFFF",
+              fontWeight: "bold",
+            }}
+          >
+            Yes
+          </Button>
+          <Button
+            onClick={handleClose}
+            sx={{
+              "&:hover": {
+                backgroundColor: "#160449",
+              },
+              backgroundColor: "#3D5CAC",
+              color: "#FFFFFF",
+              fontWeight: "bold",
+            }}
+          >
+            No
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </form>
+  );
+}
 
 const RenewContractDialog = ({ open, handleClose, contract }) => {
   const { getProfileId } = useUser();
@@ -1105,7 +1129,7 @@ const RenewContractDialog = ({ open, handleClose, contract }) => {
     const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}-${currentDate.getFullYear()}`;
     const announcementTitle = `Contract Renewal Request`;
     const propertyUnit = contract.property_unit ? " Unit - " + contract.property_unit : "";
-    const announcementMsg = `The owner(${contract.owner_uid}) of ${contract.property_address}${propertyUnit} has requested a renewal of the management contract.`;
+    const announcementMsg = `The owner(${contract.owner_uid}) of ${contract.property_address}${propertyUnit} has requested a renewal of the Lease contract.`;
 
     let annProperties = JSON.stringify({ [contract.business_uid]: [contract.property_uid] });
 
@@ -1190,14 +1214,14 @@ const RenewContractDialog = ({ open, handleClose, contract }) => {
           <IconButton
             onClick={handleClose}
             sx={{
-              position: 'absolute',
+              position: "absolute",
               top: 8,
               right: 8,
-              color: '#3D5CAC',
+              color: "#3D5CAC",
             }}
           >
             <CloseIcon />
-          </IconButton>   
+          </IconButton>
         </DialogTitle>
         <DialogContent>
           <Grid container>

@@ -75,6 +75,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { CollectionsBookmarkRounded } from "@mui/icons-material";
 import PropertiesContext from "../../contexts/PropertiesContext";
 import ListsContext from "../../contexts/ListsContext.js";
+import LeaseDetailsComponent from "./LeaseDetailsComponent.jsx";
 import ManagementDetailsComponent from "./ManagementDetailsComponent.jsx";
 
 import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy } from "../../utils/fees";
@@ -130,6 +131,7 @@ export default function PropertyNavigator({
   const propertyList = propertyListFromContext || [];
   const allRentStatus = allRentStatusFromContext || [];
   const allContracts = allContractsFromContext || [];
+  const allLeases = allContractsFromContext || [];
   const returnIndex = returnIndexFromContext || 0;
 
   const [propertyData, setPropertyData] = useState(propertyList || []);
@@ -1730,11 +1732,12 @@ export default function PropertyNavigator({
                 {/* End Top Container */}
               </Card>
             </Grid>
+
             {/* End Top Card */}
 
             {/* Lease Details and Management Details Cards */}
             {/* Left component */}
-            <Grid item xs={12} md={6}>
+            {/* <Grid item xs={12} md={6}>
               <Card sx={{ backgroundColor: color, height: "100%" }}>
                 <Box
                   sx={{
@@ -2035,8 +2038,9 @@ export default function PropertyNavigator({
                       </Typography>
                     </Grid>
                     {/* this is lease tables */}
-                    {/* {<FeesSmallDataGrid data={propertyData[currentIndex].leaseFees}/>} */}
-                    {property && property.applications.length > 0 && (
+            {/* {<FeesSmallDataGrid data={propertyData[currentIndex].leaseFees}/>} */}
+
+            {/* {property && property.applications.length > 0 && (
                       <>
                         <Grid item xs={12} md={12}>
                           <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -2109,9 +2113,9 @@ export default function PropertyNavigator({
                                       backgroundColor: getAppColor(app),
                                     },
                                   }}
-                                >
-                                  {/* Box for full name and date on one line */}
-                                  <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%" }}>
+                                > */}
+            {/* Box for full name and date on one line */}
+            {/* <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%" }}>
                                     <Typography
                                       sx={{
                                         fontSize: theme.typography.smallFont,
@@ -2128,10 +2132,10 @@ export default function PropertyNavigator({
                                     >
                                       {app.lease_application_date}
                                     </Typography>
-                                  </Box>
+                                  </Box> */}
 
-                                  {/* Box for status on the next line */}
-                                  <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
+            {/* Box for status on the next line */}
+            {/* <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
                                     <Typography
                                       sx={{
                                         fontWeight: "bold",
@@ -2151,6 +2155,23 @@ export default function PropertyNavigator({
                   </Grid>
                 </CardContent>
               </Card>
+            </Grid> */}
+
+            {/* NEW Left component */}
+            <Grid item xs={12} md={6}>
+              <LeaseDetailsComponent
+                handleViewContractClick={handleViewContractClick}
+                handleManageContractClick={onManageContractClick}
+                activeLease={activeContracts[0]}
+                currentProperty={property}
+                selectedRole={selectedRole}
+                handleViewPMQuotesRequested={handleViewPMQuotesRequested}
+                newContractCount={newContractCount}
+                sentContractCount={sentContractCount}
+                currentIndex={currentIndex}
+                handleOpenMaintenancePage={handleOpenMaintenancePage}
+                onShowSearchManager={onShowSearchManager}
+              />
             </Grid>
 
             {/* Right component */}
@@ -2168,7 +2189,9 @@ export default function PropertyNavigator({
                 handleOpenMaintenancePage={handleOpenMaintenancePage}
                 onShowSearchManager={onShowSearchManager}
               />
-              {/* <Card sx={{ backgroundColor: color, height: "100%" }}>
+            </Grid>
+          </Grid>
+          {/* <Card sx={{ backgroundColor: color, height: "100%" }}>
                 <Box
                   sx={{
                     display: "flex",
@@ -2241,8 +2264,8 @@ export default function PropertyNavigator({
                                 fontSize: theme.typography.smallFont,
                               }}
                             > */}
-              {/* {property && property.business_uid ? `${property.business_name}` : "No Manager Selected"} */}
-              {/* {activeContracts?.length > 0 ? activeContracts[0]?.business_name : "No Manager Selected"}
+          {/* {property && property.business_uid ? `${property.business_name}` : "No Manager Selected"} */}
+          {/* {activeContracts?.length > 0 ? activeContracts[0]?.business_name : "No Manager Selected"}
                             </Typography>
                             <KeyboardArrowRightIcon
                               sx={{
@@ -2524,9 +2547,9 @@ export default function PropertyNavigator({
                   </Grid>
                 </CardContent>
               </Card> */}
-            </Grid>
-            {/* End Lease Details and Management Details Cards */}
-          </Grid>
+          {/* </Grid> */}
+          {/* End Lease Details and Management Details Cards */}
+          {/* </Grid> */}
 
           {/* Rent history grid */}
           <Grid item xs={12} sx={{ pt: "10px" }}>
