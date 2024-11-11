@@ -951,14 +951,14 @@ const TenantLease = () => {
     try {
       setShowMissingFieldsPrompt(false);
       if (!checkRequiredFields()) {
-        console.log('is it inside !checkRequiredFields');
+        // console.log('is it inside !checkRequiredFields');
         setShowMissingFieldsPrompt(true);
         return;
       }
       setShowSpinner(true);
 
       const leaseApplicationFormData = new FormData();
-      console.log('created leaseApplicationFormData');
+      // console.log('created leaseApplicationFormData');
       leaseApplicationFormData.append("lease_property_id", property.property_id);
       leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");
       leaseApplicationFormData.append("lease_renew_status", "TRUE");
@@ -988,7 +988,7 @@ const TenantLease = () => {
 
       let date = new Date();
       leaseApplicationFormData.append("lease_application_date", formatDate(date.toLocaleDateString()));
-      console.log('before tenant id leaseApplicationFormData', property);
+      // console.log('before tenant id leaseApplicationFormData', property);
       if (property?.tenants) {
         try {
           // Safely parse the tenants data
@@ -998,7 +998,7 @@ const TenantLease = () => {
           let tenantUIDs = parsedData.map(tenant => tenant.tenant_uid);
       
           // Log for debugging
-          console.log('Collected tenant UIDs:', tenantUIDs);
+          // console.log('Collected tenant UIDs:', tenantUIDs);
       
           // Append tenant_uid array to the form data as a list of array
           if(application?.lease_status === "RENEW NEW"){
@@ -1010,7 +1010,7 @@ const TenantLease = () => {
           }
         } catch (error) {
           // Handle JSON parse errors
-          console.error("Error parsing tenants data: ", error);
+          // console.error("Error parsing tenants data: ", error);
       
           // Append the property.tenant_uid as fallback
           if(application?.lease_status === "RENEW NEW"){
@@ -1034,28 +1034,32 @@ const TenantLease = () => {
       // console.log("HAS MISSING TYPE", hasMissingType);
 
       if (hasMissingType) {
-        console.log('inside hasMissingType');
+        // console.log('inside hasMissingType');
         setShowMissingFileTypePrompt(true);
         setShowSpinner(false);
         return;
       }
 
+      let documentsDetails = [];
+      let index = -1;
+
       if (leaseFiles.length) {
 
-        console.log('inside leaseFiles.length');
-        const documentsDetails = [];
+        // console.log('inside leaseFiles.length');
+        
         [...leaseFiles].forEach((file, i) => {
-          leaseApplicationFormData.append(`file_${i}`, file, file.name);
+          index += 1;
+          leaseApplicationFormData.append(`file_${index}`, file, file.name);
           const fileType = leaseFileTypes[i] || "";
           const documentObject = {
             // file: file,
-            fileIndex: i, //may not need fileIndex - will files be appended in the same order?
+            fileIndex: index, //may not need fileIndex - will files be appended in the same order?
             fileName: file.name, //may not need filename
             contentType: fileType,
           };
           documentsDetails.push(documentObject);
         });
-        leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
+        // leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
 
         
       }
@@ -1072,30 +1076,40 @@ const TenantLease = () => {
         leaseApplicationUpdateFormData.append("lease_uid", application.lease_uid);
         leaseApplicationUpdateFormData.append("lease_renew_status", "PM RENEW REQUESTED");
         
-              await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
-                method: "PUT",
-                body: leaseApplicationUpdateFormData,
-              });
-              let index = -1
-              if(leaseDocuments && leaseDocuments.length !== 0){
-                [...leaseDocuments].forEach((file, i) => {
-                  index++;
-                  const documentObject = {
-                      link : file.link,
-                      fileType: file.fileType,
-                      filename: file.filename,
-                      contentType: file.contentType,
-                  };
-                  leaseApplicationFormData.append(`file_${index}`, JSON.stringify(documentObject));
-              });
-              }
-              leaseApplicationFormData.append("lease_documents_details", JSON.stringify(leaseDocuments));
-      
+        await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+          method: "PUT",
+          body: leaseApplicationUpdateFormData,
+        });
+        
 
-      await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
-        method: "POST",
-        body: leaseApplicationFormData,
-      });
+        if(leaseDocuments && leaseDocuments.length !== 0){
+          [...leaseDocuments].forEach((file, i) => {
+            index++;
+            const documentObject = {
+                link : file.link,
+                fileType: file.fileType,
+                filename: file.filename,
+                contentType: file.contentType,
+            };
+            leaseApplicationFormData.append(`file_${index}`, JSON.stringify(documentObject));
+          });
+        }
+
+        leaseDocuments.forEach(doc => {
+          documentsDetails.push(doc);
+        });
+
+        leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
+
+        // console.log("---DEBUG --- leaseapplication form data ---");
+        // for (let [key, value] of leaseApplicationFormData.entries()) {
+        //   console.log(`${key}: ${value}`);
+        // }
+
+        await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+          method: "POST",
+          body: leaseApplicationFormData,
+        });
       }
 
       const receiverPropertyMapping = {
