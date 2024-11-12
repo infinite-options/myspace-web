@@ -23,6 +23,8 @@ import {
   TextField,
   Radio,
   RadioGroup,
+  Card,
+  CardContent,
   FormControlLabel,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -31,6 +33,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import CircleIcon from "@mui/icons-material/Circle";
 import PlaceholderImage from "./MaintenanceIcon.png";
 import { List, ListItem } from "@mui/material";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import AddIcon from "@mui/icons-material/Add";
 import { Table, TableHead, TableBody, TableRow, TableCell, TableContainer } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -788,6 +791,8 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
 
 const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty, relatedLease, isMobile, setViewRHS }) => {
   // console.log("Lease Details renewal", relatedLease);
+  // console.log("Lease Details ", leaseDetails);
+  // console.log("selected property - ", selectedProperty)
   // console.log("Lease Details rightPane", rightPane);
   const { getProfileId } = useUser();
   const [isFlipped, setIsFlipped] = useState(false);
@@ -803,6 +808,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
   const currentDate = new Date();
   const leaseEndDate = new Date(leaseDetails?.lease_end);
   const noticePeriod = leaseDetails?.lease_end_notice_period ? parseInt(leaseDetails.lease_end_notice_period, 10) : 0;
+  const navigate = useNavigate();
 
   // Calculate the number of days between the current date and the lease end date
   const timeDifference = leaseEndDate.getTime() - currentDate.getTime();
@@ -811,6 +817,8 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
   // Check if Renew Lease button should be visible (if within 2x notice period)
   const showRenewLeaseButton = daysUntilLeaseEnd <= 2 * noticePeriod && leaseDetails?.lease_renew_status !== "RENEW NEW";
   const isEndingOrEarlyTermination = leaseDetails?.lease_renew_status === "ENDING" || leaseDetails?.lease_renew_status === "EARLY TERMINATION";
+  const tenants = leaseDetails?.tenants ? JSON.parse(leaseDetails?.tenants) : []
+  const tenant_detail = tenants.length > 0 ? tenants[0] : null
 
   const handleViewRenewProcessingLease = () => {
     if (isMobile) {
@@ -881,7 +889,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
     //   alert("Failed to send lease renewal request. Please try again.");
     // }
     setRightPane({
-      type: "tenantApplication",
+      type: "tenantApplicationEdit",
       state: {
         data: leaseDetails,
         status: "RENEW",
@@ -992,130 +1000,631 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
             </Stack>
           </>
         ) : (
-          <>
-            {/* Lease Details */}
-            <Box sx={{ flexGrow: 1 }}>
-              <Stack spacing={2} sx={{ marginBottom: "15px" }}>
-                <Typography variant='subtitle1' sx={{ fontWeight: "bold", color: "#3D5CAC" }}>
-                  Rent Details
-                </Typography>
-                <Stack direction='row' justifyContent='space-between'>
-                  <Typography>Rent:</Typography>
-                  <Typography>${leaseDetails?.property_listed_rent || "N/A"}</Typography>
-                </Stack>
-                <Stack direction='row' justifyContent='space-between'>
-                  <Typography>Lease Documents:</Typography>
-                  {leaseDocumentsArray.length > 0 && (
-                    <Stack direction='row' spacing={1}>
-                      {leaseDocumentsArray.map((document, index) => (
-                        <Button
-                          key={index}
-                          sx={{
-                            padding: "0px",
-                            "&:hover": {
-                              backgroundColor: theme.palette.form.main,
-                            },
-                          }}
-                          title={document.filename} // Shows filename on hover
-                          className='.MuiButton-icon'
-                          onClick={() => openPreviewPane(document)}
-                        >
-                          <img src={LeaseIcon} alt='Lease Icon' />
-                        </Button>
-                      ))}
-                    </Stack>
-                  )}
-                </Stack>
+          // <>
+          //   {/* Lease Details */}
+          //   <Box sx={{ flexGrow: 1 }}>
+          //     <Stack spacing={2} sx={{ marginBottom: "15px" }}>
+          //       <Typography variant='subtitle1' sx={{ fontWeight: "bold", color: "#3D5CAC" }}>
+          //         Rent Details
+          //       </Typography>
+          //       <Stack direction='row' justifyContent='space-between'>
+          //         <Typography>Rent:</Typography>
+          //         <Typography>${leaseDetails?.property_listed_rent || "N/A"}</Typography>
+          //       </Stack>
+          //       <Stack direction='row' justifyContent='space-between'>
+          //         <Typography>Lease Documents:</Typography>
+          //         {leaseDocumentsArray.length > 0 && (
+          //           <Stack direction='row' spacing={1}>
+          //             {leaseDocumentsArray.map((document, index) => (
+          //               <Button
+          //                 key={index}
+          //                 sx={{
+          //                   padding: "0px",
+          //                   "&:hover": {
+          //                     backgroundColor: theme.palette.form.main,
+          //                   },
+          //                 }}
+          //                 title={document.filename} // Shows filename on hover
+          //                 className='.MuiButton-icon'
+          //                 onClick={() => openPreviewPane(document)}
+          //               >
+          //                 <img src={LeaseIcon} alt='Lease Icon' />
+          //               </Button>
+          //             ))}
+          //           </Stack>
+          //         )}
+          //       </Stack>
 
-                <Stack direction='row' justifyContent='space-between'>
-                  <Typography>Start Date:</Typography>
-                  <Typography>{leaseDetails?.lease_start || "N/A"}</Typography>
-                </Stack>
-                <Stack direction='row' justifyContent='space-between'>
-                  <Typography>End Date:</Typography>
-                  <Typography>{leaseDetails?.lease_end || "N/A"}</Typography>
-                </Stack>
-                <Stack direction='row' justifyContent='space-between'>
-                  <Typography>Lease Status:</Typography>
-                  <Typography>{leaseDetails?.lease_status || "N/A"}</Typography>
-                </Stack>
-                <Stack direction='row' justifyContent='space-between'>
-                  <Typography>Deposit:</Typography>
-                  <Typography>${leaseDetails?.property_deposit || "N/A"}</Typography>
-                </Stack>
-                <Stack direction='row' justifyContent='space-between'>
-                  <Typography>Notice Period:</Typography>
-                  <Typography>{noticePeriod} days</Typography>
-                </Stack>
-              </Stack>
-              <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: "auto" }}>
-                {!isEndingOrEarlyTermination && (
-                  // <Button variant='contained' onClick={handleEndLease} size='small' sx={{ padding: "5px 10px", marginRight: "10px", backgroundColor: "#3D5CAC", fontWeight: "bold"}}>
-                  <Button
-                    variant='contained'
-                    size='small'
-                    onClick={handleEndLease}
+          //       <Stack direction='row' justifyContent='space-between'>
+          //         <Typography>Start Date:</Typography>
+          //         <Typography>{leaseDetails?.lease_start || "N/A"}</Typography>
+          //       </Stack>
+          //       <Stack direction='row' justifyContent='space-between'>
+          //         <Typography>End Date:</Typography>
+          //         <Typography>{leaseDetails?.lease_end || "N/A"}</Typography>
+          //       </Stack>
+          //       <Stack direction='row' justifyContent='space-between'>
+          //         <Typography>Lease Status:</Typography>
+          //         <Typography>{leaseDetails?.lease_status || "N/A"}</Typography>
+          //       </Stack>
+          //       <Stack direction='row' justifyContent='space-between'>
+          //         <Typography>Deposit:</Typography>
+          //         <Typography>${leaseDetails?.property_deposit || "N/A"}</Typography>
+          //       </Stack>
+          //       <Stack direction='row' justifyContent='space-between'>
+          //         <Typography>Notice Period:</Typography>
+          //         <Typography>{noticePeriod} days</Typography>
+          //       </Stack>
+          //     </Stack>
+          //     <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: "auto" }}>
+          //       {!isEndingOrEarlyTermination && (
+          //         // <Button variant='contained' onClick={handleEndLease} size='small' sx={{ padding: "5px 10px", marginRight: "10px", backgroundColor: "#3D5CAC", fontWeight: "bold"}}>
+          //         <Button
+          //           variant='contained'
+          //           size='small'
+          //           onClick={handleEndLease}
+          //           sx={{
+          //             fontWeight: "bold",
+          //             backgroundColor: "#3D5CAC",
+          //             color: "white",
+          //           }}
+          //         >
+          //           End Lease
+          //         </Button>
+          //       )}
+
+          //       {relatedLease?.lease_status === "RENEW NEW" ? (
+          //         <Button
+          //           variant='contained'
+          //           size='small'
+          //           sx={{
+          //             backgroundColor: "#FFD700",
+          //             color: "#FFFFF",
+          //             fontWeight: "bold",
+          //             textTransform: "none",
+          //             marginLeft: "10px",
+          //           }}
+          //           onClick={handleViewRenewLease}
+          //         >
+          //           RENEWAL APPLICATION
+          //         </Button>
+          //       ) : (
+          //         showRenewLeaseButton &&
+          //         relatedLease?.lease_status !== "RENEW PROCESSING" && (
+          //           <Button
+          //             variant='contained'
+          //             size='small'
+          //             onClick={handleRenewLease}
+          //             sx={{
+          //               marginLeft: "10px",
+          //               fontWeight: "bold",
+          //               backgroundColor: "#3D5CAC",
+          //               color: "white",
+          //             }}
+          //           >
+          //             Renew Lease
+          //           </Button>
+          //         )
+          //       )}
+
+          //       {relatedLease && relatedLease.lease_status === "RENEW PROCESSING" && (
+          //         <Button
+          //           variant='contained'
+          //           size='small'
+          //           onClick={handleViewRenewProcessingLease}
+          //           sx={{
+          //             marginLeft: "10px",
+          //             fontWeight: "bold",
+          //             backgroundColor: "#76B148",
+          //             color: "white",
+          //           }}
+          //         >
+          //           View Renewal Lease
+          //         </Button>
+          //       )}
+          //     </Box>
+          //   </Box>
+          // </>
+
+          <>
+            <Grid container spacing={3}>
+              {/* Tenant Details */}
+              <Grid container item spacing={2}>
+                <Grid item xs={6}>
+                  <Typography
                     sx={{
-                      fontWeight: "bold",
-                      backgroundColor: "#3D5CAC",
-                      color: "white",
+                      color: theme.typography.primary.black,
+                      fontWeight: theme.typography.secondary.fontWeight,
+                      fontSize: theme.typography.smallFont,
                     }}
                   >
-                    End Lease
+                    Tenant:
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  {tenant_detail ? (
+                    <Box display='flex' justifyContent='space-between' alignItems='center'>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.light.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        {tenant_detail?.tenant_first_name} {tenant_detail?.tenant_last_name}
+                      </Typography>
+                      <KeyboardArrowRightIcon
+                        sx={{ color: "blue", cursor: "pointer" }}
+                        onClick={() => {
+                          if (tenant_detail && tenant_detail.tenant_uid) {
+                            navigate("/ContactsPM", {
+                              state: {
+                                contactsTab: "Tenant",
+                                tenantId: tenant_detail.tenant_uid,
+                              },
+                            });
+                          }
+                        }}
+                      />
+                    </Box>
+                  ) : (
+                    <Box display='flex' justifyContent='space-between' alignItems='center'>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.light.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        No Tenant Selected
+                      </Typography>
+                    </Box>
+                  )}
+                </Grid>
+              </Grid>
+
+              {/* Lease Status */}
+              <Grid container item spacing={2}>
+                <Grid item xs={6}>
+                  <Typography
+                    sx={{
+                      color: theme.typography.primary.black,
+                      fontWeight: theme.typography.secondary.fontWeight,
+                      fontSize: theme.typography.smallFont,
+                    }}
+                  >
+                    Lease Status:
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Box display='flex' alignItems='center' justifyContent={"space-between"}>
+                    {leaseDetails?.lease_status === "ACTIVE" ? (
+                      <>
+                        <Typography
+                          sx={{
+                            color: theme.palette.success.main,
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          ACTIVE
+                        </Typography>
+                        {leaseDetails?.lease_renew_status &&
+                          (leaseDetails?.lease_renew_status === "PM RENEW REQUESTED" || leaseDetails?.lease_renew_status.includes("RENEW REQUESTED")) && (
+                            <Typography
+                              sx={{
+                                color: leaseDetails?.lease_renew_status?.includes("RENEW") ? "#FF8A00" : "#A52A2A",
+                                fontWeight: theme.typography.secondary.fontWeight,
+                                fontSize: theme.typography.smallFont,
+                              }}
+                            >
+                              {leaseDetails?.lease_renew_status?.includes("RENEW") ? " RENEWING" : leaseDetails?.lease_renew_status}
+                            </Typography>
+                          )}
+                      </>
+                    ) : (
+                      <Typography
+                        sx={{
+                          color: "#3D5CAC",
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        No Lease
+                      </Typography>
+                    )}
+                    {/* {currentProperty?.contract_status === "ACTIVE" && selectedRole === "MANAGER" && 
+                              <Button
+                                  onClick={() => {                                    
+                                          handleManageContractClick(currentProperty.contract_uid, currentProperty.contract_property_id )                                                                        
+                                  }}
+                                  variant='outlined'
+                                  sx={{
+                                      background: "#3D5CAC",
+                                      color: theme.palette.background.default,
+                                      cursor: "pointer",
+                                      paddingX:"10px",
+                                      textTransform: "none",
+                                      maxWidth: "120px", // Fixed width for the button
+                                      maxHeight: "100%",
+                                  }}
+                                  size='small'
+                              >
+                              <Typography
+                                  sx={{
+                                  textTransform: "none",
+                                  color: "#FFFFFF",
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: "12px",
+                                  whiteSpace: "nowrap",
+                                  //   marginLeft: "1%", // Adjusting margin for icon and text
+                                  }}
+                              >
+                                  {"Manage Contract"}
+                              </Typography>
+                              </Button>} */}
+                  </Box>
+                </Grid>
+              </Grid>
+
+              {/* Lease Term */}
+              {leaseDetails && (
+                <Grid container item spacing={2}>
+                  <Grid item xs={6}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      Lease Term:
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.light.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      {leaseDetails?.lease_start}
+                      <span style={{ fontWeight: "bold", margin: "0 10px" }}>to</span>
+                      {leaseDetails?.lease_end}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              )}
+
+              <Grid container item spacing={2} sx={{ marginTop: "3px", marginBottom: "5px" }}>
+                <Grid
+                  item
+                  xs={3.5}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                  }}
+                >
+                  <Button
+                    onClick={() => {
+                      handleEndLease()
+                    }}
+                    variant='contained'
+                    sx={{
+                      background: "#3D5CAC",
+                      color: theme.palette.background.default,
+                      cursor: "pointer",
+                      paddingX: "10px",
+                      textTransform: "none",
+                      maxWidth: "120px", // Fixed width for the button
+                      maxHeight: "100%",
+                    }}
+                    size='small'
+                  >
+                    <Typography
+                      sx={{
+                        textTransform: "none",
+                        color: "#FFFFFF",
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: "12px",
+                        whiteSpace: "nowrap",
+                        //   marginLeft: "1%", // Adjusting margin for icon and text
+                      }}
+                    >
+                      {"End Lease"}
+                    </Typography>
                   </Button>
-                )}
+                </Grid>
 
                 {relatedLease?.lease_status === "RENEW NEW" ? (
-                  <Button
-                    variant='contained'
-                    size='small'
+                  // <Button
+                  //   variant='contained'
+                  //   size='small'
+                  //   sx={{
+                  //     backgroundColor: "#FFD700",
+                  //     color: "#FFFFF",
+                  //     fontWeight: "bold",
+                  //     textTransform: "none",
+                  //     marginLeft: "10px",
+                  //   }}
+                  //   onClick={handleViewRenewLease}
+                  // >
+                  //   RENEWAL APPLICATION
+                  // </Button>
+                  <Grid
+                    item
+                    xs={4}
                     sx={{
-                      backgroundColor: "#FFD700",
-                      color: "#FFFFF",
-                      fontWeight: "bold",
-                      textTransform: "none",
-                      marginLeft: "10px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: "100%",
                     }}
-                    onClick={handleViewRenewLease}
                   >
-                    RENEWAL APPLICATION
-                  </Button>
+                    <Button
+                      onClick={() => {
+                        handleViewRenewLease()
+                      }}
+                      variant='contained'
+                      sx={{
+                        background: "#FFD700",
+                        color: theme.palette.background.default,
+                        cursor: "pointer",
+                        paddingX: "10px",
+                        textTransform: "none",
+                        maxWidth: "120px", // Fixed width for the button
+                        maxHeight: "100%",
+                      }}
+                      size='small'
+                    >
+                      <Typography
+                        sx={{
+                          textTransform: "none",
+                          color: "#FFFFFF",
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: "12px",
+                          whiteSpace: "nowrap",
+                          //   marginLeft: "1%", // Adjusting margin for icon and text
+                        }}
+                      >
+                        {"RENEWAL APPLICATION"}
+                      </Typography>
+                    </Button>
+                  </Grid>
                 ) : (
                   showRenewLeaseButton &&
                   relatedLease?.lease_status !== "RENEW PROCESSING" && (
-                    <Button
-                      variant='contained'
-                      size='small'
-                      onClick={handleRenewLease}
+                    // <Button
+                    //   variant='contained'
+                    //   size='small'
+                    //   onClick={handleRenewLease}
+                    //   sx={{
+                    //     marginLeft: "10px",
+                    //     fontWeight: "bold",
+                    //     backgroundColor: "#3D5CAC",
+                    //     color: "white",
+                    //   }}
+                    // >
+                    //   Renew Lease
+                    // </Button>
+                    <Grid
+                      item
+                      xs={4}
                       sx={{
-                        marginLeft: "10px",
-                        fontWeight: "bold",
-                        backgroundColor: "#3D5CAC",
-                        color: "white",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100%",
                       }}
                     >
-                      Renew Lease
-                    </Button>
+                      <Button
+                        onClick={() => {
+                          handleRenewLease()
+                        }}
+                        variant='contained'
+                        sx={{
+                          background: "#3D5CAC",
+                          color: theme.palette.background.default,
+                          cursor: "pointer",
+                          paddingX: "10px",
+                          textTransform: "none",
+                          maxWidth: "120px", // Fixed width for the button
+                          maxHeight: "100%",
+                        }}
+                        size='small'
+                      >
+                        <Typography
+                          sx={{
+                            textTransform: "none",
+                            color: "#FFFFFF",
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: "12px",
+                            whiteSpace: "nowrap",
+                            //   marginLeft: "1%", // Adjusting margin for icon and text
+                          }}
+                        >
+                          {"Renew Lease"}
+                        </Typography>
+                      </Button>
+                    </Grid>
                   )
                 )}
 
                 {relatedLease && relatedLease.lease_status === "RENEW PROCESSING" && (
-                  <Button
-                    variant='contained'
-                    size='small'
-                    onClick={handleViewRenewProcessingLease}
+                  // <Button
+                  //   variant='contained'
+                  //   size='small'
+                  //   onClick={handleViewRenewProcessingLease}
+                  //   sx={{
+                  //     marginLeft: "10px",
+                  //     fontWeight: "bold",
+                  //     backgroundColor: "#76B148",
+                  //     color: "white",
+                  //   }}
+                  // >
+                  //   View Renewal Lease
+                  // </Button>
+                  <Grid
+                    item
+                    xs={4.5}
                     sx={{
-                      marginLeft: "10px",
-                      fontWeight: "bold",
-                      backgroundColor: "#76B148",
-                      color: "white",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: "100%",
                     }}
                   >
-                    View Renewal Lease
-                  </Button>
+                    <Button
+                      onClick={() => {
+                        handleViewRenewProcessingLease()
+                      }}
+                      variant='contained'
+                      sx={{
+                        background: "#76B148",
+                        color: theme.palette.background.default,
+                        cursor: "pointer",
+                        paddingX: "10px",
+                        textTransform: "none",
+                        maxWidth: "120px", // Fixed width for the button
+                        maxHeight: "100%",
+                      }}
+                      size='small'
+                    >
+                      <Typography
+                        sx={{
+                          textTransform: "none",
+                          color: "#FFFFFF",
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: "12px",
+                          whiteSpace: "nowrap",
+                          //   marginLeft: "1%", // Adjusting margin for icon and text
+                        }}
+                      >
+                        {"View Renewal Lease"}
+                      </Typography>
+                    </Button>
+                  </Grid>
                 )}
+              </Grid>
+
+              {/* Lease Fees */}
+              {leaseDetails && (
+                <Grid container item spacing={2}>
+                  <Grid item xs={6}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      Lease Fees:
+                    </Typography>
+                  </Grid>
+                </Grid>
+              )}
+
+              {leaseDetails && (
+                <Grid container item spacing={2}>
+                  {leaseDetails?.leaseFees ? (
+                    <FeesSmallDataGrid data={JSON.parse(leaseDetails?.leaseFees)} />
+                  ) : (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginTop: "7px",
+                        marginBottom: "10px",
+                        width: "100%",
+                        height: "40px",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          color: "#A9A9A9",
+                          fontWeight: theme.typography.primary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        No Fees
+                      </Typography>
+                    </Box>
+                  )}
+                </Grid>
+              )}
+
+              {/* Lease Documents */}
+              {leaseDetails && (
+                <Grid container item spacing={2}>
+                  <Grid item xs={6}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      Lease Documents:
+                    </Typography>
+                  </Grid>
+                </Grid>
+              )}
+
+              {leaseDetails && (
+                <Grid container item>
+                  {leaseDetails?.lease_documents ? (
+                    <DocumentSmallDataGrid data={JSON.parse(leaseDetails?.lease_documents)} handleFileClick={openPreviewPane} />
+                  ) : (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginTop: "7px",
+                        marginBottom: "10px",
+                        width: "100%",
+                        height: "40px",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          color: "#A9A9A9",
+                          fontWeight: theme.typography.primary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        No Documents
+                      </Typography>
+                    </Box>
+                  )}
+                </Grid>
+              )}
+            </Grid>
+            {/* <Card sx={{ backgroundColor: "transparent", height: "100%", boxShadow: "none"}}>
+              <Box sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                <Typography
+                  sx={{
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: theme.typography.largeFont,
+                    textAlign: "center",
+                    paddingLeft: "100px",
+                    // flexGrow: 1
+                  }}
+                >
+                  Lease Details
+                </Typography>
               </Box>
-            </Box>
+              <CardContent>
+                
+              </CardContent>
+            </Card> */}
           </>
         )}
       </Stack>
@@ -1135,6 +1644,142 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
         <img src={FlipIcon} alt='Flip Icon' style={{ width: "30px", height: "30px" }} />
       </IconButton>
     </Paper>
+  );
+};
+
+export const FeesSmallDataGrid = ({ data }) => {
+  const commonStyles = {
+    color: theme.typography.primary.black,
+    fontWeight: theme.typography.light.fontWeight,
+    fontSize: theme.typography.smallFont,
+  };
+
+  const columns = [
+    {
+      field: "frequency",
+      headerName: "Frequency",
+      flex: 1,
+      renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
+      renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
+    },
+    {
+      field: "fee_name",
+      headerName: "Name",
+      flex: 1.2,
+      renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
+      renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
+    },
+    {
+      field: "charge",
+      headerName: "Charge",
+      flex: 0.8,
+      renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
+      renderCell: (params) => {
+        const feeType = params.row?.fee_type;
+        const charge = params.value;
+
+        return <Typography sx={commonStyles}>{charge}</Typography>;
+      },
+    },
+    {
+      field: "fee_type",
+      headerName: "fee_type",
+      flex: 1,
+      renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
+      renderCell: (params) => {
+        const feeType = params.row?.fee_type;
+        const fee_type = params.value;
+
+        return <Typography sx={commonStyles}>{fee_type}</Typography>;
+      },
+    },
+  ];
+
+  // Adding a unique id to each row using map if the data doesn't have an id field
+  const rowsWithId = data.map((row, index) => ({
+    ...row,
+    id: row.id ? index : index,
+  }));
+
+  return (
+    <DataGrid
+      rows={rowsWithId}
+      columns={columns}
+      sx={{
+        marginY: "5px",
+        overflow: "auto",
+        "& .MuiDataGrid-columnHeaders": {
+          minHeight: "35px !important",
+          maxHeight: "35px !important",
+          height: 35,
+        },
+      }}
+      autoHeight
+      rowHeight={35}
+      hideFooter={true} // Display footer with pagination
+    />
+  );
+};
+
+export const DocumentSmallDataGrid = ({ data, handleFileClick }) => {
+  const commonStyles = {
+    color: theme.typography.primary.black,
+    fontWeight: theme.typography.light.fontWeight,
+    fontSize: theme.typography.smallFont,
+  };
+
+  const DocColumn = [
+    {
+      field: "filename",
+      headerName: "Filename",
+      renderCell: (params) => {
+        return (
+          <Box
+            sx={{
+              ...commonStyles,
+              cursor: "pointer", // Change cursor to indicate clickability
+              color: "#3D5CAC",
+            }}
+            onClick={() => handleFileClick(params.row)}
+          >
+            {params.row.filename}
+          </Box>
+        );
+      },
+      flex: 2.2,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "contentType",
+      headerName: "Content Type",
+      flex: 1.8,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
+    },
+  ];
+
+  const rowsWithId = data.map((row, index) => ({
+    ...row,
+    id: row.id ? index : index,
+  }));
+
+  return (
+    <DataGrid
+      rows={rowsWithId}
+      columns={DocColumn}
+      hideFooter={true}
+      autoHeight
+      rowHeight={35}
+      sx={{
+        marginY: "5px",
+        overflow: "auto",
+        "& .MuiDataGrid-columnHeaders": {
+          minHeight: "35px !important",
+          maxHeight: "35px !important",
+          height: 35,
+        },
+      }}
+    />
   );
 };
 
