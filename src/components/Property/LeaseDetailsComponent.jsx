@@ -611,7 +611,7 @@ export default function LeaseDetailsComponent({
 										</Box>
 									</Box>
 								</Grid>
-								<Grid item xs={12} >
+								<Grid item xs={12}>
 									<Accordion theme={theme} sx={{ backgroundColor: '#e6e6e6', marginLeft: '-5px' }}>
 										<AccordionSummary
 											expandIcon={<ExpandMoreIcon />}
