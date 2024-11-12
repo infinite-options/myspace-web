@@ -21,7 +21,10 @@ import APIConfig from '../../utils/APIConfig';
 import { useUser } from '../../contexts/UserContext';
 import ManagementContractContext from '../../contexts/ManagementContractContext';
 import PropertiesContext from '../../contexts/PropertiesContext';
-
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 export default function ManagementDetailsComponent({
   activeContract,
@@ -480,100 +483,110 @@ export default function ManagementDetailsComponent({
                     }
 
             {/* Management Fees */}
-            {activeContract && (
-              <Grid container item spacing={2}>
-                <Grid item xs={6}>
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.secondary.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                    }}
-                  >
-                    Management Fees:
-                  </Typography>
-                </Grid>
-              </Grid>
-            )}
+{activeContract && (
+  <Grid item xs={12}>
+    <Accordion theme={theme} sx={{ backgroundColor: '#e6e6e6', marginTop: '10px' }}>
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        aria-controls="management-fees-content"
+        id="management-fees-header"
+      >
+        <Typography
+          sx={{
+            color: theme.typography.primary.black,
+            fontWeight: theme.typography.secondary.fontWeight,
+            fontSize: theme.typography.smallFont,
+          }}
+        >
+          Management Fees
+        </Typography>
+      </AccordionSummary>
+      <AccordionDetails>
+        <Grid container item spacing={2}>
+          {activeContract?.contract_fees ? (
+            <FeesSmallDataGrid data={JSON.parse(activeContract?.contract_fees)} />
+          ) : (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                width: "100%",
+                height: "40px",
+                marginTop: "10px",
+              }}
+            >
+              <Typography
+                sx={{
+                  color: "#A9A9A9",
+                  fontWeight: theme.typography.primary.fontWeight,
+                  fontSize: theme.typography.smallFont,
+                }}
+              >
+                No Fees
+              </Typography>
+            </Box>
+          )}
+        </Grid>
+      </AccordionDetails>
+    </Accordion>
+  </Grid>
+)}
 
-            {activeContract && (
-              <Grid container item spacing={2}>
-                {activeContract?.contract_fees ? (
-                  <FeesSmallDataGrid data={JSON.parse(activeContract?.contract_fees)} />
-                ) : (
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginTop: "7px",
-                      marginBottom: "10px",
-                      width: "100%",
-                      height: "40px",
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#A9A9A9",
-                        fontWeight: theme.typography.primary.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      No Fees
-                    </Typography>
-                  </Box>
-                )}
-              </Grid>
-            )}
+{/* Contract Documents */}
+{activeContract && (
+  <Grid item xs={12}>
+    <Accordion theme={theme} sx={{ backgroundColor: '#e6e6e6', marginTop: '10px' }}>
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        aria-controls="contract-documents-content"
+        id="contract-documents-header"
+      >
+        <Typography
+          sx={{
+            color: theme.typography.primary.black,
+            fontWeight: theme.typography.secondary.fontWeight,
+            fontSize: theme.typography.smallFont,
+          }}
+        >
+          Contract Documents
+        </Typography>
+      </AccordionSummary>
+      <AccordionDetails>
+        <Grid container item>
+          {activeContract?.contract_documents ? (
+            <DocumentSmallDataGrid
+              data={JSON.parse(activeContract?.contract_documents)}
+              handleFileClick={handleFileClick}
+            />
+          ) : (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                width: "100%",
+                height: "40px",
+                marginTop: "10px",
+              }}
+            >
+              <Typography
+                sx={{
+                  color: "#A9A9A9",
+                  fontWeight: theme.typography.primary.fontWeight,
+                  fontSize: theme.typography.smallFont,
+                }}
+              >
+                No Document
+              </Typography>
+            </Box>
+          )}
+        </Grid>
+      </AccordionDetails>
+    </Accordion>
+  </Grid>
+)}
 
-            {/* Contract Documents */}
-            {activeContract && (
-              <Grid container item spacing={2}>
-                <Grid item xs={6}>
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.secondary.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                    }}
-                  >
-                    Contract Documents:
-                  </Typography>
-                </Grid>
-              </Grid>
-            )}
-
-            {activeContract && (
-              <Grid container item>
-                {activeContract?.contract_documents ? (
-                  <DocumentSmallDataGrid data={JSON.parse(activeContract?.contract_documents)} handleFileClick={handleFileClick} />
-                ) : (
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginTop: "7px",
-                      marginBottom: "10px",
-                      width: "100%",
-                      height: "40px",
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#A9A9A9",
-                        fontWeight: theme.typography.primary.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      No Document
-                    </Typography>
-                  </Box>
-                )}
-              </Grid>
-            )}
 
             {/* Open Maintenance Tickets */}
             <Grid container item spacing={2}>

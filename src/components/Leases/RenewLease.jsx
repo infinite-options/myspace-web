@@ -443,8 +443,9 @@ const handleEditLease = () => {
             // console.log("---on renew---", currentLease);
         }
     } else {
+        //console.log("---on renew---", currentLease);
         navigate("/tenantLease", { state: { page: "renew_lease", application: currentLease, property: currentLease, managerInitiatedRenew: true } });
-        // console.log("---on renew---", currentLease);
+        
     }
 };
 
