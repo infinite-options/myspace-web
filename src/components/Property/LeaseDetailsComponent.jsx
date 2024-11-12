@@ -465,8 +465,8 @@ export default function LeaseDetailsComponent({
 
             {activeLease && (
               <Grid container item spacing={2}>
-                {currentProperty?.leaseFees ? (
-                  <FeesSmallDataGrid data={JSON.parse(currentProperty?.leaseFees)} />
+                {currentProperty?.lease_fees ? (
+                  <FeesSmallDataGrid data={JSON.parse(currentProperty?.lease_fees)} />
                 ) : (
                   <Box
                     sx={{

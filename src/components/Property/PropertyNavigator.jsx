@@ -358,8 +358,8 @@ export default function PropertyNavigator({
       // console.log("rentDetails - ", rentDetails);
       setpropertyRentStatus(rentDetails);
 
-      if (property.leaseFees !== null) {
-        const rent = JSON.parse(propertyData[currentIndex].leaseFees).find((fee) => fee.fee_name === "Rent");
+      if (property.lease_fees !== null) {
+        const rent = JSON.parse(propertyData[currentIndex].lease_fees).find((fee) => fee.fee_name === "Rent");
         setrentFee(rent);
         // console.log('check rent', rent);
       } else {
@@ -2171,6 +2171,7 @@ export default function PropertyNavigator({
                 currentIndex={currentIndex}
                 handleOpenMaintenancePage={handleOpenMaintenancePage}
                 onShowSearchManager={onShowSearchManager}
+                getAppColor={getAppColor}
               />
             </Grid>
 
