@@ -1130,7 +1130,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
             <Grid container spacing={3}>
               {/* Tenant Details */}
               <Grid container item spacing={2}>
-                <Grid item xs={6}>
+                <Grid item xs={5}>
                   <Typography
                     sx={{
                       color: theme.typography.primary.black,
@@ -1141,7 +1141,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                     Tenant:
                   </Typography>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={7}>
                   {tenant_detail ? (
                     <Box display='flex' justifyContent='space-between' alignItems='center'>
                       <Typography
@@ -1185,7 +1185,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
 
               {/* Lease Status */}
               <Grid container item spacing={2}>
-                <Grid item xs={6}>
+                <Grid item xs={5}>
                   <Typography
                     sx={{
                       color: theme.typography.primary.black,
@@ -1196,7 +1196,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                     Lease Status:
                   </Typography>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={7}>
                   <Box display='flex' alignItems='center' justifyContent={"space-between"}>
                     {leaseDetails?.lease_status === "ACTIVE" ? (
                       <>
@@ -1270,7 +1270,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
               {/* Lease Term */}
               {leaseDetails && (
                 <Grid container item spacing={2}>
-                  <Grid item xs={6}>
+                  <Grid item xs={5}>
                     <Typography
                       sx={{
                         color: theme.typography.primary.black,
@@ -1281,7 +1281,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                       Lease Term:
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={7}>
                     <Typography
                       sx={{
                         color: theme.typography.primary.black,
@@ -1576,7 +1576,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
               )}
 
               {leaseDetails && (
-                <Grid container item>
+                <Grid container item spacing={2}>
                   {leaseDetails?.lease_documents ? (
                     <DocumentSmallDataGrid data={JSON.parse(leaseDetails?.lease_documents)} handleFileClick={openPreviewPane} />
                   ) : (
