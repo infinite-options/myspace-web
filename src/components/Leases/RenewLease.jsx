@@ -81,14 +81,17 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
 
     const [rightPane, setRightPane] = useState({type: "tenantApplication" }); 
 
+    // console.log('RenewLease - leaseDetails - ', leaseDetails);
+
     useEffect(() => {
         setShowSpinner(true);
         const filtered = leaseDetails.find(lease => lease.lease_uid === selectedLeaseId);
         setCurrentLease(filtered);
-        console.log('In Renew Lease', leaseDetails, selectedLeaseId, filtered);
+        console.log('In Renew Lease', leaseDetails, selectedLeaseId);
+        // console.log('filtered - ', filtered);
         const tenantsRow = JSON.parse(filtered.tenants);
         setTenantWithId(tenantsRow);
-        console.log('----dhyey---- tenantRow', tenantsRow);
+        // console.log('----dhyey---- tenantRow', tenantsRow);
 
         //Set utilities details
         const utils = JSON.parse(filtered.property_utilities);
@@ -368,6 +371,56 @@ const showSnackbar = (message, severity) => {
     setSnackbarOpen(true);
 };
 
+const handleLeaseEarlyTermination = (action) => {
+    try {
+        setShowSpinner(true);        
+        const headers = {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "*",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Credentials": "*",
+        };        
+        const leaseApplicationFormData = new FormData();
+        let date = new Date()
+        for (let i = 0; i < tenantWithId.length; i++) {            
+            leaseApplicationFormData.append("lease_uid", currentLease.lease_uid);            
+
+            if(action === "ACCEPT_EARLY_TERMINATION"){
+                leaseApplicationFormData.append("lease_end", formatDate(currentLease.move_out_date));       
+                leaseApplicationFormData.append("lease_renew_status", "ENDING");            
+            }
+            
+            if(action === "ALLOW_RE_RENTAL"){
+                // leaseApplicationFormData.append("lease_end", formatDate(currentLease.move_out_date));    
+                leaseApplicationFormData.append("move_out_date", formatDate(currentLease.move_out_date));          
+                leaseApplicationFormData.append("lease_renew_status", "EARLY MOVE-OUT");            
+            }
+
+            if(action === "DECLINE"){
+                leaseApplicationFormData.append("lease_renew_status", "EARLY TERMINATION REJECTED");            
+            }
+                                                            
+            // console.log("leaseApplicationFormData", leaseApplicationFormData);
+
+            axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
+                .then((response) => {                    
+                    setShowSpinner(false);
+                    // console.log('Data updated successfully');
+                    showSnackbar("The lease has been ended successfully.", "success");
+                })
+                .catch((error) => {
+                    setShowSpinner(false);
+                    if (error.response) {
+                        console.log(error.response.data);
+                        showSnackbar("Could not end the lease. Please Try Again", "error");
+                    }
+                });
+        }
+    } catch (error) {
+        console.log("Request Failed. Lease was not updated", error);
+    }
+}
+
 const getListDetails = async () => {        
     const relationships = getList("relationships");
     const states = getList("states");
@@ -595,7 +648,7 @@ return (
                        </Alert>
                    </Snackbar>
    
-                   {selectedRole !== "OWNER" && <Grid item xs={12} md={12}>
+                   {selectedRole !== "OWNER" && currentLease.lease_early_end_date === null && <Grid item xs={12} md={12}>
                        <Grid container sx={{ alignItems: "center", justifyContent: "center" }} spacing={2}>
                            
    
@@ -663,6 +716,111 @@ return (
                                        marginLeft: "1%",
                                    }}>
                                        End Lease
+                                   </Typography>
+                               </Button>
+                           </Grid>
+                       </Grid>
+                   </Grid>}
+
+                   {selectedRole !== "OWNER" && currentLease.lease_early_end_date != null && <Grid item xs={12} md={12}>
+                       <Grid container sx={{ alignItems: "center", justifyContent: "center" }} spacing={2}>
+                           
+   
+                           <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                               <Button
+                                   variant="contained"
+                                   sx={{
+                                       background: "#ffa500",
+                                       color: theme.palette.background.default,
+                                       cursor: "pointer",
+                                       textTransform: "none",
+                                       minWidth: "150px",
+                                       minHeight: "35px",
+                                       display: "flex",
+                                       alignItems: "center",
+                                       justifyContent: "center",
+                                       '&:hover': {
+                                           background: '#ffc04d',
+                                       },
+                                   }}
+                                   onClick={() => handleLeaseEarlyTermination("ACCEPT_EARLY_TERMINATION")}
+                                   size="small"
+                               >
+                                   <Typography sx={{
+                                       textTransform: "none",
+                                       color: theme.typography.primary.black,
+                                       fontWeight: theme.typography.secondary.fontWeight,
+                                       fontSize: theme.typography.smallFont,
+                                       whiteSpace: "nowrap",
+                                       marginLeft: "1%",
+                                   }}>
+                                       Accept Early Termination
+                                   </Typography>
+                               </Button>
+                           </Grid>
+   
+                           <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                               <Button
+                                   variant="contained"
+                                   sx={{
+                                       background: "#D4736D",
+                                       color: theme.palette.background.default,
+                                       cursor: "pointer",
+                                       textTransform: "none",
+                                       minWidth: "150px",
+                                       minHeight: "35px",
+                                       display: "flex",
+                                       alignItems: "center",
+                                       justifyContent: "center",
+                                       '&:hover': {
+                                           background: '#DEA19C',
+                                       },
+                                   }}
+                                   size="small"
+                                   onClick={() => handleLeaseEarlyTermination("ALLOW_RE_RENTAL")}
+                               >
+                                   <Typography sx={{
+                                       textTransform: "none",
+                                       color: theme.typography.primary.black,
+                                       fontWeight: theme.typography.secondary.fontWeight,
+                                       fontSize: theme.typography.smallFont,
+                                       whiteSpace: "nowrap",
+                                       marginLeft: "1%",
+                                   }}>
+                                       Allow Re-rental
+                                   </Typography>
+                               </Button>
+                           </Grid>
+
+                           <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                               <Button
+                                   variant="contained"
+                                   sx={{
+                                       background: "#D4736D",
+                                       color: theme.palette.background.default,
+                                       cursor: "pointer",
+                                       textTransform: "none",
+                                       minWidth: "150px",
+                                       minHeight: "35px",
+                                       display: "flex",
+                                       alignItems: "center",
+                                       justifyContent: "center",
+                                       '&:hover': {
+                                           background: '#DEA19C',
+                                       },
+                                   }}
+                                   size="small"
+                                   onClick={() => handleLeaseEarlyTermination("DECLINE")}
+                               >
+                                   <Typography sx={{
+                                       textTransform: "none",
+                                       color: theme.typography.primary.black,
+                                       fontWeight: theme.typography.secondary.fontWeight,
+                                       fontSize: theme.typography.smallFont,
+                                       whiteSpace: "nowrap",
+                                       marginLeft: "1%",
+                                   }}>
+                                       Decline
                                    </Typography>
                                </Button>
                            </Grid>

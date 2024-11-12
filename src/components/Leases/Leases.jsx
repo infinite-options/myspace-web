@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Modal, Box, Checkbox, Paper, Button, Stack } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Modal, Box, Checkbox, Paper, Button, Stack, Grid, Typography } from "@mui/material";
 import axios from "axios";
 import React from "react";
 import { useEffect, useState } from "react";
@@ -15,7 +15,7 @@ import { useMediaQuery } from "@mui/material";
 import APIConfig from "../../utils/APIConfig";
 
 export default function Leases(props) {
-  console.log("In Leases");
+  // console.log("In Leases");
   console.log("In Leases Props: ", props);
   const { getProfileId, selectedRole } = useUser();
   // console.log("Selected Role: ", selectedRole);
@@ -34,6 +34,8 @@ export default function Leases(props) {
   const [property_checkbox_items, set_property_checkbox_items] = useState([]);
   const [owner_checkbox_items, set_owner_checkbox_items] = useState([]);
   const [originalLeaseDate, setOriginalLeaseDate] = useState([]); // New state for storing original lease dates
+  const [M2MLeases, setM2MLeases] = useState([]);
+  const [endedLeases, setEndedLeases] = useState([]);
   const fetchData = props.leaseDetails;
 
   console.log("Before Map 1");
@@ -153,7 +155,14 @@ export default function Leases(props) {
     // const fetchData = res.data["Lease_Details"].result;
     // console.log("leases fetchData", fetchData);
 
-    const fetchData = props.leaseDetails;
+    
+    const fetchData = props.leaseDetails?.filter(lease => lease.lease_status === "ACTIVE");    
+    const leasesM2M = props.leaseDetails?.filter(lease => lease.lease_status === "ACTIVE M2M");    
+    const leasesEnded = props.leaseDetails?.filter(lease => lease.lease_status === "ENDED");    
+    // console.log("leasesM2M - ", leasesM2M);
+    // console.log("leasesEnded - ", leasesEnded);
+    setM2MLeases(leasesM2M);
+    setEndedLeases(leasesEnded);
 
     // Parse lease_end strings to Date objects
     fetchData.forEach((obj) => {
@@ -178,6 +187,7 @@ export default function Leases(props) {
     fetchData.forEach((lease) => {
       const currentDate = new Date();
       const leaseDate = new Date(lease.lease_end);
+      // console.log("leaseDate - ", leaseDate);
       if (leaseDate.getFullYear() > currentDate.getFullYear() ||
         (leaseDate.getFullYear() === currentDate.getFullYear() && leaseDate.getMonth() >= currentDate.getMonth())) {
         const date = lease.lease_end.slice(0, 7);
@@ -216,6 +226,7 @@ export default function Leases(props) {
       });
     set_owner_checkbox_items(uniqueOwners);
 
+    // console.log("leases - ", leases);
     setLeaseDate(leases);
     const firstEntry = [...leases.entries()][0];
     const firstLeaseUid = firstEntry ? firstEntry[1][0].lease_uid : null;
@@ -450,7 +461,7 @@ export default function Leases(props) {
             })}
           </Accordion>
           {[...leaseDate.keys()].map((date, i) => {
-            const leases = leaseDate.get(date);
+            const leases = leaseDate.get(date);            
             let tabColor = "#FFFFFF";
             // const endMonth = date.split("-")[1];
             const [endYear, endMonth] = date.split("-").map(Number);
@@ -464,6 +475,45 @@ export default function Leases(props) {
             }
             return <LeaseMonth key={i} data={[date, leases]} style={[tabColor]} setSelectedLeaseId={props.setSelectedLeaseId} setViewRHS={props.setViewRHS}/>;
           })}
+          {
+            M2MLeases?.length > 0 && (
+            <Grid container item>
+              <Grid item xs={12}> 
+                <Typography
+                  sx={{
+                    fontWeight: 'bold',
+                  }}
+                >
+                  Month-to-Month Leases:
+                </Typography>
+
+              </Grid>
+              <Grid container item xs={12}>                
+                <LeaseCard data={M2MLeases}  setSelectedLeaseId={props.setSelectedLeaseId} setViewRHS={props.setViewRHS}/>                                    
+              </Grid>
+
+            </Grid>
+            )
+          }
+          {
+            endedLeases?.length > 0 && (
+            <Grid container item>
+              <Grid item xs={12}> 
+                <Typography
+                  sx={{
+                    fontWeight: 'bold',
+                  }}
+                >
+                  Ended Leases:
+                </Typography>
+
+              </Grid>
+              <Grid container item xs={12}>                
+                <LeaseCard data={endedLeases}  setSelectedLeaseId={props.setSelectedLeaseId} setViewRHS={props.setViewRHS}/>                                    
+              </Grid>
+
+            </Grid>
+          )}
         </Box>
         <Modal open={open} onClose={handle_property_checkbox_close} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
           <Box
@@ -520,10 +570,67 @@ export default function Leases(props) {
   );
 }
 
+function LeaseCard(props) {
+  const leaseData = props.data;  
+
+  // console.log("leaseData - ", leaseData);
+  
+  return (
+    <Box
+      sx={{
+        width: '100%',
+        display: "flex",
+        flexDirection: "row",
+        marginBottom: "20px",
+        marginTop: "10px",
+      }}
+    >
+      <Box
+        sx={{
+          width: "10%",
+          backgroundColor: "#FFFFFF",
+          borderRadius: "10px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          paddingTop: "5px",
+          paddingBottom: "10px",
+
+          fontSize: "15px",
+          color: "#160449",
+        }}
+      >        
+        <Box
+          sx={{
+            fontWeight: "bold",
+            marginTop: "auto",
+            marginBottom: "0px",
+          }}
+        >
+          {leaseData?.length}
+        </Box>
+      </Box>      
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          width: "90%",
+        }}
+      >
+        {leaseData?.map((lease, i) => (
+          <LeaseComponent key={i} data={lease} setSelectedLeaseId={props.setSelectedLeaseId} setViewRHS={props.setViewRHS}/>
+        ))}
+      </Box>
+    </Box>
+  );
+}
+
 function LeaseMonth(props) {
   const [date, leaseData] = props.data;
   let [year, month] = ["-", "-"];
   const [tabColor] = props.style;
+
+  // console.log("leaseData - ", leaseData);
 
   function parseDate(data) {
     const dateList = data.split("-");

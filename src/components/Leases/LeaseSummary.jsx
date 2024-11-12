@@ -27,6 +27,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
         //set images
         const parsedPropertyImages = currentLease.property_favorite_image ? currentLease.property_favorite_image : null;
         setImage(parsedPropertyImages === null ? propertyImage : parsedPropertyImages);
+        // console.log("currentLease - ", currentLease);
     }, [currentLease])
 
     const handleCloseDialog = () => {
@@ -45,14 +46,30 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
         handleCloseDialog();
     }
 
+    // function formatDate(dateString) {
+    //     const date = new Date(dateString);
+    //     console.log('check date', dateString, date)
+    //     const month = String(date.getMonth() + 1).padStart(2, '0');
+    //     const day = String(date.getDate()).padStart(2, '0');
+    //     const year = date.getFullYear();
+    //     return `${month}-${day}-${year}`;
+    // }
+
     function formatDate(dateString) {
-        const date = new Date(dateString);
-        console.log('check date', dateString, date)
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        const year = date.getFullYear();
-        return `${month}-${day}-${year}`;
+    const timestamp = Date.parse(dateString);
+
+    // Check if the date string is valid
+    if (isNaN(timestamp)) {
+        console.error('Invalid date:', dateString);
+        return null;
     }
+
+    const date = new Date(timestamp);
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}-${day}-${year}`;
+}
 
     return (
         <Paper sx={{ margin: "10px", backgroundColor: color, paddingBottom: "10px" }}>
@@ -309,6 +326,21 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                                     fontSize: theme.typography.smallFont,
                                 }}>TBD</Typography>
                             </Grid>
+                            {
+                                currentLease.lease_early_end_date != null && (
+                                    <>
+                                        <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                            <Typography sx={{
+                                                // textTransform: 'none',
+                                                color: "#160449",
+                                                fontWeight: theme.typography.secondary.fontWeight,
+                                                fontSize: theme.typography.smallFont,
+                                            }}>Early Termination Requested</Typography>
+                                        </Grid>                                        
+                                    </>
+                                )
+                            }
+                            
                         </Grid>
                     </Grid>
                     {/* <Grid item xs={0} md={0.5} /> */}
@@ -419,6 +451,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                                         color: "#160449",
                                         fontWeight: theme.typography.light.fontWeight,
                                         fontSize: theme.typography.smallFont,
+                                    // }}>{formatDate(currentLease.lease_end)}</Typography>
                                     }}>{formatDate(currentLease.lease_end)}</Typography>
                                 </Grid>
                                 <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
@@ -453,6 +486,20 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                                         fontSize: theme.typography.smallFont,
                                     }}>TBD</Typography>
                                 </Grid>
+                                {
+                                    currentLease.lease_early_end_date != null && (
+                                        <>
+                                            <Grid item xs={12} sx={{ marginBottom: "10px" }}>
+                                                <Typography sx={{
+                                                    textTransform: 'uppercase',
+                                                    color: "#160449",
+                                                    fontWeight: theme.typography.secondary.fontWeight,
+                                                    fontSize: theme.typography.smallFont,
+                                                }}>Early Termination Requested</Typography>
+                                            </Grid>                                        
+                                        </>
+                                    )
+                                }
                             </Grid>
                         </Grid>
                         <Grid item xs={0} md={0.5} />
