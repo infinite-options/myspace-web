@@ -614,6 +614,12 @@ export default function TenantApplicationEdit(props) {
                         showSnackbar("Your lease application has been successfully updated.", "success");
                         setIsReload((prev) => !prev);
                         setShowSpinner(false);
+
+                        if (props.from === "PropertyInfo") {
+                            props.setRightPane({ type: "listings" });
+                        } else {
+                            props.setRightPane("");
+                        }
                     })
                     .catch((error) => {
                         setShowSpinner(false);

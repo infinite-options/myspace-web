@@ -453,7 +453,7 @@ const Documents = ({ setRightPane,setRHS, setSelectedDocument, fromRenew, docume
     setRightPane({
         type: "filePreview",
         file: file,
-        onClose: () => setRightPane({ type: "tenantApplication" }) // go back to tenant application
+        onClose: () => setRightPane({ type: "tenantApplicationEdit" }) // go back to tenant application
     });
 };
 
