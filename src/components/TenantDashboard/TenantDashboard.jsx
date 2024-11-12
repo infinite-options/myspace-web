@@ -1230,7 +1230,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           fontSize: theme.typography.smallFont,
                         }}
                       >
-                        No Lease
+                        {leaseDetails?.lease_status? leaseDetails?.lease_status : "No Lease"}
                       </Typography>
                     )}
                     {/* {currentProperty?.contract_status === "ACTIVE" && selectedRole === "MANAGER" && 
@@ -1300,7 +1300,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
               <Grid container item spacing={2} sx={{ marginTop: "3px", marginBottom: "5px" }}>
                 <Grid
                   item
-                  xs={3.5}
+                  xs={6}
                   sx={{
                     display: "flex",
                     justifyContent: "center",
@@ -1356,7 +1356,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                   // </Button>
                   <Grid
                     item
-                    xs={4}
+                    xs={6}
                     sx={{
                       display: "flex",
                       justifyContent: "center",
@@ -1412,7 +1412,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                     // </Button>
                     <Grid
                       item
-                      xs={4}
+                      xs={6}
                       sx={{
                         display: "flex",
                         justifyContent: "center",
@@ -1469,7 +1469,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                   // </Button>
                   <Grid
                     item
-                    xs={4.5}
+                    xs={6}
                     sx={{
                       display: "flex",
                       justifyContent: "center",
@@ -1529,8 +1529,8 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
 
               {leaseDetails && (
                 <Grid container item spacing={2}>
-                  {leaseDetails?.leaseFees ? (
-                    <FeesSmallDataGrid data={JSON.parse(leaseDetails?.leaseFees)} />
+                  {leaseDetails?.lease_fees ? (
+                    <FeesSmallDataGrid data={JSON.parse(leaseDetails?.lease_fees)} />
                   ) : (
                     <Box
                       sx={{
@@ -2386,10 +2386,6 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
                         "& .MuiInputLabel-root.Mui-focused, & .MuiInputLabel-root.MuiFormLabel-filled": {
                           color: "#00000099",
                         },
-                        "& .MuiFilledInput-root": {
-                          paddingTop: "8px", // Reduce padding inside the text field
-                          paddingBottom: "10px", // Reduce padding inside the text field
-                        },
                       }}
                     />
                   </Stack>
@@ -2586,6 +2582,11 @@ function TenantBalanceTablePM(props) {
           rowSelectionModel={selectedRows}
           onRowSelectionModelChange={handleSelectionModelChange}
           getRowId={(row) => row.purchase_uid}
+          initialState={{
+            sorting: {
+              sortModel: [{ field: 'purchaseDate', sort: 'asc' }],
+            },
+          }}
         />
       )}
     </Box>

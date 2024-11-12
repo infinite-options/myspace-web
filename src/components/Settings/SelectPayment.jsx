@@ -270,7 +270,8 @@ export default function SelectPayment(props) {
       payment_summary: {
         ...paymentData.payment_summary,
         total: parseFloat(totalBalance.toFixed(2))
-      }
+      },
+      site: window.location.hostname === "localhost" ? "LOCAL_PM" : "PM"
     }
 
     let resultOfResponse;
@@ -285,7 +286,7 @@ export default function SelectPayment(props) {
       });
 
       resultOfResponse = await response.json()    // because response has only url so we can't convert into json
-      console.log(resultOfResponse)
+      // console.log(resultOfResponse)
 
       if (response.ok) {
 
