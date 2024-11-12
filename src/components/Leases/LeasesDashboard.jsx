@@ -26,6 +26,10 @@ export default function LeasesDashboard() {
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const [viewRHS, setViewRHS] = useState(false)
 
+    // useEffect(() => {
+    //     console.log("LeasesDashboard - leaseDetails - ", leaseDetails);
+    // }, [leaseDetails]);
+
     const fetchProperties = async () => {
         const profileId = getProfileId();
         // PROPERTIES ENDPOINT
@@ -79,6 +83,11 @@ export default function LeasesDashboard() {
         axios.get(`${APIConfig.baseURL.dev}/leaseDetails/${getProfileId()}`).then((res) => {
             //axios.get(`${APIConfig.baseURL.dev}/leaseDetails/110-000003`).then((res) => {
             const fetchData = res.data["Lease_Details"].result;
+
+            fetchData?.forEach( lease => {
+                console.log("lease_uid - ", lease.lease_uid);
+                console.log("lease_end - ", lease.lease_end);
+            })
             if (res.status === 200) {
                 console.log('In Leases dashboard', fetchData);
                 setLeaseDetails(fetchData);
