@@ -417,6 +417,7 @@ const TenantLease = () => {
       console.log('is it here---', property, application);
       let feesList = [];
       if (application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "ACTIVE" ) {
+        console.log("getLeaseFees if: ", application.lease_fees);
         feesList = JSON.parse(application?.lease_fees);
       } else if (application?.lease_status === "NEW" || application?.lease_status === "RENEW NEW") {
         feesList = initialFees(property, application);

@@ -443,8 +443,9 @@ const handleEditLease = () => {
             // console.log("---on renew---", currentLease);
         }
     } else {
+        //console.log("---on renew---", currentLease);
         navigate("/tenantLease", { state: { page: "renew_lease", application: currentLease, property: currentLease, managerInitiatedRenew: true } });
-        // console.log("---on renew---", currentLease);
+        
     }
 };
 
@@ -682,7 +683,7 @@ return (
                                    }}>
                                        {currentLease.lease_renew_status === "PM RENEW REQUESTED" || currentLease.lease_renew_status === "RENEW REQUESTED" ? 
                        "Review Renewal Application" : 
-                       "Renew Lease"}
+                       "Edit/Renew Lease"}
                                    </Typography>
                                </Button>
                            </Grid>

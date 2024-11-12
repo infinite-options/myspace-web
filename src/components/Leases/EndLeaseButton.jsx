@@ -13,7 +13,7 @@ import { useUser } from "../../contexts/UserContext";
 import axios from 'axios';
 
 
-const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked, handleUpdate }) => {
+const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked, handleUpdate, fromProperties=false }) => {
     const [open, setOpen] = useState(false);
     const [confirmationText, setConfirmationText] = useState("")
     const [showSpinner, setShowSpinner] = useState(false);
@@ -31,9 +31,14 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked,
     const color = theme.palette.form.main;
 
     useEffect(() => {
-        const filtered = leaseDetails.find(lease => lease.lease_uid === selectedLeaseId);
-        console.log('filtered', filtered);
-        setLeaseData(filtered);
+        if(fromProperties){
+            setLeaseData(leaseDetails);
+        }else{
+
+            const filtered = leaseDetails.find(lease => lease.lease_uid === selectedLeaseId);
+            // console.log('filtered', filtered);
+            setLeaseData(filtered);
+        }
     }, [selectedId])
 
     const getEndLeaseConfirmation = () => {
