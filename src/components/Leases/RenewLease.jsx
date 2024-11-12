@@ -683,7 +683,7 @@ return (
                                    }}>
                                        {currentLease.lease_renew_status === "PM RENEW REQUESTED" || currentLease.lease_renew_status === "RENEW REQUESTED" ? 
                        "Review Renewal Application" : 
-                       "Renew Lease"}
+                       "Edit/Renew Lease"}
                                    </Typography>
                                </Button>
                            </Grid>

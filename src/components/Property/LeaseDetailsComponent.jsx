@@ -447,7 +447,7 @@ export default function LeaseDetailsComponent({
 												//   marginLeft: "1%", // Adjusting margin for icon and text
 											}}
 										>
-											{'Renew Lease'}
+											{'Edit/Renew Lease'}
 										</Typography>
 									</Button>
 								</Grid>
@@ -506,62 +506,75 @@ export default function LeaseDetailsComponent({
 						)}
 
 						{/* Lease Documents */}
-						{activeLease && (
-							<Grid item xs={12}>
-								<Accordion theme={theme} sx={{ backgroundColor: '#e6e6e6', marginTop: '10px' }}>
-									<AccordionSummary
-										expandIcon={<ExpandMoreIcon />}
-										aria-controls="lease-documents-content"
-										id="lease-documents-header"
-									>
-										<Typography
-											sx={{
-												color: theme.typography.primary.black,
-												fontWeight: theme.typography.secondary.fontWeight,
-												fontSize: theme.typography.smallFont,
-											}}
-										>
-											Lease Documents
-										</Typography>
-									</AccordionSummary>
-									<AccordionDetails>
-										<Grid container item>
-											{currentProperty?.lease_documents ? (
-												<DocumentSmallDataGrid
-													data={JSON.parse(currentProperty?.lease_documents)}
-													handleFileClick={handleFileClick}
-												/>
-											) : (
-												<Box
-													sx={{
-														display: 'flex',
-														justifyContent: 'center',
-														alignItems: 'center',
-														width: '100%',
-														height: '40px',
-														marginTop: '10px',
-													}}
-												>
-													<Typography
-														sx={{
-															color: '#A9A9A9',
-															fontWeight: theme.typography.primary.fontWeight,
-															fontSize: theme.typography.smallFont,
-														}}
-													>
-														No Documents
-													</Typography>
-												</Box>
-											)}
-										</Grid>
-									</AccordionDetails>
-								</Accordion>
-							</Grid>
-						)}
+            {activeLease && (
+    <Grid item xs={12}>
+        {currentProperty?.lease_documents && JSON.parse(currentProperty.lease_documents).length > 0 ? (
+            <Accordion theme={theme} sx={{ backgroundColor: '#e6e6e6', marginTop: '10px' }}>
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="lease-documents-content"
+                    id="lease-documents-header"
+                >
+                    <Typography
+                        sx={{
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                        }}
+                    >
+                        Lease Documents
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <Grid container item>
+                        <DocumentSmallDataGrid
+                            data={JSON.parse(currentProperty.lease_documents)}
+                            handleFileClick={handleFileClick}
+                        />
+                    </Grid>
+                </AccordionDetails>
+            </Accordion>
+        ) : (
+            <Box sx={{ marginTop: '10px' }}>
+                <Typography
+                    sx={{
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                    }}
+                >
+                    Lease Documents
+                </Typography>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        width: '100%',
+                        height: '40px',
+                        marginTop: '10px',
+                    }}
+                >
+                    <Typography
+                        sx={{
+                            color: '#A9A9A9',
+                            fontWeight: theme.typography.primary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                        }}
+                    >
+                        No Documents
+                    </Typography>
+                </Box>
+            </Box>
+        )}
+    </Grid>
+)}
+
+
 
 						{currentProperty && currentProperty.applications.length > 0 && (
 							<>
-								<Grid item xs={12} md={12}>
+								<Grid item xs={12} >
 									<Box sx={{ display: 'flex', alignItems: 'center' }}>
 										<Typography
 											sx={{
@@ -598,7 +611,7 @@ export default function LeaseDetailsComponent({
 										</Box>
 									</Box>
 								</Grid>
-								<Grid item xs={12} md={12}>
+								<Grid item xs={12} >
 									<Accordion theme={theme} sx={{ backgroundColor: '#e6e6e6', marginLeft: '-5px' }}>
 										<AccordionSummary
 											expandIcon={<ExpandMoreIcon />}

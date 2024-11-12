@@ -49,7 +49,7 @@ export default function LeasesDashboard() {
 		const propertyData = await property_response.json();
 
    
-		console.log('---propertyData--', propertyData);
+		// console.log('---propertyData--', propertyData);
 		setPropertyList(getPropertyList(propertyData)); // This combines Properties with Applications and Maitenance Items to enable the LHS screen
 		// console.log("In Properties > Property Endpoint: ", propertyList);
 	};

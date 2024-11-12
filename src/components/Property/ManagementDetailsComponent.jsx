@@ -536,12 +536,34 @@ export default function ManagementDetailsComponent({
 {/* Contract Documents */}
 {activeContract && (
   <Grid item xs={12}>
-    <Accordion theme={theme} sx={{ backgroundColor: '#e6e6e6', marginTop: '10px' }}>
-      <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
-        aria-controls="contract-documents-content"
-        id="contract-documents-header"
-      >
+    {activeContract.contract_documents && activeContract.contract_documents !== "[]" ? (
+      <Accordion theme={theme} sx={{ backgroundColor: '#e6e6e6', marginTop: '10px' }}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="contract-documents-content"
+          id="contract-documents-header"
+        >
+          <Typography
+            sx={{
+              color: theme.typography.primary.black,
+              fontWeight: theme.typography.secondary.fontWeight,
+              fontSize: theme.typography.smallFont,
+            }}
+          >
+            Contract Documents
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Grid container item>
+            <DocumentSmallDataGrid
+              data={JSON.parse(activeContract.contract_documents)}
+              handleFileClick={handleFileClick}
+            />
+          </Grid>
+        </AccordionDetails>
+      </Accordion>
+    ) : (
+      <Box sx={{ marginTop: '10px' }}>
         <Typography
           sx={{
             color: theme.typography.primary.black,
@@ -551,46 +573,36 @@ export default function ManagementDetailsComponent({
         >
           Contract Documents
         </Typography>
-      </AccordionSummary>
-      <AccordionDetails>
-        <Grid container item>
-          {activeContract?.contract_documents ? (
-            <DocumentSmallDataGrid
-              data={JSON.parse(activeContract?.contract_documents)}
-              handleFileClick={handleFileClick}
-            />
-          ) : (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                width: "100%",
-                height: "40px",
-                marginTop: "10px",
-              }}
-            >
-              <Typography
-                sx={{
-                  color: "#A9A9A9",
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                No Document
-              </Typography>
-            </Box>
-          )}
-        </Grid>
-      </AccordionDetails>
-    </Accordion>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '100%',
+            height: '40px',
+            marginTop: '10px',
+          }}
+        >
+          <Typography
+            sx={{
+              color: '#A9A9A9',
+              fontWeight: theme.typography.primary.fontWeight,
+              fontSize: theme.typography.smallFont,
+            }}
+          >
+            No Document
+          </Typography>
+        </Box>
+      </Box>
+    )}
   </Grid>
 )}
 
 
+
             {/* Open Maintenance Tickets */}
             <Grid container item spacing={2}>
-              <Grid item xs={6}>
+              <Grid item xs={10}>
                 <Typography
                   sx={{
                     color: theme.typography.primary.black,
@@ -601,7 +613,7 @@ export default function ManagementDetailsComponent({
                   Open Maintenance Tickets:
                 </Typography>
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={2}>
                 <IconButton
                   sx={{ marginLeft: "1.5px", paddingTop: "3px" }}
                   onClick={() => {
