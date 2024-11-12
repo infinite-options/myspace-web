@@ -329,7 +329,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                             {
                                 currentLease.lease_early_end_date != null && (
                                     <>
-                                        <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                        <Grid item xs={12} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
                                                 // textTransform: 'none',
                                                 color: "#160449",
@@ -485,21 +485,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                                         fontWeight: theme.typography.light.fontWeight,
                                         fontSize: theme.typography.smallFont,
                                     }}>TBD</Typography>
-                                </Grid>
-                                {
-                                    currentLease.lease_early_end_date != null && (
-                                        <>
-                                            <Grid item xs={12} sx={{ marginBottom: "10px" }}>
-                                                <Typography sx={{
-                                                    textTransform: 'uppercase',
-                                                    color: "#160449",
-                                                    fontWeight: theme.typography.secondary.fontWeight,
-                                                    fontSize: theme.typography.smallFont,
-                                                }}>Early Termination Requested</Typography>
-                                            </Grid>                                        
-                                        </>
-                                    )
-                                }
+                                </Grid>                                
                             </Grid>
                         </Grid>
                         <Grid item xs={0} md={0.5} />
@@ -574,8 +560,26 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                                 </Grid>
                             </Grid>
                         </Grid>
+                                             
                     </>)}
             </Grid>
+            {
+                            currentLease.lease_early_end_date != null && (
+                                <>
+                                    <Grid container direction="row">
+                                        <Grid item xs={3.4} sx={{ marginBottom: "10px" }}></Grid>
+                                        <Grid item xs={8.6} sx={{ marginBottom: "10px" }}>
+                                            <Typography sx={{
+                                                textTransform: 'uppercase',
+                                                color: "#160449",
+                                                fontWeight: theme.typography.secondary.fontWeight,
+                                                fontSize: theme.typography.smallFont,
+                                            }}>Early Termination Requested</Typography>
+                                        </Grid>                                        
+                                    </Grid>
+                                </>
+                            )
+                        }   
         </Paper>
     )
 }

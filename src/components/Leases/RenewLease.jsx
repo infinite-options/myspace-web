@@ -788,7 +788,7 @@ return (
                                        whiteSpace: "nowrap",
                                        marginLeft: "1%",
                                    }}>
-                                       Allow Re-rental
+                                       Allow Re-Rental
                                    </Typography>
                                </Button>
                            </Grid>
