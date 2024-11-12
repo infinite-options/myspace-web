@@ -366,6 +366,9 @@ const TenantAccountBalance = ({
                 // color: "#fff",
                 color: getTextColor(),
                 fontWeight: "bold",
+                '&:hover': {
+                  color: '#fff', // White text color on hover
+                },
               }}
               onClick={
                 leaseDetails?.lease_status === "NEW" || leaseDetails?.lease_status === "PROCESSING"

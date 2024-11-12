@@ -681,7 +681,7 @@ export default function TenantApplicationEdit(props) {
     const handleSaveButton = async (e) => {
         e.preventDefault();
         console.log(status , " lease uid - ", lease[0])
-        if (lease[0]?.lease_uid == null || status === null || status === "" || status === "NEW" || status === "RENEW") {
+        if (lease[0]?.lease_uid == null || status === null || status === "" || status === "RENEW") {
             await handleApplicationSubmit();
         }else{
             await updateLeaseData();  // Trigger the PUT request to save data
