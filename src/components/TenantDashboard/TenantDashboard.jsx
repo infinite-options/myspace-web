@@ -843,7 +843,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
       setViewRHS(true);
     }
     setRightPane({
-      type: "tenantApplication",
+      type: "tenantApplicationEdit",
       state: {
         data: relatedLease,
         status: relatedLease.lease_status,
@@ -1375,7 +1375,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                         cursor: "pointer",
                         paddingX: "10px",
                         textTransform: "none",
-                        maxWidth: "120px", // Fixed width for the button
+                        width: "100%", // Fixed width for the button
                         maxHeight: "100%",
                       }}
                       size='small'
@@ -1431,7 +1431,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           cursor: "pointer",
                           paddingX: "10px",
                           textTransform: "none",
-                          maxWidth: "120px", // Fixed width for the button
+                          width: "100%", // Fixed width for the button
                           maxHeight: "100%",
                         }}
                         size='small'

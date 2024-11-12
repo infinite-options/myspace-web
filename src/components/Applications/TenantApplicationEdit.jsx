@@ -680,10 +680,11 @@ export default function TenantApplicationEdit(props) {
 
     const handleSaveButton = async (e) => {
         e.preventDefault();
-        if (lease[0]?.lease_uid) {
-            await updateLeaseData();  // Trigger the PUT request to save data
-        }else{
+        console.log(status , " lease uid - ", lease[0])
+        if (lease[0]?.lease_uid == null || status === null || status === "" || status === "NEW" || status === "RENEW") {
             await handleApplicationSubmit();
+        }else{
+            await updateLeaseData();  // Trigger the PUT request to save data
         }
         // const updatedState = {
         //     data: property,
@@ -775,11 +776,12 @@ export default function TenantApplicationEdit(props) {
             const leaseApplicationData = new FormData();
             leaseApplicationData.append("lease_property_id", property.property_uid);
     
-            if (lease[0].lease_status === "RENEW") {
+            if (status === "RENEW") {
                 const updateLeaseData = new FormData();
                 updateLeaseData.append("lease_uid", lease[0].lease_uid);
-                updateLeaseData.append("lease_renew_status", "TRUE");
-    
+                updateLeaseData.append("lease_renew_status", "RENEW REQUESTED");
+                
+                // console.log(" inside update lease status - ", updateLeaseData)
                 const updateLeaseResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
                     method: "PUT",
                     body: updateLeaseData,
@@ -842,7 +844,8 @@ export default function TenantApplicationEdit(props) {
             leaseApplicationData.append("lease_fees", "[]");
             leaseApplicationData.append("lease_application_date", formatDate(date.toLocaleDateString()));
             leaseApplicationData.append("tenant_uid", getProfileId());
-    
+            
+            // console.log("we are here -- ")
             const leaseApplicationResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
                 method: "POST",
                 body: leaseApplicationData,
