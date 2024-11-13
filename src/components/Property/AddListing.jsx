@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, useRef, useContext, } from "react";
+import React, { useState, useEffect, Fragment, useRef, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Typography,
@@ -51,7 +51,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import APIConfig from "../../utils/APIConfig";
 
-import PropertiesContext from '../../contexts/PropertiesContext';
+import PropertiesContext from "../../contexts/PropertiesContext";
 import ListsContext from "../../contexts/ListsContext";
 import ManagementContractContext from '../../contexts/ManagementContractContext';
 
@@ -60,10 +60,10 @@ export default function AddListing(props) {
   const location = useLocation();
   let navigate = useNavigate();
   const { getProfileId } = useUser();
-  const { getList, } = useContext(ListsContext);		
+  const { getList } = useContext(ListsContext);
   const { state } = useLocation();
-  // const { propertyList, fetchProperties, allContracts, fetchContracts, returnIndex,  } = useContext(PropertiesContext); 
-  
+  // const { propertyList, fetchProperties, allContracts, fetchContracts, returnIndex,  } = useContext(PropertiesContext);
+
   const propertiesContext = useContext(PropertiesContext);
   const {
     propertyList: propertyListFromContext,
@@ -81,13 +81,10 @@ export default function AddListing(props) {
 
 
   const propertyList = propertyListFromContext || [];
-  const fetchProperties = fetchPropertiesFromContext;  
+  const fetchProperties = fetchPropertiesFromContext;
   const allContracts = allContractsFromContext || [];
-  const fetchContracts = fetchContractsFromContext;  
+  const fetchContracts = fetchContractsFromContext;
   const returnIndex = returnIndexFromContext || 0;
-  
-
-
 
   let { page, onBackClick } = props;
   const refreshProperties = fetchProperties;
@@ -97,7 +94,7 @@ export default function AddListing(props) {
   const { user, selectedRole, selectRole, Name } = useUser();
   const [showSpinner, setShowSpinner] = useState(false);
   const [ownerId, setOwnerId] = useState(getProfileId());
-  const statesList = getList("states");  
+  const statesList = getList("states");
   const propertyTypes = getList("propertyType");
   const [address, setAddress] = useState(propertyData.property_address);
   const [city, setCity] = useState(propertyData.property_city);
@@ -109,7 +106,7 @@ export default function AddListing(props) {
   const [bathrooms, setBathrooms] = useState(propertyData.property_num_baths);
 
   const [description, setDescription] = useState(propertyData.property_description);
-  const [selectedImageList, setSelectedImageList] = useState(JSON.parse(propertyData.property_images));  
+  const [selectedImageList, setSelectedImageList] = useState(JSON.parse(propertyData.property_images));
   const [deletedImageList, setDeletedImageList] = useState([]);
   const [favImage, setFavImage] = useState(propertyData.property_favorite_image);
   const [activeStep, setActiveStep] = useState(0);
@@ -129,7 +126,7 @@ export default function AddListing(props) {
   const [communityAmenities, setCommunityAmenities] = useState(propertyData.property_amenities_community);
   const [apartmentAmenities, setApartmentAmenities] = useState(propertyData.property_amenities_unit);
   const [nearbyAmenities, setNearbyAmenities] = useState(propertyData.property_amenities_nearby);
-  const [activeDate, setActiveDate] = useState(propertyData.property_active_date);  
+  const [activeDate, setActiveDate] = useState(propertyData.property_active_date);
   const [isListed, setListed] = useState(true);
   const [hasUtilitiesChanges, setHasUtilitiesChanges] = useState(false);
   const [changedSaved, setChangedSaved] = useState(false);
@@ -137,12 +134,12 @@ export default function AddListing(props) {
   const [imageState, setImageState] = useState([]);
   const [imagesTobeDeleted, setImagesTobeDeleted] = useState([]);
   const [deletedIcons, setDeletedIcons] = useState(new Array(JSON.parse(propertyData.property_images).length).fill(false));
-  const [favoriteIcons, setFavoriteIcons] = useState(JSON.parse(propertyData.property_images).map((image) => image === propertyData.property_favorite_image));  
+  const [favoriteIcons, setFavoriteIcons] = useState(JSON.parse(propertyData.property_images).map((image) => image === propertyData.property_favorite_image));
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   // useEffect(() => {
   //   console.log("deletedImageList - ", deletedImageList);
   // }, [deletedImageList]);
-  
+
   const [isDefaultUtilities, setIsDefaultUtilities] = useState(false);
   const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
   const [newUtilitiesPaidBy, setNewUtilitiesPaidBy] = useState({});
@@ -171,16 +168,16 @@ export default function AddListing(props) {
   ]);
 
   const entitiesMap = new Map([
-    ["050-000041", "owner"],
-    ["050-000042", "property manager"],
-    ["050-000043", "tenant"],
-    ["050-000049", "user"],
+    ["050-000280", "owner"],
+    ["050-000281", "property manager"],
+    ["050-000282", "tenant"],
+    ["050-000289", "user"],
   ]);
 
   const reverseUtilitiesMap = new Map(Array.from(utilitiesMap, ([key, value]) => [value, key]));
   const reverseEntitiesMap = new Map(Array.from(entitiesMap, ([key, value]) => [value, key]));
 
-  const mapUIDsToUtilities = (propertyUtilities) => {    
+  const mapUIDsToUtilities = (propertyUtilities) => {
     if (!propertyUtilities) {
       return {};
     }
@@ -210,15 +207,15 @@ export default function AddListing(props) {
         utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
       }
       // console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
-      
+
       mappedUtilities2 = mapUIDsToUtilities(utilitiesInUIDForm);
       // console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
-      // console.log("   ", mappedUtilities2);      
+      // console.log("   ", mappedUtilities2);
       setMappedUtilitiesPaidBy(mappedUtilities2);
     } else {
       setMappedUtilitiesPaidBy(defaultUtilities);
       setIsDefaultUtilities(true);
-    }    
+    }
     // console.log("************************************************AddListing useEffect***********************************");
   }, []);
 
@@ -240,18 +237,18 @@ export default function AddListing(props) {
   const handleUtilityChange = (utility, entity) => {
     const utilityObject = { [utility]: `${entity}` };
     setHasUtilitiesChanges(true);
-    // console.log("----- handleUtilityChange called - ", utilityObject);    
+    // console.log("----- handleUtilityChange called - ", utilityObject);
 
     setMappedUtilitiesPaidBy((prevState) => ({
       ...prevState,
       [utility]: prevState.hasOwnProperty(utility) ? entity : prevState[utility],
-    }));    
+    }));
     setNewUtilitiesPaidBy((prevState) => ({
       ...(prevState.hasOwnProperty(utility) ? { ...prevState, [utility]: entity } : prevState),
     }));
   };
 
-  const [addUtilityAnchorElement, setAddUtilityAnchorElement] = useState(null);  
+  const [addUtilityAnchorElement, setAddUtilityAnchorElement] = useState(null);
   const keysNotInUtilitiesMap = Array.from(utilitiesMap.values()).filter((utility) => !(utility in mappedUtilitiesPaidBy));
 
   const handleAddUtilityButtonClick = (event) => {
@@ -277,12 +274,12 @@ export default function AddListing(props) {
 
   const handleListedChange = (event) => {
     setListed(event.target.checked);
-  };  
+  };
 
   useEffect(() => {
     console.log("useEffect");
     setCoverImage(selectedImageList[0] || coverImage);
-  }, [selectedImageList]);  
+  }, [selectedImageList]);
 
   useEffect(() => {
     console.log("propertyState", propertyState);
@@ -317,28 +314,28 @@ export default function AddListing(props) {
     console.log("hasPropertyChanges:", hasPropertyChanges);
     console.log("Property Data:", propertyData);
     console.log("State Values:", {
-        address,
-        unit,
-        city,
-        propertyState,
-        zip,
-        propertyType,
-        bedrooms,
-        bathrooms,
-        squareFootage,
-        rent,
-        deposit,
-        petsAllowed,
-        depositForRent,
-        taxes,
-        mortgages,
-        insurance,
-        description,
-        notes,
-        isListed,
-        communityAmenities,
-        apartmentAmenities,
-        nearbyAmenities
+      address,
+      unit,
+      city,
+      propertyState,
+      zip,
+      propertyType,
+      bedrooms,
+      bathrooms,
+      squareFootage,
+      rent,
+      deposit,
+      petsAllowed,
+      depositForRent,
+      taxes,
+      mortgages,
+      insurance,
+      description,
+      notes,
+      isListed,
+      communityAmenities,
+      apartmentAmenities,
+      nearbyAmenities,
     });
 
     if (hasPropertyChanges) {
@@ -360,7 +357,7 @@ export default function AddListing(props) {
     const formData = new FormData();
     formData.append("property_uid", propertyData.property_uid);
     let hasPropertyChanges = false;
-      
+
     if (propertyData.property_address !== address) {
       formData.append("property_address", address);
       hasPropertyChanges = true;
@@ -438,14 +435,14 @@ export default function AddListing(props) {
       hasPropertyChanges = true;
     }
 
-    const currentDate = new Date();		
-		const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}-${currentDate.getFullYear()}`;
+    const currentDate = new Date();
+    const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}-${currentDate.getFullYear()}`;
 
     if (propertyData.property_available_to_rent !== (isListed ? 1 : 0)) {
-      formData.append('property_listed_date', formattedDate);
+      formData.append("property_listed_date", formattedDate);
       hasPropertyChanges = true;
     }
-					
+
     if (propertyData.property_amenities_community !== communityAmenities) {
       formData.append("property_amenities_community", communityAmenities);
       hasPropertyChanges = true;
@@ -458,7 +455,7 @@ export default function AddListing(props) {
       formData.append("property_amenities_nearby", nearbyAmenities);
       hasPropertyChanges = true;
     }
-  
+
     if (imagesTobeDeleted.length > 0) {
       let updatedImages = JSON.parse(propertyData.property_images);
       updatedImages = updatedImages.filter((image) => !imagesTobeDeleted.includes(image));
@@ -471,14 +468,14 @@ export default function AddListing(props) {
     if (favImage !== propertyData.property_favorite_image) {
       formData.append("property_favorite_image", favImage);
       hasPropertyChanges = true;
-    }    
+    }
     let i = 0;
-    for (const file of imageState) {      
+    for (const file of imageState) {
       let key = `img_${i++}`;
-      if (file.file !== null) {        
+      if (file.file !== null) {
         formData.append(key, file.file);
         hasPropertyChanges = true;
-      } else {        
+      } else {
         formData.append(key, file.image);
         hasPropertyChanges = true;
       }
@@ -487,52 +484,52 @@ export default function AddListing(props) {
         hasPropertyChanges = true;
       }
     }
-  
+
     const putUtilitiesData = async () => {
       if (hasUtilitiesChanges) {
         const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
         const utilitiesFormData = new FormData();
         utilitiesFormData.append("property_uid", propertyData.property_uid);
         utilitiesFormData.append("property_utility", utilitiesJSONString);
-  
+
         setShowSpinner(true);
         await fetch(`${APIConfig.baseURL.dev}/utilities`, {
           method: "PUT",
           body: utilitiesFormData,
         });
         setShowSpinner(false);
-  
+
         console.log("Utilities changes saved.");
       } else {
         console.log("No changes for utilities.");
       }
     };
-  
+
     if (hasPropertyChanges || hasUtilitiesChanges) {
       try {
         setShowSpinner(true);
-            
+
         if (hasPropertyChanges) {
           await fetch(`${APIConfig.baseURL.dev}/properties`, {
             method: "PUT",
             body: formData,
           });
         }
-        
+
         if (hasUtilitiesChanges) {
           await putUtilitiesData();
         }
-    
+
         setShowSpinner(false);
         console.log("Changes saved successfully.");
-    
+
         if (navigateAfterSave) {
           refreshProperties();
           showPropertyNavigator();
         } else {
           refreshProperties();
         }
-    
+
         setChangedSaved(true);
         hasPropertyChanges = false;
         hasUtilitiesChanges = false;
@@ -548,21 +545,21 @@ export default function AddListing(props) {
       }
     }
   };
-  
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     console.log("handleSubmit");
-  
+
     if (!deposit) {
       alert("Deposit cannot be empty!");
       return;
     }
-  
+
     if (!rent) {
       alert("Rent cannot be empty!");
       return;
     }
-  
+
     await saveChanges(true);
   };
 
@@ -701,7 +698,7 @@ export default function AddListing(props) {
             //   width: "50%",
             // },
             // paddingTop: "10px",
-            padding: "25px"
+            padding: "25px",
           }}
         >
           <Stack direction='row' justifyContent='center' alignItems='center' position='relative'>
@@ -718,7 +715,7 @@ export default function AddListing(props) {
           </Stack>
 
           <Box component='form' onSubmit={handleSubmit} noValidate autoComplete='off' id='editPropertyForm'>
-            <Grid container columnSpacing={12} rowSpacing={6}>              
+            <Grid container columnSpacing={12} rowSpacing={6}>
               <Grid item xs={12}>
                 <Box
                   sx={{
@@ -826,7 +823,7 @@ export default function AddListing(props) {
                   updateFavoriteIcons={handleUpdateFavoriteIcons}
                 />
               </Grid>
-              
+
               <Grid item xs={12}>
                 <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                   Address
@@ -844,7 +841,7 @@ export default function AddListing(props) {
                   fullWidth
                 />
               </Grid>
-              
+
               <Grid item xs={6}>
                 <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>Unit</Typography>
                 <TextField
@@ -890,10 +887,10 @@ export default function AddListing(props) {
                   onChange={(e) => setPropertyState(e.target.value)}
                   value={propertyState}
                   renderValue={(value) => (value ? `${value}` : "")}
-                >                  
+                >
                   {statesList?.map((item) => {
                     return (
-                      <MenuItem  key={item.list_uid} value={item.list_item}>
+                      <MenuItem key={item.list_uid} value={item.list_item}>
                         <li>{item.list_item}</li>
                       </MenuItem>
                     );
@@ -930,12 +927,12 @@ export default function AddListing(props) {
                   fullWidth
                   onChange={(e) => setPropertyType(e.target.value)}
                   value={propertyType}
-                >                  
-                  {
-                    propertyTypes?.map( type => (
-                      <MenuItem key={type.list_uid} value={type.list_item}>{type.list_item}</MenuItem>
-                    ))
-                  }
+                >
+                  {propertyTypes?.map((type) => (
+                    <MenuItem key={type.list_uid} value={type.list_item}>
+                      {type.list_item}
+                    </MenuItem>
+                  ))}
                 </Select>
               </Grid>
 
@@ -1047,7 +1044,7 @@ export default function AddListing(props) {
             //   width: "50%",
             // },
             // paddingTop: "10px",
-            padding: "25px"
+            padding: "25px",
           }}
         >
           <Stack
@@ -1159,7 +1156,7 @@ export default function AddListing(props) {
             //   width: "50%",
             // },
             // paddingTop: "10px",
-            padding: "25px"
+            padding: "25px",
           }}
         >
           <Stack
@@ -1237,7 +1234,7 @@ export default function AddListing(props) {
                       </Fragment>
                     ))}
               </Grid>
-            </Box>           
+            </Box>
             <Grid item xs={12}>
               <Button
                 variant='outlined'
@@ -1286,7 +1283,7 @@ export default function AddListing(props) {
             //   width: "50%",
             // },
             // paddingTop: "10px",
-            padding: "25px"
+            padding: "25px",
           }}
         >
           <Stack
@@ -1382,7 +1379,7 @@ export default function AddListing(props) {
               </Grid>
             </Box>
           </Stack>
-        </Paper>        
+        </Paper>
         <Stack
           direction='column'
           justifyContent='center'
@@ -1400,12 +1397,12 @@ export default function AddListing(props) {
             }}
           >
             <Grid container>
-              <Grid item xs={12}>                
+              <Grid item xs={12}>
                 <Button variant='contained' type='submit' form='editPropertyForm' sx={{ width: "100%", backgroundColor: theme.typography.formButton.background }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                     {propertyData.property_available_to_rent !== 1 ? "Create Listing" : "Update Listing"}
                   </Typography>
-                </Button>                
+                </Button>
               </Grid>
             </Grid>
           </Box>
