@@ -150,6 +150,7 @@ export default function PropertiesList(props) {
       setPaginationModel({
         pageSize: 15,
         page: calculatedPage,
+        pageSizeOptions: [5, 10, 15],
       });
     }
   }, [propertyIndex, propertyList]);
@@ -653,6 +654,8 @@ export default function PropertiesList(props) {
                     //   setPageSize(newModel.pageSize || 15);
                     // }}
                     paginationModel={paginationModel}
+
+    pageSizeOptions={[5, 10, 15]}
                     onPaginationModelChange={setPaginationModel}
                     // initialState={{
                     //   pagination: {

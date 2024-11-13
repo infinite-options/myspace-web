@@ -344,7 +344,7 @@ const PropertiesList = ({ data }) => {
                 },
               },
             }}
-            // pageSizeOptions={[5]}              
+            pageSizeOptions={[5, 10, 15]}              
             sx={{          
               border: '0px',            
             }}
