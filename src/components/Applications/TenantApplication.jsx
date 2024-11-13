@@ -964,10 +964,25 @@ export default function TenantApplication(props) {
 
 export const AdultDataGrid = ({ adults }) => {
   const columns = [
-    { field: 'name', headerName: 'Name', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 2, renderCell : (params) => (<Typography>{params.row.name} {params.row.last_name}</Typography>)},
-    { field: 'relationship', headerName: 'Relationship', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
-    { field: 'dob', headerName: 'DoB', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+    {
+      field: 'name',
+      headerName: 'Name',
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      width: 150, // Set specific width for better control
+      renderCell: (params) => (
+        <Typography>{params.row.name} {params.row.last_name}</Typography>
+      )
+    },
+    { field: 'relationship', headerName: 'Relationship',renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    width: 100 },
+    { field: 'dob', headerName: 'DoB',renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    width: 100 },
+    { field: 'email', headerName: 'Email', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    width: 200 },
+    { field: 'phone_number', headerName: 'Phone Number', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    width: 200 }
   ];
+  
 
   let rowsWithId = []
 
@@ -979,25 +994,41 @@ export const AdultDataGrid = ({ adults }) => {
   }
 
   return (
+    <Box sx={{ width: '100%', overflow: 'auto' }}>
     <DataGrid
       rows={rowsWithId}
       columns={columns}
-      sx={{        
+      sx={{
         marginTop: "10px",
       }}
       autoHeight
-      rowHeight={50} 
+      rowHeight={50}
       hideFooter={true}
     />
+  </Box>
   );
 
 }
 
 export const ChildDataGrid = ({ children }) => {
   const columns = [
-    { field: 'name', headerName: 'Name', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 2, renderCell : (params) => (<Typography>{params.row.name} {params.row.last_name}</Typography>)},
-    { field: 'relationship', headerName: 'Relationship', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
-    { field: 'dob', headerName: 'DoB', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+    {
+      field: 'name',
+      headerName: 'Name',
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      width: 150, // Set specific width for better control
+      renderCell: (params) => (
+        <Typography>{params.row.name} {params.row.last_name}</Typography>
+      )
+    },
+    { field: 'relationship', headerName: 'Relationship',renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    width: 100 },
+    { field: 'dob', headerName: 'DoB',renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    width: 100 },
+    { field: 'email', headerName: 'Email', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    width: 200 },
+    { field: 'phone_number', headerName: 'Phone Number',renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    width: 200 }
   ];
 
   let rowsWithId = []
@@ -1029,6 +1060,9 @@ export const PetDataGrid = ({ pets }) => {
     { field: 'name', headerName: 'Name', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 2, renderCell : (params) => (<Typography>{params.row.name} {params.row.last_name}</Typography>)},
     { field: 'type', headerName: 'Type', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
     { field: 'dob', headerName: 'DoB', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+    { field: 'breed', headerName: 'Breed', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+    { field: 'weight', headerName: 'Weight', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+    { field: 'owner', headerName: 'Owner', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
   ];
 
   let rowsWithId = []
@@ -1057,9 +1091,12 @@ export const PetDataGrid = ({ pets }) => {
 
 export const VehicleDataGrid = ({ vehicles }) => {
   const columns = [
-    { field: 'name', headerName: 'Name', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 2, renderCell : (params) => (<Typography>{params.row.make} {params.row.model}</Typography>)},
-    { field: 'license', headerName: 'License', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1, renderCell : (params) => (<Typography>{params.row.license} {params.row.state}</Typography>)},
+    { field: 'make', headerName: 'Make', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 2, renderCell : (params) => (<Typography>{params.row.make}</Typography>)},
+    { field: 'model', headerName: 'Model', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+    { field: 'license', headerName: 'License', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1, renderCell : (params) => (<Typography>{params.row.license}</Typography>)},
     { field: 'year', headerName: 'Year', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+    { field: 'state', headerName: 'State', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+    { field: 'owner', headerName: 'Owner', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
   ];
 
   let rowsWithId = []
