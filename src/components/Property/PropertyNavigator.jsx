@@ -2171,6 +2171,7 @@ export default function PropertyNavigator({
                 currentIndex={currentIndex}
                 handleOpenMaintenancePage={handleOpenMaintenancePage}
                 onShowSearchManager={onShowSearchManager}
+                handleAppClick={handleAppClick}
                 getAppColor={getAppColor}
                 handleAppClick={handleAppClick}
               />

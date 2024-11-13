@@ -557,7 +557,7 @@ function PropertyCard({ data, status, leaseData, setRightPane }) {
 
   const handleTenantApplicationButton = () => {
     setRightPane({
-      type: "tenantApplication",
+      type: "tenantApplicationEdit",
       state: {
         index: data.property_uid,
         data: property,

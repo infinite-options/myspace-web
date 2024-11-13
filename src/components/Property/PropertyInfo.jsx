@@ -132,7 +132,7 @@ const PropertyInfo = (props) => {
   function renderCorrectButtonText() {
     if (status === "" || status === "WITHDRAWN" || status === "ENDED" || status === "REFUSED" || status === "RESCIND" || status === "REJECTED") {
       return "Apply Now";
-    } else if (status === "NEW") {
+    } else if (status === "NEW" || status === "RENEW PROCESSING") {
       return "View Application";
     } else if (status === "PROCESSING") {
       return "Approved";
@@ -149,15 +149,15 @@ const PropertyInfo = (props) => {
     if (status === "" || status === "NEW" || status === "WITHDRAWN" || status === "ENDED" || status === "REFUSED" || status === "RESCIND") {
       //navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } });
       props.setRightPane({
-        type: "tenantApplication",
+        type: "tenantApplicationEdit",
         state: { data: property, status: status, lease: lease, from: 'PropertyInfo' },
       });
     } else if (status === "REJECTED") {
       setshowRejectApplicationDialog(true);
-    } else if (status === "TENANT APPROVED" || status === "PROCESSING") {
+    } else if (status === "TENANT APPROVED" || status === "PROCESSING" || status === "RENEW PROCESSING") {
       //navigate("/tenantLeases", { state: { property: property, status: status, lease: lease } });
       props.setRightPane({
-        type: "tenantApplication",
+        type: "tenantApplicationEdit",
         state: { data: property, status: status, lease: lease, from: 'PropertyInfo' },
       });
     } else {
@@ -168,7 +168,7 @@ const PropertyInfo = (props) => {
   function navigateToRejectPage() {
     //navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } });
     props.setRightPane({
-      type: "tenantApplication",
+      type: "tenantApplicationEdit",
       state: { data: property, status: status, lease: lease, from: 'PropertyInfo' },
     });
   }
