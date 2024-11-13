@@ -382,6 +382,8 @@ export default function TenantApplication(props) {
     // console.log("should call /annoucements")
     // console.log("should call /leases")
     // console.log("lease status", status);
+
+    // console.log("386 - property - ", property);    
     try {
       let date = new Date();
 
@@ -478,6 +480,8 @@ export default function TenantApplication(props) {
       leaseApplicationData.append("lease_children", JSON.stringify(childOccupants));
       leaseApplicationData.append("lease_pets", JSON.stringify(petOccupants));
       leaseApplicationData.append("lease_vehicles", JSON.stringify(vehicles));
+      leaseApplicationData.append("lease_utilities", property.property_utilities);
+      
 
       // if (status === "") {
       //   leaseApplicationData.append("lease_adults", tenantProfile?.tenant_adult_occupants);

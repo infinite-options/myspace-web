@@ -2172,7 +2172,7 @@ export default function PropertyNavigator({
                 handleOpenMaintenancePage={handleOpenMaintenancePage}
                 onShowSearchManager={onShowSearchManager}
                 handleAppClick={handleAppClick}
-                getAppColor={getAppColor}
+                getAppColor={getAppColor}                
               />
             </Grid>
 
