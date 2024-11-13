@@ -228,7 +228,7 @@ export default function TenantApplicationEdit(props) {
               `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`
             );
             
-            const fetchedLease = leaseResponse.data["Lease_Detailss"].result.filter(
+            const fetchedLease = leaseResponse.data["Lease_Details"].result.filter(
               (lease) => lease.lease_uid === props.lease.lease_uid
             );
             
