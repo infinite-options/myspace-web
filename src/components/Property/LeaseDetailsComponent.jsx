@@ -54,7 +54,7 @@ export default function LeaseDetailsComponent({
 	handleAppClick,
 	getAppColor,
 }) {
-  console.log('---currentProperty---', currentProperty);
+  // console.log('---currentProperty---', currentProperty);
 	// console.log("---dhyey-- inside new component -", activeLease)
 	// const { defaultContractFees, allContracts, currentContractUID, currentContractPropertyUID, isChange, setIsChange, fetchContracts,  } = useContext(LeaseContractContext);
 	const { fetchProperties } = useContext(PropertiesContext);
