@@ -238,6 +238,8 @@ const TenantLease = () => {
 
   const [relationships, setRelationships] = useState([]);
   const [states, setStates] = useState([]);
+  const [utilityNames, setUtilityNames] = useState([]);
+  const [utilityEntities, setUtilityEntities] = useState([]);
 
   const [modifiedData, setModifiedData] = useState([]); // not being
 
@@ -278,8 +280,13 @@ const TenantLease = () => {
   const getListDetails = () => {    
     const relationships = getList("relationships");    
     const states = getList("states");
+    const utilityNames = getList("utilities");
+    const utilityEntities = getList("role");
+    console.log("ROHIT - 285 - utilityNames - ", utilityNames)
+    console.log("ROHIT - 285 - utilityEntities - ", utilityEntities)
     setRelationships(relationships);
-    setStates(states);    		
+    setStates(states);
+
   };
 
   const defaultUtilities = {
