@@ -33,6 +33,13 @@ export const ListsProvider = ({ children }) => {
     }
   }, [dataLoaded]);
 
+  // useEffect(() => {
+  //   if (!dataLoaded) {
+  //     setDataLoaded(true);            
+  //     fetchLists();      
+  //   }
+  // }, []);
+
   return (
     <ListsContext.Provider 
       value={{         
