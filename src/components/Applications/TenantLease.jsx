@@ -379,14 +379,19 @@ const TenantLease = () => {
     return mappedUtilities;
   };
 
-  const utilitiesObject = JSON.parse(property.property_utilities);
+  // const utilitiesObject = JSON.parse(property.property_utilities);
+  const utilitiesObject = JSON.parse(application.lease_utilities);
+  // console.log("392 - utilitiesObject - ", utilitiesObject);
   let utilitiesInUIDForm = {};
   let mappedUtilities2 = {};
 
   const handleUtilityChange = (utility, entity) => {
     const utilityObject = { [utility]: `${entity}` };
-    setHasUtilitiesChanges(true);
-    // console.log("----- handleUtilityChange called - ", utilityObject);    
+    setHasUtilitiesChanges(true);    
+        
+    // console.log("mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
+    // console.log("utilityObject - ", utilityObject);
+
 
     setMappedUtilitiesPaidBy((prevState) => ({
       ...prevState,
@@ -475,9 +480,10 @@ const TenantLease = () => {
 
 
     //*************************************UTILITIES********************************************************* */
-    if (utilitiesObject) {      
+    if (utilitiesObject) {  
+      // console.log("480 - utilitiesObject - ", utilitiesObject);
       for (const utility of utilitiesObject) {
-        console.log(utility.utility_type_id, utility.utility_payer_id);
+        // console.log(utility.utility_type_id, utility.utility_payer_id);
         utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
       }
       // console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
@@ -809,27 +815,47 @@ const TenantLease = () => {
     return true;
   };
 
-  const putUtilitiesData = async () => {
-    if (hasUtilitiesChanges) {
-      const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
-      const utilitiesFormData = new FormData();
-      utilitiesFormData.append("property_uid", property.property_uid);
-      utilitiesFormData.append("property_utility", utilitiesJSONString);
+  // const putUtilitiesData = async () => {
+  //   if (hasUtilitiesChanges) {
+  //     const utilitiesJSONString = JSON.stringify(mapUtilitiesAndEntitiesToUIDs(mappedUtilitiesPaidBy));
+  //     const utilitiesFormData = new FormData();
+  //     utilitiesFormData.append("property_uid", property.property_uid);
+  //     utilitiesFormData.append("property_utility", utilitiesJSONString);
 
-      setShowSpinner(true);
-      await fetch(`${APIConfig.baseURL.dev}/utilities`, {
-        method: "PUT",
-        body: utilitiesFormData,
-      });
-      setShowSpinner(false);
+  //     setShowSpinner(true);
+  //     await fetch(`${APIConfig.baseURL.dev}/utilities`, {
+  //       method: "PUT",
+  //       body: utilitiesFormData,
+  //     });
+  //     setShowSpinner(false);
 
-      console.log("Utilities changes saved.");
-    } else {
-      console.log("No changes for utilities.");
-    }
-  };
+  //     console.log("Utilities changes saved.");
+  //   } else {
+  //     console.log("No changes for utilities.");
+  //   }
+  // };
+
+  const createUpdatedUtilitesArray = (obj) => {
+    // console.log("840 - obj - ", obj);
+    const utilitiesArray = []
+
+    Object.keys(obj)?.forEach(key => {
+      // console.log("844 - util - ", key, obj[key]);
+      const utilObj = {
+        "utility_desc": key,
+        "utility_payer": null,
+        "utility_type_id": reverseUtilitiesMap.get(key),
+        "utility_payer_id": reverseEntitiesMap.get(obj[key]),
+      }
+      
+      utilitiesArray.push(utilObj);
+    })
+    // console.log("854 - utilitiesArray - ", utilitiesArray);
+    return utilitiesArray;
+  }
 
   const handleCreateLease = async () => {
+        
     try {
       setShowMissingFieldsPrompt(false);
       if (!checkRequiredFields()) {
@@ -899,7 +925,10 @@ const TenantLease = () => {
       //   }
       // );
       if (hasUtilitiesChanges) {
-        await putUtilitiesData();
+        // await putUtilitiesData();
+        const updatedUtilitiesArray = createUpdatedUtilitesArray(mappedUtilitiesPaidBy);
+        const utilitiesJSONString = JSON.stringify(updatedUtilitiesArray);                
+        leaseApplicationFormData.append("lease_utilities", utilitiesJSONString);
       }
       await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "PUT",
