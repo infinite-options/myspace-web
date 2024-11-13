@@ -2,7 +2,7 @@ import { useState, useEffect, useContext, useRef, Fragment } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import theme from "../../theme/theme";
-import { ThemeProvider, Paper, FormControlLabel, Checkbox, Radio, Menu, } from "@mui/material";
+import { ThemeProvider, Paper, FormControlLabel, Checkbox, Radio, Menu } from "@mui/material";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
@@ -26,7 +26,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import InputAdornment from "@mui/material/InputAdornment";
 import defaultHouseImage from "../Property/defaultHouseImage.png";
 import { isValidDate } from "../../utils/dates";
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid } from "@mui/x-data-grid";
 import { maskSSN, maskEIN, formattedPhoneNumber } from "../utils/privacyMasking";
 
 import APIConfig from "../../utils/APIConfig";
@@ -39,13 +39,12 @@ import { Accordion, AccordionSummary, AccordionDetails, IconButton } from "@mui/
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import AddIcon from "@mui/icons-material/Add";
-import Slider from "react-slick";  // Add react-slick for image slider
+import Slider from "react-slick"; // Add react-slick for image slider
 import UtilitiesManager from "../../components/Leases/Utilities";
 import AdultOccupant from "../Leases/AdultOccupant";
 import ChildrenOccupant from "../Leases/ChildrenOccupant";
 import PetsOccupant from "../Leases/PetsOccupant";
 import VehiclesOccupant from "../Leases/VehiclesOccupant";
-
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -56,13 +55,13 @@ const useStyles = makeStyles((theme) => ({
       marginBlock: 10,
       paddingBottom: "15px !important",
     },
-    '& input:-webkit-autofill': {
-      backgroundColor: '#D6D5DA !important',
-      color: '#000000 !important',
-      transition: 'background-color 0s 600000s, color 0s 600000s !important',
+    "& input:-webkit-autofill": {
+      backgroundColor: "#D6D5DA !important",
+      color: "#000000 !important",
+      transition: "background-color 0s 600000s, color 0s 600000s !important",
     },
-    '& input:-webkit-autofill:focus': {
-      transition: 'background-color 0s 600000s, color 0s 600000s !important',
+    "& input:-webkit-autofill:focus": {
+      transition: "background-color 0s 600000s, color 0s 600000s !important",
     },
   },
   textField: {
@@ -73,13 +72,13 @@ const useStyles = makeStyles((theme) => ({
       marginBlock: 10,
       paddingBottom: "15px !important",
     },
-    '& input:-webkit-autofill': {
-      backgroundColor: '#FFFFFF !important',
-      color: '#000000 !important',
-      transition: 'background-color 0s 600000s, color 0s 600000s !important',
+    "& input:-webkit-autofill": {
+      backgroundColor: "#FFFFFF !important",
+      color: "#000000 !important",
+      transition: "background-color 0s 600000s, color 0s 600000s !important",
     },
-    '& input:-webkit-autofill:focus': {
-      transition: 'background-color 0s 600000s, color 0s 600000s !important',
+    "& input:-webkit-autofill:focus": {
+      transition: "background-color 0s 600000s, color 0s 600000s !important",
     },
   },
   select: {
@@ -149,8 +148,8 @@ const TenantLease = () => {
   const { getProfileId } = useUser();
   const { state } = useLocation();
   const { page, application, property, managerInitiatedRenew = false } = state;
-  const { getList, } = useContext(ListsContext);	
-	const feeFrequencies = getList("frequency");
+  const { getList } = useContext(ListsContext);
+  const feeFrequencies = getList("frequency");
   console.log("Property: ", property);
   console.log("Application: ", application);
   const [showSpinner, setShowSpinner] = useState(false);
@@ -167,22 +166,22 @@ const TenantLease = () => {
     initialMoveInDate = application.lease_move_in_date ? dayjs(application.lease_move_in_date) : dayjs();
   } else if (page === "renew_lease") {
     // Calculate the duration between lease_start and lease_end
-  const leaseStartDate = dayjs(property.lease_start);
-  const leaseEndDate = dayjs(property.lease_end);
-  console.log("In Tenant Lease leaseStartDate", leaseStartDate);
-  
-  const duration = leaseEndDate.diff(leaseStartDate, 'day');  // Duration in days
-  
-  // Set the start date to remain same as lease_start
-  initialStartDate = leaseStartDate;
-  console.log("In Tenant Lease initialStartDate", initialStartDate);
-  console.log("In Tenant Lease duration", duration);
-  // Set the new end date to be initialStartDate + duration
-  console.log("In Tenant Lease initialEndDate", initialStartDate.add(duration, "days"));
-  initialEndDate = leaseEndDate.add(duration, "day");
-  console.log("In Tenant Lease initialEndDate", initialEndDate);
-  // Set move-in date same as the start date
-  initialMoveInDate = initialStartDate;
+    const leaseStartDate = dayjs(property.lease_start);
+    const leaseEndDate = dayjs(property.lease_end);
+    console.log("In Tenant Lease leaseStartDate", leaseStartDate);
+
+    const duration = leaseEndDate.diff(leaseStartDate, "day"); // Duration in days
+
+    // Set the start date to remain same as lease_start
+    initialStartDate = leaseStartDate;
+    console.log("In Tenant Lease initialStartDate", initialStartDate);
+    console.log("In Tenant Lease duration", duration);
+    // Set the new end date to be initialStartDate + duration
+    console.log("In Tenant Lease initialEndDate", initialStartDate.add(duration, "days"));
+    initialEndDate = leaseEndDate.add(duration, "day");
+    console.log("In Tenant Lease initialEndDate", initialEndDate);
+    // Set move-in date same as the start date
+    initialMoveInDate = initialStartDate;
   }
 
   // Set state using intermediate variables
@@ -191,35 +190,34 @@ const TenantLease = () => {
   const [moveInDate, setMoveInDate] = useState(initialMoveInDate);
   const [noOfOccupants, setNoOfOccupants] = useState(1);
   const [endLeaseNoticePeriod, setEndLeaseNoticePeriod] = useState(application.lease_end_notice_period ? application.lease_end_notice_period : 30);
-  const [leaseContinueM2M, setLeaseContinueM2M] = useState((application.lease_m2m  && application.lease_m2m === 1) ? true : false );
+  const [leaseContinueM2M, setLeaseContinueM2M] = useState(application.lease_m2m && application.lease_m2m === 1 ? true : false);
 
-  const [leaseAdults, setLeaseAdults ] = useState([]);
-  const [leaseChildren, setLeaseChildren ] = useState([]);
-  const [leasePets, setLeasePets ] = useState([]);
-  const [leaseVehicles, setLeaseVehicles ] = useState([]);
-  const [deletedDocsUrl, setDeletedDocsUrl] = useState([])
-  const [isPreviousFileChange, setIsPreviousFileChange] = useState(false)
-  const [deleteFees, setDeleteFees] = useState([])
-
+  const [leaseAdults, setLeaseAdults] = useState([]);
+  const [leaseChildren, setLeaseChildren] = useState([]);
+  const [leasePets, setLeasePets] = useState([]);
+  const [leaseVehicles, setLeaseVehicles] = useState([]);
+  const [deletedDocsUrl, setDeletedDocsUrl] = useState([]);
+  const [isPreviousFileChange, setIsPreviousFileChange] = useState(false);
+  const [deleteFees, setDeleteFees] = useState([]);
 
   // console.log("# of Occupants", noOfOccupants);
 
   const [fees, setFees] = useState([]);
 
   const [leaseDocuments, setLeaseDocuments] = useState(application?.lease_documents ? JSON.parse(application?.lease_documents) : []);
-  
+
   const [leaseFiles, setLeaseFiles] = useState([]);
   const [leaseFileTypes, setLeaseFileTypes] = useState([]);
 
   const [tenants, setTenants] = useState([
     {
-        id: 1, 
-        first_name: "",
-        last_name: "",
-        email: "",
-        phone_number: "",
-        lease_perc: 100,
-    }
+      id: 1,
+      first_name: "",
+      last_name: "",
+      email: "",
+      phone_number: "",
+      lease_perc: 100,
+    },
   ]);
   // const [adults, setAdults] = useState([{ id: 1, name: "", lastName: "", relation: "", dob: "" }]);
   // const [children, setChildren] = useState([{ id: 1, name: "", lastName: "", relation: "", dob: "" }]);
@@ -243,9 +241,7 @@ const TenantLease = () => {
 
   const [modifiedData, setModifiedData] = useState([]); // not being
 
-  const editOrUpdateTenant = () => {
-
-  }; // being passed to AdultOccupant, ChildrenOccupant etc but not used in this page.
+  const editOrUpdateTenant = () => {}; // being passed to AdultOccupant, ChildrenOccupant etc but not used in this page.
 
   const [showMissingFileTypePrompt, setShowMissingFileTypePrompt] = useState(false);
   const [showMissingFieldsPrompt, setShowMissingFieldsPrompt] = useState(false);
@@ -277,8 +273,8 @@ const TenantLease = () => {
 
   // }, [adults, children, pets, vehicles]);
 
-  const getListDetails = () => {    
-    const relationships = getList("relationships");    
+  const getListDetails = () => {
+    const relationships = getList("relationships");
     const states = getList("states");
     const utilityNames = getList("utilities");
     const utilityEntities = getList("role");
@@ -313,11 +309,11 @@ const TenantLease = () => {
   ]);
 
   const entitiesMap = new Map([
-    ["050-000041", "owner"],
-    ["050-000042", "property manager"],
-    ["050-000043", "tenant"],
-    ["050-000049", "user"],
-  ]);  
+    ["050-000280", "owner"],
+    ["050-000281", "property manager"],
+    ["050-000282", "tenant"],
+    ["050-000289", "user"],
+  ]);
 
   const reverseUtilitiesMap = new Map(Array.from(utilitiesMap, ([key, value]) => [value, key]));
   const reverseEntitiesMap = new Map(Array.from(entitiesMap, ([key, value]) => [value, key]));
@@ -326,7 +322,7 @@ const TenantLease = () => {
   const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
   const [newUtilitiesPaidBy, setNewUtilitiesPaidBy] = useState({});
   const [hasUtilitiesChanges, setHasUtilitiesChanges] = useState(false);
-  const [addUtilityAnchorElement, setAddUtilityAnchorElement] = useState(null);  
+  const [addUtilityAnchorElement, setAddUtilityAnchorElement] = useState(null);
   const keysNotInUtilitiesMap = Array.from(utilitiesMap.values()).filter((utility) => !(utility in mappedUtilitiesPaidBy));
 
   // useEffect(() => {
@@ -363,9 +359,7 @@ const TenantLease = () => {
     handleAddUtilityClose();
   };
 
-  
-
-  const mapUIDsToUtilities = (propertyUtilities) => {    
+  const mapUIDsToUtilities = (propertyUtilities) => {
     if (!propertyUtilities) {
       return {};
     }
@@ -397,16 +391,15 @@ const TenantLease = () => {
 
   const handleUtilityChange = (utility, entity) => {
     const utilityObject = { [utility]: `${entity}` };
-    setHasUtilitiesChanges(true);    
-        
+    setHasUtilitiesChanges(true);
+
     // console.log("392 - mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
     // console.log("392 - utilityObject - ", utilityObject);
-
 
     setMappedUtilitiesPaidBy((prevState) => ({
       ...prevState,
       [utility]: prevState.hasOwnProperty(utility) ? entity : prevState[utility],
-    }));    
+    }));
     setNewUtilitiesPaidBy((prevState) => ({
       ...(prevState.hasOwnProperty(utility) ? { ...prevState, [utility]: entity } : prevState),
     }));
@@ -430,7 +423,7 @@ const TenantLease = () => {
   useEffect(() => {
     const getLeaseFees = () => {
       let feesList = [];
-      if (application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "ACTIVE" ) {
+      if (application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "ACTIVE") {
         feesList = JSON.parse(application?.lease_fees);
       } else if (application?.lease_status === "NEW" || application?.lease_status === "RENEW NEW") {
         feesList = initialFees(property, application);
@@ -448,7 +441,7 @@ const TenantLease = () => {
 
     const getOccupants = () => {
       let numOccupants = 0;
-      try {            
+      try {
         const adults = application.lease_adults ? JSON.parse(application?.lease_adults) : [];
         setLeaseAdults(adults);
         numOccupants += adults?.length;
@@ -456,7 +449,7 @@ const TenantLease = () => {
         console.log("Error parsing application.lease_adults:", error);
       }
 
-      try {            
+      try {
         const children = application.lease_children ? JSON.parse(application?.lease_children) : [];
         setLeaseChildren(children);
         numOccupants += children?.length;
@@ -464,14 +457,14 @@ const TenantLease = () => {
         console.log("Error parsing application.lease_children:", error);
       }
 
-      try {            
+      try {
         const pets = application.lease_pets ? JSON.parse(application?.lease_pets) : [];
         setLeasePets(pets);
       } catch (error) {
         console.log("Error parsing application.lease_pets:", error);
       }
 
-      try {            
+      try {
         const vehicles = application.lease_vehicles ? JSON.parse(application?.lease_vehicles) : [];
         setLeaseVehicles(vehicles);
       } catch (error) {
@@ -481,31 +474,29 @@ const TenantLease = () => {
       setNoOfOccupants(numOccupants);
     };
 
-
     getLeaseFees();
     getOccupants();
     getListDetails();
 
-
     //*************************************UTILITIES********************************************************* */
-    if (utilitiesObject && utilitiesObject?.length > 0 ) {  
+    if (utilitiesObject && utilitiesObject?.length > 0) {
       // console.log("484 - utilitiesObject - ", utilitiesObject);
       for (const utility of utilitiesObject) {
         // console.log(utility.utility_type_id, utility.utility_payer_id);
         utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
       }
       // console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
-      
+
       mappedUtilities2 = mapUIDsToUtilities(utilitiesInUIDForm);
       // console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
-      // console.log("   ", mappedUtilities2);      
+      // console.log("   ", mappedUtilities2);
       setMappedUtilitiesPaidBy(mappedUtilities2);
     } else {
       setMappedUtilitiesPaidBy(defaultUtilities);
       setIsDefaultUtilities(true);
-    }   
+    }
     //******************************************************************************************************* */
-  }, []);  
+  }, []);
 
   // const addFeeRow = () => {
   //   setFees((prev) => [
@@ -534,8 +525,7 @@ const TenantLease = () => {
   const handleFeeChange = (e, index) => {
     const { name, value } = e.target;
     const list = [...fees];
-  
-    
+
     if (name === "due_by" || name === "late_by" || name === "available_topay") {
       if (typeof parseInt(value) === "number" && !isNaN(parseInt(value))) {
         list[index - 1][name] = parseInt(value);
@@ -584,7 +574,7 @@ const TenantLease = () => {
     list[index - 1].available_topay = value;
     setFees(list);
   };
-  
+
   const handleStartDateChange = (v) => {
     setStartDate(v);
     if (endDate < v) setEndDate(v);
@@ -723,36 +713,36 @@ const TenantLease = () => {
 
   const tenantColumns = [
     {
-        field: "tenant_uid",
-        headerName: "UID",
-        flex: 1,
+      field: "tenant_uid",
+      headerName: "UID",
+      flex: 1,
     },
     {
-        field: "tenant_first_name",
-        headerName: "First Name",
-        flex: 1,
+      field: "tenant_first_name",
+      headerName: "First Name",
+      flex: 1,
     },
     {
-        field: "tenant_last_name",
-        headerName: "Last Name",
-        flex: 1,
+      field: "tenant_last_name",
+      headerName: "Last Name",
+      flex: 1,
     },
     {
-        field: "tenant_email",
-        headerName: "Email",
-        flex: 1,
+      field: "tenant_email",
+      headerName: "Email",
+      flex: 1,
     },
     {
-        field: "tenant_phone_number",
-        headerName: "Phone Number",
-        flex: 1,
+      field: "tenant_phone_number",
+      headerName: "Phone Number",
+      flex: 1,
     },
     {
-        field: "lt_responsibility",
-        headerName: "Responsibility",
-        flex: 1,
+      field: "lt_responsibility",
+      headerName: "Responsibility",
+      flex: 1,
     },
-]
+  ];
 
   const valueToDayMap = new Map(Array.from(daytoValueMap, ([key, value]) => [value, key]));
 
@@ -763,15 +753,21 @@ const TenantLease = () => {
     let retVal = true;
     fees.map((fee) => {
       if (
-        fee.fee_name == null || fee.fee_name === "" || 
-        fee.fee_type == null || fee.fee_type === "" || 
-        fee.charge == null || fee.charge === "" || 
-        fee.frequency == null || fee.frequency === "" || 
+        fee.fee_name == null ||
+        fee.fee_name === "" ||
+        fee.fee_type == null ||
+        fee.fee_type === "" ||
+        fee.charge == null ||
+        fee.charge === "" ||
+        fee.frequency == null ||
+        fee.frequency === "" ||
         ((fee.due_by == null || fee.due_by === "") && (fee.due_by_date == null || fee.due_by_date === "" || !isValidDate(fee.due_by_date))) ||
-        fee.late_by == null || 
-        fee.late_fee == null || fee.late_fee === "" || 
-        fee.available_topay == null || 
-        fee.perDay_late_fee == null || fee.perDay_late_fee === ""
+        fee.late_by == null ||
+        fee.late_fee == null ||
+        fee.late_fee === "" ||
+        fee.available_topay == null ||
+        fee.perDay_late_fee == null ||
+        fee.perDay_late_fee === ""
       ) {
         retVal = false;
       }
@@ -845,25 +841,24 @@ const TenantLease = () => {
 
   const createUpdatedUtilitesArray = (obj) => {
     // console.log("840 - obj - ", obj);
-    const utilitiesArray = []
+    const utilitiesArray = [];
 
-    Object.keys(obj)?.forEach(key => {
+    Object.keys(obj)?.forEach((key) => {
       // console.log("844 - util - ", key, obj[key]);
       const utilObj = {
-        "utility_desc": key,
-        "utility_payer": null,
-        "utility_type_id": reverseUtilitiesMap.get(key),
-        "utility_payer_id": reverseEntitiesMap.get(obj[key]),
-      }
-      
+        utility_desc: key,
+        utility_payer: null,
+        utility_type_id: reverseUtilitiesMap.get(key),
+        utility_payer_id: reverseEntitiesMap.get(obj[key]),
+      };
+
       utilitiesArray.push(utilObj);
-    })
+    });
     // console.log("854 - utilitiesArray - ", utilitiesArray);
     return utilitiesArray;
-  }
+  };
 
   const handleCreateLease = async () => {
-        
     try {
       setShowMissingFieldsPrompt(false);
       if (!checkRequiredFields()) {
@@ -884,15 +879,15 @@ const TenantLease = () => {
       leaseApplicationFormData.append("lease_move_in_date", moveInDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_end_notice_period", endLeaseNoticePeriod);
       leaseApplicationFormData.append("lease_m2m", leaseContinueM2M === true ? 1 : 0);
-      if(deleteFees?.length > 0){
+      if (deleteFees?.length > 0) {
         leaseApplicationFormData.append("delete_fees", JSON.stringify(deleteFees));
       }
 
-      if(deletedDocsUrl && deletedDocsUrl?.length !== 0){
+      if (deletedDocsUrl && deletedDocsUrl?.length !== 0) {
         leaseApplicationFormData.append("delete_documents", JSON.stringify(deletedDocsUrl));
       }
 
-      if(isPreviousFileChange){
+      if (isPreviousFileChange) {
         leaseApplicationFormData.append("lease_documents", JSON.stringify(leaseDocuments));
       }
 
@@ -935,7 +930,7 @@ const TenantLease = () => {
       if (hasUtilitiesChanges) {
         // await putUtilitiesData();
         const updatedUtilitiesArray = createUpdatedUtilitesArray(mappedUtilitiesPaidBy);
-        const utilitiesJSONString = JSON.stringify(updatedUtilitiesArray);                
+        const utilitiesJSONString = JSON.stringify(updatedUtilitiesArray);
         leaseApplicationFormData.append("lease_utilities", utilitiesJSONString);
       }
       await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
@@ -978,8 +973,8 @@ const TenantLease = () => {
   function formatDate(dateString) {
     const date = new Date(dateString);
     // console.log('check date', dateString, date)
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     const year = date.getFullYear();
     return `${month}-${day}-${year}`;
   }
@@ -1011,11 +1006,11 @@ const TenantLease = () => {
       //   leaseApplicationFormData.append("delete_fees", JSON.stringify(deleteFees));
       // }
 
-      if(deletedDocsUrl && deletedDocsUrl?.length !== 0){
+      if (deletedDocsUrl && deletedDocsUrl?.length !== 0) {
         leaseApplicationFormData.append("delete_documents", JSON.stringify(deletedDocsUrl));
       }
 
-      if(isPreviousFileChange){
+      if (isPreviousFileChange) {
         leaseApplicationFormData.append("lease_documents", JSON.stringify(leaseDocuments));
       }
 
@@ -1024,7 +1019,7 @@ const TenantLease = () => {
       leaseApplicationFormData.append("lease_pets", JSON.stringify(leasePets));
       leaseApplicationFormData.append("lease_vehicles", JSON.stringify(leaseVehicles));
       const updatedUtilitiesArray = createUpdatedUtilitesArray(mappedUtilitiesPaidBy);
-      const utilitiesJSONString = JSON.stringify(updatedUtilitiesArray);                
+      const utilitiesJSONString = JSON.stringify(updatedUtilitiesArray);
       leaseApplicationFormData.append("lease_utilities", utilitiesJSONString);
 
       let date = new Date();
@@ -1034,42 +1029,38 @@ const TenantLease = () => {
         try {
           // Safely parse the tenants data
           const parsedData = JSON.parse(property.tenants);
-      
+
           // Collect all tenant_uid as an array
-          let tenantUIDs = parsedData.map(tenant => tenant.tenant_uid);
-      
+          let tenantUIDs = parsedData.map((tenant) => tenant.tenant_uid);
+
           // Log for debugging
           // console.log('Collected tenant UIDs:', tenantUIDs);
-      
+
           // Append tenant_uid array to the form data as a list of array
-          if(application?.lease_status === "RENEW NEW"){
-
+          if (application?.lease_status === "RENEW NEW") {
             leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify(tenantUIDs));
-          } else{
-
-            leaseApplicationFormData.append("tenant_uid", tenantUIDs.join(','));
+          } else {
+            leaseApplicationFormData.append("tenant_uid", tenantUIDs.join(","));
           }
         } catch (error) {
           // Handle JSON parse errors
           // console.error("Error parsing tenants data: ", error);
-      
-          // Append the property.tenant_uid as fallback
-          if(application?.lease_status === "RENEW NEW"){
 
-          leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify([property.tenant_uid]));
-          
-          }else{
+          // Append the property.tenant_uid as fallback
+          if (application?.lease_status === "RENEW NEW") {
+            leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify([property.tenant_uid]));
+          } else {
             leaseApplicationFormData.append("tenant_uid", property.tenant_uid);
           }
         }
       } else {
         // If 'tenants' field is not available, append property.tenant_uid as a single value array
-        if(application?.lease_status === "RENEW NEW"){
+        if (application?.lease_status === "RENEW NEW") {
           leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify([property.tenant_uid]));
-        }else{
+        } else {
           leaseApplicationFormData.append("tenant_uid", property?.tenant_uid);
+        }
       }
-    }
 
       const hasMissingType = !checkFileTypeSelected();
       // console.log("HAS MISSING TYPE", hasMissingType);
@@ -1085,9 +1076,8 @@ const TenantLease = () => {
       let index = -1;
 
       if (leaseFiles.length) {
-
         // console.log('inside leaseFiles.length');
-        
+
         [...leaseFiles].forEach((file, i) => {
           index += 1;
           leaseApplicationFormData.append(`file_${index}`, file, file.name);
@@ -1101,42 +1091,38 @@ const TenantLease = () => {
           documentsDetails.push(documentObject);
         });
         // leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
-
-        
       }
 
-      if(application?.lease_status === "RENEW NEW"){
+      if (application?.lease_status === "RENEW NEW") {
         leaseApplicationFormData.append("lease_uid", application.lease_uid);
         await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
           method: "PUT",
           body: leaseApplicationFormData,
         });
-
       } else {
         const leaseApplicationUpdateFormData = new FormData();
         leaseApplicationUpdateFormData.append("lease_uid", application.lease_uid);
         leaseApplicationUpdateFormData.append("lease_renew_status", "PM RENEW REQUESTED");
-        
+
         await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
           method: "PUT",
           body: leaseApplicationUpdateFormData,
         });
-        
 
-        if(leaseDocuments && leaseDocuments.length !== 0){
+        if (leaseDocuments && leaseDocuments.length !== 0) {
           [...leaseDocuments].forEach((file, i) => {
             index++;
             const documentObject = {
-                link : file.link,
-                fileType: file.fileType,
-                filename: file.filename,
-                contentType: file.contentType,
+              link: file.link,
+              fileType: file.fileType,
+              filename: file.filename,
+              contentType: file.contentType,
             };
             leaseApplicationFormData.append(`file_${index}`, JSON.stringify(documentObject));
           });
         }
 
-        leaseDocuments.forEach(doc => {
+        leaseDocuments.forEach((doc) => {
           documentsDetails.push(doc);
         });
 
@@ -1189,12 +1175,11 @@ const TenantLease = () => {
   const [utilities, setUtilities] = useState([]);
   const [remainingUtils, setRemainingUtils] = useState([]);
 
-
   const handleNewUtilityChange = (e, newUtility, utilityIndex) => {
     const { value } = e.target;
     setNewUtilities((prevUtilities) => {
       const updatedUtilities = [...prevUtilities];
-      const toChange = { ...updatedUtilities[utilityIndex], utility_payer_id: value === 'owner' ? '050-000041' : '050-000043' };
+      const toChange = { ...updatedUtilities[utilityIndex], utility_payer_id: value === "owner" ? "050-000280" : "050-000282" };
       updatedUtilities[utilityIndex] = toChange;
       return updatedUtilities;
     });
@@ -1229,24 +1214,21 @@ const TenantLease = () => {
 
   const addTenantRow = () => {
     const newTenant = {
-        id: tenants.length + 1, 
-        first_name: "",
-        last_name: "",
-        email: "",
-        phone_number: "",
-        lease_perc: 100,
-    }
-    setTenants(prevState => {
-        return [
-            ...prevState,
-            newTenant,
-        ]
-    })
-  }
+      id: tenants.length + 1,
+      first_name: "",
+      last_name: "",
+      email: "",
+      phone_number: "",
+      lease_perc: 100,
+    };
+    setTenants((prevState) => {
+      return [...prevState, newTenant];
+    });
+  };
 
   const removeTenantRow = (id) => {
     const updatedTenants = tenants.filter((tenant) => tenant.id !== id);
-    setTenants(updatedTenants);            
+    setTenants(updatedTenants);
   };
 
   const handleTenantChange = (event, id) => {
@@ -1260,768 +1242,755 @@ const TenantLease = () => {
       }
       return tenant;
     });
-    
-    setTenants(updatedTenants);
-        
-  };
 
+    setTenants(updatedTenants);
+  };
 
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ backgroundColor: "#F2F2F2", borderRadius: "10px", margin: "10px", padding: "15px", fontFamily: "Source Sans Pro" }}>
-        
-      <Grid item xs={11} textAlign='center' sx={{ paddingTop: "5px" }}>
-            <Typography
-              sx={{
-                fontSize: "20px",
-                fontWeight: "bold",
-                color: "#160449",
-              }}
-            >
-              {"New Tenant Lease"}
-            </Typography>
-          </Grid>
+        <Grid item xs={11} textAlign='center' sx={{ paddingTop: "5px" }}>
+          <Typography
+            sx={{
+              fontSize: "20px",
+              fontWeight: "bold",
+              color: "#160449",
+            }}
+          >
+            {"New Tenant Lease"}
+          </Typography>
+        </Grid>
         {/* Single Property Image */}
         <Box sx={{ marginBottom: "20px", textAlign: "center" }}>
           <Box sx={{ display: "inline-block", width: "130px", height: "130px", backgroundColor: "grey" }}>
-            <img 
-              src={propertyImage ? propertyImage: defaultHouseImage} 
-              alt="Property Image" 
-              style={{ width: "100%", height: "100%", borderRadius: "10px" }} 
-            />
+            <img src={propertyImage ? propertyImage : defaultHouseImage} alt='Property Image' style={{ width: "100%", height: "100%", borderRadius: "10px" }} />
           </Box>
         </Box>
-  
+
         {/* Property Address */}
         <Box sx={{ textAlign: "center", marginBottom: "20px" }}>
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+          <Typography variant='h6' sx={{ fontWeight: "bold" }}>
             {property.property_address}, {property.property_city}, {property.property_state} {property.property_zip}
           </Typography>
         </Box>
-  
+
         {/* Lease Details Section */}
-        <Paper sx={{  marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
-
-        <Accordion defaultExpanded sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
-  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-    <Typography variant="h6" sx={{ fontWeight: "bold"}}>Lease Details</Typography>
-  </AccordionSummary>
-  <AccordionDetails sx={{ padding: "20px", borderRadius: "10px" }}>
-    {/* First row: Owner, Tenant, Rent Status */}
-    <Grid container spacing={4} sx={{ marginBottom: "20px" }} alignItems="center">
-      <Grid item xs={6} sm={3}>
-        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>Owner</Typography>
-        <Typography sx={{ fontSize: "14px", fontWeight: "400", color: "#302A68" }}>{property.owner_first_name} {property.owner_last_name}</Typography>
-      </Grid>
-
-      <Grid item xs={6} sm={3}>
-        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>Tenant</Typography>
-        <Typography sx={{ fontSize: "14px", fontWeight: "400", color: "#302A68" }}>{property?.tenant_first_name ? property?.tenant_first_name : 'No Lease'} {property?.tenant_last_name ? property?.tenant_last_name : ''}</Typography>
-      </Grid>
-
-      <Grid item xs={6} sm={3}>
-        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>Rent Status</Typography>
-        <Typography sx={{ fontSize: "14px", fontWeight: "400", color: "#302A68" }}>
-          {property.rent_status}
-        </Typography>
-      </Grid>
-    </Grid>
-
-    {/* Second row: Start Date, End Date, Move-In Date, End Lease Notice */}
-    <Grid container spacing={4} alignItems="center">
-      <Grid item xs={6} sm={3}>
-        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>Start Date</Typography>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
-            value={startDate}
-            onChange={handleStartDateChange}
-            slots={{
-              openPickerIcon: CalendarIcon,
-            }}
-            slotProps={{
-              textField: {
-                size: "small",
-                style: {
-                  width: "100%",
-                  fontSize: 12,
-                  backgroundColor: "#FFFFFF",
-                  borderRadius: "10px",
-                },
-              },
-            }}
-          />
-        </LocalizationProvider>
-      </Grid>
-
-      <Grid item xs={6} sm={3}>
-        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>End Date</Typography>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
-            value={endDate}
-            minDate={startDate}
-            onChange={handleEndDateChange}
-            slots={{
-              openPickerIcon: CalendarIcon,
-            }}
-            variant="desktop"
-            slotProps={{
-              textField: {
-                size: "small",
-                style: {
-                  width: "100%",
-                  fontSize: 12,
-                  backgroundColor: "#FFFFFF",
-                  borderRadius: "10px",
-                },
-              },
-            }}
-          />
-        </LocalizationProvider>
-      </Grid>
-
-      <Grid item xs={6} sm={3}>
-        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>Move-In Date</Typography>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
-            value={moveInDate}
-            minDate={startDate}
-            onChange={handleMoveInDateChange}
-            slots={{
-              openPickerIcon: CalendarIcon,
-            }}
-            variant="desktop"
-            slotProps={{
-              textField: {
-                size: "small",
-                style: {
-                  width: "100%",
-                  fontSize: 12,
-                  backgroundColor: "#FFFFFF",
-                  borderRadius: "10px",
-                },
-              },
-            }}
-          />
-        </LocalizationProvider>
-      </Grid>
-
-      <Grid item xs={6} sm={3}>
-        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>End Lease Notice</Typography>
-        <TextField
-          name="endLeaseNoticePeriod"
-          value={endLeaseNoticePeriod}
-          onChange={(e) => setEndLeaseNoticePeriod(e.target.value)}
-          variant="outlined" // Use outlined for a similar look
-          fullWidth
-          size="small"
-          placeholder=""
-          InputProps={{
-            style: {
-              fontSize: 14, // Adjust font size
-              padding: "2px", // Adjust padding to make it look like the date picker
-              backgroundColor: "#FFFFFF",
-              borderRadius: "10px", // Rounded corners like the date picker
-            },
-          }}
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              "&:hover fieldset": {
-                borderColor: "#6e6e6e", // Same hover behavior
-              },
-            },
-            width: "100%",
-            backgroundColor: "#FFFFFF", // Background same as date picker
-            borderRadius: "10px", // Same rounded corners
-          }}
-        />            
-      </Grid>
-    </Grid>
-    <Grid container item xs={12}  sx={{marginTop: '10px', justifyContent: "space-evenly"}}>      			    
-      <Grid item container direction="row" xs={12}>
-				
-				<Grid item xs={12} sx={{marginTop: '5px', justifyContent: 'flex-start'}}>          
-          <FormControlLabel 
-            sx={{
-              // marginTop: '25px',
-            }}        
-            control={
-              <Checkbox
-                checked={leaseContinueM2M}                
-                onChange={(event) => {
-                  if (event.target.checked) {
-                    setLeaseContinueM2M(true);
-                  } else {
-                    setLeaseContinueM2M(false);
-                  }
-                }}
-                inputProps={{ 'aria-label': 'controlled' }}
-              />	          
-            } 
-            label="Lease Renews Month-to-Month" 
-            componentsProps={{
-              typography: {
-                sx: {
-                  color: '#160449',
-                  fontWeight: 'bold',
-                  fontSize: '14px',
-                },
-              },
-            }}
-          />				
-				</Grid>
-      </Grid>                                     
-    </Grid>    
-  </AccordionDetails>
-</Accordion>
-</Paper>
-<Paper sx={{ marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
-  <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
-    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-        Tenant Details
-      </Typography>
-    </AccordionSummary>
-    <AccordionDetails sx={{ paddingLeft: "15px", paddingRight: "15px", paddingBottom: "20px", borderRadius: "10px" }}>
-      {/* Display tenant details */}
-      {
-        page !== "refer_tenant" && (        
-          <>
-          {/* {console.log('--application details in tenant---', application)}
-          {console.log('--property details in tenant---', property)} */}
-
-          {/* Check if managerInitiatedRenew is true */}
-          {managerInitiatedRenew && application.tenants ? (
-            // Parse tenants if managerInitiatedRenew is true
-            (() => {
-              try {
-                const parsedTenants = JSON.parse(application.tenants);
-
-                return parsedTenants.length > 0 ? (
-                  parsedTenants.map((tenant, index) => (
-                    <Grid container spacing={2} key={index} sx={{ marginBottom: "20px" }}>
-                      <Grid item xs={6}>
-                        <Typography sx={{ fontWeight: 'bold' }}>First Name:</Typography>
-                        <Typography>{tenant.tenant_first_name || 'N/A'}</Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Typography sx={{ fontWeight: 'bold' }}>Last Name:</Typography>
-                        <Typography>{tenant.tenant_last_name || 'N/A'}</Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Typography sx={{ fontWeight: 'bold' }}>Email:</Typography>
-                        <Typography>{tenant.tenant_email || 'N/A'}</Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Typography sx={{ fontWeight: 'bold' }}>Phone Number:</Typography>
-                        <Typography>{tenant.tenant_phone_number || 'N/A'}</Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Typography sx={{ fontWeight: 'bold' }}>Responsibility:</Typography>
-                        <Typography>{tenant.lt_responsibility ? `${tenant.lt_responsibility * 100}%` : 'N/A'}</Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Typography sx={{ fontWeight: 'bold' }}>Address:</Typography>
-                        <Typography>{application.tenant_address || 'N/A'}, {application.tenant_city || 'N/A'}, {application.tenant_state || 'N/A'}, {application.tenant_zip || 'N/A'}</Typography>
-                      </Grid>
-                    </Grid>
-                  ))
-                ) : (
-                  <Typography>No Tenant Data Available</Typography>
-                );
-              } catch (error) {
-                console.error('Error parsing tenant data:', error);
-                return <Typography>Invalid Tenant Data</Typography>;
-              }
-            })()
-          ) : (
-            // Display data from `application` directly if `managerInitiatedRenew` is false
-            application ? (
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <Typography sx={{ fontWeight: 'bold' }}>First Name:</Typography>
-                  <Typography>{application.tenant_first_name || 'N/A'}</Typography>
+        <Paper sx={{ marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
+          <Accordion defaultExpanded sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant='h6' sx={{ fontWeight: "bold" }}>
+                Lease Details
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails sx={{ padding: "20px", borderRadius: "10px" }}>
+              {/* First row: Owner, Tenant, Rent Status */}
+              <Grid container spacing={4} sx={{ marginBottom: "20px" }} alignItems='center'>
+                <Grid item xs={6} sm={3}>
+                  <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>Owner</Typography>
+                  <Typography sx={{ fontSize: "14px", fontWeight: "400", color: "#302A68" }}>
+                    {property.owner_first_name} {property.owner_last_name}
+                  </Typography>
                 </Grid>
-                <Grid item xs={6}>
-                  <Typography sx={{ fontWeight: 'bold' }}>Last Name:</Typography>
-                  <Typography>{application.tenant_last_name || 'N/A'}</Typography>
+
+                <Grid item xs={6} sm={3}>
+                  <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>Tenant</Typography>
+                  <Typography sx={{ fontSize: "14px", fontWeight: "400", color: "#302A68" }}>
+                    {property?.tenant_first_name ? property?.tenant_first_name : "No Lease"} {property?.tenant_last_name ? property?.tenant_last_name : ""}
+                  </Typography>
                 </Grid>
-                <Grid item xs={6}>
-                  <Typography sx={{ fontWeight: 'bold' }}>Email:</Typography>
-                  <Typography>{application.tenant_email || 'N/A'}</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography sx={{ fontWeight: 'bold' }}>Phone Number:</Typography>
-                  <Typography>{application.tenant_phone_number || 'N/A'}</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography sx={{ fontWeight: 'bold' }}>Address:</Typography>
-                  <Typography>{application.tenant_address || 'N/A'}, {application.tenant_city || 'N/A'}, {application.tenant_state || 'N/A'}, {application.tenant_zip || 'N/A'}</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography sx={{ fontWeight: 'bold' }}>Responsibility:</Typography>
-                  <Typography>{application.lt_responsibility ? `${application.lt_responsibility * 100}%` : 'N/A'}</Typography>
+
+                <Grid item xs={6} sm={3}>
+                  <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>Rent Status</Typography>
+                  <Typography sx={{ fontSize: "14px", fontWeight: "400", color: "#302A68" }}>{property.rent_status}</Typography>
                 </Grid>
               </Grid>
-            ) : (
-              <Typography>No Tenant Data Available</Typography>
-            )
-          )}
-          </>
-      )}
-      {
-        page === "refer_tenant" && (        
-          <>
-            <Grid container direction='column' sx={{ marginTop: '10px',}}>
-                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    <Grid item xs={2.5}>
-                        <Stack spacing={-2} m={2}>
-                        <Typography
-                            sx={{
-                            color: theme.typography.common.blue,
-                            fontWeight: theme.typography.primary.fontWeight,
-                            }}
-                        >
-                            {"First Name"}
-                        </Typography>                        
-                        </Stack>
-                    </Grid>
-                    <Grid item xs={2.5}>
-                        <Stack spacing={-2} m={2}>
-                        <Typography
-                            sx={{
-                            color: theme.typography.common.blue,
-                            fontWeight: theme.typography.primary.fontWeight,
-                            }}
-                        >
-                            {"Last Name"}
-                        </Typography>                        
-                        </Stack>
-                    </Grid>
 
-                    <Grid item xs={3}>
-                        <Stack spacing={-2} m={2}>
-                        <Typography
-                            sx={{
-                            color: theme.typography.common.blue,
-                            fontWeight: theme.typography.primary.fontWeight,
-                            }}
-                        >
-                            {"Email"}
-                        </Typography>                        
-                        </Stack>
-                    </Grid>
-                    <Grid item xs={2}>
-                        <Stack spacing={-2} m={2}>
-                        <Typography
-                            sx={{
-                                color: theme.typography.common.blue,
-                                fontWeight: theme.typography.primary.fontWeight,
-                            }}
-                        >
-                            {"Phone Number"}
-                        </Typography>                        
-                        </Stack>
-                    </Grid>
-                                                        
-                    
-                        
-                    <Grid item xs={1.5}>
-                        <Stack spacing={-2} m={2}>
-                        <Typography
-                            sx={{
-                            color: theme.typography.common.blue,
-                            fontWeight: theme.typography.primary.fontWeight,
-                            }}
-                        >
-                            {"Lease %"}
-                        </Typography>                        
-                        </Stack>
-                    </Grid>                                                                                                      
+              {/* Second row: Start Date, End Date, Move-In Date, End Lease Notice */}
+              <Grid container spacing={4} alignItems='center'>
+                <Grid item xs={6} sm={3}>
+                  <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>Start Date</Typography>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      value={startDate}
+                      onChange={handleStartDateChange}
+                      slots={{
+                        openPickerIcon: CalendarIcon,
+                      }}
+                      slotProps={{
+                        textField: {
+                          size: "small",
+                          style: {
+                            width: "100%",
+                            fontSize: 12,
+                            backgroundColor: "#FFFFFF",
+                            borderRadius: "10px",
+                          },
+                        },
+                      }}
+                    />
+                  </LocalizationProvider>
                 </Grid>
-            </Grid>
-            {
-                tenants?.map((row, index) => (
-                    <>
-                        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id}>
-                            <Grid item xs={2.5}>
-                                <Stack spacing={-2} m={2}>
-                                
-                                <TextField
-                                    name='first_name'
-                                    value={row.first_name}
-                                    variant='filled'
-                                    fullWidth                                            
-                                    className={classes.textField}                                            
-                                    onChange={(e) => handleTenantChange(e, row.id)}
-                                    InputProps={{
-                                      style: {
-                                        fontSize: 14,                                                                                 
-                                        borderRadius: "5px",
-                                      },
-                                    }}
-                                />
-                                </Stack>
-                            </Grid>
-                            <Grid item xs={2.5}>
-                                <Stack spacing={-2} m={2}>                                        
-                                <TextField
-                                    name='last_name'
-                                    value={row.last_name}
-                                    variant='filled'
-                                    fullWidth                                            
-                                    className={classes.textField}                                        
-                                    onChange={(e) => handleTenantChange(e, row.id)}
-                                    InputProps={{
-                                      style: {
-                                        fontSize: 14,                                                                                 
-                                        borderRadius: "5px",
-                                      },
-                                    }}
-                                />
-                                </Stack>
-                            </Grid>
 
-                            <Grid item xs={3}>
-                                <Stack spacing={-2} m={2}>                                        
-                                <TextField
-                                    name='email'
-                                    value={row.email}
-                                    variant='filled'
-                                    fullWidth                                            
-                                    className={classes.textField}                                            
-                                    onChange={(e) => handleTenantChange(e, row.id)}
-                                    InputProps={{
-                                      style: {
-                                        fontSize: 14,                                                                                 
-                                        borderRadius: "5px",
-                                      },
-                                    }}
-                                />
-                                </Stack>
-                            </Grid>
-                            <Grid item xs={2}>
-                                <Stack spacing={-2} m={2}>                                        
-                                <TextField
-                                    name='phone_number'
-                                    value={row.phone_number}
-                                    variant='filled'
-                                    fullWidth                                            
-                                    className={classes.textField}                                           
-                                    onChange={(e) => handleTenantChange(e, row.id)}
-                                    InputProps={{
-                                      style: {
-                                        fontSize: 14,                                                                                 
-                                        borderRadius: "5px",
-                                      },
-                                    }}
-                                />
-                                </Stack>
-                            </Grid>
-                                                                
-                            
-                                
-                            <Grid item xs={1.5}>
-                                <Stack spacing={-2} m={2}>                                            
-                                <TextField
-                                    name='lease_perc'
-                                    value={row.lease_perc}
-                                    variant='filled'
-                                    fullWidth
-                                    // placeholder='15'
-                                    className={classes.textField}
-                                    onChange={(e) => handleTenantChange(e, row.id)}
-                                    sx={{
-                                        // paddingBottom: '15px',
-                                    }}
-                                    InputProps={{
-                                        endAdornment: (
-                                            <InputAdornment 
-                                                position='end'    
-                                                sx={{
-                                                    marginTop: '15px',
-                                                }}                                                            
-                                            >
-                                                %
-                                            </InputAdornment>
-                                        ),                                                        
-                                        sx: {
-                                            height: '30px',
-                                        },
-                                        style: {
-                                          fontSize: 14,                                                                                 
-                                          borderRadius: "5px",
-                                        },
-                                    }}                                    
-                                />
-                                </Stack>
-                            </Grid>
-                                
-                            
-                            <Grid container justifyContent='center' alignContent='center' item xs={0.5}>
-                                <Button
-                                    aria-label='delete'
-                                    sx={{
-                                        color: "#000000",
-                                        fontWeight: "bold",
-                                        "&:hover": {
-                                        color: "#FFFFFF",
-                                        },
-                                    }}
-                                    onClick={() => removeTenantRow(row.id)}
-                                >
-                                    <DeleteIcon sx={{ fontSize: 25, color: "#3D5CAC", }} />
-                                </Button>
-                            </Grid>                                        
-                        </Grid>
-                        
-                    </>
-                ))
-            }
-            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{paddingLeft: '10px', marginTop: '20px',}}>
-                <IconButton 
-                    aria-label='delete'
+                <Grid item xs={6} sm={3}>
+                  <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>End Date</Typography>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      value={endDate}
+                      minDate={startDate}
+                      onChange={handleEndDateChange}
+                      slots={{
+                        openPickerIcon: CalendarIcon,
+                      }}
+                      variant='desktop'
+                      slotProps={{
+                        textField: {
+                          size: "small",
+                          style: {
+                            width: "100%",
+                            fontSize: 12,
+                            backgroundColor: "#FFFFFF",
+                            borderRadius: "10px",
+                          },
+                        },
+                      }}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+
+                <Grid item xs={6} sm={3}>
+                  <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>Move-In Date</Typography>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      value={moveInDate}
+                      minDate={startDate}
+                      onChange={handleMoveInDateChange}
+                      slots={{
+                        openPickerIcon: CalendarIcon,
+                      }}
+                      variant='desktop'
+                      slotProps={{
+                        textField: {
+                          size: "small",
+                          style: {
+                            width: "100%",
+                            fontSize: 12,
+                            backgroundColor: "#FFFFFF",
+                            borderRadius: "10px",
+                          },
+                        },
+                      }}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+
+                <Grid item xs={6} sm={3}>
+                  <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>End Lease Notice</Typography>
+                  <TextField
+                    name='endLeaseNoticePeriod'
+                    value={endLeaseNoticePeriod}
+                    onChange={(e) => setEndLeaseNoticePeriod(e.target.value)}
+                    variant='outlined' // Use outlined for a similar look
+                    fullWidth
+                    size='small'
+                    placeholder=''
+                    InputProps={{
+                      style: {
+                        fontSize: 14, // Adjust font size
+                        padding: "2px", // Adjust padding to make it look like the date picker
+                        backgroundColor: "#FFFFFF",
+                        borderRadius: "10px", // Rounded corners like the date picker
+                      },
+                    }}
                     sx={{
+                      "& .MuiOutlinedInput-root": {
+                        "&:hover fieldset": {
+                          borderColor: "#6e6e6e", // Same hover behavior
+                        },
+                      },
+                      width: "100%",
+                      backgroundColor: "#FFFFFF", // Background same as date picker
+                      borderRadius: "10px", // Same rounded corners
+                    }}
+                  />
+                </Grid>
+              </Grid>
+              <Grid container item xs={12} sx={{ marginTop: "10px", justifyContent: "space-evenly" }}>
+                <Grid item container direction='row' xs={12}>
+                  <Grid item xs={12} sx={{ marginTop: "5px", justifyContent: "flex-start" }}>
+                    <FormControlLabel
+                      sx={
+                        {
+                          // marginTop: '25px',
+                        }
+                      }
+                      control={
+                        <Checkbox
+                          checked={leaseContinueM2M}
+                          onChange={(event) => {
+                            if (event.target.checked) {
+                              setLeaseContinueM2M(true);
+                            } else {
+                              setLeaseContinueM2M(false);
+                            }
+                          }}
+                          inputProps={{ "aria-label": "controlled" }}
+                        />
+                      }
+                      label='Lease Renews Month-to-Month'
+                      componentsProps={{
+                        typography: {
+                          sx: {
+                            color: "#160449",
+                            fontWeight: "bold",
+                            fontSize: "14px",
+                          },
+                        },
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+            </AccordionDetails>
+          </Accordion>
+        </Paper>
+        <Paper sx={{ marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
+          <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant='h6' sx={{ fontWeight: "bold" }}>
+                Tenant Details
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails sx={{ paddingLeft: "15px", paddingRight: "15px", paddingBottom: "20px", borderRadius: "10px" }}>
+              {/* Display tenant details */}
+              {page !== "refer_tenant" && (
+                <>
+                  {/* {console.log('--application details in tenant---', application)}
+          {console.log('--property details in tenant---', property)} */}
+
+                  {/* Check if managerInitiatedRenew is true */}
+                  {managerInitiatedRenew && application.tenants ? (
+                    // Parse tenants if managerInitiatedRenew is true
+                    (() => {
+                      try {
+                        const parsedTenants = JSON.parse(application.tenants);
+
+                        return parsedTenants.length > 0 ? (
+                          parsedTenants.map((tenant, index) => (
+                            <Grid container spacing={2} key={index} sx={{ marginBottom: "20px" }}>
+                              <Grid item xs={6}>
+                                <Typography sx={{ fontWeight: "bold" }}>First Name:</Typography>
+                                <Typography>{tenant.tenant_first_name || "N/A"}</Typography>
+                              </Grid>
+                              <Grid item xs={6}>
+                                <Typography sx={{ fontWeight: "bold" }}>Last Name:</Typography>
+                                <Typography>{tenant.tenant_last_name || "N/A"}</Typography>
+                              </Grid>
+                              <Grid item xs={6}>
+                                <Typography sx={{ fontWeight: "bold" }}>Email:</Typography>
+                                <Typography>{tenant.tenant_email || "N/A"}</Typography>
+                              </Grid>
+                              <Grid item xs={6}>
+                                <Typography sx={{ fontWeight: "bold" }}>Phone Number:</Typography>
+                                <Typography>{tenant.tenant_phone_number || "N/A"}</Typography>
+                              </Grid>
+                              <Grid item xs={6}>
+                                <Typography sx={{ fontWeight: "bold" }}>Responsibility:</Typography>
+                                <Typography>{tenant.lt_responsibility ? `${tenant.lt_responsibility * 100}%` : "N/A"}</Typography>
+                              </Grid>
+                              <Grid item xs={6}>
+                                <Typography sx={{ fontWeight: "bold" }}>Address:</Typography>
+                                <Typography>
+                                  {application.tenant_address || "N/A"}, {application.tenant_city || "N/A"}, {application.tenant_state || "N/A"}, {application.tenant_zip || "N/A"}
+                                </Typography>
+                              </Grid>
+                            </Grid>
+                          ))
+                        ) : (
+                          <Typography>No Tenant Data Available</Typography>
+                        );
+                      } catch (error) {
+                        console.error("Error parsing tenant data:", error);
+                        return <Typography>Invalid Tenant Data</Typography>;
+                      }
+                    })()
+                  ) : // Display data from `application` directly if `managerInitiatedRenew` is false
+                  application ? (
+                    <Grid container spacing={2}>
+                      <Grid item xs={6}>
+                        <Typography sx={{ fontWeight: "bold" }}>First Name:</Typography>
+                        <Typography>{application.tenant_first_name || "N/A"}</Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography sx={{ fontWeight: "bold" }}>Last Name:</Typography>
+                        <Typography>{application.tenant_last_name || "N/A"}</Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography sx={{ fontWeight: "bold" }}>Email:</Typography>
+                        <Typography>{application.tenant_email || "N/A"}</Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography sx={{ fontWeight: "bold" }}>Phone Number:</Typography>
+                        <Typography>{application.tenant_phone_number || "N/A"}</Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography sx={{ fontWeight: "bold" }}>Address:</Typography>
+                        <Typography>
+                          {application.tenant_address || "N/A"}, {application.tenant_city || "N/A"}, {application.tenant_state || "N/A"}, {application.tenant_zip || "N/A"}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography sx={{ fontWeight: "bold" }}>Responsibility:</Typography>
+                        <Typography>{application.lt_responsibility ? `${application.lt_responsibility * 100}%` : "N/A"}</Typography>
+                      </Grid>
+                    </Grid>
+                  ) : (
+                    <Typography>No Tenant Data Available</Typography>
+                  )}
+                </>
+              )}
+              {page === "refer_tenant" && (
+                <>
+                  <Grid container direction='column' sx={{ marginTop: "10px" }}>
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                      <Grid item xs={2.5}>
+                        <Stack spacing={-2} m={2}>
+                          <Typography
+                            sx={{
+                              color: theme.typography.common.blue,
+                              fontWeight: theme.typography.primary.fontWeight,
+                            }}
+                          >
+                            {"First Name"}
+                          </Typography>
+                        </Stack>
+                      </Grid>
+                      <Grid item xs={2.5}>
+                        <Stack spacing={-2} m={2}>
+                          <Typography
+                            sx={{
+                              color: theme.typography.common.blue,
+                              fontWeight: theme.typography.primary.fontWeight,
+                            }}
+                          >
+                            {"Last Name"}
+                          </Typography>
+                        </Stack>
+                      </Grid>
+
+                      <Grid item xs={3}>
+                        <Stack spacing={-2} m={2}>
+                          <Typography
+                            sx={{
+                              color: theme.typography.common.blue,
+                              fontWeight: theme.typography.primary.fontWeight,
+                            }}
+                          >
+                            {"Email"}
+                          </Typography>
+                        </Stack>
+                      </Grid>
+                      <Grid item xs={2}>
+                        <Stack spacing={-2} m={2}>
+                          <Typography
+                            sx={{
+                              color: theme.typography.common.blue,
+                              fontWeight: theme.typography.primary.fontWeight,
+                            }}
+                          >
+                            {"Phone Number"}
+                          </Typography>
+                        </Stack>
+                      </Grid>
+
+                      <Grid item xs={1.5}>
+                        <Stack spacing={-2} m={2}>
+                          <Typography
+                            sx={{
+                              color: theme.typography.common.blue,
+                              fontWeight: theme.typography.primary.fontWeight,
+                            }}
+                          >
+                            {"Lease %"}
+                          </Typography>
+                        </Stack>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  {tenants?.map((row, index) => (
+                    <>
+                      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id}>
+                        <Grid item xs={2.5}>
+                          <Stack spacing={-2} m={2}>
+                            <TextField
+                              name='first_name'
+                              value={row.first_name}
+                              variant='filled'
+                              fullWidth
+                              className={classes.textField}
+                              onChange={(e) => handleTenantChange(e, row.id)}
+                              InputProps={{
+                                style: {
+                                  fontSize: 14,
+                                  borderRadius: "5px",
+                                },
+                              }}
+                            />
+                          </Stack>
+                        </Grid>
+                        <Grid item xs={2.5}>
+                          <Stack spacing={-2} m={2}>
+                            <TextField
+                              name='last_name'
+                              value={row.last_name}
+                              variant='filled'
+                              fullWidth
+                              className={classes.textField}
+                              onChange={(e) => handleTenantChange(e, row.id)}
+                              InputProps={{
+                                style: {
+                                  fontSize: 14,
+                                  borderRadius: "5px",
+                                },
+                              }}
+                            />
+                          </Stack>
+                        </Grid>
+
+                        <Grid item xs={3}>
+                          <Stack spacing={-2} m={2}>
+                            <TextField
+                              name='email'
+                              value={row.email}
+                              variant='filled'
+                              fullWidth
+                              className={classes.textField}
+                              onChange={(e) => handleTenantChange(e, row.id)}
+                              InputProps={{
+                                style: {
+                                  fontSize: 14,
+                                  borderRadius: "5px",
+                                },
+                              }}
+                            />
+                          </Stack>
+                        </Grid>
+                        <Grid item xs={2}>
+                          <Stack spacing={-2} m={2}>
+                            <TextField
+                              name='phone_number'
+                              value={row.phone_number}
+                              variant='filled'
+                              fullWidth
+                              className={classes.textField}
+                              onChange={(e) => handleTenantChange(e, row.id)}
+                              InputProps={{
+                                style: {
+                                  fontSize: 14,
+                                  borderRadius: "5px",
+                                },
+                              }}
+                            />
+                          </Stack>
+                        </Grid>
+
+                        <Grid item xs={1.5}>
+                          <Stack spacing={-2} m={2}>
+                            <TextField
+                              name='lease_perc'
+                              value={row.lease_perc}
+                              variant='filled'
+                              fullWidth
+                              // placeholder='15'
+                              className={classes.textField}
+                              onChange={(e) => handleTenantChange(e, row.id)}
+                              sx={
+                                {
+                                  // paddingBottom: '15px',
+                                }
+                              }
+                              InputProps={{
+                                endAdornment: (
+                                  <InputAdornment
+                                    position='end'
+                                    sx={{
+                                      marginTop: "15px",
+                                    }}
+                                  >
+                                    %
+                                  </InputAdornment>
+                                ),
+                                sx: {
+                                  height: "30px",
+                                },
+                                style: {
+                                  fontSize: 14,
+                                  borderRadius: "5px",
+                                },
+                              }}
+                            />
+                          </Stack>
+                        </Grid>
+
+                        <Grid container justifyContent='center' alignContent='center' item xs={0.5}>
+                          <Button
+                            aria-label='delete'
+                            sx={{
+                              color: "#000000",
+                              fontWeight: "bold",
+                              "&:hover": {
+                                color: "#FFFFFF",
+                              },
+                            }}
+                            onClick={() => removeTenantRow(row.id)}
+                          >
+                            <DeleteIcon sx={{ fontSize: 25, color: "#3D5CAC" }} />
+                          </Button>
+                        </Grid>
+                      </Grid>
+                    </>
+                  ))}
+                  <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ paddingLeft: "10px", marginTop: "20px" }}>
+                    <IconButton
+                      aria-label='delete'
+                      sx={{
                         backgroundColor: "#3D5CAC",
                         color: "#FFFFFF",
-                        width: '80px',
-                        borderRadius: '5px',
-                        '&:hover': {
-                            backgroundColor: "#160449",                                        
-                        }
-                    }}
-                    onClick={addTenantRow}
-                >
-                    <AddIcon />
-                </IconButton>
-            </Grid>
-          </>
-
-      )}
-
-    </AccordionDetails>
-  </Accordion>
-</Paper>
-
-
-<Paper sx={{ marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
-  <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
-    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-      <Typography variant="h6" sx={{ fontWeight: "bold" }}>Income Details</Typography>
-    </AccordionSummary>
-    <AccordionDetails sx={{ padding: "20px", borderRadius: "10px" }}>
-      {
-        page !== "refer_tenant" && (     
-          <>
-            {application?.lease_income ? (
-              <>
-                {/* Parse the JSON string and map the income details */}
-                {JSON.parse(application.lease_income).map((income, index) => (
-                  <Grid container spacing={2} key={index}>
-                    <Grid item xs={6}>
-                      <Typography sx={{ fontWeight: 'bold' }}>Company name:</Typography>
-                      <Typography>{income.companyName || 'N/A'}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography sx={{ fontWeight: 'bold' }}>Job Title:</Typography>
-                      <Typography>{income.jobTitle || 'N/A'}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography sx={{ fontWeight: 'bold' }}>Amount:</Typography>
-                      <Typography>{income.salary || 'N/A'}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography sx={{ fontWeight: 'bold' }}>Amount Frequency:</Typography>
-                      <Typography>{income.frequency || 'N/A'}</Typography>
-                    </Grid>
+                        width: "80px",
+                        borderRadius: "5px",
+                        "&:hover": {
+                          backgroundColor: "#160449",
+                        },
+                      }}
+                      onClick={addTenantRow}
+                    >
+                      <AddIcon />
+                    </IconButton>
                   </Grid>
-                ))}
-              </>
-            ) : (
-              <Typography>No Income Data Available</Typography>
-            )}
-          </>
-        )
-      }
-      {
-        page === "refer_tenant" && (        
-          <>
-            <Grid container direction='column' sx={{ marginTop: '10px',}}>
-                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    <Grid item xs={2.5}>
-                        <Stack spacing={-2} m={2}>
-                        <Typography
-                            sx={{
-                            color: theme.typography.common.blue,
-                            fontWeight: theme.typography.primary.fontWeight,
-                            }}
-                        >
-                            {"Company Name"}
-                        </Typography>                        
-                        </Stack>
-                    </Grid>
-                    <Grid item xs={2.5}>
-                        <Stack spacing={-2} m={2}>
-                        <Typography
-                            sx={{
-                            color: theme.typography.common.blue,
-                            fontWeight: theme.typography.primary.fontWeight,
-                            }}
-                        >
-                            {"Job Title"}
-                        </Typography>                        
-                        </Stack>
-                    </Grid>
+                </>
+              )}
+            </AccordionDetails>
+          </Accordion>
+        </Paper>
 
-                    <Grid item xs={3}>
-                        <Stack spacing={-2} m={2}>
-                        <Typography
-                            sx={{
-                            color: theme.typography.common.blue,
-                            fontWeight: theme.typography.primary.fontWeight,
-                            }}
-                        >
-                            {"Salary"}
-                        </Typography>                        
-                        </Stack>
-                    </Grid>
-                    <Grid item xs={2}>
-                        <Stack spacing={-2} m={2}>
-                        <Typography
-                            sx={{
-                                color: theme.typography.common.blue,
-                                fontWeight: theme.typography.primary.fontWeight,
-                            }}
-                        >
-                            {"Frequency"}
-                        </Typography>                        
-                        </Stack>
-                    </Grid>                                                                                                                                                                                                                            
-                </Grid>
-            </Grid>
-            {
-                tenants?.map((row, index) => (
-                    <>                        
-                        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id}>
-                            <Grid item xs={2.5}>
-                                <Stack spacing={-2} m={2}>
-                                
-                                <TextField
-                                    name='company_name'
-                                    value={row.company_name}
-                                    variant='filled'
-                                    fullWidth                                            
-                                    className={classes.textField}                                            
-                                    onChange={(e) => handleTenantChange(e, row.id)}
-                                    InputProps={{
-                                      style: {
-                                        fontSize: 14,                                                                                 
-                                        borderRadius: "5px",
-                                      },
-                                    }}
-                                />
-                                </Stack>
-                            </Grid>
-                            <Grid item xs={2.5}>
-                                <Stack spacing={-2} m={2}>                                        
-                                <TextField
-                                    name='job_title'
-                                    value={row.job_title}
-                                    variant='filled'
-                                    fullWidth                                            
-                                    className={classes.textField}                                        
-                                    onChange={(e) => handleTenantChange(e, row.id)}
-                                    InputProps={{
-                                      style: {
-                                        fontSize: 14,                                                                                 
-                                        borderRadius: "5px",
-                                      },
-                                    }}
-                                />
-                                </Stack>
-                            </Grid>
-
-                            <Grid item xs={3}>
-                                <Stack spacing={-2} m={2}>                                        
-                                <TextField
-                                    name='salary'
-                                    value={row.salary}
-                                    variant='filled'
-                                    fullWidth                                            
-                                    className={classes.textField}                                            
-                                    onChange={(e) => handleTenantChange(e, row.id)}
-                                    InputProps={{
-                                      style: {
-                                        fontSize: 14,                                                                                 
-                                        borderRadius: "5px",
-                                      },
-                                    }}
-                                />
-                                </Stack>
-                            </Grid>
-                            <Grid item xs={2}>
-                                <Stack spacing={-2} m={2}>                                        
-                                <TextField
-                                    name='salary_frequency'
-                                    value={row.salary_frequency}
-                                    variant='filled'
-                                    fullWidth                                            
-                                    className={classes.textField}                                           
-                                    onChange={(e) => handleTenantChange(e, row.id)}
-                                    InputProps={{
-                                      style: {
-                                        fontSize: 14,                                                                                 
-                                        borderRadius: "5px",
-                                      },
-                                    }}
-                                />
-                                </Stack>
-                            </Grid>                            
+        <Paper sx={{ marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
+          <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant='h6' sx={{ fontWeight: "bold" }}>
+                Income Details
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails sx={{ padding: "20px", borderRadius: "10px" }}>
+              {page !== "refer_tenant" && (
+                <>
+                  {application?.lease_income ? (
+                    <>
+                      {/* Parse the JSON string and map the income details */}
+                      {JSON.parse(application.lease_income).map((income, index) => (
+                        <Grid container spacing={2} key={index}>
+                          <Grid item xs={6}>
+                            <Typography sx={{ fontWeight: "bold" }}>Company name:</Typography>
+                            <Typography>{income.companyName || "N/A"}</Typography>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Typography sx={{ fontWeight: "bold" }}>Job Title:</Typography>
+                            <Typography>{income.jobTitle || "N/A"}</Typography>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Typography sx={{ fontWeight: "bold" }}>Amount:</Typography>
+                            <Typography>{income.salary || "N/A"}</Typography>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Typography sx={{ fontWeight: "bold" }}>Amount Frequency:</Typography>
+                            <Typography>{income.frequency || "N/A"}</Typography>
+                          </Grid>
                         </Grid>
+                      ))}
                     </>
-                ))
-            }            
-          </>
+                  ) : (
+                    <Typography>No Income Data Available</Typography>
+                  )}
+                </>
+              )}
+              {page === "refer_tenant" && (
+                <>
+                  <Grid container direction='column' sx={{ marginTop: "10px" }}>
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                      <Grid item xs={2.5}>
+                        <Stack spacing={-2} m={2}>
+                          <Typography
+                            sx={{
+                              color: theme.typography.common.blue,
+                              fontWeight: theme.typography.primary.fontWeight,
+                            }}
+                          >
+                            {"Company Name"}
+                          </Typography>
+                        </Stack>
+                      </Grid>
+                      <Grid item xs={2.5}>
+                        <Stack spacing={-2} m={2}>
+                          <Typography
+                            sx={{
+                              color: theme.typography.common.blue,
+                              fontWeight: theme.typography.primary.fontWeight,
+                            }}
+                          >
+                            {"Job Title"}
+                          </Typography>
+                        </Stack>
+                      </Grid>
 
-      )}
-    </AccordionDetails>
-  </Accordion>
-</Paper>
+                      <Grid item xs={3}>
+                        <Stack spacing={-2} m={2}>
+                          <Typography
+                            sx={{
+                              color: theme.typography.common.blue,
+                              fontWeight: theme.typography.primary.fontWeight,
+                            }}
+                          >
+                            {"Salary"}
+                          </Typography>
+                        </Stack>
+                      </Grid>
+                      <Grid item xs={2}>
+                        <Stack spacing={-2} m={2}>
+                          <Typography
+                            sx={{
+                              color: theme.typography.common.blue,
+                              fontWeight: theme.typography.primary.fontWeight,
+                            }}
+                          >
+                            {"Frequency"}
+                          </Typography>
+                        </Stack>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  {tenants?.map((row, index) => (
+                    <>
+                      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id}>
+                        <Grid item xs={2.5}>
+                          <Stack spacing={-2} m={2}>
+                            <TextField
+                              name='company_name'
+                              value={row.company_name}
+                              variant='filled'
+                              fullWidth
+                              className={classes.textField}
+                              onChange={(e) => handleTenantChange(e, row.id)}
+                              InputProps={{
+                                style: {
+                                  fontSize: 14,
+                                  borderRadius: "5px",
+                                },
+                              }}
+                            />
+                          </Stack>
+                        </Grid>
+                        <Grid item xs={2.5}>
+                          <Stack spacing={-2} m={2}>
+                            <TextField
+                              name='job_title'
+                              value={row.job_title}
+                              variant='filled'
+                              fullWidth
+                              className={classes.textField}
+                              onChange={(e) => handleTenantChange(e, row.id)}
+                              InputProps={{
+                                style: {
+                                  fontSize: 14,
+                                  borderRadius: "5px",
+                                },
+                              }}
+                            />
+                          </Stack>
+                        </Grid>
 
+                        <Grid item xs={3}>
+                          <Stack spacing={-2} m={2}>
+                            <TextField
+                              name='salary'
+                              value={row.salary}
+                              variant='filled'
+                              fullWidth
+                              className={classes.textField}
+                              onChange={(e) => handleTenantChange(e, row.id)}
+                              InputProps={{
+                                style: {
+                                  fontSize: 14,
+                                  borderRadius: "5px",
+                                },
+                              }}
+                            />
+                          </Stack>
+                        </Grid>
+                        <Grid item xs={2}>
+                          <Stack spacing={-2} m={2}>
+                            <TextField
+                              name='salary_frequency'
+                              value={row.salary_frequency}
+                              variant='filled'
+                              fullWidth
+                              className={classes.textField}
+                              onChange={(e) => handleTenantChange(e, row.id)}
+                              InputProps={{
+                                style: {
+                                  fontSize: 14,
+                                  borderRadius: "5px",
+                                },
+                              }}
+                            />
+                          </Stack>
+                        </Grid>
+                      </Grid>
+                    </>
+                  ))}
+                </>
+              )}
+            </AccordionDetails>
+          </Accordion>
+        </Paper>
 
-{/* Occupancy Details Section */}
-<Paper sx={{  marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
-        
-        <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px" }}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="h6" sx={{ fontWeight: "bold" }}>Occupancy Details</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            {
-              page !== "refer_tenant" && (                
-              <Box sx={{ padding: "10px", overflowX: "auto" }}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>Adults</Typography>
-                    <OccupantsDataGrid data={leaseAdults} />
+        {/* Occupancy Details Section */}
+        <Paper sx={{ marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
+          <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px" }}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant='h6' sx={{ fontWeight: "bold" }}>
+                Occupancy Details
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {page !== "refer_tenant" && (
+                <Box sx={{ padding: "10px", overflowX: "auto" }}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <Typography variant='subtitle1' sx={{ fontWeight: "bold" }}>
+                        Adults
+                      </Typography>
+                      <OccupantsDataGrid data={leaseAdults} />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography variant='subtitle1' sx={{ fontWeight: "bold" }}>
+                        Children
+                      </Typography>
+                      <OccupantsDataGrid data={leaseChildren} />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography variant='subtitle1' sx={{ fontWeight: "bold" }}>
+                        Pets
+                      </Typography>
+                      <PetsDataGrid data={leasePets} />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography variant='subtitle1' sx={{ fontWeight: "bold" }}>
+                        Vehicles
+                      </Typography>
+                      <VehiclesDataGrid data={leaseVehicles} />
+                    </Grid>
                   </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>Children</Typography>
-                    <OccupantsDataGrid data={leaseChildren} />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>Pets</Typography>
-                    <PetsDataGrid data={leasePets} />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>Vehicles</Typography>
-                    <VehiclesDataGrid data={leaseVehicles} />
-                  </Grid>
-                </Grid>
-              </Box>
-              )
-            }
-            {
-              page === "refer_tenant" && (
+                </Box>
+              )}
+              {page === "refer_tenant" && (
                 <>
                   {adults && (
                     <AdultOccupant
@@ -2063,7 +2032,7 @@ const TenantLease = () => {
                   )}
                   {vehicles && (
                     <VehiclesOccupant
-                      leaseVehicles={vehicles}                  
+                      leaseVehicles={vehicles}
                       setLeaseVehicles={setVehicles}
                       states={states}
                       editOrUpdateLease={editOrUpdateTenant}
@@ -2076,155 +2045,149 @@ const TenantLease = () => {
                     />
                   )}
                 </>
-              )
-            }
-          </AccordionDetails>
-        </Accordion>
-        </Paper>
-        {/* Fees Section */}
-        <Paper sx={{  marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>        
-          <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px" }}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="h6" sx={{ fontWeight: "bold" }}>Fees</Typography>
-            </AccordionSummary>
-            <AccordionDetails sx={{paddingLeft: '15px', paddingRight: '15px', }}>            
-              <LeaseFees startDate={startDate} leaseFees={fees} isEditable={true} setLeaseFees={setFees} setDeleteFees={setDeleteFees} titleFontSize={'16px'}/>
+              )}
             </AccordionDetails>
           </Accordion>
-          </Paper>
-          {/* Documents Section */}
-          <Paper sx={{  marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
+        </Paper>
+        {/* Fees Section */}
+        <Paper sx={{ marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
+          <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px" }}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant='h6' sx={{ fontWeight: "bold" }}>
+                Fees
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails sx={{ paddingLeft: "15px", paddingRight: "15px" }}>
+              <LeaseFees startDate={startDate} leaseFees={fees} isEditable={true} setLeaseFees={setFees} setDeleteFees={setDeleteFees} titleFontSize={"16px"} />
+            </AccordionDetails>
+          </Accordion>
+        </Paper>
+        {/* Documents Section */}
+        <Paper sx={{ marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
           <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography
-                variant="h6" sx={{ fontWeight: "bold" }}
-              >
+              <Typography variant='h6' sx={{ fontWeight: "bold" }}>
                 Documents
               </Typography>
             </AccordionSummary>
 
             <AccordionDetails>
-              <Box sx={{paddingLeft: '10px', paddingRight: '10px',}}>
-                <Documents 
-                  setIsPreviousFileChange={setIsPreviousFileChange} 
+              <Box sx={{ paddingLeft: "10px", paddingRight: "10px" }}>
+                <Documents
+                  setIsPreviousFileChange={setIsPreviousFileChange}
                   customName={"Tenant Documents"}
-                  documents={leaseDocuments} 
-                  setDocuments={setLeaseDocuments} 
-                  deletedDocsUrl={deletedDocsUrl} 
-                  setDeleteDocsUrl={setDeletedDocsUrl} 
-                  contractFiles={leaseFiles} 
-                  setContractFiles={setLeaseFiles} 
-                  contractFileTypes={leaseFileTypes} 
-                  setContractFileTypes={setLeaseFileTypes} 
-                  isAccord={false} 
+                  documents={leaseDocuments}
+                  setDocuments={setLeaseDocuments}
+                  deletedDocsUrl={deletedDocsUrl}
+                  setDeleteDocsUrl={setDeletedDocsUrl}
+                  contractFiles={leaseFiles}
+                  setContractFiles={setLeaseFiles}
+                  contractFileTypes={leaseFileTypes}
+                  setContractFileTypes={setLeaseFileTypes}
+                  isAccord={false}
                   isEditable={true}
-                  titleFontSize={'16px'}
+                  titleFontSize={"16px"}
                 />
               </Box>
             </AccordionDetails>
           </Accordion>
         </Paper>
-        <Paper sx={{  marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main, }}>
-        <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>                        
-            <Grid container columnSpacing={2} rowSpacing={3}>
-              <Grid item xs={12}>
-                <Typography
-                  variant="h6" sx={{ fontWeight: "bold" }}
-                >
-                    Utilities
-                </Typography>
-              </Grid>
-            </Grid>
-          </AccordionSummary>
-
-          <AccordionDetails>
-            <Grid container columnSpacing={2} rowSpacing={3} sx={{padding: '10px',}}>
-              {isDefaultUtilities && (
+        <Paper sx={{ marginBottom: "20px", marginTop: "20px", borderRadius: "10px", backgroundColor: theme.palette.form.main }}>
+          <Accordion sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Grid container columnSpacing={2} rowSpacing={3}>
                 <Grid item xs={12}>
-                  <Typography sx={{ fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.smallFont }}>{`<--Displaying Default Utilities-->`}</Typography>
+                  <Typography variant='h6' sx={{ fontWeight: "bold" }}>
+                    Utilities
+                  </Typography>
                 </Grid>
-              )}
-              {Object.entries(mappedUtilitiesPaidBy).length > 0
-                ? Object.entries(mappedUtilitiesPaidBy).map(([utility, selectedValue]) => (
-                    <Fragment key={utility}>
-                      <Grid item xs={6}>
-                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
-                          {formatUtilityName(utility)}
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <FormControlLabel
-                          value='owner'
-                          control={<Radio checked={selectedValue === "owner"} onChange={() => handleUtilityChange(utility, "owner")} />}
-                          label='Owner'
-                        />
-                        <FormControlLabel
-                          value='tenant'
-                          control={<Radio checked={selectedValue === "tenant"} onChange={() => handleUtilityChange(utility, "tenant")} />}
-                          label='Tenant'
-                        />
-                      </Grid>
-                    </Fragment>
-                  ))
-                : Object.entries(defaultUtilities).map(([utility, selectedValue]) => (
-                    <Fragment key={utility}>
-                      <Grid item xs={6}>
-                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
-                          {formatUtilityName(utility)}
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <FormControlLabel
-                          value='owner'
-                          control={<Radio checked={selectedValue === "owner"} onChange={() => handleUtilityChange(utility, "owner")} />}
-                          label='Owner'
-                        />
-                        <FormControlLabel
-                          value='tenant'
-                          control={<Radio checked={selectedValue === "tenant"} onChange={() => handleUtilityChange(utility, "tenant")} />}
-                          label='Tenant'
-                        />
-                      </Grid>
-                    </Fragment>
-                  ))
-              }
-              <Grid item xs={12}>
-                <Button
-                  variant='outlined'
-                  onClick={handleAddUtilityButtonClick}
-                  sx={{
-                    backgroundColor: "#3D5CAC",
-                    fontWeight: theme.typography.primary.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                    textTransform: "none",
-                  }}
-                >
-                  Add Utility <ArrowDropDownIcon />
-                </Button>
-                <Menu anchorEl={addUtilityAnchorElement} open={Boolean(addUtilityAnchorElement)} onClose={handleAddUtilityClose}>
-                  {keysNotInUtilitiesMap.map((utility, index) => (
-                    <MenuItem key={index} onClick={() => handleAddUtility(utility)}>
-                      {formatUtilityName(utility)}
-                    </MenuItem>
-                  ))}
-                </Menu>
-              </Grid>  
-            </Grid>
-          </AccordionDetails>
-        </Accordion>
-            
-                              
+              </Grid>
+            </AccordionSummary>
+
+            <AccordionDetails>
+              <Grid container columnSpacing={2} rowSpacing={3} sx={{ padding: "10px" }}>
+                {isDefaultUtilities && (
+                  <Grid item xs={12}>
+                    <Typography sx={{ fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.smallFont }}>{`<--Displaying Default Utilities-->`}</Typography>
+                  </Grid>
+                )}
+                {Object.entries(mappedUtilitiesPaidBy).length > 0
+                  ? Object.entries(mappedUtilitiesPaidBy).map(([utility, selectedValue]) => (
+                      <Fragment key={utility}>
+                        <Grid item xs={6}>
+                          <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
+                            {formatUtilityName(utility)}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <FormControlLabel
+                            value='owner'
+                            control={<Radio checked={selectedValue === "owner"} onChange={() => handleUtilityChange(utility, "owner")} />}
+                            label='Owner'
+                          />
+                          <FormControlLabel
+                            value='tenant'
+                            control={<Radio checked={selectedValue === "tenant"} onChange={() => handleUtilityChange(utility, "tenant")} />}
+                            label='Tenant'
+                          />
+                        </Grid>
+                      </Fragment>
+                    ))
+                  : Object.entries(defaultUtilities).map(([utility, selectedValue]) => (
+                      <Fragment key={utility}>
+                        <Grid item xs={6}>
+                          <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
+                            {formatUtilityName(utility)}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <FormControlLabel
+                            value='owner'
+                            control={<Radio checked={selectedValue === "owner"} onChange={() => handleUtilityChange(utility, "owner")} />}
+                            label='Owner'
+                          />
+                          <FormControlLabel
+                            value='tenant'
+                            control={<Radio checked={selectedValue === "tenant"} onChange={() => handleUtilityChange(utility, "tenant")} />}
+                            label='Tenant'
+                          />
+                        </Grid>
+                      </Fragment>
+                    ))}
+                <Grid item xs={12}>
+                  <Button
+                    variant='outlined'
+                    onClick={handleAddUtilityButtonClick}
+                    sx={{
+                      backgroundColor: "#3D5CAC",
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: theme.typography.smallFont,
+                      textTransform: "none",
+                    }}
+                  >
+                    Add Utility <ArrowDropDownIcon />
+                  </Button>
+                  <Menu anchorEl={addUtilityAnchorElement} open={Boolean(addUtilityAnchorElement)} onClose={handleAddUtilityClose}>
+                    {keysNotInUtilitiesMap.map((utility, index) => (
+                      <MenuItem key={index} onClick={() => handleAddUtility(utility)}>
+                        {formatUtilityName(utility)}
+                      </MenuItem>
+                    ))}
+                  </Menu>
+                </Grid>
+              </Grid>
+            </AccordionDetails>
+          </Accordion>
         </Paper>
 
         {/* Submit Button */}
-        <Grid item xs={12} sx={{ textAlign: "center", paddingBottom: 5,  marginBottom: "20px", marginTop: "20px"  }}>
+        <Grid item xs={12} sx={{ textAlign: "center", paddingBottom: 5, marginBottom: "20px", marginTop: "20px" }}>
           <Button
             // onClick={application?.lease_status === "NEW" ? handleCreateLease : handleRenewLease}
             onClick={() => {
-              if(application?.lease_status === "NEW" || application?.lease_status === "PROCESSING"){
+              if (application?.lease_status === "NEW" || application?.lease_status === "PROCESSING") {
                 handleCreateLease();
-              } else if (application?.lease_status === "ACTIVE"){
+              } else if (application?.lease_status === "ACTIVE") {
                 handleRenewLease();
               }
             }}
@@ -2246,84 +2209,52 @@ const TenantLease = () => {
       </Box>
     </ThemeProvider>
   );
-  
 };
 
 const OccupantsDataGrid = ({ data }) => {
   const columns = [
-    { 
+    {
       field: "name",
       headerName: "First Name",
       width: 120,
-      renderHeader: (params) => (
-        <strong>{params.colDef.headerName}</strong>
-      ),
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
-    { field: "last_name",
-      headerName: "Last Name",
-      width: 150,
-      renderHeader: (params) => (
-        <strong>{params.colDef.headerName}</strong>
-      ),
-    },
-    { field: "dob",
-      headerName: "Date of Birth",
-      width: 150,
-      renderHeader: (params) => (
-        <strong>{params.colDef.headerName}</strong>
-      ),
-    },    
-    { 
+    { field: "last_name", headerName: "Last Name", width: 150, renderHeader: (params) => <strong>{params.colDef.headerName}</strong> },
+    { field: "dob", headerName: "Date of Birth", width: 150, renderHeader: (params) => <strong>{params.colDef.headerName}</strong> },
+    {
       field: "email",
       headerName: "Email",
       width: 120,
-      renderHeader: (params) => (
-        <strong>{params.colDef.headerName}</strong>
-      ),
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
-    { 
+    {
       field: "phone_number",
       headerName: "Phone Number",
       width: 130,
-      renderHeader: (params) => (
-        <strong>{params.colDef.headerName}</strong>
-      ),
-      renderCell: (params) => {        
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => {
         const phone = params.value;
 
-        return (
-          <Typography>
-            {phone ? formattedPhoneNumber(phone) : '-'}
-          </Typography>
-        );
+        return <Typography>{phone ? formattedPhoneNumber(phone) : "-"}</Typography>;
       },
-    },    
-    { 
+    },
+    {
       field: "tenant_ssn",
       headerName: "SSN",
       width: 120,
-      renderHeader: (params) => (
-        <strong>{params.colDef.headerName}</strong>
-      ),
-      renderCell: (params) => {        
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => {
         const SSN = params.value;
 
-        return (
-          <Typography>
-            {SSN ? SSN: '-'}
-          </Typography>
-        );
+        return <Typography>{SSN ? SSN : "-"}</Typography>;
       },
     },
-    { 
+    {
       field: "relationship",
       headerName: "Relationship",
       width: 150,
-      renderHeader: (params) => (
-        <strong>{params.colDef.headerName}</strong>
-      ),
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
-    
   ];
 
   // console.log("FeesDataGrid - props.data - ", data);
@@ -2335,10 +2266,12 @@ const OccupantsDataGrid = ({ data }) => {
         rows={dataWithIds}
         getRowId={(row) => row.id}
         columns={columns}
-        sx={{
-          // border: "0px",
-          // marginTop: '10px',
-        }}
+        sx={
+          {
+            // border: "0px",
+            // marginTop: '10px',
+          }
+        }
         hideFooter={true}
       />
     </>
@@ -2347,61 +2280,27 @@ const OccupantsDataGrid = ({ data }) => {
 
 const PetsDataGrid = ({ data }) => {
   const columns = [
-    { field: "name",
-      headerName: "First Name",
-      width: 120,
-      renderHeader: (params) => (
-        <strong>{params.colDef.headerName}</strong>
-      ),
-    },
-    { field: "last_name",
-      headerName: "Last Name",
-      width: 150,
-      renderHeader: (params) => (
-        <strong>{params.colDef.headerName}</strong>
-      ),
-    },
-    { field: "type",
-      headerName: "Type",
-      width: 150,
-      renderHeader: (params) => (
-        <strong>{params.colDef.headerName}</strong>
-      ),
-    },
-    { field: "breed",
-      headerName: "Breed",
-      width: 150,
-      renderHeader: (params) => (
-        <strong>{params.colDef.headerName}</strong>
-      ),
-    },
-    { 
+    { field: "name", headerName: "First Name", width: 120, renderHeader: (params) => <strong>{params.colDef.headerName}</strong> },
+    { field: "last_name", headerName: "Last Name", width: 150, renderHeader: (params) => <strong>{params.colDef.headerName}</strong> },
+    { field: "type", headerName: "Type", width: 150, renderHeader: (params) => <strong>{params.colDef.headerName}</strong> },
+    { field: "breed", headerName: "Breed", width: 150, renderHeader: (params) => <strong>{params.colDef.headerName}</strong> },
+    {
       field: "weight",
       headerName: "Weight",
       width: 150,
-      renderHeader: (params) => (
-        <strong>{params.colDef.headerName}</strong>
-      ),
-      renderCell: (params) => {        
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => {
         const weight = params.value;
 
-        return (
-          <Typography>
-            {weight} lbs
-          </Typography>
-        );
+        return <Typography>{weight} lbs</Typography>;
       },
     },
-    { 
+    {
       field: "owner",
       headerName: "Owner",
       width: 150,
-      renderHeader: (params) => (
-        <strong>{params.colDef.headerName}</strong>
-      ),
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
-    
-    
   ];
 
   // console.log("FeesDataGrid - props.data - ", data);
@@ -2413,10 +2312,12 @@ const PetsDataGrid = ({ data }) => {
         rows={dataWithIds}
         getRowId={(row) => row.id}
         columns={columns}
-        sx={{
-          // border: "0px",
-          // marginTop: '10px',
-        }}
+        sx={
+          {
+            // border: "0px",
+            // marginTop: '10px',
+          }
+        }
         hideFooter={true}
       />
     </>
@@ -2425,49 +2326,17 @@ const PetsDataGrid = ({ data }) => {
 
 const VehiclesDataGrid = ({ data }) => {
   const columns = [
-    { field: "year",
-      headerName: "Year",
-      width: 150,
-      renderHeader: (params) => (
-        <strong>{params.colDef.headerName}</strong>
-      ),
-    },
-    { field: "make",
-      headerName: "Make",
-      width: 120,
-      renderHeader: (params) => (
-        <strong>{params.colDef.headerName}</strong>
-      ),
-    },
-    { field: "model",
-      headerName: "Model",
-      width: 150,
-      renderHeader: (params) => (
-        <strong>{params.colDef.headerName}</strong>
-      ),
-    },
-    { field: "owner",
-      headerName: "Owner",
-      width: 150,
-      renderHeader: (params) => (
-        <strong>{params.colDef.headerName}</strong>
-      ),
-    },
-    { field: "license",
-      headerName: "License",
-      width: 150,
-      renderHeader: (params) => (
-        <strong>{params.colDef.headerName}</strong>
-      ),
-    },
-    { 
+    { field: "year", headerName: "Year", width: 150, renderHeader: (params) => <strong>{params.colDef.headerName}</strong> },
+    { field: "make", headerName: "Make", width: 120, renderHeader: (params) => <strong>{params.colDef.headerName}</strong> },
+    { field: "model", headerName: "Model", width: 150, renderHeader: (params) => <strong>{params.colDef.headerName}</strong> },
+    { field: "owner", headerName: "Owner", width: 150, renderHeader: (params) => <strong>{params.colDef.headerName}</strong> },
+    { field: "license", headerName: "License", width: 150, renderHeader: (params) => <strong>{params.colDef.headerName}</strong> },
+    {
       field: "state",
       headerName: "State",
       width: 150,
-      renderHeader: (params) => (
-        <strong>{params.colDef.headerName}</strong>
-      ),      
-    },            
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
   ];
 
   // console.log("FeesDataGrid - props.data - ", data);
@@ -2479,10 +2348,12 @@ const VehiclesDataGrid = ({ data }) => {
         rows={dataWithIds}
         getRowId={(row) => row.id}
         columns={columns}
-        sx={{
-          // border: "0px",
-          // marginTop: '10px',
-        }}
+        sx={
+          {
+            // border: "0px",
+            // marginTop: '10px',
+          }
+        }
         hideFooter={true}
       />
     </>

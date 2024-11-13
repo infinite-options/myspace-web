@@ -63,11 +63,11 @@ function TenantLeases(props) {
   const [fees, setFees] = useState([]);
   const [signedLease, setSignedLease] = useState(null);
   const [prevLeaseId, setPrevLeaseId] = useState(null);
-  const [ occupantsExpanded, setOccupantsExpanded ] = useState(true);
+  const [occupantsExpanded, setOccupantsExpanded] = useState(true);
   const [employmentExpanded, setEmploymentExpanded] = useState(true);
-  const [documentsExpanded, setDocumentsExpanded] = useState(true); 
+  const [documentsExpanded, setDocumentsExpanded] = useState(true);
 
-  const [managerID, setManagerID ] = useState("");
+  const [managerID, setManagerID] = useState("");
 
   useEffect(() => {
     console.log("Props passed to TenantLeases: ", props.oldLeaseUid);
@@ -76,11 +76,11 @@ function TenantLeases(props) {
     setLease(props.lease);
   }, [props.property, props.lease]);
 
-  // useEffect(() => {    
+  // useEffect(() => {
   //   console.log("62 - lease - ", lease);
   // }, [lease]);
 
-  // useEffect(() => {    
+  // useEffect(() => {
   //   console.log("68 - managerID - ", managerID);
   // }, [managerID]);
 
@@ -122,27 +122,23 @@ function TenantLeases(props) {
         setFees(detailed_property?.lease_fees ? JSON.parse(detailed_property.lease_fees) : []);
         setStatus(detailed_property?.lease_effective_date ?? null);
 
-      if (detailed_property?.property_utilities) {
-        // Parse the utilities JSON
-        const utilities = JSON.parse(detailed_property.property_utilities);
-  
-        // Separate utilities by payer
-        const tenantUtilities = utilities
-          .filter((utility) => utility.utility_payer_id === "050-000043")
-          .map((utility) => utility.utility_desc);
-  
-        const ownerUtilities = utilities
-          .filter((utility) => utility.utility_payer_id === "050-000041")
-          .map((utility) => utility.utility_desc);
-  
-        // Update state
-        setTenantUtilities(tenantUtilities);
-        setOwnerUtilities(ownerUtilities);
-      }
+        if (detailed_property?.property_utilities) {
+          // Parse the utilities JSON
+          const utilities = JSON.parse(detailed_property.property_utilities);
+
+          // Separate utilities by payer
+          const tenantUtilities = utilities.filter((utility) => utility.utility_payer_id === "050-000282").map((utility) => utility.utility_desc);
+
+          const ownerUtilities = utilities.filter((utility) => utility.utility_payer_id === "050-000280").map((utility) => utility.utility_desc);
+
+          // Update state
+          setTenantUtilities(tenantUtilities);
+          setOwnerUtilities(ownerUtilities);
+        }
         //lease link
         const parsedDocs = JSON.parse(detailed_property.lease_documents);
-        const leaseDoc = parsedDocs.find(doc => doc.type && doc.type === "Lease Agreement");
-        console.log('leaselink', leaseDoc);
+        const leaseDoc = parsedDocs.find((doc) => doc.type && doc.type === "Lease Agreement");
+        console.log("leaselink", leaseDoc);
         setSignedLease(leaseDoc);
         setManagerID(detailed_property.contract_business_id);
       }
@@ -195,7 +191,6 @@ function TenantLeases(props) {
       );
     }
   }
-  
 
   async function handleTenantRefuse() {
     const leaseApplicationFormData = new FormData();
@@ -230,7 +225,6 @@ function TenantLeases(props) {
       } catch (error) {
         console.log("Error in Tenant refuse announcements:", error);
         alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
-
       }
     };
 
@@ -243,8 +237,8 @@ function TenantLeases(props) {
       if (data.lease_update.code === 200) {
         alert("You have successfully Rejected the lease.");
         await sendAnnouncement();
-        props.setRightPane({ type: "", state: { property: property, lease: lease }, });
-        props.setReload(prev => !prev);
+        props.setRightPane({ type: "", state: { property: property, lease: lease } });
+        props.setReload((prev) => !prev);
       } else {
         console.log(data);
       }
@@ -296,7 +290,6 @@ function TenantLeases(props) {
       } catch (error) {
         console.log("Error in Tenant accept announcements:", error);
         alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
-
       }
     };
 
@@ -304,7 +297,7 @@ function TenantLeases(props) {
       const renewalFormData = new FormData();
       renewalFormData.append("lease_uid", prevLeaseId);
       renewalFormData.append("lease_renew_status", "RENEWED");
-  
+
       try {
         const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
           method: "PUT",
@@ -347,14 +340,14 @@ function TenantLeases(props) {
         body: leaseApplicationFormData,
       });
       const data = await response.json();
-      console.log('Divyy', data);
+      console.log("Divyy", data);
       if (data.lease_docs.code === 200) {
         alert("You have successfully Accepted the lease.");
         //don';t send announcemnt twice
         await sendRenewalStatus();
         await sendAnnouncement();
         props.setRightPane({ type: "" });
-        props.setReload(prev => !prev);
+        props.setReload((prev) => !prev);
       } else {
         console.log(data);
       }
@@ -413,7 +406,7 @@ function TenantLeases(props) {
   };
 
   return (
-    <Paper sx={{ marginTop: '7px', backgroundColor: theme.palette.primary.main, borderRadius: "5px", boxShadow: "0px 2px 4px #00000040" }}>
+    <Paper sx={{ marginTop: "7px", backgroundColor: theme.palette.primary.main, borderRadius: "5px", boxShadow: "0px 2px 4px #00000040" }}>
       <Box
         sx={{
           fontFamily: "Source Sans Pro",
@@ -443,15 +436,13 @@ function TenantLeases(props) {
           </Grid>
           <Grid item xs={1}>
             <Button
-                onClick={() => {
-                  if (props.from && props.from === "accwidget") {
-                    props.setRightPane("");
-                  } else {
-                    props.setRightPane({ type: "listings" });
-                  }
+              onClick={() => {
+                if (props.from && props.from === "accwidget") {
+                  props.setRightPane("");
+                } else {
+                  props.setRightPane({ type: "listings" });
                 }
-              }
-
+              }}
               sx={{
                 textTransform: "none",
                 textDecoration: "underline",
@@ -473,310 +464,321 @@ function TenantLeases(props) {
           style={{
             // margin: "30px",
             backgroundColor: theme.palette.primary.main,
-            padding: "10px",              
+            padding: "10px",
           }}
         >
-
           <Box sx={{ padding: "10px" }}>
-            <Accordion 
-                defaultExpanded 
-                sx={{
-                marginBottom: "20px", 
-                backgroundColor: "#f0f0f0", 
-                borderRadius: '8px',
-                margin: "auto", 
+            <Accordion
+              defaultExpanded
+              sx={{
+                marginBottom: "20px",
+                backgroundColor: "#f0f0f0",
+                borderRadius: "8px",
+                margin: "auto",
                 minHeight: "50px",
-                // boxShadow: "none" 
-                }}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography sx={{
+                // boxShadow: "none"
+              }}
+            >
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography
+                  sx={{
+                    // fontWeight: theme.typography.primary.fontWeight,
+                    // fontSize: "20px",
+                    // textAlign: "center",
+                    // paddingBottom: "10px",
+                    // paddingTop: "5px",
+                    // flexGrow: 1,
+                    // // paddingLeft: "50px",
+                    // color: "#160449",
+                    fontWeight: theme.typography.medium.fontWeight,
+                    color: theme.typography.primary.blue,
+                  }}
+                >
+                  Viewing Current Lease
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ padding: "30px" }}>
+                {" "}
+                {/* Increased padding */}
+                <Grid container spacing={3}>
+                  {" "}
+                  {/* Increased spacing */}
+                  <Grid item xs={6}>
+                    <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Start Date</Typography>
+                    <Typography>{lease?.lease_start || "N/A"}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Rent Amount</Typography>
+                    <Typography>${lease?.property_listed_rent.toFixed(2) || "$0.00"}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography sx={{ fontWeight: "bold", color: "#160449" }}>End Date</Typography>
+                    <Typography>{lease?.lease_end || "N/A"}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Frequency</Typography>
+                    <Typography>{lease?.frequency || "Monthly"}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Move-In Date</Typography>
+                    <Typography>{lease?.lease_move_in_date || "N/A"}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Due Date</Typography>
+                    <Typography>{lease?.due_date || "1st of month"}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Utilities Paid By Tenant</Typography>
+                    <Typography>{JSON.parse(lease.lease_utilities).length > 0 ? JSON.parse(lease.lease_utilities).join(", ") : "None"}</Typography>
+                  </Grid>
+                </Grid>
+              </AccordionDetails>
+            </Accordion>
+          </Box>
+
+          <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+            <Grid item xs={12}>
+              <Accordion
+                sx={{
+                  marginBottom: "20px",
+                  backgroundColor: "#f0f0f0",
+                  borderRadius: "8px",
+                  margin: "auto", // Center the accordion
+                  minHeight: "50px",
+                }}
+                expanded={employmentExpanded}
+                onChange={() => setEmploymentExpanded((prev) => !prev)}
+              >
+                <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='employment-content' id='employment-header'>
+                  <Grid container>
+                    <Grid item md={11.2}>
+                      <Typography
+                        sx={{
+                          fontWeight: theme.typography.medium.fontWeight,
+                          color: theme.typography.primary.blue,
+                          // color: "#160449",
+                          // fontWeight: theme.typography.primary.fontWeight,
+                          // fontSize: "20px",
+                          // textAlign: "center",
+                          // paddingBottom: "10px",
+                          // paddingTop: "5px",
+                          // flexGrow: 1,
+                          // paddingLeft: "50px"
+                        }}
+                      >
+                        Applicant Job Details
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <EmploymentDataGrid employmentDataT={lease?.lease_income ? JSON.parse(lease?.lease_income) : []} />
+                </AccordionDetails>
+              </Accordion>
+            </Grid>
+          </Grid>
+          {/* )} */}
+
+          {/* occupancy details*/}
+          <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+            <Grid item xs={12}>
+              <Accordion
+                sx={{
+                  marginBottom: "20px",
+                  backgroundColor: "#f0f0f0",
+                  borderRadius: "8px",
+                  margin: "auto", // Center the accordion
+                  minHeight: "50px",
+                }}
+                expanded={occupantsExpanded}
+                onChange={() => setOccupantsExpanded((prevState) => !prevState)}
+              >
+                <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='occupants-content' id='occupants-header'>
+                  <Grid container>
+                    <Grid item md={11.2}>
+                      <Typography
+                        sx={{
+                          fontWeight: theme.typography.medium.fontWeight,
+                          color: theme.typography.primary.blue,
+                          // color: "#160449",
+                          // fontWeight: theme.typography.primary.fontWeight,
+                          // fontSize: "20px",
+                          // textAlign: "center",
+                          // paddingBottom: "10px",
+                          // paddingTop: "5px",
+                          // flexGrow: 1,
+                          // paddingLeft: "50px",
+                        }}
+                        paddingBottom='10px'
+                      >
+                        Occupancy Details
+                      </Typography>
+                    </Grid>
+                    <Grid item md={0.5} />
+                  </Grid>
+                </AccordionSummary>
+                <AccordionDetails>
+                  {adultOccupants && (
+                    <Box sx={{ marginBottom: "20px" }}>
+                      <AdultOccupant
+                        leaseAdults={adultOccupants}
+                        // relationships={relationships}
+                        // editOrUpdateLease={lease_uid !== null ? editOrUpdateLease : editOrUpdateTenant}
+                        // editOrUpdateLease={editOrUpdateLease}
+                        // modifiedData={modifiedData}
+                        // setModifiedData={setModifiedData}
+                        // dataKey={lease_uid !== null ? "lease_adults" : "tenant_adult_occupants"}
+                        dataKey={"lease_adults"}
+                        isEditable={false}
+                      />
+                    </Box>
+                  )}
+                  {childrenOccupants && (
+                    <Box sx={{ marginBottom: "20px" }}>
+                      <ChildrenOccupant
+                        leaseChildren={childrenOccupants}
+                        // relationships={relationships}
+                        // editOrUpdateLease={lease_uid !== null ? editOrUpdateLease : editOrUpdateTenant}
+                        // editOrUpdateLease={editOrUpdateLease}
+                        // modifiedData={modifiedData}
+                        // setModifiedData={setModifiedData}
+                        // dataKey={lease_uid !== null ? "lease_children" : "tenant_children_occupants"}
+                        dataKey={"lease_children"}
+                        isEditable={false}
+                      />
+                    </Box>
+                  )}
+                  {pets && (
+                    <Box sx={{ marginBottom: "20px" }}>
+                      <PetsOccupant
+                        leasePets={pets}
+                        // editOrUpdateLease={lease_uid !== null ? editOrUpdateLease : editOrUpdateTenant}
+                        // editOrUpdateLease={editOrUpdateLease}
+                        // modifiedData={modifiedData}
+                        // setModifiedData={setModifiedData}
+                        // dataKey={lease_uid !== null ? "lease_pets" : "tenant_pet_occupants"}
+                        dataKey={"lease_pets"}
+                        isEditable={false}
+                      />
+                    </Box>
+                  )}
+                  {vehicles && (
+                    <Box sx={{ marginBottom: "20px" }}>
+                      <VehiclesOccupant
+                        leaseVehicles={vehicles}
+                        // setLeaseVehicles={setVehicles}
+                        // states={states}
+                        // editOrUpdateLease={lease_uid !== null ? editOrUpdateLease : editOrUpdateTenant}
+                        // editOrUpdateLease={editOrUpdateLease}
+                        // modifiedData={modifiedData}
+                        // setModifiedData={setModifiedData}
+                        // dataKey={lease_uid !== null ? "lease_vehicles" : "tenant_vehicle_info"}
+                        dataKey={"lease_vehicles"}
+                        // ownerOptions={[...adultOccupants, ...childOccupants]}
+                        isEditable={false}
+                      />
+                    </Box>
+                  )}
+                </AccordionDetails>
+              </Accordion>
+            </Grid>
+          </Grid>
+
+          {/* lease fees */}
+          <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+            <Grid item xs={12}>
+              <Accordion
+                sx={{
+                  marginBottom: "20px",
+                  backgroundColor: "#f0f0f0",
+                  borderRadius: "8px",
+                  margin: "auto", // Center the accordion
+                  minHeight: "50px",
+                }}
+                expanded={employmentExpanded}
+                onChange={() => setEmploymentExpanded((prev) => !prev)}
+              >
+                <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='employment-content' id='employment-header'>
+                  <Grid container>
+                    <Grid item md={11.2}>
+                      <Typography
+                        sx={{
+                          fontWeight: theme.typography.medium.fontWeight,
+                          color: theme.typography.primary.blue,
+                          // color: "#160449",
+                          // fontWeight: theme.typography.primary.fontWeight,
+                          // fontSize: "20px",
+                          // textAlign: "center",
+                          // paddingBottom: "10px",
+                          // paddingTop: "5px",
+                          // flexGrow: 1,
+                          // paddingLeft: "50px"
+                        }}
+                      >
+                        Lease Fees
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <LeaseFees leaseFees={fees} />
+                </AccordionDetails>
+              </Accordion>
+            </Grid>
+          </Grid>
+
+          {/* documents details */}
+          <Grid container direction='column' justifyContent='center' spacing={2} sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+            <Grid item xs={12}>
+              <Accordion
+                sx={{
+                  marginBottom: "20px",
+                  backgroundColor: "#f0f0f0",
+                  borderRadius: "8px",
+                  margin: "auto", // Center the accordion
+                  minHeight: "50px",
+                }}
+                expanded={documentsExpanded}
+                onChange={() => setDocumentsExpanded((prev) => !prev)}
+              >
+                <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='documents-content' id='documents-header'>
+                  <Typography
+                    sx={{
+                      fontWeight: theme.typography.medium.fontWeight,
+                      color: theme.typography.primary.blue,
+                      // color: "#160449",
                       // fontWeight: theme.typography.primary.fontWeight,
                       // fontSize: "20px",
                       // textAlign: "center",
                       // paddingBottom: "10px",
                       // paddingTop: "5px",
                       // flexGrow: 1,
-                      // // paddingLeft: "50px",
-                      // color: "#160449", 
-                      fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue
-                  }}>
-                    Viewing Current Lease
+                    }}
+                  >
+                    Document Details
                   </Typography>
                 </AccordionSummary>
-                <AccordionDetails sx={{ padding: "30px" }}> {/* Increased padding */}
-                  <Grid container spacing={3}> {/* Increased spacing */}
-                      <Grid item xs={6}>
-                        <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Start Date</Typography>
-                        <Typography>{lease?.lease_start || "N/A"}</Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Rent Amount</Typography>
-                        <Typography>${lease?.property_listed_rent.toFixed(2) || "$0.00"}</Typography>
-                      </Grid>
-
-                      <Grid item xs={6}>
-                        <Typography sx={{ fontWeight: "bold", color: "#160449" }}>End Date</Typography>
-                        <Typography>{lease?.lease_end || "N/A"}</Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Frequency</Typography>
-                        <Typography>{lease?.frequency || "Monthly"}</Typography>
-                      </Grid>
-
-                      <Grid item xs={6}>
-                        <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Move-In Date</Typography>
-                        <Typography>{lease?.lease_move_in_date || "N/A"}</Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Due Date</Typography>
-                        <Typography>{lease?.due_date || "1st of month"}</Typography>
-                      </Grid>
-
-                      <Grid item xs={6}>
-                        <Typography sx={{ fontWeight: "bold", color: "#160449" }}>
-                          Utilities Paid By Tenant
-                        </Typography>
-                        <Typography>
-                          {JSON.parse(lease.lease_utilities).length > 0
-                            ? JSON.parse(lease.lease_utilities).join(", ")
-                            : "None"}
-                        </Typography>
-                      </Grid>
-                  </Grid>
+                <AccordionDetails>
+                  <Documents
+                    documents={JSON.parse(lease.lease_documents)}
+                    // setDocuments={setTenantDocuments}
+                    customName={"Lease Documents"}
+                    // setContractFiles={setExtraUploadDocument}
+                    // setDeleteDocsUrl={setDeleteDocuments}
+                    isAccord={false}
+                    isEditable={false}
+                    // plusIconColor={ theme.typography.primary.black}
+                    // plusIconSize= {"18px"}
+                    // contractFiles={extraUploadDocument}
+                    // contractFileTypes={extraUploadDocumentType}
+                    // setContractFileTypes={setExtraUploadDocumentType}
+                    // setIsPreviousFileChange={setIsPreviousFileChange}
+                  />
                 </AccordionDetails>
-            </Accordion>
-          </Box>
-
-          <Grid container justifyContent="center" sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
-              <Grid item xs={12}>
-                  <Accordion sx={{ marginBottom: "20px", 
-                      backgroundColor: "#f0f0f0", 
-                      borderRadius: '8px',
-                      margin: "auto", // Center the accordion
-                      minHeight: "50px" }} 
-                      expanded={employmentExpanded} onChange={() => setEmploymentExpanded((prev) => !prev)}
-                  >
-                      <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="employment-content" id="employment-header">
-                          <Grid container>
-                              <Grid item md={11.2}>
-                                  <Typography
-                                      sx={{
-                                          fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue
-                                          // color: "#160449",
-                                          // fontWeight: theme.typography.primary.fontWeight,
-                                          // fontSize: "20px",
-                                          // textAlign: "center",
-                                          // paddingBottom: "10px",
-                                          // paddingTop: "5px",
-                                          // flexGrow: 1,
-                                          // paddingLeft: "50px"
-                                      }}
-                                  >
-                                      Applicant Job Details
-                                  </Typography>
-                              </Grid>
-                          </Grid>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                      <EmploymentDataGrid
-                          employmentDataT={lease?.lease_income ? JSON.parse(lease?.lease_income) : []}
-                      />
-                      </AccordionDetails>
-                  </Accordion>
-              </Grid>
-          </Grid>
-          {/* )} */}
-
-          {/* occupancy details*/}
-          <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
-              <Grid item xs={12}>
-                <Accordion 
-                  sx={{ marginBottom: "20px", 
-                    backgroundColor: "#f0f0f0", 
-                    borderRadius: '8px',
-                    margin: "auto", // Center the accordion
-                    minHeight: "50px" 
-                  }} 
-                  expanded={occupantsExpanded} onChange={() => setOccupantsExpanded(prevState => !prevState)}
-                >
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='occupants-content' id='occupants-header'>
-                      <Grid container>
-                          <Grid item md={11.2}>
-                              <Typography
-                                  sx={{
-                                      fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue
-                                      // color: "#160449",
-                                      // fontWeight: theme.typography.primary.fontWeight,
-                                      // fontSize: "20px",
-                                      // textAlign: "center",
-                                      // paddingBottom: "10px",
-                                      // paddingTop: "5px",
-                                      // flexGrow: 1,
-                                      // paddingLeft: "50px",
-                                  }}
-                                  paddingBottom='10px'
-                              >
-                                  Occupancy Details
-                              </Typography>
-                          </Grid>
-                          <Grid item md={0.5} />
-                      </Grid>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                      {adultOccupants && (
-                        <Box sx={{marginBottom: "20px"}}>
-                          <AdultOccupant
-                              leaseAdults={adultOccupants}
-                              // relationships={relationships}
-                              // editOrUpdateLease={lease_uid !== null ? editOrUpdateLease : editOrUpdateTenant}
-                              // editOrUpdateLease={editOrUpdateLease}
-                              // modifiedData={modifiedData}
-                              // setModifiedData={setModifiedData}
-                              // dataKey={lease_uid !== null ? "lease_adults" : "tenant_adult_occupants"}
-                              dataKey={"lease_adults"}
-                              isEditable={false}
-                          />
-                        </Box>
-                      )}
-                      {childrenOccupants && (
-                        <Box sx={{marginBottom: "20px"}}>
-                          <ChildrenOccupant
-                              leaseChildren={childrenOccupants}
-                              // relationships={relationships}
-                              // editOrUpdateLease={lease_uid !== null ? editOrUpdateLease : editOrUpdateTenant}
-                              // editOrUpdateLease={editOrUpdateLease}
-                              // modifiedData={modifiedData}
-                              // setModifiedData={setModifiedData}
-                              // dataKey={lease_uid !== null ? "lease_children" : "tenant_children_occupants"}
-                              dataKey={"lease_children"}
-                              isEditable={false}
-                          />
-                        </Box>
-                      )}
-                      {pets && (
-                        <Box sx={{marginBottom: "20px"}}>
-                          <PetsOccupant
-                              leasePets={pets}
-                              // editOrUpdateLease={lease_uid !== null ? editOrUpdateLease : editOrUpdateTenant}
-                              // editOrUpdateLease={editOrUpdateLease}
-                              // modifiedData={modifiedData}
-                              // setModifiedData={setModifiedData}
-                              // dataKey={lease_uid !== null ? "lease_pets" : "tenant_pet_occupants"}
-                              dataKey={"lease_pets"}
-                              isEditable={false}
-                          />
-                        </Box>
-                      )}
-                      {vehicles && (
-                        <Box sx={{marginBottom: "20px"}}>
-                          <VehiclesOccupant
-                              leaseVehicles={vehicles}
-                              // setLeaseVehicles={setVehicles}
-                              // states={states}
-                              // editOrUpdateLease={lease_uid !== null ? editOrUpdateLease : editOrUpdateTenant}
-                              // editOrUpdateLease={editOrUpdateLease}
-                              // modifiedData={modifiedData}
-                              // setModifiedData={setModifiedData}
-                              // dataKey={lease_uid !== null ? "lease_vehicles" : "tenant_vehicle_info"}
-                              dataKey={"lease_vehicles"}
-                              // ownerOptions={[...adultOccupants, ...childOccupants]}
-                              isEditable={false}
-                          />
-                        </Box>
-                      )}
-                  </AccordionDetails>
-                </Accordion>
-              </Grid>
-          </Grid>
-
-          {/* lease fees */}
-          <Grid container justifyContent="center" sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
-              <Grid item xs={12}>
-                  <Accordion sx={{ marginBottom: "20px", 
-                      backgroundColor: "#f0f0f0", 
-                      borderRadius: '8px',
-                      margin: "auto", // Center the accordion
-                      minHeight: "50px" }} 
-                      expanded={employmentExpanded} onChange={() => setEmploymentExpanded((prev) => !prev)}
-                  >
-                      <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="employment-content" id="employment-header">
-                          <Grid container>
-                              <Grid item md={11.2}>
-                                  <Typography
-                                      sx={{
-                                          fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue
-                                          // color: "#160449",
-                                          // fontWeight: theme.typography.primary.fontWeight,
-                                          // fontSize: "20px",
-                                          // textAlign: "center",
-                                          // paddingBottom: "10px",
-                                          // paddingTop: "5px",
-                                          // flexGrow: 1,
-                                          // paddingLeft: "50px"
-                                      }}
-                                  >
-                                      Lease Fees
-                                  </Typography>
-                              </Grid>
-                          </Grid>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <LeaseFees
-                          leaseFees={fees}
-                        />
-                      </AccordionDetails>
-                  </Accordion>
-              </Grid>
-          </Grid>
-          
-          {/* documents details */}
-          <Grid container direction="column"  justifyContent="center" spacing={2} sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
-            <Grid item xs={12}>
-                <Accordion sx={{marginBottom: "20px", 
-                    backgroundColor: "#f0f0f0", 
-                    borderRadius: '8px',
-                    margin: "auto", // Center the accordion
-                    minHeight: "50px" 
-                  }} 
-                  expanded={documentsExpanded} onChange={() => setDocumentsExpanded((prev) => !prev)}
-                >
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="documents-content" id="documents-header">
-                    <Typography
-                        sx={{
-                            fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue
-                            // color: "#160449",
-                            // fontWeight: theme.typography.primary.fontWeight,
-                            // fontSize: "20px",
-                            // textAlign: "center",
-                            // paddingBottom: "10px",
-                            // paddingTop: "5px",
-                            // flexGrow: 1,
-                        }}
-                    >
-                        Document Details
-                    </Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <Documents
-                        documents={JSON.parse(lease.lease_documents)}
-                        // setDocuments={setTenantDocuments}
-                        customName={"Lease Documents"}
-                        // setContractFiles={setExtraUploadDocument}
-                        // setDeleteDocsUrl={setDeleteDocuments}
-                        isAccord={false}
-                        isEditable={false}
-                        // plusIconColor={ theme.typography.primary.black}
-                        // plusIconSize= {"18px"}
-                        // contractFiles={extraUploadDocument}
-                        // contractFileTypes={extraUploadDocumentType}
-                        // setContractFileTypes={setExtraUploadDocumentType}
-                        // setIsPreviousFileChange={setIsPreviousFileChange}
-                    />
-                  </AccordionDetails>
-                </Accordion>
+              </Accordion>
             </Grid>
           </Grid>
-          
+
           {/* Accept and reject lease button */}
           <Grid container spacing={2}>
             <Grid item xs={6}>
@@ -833,7 +835,6 @@ function TenantLeases(props) {
             </Grid>
           </Grid>
 
-
           {/* <Grid
             container
             rowSpacing={2}
@@ -842,7 +843,7 @@ function TenantLeases(props) {
               // paddingRight: "20px",
             }}
           > */}
-            {/* <Grid item xs={12}>
+          {/* <Grid item xs={12}>
               <CenteringBox>
                 <Typography sx={{ color: theme.typography.common.black, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont }}>
                   Viewing Current Lease
@@ -852,7 +853,7 @@ function TenantLeases(props) {
 
           {/* Lease Details Grid */}
           {/* <Grid container spacing={2} mt={2}> */}
-            {/* <Grid item xs={6}>
+          {/* <Grid item xs={6}>
               <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Start Date</Typography>
               <Typography>{lease?.lease_start || "N/A"}</Typography>
             </Grid>
@@ -879,12 +880,12 @@ function TenantLeases(props) {
               <Typography>{lease?.due_date || "1st of month"}</Typography>
             </Grid> */}
 
-            {/* <Grid item xs={6}>
+          {/* <Grid item xs={6}>
               <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Move-Out Date</Typography>
               <Typography>{lease?.move_out_date || "N/A"}</Typography>
             </Grid> */}
 
-            {/* <Grid item xs={6}>
+          {/* <Grid item xs={6}>
             <Typography sx={{ fontWeight: "bold", color: "#160449" }}>
               Utilities Paid By Tenant
             </Typography>
@@ -894,16 +895,16 @@ function TenantLeases(props) {
                 : "None"}
             </Typography>
             </Grid> */}
-            {/* <Grid item xs={6}>
+          {/* <Grid item xs={6}>
               <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Late Fee</Typography>
               <Typography>{lease?.lease_fees || "%95"}</Typography>
             </Grid> */}
-            {/* <Grid item xs={6}>
+          {/* <Grid item xs={6}>
               <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Lease Status</Typography>
               <Typography>{lease?.lease_status}</Typography>
             </Grid> */}
 
-            {/* <Grid item xs={6}>
+          {/* <Grid item xs={6}>
             <Typography sx={{ fontWeight: "bold", color: "#160449" }}>
               Utilities Paid By Owner
             </Typography>
@@ -913,18 +914,17 @@ function TenantLeases(props) {
                 : "None"}
             </Typography>
             </Grid> */}
-            {/* <Grid item xs={6}>
+          {/* <Grid item xs={6}>
               <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Late Fee Per Day</Typography>
               <Typography>{lease?.late_fee_per_day || "$0"}</Typography>
             </Grid> */}
           {/* </Grid> */}
 
-                        
-            {/* <Grid item xs={12}>
+          {/* <Grid item xs={12}>
               <LeaseFees leaseFees={fees} />
             </Grid> */}
 
-            {/* <Grid item xs={6}>
+          {/* <Grid item xs={6}>
               <CenteringBox justifyContent="flex-start">
                 {signedLease &&
                   <Box>
@@ -1043,14 +1043,24 @@ function TenantLeases(props) {
 
 export const AdultDataGrid = ({ adults }) => {
   const columns = [
-    { field: 'name', headerName: 'Name', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 2, renderCell : (params) => (<Typography>{params.row.name} {params.row.last_name}</Typography>)},
-    { field: 'relationship', headerName: 'Relationship', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
-    { field: 'dob', headerName: 'DoB', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+    {
+      field: "name",
+      headerName: "Name",
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      flex: 2,
+      renderCell: (params) => (
+        <Typography>
+          {params.row.name} {params.row.last_name}
+        </Typography>
+      ),
+    },
+    { field: "relationship", headerName: "Relationship", renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1 },
+    { field: "dob", headerName: "DoB", renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1 },
   ];
 
-  let rowsWithId = []
+  let rowsWithId = [];
 
-  if(adults && adults?.length !== 0){
+  if (adults && adults?.length !== 0) {
     rowsWithId = adults.map((row, index) => ({
       ...row,
       id: row.id ? index : index,
@@ -1061,27 +1071,36 @@ export const AdultDataGrid = ({ adults }) => {
     <DataGrid
       rows={rowsWithId}
       columns={columns}
-      sx={{        
+      sx={{
         marginTop: "5px",
       }}
       autoHeight
-      rowHeight={50} 
+      rowHeight={50}
       hideFooter={true}
     />
   );
-
-}
+};
 
 export const ChildDataGrid = ({ children }) => {
   const columns = [
-    { field: 'name', headerName: 'Name', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 2, renderCell : (params) => (<Typography>{params.row.name} {params.row.last_name}</Typography>)},
-    { field: 'relationship', headerName: 'Relationship', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
-    { field: 'dob', headerName: 'DoB', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+    {
+      field: "name",
+      headerName: "Name",
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      flex: 2,
+      renderCell: (params) => (
+        <Typography>
+          {params.row.name} {params.row.last_name}
+        </Typography>
+      ),
+    },
+    { field: "relationship", headerName: "Relationship", renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1 },
+    { field: "dob", headerName: "DoB", renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1 },
   ];
 
-  let rowsWithId = []
+  let rowsWithId = [];
 
-  if(children && children?.length !== 0){
+  if (children && children?.length !== 0) {
     rowsWithId = children.map((row, index) => ({
       ...row,
       id: row.id ? index : index,
@@ -1092,27 +1111,36 @@ export const ChildDataGrid = ({ children }) => {
     <DataGrid
       rows={rowsWithId}
       columns={columns}
-      sx={{        
+      sx={{
         marginTop: "10px",
       }}
       autoHeight
-      rowHeight={50} 
+      rowHeight={50}
       hideFooter={true}
     />
   );
-
-}
+};
 
 export const PetDataGrid = ({ pets }) => {
   const columns = [
-    { field: 'name', headerName: 'Name', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 2, renderCell : (params) => (<Typography>{params.row.name} {params.row.last_name}</Typography>)},
-    { field: 'type', headerName: 'Type', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
-    { field: 'dob', headerName: 'DoB', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+    {
+      field: "name",
+      headerName: "Name",
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      flex: 2,
+      renderCell: (params) => (
+        <Typography>
+          {params.row.name} {params.row.last_name}
+        </Typography>
+      ),
+    },
+    { field: "type", headerName: "Type", renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1 },
+    { field: "dob", headerName: "DoB", renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1 },
   ];
 
-  let rowsWithId = []
+  let rowsWithId = [];
 
-  if(pets && pets?.length !== 0){
+  if (pets && pets?.length !== 0) {
     rowsWithId = pets.map((row, index) => ({
       ...row,
       id: row.id ? index : index,
@@ -1123,27 +1151,46 @@ export const PetDataGrid = ({ pets }) => {
     <DataGrid
       rows={rowsWithId}
       columns={columns}
-      sx={{        
+      sx={{
         marginTop: "10px",
       }}
       autoHeight
-      rowHeight={50} 
+      rowHeight={50}
       hideFooter={true}
     />
   );
-
-}
+};
 
 export const VehicleDataGrid = ({ vehicles }) => {
   const columns = [
-    { field: 'name', headerName: 'Name', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 2, renderCell : (params) => (<Typography>{params.row.make} {params.row.model}</Typography>)},
-    { field: 'license', headerName: 'License', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1, renderCell : (params) => (<Typography>{params.row.license} {params.row.state}</Typography>)},
-    { field: 'year', headerName: 'Year', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+    {
+      field: "name",
+      headerName: "Name",
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      flex: 2,
+      renderCell: (params) => (
+        <Typography>
+          {params.row.make} {params.row.model}
+        </Typography>
+      ),
+    },
+    {
+      field: "license",
+      headerName: "License",
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      flex: 1,
+      renderCell: (params) => (
+        <Typography>
+          {params.row.license} {params.row.state}
+        </Typography>
+      ),
+    },
+    { field: "year", headerName: "Year", renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1 },
   ];
 
-  let rowsWithId = []
+  let rowsWithId = [];
 
-  if(vehicles && vehicles?.length !== 0){
+  if (vehicles && vehicles?.length !== 0) {
     rowsWithId = vehicles.map((row, index) => ({
       ...row,
       id: row.id ? index : index,
@@ -1154,33 +1201,32 @@ export const VehicleDataGrid = ({ vehicles }) => {
     <DataGrid
       rows={rowsWithId}
       columns={columns}
-      sx={{        
+      sx={{
         marginTop: "10px",
       }}
       autoHeight
-      rowHeight={50} 
+      rowHeight={50}
       hideFooter={true}
     />
   );
-
-}
+};
 
 const EmploymentDataGrid = ({ employmentDataT = [] }) => {
   // const parsedEmploymentDataT = Array.isArray(employmentDataT) ? employmentDataT : [];
 
   const [employmentData, setEmploymentData] = useState([]);
 
-  const [parsedEmploymentDataT, setParsedEmploymentDataT] = useState([])
+  const [parsedEmploymentDataT, setParsedEmploymentDataT] = useState([]);
 
   // useEffect(()=>{
 
   //     if(checkedJobs.length === 0){
   //         const updateJobs = employmentData.map(job => ({
   //             ...job,
-  //             checked: parsedEmploymentDataT && parsedEmploymentDataT.length > 0 
+  //             checked: parsedEmploymentDataT && parsedEmploymentDataT.length > 0
   //                 ? parsedEmploymentDataT.some(
-  //                     leaseJob => 
-  //                         leaseJob.jobTitle === job.jobTitle && 
+  //                     leaseJob =>
+  //                         leaseJob.jobTitle === job.jobTitle &&
   //                         leaseJob.companyName === job.companyName
   //                   )
   //                 : false
@@ -1202,31 +1248,31 @@ const EmploymentDataGrid = ({ employmentDataT = [] }) => {
   // }, [profileData, employmentDataT])
 
   return (
-      <Box sx={{ padding: "10px" }}>
-          <Grid container spacing={2}>
-              {employmentDataT.length > 0 ? (
-                  employmentDataT.map((job, index) => (
-                      <Grid item xs={12} key={index}>
-                          <Box sx={{ display: "flex", alignItems: "center" }}>
-                              <Box sx={{ flex: 1 }}>
-                                  <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                                      Job Title: {job.jobTitle}
-                                  </Typography>
-                                  <Typography variant="body2">Company: {job.companyName}</Typography>
-                                  <Typography variant="body2">Salary: ${job.salary}</Typography>
-                                  <Typography variant="body2">Frequency: {job.frequency}</Typography>
-                              </Box>
-                          </Box>
-                          <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
-                      </Grid>
-                  ))
-              ) : (
-                  <Typography variant="body2" sx={{ textAlign: "center", width: "100%" }}>
-                      No employment data available.
+    <Box sx={{ padding: "10px" }}>
+      <Grid container spacing={2}>
+        {employmentDataT.length > 0 ? (
+          employmentDataT.map((job, index) => (
+            <Grid item xs={12} key={index}>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Box sx={{ flex: 1 }}>
+                  <Typography variant='body1' sx={{ fontWeight: "bold" }}>
+                    Job Title: {job.jobTitle}
                   </Typography>
-              )}
-          </Grid>
-      </Box>
+                  <Typography variant='body2'>Company: {job.companyName}</Typography>
+                  <Typography variant='body2'>Salary: ${job.salary}</Typography>
+                  <Typography variant='body2'>Frequency: {job.frequency}</Typography>
+                </Box>
+              </Box>
+              <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
+            </Grid>
+          ))
+        ) : (
+          <Typography variant='body2' sx={{ textAlign: "center", width: "100%" }}>
+            No employment data available.
+          </Typography>
+        )}
+      </Grid>
+    </Box>
   );
 };
 export default TenantLeases;
