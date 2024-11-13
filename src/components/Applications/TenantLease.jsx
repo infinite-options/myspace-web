@@ -329,7 +329,7 @@ const TenantLease = () => {
   // }, [newUtilitiesPaidBy]);
 
   // useEffect(() => {
-  //   console.log("mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
+  //   console.log("332 - mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
   // }, [mappedUtilitiesPaidBy]);
 
   const formatUtilityName = (utility) => {
@@ -380,7 +380,7 @@ const TenantLease = () => {
   };
 
   // const utilitiesObject = JSON.parse(property.property_utilities);
-  const utilitiesObject = JSON.parse(application.lease_utilities);
+  const [utilitiesObject, setUtilitiesObject] = useState(JSON.parse(application.lease_utilities ? application.lease_utilities : []));
   // console.log("392 - utilitiesObject - ", utilitiesObject);
   let utilitiesInUIDForm = {};
   let mappedUtilities2 = {};
@@ -389,8 +389,8 @@ const TenantLease = () => {
     const utilityObject = { [utility]: `${entity}` };
     setHasUtilitiesChanges(true);    
         
-    // console.log("mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
-    // console.log("utilityObject - ", utilityObject);
+    // console.log("392 - mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
+    // console.log("392 - utilityObject - ", utilityObject);
 
 
     setMappedUtilitiesPaidBy((prevState) => ({
@@ -480,8 +480,8 @@ const TenantLease = () => {
 
 
     //*************************************UTILITIES********************************************************* */
-    if (utilitiesObject) {  
-      // console.log("480 - utilitiesObject - ", utilitiesObject);
+    if (utilitiesObject && utilitiesObject?.length > 0 ) {  
+      // console.log("484 - utilitiesObject - ", utilitiesObject);
       for (const utility of utilitiesObject) {
         // console.log(utility.utility_type_id, utility.utility_payer_id);
         utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
@@ -497,7 +497,7 @@ const TenantLease = () => {
       setIsDefaultUtilities(true);
     }   
     //******************************************************************************************************* */
-  }, []);
+  }, []);  
 
   // const addFeeRow = () => {
   //   setFees((prev) => [
