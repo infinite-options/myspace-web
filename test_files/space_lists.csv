@@ -1,4 +1,5 @@
 list_uid,list_category,list_item
+050-000000,appliances,dishwasher
 050-000001,utilities,electricity
 050-000002,utilities,water
 050-000003,utilities,gas
@@ -10,7 +11,7 @@ list_uid,list_category,list_item
 050-000009,utilities,"security system"
 050-000010,utilities,"pest control"
 050-000011,utilities,gardener
-050-000012,utilities,NULL
+050-000012,utilities,maintenance
 050-000013,utilities,NULL
 050-000014,utilities,NULL
 050-000015,utilities,NULL
@@ -40,7 +41,7 @@ list_uid,list_category,list_item
 050-000039,appliances,"coffee maker"
 050-000040,appliances,NULL
 050-000041,appliances,NULL
-050-000281,appliances,NULL
+050-000042,appliances,NULL
 050-000043,appliances,NULL
 050-000044,appliances,NULL
 050-000045,appliances,NULL
@@ -132,12 +133,12 @@ list_uid,list_category,list_item
 050-000131,NULL,NULL
 050-000132,frequency,Weekly
 050-000133,frequency,Bi-Weekly
-050-000134,frequency,Monthly
-050-000135,frequency,Semi-Annually
+050-000134,frequency,Semi-Monthly
+050-000135,frequency,Monthly
 050-000136,frequency,Quarterly
-050-000137,frequency,Annually
-050-000138,NULL,NULL
-050-000139,NULL,NULL
+050-000137,frequency,Semi-Annually
+050-000138,frequency,Annually
+050-000139,frequency,other
 050-000140,type,Cat
 050-000141,type,Dog
 050-000142,NULL,NULL
@@ -165,7 +166,7 @@ list_uid,list_category,list_item
 050-000164,revenue,Rent
 050-000165,revenue,Repairs
 050-000166,revenue,Utilities
-050-000167,NULL,NULL
+050-000167,revenue,NULL
 050-000168,NULL,NULL
 050-000169,revenue,other
 050-000170,maintenance,Plumbing
@@ -218,3 +219,73 @@ list_uid,list_category,list_item
 050-000217,NULL,NULL
 050-000218,NULL,NULL
 050-000219,propertyType,other
+050-000220,purchaseType,"Bill Posting"
+050-000221,purchaseType,Deposit
+050-000222,purchaseType,"Extra Charge"
+050-000223,purchaseType,Insurance
+050-000224,purchaseType,"Late Fee"
+050-000225,purchaseType,Maintenance
+050-000226,purchaseType,Management
+050-000227,purchaseType,Mortgage
+050-000228,purchaseType,Rent
+050-000229,purchaseType,"Rent due Owner"
+050-000230,purchaseType,Repairs
+050-000231,purchaseType,Taxes
+050-000232,purchaseType,Utilities
+050-000233,purchaseType,"Late Fee due Owner"
+050-000234,purchaseType,NULL
+050-000235,purchaseType,NULL
+050-000236,purchaseType,NULL
+050-000237,purchaseType,NULL
+050-000238,purchaseType,NULL
+050-000239,purchaseType,other
+050-000240,"110-NEW REQUEST",#A52A2A
+050-000241,"110-INFO REQUESTED",#C06A6A
+050-000242,110-PROCESSING,#D29494
+050-000243,110-SCHEDULED,#9EAED6
+050-000244,110-CANCELLED,#778DC5
+050-000245,110-COMPLETED,#3D5CAC
+050-000246,ownerColor,NULL
+050-000247,ownerColor,NULL
+050-000248,ownerColor,NULL
+050-000249,ownerColor,NULL
+050-000250,"600-NEW REQUEST",#B62C2A
+050-000251,"600-QUOTES REQUESTED",#D4736D
+050-000252,"600-QUOTES ACCEPTED",#DEA19C
+050-000253,600-SCHEDULED,#92A9CB
+050-000254,600-COMPLETED,#6788B3
+050-000255,600-PAID,#173C8D
+050-000256,managerColor,NULL
+050-000257,managerColor,NULL
+050-000258,managerColor,NULL
+050-000259,managerColor,NULL
+050-000260,maintenanceColor,#A52A2A
+050-000261,maintenanceColor,#C06A6A
+050-000262,maintenanceColor,#D29494
+050-000263,maintenanceColor,#9EAED6
+050-000264,maintenanceColor,#778DC5
+050-000265,maintenanceColor,#3D5CAC
+050-000266,maintenanceColor,NULL
+050-000267,maintenanceColor,NULL
+050-000268,maintenanceColor,NULL
+050-000269,maintenanceColor,NULL
+050-000270,propertyColor,#B62C2A
+050-000271,propertyColor,#D4736D
+050-000272,propertyColor,#DEA19C
+050-000273,propertyColor,#92A9CB
+050-000274,propertyColor,#6788B3
+050-000275,propertyColor,#173C8D
+050-000276,propertyColor,NULL
+050-000277,propertyColor,NULL
+050-000278,propertyColor,NULL
+050-000279,propertyColor,NULL
+050-000280,role,owner
+050-000281,role,"property manager"
+050-000282,role,tenant
+050-000283,role,maintenance
+050-000284,role,NULL
+050-000285,role,NULL
+050-000286,role,NULL
+050-000287,role,NULL
+050-000288,role,NULL
+050-000289,role,user
