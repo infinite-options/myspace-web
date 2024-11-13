@@ -68,6 +68,7 @@ export default function TenantApplicationEdit(props) {
     const [employmentExpanded, setEmploymentExpanded] = useState(true);
     const [documentsExpanded, setDocumentsExpanded] = useState(true); 
     const [selectedJobs, setSelectedJobs] = useState([]);
+    const [propertyUtilities, setPropertyUtilities] = useState([])
 
 
     // const getListDetails = async () => {
@@ -240,6 +241,9 @@ export default function TenantApplicationEdit(props) {
             setTenantProfile(profileData.profile.result[0]);
       
             // Set other properties after all data is fetched
+            console.log("property data --- ", props.data)
+            const utilities = JSON.parse(props.data?.property_utilities).length > 0 ? JSON.parse(props.data?.property_utilities) : []
+            setPropertyUtilities(utilities)
             setProperty(props.data);
             setStatus(props.status);
       
@@ -845,6 +849,7 @@ export default function TenantApplicationEdit(props) {
             leaseApplicationData.append("lease_children", JSON.stringify(childOccupants));
             leaseApplicationData.append("lease_pets", JSON.stringify(petOccupants));
             leaseApplicationData.append("lease_vehicles", JSON.stringify(vehicles));
+            leaseApplicationData.append("lease_utilities", JSON.stringify(propertyUtilities))
             
             leaseApplicationData.append("lease_referred", "[]");
             leaseApplicationData.append("lease_fees", "[]");
@@ -852,6 +857,11 @@ export default function TenantApplicationEdit(props) {
             leaseApplicationData.append("tenant_uid", getProfileId());
             
             // console.log("we are here -- ")
+
+            // leaseApplicationData.forEach((value, key) => {
+            //     console.log(`${key}: ${value}`);
+            // });
+
             const leaseApplicationResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
                 method: "POST",
                 body: leaseApplicationData,

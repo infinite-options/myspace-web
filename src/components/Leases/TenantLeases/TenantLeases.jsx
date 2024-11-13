@@ -17,11 +17,15 @@ import {
   TableBody,
   TableCell,
   TableContainer,
+  FormControlLabel,
+  Checkbox,
+  Radio,
+  Menu,
   TableRow,
 } from "@mui/material";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
-import { useEffect, useState, Fragment } from "react";
+import { useEffect, useState, Fragment, useContext } from "react";
 import { useUser } from "../../../contexts/UserContext";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Backdrop from "@mui/material/Backdrop";
@@ -39,12 +43,14 @@ import PetsOccupant from "../PetsOccupant";
 import VehiclesOccupant from "../VehiclesOccupant";
 import { getDateAdornmentString } from "../../../utils/dates";
 import LeaseFees from "../LeaseFees";
+import ListsContext from "../../../contexts/ListsContext";
 
 function TenantLeases(props) {
   // console.log("In Tenant Leases", props);
   const location = useLocation();
   const navigate = useNavigate();
   const { getProfileId } = useUser();
+  const { getList } = useContext(ListsContext);
   const [tenantLeases, setTenantLeases] = useState([]);
   const [showSpinner, setShowSpinner] = useState(false);
   const [property, setProperty] = useState(props.property);
@@ -60,12 +66,22 @@ function TenantLeases(props) {
   const [vehicles, setVehicles] = useState([]);
   const [adultOccupants, setAdultOccupants] = useState([]);
   const [childrenOccupants, setChildrenOccupants] = useState([]);
+  const [leaseUtilities, setLeaseUtilities] = useState(null);
   const [fees, setFees] = useState([]);
   const [signedLease, setSignedLease] = useState(null);
   const [prevLeaseId, setPrevLeaseId] = useState(null);
   const [occupantsExpanded, setOccupantsExpanded] = useState(true);
   const [employmentExpanded, setEmploymentExpanded] = useState(true);
+  const [utilitiesExpanded, setUtilitiesExpanded] = useState(true);
   const [documentsExpanded, setDocumentsExpanded] = useState(true);
+  const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
+  const [utilitiesRole, setUtilitiesRole] = useState([]);
+  const [utilities, setUtilities] = useState([]);
+  const [utilitiesMap, setUtilitiesMap] = useState({});
+  const [utilitiesRoleMap, setUtilitiesRoleMap] = useState({});
+
+  let utilitiesInUIDForm = {};
+  let mappedUtilities2 = {};
 
   const [managerID, setManagerID] = useState("");
 
@@ -83,6 +99,36 @@ function TenantLeases(props) {
   // useEffect(() => {
   //   console.log("68 - managerID - ", managerID);
   // }, [managerID]);
+
+  const getListDetails = () => {
+    const utilitiesRole = getList("role");
+    const utilities = getList("utilities");
+
+    setUtilitiesMap(new Map(utilities.map((utility) => [utility.list_uid, utility.list_item])));
+    setUtilitiesRoleMap(new Map(utilitiesRole.map((role) => [role.list_uid, role.list_item])));
+    console.log(" list here -- ", utilitiesMap, utilitiesRoleMap);
+    setUtilities(utilities);
+    setUtilitiesRole(utilitiesRole);
+  };
+
+  const mapUIDsToUtilities = (propertyUtilities) => {
+    if (!propertyUtilities) {
+      return {};
+    }
+    console.log("----- in mapUIDsToUtilities, input - ", utilitiesMap);
+    const mappedUtilities = {};
+    for (const key of Object.keys(propertyUtilities)) {
+      const utilityName = utilitiesMap.get(key);
+      const entityName = utilitiesRoleMap.get(propertyUtilities[key]);
+
+      if (utilityName && entityName) {
+        mappedUtilities[utilityName] = entityName;
+      }
+    }
+
+    console.log("----- in mapUIDsToUtilities, mappedUtilities - ", mappedUtilities);
+    return mappedUtilities;
+  };
 
   useEffect(() => {
     setShowSpinner(true);
@@ -121,6 +167,7 @@ function TenantLeases(props) {
         setChildrenOccupants(detailed_property.lease_children ? JSON.parse(detailed_property?.lease_children) : []);
         setFees(detailed_property?.lease_fees ? JSON.parse(detailed_property.lease_fees) : []);
         setStatus(detailed_property?.lease_effective_date ?? null);
+        setLeaseUtilities(JSON.parse(lease?.lease_utilities));
 
         if (detailed_property?.property_utilities) {
           // Parse the utilities JSON
@@ -144,9 +191,28 @@ function TenantLeases(props) {
       }
     }
 
+    getListDetails();
     fetchData();
+
     setShowSpinner(false);
   }, []);
+
+  useEffect(() => {
+    console.log("UTILITIES - ", leaseUtilities);
+    if (leaseUtilities && leaseUtilities?.length > 0) {
+      console.log("484 - utilitiesObject - ");
+      for (const utility of leaseUtilities) {
+        // console.log(utility.utility_type_id, utility.utility_payer_id);
+        utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
+      }
+      // console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
+
+      mappedUtilities2 = mapUIDsToUtilities(utilitiesInUIDForm);
+      console.log("----- Mapped UIDs to Utilities, mappedUtilities2", mappedUtilities2);
+      // console.log("   ", mappedUtilities2);
+      setMappedUtilitiesPaidBy(mappedUtilities2);
+    }
+  }, [leaseUtilities]);
 
   const CenteringBox = ({ children, flexDirection = "column", justifyContent = "flex-start" }) => (
     <Box
@@ -405,6 +471,11 @@ function TenantLeases(props) {
     }
   };
 
+  const formatUtilityName = (utility) => {
+    const formattedUtility = utility.replace(/_/g, " ");
+    return formattedUtility.charAt(0).toUpperCase() + formattedUtility.slice(1);
+  };
+
   return (
     <Paper sx={{ marginTop: "7px", backgroundColor: theme.palette.primary.main, borderRadius: "5px", boxShadow: "0px 2px 4px #00000040" }}>
       <Box
@@ -527,14 +598,131 @@ function TenantLeases(props) {
                     <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Due Date</Typography>
                     <Typography>{lease?.due_date || "1st of month"}</Typography>
                   </Grid>
-                  <Grid item xs={6}>
-                    <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Utilities Paid By Tenant</Typography>
-                    <Typography>{JSON.parse(lease.lease_utilities).length > 0 ? JSON.parse(lease.lease_utilities).join(", ") : "None"}</Typography>
-                  </Grid>
+                  {/* <Grid item xs={6}>
+                        <Typography sx={{ fontWeight: "bold", color: "#160449" }}>
+                          Utilities Paid By Tenant
+                        </Typography>
+                        <Typography>
+                          {JSON.parse(lease.lease_utilities).length > 0
+                              ? JSON.parse(lease.lease_utilities)
+                                  .map((utility) => utility.utility_desc)
+                                  .join(", ")
+                              : "None"}
+                        </Typography>
+                      </Grid> */}
                 </Grid>
               </AccordionDetails>
             </Accordion>
           </Box>
+
+          {/* utiltiies */}
+          <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+            <Grid item xs={12}>
+              <Accordion
+                sx={{
+                  marginBottom: "20px",
+                  backgroundColor: "#f0f0f0",
+                  borderRadius: "8px",
+                  margin: "auto", // Center the accordion
+                  minHeight: "50px",
+                }}
+                expanded={utilitiesExpanded}
+                onChange={() => setUtilitiesExpanded((prev) => !prev)}
+              >
+                <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='employment-content' id='employment-header'>
+                  <Grid container>
+                    <Grid item md={11.2}>
+                      <Typography
+                        sx={{
+                          fontWeight: theme.typography.medium.fontWeight,
+                          color: theme.typography.primary.blue,
+                          // color: "#160449",
+                          // fontWeight: theme.typography.primary.fontWeight,
+                          // fontSize: "20px",
+                          // textAlign: "center",
+                          // paddingBottom: "10px",
+                          // paddingTop: "5px",
+                          // flexGrow: 1,
+                          // paddingLeft: "50px"
+                        }}
+                      >
+                        Lease Utilities
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Grid container columnSpacing={2} rowSpacing={3} sx={{ padding: "10px" }}>
+                    {Object.entries(mappedUtilitiesPaidBy).length > 0 ? (
+                      Object.entries(mappedUtilitiesPaidBy).map(([utility, selectedValue]) => (
+                        <Fragment key={utility}>
+                          <Grid item xs={6}>
+                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
+                              {formatUtilityName(utility)}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <FormControlLabel
+                              value='owner'
+                              control={
+                                <Radio
+                                  checked={selectedValue === "owner"}
+                                  disabled
+                                  sx={{
+                                    // color: '#160449', // Changes the color of the disabled radio button
+                                    "&.Mui-checked": {
+                                      color: "#160449 !important", // Changes the color when checked and disabled
+                                    },
+                                    "&.Mui-disabled": {
+                                      color: "#160449 !important", // Changes the color when disabled
+                                    },
+                                  }}
+                                />
+                              }
+                              label='Owner'
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  color: "#160449 !important", // Ensures label stays black even when disabled
+                                },
+                              }}
+                            />
+                            <FormControlLabel
+                              value='tenant'
+                              control={
+                                <Radio
+                                  checked={selectedValue === "tenant"}
+                                  disabled
+                                  sx={{
+                                    // color: '#160449', // Changes the color of the disabled radio button
+                                    "&.Mui-checked": {
+                                      color: "#160449 !important", // Changes the color when checked and disabled
+                                    },
+                                    "&.Mui-disabled": {
+                                      color: "#160449 !important", // Changes the color when disabled
+                                    },
+                                  }}
+                                />
+                              }
+                              label='Tenant'
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  color: "black !important", // Ensures label stays black even when disabled
+                                },
+                              }}
+                            />
+                          </Grid>
+                        </Fragment>
+                      ))
+                    ) : (
+                      <Typography variant='body2' sx={{ textAlign: "center", width: "100%" }}>
+                        No Utilities data available.
+                      </Typography>
+                    )}
+                  </Grid>
+                </AccordionDetails>
+              </Accordion>
+            </Grid>
+          </Grid>
 
           <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
             <Grid item xs={12}>

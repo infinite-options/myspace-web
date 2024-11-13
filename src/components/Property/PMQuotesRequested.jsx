@@ -42,6 +42,7 @@ import Documents from "../Leases/Documents";
 import PropertiesContext from '../../contexts/PropertiesContext';
 import { CheckBox, KeyboardReturnOutlined } from "@mui/icons-material";
 import { id } from "date-fns/locale";
+import ManagementContractContext from '../../contexts/ManagementContractContext';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -68,11 +69,17 @@ export default function PMQuotesRequested(props) {
   const propertiesContext = useContext(PropertiesContext);
 	const {
 	  propertyList: propertyListFromContext,	  
-    allContracts: allContractsFromContext,
+    // allContracts: allContractsFromContext,
     fetchProperties : fetchPropertiesFromContext,
-    fetchContracts: fetchContractsFromContext,	  
+    // fetchContracts: fetchContractsFromContext,	  
 	  returnIndex: returnIndexFromContext,
 	} = propertiesContext || {};
+
+  const managementContractContext = useContext(ManagementContractContext);
+	const {	  
+    allContracts: allContractsFromContext,
+    fetchContracts: fetchContractsFromContext,
+	} = managementContractContext || {};
   
 	const propertyList = propertyListFromContext || [];		
   const allContracts = allContractsFromContext || [];	

@@ -11,6 +11,7 @@ import APIConfig from "../../utils/APIConfig";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import PropertiesContext from '../../contexts/PropertiesContext';
+import ManagementContractContext from '../../contexts/ManagementContractContext';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,9 +36,14 @@ const RequestQuotes = (props) => {
   const propertiesContext = useContext(PropertiesContext);
 	const {
 	  propertyList: propertyListFromContext,	      
-    fetchContracts,	  
+    // fetchContracts,	  
 	  returnIndex: returnIndexFromContext,
 	} = propertiesContext || {};
+
+  const managementContractContext = useContext(ManagementContractContext);
+	const {	      
+    fetchContracts,	  
+	} = managementContractContext || {};
   
 	const propertyList = propertyListFromContext || [];		  
 	const returnIndex = returnIndexFromContext || 0;

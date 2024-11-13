@@ -553,18 +553,19 @@ const TenantLease = () => {
     // console.log("551 - utilitiesMap - ", utilitiesMap);
     //*************************************UTILITIES********************************************************* */
     if (utilitiesObject && utilitiesObject?.length > 0) {
-      // console.log("484 - utilitiesObject - ", utilitiesObject);
+      console.log("UTILITIES - utilitiesObject - ", utilitiesObject);
       for (const utility of utilitiesObject) {
         // console.log(utility.utility_type_id, utility.utility_payer_id);
         utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
       }
-      // console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
+      console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
 
       mappedUtilities2 = mapUIDsToUtilities(utilitiesInUIDForm);
-      // console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
-      // console.log("   ", mappedUtilities2);
+      console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
+      console.log("   ", mappedUtilities2);
       setMappedUtilitiesPaidBy(mappedUtilities2);
     } else {
+      console.log("UTILITIES setting else");
       setMappedUtilitiesPaidBy(defaultUtilities);
       setIsDefaultUtilities(true);
     }
@@ -2183,7 +2184,7 @@ const TenantLease = () => {
               <Grid container columnSpacing={2} rowSpacing={3} sx={{ padding: "10px" }}>
                 {isDefaultUtilities && (
                   <Grid item xs={12}>
-                    <Typography sx={{ fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.smallFont }}>{`<--Displaying Default Utilities-->`}</Typography>
+                    <Typography sx={{ fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.smallFont }}>{`<--Displaying Default Utilities!-->`}</Typography>
                   </Grid>
                 )}
                 {Object.entries(mappedUtilitiesPaidBy).length > 0

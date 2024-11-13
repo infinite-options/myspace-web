@@ -7,7 +7,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 export default function OwnerPropertyRentWidget(props) {
   // console.log("In Owner Property Rent Widget ");
-  const isMediumScreen = useMediaQuery("(max-width:1200px)");
+  const isMediumScreen = useMediaQuery("(maxWidth:1200px)");
   const navigate = useNavigate();
   const { propertyRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
   // console.log("In OwnerPropertyRentWidget Selected Role: ", selectedRole);
