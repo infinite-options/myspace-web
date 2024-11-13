@@ -380,7 +380,7 @@ const TenantLease = () => {
   };
 
   // const utilitiesObject = JSON.parse(property.property_utilities);
-  const [utilitiesObject, setUtilitiesObject] = useState(JSON.parse(application.lease_utilities ? application.lease_utilities : []));
+  const [utilitiesObject, setUtilitiesObject] = useState(application?.lease_utilities ? JSON.parse(application.lease_utilities) : []);
   // console.log("392 - utilitiesObject - ", utilitiesObject);
   let utilitiesInUIDForm = {};
   let mappedUtilities2 = {};
@@ -1015,6 +1015,9 @@ const TenantLease = () => {
       leaseApplicationFormData.append("lease_children", JSON.stringify(leaseChildren));
       leaseApplicationFormData.append("lease_pets", JSON.stringify(leasePets));
       leaseApplicationFormData.append("lease_vehicles", JSON.stringify(leaseVehicles));
+      const updatedUtilitiesArray = createUpdatedUtilitesArray(mappedUtilitiesPaidBy);
+      const utilitiesJSONString = JSON.stringify(updatedUtilitiesArray);                
+      leaseApplicationFormData.append("lease_utilities", utilitiesJSONString);
 
       let date = new Date();
       leaseApplicationFormData.append("lease_application_date", formatDate(date.toLocaleDateString()));
@@ -2209,7 +2212,14 @@ const TenantLease = () => {
         {/* Submit Button */}
         <Grid item xs={12} sx={{ textAlign: "center", paddingBottom: 5,  marginBottom: "20px", marginTop: "20px"  }}>
           <Button
-            onClick={application?.lease_status === "NEW" ? handleCreateLease : handleRenewLease}
+            // onClick={application?.lease_status === "NEW" ? handleCreateLease : handleRenewLease}
+            onClick={() => {
+              if(application?.lease_status === "NEW" || application?.lease_status === "PROCESSING"){
+                handleCreateLease();
+              } else if (application?.lease_status === "ACTIVE"){
+                handleRenewLease();
+              }
+            }}
             sx={{
               backgroundColor: "#9EAED6",
               color: "#160449",
@@ -2220,7 +2230,9 @@ const TenantLease = () => {
               },
             }}
           >
-            {application?.lease_status === "NEW" ? "Create Lease" : "Renew Lease"}
+            {application?.lease_status === "NEW" ? "Create Lease" : ""}
+            {application?.lease_status === "PROCESSING" ? "Modify Lease" : ""}
+            {application?.lease_status === "ACTIVE" ? "Renew Lease" : ""}
           </Button>
         </Grid>
       </Box>
