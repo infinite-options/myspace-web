@@ -832,6 +832,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
           status: "RENEW PROCESSING",
           lease: relatedLease,
           oldLeaseUid: leaseDetails.lease_uid,
+          from: "accwidget"
         },
       });
     }

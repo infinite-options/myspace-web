@@ -94,8 +94,6 @@ const useStyles = makeStyles((theme) => ({
 
 const initialFees = (property, application) => {
   const fees = [];
-  console.log("--debug-- property", property);
-  console.log("--debug-- application", application);
   if (property.property_listed_rent) {
     fees.push({
       id: fees.length + 1,
@@ -382,6 +380,11 @@ const TenantLease = () => {
   // const utilitiesObject = JSON.parse(property.property_utilities);
   const [utilitiesObject, setUtilitiesObject] = useState(application?.lease_utilities ? JSON.parse(application.lease_utilities) : []);
   // console.log("392 - utilitiesObject - ", utilitiesObject);
+  // const [utilitiesObject, setUtilitiesObject] = useState(() => {
+  //   const utilities = application?.lease_utilities;
+  //   return utilities && utilities !== "" ? JSON.parse(utilities) : [];
+  // });
+  // console.log("392 - utilitiesObject - ", utilitiesObject);
   let utilitiesInUIDForm = {};
   let mappedUtilities2 = {};
 
@@ -419,10 +422,8 @@ const TenantLease = () => {
 
   useEffect(() => {
     const getLeaseFees = () => {
-      console.log('is it here---', property, application);
       let feesList = [];
       if (application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "ACTIVE" ) {
-        console.log("getLeaseFees if: ", application.lease_fees);
         feesList = JSON.parse(application?.lease_fees);
       } else if (application?.lease_status === "NEW" || application?.lease_status === "RENEW NEW") {
         feesList = initialFees(property, application);
@@ -859,7 +860,7 @@ const TenantLease = () => {
     try {
       setShowMissingFieldsPrompt(false);
       if (!checkRequiredFields()) {
-        console.log("check here -- error no fees");
+        // console.log("check here -- error no fees");
         setShowMissingFieldsPrompt(true);
         return;
       }
@@ -969,7 +970,7 @@ const TenantLease = () => {
 
   function formatDate(dateString) {
     const date = new Date(dateString);
-    console.log('check date', dateString, date)
+    // console.log('check date', dateString, date)
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     const year = date.getFullYear();
@@ -977,7 +978,7 @@ const TenantLease = () => {
   }
 
   const handleRenewLease = async () => {
-    console.log('inside handleRenewLease');
+    // console.log('inside handleRenewLease');
     try {
       setShowMissingFieldsPrompt(false);
       if (!checkRequiredFields()) {
@@ -1478,8 +1479,8 @@ const TenantLease = () => {
       {
         page !== "refer_tenant" && (        
           <>
-          {console.log('--application details in tenant---', application)}
-          {console.log('--property details in tenant---', property)}
+          {/* {console.log('--application details in tenant---', application)}
+          {console.log('--property details in tenant---', property)} */}
 
           {/* Check if managerInitiatedRenew is true */}
           {managerInitiatedRenew && application.tenants ? (
@@ -2302,7 +2303,7 @@ const OccupantsDataGrid = ({ data }) => {
 
         return (
           <Typography>
-            {SSN ? maskSSN(SSN) : '-'}
+            {SSN ? SSN: '-'}
           </Typography>
         );
       },

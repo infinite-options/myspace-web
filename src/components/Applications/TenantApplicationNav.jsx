@@ -44,7 +44,7 @@ const TenantApplicationNav = (props) => {
   const [adultOccupants, setAdultOccupants] = useState(JSON.parse(application?.lease_adults || '["No Adult Occupants"]'));
   const [petOccupants, setPetOccupants] = useState(JSON.parse(application?.lease_pets || '["No Pet Occupants"]'));
   const [childOccupants, setChildOccupants] = useState(JSON.parse(application?.lease_children || '["No Child Occupants"]'));
-  const [applicationDocuments, setApplicationDocuments] = useState(JSON.parse(application?.lease_documents));
+  const [applicationDocuments, setApplicationDocuments] = useState(JSON.parse(application?.lease_documents || '["No Lease Documents"]'));
   const [ leaseFees, setLeaseFees ] = useState([])
   console.log("---dhyey--- in application view 222 - ", application)
   useEffect(() => {
@@ -184,9 +184,9 @@ const TenantApplicationNav = (props) => {
                         <ArrowBackIcon sx={{ color: currentIndex === 0 ? "#A0A0A0" : "#FFFFFF", width: "25px", height: "25px", margin: "0px" }} />
                       </Button>
                       <Box sx={{ textAlign: "center" }}>
-                        <Avatar src={application.tenant_photo_url} sx={{ width: "60px", height: "60px", margin: "0 auto", marginBottom: "10px" }} />
+                        <Avatar src={application?.tenant_photo_url} sx={{ width: "60px", height: "60px", margin: "0 auto", marginBottom: "10px" }} />
                         <Typography sx={{ color: "#FFFFFF", fontSize: "16px", fontWeight: 800 }}>
-                          {application.tenant_first_name + " " + application.tenant_last_name}
+                          {application?.tenant_first_name + " " + application?.tenant_last_name}
                         </Typography>
                         <Typography sx={{ color: "#FFFFFF", fontSize: "14px" }}>{`${currentIndex + 1} of ${applications.length} Applicants`}</Typography>
                       </Box>
@@ -205,14 +205,14 @@ const TenantApplicationNav = (props) => {
                       <Typography sx={{ fontWeight: "bold", color: "#160449", marginBottom: "10px" }}>CONTACT INFORMATION</Typography>
                       <Typography display="block">
                         <img src={EmailIcon} alt="email" style={{ marginRight: "10px" }} />
-                        {application.tenant_email}
+                        {application?.tenant_email}
                       </Typography>
                       <Typography display="block">
                         <img src={PhoneIcon} alt="phone" style={{ marginRight: "10px" }} />
-                        {application.tenant_phone_number}
+                        {application?.tenant_phone_number}
                       </Typography>
                       <Typography display="block">
-                        {application.tenant_address}, {application.tenant_city}, {application.tenant_state} {application.tenant_zip}
+                        {application?.tenant_address}, {application?.tenant_city}, {application?.tenant_state} {application?.tenant_zip}
                       </Typography>
                     </Box>
                   </Grid>
@@ -224,8 +224,8 @@ const TenantApplicationNav = (props) => {
                       <Typography display="block" sx={{ color: "#160449" }}>***-**-{decryptedSSN}</Typography>
                       <Typography display="block" sx={{ color: "#3D5CAC" }}>DL:</Typography>
                       <Typography display="block" sx={{ color: "#160449" }}>
-                {application.tenant_drivers_license_number 
-                  ? `${application.tenant_drivers_license_number} / ${application.tenant_drivers_license_state}`
+                {application?.tenant_drivers_license_number 
+                  ? `${application?.tenant_drivers_license_number} / ${application?.tenant_drivers_license_state}`
                   : "Not available"}
               </Typography></Box>
                   </Grid>
@@ -239,26 +239,37 @@ const TenantApplicationNav = (props) => {
                 </Typography>
                 
                 {/* Parsing the stringified JSON data */}
-                {JSON.parse(application?.lease_income).map((income, index) => (
-                  <Grid container spacing={2} key={index} sx={{ marginBottom: "10px", padding: "10px", backgroundColor: theme.palette.form.main, borderRadius: "5px" }}>
-                    <Grid item xs={3}>
-                      <Typography sx={{ color: "#3D5CAC"}}>Income Title</Typography>
-                      <Typography>{income.jobTitle}</Typography>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Typography sx={{ color: "#3D5CAC"}}>Amount</Typography>
-                      <Typography>{income.salary}</Typography>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Typography sx={{ color: "#3D5CAC" }}>Amount Frequency</Typography>
-                      <Typography>{income.frequency}</Typography>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Typography sx={{ color: "#3D5CAC" }}>Company Name</Typography>
-                      <Typography>{income.companyName}</Typography>
-                    </Grid>
-                  </Grid>
-                ))}
+                {application?.lease_income && 
+  (() => {
+    try {
+      const incomeData = JSON.parse(application.lease_income);
+      return incomeData.map((income, index) => (
+        <Grid container spacing={2} key={index} sx={{ marginBottom: "10px", padding: "10px", backgroundColor: theme.palette.form.main, borderRadius: "5px" }}>
+          <Grid item xs={3}>
+            <Typography sx={{ color: "#3D5CAC"}}>Income Title</Typography>
+            <Typography>{income.jobTitle}</Typography>
+          </Grid>
+          <Grid item xs={3}>
+            <Typography sx={{ color: "#3D5CAC"}}>Amount</Typography>
+            <Typography>{income.salary}</Typography>
+          </Grid>
+          <Grid item xs={3}>
+            <Typography sx={{ color: "#3D5CAC" }}>Amount Frequency</Typography>
+            <Typography>{income.frequency}</Typography>
+          </Grid>
+          <Grid item xs={3}>
+            <Typography sx={{ color: "#3D5CAC" }}>Company Name</Typography>
+            <Typography>{income.companyName}</Typography>
+          </Grid>
+        </Grid>
+      ));
+    } catch (error) {
+      console.error("Failed to parse lease_income JSON:", error);
+      return <Typography>No income data available</Typography>;
+    }
+  })()
+}
+
               </Paper>
 
               {/* Occupant Details */}
@@ -476,7 +487,7 @@ const TenantApplicationNav = (props) => {
               </Paper>
               {/* Action Buttons */}
               <Stack direction='row' alignItems='center' justifyContent='space-around' sx={{ padding: "30px 0", paddingRight: "15px" }}>
-                          {(application.lease_status === "NEW"|| application.lease_status === "RENEW NEW") && (
+                          {(application?.lease_status === "NEW"|| application?.lease_status === "RENEW NEW") && (
                             <Button
                               onClick={handleRejectLease}
                               sx={{
@@ -492,7 +503,7 @@ const TenantApplicationNav = (props) => {
                               {"Reject Tenant"}
                             </Button>
                           )}
-                          {(application.lease_status === "PROCESSING" || application.lease_status === "RENEW PROCESSING") && (
+                          {(application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW PROCESSING") && (
                             <div>
                               <Button
                                 onClick={handleWithdrawLease}
@@ -527,7 +538,7 @@ const TenantApplicationNav = (props) => {
                               </Button>
                             </div>
                           )}
-                          {application.lease_status === "RENEW NEW" && (
+                          {application?.lease_status === "RENEW NEW" && (
                             <Button
                               onClick={handleRenewLease}
                               sx={{
@@ -543,7 +554,7 @@ const TenantApplicationNav = (props) => {
                               {"Renew Lease"}
                             </Button>
                           )}
-                          {application.lease_status !== "PROCESSING" && application.lease_status !== "RENEW PROCESSING"  && application.lease_status !== "RENEW NEW"&& (
+                          {application?.lease_status !== "PROCESSING" && application?.lease_status !== "RENEW PROCESSING"  && application?.lease_status !== "RENEW NEW"&& (
                             <Button
                               onClick={handleCreateLease}
                               sx={{
