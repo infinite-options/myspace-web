@@ -326,6 +326,22 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                                     fontSize: theme.typography.smallFont,
                                 }}>TBD</Typography>
                             </Grid>
+                            <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                <Typography sx={{
+                                    textTransform: 'none',
+                                    color: "#160449",
+                                    fontWeight: theme.typography.secondary.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                }}>M2M Enabled</Typography>
+                            </Grid>
+                            <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                <Typography sx={{
+                                    textTransform: 'none',
+                                    color: "#160449",
+                                    fontWeight: theme.typography.light.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                }}>{currentLease?.lease_m2m && currentLease?.lease_m2m === 1 ? "Yes" : "No"}</Typography>
+                            </Grid>
                             {
                                 currentLease.lease_early_end_date != null && (
                                     <>
@@ -485,7 +501,23 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                                         fontWeight: theme.typography.light.fontWeight,
                                         fontSize: theme.typography.smallFont,
                                     }}>TBD</Typography>
-                                </Grid>                                
+                                </Grid>    
+                                <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                    <Typography sx={{
+                                        textTransform: 'none',
+                                        color: "#160449",
+                                        fontWeight: theme.typography.secondary.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                    }}>M2M Enabled</Typography>
+                                </Grid>
+                                <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
+                                    <Typography sx={{
+                                        textTransform: 'none',
+                                        color: "#160449",
+                                        fontWeight: theme.typography.light.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                    }}>{currentLease?.lease_m2m && currentLease?.lease_m2m === 1 ? "Yes" : "No"}</Typography>
+                                </Grid>                            
                             </Grid>
                         </Grid>
                         <Grid item xs={0} md={0.5} />
