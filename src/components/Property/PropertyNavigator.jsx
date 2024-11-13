@@ -77,6 +77,7 @@ import PropertiesContext from "../../contexts/PropertiesContext";
 import ListsContext from "../../contexts/ListsContext.js";
 import LeaseDetailsComponent from "./LeaseDetailsComponent.jsx";
 import ManagementDetailsComponent from "./ManagementDetailsComponent.jsx";
+import ManagementContractContext from '../../contexts/ManagementContractContext';
 
 import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy } from "../../utils/fees";
 import ReferTenantDialog from "../Referral/ReferTenantDialog.jsx";
@@ -124,9 +125,14 @@ export default function PropertyNavigator({
   const {
     propertyList: propertyListFromContext,
     allRentStatus: allRentStatusFromContext,
-    allContracts: allContractsFromContext,
+    // allContracts: allContractsFromContext,
     returnIndex: returnIndexFromContext,
   } = propertiesContext || {};
+
+  const managementContractContext = useContext(ManagementContractContext);
+  const {
+    allContracts: allContractsFromContext,
+  } = managementContractContext || {};
 
   const propertyList = propertyListFromContext || [];
   const allRentStatus = allRentStatusFromContext || [];

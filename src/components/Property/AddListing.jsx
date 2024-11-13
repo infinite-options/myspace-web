@@ -53,6 +53,8 @@ import APIConfig from "../../utils/APIConfig";
 
 import PropertiesContext from '../../contexts/PropertiesContext';
 import ListsContext from "../../contexts/ListsContext";
+import ManagementContractContext from '../../contexts/ManagementContractContext';
+
 
 export default function AddListing(props) {
   const location = useLocation();
@@ -66,10 +68,17 @@ export default function AddListing(props) {
   const {
     propertyList: propertyListFromContext,
     fetchProperties: fetchPropertiesFromContext,
-    allContracts: allContractsFromContext,
-    fetchContracts: fetchContractsFromContext,
+    // allContracts: allContractsFromContext,
+    // fetchContracts: fetchContractsFromContext,
     returnIndex: returnIndexFromContext,
   } = propertiesContext || {};
+
+  const managementContractContext = useContext(ManagementContractContext);
+  const {
+    allContracts: allContractsFromContext,
+    fetchContracts: fetchContractsFromContext,
+  } = managementContractContext || {};
+
 
   const propertyList = propertyListFromContext || [];
   const fetchProperties = fetchPropertiesFromContext;  

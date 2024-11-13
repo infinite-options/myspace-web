@@ -165,7 +165,7 @@ const fetchContracts = async () => {
       // fetchRentStatus();
       // fetchContracts();
       // setDataLoaded(true); 
-      Promise.all([fetchProperties(), fetchRentStatus(), fetchContracts()])
+      Promise.all([fetchProperties(), fetchRentStatus()])
       .then(() => {
         setDataLoaded(true);
       })
@@ -182,8 +182,8 @@ const fetchContracts = async () => {
         propertyList,
         setPropertyList,
         allRentStatus,
-        allContracts,
-        fetchContracts,
+        // allContracts,
+        // fetchContracts,
         fetchProperties, // refresh properties        
         newContractUID,
         setNewContractUID,

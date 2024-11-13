@@ -23,6 +23,7 @@ import PropertiesSearch from "./PropertiesSearch";
 import PMRent from "../Rent/PMRent/PMRent";
 
 import PropertiesContext from "../../contexts/PropertiesContext";
+import ManagementContractContext from '../../contexts/ManagementContractContext';
 
 const paymentStatusColorMap = {
   "Paid On Time": theme.palette.priority.clear,
@@ -88,8 +89,13 @@ export default function PropertiesList(props) {
     setReturnIndex,
     setCurrentPropertyID,
     setCurrentProperty,
-    allContracts: allContractsFromContext,
+    // allContracts: allContractsFromContext,
   } = propertiesContext || {};
+
+  const managementContractContext = useContext(ManagementContractContext);
+  const {
+    allContracts: allContractsFromContext,
+  } = managementContractContext || {};
 
   const propertyList = propertyListFromContext || [];
   const returnIndex = returnIndexFromContext || 0;
