@@ -242,7 +242,12 @@ export default function TenantApplicationEdit(props) {
       
             // Set other properties after all data is fetched
             console.log("property data --- ", props.data)
-            const utilities = JSON.parse(props.data?.property_utilities).length > 0 ? JSON.parse(props.data?.property_utilities) : []
+            let utilities;
+            if(props.from === "accwidget"){
+                utilities = JSON.parse(props.data?.lease_utilities).length > 0 ? JSON.parse(props.data?.lease_utilities) : []
+            }else{
+                utilities = JSON.parse(props.data?.property_utilities).length > 0 ? JSON.parse(props.data?.property_utilities) : []
+            }
             setPropertyUtilities(utilities)
             setProperty(props.data);
             setStatus(props.status);

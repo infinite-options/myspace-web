@@ -273,7 +273,7 @@ const TenantDashboard = () => {
 
   const updateLeaseDetails = (propertyUid) => {
     const leaseForProperty = leaseDetailsData.find((ld) => ld.property_uid === propertyUid);
-    // console.log("property lease for property", leaseForProperty);
+    console.log("property lease for property", leaseForProperty);
     setLeaseDetails(leaseForProperty);
 
     if (leaseForProperty?.lease_status === "NEW") {
@@ -832,7 +832,6 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
           status: "RENEW PROCESSING",
           lease: relatedLease,
           oldLeaseUid: leaseDetails.lease_uid,
-          from: "accwidget"
         },
       });
     }
