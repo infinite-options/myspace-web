@@ -101,7 +101,7 @@ const TenantDashboard = () => {
   const [balanceDetails, setBalanceDetails] = useState([]);
   const [filteredMaintenanceRequests, setFilteredMaintenanceRequests] = useState([]);
   const [allBalanceDetails, setAllBalanceDetails] = useState([]);
-  const [reload, setReload] = useState(false);
+  const [reload, setReload] = useState(true);
   const [relatedLease, setRelatedLease] = useState(null);
 
   const [announcementSentData, setAnnouncementSentData] = useState([]);
@@ -185,9 +185,16 @@ const TenantDashboard = () => {
   };
 
   useEffect(() => {
-    fetchData();
-    //fetchCashflowDetails();
-    setReload(false);
+    
+    if(reload){
+      fetchData();
+  
+      if(selectedProperty){
+        handleSelectProperty(selectedProperty)
+      }
+      //fetchCashflowDetails();
+      setReload(false);
+    }
   }, [reload, user]);
 
   useEffect(() => {
@@ -407,7 +414,7 @@ const TenantDashboard = () => {
         case "filePreview":
           return <DocumentPreview file={rightPane.file} onClose={rightPane.onClose} />;
         case "tenantApplicationEdit":
-          return <TenantApplicationEdit {...rightPane.state} setRightPane={setRightPane} />;
+          return <TenantApplicationEdit {...rightPane.state} setRightPane={setRightPane} setReload={setReload}/>;
         case "tenantLeases":
           return <TenantLeases {...rightPane.state} setRightPane={setRightPane} setReload={setReload} />;
         case "payment":
@@ -831,6 +838,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
           data: relatedLease,
           status: "RENEW PROCESSING",
           lease: relatedLease,
+          from : "accwidget",
           oldLeaseUid: leaseDetails.lease_uid,
         },
       });

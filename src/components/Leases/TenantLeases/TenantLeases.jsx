@@ -73,7 +73,8 @@ function TenantLeases(props) {
   const [occupantsExpanded, setOccupantsExpanded] = useState(true);
   const [employmentExpanded, setEmploymentExpanded] = useState(true);
   const [utilitiesExpanded, setUtilitiesExpanded] = useState(true);
-  const [documentsExpanded, setDocumentsExpanded] = useState(true); 
+  const [documentsExpanded, setDocumentsExpanded] = useState(true);
+  const [leaseFeesExpanded, setLeaseFeesExpanded] = useState(true); 
   const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
   const [utilitiesRole, setUtilitiesRole] = useState([]);
   const [utilities, setUtilities] = useState([])
@@ -86,7 +87,7 @@ function TenantLeases(props) {
   const [managerID, setManagerID] = useState("");
 
   useEffect(() => {
-    console.log("Props passed to TenantLeases: ", props.oldLeaseUid);
+    // console.log("Props passed to TenantLeases: ", props.oldLeaseUid);
     setPrevLeaseId(props.oldLeaseUid);
     setProperty(props.property);
     setLease(props.lease);
@@ -115,7 +116,7 @@ function TenantLeases(props) {
     if (!propertyUtilities) {
       return {};
     }
-    console.log("----- in mapUIDsToUtilities, input - ", utilitiesMap);
+    // console.log("----- in mapUIDsToUtilities, input - ", utilitiesMap);
     const mappedUtilities = {};
     for (const key of Object.keys(propertyUtilities)) {
       const utilityName = utilitiesMap.get(key);
@@ -126,7 +127,7 @@ function TenantLeases(props) {
       }
     }
 
-    console.log("----- in mapUIDsToUtilities, mappedUtilities - ", mappedUtilities);
+    // console.log("----- in mapUIDsToUtilities, mappedUtilities - ", mappedUtilities);
     return mappedUtilities;
   };
 
@@ -369,7 +370,7 @@ function TenantLeases(props) {
           body: renewalFormData,
         });
         const data = await response.json();
-        console.log("Renewal status updated:", data);
+        // console.log("Renewal status updated:", data);
         if (data?.code === 200) {
           console.log("Lease renewal successfully updated.");
         } else {
@@ -384,12 +385,12 @@ function TenantLeases(props) {
       var lease_status = "APPROVED"; // Abhinav - Tenant Approved
       // var status = "TENANT APPROVED";
       const date = new Date();
-      console.log("Date: ", date);
-      console.log("Lease Effective Date, ", status);
+      // console.log("Date: ", date);
+      // console.log("Lease Effective Date, ", status);
       if (status) {
         const [month, day, year] = status.split("-").map(Number);
         const leaseDate = new Date(year, month - 1, day); // Month is 0-indexed in JavaScript Date objects
-        console.log("Lease Effective Date, ", leaseDate);
+        // console.log("Lease Effective Date, ", leaseDate);
 
         if (leaseDate <= date) {
           lease_status = "ACTIVE";
@@ -865,8 +866,8 @@ function TenantLeases(props) {
                   margin: "auto", // Center the accordion
                   minHeight: "50px",
                 }}
-                expanded={employmentExpanded}
-                onChange={() => setEmploymentExpanded((prev) => !prev)}
+                expanded={leaseFeesExpanded}
+                onChange={() => setLeaseFeesExpanded((prev) => !prev)}
               >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='employment-content' id='employment-header'>
                   <Grid container>

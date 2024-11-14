@@ -243,10 +243,10 @@ export default function TenantApplicationEdit(props) {
             // Set other properties after all data is fetched
             console.log("property data --- ", props.data)
             let utilities;
-            if(props.from === "accwidget"){
-                utilities = JSON.parse(props.data?.lease_utilities).length > 0 ? JSON.parse(props.data?.lease_utilities) : []
-            }else{
+            if(props.from === "PropertyInfo"){
                 utilities = JSON.parse(props.data?.property_utilities).length > 0 ? JSON.parse(props.data?.property_utilities) : []
+            }else{
+                utilities = JSON.parse(props.data?.lease_utilities).length > 0 ? JSON.parse(props.data?.lease_utilities) : []
             }
             setPropertyUtilities(utilities)
             setProperty(props.data);
@@ -625,8 +625,10 @@ export default function TenantApplicationEdit(props) {
                         setShowSpinner(false);
 
                         if (props.from === "PropertyInfo") {
+                            props.setReload((prev) => !prev);
                             props.setRightPane({ type: "listings" });
                         } else {
+                            props.setReload((prev) => !prev);
                             props.setRightPane("");
                         }
                     })
@@ -891,8 +893,10 @@ export default function TenantApplicationEdit(props) {
     
             Promise.all([annoucementsResponse, leaseApplicationResponse]).then(() => {
                 if (props.from === "PropertyInfo") {
+                    props.setReload((prev) => !prev);
                     props.setRightPane({ type: "listings" });
                 } else {
+                    props.setReload((prev) => !prev);
                     props.setRightPane("");
                 }
             });
@@ -1107,6 +1111,7 @@ export default function TenantApplicationEdit(props) {
                                             setModifiedData={setModifiedData}
                                             // dataKey={lease_uid !== null ? "lease_pets" : "tenant_pet_occupants"}
                                             dataKey={"lease_pets"}
+                                            ownerOptions={[...adultOccupants, ...childOccupants]}
                                             isEditable={true}
                                         />
                                     )}
@@ -1158,20 +1163,22 @@ export default function TenantApplicationEdit(props) {
                             </Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <Documents
-                                    documents={tenantDocuments}
-                                    setDocuments={setTenantDocuments}
-                                    customName={"Application Documents"}
-                                    setContractFiles={setExtraUploadDocument}
-                                    setDeleteDocsUrl={setDeleteDocuments}
-                                    isAccord={false}
-                                    plusIconColor={ theme.typography.primary.black}
-                                    plusIconSize= {"18px"}
-                                    contractFiles={extraUploadDocument}
-                                    contractFileTypes={extraUploadDocumentType}
-                                    setContractFileTypes={setExtraUploadDocumentType}
-                                    setIsPreviousFileChange={setIsPreviousFileChange}
-                                />
+                                <Box sx={{width: "100%"}}>
+                                    <Documents
+                                        documents={tenantDocuments}
+                                        setDocuments={setTenantDocuments}
+                                        customName={"Application Documents"}
+                                        setContractFiles={setExtraUploadDocument}
+                                        setDeleteDocsUrl={setDeleteDocuments}
+                                        isAccord={false}
+                                        plusIconColor={ theme.typography.primary.black}
+                                        plusIconSize= {"18px"}
+                                        contractFiles={extraUploadDocument}
+                                        contractFileTypes={extraUploadDocumentType}
+                                        setContractFileTypes={setExtraUploadDocumentType}
+                                        setIsPreviousFileChange={setIsPreviousFileChange}
+                                    />
+                                </Box>
                             </AccordionDetails>
                         </Accordion>
                     </Grid>
