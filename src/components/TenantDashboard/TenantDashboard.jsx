@@ -1447,7 +1447,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                             //   marginLeft: "1%", // Adjusting margin for icon and text
                           }}
                         >
-                          {"Renew Lease"}
+                          {leaseDetails?.lease_renew_status === "RENEW REQUESTED" ? "Review Application" : "Renew Lease"}
                         </Typography>
                       </Button>
                     </Grid>

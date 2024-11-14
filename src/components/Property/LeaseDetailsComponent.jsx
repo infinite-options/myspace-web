@@ -151,29 +151,17 @@ export default function LeaseDetailsComponent({
 
 	return (
 		<>
-			<Card sx={{ backgroundColor: theme.palette.form.main, height: '100%' }}>
-				<Box
+			<Card sx={{ backgroundColor: theme.palette.form.main, height: '100%' }}>								
+				<Typography
 					sx={{
-						width: '100%',
-						display: 'flex',
-						justifyContent: 'space-between',
-						alignItems: 'center',
-						marginBottom: '20px',
+						color: theme.typography.primary.black,
+						fontWeight: theme.typography.primary.fontWeight,
+						fontSize: theme.typography.largeFont,
+						textAlign: 'center',						
 					}}
 				>
-					<Typography
-						sx={{
-							color: theme.typography.primary.black,
-							fontWeight: theme.typography.primary.fontWeight,
-							fontSize: theme.typography.largeFont,
-							textAlign: 'center',
-							paddingLeft: '100px',
-							// flexGrow: 1
-						}}
-					>
-						Lease Details
-					</Typography>
-				</Box>
+					Lease Details
+				</Typography>					
 				<CardContent>
 					<Grid container spacing={3}>
 						{/* Property Manager */}

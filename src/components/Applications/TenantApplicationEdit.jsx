@@ -690,7 +690,9 @@ export default function TenantApplicationEdit(props) {
 
     const handleSaveButton = async (e) => {
         e.preventDefault();
-        console.log(status , " lease uid - ", lease[0])
+        console.log("status - ", status )
+        console.log("lease - ", lease[0])      
+        return;  
         if (lease[0]?.lease_uid == null || status === null || status === "" || status === "RENEW") {
             await handleApplicationSubmit();
         }else{
@@ -784,7 +786,7 @@ export default function TenantApplicationEdit(props) {
             };
     
             const leaseApplicationData = new FormData();
-            leaseApplicationData.append("lease_property_id", property.property_uid);
+            leaseApplicationData.append("lease_property_id", property.property_uid != null ? property.property_uid : lease[0].lease_property_id);
     
             if (status === "RENEW") {
                 const updateLeaseData = new FormData();
@@ -849,7 +851,7 @@ export default function TenantApplicationEdit(props) {
             leaseApplicationData.append("lease_children", JSON.stringify(childOccupants));
             leaseApplicationData.append("lease_pets", JSON.stringify(petOccupants));
             leaseApplicationData.append("lease_vehicles", JSON.stringify(vehicles));
-            leaseApplicationData.append("lease_utilities", JSON.stringify(propertyUtilities))
+            leaseApplicationData.append("lease_utilities", ( lease != null && lease[0]?.lease_utilities) ? lease[0]?.lease_utilities : JSON.stringify(propertyUtilities))
             
             leaseApplicationData.append("lease_referred", "[]");
             leaseApplicationData.append("lease_fees", "[]");
@@ -1200,7 +1202,7 @@ export default function TenantApplicationEdit(props) {
                             <Button
                                 variant="contained"
                                 sx={{
-                                    width: "30%",
+                                    width: "40%",
                                     fontSize: "16px",
                                     backgroundColor: '#3D5CAC',
                                     borderRadius: "5px",
@@ -1209,7 +1211,7 @@ export default function TenantApplicationEdit(props) {
                                 onClick={handleSaveButton}
                             >
                                 <Typography sx={{ textTransform: 'none', fontWeight: theme.typography.primary.fontWeight, color: "#FFFFFF",}}>
-                                    {props.lease?.lease_uid == null? "Submit" : "Update Application"}
+                                    {(props.lease?.lease_uid == null) ? "Submit Application" : "Submit Renewal Application"}
                                 </Typography>
 
                             </Button>

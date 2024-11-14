@@ -178,7 +178,8 @@ const TenantLease = () => {
     console.log("In Tenant Lease duration", duration);
     // Set the new end date to be initialStartDate + duration
     console.log("In Tenant Lease initialEndDate", initialStartDate.add(duration, "days"));
-    initialEndDate = leaseEndDate.add(duration, "day");
+    // initialEndDate = leaseEndDate.add(duration, "day");
+    initialEndDate = leaseEndDate;
     console.log("In Tenant Lease initialEndDate", initialEndDate);
     // Set move-in date same as the start date
     initialMoveInDate = initialStartDate;
