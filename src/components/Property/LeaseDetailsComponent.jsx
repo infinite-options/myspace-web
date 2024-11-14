@@ -72,7 +72,7 @@ export default function LeaseDetailsComponent({
 		currentProperty && currentProperty.lease_start && currentProperty.tenant_uid
 			? `${currentProperty.tenant_first_name} ${currentProperty.tenant_last_name}`
 			: 'No Tenant';
-	const activeLease = currentProperty.lease_status;
+	const activeLease = currentProperty?.lease_status;
 	const [isChange, setIsChange] = useState(false);
   const [isEndLeasePopupOpen, setIsEndLeasePopupOpen] = useState(false);
 	// console.log("currentProperty?.maintenance - ", currentProperty?.maintenance);
