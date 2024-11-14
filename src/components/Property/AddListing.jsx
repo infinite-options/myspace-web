@@ -53,6 +53,8 @@ import APIConfig from "../../utils/APIConfig";
 
 import PropertiesContext from "../../contexts/PropertiesContext";
 import ListsContext from "../../contexts/ListsContext";
+import ManagementContractContext from '../../contexts/ManagementContractContext';
+
 
 export default function AddListing(props) {
   const location = useLocation();
@@ -66,10 +68,17 @@ export default function AddListing(props) {
   const {
     propertyList: propertyListFromContext,
     fetchProperties: fetchPropertiesFromContext,
-    allContracts: allContractsFromContext,
-    fetchContracts: fetchContractsFromContext,
+    // allContracts: allContractsFromContext,
+    // fetchContracts: fetchContractsFromContext,
     returnIndex: returnIndexFromContext,
   } = propertiesContext || {};
+
+  const managementContractContext = useContext(ManagementContractContext);
+  const {
+    allContracts: allContractsFromContext,
+    fetchContracts: fetchContractsFromContext,
+  } = managementContractContext || {};
+
 
   const propertyList = propertyListFromContext || [];
   const fetchProperties = fetchPropertiesFromContext;
@@ -172,7 +181,7 @@ export default function AddListing(props) {
     if (!propertyUtilities) {
       return {};
     }
-    console.log("----- in mapUIDsToUtilities, input - ", propertyUtilities);
+    // console.log("----- in mapUIDsToUtilities, input - ", propertyUtilities);
     const mappedUtilities = {};
     for (const key of Object.keys(propertyUtilities)) {
       const utilityName = utilitiesMap.get(key);
@@ -183,7 +192,7 @@ export default function AddListing(props) {
       }
     }
 
-    console.log("----- in mapUIDsToUtilities, mappedUtilities - ", mappedUtilities);
+    // console.log("----- in mapUIDsToUtilities, mappedUtilities - ", mappedUtilities);
     return mappedUtilities;
   };
 
@@ -194,7 +203,7 @@ export default function AddListing(props) {
     if (utilitiesObject) {
       // console.log("*****************************************AddListing useEffect*******************************************");
       for (const utility of utilitiesObject) {
-        console.log(utility.utility_type_id, utility.utility_payer_id);
+        // console.log(utility.utility_type_id, utility.utility_payer_id);
         utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
       }
       // console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
@@ -259,7 +268,7 @@ export default function AddListing(props) {
     updatedNewUtilitiesMappedBy[utility] = "owner";
     setNewUtilitiesPaidBy(updatedNewUtilitiesMappedBy);
 
-    console.log(`Adding utility: ${utility}`);
+    // console.log(`Adding utility: ${utility}`);
     handleAddUtilityClose();
   };
 
@@ -268,12 +277,12 @@ export default function AddListing(props) {
   };
 
   useEffect(() => {
-    console.log("useEffect");
+    // console.log("useEffect");
     setCoverImage(selectedImageList[0] || coverImage);
   }, [selectedImageList]);
 
   useEffect(() => {
-    console.log("propertyState", propertyState);
+    // console.log("propertyState", propertyState);
   }, [propertyState]);
 
   const handleBackButton = async () => {
@@ -302,32 +311,32 @@ export default function AddListing(props) {
       propertyData.property_amenities_nearby !== nearbyAmenities ||
       hasUtilitiesChanges;
 
-    console.log("hasPropertyChanges:", hasPropertyChanges);
-    console.log("Property Data:", propertyData);
-    console.log("State Values:", {
-      address,
-      unit,
-      city,
-      propertyState,
-      zip,
-      propertyType,
-      bedrooms,
-      bathrooms,
-      squareFootage,
-      rent,
-      deposit,
-      petsAllowed,
-      depositForRent,
-      taxes,
-      mortgages,
-      insurance,
-      description,
-      notes,
-      isListed,
-      communityAmenities,
-      apartmentAmenities,
-      nearbyAmenities,
-    });
+    // console.log("hasPropertyChanges:", hasPropertyChanges);
+    // console.log("Property Data:", propertyData);
+    // console.log("State Values:", {
+    //   address,
+    //   unit,
+    //   city,
+    //   propertyState,
+    //   zip,
+    //   propertyType,
+    //   bedrooms,
+    //   bathrooms,
+    //   squareFootage,
+    //   rent,
+    //   deposit,
+    //   petsAllowed,
+    //   depositForRent,
+    //   taxes,
+    //   mortgages,
+    //   insurance,
+    //   description,
+    //   notes,
+    //   isListed,
+    //   communityAmenities,
+    //   apartmentAmenities,
+    //   nearbyAmenities,
+    // });
 
     if (hasPropertyChanges) {
       const confirmSave = window.confirm("You have unsaved changes. Do you want to save them before leaving?");
@@ -939,7 +948,7 @@ export default function AddListing(props) {
                     borderRadius: "7px",
                   }}
                   size='small'
-                  placeholder={squareFootage}
+                  placeholder={squareFootage.toString()}
                   onChange={(e) => setSquareFootage(e.target.value)}
                   value={squareFootage}
                 />
