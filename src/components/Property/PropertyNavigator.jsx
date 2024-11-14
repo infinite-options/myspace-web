@@ -644,12 +644,12 @@ export default function PropertyNavigator({
   ];
 
   const handleEditClick = async (row) => {
-    // console.log("handleEditClick - row - ", row);
+    console.log("handleEditClick - row - ", row);
     await setIsReadOnly(false);
     await setInitialApplData(row);
     await setcurrentApplRow(row);
     await setModifiedApplRow({ appliance_uid: row.appliance_uid });
-    // console.log("---currentApplRow?.appliance_favorite_image---", row);
+    console.log("---currentApplRow?.appliance_favorite_image---", row);
     await setFavImage(currentApplRow?.appliance_favorite_image);
     await setIsEditing(true);
     await handleOpen();
@@ -696,8 +696,9 @@ export default function PropertyNavigator({
 
       Object.keys(appliance).forEach((key) => {
         // console.log(`Key: ${key}`);
-
-        applianceFormData.append(key, appliance[key]);
+        if (appliance[key] !== "") {
+          applianceFormData.append(key, appliance[key]);
+        }
       });
       // console.log(" editOrUpdateProfile - profileFormData - ");
       // for (var pair of profileFormData.entries()) {
@@ -782,7 +783,7 @@ export default function PropertyNavigator({
       };
 
       const changedFields = getAppliancesChanges();
-
+      console.log('Divya', changedFields, favImage);
       if (Object.keys(changedFields).length == 0 && selectedImageList.length === 0 && imagesTobeDeleted.length === 0) {
         console.log("No changes detected.");
         setShowSpinner(false);
@@ -798,8 +799,13 @@ export default function PropertyNavigator({
         applianceFormData.append("delete_images", JSON.stringify(imagesTobeDeleted));
       }
 
-      applianceFormData.append("appliance_images", JSON.stringify(currentApplRow.appliance_images));
-      applianceFormData.append("appliance_favorite_image", favImage);
+      if(currentApplRow.appliance_images.length > 0){
+        applianceFormData.append("appliance_images", JSON.stringify(currentApplRow.appliance_images));
+      }
+      
+      if (favImage != null) {
+        applianceFormData.append("appliance_favorite_image", favImage);
+      }
       console.log(favImage);
       let i = 0;
       for (const file of selectedImageList) {
@@ -1659,7 +1665,7 @@ export default function PropertyNavigator({
                               // console.log('typeof edit', typeof(onEditClick));
                               onEditClick("edit_property");
                             }}
-                            // onClick={handleEditButton}
+                          // onClick={handleEditButton}
                           >
                             <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
                             <Typography
@@ -2186,7 +2192,7 @@ export default function PropertyNavigator({
                 handleOpenMaintenancePage={handleOpenMaintenancePage}
                 onShowSearchManager={onShowSearchManager}
                 handleAppClick={handleAppClick}
-                getAppColor={getAppColor}                
+                getAppColor={getAppColor}
               />
             </Grid>
 
@@ -2674,6 +2680,7 @@ export default function PropertyNavigator({
                     }}
                     size='small'
                     onClick={() => {
+                      setIsReadOnly(false);
                       setcurrentApplRow({
                         appliance_uid: "",
                         appliance_url: "",
@@ -2681,14 +2688,14 @@ export default function PropertyNavigator({
                         appliance_desc: "",
                         appliance_images: "",
                         appliance_available: 0,
-                        appliance_installed: null,
+                        appliance_installed: "",
                         appliance_model_num: "",
-                        appliance_purchased: null,
+                        appliance_purchased: "",
                         appliance_serial_num: "",
                         appliance_property_id: propertyId,
                         appliance_manufacturer: "",
                         appliance_warranty_info: "",
-                        appliance_warranty_till: null,
+                        appliance_warranty_till: "",
                         appliance_purchase_order: "",
                         appliance_purchased_from: "",
                       });
