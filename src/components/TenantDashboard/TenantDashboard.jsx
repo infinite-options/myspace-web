@@ -794,7 +794,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
   // console.log("Lease Details ", leaseDetails);
   // console.log("selected property - ", selectedProperty)
   // console.log("Lease Details rightPane", rightPane);
-  const { getProfileId } = useUser();
+  const { getProfileId, selectedRole, } = useUser();
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleFlip = () => {
@@ -1157,13 +1157,17 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                       <KeyboardArrowRightIcon
                         sx={{ color: "blue", cursor: "pointer" }}
                         onClick={() => {
-                          if (tenant_detail && tenant_detail.tenant_uid) {
-                            navigate("/ContactsPM", {
-                              state: {
-                                contactsTab: "Tenant",
-                                tenantId: tenant_detail.tenant_uid,
-                              },
-                            });
+                          if(selectedRole === "TENANT"){
+                            navigate("/profileEditor")
+                          } else {
+                            if (tenant_detail && tenant_detail.tenant_uid) {
+                              navigate("/ContactsPM", {
+                                state: {
+                                  contactsTab: "Tenant",
+                                  tenantId: tenant_detail.tenant_uid,
+                                },
+                              });
+                            }
                           }
                         }}
                       />
