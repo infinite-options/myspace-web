@@ -691,8 +691,7 @@ export default function TenantApplicationEdit(props) {
     const handleSaveButton = async (e) => {
         e.preventDefault();
         console.log("status - ", status )
-        console.log("lease - ", lease[0])      
-        return;  
+        console.log("lease - ", lease[0])              
         if (lease[0]?.lease_uid == null || status === null || status === "" || status === "RENEW") {
             await handleApplicationSubmit();
         }else{
