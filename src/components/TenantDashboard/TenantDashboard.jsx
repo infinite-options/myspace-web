@@ -237,7 +237,7 @@ const TenantDashboard = () => {
         // console.log("second lease", secondLease);
         // console.log("lease details check", leaseDetails);
 
-        if (firstLease.lease_status === "INACTIVE" && secondLease.lease_status === "ACTIVE") {
+        if (firstLease.lease_status === "INACTIVE" && (secondLease.lease_status === "ACTIVE" || secondLease.lease_status === "ACTIVE M2M")) {
           setLeaseDetails(secondLease || null);
           console.log("here  check 2");
         } else {
@@ -1199,7 +1199,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                 </Grid>
                 <Grid item xs={7}>
                   <Box display='flex' alignItems='center' justifyContent={"space-between"}>
-                    {leaseDetails?.lease_status === "ACTIVE" ? (
+                    {(leaseDetails?.lease_status === "ACTIVE" || leaseDetails?.lease_status === "ACTIVE M2M") ? (
                       <>
                         <Typography
                           sx={{

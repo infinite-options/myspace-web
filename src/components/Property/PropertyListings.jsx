@@ -316,7 +316,7 @@ const PropertyListings = ({ setRightPane, isMobile, setViewRHS }) => {
         // console.log("applied to property at index", appliedPropertyIndex, lease.lease_status)
         if (appliedPropertyIndex > -1) {
           const appliedProperty = sortedProperties.splice(appliedPropertyIndex, 1)[0];
-          if (appliedProperty.lease_status === "ACTIVE") {
+          if (appliedProperty.lease_status === "ACTIVE" || appliedProperty.lease_status === "ACTIVE M2M") {
             activePropertyArray.push(appliedProperty);
           } else {
             sortedProperties.unshift(appliedProperty);

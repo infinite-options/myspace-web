@@ -1457,7 +1457,7 @@ export default function AddListing(props) {
           >
             <Grid container>
               <Grid item xs={12}>
-                <Button variant='contained' type='submit' form='editPropertyForm' sx={{ width: "100%", backgroundColor: theme.typography.formButton.background }}>
+                <Button variant='contained' type='submit' form='editPropertyForm' sx={{ width: "100%", backgroundColor: '#3D5CAC' }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                     {propertyData.property_available_to_rent !== 1 ? "Create Listing" : "Update Listing"}
                   </Typography>

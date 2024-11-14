@@ -207,6 +207,14 @@ export default function PropertyNavigator({
   // }, [property]);
 
   useEffect(() => {
+    console.log("210 - PropertyNavigator - allRentStatus - ", allRentStatus)
+  }, [allRentStatus]);
+
+  useEffect(() => {
+    console.log("210 - PropertyNavigator - propertyRentStatus - ", propertyRentStatus)
+  }, [propertyRentStatus]);
+
+  useEffect(() => {
     // getDataFromAPI();
     // fetchApplianceList();
     getApplianceCategories();
@@ -1557,7 +1565,7 @@ export default function PropertyNavigator({
                               </Box>
                             </Box>
                           )}
-                        {property && property.lease_status && property.lease_status === "ACTIVE" && (
+                        {property && property.lease_status && (property.lease_status === "ACTIVE" || property.lease_status === "ACTIVE M2M") && (
                           <Box sx={{ pb: 5 }}>
                             <Box
                               sx={{

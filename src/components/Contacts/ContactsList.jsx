@@ -579,7 +579,7 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex, setVi
     const tenant = props.data;
     const handleSetSelectedCard = props.selected;
     const index = props.index;
-    const tenantProperties = tenant?.properties?.length > 0? JSON.parse(tenant.properties).filter( property => property.lease_status === "ACTIVE") : [];
+    const tenantProperties = tenant?.properties?.length > 0? JSON.parse(tenant.properties).filter( property => property.lease_status === "ACTIVE" || property.lease_status === "ACTIVE M2M") : [];
     const activeProperties = tenantProperties;
   
     const handleSelection = () => {

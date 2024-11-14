@@ -155,15 +155,15 @@ const TenantLease = () => {
   const [showSpinner, setShowSpinner] = useState(false);
   // Intermediate variables to calculate the initial dates
   let initialStartDate, initialEndDate, initialMoveInDate;
-  // console.log("In Tenant Lease -  page - ", page);
-  if (page === "create_lease" || "refer_tenant") {
+  console.log("158 - In Tenant Lease -  page - ", page);
+  if (page === "create_lease" || page === "refer_tenant") {
     initialStartDate = dayjs();
     initialEndDate = dayjs().add(1, "year").subtract(1, "day");
     initialMoveInDate = initialStartDate;
   } else if (page === "edit_lease") {
     initialStartDate = application.lease_start ? dayjs(application.lease_start) : dayjs();
     initialEndDate = application.lease_end ? dayjs(application.lease_end) : dayjs().add(1, "year").subtract(1, "day");
-    initialMoveInDate = application.lease_move_in_date ? dayjs(application.lease_move_in_date) : dayjs();
+    initialMoveInDate = application.lease_move_in_date ? dayjs(application.lease_move_in_date) : dayjs();    
   } else if (page === "renew_lease") {
     // Calculate the duration between lease_start and lease_end
     const leaseStartDate = dayjs(property.lease_start);
@@ -466,7 +466,7 @@ const TenantLease = () => {
   useEffect(() => {
     const getLeaseFees = () => {
       let feesList = [];
-      if (application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "ACTIVE") {
+      if (application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "ACTIVE"  || application?.lease_status === "ACTIVE M2M") {
         feesList = JSON.parse(application?.lease_fees);
       } else if (application?.lease_status === "NEW" || application?.lease_status === "RENEW NEW") {
         feesList = initialFees(property, application);
@@ -1371,7 +1371,7 @@ const TenantLease = () => {
                 <Grid item xs={6} sm={3}>
                   <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>Tenant</Typography>
                   <Typography sx={{ fontSize: "14px", fontWeight: "400", color: "#302A68" }}>
-                    {property?.tenant_first_name ? property?.tenant_first_name : "No Lease"} {property?.tenant_last_name ? property?.tenant_last_name : ""}
+                    {property?.tenant_first_name ? property?.tenant_first_name : "No Tenant"} {property?.tenant_last_name ? property?.tenant_last_name : ""}
                   </Typography>
                 </Grid>
 
@@ -2263,7 +2263,7 @@ const TenantLease = () => {
             onClick={() => {
               if (application?.lease_status === "NEW" || application?.lease_status === "PROCESSING") {
                 handleCreateLease();
-              } else if (application?.lease_status === "ACTIVE") {
+              } else if (application?.lease_status === "ACTIVE" || application?.lease_status === "ACTIVE M2M") {
                 handleRenewLease();
               }
             }}
@@ -2279,7 +2279,7 @@ const TenantLease = () => {
           >
             {application?.lease_status === "NEW" ? "Create Lease" : ""}
             {application?.lease_status === "PROCESSING" ? "Modify Lease" : ""}
-            {application?.lease_status === "ACTIVE" ? "Renew Lease" : ""}
+            {(application?.lease_status === "ACTIVE" || application?.lease_status === "ACTIVE M2M") ? "Renew Lease" : ""}
           </Button>
         </Grid>
       </Box>

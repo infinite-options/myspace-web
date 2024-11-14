@@ -43,7 +43,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
         const lowerBoundNoticeDate = new Date(noticeDate);
         lowerBoundNoticeDate.setDate(noticeDate.getDate() - noticePeriod);
 
-        if (leaseData?.lease_status === "ACTIVE" || leaseData?.lease_status === "ACTIVE-M2M") {
+        if (leaseData?.lease_status === "ACTIVE" || leaseData?.lease_status === "ACTIVE M2M") {
             if (selectedValue === "terminate") {
                 setEndLeaseStatus("TERMINATED");
                 return `This lease will be terminated immediately, effective from today. Are you sure you want to terminate the lease?`;
