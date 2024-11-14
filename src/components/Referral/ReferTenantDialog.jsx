@@ -262,8 +262,7 @@ const ReferTenantDialog = ({open, onClose, setShowSpinner, property}) => {
                 }                    
                 <Grid container direction='column' sx={{width: '900px',}}>
                     {
-                        tenants?.map((row, index) => (
-                            <>
+                        tenants?.map((row) => (
                                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id}>
                                     <Grid item xs={2.5}>
                                         <Stack spacing={-2} m={2}>
@@ -368,7 +367,6 @@ const ReferTenantDialog = ({open, onClose, setShowSpinner, property}) => {
                                     </Grid>                                        
                                 </Grid>
                                 
-                            </>
                         ))
                     }
                     <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{paddingLeft: '10px',}}>
