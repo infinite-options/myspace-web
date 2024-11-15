@@ -111,6 +111,10 @@ const TenantDashboard = () => {
 
   const [view, setView] = useState("dashboard");
 
+  // useEffect(() => {
+  //   console.log("Listing Data: ", listingsData);
+  // }, [listingsData]);
+
   useEffect(() => {
     // Whenever this component is mounted or navigated to, reset the right pane
     if (isMobile) {

@@ -179,64 +179,64 @@ export default function TenantApplicationEdit(props) {
   }
 
   function formatTenantVehicleInfo() {
-    // if (lease.length === 0) {
-    //   let info = tenantProfile && tenantProfile.tenant_vehicle_info ? JSON.parse(tenantProfile.tenant_vehicle_info) : [];
-    //   setVehicles(info);
-    // } else {
-    //   let info = JSON.parse(lease[0].lease_vehicles);
-    //   setVehicles(info);
-    //   // for (const vehicle of info){
-    //   //     console.log(vehicle)
-    //   // }
-    // }
-    let info = tenantProfile && tenantProfile.tenant_vehicle_info ? JSON.parse(tenantProfile.tenant_vehicle_info) : [];
-    setVehicles(info);
+    if (lease.length === 0) {
+      let info = tenantProfile && tenantProfile.tenant_vehicle_info ? JSON.parse(tenantProfile.tenant_vehicle_info) : [];
+      setVehicles(info);
+    } else {
+      let info = JSON.parse(lease[0].lease_vehicles);
+      setVehicles(info);
+      // for (const vehicle of info){
+      //     console.log(vehicle)
+      // }
+    }
+    // let info = tenantProfile && tenantProfile.tenant_vehicle_info ? JSON.parse(tenantProfile.tenant_vehicle_info) : [];
+    // setVehicles(info);
   }
 
   function formatTenantAdultOccupants() {
-    // if (lease.length === 0) {
-    //     let info = tenantProfile && tenantProfile.tenant_adult_occupants ? JSON.parse(tenantProfile.tenant_adult_occupants) : [];
-    //     setAdultOccupants(info);
-    // } else {
-    //     // console.log(tenantProfile?.tenant_adult_occupants)
-    //     let info = JSON.parse(lease[0].lease_adults);
-    //     setAdultOccupants(info);
-    //     // for (const occupant of info){
-    //     //     console.log(occupant)
-    //     // }
-    // }
-    let info = tenantProfile && tenantProfile.tenant_adult_occupants ? JSON.parse(tenantProfile.tenant_adult_occupants) : [];
-    setAdultOccupants(info);
+    if (lease.length === 0) {
+      let info = tenantProfile && tenantProfile.tenant_adult_occupants ? JSON.parse(tenantProfile.tenant_adult_occupants) : [];
+      setAdultOccupants(info);
+    } else {
+      // console.log(tenantProfile?.tenant_adult_occupants)
+      let info = JSON.parse(lease[0].lease_adults);
+      setAdultOccupants(info);
+      // for (const occupant of info){
+      //     console.log(occupant)
+      // }
+    }
+    // let info = tenantProfile && tenantProfile.tenant_adult_occupants ? JSON.parse(tenantProfile.tenant_adult_occupants) : [];
+    // setAdultOccupants(info);
   }
 
   function formatTenantPetOccupants() {
-    // if (lease.length === 0) {
-    //     let info = tenantProfile && tenantProfile.tenant_pet_occupants ? JSON.parse(tenantProfile.tenant_pet_occupants) : [];
-    //     setPetOccupants(info);
-    // } else {
-    //     let info = JSON.parse(lease[0].lease_pets);
-    //     setPetOccupants(info);
-    //     // for (const pet of info){
-    //     //     console.log(pet)
-    //     // }
-    // }
-    let info = tenantProfile && tenantProfile.tenant_pet_occupants ? JSON.parse(tenantProfile.tenant_pet_occupants) : [];
-    setPetOccupants(info);
+    if (lease.length === 0) {
+      let info = tenantProfile && tenantProfile.tenant_pet_occupants ? JSON.parse(tenantProfile.tenant_pet_occupants) : [];
+      setPetOccupants(info);
+    } else {
+      let info = JSON.parse(lease[0].lease_pets);
+      setPetOccupants(info);
+      // for (const pet of info){
+      //     console.log(pet)
+      // }
+    }
+    // let info = tenantProfile && tenantProfile.tenant_pet_occupants ? JSON.parse(tenantProfile.tenant_pet_occupants) : [];
+    // setPetOccupants(info);
   }
 
   function formatTenantChildOccupants() {
-    // if (lease.length === 0) {
-    //     let info = tenantProfile && tenantProfile.tenant_children_occupants ? JSON.parse(tenantProfile.tenant_children_occupants) : [];
-    //     setChildOccupants(info);
-    // } else {
-    //     let info = JSON.parse(lease[0].lease_children);
-    //     setChildOccupants(info);
-    //     // for (const child of info){
-    //     //     console.log(child)
-    //     // }
-    // }
-    let info = tenantProfile && tenantProfile.tenant_children_occupants ? JSON.parse(tenantProfile.tenant_children_occupants) : [];
-    setChildOccupants(info);
+    if (lease.length === 0) {
+      let info = tenantProfile && tenantProfile.tenant_children_occupants ? JSON.parse(tenantProfile.tenant_children_occupants) : [];
+      setChildOccupants(info);
+    } else {
+      let info = JSON.parse(lease[0].lease_children);
+      setChildOccupants(info);
+      // for (const child of info){
+      //     console.log(child)
+      // }
+    }
+    // let info = tenantProfile && tenantProfile.tenant_children_occupants ? JSON.parse(tenantProfile.tenant_children_occupants) : [];
+    // setChildOccupants(info);
   }
 
   useEffect(() => {
@@ -260,8 +260,9 @@ export default function TenantApplicationEdit(props) {
 
         // Set other properties after all data is fetched
         console.log("property data --- ", props.data);
+        console.log("listing data --- ", props.listingsData);
         // const utilities = JSON.parse(props.data?.property_utilities).length > 0 ? JSON.parse(props.data?.property_utilities) : []
-        const currentPropertyListing = props?.listingsData?.find((listing) => (listing.property_uid = props.data.property_uid)); // listing data for the current property
+        const currentPropertyListing = props?.listingsData?.find((listing) => listing.property_uid === props.data.property_uid); // listing data for the current property
         console.log("ROHIT - 247 - currentPropertyListing - ", currentPropertyListing);
         let utilities = [];
         if (currentPropertyListing != null && currentPropertyListing.property_utilities != null) {
@@ -356,12 +357,12 @@ export default function TenantApplicationEdit(props) {
     if (props?.tenantDocuments) {
       setTenantDocuments(props.tenantDocuments);
     } else {
-      //   if (lease.length === 0) {
-      //     setTenantDocuments(tenantProfile ? JSON.parse(tenantProfile.tenant_documents) : []);
-      //   } else {
-      //     setTenantDocuments(lease && lease.length > 0 ? JSON.parse(lease[0]?.lease_documents) : []);
-      //   }
-      setTenantDocuments(tenantProfile ? JSON.parse(tenantProfile.tenant_documents) : []);
+      if (lease.length === 0) {
+        setTenantDocuments(tenantProfile ? JSON.parse(tenantProfile.tenant_documents) : []);
+      } else {
+        setTenantDocuments(lease && lease.length > 0 ? JSON.parse(lease[0]?.lease_documents) : []);
+      }
+      //   setTenantDocuments(tenantProfile ? JSON.parse(tenantProfile.tenant_documents) : []);
     }
 
     setShowSpinner(false);
