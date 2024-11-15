@@ -406,11 +406,13 @@ function TenantLeases(props) {
         body: leaseApplicationFormData,
       });
       const data = await response.json();
-      console.log("Divyy", data);
+      // console.log("409 - Data", data);
       if (data.lease_docs.code === 200) {
         alert("You have successfully Accepted the lease.");
         //don';t send announcemnt twice
-        await sendRenewalStatus();
+        if(lease.lease_status === "RENEW PROCESSING"){
+          await sendRenewalStatus();
+        }        
         await sendAnnouncement();
         props.setRightPane({ type: "" });
         props.setReload((prev) => !prev);

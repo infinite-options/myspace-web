@@ -28,7 +28,7 @@ import { json } from "react-router-dom";
 
 export default function TenantApplicationEdit(props) {
     const { getList, } = useContext(ListsContext);
-    // console.log("profile data", profileData);
+    console.log("ROHIT - 31 - props", props);
     // const [adults, setAdults] = useState(adultOccupants? adultOccupants : []);
     // const [children, setChildren] = useState(childOccupants? childOccupants : []);
     // const [pets, setPets] = useState(petOccupants? petOccupants : []);
@@ -165,56 +165,64 @@ export default function TenantApplicationEdit(props) {
     }
 
     function formatTenantVehicleInfo() {
-        if (lease.length === 0) {
-          let info = tenantProfile && tenantProfile.tenant_vehicle_info ? JSON.parse(tenantProfile.tenant_vehicle_info) : [];
+        // if (lease.length === 0) {
+        //   let info = tenantProfile && tenantProfile.tenant_vehicle_info ? JSON.parse(tenantProfile.tenant_vehicle_info) : [];
+        //   setVehicles(info);
+        // } else {
+        //   let info = JSON.parse(lease[0].lease_vehicles);
+        //   setVehicles(info);
+        //   // for (const vehicle of info){
+        //   //     console.log(vehicle)
+        //   // }
+        // }
+        let info = tenantProfile && tenantProfile.tenant_vehicle_info ? JSON.parse(tenantProfile.tenant_vehicle_info) : [];
           setVehicles(info);
-        } else {
-          let info = JSON.parse(lease[0].lease_vehicles);
-          setVehicles(info);
-          // for (const vehicle of info){
-          //     console.log(vehicle)
-          // }
-        }
     }
 
     function formatTenantAdultOccupants() {
-    if (lease.length === 0) {
-        let info = tenantProfile && tenantProfile.tenant_adult_occupants ? JSON.parse(tenantProfile.tenant_adult_occupants) : [];
-        setAdultOccupants(info);
-    } else {
-        // console.log(tenantProfile?.tenant_adult_occupants)
-        let info = JSON.parse(lease[0].lease_adults);
-        setAdultOccupants(info);
-        // for (const occupant of info){
-        //     console.log(occupant)
-        // }
-    }
+    // if (lease.length === 0) {
+    //     let info = tenantProfile && tenantProfile.tenant_adult_occupants ? JSON.parse(tenantProfile.tenant_adult_occupants) : [];
+    //     setAdultOccupants(info);
+    // } else {
+    //     // console.log(tenantProfile?.tenant_adult_occupants)
+    //     let info = JSON.parse(lease[0].lease_adults);
+    //     setAdultOccupants(info);
+    //     // for (const occupant of info){
+    //     //     console.log(occupant)
+    //     // }
+    // }
+    let info = tenantProfile && tenantProfile.tenant_adult_occupants ? JSON.parse(tenantProfile.tenant_adult_occupants) : [];
+    setAdultOccupants(info);
     }
 
     function formatTenantPetOccupants() {
-    if (lease.length === 0) {
-        let info = tenantProfile && tenantProfile.tenant_pet_occupants ? JSON.parse(tenantProfile.tenant_pet_occupants) : [];
-        setPetOccupants(info);
-    } else {
-        let info = JSON.parse(lease[0].lease_pets);
-        setPetOccupants(info);
-        // for (const pet of info){
-        //     console.log(pet)
-        // }
-    }
+    // if (lease.length === 0) {
+    //     let info = tenantProfile && tenantProfile.tenant_pet_occupants ? JSON.parse(tenantProfile.tenant_pet_occupants) : [];
+    //     setPetOccupants(info);
+    // } else {
+    //     let info = JSON.parse(lease[0].lease_pets);
+    //     setPetOccupants(info);
+    //     // for (const pet of info){
+    //     //     console.log(pet)
+    //     // }
+    // }
+    let info = tenantProfile && tenantProfile.tenant_pet_occupants ? JSON.parse(tenantProfile.tenant_pet_occupants) : [];
+    setPetOccupants(info);
     }
     
     function formatTenantChildOccupants() {
-    if (lease.length === 0) {
-        let info = tenantProfile && tenantProfile.tenant_children_occupants ? JSON.parse(tenantProfile.tenant_children_occupants) : [];
-        setChildOccupants(info);
-    } else {
-        let info = JSON.parse(lease[0].lease_children);
-        setChildOccupants(info);
-        // for (const child of info){
-        //     console.log(child)
-        // }
-    }
+    // if (lease.length === 0) {
+    //     let info = tenantProfile && tenantProfile.tenant_children_occupants ? JSON.parse(tenantProfile.tenant_children_occupants) : [];
+    //     setChildOccupants(info);
+    // } else {
+    //     let info = JSON.parse(lease[0].lease_children);
+    //     setChildOccupants(info);
+    //     // for (const child of info){
+    //     //     console.log(child)
+    //     // }
+    // }
+    let info = tenantProfile && tenantProfile.tenant_children_occupants ? JSON.parse(tenantProfile.tenant_children_occupants) : [];
+    setChildOccupants(info);
     }
 
     useEffect(() => {
@@ -242,7 +250,13 @@ export default function TenantApplicationEdit(props) {
       
             // Set other properties after all data is fetched
             console.log("property data --- ", props.data)
-            const utilities = JSON.parse(props.data?.property_utilities).length > 0 ? JSON.parse(props.data?.property_utilities) : []
+            // const utilities = JSON.parse(props.data?.property_utilities).length > 0 ? JSON.parse(props.data?.property_utilities) : []
+            const currentPropertyListing = props?.listingsData?.find(listing => listing.property_uid = props.data.property_uid); // listing data for the current property
+            console.log("ROHIT - 247 - currentPropertyListing - ", currentPropertyListing);
+            let utilities = [];
+            if(currentPropertyListing != null && currentPropertyListing.property_utilities != null){
+                utilities = JSON.parse(currentPropertyListing.property_utilities);
+            }
             setPropertyUtilities(utilities)
             setProperty(props.data);
             setStatus(props.status);
@@ -325,11 +339,12 @@ export default function TenantApplicationEdit(props) {
         if(props?.tenantDocuments){
           setTenantDocuments(props.tenantDocuments)
         }else{
-          if (lease.length === 0) {
-            setTenantDocuments(tenantProfile ? JSON.parse(tenantProfile.tenant_documents) : []);
-          } else {
-            setTenantDocuments(lease && lease.length > 0 ? JSON.parse(lease[0]?.lease_documents) : []);
-          }
+        //   if (lease.length === 0) {
+        //     setTenantDocuments(tenantProfile ? JSON.parse(tenantProfile.tenant_documents) : []);
+        //   } else {
+        //     setTenantDocuments(lease && lease.length > 0 ? JSON.parse(lease[0]?.lease_documents) : []);
+        //   }
+        setTenantDocuments(tenantProfile ? JSON.parse(tenantProfile.tenant_documents) : []);
         }
 
         setShowSpinner(false)
@@ -517,6 +532,11 @@ export default function TenantApplicationEdit(props) {
                 const leaseApplicationFormData = new FormData();
 
                 // Now set pets, adult, document, children all fields if they change
+                console.log("ROHIT - 526 - status - ", status);
+
+                if(status === "PROCESSING"){
+                    leaseApplicationFormData.append("lease_status", "NEW");
+                }
 
 
                 // modifiedData.forEach(item => {
@@ -690,11 +710,26 @@ export default function TenantApplicationEdit(props) {
 
     const handleSaveButton = async (e) => {
         e.preventDefault();
+
         console.log("status - ", status )
-        console.log("lease - ", lease[0])              
-        if (lease[0]?.lease_uid == null || status === null || status === "" || status === "RENEW") {
+        if(status == null ){
+            console.log("tenant creating new lease", status);
+        } else if (status === "NEW" || status === "PROCESSING"){
+            console.log("tenant updating lease", status);
+        } else {
+            console.log("tenant renewing lease", status);
+        }
+        if(status != null){
+            console.log("lease - ", lease[0])                          
+        }
+        // if(lease == null) {
+        //     console.log("tenant creating new lease");
+        // } else {
+        //     console.log("tenant updating / renewing new lease");
+        // }
+        if (lease[0]?.lease_uid == null || status === null || status === "" || status === "RENEW" || status === "WITHDRAWN") {
             await handleApplicationSubmit();
-        }else{
+        } else{
             await updateLeaseData();  // Trigger the PUT request to save data
         }
         // const updatedState = {
@@ -738,6 +773,18 @@ export default function TenantApplicationEdit(props) {
     };
 
     function handleWithdrawLease() {
+        //set oldLease.lease_renew_status to withdraw
+
+        const withdrawPrevLeaseData = new FormData();        
+        withdrawPrevLeaseData.append("lease_uid", props.currentLease.lease_uid);
+        withdrawPrevLeaseData.append("lease_renew_status", "WITHDRAWN");
+        
+        const withdrawPrevLeaseResponse = fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+            method: "PUT",
+            body: withdrawPrevLeaseData,
+        });
+
+
         const withdrawLeaseData = new FormData();
         if (lease[0].lease_uid) {
         withdrawLeaseData.append("lease_uid", lease[0].lease_uid);
@@ -745,7 +792,7 @@ export default function TenantApplicationEdit(props) {
         else {
         withdrawLeaseData.append("lease_property_id", property.property_uid);
         }
-        withdrawLeaseData.append("lease_status", "WITHDRAWN");
+        withdrawLeaseData.append("lease_status", "RENEW WITHDRAWN");
     
         withdrawLeaseData.forEach((value, key) => {
         console.log(`${key}: ${value}`);
@@ -756,7 +803,7 @@ export default function TenantApplicationEdit(props) {
         body: withdrawLeaseData,
         });
     
-        Promise.all([withdrawLeaseResponse]).then((values) => {
+        Promise.all([withdrawPrevLeaseResponse, withdrawLeaseResponse]).then((values) => {
         //navigate("/listings"); // send success data back to the propertyInfo page
         if (props.from === "PropertyInfo") {
             props.setRightPane({ type: "listings" });
@@ -778,6 +825,10 @@ export default function TenantApplicationEdit(props) {
     }
 
     const handleApplicationSubmit = async () => {
+        if (lease != null && lease[0]?. lease_status === "INACTIVE"){
+            alert("Lease status is INACTIVE");
+            return;
+        }
         try {
             let date = new Date();
             const receiverPropertyMapping = {
@@ -787,7 +838,7 @@ export default function TenantApplicationEdit(props) {
             const leaseApplicationData = new FormData();
             leaseApplicationData.append("lease_property_id", property.property_uid != null ? property.property_uid : lease[0].lease_property_id);
     
-            if (status === "RENEW") {
+            if (status === "RENEW" || lease[0]?.lease_status === "ACTIVE"  || lease[0]?.lease_status === "ACTIVE M2M"  || lease[0]?.lease_status === "ENDED") {
                 const updateLeaseData = new FormData();
                 updateLeaseData.append("lease_uid", lease[0].lease_uid);
                 updateLeaseData.append("lease_renew_status", "RENEW REQUESTED");
@@ -850,10 +901,24 @@ export default function TenantApplicationEdit(props) {
             leaseApplicationData.append("lease_children", JSON.stringify(childOccupants));
             leaseApplicationData.append("lease_pets", JSON.stringify(petOccupants));
             leaseApplicationData.append("lease_vehicles", JSON.stringify(vehicles));
-            leaseApplicationData.append("lease_utilities", ( lease != null && lease[0]?.lease_utilities) ? lease[0]?.lease_utilities : JSON.stringify(propertyUtilities))
+
+
+            console.log("ROHIT - 880 - lease - ", lease);
+            const leaseUtils = ( lease != null && lease?.length > 0 && lease[0].lease_utilities) ? JSON.parse(lease[0].lease_utilities) : []
+            // leaseApplicationData.append("lease_utilities", leaseUtils.length > 0 ? lease[0]?.lease_utilities : JSON.stringify(propertyUtilities)) // propertyUtilities - property utilities from listing
+
+            
+            if (lease == null || (lease?.length === 0) || [null, "REFUSED", "RESCIND", "WITHDRAWN", "REJECTED"].includes(lease[0]?.lease_status)){
+                leaseApplicationData.append("lease_utilities", JSON.stringify(propertyUtilities)) // propertyUtilities - property utilities from listing
+            } else if (["ACTIVE", "ACTIVE M2M", "NEW", "PROCESSING", "ENDED", "EXPIRED", "RENEW PROCESSING", "RENEW NEW", "RENEW REQUESTED"].includes(lease[0]?.lease_status)){
+                leaseApplicationData.append("lease_utilities", leaseUtils.length > 0 ? lease[0]?.lease_utilities : JSON.stringify([]));
+            }
             
             leaseApplicationData.append("lease_referred", "[]");
-            leaseApplicationData.append("lease_fees", "[]");
+
+            const leaseFees = ( lease != null && lease?.length > 0 && lease[0].lease_fees) ? JSON.parse(lease[0].lease_fees) : []
+            // leaseApplicationData.append("lease_fees", "[]");
+            leaseApplicationData.append("lease_fees", leaseFees.length > 0 ? lease[0]?.lease_fees : JSON.stringify([]));
             leaseApplicationData.append("lease_application_date", formatDate(date.toLocaleDateString()));
             leaseApplicationData.append("tenant_uid", getProfileId());
             
@@ -1109,7 +1174,7 @@ export default function TenantApplicationEdit(props) {
                                     {vehicles && (
                                         <VehiclesOccupant
                                             leaseVehicles={vehicles}
-                                            setLeaseVehicles={setVehicles}
+                                            // setLeaseVehicles={setVehicles}
                                             states={states}
                                             // editOrUpdateLease={lease_uid !== null ? editOrUpdateLease : editOrUpdateTenant}
                                             editOrUpdateLease={editOrUpdateLease}
@@ -1210,7 +1275,46 @@ export default function TenantApplicationEdit(props) {
                                 onClick={handleSaveButton}
                             >
                                 <Typography sx={{ textTransform: 'none', fontWeight: theme.typography.primary.fontWeight, color: "#FFFFFF",}}>
-                                    {(props.lease?.lease_uid == null) ? "Submit Application" : "Submit Renewal Application"}
+                                    {      
+                                        (
+                                            props.lease == null ||
+                                            props.lease?.lease_status == null ||
+                                            props.lease?.lease_status == "WITHDRAWN" ||
+                                            props.lease?.lease_status == "REJECTED" ||
+                                            props.lease?.lease_status == "REFUSED" ||
+                                            props.lease?.lease_status == "RESCIND"
+                                        ) 
+                                        ? 
+                                        "Submit Application" : ""
+                                    }
+                                    {
+                                        (
+                                            props.lease?.lease_status == "NEW" ||
+                                            props.lease?.lease_status == "PROCESSING"                                        
+                                        ) 
+                                        ?
+                                        "Update Lease Application" : ""
+                                    }
+                                    {       
+                                        (
+                                            props.lease?.lease_status == "ACTIVE" || 
+                                            props.lease?.lease_status == "ACTIVE M2M" ||
+                                            props.lease?.lease_status == "ENDED" ||
+                                            props.lease?.lease_status == "EXPIRED" ||
+                                            props.lease?.lease_renew_status == "PM RENEW REQUESTED"                                            
+                                        ) && (!(props.lease?.lease_renew_status === "RENEW PROCESSING" || props.lease?.lease_renew_status === "RENEW REQUESTED"))
+                                        ? "Submit Lease Renewal" : ""
+                                    }
+                                    {       
+                                        (
+                                            props.lease?.lease_status == "RENEW REQUESTED" ||
+                                            props.lease?.lease_status == "RENEW NEW" || 
+                                            props.lease?.lease_status == "RENEW PROCESSING" ||
+                                            props.lease?.lease_renew_status == "RENEW PROCESSING" ||
+                                            props.lease?.lease_renew_status == "RENEW REQUESTED"                                            
+                                        ) 
+                                        ? "Update Lease Renewal" : ""
+                                    }                                      
                                 </Typography>
 
                             </Button>

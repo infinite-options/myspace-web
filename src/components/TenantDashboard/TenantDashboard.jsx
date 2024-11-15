@@ -82,6 +82,7 @@ const TenantDashboard = () => {
   const location = useLocation();
 
   const [propertyListingData, setPropertyListingData] = useState([]);
+  const [listingsData, setListingsData] = useState([]);
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [leaseDetails, setLeaseDetails] = useState(null);
   const [leaseDetailsData, setLeaseDetailsData] = useState(null);
@@ -229,22 +230,30 @@ const TenantDashboard = () => {
       // }
 
       // Find the correct lease to set as relatedLease
+      console.log("ROHIT - 233 - leasesForProperty - ", leasesForProperty);
       if (leasesForProperty.length > 1) {
         const firstLease = leasesForProperty[0];
-        const secondLease = leasesForProperty[1];
+        // const secondLease = leasesForProperty[1];
+        const secondLease = leasesForProperty[leasesForProperty.length - 1];
 
+        const activeLease = leasesForProperty.find(lease => lease.lease_status === "ACTIVE");        
+        // const renewalLease = leasesForProperty.find(lease => (lease.lease_status === "RENEW NEW" || lease.lease_status === "RENEW WITHDRAWN" || lease.lease_status === "RENEW PROCESSING"));
+        
+
+        setLeaseDetails(activeLease || null);
         // console.log("first lease", firstLease.lease_status, firstLease.lease_renew_status);
         // console.log("second lease", secondLease);
         // console.log("lease details check", leaseDetails);
+        
 
-        if (firstLease.lease_status === "INACTIVE" && (secondLease.lease_status === "ACTIVE" || secondLease.lease_status === "ACTIVE M2M")) {
-          setLeaseDetails(secondLease || null);
-          console.log("here  check 2");
-        } else {
-          setLeaseDetails(firstLease || null);
-          setRelatedLease(secondLease || null);
-          // console.log("here  check 1");
-        }
+        // if (firstLease.lease_status === "INACTIVE" && (secondLease.lease_status === "ACTIVE" || secondLease.lease_status === "ACTIVE M2M")) {
+        //   setLeaseDetails(secondLease || null);
+        //   console.log("here  check 2");
+        // } else {
+        //   setLeaseDetails(firstLease || null);
+        //   setRelatedLease(secondLease || null);
+        //   // console.log("here  check 1");
+        // }
       } else {
         setRelatedLease(leasesForProperty[0] || null);
       }
@@ -390,7 +399,7 @@ const TenantDashboard = () => {
         case "paymentHistory":
           return <TenantPaymentHistoryTable data={rightPane.state.data} setRightPane={setRightPane} onBack={handleBack} isMobile={isMobile} />;
         case "listings":
-          return <PropertyListings setRightPane={setRightPane} isMobile={isMobile} setViewRHS={setViewRHS} />;
+          return <PropertyListings setRightPane={setRightPane} isMobile={isMobile} setViewRHS={setViewRHS} setListingsData={setListingsData} />;
         case "propertyInfo":
           return <PropertyInfo {...rightPane.state} setRightPane={setRightPane} />;
         case "tenantApplication":
@@ -407,7 +416,7 @@ const TenantDashboard = () => {
         case "filePreview":
           return <DocumentPreview file={rightPane.file} onClose={rightPane.onClose} />;
         case "tenantApplicationEdit":
-          return <TenantApplicationEdit {...rightPane.state} setRightPane={setRightPane} />;
+          return <TenantApplicationEdit {...rightPane.state} setRightPane={setRightPane} listingsData={listingsData} currentLease={leaseDetails}/>;
         case "tenantLeases":
           return <TenantLeases {...rightPane.state} setRightPane={setRightPane} setReload={setReload} />;
         case "payment":
@@ -1395,7 +1404,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           //   marginLeft: "1%", // Adjusting margin for icon and text
                         }}
                       >
-                        {"RENEWAL APPLICATION"}
+                        {"Update Application"}
                       </Typography>
                     </Button>
                   </Grid>

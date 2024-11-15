@@ -83,9 +83,9 @@ import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy } from "../../utils/
 import ReferTenantDialog from "../Referral/ReferTenantDialog.jsx";
 
 const getAppColor = (app) => {
-  if (app.lease_status.includes("RENEW")) {
+  if (app.lease_status === "RENEW NEW") {
     return "#2E7D32"; // Return green if lease_status contains 'RENEW'
-  } else if (app.lease_status === "REJECTED") {
+  } else if (app.lease_status === "REJECTED" || app.lease_status === "RENEW WITHDRAWN") {
     return "#A52A2A"; // Red color for rejected
   } else if (app.lease_status === "REFUSED") {
     return "#874499"; // Purple color for refused
