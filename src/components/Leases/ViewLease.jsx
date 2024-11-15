@@ -284,7 +284,7 @@ const ViewLease = (props) => {
       console.log("Lease Status: ", leaseData.lease_status);
       console.log("Dialog Box Open or Closed: ", confirmEndLeaseDialogOpen);
       console.log("EndLeaseDialogOpen Open or Closed: ", endLeaseDialogOpen);
-      if (leaseData.lease_status === "ACTIVE") {
+      if (leaseData.lease_status === "ACTIVE" || leaseData.lease_status === "ACTIVE M2M") {
         console.log("In IF Statement", currentDate, noticeDate, moveOutDate.$d, leaseEndDate, newLeaseEndDate);
         console.log("In IF Statement", currentDateFormatted, noticeDateFormatted, moveOut, leaseEndDateFormatted);
 

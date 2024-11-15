@@ -168,9 +168,9 @@ const TenantAccountBalance = ({
       const propertyLease = leaseDetailsData
         .filter((ld) => ld.property_uid === property.property_uid)
         .sort((a,b) => {
-          if (a.lease_status === "ACTIVE" && b.lease_status!== "ACTIVE") {
+          if ((a.lease_status === "ACTIVE" || a.lease_status === "ACTIVE M2M") && (b.lease_status!== "ACTIVE"  || b.lease_status !== "ACTIVE M2M")) {
             return -1;
-          } else if (b.lease_status === "ACTIVE" && a.lease_status !== "ACTIVE") {
+          } else if ((b.lease_status === "ACTIVE" || b.lease_status === "ACTIVE M2M") && (a.lease_status !== "ACTIVE" || a.lease_status !== "ACTIVE M2M")) {
             return 1;
           }
           return 0;
@@ -460,7 +460,7 @@ const TenantAccountBalance = ({
       )} */}
 
         {/* Payment History Button */}
-        {(!isMobile || !viewRHS) && from !== "selectPayment" && leaseDetails?.lease_status === "ACTIVE" && (
+        {(!isMobile || !viewRHS) && from !== "selectPayment" && (leaseDetails?.lease_status === "ACTIVE" || leaseDetails?.lease_status === "ACTIVE M2M") && (
           <Box sx={{ display: "flex", justifyContent: "center", marginTop: "10px" }}>
             <Button
               variant='contained'

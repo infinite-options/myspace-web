@@ -67,7 +67,7 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked,
             role = "Property Manager";
         }
 
-        if (leaseData.lease_status === "ACTIVE" || leaseData.lease_status === "ACTIVE-M2M") {
+        if (leaseData.lease_status === "ACTIVE" || leaseData.lease_status === "ACTIVE M2M") {
             if (selectedId === 2) {
                 setEndLeaseStatus("TERMINATED");
                 return `This lease will be terminated immediately, effective from today. Are you sure you want to terminate the lease?`;

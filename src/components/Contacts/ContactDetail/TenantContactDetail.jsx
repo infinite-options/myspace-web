@@ -312,7 +312,7 @@ const TenantContactDetail = ({ data, currentIndex, setCurrentIndex, propertyInde
 
 const TenantPropertyInformation = ({ propertyData, index, selectedRole }) => {
 	const properties =
-		propertyData != null ? JSON.parse(propertyData).filter((property) => property.lease_status === 'ACTIVE') : [];
+		propertyData != null ? JSON.parse(propertyData).filter((property) => property.lease_status === "ACTIVE" || property.lease_status === "ACTIVE M2M") : [];
 	const [currentIndex, setCurrentIndex] = useState(index);
 	const navigate = useNavigate();
 	console.log('TenantPropertyInformation - properties - ', properties);

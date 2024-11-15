@@ -246,7 +246,7 @@ const TenantDashboard = () => {
         // console.log("second lease", secondLease);
         // console.log("lease details check", leaseDetails);
 
-        if (firstLease.lease_status === "INACTIVE" && secondLease.lease_status === "ACTIVE") {
+        if (firstLease.lease_status === "INACTIVE" && (secondLease.lease_status === "ACTIVE" || secondLease.lease_status === "ACTIVE M2M")) {
           setLeaseDetails(secondLease || null);
           console.log("here  check 2");
         } else {
@@ -804,7 +804,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
   // console.log("Lease Details ", leaseDetails);
   // console.log("selected property - ", selectedProperty)
   // console.log("Lease Details rightPane", rightPane);
-  const { getProfileId } = useUser();
+  const { getProfileId, selectedRole, } = useUser();
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleFlip = () => {
@@ -1169,13 +1169,17 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                       <KeyboardArrowRightIcon
                         sx={{ color: "blue", cursor: "pointer" }}
                         onClick={() => {
-                          if (tenant_detail && tenant_detail.tenant_uid) {
-                            navigate("/ContactsPM", {
-                              state: {
-                                contactsTab: "Tenant",
-                                tenantId: tenant_detail.tenant_uid,
-                              },
-                            });
+                          if(selectedRole === "TENANT"){
+                            navigate("/profileEditor")
+                          } else {
+                            if (tenant_detail && tenant_detail.tenant_uid) {
+                              navigate("/ContactsPM", {
+                                state: {
+                                  contactsTab: "Tenant",
+                                  tenantId: tenant_detail.tenant_uid,
+                                },
+                              });
+                            }
                           }
                         }}
                       />
@@ -1211,7 +1215,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                 </Grid>
                 <Grid item xs={7}>
                   <Box display='flex' alignItems='center' justifyContent={"space-between"}>
-                    {leaseDetails?.lease_status === "ACTIVE" ? (
+                    {(leaseDetails?.lease_status === "ACTIVE" || leaseDetails?.lease_status === "ACTIVE M2M") ? (
                       <>
                         <Typography
                           sx={{
@@ -1459,7 +1463,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                             //   marginLeft: "1%", // Adjusting margin for icon and text
                           }}
                         >
-                          {"Renew Lease"}
+                          {leaseDetails?.lease_renew_status === "RENEW REQUESTED" ? "Review Application" : "Renew Lease"}
                         </Typography>
                       </Button>
                     </Grid>

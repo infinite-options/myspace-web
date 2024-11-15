@@ -54,7 +54,7 @@ export default function LeaseDetailsComponent({
 	handleAppClick,
 	getAppColor,
 }) {
-  // console.log('---currentProperty---', currentProperty);
+  console.log('57 - currentProperty---', currentProperty);
 	// console.log("---dhyey-- inside new component -", activeLease)
 	// const { defaultContractFees, allContracts, currentContractUID, currentContractPropertyUID, isChange, setIsChange, fetchContracts,  } = useContext(LeaseContractContext);
 	const { fetchProperties } = useContext(PropertiesContext);
@@ -151,29 +151,17 @@ export default function LeaseDetailsComponent({
 
 	return (
 		<>
-			<Card sx={{ backgroundColor: theme.palette.form.main, height: '100%' }}>
-				<Box
+			<Card sx={{ backgroundColor: theme.palette.form.main, height: '100%' }}>								
+				<Typography
 					sx={{
-						width: '100%',
-						display: 'flex',
-						justifyContent: 'space-between',
-						alignItems: 'center',
-						marginBottom: '20px',
+						color: theme.typography.primary.black,
+						fontWeight: theme.typography.primary.fontWeight,
+						fontSize: theme.typography.largeFont,
+						textAlign: 'center',						
 					}}
 				>
-					<Typography
-						sx={{
-							color: theme.typography.primary.black,
-							fontWeight: theme.typography.primary.fontWeight,
-							fontSize: theme.typography.largeFont,
-							textAlign: 'center',
-							paddingLeft: '100px',
-							// flexGrow: 1
-						}}
-					>
-						Lease Details
-					</Typography>
-				</Box>
+					Lease Details
+				</Typography>					
 				<CardContent>
 					<Grid container spacing={3}>
 						{/* Property Manager */}
@@ -293,7 +281,7 @@ export default function LeaseDetailsComponent({
 							</Grid>
 							<Grid item xs={6}>
 								<Box display="flex" alignItems="center" justifyContent={'space-between'}>
-									{currentProperty?.lease_status === 'ACTIVE' ? (
+									{currentProperty?.lease_status === "ACTIVE" || currentProperty?.lease_status === "ACTIVE M2M" ? (
 										<>
 											<Typography
 												sx={{
@@ -302,7 +290,7 @@ export default function LeaseDetailsComponent({
 													fontSize: theme.typography.smallFont,
 												}}
 											>
-												ACTIVE
+												{currentProperty?.lease_status} 
 											</Typography>
 											{currentProperty?.lease_renew_status &&
 												(currentProperty?.lease_renew_status === 'PM RENEW REQUESTED' ||

@@ -60,7 +60,7 @@ export default function AddListing(props) {
   const location = useLocation();
   let navigate = useNavigate();
   const { getProfileId } = useUser();
-  const { getList } = useContext(ListsContext);
+  const { dataLoaded, getList } = useContext(ListsContext);
   const { state } = useLocation();
   // const { propertyList, fetchProperties, allContracts, fetchContracts, returnIndex,  } = useContext(PropertiesContext);
 
@@ -140,6 +140,17 @@ export default function AddListing(props) {
   //   console.log("deletedImageList - ", deletedImageList);
   // }, [deletedImageList]);
 
+  // const [utilityNames, setUtilityNames] = useState([]);
+  // const [utilityEntities, setUtilityEntities] = useState([]);
+  const [utilitiesObject, setUtilitiesObject] = useState(propertyData?.property_utilities != null ? JSON.parse(propertyData?.property_utilities) : []);
+  const [utilityNames, setUtilityNames] = useState([]);
+  const [utilityEntities, setUtilityEntities] = useState([]);
+  const [utilitiesMap, setUtilitiesMap] = useState(new Map()); 
+  const [entitiesMap, setEntitiesMap] = useState(new Map());
+  const [reverseUtilitiesMap, setReverseUtilitiesMap] = useState(new Map()); 
+  const [reverseEntitiesMap, setReverseEntitiesMap] = useState(new Map());
+  const [keysNotInUtilitiesMap, setKeysNotInUtilitiesMap] = useState([]);
+
   const [isDefaultUtilities, setIsDefaultUtilities] = useState(false);
   const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
   const [newUtilitiesPaidBy, setNewUtilitiesPaidBy] = useState({});
@@ -148,34 +159,76 @@ export default function AddListing(props) {
   //   console.log("newUtilitiesPaidBy - ", newUtilitiesPaidBy);
   // }, [newUtilitiesPaidBy]);
 
-  // useEffect(() => {
-  //   console.log("mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
-  // }, [mappedUtilitiesPaidBy]);
+  useEffect(() => {
+    console.log("ROHIT - 153 - mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
+  }, [mappedUtilitiesPaidBy]);
 
-  const utilitiesMap = new Map([
-    ["050-000001", "electricity"],
-    ["050-000002", "water"],
-    ["050-000003", "gas"],
-    ["050-000004", "trash"],
-    ["050-000005", "sewer"],
-    ["050-000006", "internet"],
-    ["050-000007", "cable"],
-    ["050-000008", "hoa_dues"],
-    ["050-000009", "security_system"],
-    ["050-000010", "pest_control"],
-    ["050-000011", "gardener"],
-    ["050-000012", "maintenance"],
-  ]);
+  useEffect(() => {
+    // console.log("ROHIT - 153 - propertyData - ", propertyData);
+    console.log("ROHIT - 153 - propertyData.property_utilities - ", propertyData.property_utilities);
+  }, [propertyData]);
 
-  const entitiesMap = new Map([
-    ["050-000280", "owner"],
-    ["050-000281", "property manager"],
-    ["050-000282", "tenant"],
-    ["050-000289", "user"],
-  ]);
+  useEffect(() => {
+    console.log("ROHIT - 153 - utilitiesObject - ", utilitiesObject);
+    
+  }, [utilitiesObject,]);
 
-  const reverseUtilitiesMap = new Map(Array.from(utilitiesMap, ([key, value]) => [value, key]));
-  const reverseEntitiesMap = new Map(Array.from(entitiesMap, ([key, value]) => [value, key]));
+  // const utilitiesMap = new Map([
+  //   ["050-000001", "electricity"],
+  //   ["050-000002", "water"],
+  //   ["050-000003", "gas"],
+  //   ["050-000004", "trash"],
+  //   ["050-000005", "sewer"],
+  //   ["050-000006", "internet"],
+  //   ["050-000007", "cable"],
+  //   ["050-000008", "hoa_dues"],
+  //   ["050-000009", "security_system"],
+  //   ["050-000010", "pest_control"],
+  //   ["050-000011", "gardener"],
+  //   ["050-000012", "maintenance"],
+  // ]);
+
+  // const entitiesMap = new Map([
+  //   ["050-000280", "owner"],
+  //   ["050-000281", "property manager"],
+  //   ["050-000282", "tenant"],
+  //   ["050-000289", "user"],
+  // ]);
+
+  // const reverseUtilitiesMap = new Map(Array.from(utilitiesMap, ([key, value]) => [value, key]));
+  // const reverseEntitiesMap = new Map(Array.from(entitiesMap, ([key, value]) => [value, key]));
+
+  useEffect(() => {
+    const names = utilityNames?.reduce((map, item) => {
+      map.set(item.list_uid, item.list_item);
+      return map;
+    }, new Map());
+    // console.log("278 - names - ", names)
+    setUtilitiesMap(names);
+  }, [utilityNames]);
+  useEffect(() => {
+    const entities = utilityEntities?.reduce((map, item) => {
+      map.set(item.list_uid, item.list_item);
+      return map;
+    }, new Map());
+    // console.log("278 - entities - ", entities)
+    setEntitiesMap(entities);
+  }, [utilityEntities]);
+  useEffect(() => {
+    const reverseMap = new Map(Array.from(utilitiesMap ? utilitiesMap : [], ([key, value]) => [value, key]));
+    // console.log("296 - reverseMap - ", reverseMap)
+    setReverseUtilitiesMap(reverseMap);
+  }, [utilitiesMap]);
+  useEffect(() => {
+    const reverseMap = new Map(Array.from(entitiesMap ? entitiesMap : [], ([key, value]) => [value, key]));
+    // console.log("303 - reverseMap - ", reverseMap)
+    setReverseEntitiesMap(reverseMap);
+
+  // }, [adults, children, pets, vehicles]);
+  }, [entitiesMap]);
+  useEffect(() => {
+    setKeysNotInUtilitiesMap(Array.from(utilitiesMap?.values()).filter((utility) => !(utility in mappedUtilitiesPaidBy)));
+  }, [utilitiesMap, mappedUtilitiesPaidBy]);
 
   const mapUIDsToUtilities = (propertyUtilities) => {
     if (!propertyUtilities) {
@@ -196,11 +249,14 @@ export default function AddListing(props) {
     return mappedUtilities;
   };
 
-  const utilitiesObject = JSON.parse(propertyData.property_utilities);
+  // const utilitiesObject = JSON.parse(propertyData.property_utilities); 
+  
   let utilitiesInUIDForm = {};
   let mappedUtilities2 = {};
+  
+
   useEffect(() => {
-    if (utilitiesObject) {
+    if (utilitiesObject && utilitiesObject?.length > 0) {
       // console.log("*****************************************AddListing useEffect*******************************************");
       for (const utility of utilitiesObject) {
         // console.log(utility.utility_type_id, utility.utility_payer_id);
@@ -217,7 +273,29 @@ export default function AddListing(props) {
       setIsDefaultUtilities(true);
     }
     // console.log("************************************************AddListing useEffect***********************************");
-  }, []);
+  }, [utilitiesObject, utilitiesMap, entitiesMap,]);
+
+  const getListDetails = () => {
+    // console.log("543 - getListDetails called");
+    // const relationships = getList("relationships");
+    // const states = getList("states");        
+    const utilNames = getList("utilities");
+    const utilEntities = getList("role");
+    // console.log("285 - utilNames - ", utilNames)
+    // console.log("285 -  utilEntities - ", utilEntities)
+    // setRelationships(relationships);
+    // setStates(states);
+    setUtilityNames(utilNames);
+    setUtilityEntities(utilEntities);
+
+  };
+
+  useEffect(() => {
+    // console.log("543 - dataLoaded - ", dataLoaded);
+    if(dataLoaded === true){
+      getListDetails();
+    }    
+  }, [dataLoaded, getList,]);
 
   const mapUtilitiesAndEntitiesToUIDs = (utilitiesObject) => {
     const mappedResults = {};
@@ -249,7 +327,7 @@ export default function AddListing(props) {
   };
 
   const [addUtilityAnchorElement, setAddUtilityAnchorElement] = useState(null);
-  const keysNotInUtilitiesMap = Array.from(utilitiesMap.values()).filter((utility) => !(utility in mappedUtilitiesPaidBy));
+  // const keysNotInUtilitiesMap = Array.from(utilitiesMap.values()).filter((utility) => !(utility in mappedUtilitiesPaidBy));
 
   const handleAddUtilityButtonClick = (event) => {
     setAddUtilityAnchorElement(event.currentTarget);
@@ -1191,7 +1269,7 @@ export default function AddListing(props) {
                   </Grid>
                 )}
                 {Object.entries(mappedUtilitiesPaidBy).length > 0
-                  ? Object.entries(mappedUtilitiesPaidBy).map(([utility, selectedValue]) => (
+                  && Object.entries(mappedUtilitiesPaidBy).map(([utility, selectedValue]) => (
                       <Fragment key={utility}>
                         <Grid item xs={6}>
                           <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
@@ -1212,27 +1290,8 @@ export default function AddListing(props) {
                         </Grid>
                       </Fragment>
                     ))
-                  : Object.entries(defaultUtilities).map(([utility, selectedValue]) => (
-                      <Fragment key={utility}>
-                        <Grid item xs={6}>
-                          <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
-                            {formatUtilityName(utility)}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={6}>
-                          <FormControlLabel
-                            value='owner'
-                            control={<Radio checked={selectedValue === "owner"} onChange={() => handleUtilityChange(utility, "owner")} />}
-                            label='Owner'
-                          />
-                          <FormControlLabel
-                            value='tenant'
-                            control={<Radio checked={selectedValue === "tenant"} onChange={() => handleUtilityChange(utility, "tenant")} />}
-                            label='Tenant'
-                          />
-                        </Grid>
-                      </Fragment>
-                    ))}
+                  }
+                  
               </Grid>
             </Box>
             <Grid item xs={12}>
@@ -1398,7 +1457,7 @@ export default function AddListing(props) {
           >
             <Grid container>
               <Grid item xs={12}>
-                <Button variant='contained' type='submit' form='editPropertyForm' sx={{ width: "100%", backgroundColor: theme.typography.formButton.background }}>
+                <Button variant='contained' type='submit' form='editPropertyForm' sx={{ width: "100%", backgroundColor: '#3D5CAC' }}>
                   <Typography sx={{ color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                     {propertyData.property_available_to_rent !== 1 ? "Create Listing" : "Update Listing"}
                   </Typography>

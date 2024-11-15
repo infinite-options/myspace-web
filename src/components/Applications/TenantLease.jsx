@@ -148,22 +148,22 @@ const TenantLease = () => {
   const { getProfileId } = useUser();
   const { state } = useLocation();
   const { page, application, property, managerInitiatedRenew = false } = state;
-  const { getList } = useContext(ListsContext);
+  const { getList, dataLoaded, } = useContext(ListsContext);
   const feeFrequencies = getList("frequency");
   console.log("Property: ", property);
   console.log("Application: ", application);
   const [showSpinner, setShowSpinner] = useState(false);
   // Intermediate variables to calculate the initial dates
   let initialStartDate, initialEndDate, initialMoveInDate;
-  console.log("In Tenant Lease page", page);
-  if (page === "create_lease" || "refer_tenant") {
+  console.log("158 - In Tenant Lease -  page - ", page);
+  if (page === "create_lease" || page === "refer_tenant") {
     initialStartDate = dayjs();
     initialEndDate = dayjs().add(1, "year").subtract(1, "day");
     initialMoveInDate = initialStartDate;
   } else if (page === "edit_lease") {
     initialStartDate = application.lease_start ? dayjs(application.lease_start) : dayjs();
     initialEndDate = application.lease_end ? dayjs(application.lease_end) : dayjs().add(1, "year").subtract(1, "day");
-    initialMoveInDate = application.lease_move_in_date ? dayjs(application.lease_move_in_date) : dayjs();
+    initialMoveInDate = application.lease_move_in_date ? dayjs(application.lease_move_in_date) : dayjs();    
   } else if (page === "renew_lease") {
     // Calculate the duration between lease_start and lease_end
     const leaseStartDate = dayjs(property.lease_start);
@@ -178,7 +178,8 @@ const TenantLease = () => {
     console.log("In Tenant Lease duration", duration);
     // Set the new end date to be initialStartDate + duration
     console.log("In Tenant Lease initialEndDate", initialStartDate.add(duration, "days"));
-    initialEndDate = leaseEndDate.add(duration, "day");
+    // initialEndDate = leaseEndDate.add(duration, "day");
+    initialEndDate = leaseEndDate;
     console.log("In Tenant Lease initialEndDate", initialEndDate);
     // Set move-in date same as the start date
     initialMoveInDate = initialStartDate;
@@ -236,6 +237,20 @@ const TenantLease = () => {
 
   const [relationships, setRelationships] = useState([]);
   const [states, setStates] = useState([]);
+  const [utilityNames, setUtilityNames] = useState([]);
+  const [utilityEntities, setUtilityEntities] = useState([]);
+  const [utilitiesMap, setUtilitiesMap] = useState(new Map()); 
+  const [entitiesMap, setEntitiesMap] = useState(new Map());
+  const [reverseUtilitiesMap, setReverseUtilitiesMap] = useState(new Map()); 
+  const [reverseEntitiesMap, setReverseEntitiesMap] = useState(new Map());
+  const [keysNotInUtilitiesMap, setKeysNotInUtilitiesMap] = useState([]);
+  
+  const [isDefaultUtilities, setIsDefaultUtilities] = useState(false);
+  const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
+  const [newUtilitiesPaidBy, setNewUtilitiesPaidBy] = useState({});
+  const [hasUtilitiesChanges, setHasUtilitiesChanges] = useState(false);
+  const [addUtilityAnchorElement, setAddUtilityAnchorElement] = useState(null);
+  
 
   const [modifiedData, setModifiedData] = useState([]); // not being
 
@@ -263,19 +278,59 @@ const TenantLease = () => {
 
   // }, [leaseAdults, leaseChildren, leasePets, leaseVehicles]);
 
-  // useEffect(() => {
-  //   console.log("268 - adults - ", adults)
-  //   console.log("268 - children - ", children)
-  //   console.log("268 - pets - ", pets)
-  //   console.log("268 - vehicles - ", vehicles)
+  useEffect(() => {
+    const names = utilityNames?.reduce((map, item) => {
+      map.set(item.list_uid, item.list_item);
+      return map;
+    }, new Map());
 
-  // }, [adults, children, pets, vehicles]);
+    // console.log("278 - names - ", names)
+    setUtilitiesMap(names);
+
+  }, [utilityNames]);
+
+  useEffect(() => {
+    const entities = utilityEntities?.reduce((map, item) => {
+      map.set(item.list_uid, item.list_item);
+      return map;
+    }, new Map());
+
+    // console.log("278 - entities - ", entities)
+    setEntitiesMap(entities);
+
+  }, [utilityEntities]);
+
+  useEffect(() => {
+    const reverseMap = new Map(Array.from(utilitiesMap ? utilitiesMap : [], ([key, value]) => [value, key]));
+    // console.log("296 - reverseMap - ", reverseMap)
+    setReverseUtilitiesMap(reverseMap);
+
+  }, [utilitiesMap]);
+
+  useEffect(() => {
+    const reverseMap = new Map(Array.from(entitiesMap ? entitiesMap : [], ([key, value]) => [value, key]));
+    // console.log("303 - reverseMap - ", reverseMap)
+    setReverseEntitiesMap(reverseMap);
+
+  }, [entitiesMap]);
+
+  useEffect(() => {
+    setKeysNotInUtilitiesMap(Array.from(utilitiesMap?.values()).filter((utility) => !(utility in mappedUtilitiesPaidBy)));
+  }, [utilitiesMap, mappedUtilitiesPaidBy]);
 
   const getListDetails = () => {
+    // console.log("543 - getListDetails called");
     const relationships = getList("relationships");
     const states = getList("states");
+    const utilNames = getList("utilities");
+    const utilEntities = getList("role");
+    // console.log("285 - utilityNames - ", utilityNames)
+    // console.log("285 - utilityEntities - ", utilityEntities)
     setRelationships(relationships);
     setStates(states);
+    setUtilityNames(utilNames);
+    setUtilityEntities(utilEntities);
+
   };
 
   const defaultUtilities = {
@@ -286,37 +341,32 @@ const TenantLease = () => {
     gas: "owner",
   };
 
-  const utilitiesMap = new Map([
-    ["050-000001", "electricity"],
-    ["050-000002", "water"],
-    ["050-000003", "gas"],
-    ["050-000004", "trash"],
-    ["050-000005", "sewer"],
-    ["050-000006", "internet"],
-    ["050-000007", "cable"],
-    ["050-000008", "hoa_dues"],
-    ["050-000009", "security_system"],
-    ["050-000010", "pest_control"],
-    ["050-000011", "gardener"],
-    ["050-000012", "maintenance"],
-  ]);
+  // const utilitiesMap = new Map([
+  //   ["050-000001", "electricity"],
+  //   ["050-000002", "water"],
+  //   ["050-000003", "gas"],
+  //   ["050-000004", "trash"],
+  //   ["050-000005", "sewer"],
+  //   ["050-000006", "internet"],
+  //   ["050-000007", "cable"],
+  //   ["050-000008", "hoa_dues"],
+  //   ["050-000009", "security_system"],
+  //   ["050-000010", "pest_control"],
+  //   ["050-000011", "gardener"],
+  //   ["050-000012", "maintenance"],
+  // ]);
 
-  const entitiesMap = new Map([
-    ["050-000280", "owner"],
-    ["050-000281", "property manager"],
-    ["050-000282", "tenant"],
-    ["050-000289", "user"],
-  ]);
+  // const entitiesMap = new Map([
+  //   ["050-000280", "owner"],
+  //   ["050-000281", "property manager"],
+  //   ["050-000282", "tenant"],
+  //   ["050-000289", "user"],
+  // ]);
 
-  const reverseUtilitiesMap = new Map(Array.from(utilitiesMap, ([key, value]) => [value, key]));
-  const reverseEntitiesMap = new Map(Array.from(entitiesMap, ([key, value]) => [value, key]));
+  // const reverseUtilitiesMap = new Map(Array.from(utilitiesMap, ([key, value]) => [value, key]));
+  // const reverseEntitiesMap = new Map(Array.from(entitiesMap, ([key, value]) => [value, key]));
 
-  const [isDefaultUtilities, setIsDefaultUtilities] = useState(false);
-  const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
-  const [newUtilitiesPaidBy, setNewUtilitiesPaidBy] = useState({});
-  const [hasUtilitiesChanges, setHasUtilitiesChanges] = useState(false);
-  const [addUtilityAnchorElement, setAddUtilityAnchorElement] = useState(null);
-  const keysNotInUtilitiesMap = Array.from(utilitiesMap.values()).filter((utility) => !(utility in mappedUtilitiesPaidBy));
+  
 
   // useEffect(() => {
   //   console.log("newUtilitiesPaidBy - ", newUtilitiesPaidBy);
@@ -348,7 +398,7 @@ const TenantLease = () => {
     updatedNewUtilitiesMappedBy[utility] = "owner";
     setNewUtilitiesPaidBy(updatedNewUtilitiesMappedBy);
 
-    console.log(`Adding utility: ${utility}`);
+    // console.log(`Adding utility: ${utility}`);
     handleAddUtilityClose();
   };
 
@@ -356,7 +406,8 @@ const TenantLease = () => {
     if (!propertyUtilities) {
       return {};
     }
-    console.log("----- in mapUIDsToUtilities, input - ", propertyUtilities);
+    // console.log("----- in mapUIDsToUtilities, input - ", propertyUtilities);
+    // console.log("----- in mapUIDsToUtilities, entitiesMap - ", entitiesMap);
     const mappedUtilities = {};
     for (const key of Object.keys(propertyUtilities)) {
       const utilityName = utilitiesMap.get(key);
@@ -367,7 +418,7 @@ const TenantLease = () => {
       }
     }
 
-    console.log("----- in mapUIDsToUtilities, mappedUtilities - ", mappedUtilities);
+    // console.log("----- in mapUIDsToUtilities, mappedUtilities - ", mappedUtilities);
     return mappedUtilities;
   };
 
@@ -416,12 +467,12 @@ const TenantLease = () => {
   useEffect(() => {
     const getLeaseFees = () => {
       let feesList = [];
-      if (application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "ACTIVE") {
+      if (application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "ACTIVE"  || application?.lease_status === "ACTIVE M2M") {
         feesList = JSON.parse(application?.lease_fees);
       } else if (application?.lease_status === "NEW" || application?.lease_status === "RENEW NEW") {
         feesList = initialFees(property, application);
       }
-      console.log("Fees: ", feesList);
+      // console.log("Fees: ", feesList);
 
       // let i = 0;
       // feesList.forEach((fee) => {
@@ -469,8 +520,38 @@ const TenantLease = () => {
 
     getLeaseFees();
     getOccupants();
-    getListDetails();
+    // getListDetails();
 
+    // //*************************************UTILITIES********************************************************* */
+    // if (utilitiesObject && utilitiesObject?.length > 0) {
+    //   // console.log("484 - utilitiesObject - ", utilitiesObject);
+    //   for (const utility of utilitiesObject) {
+    //     // console.log(utility.utility_type_id, utility.utility_payer_id);
+    //     utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
+    //   }
+    //   // console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
+
+    //   mappedUtilities2 = mapUIDsToUtilities(utilitiesInUIDForm);
+    //   // console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
+    //   // console.log("   ", mappedUtilities2);
+    //   setMappedUtilitiesPaidBy(mappedUtilities2);
+    // } else {
+    //   setMappedUtilitiesPaidBy(defaultUtilities);
+    //   setIsDefaultUtilities(true);
+    // }
+    // //******************************************************************************************************* */
+  }, []);
+
+  useEffect(() => {
+    // console.log("543 - dataLoaded - ", dataLoaded);
+    if(dataLoaded === true){
+      getListDetails();
+    }    
+  }, [dataLoaded, getList,]);
+
+  useEffect(() => {            
+    // console.log("551 - entitiesMap - ", entitiesMap);
+    // console.log("551 - utilitiesMap - ", utilitiesMap);
     //*************************************UTILITIES********************************************************* */
     if (utilitiesObject && utilitiesObject?.length > 0) {
       console.log("UTILITIES - utilitiesObject - ", utilitiesObject);
@@ -490,7 +571,9 @@ const TenantLease = () => {
       setIsDefaultUtilities(true);
     }
     //******************************************************************************************************* */
-  }, []);
+  }, [utilitiesObject, utilitiesMap, entitiesMap,]);
+
+
 
   // const addFeeRow = () => {
   //   setFees((prev) => [
@@ -1289,7 +1372,7 @@ const TenantLease = () => {
                 <Grid item xs={6} sm={3}>
                   <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>Tenant</Typography>
                   <Typography sx={{ fontSize: "14px", fontWeight: "400", color: "#302A68" }}>
-                    {property?.tenant_first_name ? property?.tenant_first_name : "No Lease"} {property?.tenant_last_name ? property?.tenant_last_name : ""}
+                    {property?.tenant_first_name ? property?.tenant_first_name : "No Tenant"} {property?.tenant_last_name ? property?.tenant_last_name : ""}
                   </Typography>
                 </Grid>
 
@@ -2181,7 +2264,7 @@ const TenantLease = () => {
             onClick={() => {
               if (application?.lease_status === "NEW" || application?.lease_status === "PROCESSING") {
                 handleCreateLease();
-              } else if (application?.lease_status === "ACTIVE") {
+              } else if (application?.lease_status === "ACTIVE" || application?.lease_status === "ACTIVE M2M") {
                 handleRenewLease();
               }
             }}
@@ -2197,7 +2280,7 @@ const TenantLease = () => {
           >
             {application?.lease_status === "NEW" ? "Create Lease" : ""}
             {application?.lease_status === "PROCESSING" ? "Modify Lease" : ""}
-            {application?.lease_status === "ACTIVE" ? "Renew Lease" : ""}
+            {(application?.lease_status === "ACTIVE" || application?.lease_status === "ACTIVE M2M") ? "Renew Lease" : ""}
           </Button>
         </Grid>
       </Box>

@@ -36,7 +36,6 @@ import TenantDocuments from "./Documents/TenantDocuments/TenantDocuments";
 import TenantProfile from "./Profile/TenantProfile/TenantProfile";
 
 import TenantDashboard from "./TenantDashboard/TenantDashboard";
-import TenantDashboardOld from "./TenantDashboard/TenantDashboardOld";
 
 import TenantProfileEdit from "./Profile/TenantProfile/TenantProfileEdit";
 import TenantLeases from "./Leases/TenantLeases/TenantLeases";
@@ -278,7 +277,7 @@ function Main() {
             <Route path='tenantProfileEdit' element={<TenantProfileEdit />} />
             <Route path='addRole' element={<AddRole />} />
             <Route path='tenantDashboard' element={<TenantDashboard />} />
-            <Route path='tenantDashboardOld' element={<TenantDashboardOld />} />              
+            
 
             <Route path='pmProfile' element={<PMProfile />} />
             <Route path='pmProfileEdit' element={<PMProfileEdit />} />
