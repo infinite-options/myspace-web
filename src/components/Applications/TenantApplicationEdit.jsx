@@ -1109,7 +1109,7 @@ export default function TenantApplicationEdit(props) {
                                     {vehicles && (
                                         <VehiclesOccupant
                                             leaseVehicles={vehicles}
-                                            setLeaseVehicles={setVehicles}
+                                            // setLeaseVehicles={setVehicles}
                                             states={states}
                                             // editOrUpdateLease={lease_uid !== null ? editOrUpdateLease : editOrUpdateTenant}
                                             editOrUpdateLease={editOrUpdateLease}
