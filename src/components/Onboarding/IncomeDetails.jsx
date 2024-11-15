@@ -118,15 +118,36 @@ const IncomeDetails = ({ employmentList, setEmploymentList, salaryFrequencies })
     
     
     
-    const handleDeleteClick = (job) => {
+    const handleDeleteClick = async (job) => {
         const updatedList = employmentList.filter(
             (income) => income.jobTitle !== job.jobTitle || income.companyName !== job.companyName
         );
-        setEmploymentList(updatedList);
-        setDialogTitle('Success');
-        setDialogMessage("Income removed successfully.");
-        setDialogSeverity('success');
-        setDialogOpen(true);
+        await setEmploymentList(updatedList);
+        const profileFormData = new FormData();
+        profileFormData.append("tenant_uid", getProfileId());
+        profileFormData.append("tenant_employment", JSON.stringify(updatedList));
+    
+        try {
+            setShowSpinner(true);
+            await axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+    
+            setDialogTitle('Success');
+            setDialogMessage("Income removed successfully.");
+            setDialogSeverity('success');
+        } catch (error) {
+            console.error("Error removing employment data:", error);
+            setDialogTitle('Error');
+            setDialogMessage("Error removing employment data. Please try again.");
+            setDialogSeverity('error');
+        } finally {
+            setShowSpinner(false);
+            setDialogOpen(true);
+            handleClose();
+        }
     };
 
     return (
