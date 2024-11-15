@@ -179,7 +179,13 @@ export default function TenantApplicationEdit(props) {
   }
 
   function formatTenantVehicleInfo() {
-    if (lease.length === 0) {
+    // if (
+    //       lease.length === 0 ||
+    //       ((lease[0].lease_status === "ACTIVE" || lease[0].lease_status === "ACTIVE M2M") &&
+    //         (lease[0].lease_renew_status !== "RENEW REQUESTED" || lease[0].lease_renew_status !== "PM RENEW REQUESTED"))
+    //     )
+
+    if (lease.length === 0 || lease[0].lease_status === "ACTIVE" || lease[0].lease_status === "ACTIVE M2M") {
       let info = tenantProfile && tenantProfile.tenant_vehicle_info ? JSON.parse(tenantProfile.tenant_vehicle_info) : [];
       setVehicles(info);
     } else {
@@ -194,7 +200,7 @@ export default function TenantApplicationEdit(props) {
   }
 
   function formatTenantAdultOccupants() {
-    if (lease.length === 0) {
+    if (lease.length === 0 || lease[0].lease_status === "ACTIVE" || lease[0].lease_status === "ACTIVE M2M") {
       let info = tenantProfile && tenantProfile.tenant_adult_occupants ? JSON.parse(tenantProfile.tenant_adult_occupants) : [];
       setAdultOccupants(info);
     } else {
@@ -210,7 +216,7 @@ export default function TenantApplicationEdit(props) {
   }
 
   function formatTenantPetOccupants() {
-    if (lease.length === 0) {
+    if (lease.length === 0 || lease[0].lease_status === "ACTIVE" || lease[0].lease_status === "ACTIVE M2M") {
       let info = tenantProfile && tenantProfile.tenant_pet_occupants ? JSON.parse(tenantProfile.tenant_pet_occupants) : [];
       setPetOccupants(info);
     } else {
@@ -225,7 +231,7 @@ export default function TenantApplicationEdit(props) {
   }
 
   function formatTenantChildOccupants() {
-    if (lease.length === 0) {
+    if (lease.length === 0 || lease[0].lease_status === "ACTIVE" || lease[0].lease_status === "ACTIVE M2M") {
       let info = tenantProfile && tenantProfile.tenant_children_occupants ? JSON.parse(tenantProfile.tenant_children_occupants) : [];
       setChildOccupants(info);
     } else {
@@ -357,7 +363,7 @@ export default function TenantApplicationEdit(props) {
     if (props?.tenantDocuments) {
       setTenantDocuments(props.tenantDocuments);
     } else {
-      if (lease.length === 0) {
+      if (lease.length === 0 || lease[0].lease_status === "ACTIVE" || lease[0].lease_status === "ACTIVE M2M") {
         setTenantDocuments(tenantProfile ? JSON.parse(tenantProfile.tenant_documents) : []);
       } else {
         setTenantDocuments(lease && lease.length > 0 ? JSON.parse(lease[0]?.lease_documents) : []);
@@ -1176,7 +1182,9 @@ export default function TenantApplicationEdit(props) {
                   <EmploymentDataGrid
                     profileData={tenantProfile}
                     setIsEmployeChange={setIsEmployeChange}
-                    employmentDataT={lease[0]?.lease_income ? JSON.parse(lease[0]?.lease_income) : []}
+                    employmentDataT={
+                      lease[0]?.lease_income && lease[0].lease_status !== "ACTIVE" && lease[0].lease_status !== "ACTIVE M2M" ? JSON.parse(lease[0]?.lease_income) : []
+                    }
                     setSelectedJobs={setSelectedJobs}
                   />
                 </AccordionDetails>
