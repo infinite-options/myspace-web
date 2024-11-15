@@ -146,8 +146,12 @@ const PropertyInfo = (props) => {
   }
 
   function navigateToCorrectPage() {
+    console.log("ROHIT - 149 - status - ", status)
     if (status === "" || status === "NEW" || status === "WITHDRAWN" || status === "ENDED" || status === "REFUSED" || status === "RESCIND") {
       //navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } });
+      if(status === "" && props.handleSelectProperty != null){
+        props.handleSelectProperty(null);
+      }
       props.setRightPane({
         type: "tenantApplicationEdit",
         state: { data: property, status: status, lease: lease, from: "PropertyInfo" },

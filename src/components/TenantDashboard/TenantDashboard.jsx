@@ -215,6 +215,11 @@ const TenantDashboard = () => {
   }, [propertyListingData, leaseDetailsData, maintenanceRequestsNew, maintenanceStatus, announcements, paymentHistory, allBalanceDetails]);
 
   const handleSelectProperty = (property) => {
+    if(property === null){
+      setLeaseDetails(null);
+      setRelatedLease(null);
+      return;
+    }
     setSelectedProperty(property);
     updateLeaseDetails(property.property_uid);
     // console.log("leasedetailsdata", leaseDetailsData);
@@ -238,9 +243,12 @@ const TenantDashboard = () => {
 
         const activeLease = leasesForProperty.find(lease => lease.lease_status === "ACTIVE");        
         // const renewalLease = leasesForProperty.find(lease => (lease.lease_status === "RENEW NEW" || lease.lease_status === "RENEW WITHDRAWN" || lease.lease_status === "RENEW PROCESSING"));
+        const renewalLease = leasesForProperty.find(lease => (lease.lease_status === "RENEW NEW" || lease.lease_status === "RENEW PROCESSING"));
         
 
         setLeaseDetails(activeLease || null);
+        setRelatedLease(renewalLease || null);
+
         // console.log("first lease", firstLease.lease_status, firstLease.lease_renew_status);
         // console.log("second lease", secondLease);
         // console.log("lease details check", leaseDetails);
@@ -255,7 +263,8 @@ const TenantDashboard = () => {
         //   // console.log("here  check 1");
         // }
       } else {
-        setRelatedLease(leasesForProperty[0] || null);
+        // setRelatedLease(leasesForProperty[0] || null);
+        setRelatedLease(null);
       }
     }
 
@@ -399,9 +408,9 @@ const TenantDashboard = () => {
         case "paymentHistory":
           return <TenantPaymentHistoryTable data={rightPane.state.data} setRightPane={setRightPane} onBack={handleBack} isMobile={isMobile} />;
         case "listings":
-          return <PropertyListings setRightPane={setRightPane} isMobile={isMobile} setViewRHS={setViewRHS} setListingsData={setListingsData} />;
+          return <PropertyListings setRightPane={setRightPane} isMobile={isMobile} setViewRHS={setViewRHS} setListingsData={setListingsData} handleSelectProperty={handleSelectProperty} />;
         case "propertyInfo":
-          return <PropertyInfo {...rightPane.state} setRightPane={setRightPane} />;
+          return <PropertyInfo {...rightPane.state} setRightPane={setRightPane} handleSelectProperty={handleSelectProperty} />;
         case "tenantApplication":
           return (
             <TenantApplication
@@ -799,7 +808,8 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
 }
 
 const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty, relatedLease, isMobile, setViewRHS }) => {
-  // console.log("Lease Details renewal", relatedLease);
+  console.log("ROHIT - 804 - LeaseDetails - relatedLease - ", relatedLease);
+  console.log("ROHIT - 804 - LeaseDetails - currentLease - ", leaseDetails);
   // console.log("Lease Details ", leaseDetails);
   // console.log("selected property - ", selectedProperty)
   // console.log("Lease Details rightPane", rightPane);
@@ -903,7 +913,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
       state: {
         data: leaseDetails,
         status: "RENEW",
-        lease: leaseDetails,
+        lease: relatedLease,
       },
     });
   };

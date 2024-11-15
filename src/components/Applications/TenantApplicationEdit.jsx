@@ -70,6 +70,12 @@ export default function TenantApplicationEdit(props) {
     const [selectedJobs, setSelectedJobs] = useState([]);
     const [propertyUtilities, setPropertyUtilities] = useState([])
 
+    const [employmentData, setEmploymentData] = useState([]);
+
+    useEffect(() => {
+        console.log("ROHIT - 74 - lease - ", lease);
+    }, [lease]);
+
 
     // const getListDetails = async () => {
     //     try {
@@ -165,64 +171,79 @@ export default function TenantApplicationEdit(props) {
     }
 
     function formatTenantVehicleInfo() {
-        // if (lease.length === 0) {
-        //   let info = tenantProfile && tenantProfile.tenant_vehicle_info ? JSON.parse(tenantProfile.tenant_vehicle_info) : [];
-        //   setVehicles(info);
-        // } else {
-        //   let info = JSON.parse(lease[0].lease_vehicles);
-        //   setVehicles(info);
-        //   // for (const vehicle of info){
-        //   //     console.log(vehicle)
-        //   // }
-        // }
-        let info = tenantProfile && tenantProfile.tenant_vehicle_info ? JSON.parse(tenantProfile.tenant_vehicle_info) : [];
+        // let info = tenantProfile && tenantProfile.tenant_vehicle_info ? JSON.parse(tenantProfile.tenant_vehicle_info) : [];
+        // setVehicles(info);
+        if (lease.length === 0) {
+          let info = tenantProfile && tenantProfile.tenant_vehicle_info ? JSON.parse(tenantProfile.tenant_vehicle_info) : [];
           setVehicles(info);
+        } else {
+          let info = JSON.parse(lease[0].lease_vehicles);
+          setVehicles(info);
+          // for (const vehicle of info){
+          //     console.log(vehicle)
+          // }
+        }        
     }
 
     function formatTenantAdultOccupants() {
-    // if (lease.length === 0) {
-    //     let info = tenantProfile && tenantProfile.tenant_adult_occupants ? JSON.parse(tenantProfile.tenant_adult_occupants) : [];
-    //     setAdultOccupants(info);
-    // } else {
-    //     // console.log(tenantProfile?.tenant_adult_occupants)
-    //     let info = JSON.parse(lease[0].lease_adults);
-    //     setAdultOccupants(info);
-    //     // for (const occupant of info){
-    //     //     console.log(occupant)
-    //     // }
-    // }
-    let info = tenantProfile && tenantProfile.tenant_adult_occupants ? JSON.parse(tenantProfile.tenant_adult_occupants) : [];
-    setAdultOccupants(info);
+        let info = tenantProfile && tenantProfile.tenant_adult_occupants ? JSON.parse(tenantProfile.tenant_adult_occupants) : [];
+        setAdultOccupants(info);
+        if (lease.length === 0) {
+            let info = tenantProfile && tenantProfile.tenant_adult_occupants ? JSON.parse(tenantProfile.tenant_adult_occupants) : [];
+            setAdultOccupants(info);
+        } else {
+            // console.log(tenantProfile?.tenant_adult_occupants)
+            let info = JSON.parse(lease[0].lease_adults);
+            setAdultOccupants(info);
+            // for (const occupant of info){
+            //     console.log(occupant)
+            // }
+        }    
     }
 
     function formatTenantPetOccupants() {
-    // if (lease.length === 0) {
-    //     let info = tenantProfile && tenantProfile.tenant_pet_occupants ? JSON.parse(tenantProfile.tenant_pet_occupants) : [];
-    //     setPetOccupants(info);
-    // } else {
-    //     let info = JSON.parse(lease[0].lease_pets);
-    //     setPetOccupants(info);
-    //     // for (const pet of info){
-    //     //     console.log(pet)
-    //     // }
-    // }
-    let info = tenantProfile && tenantProfile.tenant_pet_occupants ? JSON.parse(tenantProfile.tenant_pet_occupants) : [];
-    setPetOccupants(info);
+        // let info = tenantProfile && tenantProfile.tenant_pet_occupants ? JSON.parse(tenantProfile.tenant_pet_occupants) : [];
+        // setPetOccupants(info);
+        if (lease.length === 0) {
+            let info = tenantProfile && tenantProfile.tenant_pet_occupants ? JSON.parse(tenantProfile.tenant_pet_occupants) : [];
+            setPetOccupants(info);
+        } else {
+            let info = JSON.parse(lease[0].lease_pets);
+            setPetOccupants(info);
+            // for (const pet of info){
+            //     console.log(pet)
+            // }
+        }
+    
     }
     
     function formatTenantChildOccupants() {
-    // if (lease.length === 0) {
-    //     let info = tenantProfile && tenantProfile.tenant_children_occupants ? JSON.parse(tenantProfile.tenant_children_occupants) : [];
-    //     setChildOccupants(info);
-    // } else {
-    //     let info = JSON.parse(lease[0].lease_children);
-    //     setChildOccupants(info);
-    //     // for (const child of info){
-    //     //     console.log(child)
-    //     // }
-    // }
-    let info = tenantProfile && tenantProfile.tenant_children_occupants ? JSON.parse(tenantProfile.tenant_children_occupants) : [];
-    setChildOccupants(info);
+        // let info = tenantProfile && tenantProfile.tenant_children_occupants ? JSON.parse(tenantProfile.tenant_children_occupants) : [];
+        // setChildOccupants(info);
+        if (lease.length === 0) {
+            let info = tenantProfile && tenantProfile.tenant_children_occupants ? JSON.parse(tenantProfile.tenant_children_occupants) : [];
+            setChildOccupants(info);
+        } else {
+            let info = JSON.parse(lease[0].lease_children);
+            setChildOccupants(info);
+            // for (const child of info){
+            //     console.log(child)
+            // }
+        }
+    
+    }    
+
+    function formatTenantEmployment() {
+        // let info = tenantProfile && tenantProfile.tenant_children_occupants ? JSON.parse(tenantProfile.tenant_children_occupants) : [];
+        // setChildOccupants(info);        
+        let info = [];
+        if (lease.length === 0) {
+            info = tenantProfile && tenantProfile.tenant_employment ? JSON.parse(tenantProfile.tenant_employment) : [];            
+        } else {
+            info = JSON.parse(lease[0].lease_income);                        
+        }
+        console.log("ROHIT - 245 - info - ", info);
+        setEmploymentData(info);                    
     }
 
     useEffect(() => {
@@ -323,6 +344,8 @@ export default function TenantApplicationEdit(props) {
         }else{
           formatTenantChildOccupants();
         }
+
+        formatTenantEmployment();
     
         if(props?.extraUploadDocument){
           setExtraUploadDocument(props.extraUploadDocument)
@@ -339,12 +362,12 @@ export default function TenantApplicationEdit(props) {
         if(props?.tenantDocuments){
           setTenantDocuments(props.tenantDocuments)
         }else{
-        //   if (lease.length === 0) {
-        //     setTenantDocuments(tenantProfile ? JSON.parse(tenantProfile.tenant_documents) : []);
-        //   } else {
-        //     setTenantDocuments(lease && lease.length > 0 ? JSON.parse(lease[0]?.lease_documents) : []);
-        //   }
-        setTenantDocuments(tenantProfile ? JSON.parse(tenantProfile.tenant_documents) : []);
+          // setTenantDocuments(tenantProfile ? JSON.parse(tenantProfile.tenant_documents) : []);
+          if (lease.length === 0) {
+            setTenantDocuments(tenantProfile ? JSON.parse(tenantProfile.tenant_documents) : []);
+          } else {
+            setTenantDocuments(lease && lease.length > 0 ? JSON.parse(lease[0]?.lease_documents) : []);
+          }        
         }
 
         setShowSpinner(false)
@@ -825,7 +848,8 @@ export default function TenantApplicationEdit(props) {
     }
 
     const handleApplicationSubmit = async () => {
-        if (lease != null && lease[0]?. lease_status === "INACTIVE"){
+        const currentLease = props.currentLease;
+        if (currentLease != null && currentLease?.lease_status === "INACTIVE"){
             alert("Lease status is INACTIVE");
             return;
         }
@@ -834,13 +858,14 @@ export default function TenantApplicationEdit(props) {
             const receiverPropertyMapping = {
                 [property.contract_business_id]: [property.contract_property_id],
             };
-    
+                
             const leaseApplicationData = new FormData();
-            leaseApplicationData.append("lease_property_id", property.property_uid != null ? property.property_uid : lease[0].lease_property_id);
+            // leaseApplicationData.append("lease_property_id", property.property_uid != null ? property.property_uid : lease[0].lease_property_id);
+            leaseApplicationData.append("lease_property_id", property.property_uid != null ? property.property_uid : currentLease?.lease_property_id);
     
-            if (status === "RENEW" || lease[0]?.lease_status === "ACTIVE"  || lease[0]?.lease_status === "ACTIVE M2M"  || lease[0]?.lease_status === "ENDED") {
+            if (status === "RENEW" || currentLease?.lease_status === "ACTIVE"  || currentLease?.lease_status === "ACTIVE M2M"  || currentLease?.lease_status === "ENDED") {
                 const updateLeaseData = new FormData();
-                updateLeaseData.append("lease_uid", lease[0].lease_uid);
+                updateLeaseData.append("lease_uid", currentLease.lease_uid);
                 updateLeaseData.append("lease_renew_status", "RENEW REQUESTED");
                 
                 // console.log(" inside update lease status - ", updateLeaseData)
@@ -904,21 +929,23 @@ export default function TenantApplicationEdit(props) {
 
 
             console.log("ROHIT - 880 - lease - ", lease);
-            const leaseUtils = ( lease != null && lease?.length > 0 && lease[0].lease_utilities) ? JSON.parse(lease[0].lease_utilities) : []
+            // const leaseUtils = ( lease != null && lease?.length > 0 && lease[0].lease_utilities) ? JSON.parse(lease[0].lease_utilities) : []
+            const leaseUtils = ( currentLease != null && currentLease.lease_utilities != null ) ? JSON.parse(currentLease.lease_utilities) : []
             // leaseApplicationData.append("lease_utilities", leaseUtils.length > 0 ? lease[0]?.lease_utilities : JSON.stringify(propertyUtilities)) // propertyUtilities - property utilities from listing
 
             
-            if (lease == null || (lease?.length === 0) || [null, "REFUSED", "RESCIND", "WITHDRAWN", "REJECTED"].includes(lease[0]?.lease_status)){
+            // if (lease == null || (lease?.length === 0) || [null, "REFUSED", "RESCIND", "WITHDRAWN", "REJECTED"].includes(lease[0]?.lease_status)){
+            if (currentLease == null || [null, "REFUSED", "RESCIND", "WITHDRAWN", "REJECTED"].includes(currentLease.lease_status)){
                 leaseApplicationData.append("lease_utilities", JSON.stringify(propertyUtilities)) // propertyUtilities - property utilities from listing
-            } else if (["ACTIVE", "ACTIVE M2M", "NEW", "PROCESSING", "ENDED", "EXPIRED", "RENEW PROCESSING", "RENEW NEW", "RENEW REQUESTED"].includes(lease[0]?.lease_status)){
-                leaseApplicationData.append("lease_utilities", leaseUtils.length > 0 ? lease[0]?.lease_utilities : JSON.stringify([]));
+            } else if (["ACTIVE", "ACTIVE M2M", "NEW", "PROCESSING", "ENDED", "EXPIRED", "RENEW PROCESSING", "RENEW NEW", "RENEW REQUESTED"].includes(currentLease?.lease_status)){
+                leaseApplicationData.append("lease_utilities", leaseUtils.length > 0 ? currentLease?.lease_utilities : JSON.stringify([]));
             }
             
             leaseApplicationData.append("lease_referred", "[]");
 
-            const leaseFees = ( lease != null && lease?.length > 0 && lease[0].lease_fees) ? JSON.parse(lease[0].lease_fees) : []
+            const leaseFees = ( currentLease != null &&  currentLease.lease_fees != null) ? JSON.parse(currentLease.lease_fees) : []
             // leaseApplicationData.append("lease_fees", "[]");
-            leaseApplicationData.append("lease_fees", leaseFees.length > 0 ? lease[0]?.lease_fees : JSON.stringify([]));
+            leaseApplicationData.append("lease_fees", leaseFees.length > 0 ? currentLease?.lease_fees : JSON.stringify([]));
             leaseApplicationData.append("lease_application_date", formatDate(date.toLocaleDateString()));
             leaseApplicationData.append("tenant_uid", getProfileId());
             
@@ -1088,7 +1115,8 @@ export default function TenantApplicationEdit(props) {
                                 <EmploymentDataGrid
                                     profileData = {tenantProfile}
                                     setIsEmployeChange = {setIsEmployeChange}
-                                    employmentDataT={lease[0]?.lease_income ? JSON.parse(lease[0]?.lease_income) : []}
+                                    // employmentDataT={lease[0]?.lease_income ? JSON.parse(lease[0]?.lease_income) : []}
+                                    employmentDataT={employmentData}
                                     setSelectedJobs={setSelectedJobs}
                                 />
                                 </AccordionDetails>
