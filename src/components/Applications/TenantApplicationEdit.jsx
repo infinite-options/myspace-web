@@ -23,6 +23,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
+import GenericDialog from "../GenericDialog";
 import { json } from "react-router-dom";
 
 
@@ -56,9 +57,11 @@ export default function TenantApplicationEdit(props) {
     const [isEmployeChange, setIsEmployeChange] = useState(false)
 
     const [modifiedData, setModifiedData] = useState([]);
-    const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const [snackbarMessage, setSnackbarMessage] = useState("");
-    const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [dialogTitle, setDialogTitle] = useState("");
+    const [dialogMessage, setDialogMessage] = useState("");
+    const [dialogSeverity, setDialogSeverity] = useState("info");
+
     const [showSpinner, setShowSpinner] = useState(false);
     // const [lease, setLease] = useState([]);
     const { user, getProfileId, roleName } = useUser();
@@ -137,16 +140,16 @@ export default function TenantApplicationEdit(props) {
     //     }
     // };
 
-    const showSnackbar = (message, severity) => {
-        // console.log("Inside show snackbar");
-        setSnackbarMessage(message);
-        setSnackbarSeverity(severity);
-        setSnackbarOpen(true);
+    const openDialog = (title, message, severity) => {
+        setDialogTitle(title); // Set custom title
+        setDialogMessage(message); // Set custom message
+        setDialogSeverity(severity); // Can use this if needed to control styles
+        setIsDialogOpen(true);
     };
-
-    const handleSnackbarClose = () => {
-        setSnackbarOpen(false);
-    };
+    
+    const closeDialog = () => {
+        setIsDialogOpen(false);
+    }
 
     // useEffect(() => {
     //     // getListDetails();
@@ -425,10 +428,12 @@ export default function TenantApplicationEdit(props) {
                 setShowSpinner(false);
                 setModifiedData([]);
             } else {
-                showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
+                // showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
+                openDialog("Error",`You haven't made any changes to the form. Please save after changing the data.`,"error");
             }
         } catch (error) {
-            showSnackbar("Cannot update the lease application. Please try again", "error");
+            // showSnackbar("Cannot update the lease application. Please try again", "error");
+            openDialog("Error",`Cannot update the lease application. Please try again`,"error");
             console.log("Cannot Update the lease application", error);
             setShowSpinner(false);
         }
@@ -620,9 +625,10 @@ export default function TenantApplicationEdit(props) {
                 axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
                     .then((response) => {
                         // console.log('Data updated successfullyyy', response);
-                        showSnackbar("Your lease application has been successfully updated.", "success");
-                        setIsReload((prev) => !prev);
+                        // showSnackbar("Your lease application has been successfully updated.", "success");
+                        openDialog("Success",`Your lease application has been successfully updated`,"success");
                         setShowSpinner(false);
+                        setIsReload((prev) => !prev);
 
                         if (props.from === "PropertyInfo") {
                             props.setReload((prev) => !prev);
@@ -634,7 +640,8 @@ export default function TenantApplicationEdit(props) {
                     })
                     .catch((error) => {
                         setShowSpinner(false);
-                        showSnackbar("Cannot update the lease application. Please try again", "error");
+                        // showSnackbar("Cannot update the lease application. Please try again", "error");
+                        openDialog("Error",`Cannot update the lease application. Please try again`,"error");
                         if (error.response) {
                             console.log(error.response.data);
                         }
@@ -647,10 +654,12 @@ export default function TenantApplicationEdit(props) {
                 setDeleteDocuments([]);
 
             } else {
-                showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
+                // showSnackbar("You haven't made any changes to the form. Please save after changing the data.", "error");
+                openDialog("Error",`You haven't made any changes to the form. Please save after changing the data.`,"error");
             }
         } catch (error) {
-            showSnackbar("Cannot update the lease application. Please try again", "error");
+            // showSnackbar("Cannot update the lease application. Please try again", "error");
+            openDialog("Error",`Cannot update the lease application. Please try again`,"error");
             console.log("Cannot Update the lease application", error);
             setShowSpinner(false);
         }
@@ -697,8 +706,11 @@ export default function TenantApplicationEdit(props) {
 
     const handleSaveButton = async (e) => {
         e.preventDefault();
-        console.log(status , " lease uid - ", lease[0])
+        // console.log(status , " lease uid - ", lease[0])
         if (lease[0]?.lease_uid == null || status === null || status === "" || status === "RENEW") {
+            if(props.setFirstPage){
+                props.setFirstPage(false)
+            }
             await handleApplicationSubmit();
         }else{
             await updateLeaseData();  // Trigger the PUT request to save data
@@ -921,10 +933,32 @@ export default function TenantApplicationEdit(props) {
                     <CircularProgress color="inherit" />
                 </Backdrop>
                 <Grid container>
-                    <Grid item xs={12} md={12}>
-                        <Typography align='center' gutterBottom sx={{ fontSize: theme.typography.largeFont, fontWeight: "bold", color: "#1f1f1f" }}>
-                            Rental Application
-                        </Typography>
+                    <Grid container item xs={12} md={12}>
+                        <Grid item xs={11}>
+                            <Typography align='center' gutterBottom sx={{ fontSize: theme.typography.largeFont, fontWeight: "bold", color: "#1f1f1f" }}>
+                                Rental Application
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={1}>
+                            <Button
+                                onClick={() => {
+                                    if (props.from && props.from === "accwidget") {
+                                        props.setRightPane("");
+                                    }else{
+                                        if(props.setFirstPage){
+                                            props.setFirstPage(false)
+                                        }
+                                        props.setRightPane({ type: "listings" });
+                                    }
+                                }}
+                                sx={{
+                                    textTransform: "none",
+                                    textDecoration: "underline",
+                                }}
+                            >
+                                <CloseIcon sx={{ color: "black", fontSize: "30px" }} />
+                            </Button>
+                        </Grid>
                     </Grid>
                     <Grid item xs={12} md={12}>
                         <Typography align='center' gutterBottom sx={{ fontSize: theme.typography.smallFont, fontWeight: "bold", color: "#1f1f1f" }}>                            
@@ -938,12 +972,25 @@ export default function TenantApplicationEdit(props) {
                             </Button>
                         </Box>
                     </Grid> */}
-                    <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                    {/* <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
                         <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%', height: "100%" }}>
                             <AlertTitle>{snackbarSeverity === "error" ? "Error" : "Success"}</AlertTitle>
                             {snackbarMessage}
                         </Alert>
-                    </Snackbar>
+                    </Snackbar> */}
+
+                    <GenericDialog
+                        isOpen={isDialogOpen}
+                        title={dialogTitle}
+                        contextText={dialogMessage}
+                        actions={[
+                            {
+                            label: "OK",
+                            onClick: closeDialog,
+                            }
+                        ]}
+                        severity={dialogSeverity}
+                    />
 
                     {/* {lease_uid && ( -- Abhinav new change*/}
                     <Box sx={{ padding: "10px" }}>

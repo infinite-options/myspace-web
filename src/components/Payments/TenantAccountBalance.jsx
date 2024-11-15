@@ -26,11 +26,13 @@ import {
   TextField,
 } from "@mui/material";
 import defaultHouseImage from "../Property/defaultHouseImage.png";
+import { FirstPage } from "@mui/icons-material";
 
 const TenantAccountBalance = ({
   propertyData,
   selectedProperty,
   setSelectedProperty,
+  firstPage,
   leaseDetails,
   leaseDetailsData,
   balanceDetails,
@@ -114,6 +116,7 @@ const TenantAccountBalance = ({
         data: leaseDetails,
         lease: leaseDetails,
         status: leaseDetails?.lease_status,
+        from: "accwidget",
       },
     });
   };
@@ -198,7 +201,7 @@ const TenantAccountBalance = ({
 
   const totalBalanceDue = balanceDetails.reduce((acc, detail) => acc + parseFloat(detail.amountDue || 0), 0);
 
-  if (!selectedProperty) {
+  if (!selectedProperty || firstPage) {
     return (
       <Paper sx={{ padding: "30px", backgroundColor: "#f0f0f0", borderRadius: "8px", flex: 1 }}>
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>

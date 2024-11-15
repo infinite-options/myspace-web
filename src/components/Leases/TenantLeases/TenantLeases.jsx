@@ -43,6 +43,7 @@ import PetsOccupant from "../PetsOccupant";
 import VehiclesOccupant from "../VehiclesOccupant";
 import { getDateAdornmentString } from "../../../utils/dates";
 import LeaseFees from "../LeaseFees";
+import GenericDialog from "../../GenericDialog";
 import ListsContext from "../../../contexts/ListsContext";
 
 function TenantLeases(props) {
@@ -80,6 +81,21 @@ function TenantLeases(props) {
   const [utilities, setUtilities] = useState([]);
   const [utilitiesMap, setUtilitiesMap] = useState({});
   const [utilitiesRoleMap, setUtilitiesRoleMap] = useState({});
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState("");
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [dialogSeverity, setDialogSeverity] = useState("info");
+
+  const openDialog = (title, message, severity) => {
+    setDialogTitle(title); // Set custom title
+    setDialogMessage(message); // Set custom message
+    setDialogSeverity(severity); // Can use this if needed to control styles
+    setIsDialogOpen(true);
+  };
+
+  const closeDialog = () => {
+    setIsDialogOpen(false);
+  };
 
   let utilitiesInUIDForm = {};
   let mappedUtilities2 = {};
@@ -291,7 +307,8 @@ function TenantLeases(props) {
         });
       } catch (error) {
         console.log("Error in Tenant refuse announcements:", error);
-        alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
+        // alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
+        openDialog("Error",`We were unable to Text the Property Manager but we were able to send them a notification through the App`,"error");
       }
     };
 
@@ -302,7 +319,8 @@ function TenantLeases(props) {
       });
       const data = await response.json();
       if (data.lease_update.code === 200) {
-        alert("You have successfully Rejected the lease.");
+        // alert("You have successfully Rejected the lease.");
+        openDialog("Success",`You have successfully Rejected the lease`,"success");
         await sendAnnouncement();
         props.setRightPane({ type: "", state: { property: property, lease: lease } });
         props.setReload((prev) => !prev);
@@ -356,7 +374,8 @@ function TenantLeases(props) {
         });
       } catch (error) {
         console.log("Error in Tenant accept announcements:", error);
-        alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
+        // alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
+        openDialog("Error",`We were unable to Text the Property Manager but we were able to send them a notification through the App`,"error");
       }
     };
 
@@ -409,7 +428,8 @@ function TenantLeases(props) {
       const data = await response.json();
       console.log("Divyy", data);
       if (data.lease_docs.code === 200) {
-        alert("You have successfully Accepted the lease.");
+        // alert("You have successfully Accepted the lease.");
+        openDialog("Success",`You have successfully Accepted the lease.`,"success");
         //don';t send announcemnt twice
         await sendRenewalStatus();
         await sendAnnouncement();
@@ -1226,6 +1246,19 @@ function TenantLeases(props) {
           </Grid> */}
         </Paper>
       </Box>
+
+      <GenericDialog
+        isOpen={isDialogOpen}
+        title={dialogTitle}
+        contextText={dialogMessage}
+        actions={[
+          {
+            label: "OK",
+            onClick: closeDialog,
+          }
+        ]}
+        severity={dialogSeverity}
+      />
     </Paper>
   );
 }

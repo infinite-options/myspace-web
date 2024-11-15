@@ -106,6 +106,8 @@ const TenantDashboard = () => {
 
   const [announcementSentData, setAnnouncementSentData] = useState([]);
   const [announcementRecvData, setAnnouncementRecvData] = useState([]);
+  const [firstPage, setFirstPage] = useState(false)
+
   const [view, setView] = useState("dashboard");
 
   useEffect(() => {
@@ -399,7 +401,7 @@ const TenantDashboard = () => {
         case "listings":
           return <PropertyListings setRightPane={setRightPane} isMobile={isMobile} setViewRHS={setViewRHS} />;
         case "propertyInfo":
-          return <PropertyInfo {...rightPane.state} setRightPane={setRightPane} />;
+          return <PropertyInfo {...rightPane.state} setRightPane={setRightPane} setFirstPage={setFirstPage}/>;
         case "tenantApplication":
           return (
             <TenantApplication
@@ -414,7 +416,7 @@ const TenantDashboard = () => {
         case "filePreview":
           return <DocumentPreview file={rightPane.file} onClose={rightPane.onClose} />;
         case "tenantApplicationEdit":
-          return <TenantApplicationEdit {...rightPane.state} setRightPane={setRightPane} setReload={setReload}/>;
+          return <TenantApplicationEdit {...rightPane.state} setRightPane={setRightPane} setReload={setReload} setFirstPage={setFirstPage}/>;
         case "tenantLeases":
           return <TenantLeases {...rightPane.state} setRightPane={setRightPane} setReload={setReload} />;
         case "payment":
@@ -526,6 +528,7 @@ const TenantDashboard = () => {
                   setViewRHS={setViewRHS}
                   propertyData={propertyListingData}
                   selectedProperty={selectedProperty}
+                  firstPage={firstPage}
                   setSelectedProperty={handleSelectProperty}
                   leaseDetails={leaseDetails}
                   leaseDetailsData={leaseDetailsData}
@@ -856,6 +859,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
         data: relatedLease,
         status: relatedLease.lease_status,
         lease: relatedLease,
+        from: "accwidget",
       },
     });
   };
@@ -902,6 +906,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
         data: leaseDetails,
         status: "RENEW",
         lease: leaseDetails,
+        from: "accwidget",
       },
     });
   };
