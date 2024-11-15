@@ -148,6 +148,9 @@ const PropertyInfo = (props) => {
   function navigateToCorrectPage() {
     if (status === "" || status === "NEW" || status === "WITHDRAWN" || status === "ENDED" || status === "REFUSED" || status === "RESCIND") {
       //navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } });
+      if(props.setFirstPage){
+        props.setFirstPage(true)
+      }
       props.setRightPane({
         type: "tenantApplicationEdit",
         state: { data: property, status: status, lease: lease, from: "PropertyInfo" },

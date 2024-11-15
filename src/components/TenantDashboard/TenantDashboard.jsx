@@ -102,11 +102,13 @@ const TenantDashboard = () => {
   const [balanceDetails, setBalanceDetails] = useState([]);
   const [filteredMaintenanceRequests, setFilteredMaintenanceRequests] = useState([]);
   const [allBalanceDetails, setAllBalanceDetails] = useState([]);
-  const [reload, setReload] = useState(false);
+  const [reload, setReload] = useState(true);
   const [relatedLease, setRelatedLease] = useState(null);
 
   const [announcementSentData, setAnnouncementSentData] = useState([]);
   const [announcementRecvData, setAnnouncementRecvData] = useState([]);
+  const [firstPage, setFirstPage] = useState(false);
+
   const [view, setView] = useState("dashboard");
 
   useEffect(() => {
@@ -186,9 +188,15 @@ const TenantDashboard = () => {
   };
 
   useEffect(() => {
-    fetchData();
-    //fetchCashflowDetails();
-    setReload(false);
+    if (reload) {
+      fetchData();
+
+      if (selectedProperty) {
+        handleSelectProperty(selectedProperty);
+      }
+      //fetchCashflowDetails();
+      setReload(false);
+    }
   }, [reload, user]);
 
   useEffect(() => {
@@ -236,15 +244,13 @@ const TenantDashboard = () => {
         // const secondLease = leasesForProperty[1];
         const secondLease = leasesForProperty[leasesForProperty.length - 1];
 
-        const activeLease = leasesForProperty.find(lease => lease.lease_status === "ACTIVE");        
+        const activeLease = leasesForProperty.find((lease) => lease.lease_status === "ACTIVE");
         // const renewalLease = leasesForProperty.find(lease => (lease.lease_status === "RENEW NEW" || lease.lease_status === "RENEW WITHDRAWN" || lease.lease_status === "RENEW PROCESSING"));
-        
 
         setLeaseDetails(activeLease || null);
         // console.log("first lease", firstLease.lease_status, firstLease.lease_renew_status);
         // console.log("second lease", secondLease);
         // console.log("lease details check", leaseDetails);
-        
 
         // if (firstLease.lease_status === "INACTIVE" && (secondLease.lease_status === "ACTIVE" || secondLease.lease_status === "ACTIVE M2M")) {
         //   setLeaseDetails(secondLease || null);
@@ -282,7 +288,7 @@ const TenantDashboard = () => {
 
   const updateLeaseDetails = (propertyUid) => {
     const leaseForProperty = leaseDetailsData.find((ld) => ld.property_uid === propertyUid);
-    // console.log("property lease for property", leaseForProperty);
+    console.log("property lease for property", leaseForProperty);
     setLeaseDetails(leaseForProperty);
 
     if (leaseForProperty?.lease_status === "NEW") {
@@ -401,7 +407,7 @@ const TenantDashboard = () => {
         case "listings":
           return <PropertyListings setRightPane={setRightPane} isMobile={isMobile} setViewRHS={setViewRHS} setListingsData={setListingsData} />;
         case "propertyInfo":
-          return <PropertyInfo {...rightPane.state} setRightPane={setRightPane} />;
+          return <PropertyInfo {...rightPane.state} setRightPane={setRightPane} setFirstPage={setFirstPage} />;
         case "tenantApplication":
           return (
             <TenantApplication
@@ -416,7 +422,17 @@ const TenantDashboard = () => {
         case "filePreview":
           return <DocumentPreview file={rightPane.file} onClose={rightPane.onClose} />;
         case "tenantApplicationEdit":
-          return <TenantApplicationEdit {...rightPane.state} setRightPane={setRightPane} listingsData={listingsData} currentLease={leaseDetails}/>;
+          return (
+            <TenantApplicationEdit
+              {...rightPane.state}
+              setRightPane={setRightPane}
+              listingsData={listingsData}
+              currentLease={leaseDetails}
+              setReload={setReload}
+              setFirstPage={setFirstPage}
+            />
+          );
+
         case "tenantLeases":
           return <TenantLeases {...rightPane.state} setRightPane={setRightPane} setReload={setReload} />;
         case "payment":
@@ -528,6 +544,7 @@ const TenantDashboard = () => {
                   setViewRHS={setViewRHS}
                   propertyData={propertyListingData}
                   selectedProperty={selectedProperty}
+                  firstPage={firstPage}
                   setSelectedProperty={handleSelectProperty}
                   leaseDetails={leaseDetails}
                   leaseDetailsData={leaseDetailsData}
@@ -803,7 +820,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
   // console.log("Lease Details ", leaseDetails);
   // console.log("selected property - ", selectedProperty)
   // console.log("Lease Details rightPane", rightPane);
-  const { getProfileId, selectedRole, } = useUser();
+  const { getProfileId, selectedRole } = useUser();
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleFlip = () => {
@@ -826,8 +843,8 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
   // Check if Renew Lease button should be visible (if within 2x notice period)
   const showRenewLeaseButton = daysUntilLeaseEnd <= 2 * noticePeriod && leaseDetails?.lease_renew_status !== "RENEW NEW";
   const isEndingOrEarlyTermination = leaseDetails?.lease_renew_status === "ENDING" || leaseDetails?.lease_renew_status === "EARLY TERMINATION";
-  const tenants = leaseDetails?.tenants ? JSON.parse(leaseDetails?.tenants) : []
-  const tenant_detail = tenants.length > 0 ? tenants[0] : null
+  const tenants = leaseDetails?.tenants ? JSON.parse(leaseDetails?.tenants) : [];
+  const tenant_detail = tenants.length > 0 ? tenants[0] : null;
 
   const handleViewRenewProcessingLease = () => {
     if (isMobile) {
@@ -840,8 +857,8 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
           data: relatedLease,
           status: "RENEW PROCESSING",
           lease: relatedLease,
+          from: "accwidget",
           oldLeaseUid: leaseDetails.lease_uid,
-          from: "accwidget"
         },
       });
     }
@@ -858,6 +875,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
         data: relatedLease,
         status: relatedLease.lease_status,
         lease: relatedLease,
+        from: "accwidget",
       },
     });
   };
@@ -904,6 +922,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
         data: leaseDetails,
         status: "RENEW",
         lease: leaseDetails,
+        from: "accwidget",
       },
     });
   };
@@ -1166,8 +1185,8 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                       <KeyboardArrowRightIcon
                         sx={{ color: "blue", cursor: "pointer" }}
                         onClick={() => {
-                          if(selectedRole === "TENANT"){
-                            navigate("/profileEditor")
+                          if (selectedRole === "TENANT") {
+                            navigate("/profileEditor");
                           } else {
                             if (tenant_detail && tenant_detail.tenant_uid) {
                               navigate("/ContactsPM", {
@@ -1212,7 +1231,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                 </Grid>
                 <Grid item xs={7}>
                   <Box display='flex' alignItems='center' justifyContent={"space-between"}>
-                    {(leaseDetails?.lease_status === "ACTIVE" || leaseDetails?.lease_status === "ACTIVE M2M") ? (
+                    {leaseDetails?.lease_status === "ACTIVE" || leaseDetails?.lease_status === "ACTIVE M2M" ? (
                       <>
                         <Typography
                           sx={{
@@ -1244,7 +1263,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           fontSize: theme.typography.smallFont,
                         }}
                       >
-                        {leaseDetails?.lease_status? leaseDetails?.lease_status : "No Lease"}
+                        {leaseDetails?.lease_status ? leaseDetails?.lease_status : "No Lease"}
                       </Typography>
                     )}
                     {/* {currentProperty?.contract_status === "ACTIVE" && selectedRole === "MANAGER" && 
@@ -1324,7 +1343,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                 >
                   <Button
                     onClick={() => {
-                      handleEndLease()
+                      handleEndLease();
                     }}
                     variant='contained'
                     sx={{
@@ -1380,7 +1399,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                   >
                     <Button
                       onClick={() => {
-                        handleViewRenewLease()
+                        handleViewRenewLease();
                       }}
                       variant='contained'
                       sx={{
@@ -1436,7 +1455,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                     >
                       <Button
                         onClick={() => {
-                          handleRenewLease()
+                          handleRenewLease();
                         }}
                         variant='contained'
                         sx={{
@@ -1493,7 +1512,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                   >
                     <Button
                       onClick={() => {
-                        handleViewRenewProcessingLease()
+                        handleViewRenewProcessingLease();
                       }}
                       variant='contained'
                       sx={{
@@ -2598,7 +2617,7 @@ function TenantBalanceTablePM(props) {
           getRowId={(row) => row.purchase_uid}
           initialState={{
             sorting: {
-              sortModel: [{ field: 'purchaseDate', sort: 'asc' }],
+              sortModel: [{ field: "purchaseDate", sort: "asc" }],
             },
           }}
         />

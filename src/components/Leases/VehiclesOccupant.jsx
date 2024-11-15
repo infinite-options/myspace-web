@@ -503,7 +503,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                                 displayEmpty
                                 renderValue={(value) => {
                                     if (!value) {
-                                        return <Typography color="gray">Owner</Typography>;
+                                        return <Typography color="black">Owner</Typography>;
                                     }
                                     return value;
                                 }}
