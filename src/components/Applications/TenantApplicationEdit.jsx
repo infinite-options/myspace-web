@@ -69,7 +69,7 @@ export default function TenantApplicationEdit(props) {
     const [documentsExpanded, setDocumentsExpanded] = useState(true); 
     const [selectedJobs, setSelectedJobs] = useState([]);
     const [propertyUtilities, setPropertyUtilities] = useState([])
-
+    const [fromTeanantApplication, setFromTeanantApplication] = useState(true); 
 
     // const getListDetails = async () => {
     //     try {
@@ -406,10 +406,10 @@ export default function TenantApplicationEdit(props) {
                         // setPets(item.value)
                     }
                     
-                    // if(item.key === "lease_vehicles"){
-                    //     // setOldVehicles(item.value)
-                    //     setVehicles(item.value)
-                    // }
+                    if(item.key === "lease_vehicles"){
+                        setVehicles(item.value)
+                        // setOldVehicles(item.value)
+                    }
 
                     // if(item.key === "lease_documents"){
                     //     setTenantDocuments(item.value)
@@ -1174,7 +1174,8 @@ export default function TenantApplicationEdit(props) {
                                     {vehicles && (
                                         <VehiclesOccupant
                                             leaseVehicles={vehicles}
-                                            // setLeaseVehicles={setVehicles}
+                                            setLeaseVehicles={setVehicles}
+                                            fromTeanantApplication={fromTeanantApplication}
                                             states={states}
                                             // editOrUpdateLease={lease_uid !== null ? editOrUpdateLease : editOrUpdateTenant}
                                             editOrUpdateLease={editOrUpdateLease}

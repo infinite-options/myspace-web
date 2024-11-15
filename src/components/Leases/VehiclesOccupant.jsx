@@ -75,7 +75,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdateLease, setModifiedData, modifiedData, dataKey, ownerOptions, isEditable }) => {
+const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdateLease, setModifiedData, modifiedData, dataKey, ownerOptions, isEditable, fromTeanantApplication=false }) => {
     // console.log('Inside vehicles occupants', leaseVehicles);
     // console.log('VehiclesOccupant - ownerOptions', ownerOptions);
     const [vehicles, setVehicles] = useState([]);
@@ -111,7 +111,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
     useEffect(() => {
         if (leaseVehicles && leaseVehicles.length > 0) {
             //Need Id for datagrid
-            if(!setLeaseVehicles){
+            if(!setLeaseVehicles || fromTeanantApplication){
                 const vehWithIds = leaseVehicles.map((veh, index) => ({ ...veh, id: index }));
                 setVehicles(vehWithIds);
             }else{
@@ -477,7 +477,7 @@ const VehiclesOccupant = ({ leaseVehicles, setLeaseVehicles, states, editOrUpdat
                             /> */}
                             <Select
                                 name='owner'
-                                value={currentRow?.owner}
+                                value={currentRow?.owner || ""}
                                 onChange={(e) => setCurrentRow({ ...currentRow, owner: e.target.value })}
                                 variant='filled'
                                 fullWidth                                
