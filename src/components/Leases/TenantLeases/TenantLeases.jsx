@@ -43,6 +43,7 @@ import PetsOccupant from "../PetsOccupant";
 import VehiclesOccupant from "../VehiclesOccupant";
 import { getDateAdornmentString } from "../../../utils/dates";
 import LeaseFees from "../LeaseFees";
+import GenericDialog from "../../GenericDialog";
 import ListsContext from "../../../contexts/ListsContext";
 
 function TenantLeases(props) {
@@ -74,11 +75,27 @@ function TenantLeases(props) {
   const [employmentExpanded, setEmploymentExpanded] = useState(true);
   const [utilitiesExpanded, setUtilitiesExpanded] = useState(true);
   const [documentsExpanded, setDocumentsExpanded] = useState(true);
+  const [leaseFeesExpanded, setLeaseFeesExpanded] = useState(true); 
   const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
   const [utilitiesRole, setUtilitiesRole] = useState([]);
   const [utilities, setUtilities] = useState([]);
   const [utilitiesMap, setUtilitiesMap] = useState({});
   const [utilitiesRoleMap, setUtilitiesRoleMap] = useState({});
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState("");
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [dialogSeverity, setDialogSeverity] = useState("info");
+
+  const openDialog = (title, message, severity) => {
+    setDialogTitle(title); // Set custom title
+    setDialogMessage(message); // Set custom message
+    setDialogSeverity(severity); // Can use this if needed to control styles
+    setIsDialogOpen(true);
+  };
+
+  const closeDialog = () => {
+    setIsDialogOpen(false);
+  };
 
   let utilitiesInUIDForm = {};
   let mappedUtilities2 = {};
@@ -86,7 +103,7 @@ function TenantLeases(props) {
   const [managerID, setManagerID] = useState("");
 
   useEffect(() => {
-    console.log("Props passed to TenantLeases: ", props.oldLeaseUid);
+    // console.log("Props passed to TenantLeases: ", props.oldLeaseUid);
     setPrevLeaseId(props.oldLeaseUid);
     setProperty(props.property);
     setLease(props.lease);
@@ -115,7 +132,7 @@ function TenantLeases(props) {
     if (!propertyUtilities) {
       return {};
     }
-    console.log("----- in mapUIDsToUtilities, input - ", utilitiesMap);
+    // console.log("----- in mapUIDsToUtilities, input - ", utilitiesMap);
     const mappedUtilities = {};
     for (const key of Object.keys(propertyUtilities)) {
       const utilityName = utilitiesMap.get(key);
@@ -126,7 +143,7 @@ function TenantLeases(props) {
       }
     }
 
-    console.log("----- in mapUIDsToUtilities, mappedUtilities - ", mappedUtilities);
+    // console.log("----- in mapUIDsToUtilities, mappedUtilities - ", mappedUtilities);
     return mappedUtilities;
   };
 
@@ -290,7 +307,8 @@ function TenantLeases(props) {
         });
       } catch (error) {
         console.log("Error in Tenant refuse announcements:", error);
-        alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
+        // alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
+        openDialog("Error",`We were unable to Text the Property Manager but we were able to send them a notification through the App`,"error");
       }
     };
 
@@ -301,7 +319,8 @@ function TenantLeases(props) {
       });
       const data = await response.json();
       if (data.lease_update.code === 200) {
-        alert("You have successfully Rejected the lease.");
+        // alert("You have successfully Rejected the lease.");
+        openDialog("Success",`You have successfully Rejected the lease`,"success");
         await sendAnnouncement();
         props.setRightPane({ type: "", state: { property: property, lease: lease } });
         props.setReload((prev) => !prev);
@@ -355,7 +374,8 @@ function TenantLeases(props) {
         });
       } catch (error) {
         console.log("Error in Tenant accept announcements:", error);
-        alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
+        // alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
+        openDialog("Error",`We were unable to Text the Property Manager but we were able to send them a notification through the App`,"error");
       }
     };
 
@@ -370,7 +390,7 @@ function TenantLeases(props) {
           body: renewalFormData,
         });
         const data = await response.json();
-        console.log("Renewal status updated:", data);
+        // console.log("Renewal status updated:", data);
         if (data?.code === 200) {
           console.log("Lease renewal successfully updated.");
         } else {
@@ -385,12 +405,12 @@ function TenantLeases(props) {
       var lease_status = "APPROVED"; // Abhinav - Tenant Approved
       // var status = "TENANT APPROVED";
       const date = new Date();
-      console.log("Date: ", date);
-      console.log("Lease Effective Date, ", status);
+      // console.log("Date: ", date);
+      // console.log("Lease Effective Date, ", status);
       if (status) {
         const [month, day, year] = status.split("-").map(Number);
         const leaseDate = new Date(year, month - 1, day); // Month is 0-indexed in JavaScript Date objects
-        console.log("Lease Effective Date, ", leaseDate);
+        // console.log("Lease Effective Date, ", leaseDate);
 
         if (leaseDate <= date) {
           lease_status = "ACTIVE";
@@ -406,11 +426,14 @@ function TenantLeases(props) {
         body: leaseApplicationFormData,
       });
       const data = await response.json();
-      console.log("Divyy", data);
+      // console.log("409 - Data", data);
       if (data.lease_docs.code === 200) {
-        alert("You have successfully Accepted the lease.");
+        // alert("You have successfully Accepted the lease.");
+        openDialog("Success",`You have successfully Accepted the lease.`,"success");
         //don';t send announcemnt twice
-        await sendRenewalStatus();
+        if(lease.lease_status === "RENEW PROCESSING"){
+          await sendRenewalStatus();
+        }        
         await sendAnnouncement();
         props.setRightPane({ type: "" });
         props.setReload((prev) => !prev);
@@ -883,8 +906,8 @@ function TenantLeases(props) {
                   margin: "auto", // Center the accordion
                   minHeight: "50px",
                 }}
-                expanded={employmentExpanded}
-                onChange={() => setEmploymentExpanded((prev) => !prev)}
+                expanded={leaseFeesExpanded}
+                onChange={() => setLeaseFeesExpanded((prev) => !prev)}
               >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='employment-content' id='employment-header'>
                   <Grid container>
@@ -1225,6 +1248,19 @@ function TenantLeases(props) {
           </Grid> */}
         </Paper>
       </Box>
+
+      <GenericDialog
+        isOpen={isDialogOpen}
+        title={dialogTitle}
+        contextText={dialogMessage}
+        actions={[
+          {
+            label: "OK",
+            onClick: closeDialog,
+          }
+        ]}
+        severity={dialogSeverity}
+      />
     </Paper>
   );
 }

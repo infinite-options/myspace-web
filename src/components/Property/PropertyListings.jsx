@@ -279,7 +279,7 @@ const FilterButtons = ({ propertyList, filteredItems, setFilteredItems, ...props
   );
 };
 
-const PropertyListings = ({ setRightPane, isMobile, setViewRHS }) => {
+const PropertyListings = ({ setRightPane, isMobile, setViewRHS, setListingsData, }) => {
   const [propertyData, setPropertyData] = useState([]);
   const [userLeases, setUserLeases] = useState([]);
   const [tenantLeaseDetails, setTenantLeaseDetails] = useState([]);
@@ -300,6 +300,7 @@ const PropertyListings = ({ setRightPane, isMobile, setViewRHS }) => {
     const propertyData = await propertyResponse.json();
     setUserLeases(propertyData?.Tenant_Leases.result);
     setPropertyData(propertyData?.Available_Listings.result);
+    setListingsData(propertyData?.Available_Listings.result);
     sortProperties(propertyData?.Tenant_Leases.result, propertyData?.Available_Listings.result);
     setShowSpinner(false);
   }

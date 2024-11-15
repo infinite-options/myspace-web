@@ -117,6 +117,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
     handleTaxIDChange(ssn, false);    
   }, [taxIDType])
 
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 const [dialogTitle, setDialogTitle] = useState("");
 const [dialogMessage, setDialogMessage] = useState("");
@@ -237,6 +238,7 @@ const closeDialog = () => {
   //   console.log("148 - profileData.tenant_ssn - ", profileData.tenant_ssn);
     
   // }, [ssn]);
+
 
   const updateModifiedData = (updatedItem) => {
     setModifiedData((prev) => {
@@ -1033,6 +1035,7 @@ const closeDialog = () => {
         setDialogTitle("Success");
         setDialogMessage("Your profile has been successfully updated.");
         setDialogSeverity("success");
+        setModifiedData([]);
         handleUpdate();
         setShowSpinner(false);
       } else {
@@ -1069,15 +1072,18 @@ const closeDialog = () => {
         // Append modified data only
         modifiedData.forEach((item) => {
           // Ensure tenant_employment is appended only once and avoid appending tenant_income_1
-          if (item.key !== "tenant_income_1" && item.key !== "tenant_employment") {
+          if (item.key !== "tenant_income_1" && item.key !== "tenant_employment" && item.key !== 'tenant_adult_occupants' &&
+          item.key !== 'tenant_children_occupants' &&
+          item.key !== 'tenant_pet_occupants' &&
+          item.key !== 'tenant_vehicle_info') {
             profileFormData.append(item.key, item.value);
           }
         });
   
         // If employment data has changed, append tenant_employment only once
-        if (employmentList && employmentList.length > 0) {
-          profileFormData.append("tenant_employment", JSON.stringify(employmentList));
-        }
+        // if (employmentList && employmentList.length > 0) {
+        //   profileFormData.append("tenant_employment", JSON.stringify(employmentList));
+        // }
   
         // Handle documents, files, and tenant_uid as before
         if (isPreviousFileChange) {
@@ -1112,6 +1118,7 @@ const closeDialog = () => {
         setDialogTitle("Success");
         setDialogMessage("Your profile has been successfully updated.");
         setDialogSeverity("success");
+        setModifiedData([]);
         handleUpdate();
         setShowSpinner(false);
       } else {
@@ -1755,7 +1762,7 @@ const closeDialog = () => {
                 employmentList={employmentList}
                 setEmploymentList={(newList) => {
                   setEmploymentList(newList);
-                  updateModifiedData({ key: "tenant_employment", value: newList });
+                  // updateModifiedData({ key: "tenant_employment", value: newList });
                 }}
                 salaryFrequencies={salaryFrequencies}
               />
@@ -1826,6 +1833,7 @@ const closeDialog = () => {
                   modifiedData={modifiedData}
                   setModifiedData={setModifiedData}
                   dataKey={"tenant_pet_occupants"}
+                  ownerOptions={[...adults, ...children]}
                   isEditable={true}
                 />
               )}

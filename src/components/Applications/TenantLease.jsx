@@ -156,9 +156,10 @@ const TenantLease = () => {
   // Intermediate variables to calculate the initial dates
   let initialStartDate, initialEndDate, initialMoveInDate;
   console.log("158 - In Tenant Lease -  page - ", page);
-  if (page === "create_lease" || page === "refer_tenant") {
+  if (page === "create_lease" || page === "refer_tenant") {    
     initialStartDate = dayjs();
-    initialEndDate = dayjs().add(1, "year").subtract(1, "day");
+    // initialEndDate = dayjs().add(1, "year").subtract(1, "day");
+    initialEndDate = property.lease_end ? dayjs(property.lease_end) : dayjs().add(1, "year").subtract(1, "day");
     initialMoveInDate = initialStartDate;
   } else if (page === "edit_lease") {
     initialStartDate = application.lease_start ? dayjs(application.lease_start) : dayjs();

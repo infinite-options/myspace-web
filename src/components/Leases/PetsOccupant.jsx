@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
 import {
     Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, TextField, Typography,
-    Grid, Snackbar, Alert, AlertTitle
+    Grid, Snackbar, Alert,Select, MenuItem, AlertTitle
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -72,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isEditable }) => {
+const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isEditable, ownerOptions }) => {
     // console.log('Inside Pets occupants', leasePets);
     const [pets, setPets] = useState([]);
     const [open, setOpen] = useState(false);
@@ -440,7 +440,7 @@ const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, setModifiedD
                             />
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField
+                            {/* <TextField
                                 className={classes.textField}
                                 margin="dense"
                                 label="Owner"
@@ -456,7 +456,46 @@ const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, setModifiedD
                                     },
                                 }}
                                 sx={{ backgroundColor: '#D6D5DA', }}
-                            />
+                            /> */}
+                            <Select
+                                name='owner'
+                                value={currentRow?.owner || ''}
+                                onChange={(e) => setCurrentRow({ ...currentRow, owner: e.target.value })}
+                                variant='filled'
+                                fullWidth                                
+                                className={classes.root}
+                                sx={{
+                                    marginTop: '10px',
+                                    backgroundColor: '#D6D5DA',
+                                    height: "55px",
+                                    borderRadius: "5px",
+                                    color: 'black',
+                                    border: '1px solid grey',
+                                    ".MuiFilledInput-root": {
+                                        padding: "0 12px",
+                                    },
+                                    ".MuiSelect-filled.MuiSelect-filled": {
+                                        height: "30px",
+                                        borderRadius: "8px",
+                                    },
+                                    "&:hover": {
+                                        backgroundColor: '#D6D5DA',
+                                    }
+                                }}
+                                displayEmpty
+                                renderValue={(value) => {
+                                    if (!value) {
+                                        return <Typography color="black">Owner</Typography>;
+                                    }
+                                    return value;
+                                }}
+                            >
+                                { 
+                                    ownerOptions?.map( option => (
+                                        <MenuItem value={`${option?.name} ${option?.last_name}`}>{`${option?.name} ${option?.last_name}`}</MenuItem>        
+                                    ))
+                                }
+                                </Select>
                         </Grid>
                     </Grid>
                 </DialogContent>
