@@ -113,6 +113,22 @@ const TenantApplicationNav = (props) => {
       method: "PUT",
       body: leaseApplicationFormData,
     });
+
+    // change old lease's renew status to RENEW REJECTED
+
+    if(application.lease_status === "RENEW NEW"){
+      const updatePrevLeaseFormData = new FormData();
+      updatePrevLeaseFormData.append("lease_uid", property.lease_uid);
+      updatePrevLeaseFormData.append("lease_renew_status", "RENEW REJECTED");      
+      
+      await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`, {
+        method: "PUT",
+        body: updatePrevLeaseFormData,
+      });
+
+    }
+
+
     setShowSpinner(false);
     navigate("/managerDashboard");
   };
