@@ -951,7 +951,12 @@ const TenantLease = () => {
       console.log("---insdie DEBUG Lease fees - ", fees)
 
       leaseApplicationFormData.append("lease_uid", application.lease_uid);
-      leaseApplicationFormData.append("lease_status", "PROCESSING");
+      if(application.lease_status === "NEW"){
+        leaseApplicationFormData.append("lease_status", "PROCESSING");
+      } else { //lease_status === RENEW NEW
+        leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");
+      }
+      
       leaseApplicationFormData.append("lease_effective_date", startDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_start", startDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_end", endDate.format("MM-DD-YYYY"));
@@ -2265,7 +2270,7 @@ const TenantLease = () => {
           <Button
             // onClick={application?.lease_status === "NEW" ? handleCreateLease : handleRenewLease}
             onClick={() => {
-              if (application?.lease_status === "NEW" || application?.lease_status === "PROCESSING") {
+              if (application?.lease_status === "NEW" || application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW NEW" || application?.lease_status === "RENEW PROCESSING" ) {
                 handleCreateLease();
               } else if (application?.lease_status === "ACTIVE" || application?.lease_status === "ACTIVE M2M") {
                 handleRenewLease();
@@ -2283,7 +2288,9 @@ const TenantLease = () => {
           >
             {application?.lease_status === "NEW" ? "Create Lease" : ""}
             {application?.lease_status === "PROCESSING" ? "Modify Lease" : ""}
-            {application?.lease_status === "ACTIVE" || application?.lease_status === "ACTIVE M2M" ? "Renew Lease" : ""}
+            {application?.lease_status === "ACTIVE" || application?.lease_status === "ACTIVE M2M" ? "Renew Lease" : ""}            
+            {application?.lease_status === "RENEW NEW" ? "Create Lease Renewal" : ""}
+            {application?.lease_status === "RENEW PROCESSING" ? "Modify Lease Renewal" : ""}
           </Button>
         </Grid>
       </Box>
