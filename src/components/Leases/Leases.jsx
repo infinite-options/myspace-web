@@ -573,7 +573,7 @@ export default function Leases(props) {
 function LeaseCard(props) {
   const leaseData = props.data;  
 
-  // console.log("leaseData - ", leaseData);
+  console.log("ROHIT - 576 - leaseData - ", leaseData);
   
   return (
     <Box
@@ -588,14 +588,13 @@ function LeaseCard(props) {
       <Box
         sx={{
           width: "10%",
-          backgroundColor: "#FFFFFF",
+          backgroundColor: leaseData[0]?.lease_status === "ACTIVE M2M" ? "#FFC614" : "#F87C7A",
           borderRadius: "10px",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           paddingTop: "5px",
           paddingBottom: "10px",
-
           fontSize: "15px",
           color: "#160449",
         }}
