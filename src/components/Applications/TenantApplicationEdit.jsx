@@ -999,6 +999,10 @@ export default function TenantApplicationEdit(props) {
         leaseApplicationData.append("lease_end_notice_period", currentLease.lease_end_notice_period ? currentLease.lease_end_notice_period : 30);
       }
 
+      if(currentLease != null) {
+        leaseApplicationData.append("lease_m2m", currentLease.lease_m2m ? currentLease.lease_m2m : 0);
+      }
+
       // console.log("we are here -- ")
 
       // leaseApplicationData.forEach((value, key) => {
