@@ -195,9 +195,9 @@ const TenantDashboard = () => {
     if (reload === true) {
       fetchData();
 
-      if (selectedProperty) {
-        handleSelectProperty(selectedProperty);
-      }
+      // if (selectedProperty) {
+      //   handleSelectProperty(selectedProperty);
+      // }
       //fetchCashflowDetails();
       setReload(false);
     }
@@ -213,6 +213,15 @@ const TenantDashboard = () => {
       // console.log("first property", firstProperty);
       if (firstProperty) {
         setSelectedProperty(firstProperty);
+        handleSelectProperty(firstProperty);
+      }
+
+    }else if(selectedProperty){
+      // console.log("--DEBUG property - ", propertyListingData)
+      const firstProperty = propertyListingData.find((property) => property.property_uid === selectedProperty.property_id);
+      // console.log("first property", firstProperty);
+      if (firstProperty) {
+        setSelectedProperty(firstProperty)
         handleSelectProperty(firstProperty);
       }
     }
@@ -1348,7 +1357,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
               <Grid container item spacing={2} sx={{ marginTop: "3px", marginBottom: "5px" }}>
                 <Grid
                   item
-                  xs={6}
+                  xs={relatedLease?.lease_status === "RENEW PROCESSING" ? 4 : 6}
                   sx={{
                     display: "flex",
                     justifyContent: "center",
@@ -1387,7 +1396,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                   </Button>
                 </Grid>
 
-                {relatedLease?.lease_status === "RENEW NEW" ? (
+                {relatedLease?.lease_status === "RENEW NEW" || relatedLease?.lease_status === "RENEW PROCESSING" ? (
                   // <Button
                   //   variant='contained'
                   //   size='small'
@@ -1404,7 +1413,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                   // </Button>
                   <Grid
                     item
-                    xs={6}
+                    xs={relatedLease?.lease_status === "RENEW PROCESSING" ? 4 : 6}
                     sx={{
                       display: "flex",
                       justifyContent: "center",
@@ -1517,7 +1526,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                   // </Button>
                   <Grid
                     item
-                    xs={6}
+                    xs={relatedLease?.lease_status === "RENEW PROCESSING" ? 4 : 6}
                     sx={{
                       display: "flex",
                       justifyContent: "center",

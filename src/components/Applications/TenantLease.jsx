@@ -460,7 +460,9 @@ const TenantLease = () => {
   };
 
   useEffect(() => {
+
     const getLeaseFees = () => {
+      console.log(" -- DEBUG -- in fees - ", application)
       let feesList = [];
       if (
         application?.lease_status === "PROCESSING" ||
@@ -468,6 +470,7 @@ const TenantLease = () => {
         application?.lease_status === "ACTIVE" ||
         application?.lease_status === "ACTIVE M2M"
       ) {
+        
         feesList = JSON.parse(application?.lease_fees);
       } else if (application?.lease_status === "NEW" || application?.lease_status === "RENEW NEW") {
         feesList = initialFees(property, application);
@@ -944,6 +947,8 @@ const TenantLease = () => {
       setShowSpinner(true);
 
       const leaseApplicationFormData = new FormData();
+
+      console.log("---insdie DEBUG Lease fees - ", fees)
 
       leaseApplicationFormData.append("lease_uid", application.lease_uid);
       leaseApplicationFormData.append("lease_status", "PROCESSING");

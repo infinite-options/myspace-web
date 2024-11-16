@@ -37,7 +37,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import GenericDialog from "../GenericDialog";
-import { json } from "react-router-dom";
+import { json, Navigate } from "react-router-dom";
 
 export default function TenantApplicationEdit(props) {
   const { getList } = useContext(ListsContext);
@@ -689,15 +689,19 @@ export default function TenantApplicationEdit(props) {
             // showSnackbar("Your lease application has been successfully updated.", "success");
             openDialog("Success", `Your lease application has been successfully updated`, "success");
             setShowSpinner(false);
-            setIsReload((prev) => !prev);
+            // setIsReload((prev) => !prev);
 
             if (props.from === "PropertyInfo") {
-              props.setReload((prev) => !prev);
               props.setRightPane({ type: "listings" });
+              // props.setReload((prev) => !prev);
             } else {
-              props.setReload((prev) => !prev);
-              props.setRightPane("");
+              // props.setRightPane("");
+              // props.setReload((prev) => !prev);
             }
+
+            // console.log("--DEBUG--- ")
+            props.setReload((prev) => !prev);
+            // Navigate("/tenantDashboard")
           })
           .catch((error) => {
             setShowSpinner(false);
@@ -871,9 +875,11 @@ export default function TenantApplicationEdit(props) {
       //navigate("/listings"); // send success data back to the propertyInfo page
       if (props.from === "PropertyInfo") {
         props.setRightPane({ type: "listings" });
+        props.setReload((prev) => !prev);
         console.log("lease set right pane");
       } else {
-        props.setRightPane("");
+        // props.setRightPane("");
+        props.setReload((prev) => !prev);
         console.log("set right pane to nothing");
       }
     });
@@ -1010,32 +1016,67 @@ export default function TenantApplicationEdit(props) {
         body: leaseApplicationData,
       });
 
-      const annoucementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          announcement_title: "New Tenant Application",
-          announcement_msg: "You have a new tenant application for your property",
-          announcement_sender: getProfileId(),
-          announcement_date: date.toDateString(),
-          announcement_properties: JSON.stringify(receiverPropertyMapping),
-          announcement_mode: "LEASE",
-          announcement_receiver: [property.contract_business_id],
-          announcement_type: ["Email", "Text"],
-        }),
-      });
+      if (leaseApplicationResponse.ok) { 
 
-      Promise.all([annoucementsResponse, leaseApplicationResponse]).then(() => {
+        props.setReload((prev) => !prev); 
+        
         if (props.from === "PropertyInfo") {
-          props.setReload((prev) => !prev);
           props.setRightPane({ type: "listings" });
-        } else {
-          props.setReload((prev) => !prev);
-          props.setRightPane("");
         }
-      });
+
+        const annoucementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            announcement_title: "New Tenant Application",
+            announcement_msg: "You have a new tenant application for your property",
+            announcement_sender: getProfileId(),
+            announcement_date: date.toDateString(),
+            announcement_properties: JSON.stringify(receiverPropertyMapping),
+            announcement_mode: "LEASE",
+            announcement_receiver: [property.contract_business_id],
+            announcement_type: ["Email", "Text"],
+          }),
+        });
+    
+        if (annoucementsResponse.ok) {
+          
+        } else {
+          console.log("Failed to send announcements.");
+        }
+
+      } else {
+        console.log("Failed to process lease application.");
+      }
+
+      // const annoucementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({
+      //     announcement_title: "New Tenant Application",
+      //     announcement_msg: "You have a new tenant application for your property",
+      //     announcement_sender: getProfileId(),
+      //     announcement_date: date.toDateString(),
+      //     announcement_properties: JSON.stringify(receiverPropertyMapping),
+      //     announcement_mode: "LEASE",
+      //     announcement_receiver: [property.contract_business_id],
+      //     announcement_type: ["Email", "Text"],
+      //   }),
+      // });
+
+      // Promise.all([annoucementsResponse, leaseApplicationResponse]).then(() => {
+      //   if (props.from === "PropertyInfo") {
+      //     props.setReload((prev) => !prev);
+      //     props.setRightPane({ type: "listings" });
+      //   } else {
+      //     props.setReload((prev) => !prev);
+      //     // props.setRightPane("");
+      //   }
+      // });
     } catch (error) {
       console.error("Error submitting application:", error);
       alert("We were unable to send the notification through text, but a notification was sent through the app.");
