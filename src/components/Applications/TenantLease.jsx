@@ -148,7 +148,7 @@ const TenantLease = () => {
   const { getProfileId } = useUser();
   const { state } = useLocation();
   const { page, application, property, managerInitiatedRenew = false } = state;
-  const { getList, dataLoaded, } = useContext(ListsContext);
+  const { getList, dataLoaded } = useContext(ListsContext);
   const feeFrequencies = getList("frequency");
   console.log("Property: ", property);
   console.log("Application: ", application);
@@ -156,7 +156,7 @@ const TenantLease = () => {
   // Intermediate variables to calculate the initial dates
   let initialStartDate, initialEndDate, initialMoveInDate;
   console.log("158 - In Tenant Lease -  page - ", page);
-  if (page === "create_lease" || page === "refer_tenant") {    
+  if (page === "create_lease" || page === "refer_tenant") {
     initialStartDate = dayjs();
     // initialEndDate = dayjs().add(1, "year").subtract(1, "day");
     initialEndDate = property.lease_end ? dayjs(property.lease_end) : dayjs().add(1, "year").subtract(1, "day");
@@ -164,11 +164,13 @@ const TenantLease = () => {
   } else if (page === "edit_lease") {
     initialStartDate = application.lease_start ? dayjs(application.lease_start) : dayjs();
     initialEndDate = application.lease_end ? dayjs(application.lease_end) : dayjs().add(1, "year").subtract(1, "day");
-    initialMoveInDate = application.lease_move_in_date ? dayjs(application.lease_move_in_date) : dayjs();    
+    initialMoveInDate = application.lease_move_in_date ? dayjs(application.lease_move_in_date) : dayjs();
   } else if (page === "renew_lease") {
     // Calculate the duration between lease_start and lease_end
-    const leaseStartDate = dayjs(property.lease_start);
-    const leaseEndDate = dayjs(property.lease_end);
+    const oldDuration = dayjs(property.lease_end).diff(dayjs(property.lease_start), "day"); // Duration in days
+    const leaseStartDate = dayjs(property.lease_end).add(1, "day");
+    const leaseEndDate = leaseStartDate.add(oldDuration, "day");
+    // const leaseEndDate = leaseStartDate + (dayjs(property.lease_end) - dayjs(property.lease_start));
     console.log("In Tenant Lease leaseStartDate", leaseStartDate);
 
     const duration = leaseEndDate.diff(leaseStartDate, "day"); // Duration in days
@@ -240,18 +242,17 @@ const TenantLease = () => {
   const [states, setStates] = useState([]);
   const [utilityNames, setUtilityNames] = useState([]);
   const [utilityEntities, setUtilityEntities] = useState([]);
-  const [utilitiesMap, setUtilitiesMap] = useState(new Map()); 
+  const [utilitiesMap, setUtilitiesMap] = useState(new Map());
   const [entitiesMap, setEntitiesMap] = useState(new Map());
-  const [reverseUtilitiesMap, setReverseUtilitiesMap] = useState(new Map()); 
+  const [reverseUtilitiesMap, setReverseUtilitiesMap] = useState(new Map());
   const [reverseEntitiesMap, setReverseEntitiesMap] = useState(new Map());
   const [keysNotInUtilitiesMap, setKeysNotInUtilitiesMap] = useState([]);
-  
+
   const [isDefaultUtilities, setIsDefaultUtilities] = useState(false);
   const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
   const [newUtilitiesPaidBy, setNewUtilitiesPaidBy] = useState({});
   const [hasUtilitiesChanges, setHasUtilitiesChanges] = useState(false);
   const [addUtilityAnchorElement, setAddUtilityAnchorElement] = useState(null);
-  
 
   const [modifiedData, setModifiedData] = useState([]); // not being
 
@@ -287,7 +288,6 @@ const TenantLease = () => {
 
     // console.log("278 - names - ", names)
     setUtilitiesMap(names);
-
   }, [utilityNames]);
 
   useEffect(() => {
@@ -298,21 +298,18 @@ const TenantLease = () => {
 
     // console.log("278 - entities - ", entities)
     setEntitiesMap(entities);
-
   }, [utilityEntities]);
 
   useEffect(() => {
     const reverseMap = new Map(Array.from(utilitiesMap ? utilitiesMap : [], ([key, value]) => [value, key]));
     // console.log("296 - reverseMap - ", reverseMap)
     setReverseUtilitiesMap(reverseMap);
-
   }, [utilitiesMap]);
 
   useEffect(() => {
     const reverseMap = new Map(Array.from(entitiesMap ? entitiesMap : [], ([key, value]) => [value, key]));
     // console.log("303 - reverseMap - ", reverseMap)
     setReverseEntitiesMap(reverseMap);
-
   }, [entitiesMap]);
 
   useEffect(() => {
@@ -331,7 +328,6 @@ const TenantLease = () => {
     setStates(states);
     setUtilityNames(utilNames);
     setUtilityEntities(utilEntities);
-
   };
 
   const defaultUtilities = {
@@ -366,8 +362,6 @@ const TenantLease = () => {
 
   // const reverseUtilitiesMap = new Map(Array.from(utilitiesMap, ([key, value]) => [value, key]));
   // const reverseEntitiesMap = new Map(Array.from(entitiesMap, ([key, value]) => [value, key]));
-
-  
 
   // useEffect(() => {
   //   console.log("newUtilitiesPaidBy - ", newUtilitiesPaidBy);
@@ -468,7 +462,12 @@ const TenantLease = () => {
   useEffect(() => {
     const getLeaseFees = () => {
       let feesList = [];
-      if (application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "ACTIVE"  || application?.lease_status === "ACTIVE M2M") {
+      if (
+        application?.lease_status === "PROCESSING" ||
+        application?.lease_status === "RENEW PROCESSING" ||
+        application?.lease_status === "ACTIVE" ||
+        application?.lease_status === "ACTIVE M2M"
+      ) {
         feesList = JSON.parse(application?.lease_fees);
       } else if (application?.lease_status === "NEW" || application?.lease_status === "RENEW NEW") {
         feesList = initialFees(property, application);
@@ -545,12 +544,12 @@ const TenantLease = () => {
 
   useEffect(() => {
     // console.log("543 - dataLoaded - ", dataLoaded);
-    if(dataLoaded === true){
+    if (dataLoaded === true) {
       getListDetails();
-    }    
-  }, [dataLoaded, getList,]);
+    }
+  }, [dataLoaded, getList]);
 
-  useEffect(() => {            
+  useEffect(() => {
     // console.log("551 - entitiesMap - ", entitiesMap);
     // console.log("551 - utilitiesMap - ", utilitiesMap);
     //*************************************UTILITIES********************************************************* */
@@ -572,9 +571,7 @@ const TenantLease = () => {
       setIsDefaultUtilities(true);
     }
     //******************************************************************************************************* */
-  }, [utilitiesObject, utilitiesMap, entitiesMap,]);
-
-
+  }, [utilitiesObject, utilitiesMap, entitiesMap]);
 
   // const addFeeRow = () => {
   //   setFees((prev) => [
@@ -2281,7 +2278,7 @@ const TenantLease = () => {
           >
             {application?.lease_status === "NEW" ? "Create Lease" : ""}
             {application?.lease_status === "PROCESSING" ? "Modify Lease" : ""}
-            {(application?.lease_status === "ACTIVE" || application?.lease_status === "ACTIVE M2M") ? "Renew Lease" : ""}
+            {application?.lease_status === "ACTIVE" || application?.lease_status === "ACTIVE M2M" ? "Renew Lease" : ""}
           </Button>
         </Grid>
       </Box>
