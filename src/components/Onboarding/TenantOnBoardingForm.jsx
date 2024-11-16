@@ -1021,10 +1021,13 @@ const closeDialog = () => {
           //     profileFormData.append("tenant_documents_details", JSON.stringify(documentsDetails));
           //   }
           // } else {
-          if(item.key !== "tenant_ssn"){
-            profileFormData.append(item.key, JSON.stringify(item.value));
-          }else{
+          if(item.key !== "tenant_income_1" && item.key !== "tenant_employment" && item.key !== 'tenant_adult_occupants' &&
+          item.key !== 'tenant_children_occupants' &&
+          item.key !== 'tenant_pet_occupants' &&
+          item.key !== 'tenant_vehicle_info'){
             profileFormData.append(item.key, item.value);
+          }else{
+            profileFormData.append(item.key, JSON.stringify(item.value));
           }
           // }
         });
@@ -1119,6 +1122,7 @@ const closeDialog = () => {
         setDialogMessage("Your profile has been successfully updated.");
         setDialogSeverity("success");
         setModifiedData([]);
+        setuploadedFiles([]);
         handleUpdate();
         setShowSpinner(false);
       } else {
