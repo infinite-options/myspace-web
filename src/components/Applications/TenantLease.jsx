@@ -2278,7 +2278,9 @@ const TenantLease = () => {
           >
             {application?.lease_status === "NEW" ? "Create Lease" : ""}
             {application?.lease_status === "PROCESSING" ? "Modify Lease" : ""}
-            {application?.lease_status === "ACTIVE" || application?.lease_status === "ACTIVE M2M" ? "Renew Lease" : ""}
+            {application?.lease_status === "ACTIVE" || application?.lease_status === "ACTIVE M2M" ? "Renew Lease" : ""}            
+            {application?.lease_status === "RENEW NEW" ? "Create Lease Renewal" : ""}
+            {application?.lease_status === "RENEW PROCESSING" ? "Modify Lease Renewal" : ""}
           </Button>
         </Grid>
       </Box>
