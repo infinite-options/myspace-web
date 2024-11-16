@@ -100,7 +100,13 @@ const TenantApplicationNav = (props) => {
   const handleRejectLease = async () => {
     const leaseApplicationFormData = new FormData();
     leaseApplicationFormData.append("lease_uid", application.lease_uid);
-    leaseApplicationFormData.append("lease_status", "REJECTED");
+    
+    // leaseApplicationFormData.append("lease_status", "REJECTED");
+    if(application.lease_status === "NEW"){
+      leaseApplicationFormData.append("lease_status", "REJECTED");
+    } else { // lease_status === RENEW NEW
+      leaseApplicationFormData.append("lease_status", "RENEW REJECTED");
+    }    
 
     setShowSpinner(true);
     await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`, {
