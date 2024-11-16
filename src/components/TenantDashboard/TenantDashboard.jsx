@@ -192,7 +192,7 @@ const TenantDashboard = () => {
   };
 
   useEffect(() => {
-    if (reload) {
+    if (reload === true) {
       fetchData();
 
       if (selectedProperty) {
@@ -227,7 +227,7 @@ const TenantDashboard = () => {
   }, [propertyListingData, leaseDetailsData, maintenanceRequestsNew, maintenanceStatus, announcements, paymentHistory, allBalanceDetails]);
 
   const handleSelectProperty = (property) => {
-    if(property === null){
+    if (property === null) {
       setLeaseDetails(null);
       setRelatedLease(null);
       return;
@@ -255,7 +255,7 @@ const TenantDashboard = () => {
 
         const activeLease = leasesForProperty.find((lease) => lease.lease_status === "ACTIVE");
         // const renewalLease = leasesForProperty.find(lease => (lease.lease_status === "RENEW NEW" || lease.lease_status === "RENEW WITHDRAWN" || lease.lease_status === "RENEW PROCESSING"));
-        const renewalLease = leasesForProperty.find(lease => (lease.lease_status === "RENEW NEW" || lease.lease_status === "RENEW PROCESSING"));
+        const renewalLease = leasesForProperty.find((lease) => lease.lease_status === "RENEW NEW" || lease.lease_status === "RENEW PROCESSING");
 
         setLeaseDetails(activeLease || null);
         setRelatedLease(renewalLease || null);
