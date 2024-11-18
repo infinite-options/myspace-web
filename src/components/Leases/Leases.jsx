@@ -155,10 +155,9 @@ export default function Leases(props) {
     // const fetchData = res.data["Lease_Details"].result;
     // console.log("leases fetchData", fetchData);
 
-    
-    const fetchData = props.leaseDetails?.filter(lease => lease.lease_status === "ACTIVE");    
-    const leasesM2M = props.leaseDetails?.filter(lease => lease.lease_status === "ACTIVE M2M");    
-    const leasesEnded = props.leaseDetails?.filter(lease => lease.lease_status === "ENDED");    
+    const fetchData = props.leaseDetails?.filter((lease) => lease.lease_status === "ACTIVE");
+    const leasesM2M = props.leaseDetails?.filter((lease) => lease.lease_status === "ACTIVE M2M");
+    const leasesEnded = props.leaseDetails?.filter((lease) => lease.lease_status === "ENDED");
     // console.log("leasesM2M - ", leasesM2M);
     // console.log("leasesEnded - ", leasesEnded);
     setM2MLeases(leasesM2M);
@@ -188,8 +187,7 @@ export default function Leases(props) {
       const currentDate = new Date();
       const leaseDate = new Date(lease.lease_end);
       // console.log("leaseDate - ", leaseDate);
-      if (leaseDate.getFullYear() > currentDate.getFullYear() ||
-        (leaseDate.getFullYear() === currentDate.getFullYear() && leaseDate.getMonth() >= currentDate.getMonth())) {
+      if (leaseDate.getFullYear() > currentDate.getFullYear() || (leaseDate.getFullYear() === currentDate.getFullYear() && leaseDate.getMonth() >= currentDate.getMonth())) {
         const date = lease.lease_end.slice(0, 7);
         console.log("Date after slice: ", date);
         if (leases.get(date) === undefined) {
@@ -230,15 +228,15 @@ export default function Leases(props) {
     setLeaseDate(leases);
     const firstEntry = [...leases.entries()][0];
     const firstLeaseUid = firstEntry ? firstEntry[1][0].lease_uid : null;
-    const prevSelectedLeaseId = sessionStorage.getItem('selectedLeaseId');
-    console.log('prevSelectedLeaseId', prevSelectedLeaseId);
-    if(prevSelectedLeaseId){
+    const prevSelectedLeaseId = sessionStorage.getItem("selectedLeaseId");
+    console.log("prevSelectedLeaseId", prevSelectedLeaseId);
+    if (prevSelectedLeaseId) {
       props.setSelectedLeaseId(prevSelectedLeaseId);
     } else {
       props.setSelectedLeaseId(firstLeaseUid);
       sessionStorage.setItem("selectedLeaseId", firstLeaseUid);
     }
-    // console.log('after sort', firstLeaseUid); 
+    // console.log('after sort', firstLeaseUid);
     setMoveoutCount(moveoutNum);
     setOriginalLeaseDate(leases); // Save original lease dates
     setShowSpinner(false);
@@ -246,13 +244,15 @@ export default function Leases(props) {
   }, [fetchData]);
 
   return (
-    <Box sx={{
-      display: "flex",
-      justifyContent: "center",
-      width: "100%", // Take up full screen width
-      // minHeight: "100vh", // Set the Box height to full height
-      height: "100%",
-    }}>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        width: "100%", // Take up full screen width
+        // minHeight: "100vh", // Set the Box height to full height
+        height: "100%",
+      }}
+    >
       <Paper
         sx={{
           marginTop: "10px",
@@ -262,7 +262,7 @@ export default function Leases(props) {
         }}
       >
         <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-          <CircularProgress color="inherit" />
+          <CircularProgress color='inherit' />
         </Backdrop>
         <Box
           sx={{
@@ -286,29 +286,39 @@ export default function Leases(props) {
               paddingRight: "0px",
             }}
           >
-            {isMobile && (<Box component='span' display='flex' justifyContent='flex-start' alignItems='flex-start' position='relative'>
-              <Button onClick={() => {navigate(-1)}}>
-                <ArrowBackIcon
-                  sx={{
-                    color: "#160449",
-                    fontSize: "25px",
-                    margin: "5px",
+            {isMobile && (
+              <Box component='span' display='flex' justifyContent='flex-start' alignItems='flex-start' position='relative'>
+                <Button
+                  onClick={() => {
+                    navigate(-1);
                   }}
-                />
-              </Button>
-            </Box>)}
-            <Box 
-              component='span' 
+                >
+                  <ArrowBackIcon
+                    sx={{
+                      color: "#160449",
+                      fontSize: "25px",
+                      margin: "5px",
+                    }}
+                  />
+                </Button>
+              </Box>
+            )}
+            <Box
+              component='span'
               sx={{
                 color: "#160449",
                 fontSize: "20px",
                 fontWeight: "bold",
-                paddingRight: isMobile ? "40px" : "0px" 
-              }} 
-              display='flex' justifyContent='center' alignItems='center' position='relative' flex={2}
+                paddingRight: isMobile ? "40px" : "0px",
+              }}
+              display='flex'
+              justifyContent='center'
+              alignItems='center'
+              position='relative'
+              flex={2}
             >
-              Leases Expiring            
-            </Box >
+              Leases Expiring
+            </Box>
           </Stack>
           <Box
             sx={{
@@ -334,14 +344,14 @@ export default function Leases(props) {
                   marginRight: "2px",
                 }}
               >
-                <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="3.125" y="6.25" width="18.75" height="15.625" rx="2" stroke="#3D5CAC" strokeWidth="2" />
+                <svg width='25' height='25' viewBox='0 0 25 25' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                  <rect x='3.125' y='6.25' width='18.75' height='15.625' rx='2' stroke='#3D5CAC' strokeWidth='2' />
                   <path
-                    d="M3.125 10.25C3.125 8.36438 3.125 7.42157 3.71079 6.83579C4.29657 6.25 5.23938 6.25 7.125 6.25H17.875C19.7606 6.25 20.7034 6.25 21.2892 6.83579C21.875 7.42157 21.875 8.36438 21.875 10.25V10.4167H3.125V10.25Z"
-                    fill="#3D5CAC"
+                    d='M3.125 10.25C3.125 8.36438 3.125 7.42157 3.71079 6.83579C4.29657 6.25 5.23938 6.25 7.125 6.25H17.875C19.7606 6.25 20.7034 6.25 21.2892 6.83579C21.875 7.42157 21.875 8.36438 21.875 10.25V10.4167H3.125V10.25Z'
+                    fill='#3D5CAC'
                   />
-                  <path d="M7.29166 3.125L7.29166 6.25" stroke="#3D5CAC" strokeWidth="2" strokeLinecap="round" />
-                  <path d="M17.7083 3.125L17.7083 6.25" stroke="#3D5CAC" strokeWidth="2" strokeLinecap="round" />
+                  <path d='M7.29166 3.125L7.29166 6.25' stroke='#3D5CAC' strokeWidth='2' strokeLinecap='round' />
+                  <path d='M17.7083 3.125L17.7083 6.25' stroke='#3D5CAC' strokeWidth='2' strokeLinecap='round' />
                 </svg>
               </Box>
               <Box>Next 1 Year</Box>
@@ -363,7 +373,7 @@ export default function Leases(props) {
                       marginRight: "2px",
                     }}
                   >
-                    <img src={AllOwnerIcon} alt="Owner Icon" style={{ width: "22px", height: "22px" }} />
+                    <img src={AllOwnerIcon} alt='Owner Icon' style={{ width: "22px", height: "22px" }} />
                   </Box>
 
                   <Box>All Owners</Box>
@@ -386,12 +396,12 @@ export default function Leases(props) {
                   marginRight: "2px",
                 }}
               >
-                <svg width="25" height="26" viewBox="0 0 25 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width='25' height='26' viewBox='0 0 25 26' fill='none' xmlns='http://www.w3.org/2000/svg'>
                   <path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M5.49423 10.97C5.20833 11.6165 5.20833 12.3519 5.20833 13.8228V18.4166C5.20833 20.4594 5.20833 21.4807 5.81852 22.1153C6.37694 22.6961 7.24682 22.7454 8.89583 22.7495V17.3333C8.89583 16.2201 9.77331 15.25 10.9375 15.25H14.0625C15.2267 15.25 16.1042 16.2201 16.1042 17.3333V22.7495C17.7532 22.7454 18.6231 22.6961 19.1815 22.1153C19.7917 21.4807 19.7917 20.4594 19.7917 18.4166V13.8228C19.7917 12.3519 19.7917 11.6165 19.5058 10.97C19.2199 10.3236 18.6829 9.84493 17.6091 8.88768L16.5674 7.9591C14.6265 6.22888 13.656 5.36377 12.5 5.36377C11.344 5.36377 10.3735 6.22888 8.43255 7.9591L7.39088 8.88768C6.31704 9.84493 5.78012 10.3236 5.49423 10.97ZM14.1042 22.7499V17.3333C14.1042 17.2974 14.091 17.2737 14.0782 17.2604C14.0719 17.2538 14.067 17.2512 14.0653 17.2505L14.0652 17.2504C14.0644 17.2501 14.0642 17.25 14.0625 17.25H10.9375C10.9358 17.25 10.9355 17.2501 10.9348 17.2504L10.9347 17.2505C10.933 17.2512 10.9281 17.2538 10.9218 17.2604C10.909 17.2737 10.8958 17.2974 10.8958 17.3333V22.7499H14.1042Z"
-                    fill="#3D5CAC"
+                    fillRule='evenodd'
+                    clipRule='evenodd'
+                    d='M5.49423 10.97C5.20833 11.6165 5.20833 12.3519 5.20833 13.8228V18.4166C5.20833 20.4594 5.20833 21.4807 5.81852 22.1153C6.37694 22.6961 7.24682 22.7454 8.89583 22.7495V17.3333C8.89583 16.2201 9.77331 15.25 10.9375 15.25H14.0625C15.2267 15.25 16.1042 16.2201 16.1042 17.3333V22.7495C17.7532 22.7454 18.6231 22.6961 19.1815 22.1153C19.7917 21.4807 19.7917 20.4594 19.7917 18.4166V13.8228C19.7917 12.3519 19.7917 11.6165 19.5058 10.97C19.2199 10.3236 18.6829 9.84493 17.6091 8.88768L16.5674 7.9591C14.6265 6.22888 13.656 5.36377 12.5 5.36377C11.344 5.36377 10.3735 6.22888 8.43255 7.9591L7.39088 8.88768C6.31704 9.84493 5.78012 10.3236 5.49423 10.97ZM14.1042 22.7499V17.3333C14.1042 17.2974 14.091 17.2737 14.0782 17.2604C14.0719 17.2538 14.067 17.2512 14.0653 17.2505L14.0652 17.2504C14.0644 17.2501 14.0642 17.25 14.0625 17.25H10.9375C10.9358 17.25 10.9355 17.2501 10.9348 17.2504L10.9347 17.2505C10.933 17.2512 10.9281 17.2538 10.9218 17.2604C10.909 17.2737 10.8958 17.2974 10.8958 17.3333V22.7499H14.1042Z'
+                    fill='#3D5CAC'
                   />
                 </svg>
               </Box>
@@ -414,8 +424,8 @@ export default function Leases(props) {
                 fontWeight: "bold",
               }}
               expandIcon={
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M3.5 5.25L7 8.75L10.5 5.25" stroke="#F2F2F2" strokeWidth="2.5" />
+                <svg width='14' height='14' viewBox='0 0 14 14' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                  <path d='M3.5 5.25L7 8.75L10.5 5.25' stroke='#F2F2F2' strokeWidth='2.5' />
                 </svg>
               }
             >
@@ -461,61 +471,53 @@ export default function Leases(props) {
             })}
           </Accordion>
           {[...leaseDate.keys()].map((date, i) => {
-            const leases = leaseDate.get(date);            
+            const leases = leaseDate.get(date);
             let tabColor = "#FFFFFF";
             // const endMonth = date.split("-")[1];
             const [endYear, endMonth] = date.split("-").map(Number);
             // console.log("lease endDate ", date, Number(endMonth), Number(currentMonth))
             // if (Number(currentMonth) === Number(endMonth)) {
-            if(currentYear === endYear && currentMonth === endMonth){
+            if (currentYear === endYear && currentMonth === endMonth) {
               tabColor = "#F87C7A";
-            } else if (currentYear === endYear && currentMonth + 1 === endMonth || 
-              (currentMonth === 12 && currentYear + 1 === endYear && endMonth === 1)) {
+            } else if ((currentYear === endYear && currentMonth + 1 === endMonth) || (currentMonth === 12 && currentYear + 1 === endYear && endMonth === 1)) {
               tabColor = "#FFC614";
             }
-            return <LeaseMonth key={i} data={[date, leases]} style={[tabColor]} setSelectedLeaseId={props.setSelectedLeaseId} setViewRHS={props.setViewRHS}/>;
+            return <LeaseMonth key={i} data={[date, leases]} style={[tabColor]} setSelectedLeaseId={props.setSelectedLeaseId} setViewRHS={props.setViewRHS} />;
           })}
-          {
-            M2MLeases?.length > 0 && (
+          {M2MLeases?.length > 0 && (
             <Grid container item>
-              <Grid item xs={12}> 
+              <Grid item xs={12}>
                 <Typography
                   sx={{
-                    fontWeight: 'bold',
+                    fontWeight: "bold",
                   }}
                 >
                   Month-to-Month Leases:
                 </Typography>
-
               </Grid>
-              <Grid container item xs={12}>                
-                <LeaseCard data={M2MLeases}  setSelectedLeaseId={props.setSelectedLeaseId} setViewRHS={props.setViewRHS}/>                                    
+              <Grid container item xs={12}>
+                <LeaseCard data={M2MLeases} setSelectedLeaseId={props.setSelectedLeaseId} setViewRHS={props.setViewRHS} />
               </Grid>
-
             </Grid>
-            )
-          }
-          {
-            endedLeases?.length > 0 && (
+          )}
+          {endedLeases?.length > 0 && (
             <Grid container item>
-              <Grid item xs={12}> 
+              <Grid item xs={12}>
                 <Typography
                   sx={{
-                    fontWeight: 'bold',
+                    fontWeight: "bold",
                   }}
                 >
                   Ended Leases:
                 </Typography>
-
               </Grid>
-              <Grid container item xs={12}>                
-                <LeaseCard data={endedLeases}  setSelectedLeaseId={props.setSelectedLeaseId} setViewRHS={props.setViewRHS}/>                                    
+              <Grid container item xs={12}>
+                <LeaseCard data={endedLeases} setSelectedLeaseId={props.setSelectedLeaseId} setViewRHS={props.setViewRHS} />
               </Grid>
-
             </Grid>
           )}
         </Box>
-        <Modal open={open} onClose={handle_property_checkbox_close} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+        <Modal open={open} onClose={handle_property_checkbox_close} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
           <Box
             sx={{
               position: "absolute",
@@ -540,7 +542,7 @@ export default function Leases(props) {
             </button>
           </Box>
         </Modal>
-        <Modal open={owner_checkbox_open} onClose={handle_owner_checkbox_close} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+        <Modal open={owner_checkbox_open} onClose={handle_owner_checkbox_close} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
           <Box
             sx={{
               position: "absolute",
@@ -571,14 +573,14 @@ export default function Leases(props) {
 }
 
 function LeaseCard(props) {
-  const leaseData = props.data;  
+  const leaseData = props.data;
 
   // console.log("leaseData - ", leaseData);
-  
+
   return (
     <Box
       sx={{
-        width: '100%',
+        width: "100%",
         display: "flex",
         flexDirection: "row",
         marginBottom: "20px",
@@ -588,7 +590,7 @@ function LeaseCard(props) {
       <Box
         sx={{
           width: "10%",
-          backgroundColor: "#FFFFFF",
+          backgroundColor: leaseData[0]?.lease_status === "ACTIVE M2M" ? "#FFC614" : "#F87C7A",
           borderRadius: "10px",
           display: "flex",
           flexDirection: "column",
@@ -599,7 +601,7 @@ function LeaseCard(props) {
           fontSize: "15px",
           color: "#160449",
         }}
-      >        
+      >
         <Box
           sx={{
             fontWeight: "bold",
@@ -609,7 +611,7 @@ function LeaseCard(props) {
         >
           {leaseData?.length}
         </Box>
-      </Box>      
+      </Box>
       <Box
         sx={{
           display: "flex",
@@ -618,7 +620,7 @@ function LeaseCard(props) {
         }}
       >
         {leaseData?.map((lease, i) => (
-          <LeaseComponent key={i} data={lease} setSelectedLeaseId={props.setSelectedLeaseId} setViewRHS={props.setViewRHS}/>
+          <LeaseComponent key={i} data={lease} setSelectedLeaseId={props.setSelectedLeaseId} setViewRHS={props.setViewRHS} />
         ))}
       </Box>
     </Box>
@@ -695,7 +697,7 @@ function LeaseMonth(props) {
         }}
       >
         {leaseData.map((lease, i) => (
-          <LeaseComponent key={i} data={lease} setSelectedLeaseId={props.setSelectedLeaseId} setViewRHS={props.setViewRHS}/>
+          <LeaseComponent key={i} data={lease} setSelectedLeaseId={props.setSelectedLeaseId} setViewRHS={props.setViewRHS} />
         ))}
       </Box>
     </Box>
@@ -717,19 +719,19 @@ function LeaseComponent(props) {
   }
   function getLeaseStatusIcon(status) {
     const moveoutIcon = (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M19.5 6.5L6.5 19.5" stroke="#3D5CAC" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M6.5 6.5L19.5 19.5" stroke="#3D5CAC" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <svg width='26' height='26' viewBox='0 0 26 26' fill='none' xmlns='http://www.w3.org/2000/svg'>
+        <path d='M19.5 6.5L6.5 19.5' stroke='#3D5CAC' strokeWidth='2.5' strokeLinecap='round' strokeLinejoin='round' />
+        <path d='M6.5 6.5L19.5 19.5' stroke='#3D5CAC' strokeWidth='2.5' strokeLinecap='round' strokeLinejoin='round' />
       </svg>
     );
     const renewIcon = (
-      <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M5.20833 14.5833L8.60809 17.1331C9.03678 17.4547 9.64272 17.3811 9.98205 16.9664L18.75 6.25" stroke="#3D5CAC" strokeWidth="2.5" strokeLinecap="round" />
+      <svg width='25' height='25' viewBox='0 0 25 25' fill='none' xmlns='http://www.w3.org/2000/svg'>
+        <path d='M5.20833 14.5833L8.60809 17.1331C9.03678 17.4547 9.64272 17.3811 9.98205 16.9664L18.75 6.25' stroke='#3D5CAC' strokeWidth='2.5' strokeLinecap='round' />
       </svg>
     );
     const nullIcon = (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1" y="1" width="18" height="18" rx="4" stroke="#3D5CAC" strokeWidth="2" />
+      <svg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'>
+        <rect x='1' y='1' width='18' height='18' rx='4' stroke='#3D5CAC' strokeWidth='2' />
       </svg>
     );
     let outputIcon;
@@ -766,9 +768,9 @@ function LeaseComponent(props) {
           //     lease_id: leaseData.lease_uid,
           //   },
           // });
-          console.log('click event', props.setSelectedLeaseId);
-          if(props.setViewRHS){
-            props.setViewRHS(true)
+          console.log("click event", props.setSelectedLeaseId);
+          if (props.setViewRHS) {
+            props.setViewRHS(true);
           }
           props.setSelectedLeaseId(leaseData.lease_uid);
           sessionStorage.setItem("selectedLeaseId", leaseData.lease_uid);

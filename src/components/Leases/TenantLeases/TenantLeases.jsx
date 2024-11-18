@@ -318,12 +318,15 @@ function TenantLeases(props) {
         body: leaseApplicationFormData,
       });
       const data = await response.json();
-      if (data.lease_update.code === 200) {
+      // if (data.lease_update.code === 200) {
+      if(response.ok){
         // alert("You have successfully Rejected the lease.");
         openDialog("Success",`You have successfully Rejected the lease`,"success");
         await sendAnnouncement();
-        props.setRightPane({ type: "", state: { property: property, lease: lease } });
+        // props.setRightPane({ type: "", state: { property: property, lease: lease } });
+        // console.log("--- DEBUD---- rejected")
         props.setReload((prev) => !prev);
+        // props.setRightPane("");
       } else {
         console.log(data);
       }
@@ -427,7 +430,7 @@ function TenantLeases(props) {
       });
       const data = await response.json();
       // console.log("409 - Data", data);
-      if (data.lease_docs.code === 200) {
+      if (response.ok) {
         // alert("You have successfully Accepted the lease.");
         openDialog("Success",`You have successfully Accepted the lease.`,"success");
         //don';t send announcemnt twice
@@ -435,7 +438,7 @@ function TenantLeases(props) {
           await sendRenewalStatus();
         }        
         await sendAnnouncement();
-        props.setRightPane({ type: "" });
+        // props.setRightPane("");
         props.setReload((prev) => !prev);
       } else {
         console.log(data);
