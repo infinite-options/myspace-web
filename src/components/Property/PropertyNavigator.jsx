@@ -681,6 +681,32 @@ export default function PropertyNavigator({
   const [dataGridKey, setDataGridKey] = useState(0);
   const [forceRender, setForceRender] = useState(false);
 
+  const getAppliances = async () => {
+    const headers = {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "*",
+      "Access-Control-Allow-Headers": "*",
+      "Access-Control-Allow-Credentials": "*",
+    };
+    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances/${propertyId}`)
+      .then((response) => {
+        // console.log(typeof (response.data.result));
+        // console.log(response.data.result);
+        const updatedData = response.data.result.map((appln) => {
+          const { list_item, list_uid, list_category, appliance_images, ...rest } = appln;
+          return {
+            appliance_item: list_item, appliance_type: list_uid, appliance_category: list_category,
+            appliance_images: JSON.parse(appliance_images), ...rest
+          };
+        });
+        console.log("updatedData", updatedData);
+        setAppliances(updatedData);
+      }).catch((err) => {
+        console.log(err);
+      })
+  }
+
+
   const addAppliance = async (appliance) => {
     // console.log("inside editOrUpdateAppliance", appliance);
     try {
@@ -705,6 +731,7 @@ export default function PropertyNavigator({
       //   console.log(pair[0]+ ', ' + pair[1]);
       // }
       let i = 0;
+      console.log('selectedimage', selectedImageList);
       if (selectedImageList.length > 0) {
         for (const file of selectedImageList) {
           // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
@@ -725,21 +752,25 @@ export default function PropertyNavigator({
         .post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
         .then((response) => {
           // Check if the response contains the `appliance_uid`
-          const newApplianceUID = response?.data?.appliance_uid;
+          const newApplianceUID = response?.data?.appliance_UID;
           if (newApplianceUID) {
+            if(selectedImageList.length == 0){
             // console.log("Data updated successfully", response);
             // showSnackbar("Your profile has been successfully updated.", "success");
             // handleUpdate();
-            console.log("Appliance befor", appliance);
-            console.log("applianceUIDToCategoryMap is %%", applianceUIDToCategoryMap);
+           // console.log("Appliance befor", appliance);
+            // console.log("applianceUIDToCategoryMap is %%", applianceUIDToCategoryMap);
             const applianceCategory = applianceUIDToCategoryMap[appliance.appliance_type];
-            console.log("Appliance is $$", applianceCategory);
-            setAppliances([...appliances, { ...appliance, appliance_uid: newApplianceUID }]);
+            // console.log("Appliance is $$", applianceCategory);
+            setAppliances([...appliances, { ...appliance, appliance_uid: newApplianceUID, appliance_item: applianceCategory }]);
+          } else {
+            getAppliances();
+          }
           }
           setShowSpinner(false);
           setSelectedImageList([]);
           handleClose();
-          window.location.reload(); //change here for alt referesh
+          // window.location.reload(); //change here for alt referesh
         })
         .catch((error) => {
           setShowSpinner(false);
@@ -783,7 +814,6 @@ export default function PropertyNavigator({
       };
 
       const changedFields = getAppliancesChanges();
-      console.log('Divya', changedFields, favImage);
       if (Object.keys(changedFields).length == 0 && selectedImageList.length === 0 && imagesTobeDeleted.length === 0) {
         console.log("No changes detected.");
         setShowSpinner(false);
@@ -799,16 +829,17 @@ export default function PropertyNavigator({
         applianceFormData.append("delete_images", JSON.stringify(imagesTobeDeleted));
       }
 
-      if(currentApplRow.appliance_images.length > 0){
+      if (currentApplRow.appliance_images.length > 0) {
         applianceFormData.append("appliance_images", JSON.stringify(currentApplRow.appliance_images));
       }
-      
+
       if (favImage != null) {
         applianceFormData.append("appliance_favorite_image", favImage);
       }
       console.log(favImage);
       let i = 0;
       for (const file of selectedImageList) {
+        console.log('file prop', file);
         let key = `img_${i++}`;
         if (file.file !== null) {
           applianceFormData.append(key, file.file);
@@ -835,16 +866,21 @@ export default function PropertyNavigator({
       axios
         .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
         .then((response) => {
-          setAppliances((prevAppliances) => {
-            const index = prevAppliances.findIndex((item) => item.appliance_uid === appliance.appliance_uid);
-            if (index !== -1) {
-              const updatedAppliances = [...prevAppliances];
-              updatedAppliances[index] = { ...appliance, appliance_favorite_image: favImage };
-              return updatedAppliances;
-            } else {
-              return prevAppliances;
+          if (selectedImageList.length === 0 && imagesTobeDeleted.length === 0) {
+            setAppliances((prevAppliances) => {
+              const index = prevAppliances.findIndex((item) => item.appliance_uid === appliance.appliance_uid);
+              if (index !== -1) {
+                const updatedAppliances = [...prevAppliances];
+                updatedAppliances[index] = { ...appliance, appliance_favorite_image: favImage };
+                return updatedAppliances;
+              } else {
+                return prevAppliances;
+              }
             }
-          });
+            )
+          } else {
+            getAppliances();
+          };
 
           setShowSpinner(false);
           setSelectedImageList([]);
@@ -995,7 +1031,11 @@ export default function PropertyNavigator({
             <IconButton onClick={() => handleInfoClick(params.row)}>
               <InfoIcon />
             </IconButton>
-            <IconButton onClick={() => handleEditClick(params.row)}>
+            <IconButton onClick={() => {
+              console.log("checking--", params.row);
+              console.log("checking--", typeof (params.row.appliance_images));
+              handleEditClick(params.row)
+            }}>
               <EditIcon />
             </IconButton>
             <IconButton onClick={() => handleDeleteClick(params.row.appliance_uid)}>
