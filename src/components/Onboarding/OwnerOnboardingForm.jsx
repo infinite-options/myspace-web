@@ -1032,6 +1032,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                         color: theme.typography.common.blue,
                         fontWeight: theme.typography.primary.fontWeight,
                         width: "100%",
+                        whiteSpace : 'nowrap',
                       }}
                     >
                       {isMobile ? "Zip" : "Zip Code"}
