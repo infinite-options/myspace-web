@@ -813,7 +813,7 @@ const PropertyCard = (props) => {
 //   const { getProfileId } = useUser();
   const { getProfileId, selectedRole } = useUser();
   const { defaultContractFees, allContracts, currentContractUID, currentContractPropertyUID, isChange, setIsChange, fetchContracts} = useContext(ManagementContractContext);  
-  console.log("PropertyCard - props - ", props);
+//   console.log("PropertyCard - props - ", props);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [propertyData, setPropertyData] = useState(props.data);
@@ -958,7 +958,6 @@ const PropertyCard = (props) => {
   }, [contractStartDate]);
 
   useEffect(() => {
-	console.log("props.data - ", props.data)
     setPropertyData(props.data);
   }, [props.data]);
 
@@ -1446,6 +1445,7 @@ const PropertyCard = (props) => {
     formData.append("contract_assigned_contacts", contractContactsJSONString);
 	formData.append("contract_business_id", getProfileId());
 	formData.append("contract_property_ids", JSON.stringify([currentContractPropertyUID]));
+	formData.append("contract_m2m", continueM2M);
 
 
 	if(isPreviousFileChange){
@@ -1574,7 +1574,10 @@ const PropertyCard = (props) => {
 			if(props.navigatingFrom && props.navigatingFrom === "PropertyForm"){
 				// navigate("/properties"); 					
 			} else if(props.navigatingFrom && props.navigatingFrom === "ManageContract" && props.handleBackBtn){
+				props.fetchContracts();
 				props.handleBackBtn();
+				// console.log(" inside property Card - 1577  - property uid - ", propertyData?.property_uid)
+				// navigate("/properties", {state: {currentProperty: propertyData?.property_uid, showRHS: "PropertyNavigator"}});
 			} 			
 			else {
 				navigate("/managerDashboard"); 
@@ -1892,7 +1895,11 @@ return (
 				</Grid>
 				<Grid item xs={12}>
 					<Typography sx={{color: '#160449', textAlign: 'center',}}>
-						{propertyOwnerName} <ChatIcon sx={{ fontSize: 16, color: '#3D5CAC' }} />
+						{propertyOwnerName} <ChatIcon onClick={()=>{
+								navigate("/managerCreateAnnouncement", { state: { ownerName: propertyOwnerName, selectOptions: "owners_by_name"} });
+							}} 
+							sx={{ fontSize: 16, color: '#3D5CAC', cursor: "pointer"}} 
+						/>
 					</Typography>					
 				</Grid>
 				
@@ -2053,7 +2060,7 @@ return (
 				
 
 			</Grid>
-			<Grid item container direction="row" xs={5} md={2.5} sx={{justifyContent: 'center', }}>
+			<Grid item container direction="col" xs={5} md={2.5} sx={{justifyContent: 'center', }}>
 				<Grid item xs={12}>
 					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
 						Start Date
@@ -2069,12 +2076,21 @@ return (
 							slots={{
 								openPickerIcon: CalendarIcon,
 							}}
-							slotProps={datePickerSlotProps}
+							slotProps={{
+								openPickerButton: {
+									sx: {
+									  marginRight: "0px",
+									  padding: '3px',
+									  width: "26px",
+									  height: "26px"
+									},
+								},
+								...datePickerSlotProps}}
 						/>
 					</LocalizationProvider>
 				</Grid>
 			</Grid>			
-			<Grid item container direction="row" xs={5} md={2.5} sx={{justifyContent: 'center', }}>
+			<Grid item container direction="col" xs={5} md={2.5} sx={{justifyContent: 'center', }}>
 				<Grid item xs={12}>
 					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
 						End Date
@@ -2090,7 +2106,17 @@ return (
 							slots={{
 								openPickerIcon: CalendarIcon,
 							}}              
-              				slotProps={datePickerSlotProps}
+							slotProps={{
+								openPickerButton: {
+									sx: {
+									  marginRight: "0px",
+									  padding: '3px',
+									  width: "26px",
+									  height: "26px"
+									},
+								},
+								...datePickerSlotProps
+							}}
 						/>
 					</LocalizationProvider>
 				</Grid>

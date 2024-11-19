@@ -11,7 +11,7 @@ import { Grid, Box, ThemeProvider, Radio, RadioGroup, FormControlLabel, Table, T
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import backButton from "../Payments/backIcon.png";
 // import AnnouncementPopUp from "./AnnouncementPopUp";
 import theme from "../../theme/theme";
@@ -21,6 +21,7 @@ import APIConfig from "../../utils/APIConfig";
 
 export default function ManagerCreateAnnouncement() {
   const { getProfileId } = useUser();
+  const location = useLocation();
   const [applicantsData, setApplicantsData] = useState([]);
   const [ownersData, setOwnersData] = useState([]);
   const [tenantsData, setTenantsData] = useState([]);
@@ -29,7 +30,7 @@ export default function ManagerCreateAnnouncement() {
   const [announcementMessage, setAnnouncementMessage] = useState("");
   const [announcementTypes, setAnnouncementTypes] = useState({ text: false, email: false });
 
-  const [selectedOption, setSelectedOption] = useState("tenants_by_name");
+  const [selectedOption, setSelectedOption] = useState(location?.state?.selectOptions ? location?.state?.selectOptions : "tenants_by_name");
 
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [propertyAddressesMap, setPropertyAddressesMap] = useState({});
@@ -147,7 +148,24 @@ export default function ManagerCreateAnnouncement() {
         return { ...owner, properties_list: ownerProperties };
       });
       const ownersWithSortedProperties = sortPropertiesList(ownersWithProperties);
+      // console.log("--- DEBUG -- inside managercreate announcement page - ", ownersWithSortedProperties)
       setOwnersData(ownersWithSortedProperties);
+
+      if(location?.state?.ownerName){
+        const [firstName, lastName] = location?.state?.ownerName.split(" ");
+  
+        const matchingOwner = ownersWithSortedProperties.find(
+          (owner) =>
+            owner.owner_first_name === firstName && owner.owner_last_name === lastName
+        );
+  
+        if (matchingOwner) {
+          setSelectedUsers((prevSelectedUsers) => [...prevSelectedUsers, matchingOwner]);
+        } else {
+          console.warn("Owner not found in the list");
+        }
+      }
+
 
       const propertyAddresses = {};
       properties.forEach((property) => {
