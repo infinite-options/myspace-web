@@ -273,6 +273,7 @@ export default function PropertyNavigator({
   const [showSpinner, setShowSpinner] = useState(false);
   const [contractsData, setContractsData] = useState(allContracts);
   const [activeContracts, setActiveContracts] = useState([]);
+  const [renewContracts, setRenewContracts] = useState([])
   const [contractsNewSent, setContractsNewSent] = useState(0);
   const [maintenanceReqData, setMaintenanceReqData] = useState([{}]);
   // console.log('Maintenance Request Data1: ', maintenanceReqData);
@@ -353,8 +354,15 @@ export default function PropertyNavigator({
         const contractPropertyID = contract.property_id || contract.property_uid;
         return contractPropertyID === propertyId;
       });
-      // console.log("PropertyNavigator - filtered - ", filtered);
+      console.log("PropertyNavigator - filtered - ", filtered);
       const active = filtered?.filter((contract) => contract.contract_status === "ACTIVE");
+
+      if(filtered?.length > 1){
+        const renew = filtered?.filter((contract) => contract.contract_status !== "ACTIVE");
+        setRenewContracts(renew)
+      }else{
+        setRenewContracts([])
+      }
       // console.log("322 - PropertyNavigator - filtered contracts - ", filtered);
       filtered.forEach((contract) => {
         if (contract.contract_status === "SENT") {
@@ -2248,6 +2256,7 @@ export default function PropertyNavigator({
                 handleViewContractClick={handleViewContractClick}
                 handleManageContractClick={onManageContractClick}
                 activeContract={activeContracts[0]}
+                renewContract={renewContracts[0]}
                 currentProperty={property}
                 selectedRole={selectedRole}
                 handleViewPMQuotesRequested={handleViewPMQuotesRequested}
