@@ -39,7 +39,7 @@ export default function ManagementDetailsComponent({
   handleViewContractClick,
   handleManageContractClick,
 }) {
-  // console.log("---dhyey-- inside new component -", activeContract)
+  console.log("---dhyey-- inside new component -", activeContract)
   const { defaultContractFees, allContracts, currentContractUID, currentContractPropertyUID, isChange, setIsChange, fetchContracts,  } = useContext(ManagementContractContext);     
   const { fetchProperties } = useContext(PropertiesContext);  
   const [selectedPreviewFile, setSelectedPreviewFile] = useState(null);
@@ -118,7 +118,7 @@ export default function ManagementDetailsComponent({
     return (
     <>
       <Card sx={{ backgroundColor: theme.palette.form.main, height: "100%" }}>
-        <Box sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+        <Box sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center",}}>
           <Typography
             sx={{
               color: theme.typography.primary.black,
@@ -411,6 +411,62 @@ export default function ManagementDetailsComponent({
                         </Typography>
                         </Grid>
                     </Grid>}
+
+                    {/* contract end notice */}
+                    <Grid container item spacing={2}>
+                        <Grid item xs={6}>
+                          <Typography
+                              sx={{
+                                  color: theme.typography.primary.black,
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                              }}
+                          >
+                            End Notice Period:
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Box display="flex" alignItems="center" justifyContent={"space-between"}>
+                            <Typography
+                                sx={{
+                                  color: theme.typography.primary.black,
+                                  fontWeight: theme.typography.light.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                }}
+                            >
+                              {activeContract?.contract_end_notice_period? activeContract?.contract_end_notice_period : "Not Specified"}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                    </Grid>
+
+                    {/* contract renew */}
+                    <Grid container item spacing={2}>
+                        <Grid item xs={6}>
+                          <Typography
+                              sx={{
+                                  color: theme.typography.primary.black,
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                              }}
+                          >
+                              Contract Renewal:
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Box display="flex" alignItems="center" justifyContent={"space-between"}>
+                            <Typography
+                                sx={{
+                                  color: theme.typography.primary.black,
+                                  fontWeight: theme.typography.light.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                }}
+                            >
+                              {activeContract?.contract_m2m === 1? "Month To Month" : "Automatic"}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                    </Grid>
 
                     {
                         (selectedRole === "OWNER" || selectedRole === "MANAGER") && (activeContract) &&  (
