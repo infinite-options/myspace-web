@@ -129,17 +129,17 @@ export default function LeaseDetailsComponent({
 		let renewalApplicationIndex = null;
 
 		currentProperty?.applications?.forEach( (application, index) => {
-			if(application.lease_status === "RENEW NEW" || application.lease_status === "RENEW PROCESSING" ) {
-				// console.log("88 - application - ", application);		
+			if(application.lease_status === "RENEW NEW" || application.lease_status === "RENEW PROCESSING" ||  application.lease_status === "APPROVED") {
+				console.log("88 - application - ", application);		
 				// console.log("88 - index - ", index);		
 				renewalApplication = application;	
 				renewalApplicationIndex = index;
 			}		
 		});
 
-		if( renewalApplication != null && renewalApplication.lease_status === "RENEW NEW"){
+		if( renewalApplication != null && renewalApplication.lease_status === "RENEW NEW" ){
 			handleAppClick(renewalApplicationIndex)
-		} else if(renewalApplication != null && renewalApplication.lease_status === "RENEW PROCESSING"){
+		} else if( renewalApplication != null && (renewalApplication.lease_status === "RENEW PROCESSING" || renewalApplication.lease_status === "APPROVED")){
 			navigate('/tenantLease', {
 				state: {
 					page: 'renew_lease',
@@ -277,6 +277,45 @@ export default function LeaseDetailsComponent({
               </Grid>
             )}
 
+			<Grid container item spacing={2}>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  Lease Name:
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Box display='flex' alignItems='center' justifyContent={"space-between"}>
+                  {currentProperty?.lease_status === "ACTIVE" || currentProperty?.lease_status === "ACTIVE M2M" ? (                    
+                      <Typography
+                        sx={{
+							color: theme.typography.primary.black,
+							fontWeight: theme.typography.light.fontWeight,
+							fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        {currentProperty?.property_address}
+                      </Typography>                                                                                          
+                  ) : (
+                    <Typography
+                      sx={{
+                        color: "#3D5CAC",
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      No Lease
+                    </Typography>
+                  )}
+                </Box>
+              </Grid>
+            </Grid>
+
             {/* Lease Status */}
             <Grid container item spacing={2}>
               <Grid item xs={6}>
@@ -304,7 +343,7 @@ export default function LeaseDetailsComponent({
                         {currentProperty?.lease_status}
                       </Typography>
                       {currentProperty?.lease_renew_status &&
-                        (currentProperty?.lease_renew_status === "PM RENEW REQUESTED" || currentProperty?.lease_renew_status.includes("RENEW REQUESTED")) && (
+                        (currentProperty?.lease_renew_status.includes("RENEW")) && (
                           <Typography
                             sx={{
                               color: currentProperty?.lease_renew_status?.includes("RENEW") ? "#FF8A00" : "#A52A2A",
@@ -312,7 +351,8 @@ export default function LeaseDetailsComponent({
                               fontSize: theme.typography.smallFont,
                             }}
                           >
-                            {currentProperty?.lease_renew_status?.includes("RENEW") ? " RENEWING" : currentProperty?.lease_renew_status}
+                            {currentProperty?.lease_renew_status === "RENEW REQUESTED" || currentProperty?.lease_renew_status === "PM RENEW REQUESTED"  ? "RENEWING" : ""}
+							{currentProperty?.lease_renew_status === "RENEWED" ? "RENEWED" : ""}
                           </Typography>
                         )}
                     </>
@@ -356,6 +396,61 @@ export default function LeaseDetailsComponent({
                     {currentProperty?.lease_start}
                     <span style={{ fontWeight: "bold", margin: "0 10px" }}>to</span>
                     {currentProperty?.lease_end}
+                  </Typography>
+                </Grid>
+              </Grid>
+            )}
+
+			{activeLease && (
+              <Grid container item spacing={2}>
+                <Grid item xs={6}>
+                  <Typography
+                    sx={{
+                      color: theme.typography.primary.black,
+                      fontWeight: theme.typography.secondary.fontWeight,
+                      fontSize: theme.typography.smallFont,
+                    }}
+                  >
+                    End Notice Period:
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    sx={{
+                      color: theme.typography.primary.black,
+                      fontWeight: theme.typography.light.fontWeight,
+                      fontSize: theme.typography.smallFont,
+                    }}
+                  >
+                    {currentProperty?.lease_end_notice_period ? `${currentProperty?.lease_end_notice_period} days` : 'Not specified'}                    
+                  </Typography>
+                </Grid>
+              </Grid>
+            )}
+
+			{activeLease && (
+              <Grid container item spacing={2}>
+                <Grid item xs={6}>
+                  <Typography
+                    sx={{
+                      color: theme.typography.primary.black,
+                      fontWeight: theme.typography.secondary.fontWeight,
+                      fontSize: theme.typography.smallFont,
+                    }}
+                  >
+                    Lease Renewal:
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    sx={{
+                      color: theme.typography.primary.black,
+                      fontWeight: theme.typography.light.fontWeight,
+                      fontSize: theme.typography.smallFont,
+                    }}
+                  >
+					{currentProperty?.lease_m2m == null || currentProperty?.lease_m2m === 0 ? "Not Specified" : ""}
+                    {currentProperty?.lease_m2m === 1 ? "Month To Month" : ""}
                   </Typography>
                 </Grid>
               </Grid>
@@ -422,7 +517,7 @@ export default function LeaseDetailsComponent({
                       cursor: "pointer",
                       paddingX: "10px",
                       textTransform: "none",
-                      maxWidth: "120px", // Fixed width for the button
+                      maxWidth: "130px", // Fixed width for the button
                       maxHeight: "100%",
                     }}
                     size='small'
@@ -437,7 +532,8 @@ export default function LeaseDetailsComponent({
                         //   marginLeft: "1%", // Adjusting margin for icon and text
                       }}
                     >
-                      {"Edit/Renew Lease"}
+                      {/* {"Edit/Renew Lease"} */}
+                      {currentProperty?.lease_renew_status === "RENEWED" ? "View Renewed Lease" : "Edit/Renew Lease"}
                     </Typography>
                   </Button>
                 </Grid>
