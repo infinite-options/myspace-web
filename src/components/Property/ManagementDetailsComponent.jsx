@@ -168,189 +168,217 @@ export default function ManagementDetailsComponent({
         </Box>
         <CardContent>
           <Grid container spacing={3}>
-            {/* Property Manager */}
-            {selectedRole === "OWNER" && (
-              <Grid container item spacing={2}>
-                <Grid item xs={6}>
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.secondary.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                    }}
-                  >
-                    Property Manager:
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  {activeContract ? (
-                    <Box display='flex' justifyContent='space-between' alignItems='center'>
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.light.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        {activeContract?.business_name}
-                      </Typography>
-                      <KeyboardArrowRightIcon
-                        sx={{ color: "blue", cursor: "pointer" }}
-                        onClick={() => {
-                          if (activeContract && activeContract.business_uid) {
-                            navigate("/ContactsPM", {
-                              state: {
-                                contactsTab: "Manager",
-                                managerId: activeContract.business_uid,
-                                fromPage: true,
-                                index: currentIndex,
-                              },
-                            });
-                          }
-                        }}
-                      />
-                    </Box>
-                  ) : (
-                    <Box display='flex' justifyContent='space-between' alignItems='center'>
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.light.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        No Manager Selected
-                      </Typography>
-                    </Box>
-                  )}
-                </Grid>
-              </Grid>
-            )}
+                    {/* Property Manager */}
+                    {selectedRole === "OWNER" && (
+                      <Grid container item spacing={2}>
+                        <Grid item xs={6}>
+                          <Typography
+                            sx={{
+                              color: theme.typography.primary.black,
+                              fontWeight: theme.typography.secondary.fontWeight,
+                              fontSize: theme.typography.smallFont,
+                            }}
+                          >
+                            Property Manager:
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          {activeContract ? (
+                            <Box display='flex' justifyContent='space-between' alignItems='center'>
+                              <Typography
+                                sx={{
+                                  color: theme.typography.primary.black,
+                                  fontWeight: theme.typography.light.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                }}
+                              >
+                                {activeContract?.business_name}
+                              </Typography>
+                              <KeyboardArrowRightIcon
+                                sx={{ color: "blue", cursor: "pointer", fontSize: "18px"}}
+                                onClick={() => {
+                                  if (activeContract && activeContract.business_uid) {
+                                    navigate("/ContactsPM", {
+                                      state: {
+                                        contactsTab: "Manager",
+                                        managerId: activeContract.business_uid,
+                                        fromPage: true,
+                                        index: currentIndex,
+                                      },
+                                    });
+                                  }
+                                }}
+                              />
+                            </Box>
+                          ) : (
+                            <Box display='flex' justifyContent='space-between' alignItems='center'>
+                              <Typography
+                                sx={{
+                                  color: theme.typography.primary.black,
+                                  fontWeight: theme.typography.light.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                }}
+                              >
+                                No Manager Selected
+                              </Typography>
+                            </Box>
+                          )}
+                        </Grid>
+                      </Grid>
+                    )}
 
-            {/* Owner Info for Managers */}
-            {selectedRole === "MANAGER" && (
-              <Grid container item spacing={2}>
-                <Grid item xs={6}>
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.secondary.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                    }}
-                  >
-                    Property Owner:
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Box display='flex' justifyContent='space-between' alignItems='center'>
-                    <Typography
-                      sx={{
-                        color: theme.typography.primary.black,
-                        fontWeight: theme.typography.light.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      {currentProperty ? `${currentProperty.owner_first_name} ${currentProperty.owner_last_name}` : "-"}
-                    </Typography>
-                    <KeyboardArrowRightIcon
-                      sx={{ color: "blue", cursor: "pointer" }}
-                      onClick={() => {
-                        if (activeContract && activeContract.business_uid) {
-                          navigate("/ContactsPM", {
-                            state: {
-                              contactsTab: "Owner",
-                              ownerId: currentProperty.owner_uid,
-                            },
-                          });
-                        }
-                      }}
-                    />
-                  </Box>
-                </Grid>
-              </Grid>
-            )}
+                    {/* Owner Info for Managers */}
+                    {selectedRole === "MANAGER" && (
+                      <Grid container item spacing={2}>
+                        <Grid item xs={6}>
+                          <Typography
+                            sx={{
+                              color: theme.typography.primary.black,
+                              fontWeight: theme.typography.secondary.fontWeight,
+                              fontSize: theme.typography.smallFont,
+                            }}
+                          >
+                            Property Owner:
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Box display='flex' justifyContent='space-between' alignItems='center'>
+                            <Typography
+                              sx={{
+                                color: theme.typography.primary.black,
+                                fontWeight: theme.typography.light.fontWeight,
+                                fontSize: theme.typography.smallFont,
+                              }}
+                            >
+                              {currentProperty ? `${currentProperty.owner_first_name} ${currentProperty.owner_last_name}` : "-"}
+                            </Typography>
+                            <KeyboardArrowRightIcon
+                              sx={{ color: "blue", cursor: "pointer", fontSize: "18px" }}
+                              onClick={() => {
+                                if (activeContract && activeContract.business_uid) {
+                                  navigate("/ContactsPM", {
+                                    state: {
+                                      contactsTab: "Owner",
+                                      ownerId: currentProperty.owner_uid,
+                                    },
+                                  });
+                                }
+                              }}
+                            />
+                          </Box>
+                        </Grid>
+                      </Grid>
+                    )}
+
+                    {/* Contract name */}
+                    <Grid container item spacing={2}>
+                        <Grid item xs={6}>
+                          <Typography
+                              sx={{
+                                  color: theme.typography.primary.black,
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                              }}
+                          >
+                              Contract Name:
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Box display="flex" alignItems="center" justifyContent={"space-between"}>
+                            <Typography
+                                sx={{
+                                  color: theme.typography.primary.black,
+                                  fontWeight: theme.typography.light.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                }}
+                            >
+                              {activeContract?.contract_name}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                    </Grid>
 
                     {/* Contract Status */}
                     <Grid container item spacing={2}>
                         <Grid item xs={6}>
-                        <Typography
-                            sx={{
-                                color: theme.typography.primary.black,
-                                fontWeight: theme.typography.secondary.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                            }}
-                        >
-                            Contract Status:
-                        </Typography>
+                          <Typography
+                              sx={{
+                                  color: theme.typography.primary.black,
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                              }}
+                          >
+                              Contract Status:
+                          </Typography>
                         </Grid>
                         <Grid item xs={6}>
-                        <Box display="flex" alignItems="center" justifyContent={"space-between"}>
-                            {currentProperty?.contract_status === "ACTIVE" ? (
-                                <>
-                                    <Typography
-                                        sx={{
-                                            color: theme.palette.success.main,
-                                            fontWeight: theme.typography.secondary.fontWeight,
-                                            fontSize: theme.typography.smallFont,
-                                        }}
-                                    >
-                                        ACTIVE
-                                    </Typography>
-                                    {currentProperty?.contract_renew_status && (currentProperty?.contract_renew_status === "ENDING" || currentProperty?.contract_renew_status.includes("RENEW")) && 
-                                        (
-                                            <Typography
-                                                sx={{
-                                                    color: currentProperty?.contract_renew_status?.includes("RENEW")? "#FF8A00" : "#A52A2A",
-                                                    fontWeight: theme.typography.secondary.fontWeight,
-                                                    fontSize: theme.typography.smallFont,
-                                                }}
-                                            >
-                                                {currentProperty?.contract_renew_status?.includes("RENEW") ? " RENEWING" : currentProperty?.contract_renew_status }
-                                            </Typography>
-                                        )
-                                    }
-                                </>
-                            ) : (
-                                <Typography
-                                    sx={{
-                                        color: "#3D5CAC",
-                                        fontWeight: theme.typography.secondary.fontWeight,
-                                        fontSize: theme.typography.smallFont,
-                                    }}
-                                >
-                                    No Contract
-                                </Typography>)}
-                            {/* {currentProperty?.contract_status === "ACTIVE" && selectedRole === "MANAGER" && 
-                            <Button
-                                onClick={() => {                                    
-                                        handleManageContractClick(currentProperty.contract_uid, currentProperty.contract_property_id )                                                                        
-                                }}
-                                variant='outlined'
-                                sx={{
-                                    background: "#3D5CAC",
-                                    color: theme.palette.background.default,
-                                    cursor: "pointer",
-                                    paddingX:"10px",
-                                    textTransform: "none",
-                                    maxWidth: "120px", // Fixed width for the button
-                                    maxHeight: "100%",
-                                }}
-                                size='small'
-                            >
-                            <Typography
-                                sx={{
-                                textTransform: "none",
-                                color: "#FFFFFF",
-                                fontWeight: theme.typography.secondary.fontWeight,
-                                fontSize: "12px",
-                                whiteSpace: "nowrap",
-                                //   marginLeft: "1%", // Adjusting margin for icon and text
-                                }}
-                            >
-                                {"Manage Contract"}
-                            </Typography>
-                            </Button>} */}
-                        </Box>
+                          <Box display="flex" alignItems="center" justifyContent={"space-between"}>
+                              {currentProperty?.contract_status === "ACTIVE" ? (
+                                  <>
+                                      <Typography
+                                          sx={{
+                                              color: theme.palette.success.main,
+                                              fontWeight: theme.typography.secondary.fontWeight,
+                                              fontSize: theme.typography.smallFont,
+                                          }}
+                                      >
+                                          ACTIVE
+                                      </Typography>
+                                      {currentProperty?.contract_renew_status && (currentProperty?.contract_renew_status === "ENDING" || currentProperty?.contract_renew_status.includes("RENEW")) && 
+                                          (
+                                              <Typography
+                                                  sx={{
+                                                      color: currentProperty?.contract_renew_status?.includes("RENEW")? "#FF8A00" : "#A52A2A",
+                                                      fontWeight: theme.typography.secondary.fontWeight,
+                                                      fontSize: theme.typography.smallFont,
+                                                  }}
+                                              >
+                                                  {currentProperty?.contract_renew_status?.includes("RENEW") ? " RENEWING" : currentProperty?.contract_renew_status }
+                                              </Typography>
+                                          )
+                                      }
+                                  </>
+                              ) : (
+                                  <Typography
+                                      sx={{
+                                          color: "#3D5CAC",
+                                          fontWeight: theme.typography.secondary.fontWeight,
+                                          fontSize: theme.typography.smallFont,
+                                      }}
+                                  >
+                                      No Contract
+                                  </Typography>)}
+                              {/* {currentProperty?.contract_status === "ACTIVE" && selectedRole === "MANAGER" && 
+                              <Button
+                                  onClick={() => {                                    
+                                          handleManageContractClick(currentProperty.contract_uid, currentProperty.contract_property_id )                                                                        
+                                  }}
+                                  variant='outlined'
+                                  sx={{
+                                      background: "#3D5CAC",
+                                      color: theme.palette.background.default,
+                                      cursor: "pointer",
+                                      paddingX:"10px",
+                                      textTransform: "none",
+                                      maxWidth: "120px", // Fixed width for the button
+                                      maxHeight: "100%",
+                                  }}
+                                  size='small'
+                              >
+                              <Typography
+                                  sx={{
+                                  textTransform: "none",
+                                  color: "#FFFFFF",
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: "12px",
+                                  whiteSpace: "nowrap",
+                                  //   marginLeft: "1%", // Adjusting margin for icon and text
+                                  }}
+                              >
+                                  {"Manage Contract"}
+                              </Typography>
+                              </Button>} */}
+                          </Box>
                         </Grid>
                     </Grid>
 
@@ -482,148 +510,220 @@ export default function ManagementDetailsComponent({
                         )
                     }
 
-            {/* Management Fees */}
-{activeContract && (
-  <Grid item xs={12}>
-    <Accordion theme={theme} sx={{ backgroundColor: '#e6e6e6', marginTop: '10px' }}>
-      <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
-        aria-controls="management-fees-content"
-        id="management-fees-header"
-      >
-        <Typography
-          sx={{
-            color: theme.typography.primary.black,
-            fontWeight: theme.typography.secondary.fontWeight,
-            fontSize: theme.typography.smallFont,
-          }}
-        >
-          Management Fees
-        </Typography>
-      </AccordionSummary>
-      <AccordionDetails>
-        <Grid container item spacing={2}>
-          {activeContract?.contract_fees ? (
-            <FeesSmallDataGrid data={JSON.parse(activeContract?.contract_fees)} />
-          ) : (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                width: "100%",
-                height: "40px",
-                marginTop: "10px",
-              }}
-            >
-              <Typography
-                sx={{
-                  color: "#A9A9A9",
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: theme.typography.smallFont,
-                }}
-              >
-                No Fees
-              </Typography>
-            </Box>
-          )}
-        </Grid>
-      </AccordionDetails>
-    </Accordion>
-  </Grid>
-)}
+                    {/* Management Fees */}
+                    {activeContract && (
+                      <Grid item xs={12}>
+                        <Accordion theme={theme} sx={{ backgroundColor: '#e6e6e6', marginTop: '10px' }}>
+                          <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="management-fees-content"
+                            id="management-fees-header"
+                          >
+                            <Typography
+                              sx={{
+                                color: theme.typography.primary.black,
+                                fontWeight: theme.typography.secondary.fontWeight,
+                                fontSize: theme.typography.smallFont,
+                              }}
+                            >
+                              Management Fees
+                            </Typography>
+                          </AccordionSummary>
+                          <AccordionDetails>
+                            <Grid container item spacing={2}>
+                              {activeContract?.contract_fees ? (
+                                <FeesSmallDataGrid data={JSON.parse(activeContract?.contract_fees)} />
+                              ) : (
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    width: "100%",
+                                    height: "40px",
+                                    marginTop: "10px",
+                                  }}
+                                >
+                                  <Typography
+                                    sx={{
+                                      color: "#A9A9A9",
+                                      fontWeight: theme.typography.primary.fontWeight,
+                                      fontSize: theme.typography.smallFont,
+                                    }}
+                                  >
+                                    No Fees
+                                  </Typography>
+                                </Box>
+                              )}
+                            </Grid>
+                          </AccordionDetails>
+                        </Accordion>
+                      </Grid>
+                    )}
 
-{/* Contract Documents */}
-{activeContract && (
-  <Grid item xs={12}>
-    {activeContract.contract_documents && activeContract.contract_documents !== "[]" ? (
-      <Accordion theme={theme} sx={{ backgroundColor: '#e6e6e6', marginTop: '10px' }}>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="contract-documents-content"
-          id="contract-documents-header"
-        >
-          <Typography
-            sx={{
-              color: theme.typography.primary.black,
-              fontWeight: theme.typography.secondary.fontWeight,
-              fontSize: theme.typography.smallFont,
-            }}
-          >
-            Contract Documents
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Grid container item>
-            <DocumentSmallDataGrid
-              data={JSON.parse(activeContract.contract_documents)}
-              handleFileClick={handleFileClick}
-            />
-          </Grid>
-        </AccordionDetails>
-      </Accordion>
-    ) : (
-      <Box sx={{ marginTop: '10px' }}>
-        <Typography
-          sx={{
-            color: theme.typography.primary.black,
-            fontWeight: theme.typography.secondary.fontWeight,
-            fontSize: theme.typography.smallFont,
-          }}
-        >
-          Contract Documents
-        </Typography>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: '100%',
-            height: '40px',
-            marginTop: '10px',
-          }}
-        >
-          <Typography
-            sx={{
-              color: '#A9A9A9',
-              fontWeight: theme.typography.primary.fontWeight,
-              fontSize: theme.typography.smallFont,
-            }}
-          >
-            No Document
-          </Typography>
-        </Box>
-      </Box>
-    )}
-  </Grid>
-)}
+                    {/* Contract Documents */}
+                    {activeContract && (
+                      <Grid item xs={12}>
+                        {activeContract.contract_documents && activeContract.contract_documents !== "[]" ? (
+                          <Accordion theme={theme} sx={{ backgroundColor: '#e6e6e6', marginTop: '10px' }}>
+                            <AccordionSummary
+                              expandIcon={<ExpandMoreIcon />}
+                              aria-controls="contract-documents-content"
+                              id="contract-documents-header"
+                            >
+                              <Typography
+                                sx={{
+                                  color: theme.typography.primary.black,
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                }}
+                              >
+                                Contract Documents
+                              </Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                              <Grid container item>
+                                <DocumentSmallDataGrid
+                                  data={JSON.parse(activeContract.contract_documents)}
+                                  handleFileClick={handleFileClick}
+                                />
+                              </Grid>
+                            </AccordionDetails>
+                          </Accordion>
+                        ) : (
+                          // <Box theme={theme} sx={{ marginTop: '10px', backgroundColor: '#e6e6e6', padding: '10px' }}>
+                          //   {/* <Typography
+                          //     sx={{
+                          //       color: theme.typography.primary.black,
+                          //       fontWeight: theme.typography.secondary.fontWeight,
+                          //       fontSize: theme.typography.smallFont,
+                          //     }}
+                          //   >
+                          //     Contract Documents
+                          //   </Typography>
+                          //   <Box
+                          //     sx={{
+                          //       display: 'flex',
+                          //       justifyContent: 'center',
+                          //       alignItems: 'center',
+                          //       width: '100%',
+                          //       height: '40px',
+                          //       marginTop: '10px',
+                          //     }}
+                          //   >
+                          //     <Typography
+                          //       sx={{
+                          //         color: '#A9A9A9',
+                          //         fontWeight: theme.typography.primary.fontWeight,
+                          //         fontSize: theme.typography.smallFont,
+                          //       }}
+                          //     >
+                          //       No Document
+                          //     </Typography>
+                          //   </Box> */}
+                          //   <Box
+                          //     sx={{
+                          //       display: 'flex',
+                          //       justifyContent: 'space-between',
+                          //       alignItems: 'center',
+                          //       width: '100%',
+                          //     }}
+                          //   >
+                          //     <Typography
+                          //       sx={{
+                          //         color: theme.typography.primary.black,
+                          //         fontWeight: theme.typography.secondary.fontWeight,
+                          //         fontSize: theme.typography.smallFont,
+                          //       }}
+                          //     >
+                          //       Contract Documents
+                          //     </Typography>
+                          //     <Typography
+                          //       sx={{
+                          //         color: '#A9A9A9',
+                          //         fontWeight: theme.typography.primary.fontWeight,
+                          //         fontSize: theme.typography.smallFont,
+                          //       }}
+                          //     >
+                          //       No Document
+                          //     </Typography>
+                          //   </Box>
+                          // </Box>
+                          <Accordion
+                            theme={theme}
+                            sx={{
+                              backgroundColor: '#e6e6e6',
+                              marginTop: '10px',
+                              '&.Mui-disabled': {
+                                backgroundColor: '#e6e6e6',
+                                color: theme.typography.primary.black,
+                                // opacity: 1,
+                              },
+                            }}
+                          >
+                            <AccordionSummary
+                              expandIcon={null}
+                              aria-controls="contract-documents-content"
+                              id="contract-documents-header"
+                              sx={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                width: "100%"
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  color: theme.typography.primary.black,
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                }}
+                              >
+                                Contract Documents
+                              </Typography>
+                              <Typography
+                                sx={{
+                                  color: '#A9A9A9',
+                                  position: "absolute",
+                                  right: "15px",
+                                  fontWeight: theme.typography.primary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                }}
+                              >
+                                No Document
+                              </Typography>
+                            </AccordionSummary>
+                          </Accordion>
+                        )}
+                      </Grid>
+                    )}
 
 
 
-            {/* Open Maintenance Tickets */}
-            <Grid container item spacing={2}>
-              <Grid item xs={10}>
-                <Typography
-                  sx={{
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                  }}
-                >
-                  Open Maintenance Tickets:
-                </Typography>
-              </Grid>
-              <Grid item xs={2}>
-                <IconButton
-                  sx={{ marginLeft: "1.5px", paddingTop: "3px" }}
-                  onClick={() => {
-                    handleOpenMaintenancePage();
-                  }}
-                >
-                  <Badge badgeContent={currentProperty?.maintenance?.length || 0} color='error' showZero />
-                </IconButton>
-              </Grid>
-            </Grid>
+                    {/* Open Maintenance Tickets */}
+                    <Grid container item spacing={2} marginTop={"5px"}>
+                      <Grid item xs={10}>
+                        <Typography
+                          sx={{
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          Open Maintenance Tickets:
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={2}>
+                        <IconButton
+                          sx={{ marginLeft: "1.5px", paddingTop: "3px" }}
+                          onClick={() => {
+                            handleOpenMaintenancePage();
+                          }}
+                        >
+                          <Badge badgeContent={currentProperty?.maintenance?.length || 0} color='error' showZero />
+                        </IconButton>
+                      </Grid>
+                    </Grid>
 
             {/* <Grid container item spacing={2}>
                         <Grid item xs={6}>
@@ -672,7 +772,8 @@ export default function ManagementDetailsComponent({
             open={showRenewContractDialog} 
             handleClose={() => setShowRenewContractDialog(false)}            
             contract={activeContract}
-        />    </>
+        />    
+        </>
     );
 }
 

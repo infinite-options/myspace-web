@@ -883,7 +883,8 @@ const handleChangeChecked = (e) => {
                           sx={{
                               color: theme.typography.common.blue,
                               fontWeight: theme.typography.primary.fontWeight,
-                              width: '10%'
+                              width: '10%',
+                              whiteSpace: 'nowrap',
                           }}
                       >
                           {"Zip code"}
