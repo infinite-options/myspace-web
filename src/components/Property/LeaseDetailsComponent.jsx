@@ -73,6 +73,8 @@ export default function LeaseDetailsComponent({
 			? `${currentProperty.tenant_first_name} ${currentProperty.tenant_last_name}`
 			: 'No Tenant';
 	const activeLease = currentProperty.lease_status;
+	const [renewalApplication, setRenewalApplication] = useState(null);
+	const [renewalApplicationIndex, setRenewalApplicationIndex] = useState(null);
 	const [isChange, setIsChange] = useState(false);
   const [isEndLeasePopupOpen, setIsEndLeasePopupOpen] = useState(false);
 	// console.log("currentProperty?.maintenance - ", currentProperty?.maintenance);
@@ -81,6 +83,8 @@ export default function LeaseDetailsComponent({
 	//   // console.log("activeLease - ", activeLease);
 	//   setContractEndNotice(currentProperty?.lease_end_notice_period ? Number(currentProperty?.lease_end_notice_period) : 30);
 	// }, [activeLease]);
+
+
 
 	const maintenanceGroupedByStatus = currentProperty?.maintenance?.reduce((acc, request) => {
 		const status = request.maintenance_status;
@@ -139,16 +143,35 @@ export default function LeaseDetailsComponent({
 	};
 
 	const handleRenewLease = () => {
-		navigate('/tenantLease', {
-			state: {
-				page: 'renew_lease',
-				application: currentProperty,
-				property: currentProperty,
-				managerInitiatedRenew: true,
-			},
+		let renewalApplication = null;
+		let renewalApplicationIndex = null;
+
+		currentProperty?.applications?.forEach( (application, index) => {
+			if(application.lease_status === "RENEW NEW" || application.lease_status === "RENEW PROCESSING" ) {
+				console.log("ROHIT - 88 - application - ", application);		
+				console.log("ROHIT - 88 - index - ", index);		
+				renewalApplication = application;	
+				renewalApplicationIndex = index;
+			}		
 		});
+
+		if(renewalApplicationIndex != null){
+			handleAppClick(renewalApplicationIndex)
+		} else {
+			navigate('/tenantLease', {
+				state: {
+					page: 'renew_lease',
+					application: currentProperty,
+					property: currentProperty,
+					managerInitiatedRenew: true,
+				},
+			});
+		}
 	};
 
+	
+	
+	// findRenewalApplication();
 	return (
 		<>
 			<Card sx={{ backgroundColor: theme.palette.form.main, height: '100%' }}>								

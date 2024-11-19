@@ -468,11 +468,12 @@ const TenantLease = () => {
         application?.lease_status === "PROCESSING" ||
         application?.lease_status === "RENEW PROCESSING" ||
         application?.lease_status === "ACTIVE" ||
-        application?.lease_status === "ACTIVE M2M"
+        application?.lease_status === "ACTIVE M2M" ||
+        application?.lease_status === "RENEW NEW"
       ) {
         
         feesList = JSON.parse(application?.lease_fees);
-      } else if (application?.lease_status === "NEW" || application?.lease_status === "RENEW NEW") {
+      } else if (application?.lease_status === "NEW") {
         feesList = initialFees(property, application);
       }
       // console.log("Fees: ", feesList);
