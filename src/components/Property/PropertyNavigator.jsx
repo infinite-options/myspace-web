@@ -81,7 +81,6 @@ import ManagementContractContext from '../../contexts/ManagementContractContext'
 
 import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy } from "../../utils/fees";
 import ReferTenantDialog from "../Referral/ReferTenantDialog.jsx";
-import { yellow } from "@mui/material/colors";
 
 const getAppColor = (app) => {
   if (app.lease_status === "RENEW NEW") {
@@ -1079,7 +1078,6 @@ export default function PropertyNavigator({
       field: "actions",
       headerName: "Actions",
       width: 120,
-      flex: 1,
       renderCell: (params) => {
         return (
           <Box sx={{ display: "flex", width: "100%" }}>
@@ -2811,6 +2809,15 @@ export default function PropertyNavigator({
                     rows={appliances}
                     columns={applnColumns}
                     pageSize={5}
+                    rowsPerPageOptions={[5, 10, 15]}
+                    initialState={{
+                      pagination: {
+                        paginationModel: {
+                          pageSize: 5,
+                          page: 0,
+                        },
+                      },
+                    }}
                     getRowId={(row) => row.appliance_uid}
                     autoHeight
                     sx={{
