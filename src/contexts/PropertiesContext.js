@@ -157,6 +157,17 @@ const fetchContracts = async () => {
     setAllContracts(contractsResponse.result);
 }
 
+const updateAppliances = (property_uid, appliances) => {
+  setPropertyList(propertyList.map((property)=>{
+    if(property.property_uid === property_uid){
+      return {...property, appliances:JSON.stringify(appliances)};
+    } else {
+      return property;
+    }
+  }))
+
+}
+
   useEffect(() => {
     if (!dataLoaded) {
            
@@ -197,6 +208,7 @@ const fetchContracts = async () => {
         setCurrentProperty,
         setNewPropertyUid,
         dataLoaded, 
+        updateAppliances,
       }}
     >
       {children}
