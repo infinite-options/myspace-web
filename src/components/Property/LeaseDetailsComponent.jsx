@@ -56,9 +56,7 @@ export default function LeaseDetailsComponent({
 		currentProperty && currentProperty.lease_start && currentProperty.tenant_uid
 			? `${currentProperty.tenant_first_name} ${currentProperty.tenant_last_name}`
 			: 'No Tenant';
-	const activeLease = currentProperty.lease_status;
-	const [renewalApplication, setRenewalApplication] = useState(null);
-	const [renewalApplicationIndex, setRenewalApplicationIndex] = useState(null);
+	const activeLease = currentProperty.lease_status;	
 	const [isChange, setIsChange] = useState(false);
   const [isEndLeasePopupOpen, setIsEndLeasePopupOpen] = useState(false);
   // console.log("currentProperty?.maintenance - ", currentProperty?.maintenance);
@@ -132,8 +130,8 @@ export default function LeaseDetailsComponent({
 
 		currentProperty?.applications?.forEach( (application, index) => {
 			if(application.lease_status === "RENEW NEW" || application.lease_status === "RENEW PROCESSING" ) {
-				console.log("ROHIT - 88 - application - ", application);		
-				console.log("ROHIT - 88 - index - ", index);		
+				// console.log("88 - application - ", application);		
+				// console.log("88 - index - ", index);		
 				renewalApplication = application;	
 				renewalApplicationIndex = index;
 			}		
