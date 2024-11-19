@@ -127,6 +127,7 @@ export default function PropertyNavigator({
     allRentStatus: allRentStatusFromContext,
     // allContracts: allContractsFromContext,
     returnIndex: returnIndexFromContext,
+    updateAppliances: updateAppliancesFromContext, 
   } = propertiesContext || {};
 
   const managementContractContext = useContext(ManagementContractContext);
@@ -140,6 +141,7 @@ export default function PropertyNavigator({
   const allContracts = allContractsFromContext || [];
   const allLeases = allContractsFromContext || [];
   const returnIndex = returnIndexFromContext || 0;
+  const updateAppliances = updateAppliancesFromContext;
 
   const [propertyData, setPropertyData] = useState(propertyList || []);
   const [currentIndex, setCurrentIndex] = useState(returnIndex !== undefined ? returnIndex : 0);
@@ -242,7 +244,10 @@ export default function PropertyNavigator({
   // }, [currentId]);
 
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setSelectedImageList([]);
+    setOpen(false)
+  };
 
   // Parse property images once outside the component
   const parsedPropertyImages =
@@ -658,8 +663,8 @@ export default function PropertyNavigator({
     await setInitialApplData(row);
     await setcurrentApplRow(row);
     await setModifiedApplRow({ appliance_uid: row.appliance_uid });
-    console.log("---currentApplRow?.appliance_favorite_image---", row);
-    await setFavImage(currentApplRow?.appliance_favorite_image);
+    // console.log("---currentApplRow?.appliance_favorite_image---", row);
+    await setFavImage(row?.appliance_favorite_image);
     await setIsEditing(true);
     await handleOpen();
   };
@@ -678,7 +683,9 @@ export default function PropertyNavigator({
       const response = await axios.delete(`${APIConfig.baseURL.dev}/appliances/${id}`);
 
       if (response.status === 200) {
-        setAppliances(appliances.filter((appliance) => appliance.appliance_uid !== id));
+        const updatedData = appliances.filter((appliance) => appliance.appliance_uid !== id);
+        setAppliances(updatedData);
+        updateAppliances(propertyId, updatedData);
       } else {
         console.error("Failed to delete the appliance. Status code:", response.status);
       }
@@ -710,6 +717,9 @@ export default function PropertyNavigator({
         });
         console.log("updatedData", updatedData);
         setAppliances(updatedData);
+         // Call the function to update appliances in the properties context for the specified property
+        updateAppliances(propertyId, updatedData);
+        setDeletedIcons(currentApplRow?.appliance_images ? new Array(currentApplRow.appliance_images.length).fill(false) : []);
       }).catch((err) => {
         console.log(err);
       })
@@ -753,7 +763,7 @@ export default function PropertyNavigator({
             applianceFormData.append(key, file.image);
           }
           if (file.coverPhoto) {
-            applianceFormData.append("img_favorite", key);
+            applianceFormData.append("appliance_favorite_image", key);
           }
         }
       }
@@ -1040,11 +1050,7 @@ export default function PropertyNavigator({
             <IconButton onClick={() => handleInfoClick(params.row)}>
               <InfoIcon />
             </IconButton>
-            <IconButton onClick={() => {
-              console.log("checking--", params.row);
-              console.log("checking--", typeof (params.row.appliance_images));
-              handleEditClick(params.row)
-            }}>
+            <IconButton onClick={() => handleEditClick(params.row)}>
               <EditIcon />
             </IconButton>
             <IconButton onClick={() => handleDeleteClick(params.row.appliance_uid)}>
@@ -2748,6 +2754,7 @@ export default function PropertyNavigator({
                         appliance_warranty_till: "",
                         appliance_purchase_order: "",
                         appliance_purchased_from: "",
+                        appliance_favorite_image:"",
                       });
                       setIsEditing(false);
                       handleOpen();

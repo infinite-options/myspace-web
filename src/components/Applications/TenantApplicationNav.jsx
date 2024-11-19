@@ -30,7 +30,8 @@ const TenantApplicationNav = (props) => {
   const { state } = useLocation();
   console.log('Inside TenantApplicationNav', props, state);
   const { index, property, isDesktop, propertyIndex, onBackClick } = props;
-  console.log('Inside TenantApplicationNav property', property);
+  console.log('Inside TenantApplicationNav - property - ', property);
+  console.log('Inside TenantApplicationNav - index - ', index);
   const { applications } = property;
   const [currentIndex, setCurrentIndex] = useState(index || 0);
   const [application, setApplication] = useState(applications[currentIndex]);
@@ -142,6 +143,7 @@ const TenantApplicationNav = (props) => {
     navigate("/tenantLease", { state: { page: "edit_lease", application, property } });
   };
   const handleRenewLease = () => {
+    console.log("ROHIT - 146 - application - ", application);
     navigate("/tenantLease", { state: { page: "renew_lease", application, property } });
   };
   

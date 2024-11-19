@@ -597,45 +597,22 @@ function TenantLeases(props) {
               <AccordionDetails sx={{ padding: "30px" }}>
                 {" "}
                 {/* Increased padding */}
+                
                 <Grid container spacing={3}>
                   {" "}
                   {/* Increased spacing */}
-                  <Grid item xs={6}>
+                  <Grid item xs={3}>
                     <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Start Date</Typography>
                     <Typography>{lease?.lease_start || "N/A"}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Rent Amount</Typography>
-                    <Typography>${lease?.property_listed_rent.toFixed(2) || "$0.00"}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
+                  </Grid>                  
+                  <Grid item xs={3}>
                     <Typography sx={{ fontWeight: "bold", color: "#160449" }}>End Date</Typography>
                     <Typography>{lease?.lease_end || "N/A"}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Frequency</Typography>
-                    <Typography>{lease?.frequency || "Monthly"}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
+                  </Grid>                  
+                  <Grid item xs={3}>
                     <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Move-In Date</Typography>
                     <Typography>{lease?.lease_move_in_date || "N/A"}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Due Date</Typography>
-                    <Typography>{lease?.due_date || "1st of month"}</Typography>
-                  </Grid>
-                  {/* <Grid item xs={6}>
-                        <Typography sx={{ fontWeight: "bold", color: "#160449" }}>
-                          Utilities Paid By Tenant
-                        </Typography>
-                        <Typography>
-                          {JSON.parse(lease.lease_utilities).length > 0
-                              ? JSON.parse(lease.lease_utilities)
-                                  .map((utility) => utility.utility_desc)
-                                  .join(", ")
-                              : "None"}
-                        </Typography>
-                      </Grid> */}
+                  </Grid>                                    
                 </Grid>
               </AccordionDetails>
             </Accordion>
