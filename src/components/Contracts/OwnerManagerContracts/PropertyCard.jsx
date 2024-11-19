@@ -810,7 +810,8 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 
 const PropertyCard = (props) => {
   const navigate = useNavigate();
-  const { getProfileId } = useUser();
+//   const { getProfileId } = useUser();
+  const { getProfileId, selectedRole } = useUser();
   const { defaultContractFees, allContracts, currentContractUID, currentContractPropertyUID, isChange, setIsChange, fetchContracts} = useContext(ManagementContractContext);  
   console.log("PropertyCard - props - ", props);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -1659,7 +1660,7 @@ if (scrollRef.current) {
 }
 	};
 
-	const ContactColumns = [
+	const ContactEditableColumns = [
 		{
 		  field: "contact_first_name",
 		  headerName: "Name",
@@ -1704,6 +1705,30 @@ if (scrollRef.current) {
 			  </IconButton>
 			</Box>
 		  ),
+		}
+	];
+
+	const ContactColumns = [
+		{
+		  field: "contact_first_name",
+		  headerName: "Name",
+		  flex:1.5,
+		  renderCell : (params) => (
+			<Typography fontSize={"14px"}>{params.row.contact_first_name} {params.row.contact_last_name}</Typography>
+		  ),
+		  renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+		},
+		{
+		  field: "contact_email",
+		  headerName: "Email",
+		  flex:1.5,
+		  renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+		},
+		{
+		  field: "contact_phone_number",
+		  headerName: "Phone Number",
+		  flex:1,
+		  renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
 		}
 	];
 
@@ -2021,6 +2046,7 @@ return (
 						required						
             			InputProps={textFieldInputProps}
             			sx={textFieldSX}
+						disabled={selectedRole === "OWNER"}
 					>						
 					</TextField>
 				</Grid>
@@ -2036,6 +2062,7 @@ return (
 				<Grid item xs={12}>
 					<LocalizationProvider dateAdapter={AdapterDayjs}>
 						<DatePicker
+							disabled={selectedRole === "OWNER"}
 							value={contractStartDate}
 							// minDate={dayjs()}
 							onChange={handleStartDateChange}
@@ -2056,6 +2083,7 @@ return (
 				<Grid item xs={12}>
 					<LocalizationProvider dateAdapter={AdapterDayjs}>
 						<DatePicker
+							disabled={selectedRole === "OWNER"}
 							value={contractEndDate}
 							// minDate={dayjs()}
 							onChange={handleEndDateChange}
@@ -2080,6 +2108,7 @@ return (
             }}        
             control={
               <Checkbox
+			  	disabled={selectedRole === "OWNER"}
                 checked={continueM2M === 1 ? true : false}
                 onChange={(event) => {
 					if (event.target.checked) {
@@ -2105,6 +2134,7 @@ return (
             }}        
             control={
               <Checkbox
+			  	disabled={selectedRole === "OWNER"}
                 checked={continueM2M === 2 ? true : false}
                 onChange={(event) => {
 					if (event.target.checked) {
@@ -2131,6 +2161,7 @@ return (
 				</Grid>
 				<Grid item xs={12} sx={{marginTop: '5px', }}>
 					<TextField
+						disabled={selectedRole === "OWNER"}
 						name="contract_notice_period"
 						// placeholder="days"
 						value={contractEndNotice}
@@ -2195,12 +2226,12 @@ return (
 						{"Management Fees* "}
 					</Typography>
 					{/* <Box>Management Fees 1*</Box> */}
-					<Box onClick={handleOpenAddFee} marginTop={"10px"} marginLeft={"10px"} paddingTop={"5px"}>
+					{selectedRole !== "OWNER" && (<Box onClick={handleOpenAddFee} marginTop={"10px"} marginLeft={"10px"} paddingTop={"5px"}>
 						<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
-					</Box>
+					</Box>)}
 				</Box>
 			</Box>
-			{contractFees?.length !== 0 ? <Box sx={{width: '100%', }}><FeesDataGrid data={contractFees} isDeleteable={true} handleEditFee={handleOpenEditFee} handleDeleteFee={handleDeleteFee}/> </Box> : 
+			{contractFees?.length !== 0 ? <Box sx={{width: '100%', }}><FeesDataGrid data={contractFees} isDeleteable={selectedRole !== "OWNER" ? true : false} handleEditFee={handleOpenEditFee} handleDeleteFee={handleDeleteFee}/> </Box> : 
 				<>
 						<Box
 							sx={{
@@ -2231,56 +2262,65 @@ return (
 
 			{/* previously Uploaded docs */}
 			<Box sx={{width: '100%', marginLeft: '10px', paddingRight: '10px',}}>				
-				<Documents isEditable={true} setIsPreviousFileChange={setIsPreviousFileChange} isAccord={false} documents={previouslyUploadedDocs} setDocuments={setPreviouslyUploadedDocs} setDeleteDocsUrl={setDeletedDocsUrl} contractFiles={contractFiles} contractFileTypes={contractFileTypes} setContractFiles={setContractFiles} setContractFileTypes={setContractFileTypes}/>				
+				<Documents isEditable={selectedRole !== "OWNER" ? true : false} setIsPreviousFileChange={setIsPreviousFileChange} isAccord={false} documents={previouslyUploadedDocs} setDocuments={setPreviouslyUploadedDocs} setDeleteDocsUrl={setDeletedDocsUrl} contractFiles={contractFiles} contractFileTypes={contractFileTypes} setContractFiles={setContractFiles} setContractFileTypes={setContractFileTypes}/>				
 			</Box>
 
 			{/* Contact details */}
 			<Box sx={{width: '100%'}}>				
-			<Box
-				sx={{
-					display: 'flex',
-					flexDirection: 'row',
-					justifyContent: 'space-between',
-					fontSize: '15px',
-					fontWeight: 'bold',
-					paddingRight: '10px',
-					color: '#3D5CAC',
-				}}
-			>
-				<Typography
+				<Box
 					sx={{
-						color: "#160449",
-						fontWeight: theme.typography.primary.fontWeight,
-						fontSize: "18px",
-						paddingBottom: "5px",
-						paddingTop: "5px",
-						marginY:"10px"
+						display: 'flex',
+						flexDirection: 'row',
+						justifyContent: 'space-between',
+						fontSize: '15px',
+						fontWeight: 'bold',
+						paddingRight: '10px',
+						color: '#3D5CAC',
 					}}
 				>
-					{"Contract Assigned Contacts: "}
-				</Typography>
-				<Box onClick={()=>{setShowAddContactDialog(true)}} marginTop={"10px"} paddingTop={"5px"} paddingRight={"0px"}>
-					<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
+					<Typography
+						sx={{
+							color: "#160449",
+							fontWeight: theme.typography.primary.fontWeight,
+							fontSize: "18px",
+							paddingBottom: "5px",
+							paddingTop: "5px",
+							marginY:"10px"
+						}}
+					>
+						{"Contract Assigned Contacts: "}
+					</Typography>
+					{selectedRole !== "OWNER" && (<Box onClick={()=>{setShowAddContactDialog(true)}} marginTop={"10px"} paddingTop={"5px"} paddingRight={"0px"}>
+						<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
+					</Box>)}
 				</Box>
-			</Box>
-			{contractAssignedContacts?.length !== 0 ? (				
-				<DataGrid
-					rows={contactRowsWithId}
-					// columns={ContactColumns}
-					columns={isMobile ? ContactColumns.map(column => ({ ...column, minWidth: 150 })) : ContactColumns}
-					sx={{
-					// minHeight:"100px",
-					// height:"100px",
-					// maxHeight:"100%",
-					marginTop: "10px",
-					}}
-					autoHeight
-					rowHeight={50} 
-					hideFooter={true}
-				/>
-			) : (
-				<></>
-			)}
+				{contractAssignedContacts?.length !== 0 ? (				
+					<DataGrid
+						rows={contactRowsWithId}
+						// columns={ContactColumns}
+						// columns={isMobile ? ContactEditableColumns.map(column => ({ ...column, minWidth: 150 })) : ContactEditableColumns}
+						columns={isMobile
+							? (selectedRole === "OWNER" 
+								? ContactColumns.map(column => ({ ...column, minWidth: 150 })) 
+								: ContactEditableColumns.map(column => ({ ...column, minWidth: 150 }))
+								)
+							: (selectedRole === "OWNER" 
+								? ContactColumns 
+								: ContactEditableColumns)
+						}
+						sx={{
+						// minHeight:"100px",
+						// height:"100px",
+						// maxHeight:"100%",
+						marginTop: "10px",
+						}}
+						autoHeight
+						rowHeight={50} 
+						hideFooter={true}
+					/>
+				) : (
+					<></>
+				)}
 			</Box>	
 			{
 				(contractStatus === "NEW" || contractStatus === "SENT" || contractStatus === "REJECTED") && (
@@ -2310,7 +2350,14 @@ return (
 									backgroundColor: '#CB8E8E',
 								},
 							}}
-							onClick={handleDeclineOfferClick}
+							onClick={()=> {
+									if(selectedRole !== "OWNER"){
+										handleDeclineOfferClick()
+									}else{
+										// Implement logic for owner click on REJECT
+									}
+								}
+							}
 						>
 							<Typography
 								sx={{
@@ -2320,7 +2367,7 @@ return (
 									textTransform: 'none',
 								}}
 							>
-								{contractStatus === 'NEW' ? 'Decline Offer' : 'Withdraw Quote 1'}
+								{selectedRole === "OWNER" ? "Reject" : (contractStatus === 'NEW' ? 'Decline Offer' : 'Withdraw Quote 1')}
 							</Typography>
 						</Button>
 						</>
@@ -2337,7 +2384,13 @@ return (
 									backgroundColor: '#9EAED6',
 								},
 							}}
-							onClick={handleSendQuoteClick}
+							onClick={() => {
+								if(selectedRole !== "OWNER"){
+									handleSendQuoteClick()
+								}else{
+									// Implement logic for Owner click on Accept
+								}
+							}}
 							disabled={!contractName || !contractStartDate || !contractEndDate || !contractFees}
 						>
 							<Typography
@@ -2348,7 +2401,7 @@ return (
 									textTransform: 'none',
 								}}
 							>
-								{contractStatus === 'NEW' ? 'Send Quote' : 'Update Quote'}
+								{selectedRole === "OWNER" ? "Accept" : (contractStatus === 'NEW' ? 'Send Quote' : 'Update Quote')}
 							</Typography>
 						</Button>
 					</Box>

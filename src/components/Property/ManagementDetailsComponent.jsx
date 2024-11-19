@@ -28,6 +28,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 export default function ManagementDetailsComponent({
   activeContract,
+  renewContract,
   currentProperty,
   currentIndex,
   selectedRole,
@@ -39,7 +40,7 @@ export default function ManagementDetailsComponent({
   handleViewContractClick,
   handleManageContractClick,
 }) {
-  console.log("---dhyey-- inside new component -", activeContract)
+  console.log("---dhyey-- inside new component -", renewContract, "current property contract - ", currentProperty)
   const { defaultContractFees, allContracts, currentContractUID, currentContractPropertyUID, isChange, setIsChange, fetchContracts,  } = useContext(ManagementContractContext);     
   const { fetchProperties } = useContext(PropertiesContext);  
   const [selectedPreviewFile, setSelectedPreviewFile] = useState(null);
@@ -324,7 +325,7 @@ export default function ManagementDetailsComponent({
                                       >
                                           ACTIVE
                                       </Typography>
-                                      {currentProperty?.contract_renew_status && (currentProperty?.contract_renew_status === "ENDING" || currentProperty?.contract_renew_status.includes("RENEW")) && 
+                                      {/* {currentProperty?.contract_renew_status && (currentProperty?.contract_renew_status === "ENDING" || currentProperty?.contract_renew_status.includes("RENEW")) && 
                                           (
                                               <Typography
                                                   sx={{
@@ -334,6 +335,19 @@ export default function ManagementDetailsComponent({
                                                   }}
                                               >
                                                   {currentProperty?.contract_renew_status?.includes("RENEW") ? " RENEWING" : currentProperty?.contract_renew_status }
+                                              </Typography>
+                                          )
+                                      } */}
+                                      {renewContract && (renewContract?.contract_status === "SENT" || renewContract?.contract_status.includes("RENEW")) && 
+                                          (
+                                              <Typography
+                                                  sx={{
+                                                      color: renewContract?.contract_status === "SENT" ? "#FF8A00" : "#A52A2A",
+                                                      fontWeight: theme.typography.secondary.fontWeight,
+                                                      fontSize: theme.typography.smallFont,
+                                                  }}
+                                              >
+                                                  {renewContract?.contract_status === "SENT" ? "RENEWING" : renewContract?.contract_status }
                                               </Typography>
                                           )
                                       }
@@ -530,10 +544,18 @@ export default function ManagementDetailsComponent({
                                 >                                
                                     <Button
                                         onClick={() => {
-                                            if(selectedRole === "OWNER"){                                                                                            
+                                            if(selectedRole === "OWNER"){   
+                                              if(renewContract){
+                                                handleManageContractClick(renewContract.contract_uid, currentProperty.contract_property_id)
+                                              }else{
                                                 setShowRenewContractDialog(true)
+                                              }                                                                                         
                                             } else if (selectedRole === "MANAGER"){
-                                                handleManageContractClick(currentProperty.contract_uid, currentProperty.contract_property_id )
+                                                if(renewContract){
+                                                  handleManageContractClick(renewContract.contract_uid, currentProperty.contract_property_id )
+                                                }else{
+                                                  handleManageContractClick(currentProperty.contract_uid, currentProperty.contract_property_id )
+                                                }
                                             }
                                         }}
                                         variant='contained'
@@ -543,7 +565,7 @@ export default function ManagementDetailsComponent({
                                             cursor: "pointer",
                                             paddingX:"10px",
                                             textTransform: "none",
-                                            maxWidth: "120px", // Fixed width for the button
+                                            maxWidth: "100%", // Fixed width for the button
                                             maxHeight: "100%",
                                         }}
                                         size='small'
@@ -558,7 +580,7 @@ export default function ManagementDetailsComponent({
                                             //   marginLeft: "1%", // Adjusting margin for icon and text
                                             }}
                                         >
-                                            {"Renew Contract"}
+                                            {renewContract && renewContract?.contract_status === "SENT" ? (selectedRole === "MANAGER" ? "Edit Renew Contract" : "View Renew Contract") : "Renew Contract"}
                                         </Typography>
                                     </Button>
                                 </Grid>
