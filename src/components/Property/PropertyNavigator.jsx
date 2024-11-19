@@ -81,6 +81,7 @@ import ManagementContractContext from '../../contexts/ManagementContractContext'
 
 import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy } from "../../utils/fees";
 import ReferTenantDialog from "../Referral/ReferTenantDialog.jsx";
+import { yellow } from "@mui/material/colors";
 
 const getAppColor = (app) => {
   if (app.lease_status === "RENEW NEW") {
@@ -928,7 +929,7 @@ export default function PropertyNavigator({
   const handleAddAppln = () => {
     const newError = {};
     if (!currentApplRow.appliance_type) newError.appliance_type = "Type is required";
-
+    setFavImage("");
     setError(newError);
     if (Object.keys(newError).length === 0) {
       if (isEditing) {
@@ -1034,27 +1035,54 @@ export default function PropertyNavigator({
 
   const applnColumns = [
     // { field: "appliance_uid", headerName: "UID", width: 80 },
-    { field: "appliance_item", headerName: "Appliance", flex: 1 },
+    { field: "appliance_item", headerName: "Appliance", width: 120 },
     // { field: "appliance_desc", headerName: "Description", width: 80 },
     // { field: "appliance_manufacturer", headerName: "Manufacturer", width: 80 },
     //{ field: "appliance_purchased_from", headerName: "Purchased From", width: 80 },
-    { field: "appliance_purchased", headerName: "Purchased On", flex: 1 },
+    // { field: "appliance_purchased", headerName: "Purchased On", flex: 1 },
     //{ field: "appliance_purchase_order", headerName: "Purchase Order Number", width: 80 },
-    { field: "appliance_installed", headerName: "Installed On", flex: 1 },
+    // { field: "appliance_installed", headerName: "Installed On", flex: 1 },
     //{ field: "appliance_serial_num", headerName: "Serial Number", width: 80 },
     //{ field: "appliance_model_num", headerName: "Model Number", width: 80 },
-    { field: "appliance_warranty_till", headerName: "Warranty Till", flex: 1 },
+    // { field: "appliance_warranty_till", headerName: "Warranty Till", flex: 1 },
     //{ field: "appliance_warranty_info", headerName: "Warranty Info", width: 80 },
     //{ field: "appliance_url", headerName: "URLs", width: 80 },
     //{ field: "appliance_images", headerName: "Image", width: 100, renderCell: ImageCell }, //appliance_favorite_image needs to be added
     //{ field: "appliance_documents", headerName: "Documents", width: 80 },
     {
+      field: "avatar",
+      headerName: "",
+      width: 120,
+      renderCell: (params) => (
+        <Box
+          sx={{
+            width: "70px",
+            height: "70px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            overflow: "hidden", // Ensures no overflow
+          }}
+        >
+          <img
+            src={`${params.row.appliance_favorite_image}`}
+            alt='Appliance image'
+            style={{
+              width: "100%", // Ensures the image takes full width
+              height: "auto", // Maintain aspect ratio
+            }}
+          />
+        </Box>
+      ),
+    },
+    {
       field: "actions",
       headerName: "Actions",
       width: 120,
+      flex: 1,
       renderCell: (params) => {
         return (
-          <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+          <Box sx={{ display: "flex", width: "100%" }}>
             <IconButton onClick={() => handleInfoClick(params.row)}>
               <InfoIcon />
             </IconButton>
@@ -2717,7 +2745,7 @@ export default function PropertyNavigator({
           {/* Appliances grid */}
           <Grid item xs={12} md={12} sx={{ pt: "10px" }}>
             <Card sx={{ backgroundColor: color, height: "100%" }}>
-              <Box sx={{ width: "100%" }}>
+              <Box sx={{ margin:"0px 15px 15px 15px"}}>
                 <Box
                   sx={{
                     display: "flex",
@@ -2778,7 +2806,7 @@ export default function PropertyNavigator({
                     <AddIcon sx={{ color: "black", fontSize: "24px" }} />
                   </IconButton>
                 </Box>
-                <Box sx={{ width: "100%", overflowX: "auto" }}>
+                <Box>
                   <DataGrid
                     rows={appliances}
                     columns={applnColumns}
@@ -2786,7 +2814,7 @@ export default function PropertyNavigator({
                     getRowId={(row) => row.appliance_uid}
                     autoHeight
                     sx={{
-                      minWidth: "700px",
+                      // minWidth: "700px",
                       fontSize: "10px",
                       "& .wrap-text": {
                         whiteSpace: "normal !important",
