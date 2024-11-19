@@ -118,7 +118,7 @@ export default function ManagementDetailsComponent({
     return (
     <>
       <Card sx={{ backgroundColor: theme.palette.form.main, height: "100%" }}>
-        <Box sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+        <Box sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", }}>
           <Typography
             sx={{
               color: theme.typography.primary.black,

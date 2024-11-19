@@ -52,17 +52,21 @@ export default function LeaseDetailsComponent({
   const [showRenewContractDialog, setShowRenewContractDialog] = useState(false);
   const [contractEndNotice, setContractEndNotice] = useState(currentProperty?.lease_end_notice_period ? Number(currentProperty?.lease_end_notice_period) : 30);
 
-  const tenant_detail =
-    currentProperty && currentProperty.lease_start && currentProperty.tenant_uid ? `${currentProperty.tenant_first_name} ${currentProperty.tenant_last_name}` : "No Tenant";
-  const activeLease = currentProperty?.lease_status;
-  const [isChange, setIsChange] = useState(false);
+	const tenant_detail =
+		currentProperty && currentProperty.lease_start && currentProperty.tenant_uid
+			? `${currentProperty.tenant_first_name} ${currentProperty.tenant_last_name}`
+			: 'No Tenant';
+	const activeLease = currentProperty.lease_status;	
+	const [isChange, setIsChange] = useState(false);
   const [isEndLeasePopupOpen, setIsEndLeasePopupOpen] = useState(false);
   // console.log("currentProperty?.maintenance - ", currentProperty?.maintenance);
 
-  // useEffect(() => {
-  //   // console.log("activeLease - ", activeLease);
-  //   setContractEndNotice(currentProperty?.lease_end_notice_period ? Number(currentProperty?.lease_end_notice_period) : 30);
-  // }, [activeLease]);
+	// useEffect(() => {
+	//   // console.log("activeLease - ", activeLease);
+	//   setContractEndNotice(currentProperty?.lease_end_notice_period ? Number(currentProperty?.lease_end_notice_period) : 30);
+	// }, [activeLease]);
+
+
 
   const maintenanceGroupedByStatus = currentProperty?.maintenance?.reduce((acc, request) => {
     const status = request.maintenance_status;
@@ -120,16 +124,41 @@ export default function LeaseDetailsComponent({
       });
   };
 
-  const handleRenewLease = () => {
-    navigate("/tenantLease", {
-      state: {
-        page: "renew_lease",
-        application: currentProperty,
-        property: currentProperty,
-        managerInitiatedRenew: true,
-      },
-    });
-  };
+	const handleRenewLease = () => {
+		let renewalApplication = null;
+		let renewalApplicationIndex = null;
+
+		currentProperty?.applications?.forEach( (application, index) => {
+			if(application.lease_status === "RENEW NEW" || application.lease_status === "RENEW PROCESSING" ) {
+				// console.log("88 - application - ", application);		
+				// console.log("88 - index - ", index);		
+				renewalApplication = application;	
+				renewalApplicationIndex = index;
+			}		
+		});
+
+		if( renewalApplication != null && renewalApplication.lease_status === "RENEW NEW"){
+			handleAppClick(renewalApplicationIndex)
+		} else if(renewalApplication != null && renewalApplication.lease_status === "RENEW PROCESSING"){
+			navigate('/tenantLease', {
+				state: {
+					page: 'renew_lease',
+					application: renewalApplication,
+					property: currentProperty,
+					managerInitiatedRenew: false,
+				},
+			});
+		} else {
+			navigate('/tenantLease', {
+				state: {
+					page: 'renew_lease',
+					application: currentProperty,
+					property: currentProperty,
+					managerInitiatedRenew: true,
+				},
+			});
+		}
+	};
 
   return (
     <>

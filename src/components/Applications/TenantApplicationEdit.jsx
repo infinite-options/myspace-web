@@ -589,6 +589,8 @@ export default function TenantApplicationEdit(props) {
 
         if (status === "PROCESSING") {
           leaseApplicationFormData.append("lease_status", "NEW");
+        } else if (status === "RENEW PROCESSING") {
+          leaseApplicationFormData.append("lease_status", "RENEW NEW");
         }
 
         // modifiedData.forEach(item => {
