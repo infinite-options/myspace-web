@@ -127,7 +127,7 @@ export default function PropertyNavigator({
     allRentStatus: allRentStatusFromContext,
     // allContracts: allContractsFromContext,
     returnIndex: returnIndexFromContext,
-    updateAppliances: updateAppliancesFromContext, 
+    updateAppliances: updateAppliancesFromContext,
   } = propertiesContext || {};
 
   const managementContractContext = useContext(ManagementContractContext);
@@ -357,10 +357,10 @@ export default function PropertyNavigator({
       console.log("PropertyNavigator - filtered - ", filtered);
       const active = filtered?.filter((contract) => contract.contract_status === "ACTIVE");
 
-      if(filtered?.length > 1){
+      if (filtered?.length > 1) {
         const renew = filtered?.filter((contract) => contract.contract_status !== "ACTIVE");
         setRenewContracts(renew)
-      }else{
+      } else {
         setRenewContracts([])
       }
       // console.log("322 - PropertyNavigator - filtered contracts - ", filtered);
@@ -657,6 +657,10 @@ export default function PropertyNavigator({
   ];
 
   const handleEditClick = async (row) => {
+    const sortedImages = sortByFavImage(row.appliance_favorite_image, row.appliance_images);
+    if (sortedImages) {
+      row.appliance_images = sortedImages;
+    }
     console.log("handleEditClick - row - ", row);
     await setIsReadOnly(false);
     await setInitialApplData(row);
@@ -716,7 +720,7 @@ export default function PropertyNavigator({
         });
         console.log("updatedData", updatedData);
         setAppliances(updatedData);
-         // Call the function to update appliances in the properties context for the specified property
+        // Call the function to update appliances in the properties context for the specified property
         updateAppliances(propertyId, updatedData);
         setDeletedIcons(currentApplRow?.appliance_images ? new Array(currentApplRow.appliance_images.length).fill(false) : []);
       }).catch((err) => {
@@ -772,18 +776,18 @@ export default function PropertyNavigator({
           // Check if the response contains the `appliance_uid`
           const newApplianceUID = response?.data?.appliance_UID;
           if (newApplianceUID) {
-            if(selectedImageList.length == 0){
-            // console.log("Data updated successfully", response);
-            // showSnackbar("Your profile has been successfully updated.", "success");
-            // handleUpdate();
-           // console.log("Appliance befor", appliance);
-            // console.log("applianceUIDToCategoryMap is %%", applianceUIDToCategoryMap);
-            const applianceCategory = applianceUIDToCategoryMap[appliance.appliance_type];
-            // console.log("Appliance is $$", applianceCategory);
-            setAppliances([...appliances, { ...appliance, appliance_uid: newApplianceUID, appliance_item: applianceCategory }]);
-          } else {
-            getAppliances();
-          }
+            if (selectedImageList.length == 0) {
+              // console.log("Data updated successfully", response);
+              // showSnackbar("Your profile has been successfully updated.", "success");
+              // handleUpdate();
+              // console.log("Appliance befor", appliance);
+              // console.log("applianceUIDToCategoryMap is %%", applianceUIDToCategoryMap);
+              const applianceCategory = applianceUIDToCategoryMap[appliance.appliance_type];
+              // console.log("Appliance is $$", applianceCategory);
+              setAppliances([...appliances, { ...appliance, appliance_uid: newApplianceUID, appliance_item: applianceCategory }]);
+            } else {
+              getAppliances();
+            }
           }
           setShowSpinner(false);
           setSelectedImageList([]);
@@ -851,9 +855,9 @@ export default function PropertyNavigator({
         applianceFormData.append("appliance_images", JSON.stringify(currentApplRow.appliance_images));
       }
 
-      if (favImage != null) {
-        applianceFormData.append("appliance_favorite_image", favImage);
-      }
+      // if (favImage != null) {
+      //   applianceFormData.append("appliance_favorite_image", favImage);
+      // }
       console.log(favImage);
       let i = 0;
       for (const file of selectedImageList) {
@@ -902,6 +906,7 @@ export default function PropertyNavigator({
 
           setShowSpinner(false);
           setSelectedImageList([]);
+          setImagesTobeDeleted([]);
           handleClose();
         })
         .catch((error) => {
@@ -1017,6 +1022,10 @@ export default function PropertyNavigator({
   };
 
   const handleInfoClick = (row) => {
+    const sortedImages = sortByFavImage(row.appliance_favorite_image, row.appliance_images);
+    if (sortedImages) {
+      row.appliance_images = sortedImages;
+    }
     setcurrentApplRow(row);
     setIsEditing(false); // This will ensure that edit options are disabled
     setIsReadOnly(true); // Set read-only mode for Info button click
@@ -1112,6 +1121,13 @@ export default function PropertyNavigator({
   const handleUpdateFavoriteIcons = () => {
     setFavoriteIcons(new Array(favoriteIcons.length).fill(false));
   };
+
+  const sortByFavImage = (favImage, imageList) => {
+    if (!favImage || !imageList) return
+
+    const sortedImages = [favImage, ...imageList.filter((img) => img !== favImage)];
+    return sortedImages;
+  }
 
   const handleTenantClick = (tenantId) => {
     if (selectedRole === "MANAGER" || selectedRole === "OWNER") {
@@ -2753,7 +2769,7 @@ export default function PropertyNavigator({
                         appliance_warranty_till: "",
                         appliance_purchase_order: "",
                         appliance_purchased_from: "",
-                        appliance_favorite_image:"",
+                        appliance_favorite_image: "",
                       });
                       setIsEditing(false);
                       handleOpen();
