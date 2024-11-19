@@ -155,8 +155,17 @@ export default function LeaseDetailsComponent({
 			}		
 		});
 
-		if(renewalApplicationIndex != null){
+		if( renewalApplication != null && renewalApplication.lease_status === "RENEW NEW"){
 			handleAppClick(renewalApplicationIndex)
+		} else if(renewalApplication != null && renewalApplication.lease_status === "RENEW PROCESSING"){
+			navigate('/tenantLease', {
+				state: {
+					page: 'renew_lease',
+					application: renewalApplication,
+					property: currentProperty,
+					managerInitiatedRenew: false,
+				},
+			});
 		} else {
 			navigate('/tenantLease', {
 				state: {

@@ -168,19 +168,26 @@ const TenantLease = () => {
   } else if (page === "renew_lease") {
     // Calculate the duration between lease_start and lease_end
     const oldDuration = dayjs(property.lease_end).diff(dayjs(property.lease_start), "day"); // Duration in days
-    const leaseStartDate = dayjs(property.lease_end).add(1, "day");
-    const leaseEndDate = leaseStartDate.add(oldDuration, "day");
+    let leaseStartDate = dayjs(property.lease_end).add(1, "day");
+    let leaseEndDate = leaseStartDate.add(oldDuration, "day");
+
+    if(application.lease_status === "RENEW PROCESSING" && application.lease_start != null){
+      leaseStartDate = dayjs(application.lease_start);
+    }
+    if(application.lease_status === "RENEW PROCESSING" && application.lease_end != null){
+      leaseEndDate = dayjs(application.lease_end);
+    }
     // const leaseEndDate = leaseStartDate + (dayjs(property.lease_end) - dayjs(property.lease_start));
     console.log("In Tenant Lease leaseStartDate", leaseStartDate);
 
-    const duration = leaseEndDate.diff(leaseStartDate, "day"); // Duration in days
+    // const duration = leaseEndDate.diff(leaseStartDate, "day"); // Duration in days
 
     // Set the start date to remain same as lease_start
     initialStartDate = leaseStartDate;
     console.log("In Tenant Lease initialStartDate", initialStartDate);
-    console.log("In Tenant Lease duration", duration);
+    // console.log("In Tenant Lease duration", duration);
     // Set the new end date to be initialStartDate + duration
-    console.log("In Tenant Lease initialEndDate", initialStartDate.add(duration, "days"));
+    // console.log("In Tenant Lease initialEndDate", initialStartDate.add(duration, "days"));
     // initialEndDate = leaseEndDate.add(duration, "day");
     initialEndDate = leaseEndDate;
     console.log("In Tenant Lease initialEndDate", initialEndDate);
@@ -1365,7 +1372,7 @@ const TenantLease = () => {
           <Accordion defaultExpanded sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant='h6' sx={{ fontWeight: "bold" }}>
-                Lease Details
+                Lease Details (UID: {application.lease_uid})
               </Typography>
             </AccordionSummary>
             <AccordionDetails sx={{ padding: "20px", borderRadius: "10px" }}>
