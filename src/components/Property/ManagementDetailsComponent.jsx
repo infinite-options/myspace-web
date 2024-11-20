@@ -312,7 +312,7 @@ export default function ManagementDetailsComponent({
               </Grid>
               <Grid item xs={6}>
                 <Box display='flex' alignItems='center' justifyContent={"space-between"}>
-                  {currentProperty?.contract_status === "ACTIVE" ? (
+                  {activeContract?.contract_status === "ACTIVE" ? (
                     <>
                       <Typography
                         sx={{
@@ -323,20 +323,20 @@ export default function ManagementDetailsComponent({
                       >
                         ACTIVE
                       </Typography>
-                      {/* {currentProperty?.contract_renew_status && (currentProperty?.contract_renew_status === "ENDING" || currentProperty?.contract_renew_status.includes("RENEW")) && 
-                                          (
-                                              <Typography
-                                                  sx={{
-                                                      color: currentProperty?.contract_renew_status?.includes("RENEW")? "#FF8A00" : "#A52A2A",
-                                                      fontWeight: theme.typography.secondary.fontWeight,
-                                                      fontSize: theme.typography.smallFont,
-                                                  }}
-                                              >
-                                                  {currentProperty?.contract_renew_status?.includes("RENEW") ? " RENEWING" : currentProperty?.contract_renew_status }
-                                              </Typography>
-                                          )
-                                      } */}
-                      {renewContract && (renewContract?.contract_status === "SENT" || renewContract?.contract_status.includes("RENEW")) && (
+                      {activeContract?.contract_renew_status && (activeContract?.contract_renew_status === "ENDING" || activeContract?.contract_renew_status.includes("EARLY") || activeContract?.contract_renew_status.includes("RENEW")) && 
+                          (
+                              <Typography
+                                  sx={{
+                                      color: activeContract?.contract_renew_status?.includes("RENEW")? "#FF8A00" : "#A52A2A",
+                                      fontWeight: theme.typography.secondary.fontWeight,
+                                      fontSize: theme.typography.smallFont,
+                                  }}
+                              >
+                                  {activeContract?.contract_renew_status?.includes("RENEW") ? " RENEWING" : activeContract?.contract_renew_status }
+                              </Typography>
+                          )
+                      }
+                      {/* {activeContract?.contract_renew_status && (renewContract?.contract_status === "SENT" || renewContract?.contract_status.includes("RENEW")) && (
                         <Typography
                           sx={{
                             color: renewContract?.contract_status === "SENT" ? "#FF8A00" : "#A52A2A",
@@ -346,7 +346,7 @@ export default function ManagementDetailsComponent({
                         >
                           {renewContract?.contract_status === "SENT" ? "RENEWING" : renewContract?.contract_status}
                         </Typography>
-                      )}
+                      )} */}
                     </>
                   ) : (
                     <Typography
@@ -539,7 +539,9 @@ export default function ManagementDetailsComponent({
                     onClick={() => {
                       if (selectedRole === "OWNER") {
                         if (renewContract) {
-                          handleManageContractClick(renewContract.contract_uid, currentProperty.contract_property_id);
+                            if(renewContract.contract_status === "SENT" || renewContract.contract_status === "APPROVED"){
+                              handleManageContractClick(renewContract.contract_uid, currentProperty.contract_property_id);
+                            }
                         } else {
                           setShowRenewContractDialog(true);
                         }
@@ -547,11 +549,12 @@ export default function ManagementDetailsComponent({
                         if (renewContract) {
                           handleManageContractClick(renewContract.contract_uid, currentProperty.contract_property_id);
                         } else {
-                          handleManageContractClick(currentProperty.contract_uid, currentProperty.contract_property_id);
+                          handleManageContractClick(activeContract.contract_uid, currentProperty.contract_property_id);
                         }
                       }
                     }}
                     variant='contained'
+                    disabled={(renewContract?.contract_status === "NEW" || renewContract?.contract_status === "REJECTED") && selectedRole === "OWNER"}
                     sx={{
                       background: "#3D5CAC",
                       color: theme.palette.background.default,
@@ -573,7 +576,7 @@ export default function ManagementDetailsComponent({
                         //   marginLeft: "1%", // Adjusting margin for icon and text
                       }}
                     >
-                      {renewContract && renewContract?.contract_status === "SENT" ? (selectedRole === "MANAGER" ? "Edit Renew Contract" : "View Renew Contract") : "Renew Contract"}
+                      {renewContract ? (renewContract?.contract_status === "SENT" ? (selectedRole === "MANAGER" ? "Edit Renew Contract" : "Manage Renew Contract") : (renewContract?.contract_status === "NEW" ? (selectedRole === "MANAGER" ? "Owner Renew Requested" : "Already Requested") : (renewContract?.contract_status === "REJECTED" ? (selectedRole === "MANAGER" ? "Edit Renew Contract" : "Rejected By Owner")  : "View Renewed Contract"))) : "Renew Contract"}
                     </Typography>
                   </Button>
                 </Grid>
@@ -821,11 +824,12 @@ export default function ManagementDetailsComponent({
             handleClose={() => setShowManagerEndContractDialog(false)}
             onEndContract={handleManagerEndContractClick}
             noticePeriod={contractEndNotice}
+            fetchContracts={fetchContracts}
           />
         </Box>
       )}
 
-      <RenewContractDialog open={showRenewContractDialog} handleClose={() => setShowRenewContractDialog(false)} contract={activeContract} />
+      <RenewContractDialog open={showRenewContractDialog} handleClose={() => setShowRenewContractDialog(false)} contract={activeContract} fetchContracts={fetchContracts} />
     </>
   );
 }
@@ -1231,7 +1235,7 @@ function ManagerEndContractDialog({ open, handleClose, onEndContract, noticePeri
   );
 }
 
-const RenewContractDialog = ({ open, handleClose, contract }) => {
+const RenewContractDialog = ({ open, handleClose, contract, fetchContracts }) => {
   const { getProfileId } = useUser();
   const ONE_DAY_MS = 1000 * 60 * 60 * 24;
 
@@ -1285,7 +1289,7 @@ const RenewContractDialog = ({ open, handleClose, contract }) => {
 
     try {
       const response = await axios.request(config);
-      console.log(JSON.stringify(response.data));
+      // console.log(JSON.stringify(response.data));
     } catch (error) {
       console.log(error);
     }
@@ -1300,6 +1304,7 @@ const RenewContractDialog = ({ open, handleClose, contract }) => {
     formData.append("contract_uid", contract.contract_uid);
     formData.append("contract_renew_status", contractRenewStatus);
 
+    // put request to change renew status
     try {
       fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`, {
         method: "PUT",
@@ -1319,7 +1324,41 @@ const RenewContractDialog = ({ open, handleClose, contract }) => {
       console.error(error);
     }
 
-    sendAnnouncement();
+    const currentDate = new Date();    
+    const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}-${currentDate.getFullYear()}`;
+
+  
+    const NewFormData = new FormData();
+    NewFormData.append("contract_property_ids", JSON.stringify([contract.contract_property_id]));
+    NewFormData.append("contract_business_id", contract.contract_business_id);
+    NewFormData.append("contract_start_date", formattedDate);
+    NewFormData.append("contract_status", "NEW");
+
+    const url = `${APIConfig.baseURL.dev}/contracts`;
+
+    //post request to create new contract
+    try {
+      fetch(url, {
+        method: "POST",
+        body: NewFormData,
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          } else {
+            console.log("Data added successfully");
+            sendAnnouncement();
+            fetchContracts();
+          }
+        })
+        .catch((error) => {
+          console.error("There was a problem with the fetch operation:", error);
+        });
+    } catch (error) {
+      console.error("There was a problem with the fetch operation:", error);
+    }
+
+    // sendAnnouncement();
 
     handleClose();
   };

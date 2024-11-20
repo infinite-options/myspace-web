@@ -358,8 +358,8 @@ export default function PropertyNavigator({
       console.log("PropertyNavigator - filtered - ", filtered);
       const active = filtered?.filter((contract) => contract.contract_status === "ACTIVE");
 
-      if(filtered?.length > 1){
-        const renew = filtered?.filter((contract) => contract.contract_status !== "ACTIVE");
+      if(filtered?.length > 1 && active?.length > 0){
+        const renew = filtered?.filter((contract) => (contract.contract_status === "SENT" || contract.contract_status === "NEW" || contract.contract_status === "APPROVED" || contract.contract_status === "REJECTED") && (contract.business_uid === active[0].business_uid));
         setRenewContracts(renew)
       }else{
         setRenewContracts([])
