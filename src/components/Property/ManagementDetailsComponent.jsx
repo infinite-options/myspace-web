@@ -473,7 +473,9 @@ export default function ManagementDetailsComponent({
                       fontSize: theme.typography.smallFont,
                     }}
                   >
-                    {activeContract?.contract_m2m === 1 ? "Month To Month" : "Automatic"}
+                    {activeContract?.contract_m2m == null ? "Not Specified" : ""}
+                    {activeContract?.contract_m2m === 0 ? "Automatic" : ""}
+                    {activeContract?.contract_m2m === 1 ? "Month To Month" : ""}
                   </Typography>
                 </Box>
               </Grid>

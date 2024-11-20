@@ -171,10 +171,10 @@ const TenantLease = () => {
     let leaseStartDate = dayjs(property.lease_end).add(1, "day");
     let leaseEndDate = leaseStartDate.add(oldDuration, "day");
 
-    if(application.lease_status === "RENEW PROCESSING" && application.lease_start != null){
+    if((application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") && application.lease_start != null){
       leaseStartDate = dayjs(application.lease_start);
     }
-    if(application.lease_status === "RENEW PROCESSING" && application.lease_end != null){
+    if((application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") && application.lease_end != null){
       leaseEndDate = dayjs(application.lease_end);
     }
     // const leaseEndDate = leaseStartDate + (dayjs(property.lease_end) - dayjs(property.lease_start));
@@ -476,7 +476,8 @@ const TenantLease = () => {
         application?.lease_status === "RENEW PROCESSING" ||
         application?.lease_status === "ACTIVE" ||
         application?.lease_status === "ACTIVE M2M" ||
-        application?.lease_status === "RENEW NEW"
+        application?.lease_status === "RENEW NEW" ||
+        application?.lease_status === "APPROVED"
       ) {
         
         feesList = JSON.parse(application?.lease_fees);
@@ -961,8 +962,16 @@ const TenantLease = () => {
       leaseApplicationFormData.append("lease_uid", application.lease_uid);
       if(application.lease_status === "NEW"){
         leaseApplicationFormData.append("lease_status", "PROCESSING");
-      } else { //lease_status === RENEW NEW
+      } else if (application.lease_status === "RENEW NEW") {
         leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");
+      } else if(application.lease_status === "APPROVED"){
+        // console.log("968 - property - ", property);
+        if(property.lease_status === "ACTIVE"){
+          leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");
+        } else {
+          leaseApplicationFormData.append("lease_status", "PROCESSING");
+        }
+        
       }
       
       leaseApplicationFormData.append("lease_effective_date", startDate.format("MM-DD-YYYY"));
@@ -2278,7 +2287,7 @@ const TenantLease = () => {
           <Button
             // onClick={application?.lease_status === "NEW" ? handleCreateLease : handleRenewLease}
             onClick={() => {
-              if (application?.lease_status === "NEW" || application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW NEW" || application?.lease_status === "RENEW PROCESSING" ) {
+              if (application?.lease_status === "NEW" || application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW NEW" || application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "APPROVED" ) {
                 handleCreateLease();
               } else if (application?.lease_status === "ACTIVE" || application?.lease_status === "ACTIVE M2M") {
                 handleRenewLease();
@@ -2298,7 +2307,7 @@ const TenantLease = () => {
             {application?.lease_status === "PROCESSING" ? "Modify Lease" : ""}
             {application?.lease_status === "ACTIVE" || application?.lease_status === "ACTIVE M2M" ? "Renew Lease" : ""}            
             {application?.lease_status === "RENEW NEW" ? "Create Lease Renewal" : ""}
-            {application?.lease_status === "RENEW PROCESSING" ? "Modify Lease Renewal" : ""}
+            {application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "APPROVED" ? "Modify Lease Renewal" : ""}            
           </Button>
         </Grid>
       </Box>
