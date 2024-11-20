@@ -51,7 +51,7 @@ function Properties() {
   // console.log("----loading issue - propertyList - ", propertyList, dataload)
   // console.log("returnIndexFromContext - ", returnIndexFromContext);
 
-  const { updateContractUID, updateContractPropertyUID } = useContext(ManagementContractContext);
+  const { updateContractUID, updateContractPropertyUID, fetchContracts} = useContext(ManagementContractContext);
 
   const [dataReady, setDataReady] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
@@ -499,7 +499,7 @@ function Properties() {
                         setReturnIndexByProperty={setReturnIndexByProperty}
                       />
                     )}
-                    {RHS === "ManageContract" && <ManagementContractDetails page={"properties"} handleBackClick={handleBackClick} navigatingFrom={"ManageContract"} />}
+                    {RHS === "ManageContract" && <ManagementContractDetails page={"properties"} handleBackClick={handleBackClick} navigatingFrom={"ManageContract"} fetchContracts={fetchContracts}/>}
                   </>
                 )}
               </Grid>

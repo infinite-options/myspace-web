@@ -134,6 +134,7 @@ export default function PropertyNavigator({
   const managementContractContext = useContext(ManagementContractContext);
   const {
     allContracts: allContractsFromContext,
+    fetchContracts,
   } = managementContractContext || {};
 
   const propertyList = propertyListFromContext || [];

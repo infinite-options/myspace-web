@@ -179,7 +179,7 @@ function ManagementContractDetails(props) {
             Contract UID: {currentContractUID}
           </Typography>
         </Box>
-        <PropertyCard data={filteredPropertiesData[index] ? filteredPropertiesData[index] : []} navigatingFrom={props.navigatingFrom} handleBackBtn={handleBackBtn} />
+        <PropertyCard data={filteredPropertiesData[index] ? filteredPropertiesData[index] : []} navigatingFrom={props.navigatingFrom} handleBackBtn={handleBackBtn} fetchContracts={props.fetchContracts}/>
       </Box>
       {/* <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
           <CircularProgress color='inherit' />
