@@ -41,7 +41,7 @@ import { json, Navigate } from "react-router-dom";
 
 export default function TenantApplicationEdit(props) {
   const { getList } = useContext(ListsContext);
-  console.log("ROHIT - 31 - props", props);
+//   console.log("44 - props", props);
   // const [adults, setAdults] = useState(adultOccupants? adultOccupants : []);
   // const [children, setChildren] = useState(childOccupants? childOccupants : []);
   // const [pets, setPets] = useState(petOccupants? petOccupants : []);
@@ -86,9 +86,10 @@ export default function TenantApplicationEdit(props) {
   const [propertyUtilities, setPropertyUtilities] = useState([]);
 
   const [employmentData, setEmploymentData] = useState([]);
-  useEffect(() => {
-    console.log("ROHIT - 74 - lease - ", lease);
-  }, [lease]);
+  
+//   useEffect(() => {
+//     console.log("74 - lease - ", lease);
+//   }, [lease]);
 
   // const getListDetails = async () => {
   //     try {
@@ -259,7 +260,7 @@ export default function TenantApplicationEdit(props) {
     } else {
       info = lease[0]?.lease_income ? JSON.parse(lease[0].lease_income) : [];
     }
-    console.log("ROHIT - 245 - info - ", info);
+    // console.log("245 - info - ", info);
     setEmploymentData(info);
   }
 
@@ -287,7 +288,7 @@ export default function TenantApplicationEdit(props) {
         console.log("listing data --- ", props.listingsData);
         // const utilities = JSON.parse(props.data?.property_utilities).length > 0 ? JSON.parse(props.data?.property_utilities) : []
         const currentPropertyListing = props?.listingsData?.find((listing) => listing.property_uid === props.data.property_uid); // listing data for the current property
-        console.log("ROHIT - 247 - currentPropertyListing - ", currentPropertyListing);
+        // console.log("247 - currentPropertyListing - ", currentPropertyListing);
         let utilities = [];
         if (currentPropertyListing != null && currentPropertyListing.property_utilities != null) {
           utilities = JSON.parse(currentPropertyListing.property_utilities);
@@ -585,7 +586,7 @@ export default function TenantApplicationEdit(props) {
         const leaseApplicationFormData = new FormData();
 
         // Now set pets, adult, document, children all fields if they change
-        console.log("ROHIT - 526 - status - ", status);
+        // console.log("526 - status - ", status);
 
         if (status === "PROCESSING") {
           leaseApplicationFormData.append("lease_status", "NEW");
@@ -978,7 +979,7 @@ export default function TenantApplicationEdit(props) {
       leaseApplicationData.append("lease_pets", JSON.stringify(petOccupants));
       leaseApplicationData.append("lease_vehicles", JSON.stringify(vehicles));
 
-      console.log("ROHIT - 880 - lease - ", lease);
+    //   console.log("880 - lease - ", lease);
       //   const leaseUtils = lease != null && lease?.length > 0 && lease[0].lease_utilities ? JSON.parse(lease[0].lease_utilities) : [];
       const leaseUtils = currentLease != null && currentLease.lease_utilities != null ? JSON.parse(currentLease.lease_utilities) : [];
 

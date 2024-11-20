@@ -45,6 +45,7 @@ import AdultOccupant from "../Leases/AdultOccupant";
 import ChildrenOccupant from "../Leases/ChildrenOccupant";
 import PetsOccupant from "../Leases/PetsOccupant";
 import VehiclesOccupant from "../Leases/VehiclesOccupant";
+import GenericDialog from "../GenericDialog";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -178,19 +179,19 @@ const TenantLease = () => {
       leaseEndDate = dayjs(application.lease_end);
     }
     // const leaseEndDate = leaseStartDate + (dayjs(property.lease_end) - dayjs(property.lease_start));
-    console.log("In Tenant Lease leaseStartDate", leaseStartDate);
+    // console.log("In Tenant Lease leaseStartDate", leaseStartDate);
 
     // const duration = leaseEndDate.diff(leaseStartDate, "day"); // Duration in days
 
     // Set the start date to remain same as lease_start
     initialStartDate = leaseStartDate;
-    console.log("In Tenant Lease initialStartDate", initialStartDate);
+    // console.log("In Tenant Lease initialStartDate", initialStartDate);
     // console.log("In Tenant Lease duration", duration);
     // Set the new end date to be initialStartDate + duration
     // console.log("In Tenant Lease initialEndDate", initialStartDate.add(duration, "days"));
     // initialEndDate = leaseEndDate.add(duration, "day");
     initialEndDate = leaseEndDate;
-    console.log("In Tenant Lease initialEndDate", initialEndDate);
+    // console.log("In Tenant Lease initialEndDate", initialEndDate);
     // Set move-in date same as the start date
     initialMoveInDate = initialStartDate;
   }
@@ -268,6 +269,22 @@ const TenantLease = () => {
   const [showMissingFileTypePrompt, setShowMissingFileTypePrompt] = useState(false);
   const [showMissingFieldsPrompt, setShowMissingFieldsPrompt] = useState(false);
   const [showInvalidDueDatePrompt, setShowInvalidDueDatePrompt] = useState(false);
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState("");
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [dialogSeverity, setDialogSeverity] = useState("info");
+
+  const openDialog = (title, message, severity) => {
+    setDialogTitle(title); // Set custom title
+    setDialogMessage(message); // Set custom message
+    setDialogSeverity(severity); // Can use this if needed to control styles
+    setIsDialogOpen(true);
+  };
+
+  const closeDialog = () => {
+    setIsDialogOpen(false);
+  };
 
   let propertyImage;
   if (property.property_favorite_image !== null) {
@@ -839,6 +856,7 @@ const TenantLease = () => {
     }
     let retVal = true;
     fees.map((fee) => {
+      // console.log("859 - fee.due_by_date - ", fee.due_by_date);
       if (
         fee.fee_name == null ||
         fee.fee_name === "" ||
@@ -947,10 +965,11 @@ const TenantLease = () => {
 
   const handleCreateLease = async () => {
     try {
-      setShowMissingFieldsPrompt(false);
+      // setShowMissingFieldsPrompt(false);
       if (!checkRequiredFields()) {
         // console.log("check here -- error no fees");
-        setShowMissingFieldsPrompt(true);
+        // setShowMissingFieldsPrompt(true);
+        openDialog("Error", `Please fill out all required fields.`, "error");
         return;
       }
       setShowSpinner(true);
@@ -1082,12 +1101,13 @@ const TenantLease = () => {
   }
 
   const handleRenewLease = async () => {
-    // console.log('inside handleRenewLease');
+    // console.log('inside handleRenewLease');            
     try {
-      setShowMissingFieldsPrompt(false);
+      // setShowMissingFieldsPrompt(false);
       if (!checkRequiredFields()) {
         // console.log('is it inside !checkRequiredFields');
-        setShowMissingFieldsPrompt(true);
+        // setShowMissingFieldsPrompt(true);
+        openDialog("Error", `Please fill out all required fields.`, "error");
         return;
       }
       setShowSpinner(true);
@@ -2311,6 +2331,18 @@ const TenantLease = () => {
           </Button>
         </Grid>
       </Box>
+      <GenericDialog
+        isOpen={isDialogOpen}
+        title={dialogTitle}
+        contextText={dialogMessage}
+        actions={[
+          {
+            label: "OK",
+            onClick: closeDialog,
+          },
+        ]}
+        severity={dialogSeverity}
+      />
     </ThemeProvider>
   );
 };

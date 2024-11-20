@@ -256,7 +256,7 @@ const TenantDashboard = () => {
       // }
 
       // Find the correct lease to set as relatedLease
-      console.log("ROHIT - 233 - leasesForProperty - ", leasesForProperty);
+      // console.log("233 - leasesForProperty - ", leasesForProperty);
       if (leasesForProperty.length > 1) {
         const firstLease = leasesForProperty[0];
         // const secondLease = leasesForProperty[1];
@@ -378,14 +378,14 @@ const TenantDashboard = () => {
     });
 
     if (rightPaneRef.current) {
-      // console.log("ROHIT - rightPaneRef - ", rightPaneRef)
+      // console.log("rightPaneRef - ", rightPaneRef)
       rightPaneRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
-  // console.log("ROHIT - rightPaneRef1 - ", rightPaneRef)
+  // console.log("rightPaneRef1 - ", rightPaneRef)
   useEffect(() => {
-    // console.log("ROHIT - rightPaneRef2 - ", rightPaneRef)
+    // console.log("rightPaneRef2 - ", rightPaneRef)
     // if (rightPaneRef.current) {
     //   rightPaneRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     // }
@@ -838,8 +838,8 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
 
 const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty, relatedLease, isMobile, setViewRHS }) => {
   // console.log("Lease Details renewal", relatedLease);
-  console.log("ROHIT - 804 - LeaseDetails - relatedLease - ", relatedLease);
-  console.log("ROHIT - 804 - LeaseDetails - currentLease - ", leaseDetails);
+  // console.log("804 - LeaseDetails - relatedLease - ", relatedLease);
+  // console.log("804 - LeaseDetails - currentLease - ", leaseDetails);
   // console.log("Lease Details ", leaseDetails);
   // console.log("selected property - ", selectedProperty)
   // console.log("Lease Details rightPane", rightPane);
@@ -874,6 +874,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
       setViewRHS(true);
     }
     if (relatedLease) {
+      // console.log("877 - leaseDetails - ", leaseDetails);
       setRightPane({
         type: "tenantLeases",
         state: {

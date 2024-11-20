@@ -36,7 +36,8 @@ export const getFeesDueBy = (fee) => {
     } else if (fee.frequency === "Monthly" || fee.frequency === "Quarterly" || fee.frequency === "Semi-Monthly") {
       return fee.due_by !== "" ? `${fee.due_by}${getDateAdornmentString(fee.due_by)} of the month` : "-";
     } else if (fee.frequency === "One Time" || fee.frequency === "Annually" || fee.frequency === "Semi-Annually") {
-      return fee.due_by_date !== "" ? `${fee.due_by_date}` : "No Due Date";
+      // return fee.due_by_date !== "" ? `${fee.due_by_date}` : "No Due Date";
+      return (fee.due_by_date !== "") ? `${fee.due_by_date}` : "";
     } else{
       return "-";
     }
