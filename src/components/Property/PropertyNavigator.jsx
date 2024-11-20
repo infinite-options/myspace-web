@@ -51,6 +51,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useUser } from "../../contexts/UserContext";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
@@ -3025,7 +3026,7 @@ export default function PropertyNavigator({
                       disabled={isReadOnly}
                     />
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker
+                      <DesktopDatePicker
                         label='Purchased On'
                         value={currentApplRow?.appliance_purchased ? dayjs(currentApplRow.appliance_purchased) : null}
                         onChange={(date) => {
@@ -3054,7 +3055,8 @@ export default function PropertyNavigator({
                             }}
                           />
                         )}
-                        sx={{ marginTop: "10px", width: "535px" }}
+                        slotProps={{ textField: { fullWidth: true } }}
+                        sx={{ marginTop: "10px" }}
                       />
                     </LocalizationProvider>
                     <TextField
@@ -3073,7 +3075,7 @@ export default function PropertyNavigator({
                     />
 
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker
+                      <DesktopDatePicker
                         label='Installed On'
                         disabled={isReadOnly}
                         value={currentApplRow?.appliance_installed ? dayjs(currentApplRow.appliance_installed) : null}
@@ -3099,7 +3101,8 @@ export default function PropertyNavigator({
                             }}
                           />
                         )}
-                        sx={{ marginTop: "10px", width: "535px" }}
+                        slotProps={{ textField: { fullWidth: true } }}
+                        sx={{ marginTop: "10px"}}
                       />
                     </LocalizationProvider>
 
@@ -3146,7 +3149,7 @@ export default function PropertyNavigator({
                       }
                     />
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker
+                      <DesktopDatePicker 
                         label='Warranty Till'
                         disabled={isReadOnly}
                         value={currentApplRow?.appliance_warranty_till ? dayjs(currentApplRow.appliance_warranty_till) : null}
@@ -3172,7 +3175,8 @@ export default function PropertyNavigator({
                             }}
                           />
                         )}
-                        sx={{ marginTop: "10px", width: "535px" }}
+                        slotProps={{ textField: { fullWidth: true } }}
+                        sx={{ marginTop: "10px"}}
                       />
                     </LocalizationProvider>
                     <TextField
