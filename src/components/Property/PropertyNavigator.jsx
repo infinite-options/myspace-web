@@ -7,10 +7,8 @@ import {
   Typography,
   Button,
   Box,
-  Stack,
   Paper,
   Grid,
-  Badge,
   Dialog,
   DialogActions,
   DialogContent,
@@ -51,7 +49,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useUser } from "../../contexts/UserContext";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
@@ -78,7 +76,7 @@ import PropertiesContext from "../../contexts/PropertiesContext";
 import ListsContext from "../../contexts/ListsContext.js";
 import LeaseDetailsComponent from "./LeaseDetailsComponent.jsx";
 import ManagementDetailsComponent from "./ManagementDetailsComponent.jsx";
-import ManagementContractContext from '../../contexts/ManagementContractContext';
+import ManagementContractContext from "../../contexts/ManagementContractContext";
 
 import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy } from "../../utils/fees";
 import ReferTenantDialog from "../Referral/ReferTenantDialog.jsx";
@@ -132,10 +130,7 @@ export default function PropertyNavigator({
   } = propertiesContext || {};
 
   const managementContractContext = useContext(ManagementContractContext);
-  const {
-    allContracts: allContractsFromContext,
-    fetchContracts,
-  } = managementContractContext || {};
+  const { allContracts: allContractsFromContext, fetchContracts } = managementContractContext || {};
 
   const propertyList = propertyListFromContext || [];
   const allRentStatus = allRentStatusFromContext || [];
@@ -211,11 +206,11 @@ export default function PropertyNavigator({
   // }, [property]);
 
   useEffect(() => {
-    console.log("210 - PropertyNavigator - allRentStatus - ", allRentStatus)
+    console.log("210 - PropertyNavigator - allRentStatus - ", allRentStatus);
   }, [allRentStatus]);
 
   useEffect(() => {
-    console.log("210 - PropertyNavigator - propertyRentStatus - ", propertyRentStatus)
+    console.log("210 - PropertyNavigator - propertyRentStatus - ", propertyRentStatus);
   }, [propertyRentStatus]);
 
   useEffect(() => {
@@ -247,7 +242,7 @@ export default function PropertyNavigator({
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setSelectedImageList([]);
-    setOpen(false)
+    setOpen(false);
   };
 
   // Parse property images once outside the component
@@ -275,7 +270,7 @@ export default function PropertyNavigator({
   const [showSpinner, setShowSpinner] = useState(false);
   const [contractsData, setContractsData] = useState(allContracts);
   const [activeContracts, setActiveContracts] = useState([]);
-  const [renewContracts, setRenewContracts] = useState([])
+  const [renewContracts, setRenewContracts] = useState([]);
   const [contractsNewSent, setContractsNewSent] = useState(0);
   const [maintenanceReqData, setMaintenanceReqData] = useState([{}]);
   // console.log('Maintenance Request Data1: ', maintenanceReqData);
@@ -359,11 +354,15 @@ export default function PropertyNavigator({
       console.log("PropertyNavigator - filtered - ", filtered);
       const active = filtered?.filter((contract) => contract.contract_status === "ACTIVE");
 
-      if (filtered?.length > 1) {
-        const renew = filtered?.filter((contract) => contract.contract_status !== "ACTIVE");
-        setRenewContracts(renew)
+      if (filtered?.length > 1 && active?.length > 0) {
+        const renew = filtered?.filter(
+          (contract) =>
+            (contract.contract_status === "SENT" || contract.contract_status === "NEW" || contract.contract_status === "APPROVED" || contract.contract_status === "REJECTED") &&
+            contract.business_uid === active[0].business_uid
+        );
+        setRenewContracts(renew);
       } else {
-        setRenewContracts([])
+        setRenewContracts([]);
       }
       // console.log("322 - PropertyNavigator - filtered contracts - ", filtered);
       filtered.forEach((contract) => {
@@ -646,18 +645,18 @@ export default function PropertyNavigator({
     //     return <Box sx={{ width: "100%", color: getLateFeesColor(params.row) }}>{params.row.lf_pur_amount_due}</Box>;
     //   },
     // },
-    , ...(!isMobile
+    ...(!isMobile
       ? [
-        {
-          field: "pur_description",
-          headerName: "Notes",
-          sortable: isDesktop,
-          flex: 3,
-          renderCell: (params) => {
-            return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
+          {
+            field: "pur_description",
+            headerName: "Notes",
+            sortable: isDesktop,
+            flex: 3,
+            renderCell: (params) => {
+              return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
+            },
           },
-        },
-      ]
+        ]
       : []),
     // {
     //   field: "pur_description",
@@ -721,15 +720,19 @@ export default function PropertyNavigator({
       "Access-Control-Allow-Headers": "*",
       "Access-Control-Allow-Credentials": "*",
     };
-    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances/${propertyId}`)
+    axios
+      .get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances/${propertyId}`)
       .then((response) => {
         // console.log(typeof (response.data.result));
         // console.log(response.data.result);
         const updatedData = response.data.result.map((appln) => {
           const { list_item, list_uid, list_category, appliance_images, ...rest } = appln;
           return {
-            appliance_item: list_item, appliance_type: list_uid, appliance_category: list_category,
-            appliance_images: JSON.parse(appliance_images), ...rest
+            appliance_item: list_item,
+            appliance_type: list_uid,
+            appliance_category: list_category,
+            appliance_images: JSON.parse(appliance_images),
+            ...rest,
           };
         });
         console.log("updatedData", updatedData);
@@ -737,11 +740,11 @@ export default function PropertyNavigator({
         // Call the function to update appliances in the properties context for the specified property
         updateAppliances(propertyId, updatedData);
         setDeletedIcons(currentApplRow?.appliance_images ? new Array(currentApplRow.appliance_images.length).fill(false) : []);
-      }).catch((err) => {
-        console.log(err);
       })
-  }
-
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const addAppliance = async (appliance) => {
     // console.log("inside editOrUpdateAppliance", appliance);
@@ -767,7 +770,7 @@ export default function PropertyNavigator({
       //   console.log(pair[0]+ ', ' + pair[1]);
       // }
       let i = 0;
-      console.log('selectedimage', selectedImageList);
+      console.log("selectedimage", selectedImageList);
       if (selectedImageList.length > 0) {
         for (const file of selectedImageList) {
           // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
@@ -875,7 +878,7 @@ export default function PropertyNavigator({
       console.log(favImage);
       let i = 0;
       for (const file of selectedImageList) {
-        console.log('file prop', file);
+        console.log("file prop", file);
         let key = `img_${i++}`;
         if (file.file !== null) {
           applianceFormData.append(key, file.file);
@@ -912,11 +915,10 @@ export default function PropertyNavigator({
               } else {
                 return prevAppliances;
               }
-            }
-            )
+            });
           } else {
             getAppliances();
-          };
+          }
 
           setShowSpinner(false);
           setSelectedImageList([]);
@@ -980,33 +982,33 @@ export default function PropertyNavigator({
   };
 
   // Define the custom cell renderer for the appliance_images column
-  const ImageCell = (params) => {
-    // console.log("---params----", params);
-    let images;
-    try {
-      images = JSON.parse(params.value); // Try to parse as JSON
-    } catch (e) {
-      images = params.value; // If parsing fails, treat as a single URL string
-    }
-    // console.log("---images----", images);
-    const imageUrl = images?.length > 0 ? images[0] : ""; // Get the first image URL
-    const appliance = params.row;
-    const favImage = appliance.appliance_favorite_image;
+  // const ImageCell = (params) => {
+  //   // console.log("---params----", params);
+  //   let images;
+  //   try {
+  //     images = JSON.parse(params.value); // Try to parse as JSON
+  //   } catch (e) {
+  //     images = params.value; // If parsing fails, treat as a single URL string
+  //   }
+  //   // console.log("---images----", images);
+  //   const imageUrl = images?.length > 0 ? images[0] : ""; // Get the first image URL
+  //   const appliance = params.row;
+  //   const favImage = appliance.appliance_favorite_image;
 
-    return (
-      <Avatar
-        src={favImage}
-        alt='Appliance'
-        sx={{
-          borderRadius: "0",
-          width: "60px",
-          height: "60px",
-          margin: "0px",
-          padding: "0px",
-        }}
-      />
-    );
-  };
+  //   return (
+  //     <Avatar
+  //       src={favImage}
+  //       alt='Appliance'
+  //       sx={{
+  //         borderRadius: "0",
+  //         width: "60px",
+  //         height: "60px",
+  //         margin: "0px",
+  //         padding: "0px",
+  //       }}
+  //     />
+  //   );
+  // };
 
   const [scrollPosition, setScrollPosition] = useState(0);
   const scrollRef = useRef(null);
@@ -1048,12 +1050,12 @@ export default function PropertyNavigator({
 
   const applnColumns = [
     // { field: "appliance_uid", headerName: "UID", width: 80 },
-    { field: "appliance_item", headerName: "Appliance", flex:1 },
+    { field: "appliance_item", headerName: "Appliance", flex: 1 },
     {
       field: "avatar",
       headerName: "",
       // width: 80,
-      flex:0.8,
+      flex: 0.8,
       renderCell: (params) => (
         <Box
           sx={{
@@ -1067,7 +1069,7 @@ export default function PropertyNavigator({
         >
           <img
             src={`${params.row.appliance_favorite_image}`}
-            alt='Appliance image'
+            alt='Appliance'
             style={{
               width: "100%", // Ensures the image takes full width
               height: "auto", // Maintain aspect ratio
@@ -1078,22 +1080,22 @@ export default function PropertyNavigator({
     },
     ...(!isMobile
       ? [
-        {
-          field: "appliance_purchased_from",
-          headerName: "Purchased From",
-          flex: 1,
-        },
-        {
-          field: "appliance_purchased",
-          headerName: "Purchased On",
-          flex: 1,
-        },
-        {
-          field: "appliance_warranty_till",
-          headerName: "Warranty Till",
-          flex: 1,
-        },
-      ]
+          {
+            field: "appliance_purchased_from",
+            headerName: "Purchased From",
+            flex: 1,
+          },
+          {
+            field: "appliance_purchased",
+            headerName: "Purchased On",
+            flex: 1,
+          },
+          {
+            field: "appliance_warranty_till",
+            headerName: "Warranty Till",
+            flex: 1,
+          },
+        ]
       : []),
     // { field: "appliance_desc", headerName: "Description", width: 80 },
     // { field: "appliance_manufacturer", headerName: "Manufacturer", width: 80 },
@@ -1113,7 +1115,7 @@ export default function PropertyNavigator({
       field: "actions",
       headerName: "Actions",
       // width: 120,
-      flex:1,
+      flex: 1,
       renderCell: (params) => {
         return (
           <Box sx={{ display: "flex", width: "100%" }}>
@@ -1185,11 +1187,11 @@ export default function PropertyNavigator({
   };
 
   const sortByFavImage = (favImage, imageList) => {
-    if (!favImage || !imageList) return
+    if (!favImage || !imageList) return;
 
     const sortedImages = [favImage, ...imageList.filter((img) => img !== favImage)];
     return sortedImages;
-  }
+  };
 
   const handleTenantClick = (tenantId) => {
     if (selectedRole === "MANAGER" || selectedRole === "OWNER") {
@@ -1797,7 +1799,7 @@ export default function PropertyNavigator({
                               // console.log('typeof edit', typeof(onEditClick));
                               onEditClick("edit_property");
                             }}
-                          // onClick={handleEditButton}
+                            // onClick={handleEditButton}
                           >
                             <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
                             <Typography
