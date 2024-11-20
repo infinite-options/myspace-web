@@ -844,24 +844,24 @@ export const FeesSmallDataGrid = ({ data }) => {
 	  {
 		field: "frequency",
 		headerName: "Frequency",
-		flex: 1,
-		minWidth: 100, // Ensure column doesn't shrink too much
+		flex: 1.2,
+		minWidth: 110, // Ensure column doesn't shrink too much
 		renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
 		renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
 	  },
 	  {
 		field: "fee_name",
 		headerName: "Name",
-		flex: 1.2,
-		minWidth: 100,
+		flex: 1,
+		minWidth: 80,
 		renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
 		renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
 	  },
 	  {
 		field: "charge",
 		headerName: "Charge",
-		flex: 0.8,
-		minWidth: 100,
+		flex: 1,
+		minWidth: 80,
 		renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
 		renderCell: (params) => {
 		  const feeType = params.row?.fee_type;
@@ -874,7 +874,7 @@ export const FeesSmallDataGrid = ({ data }) => {
 		field: "fee_type",
 		headerName: "Fee Type",
 		flex: 1,
-		minWidth: 100,
+		minWidth: 110,
 		renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
 		renderCell: (params) => {
 		  const feeType = params.row?.fee_type;

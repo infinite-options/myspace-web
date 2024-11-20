@@ -646,16 +646,28 @@ export default function PropertyNavigator({
     //     return <Box sx={{ width: "100%", color: getLateFeesColor(params.row) }}>{params.row.lf_pur_amount_due}</Box>;
     //   },
     // },
-
-    {
-      field: "pur_description",
-      headerName: "Notes",
-      sortable: isDesktop,
-      flex: 3,
-      renderCell: (params) => {
-        return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
-      },
-    },
+    , ...(!isMobile
+      ? [
+        {
+          field: "pur_description",
+          headerName: "Notes",
+          sortable: isDesktop,
+          flex: 3,
+          renderCell: (params) => {
+            return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
+          },
+        },
+      ]
+      : []),
+    // {
+    //   field: "pur_description",
+    //   headerName: "Notes",
+    //   sortable: isDesktop,
+    //   flex: 3,
+    //   renderCell: (params) => {
+    //     return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
+    //   },
+    // },
   ];
 
   const handleEditClick = async (row) => {
@@ -1036,24 +1048,12 @@ export default function PropertyNavigator({
 
   const applnColumns = [
     // { field: "appliance_uid", headerName: "UID", width: 80 },
-    { field: "appliance_item", headerName: "Appliance", width: 120 },
-    // { field: "appliance_desc", headerName: "Description", width: 80 },
-    // { field: "appliance_manufacturer", headerName: "Manufacturer", width: 80 },
-    //{ field: "appliance_purchased_from", headerName: "Purchased From", width: 80 },
-    // { field: "appliance_purchased", headerName: "Purchased On", flex: 1 },
-    //{ field: "appliance_purchase_order", headerName: "Purchase Order Number", width: 80 },
-    // { field: "appliance_installed", headerName: "Installed On", flex: 1 },
-    //{ field: "appliance_serial_num", headerName: "Serial Number", width: 80 },
-    //{ field: "appliance_model_num", headerName: "Model Number", width: 80 },
-    // { field: "appliance_warranty_till", headerName: "Warranty Till", flex: 1 },
-    //{ field: "appliance_warranty_info", headerName: "Warranty Info", width: 80 },
-    //{ field: "appliance_url", headerName: "URLs", width: 80 },
-    //{ field: "appliance_images", headerName: "Image", width: 100, renderCell: ImageCell }, //appliance_favorite_image needs to be added
-    //{ field: "appliance_documents", headerName: "Documents", width: 80 },
+    { field: "appliance_item", headerName: "Appliance", flex:1 },
     {
       field: "avatar",
       headerName: "",
-      width: 120,
+      // width: 80,
+      flex:0.8,
       renderCell: (params) => (
         <Box
           sx={{
@@ -1076,10 +1076,44 @@ export default function PropertyNavigator({
         </Box>
       ),
     },
+    ...(!isMobile
+      ? [
+        {
+          field: "appliance_purchased_from",
+          headerName: "Purchased From",
+          flex: 1,
+        },
+        {
+          field: "appliance_purchased",
+          headerName: "Purchased On",
+          flex: 1,
+        },
+        {
+          field: "appliance_warranty_till",
+          headerName: "Warranty Till",
+          flex: 1,
+        },
+      ]
+      : []),
+    // { field: "appliance_desc", headerName: "Description", width: 80 },
+    // { field: "appliance_manufacturer", headerName: "Manufacturer", width: 80 },
+    // { field: "appliance_purchased_from", headerName: "Purchased From", flex:1 },
+    // { field: "appliance_purchased", headerName: "Purchased On", flex: 1},
+    //{ field: "appliance_purchase_order", headerName: "Purchase Order Number", width: 80 },
+    // { field: "appliance_installed", headerName: "Installed On", flex: 1 },
+    //{ field: "appliance_serial_num", headerName: "Serial Number", width: 80 },
+    //{ field: "appliance_model_num", headerName: "Model Number", width: 80 },
+    // { field: "appliance_warranty_till", headerName: "Warranty Till", flex: 1 },
+    //{ field: "appliance_warranty_info", headerName: "Warranty Info", width: 80 },
+    //{ field: "appliance_url", headerName: "URLs", width: 80 },
+    //{ field: "appliance_images", headerName: "Image", width: 100, renderCell: ImageCell }, //appliance_favorite_image needs to be added
+    //{ field: "appliance_documents", headerName: "Documents", width: 80 },
+
     {
       field: "actions",
       headerName: "Actions",
-      width: 120,
+      // width: 120,
+      flex:1,
       renderCell: (params) => {
         return (
           <Box sx={{ display: "flex", width: "100%" }}>
@@ -2276,7 +2310,7 @@ export default function PropertyNavigator({
             </Grid> */}
 
             {/* NEW Left component */}
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={12} sm={12} lg={6}>
               <LeaseDetailsComponent
                 handleViewContractClick={handleViewContractClick}
                 handleManageContractClick={onManageContractClick}
@@ -2295,7 +2329,7 @@ export default function PropertyNavigator({
             </Grid>
 
             {/* Right component */}
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={12} sm={12} lg={6}>
               <ManagementDetailsComponent
                 handleViewContractClick={handleViewContractClick}
                 handleManageContractClick={onManageContractClick}
@@ -2745,7 +2779,7 @@ export default function PropertyNavigator({
           {/* Appliances grid */}
           <Grid item xs={12} md={12} sx={{ pt: "10px" }}>
             <Card sx={{ backgroundColor: color, height: "100%" }}>
-              <Box sx={{ margin:"0px 15px 15px 15px"}}>
+              <Box sx={{ margin: "0px 15px 15px 15px" }}>
                 <Box
                   sx={{
                     display: "flex",
@@ -2824,7 +2858,7 @@ export default function PropertyNavigator({
                     autoHeight
                     sx={{
                       // minWidth: "700px",
-                      fontSize: "10px",
+                      fontSize: "14px",
                       "& .wrap-text": {
                         whiteSpace: "normal !important",
                         wordWrap: "break-word !important",
@@ -3103,7 +3137,7 @@ export default function PropertyNavigator({
                           />
                         )}
                         slotProps={{ textField: { fullWidth: true } }}
-                        sx={{ marginTop: "10px"}}
+                        sx={{ marginTop: "10px" }}
                       />
                     </LocalizationProvider>
 
@@ -3150,7 +3184,7 @@ export default function PropertyNavigator({
                       }
                     />
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DesktopDatePicker 
+                      <DesktopDatePicker
                         label='Warranty Till'
                         disabled={isReadOnly}
                         value={currentApplRow?.appliance_warranty_till ? dayjs(currentApplRow.appliance_warranty_till) : null}
@@ -3177,7 +3211,7 @@ export default function PropertyNavigator({
                           />
                         )}
                         slotProps={{ textField: { fullWidth: true } }}
-                        sx={{ marginTop: "10px"}}
+                        sx={{ marginTop: "10px" }}
                       />
                     </LocalizationProvider>
                     <TextField
