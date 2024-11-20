@@ -32,6 +32,10 @@ export const textFieldSX = {
       color: "#3D5CAC",
       fontSize: "16px",
     },
+    "& .MuiInputBase-input.Mui-disabled": {
+      color: "#160449",
+      "-webkit-text-fill-color": "#160449", 
+    },
     // "& .MuiFormControl-root": {
     //   width: '100%',
     // },
@@ -133,6 +137,11 @@ export const datePickerSlotProps = {
           color: '#3D5CAC',
           fontSize: '16px',                    
         },
+        "& .MuiInputBase-input.Mui-disabled": {
+          color: "#160449",
+          "-webkit-text-fill-color": "#160449", 
+        },
+
         "& input:focus": {
           borderColor: '#3D5CAC',        
   

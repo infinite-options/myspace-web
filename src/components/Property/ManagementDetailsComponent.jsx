@@ -332,7 +332,7 @@ export default function ManagementDetailsComponent({
                                       fontSize: theme.typography.smallFont,
                                   }}
                               >
-                                  {activeContract?.contract_renew_status?.includes("RENEW") ? " RENEWING" : activeContract?.contract_renew_status }
+                                  {activeContract?.contract_renew_status?.includes("RENEW") ? " RENEWING" : (activeContract?.contract_renew_status?.includes("EARLY") ? "EARLY END" : activeContract?.contract_renew_status) }
                               </Typography>
                           )
                       }

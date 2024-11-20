@@ -2083,780 +2083,785 @@ const PropertyCard = (props) => {
 	];
 
 return (
-    <>
-      {/* Time since Inquiry was created */}
-      <Box
-        sx={{
-          display: "flex",
-          padding: "5px",
-		  flexDirection: "column",
-          justifyContent: "flex-end",
-          alignItems: "center",
-          fontSize: "20px",
-          color: "#160449",
-		  backgroundColor: "#D6D5DA",
-		  borderRadius: "10px",
-          // color: '#3D5CAC',
-        }}
-      >
-		{/* For image list */}
-		<Grid item xs={12}>
-		  <Box
-					sx={{
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						padding: 2,						
-					}}
-				>
-					<IconButton onClick={() => handleScroll('left')} disabled={scrollPosition === 0}>
-						<ArrowBackIosIcon />
-					</IconButton>
-					<Box
-						sx={{
-							display: 'flex',
-							overflowX: 'auto',
-							scrollbarWidth: 'none',
-							msOverflowStyle: 'none',
-							'&::-webkit-scrollbar': {
-								display: 'none',
-							},
-						}}
-					>
-						<Box
-							
-							sx={{
-								display: 'flex',
-								overflowX: 'auto',
-								scrollbarWidth: 'none',
-								msOverflowStyle: 'none',
-								'&::-webkit-scrollbar': {
-									display: 'none',
-								},
-							}}
-						>
-							<ImageList ref={scrollRef} sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
-								{images.map((image, index) => (
-									<ImageListItem
-										key={index}
-										sx={{
-											width: 'auto',
-											flex: '0 0 auto',
-											border: '1px solid #ccc',
-											margin: '0 2px',
-											position: 'relative', // Added to position icons
-										}}
-									>
-										<img
-											src={image}
-											alt={`maintenance-${index}`}
-											style={{
-												height: '150px',
-												width: '150px',
-												objectFit: 'cover',
-											}}
-										/>
-									</ImageListItem>
-								))}
-							</ImageList>
-						</Box>
-					</Box>
-					<IconButton onClick={() => handleScroll('right')}>
-						<ArrowForwardIosIcon />
-					</IconButton>
-				</Box>
-        {/* <Box
-          sx={{
-            fontSize: "13px",
-          }}
-        >
-          {timeDiff}
-        </Box> */}
-		</Grid>
-		<Grid item xs={12}>
+		<>
+		{/* Time since Inquiry was created */}
 			<Box
-					sx={{
-						display: 'flex',
-						padding: '5px',
-						justifyContent: 'space-evenly',
-						alignItems: 'center',
-						fontSize: '20px',
-						color: '#160449',
-						// color: '#3D5CAC',
-					}}
-				>
-					<Box
-						sx={{
-							fontSize: '16px',
-							fontWeight: '600',
-						}}
-					>
-						{/* {getProperties(propertyStatus).length > 0 ? (`${getProperties(propertyStatus)[index].property_address}, ${(getProperties(propertyStatus)[index].property_unit !== null && getProperties(propertyStatus)[index].property_unit !== '' ? (getProperties(propertyStatus)[index].property_unit + ',') : (''))} ${getProperties(propertyStatus)[index].property_city} ${getProperties(propertyStatus)[index].property_state} ${getProperties(propertyStatus)[index].property_zip}`) : (<></>)} */}
-						{/* 789 Maple Lane, San Diego, CA 92101, USA */}
-						{propertyData?.property_unit ? (
-							<span>
-								{propertyData.property_address}
-								{', Unit - '}
-								{propertyData.property_unit}
-								{', '}
-								{propertyData.property_city}
-								{', '}
-								{propertyData.property_state} {propertyData.property_zip}
-							</span>
-						) : (
-							<span>
-								{propertyData.property_address}
-								{', '}
-								{propertyData.property_city}
-								{', '}
-								{propertyData.property_state} {propertyData.property_zip}
-							</span>
-						)}
-					</Box>
-			</Box>
-
-		</Grid>
-        
-      </Box>
-	  <Box
-        sx={{
-          display: "flex",
-          padding: "5px",
-		  marginTop: "10px",
-		  flexDirection: "column",
-          justifyContent: "flex-end",
-          alignItems: "center",
-          fontSize: "15px",
-          color: "#3D5CAC",
-		  backgroundColor: "#D6D5DA",
-		  borderRadius: "10px",
-          // color: '#3D5CAC',
-        }}
-      >
-		<Grid container sx={{marginTop: '10px', }}>
-			<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
-				<Grid item xs={12}>
-					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
-						Owner
-					</Typography>					
-				</Grid>
-				<Grid item xs={12}>
-					<Typography sx={{color: '#160449', textAlign: 'center',}}>
-						{propertyOwnerName} <ChatIcon onClick={()=>{
-								navigate("/managerCreateAnnouncement", { state: { ownerName: propertyOwnerName, selectOptions: "owners_by_name"} });
-							}} 
-							sx={{ fontSize: 16, color: '#3D5CAC', cursor: "pointer"}} 
-						/>
-					</Typography>					
-				</Grid>
-				
-
-			</Grid>
-			<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
-				<Grid item xs={12}>
-					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
-						Type
-					</Typography>					
-				</Grid>
-				<Grid item xs={12}>
-					<Typography sx={{color: '#160449', textAlign: 'center',}}>
-						{propertyData.property_type ? propertyData.property_type : '<TYPE>'}
-					</Typography>					
-				</Grid>
-			</Grid>
-			<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
-				<Grid item xs={12}>
-					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
-						Property Value
-					</Typography>					
-				</Grid>
-				<Grid item xs={12}>
-					<Typography sx={{color: '#160449', textAlign: 'center',}}>
-						{'$'}
-						{propertyData.property_value ? propertyData.property_value : 'No Property Value'}{' '}
-						{propertyData.property_value_year ? `(${propertyData.property_value_year})` : ''}
-					</Typography>					
-				</Grid>
-			</Grid>
-			
-		</Grid>
-		<Grid container sx={{marginTop: '10px', }}>
-			<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
-				<Grid item xs={12}>
-					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
-						PM Contract Status
-					</Typography>					
-				</Grid>
-				<Grid item xs={12}>
-					<Typography sx={{color: '#160449', textAlign: 'center',}}>
-						{contractStatus ? contractStatus : '<CONTRACT_STATUS>'}
-					</Typography>					
-				</Grid>
-				
-
-			</Grid>
-			<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
-				<Grid item xs={12}>
-					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
-						Sq Ft
-					</Typography>					
-				</Grid>
-				<Grid item xs={12}>
-					<Typography sx={{color: '#160449', textAlign: 'center',}}>
-						{propertyData.property_area ? propertyData.property_area : '<SFT>'}
-					</Typography>					
-				</Grid>
-			</Grid>
-			<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
-				<Grid item xs={12}>
-					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
-						Value per Sqft
-					</Typography>					
-				</Grid>
-				<Grid item xs={12}>
-					<Typography sx={{color: '#160449', textAlign: 'center',}}>
-						{'$'}
-						{propertyData.property_value && propertyData.property_area
-							? (propertyData.property_value / propertyData.property_area).toFixed(2)
-							: 'No SqFt available'}
-					</Typography>					
-				</Grid>
-			</Grid>
-			
-		</Grid>
-		<Grid container sx={{marginTop: '10px', marginBottom: '10px',}}>
-			<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
-				<Grid item xs={12}>
-					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
-						Expiration Date
-					</Typography>					
-				</Grid>
-				<Grid item xs={12}>
-					<Typography sx={{color: '#160449', textAlign: 'center',}}>
-						{contractEndDate ? contractEndDate.format('MM-DD-YYYY') : dayjs().format('MM-DD-YYYY')}
-					</Typography>					
-				</Grid>
-				
-
-			</Grid>
-			<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
-				<Grid item xs={12}>
-					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
-						Beds
-					</Typography>					
-				</Grid>
-				<Grid item xs={12}>
-					<Typography sx={{color: '#160449', textAlign: 'center',}}>
-						{propertyData.property_num_beds >= 0 ? Number(propertyData.property_num_beds) : '<BEDS>'}
-					</Typography>					
-				</Grid>
-			</Grid>
-			<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
-				<Grid item xs={12}>
-					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
-						Baths
-					</Typography>					
-				</Grid>
-				<Grid item xs={12}>
-					<Typography sx={{color: '#160449', textAlign: 'center',}}>
-						{propertyData.property_num_baths >= 0 ? propertyData.property_num_baths : '<BATHS>'}
-					</Typography>					
-				</Grid>
-			</Grid>
-			
-		</Grid>
-		
-	  </Box>  
-
-	  <Box
-        sx={{
-          display: "flex",
-          padding: "5px",
-		  marginTop: "10px",
-		  flexDirection: "column",
-          justifyContent: "flex-end",
-          alignItems: "center",
-          fontSize: "15px",
-          color: "#3D5CAC",
-		  backgroundColor: "#D6D5DA",
-		  borderRadius: "10px",
-          // color: '#3D5CAC',
-        }}
-      >    
-			
-		<Grid container columnGap={0} sx={{marginTop: '10px', justifyContent: "space-evenly"}}>
-			<Grid item container direction="row" xs={10.75} md={5.5} sx={{justifyContent: 'center', }}>
-				<Grid item xs={12}>
-					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
-						Management Agreement Name
-					</Typography>					
-				</Grid>
-				<Grid item xs={12} sx={{marginTop: '5px', }}>
-					<TextField
-						name="management_agreement_name"
-						placeholder="Enter contract name"
-						value={contractName}
-						onChange={handleContractNameChange}
-						required						
-            			InputProps={textFieldInputProps}
-            			sx={textFieldSX}
-						disabled={selectedRole === "OWNER" || contractStatus === "APPROVED"}
-					>						
-					</TextField>
-				</Grid>
-				
-
-			</Grid>
-			<Grid item container direction="col" xs={5} md={2.5} sx={{justifyContent: 'center', }}>
-				<Grid item xs={12}>
-					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
-						Start Date
-					</Typography>					
-				</Grid>
-				<Grid item xs={12}>
-					<LocalizationProvider dateAdapter={AdapterDayjs}>
-						<DatePicker
-							disabled={selectedRole === "OWNER" || contractStatus === "APPROVED"}
-							value={contractStartDate}
-							// minDate={dayjs()}
-							onChange={handleStartDateChange}
-							slots={{
-								openPickerIcon: CalendarIcon,
-							}}
-							slotProps={{
-								openPickerButton: {
-									sx: {
-									  marginRight: "0px",
-									  padding: '3px',
-									  width: "26px",
-									  height: "26px"
-									},
-								},
-								...datePickerSlotProps}}
-						/>
-					</LocalizationProvider>
-				</Grid>
-			</Grid>			
-			<Grid item container direction="col" xs={5} md={2.5} sx={{justifyContent: 'center', }}>
-				<Grid item xs={12}>
-					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
-						End Date
-					</Typography>					
-				</Grid>
-				<Grid item xs={12}>
-					<LocalizationProvider dateAdapter={AdapterDayjs}>
-						<DatePicker
-							disabled={selectedRole === "OWNER" || contractStatus === "APPROVED"}
-							value={contractEndDate}
-							// minDate={dayjs()}
-							onChange={handleEndDateChange}
-							slots={{
-								openPickerIcon: CalendarIcon,
-							}}              
-							slotProps={{
-								openPickerButton: {
-									sx: {
-									  marginRight: "0px",
-									  padding: '3px',
-									  width: "26px",
-									  height: "26px"
-									},
-								},
-								...datePickerSlotProps
-							}}
-						/>
-					</LocalizationProvider>
-				</Grid>
-			</Grid>
-
-		</Grid>			
-    <Grid container item xs={12}  sx={{marginTop: '10px', justifyContent: "space-evenly"}}>      			    
-      <Grid item container direction="row" xs={3.5} sx={{justifyContent: 'center', }}>
-				<Grid item xs={12}>					
-				</Grid>
-				<Grid item xs={12} sx={{marginTop: '5px', }}>          
-          <FormControlLabel 
-            sx={{
-              marginTop: '25px',
-            }}        
-            control={
-              <Checkbox
-			  	disabled={selectedRole === "OWNER" || contractStatus === "APPROVED"}
-                checked={continueM2M === 1 ? true : false}
-                onChange={(event) => {
-					if (event.target.checked) {
-						setContinueM2M(1);
-					} else {
-						setContinueM2M(0);
-					}
+				sx={{
+				display: "flex",
+				padding: "5px",
+				flexDirection: "column",
+				justifyContent: "flex-end",
+				alignItems: "center",
+				fontSize: "20px",
+				color: "#160449",
+				backgroundColor: "#D6D5DA",
+				borderRadius: "10px",
+				// color: '#3D5CAC',
 				}}
-                inputProps={{ 'aria-label': 'controlled' }}
-              />	          
-            } 
-            label="Continue Month-to-Month" 
-          />				
-				</Grid>
-      </Grid>
-      <Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
-				<Grid item xs={12}>					
-				</Grid>
-				<Grid item xs={12} sx={{marginTop: '5px', }}>          
-          <FormControlLabel 
-            sx={{
-              marginTop: '25px',
-            }}        
-            control={
-              <Checkbox
-			  	disabled={selectedRole === "OWNER" || contractStatus === "APPROVED"}
-                checked={continueM2M === 2 ? true : false}
-                onChange={(event) => {
-					if (event.target.checked) {
-						setContinueM2M(2);
-					} else {
-						setContinueM2M(0);
-					}
-				}}
-                inputProps={{ 'aria-label': 'controlled' }}
-              />	          
-            } 
-            label="Contract renews automatically" 
-          />				
-				</Grid>
-      </Grid>
-      {/* <Grid item xs={1.85}>
-
-      </Grid> */}
-      <Grid item container direction="row" xs={4} sx={{justifyContent: 'flex-start', }}>
+			>
+				{/* For image list */}
 				<Grid item xs={12}>
-					<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
-						Contract End Notice
-					</Typography>					
-				</Grid>
-				<Grid item xs={12} sx={{marginTop: '5px', }}>
-					<TextField
-						disabled={selectedRole === "OWNER" || contractStatus === "APPROVED"}
-						name="contract_notice_period"
-						// placeholder="days"
-						value={contractEndNotice}
-						onChange={handleNoticePeriodChange}
-						required            
-            InputProps={{
-              ...textFieldInputProps,
-              endAdornment: (
-                <InputAdornment position="end">days</InputAdornment>
-              ),
-            }}
-            sx={textFieldSX}
-					>						
-					</TextField>
-				</Grid>
-      </Grid>              
-    </Grid>    
-			{showInvalidStartDatePrompt && (
 				<Box
-					sx={{
-						color: 'red',
-						fontSize: '13px',
-					}}
-				>
-					Please enter a valid start date in "MM-DD-YYYY" format.
-				</Box>
-			)}
-			{showInvalidEndDatePrompt && (
-				<Box
-					sx={{
-						color: 'red',
-						fontSize: '13px',
-					}}
-				>
-					Please enter a valid end date in "MM-DD-YYYY" format. End date cannot be before contract start date.
-				</Box>
-			)}
-
-			{/* For management Fees */}
-			<Box sx={{width: '100%'}}>			
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'row',
-						justifyContent: 'space-between',
-						fontSize: '15px',
-						fontWeight: 'bold',
-						paddingRight: '10px',
-						color: '#3D5CAC',
-					}}
-				>
-					<Typography
-						sx={{
-							color: "#160449",
-							fontWeight: theme.typography.primary.fontWeight,
-							fontSize: "18px",
-							paddingBottom: "5px",
-							paddingTop: "5px",
-							marginTop:"10px"
-						}}
-					>
-						{"Management Fees* "}
-					</Typography>
-					{/* <Box>Management Fees 1*</Box> */}
-					{selectedRole !== "OWNER" && contractStatus !== "APPROVED" && (<Box onClick={handleOpenAddFee} marginTop={"10px"} marginLeft={"10px"} paddingTop={"5px"}>
-						<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
-					</Box>)}
-				</Box>
-			</Box>
-			{contractFees?.length !== 0 ? <Box sx={{width: '100%', }}><FeesDataGrid data={contractFees} isDeleteable={selectedRole !== "OWNER" && contractStatus !== "APPROVED" ? true : false} handleEditFee={handleOpenEditFee} handleDeleteFee={handleDeleteFee}/> </Box> : 
-				<>
-						<Box
 							sx={{
 								display: 'flex',
-								flexDirection: 'row',
-								justifyContent: 'center',
 								alignItems: 'center',
-								marginBottom: '7px',
-								width: '100%',
-								height:"100px"
+								justifyContent: 'center',
+								padding: 2,						
 							}}
 						>
-							<Typography
+							<IconButton onClick={() => handleScroll('left')} disabled={scrollPosition === 0}>
+								<ArrowBackIosIcon />
+							</IconButton>
+							<Box
 								sx={{
-								color: "#A9A9A9",
-								fontWeight: theme.typography.primary.fontWeight,
-								fontSize: "15px",
+									display: 'flex',
+									overflowX: 'auto',
+									scrollbarWidth: 'none',
+									msOverflowStyle: 'none',
+									'&::-webkit-scrollbar': {
+										display: 'none',
+									},
 								}}
 							>
-								No Fees
-							</Typography>
+								<Box
+									
+									sx={{
+										display: 'flex',
+										overflowX: 'auto',
+										scrollbarWidth: 'none',
+										msOverflowStyle: 'none',
+										'&::-webkit-scrollbar': {
+											display: 'none',
+										},
+									}}
+								>
+									<ImageList ref={scrollRef} sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
+										{images.map((image, index) => (
+											<ImageListItem
+												key={index}
+												sx={{
+													width: 'auto',
+													flex: '0 0 auto',
+													border: '1px solid #ccc',
+													margin: '0 2px',
+													position: 'relative', // Added to position icons
+												}}
+											>
+												<img
+													src={image}
+													alt={`maintenance-${index}`}
+													style={{
+														height: '150px',
+														width: '150px',
+														objectFit: 'cover',
+													}}
+												/>
+											</ImageListItem>
+										))}
+									</ImageList>
+								</Box>
+							</Box>
+							<IconButton onClick={() => handleScroll('right')}>
+								<ArrowForwardIosIcon />
+							</IconButton>
 						</Box>
-				</>
-			}
-			
-
-			
-
-			{/* previously Uploaded docs */}
-			<Box sx={{width: '100%', marginLeft: '10px', paddingRight: '10px',}}>				
-				<Documents isEditable={selectedRole !== "OWNER" && contractStatus !== "APPROVED" ? true : false} setIsPreviousFileChange={setIsPreviousFileChange} isAccord={false} documents={previouslyUploadedDocs} setDocuments={setPreviouslyUploadedDocs} setDeleteDocsUrl={setDeletedDocsUrl} contractFiles={contractFiles} contractFileTypes={contractFileTypes} setContractFiles={setContractFiles} setContractFileTypes={setContractFileTypes}/>				
-			</Box>
-
-			{/* Contact details */}
-			<Box sx={{width: '100%'}}>				
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'row',
-						justifyContent: 'space-between',
-						fontSize: '15px',
-						fontWeight: 'bold',
-						paddingRight: '10px',
-						color: '#3D5CAC',
-					}}
+				{/* <Box
+				sx={{
+					fontSize: "13px",
+				}}
 				>
-					<Typography
+				{timeDiff}
+				</Box> */}
+				</Grid>
+				<Grid item xs={12}>
+					<Box
+							sx={{
+								display: 'flex',
+								padding: '5px',
+								justifyContent: 'space-evenly',
+								alignItems: 'center',
+								fontSize: '20px',
+								color: '#160449',
+								// color: '#3D5CAC',
+							}}
+						>
+							<Box
+								sx={{
+									fontSize: '16px',
+									fontWeight: '600',
+								}}
+							>
+								{/* {getProperties(propertyStatus).length > 0 ? (`${getProperties(propertyStatus)[index].property_address}, ${(getProperties(propertyStatus)[index].property_unit !== null && getProperties(propertyStatus)[index].property_unit !== '' ? (getProperties(propertyStatus)[index].property_unit + ',') : (''))} ${getProperties(propertyStatus)[index].property_city} ${getProperties(propertyStatus)[index].property_state} ${getProperties(propertyStatus)[index].property_zip}`) : (<></>)} */}
+								{/* 789 Maple Lane, San Diego, CA 92101, USA */}
+								{propertyData?.property_unit ? (
+									<span>
+										{propertyData.property_address}
+										{', Unit - '}
+										{propertyData.property_unit}
+										{', '}
+										{propertyData.property_city}
+										{', '}
+										{propertyData.property_state} {propertyData.property_zip}
+									</span>
+								) : (
+									<span>
+										{propertyData.property_address}
+										{', '}
+										{propertyData.property_city}
+										{', '}
+										{propertyData.property_state} {propertyData.property_zip}
+									</span>
+								)}
+							</Box>
+					</Box>
+
+				</Grid>
+				
+			</Box>
+			<Box
+				sx={{
+				display: "flex",
+				padding: "5px",
+				marginTop: "10px",
+				flexDirection: "column",
+				justifyContent: "flex-end",
+				alignItems: "center",
+				fontSize: "15px",
+				color: "#3D5CAC",
+				backgroundColor: "#D6D5DA",
+				borderRadius: "10px",
+				// color: '#3D5CAC',
+				}}
+			>
+				<Grid container sx={{marginTop: '10px', }}>
+					<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
+						<Grid item xs={12}>
+							<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+								Owner
+							</Typography>					
+						</Grid>
+						<Grid item xs={12}>
+							<Typography sx={{color: '#160449', textAlign: 'center',}}>
+								{propertyOwnerName} <ChatIcon onClick={()=>{
+										navigate("/managerCreateAnnouncement", { state: { ownerName: propertyOwnerName, selectOptions: "owners_by_name"} });
+									}} 
+									sx={{ fontSize: 16, color: '#3D5CAC', cursor: "pointer"}} 
+								/>
+							</Typography>					
+						</Grid>
+						
+
+					</Grid>
+					<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
+						<Grid item xs={12}>
+							<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+								Type
+							</Typography>					
+						</Grid>
+						<Grid item xs={12}>
+							<Typography sx={{color: '#160449', textAlign: 'center',}}>
+								{propertyData.property_type ? propertyData.property_type : '<TYPE>'}
+							</Typography>					
+						</Grid>
+					</Grid>
+					<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
+						<Grid item xs={12}>
+							<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+								Property Value
+							</Typography>					
+						</Grid>
+						<Grid item xs={12}>
+							<Typography sx={{color: '#160449', textAlign: 'center',}}>
+								{'$'}
+								{propertyData.property_value ? propertyData.property_value : 'No Property Value'}{' '}
+								{propertyData.property_value_year ? `(${propertyData.property_value_year})` : ''}
+							</Typography>					
+						</Grid>
+					</Grid>
+					
+				</Grid>
+				<Grid container sx={{marginTop: '10px', }}>
+					<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
+						<Grid item xs={12}>
+							<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+								PM Contract Status
+							</Typography>					
+						</Grid>
+						<Grid item xs={12}>
+							<Typography sx={{color: '#160449', textAlign: 'center',}}>
+								{contractStatus ? contractStatus : '<CONTRACT_STATUS>'}
+							</Typography>					
+						</Grid>
+						
+
+					</Grid>
+					<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
+						<Grid item xs={12}>
+							<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+								Sq Ft
+							</Typography>					
+						</Grid>
+						<Grid item xs={12}>
+							<Typography sx={{color: '#160449', textAlign: 'center',}}>
+								{propertyData.property_area ? propertyData.property_area : '<SFT>'}
+							</Typography>					
+						</Grid>
+					</Grid>
+					<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
+						<Grid item xs={12}>
+							<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+								Value per Sqft
+							</Typography>					
+						</Grid>
+						<Grid item xs={12}>
+							<Typography sx={{color: '#160449', textAlign: 'center',}}>
+								{'$'}
+								{propertyData.property_value && propertyData.property_area
+									? (propertyData.property_value / propertyData.property_area).toFixed(2)
+									: 'No SqFt available'}
+							</Typography>					
+						</Grid>
+					</Grid>
+					
+				</Grid>
+				<Grid container sx={{marginTop: '10px', marginBottom: '10px',}}>
+					<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
+						<Grid item xs={12}>
+							<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+								Expiration Date
+							</Typography>					
+						</Grid>
+						<Grid item xs={12}>
+							<Typography sx={{color: '#160449', textAlign: 'center',}}>
+								{contractEndDate ? contractEndDate.format('MM-DD-YYYY') : dayjs().format('MM-DD-YYYY')}
+							</Typography>					
+						</Grid>
+						
+
+					</Grid>
+					<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
+						<Grid item xs={12}>
+							<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+								Beds
+							</Typography>					
+						</Grid>
+						<Grid item xs={12}>
+							<Typography sx={{color: '#160449', textAlign: 'center',}}>
+								{propertyData.property_num_beds >= 0 ? Number(propertyData.property_num_beds) : '<BEDS>'}
+							</Typography>					
+						</Grid>
+					</Grid>
+					<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
+						<Grid item xs={12}>
+							<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+								Baths
+							</Typography>					
+						</Grid>
+						<Grid item xs={12}>
+							<Typography sx={{color: '#160449', textAlign: 'center',}}>
+								{propertyData.property_num_baths >= 0 ? propertyData.property_num_baths : '<BATHS>'}
+							</Typography>					
+						</Grid>
+					</Grid>
+					
+				</Grid>
+				
+			</Box>  
+
+			<Box
+				sx={{
+				display: "flex",
+				padding: "5px",
+				marginTop: "10px",
+				flexDirection: "column",
+				justifyContent: "flex-end",
+				alignItems: "center",
+				fontSize: "15px",
+				color: "#3D5CAC",
+				backgroundColor: "#D6D5DA",
+				borderRadius: "10px",
+				// color: '#3D5CAC',
+				}}
+			>    
+				<Grid container columnGap={0} sx={{marginTop: '10px', justifyContent: "space-evenly"}}>
+					<Grid item container direction="row" xs={10.75} md={5.5} sx={{justifyContent: 'center', }}>
+						<Grid item xs={12}>
+							<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+								Management Agreement Name
+							</Typography>					
+						</Grid>
+						<Grid item xs={12} sx={{marginTop: '5px', }}>
+							<TextField
+								name="management_agreement_name"
+								placeholder="Enter contract name"
+								value={contractName}
+								onChange={handleContractNameChange}
+								required						
+								InputProps={textFieldInputProps}
+								sx={textFieldSX}
+								disabled={selectedRole === "OWNER" || contractStatus === "APPROVED"}
+							>						
+							</TextField>
+						</Grid>
+						
+
+					</Grid>
+					<Grid item container direction="col" xs={5} md={2.5} sx={{justifyContent: 'center', }}>
+						<Grid item xs={12}>
+							<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+								Start Date
+							</Typography>					
+						</Grid>
+						<Grid item xs={12}>
+							<LocalizationProvider dateAdapter={AdapterDayjs}>
+								<DatePicker
+									disabled={selectedRole === "OWNER" || contractStatus === "APPROVED"}
+									value={contractStartDate}
+									// minDate={dayjs()}
+									onChange={handleStartDateChange}
+									slots={{
+										openPickerIcon: CalendarIcon,
+									}}
+									slotProps={{
+										openPickerButton: {
+											sx: {
+											marginRight: "0px",
+											padding: '3px',
+											width: "26px",
+											height: "26px"
+											},
+										},
+										...datePickerSlotProps}}
+								/>
+							</LocalizationProvider>
+						</Grid>
+					</Grid>			
+					<Grid item container direction="col" xs={5} md={2.5} sx={{justifyContent: 'center', }}>
+						<Grid item xs={12}>
+							<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+								End Date
+							</Typography>					
+						</Grid>
+						<Grid item xs={12}>
+							<LocalizationProvider dateAdapter={AdapterDayjs}>
+								<DatePicker
+									disabled={selectedRole === "OWNER" || contractStatus === "APPROVED"}
+									value={contractEndDate}
+									// minDate={dayjs()}
+									onChange={handleEndDateChange}
+									slots={{
+										openPickerIcon: CalendarIcon,
+									}}              
+									slotProps={{
+										openPickerButton: {
+											sx: {
+											marginRight: "0px",
+											padding: '3px',
+											width: "26px",
+											height: "26px"
+											},
+										},
+										...datePickerSlotProps
+									}}
+								/>
+							</LocalizationProvider>
+						</Grid>
+					</Grid>
+
+				</Grid>			
+				<Grid container item xs={12}  sx={{marginTop: '10px', justifyContent: "space-evenly"}}>      			    
+					<Grid item container direction="row" xs={3.5} sx={{justifyContent: 'center', }}>
+						<Grid item xs={12}>					
+						</Grid>
+						<Grid item xs={12} sx={{marginTop: '5px', }}>          
+							<FormControlLabel 
+								sx={{
+									marginTop: '25px',
+									'& .MuiFormControlLabel-label.Mui-disabled': {
+										color: '#160449', // Override the default disabled label color
+									},
+								}}        
+								control={
+									<Checkbox
+										disabled={selectedRole === "OWNER" || contractStatus === "APPROVED"}
+										checked={continueM2M === 1 ? true : false}
+										onChange={(event) => {
+											if (event.target.checked) {
+												setContinueM2M(1);
+											} else {
+												setContinueM2M(0);
+											}
+										}}
+										inputProps={{ 'aria-label': 'controlled' }}
+									/>	          
+								} 
+								label="Continue Month-to-Month" 
+							/>				
+						</Grid>
+					</Grid>
+					<Grid item container direction="row" xs={4} sx={{justifyContent: 'center', }}>
+						<Grid item xs={12}>					
+						</Grid>
+						<Grid item xs={12} sx={{marginTop: '5px', }}>          
+							<FormControlLabel 
+								sx={{
+									marginTop: '25px',
+									'& .MuiFormControlLabel-label.Mui-disabled': {
+										color: '#160449', // Override the default disabled label color
+									},
+								}}        
+								control={
+									<Checkbox
+										disabled={selectedRole === "OWNER" || contractStatus === "APPROVED"}
+										checked={continueM2M === 2 ? true : false}
+										onChange={(event) => {
+											if (event.target.checked) {
+												setContinueM2M(2);
+											} else {
+												setContinueM2M(0);
+											}
+										}}
+										inputProps={{ 'aria-label': 'controlled' }}
+									/>	          
+								} 
+								label="Contract renews automatically" 
+							/>				
+						</Grid>
+					</Grid>
+					{/* <Grid item xs={1.85}>
+
+					</Grid> */}
+					<Grid item container direction="row" xs={4} sx={{justifyContent: 'flex-start', }}>
+								<Grid item xs={12}>
+									<Typography sx={{fontWeight: 'bold', textAlign: 'center',}}>
+										Contract End Notice
+									</Typography>					
+								</Grid>
+								<Grid item xs={12} sx={{marginTop: '5px', }}>
+									<TextField
+										disabled={selectedRole === "OWNER" || contractStatus === "APPROVED"}
+										name="contract_notice_period"
+										// placeholder="days"
+										value={contractEndNotice}
+										onChange={handleNoticePeriodChange}
+										required            
+							InputProps={{
+							...textFieldInputProps,
+							endAdornment: (
+								<InputAdornment position="end">days</InputAdornment>
+							),
+							}}
+							sx={textFieldSX}
+									>						
+									</TextField>
+								</Grid>
+					</Grid>              
+				</Grid>    
+				{showInvalidStartDatePrompt && (
+					<Box
 						sx={{
-							color: "#160449",
-							fontWeight: theme.typography.primary.fontWeight,
-							fontSize: "18px",
-							paddingBottom: "5px",
-							paddingTop: "5px",
-							marginY:"10px"
+							color: 'red',
+							fontSize: '13px',
 						}}
 					>
-						{"Contract Assigned Contacts: "}
-					</Typography>
-					{selectedRole !== "OWNER" && contractStatus !== "APPROVED" && (<Box onClick={()=>{setShowAddContactDialog(true)}} marginTop={"10px"} paddingTop={"5px"} paddingRight={"0px"}>
-						<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
-					</Box>)}
-				</Box>
-				{contractAssignedContacts?.length !== 0 ? (				
-					<DataGrid
-						rows={contactRowsWithId}
-						// columns={ContactColumns}
-						// columns={isMobile ? ContactEditableColumns.map(column => ({ ...column, minWidth: 150 })) : ContactEditableColumns}
-						columns={isMobile
-							? (selectedRole === "OWNER" || contractStatus === "APPROVED" 
-								? ContactColumns.map(column => ({ ...column, minWidth: 150 })) 
-								: ContactEditableColumns.map(column => ({ ...column, minWidth: 150 }))
-								)
-							: (selectedRole === "OWNER" || contractStatus === "APPROVED"
-								? ContactColumns 
-								: ContactEditableColumns)
-						}
-						sx={{
-						// minHeight:"100px",
-						// height:"100px",
-						// maxHeight:"100%",
-						marginTop: "10px",
-						}}
-						autoHeight
-						rowHeight={50} 
-						hideFooter={true}
-					/>
-				) : (
-					<></>
+						Please enter a valid start date in "MM-DD-YYYY" format.
+					</Box>
 				)}
-			</Box>	
-			{
-				(contractStatus === "NEW" || contractStatus === "SENT" || contractStatus === "REJECTED") && (
+				{showInvalidEndDatePrompt && (
+					<Box
+						sx={{
+							color: 'red',
+							fontSize: '13px',
+						}}
+					>
+						Please enter a valid end date in "MM-DD-YYYY" format. End date cannot be before contract start date.
+					</Box>
+				)}
+
+				{/* For management Fees */}
+				<Box sx={{width: '100%'}}>			
 					<Box
 						sx={{
 							display: 'flex',
 							flexDirection: 'row',
 							justifyContent: 'space-between',
-							alignItems: 'center',
-							paddingTop: '10px',
-							marginBottom: '7px',
-							marginTop:"10px",
-							width: '100%',
+							fontSize: '15px',
+							fontWeight: 'bold',
+							paddingRight: '10px',
+							color: '#3D5CAC',
 						}}
 					>
-						{contractStatus !== 'REJECTED' && (
-						<>
-						<Button
-							variant="contained"
+						<Typography
 							sx={{
-								backgroundColor: '#CB8E8E',
-								textTransform: 'none',
-								borderRadius: '5px',
-								display: 'flex',
-								width: '45%',
-								'&:hover': {
-									backgroundColor: '#CB8E8E',
-								},
+								color: "#160449",
+								fontWeight: theme.typography.primary.fontWeight,
+								fontSize: "18px",
+								paddingBottom: "5px",
+								paddingTop: "5px",
+								marginTop:"10px"
 							}}
-							onClick={()=> {
-									if(selectedRole !== "OWNER"){
-										handleDeclineOfferClick()
-									}else{
-										handleDecline()
-										// Implement logic for owner click on REJECT
-									}
-								}
-							}
 						>
-							<Typography
-								sx={{
-									fontWeight: theme.typography.primary.fontWeight,
-									fontSize: '14px',
-									color: '#160449',
-									textTransform: 'none',
-								}}
-							>
-								{selectedRole === "OWNER" ? "Reject" : (contractStatus === 'NEW' ? 'Decline Offer' : 'Withdraw Quote')}
-							</Typography>
-						</Button>
-						</>
-						)}
-						<Button
-							variant="contained"
-							sx={{
-								backgroundColor: '#9EAED6',
-								textTransform: 'none',
-								borderRadius: '5px',
-								display: 'flex',
-								width: contractStatus === 'REJECTED' ? '100%' : '45%',
-								'&:hover': {
-									backgroundColor: '#9EAED6',
-								},
-							}}
-							onClick={() => {
-								if(selectedRole !== "OWNER"){
-									handleSendQuoteClick()
-								}else{
-									handleAccept()
-									// Implement logic for Owner click on Accept
-								}
-							}}
-							disabled={!contractName || !contractStartDate || !contractEndDate || !contractFees}
-						>
-							<Typography
-								sx={{
-									fontWeight: theme.typography.primary.fontWeight,
-									fontSize: '14px',
-									color: '#160449',
-									textTransform: 'none',
-								}}
-							>
-								{selectedRole === "OWNER" ? "Accept" : (contractStatus === 'NEW' ? 'Send Quote' : 'Update Quote')}
-							</Typography>
-						</Button>
+							{"Management Fees* "}
+						</Typography>
+						{/* <Box>Management Fees 1*</Box> */}
+						{selectedRole !== "OWNER" && contractStatus !== "APPROVED" && (<Box onClick={handleOpenAddFee} marginTop={"10px"} marginLeft={"10px"} paddingTop={"5px"}>
+							<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
+						</Box>)}
 					</Box>
-				)
-			}							
-			{
-				(contractStatus === "ACTIVE") && (
+				</Box>
+				{contractFees?.length !== 0 ? <Box sx={{width: '100%', }}><FeesDataGrid data={contractFees} isDeleteable={selectedRole !== "OWNER" && contractStatus !== "APPROVED" ? true : false} handleEditFee={handleOpenEditFee} handleDeleteFee={handleDeleteFee}/> </Box> : 
+					<>
+							<Box
+								sx={{
+									display: 'flex',
+									flexDirection: 'row',
+									justifyContent: 'center',
+									alignItems: 'center',
+									marginBottom: '7px',
+									width: '100%',
+									height:"100px"
+								}}
+							>
+								<Typography
+									sx={{
+									color: "#A9A9A9",
+									fontWeight: theme.typography.primary.fontWeight,
+									fontSize: "15px",
+									}}
+								>
+									No Fees
+								</Typography>
+							</Box>
+					</>
+				}
+					
+
+					
+
+				{/* previously Uploaded docs */}
+				<Box sx={{width: '100%', marginLeft: '10px', paddingRight: '10px',}}>				
+					<Documents isEditable={selectedRole !== "OWNER" && contractStatus !== "APPROVED" ? true : false} setIsPreviousFileChange={setIsPreviousFileChange} isAccord={false} documents={previouslyUploadedDocs} setDocuments={setPreviouslyUploadedDocs} setDeleteDocsUrl={setDeletedDocsUrl} contractFiles={contractFiles} contractFileTypes={contractFileTypes} setContractFiles={setContractFiles} setContractFileTypes={setContractFileTypes}/>				
+				</Box>
+
+				{/* Contact details */}
+				<Box sx={{width: '100%'}}>				
 					<Box
 						sx={{
 							display: 'flex',
 							flexDirection: 'row',
-							// justifyContent: 'space-between',
-							justifyContent: 'center',
-							alignItems: 'center',
-							paddingTop: '10px',
-							marginBottom: '7px',
-							marginTop:"10px",
-							width: '100%',
+							justifyContent: 'space-between',
+							fontSize: '15px',
+							fontWeight: 'bold',
+							paddingRight: '10px',
+							color: '#3D5CAC',
 						}}
 					>
-						
-						
-							
-						{/* <Button
-							variant="contained"
+						<Typography
 							sx={{
-								backgroundColor: '#CB8E8E',
-								textTransform: 'none',
-								borderRadius: '5px',
-								display: 'flex',
-								width: '45%',
-								'&:hover': {
-									backgroundColor: '#CB8E8E',
-								},
+								color: "#160449",
+								fontWeight: theme.typography.primary.fontWeight,
+								fontSize: "18px",
+								paddingBottom: "5px",
+								paddingTop: "5px",
+								marginY:"10px"
 							}}
-							onClick={() => setShowEndContractDialog(true)}							
-							// disabled={!contractName || !contractStartDate || !contractEndDate || !contractFees}
 						>
-							<Typography
-								sx={{
-									fontWeight: theme.typography.primary.fontWeight,
-									fontSize: '14px',
-									color: '#160449',
-									textTransform: 'none',
-								}}
-							>
-								{'End Contract'}
-							</Typography>
-						</Button> */}
-
-						<Button
-							variant="contained"
-							sx={{
-								backgroundColor: '#9EAED6',
-								textTransform: 'none',
-								borderRadius: '5px',
-								display: 'flex',
-								width: '45%',
-								'&:hover': {
-									backgroundColor: '#9EAED6',
-								},
-							}}
-							onClick={handleCreateNewContractClick}
-							disabled={!isChange || isChange === false || !contractName || !contractStartDate || !contractEndDate || !contractFees}
-						>
-							<Typography
-								sx={{
-									fontWeight: theme.typography.primary.fontWeight,
-									fontSize: '14px',
-									color: '#160449',
-									textTransform: 'none',
-								}}
-							>
-								{'Create New Contract'}
-							</Typography>
-						</Button>
+							{"Contract Assigned Contacts: "}
+						</Typography>
+						{selectedRole !== "OWNER" && contractStatus !== "APPROVED" && (<Box onClick={()=>{setShowAddContactDialog(true)}} marginTop={"10px"} paddingTop={"5px"} paddingRight={"0px"}>
+							<AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
+						</Box>)}
 					</Box>
-				)
-			}							
-			
+					{contractAssignedContacts?.length !== 0 ? (				
+						<DataGrid
+							rows={contactRowsWithId}
+							// columns={ContactColumns}
+							// columns={isMobile ? ContactEditableColumns.map(column => ({ ...column, minWidth: 150 })) : ContactEditableColumns}
+							columns={isMobile
+								? (selectedRole === "OWNER" || contractStatus === "APPROVED" 
+									? ContactColumns.map(column => ({ ...column, minWidth: 150 })) 
+									: ContactEditableColumns.map(column => ({ ...column, minWidth: 150 }))
+									)
+								: (selectedRole === "OWNER" || contractStatus === "APPROVED"
+									? ContactColumns 
+									: ContactEditableColumns)
+							}
+							sx={{
+							// minHeight:"100px",
+							// height:"100px",
+							// maxHeight:"100%",
+							marginTop: "10px",
+							}}
+							autoHeight
+							rowHeight={50} 
+							hideFooter={true}
+						/>
+					) : (
+						<></>
+					)}
+				</Box>	
+				{
+					(contractStatus === "NEW" || contractStatus === "SENT" || contractStatus === "REJECTED") && (
+						<Box
+							sx={{
+								display: 'flex',
+								flexDirection: 'row',
+								justifyContent: 'space-between',
+								alignItems: 'center',
+								paddingTop: '10px',
+								marginBottom: '7px',
+								marginTop:"10px",
+								width: '100%',
+							}}
+						>
+							{contractStatus !== 'REJECTED' && (
+							<>
+							<Button
+								variant="contained"
+								sx={{
+									backgroundColor: '#CB8E8E',
+									textTransform: 'none',
+									borderRadius: '5px',
+									display: 'flex',
+									width: '45%',
+									'&:hover': {
+										backgroundColor: '#CB8E8E',
+									},
+								}}
+								onClick={()=> {
+										if(selectedRole !== "OWNER"){
+											handleDeclineOfferClick()
+										}else{
+											handleDecline()
+											// Implement logic for owner click on REJECT
+										}
+									}
+								}
+							>
+								<Typography
+									sx={{
+										fontWeight: theme.typography.primary.fontWeight,
+										fontSize: '14px',
+										color: '#160449',
+										textTransform: 'none',
+									}}
+								>
+									{selectedRole === "OWNER" ? "Reject" : (contractStatus === 'NEW' ? 'Decline Offer' : 'Withdraw Quote')}
+								</Typography>
+							</Button>
+							</>
+							)}
+							<Button
+								variant="contained"
+								sx={{
+									backgroundColor: '#9EAED6',
+									textTransform: 'none',
+									borderRadius: '5px',
+									display: 'flex',
+									width: contractStatus === 'REJECTED' ? '100%' : '45%',
+									'&:hover': {
+										backgroundColor: '#9EAED6',
+									},
+								}}
+								onClick={() => {
+									if(selectedRole !== "OWNER"){
+										handleSendQuoteClick()
+									}else{
+										handleAccept()
+										// Implement logic for Owner click on Accept
+									}
+								}}
+								disabled={!contractName || !contractStartDate || !contractEndDate || !contractFees}
+							>
+								<Typography
+									sx={{
+										fontWeight: theme.typography.primary.fontWeight,
+										fontSize: '14px',
+										color: '#160449',
+										textTransform: 'none',
+									}}
+								>
+									{selectedRole === "OWNER" ? "Accept" : (contractStatus === 'NEW' ? 'Send Quote' : 'Update Quote')}
+								</Typography>
+							</Button>
+						</Box>
+					)
+				}							
+				{
+					(contractStatus === "ACTIVE") && (
+						<Box
+							sx={{
+								display: 'flex',
+								flexDirection: 'row',
+								// justifyContent: 'space-between',
+								justifyContent: 'center',
+								alignItems: 'center',
+								paddingTop: '10px',
+								marginBottom: '7px',
+								marginTop:"10px",
+								width: '100%',
+							}}
+						>
+							
+							
+								
+							{/* <Button
+								variant="contained"
+								sx={{
+									backgroundColor: '#CB8E8E',
+									textTransform: 'none',
+									borderRadius: '5px',
+									display: 'flex',
+									width: '45%',
+									'&:hover': {
+										backgroundColor: '#CB8E8E',
+									},
+								}}
+								onClick={() => setShowEndContractDialog(true)}							
+								// disabled={!contractName || !contractStartDate || !contractEndDate || !contractFees}
+							>
+								<Typography
+									sx={{
+										fontWeight: theme.typography.primary.fontWeight,
+										fontSize: '14px',
+										color: '#160449',
+										textTransform: 'none',
+									}}
+								>
+									{'End Contract'}
+								</Typography>
+							</Button> */}
+
+							<Button
+								variant="contained"
+								sx={{
+									backgroundColor: '#9EAED6',
+									textTransform: 'none',
+									borderRadius: '5px',
+									display: 'flex',
+									width: '45%',
+									'&:hover': {
+										backgroundColor: '#9EAED6',
+									},
+								}}
+								onClick={handleCreateNewContractClick}
+								disabled={!isChange || isChange === false || !contractName || !contractStartDate || !contractEndDate || !contractFees}
+							>
+								<Typography
+									sx={{
+										fontWeight: theme.typography.primary.fontWeight,
+										fontSize: '14px',
+										color: '#160449',
+										textTransform: 'none',
+									}}
+								>
+									{'Create New Contract'}
+								</Typography>
+							</Button>
+						</Box>
+					)
+				}							
+					
 			</Box>
 			{showAddFeeDialog && (
 				<Box>
@@ -2894,25 +2899,25 @@ return (
 					/>
 				</Box>
 			)}
-      {/* {showEndContractDialog && (
-				<Box>
-					<EndContractDialog open={showEndContractDialog} handleClose={() => setShowEndContractDialog(false)} onEndContract={handleEndContractClick} noticePeriod={contractEndNotice} />
-				</Box>
-			)} */}
-      <GenericDialog
-        isOpen={isDialogOpen}
-        title={dialogTitle}
-        contextText={dialogMessage}
-        actions={[
-          {
-            label: "OK",
-            onClick: closeDialog,
-          }
-        ]}
-        severity={dialogSeverity}
-      />
+		{/* {showEndContractDialog && (
+					<Box>
+						<EndContractDialog open={showEndContractDialog} handleClose={() => setShowEndContractDialog(false)} onEndContract={handleEndContractClick} noticePeriod={contractEndNotice} />
+					</Box>
+				)} */}
+			<GenericDialog
+				isOpen={isDialogOpen}
+				title={dialogTitle}
+				contextText={dialogMessage}
+				actions={[
+				{
+					label: "OK",
+					onClick: closeDialog,
+				}
+				]}
+				severity={dialogSeverity}
+			/>
 
-			
+				
 		</>
 	);
 };
