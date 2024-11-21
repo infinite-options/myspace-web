@@ -385,11 +385,12 @@ export function RentAccordion(props) {
                 cursor: "pointer",
               }}
               onClick={() => {
-                if (isMobile) {
-                  navigateTo(rentDetailUrl, index);
-                } else {
-                  props.onPropertyInRentWidgetClicked(property.property_uid);
-                }
+                // if (isMobile) {
+                //   navigateTo(rentDetailUrl, index);
+                // } else {
+                //   props.onPropertyInRentWidgetClicked(property.property_uid);
+                // }
+                props.onPropertyInRentWidgetClicked(property.property_uid);
               }}
             >
               <Box sx={{ display: "flex", alignItems: "center" }}>

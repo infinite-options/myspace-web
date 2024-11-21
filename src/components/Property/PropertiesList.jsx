@@ -119,7 +119,7 @@ export default function PropertiesList(props) {
   // const [allContracts, setAllContracts] = useState([]);
   const profileId = getProfileId();
   // const [returnIndex, setReturnIndex] = useState(0);
-  const [initialPropInRent, setInitialPropInRent] = useState("");
+  const [initialPropInRent, setInitialPropInRent] = useState(0);
   const [isDataReady, setIsDataReady] = useState(false);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -182,7 +182,7 @@ export default function PropertiesList(props) {
         setReturnIndex(i);
       }
 
-      if (LHS === "Rent") {
+      if (LHS === "Rent" && !isMobile) {
         onPropertyInRentWidgetClicked(initialPropInRent);
       }
     }
@@ -202,7 +202,7 @@ export default function PropertiesList(props) {
   };
 
   const onPropertyInRentWidgetClicked = (property_uid) => {
-    // console.log("onPropertyInRentWidgetClicked Clicked", property_uid, displayedItems);
+    console.log("onPropertyInRentWidgetClicked Clicked", property_uid, displayedItems);
     if (displayedItems.length > 0) {
       const i = displayedItems.findIndex((p) => p.property_uid === property_uid);
       // console.log("onPropertyInRentWidgetClicked Clicked", property_uid, i, displayedItems);
@@ -210,6 +210,8 @@ export default function PropertiesList(props) {
       setReturnIndex(i);
       setCurrentPropertyID(property_uid);
       setCurrentProperty(displayedItems[i]);
+      props.setRHS("PropertyNavigator");
+      props.setViewRHS(true);
     }
   };
 
@@ -655,7 +657,7 @@ export default function PropertiesList(props) {
                     // }}
                     paginationModel={paginationModel}
 
-    pageSizeOptions={[5, 10, 15]}
+                    pageSizeOptions={[5, 10, 15]}
                     onPaginationModelChange={setPaginationModel}
                     // initialState={{
                     //   pagination: {
