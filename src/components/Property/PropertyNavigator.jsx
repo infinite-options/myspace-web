@@ -574,7 +574,7 @@ export default function PropertyNavigator({
       field: "cf_monthName",
       headerName: "Month",
       sortable: isDesktop,
-      flex: 0.5,
+      flex: isMobile ? 0.3 : 0.5,
       renderCell: (params) => {
         return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
       },
@@ -583,30 +583,30 @@ export default function PropertyNavigator({
       field: "purchase_type",
       headerName: "Category",
       sortable: isDesktop,
-      flex: 1,
+      flex: isMobile ? 0.4 : 1,
       renderCell: (params) => {
         return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
       },
     },
-    {
-      field: "latest_date_formatted",
-      headerName: "Date Paid",
-      sortable: isDesktop,
-      // flex: 1,
-      // renderCell: (params) => {
-      //   return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value.split(" ")[0]}</Box>;
-      // },
-      renderCell: (params) => {
-        const value = params.value || "-";
-        return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{value.split(" ")[0]}</Box>;
-      },
-    },
+    ...(!isMobile
+      ? [
+        {
+          field: "latest_date_formatted",
+          headerName: "Date Paid",
+          sortable: isDesktop,
+          renderCell: (params) => {
+            const value = params.value || "-";
+            return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{value.split(" ")[0]}</Box>;
+          },
+        },
+        ]
+      : []),
     {
       // field: 'total_paid_formatted',\
       field: "pur_amount_due",
       headerName: "Amount",
       sortable: isDesktop,
-      flex: 0.7,
+      flex: isMobile ? 0.3 : 0.7,
       renderCell: (params) => {
         return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
       },
@@ -614,9 +614,9 @@ export default function PropertyNavigator({
 
     {
       field: "rent_status",
-      headerName: "Rent Status",
+      headerName: isMobile ? "Status" : "Rent Status",
       sortable: isDesktop,
-      flex: 1,
+      flex: isMobile ? 0.3 : 1,
       renderCell: (params) => {
         return (
           <Box
@@ -1218,7 +1218,7 @@ export default function PropertyNavigator({
   return (
     <Paper
       style={{
-        marginTop: "10px",
+        marginTop: isMobile? "0px" : "10px",
         backgroundColor: theme.palette.primary.main,
         width: "100%", // Occupy full width with 25px margins on each side
       }}
@@ -2728,14 +2728,14 @@ export default function PropertyNavigator({
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "space-around",
-                  width: "100%",
+                  // width: "100%",
                   overflowX: "auto",
                 }}
               >
                 <DataGrid
                   rows={propertyRentStatus}
                   columns={rentStatusColumns}
-                  disableColumnMenu={!isDesktop}
+                  disableColumnMenu={isMobile}
                   autoHeight
                   initialState={{
                     pagination: {
@@ -2747,7 +2747,7 @@ export default function PropertyNavigator({
                   getRowId={(row) => row.rent_detail_index}
                   pageSizeOptions={[12]}
                   sx={{
-                    minWidth: "700px",
+                    // minWidth: "700px",
                     "& .MuiDataGrid-cell": {
                       justifyContent: "center",
                       alignItems: "center",

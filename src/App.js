@@ -7,6 +7,7 @@ import { OnboardingProvider } from "./contexts/OnboardingContext";
 import { CookiesProvider } from "react-cookie";
 import { MaintenanceProvider } from "./contexts/MaintenanceContext";  // Import the MaintenanceProvider
 import { ListsProvider } from "./contexts/ListsContext";
+import ScrollToTop from "./components/ScrollToTop";
 function App() {
   return (
     <CookiesProvider defaultSetOptions={{ path: "/" }}>
@@ -16,6 +17,7 @@ function App() {
             <SettingsACHContextProvider>
               <MaintenanceProvider>               
                 <BrowserRouter>
+                <ScrollToTop/>
                   <Main />
                 </BrowserRouter>              
               </MaintenanceProvider>

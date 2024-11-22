@@ -529,7 +529,7 @@ export default function PropertiesList(props) {
       >
         <Paper
           sx={{
-            marginTop: "15px",
+            marginTop: isMobile ? "0px" : "15px",
             backgroundColor: theme.palette.primary.main,
             width: "100%",
             maxWidth: "800px",

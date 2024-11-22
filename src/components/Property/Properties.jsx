@@ -396,7 +396,7 @@ function Properties() {
           <CircularProgress color='inherit' />
         </Backdrop>
       ) : (
-        <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
+        <Container maxWidth='lg' sx={{ paddingTop: isMobile ? "0px" : "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
           <Grid container spacing={4}>
             {(!isMobile || !viewRHS) && (
               <Grid item xs={12} md={4}>

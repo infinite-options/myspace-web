@@ -1193,13 +1193,13 @@ export default function AddListing(props) {
                     value={rent}
                   />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} md={6}>
                   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                     Deposit for Last Month's Rent
                   </Typography>
                   <Checkbox checked={depositForRent} onChange={(e) => setDepositForRent(e.target.checked)} />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} md={6}>
                   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                     Pets Allowed
                   </Typography>
@@ -1271,12 +1271,12 @@ export default function AddListing(props) {
                 {Object.entries(mappedUtilitiesPaidBy).length > 0
                   && Object.entries(mappedUtilitiesPaidBy).map(([utility, selectedValue]) => (
                       <Fragment key={utility}>
-                        <Grid item xs={6}>
+                        <Grid item xs={5}>
                           <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                             {formatUtilityName(utility)}
                           </Typography>
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={7}>
                           <FormControlLabel
                             value='owner'
                             control={<Radio checked={selectedValue === "owner"} onChange={() => handleUtilityChange(utility, "owner")} />}
