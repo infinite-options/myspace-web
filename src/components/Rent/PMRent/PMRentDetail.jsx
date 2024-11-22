@@ -1,4 +1,5 @@
 import { Box } from "@mui/system";
+import { Typography, Stack, Paper, Button, ThemeProvider, Grid, Container, InputBase, IconButton, Avatar, Badge } from "@mui/material";
 import { MainContainer, RentTitle, ViewOptionText, getStatusColor } from "../RentComponents/RentComponents";
 import { BackIcon, RentDetailBody, RentDetailNavbarTab } from "../RentComponents/RentDetailComponents";
 import { useLocation, useNavigate } from "react-router";
@@ -8,6 +9,8 @@ import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import APIConfig from "../../../utils/APIConfig";
+import theme from "../../../theme/theme";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 function PMRentDetail(props) {
   // console.log("in PMRentDetail: ", props);
@@ -209,8 +212,45 @@ function PMRentDetail(props) {
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
         <CircularProgress color='inherit' />
       </Backdrop>
-      <RentTitle>Property Rent 4</RentTitle>
       <Box
+  component="span"
+  display="flex"
+  justifyContent="center"
+  alignItems="center"
+  position="relative"
+  flex="1"
+>
+  {/* Back Button */}
+  <Button
+    onClick={() => {
+      navigate(-1);
+    }}
+    sx={{
+      position: "absolute",
+      left: "10px", // Adjust as needed for spacing
+    }}
+  >
+    <ArrowBackIcon
+      sx={{
+        color: theme.typography.primary.black,
+        fontSize: "30px",
+        margin: "5px",
+      }}
+    />
+  </Button>
+
+  {/* Title */}
+  <Typography
+    sx={{
+      color: theme.typography.primary.black,
+      fontWeight: theme.typography.primary.fontWeight,
+      fontSize: theme.typography.largeFont,
+    }}
+  >
+    Property Rent 4
+  </Typography>
+</Box>
+{/* <Box
         sx={{
           display: "flex",
           justifyContent: "center",
@@ -221,7 +261,7 @@ function PMRentDetail(props) {
       >
         <BackIcon />
         <ViewOptionText>Return to Viewing All Listings</ViewOptionText>
-      </Box>
+      </Box> */}
       <Box
         sx={{
           display: "flex",
