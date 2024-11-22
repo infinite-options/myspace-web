@@ -97,6 +97,9 @@ export default function OwnerDashboard() {
     // const announcementsResponseData = await announcementsResponse.json();
 
     let announcementsReceivedData = jsonData?.announcementsReceived?.result;
+    if (announcementsReceivedData && Array.isArray(announcementsReceivedData)) {
+      announcementsReceivedData.sort((a, b) => new Date(b.announcement_date) - new Date(a.announcement_date));
+    }    
     setAnnouncementRecvData(announcementsReceivedData || ["Card 1", "Card 2", "Card 3", "Card 4", "Card 5"]);
 
     setAnnouncementSentData(jsonData?.announcementsSent?.result);
