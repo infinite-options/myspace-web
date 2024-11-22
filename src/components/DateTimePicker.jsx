@@ -145,21 +145,20 @@ function DateTimePickerModal(props) {
 
             </Box>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-            {props.completeTicket ? (
+                {props.completeTicket ? (
                     <Grid container columnSpacing={5} padding={4} sx={{justifyContent: "left"}}>
                         <Grid item xs={12}>
-                        <FormControl>
-                            <RadioGroup
-                                defaultValue="now"
-                                name="completed-date-radio-buttons"
-                            ><FormControlLabel value="cancel" control={<Radio onChange={handleCancelFlag}/>}label={"Cancel Ticket without Completion"} />
-                                <FormControlLabel value="now" control={<Radio onChange={changeActiveDateSelector}/>} label={showFormLabel("now")}/>
-                                <FormControlLabel value="schedule" control={<Radio onChange={changeActiveDateSelector} disabled={props.maintenanceItem.maintenance_scheduled_date == null ? true : false}/>} label={showFormLabel("schedule")} />
-                                <FormControlLabel value="select" control={<Radio onChange={changeActiveDateSelector}/>} label={"Select Completed Date"} />
-                                
-                            
-                            </RadioGroup>
-                        </FormControl>
+                            <FormControl>
+                                <RadioGroup
+                                    defaultValue="now"
+                                    name="completed-date-radio-buttons"
+                                >
+                                    <FormControlLabel value="cancel" control={<Radio sx={{'&.Mui-checked': { color: '#160449' }}} onChange={handleCancelFlag}/>}label={"Cancel Ticket without Completion"} />
+                                    <FormControlLabel value="now" control={<Radio sx={{'&.Mui-checked': { color: '#160449' }}} onChange={changeActiveDateSelector}/>} label={showFormLabel("now")}/>
+                                    <FormControlLabel value="schedule" sx={{'&.Mui-checked': { color: '#160449' }}} control={<Radio onChange={changeActiveDateSelector} disabled={props.maintenanceItem.maintenance_scheduled_date == null ? true : false}/>} label={showFormLabel("schedule")} />
+                                    <FormControlLabel value="select" sx={{'&.Mui-checked': { color: '#160449' }}} control={<Radio onChange={changeActiveDateSelector}/>} label={"Select Completed Date"} />
+                                </RadioGroup>
+                            </FormControl>
                         </Grid>
                         <Grid item xs={12}>
                         <Box sx={{paddingTop: "10px", paddingBottom: "10px"}}>
@@ -186,82 +185,84 @@ function DateTimePickerModal(props) {
                             />
                         </Box> 
                         </Grid>
-                  </Grid>
-            ) : (
-                <Grid container rowSpacing={6} padding={4}>
-                <Grid item xs={12}>
-                    <DatePicker
-                        value={dayjs(availabilityDate)}
-                        minDate={dayjs()}
-                        onChange={(v) => setAvailabilityDate(v.format("MM-DD-YYYY"))}
-                        slots={{
-                            openPickerIcon: CalendarIcon,
-                        }}
-                        slotProps={{
-                            textField: {
-                                size: "small",
-                                style: {
-                                    width: "100%",
-                                    fontSize: 12,
-                                    backgroundColor: "#F2F2F2 !important",
-                                    borderRadius: "10px !important",
+                    </Grid>
+                ) : (
+                    <Grid container rowSpacing={6} padding={4}>
+                        <Grid item xs={12}>
+                            <DatePicker
+                                value={dayjs(availabilityDate)}
+                                minDate={dayjs()}
+                                onChange={(v) => setAvailabilityDate(v.format("MM-DD-YYYY"))}
+                                slots={{
+                                    openPickerIcon: CalendarIcon,
+                                }}
+                                slotProps={{
+                                    textField: {
+                                        size: "small",
+                                        style: {
+                                            width: "100%",
+                                            fontSize: 12,
+                                            backgroundColor: "#F2F2F2 !important",
+                                            borderRadius: "10px !important",
+                                        },
+                                        label: "Date"
+                                    },
+                                }}
+                            />
+                        </Grid> 
+                        <Grid item xs={12}>
+                            <TimePicker                                                        
+                                slotProps={{ 
+                                    textField: { 
+                                        size: 'small',
+                                        style: {
+                                            width: "100%",
+                                            fontSize: 12,
+                                            backgroundColor: "#F2F2F2 !important",
+                                            borderRadius: "10px !important",
+                                        },
+                                        label: 'Time (select AM or PM)'                                                                
+                                    } 
+                                }}                                                        
+                                views={['hours', 'minutes']}
+                                
+                                value={dayjs(availabilityTime,"HH:mm")}
+                                onChange={(newValue) => setAvailabilityTime(newValue.format("HH:mm"))}
+                            />
+                        </Grid>
+                    </Grid>
+                )}
+                
+                <Grid container justifyContent="center" alignItems="center" sx={{ padding: "8px" }}>
+                    <Grid item>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => submit()}
+                            sx={{
+                                backgroundColor: !activeButton ? "#B0B0B0" : "#FFC614", // Updated color to #FFC614
+                                pointerEvents: !activeButton ? "none" : "auto",
+                                width: "285px", // Set the width to match the image
+                                height: "40px", // Set the height to match the image
+                                borderRadius: "8px", // Rounded corners for the button
+                                '&:hover': {
+                                    backgroundColor: "#FFC614", // Ensure hover color is the same
                                 },
-                                label: "Date"
-                            },
-                        }}
-                    />
-                </Grid> 
-                <Grid item xs={12}>
-                    <TimePicker                                                        
-                        slotProps={{ 
-                            textField: { 
-                                size: 'small',
-                                style: {
-                                    width: "100%",
-                                    fontSize: 12,
-                                    backgroundColor: "#F2F2F2 !important",
-                                    borderRadius: "10px !important",
-                                },
-                                label: 'Time (select AM or PM)'                                                                
-                            } 
-                        }}                                                        
-                        views={['hours', 'minutes']}
-                        
-                        value={dayjs(availabilityTime,"HH:mm")}
-                        onChange={(newValue) => setAvailabilityTime(newValue.format("HH:mm"))}
-                    />
+                            }}
+                        >
+                            <Typography
+                                sx={{
+                                    color: "#160449", // Ensure the text color is #160449 as in your images
+                                    fontWeight: theme.typography.primary.fontWeight,
+                                    fontSize: theme.typography.mediumFont,
+                                }}
+                            >
+                                Save
+                            </Typography>
+                        </Button>
+                    </Grid>
                 </Grid>
-            </Grid>
-            )}
-                 <Grid container justifyContent="center" alignItems="center" sx={{ padding: "8px" }}>
-            <Grid item>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => submit()}
-                    sx={{
-                        backgroundColor: !activeButton ? "#B0B0B0" : "#FFC614", // Updated color to #FFC614
-                        pointerEvents: !activeButton ? "none" : "auto",
-                        width: "285px", // Set the width to match the image
-                        height: "40px", // Set the height to match the image
-                        borderRadius: "8px", // Rounded corners for the button
-                        '&:hover': {
-                            backgroundColor: "#FFC614", // Ensure hover color is the same
-                        },
-                    }}
-                >
-                    <Typography
-                        sx={{
-                            color: "#160449", // Ensure the text color is #160449 as in your images
-                            fontWeight: theme.typography.primary.fontWeight,
-                            fontSize: theme.typography.mediumFont,
-                        }}
-                    >
-                        Save
-                    </Typography>
-                </Button>
-            </Grid>
-        </Grid></LocalizationProvider>
+            </LocalizationProvider>
         </Box>
       </Modal>
     </div>

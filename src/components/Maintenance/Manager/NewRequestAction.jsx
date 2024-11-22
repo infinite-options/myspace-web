@@ -32,6 +32,7 @@ import OwnerProfileLink from '../../Maintenance/MaintenanceComponents/OwnerProfi
 import useMediaQuery from '@mui/material/useMediaQuery';
 import APIConfig from '../../../utils/APIConfig';
 import { useMaintenance } from "../../../contexts/MaintenanceContext";
+import RequestInfoModal from '../RequestInfoModal';
 
 export default function NewRequestAction({ setRefresh, maintenanceItem, navigateParams, quotes }) {
     const navigate = useNavigate();
@@ -107,91 +108,98 @@ export default function NewRequestAction({ setRefresh, maintenanceItem, navigate
                 width: '100%',
             }}
         >
-            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-                <CircularProgress color="inherit" />
-            </Backdrop>
-                <Box
-  sx={{
-    display: 'flex',  // Flexbox for horizontal alignment
-    justifyContent: 'space-between',  // Ensures space between buttons
-    flexWrap: 'nowrap',  // Prevent wrapping on larger screens
-    gap: 5,  // Space between buttons
-    width: '100%',
-    padding: '20px',
-  }}
->
-  <Button
-    variant="contained"
-    sx={{
-      backgroundColor: '#a7b8e6',
-      color: '#160449',
-      textTransform: 'none',
-      fontWeight: 'bold',
-      borderRadius: '8px',
-      height: '120px',
-      width: '200px', 
-      padding: '10px',
-      '&:hover': {
-        backgroundColor: '#a7b8e6',
-      },
-    }}
-    onClick={() => setShowRequestMoreInfo(true)}
-  >
-    Ask For Details
-  </Button>
+          <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+              <CircularProgress color="inherit" />
+          </Backdrop>
+          
+          <Box
+            sx={{
+              display: 'flex',  // Flexbox for horizontal alignment
+              justifyContent: 'space-between',  // Ensures space between buttons
+              flexWrap: 'nowrap',  // Prevent wrapping on larger screens
+              gap: 5,  // Space between buttons
+              width: '100%',
+              padding: '20px',
+            }}
+          >
+            {/* ask for details button */}
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: '#a7b8e6',
+                color: '#160449',
+                textTransform: 'none',
+                fontWeight: 'bold',
+                borderRadius: '8px',
+                height: '120px',
+                width: '200px', 
+                padding: '10px',
+                '&:hover': {
+                  backgroundColor: '#a7b8e6',
+                },
+              }}
+              onClick={() => setShowRequestMoreInfo(true)}
+            >
+              Ask For Details
+            </Button>
+            
+            {/* schedule button */}
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: '#FFC614',
+                color: '#160449',
+                textTransform: 'none',
+                fontWeight: 'bold',
+                borderRadius: '8px',
+                height: '120px',
+                width: '200px',   
+                padding: '10px',
+                '&:hover': {
+                  backgroundColor: '#FFC614',
+                },
+              }}
+              onClick={() => setShowModal(true)}
+            >
+              Schedule
+            </Button>
+            
+            {/* request quote button */}
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: '#F87C7A',
+                color: '#160449',
+                textTransform: 'none',
+                fontWeight: 'bold',
+                borderRadius: '8px',
+                height: '120px',
+                width: '200px',   
+                padding: '10px',
+                '&:hover': {
+                  backgroundColor: '#F87C7A',
+                },
+              }}
+              onClick={() => handleNavigateToQuotesRequested()}
+            >
+              Request Quotes
+            </Button>
+            
+            {/* complete button */}
+            <CompleteButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage} setRefresh = {setRefresh}/>
+          </Box>
 
-  <Button
-    variant="contained"
-    sx={{
-      backgroundColor: '#FFC614',
-      color: '#160449',
-      textTransform: 'none',
-      fontWeight: 'bold',
-      borderRadius: '8px',
-      height: '120px',
-      width: '200px',   
-      padding: '10px',
-      '&:hover': {
-        backgroundColor: '#FFC614',
-      },
-    }}
-    onClick={() => setShowModal(true)}
-  >
-    Schedule
-  </Button>
+          <AlertMessage showMessage={showMessage} setShowMessage={setShowMessage} message={message} />
+          <DateTimePickerModal
+              setOpenModal={setShowModal}
+              open={showModal}
+              maintenanceItem={maintenanceItem}
+              date={''}
+              time={''}
+              handleSubmit={handleSubmit}
+          />
 
-  <Button
-    variant="contained"
-    sx={{
-      backgroundColor: '#F87C7A',
-      color: '#160449',
-      textTransform: 'none',
-      fontWeight: 'bold',
-      borderRadius: '8px',
-      height: '120px',
-      width: '200px',   
-      padding: '10px',
-      '&:hover': {
-        backgroundColor: '#F87C7A',
-      },
-    }}
-    onClick={() => handleNavigateToQuotesRequested()}
-  >
-    Request Quotes
-  </Button>
-
-  <CompleteButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage} setRefresh = {setRefresh}/>
-                    </Box>
-
-            <AlertMessage showMessage={showMessage} setShowMessage={setShowMessage} message={message} />
-            <DateTimePickerModal
-                setOpenModal={setShowModal}
-                open={showModal}
-                maintenanceItem={maintenanceItem}
-                date={''}
-                time={''}
-                handleSubmit={handleSubmit}
-            />
+          {showRequestMoreInfo && <RequestInfoModal maintenanceItem={maintenanceItem} onRequestClose={()=>{setShowRequestMoreInfo(false)}} setShowSpinner={setShowSpinner} setRefresh = {setRefresh} getProfileId={getProfileId}/>}
         </Box>
     );
 }
