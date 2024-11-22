@@ -169,20 +169,20 @@ function EditProperty(props) {
 		{ description: '', startTime: '', endTime: '', days: '' },
 	]);
 	const [initialOtherDetails, setInitialOtherDetails] = useState([{ description: '', days: '' }]);
-	
+
 	// Track if changes occurred
 	const [hasPropertyDetailsChanged, setHasPropertyDetailsChanged] = useState(false);
-	
 
-	 // Update the initial states when component mounts
-	 useEffect(() => {
+
+	// Update the initial states when component mounts
+	useEffect(() => {
 		if (propertyData && propertyData.property_details) {
-		  const details = JSON.parse(propertyData.property_details);
-		  setPropertyCodes(details.propertyCodes || [{ description: '', code: '', startTime: '', endTime: '', days: '' }]);
-		  setPropertyAmenities(details.propertyAmenities || [{ description: '', startTime: '', endTime: '', days: '' }]);
-		  setOtherDetails(details.otherDetails || [{ description: '', days: '' }]);
+			const details = JSON.parse(propertyData.property_details);
+			setPropertyCodes(details.propertyCodes || [{ description: '', code: '', startTime: '', endTime: '', days: '' }]);
+			setPropertyAmenities(details.propertyAmenities || [{ description: '', startTime: '', endTime: '', days: '' }]);
+			setOtherDetails(details.otherDetails || [{ description: '', days: '' }]);
 		}
-	  }, [propertyData]);
+	}, [propertyData]);
 
 	//   useEffect(() => {
 	// 	console.log("assessmentYear - ", assessmentYear);
@@ -348,8 +348,8 @@ function EditProperty(props) {
 			return;
 		}
 
-		
-	
+
+
 
 		setIsSaveDisabled(true);
 		setSaveButtonText('Return to Dashboard');
@@ -382,7 +382,7 @@ function EditProperty(props) {
 					days: detail.days,
 				})),
 			};
-	
+
 			formData.append('property_details', JSON.stringify(property_details));
 		}
 
@@ -639,7 +639,7 @@ function EditProperty(props) {
 		setPropertyCodes(updatedCodes);
 		checkForPropertyDetailsChanges(updatedCodes, initialPropertyCodes, propertyAmenities, initialPropertyAmenities, otherDetails, initialOtherDetails);
 	};
-	
+
 	const handlePropertyAmenityChange = (index, event) => {
 		const { name, value } = event.target;
 		const updatedAmenities = [...propertyAmenities];
@@ -647,7 +647,7 @@ function EditProperty(props) {
 		setPropertyAmenities(updatedAmenities);
 		checkForPropertyDetailsChanges(propertyCodes, initialPropertyCodes, updatedAmenities, initialPropertyAmenities, otherDetails, initialOtherDetails);
 	};
-	
+
 	const handleOtherDetailChange = (index, event) => {
 		const { name, value } = event.target;
 		const updatedDetails = [...otherDetails];
@@ -655,7 +655,7 @@ function EditProperty(props) {
 		setOtherDetails(updatedDetails);
 		checkForPropertyDetailsChanges(propertyCodes, initialPropertyCodes, propertyAmenities, initialPropertyAmenities, updatedDetails, initialOtherDetails);
 	};
-	
+
 	// Function to check for changes
 	const checkForPropertyDetailsChanges = (newPropertyCodes, initialPropertyCodes, newPropertyAmenities, initialPropertyAmenities, newOtherDetails, initialOtherDetails) => {
 		if (JSON.stringify(newPropertyCodes) !== JSON.stringify(initialPropertyCodes) ||
@@ -666,7 +666,7 @@ function EditProperty(props) {
 			setHasPropertyDetailsChanged(false);
 		}
 	};
-	
+
 
 	return (
 		<ThemeProvider theme={theme}>
@@ -1152,7 +1152,7 @@ function EditProperty(props) {
 						<Grid container columnSpacing={6} rowSpacing={4}>
 							{/* Property Codes Section */}
 							<Grid item xs={11}>
-								<Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue, marginBottom: '8px',}}>
+								<Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue, marginBottom: '8px', }}>
 									Property Codes
 								</Typography>
 							</Grid>
@@ -1163,213 +1163,216 @@ function EditProperty(props) {
 							</Grid>
 
 							{propertyCodes.map((code, index) => (
-    <React.Fragment key={index}>
-        <Grid item md={3.5} xs={12}>
-            <TextField
-                fullWidth
-                placeholder="Enter description"
-                size="small"
-                name="description"
-                value={code.description}
-                onChange={(e) => handlePropertyCodeChange(index, e)}
-                sx={{
-                    backgroundColor: 'white',
-                    borderColor: 'black',
-                    borderRadius: '7px',
-                }}
-            />
-        </Grid>
-        <Grid item md={2.3} xs={12}>
-            <TextField
-                fullWidth
-                placeholder="Enter code"
-                size="small"
-                name="code"
-                value={code.code}
-                onChange={(e) => handlePropertyCodeChange(index, e)}
-                sx={{
-                    backgroundColor: 'white',
-                    borderColor: 'black',
-                    borderRadius: '7px',
-                }}
-            />
-        </Grid>
-        <Grid item md={2} xs={12}>
-            <TextField
-                fullWidth
-                placeholder="Start Time"
-                size="small"
-                name="startTime"
-                value={code.startTime}
-                onChange={(e) => handlePropertyCodeChange(index, e)}
-                sx={{
-                    backgroundColor: 'white',
-                    borderColor: 'black',
-                    borderRadius: '7px',
-                }}
-            />
-        </Grid>
-        <Grid item md={2} xs={12}>
-            <TextField
-                fullWidth
-                placeholder="End Time"
-                size="small"
-                name="endTime"
-                value={code.endTime}
-                onChange={(e) => handlePropertyCodeChange(index, e)}
-                sx={{
-                    backgroundColor: 'white',
-                    borderColor: 'black',
-                    borderRadius: '7px',
-                }}
-            />
-        </Grid>
-        <Grid item md={2.2} xs={12}>
-            <TextField
-                fullWidth
-                placeholder="Enter days"
-                size="small"
-                name="days"
-                value={code.days}
-                onChange={(e) => handlePropertyCodeChange(index, e)}
-                sx={{
-                    backgroundColor: 'white',
-                    borderColor: 'black',
-                    borderRadius: '7px',
-                }}
-            />
-        </Grid>
-    </React.Fragment>
-))}
+								<React.Fragment key={index}>
+									<Grid item md={3.5} xs={12}>
+										<TextField
+											fullWidth
+											placeholder="Enter description"
+											size="small"
+											name="description"
+											value={code.description}
+											onChange={(e) => handlePropertyCodeChange(index, e)}
+											sx={{
+												backgroundColor: 'white',
+												borderColor: 'black',
+												borderRadius: '7px',
+											}}
+										/>
+									</Grid>
+									<Grid item md={2.3} xs={12}>
+										<TextField
+											fullWidth
+											placeholder="Enter code"
+											size="small"
+											name="code"
+											value={code.code}
+											onChange={(e) => handlePropertyCodeChange(index, e)}
+											sx={{
+												backgroundColor: 'white',
+												borderColor: 'black',
+												borderRadius: '7px',
+											}}
+										/>
+									</Grid>
+									<Grid item md={2} xs={12}>
+										<TextField
+											fullWidth
+											placeholder="Start Time"
+											size="small"
+											name="startTime"
+											value={code.startTime}
+											onChange={(e) => handlePropertyCodeChange(index, e)}
+											sx={{
+												backgroundColor: 'white',
+												borderColor: 'black',
+												borderRadius: '7px',
+											}}
+										/>
+									</Grid>
+									<Grid item md={2} xs={12}>
+										<TextField
+											fullWidth
+											placeholder="End Time"
+											size="small"
+											name="endTime"
+											value={code.endTime}
+											onChange={(e) => handlePropertyCodeChange(index, e)}
+											sx={{
+												backgroundColor: 'white',
+												borderColor: 'black',
+												borderRadius: '7px',
+											}}
+										/>
+									</Grid>
+									<Grid item md={2.2} xs={12}>
+										<TextField
+											fullWidth
+											placeholder="Enter days"
+											size="small"
+											name="days"
+											value={code.days}
+											onChange={(e) => handlePropertyCodeChange(index, e)}
+											sx={{
+												backgroundColor: 'white',
+												borderColor: 'black',
+												borderRadius: '7px',
+											}}
+										/>
+									</Grid>
+								</React.Fragment>
+							))}
 
 
 							{/* Property Amenities Section */}
 							<Grid item xs={11}>
-								<Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue, marginTop: '20px',  // Add more space before the next title
-                marginBottom: '8px', }}>
+								<Typography sx={{
+									fontWeight: 'bold', color: theme.typography.common.blue, marginTop: '20px',  // Add more space before the next title
+									marginBottom: '8px',
+								}}>
 									Property Amenities
 								</Typography>
 							</Grid>
 
 							<Grid item xs={1}>
-								<IconButton onClick={handleAddPropertyAmenity} sx={{ marginTop: '20px',  // Add more space before the next title
-              }}>
+								<IconButton onClick={handleAddPropertyAmenity} sx={{
+									marginTop: '20px',  // Add more space before the next title
+								}}>
 									<AddIcon />
 								</IconButton>
 							</Grid>
 							{propertyAmenities.map((amenity, index) => (
-    <React.Fragment key={index}>
-        <Grid item md={4} xs={12}>
-            <TextField
-                fullWidth
-                placeholder="Enter a description"
-                size="small"
-                name="description"  // Name matches the state property
-                value={amenity.description}
-                onChange={(e) => handlePropertyAmenityChange(index, e)}
-                sx={{
-                    backgroundColor: 'white',
-                    borderColor: 'black',
-                    borderRadius: '7px',
-                }}
-            />
-        </Grid>
-        <Grid item md={2} xs={12}>
-            <TextField
-                fullWidth
-                placeholder="Start Time"
-                size="small"
-                name="startTime"  // Name matches the state property
-                value={amenity.startTime}
-                onChange={(e) => handlePropertyAmenityChange(index, e)}
-                sx={{
-                    backgroundColor: 'white',
-                    borderColor: 'black',
-                    borderRadius: '7px',
-                }}
-            />
-        </Grid>
-        <Grid item md={2} xs={12}>
-            <TextField
-                fullWidth
-                placeholder="End Time"
-                size="small"
-                name="endTime"  // Name matches the state property
-                value={amenity.endTime}
-                onChange={(e) => handlePropertyAmenityChange(index, e)}
-                sx={{
-                    backgroundColor: 'white',
-                    borderColor: 'black',
-                    borderRadius: '7px',
-                }}
-            />
-        </Grid>
-        <Grid item md={3} xs={12}>
-            <TextField
-                fullWidth
-                placeholder="Enter days"
-                size="small"
-                name="days"  // Name matches the state property
-                value={amenity.days}
-                onChange={(e) => handlePropertyAmenityChange(index, e)}
-                sx={{
-                    backgroundColor: 'white',
-                    borderColor: 'black',
-                    borderRadius: '7px',
-                }}
-            />
-        </Grid>
-    </React.Fragment>
-))}
+								<React.Fragment key={index}>
+									<Grid item md={4} xs={12}>
+										<TextField
+											fullWidth
+											placeholder="Enter a description"
+											size="small"
+											name="description"  // Name matches the state property
+											value={amenity.description}
+											onChange={(e) => handlePropertyAmenityChange(index, e)}
+											sx={{
+												backgroundColor: 'white',
+												borderColor: 'black',
+												borderRadius: '7px',
+											}}
+										/>
+									</Grid>
+									<Grid item md={2} xs={12}>
+										<TextField
+											fullWidth
+											placeholder="Start Time"
+											size="small"
+											name="startTime"  // Name matches the state property
+											value={amenity.startTime}
+											onChange={(e) => handlePropertyAmenityChange(index, e)}
+											sx={{
+												backgroundColor: 'white',
+												borderColor: 'black',
+												borderRadius: '7px',
+											}}
+										/>
+									</Grid>
+									<Grid item md={2} xs={12}>
+										<TextField
+											fullWidth
+											placeholder="End Time"
+											size="small"
+											name="endTime"  // Name matches the state property
+											value={amenity.endTime}
+											onChange={(e) => handlePropertyAmenityChange(index, e)}
+											sx={{
+												backgroundColor: 'white',
+												borderColor: 'black',
+												borderRadius: '7px',
+											}}
+										/>
+									</Grid>
+									<Grid item md={3} xs={12}>
+										<TextField
+											fullWidth
+											placeholder="Enter days"
+											size="small"
+											name="days"  // Name matches the state property
+											value={amenity.days}
+											onChange={(e) => handlePropertyAmenityChange(index, e)}
+											sx={{
+												backgroundColor: 'white',
+												borderColor: 'black',
+												borderRadius: '7px',
+											}}
+										/>
+									</Grid>
+								</React.Fragment>
+							))}
 
 
 							{/* Other Details Section */}
 							<Grid item xs={11}>
-								<Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue, marginTop: '20px',  }}>
+								<Typography sx={{ fontWeight: 'bold', color: theme.typography.common.blue, marginTop: '20px', }}>
 									Other Details
 								</Typography>
 							</Grid>
 
 							<Grid item xs={1}>
-								<IconButton onClick={handleAddOtherDetail} sx={{ marginTop: '20px',  }}>
-			
+								<IconButton onClick={handleAddOtherDetail} sx={{ marginTop: '20px', }}>
+
 									<AddIcon />
 								</IconButton>
 							</Grid>
 							{otherDetails.map((detail, index) => (
-    <React.Fragment key={index}>
-        <Grid item md={6} xs={12}>
-            <TextField
-                fullWidth
-                placeholder="Enter a description"
-                size="small"
-                name="description"  // Name matches the state property
-                value={detail.description}
-                onChange={(e) => handleOtherDetailChange(index, e)}
-                sx={{
-                    backgroundColor: 'white',
-                    borderColor: 'black',
-                    borderRadius: '7px',
-                }}
-            />
-        </Grid>
-        <Grid item md={3} xs={12}>
-            <TextField
-                fullWidth
-                placeholder="Enter days"
-                size="small"
-                name="days"  // Name matches the state property
-                value={detail.days}
-                onChange={(e) => handleOtherDetailChange(index, e)}
-                sx={{
-                    backgroundColor: 'white',
-                    borderColor: 'black',
-                    borderRadius: '7px',
-                }}
-            />
-        </Grid>
-    </React.Fragment>
-))}
+								<React.Fragment key={index}>
+									<Grid item md={6} xs={12}>
+										<TextField
+											fullWidth
+											placeholder="Enter a description"
+											size="small"
+											name="description"  // Name matches the state property
+											value={detail.description}
+											onChange={(e) => handleOtherDetailChange(index, e)}
+											sx={{
+												backgroundColor: 'white',
+												borderColor: 'black',
+												borderRadius: '7px',
+											}}
+										/>
+									</Grid>
+									<Grid item md={3} xs={12}>
+										<TextField
+											fullWidth
+											placeholder="Enter days"
+											size="small"
+											name="days"  // Name matches the state property
+											value={detail.days}
+											onChange={(e) => handleOtherDetailChange(index, e)}
+											sx={{
+												backgroundColor: 'white',
+												borderColor: 'black',
+												borderRadius: '7px',
+											}}
+										/>
+									</Grid>
+								</React.Fragment>
+							))}
 
 						</Grid>
 
