@@ -8,6 +8,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import APIConfig from "../../utils/APIConfig";
 import PropertiesList from "./PropertiesList";
 import PropertyNavigator from "./PropertyNavigator";
+import PropertyNavigator2 from "./PropertyNavigator2";
 import EditProperty from "./EditProperty";
 import ViewLease from "../Leases/ViewLease";
 import ViewManagementContract from "../Contracts/OwnerManagerContracts/ViewManagementContract";
@@ -426,7 +427,24 @@ function Properties() {
                 ) : (
                   <>
                     {RHS === "PropertyNavigator" && (
-                      <PropertyNavigator
+                      // <PropertyNavigator
+                      //   isDesktop={isDesktop}
+                      //   onEditClick={handleEditClick}
+                      //   onViewLeaseClick={handleViewLeaseClick}
+                      //   onViewContractClick={handleViewContractClick}
+                      //   onManageContractClick={handleManageContract}
+                      //   handleViewApplication={handleViewApplication}
+                      //   handleViewPMQuotesRequested={handleViewPMQuotesRequested}
+                      //   onShowSearchManager={handleShowSearchManager}
+                      //   // onShowSearchManager={handleViewPMQuotesRequested}
+                      //   handleShowRequestQuotes={handleShowRequestQuotes}
+                      //   onAddListingClick={handleAddListingClick}
+                      //   setManagerDetailsState={setManagerDetailsState}
+                      //   handleViewManagerDetailsClick={handleViewManagerDetailsClick}
+                      //   showOnlyListings={showOnlyListings}
+                      //   setViewRHS={setViewRHS}
+                      // />
+                      <PropertyNavigator2
                         isDesktop={isDesktop}
                         onEditClick={handleEditClick}
                         onViewLeaseClick={handleViewLeaseClick}
