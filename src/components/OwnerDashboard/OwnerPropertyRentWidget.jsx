@@ -7,7 +7,13 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 export default function OwnerPropertyRentWidget(props) {
   // console.log("In Owner Property Rent Widget ");
-  const isMediumScreen = useMediaQuery("(maxWidth:1200px)");
+  const isMediumScreen = useMediaQuery("(min-width:1241px)");
+  // const isSmallScreen = useMediaQuery("(maxWidth:1240px)");
+  // const isXSmallScreen = useMediaQuery("(maxWidth:960px)");
+  const isSmallScreen = useMediaQuery("(min-width:1131px) and (max-width:1240px)");
+  const isXSmallScreen = useMediaQuery("(min-width: 961px) and (max-width:1130px)");
+  const isMobileScreen = useMediaQuery("(max-width:960px)");
+
   const navigate = useNavigate();
   const { propertyRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
   // console.log("In OwnerPropertyRentWidget Selected Role: ", selectedRole);
@@ -85,6 +91,84 @@ export default function OwnerPropertyRentWidget(props) {
     return <span style={{ color: "#160449", fontFamily: "Source Sans Pro", fontSize: "18px" }}>No properties</span>;
   };
 
+  const getChartLeftMargin = () => {
+    if(isMediumScreen){
+      return 20;
+    } else if (isSmallScreen){
+      return 10;
+    } else if (isMobileScreen){
+      return -50;
+    } else {
+      return 0;
+    }        
+  }
+
+  const getChartRightMargin = () => {
+    if(isMediumScreen){
+      return 30;
+    } else if (isSmallScreen){
+      return 20;
+    } else if (isMobileScreen){
+      return 50;
+    } else {
+      return 0;
+    }        
+  }
+
+  const getPositions = () => {
+    if (isMobileScreen) {
+      return {
+        pieX: 190,
+        pieY: 100,
+        x: 140,
+        tspanX: 140,
+        y: 145,
+        tspanY: 160,
+      };
+    } else if (isXSmallScreen) {
+      return {
+        pieX: 200,
+        pieY: 100,
+        x: 200,
+        tspanX: 200,
+        y: 145,
+        tspanY: 160,
+      };
+    } else if (isSmallScreen) {
+      return {              
+        pieX: 100,
+        pieY: 100,
+        x: 110,
+        y: 142,  
+        tspanX: 110,
+        tspanY: 155,
+      };
+    } else if (isMediumScreen) {
+      return {
+        // x: 120,
+        // tspanX: 120,
+        // y: 145,
+        // tspanY: 160,
+        pieX: 100,
+        pieY: 100,
+        x: 120,
+        y: 142,  
+        tspanX: 120,
+        tspanY: 155,
+      };
+    } else {
+      return {
+        x: 250,
+        tspanX: 250,
+        y: 100,
+        tspanY: 112,
+      };
+    }
+  };
+
+  const { x, y, tspanX, tspanY,pieX, pieY, } = getPositions();
+
+
   return (
     <Grid container style={{ backgroundColor: "#F2F2F2", borderRadius: "10px", height: "100%", alignContent: "flex-start" }}>
       <Grid item xs={12} style={{ display: "flex", justifyContent: "center", height: "50px" }}>
@@ -92,28 +176,37 @@ export default function OwnerPropertyRentWidget(props) {
           Property Rent 589
         </Typography>
       </Grid>
-      <Grid item xs={12}>
-        <ResponsiveContainer width='100%' height={300}>
+      {/* <Grid item xs={12}> */}
+      <Grid container justifyContent="center" alignItems="center">
+        <ResponsiveContainer 
+          // width='100%'
+          width={isMobileScreen? 450 : 400}
+          height={300}
+        >
           {totalPropertiesCount > 0 ? (
             <PieChart
-              width={400}
+              width={400}              
               height={250}
               margin={{
                 top: 50,
                 // right: 30,
-                right: isMediumScreen ? 20 : 50,
-                left: isMediumScreen ? 20 : 50,
+                // right: isMediumScreen ? 20 : 50,
+                // left: isMediumScreen ? 20 : 50,
+                left: getChartLeftMargin(),
+                right: getChartRightMargin(),                
                 bottom: 40,
               }}
             >
               <Pie
                 data={data}
                 // cx={70}
-                cx={isMediumScreen ? 200 : 70}
+                // cx={!isMediumScreen ? 200 : 70}
+                cx={pieX}
                 // cy={78}
-                cy={isMediumScreen ? 48 : 100}
-                innerRadius={55}
-                outerRadius={80}
+                // cy={!isMediumScreen ? 48 : 100}
+                cy={pieY}
+                innerRadius={isXSmallScreen ? 65 : 55}
+                outerRadius={isXSmallScreen ? 95 : 80}
                 paddingAngle={0}
                 dataKey='number'
                 // filter='url(#shadow)'
@@ -126,48 +219,56 @@ export default function OwnerPropertyRentWidget(props) {
                 ))}
               </Pie>
 
-              <Legend
-                height={50}
-                iconType='circle'
-                // layout='vertical'
-                // align='right'
-                // verticalAlign='top'
-                layout={isMediumScreen ? "horizontal" : "vertical"}
-                align={isMediumScreen ? "center" : "right"}
-                verticalAlign={isMediumScreen ? "bottom" : "middle"}
-                iconSize={15}
-                padding={5}
-                formatter={renderColorfulLegendText}
-                wrapperStyle={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  justifyContent: isMediumScreen ? "flex-start" : "center", // Align items to flex-start for small screens
-                  // alignContent: 'flex-start',
-                  flexDirection: isMediumScreen ? "row" : "column", // Set direction based on layout
-                  width: isMediumScreen ? "90%" : "auto", // Full width for small screens to align items properly
-                  textAlign: isMediumScreen ? "left" : "center", // Text alignment for small screens
-                }}
-                // wrapperStyle={{
-                //   display: "flex",
-                //   justifyContent: "flex-start", // Align items to the left
-                //   flexWrap: "wrap", // Allow items to wrap to the next row
-                //   flexDirection: "row",
-                //   width: "90%", // Ensure the legend spans the full width
-                // }}
-                itemStyle={{
-                  flexBasis: isMediumScreen ? "45%" : "100%", // 2 items per row for medium screens, 1 item per row for large
-                  margin: "5px", // Add some margin to create spacing between items
-                  textAlign: "left",
-                }}
-                // onClick={() => navigate("/pmRent")}
-                // onClick={() => navigate("/properties")} - PM Changed
-                onClick={() => navigate("/properties")}
-                // onClick={() => navigate("/properties", { state: { showRentForm: true } })}
-              />
+                {!isXSmallScreen &&  (
+                  <Legend
+                  height={50}
+                  iconType='circle'
+                  layout='vertical'
+                  align='right'
+                  verticalAlign='top'
+                  // layout={!isMediumScreen ? "horizontal" : "vertical"}
+                  // align={!isMediumScreen ? "center" : "right"}
+                  // verticalAlign={!isMediumScreen ? "bottom" : "middle"}
+                  iconSize={15}
+                  padding={5}
+                  formatter={renderColorfulLegendText}
+                  wrapperStyle={{
+                    marginTop: "25px",
+                    display: "flex",
+                    flexWrap: "wrap",
+                    // justifyContent: !isMediumScreen ? "flex-start" : "center",
+                    justifyContent: "flex-end", // Align items to flex-start for small screens
+                    // alignContent: 'flex-start',
+                    // flexDirection: !isMediumScreen ? "row" : "column", // Set direction based on layout
+                    flexDirection: "row",
+                    width: "auto", // Full width for small screens to align items properly
+                    textAlign: !isMediumScreen ? "left" : "center", // Text alignment for small screens
+                  }}
+                  // wrapperStyle={{
+                  //   display: "flex",
+                  //   justifyContent: "flex-start", // Align items to the left
+                  //   flexWrap: "wrap", // Allow items to wrap to the next row
+                  //   flexDirection: "row",
+                  //   width: "90%", // Ensure the legend spans the full width
+                  // }}
+                  itemStyle={{
+                    flexBasis: !isMediumScreen ? "45%" : "100%", // 2 items per row for medium screens, 1 item per row for large
+                    margin: "5px", // Add some margin to create spacing between items
+                    textAlign: "left",
+                  }}
+                  // onClick={() => navigate("/pmRent")}
+                  // onClick={() => navigate("/properties")} - PM Changed
+                  onClick={() => navigate("/properties")}
+                  // onClick={() => navigate("/properties", { state: { showRentForm: true } })}
+                />
+                )}
+              
 
               <text
-                x={isMediumScreen ? 220 : 120}
-                y={isMediumScreen ? 93 : 145}
+                // x={isMediumScreen ? 220 : 120}
+                x={x}
+                // y={isMediumScreen ? 93 : 145}
+                y={y}
                 textAnchor='middle'
                 dominantBaseline='middle'
                 cursor='pointer'
@@ -180,7 +281,12 @@ export default function OwnerPropertyRentWidget(props) {
                 onClick={() => navigate(propertyRoutingBasedOnSelectedRole())}
               >
                 View all {totalPropertiesCount}
-                <tspan x={isMediumScreen ? 220 : 120} y={isMediumScreen ? 105 : 157}>
+                <tspan 
+                  // x={isMediumScreen ? 220 : 120}
+                  x={tspanX}
+                  // y={isMediumScreen ? 105 : 157}
+                  y={tspanY}
+                >
                   properties 98
                 </tspan>
               </text>
