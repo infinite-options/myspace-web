@@ -1164,7 +1164,7 @@ function EditProperty(props) {
 
 							{propertyCodes.map((code, index) => (
     <React.Fragment key={index}>
-        <Grid item xs={3.5}>
+        <Grid item md={3.5} xs={12}>
             <TextField
                 fullWidth
                 placeholder="Enter description"
@@ -1179,7 +1179,7 @@ function EditProperty(props) {
                 }}
             />
         </Grid>
-        <Grid item xs={2.3}>
+        <Grid item md={2.3} xs={12}>
             <TextField
                 fullWidth
                 placeholder="Enter code"
@@ -1194,7 +1194,7 @@ function EditProperty(props) {
                 }}
             />
         </Grid>
-        <Grid item xs={2}>
+        <Grid item md={2} xs={12}>
             <TextField
                 fullWidth
                 placeholder="Start Time"
@@ -1209,7 +1209,7 @@ function EditProperty(props) {
                 }}
             />
         </Grid>
-        <Grid item xs={2}>
+        <Grid item md={2} xs={12}>
             <TextField
                 fullWidth
                 placeholder="End Time"
@@ -1224,7 +1224,7 @@ function EditProperty(props) {
                 }}
             />
         </Grid>
-        <Grid item xs={2.2}>
+        <Grid item md={2.2} xs={12}>
             <TextField
                 fullWidth
                 placeholder="Enter days"
@@ -1259,7 +1259,7 @@ function EditProperty(props) {
 							</Grid>
 							{propertyAmenities.map((amenity, index) => (
     <React.Fragment key={index}>
-        <Grid item xs={4}>
+        <Grid item md={4} xs={12}>
             <TextField
                 fullWidth
                 placeholder="Enter a description"
@@ -1274,7 +1274,7 @@ function EditProperty(props) {
                 }}
             />
         </Grid>
-        <Grid item xs={2}>
+        <Grid item md={2} xs={12}>
             <TextField
                 fullWidth
                 placeholder="Start Time"
@@ -1289,7 +1289,7 @@ function EditProperty(props) {
                 }}
             />
         </Grid>
-        <Grid item xs={2}>
+        <Grid item md={2} xs={12}>
             <TextField
                 fullWidth
                 placeholder="End Time"
@@ -1304,7 +1304,7 @@ function EditProperty(props) {
                 }}
             />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item md={3} xs={12}>
             <TextField
                 fullWidth
                 placeholder="Enter days"
@@ -1338,7 +1338,7 @@ function EditProperty(props) {
 							</Grid>
 							{otherDetails.map((detail, index) => (
     <React.Fragment key={index}>
-        <Grid item xs={6}>
+        <Grid item md={6} xs={12}>
             <TextField
                 fullWidth
                 placeholder="Enter a description"
@@ -1353,7 +1353,7 @@ function EditProperty(props) {
                 }}
             />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item md={3} xs={12}>
             <TextField
                 fullWidth
                 placeholder="Enter days"
