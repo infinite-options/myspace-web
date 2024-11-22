@@ -389,9 +389,11 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
                 })}
               </Tabs>
               {colorStatus.map((item, index) => (
-                <div key={index}  sx={{
-                  padding: "0px",
-                }}>
+                <div key={index}  
+                  sx={{
+                    padding: "0px",
+                  }}
+                >
                   <CustomTabPanel
                     key={index}
                     value={value}
@@ -427,6 +429,8 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
                   </CustomTabPanel>
                 </div>
               ))}
+
+              {/* actions button */}
               <Box
                 sx={{
                   paddingBottom: "20px",
@@ -452,6 +456,7 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
                   <PaidMaintenance maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh = {setRefresh}/>
                 ) : null}
               </Box>
+              
             </Box>
           </Stack>
         </Paper>

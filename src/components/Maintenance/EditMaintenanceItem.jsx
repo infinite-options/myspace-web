@@ -195,6 +195,7 @@ export default function EditMaintenanceItem({setRefersh, setRightPane, maintenan
 	const [description, setDescription] = useState(testIssue1);
 	const [selectedImageList, setSelectedImageList] = useState([]);
 	const [showSpinner, setShowSpinner] = useState(false);
+	const [change, setChange] = useState(false)
 
 	const [deletedImageList, setDeletedImageList] = useState([]);
 	const [favImage, setFavImage] = useState(maintainanceFavImage);
@@ -222,27 +223,32 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 );
 
 	const handlePropertyChange = (event) => {
+		setChange(true)
 		console.log('handlePropertyChange', event.target.value);
 		setProperty(event.target.value);
 		setPropertyId(event.target.value);
 	};
 
 	const handleIssueChange = (event) => {
+		setChange(true)
 		console.log('handleIssueCategoryChange', event.target.value);
 		setIssue(event.target.value);
 	};
 
 	const handleCostChange = (event) => {
+		setChange(true)
 		console.log('handleCostChange', event.target.value);
 		setCost(event.target.value);
 	};
 
 	const handleTitleChange = (event) => {
+		setChange(true)
 		console.log('handleTitleChange', event.target.value);
 		setTitle(event.target.value);
 	};
 
 	const handleDescriptionChange = (event) => {
+		setChange(true)
 		console.log('handleDescriptionChange', event.target.value);
 		setDescription(event.target.value);
 	};
@@ -256,6 +262,7 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 	//     // setToggleAlignment(newToggleGroupValue);
 	// };
 	const handlePriorityChange = (priority) => {
+		setChange(true)
 		setToggleAlignment(priority);
 		setToggleGroupValue(priority);
 		setPriority(priority);
@@ -276,6 +283,7 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 	};
 
 	const handleCompletedChange = (event, newToggleGroupValue) => {
+		setChange(true)
 		console.log('handleToggleGroupChange', newToggleGroupValue);
 		setCompleted(event.target.value);
 		console.log('completed>>>,>>', completed);
@@ -327,6 +335,12 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
+
+		if(!change){
+			alert("you didn't change anything...");
+			setChange(false)
+			return;
+		}
 
 		const editFormData = new FormData();
 
@@ -410,28 +424,28 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 			try {
 				const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
 					method: 'PUT',
-					// headers: {
-					//     'Content-Type': 'application/json',
-					// },
-					// body : JSON.stringify({
-					//     "maintenance_property_id" : propertyId,
-					//     "maintenance_title": title,
-					//     "maintenance_desc": description,
-					//     "maintenance_request_type": issue,
-					//     "maintenance_request_created_by": getProfileId(),  // problem is here it was 600-000003, changed it 600-000012
-					//     "maintenance_priority": priority,
-					//     "maintenance_can_reschedule": 1,
-					//     "maintenance_assigned_business": null,
-					//     "maintenance_assigned_worker": null,
-					//     "maintenance_scheduled_date": null,
-					//     "maintenance_scheduled_time": null,
-					//     "maintenance_frequency": "One Time",
-					//     "maintenance_notes": null,
-					//     "maintenance_request_created_date": formattedDate, // Convert to ISO string format
-					//     "maintenance_request_closed_date": null,
-					//     "maintenance_request_adjustment_date": null
-					// })
-					// body: JSON.stringify(editFormData)
+				// 	// headers: {
+				// 	//     'Content-Type': 'application/json',
+				// 	// },
+				// 	// body : JSON.stringify({
+				// 	//     "maintenance_property_id" : propertyId,
+				// 	//     "maintenance_title": title,
+				// 	//     "maintenance_desc": description,
+				// 	//     "maintenance_request_type": issue,
+				// 	//     "maintenance_request_created_by": getProfileId(),  // problem is here it was 600-000003, changed it 600-000012
+				// 	//     "maintenance_priority": priority,
+				// 	//     "maintenance_can_reschedule": 1,
+				// 	//     "maintenance_assigned_business": null,
+				// 	//     "maintenance_assigned_worker": null,
+				// 	//     "maintenance_scheduled_date": null,
+				// 	//     "maintenance_scheduled_time": null,
+				// 	//     "maintenance_frequency": "One Time",
+				// 	//     "maintenance_notes": null,
+				// 	//     "maintenance_request_created_date": formattedDate, // Convert to ISO string format
+				// 	//     "maintenance_request_closed_date": null,
+				// 	//     "maintenance_request_adjustment_date": null
+				// 	// })
+				// 	// body: JSON.stringify(editFormData)
 					body: editFormData,
 				});
 				const data = await response.json();
@@ -441,7 +455,7 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 			}
 			setShowSpinner(false);
 		};
-		putData();
+		putData(); //undo
 
 		// setSelectedImageList([])
 		// setProperty('')
@@ -451,6 +465,8 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 		// setCost('')
 		// setTitle('')
 		// setDescription('')
+
+		//undo
 		if(setRefersh){
 			setRefersh(true);
 		}
@@ -491,6 +507,7 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 	};
 
 	const handleDelete = (index) => {
+		setChange(true)
 		const updatedDeletedIcons = [...deletedIcons];
 		updatedDeletedIcons[index] = !updatedDeletedIcons[index];
 		setDeletedIcons(updatedDeletedIcons);
@@ -504,6 +521,7 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 	
 
 	const handleFavorite = (index) => {
+		setChange(true)
     const updatedFavoriteIcons = new Array(favoriteIcons.length).fill(false);
     updatedFavoriteIcons[index] = true;
     setFavoriteIcons(updatedFavoriteIcons);
@@ -521,6 +539,7 @@ const [favoriteIcons, setFavoriteIcons] = useState(
   };
 
   const handleUpdateFavoriteIcons = () => {
+	setChange(true)
     setFavoriteIcons(new Array(favoriteIcons.length).fill(false));
 };
 

@@ -276,15 +276,24 @@ export default function MaintenanceManager() {
   }
 
   function handleFilter(maintenanceArray, month, year, filterPropertyList) {
+    // console.log(" -- DEBUG -- month, year, filter Property list - ", month, typeof year, filterPropertyList, maintenanceArray)
+
     var filteredArray = [];
     if (month && year) {
       const filterFormatDate = convertToStandardFormat(month, year);
       for (const item of maintenanceArray) {
-        if (item.maintenance_request_created_date.startsWith(filterFormatDate)) {
+        if (item.maintenance_request_created_date?.split("-")[0] === filterFormatDate?.split("-")[1] && item.maintenance_request_created_date?.split("-")[2] === filterFormatDate?.split("-")[0]) {
           filteredArray.push(item);
         }
       }
-    } else {
+    } else if(!month && year){
+      for (const item of maintenanceArray) {
+        if (item.maintenance_request_created_date?.split("-")[2] === String(year)) {
+          filteredArray.push(item);
+        }
+      }
+
+    }else {
       filteredArray = maintenanceArray;
     }
 
@@ -304,6 +313,8 @@ export default function MaintenanceManager() {
   function displayFilterString(month, year) {
     if (month && year) {
       return month + " " + year;
+    } else if(!month && year){
+      return "All of " + year;
     } else {
       return "Last 30 Days";
     }
@@ -326,7 +337,7 @@ export default function MaintenanceManager() {
   function clearFilters() {
     setMonth(null);
     setYear(null);
-    setFilterPropertyList([]);
+    // setFilterPropertyList([]);
   }
 
 
@@ -335,6 +346,10 @@ export default function MaintenanceManager() {
     maintenanceManagerDataCollectAndProcess(maintenanceData, setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, selectedStatus, setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData);
     setRefresh(false);
   }, [refresh]);
+
+  useEffect(()=>{
+    console.log(" -- inside useeffect to show data maintenanceData - ", maintenanceData, " - selectedstatus - ", selectedStatus, " - selected index - ", selectedRequestIndex)
+  }, [maintenanceData, selectedStatus, allMaintenanceData, displayMaintenanceData])
 
   useEffect(() => {
     const handleMaintenanceUpdate = () => {
@@ -407,6 +422,7 @@ export default function MaintenanceManager() {
                 paddingBottom: "30px",
               }}
             >
+              {/* back, maintenance and add icon */}
               <Stack
                 direction='row'
                 justifyContent='space-between'
@@ -417,6 +433,7 @@ export default function MaintenanceManager() {
                   paddingRight: "0px",
                 }}
               >
+                {/* Back icon on left card */}
                 <Box component='span' display='flex' justifyContent='flex-start' alignItems='flex-start' position='relative'>
                   <Button onClick={handleBackButton}>
                     <ArrowBackIcon
@@ -428,6 +445,8 @@ export default function MaintenanceManager() {
                     />
                   </Button>
                 </Box>
+
+                {/* Maintenance text */}
                 <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative' flex={1}>
                   <Typography
                     sx={{
@@ -439,6 +458,8 @@ export default function MaintenanceManager() {
                     Maintenance
                   </Typography>
                 </Box>
+
+                {/* Add maintenance icon */}
                 <Box position='relative' display='flex' justifyContent='flex-end' alignItems='center'>
                   <Button onClick={() => navigateToAddMaintenanceItem()} id='addMaintenanceButton'>
                     <AddIcon
@@ -451,7 +472,10 @@ export default function MaintenanceManager() {
                   </Button>
                 </Box>
               </Stack>
+              
+              {/* calendar, property filter button*/}
               <Box component='span' m={2} display='flex' justifyContent='space-between' alignItems='center'>
+                {/* calendar icon */}
                 <Button sx={{ textTransform: "capitalize" }} onClick={() => setShowSelectMonth(true)}>
                   <CalendarTodayIcon
                     sx={{
@@ -471,6 +495,8 @@ export default function MaintenanceManager() {
                     {displayFilterString(month, year)}
                   </Typography>
                 </Button>
+
+                {/* property icon or filter */}
                 <Button sx={{ textTransform: "capitalize" }} onClick={() => setShowPropertyFilter(true)}>
                   <HomeWorkIcon
                     sx={{
@@ -490,7 +516,8 @@ export default function MaintenanceManager() {
                     {displayPropertyFilterTitle(filterPropertyList)}
                   </Typography>
                 </Button>
-
+                
+                {/* Month date select component */}
                 <SelectMonthComponent
                   month={month}
                   showSelectMonth={showSelectMonth}
@@ -498,6 +525,8 @@ export default function MaintenanceManager() {
                   setMonth={setMonth}
                   setYear={setYear}
                 ></SelectMonthComponent>
+
+                {/* property filter component */}
                 <SelectPropertyFilter
                   showPropertyFilter={showPropertyFilter}
                   setShowPropertyFilter={setShowPropertyFilter}
@@ -505,6 +534,8 @@ export default function MaintenanceManager() {
                   setFilterList={setFilterPropertyList}
                 />
               </Box>
+
+              {/* close icon or clear filter */}
               <Box component='span' m={2} display='flex' justifyContent='center' alignItems='center' position='relative'>
                 <Typography
                   sx={{
@@ -530,6 +561,8 @@ export default function MaintenanceManager() {
                   )}
                 </Typography>
               </Box>
+
+              {/* Maintenance table */}
               <div
                 style={{
                   borderRadius: "20px",
@@ -541,10 +574,11 @@ export default function MaintenanceManager() {
                   let maintenanceArray = maintenanceData[mappingKey] || [];
                   
                   let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList);
-                  
-                  for (const item of filteredArray) {
-                    newDataObject[mappingKey].push(item);
-                  }
+
+                  // for (const item of filteredArray) {
+                  //   newDataObject[mappingKey].push(item);
+                  // }
+                  newDataObject[mappingKey] = filteredArray
                   
 
                   return (
@@ -553,7 +587,7 @@ export default function MaintenanceManager() {
                       status={item.status}
                       color={item.color}
                       maintenanceItemsForStatus={filteredArray}
-                      allMaintenanceData={newDataObject}
+                      allMaintenanceData={allMaintenanceData}
                       maintenanceRequestsCount={filteredArray}
                       onRowClick={handleRowClick}
                     />
@@ -592,8 +626,8 @@ export default function MaintenanceManager() {
                     maintenance_request_index={selectedRequestIndex}
                     status={selectedStatus}
                     setViewRHS={setViewRHS}
-                    maintenanceItemsForStatus={maintenanceData[selectedStatus]}
-                    allMaintenancefilteredData={maintenanceData}
+                    maintenanceItemsForStatus={newDataObject[selectedStatus]}
+                    allMaintenancefilteredData={newDataObject}
                     setRefresh = {setRefresh}
                   />
                 )

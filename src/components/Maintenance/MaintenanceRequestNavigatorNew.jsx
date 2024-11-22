@@ -31,6 +31,7 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { IconButton } from '@mui/material';
 import APIConfig from '../../utils/APIConfig';
+import { useUser } from '../../contexts/UserContext';
 
 import { useMaintenance } from '../../contexts/MaintenanceContext'; // Added useMaintenance context
 import ListsContext from '../../contexts/ListsContext';
@@ -82,8 +83,10 @@ export default function MaintenanceRequestNavigatorNew({
 		setSelectedRequestIndex,
 		setSelectedStatus,
 	 } = useMaintenance(); // Use the context
+	//  console.log("---DEBUG -- isnide maintenancerequestNAvnew page request data - ", requestData)
 
-	const { getList, } = useContext(ListsContext);	
+	const { getList, } = useContext(ListsContext);
+	const { user, getProfileId, selectedRole } = useUser();	
 	
     const priorityOptions = getList("priority");
 
@@ -362,6 +365,7 @@ export default function MaintenanceRequestNavigatorNew({
 				return '#FF9800'; // Default color
 		}
 	};
+
 	useEffect(() => {
 		displayScheduledDate(data);
 	}, [data]);
@@ -383,10 +387,13 @@ export default function MaintenanceRequestNavigatorNew({
 					backgroundColor: theme.palette.primary.main,
 					borderRadius: '10px',
 				}}
-			>
+			>	
+				{/* top card with address and forward backward icon */}
 				<Stack sx={{ backgroundColor: color }}direction="column" justifyContent="center" alignItems="center" spacing={2} >
+					
+					{/* property address */}
 					<Typography
-					 component="div" 
+					 	component="div" 
 						sx={{
 							color: '#160449',
 							fontWeight: theme.typography.secondary.fontWeight,
@@ -401,13 +408,15 @@ export default function MaintenanceRequestNavigatorNew({
 							</u>
 						}
 					</Typography>
+					
+					{/* forward backward icon */}
 					<Stack direction="row" justifyContent="center" alignItems="center" spacing={2}>
 						<Button onClick={handlePreviousCard} disabled={backward_active_status}>
 							<ArrowBackIcon sx={{ color: '#160449' }} />
 						</Button>
 						<Stack direction="column" justifyContent="center" alignItems="center" spacing={2} width="100px">
 							<Typography
-							 component="div" 
+							 	component="div" 
 								sx={{
 									color: '#160449',
 									fontWeight: theme.typography.secondary.fontWeight,
@@ -435,7 +444,8 @@ export default function MaintenanceRequestNavigatorNew({
 							justifyContent: 'center',
 							padding: '0px',
 						}}
-					>
+					>	
+						{/* iamge card */}
 						<CardContent
 							sx={{
 								flexDirection: 'column',
@@ -471,8 +481,7 @@ export default function MaintenanceRequestNavigatorNew({
 										},
 									}}
 								>
-									<ImageList 
-									ref={scrollRef} sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
+									<ImageList ref={scrollRef} sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
 										{(images)?.map((image, index) => (
 											<ImageListItem
 												key={index}
@@ -497,6 +506,7 @@ export default function MaintenanceRequestNavigatorNew({
 								</IconButton>
 							</Box>
 						</CardContent>
+
 						<CardContent
 							sx={{
 								flexDirection: 'column',
@@ -506,14 +516,16 @@ export default function MaintenanceRequestNavigatorNew({
 								padding: '0px',
 							}}
 						>
+							{/* edit icon, data of reported by and all also quote table and details */}
 							<Box style={{ alignContent: 'left', justifyContent: 'left', alignItems: 'left' }}>
-								<Stack direction="row">
+								{data?.maintenance_request_created_by === getProfileId() && <Stack direction="row">
 									<CreateIcon
 										sx={{
 											color: '#160449',
 											marginLeft: 'auto',
 											fontSize: '28px',
 											padding: '15px',
+											cursor: "pointer"
 										}}
 										onClick={() =>
 											navigateToEditMaintenanceItem(
@@ -528,11 +540,10 @@ export default function MaintenanceRequestNavigatorNew({
 												data.maintenance_property_id,
 												data?.maintenance_images,
 												data?.maintenance_favorite_image,
-
 											)
 										}
 									/>
-								</Stack>
+								</Stack>}
 
 								<Box
 									sx={{
@@ -549,8 +560,10 @@ export default function MaintenanceRequestNavigatorNew({
 									<Typography component="div" variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
 										<strong style={{ minWidth: '150px' }}>Description:</strong> {data?.maintenance_desc}
 									</Typography>
+
+									{/* priority button */}
 									<Typography
-									component="div"
+										component="div"
 										variant="body1"
 										sx={{ display: 'flex', alignItems: 'center', marginBottom: 5 }}
 									>
@@ -596,6 +609,8 @@ export default function MaintenanceRequestNavigatorNew({
 											</Select>
 										</FormControl>
 									</Typography>
+
+									{/* reported by reported on data */}
 									<Grid container spacing={2} sx={{ marginTop: 1, width:"100%"}}>
 										<Grid item xs={6}>
 											<Typography component="div" variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
@@ -626,6 +641,7 @@ export default function MaintenanceRequestNavigatorNew({
 									</Grid>
 								</Box>
 								
+								{/* for quotes table and detail */}
 								<Grid container sx={{ padding: '0px' }}>
 									<QuotesTable
 										maintenanceItem={data}
@@ -634,16 +650,16 @@ export default function MaintenanceRequestNavigatorNew({
 										onQuoteSelect={handleQuoteSelect}
 									/>
 									<Grid container sx={{ padding: '0px' }}>
-									{data?.maintenance_request_status !== 'NEW' && maintenanceQuotes.length > 0? (
-										<QuoteDetails
-											maintenanceItem={data}
-											navigateParams={navigateParams}
-											initialIndex={selectedQuoteIndex}
-											maintenanceQuotesForItem={maintenanceQuotes}
-											fetchAndUpdateQuotes={fetchAndUpdateQuotes}
-											setRefresh={setRefresh}
-										/>
-									) : null}
+										{data?.maintenance_request_status !== 'NEW' && maintenanceQuotes.length > 0? (
+											<QuoteDetails
+												maintenanceItem={data}
+												navigateParams={navigateParams}
+												initialIndex={selectedQuoteIndex}
+												maintenanceQuotesForItem={maintenanceQuotes}
+												fetchAndUpdateQuotes={fetchAndUpdateQuotes}
+												setRefresh={setRefresh}
+											/>
+										) : null}
 									</Grid>
 									
 								</Grid>
