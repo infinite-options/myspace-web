@@ -13,7 +13,7 @@ import { useUser } from "../../contexts/UserContext";
 import axios from 'axios';
 
 
-const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked, handleUpdate, fromProperties=false }) => {
+const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked, handleUpdate, fromProperties = false }) => {
     const [open, setOpen] = useState(false);
     const [confirmationText, setConfirmationText] = useState("")
     const [showSpinner, setShowSpinner] = useState(false);
@@ -31,9 +31,9 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked,
     const color = theme.palette.form.main;
 
     useEffect(() => {
-        if(fromProperties){
+        if (fromProperties) {
             setLeaseData(leaseDetails);
-        }else{
+        } else {
 
             const filtered = leaseDetails.find(lease => lease.lease_uid === selectedLeaseId);
             // console.log('filtered', filtered);
@@ -61,7 +61,7 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked,
         console.log("Notice Date: ", noticeDate);
         console.log("lowerBoundNoticeDateFormatted: ", lowerBoundNoticeDateFormatted);
         let role = "";
-        if (selectedRole === "MANAGER"){
+        if (selectedRole === "MANAGER") {
             role = "Tenant";
         } else {
             role = "Property Manager";
@@ -194,15 +194,15 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked,
             style={{
                 display: "flex",
                 justifyContent: "center",
-                width: "100%",
+                // width: "100%",
                 height: "100%",
             }}
         >
             <Paper
                 style={{
-                    marginTop: "10px",
+                    // marginTop: "10px",
                     backgroundColor: theme.palette.primary.main,
-                    width: "100%", // Occupy full width with 25px margins on each side
+                    // width: "100%", // Occupy full width with 25px margins on each side
                 }}
             >
                 <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -237,7 +237,7 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked,
                     {success.length > 0 && (
                         <Box>
                             <Alert severity="success">
-                                    {success}
+                                {success}
                             </Alert>
                         </Box>
                     )}
@@ -253,7 +253,7 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked,
                         </Box>
                     )}
                     <Grid item xs={12} md={12}>
-                        <Paper sx={{ padding: "10px", backgroundColor: color, width: '95%', margin: '10px 10px 0px 10px' }} >
+                        <Paper sx={{ padding: "10px", backgroundColor: color, width: "auto", margin: '10px 10px 0px 10px' }} >
                             <FormControl sx={{ width: '100%' }}>
                                 <RadioGroup
                                     aria-labelledby="demo-controlled-radio-buttons-group"
@@ -287,7 +287,7 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked,
                     </Grid>
 
                     <Grid item xs={12} md={12}>
-                        <Paper sx={{ padding: "10px", backgroundColor: color, width: '95%', margin: '10px 10px 0px 10px' }} >
+                        <Paper sx={{ padding: "10px", backgroundColor: color, width: "auto", margin: '10px 10px 0px 10px' }} >
                             <FormControl sx={{ width: '100%' }}>
                                 <RadioGroup
                                     aria-labelledby="demo-controlled-radio-buttons-group"
@@ -362,7 +362,7 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked,
 
 
                     <Grid item xs={12} md={12}>
-                        <Paper sx={{ padding: "10px", backgroundColor: color, width: '95%', margin: '10px 10px 0px 10px' }} >
+                        <Paper sx={{ padding: "10px", backgroundColor: color, width: "auto", margin: '10px 10px 0px 10px' }} >
                             <FormControl sx={{ width: '100%' }}>
                                 <RadioGroup
                                     aria-labelledby="demo-controlled-radio-buttons-group"
@@ -428,7 +428,7 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked,
                     </Grid>
 
                     <Grid item xs={12} md={12}>
-                        <Paper sx={{ padding: "10px", backgroundColor: color, width: '95%', margin: '10px 10px 0px 10px' }} >
+                        <Paper sx={{ padding: "10px", backgroundColor: color, width: "auto", margin: '10px 10px 0px 10px' }} >
                             <FormControl sx={{ width: '100%' }}>
                                 <RadioGroup
                                     aria-labelledby="demo-controlled-radio-buttons-group"
@@ -462,12 +462,21 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked,
                     </Grid>
                 </Grid>
 
-                <Grid container sx={{ marginBottom: "5px", alignItems: "center", marginTop: '10px' }}>
-                    <Grid item xs={3} />
-                    <Grid item xs={2}>
-                        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC" }}>Move-Out Date</Typography>
+                <Grid container sx={{ margin: "10px 0px", alignItems: "center", justifyContent: "center" }}>
+                    <Grid item xs={5} sx={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                        paddingRight: "10px"
+                    }}>
+                        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", textAlign: 'center' }}>Move-Out Date</Typography>
                     </Grid>
-                    <Grid item xs={7}>
+                    <Grid item xs={7} sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "flex-start",
+                        paddingLeft: "10px"
+                    }}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker
                                 value={moveOutDate}
@@ -475,6 +484,7 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked,
                                     const formattedDate = e ? e.format("MM-DD-YYYY") : null;
                                     setMoveOutDate(dayjs(formattedDate));
                                 }}
+                                sx={{ marginRight: "10px" }}
                             />
                         </LocalizationProvider>
                     </Grid>
