@@ -52,21 +52,17 @@ export default function LeaseDetailsComponent({
   const [showRenewContractDialog, setShowRenewContractDialog] = useState(false);
   const [contractEndNotice, setContractEndNotice] = useState(currentProperty?.lease_end_notice_period ? Number(currentProperty?.lease_end_notice_period) : 30);
 
-	const tenant_detail =
-		currentProperty && currentProperty.lease_start && currentProperty.tenant_uid
-			? `${currentProperty.tenant_first_name} ${currentProperty.tenant_last_name}`
-			: 'No Tenant';
-	const activeLease = currentProperty.lease_status;	
-	const [isChange, setIsChange] = useState(false);
+  const tenant_detail =
+    currentProperty && currentProperty.lease_start && currentProperty.tenant_uid ? `${currentProperty.tenant_first_name} ${currentProperty.tenant_last_name}` : "No Tenant";
+  const activeLease = currentProperty?.lease_status;
+  const [isChange, setIsChange] = useState(false);
   const [isEndLeasePopupOpen, setIsEndLeasePopupOpen] = useState(false);
   // console.log("currentProperty?.maintenance - ", currentProperty?.maintenance);
 
-	// useEffect(() => {
-	//   // console.log("activeLease - ", activeLease);
-	//   setContractEndNotice(currentProperty?.lease_end_notice_period ? Number(currentProperty?.lease_end_notice_period) : 30);
-	// }, [activeLease]);
-
-
+  // useEffect(() => {
+  //   // console.log("activeLease - ", activeLease);
+  //   setContractEndNotice(currentProperty?.lease_end_notice_period ? Number(currentProperty?.lease_end_notice_period) : 30);
+  // }, [activeLease]);
 
   const maintenanceGroupedByStatus = currentProperty?.maintenance?.reduce((acc, request) => {
     const status = request.maintenance_status;
@@ -124,41 +120,41 @@ export default function LeaseDetailsComponent({
       });
   };
 
-	const handleRenewLease = () => {
-		let renewalApplication = null;
-		let renewalApplicationIndex = null;
+  const handleRenewLease = () => {
+    let renewalApplication = null;
+    let renewalApplicationIndex = null;
 
-		currentProperty?.applications?.forEach( (application, index) => {
-			if(application.lease_status === "RENEW NEW" || application.lease_status === "RENEW PROCESSING" ||  application.lease_status === "APPROVED") {
-				console.log("88 - application - ", application);		
-				// console.log("88 - index - ", index);		
-				renewalApplication = application;	
-				renewalApplicationIndex = index;
-			}		
-		});
+    currentProperty?.applications?.forEach((application, index) => {
+      if (application.lease_status === "RENEW NEW" || application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") {
+        console.log("88 - application - ", application);
+        // console.log("88 - index - ", index);
+        renewalApplication = application;
+        renewalApplicationIndex = index;
+      }
+    });
 
-		if( renewalApplication != null && renewalApplication.lease_status === "RENEW NEW" ){
-			handleAppClick(renewalApplicationIndex)
-		} else if( renewalApplication != null && (renewalApplication.lease_status === "RENEW PROCESSING" || renewalApplication.lease_status === "APPROVED")){
-			navigate('/tenantLease', {
-				state: {
-					page: 'renew_lease',
-					application: renewalApplication,
-					property: currentProperty,
-					managerInitiatedRenew: false,
-				},
-			});
-		} else {
-			navigate('/tenantLease', {
-				state: {
-					page: 'renew_lease',
-					application: currentProperty,
-					property: currentProperty,
-					managerInitiatedRenew: true,
-				},
-			});
-		}
-	};
+    if (renewalApplication != null && renewalApplication.lease_status === "RENEW NEW") {
+      handleAppClick(renewalApplicationIndex);
+    } else if (renewalApplication != null && (renewalApplication.lease_status === "RENEW PROCESSING" || renewalApplication.lease_status === "APPROVED")) {
+      navigate("/tenantLease", {
+        state: {
+          page: "renew_lease",
+          application: renewalApplication,
+          property: currentProperty,
+          managerInitiatedRenew: false,
+        },
+      });
+    } else {
+      navigate("/tenantLease", {
+        state: {
+          page: "renew_lease",
+          application: currentProperty,
+          property: currentProperty,
+          managerInitiatedRenew: true,
+        },
+      });
+    }
+  };
 
   return (
     <>
@@ -730,7 +726,7 @@ export default function LeaseDetailsComponent({
                     </Box>
                   </Box>
                 </Grid>
-                <Grid item xs={12}  sx={{ marginLeft: "5px" }}>
+                <Grid item xs={12} sx={{ marginLeft: "5px" }}>
                   <Accordion theme={theme} sx={{ backgroundColor: "#e6e6e6", marginLeft: "-5px" }}>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='panel1-content' id='panel1-header'>
                       <Typography
@@ -884,87 +880,85 @@ export default function LeaseDetailsComponent({
 }
 
 export const FeesSmallDataGrid = ({ data }) => {
-	const commonStyles = {
-	  color: theme.typography.primary.black,
-	  fontWeight: theme.typography.light.fontWeight,
-	  fontSize: theme.typography.smallFont,
-	  whiteSpace: "wrap", // Prevents text from wrapping
-  
-	};
-  
-	const columns = [
-	  {
-		field: "frequency",
-		headerName: "Frequency",
-		flex: 1.2,
-		minWidth: 110, // Ensure column doesn't shrink too much
-		renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
-		renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
-	  },
-	  {
-		field: "fee_name",
-		headerName: "Name",
-		flex: 1,
-		minWidth: 80,
-		renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
-		renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
-	  },
-	  {
-		field: "charge",
-		headerName: "Charge",
-		flex: 1,
-		minWidth: 80,
-		renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
-		renderCell: (params) => {
-		  const feeType = params.row?.fee_type;
-		  const charge = params.value;
-  
-		  return <Typography sx={commonStyles}>{charge}</Typography>;
-		},
-	  },
-	  {
-		field: "fee_type",
-		headerName: "Fee Type",
-		flex: 1,
-		minWidth: 110,
-		renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
-		renderCell: (params) => {
-		  const feeType = params.row?.fee_type;
-		  const fee_type = params.value;
-  
-		  return <Typography sx={commonStyles}>{fee_type}</Typography>;
-		},
-	  },
-	];
-  
-	// Adding a unique id to each row using map if the data doesn't have an id field
-	const rowsWithId = data.map((row, index) => ({
-	  ...row,
-	  id: row.id ? row.id : index, // Use the existing id if available
-	}));
-  
-	return (
-	  <div style={{ width: "100%", overflowX: "auto" }}>
-		<DataGrid
-		  rows={rowsWithId}
-		  columns={columns}
-		  sx={{
-			marginY: "5px",
-			"& .MuiDataGrid-columnHeaders": {
-			  minHeight: "35px !important",
-			  maxHeight: "35px !important",
-			  height: 'auto',
-			},
-		  }}
-		  autoHeight
-		  rowHeight={60}
-		  hideFooter={true} // Hides pagination
-		  disableColumnMenu // Disable column menu for cleaner UI
-		/>
-	  </div>
-	);
+  const commonStyles = {
+    color: theme.typography.primary.black,
+    fontWeight: theme.typography.light.fontWeight,
+    fontSize: theme.typography.smallFont,
+    whiteSpace: "wrap", // Prevents text from wrapping
   };
-  
+
+  const columns = [
+    {
+      field: "frequency",
+      headerName: "Frequency",
+      flex: 1.2,
+      minWidth: 110, // Ensure column doesn't shrink too much
+      renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
+      renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
+    },
+    {
+      field: "fee_name",
+      headerName: "Name",
+      flex: 1,
+      minWidth: 80,
+      renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
+      renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
+    },
+    {
+      field: "charge",
+      headerName: "Charge",
+      flex: 1,
+      minWidth: 80,
+      renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
+      renderCell: (params) => {
+        const feeType = params.row?.fee_type;
+        const charge = params.value;
+
+        return <Typography sx={commonStyles}>{charge}</Typography>;
+      },
+    },
+    {
+      field: "fee_type",
+      headerName: "Fee Type",
+      flex: 1,
+      minWidth: 110,
+      renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
+      renderCell: (params) => {
+        const feeType = params.row?.fee_type;
+        const fee_type = params.value;
+
+        return <Typography sx={commonStyles}>{fee_type}</Typography>;
+      },
+    },
+  ];
+
+  // Adding a unique id to each row using map if the data doesn't have an id field
+  const rowsWithId = data.map((row, index) => ({
+    ...row,
+    id: row.id ? row.id : index, // Use the existing id if available
+  }));
+
+  return (
+    <div style={{ width: "100%", overflowX: "auto" }}>
+      <DataGrid
+        rows={rowsWithId}
+        columns={columns}
+        sx={{
+          marginY: "5px",
+          "& .MuiDataGrid-columnHeaders": {
+            minHeight: "35px !important",
+            maxHeight: "35px !important",
+            height: "auto",
+          },
+        }}
+        autoHeight
+        rowHeight={60}
+        hideFooter={true} // Hides pagination
+        disableColumnMenu // Disable column menu for cleaner UI
+      />
+    </div>
+  );
+};
 
 export const DocumentSmallDataGrid = ({ data, handleFileClick }) => {
   const commonStyles = {
