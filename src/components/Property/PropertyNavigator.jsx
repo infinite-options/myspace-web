@@ -1218,7 +1218,7 @@ export default function PropertyNavigator({
   return (
     <Paper
       style={{
-        marginTop: "10px",
+        marginTop: isMobile? "0px" : "10px",
         backgroundColor: theme.palette.primary.main,
         width: "100%", // Occupy full width with 25px margins on each side
       }}
