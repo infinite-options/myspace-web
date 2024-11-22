@@ -882,7 +882,7 @@ const PropertyCard = (props) => {
   const setContractDetails = () => {
 	if (allContracts !== null && allContracts !== undefined) {
 	  const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
-	//   console.log("setContractDetails - contractData - ", contractData);	  
+	  console.log("setContractDetails - contractData - ", contractData);	  
 	  // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
 	  if (contractData) {
 		setContractName(contractData["contract_name"] ? contractData["contract_name"] : "");
