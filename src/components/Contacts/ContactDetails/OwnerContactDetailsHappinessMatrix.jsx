@@ -1422,6 +1422,13 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
         getRowId={(row) => row.property_uid}
         sx={{
           border: "0px",
+          overflow: "hidden",
+          "& .MuiDataGrid-virtualScroller": {
+            overflow: "hidden", 
+          },
+          "& .MuiDataGrid-main": {
+            overflow: "hidden",
+          },
         }}
         hideFooter={true}
       />
