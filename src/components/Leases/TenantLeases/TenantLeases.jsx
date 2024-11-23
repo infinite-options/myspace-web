@@ -336,10 +336,10 @@ function TenantLeases(props) {
   }
 
   async function handleTenantAccept() {
-    console.log("Data we have1: ", lease);
-    console.log("Data we have2: ", property);
-    console.log("Data we have3: ", status);
-    console.log("Data we have4: ", pets);
+    // console.log("Data we have1: ", lease);
+    // console.log("Data we have2: ", property);
+    // console.log("Data we have3: ", status);
+    // console.log("Data we have4: ", pets);
     // console.log("Lease Application Data1: ", leaseApplicationFormData);
     // console.log("In handle Accept: ", detailed_property?.lease_effective_date);
     const leaseApplicationFormData = new FormData();
@@ -415,12 +415,12 @@ function TenantLeases(props) {
         const leaseDate = new Date(year, month - 1, day); // Month is 0-indexed in JavaScript Date objects
         // console.log("Lease Effective Date, ", leaseDate);
 
-        if (leaseDate <= date) {
-          lease_status = "ACTIVE";
-          console.log("Lease Status Changed: ", lease_status);
-          // if (lease.lease_effective_date <= date) {
-          // status = "ACTIVE";
-        }
+        // if (leaseDate <= date) {
+        //   lease_status = "ACTIVE";
+        //   console.log("Lease Status Changed: ", lease_status);
+        //   // if (lease.lease_effective_date <= date) {
+        //   // status = "ACTIVE";
+        // }
       }
       console.log("Status: ", status);
       leaseApplicationFormData.append("lease_status", lease_status);
@@ -527,7 +527,7 @@ function TenantLeases(props) {
                   fontSize: "25px",
                 }}
               >
-                Lease
+                Lease (UID: {lease.lease_uid})
               </Typography>
             </Box>
           </Grid>
@@ -598,20 +598,28 @@ function TenantLeases(props) {
                 {" "}
                 {/* Increased padding */}
                 
-                <Grid container spacing={3}>
+                <Grid container spacing={3} justifyContent="space-between">
                   {" "}
                   {/* Increased spacing */}
-                  <Grid item xs={3}>
+                  <Grid item xs={2}>
                     <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Start Date</Typography>
                     <Typography>{lease?.lease_start || "N/A"}</Typography>
                   </Grid>                  
-                  <Grid item xs={3}>
+                  <Grid item xs={2}>
                     <Typography sx={{ fontWeight: "bold", color: "#160449" }}>End Date</Typography>
                     <Typography>{lease?.lease_end || "N/A"}</Typography>
                   </Grid>                  
-                  <Grid item xs={3}>
+                  <Grid item xs={2}>
                     <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Move-In Date</Typography>
                     <Typography>{lease?.lease_move_in_date || "N/A"}</Typography>
+                  </Grid>                                    
+                  <Grid item xs={4}>
+                    <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Lease Renewal</Typography>
+                    <Typography>
+                      {lease?.lease_m2m == null ? "Not Specified" : ""}
+                      {lease?.lease_m2m === 1 ? "Renews Month-to-Month" : ""}
+                      {lease?.lease_m2m === 0 ? "Renews Automatically" : ""}
+                    </Typography>
                   </Grid>                                    
                 </Grid>
               </AccordionDetails>
@@ -971,60 +979,66 @@ function TenantLeases(props) {
           </Grid>
 
           {/* Accept and reject lease button */}
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <CenteringBox>
-                <Button
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: "#CB8E8E",
-                    borderRadius: "5px",
-                    padding: "5px 10px",
-                    minWidth: "90px",
-                    width: "150px",
-                    fontSize: "14px",
-                    fontWeight: "700",
-                    color: "#FFFFFF",
-                    textTransform: "none",
-                    "&:hover": {
-                      backgroundColor: "#A75A5A",
-                    },
-                  }}
-                  onClick={() => handleTenantRefuse()}
-                >
-                  Reject Lease
-                </Button>
-              </CenteringBox>
-            </Grid>
-            <Grid item xs={6}>
-              <CenteringBox>
-                <Button
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: "#9EAED6",
-                    borderRadius: "5px",
-                    padding: "5px 10px",
-                    minWidth: "90px",
-                    width: "150px",
-                    fontSize: "14px",
-                    fontWeight: "600",
-                    color: "#FFFFFF",
-                    textTransform: "none",
-                    "&:hover": {
-                      backgroundColor: "#6A8AB3",
-                    },
-                  }}
-                  onClick={() => handleTenantAccept()}
-                >
-                  Accept Lease
-                </Button>
-              </CenteringBox>
-            </Grid>
-          </Grid>
+          {
+            lease.lease_status !== "APPROVED" && (
+
+            
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <CenteringBox>
+                    <Button
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "#CB8E8E",
+                        borderRadius: "5px",
+                        padding: "5px 10px",
+                        minWidth: "90px",
+                        width: "150px",
+                        fontSize: "14px",
+                        fontWeight: "700",
+                        color: "#FFFFFF",
+                        textTransform: "none",
+                        "&:hover": {
+                          backgroundColor: "#A75A5A",
+                        },
+                      }}
+                      onClick={() => handleTenantRefuse()}
+                    >
+                      Reject Lease
+                    </Button>
+                  </CenteringBox>
+                </Grid>
+                <Grid item xs={6}>
+                  <CenteringBox>
+                    <Button
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "#9EAED6",
+                        borderRadius: "5px",
+                        padding: "5px 10px",
+                        minWidth: "90px",
+                        width: "150px",
+                        fontSize: "14px",
+                        fontWeight: "600",
+                        color: "#FFFFFF",
+                        textTransform: "none",
+                        "&:hover": {
+                          backgroundColor: "#6A8AB3",
+                        },
+                      }}
+                      onClick={() => handleTenantAccept()}
+                    >
+                      Accept Lease
+                    </Button>
+                  </CenteringBox>
+                </Grid>
+              </Grid>
+            )
+          }
 
           {/* <Grid
             container

@@ -1179,6 +1179,9 @@ const TenantLease = () => {
         // If 'tenants' field is not available, append property.tenant_uid as a single value array
         if (application?.lease_status === "RENEW NEW") {
           leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify([property.tenant_uid]));
+        } else if (application?.lease_status === "ACTIVE") { 
+          leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify([property.tenant_uid]));
+          leaseApplicationFormData.append("tenant_uid", property?.tenant_uid);
         } else {
           leaseApplicationFormData.append("tenant_uid", property?.tenant_uid);
         }
