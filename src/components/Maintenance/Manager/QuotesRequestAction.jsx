@@ -207,7 +207,7 @@ export default function QuotesRequestAction({ maintenanceItem, navigateParams, q
 					padding: '20px',
 				}}
 			>
-				<Button
+				{/* <Button
 					variant="contained"
 					sx={{
 					backgroundColor: '#a7b8e6',
@@ -225,7 +225,7 @@ export default function QuotesRequestAction({ maintenanceItem, navigateParams, q
 					onClick={() => handleNavigateToQuotesAccept()}
 				>
 					View Quotes
-				</Button>
+				</Button> */}
 
 				<Button
 					variant="contained"

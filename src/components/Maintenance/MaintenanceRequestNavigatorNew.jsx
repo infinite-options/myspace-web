@@ -83,7 +83,7 @@ export default function MaintenanceRequestNavigatorNew({
 		setSelectedRequestIndex,
 		setSelectedStatus,
 	 } = useMaintenance(); // Use the context
-	//  console.log("---DEBUG -- isnide maintenancerequestNAvnew page request data - ", requestData)
+	 console.log("---DEBUG -- isnide maintenancerequestNAvnew page request data - ", requestData, requestIndex)
 
 	const { getList, } = useContext(ListsContext);
 	const { user, getProfileId, selectedRole } = useUser();	
@@ -109,6 +109,7 @@ export default function MaintenanceRequestNavigatorNew({
 	);
 
 	useEffect(() => {
+		setSelectedQuoteIndex(0);
 		setCurrentIndex(requestIndex);
 	}, [requestIndex]);
 
@@ -256,6 +257,7 @@ export default function MaintenanceRequestNavigatorNew({
 	// Handle scrolling of images
 	const [scrollPosition, setScrollPosition] = useState(0);
 	const scrollRef = useRef(null);
+	const [selectedQuoteIndex, setSelectedQuoteIndex] = useState(0);
 
 	useEffect(() => {
 		if (scrollRef.current) {
@@ -369,8 +371,6 @@ export default function MaintenanceRequestNavigatorNew({
 	useEffect(() => {
 		displayScheduledDate(data);
 	}, [data]);
-
-	const [selectedQuoteIndex, setSelectedQuoteIndex] = useState(0);
 
     const handleQuoteSelect = (index) => {
         setSelectedQuoteIndex(index);
@@ -518,7 +518,7 @@ export default function MaintenanceRequestNavigatorNew({
 						>
 							{/* edit icon, data of reported by and all also quote table and details */}
 							<Box style={{ alignContent: 'left', justifyContent: 'left', alignItems: 'left' }}>
-								{data?.maintenance_request_created_by === getProfileId() && <Stack direction="row">
+								{(selectedRole === "MANAGER") && <Stack direction="row">
 									<CreateIcon
 										sx={{
 											color: '#160449',

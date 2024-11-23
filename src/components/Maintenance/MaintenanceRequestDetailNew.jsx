@@ -176,7 +176,7 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
       allData,
       filteredQuotes,
     });
-  }, [selectedRequestIndex, selectedStatus, maintenanceItemsForStatus]);
+  }, [selectedRequestIndex, selectedStatus, maintenanceItemsForStatus, filteredQuotes]);
 
   useEffect(() => {
     var quotesFilteredById = maintenanceQuotes?.filter(
@@ -440,19 +440,19 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
                 {selectedRole !== "OWNER" && colorStatus[value]?.status === "New Requests" && maintenanceItemsForStatus[selectedRequestIndex] ? (
                   <NewRequestAction maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} setRefresh = {setRefresh}/>
                 ) : null}
-                {colorStatus[value]?.status === "Quotes Requested" && maintenanceItemsForStatus[selectedRequestIndex] ? (
+                {selectedRole !== "OWNER" && colorStatus[value]?.status === "Quotes Requested" && maintenanceItemsForStatus[selectedRequestIndex] ? (
                   <QuotesRequestAction maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh = {setRefresh}/>
                 ) : null}
-                {colorStatus[value]?.status === "Quotes Accepted" && maintenanceItemsForStatus[selectedRequestIndex]? (
+                {selectedRole !== "OWNER" && colorStatus[value]?.status === "Quotes Accepted" && maintenanceItemsForStatus[selectedRequestIndex]? (
                   <QuotesAccepted maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh={setRefresh}/>
                 ) : null}
-                {colorStatus[value]?.status === "Scheduled" && maintenanceItemsForStatus[selectedRequestIndex] ? (
+                {selectedRole !== "OWNER" && colorStatus[value]?.status === "Scheduled" && maintenanceItemsForStatus[selectedRequestIndex] ? (
                   <ScheduleMaintenance maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh = {setRefresh}/>
                 ) : null}
-                {colorStatus[value]?.status === "Completed" && maintenanceItemsForStatus[selectedRequestIndex]?.maintenance_request_status !== "CANCELLED" ? (
+                {selectedRole !== "OWNER" && colorStatus[value]?.status === "Completed" && maintenanceItemsForStatus[selectedRequestIndex]?.maintenance_request_status !== "CANCELLED" ? (
                   <CompleteMaintenance maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh = {setRefresh}/>
                 ) : null}
-                {colorStatus[value]?.status === "Paid" && maintenanceItemsForStatus[selectedRequestIndex] ? (
+                {selectedRole !== "OWNER" && colorStatus[value]?.status === "Paid" && maintenanceItemsForStatus[selectedRequestIndex] ? (
                   <PaidMaintenance maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh = {setRefresh}/>
                 ) : null}
               </Box>

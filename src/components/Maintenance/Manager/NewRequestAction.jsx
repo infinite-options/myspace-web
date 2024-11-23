@@ -138,6 +138,7 @@ export default function NewRequestAction({ setRefresh, maintenanceItem, navigate
                   backgroundColor: '#a7b8e6',
                 },
               }}
+              disabled={maintenanceItem?.maintenance_request_status === "INFO"}
               onClick={() => setShowRequestMoreInfo(true)}
             >
               Ask For Details
