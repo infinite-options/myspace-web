@@ -846,6 +846,53 @@ export default function TenantApplicationEdit(props) {
   };
 
   function handleWithdrawLease() {
+
+
+    //set oldLease.lease_renew_status to withdraw
+    if(lease[0].lease_status === "NEW"){
+      handleWithdrawApplication();
+    } else if (lease[0].lease_status === "RENEW NEW"){
+      handleWithdrawRenewalLease();
+    }
+  }
+
+  function handleWithdrawApplication() {
+    //set oldLease.lease_renew_status to withdraw
+
+    
+    const withdrawLeaseData = new FormData();
+    if (lease[0].lease_uid) {
+      withdrawLeaseData.append("lease_uid", lease[0].lease_uid);
+    } else {
+      withdrawLeaseData.append("lease_property_id", property.property_uid);
+    }
+
+    withdrawLeaseData.append("lease_status", "WITHDRAWN");            
+
+    withdrawLeaseData.forEach((value, key) => {
+      console.log(`${key}: ${value}`);
+    });
+
+    const withdrawLeaseResponse = fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+      method: "PUT",
+      body: withdrawLeaseData,
+    });
+
+    Promise.all([withdrawLeaseResponse]).then((values) => {
+      //navigate("/listings"); // send success data back to the propertyInfo page
+      if (props.from === "PropertyInfo") {
+        props.setRightPane({ type: "listings" });
+        props.setReload((prev) => !prev);
+        console.log("lease set right pane");
+      } else {
+        // props.setRightPane("");
+        props.setReload((prev) => !prev);
+        console.log("set right pane to nothing");
+      }
+    });
+  }
+
+  function handleWithdrawRenewalLease() {
     //set oldLease.lease_renew_status to withdraw
 
     const withdrawPrevLeaseData = new FormData();
@@ -863,7 +910,14 @@ export default function TenantApplicationEdit(props) {
     } else {
       withdrawLeaseData.append("lease_property_id", property.property_uid);
     }
-    withdrawLeaseData.append("lease_status", "RENEW WITHDRAWN");
+
+    if (lease[0].lease_status === "NEW") {
+      withdrawLeaseData.append("lease_status", "WITHDRAWN");
+    } else if(lease[0].lease_status === "RENEW NEW") {
+      withdrawLeaseData.append("lease_status", "RENEW WITHDRAWN");
+    }
+    
+    
 
     withdrawLeaseData.forEach((value, key) => {
       console.log(`${key}: ${value}`);
