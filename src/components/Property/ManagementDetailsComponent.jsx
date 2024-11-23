@@ -999,6 +999,13 @@ export const DocumentSmallDataGrid = ({ data, handleFileClick }) => {
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
       renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
     },
+    {
+      field: "fileType",
+      headerName: "File Type",
+      flex: 1.8,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
+    },
   ];
 
   const rowsWithId = data.map((row, index) => ({
