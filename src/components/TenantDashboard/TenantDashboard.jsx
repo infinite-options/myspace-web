@@ -257,16 +257,12 @@ const TenantDashboard = () => {
 
       // Find the correct lease to set as relatedLease
       // console.log("233 - leasesForProperty - ", leasesForProperty);
-      if (leasesForProperty.length > 1) {
-        const firstLease = leasesForProperty[0];
-        // const secondLease = leasesForProperty[1];
-        const secondLease = leasesForProperty[leasesForProperty.length - 1];
-
-        const activeLease = leasesForProperty.find((lease) => lease.lease_status === "ACTIVE");
+      if (leasesForProperty.length > 1) {        
+        // const activeLease = leasesForProperty.find((lease) => lease.lease_status === "ACTIVE");
         // const renewalLease = leasesForProperty.find(lease => (lease.lease_status === "RENEW NEW" || lease.lease_status === "RENEW WITHDRAWN" || lease.lease_status === "RENEW PROCESSING"));
         const renewalLease = leasesForProperty.find((lease) => lease.lease_status === "RENEW NEW" || lease.lease_status === "RENEW PROCESSING" || lease.lease_status === "APPROVED");
 
-        setLeaseDetails(activeLease || null);
+        // setLeaseDetails(activeLease || null);
         setRelatedLease(renewalLease || null);
         // console.log("first lease", firstLease.lease_status, firstLease.lease_renew_status);
         // console.log("second lease", secondLease);
@@ -308,7 +304,26 @@ const TenantDashboard = () => {
   };
 
   const updateLeaseDetails = (propertyUid) => {
-    const leaseForProperty = leaseDetailsData.find((ld) => ld.property_uid === propertyUid);
+    const allLeasesForProperty = leaseDetailsData.filter((ld) => ld.property_uid === propertyUid);
+
+    let leaseForProperty = null;
+    if(allLeasesForProperty?.length > 1){
+      const newLease = allLeasesForProperty.find((ld) => ld.lease_status === "NEW");
+      const activeLease = allLeasesForProperty.find((ld) => ld.lease_status === "ACTIVE");
+      if(newLease != null){
+        leaseForProperty = newLease;
+      }else {
+        if(activeLease != null){
+          leaseForProperty = activeLease;
+        } else {
+          leaseForProperty = allLeasesForProperty[allLeasesForProperty?.length - 1];
+        }
+      }
+    } else {
+      leaseForProperty = allLeasesForProperty[0];
+    }
+    
+    // const leaseForProperty = leaseDetailsData.find((ld) => ld.property_uid === propertyUid);
     console.log("property lease for property", leaseForProperty);
     setLeaseDetails(leaseForProperty);
 
@@ -853,7 +868,7 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
 const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty, relatedLease, isMobile, setViewRHS, setReload, handleViewTenantApplication}) => {
   // console.log("Lease Details renewal", relatedLease);
   // console.log("804 - LeaseDetails - relatedLease - ", relatedLease);
-  // console.log("804 - LeaseDetails - currentLease - ", leaseDetails);
+  console.log("804 - LeaseDetails - currentLease - ", leaseDetails);
   // console.log("Lease Details ", leaseDetails);
   // console.log("selected property - ", selectedProperty)
   // console.log("Lease Details rightPane", rightPane);
@@ -999,26 +1014,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
   };
 
   const handleReApply = () => {
-    const applicationData = new FormData();    
-    applicationData.append("lease_uid", leaseDetails.lease_uid);    
-    applicationData.append("lease_status", "NEW");            
-
-    applicationData.forEach((value, key) => {
-      console.log(`${key}: ${value}`);
-    });
-
-    const applicationResponse = fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
-      method: "PUT",
-      body: applicationData,
-    });
-
-    Promise.all([applicationResponse]).then((values) => {
-      //navigate("/listings"); // send success data back to the propertyInfo page
-      
-        // props.setRightPane("");
-        setReload((prev) => !prev);
-        console.log("set right pane to nothing");      
-    });
+    handleViewTenantApplication();
     
   }
 
@@ -1454,7 +1450,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
 
               <Grid container justifyContent="center" item spacing={2} sx={{ marginTop: "3px", marginBottom: "5px" }}>
                 {
-                  leaseDetails.lease_status === "WITHDRAWN" && (
+                  leaseDetails?.lease_status === "WITHDRAWN" && (
                     <Grid
                       item
                       xs={6}

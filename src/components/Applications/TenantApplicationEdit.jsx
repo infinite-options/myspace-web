@@ -41,6 +41,8 @@ import { json, Navigate } from "react-router-dom";
 
 export default function TenantApplicationEdit(props) {
   const { getList } = useContext(ListsContext);
+
+  console.log("ROHIT - props.status - ", props.status);
 //   console.log("44 - props", props);
   // const [adults, setAdults] = useState(adultOccupants? adultOccupants : []);
   // const [children, setChildren] = useState(childOccupants? childOccupants : []);
@@ -1521,12 +1523,13 @@ export default function TenantApplicationEdit(props) {
                 <Typography sx={{ textTransform: "none", fontWeight: theme.typography.primary.fontWeight, color: "#FFFFFF" }}>
                   {props.lease == null ||
                   props.lease?.lease_status == null ||
-                  props.lease?.lease_status == "WITHDRAWN" ||
+                  // props.lease?.lease_status == "WITHDRAWN" ||
                   props.lease?.lease_status == "REJECTED" ||
                   props.lease?.lease_status == "REFUSED" ||
                   props.lease?.lease_status == "RESCIND"
                     ? "Submit Application"
                     : ""}
+                  {props.lease?.lease_status === "WITHDRAWN" ? "Re-submit Application" : ""}
                   {props.lease?.lease_status == "NEW" || props.lease?.lease_status == "PROCESSING" ? "Update Lease Application" : ""}
                   {(props.lease?.lease_status == "ACTIVE" ||
                     props.lease?.lease_status == "ACTIVE M2M" ||
