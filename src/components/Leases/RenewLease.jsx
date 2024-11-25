@@ -463,6 +463,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
     >
       <Paper
         style={{
+          marginTop: !isMobile && "10px",
+          marginBottom : isMobile && "10px",
           marginTop: "10px",
           backgroundColor: theme.palette.primary.main,
           width: "100%", // Occupy full width with 25px margins on each side
@@ -760,7 +762,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
             {selectedRole !== "OWNER" && currentLease.lease_early_end_date === null && (
               <Grid item xs={12} md={12}>
                 <Grid container sx={{ alignItems: "center", justifyContent: "center" }} spacing={2}>
-                  <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                  <Grid item xs={6} md={6} container sx={{ alignItems: "right", justifyContent: "right" }}>
                     <Button
                       variant='contained'
                       sx={{
@@ -768,7 +770,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                         color: theme.palette.background.default,
                         cursor: "pointer",
                         textTransform: "none",
-                        minWidth: "150px",
+                        width: "150px",
                         minHeight: "35px",
                         display: "flex",
                         alignItems: "center",
@@ -797,7 +799,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                     </Button>
                   </Grid>
 
-                  <Grid item xs={4} md={4} container sx={{ alignItems: "center", justifyContent: "center" }}>
+                  <Grid item xs={6} md={6} container sx={{ alignItems: "left", justifyContent: "left" }}>
                     <Button
                       variant='contained'
                       sx={{
@@ -805,7 +807,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                         color: theme.palette.background.default,
                         cursor: "pointer",
                         textTransform: "none",
-                        minWidth: "150px",
+                        width: "150px",
                         minHeight: "35px",
                         display: "flex",
                         alignItems: "center",
