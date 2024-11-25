@@ -247,6 +247,7 @@ export default function MaintenanceDashboard2() {
   }, [userState]);
 
   const handleWorkerMaintenanceRequestSelected = (maintenance_request_index, propstatus, propmaintenanceItemsForStatus, alldata, maintenance_request_uid) => {
+    console.log( " === calling itemof status, all data - ", propmaintenanceItemsForStatus, alldata)
     setSessionData({
       maintenance_request_index,
       propstatus,
@@ -299,6 +300,8 @@ export default function MaintenanceDashboard2() {
               nextScheduleData={nextScheduleData}
               allMaintenanceStatusData={maintenanceStatusRequests}
               onSelectRequest={handleWorkerMaintenanceRequestSelected}
+              setSessionData = {setSessionData}
+              showMaintenanceDetail={showMaintenanceDetail}
             />
           </Grid>
 
@@ -377,11 +380,11 @@ export default function MaintenanceDashboard2() {
   );
 }
 
-const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, allMaintenanceStatusData, onSelectRequest }) => {
+const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, allMaintenanceStatusData, onSelectRequest, setSessionData }) => {
   let navigate = useNavigate();
   const colorStatus = theme.colorStatusMM;
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const [showSpinner, setShowSpinner] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(true);
   const convertTimeTo12HourFormat = (time) => {
     const [hours, minutes] = time.split(":");
     const date = new Date();
@@ -398,13 +401,14 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
   const [month, setMonth] = useState(null);
   const [year, setYear] = useState(null);
   const [filterPropertyList, setFilterPropertyList] = useState([]);
+  const [filteredMaintenanceRequests, setFilteredMaintenanceRequests] = useState({})
 
   useEffect(() => {
-    if (maintenanceRequests) {
+    if (allMaintenanceStatusData) {
       const propertyList = [];
       const addedAddresses = [];
-      for (const key in maintenanceRequests) {
-        for (const item of maintenanceRequests[key]) {
+      for (const key in allMaintenanceStatusData?.result) {
+        for (const item of allMaintenanceStatusData.result[key]?.maintenance_items) {
           if (!addedAddresses.includes(item.property_address)) {
             addedAddresses.push(item.property_address);
             if (!propertyList.includes(item.property_address)) {
@@ -423,12 +427,14 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
   function clearFilters() {
     setMonth(null);
     setYear(null);
-    setFilterPropertyList([]);
+    // setFilterPropertyList([]);
   }
 
   function displayFilterString(month, year) {
     if (month && year) {
       return month + " " + year;
+    }else if(!month && year){
+      return "All Of " + year;
     } else {
       return "Last 30 Days";
     }
@@ -447,21 +453,76 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
       return "Selected " + count + " Properties";
     }
   }
+
+  function convertToStandardFormat(monthName, year) {
+    const months = {
+      January: "01",
+      February: "02",
+      March: "03",
+      April: "04",
+      May: "05",
+      June: "06",
+      July: "07",
+      August: "08",
+      September: "09",
+      October: "10",
+      November: "11",
+      December: "12",
+    };
+
+    return `${year}-${months[monthName]}`;
+  }
+
   const filterCheckedAddresses = (requests, filterList) => {
+    // console.log("--- inside filter function - ", requests)
     const checkedAddresses = new Set(filterList.filter((property) => property.checked).map((property) => property.address));
 
+    // const filteredRequests = {};
+    // for (const status in requests) {
+    //   filteredRequests[status] = requests[status].filter((item) => checkedAddresses.has(item.property_address));
+    // }
     const filteredRequests = {};
-    for (const status in requests) {
-      filteredRequests[status] = requests[status].filter((item) => checkedAddresses.has(item.property_address));
+
+    const requestResult = requests?.result;
+
+    for (const status in requestResult) {
+        filteredRequests[status] = requestResult[status].maintenance_items?.filter((item) => {
+            
+            const addressMatches = checkedAddresses.has(item.property_address);
+
+            let dateMatches = true;
+
+            if (month && year) {
+                const filterFormatDate = convertToStandardFormat(month, year);
+                dateMatches =
+                    item.maintenance_request_created_date?.split("-")[0] === filterFormatDate?.split("-")[1] && 
+                    item.maintenance_request_created_date?.split("-")[2] === filterFormatDate?.split("-")[0];
+            } else if (!month && year) {
+                dateMatches =
+                    item.maintenance_request_created_date?.split("-")[2] === String(year);
+            }
+
+            return addressMatches && dateMatches;
+        });
     }
+
     return filteredRequests;
+
   };
 
-  const filteredMaintenanceRequests = filterCheckedAddresses(maintenanceRequests, filterPropertyList);
+  useEffect(()=>{
 
-  let maintenanceRequestsByQuoteStatus = {}; // Quotes Requested, Quotes submitted etc.
-  let maintenanceRequestsByStatus = {}; // ACCEPTED, FINISHED etc.
-  const filterAllMaintenanceData = (filteredMaintenanceRequests) => {
+    setShowSpinner(true)
+    setFilteredMaintenanceRequests(filterCheckedAddresses(allMaintenanceStatusData, filterPropertyList))
+    setShowSpinner(false)
+
+  }, [allMaintenanceStatusData, filterPropertyList, month, year])
+  // const filteredMaintenanceRequests = filterCheckedAddresses(allMaintenanceStatusData, filterPropertyList);
+
+  const [maintenanceRequestsByQuoteStatus, setMaintenanceRequestsByQuoteStatus] = useState({}); // Quotes Requested, Quotes submitted etc.
+  const [maintenanceRequestsByStatus, setMaintenanceRequestsByStatus] = useState({}); // ACCEPTED, FINISHED etc.
+
+  const filterAllMaintenanceData = (filteredAllMaintenanceRequests) => {
     // if(filteredMaintenanceRequests == null || Object.keys(filteredMaintenanceRequests)?.length === 0){
     //   return;
     // }
@@ -472,9 +533,9 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
       //console.log('-----data inside workerMaintenanceTable----', data);
 
       const addresses = new Set();
-      for (const status in filteredMaintenanceRequests.result) {
-        if (Array.isArray(filteredMaintenanceRequests.result[status]?.maintenance_items)) {
-          filteredMaintenanceRequests.result[status]?.maintenance_items.forEach((item) => {
+      for (const status in filteredAllMaintenanceRequests.result) {
+        if (Array.isArray(filteredAllMaintenanceRequests.result[status]?.maintenance_items)) {
+          filteredAllMaintenanceRequests.result[status]?.maintenance_items.forEach((item) => {
             addresses.add(item.property_address);
           });
         }
@@ -487,7 +548,7 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
           if (allMaintenanceStatusData.result[status].maintenance_items.length > 0) {
             filteredRequests[status] = {
               ...allMaintenanceStatusData.result[status],
-              maintenance_items: allMaintenanceStatusData.result[status].maintenance_items.filter((item) => address.includes(item.property_address)),
+              maintenance_items: allMaintenanceStatusData.result[status].maintenance_items.filter((item) => address.includes(item.property_address) && filteredMaintenanceRequests[status]?.some(filteredItem => JSON.stringify(filteredItem) === JSON.stringify(item))),
             };
           } else {
             filteredRequests[status] = {
@@ -498,10 +559,11 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
         }
         return filteredRequests;
       };
-      const data = filterMaintenanceRequests(filteredMaintenanceRequests, Array.from(addresses));
 
-      //console.log('-----data inside workerMaintenanceTable----', data);
-      //console.log('-----filteredRequests inside workerMaintenanceTable----', filteredMaintenanceRequests);
+      const data = filterMaintenanceRequests(filteredAllMaintenanceRequests, Array.from(addresses));
+
+      // console.log('-----data inside workerMaintenanceTable----', data);
+      // console.log('-----filteredRequests inside workerMaintenanceTable----', filteredMaintenanceRequests);
 
       const statusMappings = [
         { status: "Quotes Requested", mapping: "REQUESTED" },
@@ -522,18 +584,28 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
           tempdata[key] = data[key].maintenance_items;
         }
       });
-      //console.log('status table---', result);
+      // console.log('status table---', result);
 
-      maintenanceRequestsByQuoteStatus = result;
-      maintenanceRequestsByStatus = tempdata;
+      setMaintenanceRequestsByQuoteStatus(result);
+      setMaintenanceRequestsByStatus(tempdata);
+
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
-  filterAllMaintenanceData(allMaintenanceStatusData);
+  useEffect(() => {
+    // console.log("---- here here here ---- ")
+    setShowSpinner(true)
 
-  //console.log('----filteredMaintenanceRequests-----', filteredMaintenanceRequests);
+    filterAllMaintenanceData(allMaintenanceStatusData);
+    
+    setShowSpinner(false)
+
+  }, [filteredMaintenanceRequests])
+  
+
+  // console.log('----filteredMaintenanceRequests-----', allMaintenanceStatusData, filteredMaintenanceRequests);
 
   async function handleRequestDetailPage(maintenance_request_index, mapping, property_uid, maintenance_request_uid) {
     const colorStatusItem = colorStatus?.find((item) => item.mapping === mapping);
@@ -592,7 +664,10 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
                     {displayFilterString(month, year)}
                   </Typography>
                 </Button>
+
                 <Box sx={{ flex: 1 }} />
+
+                {/* property Button */}
                 <Button sx={{ textTransform: "capitalize" }} onClick={() => setShowPropertyFilter(true)}>
                   <HomeWorkIcon
                     sx={{
@@ -620,7 +695,44 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
                   filterList={filterPropertyList}
                   setFilterList={setFilterPropertyList}
                 />
+
+              </Box>      
+
+              <Box 
+                component="span" 
+                m={2} 
+                display="flex" 
+                justifyContent="center" 
+                alignItems="center" 
+                width="100%"
+              >
+                <Typography
+                  sx={{
+                    display: "flex",
+                    alignItems: "center", 
+                    gap: "4px",
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.common.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                  }}
+                >
+                  {displayFilterString(month, year)}
+                  {displayFilterString(month, year) === "Last 30 Days" ? null : (
+                    <Button
+                      onClick={() => clearFilters()}
+                      sx={{
+                        padding: "0px",
+                        minWidth: 0, // Removes extra padding from the button
+                        opacity: 1, 
+                        pointerEvents: "auto",
+                      }}
+                    >
+                      <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "14px" }} />
+                    </Button>
+                  )}
+                </Typography>
               </Box>
+              
             </Grid>
 
             <Grid item xs={12}>
@@ -630,8 +742,11 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
                 onSelectRequest={onSelectRequest}
                 maintenanceRequestsByQuoteStatus={maintenanceRequestsByQuoteStatus}
                 maintenanceRequestsByStatus={maintenanceRequestsByStatus}
+                setSessionData={setSessionData}
               />
             </Grid>
+
+            {/* work order today */}
             <Grid item xs={12} sx={{ padding: "20px 0px 20px 0px" }}>
               <Paper
                 elevation={0}
@@ -777,7 +892,7 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
   );
 };
 
-const WorkOrdersAccordion = ({ maintenanceRequests, maintenanceRequestsByQuoteStatus, maintenanceRequestsByStatus, allMaintenanceStatusData, onSelectRequest }) => {
+const WorkOrdersAccordion = ({ maintenanceRequests, maintenanceRequestsByQuoteStatus, maintenanceRequestsByStatus, allMaintenanceStatusData, onSelectRequest, setSessionData }) => {
   const colorStatus = theme.colorStatusMM;
   const [query, setQuery] = useState("");
 
@@ -811,6 +926,7 @@ const WorkOrdersAccordion = ({ maintenanceRequests, maintenanceRequestsByQuoteSt
               allMaintenanceStatusData={allMaintenanceStatusData}
               maintenanceRequestsCount={maintenanceArray}
               onSelectRequest={onSelectRequest}
+              setSessionData={setSessionData}
             />
           );
         })}

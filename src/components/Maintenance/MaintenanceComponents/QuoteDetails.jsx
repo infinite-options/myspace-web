@@ -580,6 +580,29 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                                                 </Box>
                                             </Box>
                                         </Grid>}
+
+                                        {/* Rejection reason */}
+                                        {currentItem?.quote_status === "REFUSED" && <Grid item xs={12}>
+                                            <Box sx={{ paddingTop: '10px' }}>
+                                                <Typography variant="body2" gutterBottom sx={{  color: "#160449",
+                                                            fontWeight: theme.typography.primary.fontWeight,
+                                                            fontSize: "18px",
+                                                            paddingBottom: "5px",
+                                                            paddingTop: "5px",
+                                                            marginTop:"10px",}}>
+                                                    Reason From Maintenance:
+                                                </Typography>
+                                                <Box
+                                                    sx={{
+                                                        color: "#F87C7A",
+                                                        fontWeight: theme.typography.primary.fontWeight,
+                                                        padding: 2,
+                                                    }}
+                                                >
+                                                   {currentItem?.quote_notes? currentItem?.quote_notes : ""}
+                                                </Box>
+                                            </Box>
+                                        </Grid>}
                                     </Grid>
                                 </Box>
                             ))}

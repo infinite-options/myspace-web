@@ -30,13 +30,13 @@ export const getChipColor = (priority) => {
   }
 };
 
-export default function WorkerMaintenanceStatusTable({ status, color, maintenanceItemsForStatus, allMaintenanceData, allMaintenanceStatusData, maintenanceRequestsByQuoteStatus, maintenanceRequestsByStatus, maintenanceRequestsCount, onSelectRequest }) {
+export default function WorkerMaintenanceStatusTable({ status, color, maintenanceItemsForStatus, allMaintenanceData, allMaintenanceStatusData, maintenanceRequestsByQuoteStatus, maintenanceRequestsByStatus, maintenanceRequestsCount, onSelectRequest, setSessionData }) {
   // console.log('--inside table---', maintenanceRequestsCount);
   const location = useLocation();
   let navigate = useNavigate();
   const { user, getProfileId, } = useUser();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  //console.log("MaintenanceStatusTable", maintenanceItemsForStatus);	
+  console.log("MaintenanceStatusTable", maintenanceItemsForStatus, status);	
   let maintenanceRequests = maintenanceRequestsByQuoteStatus;
   let data = maintenanceRequestsByStatus;
 
@@ -125,6 +125,15 @@ export default function WorkerMaintenanceStatusTable({ status, color, maintenanc
       },
     },
   ];
+
+  useEffect(() => {
+    setSessionData((prev) => ({
+      ...prev,
+      propmaintenanceItemsForStatus: maintenanceRequests[status], 
+      alldata: data, 
+    }));
+
+  }, [maintenanceRequestsByQuoteStatus, maintenanceRequestsByStatus])
 
   async function handleRequestDetailPage(maintenance_request_index, property_uid, maintenance_request_uid) {
     

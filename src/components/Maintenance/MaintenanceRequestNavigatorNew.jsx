@@ -639,6 +639,14 @@ export default function MaintenanceRequestNavigatorNew({
 											</Typography>
 										</Grid>
 									</Grid>
+
+									{data?.maintenance_request_status === "INFO OWNER" && <Typography component="div" variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
+										<strong style={{ minWidth: '150px', color: 'red'}}>You already asked more info from Owner</strong>
+									</Typography>}
+
+									{data?.maintenance_request_status === "INFO TENANT" && <Typography component="div" variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
+										<strong style={{ minWidth: '150px', color: 'red'}}>You already asked more info from Tenant</strong>
+									</Typography>}
 								</Box>
 								
 								{/* for quotes table and detail */}

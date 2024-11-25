@@ -35,6 +35,7 @@ const style = {
 function DateTimePickerModal(props) {
   const [availabilityDate, setAvailabilityDate] = useState(props.date || "");
   const [availabilityTime, setAvailabilityTime] = useState(props.time || "");
+//   console.log("--availability time - ", props)
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [cancelTicketFlag, setcancelTicketFlag] = useState(false);
   useEffect(() => {
@@ -47,8 +48,8 @@ function DateTimePickerModal(props) {
     // console.log("props.maintenanceItem - ", props.maintenanceItem);
     const scheduledDate = props.maintenanceItem?.maintenance_scheduled_date;
     const scheduledTime = props.maintenanceItem?.maintenance_scheduled_time;
-    setAvailabilityDate((scheduledDate !== "" && scheduledDate !== null && scheduledDate !== undefined && scheduledDate !== "null")  ? props.maintenanceItem.maintenance_scheduled_date : props.maintenanceItem.quote_earliest_available_date);
-    setAvailabilityTime((scheduledTime !== "" && scheduledTime !== null && scheduledTime !== undefined && scheduledTime !== "null") ? props.maintenanceItem.maintenance_scheduled_time : props.maintenanceItem.quote_earliest_available_time);
+    setAvailabilityDate((scheduledDate !== "" && scheduledDate !== null && scheduledDate !== undefined && scheduledDate !== "null")  ? props.maintenanceItem.maintenance_scheduled_date : props.date);
+    setAvailabilityTime((scheduledTime !== "" && scheduledTime !== null && scheduledTime !== undefined && scheduledTime !== "null") ? props.maintenanceItem.maintenance_scheduled_time : props.time);
     // setAvailabilityDate(props.maintenanceItem.maintenance_scheduled_date ? props.maintenanceItem.maintenance_scheduled_date : props.date)
     // setAvailabilityTime(props.maintenanceItem.maintenance_scheduled_time ? props.maintenanceItem.maintenance_scheduled_time : props.time)
   }, [])
@@ -88,10 +89,10 @@ function DateTimePickerModal(props) {
   
 
   async function submit(){
-    console.log("in submit for datetimepicker")
+    // console.log("in submit for datetimepicker")
     if(cancelTicketFlag) {
         console.log("Cancel ticket---", props.cancelTicket);
-        await props.cancelTicket(props.maintenanceItem.maintenance_request_uid, props.maintenanceItem.quote_info);
+        await props.cancelTicket(props.maintenanceItem.maintenance_request_uid, JSON.parse(props.maintenanceItem.quote_info));
         await handleClose();
     }
     else if (props.completeTicket) {
@@ -155,8 +156,8 @@ function DateTimePickerModal(props) {
                                 >
                                     <FormControlLabel value="cancel" control={<Radio sx={{'&.Mui-checked': { color: '#160449' }}} onChange={handleCancelFlag}/>}label={"Cancel Ticket without Completion"} />
                                     <FormControlLabel value="now" control={<Radio sx={{'&.Mui-checked': { color: '#160449' }}} onChange={changeActiveDateSelector}/>} label={showFormLabel("now")}/>
-                                    <FormControlLabel value="schedule" sx={{'&.Mui-checked': { color: '#160449' }}} control={<Radio onChange={changeActiveDateSelector} disabled={props.maintenanceItem.maintenance_scheduled_date == null ? true : false}/>} label={showFormLabel("schedule")} />
-                                    <FormControlLabel value="select" sx={{'&.Mui-checked': { color: '#160449' }}} control={<Radio onChange={changeActiveDateSelector}/>} label={"Select Completed Date"} />
+                                    <FormControlLabel value="schedule" control={<Radio sx={{'&.Mui-checked': { color: '#160449' }}} onChange={changeActiveDateSelector} disabled={props.maintenanceItem.maintenance_scheduled_date == null ? true : false}/>} label={showFormLabel("schedule")} />
+                                    <FormControlLabel value="select" control={<Radio sx={{'&.Mui-checked': { color: '#160449' }}} onChange={changeActiveDateSelector}/>} label={"Select Completed Date"} />
                                 </RadioGroup>
                             </FormControl>
                         </Grid>
@@ -225,7 +226,6 @@ function DateTimePickerModal(props) {
                                     } 
                                 }}                                                        
                                 views={['hours', 'minutes']}
-                                
                                 value={dayjs(availabilityTime,"HH:mm")}
                                 onChange={(newValue) => setAvailabilityTime(newValue.format("HH:mm"))}
                             />
@@ -240,8 +240,10 @@ function DateTimePickerModal(props) {
                             color="primary"
                             onClick={() => submit()}
                             sx={{
-                                backgroundColor: !activeButton ? "#B0B0B0" : "#FFC614", // Updated color to #FFC614
-                                pointerEvents: !activeButton ? "none" : "auto",
+                                // backgroundColor: !activeButton  ? "#B0B0B0" : "#FFC614", // Updated color to #FFC614
+                                // pointerEvents: !activeButton ? "none" : "auto",
+                                backgroundColor: "#FFC614",
+                                pointerEvents: "auto",
                                 width: "285px", // Set the width to match the image
                                 height: "40px", // Set the height to match the image
                                 borderRadius: "8px", // Rounded corners for the button

@@ -248,7 +248,7 @@ export default function QuoteRequestEditForm({ setRefresh }) {
 		
 		submitQuoteRequest(); 	
 		
-	  };
+	};
 	  
 
 	function numImages() {

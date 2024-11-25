@@ -34,7 +34,7 @@ import AlertMessage from '../AlertMessage';
 import APIConfig from "../../../utils/APIConfig";
 
 
-export default function QuotesAccepted({setRefresh, maintenanceItem, navigateParams, quotes}){
+export default function QuotesAccepted({setRefresh, maintenanceItem, navigateParams, quotes, fetchAndUpdateQuotes}){
     console.log("--debug-- maintenanceItem", maintenanceItem)
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
@@ -48,11 +48,13 @@ export default function QuotesAccepted({setRefresh, maintenanceItem, navigatePar
 		quotes = JSON.parse(sessionStorage.getItem('quoteAcceptView'));
 	} 
     console.log("---maintenanceItem", maintenanceItem);
-    console.log('---maintenanceItem?.quote_info--', maintenanceItem.quotes);
-    let maintenanceQuoteInfo = JSON.parse(maintenanceItem?.quote_info)?.find((quote) => quote.quote_status === maintenanceItem.quote_status_ranked)
+    // console.log('---maintenanceItem?.quote_info--', maintenanceItem.quotes);
+    let maintenanceQuoteInfo = JSON.parse(maintenanceItem?.quote_info)?.find((quote) => quote.quote_status === "ACCEPTED")
     console.log(maintenanceQuoteInfo)
     const [date, setDate] = useState(maintenanceQuoteInfo?.quote_earliest_available_date || "")
     const [time, setTime] = useState(maintenanceQuoteInfo?.quote_earliest_available_time || "")
+
+    console.log(" -- time -- ", time)
 
     const [showModal, setShowModal] = useState(false);
 
@@ -76,7 +78,7 @@ export default function QuotesAccepted({setRefresh, maintenanceItem, navigatePar
                 });
     
                 const responseData = await response.json();
-                console.log(responseData);
+                // console.log(responseData);
                 if (response.status === 200) {
                     console.log("success")
                     if(setRefresh){
@@ -90,12 +92,13 @@ export default function QuotesAccepted({setRefresh, maintenanceItem, navigatePar
             }
             setShowSpinner(false);
         }
+
         const changeMaintenanceQuoteStatus = async () => {
             setShowSpinner(true);
             const formData = new FormData();
             let quote = quotes.find(quote => quote.quote_status === "ACCEPTED") // see number 16 in "Testing Maintenance Flow" ticket
-            console.log("changeMaintenanceQuoteStatus maintenanceItemQuotes", maintenanceItemQuotes)
-            console.log(quote)
+            // console.log("changeMaintenanceQuoteStatus maintenanceItemQuotes", maintenanceItemQuotes)
+            // console.log(quote)
             formData.append("maintenance_quote_uid", quote.maintenance_quote_uid); // 900-xxx
             formData.append("quote_maintenance_request_id", id) //quote_maintenance_request_id maintenance_request_uid
             formData.append("quote_status", "SCHEDULED")
@@ -107,10 +110,16 @@ export default function QuotesAccepted({setRefresh, maintenanceItem, navigatePar
                 });
     
                 const responseData = await response.json();
-                console.log(responseData);
+                // console.log(responseData);
                 if (response.status === 200) {
                     console.log("success")
-                    changeMaintenanceRequestStatus()
+                    if(fetchAndUpdateQuotes){
+                        await fetchAndUpdateQuotes();
+                    }
+
+                    await changeMaintenanceRequestStatus()
+                    
+
                     navigate(maintenanceRoutingBasedOnSelectedRole(), {state: {refresh: true}})
                 } else{
                     console.log("error setting status")
@@ -120,6 +129,7 @@ export default function QuotesAccepted({setRefresh, maintenanceItem, navigatePar
             }
             setShowSpinner(false);
         }
+
         await changeMaintenanceQuoteStatus()
         // navigate(maintenanceRoutingBasedOnSelectedRole())
     }

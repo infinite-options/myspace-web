@@ -444,16 +444,16 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
                   <QuotesRequestAction maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh = {setRefresh}/>
                 ) : null}
                 {selectedRole !== "OWNER" && colorStatus[value]?.status === "Quotes Accepted" && maintenanceItemsForStatus[selectedRequestIndex]? (
-                  <QuotesAccepted maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh={setRefresh}/>
+                  <QuotesAccepted maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh={setRefresh} fetchAndUpdateQuotes={fetchAndUpdateQuotes}/>
                 ) : null}
                 {selectedRole !== "OWNER" && colorStatus[value]?.status === "Scheduled" && maintenanceItemsForStatus[selectedRequestIndex] ? (
-                  <ScheduleMaintenance maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh = {setRefresh}/>
+                  <ScheduleMaintenance maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh = {setRefresh} fetchAndUpdateQuotes={fetchAndUpdateQuotes}/>
                 ) : null}
                 {selectedRole !== "OWNER" && colorStatus[value]?.status === "Completed" && maintenanceItemsForStatus[selectedRequestIndex]?.maintenance_request_status !== "CANCELLED" ? (
-                  <CompleteMaintenance maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh = {setRefresh}/>
+                  <CompleteMaintenance maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh = {setRefresh} fetchAndUpdateQuotes={fetchAndUpdateQuotes}/>
                 ) : null}
                 {selectedRole !== "OWNER" && colorStatus[value]?.status === "Paid" && maintenanceItemsForStatus[selectedRequestIndex] ? (
-                  <PaidMaintenance maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh = {setRefresh}/>
+                  <PaidMaintenance maintenanceItem={maintenanceItemsForStatus[selectedRequestIndex]} navigateParams={navParams} quotes={filteredQuotes} setRefresh = {setRefresh} fetchAndUpdateQuotes={fetchAndUpdateQuotes}/>
                 ) : null}
               </Box>
               
