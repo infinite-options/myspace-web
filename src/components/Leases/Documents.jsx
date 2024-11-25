@@ -268,25 +268,25 @@ const Documents = ({ setRightPane,setRHS, setSelectedDocument, fromRenew, docume
           			</Box>
               );
       },
-      flex: 2,
+      flex: isMobile ? 1 : 2,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
       field: "contentType",
       headerName: "Content Type",
-      flex: 1,
+      flex: isMobile ? 0.8 : 1,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
       field: "fileType",
       headerName: "File Type",
-      flex: 1,
+      flex: isMobile ? 0.8 : 1,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
       field: "editactions",
       headerName: "",
-      flex: 0.5,
+      flex:  isMobile ? 0.2 : 0.5,
       renderCell: (params) => (
         <Box>
           <IconButton onClick={() => handleEditClick(params.row)}>
@@ -298,7 +298,7 @@ const Documents = ({ setRightPane,setRHS, setSelectedDocument, fromRenew, docume
     {
       field: "deleteactions",
       headerName: "",
-      flex: 0.5,
+      flex:isMobile ? 0.2 : 0.5,
       renderCell: (params) => (
         <Box>
           <IconButton onClick={() => {
@@ -561,8 +561,8 @@ setSelectedDocument({
               {documents && documents.length ? (
                 <DataGrid
                   rows={rowsWithId}
-                  // columns={docsColumns}
-                  columns={isMobileView ? docsColumns.map(column => ({ ...column, minWidth: 150 })) : docsColumns}
+                  columns={docsColumns}
+                  // columns={isMobileView ? docsColumns.map(column => ({ ...column, minWidth: 150 })) : docsColumns}
                   hideFooter={true}
                   autoHeight
                   rowHeight={50}

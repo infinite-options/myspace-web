@@ -1247,7 +1247,7 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
     PAID: "Paid On Time",
     Partial: "Partially Paid",
     VACANT: "Vacant",
-    "NOT LISTED": " Vacant - Not Listed",
+    "NOT LISTED": "Not Listed",
     "NO MANAGER": "No Manager",
   };
 
@@ -1443,6 +1443,7 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
     })
   );
   const [tab, setTab] = useState("by_month");
+  const isMobile =  useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     if (tab === "by_month") {
@@ -1469,12 +1470,12 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
   const columns = [
     {
       field: "property_owner_id",
-      headerName: "Owner UID - DEBUG",
+      headerName: isMobile ? "UID" : "Owner UID - DEBUG",
       width: 100,
     },
     {
       field: "owner_name",
-      headerName: "Owner Name - DEBUG",
+      headerName: isMobile ? "Name" :"Owner Name - DEBUG",
       width: 150,
       renderCell: (params) => (
         <span>
@@ -1514,23 +1515,23 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
       : []),
     {
       field: "expected_cashflow",
-      headerName: "Expected Cashflow",
-      width: 100,
+      headerName: isMobile ? "Expected" : "Expected Cashflow",
+      width: 110,
     },
     {
       field: "actual_cashflow",
-      headerName: "Actual Cashflow",
+      headerName: isMobile ? "Actual" :"Actual Cashflow",
       width: 100,
     },
     {
       field: "delta_cashflow",
-      headerName: "Delta Cashflow",
+      headerName: isMobile ? "Delta" : "Delta Cashflow",
       width: 100,
       renderCell: (params) => <span>{parseFloat(params.row.delta_cashflow)}</span>,
     },
     {
       field: "percent_delta_cashflow",
-      headerName: "% Delta Cashflow",
+      headerName: isMobile ? "% Delta" : "% Delta Cashflow",
       width: 100,
     },
   ];
@@ -1541,7 +1542,7 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
 
   return (
     <>
-      <Grid container item xs={12} sx={{ padding: "10px" }}>
+      <Grid container item xs={12} sx={{ padding: "10px" }} spacing={2}>
         <Grid container justifyContent='center' item xs={3}>
           <Box
             sx={{
@@ -1592,10 +1593,11 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
               "&:hover": {
                 backgroundColor: tab === "by_property_by_month" ? "#3D5CAC" : "#9EAED6",
               },
+              padding: "0px"
             }}
             onClick={() => handleSelectTab("by_property_by_month")}
           >
-            <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Property By Month</Typography>
+            <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Prop-Mon</Typography>
           </Button>
         </Grid>
       </Grid>
@@ -1611,14 +1613,25 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
               fontWeight: "bold",
             },
             border: "0px",
+            "& .MuiDataGrid-cell": {
+              fontSize: isMobile ? "12px" : "14px",
+            },
+            "& .MuiDataGrid-columnHeader": {
+              fontSize: isMobile ? "12px" : "14px", 
+            },
             "& .MuiDataGrid-columnHeaderTitle": {
               fontWeight: "bold",
+              textOverflow: "clip", 
+              whiteSpace: "normal", 
+              lineHeight: "1.5", 
             },
             "& .MuiDataGrid-footerContainer": {
-              height: "30px",
-              minHeight: "30px",
+              fontSize: isMobile ? "12px" : "14px", 
             },
           }}
+          disableColumnFilter = {isMobile}
+          disableColumnMenu = {isMobile}
+          disableColumnSelector = {isMobile}
         />
       </Grid>
     </>

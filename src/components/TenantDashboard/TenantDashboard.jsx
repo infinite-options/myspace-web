@@ -1506,7 +1506,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           //   marginLeft: "1%", // Adjusting margin for icon and text
                         }}
                       >
-                        {"Update Application"}
+                        {"Update"}
                       </Typography>
                     </Button>
                   </Grid>
@@ -1619,7 +1619,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           //   marginLeft: "1%", // Adjusting margin for icon and text
                         }}
                       >                        
-                        {relatedLease.lease_status === "RENEW PROCESSING" ? "View Renewal Lease" : ""}
+                        {relatedLease.lease_status === "RENEW PROCESSING" ? "View Renewal" : ""}
                         {relatedLease.lease_status === "APPROVED" ? "View Renewed Lease" : ""}
                       </Typography>
                     </Button>
