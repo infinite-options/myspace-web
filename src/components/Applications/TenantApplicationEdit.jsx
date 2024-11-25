@@ -890,7 +890,6 @@ export default function TenantApplicationEdit(props) {
     });
   }
 
-  }
 
   function formatDate(dateString) {
     const date = new Date(dateString);
