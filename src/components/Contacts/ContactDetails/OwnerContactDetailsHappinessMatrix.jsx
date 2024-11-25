@@ -759,33 +759,41 @@ const OwnerContactDetail = ({
   return (
     <Grid container sx={{ backgroundColor: theme.palette.primary.main, borderRadius: "10px", padding: "10px" }}>
       <Grid item xs={12} container justifyContent='center' sx={{ height: "50px" }}>
-        <Button
-          sx={{
-            textTransform: "none",
-            color: theme.typography.common.blue,
-            fontWeight: theme.typography.common.fontWeight,
-            fontSize: "16px",
-            "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
-          }}
-          onClick={() => {
-            if(isMobile && setViewRHS){
-              setViewRHS(false)
-            }else if(fromPage && propertyIndex >= 0){
-              navigate("/properties", { state: { index : propertyIndex } });
-            }else{
-              navigate(-1)
-            }
-          }}
-        >
-          <ArrowBackIcon
-            sx={{
-              color: theme.typography.primary.black,
-              fontSize: "30px",
-              margin: "5px",
-            }}
-          />
-        </Button>
-        <Typography sx={{ fontSize: "35px", fontWeight: "bold", color: "#160449" }}>Owner Contact</Typography>
+        <Grid container>
+          <Grid container item xs={2} md={1}>
+            <Button
+              sx={{
+                textTransform: "none",
+                color: theme.typography.common.blue,
+                fontWeight: theme.typography.common.fontWeight,
+                fontSize: "16px",
+                "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
+              }}
+              onClick={() => {
+                if (isMobile && setViewRHS) {
+                  setViewRHS(false)
+                } else if (fromPage && propertyIndex >= 0) {
+                  navigate("/properties", { state: { index: propertyIndex } });
+                } else {
+                  navigate(-1)
+                }
+              }}
+            >
+              <ArrowBackIcon
+                sx={{
+                  color: theme.typography.primary.black,
+                  fontSize: "30px",
+                  margin: "5px",
+                }}
+              />
+            </Button>
+          </Grid>
+          <Grid item xs={8} md={10}>
+            <Typography sx={{ fontSize: "35px", fontWeight: "bold", color: "#160449", textAlign:"center" }}>Owner Contact</Typography>
+          </Grid>
+          <Grid item xs={2} md={1} />
+        </Grid>
+
       </Grid>
       <Grid item xs={12} container justifyContent='center'>
         <Typography sx={{ fontSize: "20px", color: "#3D5CAC" }}>
@@ -1053,7 +1061,7 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
           <Typography sx={{ fontSize: "18px", fontWeight: "bold", color: "#160449", marginTop: "10px" }}>YOU MANAGE {activeProperties?.length} OF THEIR PROPERTIES</Typography>
         </Grid>
       </Grid>
-      <Grid container sx={{ height: "320px", overflow: "auto", alignContent: "flex-start"}}>
+      <Grid container sx={{ height: "320px", overflow: "auto", alignContent: "flex-start" }}>
         {activeProperties && activeProperties.length > 0 ? (
           <>
             {/* <Grid item xs={12}>
@@ -1079,7 +1087,7 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "15px" }}>Active {`(${activeProperties.length})`}</Typography>
                 </AccordionSummary>
-              <AccordionDetails sx={{marginBottom: "5px", marginLeft: "10px" }}>
+                <AccordionDetails sx={{ marginBottom: "5px", marginLeft: "10px" }}>
                   <Grid item xs={12}>
                     <PropertiesDataGrid data={activeProperties} maintenanceRequests={maintenanceReqsByProperty} />
                   </Grid>
@@ -1151,7 +1159,7 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
           </Grid>
         </Grid>
 
-      <Grid container sx={{ paddingLeft: "10px",}}>
+        <Grid container sx={{ paddingLeft: "10px", }}>
           <Grid item xs={12}>
             {/* <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "20px" }}>Sent {`(${sentContracts?.length || 0})`}</Typography> */}
             {sentContracts && sentContracts.length > 0 ?
@@ -1213,6 +1221,7 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
 
 const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
   const navigate = useNavigate();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   // const paymentStatusColorMap = {
   //   "Paid On Time": theme.palette.priority.clear,
   //   "Partially Paid": theme.palette.priority.medium,
@@ -1424,7 +1433,7 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
           border: "0px",
           overflow: "hidden",
           "& .MuiDataGrid-virtualScroller": {
-            overflow: "hidden", 
+            overflow: "hidden",
           },
           "& .MuiDataGrid-main": {
             overflow: "hidden",
@@ -1443,7 +1452,7 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
     })
   );
   const [tab, setTab] = useState("by_month");
-  const isMobile =  useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     if (tab === "by_month") {
@@ -1475,7 +1484,7 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
     },
     {
       field: "owner_name",
-      headerName: isMobile ? "Name" :"Owner Name - DEBUG",
+      headerName: isMobile ? "Name" : "Owner Name - DEBUG",
       width: 150,
       renderCell: (params) => (
         <span>
@@ -1520,7 +1529,7 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
     },
     {
       field: "actual_cashflow",
-      headerName: isMobile ? "Actual" :"Actual Cashflow",
+      headerName: isMobile ? "Actual" : "Actual Cashflow",
       width: 100,
     },
     {
@@ -1605,6 +1614,7 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
         <DataGrid
           rows={data}
           columns={columns}
+          rowHeight={isMobile ? 35 : 52}
           getRowId={(row) => row.index}
           sx={{
             height: "300px",
@@ -1617,21 +1627,21 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
               fontSize: isMobile ? "12px" : "14px",
             },
             "& .MuiDataGrid-columnHeader": {
-              fontSize: isMobile ? "12px" : "14px", 
+              fontSize: isMobile ? "12px" : "14px",
             },
             "& .MuiDataGrid-columnHeaderTitle": {
               fontWeight: "bold",
-              textOverflow: "clip", 
-              whiteSpace: "normal", 
-              lineHeight: "1.5", 
+              textOverflow: "clip",
+              whiteSpace: "normal",
+              lineHeight: "1.5",
             },
             "& .MuiDataGrid-footerContainer": {
-              fontSize: isMobile ? "12px" : "14px", 
+              fontSize: isMobile ? "12px" : "14px",
             },
           }}
-          disableColumnFilter = {isMobile}
-          disableColumnMenu = {isMobile}
-          disableColumnSelector = {isMobile}
+          disableColumnFilter={isMobile}
+          disableColumnMenu={isMobile}
+          disableColumnSelector={isMobile}
         />
       </Grid>
     </>

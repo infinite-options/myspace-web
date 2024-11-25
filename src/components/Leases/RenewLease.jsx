@@ -465,7 +465,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
         style={{
           marginTop: !isMobile && "10px",
           marginBottom : isMobile && "10px",
-          marginTop: "10px",
+          // marginTop: "10px",
           backgroundColor: theme.palette.primary.main,
           width: "100%", // Occupy full width with 25px margins on each side
         }}
