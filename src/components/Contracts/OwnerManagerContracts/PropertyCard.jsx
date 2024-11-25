@@ -928,8 +928,30 @@ const PropertyCard = (props) => {
 		if (contractDoc) {
 		  setContractDocument(contractDoc);
 		}
-		setPropertyOwnerName(`${contractData["owner_first_name"]} ${contractData["owner_last_name"]}`);
-	  }
+		if (contractData.owners) {
+			// Parse the owners data if it is a JSON string
+			let owners = [];
+			try {
+			  owners = Array.isArray(contractData.owners)
+				? contractData.owners // Already an array
+				: JSON.parse(contractData.owners); // Parse if it is a string
+			} catch (error) {
+			  console.error("Error parsing owners data:", error);
+			}
+		  
+			// Check if we have at least one owner
+			if (owners.length > 0) {
+			  const firstOwner = owners[0]; // Get the first owner
+			  setPropertyOwnerName(`${firstOwner.owner_first_name} ${firstOwner.owner_last_name}`);
+			} else {
+			  console.warn("No owners found in contract data.");
+			  setPropertyOwnerName("No Owner Available");
+			}
+		  } else {
+			console.warn("Contract data does not have owners property.");
+			setPropertyOwnerName("No Owner Available");
+		  }
+		  }
 	}
 };	
 
@@ -1870,10 +1892,27 @@ const PropertyCard = (props) => {
   const sendAnnouncement = async (action) => {    
 	const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
 	console.log("sendAnnouncement - contract - ", contractData)
-    const receiverPropertyMapping = {
-        // [contractData.property_owner_id]: [contractData.property_id],
-		[contractData.owner_uid]: [contractData.property_uid],
-    };
+   // Parse `owners` and extract `owner_uid` and `property_uid`
+  let owners = [];
+  try {
+    owners = Array.isArray(contractData.owners)
+      ? contractData.owners
+      : JSON.parse(contractData.owners); // Parse the JSON string if necessary
+  } catch (error) {
+    console.error("Error parsing owners:", error);
+  }
+
+  if (!owners.length) {
+    console.error("No owners available for the contract.");
+    return;
+  }
+
+  // Assuming we are sending announcements to the first owner
+  const firstOwner = owners[0];
+
+  const receiverPropertyMapping = {
+    [firstOwner.owner_uid]: [contractData.property_uid],
+  };
 
 	let announcementTitle;
 	let announcementMessage;
@@ -1912,7 +1951,7 @@ const PropertyCard = (props) => {
 			  announcement_properties: JSON.stringify(receiverPropertyMapping),
 			  announcement_mode: "CONTRACT",
 			//   announcement_receiver: [contractData.property_owner_id],
-			  announcement_receiver: [contractData.owner_uid],
+			  announcement_receiver: [firstOwner.owner_uid],
 			  announcement_type: ["App", "Email", "Text"],
 			}),
 		  });
