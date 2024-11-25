@@ -264,7 +264,7 @@ const TenantDashboard = () => {
 
         const activeLease = leasesForProperty.find((lease) => lease.lease_status === "ACTIVE");
         // const renewalLease = leasesForProperty.find(lease => (lease.lease_status === "RENEW NEW" || lease.lease_status === "RENEW WITHDRAWN" || lease.lease_status === "RENEW PROCESSING"));
-        const renewalLease = leasesForProperty.find((lease) => lease.lease_status === "RENEW NEW" || lease.lease_status === "RENEW PROCESSING");
+        const renewalLease = leasesForProperty.find((lease) => lease.lease_status === "RENEW NEW" || lease.lease_status === "RENEW PROCESSING" || lease.lease_status === "APPROVED");
 
         setLeaseDetails(activeLease || null);
         setRelatedLease(renewalLease || null);
@@ -1268,7 +1268,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           ACTIVE
                         </Typography>
                         {leaseDetails?.lease_renew_status &&
-                          (leaseDetails?.lease_renew_status === "PM RENEW REQUESTED" || leaseDetails?.lease_renew_status.includes("RENEW REQUESTED")) && (
+                          (leaseDetails?.lease_renew_status === "PM RENEW REQUESTED" || leaseDetails?.lease_renew_status.includes("RENEW REQUESTED") || leaseDetails?.lease_renew_status.includes("RENEWED") ) && (
                             <Typography
                               sx={{
                                 color: leaseDetails?.lease_renew_status?.includes("RENEW") ? "#FF8A00" : "#A52A2A",
@@ -1276,7 +1276,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                                 fontSize: theme.typography.smallFont,
                               }}
                             >
-                              {leaseDetails?.lease_renew_status?.includes("RENEW") ? " RENEWING" : leaseDetails?.lease_renew_status}
+                              {(leaseDetails?.lease_renew_status == "RENEW REQUESTED" || leaseDetails?.lease_renew_status == "PM RENEW REQUESTED") ? " RENEWING" : leaseDetails?.lease_renew_status}
                             </Typography>
                           )}
                       </>
@@ -1350,6 +1350,64 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                       {leaseDetails?.lease_start}
                       <span style={{ fontWeight: "bold", margin: "0 10px" }}>to</span>
                       {leaseDetails?.lease_end}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              )}
+
+              {/* Notice Period */}
+              {leaseDetails && (
+                <Grid container item spacing={2}>
+                  <Grid item xs={5}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      End Notice Period:
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={7}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.light.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      {leaseDetails?.lease_end_notice_period ? `${leaseDetails?.lease_end_notice_period} days` : 'Not Specified' }                      
+                    </Typography>
+                  </Grid>
+                </Grid>
+              )}
+
+              {/* Lease Renewal */}
+              {leaseDetails && (
+                <Grid container item spacing={2}>
+                  <Grid item xs={5}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      Lease Renewal:
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={7}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.light.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      {leaseDetails?.lease_m2m == null ? "Not Specified" : ""}
+                      {leaseDetails?.lease_m2m === 1 ? "Renews Month-to-Month" : ""}
+                      {leaseDetails?.lease_m2m === 0 ? "Renews Automatically" : ""}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -1454,7 +1512,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                   </Grid>
                 ) : (
                   showRenewLeaseButton &&
-                  relatedLease?.lease_status !== "RENEW PROCESSING" && (
+                  (relatedLease?.lease_status !== "RENEW PROCESSING" && relatedLease?.lease_status !== "APPROVED") && (
                     // <Button
                     //   variant='contained'
                     //   size='small'
@@ -1509,9 +1567,9 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                       </Button>
                     </Grid>
                   )
-                )}
+                )}                
 
-                {relatedLease && relatedLease.lease_status === "RENEW PROCESSING" && (
+                {relatedLease && (relatedLease.lease_status === "RENEW PROCESSING" || relatedLease.lease_status === "APPROVED") && (
                   // <Button
                   //   variant='contained'
                   //   size='small'
@@ -1527,7 +1585,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                   // </Button>
                   <Grid
                     item
-                    xs={relatedLease?.lease_status === "RENEW PROCESSING" ? 4 : 6}
+                    xs={(relatedLease?.lease_status === "RENEW PROCESSING" || relatedLease?.lease_status === "APPROVED") ? 4 : 6}
                     sx={{
                       display: "flex",
                       justifyContent: "center",
@@ -1541,12 +1599,12 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                       }}
                       variant='contained'
                       sx={{
-                        background: "#76B148",
+                        background: relatedLease?.lease_status === "APPROVED" ? "#3D5CAC" : "#76B148",
                         color: theme.palette.background.default,
                         cursor: "pointer",
                         paddingX: "10px",
                         textTransform: "none",
-                        maxWidth: "120px", // Fixed width for the button
+                        maxWidth: "130px", // Fixed width for the button
                         maxHeight: "100%",
                       }}
                       size='small'
@@ -1560,8 +1618,9 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           whiteSpace: "nowrap",
                           //   marginLeft: "1%", // Adjusting margin for icon and text
                         }}
-                      >
-                        {"View Renewal Lease"}
+                      >                        
+                        {relatedLease.lease_status === "RENEW PROCESSING" ? "View Renewal Lease" : ""}
+                        {relatedLease.lease_status === "APPROVED" ? "View Renewed Lease" : ""}
                       </Typography>
                     </Button>
                   </Grid>

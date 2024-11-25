@@ -240,7 +240,7 @@ export default function PropertiesList(props) {
 
       if (allcontracts) {
         const propertyId = property?.property_uid;
-        const filtered = allcontracts?.filter((contract) => contract.property_id === propertyId);
+        const filtered = allcontracts?.filter((contract) => contract.property_uid === propertyId);
         // console.log("--dhyey---322 - PropertyNavigator - filtered contracts - ", filtered);
         filtered.forEach((contract) => {
           if (contract.contract_status == "SENT") {
@@ -248,7 +248,6 @@ export default function PropertiesList(props) {
           }
         });
       }
-
       return count;
     } else {
       return property.applications ? property.applications.filter((app) => app.lease_status.includes("NEW")).length : 0;
@@ -362,53 +361,56 @@ export default function PropertiesList(props) {
       headerName: "Status",
       headerAlign: "center",
       flex: 0.6,
-      renderCell: (params) => (
-        <Box
-          sx={{
-            backgroundColor: getPaymentStatusColor(params.row.rent_status, params.row),
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            padding: "0px",
-            border: "none",
-            margin: "0px",
-          }}
-        >
-          <Badge
-            overlap='circular'
-            color='success'
-            badgeContent={getNumOfApplications(params.row)}
-            invisible={!getNumOfApplications(params.row)}
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            style={{
-              color: "#000000",
+      renderCell: (params) => {
+        console.log("Payment Status params:", params); // Log params
+        return (
+          <Box
+            sx={{
+              backgroundColor: getPaymentStatusColor(params.row.rent_status, params.row),
               width: "100%",
+              height: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: "0px",
+              border: "none",
+              margin: "0px",
             }}
           >
-            <Typography
-              sx={{
-                color: theme.palette.primary.main,
-                fontWeight: theme.typography.primary.fontWeight,
-                fontSize: "11px",
-                margin: "0px",
-                height: "50px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+            <Badge
+              overlap="circular"
+              color= {params.row.rent_status === "NO MANAGER" ? "warning" : "success"}
+              badgeContent={getNumOfApplications(params.row)}
+              invisible={!getNumOfApplications(params.row)}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              style={{
+                color: "#000000",
                 width: "100%",
-                textAlign: "center",
               }}
             >
-              {getPaymentStatus(params.row.rent_status, params.row)}
-            </Typography>
-          </Badge>
-        </Box>
-      ),
+              <Typography
+                sx={{
+                  color: theme.palette.primary.main,
+                  fontWeight: theme.typography.primary.fontWeight,
+                  fontSize: "11px",
+                  margin: "0px",
+                  height: "50px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                  textAlign: "center",
+                }}
+              >
+                {getPaymentStatus(params.row.rent_status, params.row)}
+              </Typography>
+            </Badge>
+          </Box>
+        );
+      },
     },
     {
       field: "maintenanceIcon",

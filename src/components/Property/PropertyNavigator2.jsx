@@ -583,6 +583,7 @@ export default function PropertyNavigator2({
       headerName: "Month",
       sortable: isDesktop,
       flex: isMobile ? 0.3 : 0.5,
+      minWidth: 60,
       renderCell: (params) => {
         return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
       },
@@ -592,6 +593,7 @@ export default function PropertyNavigator2({
       headerName: "Category",
       sortable: isDesktop,
       flex: 1,
+      minWidth: 100,
       renderCell: (params) => {
         return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
       },
@@ -604,6 +606,7 @@ export default function PropertyNavigator2({
       // renderCell: (params) => {
       //   return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value.split(" ")[0]}</Box>;
       // },
+      minWidth: 100,
       renderCell: (params) => {
         const value = params.value || "-";
         return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{value.split(" ")[0]}</Box>;
@@ -615,16 +618,29 @@ export default function PropertyNavigator2({
       headerName: "Amount",
       sortable: isDesktop,
       flex: 0.7,
+      minWidth: 90,
       renderCell: (params) => {
         return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
       },
     },
+    {
+        // field: 'total_paid_formatted',\
+        field: "total_paid",
+        headerName: "Total Paid",
+        sortable: isDesktop,
+        flex: 0.7,
+        minWidth: 90,
+        renderCell: (params) => {
+          return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value ? params.value : "-"}</Box>;
+        },
+    },    
 
     {
       field: "rent_status",
       headerName: "Rent Status",
       sortable: isDesktop,
       flex: 1,
+      minWidth: 100,
       renderCell: (params) => {
         return (
           <Box
@@ -644,6 +660,17 @@ export default function PropertyNavigator2({
         );
       },
     },
+    {
+        // field: 'total_paid_formatted',\
+        field: "pur_due_date",
+        headerName: "Due Date",
+        sortable: isDesktop,
+        flex: 0.7,
+        minWidth: 90,
+        renderCell: (params) => {
+          return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value?.split(" ")[0]}</Box>;
+        },
+    },
     // {
     //   field: "fees",
     //   headerName: "Late Fees",
@@ -660,6 +687,7 @@ export default function PropertyNavigator2({
             headerName: "Notes",
             sortable: isDesktop,
             flex: 3,
+            minWidth: 250,
             renderCell: (params) => {
               return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
             },
@@ -1420,47 +1448,49 @@ export default function PropertyNavigator2({
                   overflowX: "auto",
                 }}
               >
-                <DataGrid
-                  rows={propertyRentStatus}
-                  columns={rentStatusColumns}
-                  disableColumnMenu={!isDesktop}
-                  autoHeight
-                  initialState={{
-                    pagination: {
-                      paginationModel: {
-                        pageSize: 12,
-                      },
-                    },
-                  }}
-                  getRowId={(row) => row.rent_detail_index}
-                  pageSizeOptions={[12]}
-                  sx={{
-                    minWidth: "700px",
-                    "& .MuiDataGrid-cell": {
-                      justifyContent: "center",
-                      alignItems: "center",
-                    },
-                    "& .MuiDataGrid-columnHeader": {
-                      justifyContent: "center",
-                      alignItems: "center",
-                      color: "#3D5CAC",
-                      textAlign: "center",
-                    },
-                    "& .MuiDataGrid-columnHeaderTitle": {
-                      textAlign: "center",
-                      font: "bold",
-                      width: "100%",
-                    },
-                    "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
-                    "@media (maxWidth: 600px)": {
-                      "& .MuiDataGrid-columnHeaderTitle": {
+                <Grid item xs={12} sx={{overflowX: 'auto', }}>
+                    <DataGrid
+                    rows={propertyRentStatus}
+                    columns={rentStatusColumns}
+                    disableColumnMenu={!isDesktop}
+                    autoHeight
+                    initialState={{
+                        pagination: {
+                        paginationModel: {
+                            pageSize: 12,
+                        },
+                        },
+                    }}
+                    getRowId={(row) => row.rent_detail_index}
+                    pageSizeOptions={[12]}
+                    sx={{
+                        minWidth: "700px",
+                        "& .MuiDataGrid-cell": {
+                        justifyContent: "center",
+                        alignItems: "center",
+                        },
+                        "& .MuiDataGrid-columnHeader": {
+                        justifyContent: "center",
+                        alignItems: "center",
+                        color: "#3D5CAC",
+                        textAlign: "center",
+                        },
+                        "& .MuiDataGrid-columnHeaderTitle": {
+                        textAlign: "center",
+                        font: "bold",
                         width: "100%",
-                        margin: "0px",
-                        padding: "0px",
-                      },
-                    },
-                  }}
-                />
+                        },
+                        "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
+                        "@media (maxWidth: 600px)": {
+                        "& .MuiDataGrid-columnHeaderTitle": {
+                            width: "100%",
+                            margin: "0px",
+                            padding: "0px",
+                        },
+                        },
+                    }}
+                    />
+                </Grid>
               </CardContent>
             </Card>
           </Grid>
