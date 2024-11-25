@@ -33,19 +33,20 @@ import ClearIcon from '@mui/icons-material/Clear';
 import APIConfig from '../../../utils/APIConfig';
 
 import { useMaintenance } from "../../../contexts/MaintenanceContext";
+import { parse } from 'date-fns';
 
-export default function QuoteRequestForm({ setRefresh }) {
+export default function QuoteRequestEditForm({ setRefresh }) {
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const location = useLocation();
 	const navigate = useNavigate();
 	const { roleName, maintenanceRoutingBasedOnSelectedRole, getProfileId } = useUser();
 	let maintenanceItem;
 	let navigationParams;
-	const { quoteRequestView, setQuoteRequestView ,    maintenanceData: contextMaintenanceItem, 
-		navigateParams: contextNavigateParams,  maintenanceQuotes, setMaintenanceQuotes, setMaintenanceItemsForStatus, selectedStatus, setSelectedStatus, setSelectedRequestIndex, setAllMaintenanceData } = useMaintenance();
+	const { quoteRequestEditView, setQuoteRequestEditView , maintenanceData: contextMaintenanceItem, 
+		navigateParams: contextNavigateParams, currentQuoteIndex, maintenanceQuotes, setMaintenanceQuotes, setMaintenanceItemsForStatus, selectedStatus, setSelectedStatus, setSelectedRequestIndex, setAllMaintenanceData } = useMaintenance();
     
 
-	if (!isMobile && quoteRequestView) {
+	if (!isMobile && quoteRequestEditView) {
 		maintenanceItem = contextMaintenanceItem;
 		navigationParams = contextNavigateParams;
 	} else {
@@ -53,20 +54,17 @@ export default function QuoteRequestForm({ setRefresh }) {
 		navigationParams = location.state.navigateParams;
 	}
 
-	// console.log("maintenance quote from request form  - ", maintenanceQuotes);
+	const currentQuote = selectedStatus !== "New Requests" ? (maintenanceQuotes ? maintenanceQuotes[currentQuoteIndex] : null) : null;
 
-	const alreadyRequestedQuotes = selectedStatus !== "New Requests" ? (maintenanceQuotes ? maintenanceQuotes : []) : [];
-
-	const uniqueQuotes = alreadyRequestedQuotes.filter(
-		(quote, index, self) =>
-		  index === self.findIndex((q) => q.quote_business_id === quote.quote_business_id)
-	);
+    
+	console.log("maintenance quote from request form  - ", currentQuote);
 
 	useEffect(() => {
 		// console.log(alreadyRequestedQuotes);
 	}, []);
 
 	const [selectedImageList, setSelectedImageList] = useState([]);
+    const [parsedImageList, setParsedImageList] = useState(currentQuote?.quote_maintenance_images? JSON.parse(currentQuote?.quote_maintenance_images) : [])
 	const [additionalInfo, setAdditionalInfo] = useState('');
 	const [contactList, setContactList] = useState([]);
 	const [maintenanceContacts, setMaintenanceContacts] = useState(new Set());
@@ -104,9 +102,9 @@ export default function QuoteRequestForm({ setRefresh }) {
 
 		
 		setMaintenanceItemsForStatus(maintenanceItemsForStatus);
-                    setAllMaintenanceData(allMaintenanceData);
-                    setSelectedRequestIndex(maintenance_request_index);
-                    setSelectedStatus(status);
+        setAllMaintenanceData(allMaintenanceData);
+        setSelectedRequestIndex(maintenance_request_index);
+        setSelectedStatus(status);
 
 		if (isMobile) {
 			navigate('/maintenance/detail', {
@@ -122,7 +120,7 @@ export default function QuoteRequestForm({ setRefresh }) {
 			// sessionStorage.removeItem('navigateParams');
 			// sessionStorage.removeItem('desktopView');
 
-			setQuoteRequestView(false);
+			setQuoteRequestEditView(false);
 
 		}
 	}
@@ -154,12 +152,13 @@ export default function QuoteRequestForm({ setRefresh }) {
 		}
 	  
 		// Submit the quote request to vendors
-		const submitQuoteRequest = async (maintenanceContactIds) => {
+		const submitQuoteRequest = async () => {
 		  setShowSpinner(true);
 		  const formData = new FormData();
-		  formData.append('quote_maintenance_request_id', maintenanceItem.maintenance_request_uid);
+          formData.append('maintenance_quote_uid', currentQuote?.maintenance_quote_uid)
+          formData.append('quote_status', "REQUESTED")
+          formData.append('quote_maintenance_request_id', currentQuote?.quote_maintenance_request_id)
 		  formData.append('quote_pm_notes', additionalInfo);
-		  formData.append('quote_business_id', maintenanceContactIds); // maintenanceContactIds
 	  
 		  // Attach selected images to the request
 		  selectedImageList.forEach((file, index) => {
@@ -168,7 +167,7 @@ export default function QuoteRequestForm({ setRefresh }) {
 	  
 		  try {
 			const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {
-			  method: 'POST',
+			  method: 'PUT',
 			  body: formData,
 			});
 	  
@@ -176,7 +175,7 @@ export default function QuoteRequestForm({ setRefresh }) {
 			  console.log("Quote request sent successfully");
 			  
 			  // Call the function to change the maintenance request status
-			  await changeMaintenanceRequestStatus();
+			  // await changeMaintenanceRequestStatus();
 	  
 			  // Refresh Manager Maintenance view
 			  if (isMobile) {
@@ -243,13 +242,13 @@ export default function QuoteRequestForm({ setRefresh }) {
 				console.log("Error in sending announcement for requesting quotes:", error);
 				alert("We were unable to send a Text but we were able to send them a notification through the App");
 			}
-			};
+		};
 
 		// for (let contact of maintenanceContactIds)
 		
-		submitQuoteRequest(maintenanceContactIds); 	
+		submitQuoteRequest(); 	
 		
-	  };
+	};
 	  
 
 	function numImages() {
@@ -260,62 +259,6 @@ export default function QuoteRequestForm({ setRefresh }) {
 		}
 	}
 
-	function displayContactList() {
-		// console.log("displayContactList")
-		// console.log("contactList length", contactList.length)
-		// console.log("contactList", contactList)
-		if (contactList.length > 0) {
-			return contactList.map((contact, index) => (
-				<MenuItem key={index} value={contact}>
-					{' '}
-					{contact.contact_first_name}{' '}
-				</MenuItem>
-			));
-		} else {
-			return <MenuItem value={'Loading'}>Loading</MenuItem>;
-		}
-	}
-
-	useEffect(() => {
-		// console.log("get all maintenance workers")
-
-		const getMaintenanceWorkers = async (requestedQuotes) => {
-			setShowSpinner(true);
-			// const response = await fetch(`${APIConfig.baseURL.dev}/contactsMaintenance`)
-			// const response = await fetch(`${APIConfig.baseURL.dev}/contacts/${getProfileId()}`)
-			const response = await fetch(`${APIConfig.baseURL.dev}/contacts/ALL`);
-			const data = await response.json();
-			// const workers = data.Maintenance_Contacts.result
-
-			const workers = data.maintenance_businesses.result;
-
-			console.log('workers', workers);
-			//workers.filter((worker) => worker.business_name != "DoLittle Maintenance")
-			// Get a list of maint_business_uid values from requestedQuotes
-			const requestedBusinessUids = requestedQuotes.map((quote) => quote.contact_uid);
-			console.log('requestedBusinessUids', requestedBusinessUids);
-
-			// Filter out workers whose business_uid is in requestedBusinessUids
-
-			// const filteredWorkers = workers.filter(worker => !requestedBusinessUids.includes(worker.contact_uid));
-			// setContactList(filteredWorkers)
-
-			setContactList(workers);
-			setShowSpinner(false);
-		};
-
-		getMaintenanceWorkers(alreadyRequestedQuotes).then(() => setLoadingContacts(false));
-
-		let imageArray = JSON.parse(maintenanceItem.maintenance_images);
-
-		// setMaintenanceContacts(location.state?.quotes)
-
-		setDisplayImages(imageArray);
-	}, []);
-
-	// useEffect(() => {
-	//     console.log("selectedImageList", selectedImageList)
-	// }, [selectedImageList])
 
 	return (
 		<Box
@@ -431,7 +374,7 @@ export default function QuoteRequestForm({ setRefresh }) {
 														<Grid item key={index}>
 															<img
 																src={image}
-																alt={`Image ${index}`}
+																alt={`Img ${index}`}
 																style={{ width: '50px', height: '50px' }}
 															/>
 														</Grid>
@@ -570,103 +513,33 @@ export default function QuoteRequestForm({ setRefresh }) {
 						</Grid>
 
 						<Grid item xs={12} sx={{ width: '90%' }}>
-							{loadingContacts ? (
-								<Typography
-									sx={{
-										color: theme.typography.common.blue,
-										fontWeight: theme.typography.primary.fontWeight,
-										fontSize: theme.typography.mediumFont,
-									}}
-								>
-									Loading Contacts
-								</Typography>
-							) : (
-								<>
-									<Typography
-										sx={{
-											color: theme.typography.common.blue,
-											fontWeight: theme.typography.primary.fontWeight,
-											fontSize: theme.typography.mediumFont,
-										}}
-									>
-										Contacts
-									</Typography>
-									<Select
-										sx={{
-											backgroundColor: 'white',
-											borderColor: 'black',
-											borderRadius: '7px',
-										}}
-										size="small"
-										fullWidth
-										onChange={(e) => handleMaintenanceChange(e)}
-										value={''}
-										// renderValue={(selected) => selected.join(', ')}
-									>
-										{displayContactList()}
-									</Select>
-								</>
-							)}
-
-							{[...new Set(maintenanceContacts)].map((c) => {
-								return (
-									<Box sx={{ display: 'flex', alignItems: 'center' }} key={c.contact_uid}>
-										<Typography
-											sx={{
-												color: "#160449",
-												fontWeight: theme.typography.primary.fontWeight,
-												fontSize: theme.typography.mediumFont,
-											}}
-										>
-											{c.contact_first_name}
-										</Typography>
-										<IconButton
-											onClick={() => {
-												let contacts = new Set([...maintenanceContacts]);
-												contacts.delete(c);
-												setMaintenanceContacts(contacts);
-											}}
-										>
-											<ClearIcon />
-										</IconButton>
-									</Box>
-								);
-							})}
+                            <Typography
+                                sx={{
+                                    color: theme.typography.common.blue,
+                                    fontWeight: theme.typography.primary.fontWeight,
+                                    fontSize: theme.typography.mediumFont,
+                                }}
+                            >
+                                Contacts
+                            </Typography>
+                            <TextField
+                                sx={{
+                                    backgroundColor: 'white',
+                                    borderColor: 'black',
+                                    borderRadius: '7px',
+                                    '& .MuiInputBase-input.Mui-disabled': {
+                                        color: '#160449',
+                                        '-webkit-text-fill-color': '#160449'
+                                    },
+                                }}
+                                size="small"
+                                fullWidth
+                                disabled={true}
+                                value={currentQuote?.maint_business_name ? currentQuote?.maint_business_name : ''}
+                            />
 						</Grid>
-						{uniqueQuotes.length > 0 ? (
-							<Grid item xs={12} sx={{ width: '90%' }} marginY={"12px"}>
-								<Box sx={{ display: 'flex', flexWrap: 'wrap', flexDirection: "column"}}>
-									<Typography
-										sx={{
-											color: theme.typography.common.blue,
-											fontWeight: theme.typography.primary.fontWeight,
-											fontSize: theme.typography.mediumFont,
-										}}
-									>
-										Previously Requested Quotes:
-									</Typography>
-									<Box sx={{display: "flex", flexDirection : "row", marginTop: "5px"}}>
-										{uniqueQuotes.map((quoteRequested) => {
-											return (
-												<Box sx={{ paddingLeft: '5px', paddingRight: '5px' }}>
-													<Chip
-														label={quoteRequested.maint_business_name}
-														variant="outlined"
-														sx={{
-															color: "#160449",
-															// fontWeight: theme.typography.primary.fontWeight,
-															fontSize: theme.typography.mediumFont,
-															border: "1px solid"
-														}}
-													/>
-												</Box>
-											);
-										})}
-									</Box>
-								</Box>
-							</Grid>
-						) : null}
-
+                        
+                        {/* additionalInfo */}
 						<Grid item xs={12} sx={{ width: '90%' }}>
 							<Typography
 								sx={{
@@ -690,6 +563,33 @@ export default function QuoteRequestForm({ setRefresh }) {
 								fullWidth
 							/>
 						</Grid>
+
+                        {/* previous images */}
+                        <Grid item xs={12} sx={{width: "90%"}}>
+                            <Typography
+								sx={{
+									color: theme.typography.common.blue,
+									fontWeight: theme.typography.primary.fontWeight,
+									fontSize: theme.typography.mediumFont,
+								}}
+							>
+								Previous Quote Images
+							</Typography>
+                            <Grid container spacing={2} marginTop={"5px"}>
+                                {Array.isArray(parsedImageList) && parsedImageList.length > 0
+                                    ? parsedImageList.map((image, index) => (
+                                            <Grid item key={index}>
+                                                <img
+                                                    src={image}
+                                                    alt={`Img ${index}`}
+                                                    style={{ width: '70px', height: '70px' }}
+                                                />
+                                            </Grid>
+                                        ))
+                                    : null
+                                }
+                            </Grid>
+                        </Grid>
 						
 						{/* image uploader */}
 						<Grid item xs={12} sx={{ width: '90%' }}>
@@ -723,7 +623,7 @@ export default function QuoteRequestForm({ setRefresh }) {
 										fontSize: '14px',
 									}}
 								>
-									Send Quote Request
+									Update Quote
 								</Typography>
 							</Button>
 						</Grid>

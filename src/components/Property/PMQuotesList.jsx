@@ -395,24 +395,31 @@ function ContractCard(props) {
           <span style={{ fontWeight: "bold" }}>Message:</span> {`${announcements?.length ? announcements[0]?.announcement_msg : "No message"}`}
         </Typography>
       </Grid> */}
-      <Grid item xs={12}>
+      <Grid container spacing={2}>
+      <Grid container spacing={2}>
+  {contract.owners
+    ? JSON.parse(contract.owners).map((owner, index) => (
+        <Grid item xs={12} key={index}>
+          <Typography sx={{ color: "#160449", fontSize: "14px" }}>
+            <span style={{ fontWeight: "bold" }}>Owner:</span> {`${owner.owner_first_name} ${owner.owner_last_name}`}
+          </Typography>
+          <Typography sx={{ color: "#160449", fontSize: "14px" }}>
+            <span style={{ fontWeight: "bold" }}>Email:</span> {owner.owner_email}
+          </Typography>
         <Typography sx={{ color: "#160449", fontSize: "14px" }}>
-          <span style={{ fontWeight: "bold" }}>Owner:</span> {`${contract.owner_first_name} ${contract.owner_last_name}`}
+          <span style={{ fontWeight: "bold" }}>Phone Number:</span> {owner.owner_phone_number}
         </Typography>
-      </Grid>
-      <Grid item xs={12}>
-        <Typography sx={{ color: "#160449", fontSize: "14px" }}>
-          <span style={{ fontWeight: "bold" }}>Email:</span> {contract.owner_email}
-        </Typography>
-      </Grid>
+        </Grid>
+      ))
+    : (
+      <Typography>No owners available.</Typography>
+    )}
+</Grid>
+
+</Grid>
       <Grid item xs={12}>
         <Typography sx={{ color: "#160449", fontSize: "14px" }}>
           <span style={{ fontWeight: "bold" }}>Address:</span> {contract.property_address} {contract.property_city} {contract.property_state} {contract.property_zip}
-        </Typography>
-      </Grid>
-      <Grid item xs={12}>
-        <Typography sx={{ color: "#160449", fontSize: "14px" }}>
-          <span style={{ fontWeight: "bold" }}>Phone Number:</span> {contract.owner_phone_number}
         </Typography>
       </Grid>
       <Grid item xs={12}>

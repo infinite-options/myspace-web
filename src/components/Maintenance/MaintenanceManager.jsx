@@ -26,6 +26,7 @@ import EditMaintenanceItem from "./EditMaintenanceItem";
 import { gridColumnsTotalWidthSelector } from "@mui/x-data-grid";
 
 import { useMaintenance } from "../../contexts/MaintenanceContext";
+import QuoteRequestEditForm from "./Manager/QuoteRequestEditForm";
 
 export async function maintenanceManagerDataCollectAndProcess(maintenanceData, setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, selectedStatus,  setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData) {
   // console.log('is it in maintenanceManagerDataCollectAndProcess----');
@@ -192,7 +193,7 @@ export default function MaintenanceManager() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [cookies] = useCookies(["selectedRole"]);
   const selectedRole = cookies.selectedRole;
-  const { quoteRequestView, quoteAcceptView, rescheduleView, payMaintenanceView, editMaintenanceView } = useMaintenance();
+  const { quoteRequestView, quoteRequestEditView, quoteAcceptView, rescheduleView, payMaintenanceView, editMaintenanceView } = useMaintenance();
 
   const [isAddingNewMaintenance, setIsAddingNewMaintenance] = useState(false);
   const [showNewMaintenance, setshowNewMaintenance] = useState(false);
@@ -605,6 +606,10 @@ export default function MaintenanceManager() {
               ) : quoteRequestView && selectedRole === "MANAGER" ? (
                 <>
                   <QuoteRequestForm setRefresh = {setRefresh}/>
+                </>
+              ) : quoteRequestEditView && selectedRole === "MANAGER"? (
+                <>
+                  <QuoteRequestEditForm setRefresh={setRefresh} />
                 </>
               ) : quoteAcceptView && selectedRole === "MANAGER" ? (
                 <>
