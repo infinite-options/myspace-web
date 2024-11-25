@@ -846,35 +846,37 @@ export default function TenantApplicationEdit(props) {
   };
 
   function handleWithdrawLease() {
-    //set oldLease.lease_renew_status to withdraw
 
-    const withdrawPrevLeaseData = new FormData();
-    withdrawPrevLeaseData.append("lease_uid", props.currentLease.lease_uid);
-    withdrawPrevLeaseData.append("lease_renew_status", "WITHDRAWN");
+    if(lease[0].lease_status === "RENEW NEW"){
+      const withdrawCurrentLeaseData = new FormData();    
+      withdrawCurrentLeaseData.append("lease_uid", props.currentLease.lease_uid);    
+      withdrawCurrentLeaseData.append("lease_renew_status", "WITHDRAWN");            
 
-    const withdrawPrevLeaseResponse = fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
-      method: "PUT",
-      body: withdrawPrevLeaseData,
-    });
+      // withdrawLeaseData.forEach((value, key) => {
+      //   console.log(`${key}: ${value}`);
+      // });
 
-    const withdrawLeaseData = new FormData();
-    if (lease[0].lease_uid) {
-      withdrawLeaseData.append("lease_uid", lease[0].lease_uid);
-    } else {
-      withdrawLeaseData.append("lease_property_id", property.property_uid);
+      const withdrawCurrentLeaseResponse = fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+        method: "PUT",
+        body: withdrawCurrentLeaseData,
+      });
+      
     }
-    withdrawLeaseData.append("lease_status", "RENEW WITHDRAWN");
 
-    withdrawLeaseData.forEach((value, key) => {
-      console.log(`${key}: ${value}`);
-    });
+    const withdrawNewLeaseData = new FormData();    
+    withdrawNewLeaseData.append("lease_uid", lease[0].lease_uid);    
+    withdrawNewLeaseData.append("lease_status", "WITHDRAWN");            
 
-    const withdrawLeaseResponse = fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+    // withdrawLeaseData.forEach((value, key) => {
+    //   console.log(`${key}: ${value}`);
+    // });
+
+    const withdrawNewLeaseResponse = fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
       method: "PUT",
-      body: withdrawLeaseData,
+      body: withdrawNewLeaseData,
     });
 
-    Promise.all([withdrawPrevLeaseResponse, withdrawLeaseResponse]).then((values) => {
+    Promise.all([withdrawNewLeaseResponse]).then((values) => {
       //navigate("/listings"); // send success data back to the propertyInfo page
       if (props.from === "PropertyInfo") {
         props.setRightPane({ type: "listings" });
@@ -886,6 +888,8 @@ export default function TenantApplicationEdit(props) {
         console.log("set right pane to nothing");
       }
     });
+  }
+
   }
 
   function formatDate(dateString) {
