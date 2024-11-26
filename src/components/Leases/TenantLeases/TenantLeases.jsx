@@ -598,7 +598,7 @@ function TenantLeases(props) {
                 {" "}
                 {/* Increased padding */}
                 
-                <Grid container spacing={3} justifyContent="space-between">
+                <Grid container spacing={3} rowGap={6} justifyContent="space-between">
                   {" "}
                   {/* Increased spacing */}
                   <Grid item xs={2}>
@@ -619,6 +619,12 @@ function TenantLeases(props) {
                       {lease?.lease_m2m == null ? "Not Specified" : ""}
                       {lease?.lease_m2m === 1 ? "Renews Month-to-Month" : ""}
                       {lease?.lease_m2m === 0 ? "Renews Automatically" : ""}
+                    </Typography>
+                  </Grid>                                    
+                  <Grid item xs={4}>
+                    <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Lease End Notice Period</Typography>
+                    <Typography>
+                      {lease?.lease_end_notice_period != null ? `${lease?.lease_end_notice_period} days` : "Not Specified"}                      
                     </Typography>
                   </Grid>                                    
                 </Grid>

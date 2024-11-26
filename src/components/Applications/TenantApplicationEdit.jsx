@@ -791,13 +791,16 @@ export default function TenantApplicationEdit(props) {
     // } else {
     //     console.log("tenant updating / renewing new lease");
     // }
-    if (lease[0]?.lease_uid == null || status === null || status === "" || status === "RENEW NEW" || status === "RENEW PROCESSING" || status === "WITHDRAWN" || status === "REJECTED" || status === "REFUSED") {
+    if (lease[0]?.lease_uid == null || status === null || status === "" || status === "WITHDRAWN" || status === "REJECTED" || status === "REFUSED") {
       if (props.setFirstPage) {
         props.setFirstPage(false);
       }
       await handleApplicationSubmit();
-    } else {
+    } else if(status === "RENEW NEW" || status === "RENEW PROCESSING" || status === "NEW" || status === "PROCESSING"  ){
       await updateLeaseData(); // Trigger the PUT request to save data
+    } else {
+      // await updateLeaseData(); 
+      alert("Invalid status");
     }
 
     // Dhyey Code
