@@ -216,7 +216,7 @@ const TenantDashboard = () => {
         handleSelectProperty(firstProperty);
       }
 
-    }else if(selectedProperty){
+    } else if (selectedProperty) {
       // console.log("--DEBUG property - ", propertyListingData)
       const firstProperty = propertyListingData.find((property) => property.property_uid === selectedProperty.property_id);
       // console.log("first property", firstProperty);
@@ -523,7 +523,7 @@ const TenantDashboard = () => {
         </Backdrop>
       ) : (
         <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
-          <Grid container spacing={isMobile ? 0 : 3}>
+          <Grid container spacing={8} rowGap={2} sx={{alignItems:"stretch"}}>
             {/* Top Section: Welcome Message and Search Icon */}
             {(!isMobile || !viewRHS) && (
               <Grid item xs={12} sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
@@ -556,32 +556,32 @@ const TenantDashboard = () => {
               </Grid>
             )}
 
-            <Grid container spacing={isMobile ? 2 : 3}>
-              {/* Left-hand side: Account Balance */}
-              <Grid item xs={12} md={4} sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
-                <TenantAccountBalance
-                  isMobile={isMobile}
-                  viewRHS={viewRHS}
-                  setViewRHS={setViewRHS}
-                  propertyData={propertyListingData}
-                  selectedProperty={selectedProperty}
-                  firstPage={firstPage}
-                  setSelectedProperty={handleSelectProperty}
-                  leaseDetails={leaseDetails}
-                  leaseDetailsData={leaseDetailsData}
-                  onPaymentHistoryNavigate={handlePaymentHistoryNavigate}
-                  setRightPane={setRightPane}
-                  balanceDetails={balanceDetails}
-                  handleMakePayment={handleMakePayment}
-                  sx={{ flex: 1 }} // Ensures this grows to match the height of the right-hand side
-                />
-              </Grid>
+            {/* Left-hand side: Account Balance */}
+            <Grid item xs={12} md={4} sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
+              <TenantAccountBalance
+                isMobile={isMobile}
+                viewRHS={viewRHS}
+                setViewRHS={setViewRHS}
+                propertyData={propertyListingData}
+                selectedProperty={selectedProperty}
+                firstPage={firstPage}
+                setSelectedProperty={handleSelectProperty}
+                leaseDetails={leaseDetails}
+                leaseDetailsData={leaseDetailsData}
+                onPaymentHistoryNavigate={handlePaymentHistoryNavigate}
+                setRightPane={setRightPane}
+                balanceDetails={balanceDetails}
+                handleMakePayment={handleMakePayment}
+                sx={{ flex: 1 }} // Ensures this grows to match the height of the right-hand side
+              />
+            </Grid>
 
-              {/* Right-hand side */}
-              <Grid item xs={12} md={8}>
+            {/* Right-hand side */}
+            <Grid item xs={12} md={8} sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
+              {/* <Grid container rowGap={5} sx={{alignItems:"stretch"}}> */}
                 {/* Top section: Announcements */}
                 {(!isMobile || !viewRHS) && (
-                  <Grid item xs={12} sx={{ paddingLeft: "15px" }}>
+                  <Grid item xs={12}>
                     <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", paddingBottom: "40px", borderRadius: "10px", height: "100%" }}>
                       <Grid
                         container
@@ -655,7 +655,7 @@ const TenantDashboard = () => {
                 )}
 
                 {/* Bottom section containing Lease, Maintenance, and Management Details - Abhinav here layouting, margin 1px */}
-                <Grid container spacing={3} sx={{ paddingLeft: "15px", paddingTop: "15px" }}>
+                <Grid container spacing={8} rowGap={2} sx={{ flex: 1 }} marginTop={1}>
                   {rightPane?.type ? (
                     /* Render the rightPane component if available */
                     <Grid item xs={12} sx={{ flex: 1 }} ref={rightPaneRef} marginBottom={isMobile ? "40px" : "0px"}>
@@ -664,7 +664,7 @@ const TenantDashboard = () => {
                   ) : (
                     <>
                       {/* Lease Details: Aligns with Account Balance */}
-                      <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column", flex: 1, paddingRight: "15px" }}>
+                      <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
                         <LeaseDetails
                           isMobile={isMobile}
                           setViewRHS={setViewRHS}
@@ -677,9 +677,8 @@ const TenantDashboard = () => {
                       </Grid>
 
                       {/* Maintenance and Management Details: Match height with Lease Details */}
-                      <Grid item xs={12} md={6} sx={{ marginBottom: isMobile ? "50px" : "0px" }}>
-                        <Grid>
-                          <Grid item xs={12}>
+                      <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
+                          <Grid item xs={12} md={12} sx={{flex:1}}>
                             <MaintenanceDetails
                               maintenanceRequests={filteredMaintenanceRequests}
                               selectedProperty={selectedProperty}
@@ -688,18 +687,19 @@ const TenantDashboard = () => {
                               setRightPane={setRightPane}
                               isMobile={isMobile}
                               setViewRHS={setViewRHS}
+                              sx={{flex:1}}
                             />
                           </Grid>
-                          <Grid item xs={12} sx={{ marginTop: "15px" }}>
-                            <ManagementDetails leaseDetails={leaseDetails} />
+                          <Grid item xs={12} md={12} sx={{flex:1}} marginTop={10}>
+                            <ManagementDetails leaseDetails={leaseDetails} sx={{flex:1}}/>
                           </Grid>
                         </Grid>
-                      </Grid>
                     </>
                   )}
                 </Grid>
-              </Grid>
+              {/* </Grid> */}
             </Grid>
+            {/* </Grid> */}
           </Grid>
         </Container>
       )}
@@ -985,21 +985,21 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
 
   return (
     <Paper
-      elevation={3}
       sx={{
-        padding: "20px",
+        // padding: "20px",
         backgroundColor: "#f0f0f0",
         position: "relative",
-        // height: "95%",
-        flex: 1,
+        height: "100%",
+        width: "100%",
         borderRadius: "7px",
+        flex : 1,
         // transition: 'transform 0.6s',
         // transformStyle: 'preserve-3d',
         // position: 'relative',
         // transform: isFlipped ? 'rotateY(180deg)':'rotateY(0deg)',
       }}
     >
-      <Typography variant='h6' sx={{ fontWeight: "bold", color: "#160449" }}>
+      <Typography variant='h6' sx={{ fontWeight: "bold", color: "#160449", textAlign:"center" }}>
         {isFlipped ? "Property Details" : "Lease Details"}
       </Typography>
 
@@ -1268,7 +1268,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           ACTIVE
                         </Typography>
                         {leaseDetails?.lease_renew_status &&
-                          (leaseDetails?.lease_renew_status === "PM RENEW REQUESTED" || leaseDetails?.lease_renew_status.includes("RENEW REQUESTED") || leaseDetails?.lease_renew_status.includes("RENEWED") ) && (
+                          (leaseDetails?.lease_renew_status === "PM RENEW REQUESTED" || leaseDetails?.lease_renew_status.includes("RENEW REQUESTED") || leaseDetails?.lease_renew_status.includes("RENEWED")) && (
                             <Typography
                               sx={{
                                 color: leaseDetails?.lease_renew_status?.includes("RENEW") ? "#FF8A00" : "#A52A2A",
@@ -1377,7 +1377,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                         fontSize: theme.typography.smallFont,
                       }}
                     >
-                      {leaseDetails?.lease_end_notice_period ? `${leaseDetails?.lease_end_notice_period} days` : 'Not Specified' }                      
+                      {leaseDetails?.lease_end_notice_period ? `${leaseDetails?.lease_end_notice_period} days` : 'Not Specified'}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -1567,7 +1567,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                       </Button>
                     </Grid>
                   )
-                )}                
+                )}
 
                 {relatedLease && (relatedLease.lease_status === "RENEW PROCESSING" || relatedLease.lease_status === "APPROVED") && (
                   // <Button
@@ -1618,7 +1618,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           whiteSpace: "nowrap",
                           //   marginLeft: "1%", // Adjusting margin for icon and text
                         }}
-                      >                        
+                      >
                         {relatedLease.lease_status === "RENEW PROCESSING" ? "View Renewal" : ""}
                         {relatedLease.lease_status === "APPROVED" ? "View Renewed Lease" : ""}
                       </Typography>
@@ -1819,6 +1819,7 @@ export const FeesSmallDataGrid = ({ data }) => {
   }));
 
   return (
+    <Box sx={{width:"98%"}}>
     <DataGrid
       rows={rowsWithId}
       columns={columns}
@@ -1835,6 +1836,7 @@ export const FeesSmallDataGrid = ({ data }) => {
       rowHeight={35}
       hideFooter={true} // Display footer with pagination
     />
+    </Box>
   );
 };
 
@@ -1881,6 +1883,7 @@ export const DocumentSmallDataGrid = ({ data, handleFileClick }) => {
   }));
 
   return (
+    <Box sx={{width:"98%"}}>
     <DataGrid
       rows={rowsWithId}
       columns={DocColumn}
@@ -1888,8 +1891,9 @@ export const DocumentSmallDataGrid = ({ data, handleFileClick }) => {
       autoHeight
       rowHeight={35}
       sx={{
+        width: "100%",
         marginY: "5px",
-        overflow: "auto",
+        overflow: "hidden",
         "& .MuiDataGrid-columnHeaders": {
           minHeight: "35px !important",
           maxHeight: "35px !important",
@@ -1897,6 +1901,7 @@ export const DocumentSmallDataGrid = ({ data, handleFileClick }) => {
         },
       }}
     />
+    </Box>
   );
 };
 
@@ -1937,14 +1942,10 @@ const MaintenanceDetails = ({ maintenanceRequests, onPropertyClick, selectedProp
 
   return (
     <Paper
-      elevation={3}
       sx={{
-        padding: "20px",
         backgroundColor: "#f0f0f0",
         borderRadius: "8px",
         fontFamily: "Source Sans Pro",
-        maxWidth: "400px",
-        margin: "auto",
       }}
     >
       {/* Header with Title and Add Button */}
@@ -2024,12 +2025,14 @@ const ManagementDetails = ({ leaseDetails }) => {
 
   return (
     <Paper
-      elevation={3}
       sx={{
-        padding: "24px",
+        // padding: "24px",
         backgroundColor: "#f0f0f0",
-        margin: "auto",
-        borderRadius: "8px",
+        // margin: "auto",
+        height: "100%",
+        width: "100%",
+        borderRadius: "7px",
+        flexGrow: 1 
       }}
     >
       {/* Title */}
@@ -2038,7 +2041,7 @@ const ManagementDetails = ({ leaseDetails }) => {
       </Typography>
 
       {/* Business Details */}
-      <Stack spacing={2} sx={{ marginTop: "10px" }}>
+      <Stack spacing={2} sx={{ margin: "10px" }}>
         <Stack direction='row' justifyContent='space-between'>
           <Typography>Name:</Typography>
           <Typography>{business_name || "N/A"}</Typography>
@@ -2109,7 +2112,7 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
 
   return (
     <Paper
-      elevation={3}
+      // elevation={3}
       sx={{
         padding: "20px",
         backgroundColor: "#f0f0f0",
