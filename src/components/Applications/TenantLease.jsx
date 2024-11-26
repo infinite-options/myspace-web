@@ -969,6 +969,122 @@ const TenantLease = () => {
     return utilitiesArray;
   };
 
+
+  const handleCreateNewLease = async () => {
+    //POST call
+    try {
+      // setShowMissingFieldsPrompt(false);
+      if (!checkRequiredFields()) {
+        // console.log("check here -- error no fees");
+        // setShowMissingFieldsPrompt(true);
+        openDialog("Error", `Please fill out all required fields.`, "error");
+        return;
+      }
+      setShowSpinner(true);
+
+      const leaseApplicationFormData = new FormData();
+
+      console.log("---insdie DEBUG Lease fees - ", fees)
+            
+      leaseApplicationFormData.append("lease_status", "PROCESSING");            
+      leaseApplicationFormData.append("lease_property_id", application.lease_property_id);      
+      leaseApplicationFormData.append("tenant_uid", application?.tenant_uid);
+      leaseApplicationFormData.append("lease_assigned_contacts", application?.lease_assigned_contacts);
+      leaseApplicationFormData.append("lease_application_date", application?.lease_application_date);
+      leaseApplicationFormData.append("lease_effective_date", startDate.format("MM-DD-YYYY"));      
+      leaseApplicationFormData.append("lease_start", startDate.format("MM-DD-YYYY"));
+      leaseApplicationFormData.append("lease_end", endDate.format("MM-DD-YYYY"));
+      leaseApplicationFormData.append("lease_fees", JSON.stringify(fees));
+      leaseApplicationFormData.append("lease_move_in_date", moveInDate.format("MM-DD-YYYY"));
+      leaseApplicationFormData.append("lease_end_notice_period", endLeaseNoticePeriod);
+      leaseApplicationFormData.append("lease_m2m", leaseContinueM2M === true ? 1 : 0);                  
+      leaseApplicationFormData.append("lease_documents", JSON.stringify(leaseDocuments));
+      
+
+      const hasMissingType = !checkFileTypeSelected();
+      // console.log("HAS MISSING TYPE", hasMissingType);
+
+      if (hasMissingType) {
+        setShowMissingFileTypePrompt(true);
+        setShowSpinner(false);
+        return;
+      }
+
+      if (leaseFiles.length) {
+        const documentsDetails = [];
+        [...leaseFiles].forEach((file, i) => {
+          leaseApplicationFormData.append(`file_${i}`, file, file.name);
+          const fileType = leaseFileTypes[i] || "";
+          const documentObject = {
+            // file: file,
+            fileIndex: i, //may not need fileIndex - will files be appended in the same order?
+            fileName: file.name, //may not need filename
+            contentType: fileType,
+          };
+          documentsDetails.push(documentObject);
+        });
+        leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
+      }
+
+      // for (let [key, value] of leaseApplicationFormData.entries()) {
+      //   console.log(key, value);
+      // }
+
+      // await fetch(
+      //   `http://localhost:4000/leaseApplication`,
+      //   {
+      //     method: "PUT",
+      //     body: leaseApplicationFormData
+      //   }
+      // );
+      
+        // await putUtilitiesData();
+      const updatedUtilitiesArray = createUpdatedUtilitesArray(mappedUtilitiesPaidBy);
+      const utilitiesJSONString = JSON.stringify(updatedUtilitiesArray);
+      leaseApplicationFormData.append("lease_utilities", utilitiesJSONString);
+
+      leaseApplicationFormData.append("lease_adults", application.lease_adults);
+      leaseApplicationFormData.append("lease_children", application.lease_children);
+      leaseApplicationFormData.append("lease_pets", application.lease_pets);
+      leaseApplicationFormData.append("lease_vehicles", application.lease_vehicles);
+      
+      await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+        method: "POST",
+        body: leaseApplicationFormData,
+      });
+
+      const receiverPropertyMapping = {
+        [application.tenant_uid]: [property.property_uid],
+      };
+
+      await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          announcement_title: "New Lease created",
+          announcement_msg: "You have a new lease to be approved for your property",
+          announcement_sender: getProfileId(),
+          announcement_date: new Date().toDateString(),
+          // announcement_properties: property.property_uid,
+          announcement_properties: JSON.stringify(receiverPropertyMapping),
+          announcement_mode: "LEASE",
+          announcement_receiver: [application.tenant_uid],
+          announcement_type: ["Email", "Text"],
+        }),
+      });
+      navigate("/managerDashboard");
+      setShowSpinner(false);
+    } catch (error) {
+      // console.log("Error Creating Lease:", error);
+      alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
+
+      navigate("/managerDashboard");
+      setShowSpinner(false);
+    }
+  };
+
   const handleCreateLease = async () => {
     try {
       // setShowMissingFieldsPrompt(false);
@@ -2316,8 +2432,10 @@ const TenantLease = () => {
           <Button
             // onClick={application?.lease_status === "NEW" ? handleCreateLease : handleRenewLease}
             onClick={() => {
-              if (application?.lease_status === "NEW" || application?.lease_status === "REJECTED" || application?.lease_status === "REFUSED" || application?.lease_status === "WITHDRAWN" || application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW NEW" || application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "APPROVED" ) {
-                handleCreateLease();
+              if (application?.lease_status === "NEW" || application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW NEW" || application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "APPROVED" ) {
+                handleCreateLease(); //PUT
+              } else if(application?.lease_status === "REJECTED" || application?.lease_status === "REFUSED" || application?.lease_status === "WITHDRAWN"){
+                handleCreateNewLease(); //POST
               } else if (application?.lease_status === "ACTIVE" || application?.lease_status === "ACTIVE M2M") {
                 handleRenewLease();
               }
