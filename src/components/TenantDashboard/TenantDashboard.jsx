@@ -999,7 +999,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
         // transform: isFlipped ? 'rotateY(180deg)':'rotateY(0deg)',
       }}
     >
-      <Typography variant='h6' sx={{ fontWeight: "bold", color: "#160449", textAlign:"center" }}>
+      <Typography variant='h6' sx={{ fontWeight: "bold", color: "#160449", textAlign:"center", marginTop: "10px", }}>
         {isFlipped ? "Property Details" : "Lease Details"}
       </Typography>
 
@@ -1255,7 +1255,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                   </Typography>
                 </Grid>
                 <Grid item xs={7}>
-                  <Box display='flex' alignItems='center' justifyContent={"space-between"}>
+                  <Box display='flex' alignItems='center' justifyContent={"space-between"} sx={{marginRight:"10px"}}>
                     {leaseDetails?.lease_status === "ACTIVE" || leaseDetails?.lease_status === "ACTIVE M2M" ? (
                       <>
                         <Typography
@@ -1413,7 +1413,8 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                 </Grid>
               )}
 
-              <Grid container item spacing={2} sx={{ marginTop: "3px", marginBottom: "5px" }}>
+              <Grid container item spacing={2} sx={{ marginTop: "3px", marginBottom: "5px", marginRight:"10px", }}>
+                {relatedLease?.lease_status === "RENEW PROCESSING" && 
                 <Grid
                   item
                   xs={relatedLease?.lease_status === "RENEW PROCESSING" ? 4 : 6}
@@ -1435,8 +1436,8 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                       cursor: "pointer",
                       paddingX: "10px",
                       textTransform: "none",
-                      maxWidth: "120px", // Fixed width for the button
-                      maxHeight: "100%",
+                      // maxWidth: "120px", // Fixed width for the button
+                      // maxHeight: "100%",
                     }}
                     size='small'
                   >
@@ -1454,6 +1455,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                     </Typography>
                   </Button>
                 </Grid>
+                }
 
                 {relatedLease?.lease_status === "RENEW NEW" || relatedLease?.lease_status === "RENEW PROCESSING" ? (
                   // <Button
@@ -1491,8 +1493,8 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                         cursor: "pointer",
                         paddingX: "10px",
                         textTransform: "none",
-                        width: "100%", // Fixed width for the button
-                        maxHeight: "100%",
+                        // width: "100%", // Fixed width for the button
+                        // maxHeight: "100%",
                       }}
                       size='small'
                     >
@@ -1547,8 +1549,8 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           cursor: "pointer",
                           paddingX: "10px",
                           textTransform: "none",
-                          width: "100%", // Fixed width for the button
-                          maxHeight: "100%",
+                          // width: "100%", // Fixed width for the button
+                          // maxHeight: "100%",
                         }}
                         size='small'
                       >
@@ -1604,8 +1606,8 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                         cursor: "pointer",
                         paddingX: "10px",
                         textTransform: "none",
-                        maxWidth: "130px", // Fixed width for the button
-                        maxHeight: "100%",
+                        // maxWidth: "130px", // Fixed width for the button
+                        // maxHeight: "100%",
                       }}
                       size='small'
                     >
