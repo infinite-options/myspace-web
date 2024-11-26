@@ -4,6 +4,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddIcon from "@mui/icons-material/Add";
 import theme from "../../theme/theme";
 import { Close } from "@mui/icons-material";
+import { useMediaQuery } from "@mui/material";
 
 const formatUtilityName = (name) => name || "";
 
@@ -11,40 +12,33 @@ const UtilityComponent = ({ newUtilities, utilities, utilitiesMap, handleNewUtil
   console.log("utilcomp", newUtilities);
   return (
     <Grid container sx={{ marginBottom: "20px", marginTop: "5px" }} spacing={4}>
-      <Grid item xs={5} />
-      <Grid item xs={7}>
+      <Grid item xs={4} md={3} />
+      <Grid item xs={7} md={7}>
         <Grid container sx={{ alignItems: "center", justifyContent: "center" }}>
-          <Grid item xs={6} md={5}>
-            <Typography sx={{ fontSize: "14px", color: "#3D5CAC", fontWeight: "bold" }}>Current</Typography>
+          <Grid item xs={6} md={6}>
+            <Typography sx={{ fontSize: "14px", color: "#3D5CAC", fontWeight: "bold", textAlign: "center" }}>Current</Typography>
           </Grid>
           <Grid item xs={6} md={6}>
-            <Typography sx={{ fontSize: "14px", color: "#3D5CAC", fontWeight: "bold" }}>Proposed</Typography>
+            <Typography sx={{ fontSize: "14px", color: "#3D5CAC", fontWeight: "bold", textAlign: "center" }}>Proposed</Typography>
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={1} />
-      <Grid item xs={4}>
-        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC" }}>Utilities Responsibility</Typography>
+      {/* <Grid item xs={1} /> */}
+      <Grid item xs={4} md={3}>
+        <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", textAlign: "right" }}>Responsibility</Typography>
       </Grid>
-      <Grid item xs={3}>
-        <Grid container>
-          <Grid item xs={4} md={4}>
-            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Owner</Typography>
-          </Grid>
-          <Grid item xs={4} md={4}>
-            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Tenant</Typography>
-          </Grid>
-        </Grid>
+      <Grid item xs={3.5} md={3.5}>
+        <Box sx={{ display: "flex", justifyContent: "space-around" }}>
+          <Typography sx={{ fontSize: "14px", color: "#3D5CAC", textAlign: "right" }}>Owner</Typography>
+          <Typography sx={{ fontSize: "14px", color: "#3D5CAC", textAlign: "left" }}>Tenant</Typography>
+        </Box>
       </Grid>
-      <Grid item xs={3}>
-        <Grid container sx={{ marginBottom: "5px" }}>
-          <Grid item xs={4} md={4}>
-            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Owner</Typography>
-          </Grid>
-          <Grid item xs={4} md={4}>
-            <Typography sx={{ fontSize: "14px", color: "#3D5CAC" }}>Tenant</Typography>
-          </Grid>
-        </Grid>
+
+      <Grid item xs={3.5} md={3.5}>
+        <Box sx={{ display: "flex", justifyContent: "space-around" }}>
+          <Typography sx={{ fontSize: "14px", color: "#3D5CAC", textAlign: "right" }}>Owner</Typography>
+          <Typography sx={{ fontSize: "14px", color: "#3D5CAC", textAlign: "left" }}>Tenant</Typography>
+        </Box>
       </Grid>
 
       {/* utilities map */}
@@ -54,33 +48,54 @@ const UtilityComponent = ({ newUtilities, utilities, utilitiesMap, handleNewUtil
           const utility = utilityIndex !== -1 ? utilities[utilityIndex] : null;
           return (
             <React.Fragment key={newUtility.utility_type_id}>
-              <Grid item xs={2} />
-              <Grid item xs={3} container alignItems='center'>
-                <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC" }}>{formatUtilityName(utilitiesMap.get(newUtility.utility_type_id))}</Typography>
+              <Grid item xs={4} md={3} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+                <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", textAlign: "right" }}>
+                  {formatUtilityName(utilitiesMap.get(newUtility.utility_type_id))}
+                </Typography>
               </Grid>
-              <Grid item xs={3}>
+
+              <Grid item xs={3.5} md={3.5} sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 {utility !== null && (
                   <RadioGroup
                     row
                     aria-labelledby='demo-row-radio-buttons-group-label'
                     name='row-radio-buttons-group'
                     value={utility.utility_payer_id === "050-000280" ? "owner" : "tenant"}
+                    sx={{ width: "100%", justifyContent: "space-around", alignItems: "center" }}
                   >
-                    <FormControlLabel sx={{ marginLeft: "0px" }} value='owner' control={<Radio size='small' sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />} />
-                    <FormControlLabel sx={{ marginLeft: "0px" }} value='tenant' control={<Radio size='small' sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />} />
+                    <FormControlLabel
+                      sx={{ marginLeft: "0px" }}
+                      value='owner'
+                      control={<Radio size='small' sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />}
+                    />
+                    <FormControlLabel
+                      sx={{ marginLeft: "0px" }}
+                      value='tenant'
+                      control={<Radio size='small' sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />}
+                    />
                   </RadioGroup>
                 )}
               </Grid>
-              <Grid item xs={3}>
+
+              <Grid item xs={3.5} md = {3.5} sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <RadioGroup
                   row
                   aria-labelledby='demo-row-radio-buttons-group-label'
                   name='row-radio-buttons-group'
                   value={newUtility.utility_payer_id === "050-000280" ? "owner" : "tenant"}
                   onChange={(e) => handleNewUtilityChange(e, newUtility, index)}
+                  sx={{ width: "100%", justifyContent: "space-around", alignItems: "center" }}
                 >
-                  <FormControlLabel sx={{ marginLeft: "0px" }} value='owner' control={<Radio size='small' sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />} />
-                  <FormControlLabel sx={{ marginLeft: "0px" }} value='tenant' control={<Radio size='small' sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />} />
+                  <FormControlLabel
+                    sx={{ marginLeft: "0px" }}
+                    value='owner'
+                    control={<Radio size='small' sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />}
+                  />
+                  <FormControlLabel
+                    sx={{ marginLeft: "0px" }}
+                    value='tenant'
+                    control={<Radio size='small' sx={{ "&.Mui-checked": { color: "#3D5CAC" } }} />}
+                  />
                 </RadioGroup>
               </Grid>
             </React.Fragment>
@@ -100,6 +115,7 @@ const UtilitiesManager = ({ newUtilities, setNewUtilities, utils, utilitiesMap, 
   const [selectedAddUtil, setSelectedAddUtil] = useState(null);
   const [newlyAddedUtils, setNewlyAddedUtils] = useState(null);
   const [currentRemainingUtils, setCurrentRemainingUtils] = useState(null);
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleOpen = (e) => {
     e.preventDefault();
@@ -197,11 +213,12 @@ const UtilitiesManager = ({ newUtilities, setNewUtilities, utils, utilitiesMap, 
                     color: "#160449",
                     fontWeight: theme.typography.primary.fontWeight,
                     fontSize: theme.typography.small,
-                    textAlign: "center",
-                    paddingBottom: "10px",
+                    width: "100%",
+                    textAlign: isMobile ? "left" : "center",
+                    addingBottom: "10px",
                     paddingTop: "5px",
                     flexGrow: 1,
-                    paddingLeft: "50px",
+                    paddingLeft: isMobile ? "5px" : "50px",
                   }}
                 >
                   Utilities
