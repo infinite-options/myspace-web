@@ -257,16 +257,12 @@ const TenantDashboard = () => {
 
       // Find the correct lease to set as relatedLease
       // console.log("233 - leasesForProperty - ", leasesForProperty);
-      if (leasesForProperty.length > 1) {
-        const firstLease = leasesForProperty[0];
-        // const secondLease = leasesForProperty[1];
-        const secondLease = leasesForProperty[leasesForProperty.length - 1];
-
-        const activeLease = leasesForProperty.find((lease) => lease.lease_status === "ACTIVE");
+      if (leasesForProperty.length > 1) {        
+        // const activeLease = leasesForProperty.find((lease) => lease.lease_status === "ACTIVE");
         // const renewalLease = leasesForProperty.find(lease => (lease.lease_status === "RENEW NEW" || lease.lease_status === "RENEW WITHDRAWN" || lease.lease_status === "RENEW PROCESSING"));
         const renewalLease = leasesForProperty.find((lease) => lease.lease_status === "RENEW NEW" || lease.lease_status === "RENEW PROCESSING" || lease.lease_status === "APPROVED");
 
-        setLeaseDetails(activeLease || null);
+        // setLeaseDetails(activeLease || null);
         setRelatedLease(renewalLease || null);
         // console.log("first lease", firstLease.lease_status, firstLease.lease_renew_status);
         // console.log("second lease", secondLease);
@@ -308,7 +304,26 @@ const TenantDashboard = () => {
   };
 
   const updateLeaseDetails = (propertyUid) => {
-    const leaseForProperty = leaseDetailsData.find((ld) => ld.property_uid === propertyUid);
+    const allLeasesForProperty = leaseDetailsData.filter((ld) => ld.property_uid === propertyUid);
+
+    let leaseForProperty = null;
+    if(allLeasesForProperty?.length > 1){
+      const newLease = allLeasesForProperty.find((ld) => ld.lease_status === "NEW");
+      const activeLease = allLeasesForProperty.find((ld) => ld.lease_status === "ACTIVE");
+      if(newLease != null){
+        leaseForProperty = newLease;
+      }else {
+        if(activeLease != null){
+          leaseForProperty = activeLease;
+        } else {
+          leaseForProperty = allLeasesForProperty[allLeasesForProperty?.length - 1];
+        }
+      }
+    } else {
+      leaseForProperty = allLeasesForProperty[0];
+    }
+    
+    // const leaseForProperty = leaseDetailsData.find((ld) => ld.property_uid === propertyUid);
     console.log("property lease for property", leaseForProperty);
     setLeaseDetails(leaseForProperty);
 
@@ -418,6 +433,18 @@ const TenantDashboard = () => {
       setViewRHS(false);
     }
     setRightPane("");
+  };
+
+  const handleViewTenantApplication = () => {
+    setRightPane({
+      type: "tenantApplicationEdit",
+      state: {
+        data: leaseDetails,
+        lease: leaseDetails,
+        status: leaseDetails?.lease_status,
+        from: "accwidget",
+      },
+    });
   };
 
   const renderRightPane = () => {
@@ -673,6 +700,8 @@ const TenantDashboard = () => {
                           setRightPane={setRightPane}
                           selectedProperty={selectedProperty}
                           relatedLease={relatedLease}
+                          setReload={setReload}
+                          handleViewTenantApplication={handleViewTenantApplication}
                         />
                       </Grid>
 
@@ -836,7 +865,7 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
   );
 }
 
-const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty, relatedLease, isMobile, setViewRHS }) => {
+const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty, relatedLease, isMobile, setViewRHS, setReload, handleViewTenantApplication, }) => {
   // console.log("Lease Details renewal", relatedLease);
   // console.log("804 - LeaseDetails - relatedLease - ", relatedLease);
   // console.log("804 - LeaseDetails - currentLease - ", leaseDetails);
@@ -965,6 +994,10 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
       },
     });
   };
+
+  const handleReApply = () => {
+    handleViewTenantApplication();    
+  }
 
   const leaseDocumentsArray = useMemo(() => {
     try {
@@ -1181,7 +1214,35 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
           // </>
 
           <>
+
             <Grid container spacing={3}>
+              {/* Lease Term */}
+              {leaseDetails && (
+                <Grid container item spacing={2}>
+                  <Grid item xs={5}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      Lease UID:
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={7}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.light.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      {leaseDetails?.lease_uid}                      
+                    </Typography>
+                  </Grid>
+                </Grid>
+              )}
               {/* Tenant Details */}
               <Grid container item spacing={2}>
                 <Grid item xs={5}>
@@ -1268,7 +1329,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           ACTIVE
                         </Typography>
                         {leaseDetails?.lease_renew_status &&
-                          (leaseDetails?.lease_renew_status === "PM RENEW REQUESTED" || leaseDetails?.lease_renew_status.includes("RENEW REQUESTED") || leaseDetails?.lease_renew_status.includes("RENEWED") ) && (
+                          (leaseDetails?.lease_renew_status === "PM RENEW REQUESTED" || leaseDetails?.lease_renew_status.includes("RENEW REQUESTED") || leaseDetails?.lease_renew_status.includes("RENEWED") || leaseDetails?.lease_renew_status === "EARLY TERMINATION") && (
                             <Typography
                               sx={{
                                 color: leaseDetails?.lease_renew_status?.includes("RENEW") ? "#FF8A00" : "#A52A2A",
@@ -1276,7 +1337,9 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                                 fontSize: theme.typography.smallFont,
                               }}
                             >
-                              {(leaseDetails?.lease_renew_status == "RENEW REQUESTED" || leaseDetails?.lease_renew_status == "PM RENEW REQUESTED") ? " RENEWING" : leaseDetails?.lease_renew_status}
+                              {(leaseDetails?.lease_renew_status == "RENEW REQUESTED" || leaseDetails?.lease_renew_status == "PM RENEW REQUESTED") ? " RENEWING" : ""}
+                              {(leaseDetails?.lease_renew_status == "EARLY TERMINATION") ? "EARLY END" : ""}
+
                             </Typography>
                           )}
                       </>
@@ -1414,62 +1477,8 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
               )}
 
               <Grid container item spacing={2} sx={{ marginTop: "3px", marginBottom: "5px" }}>
-                <Grid
-                  item
-                  xs={relatedLease?.lease_status === "RENEW PROCESSING" ? 4 : 6}
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100%",
-                  }}
-                >
-                  <Button
-                    onClick={() => {
-                      handleEndLease();
-                    }}
-                    variant='contained'
-                    sx={{
-                      background: "#3D5CAC",
-                      color: theme.palette.background.default,
-                      cursor: "pointer",
-                      paddingX: "10px",
-                      textTransform: "none",
-                      maxWidth: "120px", // Fixed width for the button
-                      maxHeight: "100%",
-                    }}
-                    size='small'
-                  >
-                    <Typography
-                      sx={{
-                        textTransform: "none",
-                        color: "#FFFFFF",
-                        fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: "12px",
-                        whiteSpace: "nowrap",
-                        //   marginLeft: "1%", // Adjusting margin for icon and text
-                      }}
-                    >
-                      {"End Lease"}
-                    </Typography>
-                  </Button>
-                </Grid>
-
-                {relatedLease?.lease_status === "RENEW NEW" || relatedLease?.lease_status === "RENEW PROCESSING" ? (
-                  // <Button
-                  //   variant='contained'
-                  //   size='small'
-                  //   sx={{
-                  //     backgroundColor: "#FFD700",
-                  //     color: "#FFFFF",
-                  //     fontWeight: "bold",
-                  //     textTransform: "none",
-                  //     marginLeft: "10px",
-                  //   }}
-                  //   onClick={handleViewRenewLease}
-                  // >
-                  //   RENEWAL APPLICATION
-                  // </Button>
+              {
+                leaseDetails?.lease_status === "ACTIVE" && (
                   <Grid
                     item
                     xs={relatedLease?.lease_status === "RENEW PROCESSING" ? 4 : 6}
@@ -1482,16 +1491,16 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                   >
                     <Button
                       onClick={() => {
-                        handleViewRenewLease();
+                        handleEndLease();
                       }}
                       variant='contained'
                       sx={{
-                        background: "#FFD700",
+                        background: "#3D5CAC",
                         color: theme.palette.background.default,
                         cursor: "pointer",
                         paddingX: "10px",
                         textTransform: "none",
-                        width: "100%", // Fixed width for the button
+                        maxWidth: "120px", // Fixed width for the button
                         maxHeight: "100%",
                       }}
                       size='small'
@@ -1506,26 +1515,14 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           //   marginLeft: "1%", // Adjusting margin for icon and text
                         }}
                       >
-                        {"Update Application"}
+                        {"End Lease"}
                       </Typography>
                     </Button>
                   </Grid>
-                ) : (
-                  showRenewLeaseButton &&
-                  (relatedLease?.lease_status !== "RENEW PROCESSING" && relatedLease?.lease_status !== "APPROVED") && (
-                    // <Button
-                    //   variant='contained'
-                    //   size='small'
-                    //   onClick={handleRenewLease}
-                    //   sx={{
-                    //     marginLeft: "10px",
-                    //     fontWeight: "bold",
-                    //     backgroundColor: "#3D5CAC",
-                    //     color: "white",
-                    //   }}
-                    // >
-                    //   Renew Lease
-                    // </Button>
+                )
+              }
+              {
+                  leaseDetails?.lease_status === "NEW" && (
                     <Grid
                       item
                       xs={6}
@@ -1538,16 +1535,17 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                     >
                       <Button
                         onClick={() => {
-                          handleRenewLease();
+                          console.log("ROHIT - 1493 - leaseDetails - ", leaseDetails)
+                          handleViewTenantApplication();
                         }}
                         variant='contained'
                         sx={{
-                          background: "#3D5CAC",
+                          background: "#FFD700",
                           color: theme.palette.background.default,
                           cursor: "pointer",
                           paddingX: "10px",
                           textTransform: "none",
-                          width: "100%", // Fixed width for the button
+                          maxWidth: "120px", // Fixed width for the button
                           maxHeight: "100%",
                         }}
                         size='small'
@@ -1562,12 +1560,177 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                             //   marginLeft: "1%", // Adjusting margin for icon and text
                           }}
                         >
-                          {leaseDetails?.lease_renew_status === "RENEW REQUESTED" ? "Review Application" : "Renew Lease"}
+                          {"Update Application"}                          
                         </Typography>
                       </Button>
                     </Grid>
                   )
-                )}                
+                }
+              {
+                (leaseDetails?.lease_status === "WITHDRAWN" || leaseDetails?.lease_status === "REJECTED" || leaseDetails?.lease_status === "REFUSED") && (
+                  <Grid
+                    item
+                    xs={6}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: "100%",
+                    }}
+                  >
+                    <Button
+                      onClick={() => {
+                        handleReApply();
+                      }}
+                      variant='contained'
+                      sx={{
+                        background: "#FFD700",
+                        color: theme.palette.background.default,
+                        cursor: "pointer",
+                        paddingX: "10px",
+                        textTransform: "none",
+                        width: "160px", // Fixed width for the button
+                        maxHeight: "100%",
+                      }}
+                      size='small'
+                    >
+                      <Typography
+                        sx={{
+                          textTransform: "none",
+                          color: "#FFFFFF",
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: "12px",
+                          whiteSpace: "nowrap",
+                          //   marginLeft: "1%", // Adjusting margin for icon and text
+                        }}
+                      >
+                        {"Re-Apply"}
+                      </Typography>
+                    </Button>
+                  </Grid>
+                )
+              }
+
+                {/* {console.log("1531 - relatedLease - ", relatedLease)} */}
+                {
+                  relatedLease != null && (
+                    <>
+                      {relatedLease?.lease_status === "RENEW NEW" || relatedLease?.lease_status === "RENEW PROCESSING" ? (
+                        // <Button
+                        //   variant='contained'
+                        //   size='small'
+                        //   sx={{
+                        //     backgroundColor: "#FFD700",
+                        //     color: "#FFFFF",
+                        //     fontWeight: "bold",
+                        //     textTransform: "none",
+                        //     marginLeft: "10px",
+                        //   }}
+                        //   onClick={handleViewRenewLease}
+                        // >
+                        //   RENEWAL APPLICATION
+                        // </Button>
+                        <Grid
+                          item
+                          xs={relatedLease?.lease_status === "RENEW PROCESSING" ? 4 : 6}
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            height: "100%",
+                          }}
+                        >
+                          <Button
+                            onClick={() => {
+                              handleViewRenewLease();
+                            }}
+                            variant='contained'
+                            sx={{
+                              background: "#FFD700",
+                              color: theme.palette.background.default,
+                              cursor: "pointer",
+                              paddingX: "10px",
+                              textTransform: "none",
+                              width: "100%", // Fixed width for the button
+                              maxHeight: "100%",
+                            }}
+                            size='small'
+                          >
+                            <Typography
+                              sx={{
+                                textTransform: "none",
+                                color: "#FFFFFF",
+                                fontWeight: theme.typography.secondary.fontWeight,
+                                fontSize: "12px",
+                                whiteSpace: "nowrap",
+                                //   marginLeft: "1%", // Adjusting margin for icon and text
+                              }}
+                            >
+                              {"Update Application"}
+                            </Typography>
+                          </Button>
+                        </Grid>
+                      ) : (
+                        showRenewLeaseButton &&
+                        (relatedLease?.lease_status !== "RENEW PROCESSING" && relatedLease?.lease_status !== "APPROVED") && (
+                          // <Button
+                          //   variant='contained'
+                          //   size='small'
+                          //   onClick={handleRenewLease}
+                          //   sx={{
+                          //     marginLeft: "10px",
+                          //     fontWeight: "bold",
+                          //     backgroundColor: "#3D5CAC",
+                          //     color: "white",
+                          //   }}
+                          // >
+                          //   Renew Lease
+                          // </Button>
+                          <Grid
+                            item
+                            xs={6}
+                            sx={{
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              height: "100%",
+                            }}
+                          >
+                            <Button
+                              onClick={() => {
+                                handleRenewLease();
+                              }}
+                              variant='contained'
+                              sx={{
+                                background: "#3D5CAC",
+                                color: theme.palette.background.default,
+                                cursor: "pointer",
+                                paddingX: "10px",
+                                textTransform: "none",
+                                width: "100%", // Fixed width for the button
+                                maxHeight: "100%",
+                              }}
+                              size='small'
+                            >
+                              <Typography
+                                sx={{
+                                  textTransform: "none",
+                                  color: "#FFFFFF",
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: "12px",
+                                  whiteSpace: "nowrap",
+                                  //   marginLeft: "1%", // Adjusting margin for icon and text
+                                }}
+                              >
+                                {leaseDetails?.lease_renew_status === "RENEW REQUESTED" ? "Review Application" : "Renew Lease"}
+                              </Typography>
+                            </Button>
+                          </Grid>
+                        )
+                      )}   
+                    </>             
+                  )
+                }                    
 
                 {relatedLease && (relatedLease.lease_status === "RENEW PROCESSING" || relatedLease.lease_status === "APPROVED") && (
                   // <Button

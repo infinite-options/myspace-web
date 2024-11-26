@@ -460,7 +460,7 @@ export default function LeaseDetailsComponent({
                               {currentProperty?.lease_status}
                             </Typography>
                             {currentProperty?.lease_renew_status &&
-                              (currentProperty?.lease_renew_status.includes("RENEW")) && (
+                              (currentProperty?.lease_renew_status.includes("RENEW") || currentProperty?.lease_renew_status.includes("TERMINATION")) && (
                                 <Typography
                                   sx={{
                                     color: currentProperty?.lease_renew_status?.includes("RENEW") ? "#FF8A00" : "#A52A2A",
@@ -469,7 +469,8 @@ export default function LeaseDetailsComponent({
                                   }}
                                 >
                                   {currentProperty?.lease_renew_status === "RENEW REQUESTED" || currentProperty?.lease_renew_status === "PM RENEW REQUESTED"  ? "RENEWING" : ""}
-                    {currentProperty?.lease_renew_status === "RENEWED" ? "RENEWED" : ""}
+                                  {currentProperty?.lease_renew_status === "RENEWED" ? "RENEWED" : ""}
+                                  {currentProperty?.lease_renew_status === "EARLY TERMINATION" ? "EARLY TERMINATION" : ""}
                                 </Typography>
                               )}
                           </>

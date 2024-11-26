@@ -499,7 +499,13 @@ const TenantLease = () => {
         
         feesList = JSON.parse(application?.lease_fees);
       } else if (application?.lease_status === "NEW") {
-        feesList = initialFees(property, application);
+        const parsedApplicationFees = application.lease_fees ? JSON.parse(application.lease_fees) : []
+        if(parsedApplicationFees?.length === 0){
+          feesList = initialFees(property, application);
+        } else {
+          // feesList = JSON.parse(application?.lease_fees);
+          feesList = parsedApplicationFees;
+        }
       }
       // console.log("Fees: ", feesList);
 

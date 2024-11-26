@@ -260,7 +260,8 @@ export default function TenantApplicationEdit(props) {
     } else {
       info = lease[0]?.lease_income ? JSON.parse(lease[0].lease_income) : [];
     }
-    // console.log("245 - info - ", info);
+    console.log("ROHIT - 263 - lease - ", lease);
+    console.log("ROHIT - 263 - info - ", info);
     setEmploymentData(info);
   }
 
@@ -790,7 +791,7 @@ export default function TenantApplicationEdit(props) {
     // } else {
     //     console.log("tenant updating / renewing new lease");
     // }
-    if (lease[0]?.lease_uid == null || status === null || status === "" || status === "RENEW" || status === "WITHDRAWN") {
+    if (lease[0]?.lease_uid == null || status === null || status === "" || status === "RENEW" || status === "WITHDRAWN" || status === "REJECTED" || status === "REFUSED") {
       if (props.setFirstPage) {
         props.setFirstPage(false);
       }
@@ -984,16 +985,16 @@ export default function TenantApplicationEdit(props) {
 
     //   console.log("880 - lease - ", lease);
       //   const leaseUtils = lease != null && lease?.length > 0 && lease[0].lease_utilities ? JSON.parse(lease[0].lease_utilities) : [];
-      const leaseUtils = currentLease != null && currentLease.lease_utilities != null ? JSON.parse(currentLease.lease_utilities) : [];
+      // const leaseUtils = currentLease != null && currentLease.lease_utilities != null ? JSON.parse(currentLease.lease_utilities) : [];
 
-      // leaseApplicationData.append("lease_utilities", leaseUtils.length > 0 ? lease[0]?.lease_utilities : JSON.stringify(propertyUtilities)) // propertyUtilities - property utilities from listing
+      // // leaseApplicationData.append("lease_utilities", leaseUtils.length > 0 ? lease[0]?.lease_utilities : JSON.stringify(propertyUtilities)) // propertyUtilities - property utilities from listing
 
-      //   if (lease == null || lease?.length === 0 || [null, "REFUSED", "RESCIND", "WITHDRAWN", "REJECTED"].includes(lease[0]?.lease_status)) {
-      if (currentLease == null || [null, "REFUSED", "RESCIND", "WITHDRAWN", "REJECTED"].includes(currentLease.lease_status)) {
-        leaseApplicationData.append("lease_utilities", JSON.stringify(propertyUtilities)); // propertyUtilities - property utilities from listing
-      } else if (["ACTIVE", "ACTIVE M2M", "NEW", "PROCESSING", "ENDED", "EXPIRED", "RENEW PROCESSING", "RENEW NEW", "RENEW REQUESTED"].includes(currentLease?.lease_status)) {
-        leaseApplicationData.append("lease_utilities", leaseUtils.length > 0 ? currentLease?.lease_utilities : JSON.stringify([]));
-      }
+      // //   if (lease == null || lease?.length === 0 || [null, "REFUSED", "RESCIND", "WITHDRAWN", "REJECTED"].includes(lease[0]?.lease_status)) {
+      // if (currentLease == null || [null, "REFUSED", "RESCIND", "WITHDRAWN", "REJECTED"].includes(currentLease.lease_status)) {
+      //   leaseApplicationData.append("lease_utilities", JSON.stringify(propertyUtilities)); // propertyUtilities - property utilities from listing
+      // } else if (["ACTIVE", "ACTIVE M2M", "NEW", "PROCESSING", "ENDED", "EXPIRED", "RENEW PROCESSING", "RENEW NEW", "RENEW REQUESTED"].includes(currentLease?.lease_status)) {
+      //   leaseApplicationData.append("lease_utilities", leaseUtils.length > 0 ? currentLease?.lease_utilities : JSON.stringify([]));
+      // }
 
       leaseApplicationData.append("lease_referred", "[]");
 
@@ -1003,6 +1004,12 @@ export default function TenantApplicationEdit(props) {
       // leaseApplicationData.append("lease_fees", "[]");
       // leaseApplicationData.append("lease_fees", leaseFees.length > 0 ? lease[0]?.lease_fees : JSON.stringify([]));
       leaseApplicationData.append("lease_fees", leaseFees.length > 0 ? currentLease?.lease_fees : JSON.stringify([]));
+
+      const leaseUtils = currentLease != null && currentLease.lease_utilities != null ? JSON.parse(currentLease.lease_utilities) : [];
+
+      // leaseApplicationData.append("lease_fees", "[]");
+      // leaseApplicationData.append("lease_fees", leaseFees.length > 0 ? lease[0]?.lease_fees : JSON.stringify([]));
+      leaseApplicationData.append("lease_utilities", leaseUtils.length > 0 ? currentLease?.lease_utilities : JSON.stringify(propertyUtilities));
 
       leaseApplicationData.append("lease_application_date", formatDate(date.toLocaleDateString()));
       leaseApplicationData.append("tenant_uid", getProfileId());
@@ -1650,21 +1657,22 @@ export const EmploymentDataGrid = ({ profileData, employmentDataT = [], setSelec
   //     }
   //   }, [parsedEmploymentDataT, employmentData]);
   useEffect(() => {
-    if (checkedJobs.length === 0) {
-      const updateJobs = employmentData.map((job) => {
-        const matchingJob = parsedEmploymentDataT?.find((leaseJob) => leaseJob.jobTitle === job.jobTitle && leaseJob.companyName === job.companyName);
+    console.log("ROHIT - 1653 - checkedJobs - ", checkedJobs);
+    console.log("ROHIT - 1653 - employmentData - ", employmentData);        
+    const updateJobs = employmentData.map((job) => {
+      const matchingJob = parsedEmploymentDataT?.find((leaseJob) => leaseJob.jobTitle === job.jobTitle && leaseJob.companyName === job.companyName);
 
-        return {
-          ...job,
-          checked: matchingJob ? Boolean(matchingJob.checked) : false, // Only mark checked if matching job has `checked: true`
-        };
-      });
+      return {
+        ...job,
+        checked: matchingJob ? Boolean(matchingJob.checked) : false, // Only mark checked if matching job has `checked: true`
+      };
+    });
 
-      setCheckedJobs(updateJobs);
+    setCheckedJobs(updateJobs);
 
-      const selectedJobs = updateJobs.filter((job) => job.checked);
-      setSelectedJobs(selectedJobs);
-    }
+    const selectedJobs = updateJobs.filter((job) => job.checked);
+    setSelectedJobs(selectedJobs);
+    
   }, [parsedEmploymentDataT, employmentData]);
 
   useEffect(() => {

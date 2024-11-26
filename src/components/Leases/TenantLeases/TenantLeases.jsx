@@ -415,12 +415,12 @@ function TenantLeases(props) {
         const leaseDate = new Date(year, month - 1, day); // Month is 0-indexed in JavaScript Date objects
         // console.log("Lease Effective Date, ", leaseDate);
 
-        // if (leaseDate <= date) {
-        //   lease_status = "ACTIVE";
-        //   console.log("Lease Status Changed: ", lease_status);
-        //   // if (lease.lease_effective_date <= date) {
-        //   // status = "ACTIVE";
-        // }
+        if (leaseDate <= date && lease.lease_status === "PROCESSING") {
+          lease_status = "ACTIVE";
+          console.log("Lease Status Changed: ", lease_status);
+          // if (lease.lease_effective_date <= date) {
+          // status = "ACTIVE";
+        }
       }
       console.log("Status: ", status);
       leaseApplicationFormData.append("lease_status", lease_status);
