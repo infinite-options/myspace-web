@@ -23,6 +23,7 @@ import {
   InputLabel,
   Avatar,
 } from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import PropTypes from "prop-types";
@@ -2211,8 +2212,8 @@ const PropertyTabPanel = (props) => {
                             src={image}
                             alt={`maintenance-${index}`}
                             style={{
-                              height: isMobile ? "200px" : "400px",
-                              width: isMobile ? "350px" : "700px",
+                              height: isMobile ? "200px" : "150px",
+                              width: isMobile ? "350px" : "150px",
                               objectFit: "cover",
                             }}
                           />
@@ -2231,7 +2232,7 @@ const PropertyTabPanel = (props) => {
       </Grid>
       <Grid container item xs={12} justifyContent='center'>
         <Grid container item xs={10}>
-          <Grid container item xs={8} sx={{ height: "250px", alignContent: "space-between" }}>
+          <Grid container item xs={8} sx={{ height: "550px", alignContent: "space-between" }}>
             <Grid container item xs={12}>
               <Grid item xs={6}>
                 <Typography
@@ -2358,7 +2359,63 @@ const PropertyTabPanel = (props) => {
                 {property && property.property_area ? `$${(property?.property_value / property?.property_area).toFixed(2)}` : "-"}
               </Grid>
             </Grid>
-          </Grid>
+            <Grid container item xs={12}>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{
+                    textTransform: "none",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    textAlign: "left",
+                  }}
+                >
+                  Unit Ammenities:
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                {property && property.property_amenities_unit ? `${(property?.property_amenities_unit)}` : "-"}
+              </Grid>
+            </Grid>
+            <Grid container item xs={12}>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{
+                    textTransform: "none",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    textAlign: "left",
+                  }}
+                >
+                  Community Ammenities:
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                {property && property.property_amenities_community ? `${(property?.property_amenities_community)}` : "-"}
+              </Grid>
+            </Grid>
+            <Grid container item xs={12}>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{
+                    textTransform: "none",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    textAlign: "left",
+                  }}
+                >
+                  Nearby Ammenities:
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                {property && property.property_amenities_nearby ? `${(property?.property_amenities_nearby)}` : "-"}
+              </Grid>
+            </Grid>
+            <Grid container item xs={12}>
+        <PropertyDetailsGrid propertyDetails={property?.property_details || '{}'} />
+      </Grid></Grid>
           <Grid container item xs={4} justifyContent='center' sx={{ height: "250px", alignContent: "space-between" }}>
             <Grid item xs={10} sx={{ minHeight: "35px" }}>
               {property && property?.property_available_to_rent === 1 && (property.lease_status == null || property.lease_status !== "ACTIVE") && (
@@ -2649,6 +2706,84 @@ const PropertyTabPanel = (props) => {
         </Grid>
       </Grid>
     </Grid>
+  );
+};
+
+const PropertyDetailsGrid = ({ propertyDetails }) => {
+  const parsedDetails = JSON.parse(propertyDetails);
+
+  const { otherDetails = [], propertyCodes = [], propertyAmenities = [] } = parsedDetails;
+
+  const rows = [
+    { type: "Other Details", details: otherDetails },
+    { type: "Property Codes", details: propertyCodes },
+    { type: "Property Amenities", details: propertyAmenities },
+  ];
+
+  return (
+    <>
+      {rows.map((row, index) => (
+        <Grid container item xs={12} key={index} sx={{ marginBottom: 2 }}>
+          <Grid item xs={12}>
+          <Typography
+                  sx={{
+                    textTransform: "none",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    textAlign: "left",
+                  }}
+                >
+              {row.type}:
+            </Typography>
+          </Grid>
+          {row.details.length > 0 ? (
+            <>
+              {/* Render Headers Once */}
+              <Grid container item xs={12} sx={{ fontWeight: "bold", marginBottom: 1 }}>
+                <Grid item xs={6}>
+                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                    Description
+                  </Typography>
+                </Grid>
+                <Grid item xs={2}>
+                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                    Days
+                  </Typography>
+                </Grid>
+                <Grid item xs={2}>
+                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                    Start Time
+                  </Typography>
+                </Grid>
+                <Grid item xs={2}>
+                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                    End Time
+                  </Typography>
+                </Grid>
+              </Grid>
+              {/* Render Data Rows */}
+              {row.details.map((detail, detailIndex) => (
+                <Grid container item xs={12} key={detailIndex} sx={{ marginBottom: 1 }}>
+                  <Grid item xs={6}>
+                    <Typography variant="body2">{detail.description || "-"}</Typography>
+                  </Grid>
+                  <Grid item xs={2}>
+                    <Typography variant="body2">{detail.days || "-"}</Typography>
+                  </Grid>
+                  <Grid item xs={2}>
+                    <Typography variant="body2">{detail.startTime || "-"}</Typography>
+                  </Grid>
+                  <Grid item xs={2}>
+                    <Typography variant="body2">{detail.endTime || "-"}</Typography>
+                  </Grid>
+                </Grid>
+              ))}
+            </>
+          ) : '-'}
+        </Grid>
+      ))}
+    </>
   );
 };
 
