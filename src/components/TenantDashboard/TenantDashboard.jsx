@@ -893,7 +893,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
   const daysUntilLeaseEnd = Math.ceil(timeDifference / (1000 * 3600 * 24));
 
   // Check if Renew Lease button should be visible (if within 2x notice period)
-  const showRenewLeaseButton = daysUntilLeaseEnd <= 2 * noticePeriod && leaseDetails?.lease_renew_status !== "RENEW NEW";
+  const showRenewLeaseButton = daysUntilLeaseEnd <= 2 * noticePeriod && leaseDetails?.lease_renew_status !== "RENEW NEW"  && leaseDetails?.lease_renew_status !== "RENEWED"  && leaseDetails?.lease_renew_status !== "RENEW PROCESSING";
   const isEndingOrEarlyTermination = leaseDetails?.lease_renew_status === "ENDING" || leaseDetails?.lease_renew_status === "EARLY TERMINATION";
   const tenants = leaseDetails?.tenants ? JSON.parse(leaseDetails?.tenants) : [];
   const tenant_detail = tenants.length > 0 ? tenants[0] : null;
@@ -1338,6 +1338,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                               }}
                             >
                               {(leaseDetails?.lease_renew_status == "RENEW REQUESTED" || leaseDetails?.lease_renew_status == "PM RENEW REQUESTED") ? " RENEWING" : ""}
+                              {leaseDetails?.lease_renew_status === "RENEWED" ? "RENEWED" : ""}
                               {(leaseDetails?.lease_renew_status == "EARLY TERMINATION") ? "EARLY END" : ""}
 
                             </Typography>
@@ -1610,6 +1611,51 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                   </Grid>
                 )
               }
+              {console.log("ROHIT - 1614 - showRenewLeaseButton - ", showRenewLeaseButton)}
+              {
+                (leaseDetails?.lease_status === "ACTIVE" || leaseDetails?.lease_status === "ACTIVE M2M" ) &&  showRenewLeaseButton && (
+                  <Grid
+                    item
+                    xs={6}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: "100%",
+                    }}
+                  >
+                    <Button
+                      onClick={() => {
+                        handleRenewLease();
+                      }}
+                      variant='contained'
+                      sx={{
+                        background: "#3D5CAC",
+                        color: theme.palette.background.default,
+                        cursor: "pointer",
+                        paddingX: "10px",
+                        textTransform: "none",
+                        maxWidth: "120px", // Fixed width for the button
+                        maxHeight: "100%",
+                      }}
+                      size='small'
+                    >
+                      <Typography
+                        sx={{
+                          textTransform: "none",
+                          color: "#FFFFFF",
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: "12px",
+                          whiteSpace: "nowrap",
+                          //   marginLeft: "1%", // Adjusting margin for icon and text
+                        }}
+                      >
+                        {leaseDetails?.lease_renew_status === "RENEW REQUESTED" ? "Review Application" : "Renew Lease"}
+                      </Typography>
+                    </Button>
+                  </Grid>
+                )
+              }
 
                 {/* {console.log("1531 - relatedLease - ", relatedLease)} */}
                 {
@@ -1730,7 +1776,8 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                       )}   
                     </>             
                   )
-                }                    
+                }           
+                {console.log("ROHIT - 1780 - relatedLease - ", relatedLease)}         
 
                 {relatedLease && (relatedLease.lease_status === "RENEW PROCESSING" || relatedLease.lease_status === "APPROVED") && (
                   // <Button

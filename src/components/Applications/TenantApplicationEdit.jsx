@@ -1014,11 +1014,11 @@ export default function TenantApplicationEdit(props) {
       leaseApplicationData.append("lease_application_date", formatDate(date.toLocaleDateString()));
       leaseApplicationData.append("tenant_uid", getProfileId());
 
-      if(currentLease != null) {
+      if(currentLease != null && (currentLease.lease_status === "ACTIVE" || currentLease.lease_status === "ACTIVE M2M")) {
         leaseApplicationData.append("lease_end_notice_period", currentLease.lease_end_notice_period ? currentLease.lease_end_notice_period : 30);
       }
 
-      if(currentLease != null) {
+      if(currentLease != null && (currentLease.lease_status === "ACTIVE" || currentLease.lease_status === "ACTIVE M2M")) {
         leaseApplicationData.append("lease_m2m", currentLease.lease_m2m ? currentLease.lease_m2m : 0);
       }
 

@@ -91,6 +91,8 @@ const getAppColor = (app) => {
     return "#A52A2A"; // Red color for rejected
   } else if (app.lease_status === "REFUSED") {
     return "#874499"; // Purple color for refused
+  } else if (app.lease_status === "WITHDRAWN") {
+    return "#FF8A00"; // Orange color for withdrawn
   } else {
     return "#778DC5"; // Default blue color for other statuses
   }
