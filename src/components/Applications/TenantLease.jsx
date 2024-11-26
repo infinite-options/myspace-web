@@ -498,7 +498,7 @@ const TenantLease = () => {
       ) {
         
         feesList = JSON.parse(application?.lease_fees);
-      } else if (application?.lease_status === "NEW" || application?.lease_status === "REJECTED") {
+      } else if (application?.lease_status === "NEW" || application?.lease_status === "REJECTED" || application?.lease_status === "REFUSED" || application?.lease_status === "WITHDRAWN" ) {
         const parsedApplicationFees = application.lease_fees ? JSON.parse(application.lease_fees) : []
         if(parsedApplicationFees?.length === 0){
           feesList = initialFees(property, application);
@@ -2316,7 +2316,7 @@ const TenantLease = () => {
           <Button
             // onClick={application?.lease_status === "NEW" ? handleCreateLease : handleRenewLease}
             onClick={() => {
-              if (application?.lease_status === "NEW" || application?.lease_status === "REJECTED" || application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW NEW" || application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "APPROVED" ) {
+              if (application?.lease_status === "NEW" || application?.lease_status === "REJECTED" || application?.lease_status === "REFUSED" || application?.lease_status === "WITHDRAWN" || application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW NEW" || application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "APPROVED" ) {
                 handleCreateLease();
               } else if (application?.lease_status === "ACTIVE" || application?.lease_status === "ACTIVE M2M") {
                 handleRenewLease();
@@ -2332,7 +2332,7 @@ const TenantLease = () => {
               },
             }}
           >
-            {(application?.lease_status === "NEW" ||  application?.lease_status === "REJECTED") ? "Create Lease" : ""}
+            {(application?.lease_status === "NEW" ||  application?.lease_status === "REJECTED" || application?.lease_status === "REFUSED" || application?.lease_status === "WITHDRAWN" ) ? "Create Lease" : ""}
             {application?.lease_status === "PROCESSING" ? "Modify Lease" : ""}
             {application?.lease_status === "ACTIVE" || application?.lease_status === "ACTIVE M2M" ? "Renew Lease" : ""}            
             {application?.lease_status === "RENEW NEW" ? "Create Lease Renewal" : ""}
