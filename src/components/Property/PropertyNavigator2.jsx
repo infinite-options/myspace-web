@@ -2738,49 +2738,52 @@ const PropertyDetailsGrid = ({ propertyDetails }) => {
             </Typography>
           </Grid>
           {row.details.length > 0 ? (
-            <>
-              {/* Render Headers Once */}
-              <Grid container item xs={12} sx={{ fontWeight: "bold", marginBottom: 1 }}>
-                <Grid item xs={6}>
-                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                    Description
-                  </Typography>
-                </Grid>
-                <Grid item xs={2}>
-                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                    Days
-                  </Typography>
-                </Grid>
-                <Grid item xs={2}>
-                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                    Start Time
-                  </Typography>
-                </Grid>
-                <Grid item xs={2}>
-                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                    End Time
-                  </Typography>
-                </Grid>
-              </Grid>
-              {/* Render Data Rows */}
-              {row.details.map((detail, detailIndex) => (
-                <Grid container item xs={12} key={detailIndex} sx={{ marginBottom: 1 }}>
-                  <Grid item xs={6}>
-                    <Typography variant="body2">{detail.description || "-"}</Typography>
-                  </Grid>
-                  <Grid item xs={2}>
-                    <Typography variant="body2">{detail.days || "-"}</Typography>
-                  </Grid>
-                  <Grid item xs={2}>
-                    <Typography variant="body2">{detail.startTime || "-"}</Typography>
-                  </Grid>
-                  <Grid item xs={2}>
-                    <Typography variant="body2">{detail.endTime || "-"}</Typography>
-                  </Grid>
-                </Grid>
-              ))}
-            </>
-          ) : '-'}
+  <>
+    {/* Render Headers Once */}
+    <Grid container item xs={12} sx={{ fontWeight: "bold", marginBottom: 1 }}>
+      <Grid item sx={{ flex: 1.5 }}>
+        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+          Description
+        </Typography>
+      </Grid>
+      <Grid item sx={{ flex: 1 }}>
+        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+          Days
+        </Typography>
+      </Grid>
+      <Grid item sx={{ flex: 0.5 }}>
+        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+          Start Time
+        </Typography>
+      </Grid>
+      <Grid item sx={{ flex: 0.5 }}>
+        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+          End Time
+        </Typography>
+      </Grid>
+    </Grid>
+    {/* Render Data Rows */}
+    {row.details.map((detail, detailIndex) => (
+      <Grid container item xs={12} key={detailIndex} sx={{ marginBottom: 1 }}>
+        <Grid item sx={{ flex: 1.5 }}>
+          <Typography variant="body2">{detail.description || "-"}</Typography>
+        </Grid>
+        <Grid item sx={{ flex: 1 }}>
+          <Typography variant="body2">{detail.days || "-"}</Typography>
+        </Grid>
+        <Grid item sx={{ flex: 0.5 }}>
+          <Typography variant="body2">{detail.startTime || "-"}</Typography>
+        </Grid>
+        <Grid item sx={{ flex: 0.5 }}>
+          <Typography variant="body2">{detail.endTime || "-"}</Typography>
+        </Grid>
+      </Grid>
+    ))}
+  </>
+) : (
+  "-"
+)}
+
         </Grid>
       ))}
     </>
