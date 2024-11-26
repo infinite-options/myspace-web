@@ -1647,7 +1647,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
               {leaseDetails && (
                 <Grid container item spacing={2}>
                   {leaseDetails?.lease_fees ? (
-                    <FeesSmallDataGrid data={JSON.parse(leaseDetails?.lease_fees)} />
+                    <FeesSmallDataGrid data={JSON.parse(leaseDetails?.lease_fees)} isMobile={isMobile}/>
                   ) : (
                     <Box
                       sx={{
@@ -1764,7 +1764,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
   );
 };
 
-export const FeesSmallDataGrid = ({ data }) => {
+export const FeesSmallDataGrid = ({ data, isMobile }) => {
   const commonStyles = {
     color: theme.typography.primary.black,
     fontWeight: theme.typography.light.fontWeight,
@@ -1774,7 +1774,7 @@ export const FeesSmallDataGrid = ({ data }) => {
   const columns = [
     {
       field: "frequency",
-      headerName: "Frequency",
+      headerName: isMobile ? "Freq" :"Frequency",
       flex: 1,
       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
       renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
@@ -1782,14 +1782,14 @@ export const FeesSmallDataGrid = ({ data }) => {
     {
       field: "fee_name",
       headerName: "Name",
-      flex: 1.2,
+      flex: isMobile ? 1 : 1.2,
       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
       renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
     },
     {
       field: "charge",
       headerName: "Charge",
-      flex: 0.8,
+      flex: 1,
       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
       renderCell: (params) => {
         const feeType = params.row?.fee_type;
@@ -1800,7 +1800,7 @@ export const FeesSmallDataGrid = ({ data }) => {
     },
     {
       field: "fee_type",
-      headerName: "fee_type",
+      headerName: isMobile ? "Type" :"Fee Type",
       flex: 1,
       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
       renderCell: (params) => {
@@ -1835,6 +1835,9 @@ export const FeesSmallDataGrid = ({ data }) => {
       autoHeight
       rowHeight={35}
       hideFooter={true} // Display footer with pagination
+      disableColumnFilter = {isMobile}
+      disableColumnSelector = {isMobile}
+      disableColumnMenu = {isMobile}
     />
     </Box>
   );
