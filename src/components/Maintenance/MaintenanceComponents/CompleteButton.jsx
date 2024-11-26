@@ -90,13 +90,17 @@ export default function CompleteButton(props){
     }
 
   
-    function handleCancel(id, quotes){
+    async function handleCancel(id, quotes){
         if (quotes && quotes.length > 0){
             for (let i = 0; i < quotes.length; i++){
-                CancelQuote(quotes[i].maintenance_quote_uid);
+                await CancelQuote(quotes[i].maintenance_quote_uid);
             }
         }
-        let response = CancelTicket(id);
+        if(props.fetchAndUpdateQuotes){
+            props.fetchAndUpdateQuotes()
+        }
+        
+        let response = await CancelTicket(id);
         if (response){
             setShowMessage(true);
             setMessage("Ticket Cancelled!! Maintenance Status changed to CANCELLED");

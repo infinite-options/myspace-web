@@ -32,7 +32,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import APIConfig from '../../../utils/APIConfig';
 import { useMaintenance } from "../../../contexts/MaintenanceContext";
 
-export default function ScheduleMaintenance({ maintenanceItem,navigateParams, quotes, setRefresh }) {
+export default function ScheduleMaintenance({ maintenanceItem,navigateParams, quotes, setRefresh, fetchAndUpdateQuotes }) {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const { maintenanceRoutingBasedOnSelectedRole } = useUser();
@@ -253,7 +253,7 @@ export default function ScheduleMaintenance({ maintenanceItem,navigateParams, qu
 				>
 					Reschedule
 				</Button>
-				<Button
+				{(maintenanceItem?.quote_maintenance_request_id === null || maintenanceItem?.quote_status !== "SCHEDULED") && <Button
 					variant="contained"
 					sx={{
 						backgroundColor: '#F87C7A',
@@ -277,9 +277,9 @@ export default function ScheduleMaintenance({ maintenanceItem,navigateParams, qu
 					onClick={() => handleNavigateToQuotesRequested()}
 				>
 					Request Quotes
-				</Button>
+				</Button>}
 			
-				<CompleteButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage} setRefresh = {setRefresh}/>
+				<CompleteButton maintenanceItem={maintenanceItem} quotes={quotes} setShowMessage={setShowMessage} setMessage={setMessage} setRefresh = {setRefresh} fetchAndUpdateQuotes={fetchAndUpdateQuotes}/>
 			
 		
 		</Box>

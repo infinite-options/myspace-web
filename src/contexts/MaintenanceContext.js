@@ -7,11 +7,13 @@ export const useMaintenance = () => useContext(MaintenanceContext);
 export const MaintenanceProvider = ({ children }) => {
   const [maintenanceData, setMaintenanceData] = useState({});
   const [selectedRequestIndex, setSelectedRequestIndex] = useState(0);
+  const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
   // const [selectedStatus, setSelectedStatus] = useState('NEW REQUEST');
   const [selectedStatus, setSelectedStatus] = useState('');
   const [maintenanceItemsForStatus, setMaintenanceItemsForStatus] = useState([]);
   const [allMaintenanceData, setAllMaintenanceData] = useState({});
   const [quoteRequestView, setQuoteRequestView] = useState(false);
+  const [quoteRequestEditView, setQuoteRequestEditView] = useState(false);
   const [quoteAcceptView, setQuoteAcceptView] = useState(false);
   const [editMaintenanceView, setEditMaintenanceView] = useState(false);
   const [rescheduleView, setRescheduleView] = useState(false);
@@ -41,6 +43,8 @@ export const MaintenanceProvider = ({ children }) => {
         setMaintenanceData,
         selectedRequestIndex,
         setSelectedRequestIndex,
+        currentQuoteIndex,
+        setCurrentQuoteIndex,
         selectedStatus,
         setSelectedStatus,
         maintenanceItemsForStatus,
@@ -49,6 +53,8 @@ export const MaintenanceProvider = ({ children }) => {
         setAllMaintenanceData,
         quoteRequestView,
         setQuoteRequestView,
+        quoteRequestEditView,
+        setQuoteRequestEditView,
         quoteAcceptView,
         setQuoteAcceptView,
         editMaintenanceView,

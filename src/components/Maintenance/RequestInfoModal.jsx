@@ -5,7 +5,7 @@ import axios from 'axios';
 import APIConfig from '../../utils/APIConfig';
 
 export default function RequestInfoModal({ maintenanceItem, onRequestClose, setShowSpinner, setRefresh, getProfileId }){
-  const [selectedRole, setSelectedRole] = useState('owner');
+  const [selectedRole, setSelectedRole] = useState(maintenanceItem?.maintenance_request_status === "INFO OWNER"? 'tenant' : 'owner');
 
   console.log("request info --- ", maintenanceItem)
 
@@ -56,7 +56,7 @@ export default function RequestInfoModal({ maintenanceItem, onRequestClose, setS
         setShowSpinner(true)
         const formData = new FormData();
         formData.append('maintenance_request_uid', maintenanceItem.maintenance_request_uid);
-        formData.append('maintenance_request_status', 'INFO');
+        formData.append('maintenance_request_status', `INFO ${selectedRole.toUpperCase()}`);
 
         try {
             const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
@@ -125,11 +125,13 @@ export default function RequestInfoModal({ maintenanceItem, onRequestClose, setS
           <FormControlLabel
             value="owner"
             control={<Radio sx={{'&.Mui-checked': { color: '#160449' }}} />}
+            disabled={maintenanceItem?.maintenance_request_status === "INFO OWNER"}
             label={`Owner: ${maintenanceItem.owner_first_name} ${maintenanceItem.owner_last_name}`}
           />
           <FormControlLabel
             value="tenant"
             control={<Radio sx={{'&.Mui-checked': { color: '#160449' }}} />}
+            disabled={maintenanceItem?.maintenance_request_status === "INFO TENANT"}
             label={`Tenant: ${maintenanceItem.tenant_first_name} ${maintenanceItem.tenant_last_name}`}
           />
           {/* <FormControlLabel

@@ -14,9 +14,10 @@ import NoImageAvailable from '../../../images/NoImageAvailable.png';
 import Documents from '../../Leases/Documents';
 import theme from "../../../theme/theme";
 import { DataGrid } from '@mui/x-data-grid';
+import { useMaintenance } from '../../../contexts/MaintenanceContext';
 
-const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem, fetchAndUpdateQuotes, setRefresh}) => {
-    // console.log('----QuoteDetails maintenanceQuotesForItem----', maintenanceItem);
+const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem, fetchAndUpdateQuotes, setRefresh, navigateParams}) => {
+    console.log('----QuoteDetails maintenanceQuotesForItem----', initialIndex, maintenanceQuotesForItem);
 
     const [currentIndex, setCurrentIndex] = useState(initialIndex);
     //console.log('currentIndex=----', currentIndex);
@@ -24,8 +25,11 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
     console.log('currentItem=----', currentItem);
     const [showSpinner, setShowSpinner] = useState(false);
 
+    const { setQuoteRequestEditView, setMaintenanceQuotes, setCurrentQuoteIndex, setNavigateParams, setMaintenanceData, setSelectedStatus, setSelectedRequestIndex } = useMaintenance();
+
     useEffect(() => {
 		setCurrentIndex(initialIndex);
+        setCurrentQuoteIndex(initialIndex);
 	}, [initialIndex]);
 
     const handlePrev = () => {
@@ -251,10 +255,31 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
     
         changeMaintenanceQuoteStatus(quoteStatusParam);
     };
+
+    const handleEdit = () => {
+        
+        if (maintenanceItem && navigateParams) {
+
+            try {
+                setMaintenanceData(maintenanceItem);
+                setNavigateParams(navigateParams);
+                setMaintenanceQuotes(maintenanceQuotesForItem);
+                setSelectedRequestIndex(navigateParams.maintenanceRequestIndex);
+                setSelectedStatus(navigateParams.status);
+                setQuoteRequestEditView(true);
+            } catch (error) {
+                console.error('Error setting sessionStorage: ', error);
+            }
+        } else {
+            console.error('maintenanceItem or navigateParams is undefined');
+        }
+    }
     
 
-      const [scrollPosition, setScrollPosition] = useState(0);
+    const [scrollPosition, setScrollPosition] = useState(0);
 	const scrollRef = useRef(null);
+
+    // console.log('----QuoteDetails navigate params----', navigateParams);
 
 	useEffect(() => {
 		if (scrollRef.current) {
@@ -300,9 +325,9 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                 <Typography variant="h6" gutterBottom sx={{ color: '#2c2a75', fontWeight: 'bold' }}>
                     Quotes Details
                 </Typography>
-
+                
+                {/* Docuement, service table, image */}
                 <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center', maxHeight: "500px", overflow: 'auto' }}>
-                    
                     <Card
                         variant="outlined"
                         sx={{
@@ -387,23 +412,28 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                                         <Grid item xs={6}>
                                             <DescriptionIcon sx={{ color: '#2c2a75' }} />
                                         </Grid> */}
-                                        {item?.quote_services_expenses &&
-                                        JSON.parse(item?.quote_services_expenses)?.event_type === 'Fixed' ? (
-                                            <Grid container sx={{ paddingTop: '10px' }}>
-                                                <Grid item xs={6}>
-                                                    <Typography variant="body2" sx={{ color: '#2c2a75' }}>
-                                                        Fixed Bid
-                                                    </Typography>
+
+                                        {/* quote fix bid  */}
+                                        {item?.quote_services_expenses && JSON.parse(item?.quote_services_expenses)?.event_type === 'Fixed' ? (
+                                                <Grid container sx={{ paddingTop: '10px' }}>
+                                                    <Grid item xs={6}>
+                                                        <Typography variant="body2" sx={{ color: '#2c2a75' }}>
+                                                            Fixed Bid
+                                                        </Typography>
+                                                    </Grid>
+                                                    <Grid item xs={6}>
+                                                        <Typography variant="body2" sx={{ color: '#2c2a75' }}>
+                                                            $
+                                                            {Number(JSON.parse(item?.quote_services_expenses)?.labor[0]?.rate || 0).toFixed(2)}
+                                                        </Typography>
+                                                    </Grid>
                                                 </Grid>
-                                                <Grid item xs={6}>
-                                                    <Typography variant="body2" sx={{ color: '#2c2a75' }}>
-                                                        $
-                                                        {Number(JSON.parse(item?.quote_services_expenses)?.labor[0]?.rate || 0).toFixed(2)}
-                                                    </Typography>
-                                                </Grid>
-                                            </Grid>
                                         ) : null}
+
+                                        {/* quote expense service for parts */}
                                         {item?.quote_services_expenses ? renderParts(item) : null}
+
+                                        {/* quote total price */}
                                         <Grid item xs={6}>
                                             <Typography variant="body2" gutterBottom sx={{ color: '#2c2a75' , fontWeight: 'bold' }}>
                                                 Quote Total:
@@ -414,6 +444,8 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                                                 <strong>${item.quote_total_estimate ? parseFloat(item.quote_total_estimate).toFixed(2) : '0.00'}</strong>
                                             </Typography>
                                         </Grid>
+
+                                        {/* Quote schedule date & time */}
                                         {item?.maintenance_request_status === 'SCHEDULED' ? (
                                             <>
                                                 <Grid item xs={6}>
@@ -432,103 +464,154 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                                                 </Grid>
                                             </>
                                         ) : null}
+                                        
+                                        {/* quote documents */}
                                         <Grid item xs={12}>
                                             <Documents isAccord={false} isEditable={false} documents={item?.quote_documents? JSON.parse(item?.quote_documents) : []} customName={"Quote Documents"}/>
                                         </Grid>
+
+                                        {/* Quote image */}
                                         <Grid item xs={12}>
+                                            <Box sx={{ paddingTop: '10px' }}>
+                                                <Typography variant="body2" gutterBottom sx={{  color: "#160449",
+                                                            fontWeight: theme.typography.primary.fontWeight,
+                                                            fontSize: "18px",
+                                                            paddingBottom: "5px",
+                                                            paddingTop: "5px",
+                                                            marginTop:"10px",}}>
+                                                    Quote Images:
+                                                </Typography>
+                                                <Box
+                                                    sx={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        padding: 2,
+                                                    }}
+                                                >
+                                                    <IconButton onClick={() => handleScroll('left')} disabled={scrollPosition === 0}>
+                                                        <ArrowBackIosIcon />
+                                                    </IconButton>
+                                                    <Box
+                                                        sx={{
+                                                            display: 'flex',
+                                                            overflowX: 'auto',
+                                                            scrollbarWidth: 'none',
+                                                            msOverflowStyle: 'none',
+                                                            '&::-webkit-scrollbar': {
+                                                                display: 'none',
+                                                            },
+                                                        }}
+                                                    >
+                                                        <ImageList ref={scrollRef} sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
+                                                            {JSON.parse(item.quote_maintenance_images)?.length > 0 ? (
+                                                                JSON.parse(item.quote_maintenance_images).map((image, index) => (
+                                                                    <ImageListItem
+                                                                        key={index}
+                                                                        sx={{
+                                                                            width: 'auto',
+                                                                            flex: '0 0 auto',
+                                                                            border: '1px solid #ccc',
+                                                                            margin: '0 2px',
+                                                                            position: 'relative', // Added to position icons
+                                                                        }}
+                                                                    >
+                                                                        <img
+                                                                            src={image}
+                                                                            alt={`maintenance-${index}`}
+                                                                            style={{
+                                                                                height: '150px',
+                                                                                width: '150px',
+                                                                                objectFit: 'cover',
+                                                                            }}
+                                                                        />
+                                                                    </ImageListItem>
+                                                                ))
+                                                            ) : (
+                                                                <ImageListItem
+                                                                    sx={{
+                                                                        width: 'auto',
+                                                                        flex: '0 0 auto',
+                                                                        border: '1px solid #ccc',
+                                                                        margin: '0 2px',
+                                                                        position: 'relative',
+                                                                    }}
+                                                                >
+                                                                    <img
+                                                                        src={NoImageAvailable}
+                                                                        alt="No images available"
+                                                                        style={{
+                                                                            height: '150px',
+                                                                            width: '150px',
+                                                                            objectFit: 'cover',
+                                                                        }}
+                                                                    />
+                                                                </ImageListItem>
+                                                            )}
+                                                        </ImageList>
+                                                    </Box>
+                                                    <IconButton onClick={() => handleScroll('right')}>
+                                                        <ArrowForwardIosIcon />
+                                                    </IconButton>
+                                                </Box>
+                                            </Box>
+                                        </Grid>
                                         
-                                        <Box sx={{ paddingTop: '10px' }}>
-    <Typography variant="body2" gutterBottom sx={{  color: "#160449",
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: "18px",
-                  paddingBottom: "5px",
-                  paddingTop: "5px",
-                  marginTop:"10px",}}>
-        Quote Images:
-    </Typography>
-    <Box
-        sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 2,
-        }}
-    >
-        <IconButton onClick={() => handleScroll('left')} disabled={scrollPosition === 0}>
-            <ArrowBackIosIcon />
-        </IconButton>
-        <Box
-            sx={{
-                display: 'flex',
-                overflowX: 'auto',
-                scrollbarWidth: 'none',
-                msOverflowStyle: 'none',
-                '&::-webkit-scrollbar': {
-                    display: 'none',
-                },
-            }}
-        >
-            <ImageList ref={scrollRef} sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
-                {JSON.parse(item.quote_maintenance_images)?.length > 0 ? (
-                    JSON.parse(item.quote_maintenance_images).map((image, index) => (
-                        <ImageListItem
-                            key={index}
-                            sx={{
-                                width: 'auto',
-                                flex: '0 0 auto',
-                                border: '1px solid #ccc',
-                                margin: '0 2px',
-                                position: 'relative', // Added to position icons
-                            }}
-                        >
-                            <img
-                                src={image}
-                                alt={`maintenance-${index}`}
-                                style={{
-                                    height: '150px',
-                                    width: '150px',
-                                    objectFit: 'cover',
-                                }}
-                            />
-                        </ImageListItem>
-                    ))
-                ) : (
-                    <ImageListItem
-                        sx={{
-                            width: 'auto',
-                            flex: '0 0 auto',
-                            border: '1px solid #ccc',
-                            margin: '0 2px',
-                            position: 'relative',
-                        }}
-                    >
-                        <img
-                            src={NoImageAvailable}
-                            alt="No images available"
-                            style={{
-                                height: '150px',
-                                width: '150px',
-                                objectFit: 'cover',
-                            }}
-                        />
-                    </ImageListItem>
-                )}
-            </ImageList>
-        </Box>
-        <IconButton onClick={() => handleScroll('right')}>
-            <ArrowForwardIosIcon />
-        </IconButton>
-    </Box>
-</Box>
-</Grid>
+                                        {/* Quote more info details */}
+                                        {currentItem?.quote_status === "MORE INFO" && <Grid item xs={12}>
+                                            <Box sx={{ paddingTop: '10px' }}>
+                                                <Typography variant="body2" gutterBottom sx={{  color: "#160449",
+                                                            fontWeight: theme.typography.primary.fontWeight,
+                                                            fontSize: "18px",
+                                                            paddingBottom: "5px",
+                                                            paddingTop: "5px",
+                                                            marginTop:"10px",}}>
+                                                    Quote More Info Required:
+                                                </Typography>
+                                                <Box
+                                                    sx={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        padding: 2,
+                                                    }}
+                                                >
+                                                   {currentItem?.quote_mm_notes? currentItem?.quote_mm_notes : ""}
+                                                </Box>
+                                            </Box>
+                                        </Grid>}
+
+                                        {/* Rejection reason */}
+                                        {currentItem?.quote_status === "REFUSED" && <Grid item xs={12}>
+                                            <Box sx={{ paddingTop: '10px' }}>
+                                                <Typography variant="body2" gutterBottom sx={{  color: "#160449",
+                                                            fontWeight: theme.typography.primary.fontWeight,
+                                                            fontSize: "18px",
+                                                            paddingBottom: "5px",
+                                                            paddingTop: "5px",
+                                                            marginTop:"10px",}}>
+                                                    Reason From Maintenance:
+                                                </Typography>
+                                                <Box
+                                                    sx={{
+                                                        color: "#F87C7A",
+                                                        fontWeight: theme.typography.primary.fontWeight,
+                                                        padding: 2,
+                                                    }}
+                                                >
+                                                   {currentItem?.quote_notes? currentItem?.quote_notes : ""}
+                                                </Box>
+                                            </Box>
+                                        </Grid>}
                                     </Grid>
                                 </Box>
                             ))}
                         </Carousel>
-                    </Card>
-                   
+                    </Card> 
                 </Box>
             </CardContent>
+
+            {/* Action button */}
             {currentItem && (
                 <Box display="flex" justifyContent="space-between" p={2}>
                     {currentItem.quote_status === 'REQUESTED' ? (
@@ -550,38 +633,38 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                     ) : currentItem.quote_status === 'SENT' ? (
                         <>
                            {!isAnyQuoteAccepted && (
-            <Button
-                variant="contained"
-                sx={{
-                    backgroundColor: '#9EAED6',
-                    '&:hover': {
-                        backgroundColor: '#9EAED6',
-                    },
-                    color: '#160449',
-                    fontWeight: 'bold',
-                    textTransform: 'none',
-                }}
-                onClick={() => handleSubmit("ACCEPTED")}
-            >
-                Accept
-            </Button>
-        )}
-        <Button
-            variant="contained"
-            sx={{
-                backgroundColor: '#FFC614',
-                '&:hover': {
-                    backgroundColor: '#FFC614',
-                },
-                color: '#160449',
-                fontWeight: 'bold',
-                textTransform: 'none',
-            }}
-            onClick={() => handleSubmit("REJECTED")}
-        >
-            Decline
-        </Button>
-    </>
+                                <Button
+                                    variant="contained"
+                                    sx={{
+                                        backgroundColor: '#9EAED6',
+                                        '&:hover': {
+                                            backgroundColor: '#9EAED6',
+                                        },
+                                        color: '#160449',
+                                        fontWeight: 'bold',
+                                        textTransform: 'none',
+                                    }}
+                                    onClick={() => handleSubmit("ACCEPTED")}
+                                >
+                                    Accept
+                                </Button>
+                            )}
+                            <Button
+                                variant="contained"
+                                sx={{
+                                    backgroundColor: '#FFC614',
+                                    '&:hover': {
+                                        backgroundColor: '#FFC614',
+                                    },
+                                    color: '#160449',
+                                    fontWeight: 'bold',
+                                    textTransform: 'none',
+                                }}
+                                onClick={() => handleSubmit("REJECTED")}
+                            >
+                                Decline
+                            </Button>
+                        </>
                     ) : currentItem.quote_status === 'ACCEPTED' ? (
                         <Button
                             variant="contained"
@@ -597,6 +680,22 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                             onClick={() => handleSubmit("REJECTED")}
                         >
                             Reject
+                        </Button>
+                    ) : currentItem.quote_status === "MORE INFO" ? (
+                        <Button
+                            variant="contained"
+                            sx={{
+                                backgroundColor: '#F87C7A',
+                                '&:hover': {
+                                    backgroundColor: '#F87C7A',
+                                },
+                                color: '#160449',
+                                fontWeight: 'bold',
+                                textTransform: 'none',
+                            }}
+                            onClick={() => handleEdit()}
+                        >
+                            Edit Quote
                         </Button>
                     ) : null}
                 </Box>

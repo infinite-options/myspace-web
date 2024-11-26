@@ -37,7 +37,7 @@ import { useMediaQuery } from '@mui/material';
 import APIConfig from "../../../utils/APIConfig";
 import { useMaintenance } from "../../../contexts/MaintenanceContext";
 
-export default function RescheduleMaintenance(){
+export default function RescheduleMaintenance({setRefresh}){
 
     // console.log("RescheduleMaintenance")
     const location = useLocation();
@@ -116,6 +116,11 @@ export default function RescheduleMaintenance(){
         }
         
         changeMaintenanceRequestStatus()
+
+        if(setRefresh){
+            setRefresh(true)
+        }
+        
         handleBackButton()
     }
 
@@ -226,7 +231,7 @@ export default function RescheduleMaintenance(){
                     >
                         <Box sx={{
 								position: 'absolute',
-								left: isMobile ? '30px' : '43%',
+								left: isMobile ? '30px' : '35%',
 							}}>
                             <Button onClick={() => handleBackButton()}>
                                 <ArrowBackIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
@@ -242,9 +247,9 @@ export default function RescheduleMaintenance(){
                             </Typography>
                         </Box>
                         <Box position="absolute" right={30}>
-                            <Button onClick={() => navigateToAddMaintenanceItem()}>
+                            {/* <Button onClick={() => navigateToAddMaintenanceItem()}>
                                 <AddIcon sx={{color: theme.typography.primary.black, fontSize: "30px", margin:'5px'}}/>
-                            </Button>
+                            </Button> */}
                         </Box>
                     </Stack>
                     <Grid container spacing={5}
@@ -347,7 +352,7 @@ export default function RescheduleMaintenance(){
                                 {currentScheduledDate(availabilityDate, availabilityTime)}
                             </Typography>
                         </Grid>
-                        <Grid item xs={6} md={6} sx={{paddingTop: "10px"}}>                
+                        <Grid item xs={6} md={6} sx={{paddingTop: "10px", marginTop: "10px"}}>                
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DatePicker
                                     value={dayjs(availabilityDate)}
@@ -371,7 +376,7 @@ export default function RescheduleMaintenance(){
                                 />
                             </LocalizationProvider>
                         </Grid>
-                        <Grid item xs={6} md={6} sx={{paddingTop: "10px"}}>
+                        <Grid item xs={6} md={6} sx={{paddingTop: "10px", marginTop: "15px"}}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <TimePicker                                                        
                                     slotProps={{ 
@@ -392,7 +397,7 @@ export default function RescheduleMaintenance(){
                                 />
                             </LocalizationProvider>
                         </Grid>
-                        <Grid item xs={12}>
+                        <Grid item xs={12} marginTop={"15px"}>
                             <Typography  sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "13px"}}>
                                 Can Tenant Reschedule?
                             </Typography>
@@ -434,21 +439,24 @@ export default function RescheduleMaintenance(){
                                 />
                             </RadioGroup>
                         </Grid>
-                        <Grid item xs={12}>
+                        <Grid item xs={12} marginTop={"15px"}>
                             <Button
                                 variant="contained"
-                                
                                 sx={{
                                     backgroundColor: "#9EAED6",
                                     textTransform: "none",
                                     borderRadius: "10px",
                                     display: 'flex',
+                                    color: "#160449",
                                     width: "100%",
+                                    '&:hover': {
+                                        color: "white",
+                                    },
+
                                 }}
                                 onClick={() => handleSubmit(availabilityDate, availabilityTime)}
-                                >
+                            >
                                 <Typography sx={{
-                                    color: "#160449",
                                     fontWeight: theme.typography.primary.fontWeight, 
                                     fontSize: "14px"
                                 }}>
