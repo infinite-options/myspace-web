@@ -791,7 +791,7 @@ export default function TenantApplicationEdit(props) {
     // } else {
     //     console.log("tenant updating / renewing new lease");
     // }
-    if (lease[0]?.lease_uid == null || status === null || status === "" || status === "RENEW" || status === "WITHDRAWN" || status === "REJECTED" || status === "REFUSED") {
+    if (lease[0]?.lease_uid == null || status === null || status === "" || status === "RENEW NEW" || status === "RENEW PROCESSING" || status === "WITHDRAWN" || status === "REJECTED" || status === "REFUSED") {
       if (props.setFirstPage) {
         props.setFirstPage(false);
       }
@@ -918,7 +918,7 @@ export default function TenantApplicationEdit(props) {
       // leaseApplicationData.append("lease_property_id", property.property_uid != null ? property.property_uid : lease[0].lease_property_id);
       leaseApplicationData.append("lease_property_id", property.property_uid != null ? property.property_uid : currentLease?.lease_property_id);
 
-      if (status === "RENEW" || currentLease?.lease_status === "ACTIVE" || currentLease?.lease_status === "ACTIVE M2M" || currentLease?.lease_status === "ENDED") {
+      if (status === "RENEW NEW" || status === "RENEW PROCESSING" || currentLease?.lease_status === "ACTIVE" || currentLease?.lease_status === "ACTIVE M2M" || currentLease?.lease_status === "ENDED") {
         const updateLeaseData = new FormData();
         // updateLeaseData.append("lease_uid", lease[0].lease_uid);
         updateLeaseData.append("lease_uid", currentLease.lease_uid);

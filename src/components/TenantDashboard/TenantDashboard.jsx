@@ -893,7 +893,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
   const daysUntilLeaseEnd = Math.ceil(timeDifference / (1000 * 3600 * 24));
 
   // Check if Renew Lease button should be visible (if within 2x notice period)
-  const showRenewLeaseButton = daysUntilLeaseEnd <= 2 * noticePeriod && leaseDetails?.lease_renew_status !== "RENEW NEW"  && leaseDetails?.lease_renew_status !== "RENEWED"  && leaseDetails?.lease_renew_status !== "RENEW PROCESSING";
+  const showRenewLeaseButton = daysUntilLeaseEnd <= 2 * noticePeriod && leaseDetails?.lease_renew_status !== "RENEW REQUESTED"  && leaseDetails?.lease_renew_status !== "RENEWED"  && leaseDetails?.lease_renew_status !== "RENEW PROCESSING";
   const isEndingOrEarlyTermination = leaseDetails?.lease_renew_status === "ENDING" || leaseDetails?.lease_renew_status === "EARLY TERMINATION";
   const tenants = leaseDetails?.tenants ? JSON.parse(leaseDetails?.tenants) : [];
   const tenant_detail = tenants.length > 0 ? tenants[0] : null;
@@ -918,6 +918,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
   };
 
   const handleViewRenewLease = () => {
+    // console.log("921 - relatedLease - ", relatedLease);    
     console.log("related Lease", relatedLease);
     if (isMobile) {
       setViewRHS(true);
@@ -1697,7 +1698,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                               cursor: "pointer",
                               paddingX: "10px",
                               textTransform: "none",
-                              width: "100%", // Fixed width for the button
+                              maxWidth: "100%", // Fixed width for the button
                               maxHeight: "100%",
                             }}
                             size='small'
