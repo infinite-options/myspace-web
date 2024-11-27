@@ -523,7 +523,7 @@ const TenantDashboard = () => {
         </Backdrop>
       ) : (
         <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
-          <Grid container spacing={8} rowGap={2} sx={{ alignItems: "stretch" }}>
+          <Grid container spacing={8} rowGap={1} sx={{ alignItems: "stretch", flexDirection: isMobile && "column" }}>
             {/* Top Section: Welcome Message and Search Icon */}
             {(!isMobile || !viewRHS) && (
               <Grid item xs={12} sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
@@ -577,7 +577,7 @@ const TenantDashboard = () => {
             </Grid>
 
             {/* Right-hand side */}
-            <Grid item xs={12} md={8} sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
+            <Grid item xs={12} md={8} sx={{ display: "flex", flexDirection: "column", flex: 1 }} rowGap={8}>
               {/* <Grid container rowGap={5} sx={{alignItems:"stretch"}}> */}
               {/* Top section: Announcements */}
               {(!isMobile || !viewRHS) && (
@@ -655,10 +655,10 @@ const TenantDashboard = () => {
               )}
 
               {/* Bottom section containing Lease, Maintenance, and Management Details - Abhinav here layouting, margin 1px */}
-              <Grid container spacing={8} rowGap={2} sx={{ flex: 1, display: "flex", flexDirection: isMobile ? "column" : "row" }} marginTop={1}>
+              <Grid container spacing={8} rowGap={2} sx={{ flex: 1, display: "flex", flexDirection: isMobile ? "column" : "row" }}>
                 {rightPane?.type ? (
                   /* Render the rightPane component if available */
-                  <Grid item xs={12} sx={{ flex: 1 }} ref={rightPaneRef} marginBottom={isMobile ? "40px" : "0px"}>
+                  <Grid item xs={12} sx={{ display: "flex", flexDirection: "column", flex: 1 }} ref={rightPaneRef} marginBottom={isMobile ? "40px" : "0px"}>
                     {renderRightPane()}
                   </Grid>
                 ) : (
@@ -786,7 +786,7 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
   return (
     <Paper
       sx={{
-        padding: "20px",
+        padding: isMobile ? "10px" : "20px",
         backgroundColor: "#f0f0f0",
         borderRadius: "8px",
         overflowX: "auto",
@@ -794,7 +794,7 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
       }}
     >
       <Grid Container sx={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
-        <Grid item xs={1} md={1}>
+        <Grid item xs={0.5} md={1}>
           <Button onClick={onBack}>
             <ArrowBackIcon
               sx={{
@@ -805,12 +805,12 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
             />
           </Button>
         </Grid>
-        <Grid item xs={10} md={10}>
+        <Grid item xs={11} md={10}>
           <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont, textAlign: "center" }}>
             Payment History
           </Typography>
         </Grid>
-        <Grid item xs={1} md={1} />
+        <Grid item xs={0.5} md={1} />
       </Grid>
       {data && data.length > 0 ? (
         <DataGrid
@@ -2129,6 +2129,7 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
         borderRadius: "10px",
         width: "100%",
         margin: "auto",
+        minHeight: "250px"
       }}
     >
       <Grid Container sx={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
@@ -2343,7 +2344,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
         </Backdrop>
 
         <>
-          <Grid container>
+          <Grid container sx={{ flex: 1 }}>
             <Grid container>
               <Paper
                 component={Stack}
