@@ -25,6 +25,9 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import EndLeaseButton from "../Leases/EndLeaseButton";
+import FlipIcon from "../TenantDashboard/FlipImage.png"
+import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy, } from "../../utils/fees";
+
 
 export default function LeaseDetailsComponent({
   currentProperty,
@@ -57,6 +60,34 @@ export default function LeaseDetailsComponent({
   const activeLease = currentProperty?.lease_status;
   const [isChange, setIsChange] = useState(false);
   const [isEndLeasePopupOpen, setIsEndLeasePopupOpen] = useState(false);
+  const [renewedLease, setRenewedLease] = useState(null);
+  const [isFlipped, setIsFlipped] = useState(false);
+
+
+  const handleFlip = () => {
+    setIsFlipped(!isFlipped);
+  };
+
+  useEffect(() => {    
+    let renewed = null;
+    currentProperty?.applications?.forEach((application, index) => {
+      // if (application.lease_status === "RENEW NEW" || application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") {
+      if (application.lease_status === "APPROVED") {
+        console.log("73 - application - ", application);
+        // console.log("88 - index - ", index);
+        renewed = application;
+      }
+    });
+
+    setRenewedLease(renewed);
+    setIsFlipped(false);
+
+  }, [currentProperty]);
+
+  useEffect(() => {    
+    console.log("ROHIT - 86 - renewedLease - ", renewedLease);
+
+  }, [renewedLease]);
   // console.log("currentProperty?.maintenance - ", currentProperty?.maintenance);
 
   // useEffect(() => {
@@ -159,16 +190,35 @@ export default function LeaseDetailsComponent({
   return (
     <>
       <Card sx={{ height: "100%" }}>
-        <Typography
-          sx={{
-            color: "#160449",
-            fontWeight: theme.typography.primary.fontWeight,
-            fontSize: theme.typography.largeFont,
-            textAlign: "center",
-          }}
-        >
-          Current Lease Details
-        </Typography>
+        <Grid container justifyContent="center">          
+          <Grid container justifyContent="center" item xs={3.8}>
+            <Typography
+              sx={{
+                color: "#160449",
+                fontWeight: theme.typography.primary.fontWeight,
+                fontSize: theme.typography.largeFont,
+                textAlign: "left",
+              }}
+            >
+              {isFlipped? "Renewed Lease Details" : "Current Lease Details"}
+            </Typography>            
+          </Grid>
+          <Grid container justifyContent="flex-start" item xs={1}>            
+            <IconButton
+                onClick={handleFlip}
+                disabled={renewedLease == null}
+                sx={{
+                  // position: "absolute",
+                  // top: "10px",
+                  // right: "10px",
+                  padding: 0,                  
+                  opacity: renewedLease == null ? 0.2 : 1,
+                }}
+              >
+                <img src={FlipIcon} alt='Flip Icon' style={{ width: "30px", height: "30px" }} />
+              </IconButton>
+          </Grid>
+        </Grid>        
         <CardContent>
           <Grid container direction="row">
 
@@ -233,6 +283,71 @@ export default function LeaseDetailsComponent({
                 </Grid>
               )}
 
+              {/* DEBUG - Lease UID */}
+              {
+                (activeLease || renewedLease != null) && (
+                  <Grid container item spacing={2}>
+                    <Grid item xs={6}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        Lease UID:
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      {
+                        isFlipped === false && (
+                          <Box display='flex' alignItems='center' justifyContent={"space-between"}>
+                            {currentProperty?.lease_status === "ACTIVE" || currentProperty?.lease_status === "ACTIVE M2M" ? (                    
+                                <Typography
+                                  sx={{
+                                    color: theme.typography.primary.black,
+                                    fontWeight: theme.typography.light.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                  }}
+                                >
+                                  {currentProperty?.lease_uid}
+                                </Typography>                                                                                          
+                            ) : (
+                              <Typography
+                                sx={{
+                                  color: "#3D5CAC",
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                }}
+                              >
+                                No Lease
+                              </Typography>
+                            )}
+                          </Box>
+                        )
+                      }
+                      {
+                        isFlipped === true && (
+                          <Box display='flex' alignItems='center' justifyContent={"space-between"}>
+                            
+                                <Typography
+                                  sx={{
+                                    color: theme.typography.primary.black,
+                                    fontWeight: theme.typography.light.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                  }}
+                                >
+                                  {renewedLease?.lease_uid}
+                                </Typography>                                                                                                                      
+                          </Box>
+                        )
+                      }
+                      
+                    </Grid>
+                  </Grid>
+                )
+              }
+
               {/* Owner Info for Managers */}
               {selectedRole === "MANAGER" && (
                 <Grid container item spacing={2}>
@@ -276,7 +391,7 @@ export default function LeaseDetailsComponent({
                 </Grid>
               )}
 
-        <Grid container item spacing={2}>
+              <Grid container item spacing={2}>
                 <Grid item xs={6}>
                   <Typography
                     sx={{
@@ -293,9 +408,9 @@ export default function LeaseDetailsComponent({
                     {currentProperty?.lease_status === "ACTIVE" || currentProperty?.lease_status === "ACTIVE M2M" ? (                    
                         <Typography
                           sx={{
-                color: theme.typography.primary.black,
-                fontWeight: theme.typography.light.fontWeight,
-                fontSize: theme.typography.smallFont,
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.light.fontWeight,
+                            fontSize: theme.typography.smallFont,
                           }}
                         >
                           {currentProperty?.property_address}
@@ -328,50 +443,77 @@ export default function LeaseDetailsComponent({
                     Lease Status:
                   </Typography>
                 </Grid>
-                <Grid item xs={6}>
-                  <Box display='flex' alignItems='center' justifyContent={"space-between"}>
-                    {currentProperty?.lease_status === "ACTIVE" || currentProperty?.lease_status === "ACTIVE M2M" ? (
-                      <>
-                        <Typography
-                          sx={{
-                            color: theme.palette.success.main,
-                            fontWeight: theme.typography.secondary.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                          }}
-                        >
-                          {currentProperty?.lease_status}
-                        </Typography>
-                        {currentProperty?.lease_renew_status &&
-                          (currentProperty?.lease_renew_status.includes("RENEW")) && (
+                {
+                  isFlipped === false && (
+                    <Grid item xs={6}>
+                      <Box display='flex' alignItems='center' justifyContent={"space-between"}>
+                        
+                        {currentProperty?.lease_status === "ACTIVE" || currentProperty?.lease_status === "ACTIVE M2M" ? (
+                          <>
                             <Typography
                               sx={{
-                                color: currentProperty?.lease_renew_status?.includes("RENEW") ? "#FF8A00" : "#A52A2A",
+                                color: theme.palette.success.main,
                                 fontWeight: theme.typography.secondary.fontWeight,
                                 fontSize: theme.typography.smallFont,
                               }}
                             >
-                              {currentProperty?.lease_renew_status === "RENEW REQUESTED" || currentProperty?.lease_renew_status === "PM RENEW REQUESTED"  ? "RENEWING" : ""}
-                {currentProperty?.lease_renew_status === "RENEWED" ? "RENEWED" : ""}
+                              {currentProperty?.lease_status}
                             </Typography>
-                          )}
-                      </>
-                    ) : (
-                      <Typography
-                        sx={{
-                          color: "#3D5CAC",
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        No Lease
-                      </Typography>
-                    )}
-                  </Box>
-                </Grid>
+                            {currentProperty?.lease_renew_status &&
+                              (currentProperty?.lease_renew_status.includes("RENEW")) && (
+                                <Typography
+                                  sx={{
+                                    color: currentProperty?.lease_renew_status?.includes("RENEW") ? "#FF8A00" : "#A52A2A",
+                                    fontWeight: theme.typography.secondary.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                  }}
+                                >
+                                  {currentProperty?.lease_renew_status === "RENEW REQUESTED" || currentProperty?.lease_renew_status === "PM RENEW REQUESTED"  ? "RENEWING" : ""}
+                    {currentProperty?.lease_renew_status === "RENEWED" ? "RENEWED" : ""}
+                                </Typography>
+                              )}
+                          </>
+                        ) : (
+                          <Typography
+                            sx={{
+                              color: "#3D5CAC",
+                              fontWeight: theme.typography.secondary.fontWeight,
+                              fontSize: theme.typography.smallFont,
+                            }}
+                          >
+                            No Lease
+                          </Typography>
+                        )}
+                      </Box>
+                    </Grid>
+                  )
+                }
+                {
+                  isFlipped === true && (
+                    <Grid item xs={6}>
+                      <Box display='flex' alignItems='center' justifyContent={"space-between"}>                                                
+                          <>
+                            <Typography
+                              sx={{
+                                color: theme.palette.success.main,
+                                fontWeight: theme.typography.secondary.fontWeight,
+                                fontSize: theme.typography.smallFont,
+                              }}
+                            >
+                              {renewedLease?.lease_status}
+                            </Typography>                            
+                          </>                        
+                      </Box>
+                    </Grid>
+                  )
+                }
+                
               </Grid>
 
+              
+
               {/* Lease Term */}
-              {activeLease && (
+              {(activeLease || renewedLease != null ) && (
                 <Grid container item spacing={2}>
                   <Grid item xs={6}>
                     <Typography
@@ -385,22 +527,41 @@ export default function LeaseDetailsComponent({
                     </Typography>
                   </Grid>
                   <Grid item xs={6}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.primary.black,
-                        fontWeight: theme.typography.light.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      {currentProperty?.lease_start}
-                      <span style={{ fontWeight: "bold", margin: "0 10px" }}>to</span>
-                      {currentProperty?.lease_end}
-                    </Typography>
+                    {
+                      isFlipped === false && (
+                        <Typography
+                          sx={{
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.light.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          {currentProperty?.lease_start}
+                          <span style={{ fontWeight: "bold", margin: "0 10px" }}>to</span>
+                          {currentProperty?.lease_end}
+                        </Typography>
+                      )
+                    }
+                    {
+                      isFlipped === true && (
+                        <Typography
+                          sx={{
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.light.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          {renewedLease?.lease_start}
+                          <span style={{ fontWeight: "bold", margin: "0 10px" }}>to</span>
+                          {renewedLease?.lease_end}
+                        </Typography>
+                      )
+                    }                      
                   </Grid>
                 </Grid>
               )}
 
-        {activeLease && (
+        {(activeLease || renewedLease != null) && (
                 <Grid container item spacing={2}>
                   <Grid item xs={6}>
                     <Typography
@@ -414,20 +575,39 @@ export default function LeaseDetailsComponent({
                     </Typography>
                   </Grid>
                   <Grid item xs={6}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.primary.black,
-                        fontWeight: theme.typography.light.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      {currentProperty?.lease_end_notice_period ? `${currentProperty?.lease_end_notice_period} days` : 'Not specified'}                    
-                    </Typography>
+                    {
+                      isFlipped === false && (
+                        <Typography
+                          sx={{
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.light.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          {currentProperty?.lease_end_notice_period ? `${currentProperty?.lease_end_notice_period} days` : 'Not specified'}                    
+                        </Typography>
+                      )
+                    }
+
+                    {
+                      isFlipped === true && (
+                        <Typography
+                          sx={{
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.light.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          {renewedLease?.lease_end_notice_period ? `${renewedLease?.lease_end_notice_period} days` : 'Not specified'}                    
+                        </Typography>
+                      )
+                    }
+                    
                   </Grid>
                 </Grid>
               )}
 
-        {activeLease && (
+        {(activeLease || renewedLease != null) && (
                 <Grid container item spacing={2}>
                   <Grid item xs={6}>
                     <Typography
@@ -440,17 +620,36 @@ export default function LeaseDetailsComponent({
                       Lease Renewal:
                     </Typography>
                   </Grid>
+                  {
+                    isFlipped === false && (
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.light.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        {currentProperty?.lease_m2m == null || currentProperty?.lease_m2m === 0 ? "Not Specified" : ""}
+                        {currentProperty?.lease_m2m === 1 ? "Month To Month" : ""}
+                      </Typography>
+                      )
+                  }
+                  {
+                    isFlipped === true && (
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.light.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        {renewedLease?.lease_m2m == null || renewedLease?.lease_m2m === 0 ? "Not Specified" : ""}
+                        {renewedLease?.lease_m2m === 1 ? "Month To Month" : ""}
+                      </Typography>
+                      )
+                  }
                   <Grid item xs={6}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.primary.black,
-                        fontWeight: theme.typography.light.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-            {currentProperty?.lease_m2m == null || currentProperty?.lease_m2m === 0 ? "Not Specified" : ""}
-                      {currentProperty?.lease_m2m === 1 ? "Month To Month" : ""}
-                    </Typography>
+                    
                   </Grid>
                 </Grid>
               )}
@@ -589,7 +788,7 @@ export default function LeaseDetailsComponent({
             
             <Grid container spacing={3}>
             {/* Lease Fees */}
-            {activeLease && (
+            {isFlipped === false && activeLease && (
               <Grid item xs={12}>
                 <Accordion theme={theme} sx={{ backgroundColor: "#e6e6e6", marginTop: "40px" }}>
                   <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='lease-fees-content' id='lease-fees-header'>
@@ -634,9 +833,54 @@ export default function LeaseDetailsComponent({
                 </Accordion>
               </Grid>
             )}
+            {isFlipped === true && renewedLease != null && (
+              <Grid item xs={12}>
+                <Accordion theme={theme} sx={{ backgroundColor: "#e6e6e6", marginTop: "40px" }}>
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='lease-fees-content' id='lease-fees-header'>
+                    <Typography
+                      sx={{
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: '20px',
+                      }}
+                    >
+                      Lease Fees
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Grid container item spacing={2}>
+                      {renewedLease?.lease_fees ? (
+                        <FeesSmallDataGrid data={JSON.parse(renewedLease?.lease_fees)} />
+                      ) : (
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            width: "100%",
+                            height: "40px",
+                            marginTop: "10px",
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              color: "#A9A9A9",
+                              fontWeight: theme.typography.primary.fontWeight,
+                              fontSize: theme.typography.smallFont,
+                            }}
+                          >
+                            No Fees
+                          </Typography>
+                        </Box>
+                      )}
+                    </Grid>
+                  </AccordionDetails>
+                </Accordion>
+              </Grid>
+            )}
 
             {/* Lease Documents */}
-            {activeLease && (
+            {isFlipped === false && activeLease && (
               <Grid item xs={12}>
                 {currentProperty?.lease_documents && JSON.parse(currentProperty.lease_documents).length > 0 ? (
                   <Accordion theme={theme} sx={{ backgroundColor: "#e6e6e6", marginTop: "10px" }}>
@@ -654,6 +898,62 @@ export default function LeaseDetailsComponent({
                     <AccordionDetails>
                       <Grid container item>
                         <DocumentSmallDataGrid data={JSON.parse(currentProperty.lease_documents)} handleFileClick={handleFileClick} />
+                      </Grid>
+                    </AccordionDetails>
+                  </Accordion>
+                ) : (
+                  <Box sx={{ marginTop: "10px" }}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      Lease Documents
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        width: "100%",
+                        height: "40px",
+                        marginTop: "10px",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          color: "#A9A9A9",
+                          fontWeight: theme.typography.primary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        No Documents
+                      </Typography>
+                    </Box>
+                  </Box>
+                )}
+              </Grid>
+            )}
+            {isFlipped === true && renewedLease != null && (
+              <Grid item xs={12}>
+                {renewedLease?.lease_documents && JSON.parse(renewedLease.lease_documents).length > 0 ? (
+                  <Accordion theme={theme} sx={{ backgroundColor: "#e6e6e6", marginTop: "10px" }}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='lease-documents-content' id='lease-documents-header'>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: '20px',
+                        }}
+                      >
+                        Lease Documents
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Grid container item>
+                        <DocumentSmallDataGrid data={JSON.parse(renewedLease.lease_documents)} handleFileClick={handleFileClick} />
                       </Grid>
                     </AccordionDetails>
                   </Accordion>
@@ -892,7 +1192,7 @@ export const FeesSmallDataGrid = ({ data }) => {
       field: "frequency",
       headerName: "Frequency",
       flex: 1.2,
-      minWidth: 110, // Ensure column doesn't shrink too much
+      minWidth: 120, // Ensure column doesn't shrink too much
       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
       renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
     },
@@ -900,7 +1200,7 @@ export const FeesSmallDataGrid = ({ data }) => {
       field: "fee_name",
       headerName: "Name",
       flex: 1,
-      minWidth: 80,
+      minWidth: 90,
       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
       renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
     },
@@ -908,7 +1208,7 @@ export const FeesSmallDataGrid = ({ data }) => {
       field: "charge",
       headerName: "Charge",
       flex: 1,
-      minWidth: 80,
+      minWidth: 100,
       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
       renderCell: (params) => {
         const feeType = params.row?.fee_type;
@@ -920,7 +1220,7 @@ export const FeesSmallDataGrid = ({ data }) => {
     {
       field: "fee_type",
       headerName: "Fee Type",
-      flex: 1,
+      flex: 0.8,
       minWidth: 110,
       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
       renderCell: (params) => {
@@ -930,6 +1230,79 @@ export const FeesSmallDataGrid = ({ data }) => {
         return <Typography sx={commonStyles}>{fee_type}</Typography>;
       },
     },
+    {
+      field: "due_by",
+      headerName: "Due By",
+      flex: 3,
+      minWidth: 130,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => (
+        <Typography>
+          {/* {params.row.frequency === "Monthly" && `${params.row.due_by}${getDateAdornmentString(params.row.due_by)} of every month`}
+        {params.row.frequency === "One Time" && `${params.row.due_by_date}`}
+        {(params.row.frequency === "Weekly"  || params.row.frequency === "Bi-Weekly") && `${valueToDayMap.get(params.row.due_by)}`} */}
+          {getFeesDueBy(params.row)}
+          { console.log("ROHIT - 1245 - params.row - ", params.row)}
+        </Typography>
+      ),
+    },
+    {
+      field: "available_topay",
+      headerName: "Available To Pay",
+      flex: 3,
+      minWidth: 160,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => (
+        <Typography>
+          {/* { (
+            params.row.frequency === "Monthly" || 
+            params.row.frequency === "Weekly" ||
+            params.row.frequency === "Bi-Weekly" ||
+            params.row.frequency === "One Time"
+          )
+          && `${params.row.available_topay} days before`} */}
+          {getFeesAvailableToPay(params.row)}
+        </Typography>
+      ),
+    },
+    {
+      field: "late_by",
+      headerName: "Late By",
+      flex: 1.4,
+      minWidth: 160,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => (
+        <Typography>
+          {/* {(
+            params.row.frequency === "Monthly" || 
+            params.row.frequency === "Weekly" ||
+            params.row.frequency === "Bi-Weekly" ||
+            params.row.frequency === "One Time"
+          ) 
+        && `${params.row.available_topay} days after`} */}
+          {getFeesLateBy(params.row)}
+        </Typography>
+      ),
+    },
+    {
+      field: "late_fee",
+      headerName: "Late Fee",
+      flex: 0.7,
+      minWidth: 120,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => <Typography>{params.row.late_fee !== ""  ? `$ ${params.row.late_fee}` : "-"}</Typography>,
+    },
+    {
+      field: "perDay_late_fee",
+      flex: 1,
+      minWidth: 120,
+      renderHeader: (params) => (
+        <strong style={{ lineHeight: 1.2, display: "inline-block", textAlign: "center" }}>
+          Late Fee <br /> Per Day
+        </strong>
+      ),
+      renderCell: (params) => <Typography>{params.row.perDay_late_fee !== "" ? `$ ${params.row.perDay_late_fee}` : "-"}</Typography>,
+    },    
   ];
 
   // Adding a unique id to each row using map if the data doesn't have an id field
@@ -939,7 +1312,8 @@ export const FeesSmallDataGrid = ({ data }) => {
   }));
 
   return (
-    <div style={{ width: "100%", overflowX: "auto" }}>
+    // <div style={{ width: "100%", overflowX: "auto" }}>      
+    <Grid item xs={12} sx={{ overflowX: 'auto',}}>
       <DataGrid
         rows={rowsWithId}
         columns={columns}
@@ -956,7 +1330,8 @@ export const FeesSmallDataGrid = ({ data }) => {
         hideFooter={true} // Hides pagination
         disableColumnMenu // Disable column menu for cleaner UI
       />
-    </div>
+    </Grid>
+    
   );
 };
 
@@ -966,6 +1341,8 @@ export const DocumentSmallDataGrid = ({ data, handleFileClick }) => {
     fontWeight: theme.typography.light.fontWeight,
     fontSize: theme.typography.smallFont,
   };
+
+  console.log("ROHIT - 1345 - data - ", data);
 
   const DocColumn = [
     {
@@ -991,6 +1368,13 @@ export const DocumentSmallDataGrid = ({ data, handleFileClick }) => {
     {
       field: "contentType",
       headerName: "Content Type",
+      flex: 1.8,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
+    },
+    {
+      field: "fileType",
+      headerName: "File Type",
       flex: 1.8,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
       renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,

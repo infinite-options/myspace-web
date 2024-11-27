@@ -8,6 +8,7 @@ import { Typography, Box, Grid, Container, Paper, Button, ThemeProvider, TextFie
 import { DataGrid } from "@mui/x-data-grid";
 import theme from "../../../theme/theme";
 import SearchIcon from "@mui/icons-material/Search";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import HappinessMatrixWidget from "../../Dashboard-Components/HappinessMatrix/HappinessMatrixWidget";
 import CommentIcon from "@mui/icons-material/Comment";
@@ -529,8 +530,8 @@ const OwnerContactDetailsHappinessMatrix = () => {
         <CircularProgress color='inherit' />
       </Backdrop>
       <ThemeProvider theme={theme}>
-        <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px", marginTop: "10px", backgroundColor: "#FFFFFF" }}>
-          <Grid container columnSpacing={5} sx={{ marginTop: "10px" }}>
+        <Container maxWidth='lg' sx={{ paddingTop: !isMobile && "10px", paddingBottom: "50px", marginTop: !isMobile && "10px", backgroundColor: "#FFFFFF" }}>
+          <Grid container columnSpacing={5} sx={{ marginTop: !isMobile && "10px" }}>
             {!isMobile && (
               <Grid container item xs={12} md={4} sx={{ padding: "10px", backgroundColor: theme.palette.primary.main, borderRadius: "10px" }}>
                 <Grid item xs={12} sx={{ marginBottom: "10px" }}>
@@ -760,11 +761,11 @@ const OwnerContactDetail = ({
       <Grid item xs={12} container justifyContent='center' sx={{ height: "50px" }}>
         <Button
           sx={{
-          textTransform: "none",
-          color: theme.typography.common.blue,
-          fontWeight: theme.typography.common.fontWeight,
-          fontSize: "16px",
-          "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
+            textTransform: "none",
+            color: theme.typography.common.blue,
+            fontWeight: theme.typography.common.fontWeight,
+            fontSize: "16px",
+            "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
           }}
           onClick={() => {
             if(isMobile && setViewRHS){
@@ -776,7 +777,13 @@ const OwnerContactDetail = ({
             }
           }}
         >
-          <img src={refundIcon} style={{ width: "25px", height: "25px", margin: "5px" }} />
+          <ArrowBackIcon
+            sx={{
+              color: theme.typography.primary.black,
+              fontSize: "30px",
+              margin: "5px",
+            }}
+          />
         </Button>
         <Typography sx={{ fontSize: "35px", fontWeight: "bold", color: "#160449" }}>Owner Contact</Typography>
       </Grid>
@@ -1047,9 +1054,9 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
         </Grid>
       </Grid>
       <Grid container sx={{ height: "320px", overflow: "auto", alignContent: "flex-start"}}>
-      {activeProperties && activeProperties.length > 0 ? (
-        <>
-          {/* <Grid item xs={12}>
+        {activeProperties && activeProperties.length > 0 ? (
+          <>
+            {/* <Grid item xs={12}>
             <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "20px" }}>Active {`(${activeProperties.length})`}</Typography>
           </Grid>
           <Grid container sx={{ padding: "10px", }}>
@@ -1057,44 +1064,44 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
               <PropertiesDataGrid data={activeProperties} maintenanceRequests={maintenanceReqsByProperty} />
             </Grid>
           </Grid> */}
-          <Grid item xs={12}>
-            <Accordion 
-              defaultExpanded 
-              sx={{
-                marginBottom: "20px", 
-                backgroundColor: "#D6D5DA", 
-                borderRadius: '8px',
-                margin: "auto", 
-                // minHeight: "50px",
-                boxShadow: "none",
-              }}
-            >
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "15px" }}>Active {`(${activeProperties.length})`}</Typography>
-              </AccordionSummary>
+            <Grid item xs={12}>
+              <Accordion
+                defaultExpanded
+                sx={{
+                  marginBottom: "20px",
+                  backgroundColor: "#D6D5DA",
+                  borderRadius: '8px',
+                  margin: "auto",
+                  // minHeight: "50px",
+                  boxShadow: "none",
+                }}
+              >
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "15px" }}>Active {`(${activeProperties.length})`}</Typography>
+                </AccordionSummary>
               <AccordionDetails sx={{marginBottom: "5px", marginLeft: "10px" }}>
-                <Grid item xs={12}>
-                  <PropertiesDataGrid data={activeProperties} maintenanceRequests={maintenanceReqsByProperty} />
-                </Grid>
-              </AccordionDetails>
-            </Accordion>
+                  <Grid item xs={12}>
+                    <PropertiesDataGrid data={activeProperties} maintenanceRequests={maintenanceReqsByProperty} />
+                  </Grid>
+                </AccordionDetails>
+              </Accordion>
+            </Grid>
+          </>
+        ) : (
+          <Grid container justifyContent='center' sx={{ marginTop: "20px" }}>
+            <Grid item xs={12}>
+              <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "2px", marginLeft: "20px" }}>Active {`(0)`}</Typography>
+            </Grid>
+            <Typography sx={{ ontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px" }}>No active properties available for this owner.</Typography>
           </Grid>
-        </>
-      ) : (
-        <Grid container justifyContent='center' sx={{ marginTop: "20px" }}>
+        )}
+        <Grid container sx={{ paddingLeft: "10px", }}>
           <Grid item xs={12}>
-            <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "2px", marginLeft: "20px" }}>Active {`(0)`}</Typography>
-          </Grid>
-          <Typography sx={{ ontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px" }}>No active properties available for this owner.</Typography>
-        </Grid>
-      )}      
-      <Grid container sx={{ paddingLeft: "10px", }}>
-        <Grid item xs={12}>
-          {/* <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "20px" }}>New {`(${newContracts?.length || 0})`}</Typography> */}
-          {newContracts && newContracts.length > 0 ? 
-          (
-            <>
-            {/* {newContracts.map((contract, index) => (
+            {/* <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "20px" }}>New {`(${newContracts?.length || 0})`}</Typography> */}
+            {newContracts && newContracts.length > 0 ?
+              (
+                <>
+                  {/* {newContracts.map((contract, index) => (
               <Box
                 key={index}
                 onClick={() => navigate("/pmQuotesList", { state: { selectedContractUID: contract.contract_uid, selectedContractPropertyUID: contract.property_uid } })}
@@ -1105,52 +1112,52 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
                 </Typography>
               </Box>
             ))} */}
-            <Accordion 
-              // defaultExpanded 
-              sx={{
-                marginBottom: "20px", 
-                backgroundColor: "#D6D5DA", 
-                borderRadius: '8px',
-                margin: "auto", 
-                // minHeight: "50px",
-                boxShadow: "none",
+                  <Accordion
+                    // defaultExpanded 
+                    sx={{
+                      marginBottom: "20px",
+                      backgroundColor: "#D6D5DA",
+                      borderRadius: '8px',
+                      margin: "auto",
+                      // minHeight: "50px",
+                      boxShadow: "none",
 
-              }}>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "5px" }}>New {`(${newContracts?.length || 0})`}</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                {newContracts.map((contract, index) => (
-                  <Box
-                    key={index}
-                    onClick={() => navigate("/pmQuotesList", { state: { selectedContractUID: contract.contract_uid, selectedContractPropertyUID: contract.property_uid } })}
-                    sx={{ cursor: "pointer" }}
-                  >
-                    <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px" }}>
-                      {`${contract.property_address}${contract.property_unit ? `, Unit - ${contract.property_unit}` : ""}`}
-                    </Typography>
-                  </Box>
-                ))} 
-              </AccordionDetails>
-            </Accordion>
-            </>
-            
-          ) : (
-            <>
-              <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "20px" }}>New {`(${newContracts?.length || 0})`}</Typography>
-              <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px" }}>No new contracts</Typography>
-            </>
-          )}
+                    }}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                      <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "5px" }}>New {`(${newContracts?.length || 0})`}</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      {newContracts.map((contract, index) => (
+                        <Box
+                          key={index}
+                          onClick={() => navigate("/pmQuotesList", { state: { selectedContractUID: contract.contract_uid, selectedContractPropertyUID: contract.property_uid } })}
+                          sx={{ cursor: "pointer" }}
+                        >
+                          <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px" }}>
+                            {`${contract.property_address}${contract.property_unit ? `, Unit - ${contract.property_unit}` : ""}`}
+                          </Typography>
+                        </Box>
+                      ))}
+                    </AccordionDetails>
+                  </Accordion>
+                </>
+
+              ) : (
+                <>
+                  <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "20px" }}>New {`(${newContracts?.length || 0})`}</Typography>
+                  <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px" }}>No new contracts</Typography>
+                </>
+              )}
+          </Grid>
         </Grid>
-      </Grid>
 
       <Grid container sx={{ paddingLeft: "10px",}}>
-        <Grid item xs={12}>
-          {/* <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "20px" }}>Sent {`(${sentContracts?.length || 0})`}</Typography> */}
-          {sentContracts && sentContracts.length > 0 ? 
-          (
-            <>
-              {/* {sentContracts.map((contract, index) => (
+          <Grid item xs={12}>
+            {/* <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "20px" }}>Sent {`(${sentContracts?.length || 0})`}</Typography> */}
+            {sentContracts && sentContracts.length > 0 ?
+              (
+                <>
+                  {/* {sentContracts.map((contract, index) => (
                 <Box
                   key={index}
                   onClick={() => navigate("/pmQuotesList", { state: { selectedContractUID: contract.contract_uid, selectedContractPropertyUID: contract.property_uid } })}
@@ -1161,44 +1168,44 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
                   </Typography>
                 </Box>
               ))} */}
-              <Accordion 
-                // defaultExpanded 
-                sx={{
-                  marginBottom: "20px", 
-                  backgroundColor: "#D6D5DA", 
-                  borderRadius: '8px',
-                  margin: "auto", 
-                  // minHeight: "50px",
-                  boxShadow: "none",
+                  <Accordion
+                    // defaultExpanded 
+                    sx={{
+                      marginBottom: "20px",
+                      backgroundColor: "#D6D5DA",
+                      borderRadius: '8px',
+                      margin: "auto",
+                      // minHeight: "50px",
+                      boxShadow: "none",
 
-                }}
-              >
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "5px" }}>Sent {`(${sentContracts?.length || 0})`}</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                {sentContracts.map((contract, index) => (
-                  <Box
-                    key={index}
-                    onClick={() => navigate("/pmQuotesList", { state: { selectedContractUID: contract.contract_uid, selectedContractPropertyUID: contract.property_uid } })}
-                    sx={{ cursor: "pointer" }}
+                    }}
                   >
-                    <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px" }}>
-                      {`${contract.property_address}${contract.property_unit ? `, Unit - ${contract.property_unit}` : ""}`}
-                    </Typography>
-                  </Box>
-                ))}
-              </AccordionDetails>
-            </Accordion>
-            </>
-          ) : (
-            <>
-              <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "20px" }}>Sent {`(${sentContracts?.length || 0})`}</Typography>
-              <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px" }}>No sent contracts</Typography>
-            </>
-          )}
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                      <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "5px" }}>Sent {`(${sentContracts?.length || 0})`}</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      {sentContracts.map((contract, index) => (
+                        <Box
+                          key={index}
+                          onClick={() => navigate("/pmQuotesList", { state: { selectedContractUID: contract.contract_uid, selectedContractPropertyUID: contract.property_uid } })}
+                          sx={{ cursor: "pointer" }}
+                        >
+                          <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px" }}>
+                            {`${contract.property_address}${contract.property_unit ? `, Unit - ${contract.property_unit}` : ""}`}
+                          </Typography>
+                        </Box>
+                      ))}
+                    </AccordionDetails>
+                  </Accordion>
+                </>
+              ) : (
+                <>
+                  <Typography sx={{ fontSize: "15px", fontWeight: "bold", color: "#160449", marginTop: "10px", marginLeft: "20px" }}>Sent {`(${sentContracts?.length || 0})`}</Typography>
+                  <Typography sx={{ fontSize: "14px", color: "#160449", marginBottom: "5px", marginLeft: "10px" }}>No sent contracts</Typography>
+                </>
+              )}
+          </Grid>
         </Grid>
-      </Grid>
       </Grid>
     </>
   );
@@ -1363,14 +1370,14 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
           onClick={() =>
             getNumOfMaintenanceReqs(params.row.property_uid) > 0
               ? navigate("/managerMaintenance", {
-                  state: {
-                    selectedProperty: {
-                      address: params.row.property_address,
-                      property_uid: params.row.property_uid,
-                      checked: true,
-                    },
+                state: {
+                  selectedProperty: {
+                    address: params.row.property_address,
+                    property_uid: params.row.property_uid,
+                    checked: true,
                   },
-                })
+                },
+              })
               : null
           }
         >
@@ -1387,6 +1394,7 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
               width: "35px",
               height: "20px",
               fontSize: "5px",
+              paddingRight: "10px"
             }}
           >
             <Button sx={{ border: "none", "&:hover, &:focus, &:active": { backgroundColor: "#d6d5da" }, alignContent: "left", justifyContent: "left" }}>
@@ -1414,6 +1422,13 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
         getRowId={(row) => row.property_uid}
         sx={{
           border: "0px",
+          overflow: "hidden",
+          "& .MuiDataGrid-virtualScroller": {
+            overflow: "hidden", 
+          },
+          "& .MuiDataGrid-main": {
+            overflow: "hidden",
+          },
         }}
         hideFooter={true}
       />
@@ -1469,33 +1484,33 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
     },
     ...(tab !== "by_month"
       ? [
-          {
-            field: "property_address",
-            headerName: "Address",
-            width: 150,
-            renderCell: (params) => <span>{params.row.property_address !== null ? params.row.property_address : "-"}</span>,
-          },
-        ]
+        {
+          field: "property_address",
+          headerName: "Address",
+          width: 150,
+          renderCell: (params) => <span>{params.row.property_address !== null ? params.row.property_address : "-"}</span>,
+        },
+      ]
       : []),
     ...(tab !== "by_property"
       ? [
-          {
-            field: "year_month",
-            headerName: "Month",
-            width: 100,
-            renderCell: (params) => <span>{params.row.cf_month !== null ? params.row.cf_month : "-"}</span>,
-          },
-        ]
+        {
+          field: "year_month",
+          headerName: "Month",
+          width: 100,
+          renderCell: (params) => <span>{params.row.cf_month !== null ? params.row.cf_month : "-"}</span>,
+        },
+      ]
       : []),
     ...(tab !== "by_property"
       ? [
-          {
-            field: "year",
-            headerName: "Year",
-            width: 100,
-            renderCell: (params) => <span>{params.row.cf_year !== null ? params.row.cf_year : "-"}</span>,
-          },
-        ]
+        {
+          field: "year",
+          headerName: "Year",
+          width: 100,
+          renderCell: (params) => <span>{params.row.cf_year !== null ? params.row.cf_year : "-"}</span>,
+        },
+      ]
       : []),
     {
       field: "expected_cashflow",
