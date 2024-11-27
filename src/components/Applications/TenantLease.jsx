@@ -498,7 +498,7 @@ const TenantLease = () => {
       ) {
         
         feesList = JSON.parse(application?.lease_fees);
-      } else if (application?.lease_status === "NEW" || application?.lease_status === "REJECTED" || application?.lease_status === "REFUSED" || application?.lease_status === "WITHDRAWN" ) {
+      } else if (application?.lease_status === "NEW" || application?.lease_status === "REJECTED" || application?.lease_status === "REFUSED" || application?.lease_status === "RENEW REFUSED" || application?.lease_status === "WITHDRAWN" ) {
         const parsedApplicationFees = application.lease_fees ? JSON.parse(application.lease_fees) : []
         if(parsedApplicationFees?.length === 0){
           feesList = initialFees(property, application);
@@ -969,6 +969,31 @@ const TenantLease = () => {
     return utilitiesArray;
   };
 
+  async function updateCurrentLease() {
+    const leaseApplicationFormData = new FormData();
+
+    leaseApplicationFormData.append("lease_uid", property.lease_uid);
+    leaseApplicationFormData.append("lease_renew_status", "RENEW REQUESTED");    
+
+    try {
+      const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+        method: "PUT",
+        body: leaseApplicationFormData,
+      });
+      const data = await response.json();
+      // if (data.lease_update.code === 200) {
+      if(response.ok){
+        // alert("You have successfully Rejected the lease.");
+        openDialog("Success",`You have successfully Rejected the lease`,"success");        
+        
+      } else {
+        console.log(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
 
   const handleCreateNewLease = async () => {
     //POST call
@@ -985,8 +1010,12 @@ const TenantLease = () => {
       const leaseApplicationFormData = new FormData();
 
       console.log("---insdie DEBUG Lease fees - ", fees)
-            
-      leaseApplicationFormData.append("lease_status", "PROCESSING");            
+      
+      if(application?.lease_status === "RENEW REFUSED" || application?.lease_status === "RENEW WITHDRAWN") {
+        leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");            
+      } else {
+        leaseApplicationFormData.append("lease_status", "PROCESSING");            
+      }      
       leaseApplicationFormData.append("lease_property_id", application.lease_property_id);      
       leaseApplicationFormData.append("tenant_uid", application?.tenant_uid);
       leaseApplicationFormData.append("lease_assigned_contacts", application?.lease_assigned_contacts);
@@ -1052,6 +1081,15 @@ const TenantLease = () => {
         method: "POST",
         body: leaseApplicationFormData,
       });
+
+
+
+      if(application.lease_status === "RENEW REFUSED" || application.lease_status === "RENEW WITHDRAWN"){
+        await updateCurrentLease();
+      }      
+
+
+
 
       const receiverPropertyMapping = {
         [application.tenant_uid]: [property.property_uid],
@@ -2434,7 +2472,7 @@ const TenantLease = () => {
             onClick={() => {
               if (application?.lease_status === "NEW" || application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW NEW" || application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "APPROVED" ) {
                 handleCreateLease(); //PUT
-              } else if(application?.lease_status === "REJECTED" || application?.lease_status === "REFUSED" || application?.lease_status === "WITHDRAWN"){
+              } else if(application?.lease_status === "REJECTED" || application?.lease_status === "REFUSED" || application?.lease_status === "WITHDRAWN" || application?.lease_status === "RENEW REFUSED" || application?.lease_status ===  "RENEW WITHDRAWN"){
                 handleCreateNewLease(); //POST
               } else if (application?.lease_status === "ACTIVE" || application?.lease_status === "ACTIVE M2M") {
                 handleRenewLease();
@@ -2450,7 +2488,7 @@ const TenantLease = () => {
               },
             }}
           >
-            {(application?.lease_status === "NEW" ||  application?.lease_status === "REJECTED" || application?.lease_status === "REFUSED" || application?.lease_status === "WITHDRAWN" ) ? "Create Lease" : ""}
+            {(application?.lease_status === "NEW" ||  application?.lease_status === "REJECTED" || application?.lease_status === "REFUSED" || application?.lease_status === "RENEW REFUSED" || application?.lease_status === "WITHDRAWN" ) ? "Create Lease" : ""}
             {application?.lease_status === "PROCESSING" ? "Modify Lease" : ""}
             {application?.lease_status === "ACTIVE" || application?.lease_status === "ACTIVE M2M" ? "Renew Lease" : ""}            
             {application?.lease_status === "RENEW NEW" ? "Create Lease Renewal" : ""}

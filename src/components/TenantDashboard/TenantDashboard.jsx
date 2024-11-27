@@ -482,7 +482,7 @@ const TenantDashboard = () => {
           );
 
         case "tenantLeases":
-          return <TenantLeases {...rightPane.state} setRightPane={setRightPane} setReload={setReload} />;
+          return <TenantLeases {...rightPane.state} setRightPane={setRightPane} setReload={setReload} property={selectedProperty}/>;
         case "payment":
           return (
             <PaymentsPM
@@ -1330,7 +1330,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           ACTIVE
                         </Typography>
                         {leaseDetails?.lease_renew_status &&
-                          (leaseDetails?.lease_renew_status === "PM RENEW REQUESTED" || leaseDetails?.lease_renew_status.includes("RENEW REQUESTED") || leaseDetails?.lease_renew_status.includes("RENEWED") || leaseDetails?.lease_renew_status === "EARLY TERMINATION") && (
+                          (leaseDetails?.lease_renew_status === "PM RENEW REQUESTED" || leaseDetails?.lease_renew_status.includes("RENEW REQUESTED") || leaseDetails?.lease_renew_status === "RENEWED" || leaseDetails?.lease_renew_status === "RENEW REJECTED" || leaseDetails?.lease_renew_status === "EARLY TERMINATION") && (
                             <Typography
                               sx={{
                                 color: leaseDetails?.lease_renew_status?.includes("RENEW") ? "#FF8A00" : "#A52A2A",
@@ -1340,6 +1340,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                             >
                               {(leaseDetails?.lease_renew_status == "RENEW REQUESTED" || leaseDetails?.lease_renew_status == "PM RENEW REQUESTED") ? " RENEWING" : ""}
                               {leaseDetails?.lease_renew_status === "RENEWED" ? "RENEWED" : ""}
+                              {leaseDetails?.lease_renew_status === "RENEW REJECTED" ? "RENEW REJECTED" : ""}
                               {(leaseDetails?.lease_renew_status == "EARLY TERMINATION") ? "EARLY END" : ""}
 
                             </Typography>
@@ -1524,7 +1525,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                 )
               }
               {
-                  leaseDetails?.lease_status === "NEW" && (
+                  (leaseDetails?.lease_status === "NEW" || leaseDetails?.lease_status === "PROCESSING") && (
                     <Grid
                       item
                       xs={6}
@@ -1562,7 +1563,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                             //   marginLeft: "1%", // Adjusting margin for icon and text
                           }}
                         >
-                          {"Update Application"}                          
+                          {"Update Application 1"}                          
                         </Typography>
                       </Button>
                     </Grid>
@@ -1713,7 +1714,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                                 //   marginLeft: "1%", // Adjusting margin for icon and text
                               }}
                             >
-                              {"Update Application"}
+                              {"Update Application 2"}
                             </Typography>
                           </Button>
                         </Grid>

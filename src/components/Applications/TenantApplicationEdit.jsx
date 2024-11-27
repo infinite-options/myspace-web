@@ -1659,9 +1659,7 @@ export const EmploymentDataGrid = ({ profileData, employmentDataT = [], setSelec
   //       setSelectedJobs(selectedJobs);
   //     }
   //   }, [parsedEmploymentDataT, employmentData]);
-  useEffect(() => {
-    console.log("ROHIT - 1653 - checkedJobs - ", checkedJobs);
-    console.log("ROHIT - 1653 - employmentData - ", employmentData);        
+  useEffect(() => {    
     const updateJobs = employmentData.map((job) => {
       const matchingJob = parsedEmploymentDataT?.find((leaseJob) => leaseJob.jobTitle === job.jobTitle && leaseJob.companyName === job.companyName);
 

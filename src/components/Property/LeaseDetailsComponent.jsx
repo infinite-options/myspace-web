@@ -1018,7 +1018,7 @@ export default function LeaseDetailsComponent({
                     >
                       <Badge
                         color='success'
-                        badgeContent={currentProperty.applications.filter((app) => app.lease_status.includes("NEW") || app.lease_status.includes("PROCESSING")).length}
+                        badgeContent={currentProperty.applications.filter((app) => ["NEW", "RENEW NEW", "PROCESSING", "RENEW PROCESSING"].includes(app.lease_status)).length}
                         showZero
                         sx={{
                           paddingRight: "50px",

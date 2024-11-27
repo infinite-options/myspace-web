@@ -89,7 +89,7 @@ const getAppColor = (app) => {
     return "#2E7D32"; // Return green if lease_status contains 'RENEW'
   } else if (app.lease_status === "REJECTED" || app.lease_status === "RENEW WITHDRAWN") {
     return "#A52A2A"; // Red color for rejected
-  } else if (app.lease_status === "REFUSED") {
+  } else if (app.lease_status === "REFUSED" || app.lease_status === "RENEW REFUSED") {
     return "#874499"; // Purple color for refused
   } else if (app.lease_status === "WITHDRAWN") {
     return "#FF8A00"; // Orange color for withdrawn

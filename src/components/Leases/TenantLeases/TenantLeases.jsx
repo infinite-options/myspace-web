@@ -279,7 +279,11 @@ function TenantLeases(props) {
     const leaseApplicationFormData = new FormData();
 
     leaseApplicationFormData.append("lease_uid", lease.lease_uid);
-    leaseApplicationFormData.append("lease_status", "REFUSED");
+    if(lease.lease_status === "RENEW PROCESSING"){
+      leaseApplicationFormData.append("lease_status", "RENEW REFUSED");
+    } else {
+      leaseApplicationFormData.append("lease_status", "REFUSED");
+    }
 
     const sendAnnouncement = async () => {
       try {
@@ -322,11 +326,48 @@ function TenantLeases(props) {
       if(response.ok){
         // alert("You have successfully Rejected the lease.");
         openDialog("Success",`You have successfully Rejected the lease`,"success");
+        
         await sendAnnouncement();
+
+
+        // if lease status is RENEW PROCESSING update the current lease's renew status
+        if(lease.lease_status === "RENEW PROCESSING"){
+          await updateCurrentLease();
+        }
+
+
+
         // props.setRightPane({ type: "", state: { property: property, lease: lease } });
         // console.log("--- DEBUD---- rejected")
         props.setReload((prev) => !prev);
         // props.setRightPane("");
+
+
+      } else {
+        console.log(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function updateCurrentLease() {
+    const leaseApplicationFormData = new FormData();
+
+    leaseApplicationFormData.append("lease_uid", property.lease_uid);
+    leaseApplicationFormData.append("lease_renew_status", "RENEW REFUSED");    
+
+    try {
+      const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+        method: "PUT",
+        body: leaseApplicationFormData,
+      });
+      const data = await response.json();
+      // if (data.lease_update.code === 200) {
+      if(response.ok){
+        // alert("You have successfully Rejected the lease.");
+        openDialog("Success",`You have successfully Rejected the lease`,"success");        
+        
       } else {
         console.log(data);
       }
