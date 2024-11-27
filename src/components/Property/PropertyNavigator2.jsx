@@ -2015,9 +2015,7 @@ const PropertyTabPanel = (props) => {
                 {property && property.property_amenities_nearby ? `${(property?.property_amenities_nearby)}` : "-"}
               </Grid>
             </Grid>
-            <Grid container item xs={12}>
-        <PropertyDetailsGrid propertyDetails={property?.property_details || '{}'} />
-      </Grid></Grid>
+            </Grid>
           <Grid container item xs={4} justifyContent='center' sx={{ height: "250px", alignContent: "space-between" }}>
             <Grid item xs={10} sx={{ minHeight: "35px", marginBottom: "20px"  }}>
               {property && property?.property_available_to_rent === 1 && (property.lease_status == null || property.lease_status !== "ACTIVE") && (
@@ -2168,7 +2166,7 @@ const PropertyTabPanel = (props) => {
               </Box>
             </Grid>
             <Grid item xs={10} sx={{ marginBottom: "0px" }}>
-              <Box sx={{ pb: isMobile ? 5 : 0 }}>
+              <Box sx={{ pb: isMobile ? 0 : 0 }}>
                 {/* Edit Property Button */}
                 <Button
                   variant='contained'
@@ -2271,6 +2269,11 @@ const PropertyTabPanel = (props) => {
             </Grid>
           </Grid>
         </Grid>
+        <Grid container item xs={12} justifyContent='center' sx = {{ marginTop :"10px", alignContent: "space-between" }}>
+        <Grid container item xs={10}>
+          <PropertyDetailsGrid propertyDetails={property?.property_details || '{}'} />
+          </Grid>
+          </Grid>
       </Grid>
     </Grid>
   );
@@ -2288,11 +2291,17 @@ const PropertyDetailsGrid = ({ propertyDetails }) => {
   ];
 
   return (
-    <>
+    <Grid container item xs={12} spacing={2}>
       {rows.map((row, index) => (
-        <Grid container item xs={12} key={index} sx={{ marginBottom: 2 }}>
-          <Grid item xs={12}>
-          <Typography
+        <Grid item xs={12} key={index}>
+          {row.details.length > 0 ? (
+            <Accordion sx={{ width: "100%" }}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls={`panel${index}-content`}
+                id={`panel${index}-header`}
+              >
+                <Typography
                   sx={{
                     textTransform: "none",
                     color: theme.typography.primary.black,
@@ -2301,61 +2310,71 @@ const PropertyDetailsGrid = ({ propertyDetails }) => {
                     textAlign: "left",
                   }}
                 >
-              {row.type}:
+                  {row.type}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                {/* Render Headers Once */}
+                <Grid container item xs={12} sx={{ fontWeight: "bold", marginBottom: 1 }}>
+                  <Grid item sx={{ flex: 1.5 }}>
+                    <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                      Description
+                    </Typography>
+                  </Grid>
+                  <Grid item sx={{ flex: 1 }}>
+                    <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                      Days
+                    </Typography>
+                  </Grid>
+                  <Grid item sx={{ flex: 0.5 }}>
+                    <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                      Start Time
+                    </Typography>
+                  </Grid>
+                  <Grid item sx={{ flex: 0.5 }}>
+                    <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                      End Time
+                    </Typography>
+                  </Grid>
+                </Grid>
+                {/* Render Data Rows */}
+                {row.details.map((detail, detailIndex) => (
+                  <Grid container item xs={12} key={detailIndex} sx={{ marginBottom: 1 }}>
+                    <Grid item sx={{ flex: 1.5 }}>
+                      <Typography variant="body2">{detail.description || "-"}</Typography>
+                    </Grid>
+                    <Grid item sx={{ flex: 1 }}>
+                      <Typography variant="body2">{detail.days || "-"}</Typography>
+                    </Grid>
+                    <Grid item sx={{ flex: 0.5 }}>
+                      <Typography variant="body2">{detail.startTime || "-"}</Typography>
+                    </Grid>
+                    <Grid item sx={{ flex: 0.5 }}>
+                      <Typography variant="body2">{detail.endTime || "-"}</Typography>
+                    </Grid>
+                  </Grid>
+                ))}
+              </AccordionDetails>
+            </Accordion>
+          ) : (
+            <Typography
+              sx={{
+                textTransform: "none",
+                color: theme.typography.primary.black,
+                fontWeight: theme.typography.secondary.fontWeight,
+                fontSize: theme.typography.smallFont,
+                textAlign: "left",
+              }}
+            >
+              {row.type}: -
             </Typography>
-          </Grid>
-          {row.details.length > 0 ? (
-  <>
-    {/* Render Headers Once */}
-    <Grid container item xs={12} sx={{ fontWeight: "bold", marginBottom: 1 }}>
-      <Grid item sx={{ flex: 1.5 }}>
-        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-          Description
-        </Typography>
-      </Grid>
-      <Grid item sx={{ flex: 1 }}>
-        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-          Days
-        </Typography>
-      </Grid>
-      <Grid item sx={{ flex: 0.5 }}>
-        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-          Start Time
-        </Typography>
-      </Grid>
-      <Grid item sx={{ flex: 0.5 }}>
-        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-          End Time
-        </Typography>
-      </Grid>
-    </Grid>
-    {/* Render Data Rows */}
-    {row.details.map((detail, detailIndex) => (
-      <Grid container item xs={12} key={detailIndex} sx={{ marginBottom: 1 }}>
-        <Grid item sx={{ flex: 1.5 }}>
-          <Typography variant="body2">{detail.description || "-"}</Typography>
-        </Grid>
-        <Grid item sx={{ flex: 1 }}>
-          <Typography variant="body2">{detail.days || "-"}</Typography>
-        </Grid>
-        <Grid item sx={{ flex: 0.5 }}>
-          <Typography variant="body2">{detail.startTime || "-"}</Typography>
-        </Grid>
-        <Grid item sx={{ flex: 0.5 }}>
-          <Typography variant="body2">{detail.endTime || "-"}</Typography>
-        </Grid>
-      </Grid>
-    ))}
-  </>
-) : (
-  "-"
-)}
-
+          )}
         </Grid>
       ))}
-    </>
+    </Grid>
   );
 };
+
 
 export const FeesSmallDataGrid = ({ data }) => {
   const commonStyles = {
