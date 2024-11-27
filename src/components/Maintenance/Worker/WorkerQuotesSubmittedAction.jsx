@@ -26,7 +26,7 @@ import { useUser } from "../../../contexts/UserContext";
 import ManagerProfileLink from "../MaintenanceComponents/ManagerProfileLink";
 import WorkerQuoteView from "../MaintenanceComponents/WorkerQuoteView";
 
-export default function WorkerQuotesSubmittedAction({maintenanceItem}){
+export default function WorkerQuotesSubmittedAction({maintenanceItem, refreshMaintenanceData}){
     
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
@@ -77,7 +77,7 @@ export default function WorkerQuotesSubmittedAction({maintenanceItem}){
                 width: "100%",
             }}
         >
-            <WorkerQuoteView maintenanceItem={maintenanceItem}/>
+            <WorkerQuoteView maintenanceItem={maintenanceItem} refreshMaintenanceData={refreshMaintenanceData}/>
         </Box>
     )
 }

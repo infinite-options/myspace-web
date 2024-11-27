@@ -158,27 +158,27 @@ function PartsTableReadOnly({parts, setParts}){
     )
 }
 
-export default function QuoteDetailInfo({maintenanceItem}){
-    // console.log('inside QuoteDetailInfo - maintenanceItem - ', maintenanceItem);
+export default function QuoteDetailInfo({maintenanceItem, refreshMaintenanceData}){
+    console.log('inside QuoteDetailInfo - maintenanceItem - ', maintenanceItem);
     const { roleName } = useUser();
 
     const location = useLocation();
     const navigate = useNavigate();
 
     let costData;
+
+    // set cost data from quote_Service_expense
     try {
         // console.log('----maintenanceItem in quotedetailinfo---', maintenanceItem);
         if (maintenanceItem?.quote_services_expenses) {
             costData = JSON.parse(maintenanceItem?.quote_services_expenses);
         } else {
-            // throw new Error('quote_services_expenses is undefined');
-            costData = {}; // Set a default value if needed
+            costData = {}; 
         }
     } catch (error) {
         console.error('Error parsing quote_services_expenses:', error);
-        // Handle the error or set a default value for costData
-        costData = {}; // Set a default value if needed
-    } //failing here in some cases
+        costData = {}; 
+    } 
 
     const [parts, setParts] = useState([]);
     const [labor, setLabor] = useState([]);
@@ -194,10 +194,6 @@ export default function QuoteDetailInfo({maintenanceItem}){
     const date = maintenanceItem.maintenance_scheduled_date;
     const time = maintenanceItem.maintenance_scheduled_time;
 
-    useEffect(() => {
-        // console.log("[DEBUG] QuoteDetailInfo", maintenanceItem)
-    })
-
     const handleWithdraw = async () => {
         // PUT to withdraw request
 
@@ -212,6 +208,9 @@ export default function QuoteDetailInfo({maintenanceItem}){
                 method: 'PUT',
                 body: formData
             });
+            if(response.ok){
+                await refreshMaintenanceData()
+            }
         } catch (error){
             console.log("error", error)
         }
@@ -232,16 +231,20 @@ export default function QuoteDetailInfo({maintenanceItem}){
             // }
 
             if (servicesObject?.event_type === "Fixed") {
-    // For fixed event type, sum up the rates without multiplying by hours
-    for (const item in servicesObject?.labor) {
-        laborCost += parseInt(servicesObject.labor[item].rate || 0);
-    }
-} else if (servicesObject?.event_type === "Hourly") {
-    // For hourly event type, multiply rate by hours
-    for (const item in servicesObject?.labor) {
-        laborCost += parseInt(servicesObject.labor[item].hours || 0) * parseInt(servicesObject.labor[item].rate ||  0);
-    }
-}
+                // For fixed event type, sum up the rates without multiplying by hours
+                for (const item in servicesObject?.labor) {
+                    laborCost += parseInt(servicesObject.labor[item].rate || servicesObject.labor[item].charge || 0);
+                }
+            } else if (servicesObject?.event_type === "Hourly") {
+                // For hourly event type, multiply rate by hours
+                for (const item in servicesObject?.labor) {
+                    laborCost += parseInt(servicesObject.labor[item].hours || 0) * parseInt(servicesObject.labor[item].rate || servicesObject.labor[item].charge ||  0);
+                }
+            }else{
+                for (const item in servicesObject?.labor) {
+                    laborCost += parseInt(servicesObject.labor[item].hours || 1) * parseInt(servicesObject.labor[item].rate || servicesObject.labor[item].charge ||  0);
+                }
+            }
 
 
             setEstimatedLaborCost(laborCost)
@@ -249,12 +252,15 @@ export default function QuoteDetailInfo({maintenanceItem}){
 
             setEstimatedCost(laborCost + partsCost)
         }
+
         setParts(costData?.parts || [{hours: 0, rate: 0, description: ""}])
         setLabor(costData?.labor || [{part: "", cost: 0, quantity: ""}])
+        
         try{
             parseServicesExpenses(maintenanceItem?.quote_services_expenses)
             let quoteImageArray = JSON.parse(maintenanceItem?.quote_maintenance_images || '[]');
             setQuoteImages(quoteImageArray);
+
             setEstimatedTime(maintenanceItem?.quote_event_type)
             setEarliestAvailability(maintenanceItem?.quote_earliest_availability)
         } catch (error){
@@ -304,9 +310,14 @@ export default function QuoteDetailInfo({maintenanceItem}){
             sx={{
                 paddingBottom: "5px",
             }}
-        >   
+        >
+        {/* edit icon, status, image    */}
         <Grid container direction="column" rowSpacing={2}>
+
+            {/* edit icon & status chip */}
             <Grid container direction="row">
+
+                {/* quote status & maintenance status */}
                 <Grid item xs={11}>
                     <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "18px"}}>
                         Maintenance Quote Details
@@ -316,10 +327,17 @@ export default function QuoteDetailInfo({maintenanceItem}){
                         size="small"
                         style={{ backgroundColor: getChipColor(maintenanceItem.quote_status), color: 'white' }}
                     />
+                    {maintenanceItem.maintenance_request_status === "COMPLETED" && maintenanceItem.maintenance_status === "SUBMITTED" && <Chip
+                        label={maintenanceItem.maintenance_request_status}
+                        size="small"
+                        style={{ backgroundColor: getChipColor(maintenanceItem.maintenance_request_status), color: 'white', marginLeft: "20px"}}
+                    />}
                 </Grid>
+                
+                {/* edit icon */}
                 <Grid item xs={1}>
                     <Box sx={{alignItems: "right", justifyContent: "right"}}>
-                        {roleName() == "Manager" ? null : (
+                        {roleName() === "Manager"  || maintenanceItem?.quote_status === "REFUSED" || maintenanceItem.maintenance_request_status === "COMPLETED" ? null : (
                             <Button 
                                 onClick={() => navigate("/businessEditQuoteForm", {state: {maintenanceItem: maintenanceItem}})}
                                 sx={{background: "#FFFFFF", color: "#3D5CAC"}}
@@ -330,144 +348,155 @@ export default function QuoteDetailInfo({maintenanceItem}){
                     </Box>
                 </Grid>
             </Grid>
+            
+            {/* quote id */}
             <Grid item xs={12}>
                     <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px"}}>
                         {maintenanceItem?.maintenance_quote_uid}
                     </Typography>
-                </Grid>
+            </Grid>
+            
+            {/* quote images */}
             <Grid item xs={12}>
                 {quoteImages.length > 0  ? (
-                <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "18px"}}>
-                    Maintenance Quote Images
-                </Typography>
+                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "18px"}}>
+                        Maintenance Quote Images
+                    </Typography>
                 ) : null}
             </Grid>
             <Grid item xs={12}>
                 {quoteImages.length > 0 ? (
                   <Grid item xs={12}>
-                  <Box
-                      sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          padding: 2,
-                      }}
-                  >
-                      <IconButton
-                          onClick={() => handleScroll('left')}
-                          disabled={scrollPosition === 0}
-                      >
-                          <ArrowBackIosIcon />
-                      </IconButton>
-                      <Box
-                          sx={{
-                              display: 'flex',
-                              overflowX: 'auto',
-                              scrollbarWidth: 'none',
-                              msOverflowStyle: 'none',
-                              '&::-webkit-scrollbar': {
-                                  display: 'none',
-                              },
-                          }}
-                      >
-                          <Box
-                              sx={{
-                                  display: 'flex',
-                                  overflowX: 'auto',
-                                  scrollbarWidth: 'none',
-                                  msOverflowStyle: 'none',
-                                  '&::-webkit-scrollbar': {
-                                      display: 'none',
-                                  },
-                              }}
-                          >
-                              <ImageList 
-                              ref={scrollRef}
-                              sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
-                                  {quoteImages?.map((image, index) => (
-                                      <ImageListItem
-                                          key={index}
-                                          sx={{
-                                              width: 'auto',
-                                              flex: '0 0 auto',
-                                              border: '1px solid #ccc',
-                                              margin: '0 2px',
-                                              position: 'relative', // Added to position icons
-                                          }}
-                                      >
-                                          <img
-                                              src={image}
-                                              alt={`maintenance-${index}`}
-                                              style={{
-                                                  height: '150px',
-                                                  width: '150px',
-                                                  objectFit: 'cover',
-                                              }}
-                                          />
-                                      </ImageListItem>
-                                  ))}
-                              </ImageList>
-                          </Box>
-                      </Box>
-                      <IconButton onClick={() => handleScroll('right')}>
-                          <ArrowForwardIosIcon />
-                      </IconButton>
-                  </Box>
-              
-                      
-
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: 2,
+                        }}
+                    >
+                        <IconButton
+                            onClick={() => handleScroll('left')}
+                            disabled={scrollPosition === 0}
+                        >
+                            <ArrowBackIosIcon />
+                        </IconButton>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                overflowX: 'auto',
+                                scrollbarWidth: 'none',
+                                msOverflowStyle: 'none',
+                                '&::-webkit-scrollbar': {
+                                    display: 'none',
+                                },
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    overflowX: 'auto',
+                                    scrollbarWidth: 'none',
+                                    msOverflowStyle: 'none',
+                                    '&::-webkit-scrollbar': {
+                                        display: 'none',
+                                    },
+                                }}
+                            >
+                                <ImageList 
+                                ref={scrollRef}
+                                sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
+                                    {quoteImages?.map((image, index) => (
+                                        <ImageListItem
+                                            key={index}
+                                            sx={{
+                                                width: 'auto',
+                                                flex: '0 0 auto',
+                                                border: '1px solid #ccc',
+                                                margin: '0 2px',
+                                                position: 'relative', // Added to position icons
+                                            }}
+                                        >
+                                            <img
+                                                src={image}
+                                                alt={`maintenance-${index}`}
+                                                style={{
+                                                    height: '150px',
+                                                    width: '150px',
+                                                    objectFit: 'cover',
+                                                }}
+                                            />
+                                        </ImageListItem>
+                                    ))}
+                                </ImageList>
+                            </Box>
+                        </Box>
+                        <IconButton onClick={() => handleScroll('right')}>
+                            <ArrowForwardIosIcon />
+                        </IconButton>
+                    </Box>
                   </Grid>
-                        // : 
-                        // null
-                    )
+                )
                 : "No Images" }
             </Grid>
         </Grid>
-        <Grid container direction="column" rowSpacing={2}>
+        
+        {/* estimate */}
+        {maintenanceItem?.quote_status !== "REFUSED" && <Grid container direction="column" rowSpacing={2}>
             <Grid item xs={12}>
                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "18px"}}>
                     Estimate
                 </Typography>
             </Grid>
-        </Grid>
-        {JSON.parse(maintenanceItem?.quote_services_expenses)?.event_type === "Fixed Bid" ? (
-            <Grid container sx={{ paddingTop: "10px" }}>
-                <Grid item xs={6}>
-                    <Typography sx={{ color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px" }}>
-                        Fixed Bid
-                    </Typography>
+        </Grid>}
+        
+        {/* labor expense */}
+        {maintenanceItem?.quote_status !== "REFUSED" && (
+            JSON.parse(maintenanceItem?.quote_services_expenses)?.event_type === "Fixed" ? (
+                <Grid container sx={{ paddingTop: "10px" }}>
+                    <Grid item xs={6}>
+                        <Typography sx={{ color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px" }}>
+                            Fixed Bid
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Typography sx={{ color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px" }}>
+                            ${labor[0]?.rate || 0}
+                        </Typography>
+                    </Grid>
                 </Grid>
-                <Grid item xs={6}>
-                    <Typography sx={{ color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px" }}>
-                        ${labor[0]?.rate || 0}
-                    </Typography>
-                </Grid>
-            </Grid>
-        ) : (
-            labor.length > 0 ? (
-                <LaborTableReadOnly labor={labor} setLabor={setLabor} />
+            ) : (
+                labor.length > 0 ? (
+                    <LaborTableReadOnly labor={labor} setLabor={setLabor} />
+                ) : (
+                    <Grid container sx={{ paddingTop: "10px" }}>
+                        <Grid item xs={12}>
+                            <Typography sx={{ color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px" }}>
+                                No Labor
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                )
+            )
+        )}
+
+        {/* parts expense */}
+        {maintenanceItem?.quote_status !== "REFUSED" && (
+            parts.length > 0 ? (
+                <PartsTableReadOnly parts={parts} setParts={setParts} />
             ) : (
                 <Grid container sx={{ paddingTop: "10px" }}>
                     <Grid item xs={12}>
                         <Typography sx={{ color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px" }}>
-                            No Labor
+                            No Parts
                         </Typography>
                     </Grid>
                 </Grid>
             )
         )}
 
-        {parts.length > 0 ? <PartsTableReadOnly parts={parts} setParts={setParts}/> : (
-            <Grid container sx={{paddingTop: "10px"}}>
-                <Grid item xs={12}>
-                    <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                        No Parts
-                    </Typography>
-                </Grid>
-            </Grid>
-        )}
-
-        <Grid container direction="column" rowSpacing={2} paddingTop={"20px"}>
+        {/* estimate, document */}
+        {maintenanceItem?.quote_status !== "REFUSED" && <Grid container direction="column" rowSpacing={2} paddingTop={"20px"}>
             <Grid item xs={12}>
                 <Typography sx={{color: "#000000", fontWeight: theme.typography.medium.fontWeight, fontSize: "18px"}}>
                     Quote Total: ${estimatedCost}
@@ -480,7 +509,9 @@ export default function QuoteDetailInfo({maintenanceItem}){
                     Earliest Availability: {maintenanceItem.quote_earliest_available_date} {dayjs(maintenanceItem.quote_earliest_available_time, "HH:mm").format("h:mm A")}
                 </Typography>
             </Grid>
-            {maintenanceItem?.maintenance_request_status == "SCHEDULED" ? (
+
+            {/* schedule date and time */}
+            {maintenanceItem?.maintenance_request_status === "SCHEDULED" ? (
                 <Grid item xs={12} sx={{paddingBottom: "15px"}}>
                   <Box sx={{paddingTop: "15px"}}>
                       <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "18px"}}>
@@ -492,6 +523,9 @@ export default function QuoteDetailInfo({maintenanceItem}){
                   </Box>
               </Grid>
             ) : null}
+
+
+            {/* checkbox Diagnostic */}
             <Grid item xs={12} sx={{paddingLeft: "0px"}}>
                 <Box 
                     display="flex" 
@@ -501,7 +535,7 @@ export default function QuoteDetailInfo({maintenanceItem}){
                 >
                     <Checkbox
                         checked={true}
-                        sx={{paddingLeft: "0px"}}
+                        sx={{paddingLeft: "0px", cursor: "default"}}
                     />
                     <Typography
                         sx={{
@@ -516,6 +550,8 @@ export default function QuoteDetailInfo({maintenanceItem}){
                     </Typography>
                 </Box>
             </Grid>
+
+            {/* document */}
             <Grid item xs={12} sx={{paddingLeft: "0px"}}>
                 {/* <Button sx={{
                     color: "#3D5CAC",
@@ -529,10 +565,12 @@ export default function QuoteDetailInfo({maintenanceItem}){
                 </Button> */}
                 <Documents isAccord={false} isEditable={false} customName={"View Document"} documents={maintenanceItem?.quote_documents? JSON.parse(maintenanceItem?.quote_documents) : []}/>
             </Grid>
-            {maintenanceItem.quote_status !== "REJECTED" && maintenanceItem.maintenance_request_status !== "COMPLETED" && maintenanceItem.quote_status !== "FINISHED" && (roleName == "Maintenance" || roleName === "Maintenance Employee") ? (
+            
+            {/* withdraw button */}
+            {maintenanceItem.quote_status !== "REJECTED" && maintenanceItem.maintenance_request_status !== "COMPLETED" && maintenanceItem.quote_status !== "FINISHED" && (roleName() === "Maintenance" || roleName() === "Maintenance Employee") ? (
                 <Grid item xs={12} sx={{paddingLeft: "0px"}}>
                     <Button sx={{
-                        backgroundColor: "#F44336",
+                        backgroundColor: "#A52A2A",
                         textTransform: "none",
                         margin: "1px",
                         }}
@@ -546,7 +584,8 @@ export default function QuoteDetailInfo({maintenanceItem}){
                     </Button>
                 </Grid>
             ) : null}
-        </Grid>
+        </Grid>}
+
         <DateTimePickerModal
             setOpenModal={setShowModal}
             open={showModal}

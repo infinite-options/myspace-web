@@ -21,10 +21,12 @@ import ManagerProfileLink from "./ManagerProfileLink";
 import QuoteDetailInfo from "../Worker/QuoteDetailInfo";
 
 
-export default function WorkerQuoteView({maintenanceItem}){
+export default function WorkerQuoteView({maintenanceItem, refreshMaintenanceData}){
     return (
         <Grid container direction="column" columnSpacing={6} rowSpacing={6}>
             <ManagerProfileLink maintenanceItem={maintenanceItem}/>
+
+            {/* quote details info */}
             <Grid item xs={12} sx={{
                 alignItems: "center",
                 justifyContent: "center",
@@ -46,16 +48,18 @@ export default function WorkerQuoteView({maintenanceItem}){
                 >
                     {/* contains more quote info */}
                     
-                    <QuoteDetailInfo maintenanceItem={maintenanceItem}/>
+                    <QuoteDetailInfo maintenanceItem={maintenanceItem} refreshMaintenanceData={refreshMaintenanceData}/>
 
 
-                    {maintenanceItem?.quote_status == "REFUSED" && 
+                    {/* {maintenanceItem?.quote_status == "REFUSED" && 
                         <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.largeFont}}>
                             Quote Refused
                         </Typography>
-                    }
+                    } */}
                 </Box>
             </Grid>
+
+            {/* notes */}
             <Grid item xs={12} sx={{
                 alignItems: "center",
                 justifyContent: "center",

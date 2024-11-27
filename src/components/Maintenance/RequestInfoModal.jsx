@@ -56,7 +56,8 @@ export default function RequestInfoModal({ maintenanceItem, onRequestClose, setS
         setShowSpinner(true)
         const formData = new FormData();
         formData.append('maintenance_request_uid', maintenanceItem.maintenance_request_uid);
-        formData.append('maintenance_request_status', `INFO ${selectedRole.toUpperCase()}`);
+        const maintenance_status = (maintenanceItem.maintenance_request_status === "INFO OWNER" && selectedRole === "tenant" ? "INFO" : maintenanceItem.maintenance_request_status === "INFO TENANT" && selectedRole === "owner" ? "INFO" : `INFO ${selectedRole.toUpperCase()}`);
+        formData.append('maintenance_request_status', maintenance_status);
 
         try {
             const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
