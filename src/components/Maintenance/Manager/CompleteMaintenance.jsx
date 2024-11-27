@@ -36,9 +36,9 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams, qu
     const { payMaintenanceView, setPayMaintenanceView, maintenanceData: contextMaintenanceItem, 
 		navigateParams: contextNavigateParams,  maintenanceQuotes, setMaintenanceQuotes, setNavigateParams, setMaintenanceData,setSelectedStatus, setSelectedRequestIndex, setAllMaintenanceData } = useMaintenance();
     
-    // console.log("COMPLETE MAINTENANCE QUOTES", maintenanceItem, maintenanceQuotes)
+    console.log("COMPLETE MAINTENANCE QUOTES", maintenanceItem)
     
-    let finishedQuote = quotes.find(quote => quote.quote_status === "FINISHED" || quote.quote_status === "COMPLETED")
+    let finishedQuote = quotes?.find(quote => quote.quote_status === "FINISHED" || quote.quote_status === "COMPLETED")
 
     function handleNavigate(){
         console.log("navigate to pay Maintenance")
@@ -115,7 +115,7 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams, qu
             }}
         >
             <Grid container item xs={12} marginBottom={"20px"}>
-                {maintenanceItem.bill_uid && <ManagerInvoiceView maintenanceItem={maintenanceItem}/>}      
+                {maintenanceItem?.bill_uid && <ManagerInvoiceView maintenanceItem={maintenanceItem}/>}      
             </Grid>
             <Grid container item xs={12} display={"flex"} flexDirection={"row"} justifyContent={"center"} alignItems={"center"}>
                 <Button
@@ -141,8 +141,7 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams, qu
                     }}
                     disabled={!maintenanceItem?.bill_uid}
                     onClick={() => handleNavigate()}
-                >
-                        
+                >    
                     {finishedQuote && maintenanceItem.maintenance_status !== "CANCELLED" ? "Pay Maintenance" : "Charge Owner"}
                 </Button>
             </Grid>

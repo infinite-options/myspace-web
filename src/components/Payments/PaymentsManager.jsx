@@ -561,6 +561,10 @@ export default function PaymentsManager(props) {
                             borderRadius: "10px",
                             color: "#FFFFFF",
                             width: "100%",
+                            "&:hover": {
+                              backgroundColor: "#2A488A",
+                              color: "#FFD700",
+                            },
                           }}
                           onClick={() => {
                             // paymentData.business_code = paymentNotes;
@@ -613,7 +617,14 @@ export default function PaymentsManager(props) {
                       paddingBottom: "15px",
                     }}
                   >
-                    <TextField variant='filled' fullWidth={true} multiline={true} value={paymentNotes} onChange={handlePaymentNotesChange} label='Payment Notes' />
+                    <TextField variant='filled' fullWidth={true} multiline={true} value={paymentNotes} onChange={handlePaymentNotesChange} label='Payment Notes' InputLabelProps={{
+                        sx: {
+                          '&.Mui-focused': {
+                            color: '#160449', // Label color when focused
+                          },
+                        },
+                      }} 
+                    />
                   </Stack>
                 </Paper>
 
@@ -1222,15 +1233,17 @@ function TransactionsTable(props) {
 
       removedRows.forEach((item, index) => {
         let removedPayment = paymentDueResult.find((row) => row.index === item);
-        let relatedPayments = [];
 
-        if (removedPayment) {
-          relatedPayments = paymentDueResult.filter((row) => row.pur_group === removedPayment.pur_group);
-          relatedRows = relatedPayments.map((payment) => payment.index);
-        }
+        // we don't want to deselect all rows which are related to purchase_group because for maintenance 
+        // let relatedPayments = [];
+
+        // if (removedPayment) {
+        //   relatedPayments = paymentDueResult.filter((row) => row.pur_group === removedPayment.pur_group);
+        //   relatedRows = relatedPayments.map((payment) => payment.index);
+        // }
 
         removedPayments.push(removedPayment);
-        removedPayments.push(relatedPayments);
+        // removedPayments.push(relatedPayments);
       });
       // console.log("removedPayments - ", removedPayments);
       const allRowRemove = [...new Set([...removedRows, ...relatedRows])];

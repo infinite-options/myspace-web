@@ -31,26 +31,27 @@ export default function ManagerInvoiceView({maintenanceItem}){
     useEffect(()=>{
         const quotes = JSON.parse(maintenanceItem?.quote_info)
 
-        const curr_quote = quotes.find(quote => quote.quote_status === "FINISHED");
+        const curr_quote = quotes?.find(quote => quote.quote_status === "FINISHED");
 
         console.log(" --- finishde - ", curr_quote)
         setCurrentQuote(curr_quote)
 
-
-        const partsTotal = curr_quote.quote_services_expenses.parts.reduce((total, part) => {
-            const cost = parseFloat(part.cost);
-            const quantity = parseFloat(part.quantity);
-            return total + (cost * quantity);
-        }, 0);
-
-        const serviceTotal = curr_quote.quote_services_expenses.labor.reduce((total, part) => {
-            const rate = parseFloat(part.rate || part.charge);
-            const hours = parseFloat(part.hours);
-            return total + (rate * hours);
-        }, 0);
-
-        setTotalParts(partsTotal)
-        setTotalService(serviceTotal)
+        if(curr_quote){
+            const partsTotal = curr_quote.quote_services_expenses.parts.reduce((total, part) => {
+                const cost = parseFloat(part.cost);
+                const quantity = parseFloat(part.quantity);
+                return total + (cost * quantity);
+            }, 0);
+    
+            const serviceTotal = curr_quote.quote_services_expenses.labor.reduce((total, service) => {
+                const rate = parseFloat(service.rate || service.charge);
+                const hours = parseFloat(service.hours);
+                return total + (rate * hours);
+            }, 0);
+    
+            setTotalParts(partsTotal)
+            setTotalService(serviceTotal)
+        }
 
     }, [])
 
