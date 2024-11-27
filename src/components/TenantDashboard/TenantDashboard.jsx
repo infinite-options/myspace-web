@@ -1213,7 +1213,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                         {tenant_detail?.tenant_first_name} {tenant_detail?.tenant_last_name}
                       </Typography>
                       <KeyboardArrowRightIcon
-                        sx={{ color: "blue", cursor: "pointer" }}
+                        sx={{ color: "blue", cursor: "pointer", paddingRight: "5px" }}
                         onClick={() => {
                           if (selectedRole === "TENANT") {
                             navigate("/profileEditor");
@@ -1954,7 +1954,7 @@ const MaintenanceDetails = ({ maintenanceRequests, onPropertyClick, selectedProp
     <Paper
       sx={{
         backgroundColor: "#f0f0f0",
-        borderRadius: "8px",
+        borderRadius: "10px",
         fontFamily: "Source Sans Pro",
       }}
     >
@@ -2120,6 +2120,96 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
     setRightPane("");
   };
 
+  // Datagrid rows
+  const rows = filteredRequests.map((request) => ({
+    id: request.maintenance_request_uid,
+    title: request.maintenance_title,
+    createdDate: request.maintenance_request_created_date || "-",
+    image: request.maintenance_favorite_image || "PlaceholderImage",
+    scheduledDateTime: request.maintenance_scheduled_date
+      ? `${request.maintenance_scheduled_date} ${request.maintenance_scheduled_time || "--"}`
+      : "--",
+    status: request.maintenance_status,
+    actions: request,
+  }));
+
+  // Datagrid columns
+  const columns = [
+    {
+      field: "title",
+      headerName: "Title",
+      flex: 1.5,
+      renderCell: (params) => (
+        <Box
+          sx={{
+            display: "flex",
+            align: "left",
+            headerAlign: "left",
+            cursor: "pointer",
+            background: getColorForPriority(params.row.actions.maintenance_priority),
+            padding: "5px",
+            color: "#000",
+            borderRadius: "4px",
+          }}
+          onClick={() => toggleAccordion(params.row.id)}
+        >
+          {params.value}
+        </Box>
+      ),
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      flex: 1.5,
+      align: "left",
+      headerAlign: "left",
+      whiteSpace: "wrap"
+    },
+    {
+      field: "image",
+      headerName: "Images",
+      flex: 1,
+      align: "left",
+      headerAlign: "left",
+      renderCell: (params) => (
+        <img
+          src={params.value}
+          alt="Maintenance"
+          style={{ width: "60px", height: "55px", objectFit: "cover" }}
+        />
+      ),
+    },
+    {
+      field: "scheduledDateTime",
+      headerName: "Scheduled Date & Time",
+      flex: 1.5,
+      align: "left",
+      headerAlign: "left",
+      whiteSpace: "wrap"
+    },
+    {
+      field: "createdDate",
+      headerName: "Created Date",
+      flex: 1.5,
+      align: "left",
+      headerAlign: "left",
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      flex: 1,
+      align: "left",
+      headerAlign: "left",
+      renderCell: (params) => (
+        <Stack direction="row" spacing={1}>
+          <IconButton onClick={() => handleEditClick(params.row.actions)}>
+            <EditIcon />
+          </IconButton>
+        </Stack>
+      ),
+    },
+  ];
+
   return (
     <Paper
       // elevation={3}
@@ -2145,7 +2235,9 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
           </Button>
         </Grid>
         <Grid item xs={8} md={10}>
-          <Typography variant='h6' sx={{ textAlign: "center" }}>Maintenance Requests for Property {propertyId}</Typography>
+          <Typography variant='h6' sx={{ fontWeight: "bold", color: "#160449", textAlign: "center" }}>
+            Maintenance Requests for Property {propertyId}
+          </Typography>
         </Grid>
         <Grid item xs={2} md={1}>
           <Button onClick={onAdd}>
@@ -2159,77 +2251,17 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
           </Button>
         </Grid>
       </Grid>
-      <TableContainer component={Paper}>
-        <Table aria-label='maintenance requests table'>
-          <TableHead>
-            <TableRow>
-              <TableCell>Title</TableCell>
-              <TableCell align='center'>Created Date</TableCell>
-              <TableCell align='center'>Images</TableCell>
-              <TableCell align='center'>Scheduled Date & Time</TableCell>
-              <TableCell align='center'>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredRequests.map((request) => (
-              <React.Fragment key={request.maintenance_request_uid}>
-                <TableRow>
-                  <TableCell>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        cursor: "pointer",
-                        background: getColorForPriority(request.maintenance_priority),
-                        padding: "5px",
-                        color: "#000",
-                        borderRadius: "4px",
-                      }}
-                      onClick={() => toggleAccordion(request.maintenance_request_uid)}
-                    >
-                      {request.maintenance_title}
-                    </Box>
-                  </TableCell>
-                  <TableCell align='center'>{request.maintenance_request_created_date || "-"}</TableCell>
-                  <TableCell align='center'>
-                    <img src={request.maintenance_favorite_image || PlaceholderImage} alt='Maintenance' style={{ width: "60px", height: "55px" }} />
-                  </TableCell>
-                  <TableCell align='center'>
-                    {request.maintenance_scheduled_date ? `${request.maintenance_scheduled_date} ${request.maintenance_scheduled_time || "--"}` : "--"}
-                  </TableCell>
-                  <TableCell align='center'>
-                    <Stack direction='row' spacing={1}>
-                      <IconButton onClick={() => toggleAccordion(request.maintenance_request_uid)}>
-                        {expandedRows[request.maintenance_request_uid] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                      </IconButton>
-                      <IconButton onClick={() => handleEditClick(request)}>
-                        <EditIcon />
-                      </IconButton>
-                    </Stack>
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5}>
-                    <Collapse in={expandedRows[request.maintenance_request_uid]} timeout='auto' unmountOnExit>
-                      <Box margin={1}>
-                        <Typography variant='subtitle1' gutterBottom component='div'>
-                          <strong>Frequency:</strong> {request.maintenance_frequency || "N/A"}
-                        </Typography>
-                        <Typography variant='subtitle1' gutterBottom component='div'>
-                          <strong>Status:</strong> {request.maintenance_request_status || "N/A"}
-                        </Typography>
-                        <Typography variant='subtitle1' gutterBottom component='div'>
-                          <strong>Type:</strong> {request.maintenance_request_type || "N/A"}
-                        </Typography>
-                      </Box>
-                    </Collapse>
-                  </TableCell>
-                </TableRow>
-              </React.Fragment>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <Box sx={{ width: "100%", overflowX: "auto" }}>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          autoHeight
+          sx={{ minWidth: "550px",}}
+          disableColumnFilter = {isMobile}
+          disableColumnMenu = {isMobile}
+          disableColumnSelector = {isMobile}
+        />
+      </Box>
     </Paper>
   );
 };
@@ -2415,17 +2447,17 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
                         />
                       </RadioGroup>
                     </Grid>
-                    <Grid item xs={5}>
-                      <Typography sx={{ fontWeight: "bold", fontSize: "18px", color: "#160449" }}>Pay Selected Balance</Typography>
+                    <Grid item xs={6}>
+                      <Typography sx={{ fontWeight: "bold", fontSize: isMobile ? "14px" : "18px", color: "#160449" }}>Pay Selected Balance</Typography>
                     </Grid>
                     <Grid item xs={5}>
-                      <Typography sx={{ fontWeight: "bold", fontSize: "24px", color: "#1e3a8a", textAlign: "right" }}>
+                      <Typography sx={{ fontWeight: "bold", fontSize: isMobile ? "18px" : "24px", color: "#1e3a8a", textAlign: "right" }}>
                         {/* ${paymentOption === "partial" ? partialAmount || 0 : total.toFixed(2)} */}${total.toFixed(2)}
                       </Typography>
                     </Grid>
                   </Grid>
 
-                  <Grid container spacing={3} alignItems='center'>
+                  <Grid container spacing={3} alignItems='center' sx={{ justifyContent: "center" }}>
                     <Grid item xs={1}>
                       <RadioGroup aria-label='payment-option' value={paymentOption} onChange={handlePaymentOptionChange} row>
                         <FormControlLabel
@@ -2444,8 +2476,8 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
                         />
                       </RadioGroup>
                     </Grid>
-                    <Grid item xs={4}>
-                      <Typography sx={{ fontWeight: "bold", fontSize: "18px", color: "#160449" }}>Make Partial Payment</Typography>
+                    <Grid item xs={5}>
+                      <Typography sx={{ fontWeight: "bold", fontSize: isMobile ? "14px" : "18px", color: "#160449" }}>Make Partial Payment</Typography>
                     </Grid>
                     <Grid item xs={3}>
                       {paymentOption === "partial" && (
@@ -2481,7 +2513,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
                       )}
                     </Grid>
                     <Grid item xs={3}>
-                      <Typography sx={{ fontWeight: "bold", fontSize: "24px", color: "#1e3a8a", textAlign: "right" }}>${parseFloat(partialAmount || 0).toFixed(2)}</Typography>
+                      <Typography sx={{ fontWeight: "bold", fontSize: isMobile ? "18px" : "24px", color: "#1e3a8a", textAlign: "right" }}>${parseFloat(partialAmount || 0).toFixed(2)}</Typography>
                     </Grid>
                   </Grid>
 
