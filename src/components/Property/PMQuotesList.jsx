@@ -314,6 +314,10 @@ function ContractCard(props) {
   // // console.log("Annoncements", announcements);
   // if (Array.isArray(announcements)) announcements.sort((a, b) => new Date(b.announcement_date) - new Date(a.announcement_date));
 
+  // Extract the first owner's photo (if available) or use a default placeholder
+  const owners = JSON.parse(contract.owners || "[]");
+  const ownerPhotoUrl = owners.length > 0 ? owners[0].owner_photo_url : "/default-photo.jpg";
+
   return (
     <>
       <Grid
@@ -347,7 +351,7 @@ function ContractCard(props) {
 
         <Grid item xs={4} style={{ display: "flex", justifyContent: "center" }}>
           <img
-            src={contract.owner_photo_url}
+            src={ownerPhotoUrl}
             alt='Business Photo'
             style={{
               borderRadius: "50%",

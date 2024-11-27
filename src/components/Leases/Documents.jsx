@@ -268,7 +268,7 @@ const Documents = ({ setRightPane,setRHS, setSelectedDocument, fromRenew, docume
           			</Box>
               );
       },
-      flex: 2,
+      flex: isMobileView ? 1 : 2,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
@@ -286,7 +286,7 @@ const Documents = ({ setRightPane,setRHS, setSelectedDocument, fromRenew, docume
     {
       field: "editactions",
       headerName: "",
-      flex: 0.5,
+      flex:  isMobileView ? 0.2 : 0.5,
       renderCell: (params) => (
         <Box>
           <IconButton onClick={() => handleEditClick(params.row)}>
@@ -298,7 +298,7 @@ const Documents = ({ setRightPane,setRHS, setSelectedDocument, fromRenew, docume
     {
       field: "deleteactions",
       headerName: "",
-      flex: 0.5,
+      flex:isMobileView ? 0.2 : 0.5,
       renderCell: (params) => (
         <Box>
           <IconButton onClick={() => {
@@ -561,14 +561,17 @@ setSelectedDocument({
               {documents && documents.length ? (
                 <DataGrid
                   rows={rowsWithId}
-                  // columns={docsColumns}
-                  columns={isMobileView ? docsColumns.map(column => ({ ...column, minWidth: 150 })) : docsColumns}
+                  columns={docsColumns}
+                  // columns={isMobileView ? docsColumns.map(column => ({ ...column, minWidth: 150 })) : docsColumns}
                   hideFooter={true}
                   autoHeight
                   rowHeight={50}
                   sx={{
                     marginTop: "10px"
                   }}
+                  disableColumnFilter = {isMobile}
+                  disableColumnMenu = {isMobile}
+                  disableColumnSelector = {isMobile}
                 />
               ) : (
                 <></>
@@ -1107,7 +1110,8 @@ setSelectedDocument({
           <Box sx={{overflowX : "auto"}}>
             <DataGrid
               rows={rowsWithId}
-              columns={isMobileView ? docsColumns.map(column => ({ ...column, minWidth: 150 })) : docsColumns}
+              columns = {docsColumns}
+              // columns={isMobileView ? docsColumns.map(column => ({ ...column, minWidth: 150 })) : docsColumns}
               sx={{
                 // minHeight:"100px",
                 // height:"100px",

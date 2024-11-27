@@ -1,6 +1,6 @@
-import { 
-    Typography, 
-    Box, 
+import {
+    Typography,
+    Box,
     Stack,
     Paper,
     Button,
@@ -30,7 +30,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import ImageUploader from '../ImageUploader';
 import dataURItoBlob from '../utils/dataURItoBlob'
-import Backdrop from "@mui/material/Backdrop"; 
+import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import theme from '../../theme/theme';
 import { formatPhoneNumber } from "../Onboarding/helper";
@@ -43,13 +43,13 @@ import ReturnButtonIcon from '../Property/refundIcon.png';
 import APIConfig from '../../utils/APIConfig';
 import ListsContext from "../../contexts/ListsContext";
 
-export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem, newTenantMaintenanceState, setRightPane, setReload, isMobile, setViewRHS}){   
-    console.log("---closeAddTenantMaintenanceItem---", closeAddTenantMaintenanceItem); 
+export default function AddTenantMaintenanceItem({ closeAddTenantMaintenanceItem, newTenantMaintenanceState, setRightPane, setReload, isMobile, setViewRHS }) {
+    console.log("---closeAddTenantMaintenanceItem---", closeAddTenantMaintenanceItem);
     const location = useLocation();
     let navigate = useNavigate();
     const { user, getProfileId, dashboardRoutingBasedOnSelectedRole } = useUser();
-    const { getList, } = useContext(ListsContext);	
-	
+    const { getList, } = useContext(ListsContext);
+
     const maintenanceIssues = getList("maintenance");
     const [selectedImageList, setSelectedImageList] = useState([]);
     const [property, setProperty] = useState(location.state?.propertyData || newTenantMaintenanceState?.propertyData || {});
@@ -96,12 +96,12 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
     const handlePriorityChange = (priority) => {
         setToggleAlignment(priority);
         setToggleGroupValue(priority);
-    
+
         // Update styles for all toggle buttons based on the selected priority
         const buttons = document.querySelectorAll('.MuiToggleButton-root');
         buttons.forEach(button => {
             const buttonPriority = button.getAttribute('value');
-    
+
             if (buttonPriority === priority) {
                 // Set white border for the selected button
                 button.style.borderColor = 'white';
@@ -116,14 +116,14 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
         setToggleGroupValue(newToggleGroupValue);
         setToggleAlignment(newToggleGroupValue);
     };
-    
+
     const handleFileChange = (event) => {
         setFile(event.target.value);
     };
 
     const handleBackButton = () => {
         console.log("handleBackButton");
-        if(isMobile){
+        if (isMobile) {
             setViewRHS(false)
         }
         setRightPane("");
@@ -160,30 +160,30 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
         const files = selectedImageList;
         let i = 0;
         for (const file of selectedImageList) {
-          // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
-          let key = `img_${i++}`;
-          if (file.file !== null) {
-            // newProperty[key] = file.file;
-            formData.append(key, file.file);
-          } else {
-            // newProperty[key] = file.image;
-            formData.append(key, file.image);
-          }
-          if (file.coverPhoto) {
-            formData.append("img_favorite", key);
-          }
+            // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+            let key = `img_${i++}`;
+            if (file.file !== null) {
+                // newProperty[key] = file.file;
+                formData.append(key, file.file);
+            } else {
+                // newProperty[key] = file.image;
+                formData.append(key, file.image);
+            }
+            if (file.coverPhoto) {
+                formData.append("img_favorite", key);
+            }
         }
 
 
         for (let [key, value] of formData.entries()) {
-            console.log(key, value);    
+            console.log(key, value);
         }
-        
+
 
         const postData = async () => {
             setShowSpinner(true);
             try {
-                
+
                 const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
                     method: "POST",
                     body: formData,
@@ -201,37 +201,38 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
         }
 
         const sendAnnouncement = async () => {
-            try{
-                        
-            const receiverPropertyMapping = {            
-                [lease.business_uid]: [property.property_uid],
-            };
-            // console.log("sendAnnouncement - receiverPropertyMapping - ", receiverPropertyMapping);
+            try {
 
-            await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
-            // const annoucementsResponse = fetch(`http://localhost:4000/announcements/${getProfileId()}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    "announcement_title" : "New Maintenance Request",
-                    "announcement_msg" : `New maintenance request created by Tenant for ${property.property_address}, Unit - ${property.property_unit}`,
-                    "announcement_sender": getProfileId(),
-                    "announcement_date": currentDate.toDateString(),
-                    // "announcement_properties": property.contract_property_id,
-                    "announcement_properties": JSON.stringify(receiverPropertyMapping),
-                    "announcement_mode": "LEASE",
-                    "announcement_receiver": [lease.business_uid],
-                    "announcement_type": ["App", "Email", "Text"],
+                const receiverPropertyMapping = {
+                    [lease.business_uid]: [property.property_uid],
+                };
+                // console.log("sendAnnouncement - receiverPropertyMapping - ", receiverPropertyMapping);
+
+                await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
+                    // const annoucementsResponse = fetch(`http://localhost:4000/announcements/${getProfileId()}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        "announcement_title": "New Maintenance Request",
+                        "announcement_msg": `New maintenance request created by Tenant for ${property.property_address}, Unit - ${property.property_unit}`,
+                        "announcement_sender": getProfileId(),
+                        "announcement_date": currentDate.toDateString(),
+                        // "announcement_properties": property.contract_property_id,
+                        "announcement_properties": JSON.stringify(receiverPropertyMapping),
+                        "announcement_mode": "LEASE",
+                        "announcement_receiver": [lease.business_uid],
+                        "announcement_type": ["App", "Email", "Text"],
+                    })
                 })
-            })
-       
-        } catch (error) {
-            console.log("Error in Tenant Maintainance announcements:", error);
-            alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
-                
-          }}
+
+            } catch (error) {
+                console.log("Error in Tenant Maintainance announcements:", error);
+                alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
+
+            }
+        }
 
         postData();
         sendAnnouncement();
@@ -250,8 +251,8 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
         //navigate(dashboardRoutingBasedOnSelectedRole(), {state: {refresh: true, propertyId: property.property_uid}})
     }
 
-    
-    return(
+
+    return (
         <Paper
             style={{
                 margin: '3px',
@@ -266,32 +267,25 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <Stack
-                direction="column"
-                justifyContent="center"
-                alignItems="center"
-                position="relative"
-            >
-                <Box
-                    direction="column"
-                    justifyContent="center"
-                    alignItems="center"
-                >
-                    <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.largeFont}}>
+            <Grid Container sx={{ alignItems: "center", justifyContent: "center", display:"flex" }}>
+                <Grid item xs={1} md={1}>
+                    <Button onClick={() => (closeAddTenantMaintenanceItem ? closeAddTenantMaintenanceItem() : handleBackButton())}>
+                        <ArrowBackIcon
+                            sx={{
+                                color: "#160449",
+                                fontSize: "25px",
+                                margin: "5px",
+                            }}
+                        />
+                    </Button>
+                </Grid>
+                <Grid item xs={10} md={10}>
+                    <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont, textAlign:"center" }}>
                         Add Maintenance
                     </Typography>
-                </Box>
-
-                <Box left={0} direction="column" alignItems="center">
-                    <Button onClick={() => (closeAddTenantMaintenanceItem ? closeAddTenantMaintenanceItem() : handleBackButton())}>
-                        {/* <ArrowBackIcon sx={{color: theme.typography.common.blue, fontSize: "30px", margin:'5px'}}/> */}
-                        <img src={ReturnButtonIcon} alt="Return Button Icon" style={{width: '25px', height: '25px', marginRight: '10px'}}/>
-                            <Typography sx={{textTransform: 'none', color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: '16px'}}>
-                                    {closeAddTenantMaintenanceItem ? "Return to Viewing All Properties" : "Return to Dashboard"}
-                            </Typography>
-                    </Button>
-                </Box>
-            </Stack>
+                </Grid>
+                <Grid item xs={1} md={1} />
+            </Grid>
             <Stack
                 direction="column"
                 justifyContent="center"
@@ -308,22 +302,22 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
                     <Grid container spacing={6}>
                         {/* Select Field for Issue and Cost Estimate */}
                         <Grid item xs={12}>
-                            <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                                 Maintenance Type
                             </Typography>
-                            <FormControl 
+                            <FormControl
                                 fullWidth
                                 sx={{
                                     backgroundColor: 'white',
                                     borderColor: 'black',
                                     borderRadius: '7px',
                                 }}
-                                size="small" 
+                                size="small"
                             >
                                 {/* <InputLabel>Select Issue Category</InputLabel> */}
                                 <Select defaultValue="" onChange={handleIssueChange}>
                                     {
-                                        maintenanceIssues?.map( (freq ) => (
+                                        maintenanceIssues?.map((freq) => (
                                             <MenuItem key={freq.list_uid} value={freq.list_item}>{freq.list_item}</MenuItem>
                                         ))
                                     }
@@ -333,10 +327,10 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
 
                         {/* Select Field for Property */}
                         <Grid item xs={12}>
-                            <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                                 Property
                             </Typography>
-                            <FormControl 
+                            <FormControl
                                 fullWidth
                                 sx={{
                                     backgroundColor: 'white',
@@ -355,11 +349,11 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
 
                         {/* Text Field for Title */}
                         <Grid item xs={12}>
-                            <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                                 Title
                             </Typography>
-                            <TextField 
-                                onChange={handleTitleChange} 
+                            <TextField
+                                onChange={handleTitleChange}
                                 sx={{
                                     backgroundColor: 'white',
                                     borderColor: 'black',
@@ -372,7 +366,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
 
                         {/* Text Field for Description */}
                         <Grid item xs={12}>
-                            <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                                 Description
                             </Typography>
                             <TextField
@@ -381,7 +375,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
                                 size="small"
                                 multiline
                                 onChange={handleDescriptionChange}
-                                sx={{ 
+                                sx={{
                                     width: '100%',
                                     backgroundColor: 'white'
                                 }}
@@ -390,116 +384,116 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
 
                         {/* Priority Toggle Field */}
                         <Grid item xs={12}>
-                            <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                                 Priority
                             </Typography>
-                        <ToggleButtonGroup
-                            exclusive
-                            fullWidth
-                            value={toggleAlignment}
-                            onChange={(event, value) => handlePriorityChange(value)}
-                            aria-label="Priority"
-                            size="small"
-                            sx={{
-                                '& .MuiToggleButton-root.Mui-selected': {
-                                // backgroundColor: 'lightblue', // Selected background color
-                                color: 'white', // Selected text color
-                            },
-                            }}
-                        >
-                            <ToggleButton 
-                                key={"Low"}
-                                value={"Low"}
+                            <ToggleButtonGroup
+                                exclusive
+                                fullWidth
+                                value={toggleAlignment}
+                                onChange={(event, value) => handlePriorityChange(value)}
+                                aria-label="Priority"
+                                size="small"
                                 sx={{
-                                    backgroundColor: theme.palette.priority.low,
-                                    borderRadius: '20px',
-                                    color: 'white',
-                                    marginRight: "10px",
-                                    borderWidth: "3px",
-                                    '&.Mui-selected': {
-                                    borderColor: "white",
-                                    borderBlockColor: "white",
-                                    borderWidth: "3px",
-                                    backgroundColor: theme.palette.priority.low,
-                                    },
-                                    '&:hover': {
-                                    borderColor: "white",
-                                    // backgroundColor: theme.palette.priority.low,
-                                    backgroundColor: darken(theme.palette.priority.low, 0.3),
-                                    },
-                                    '&.Mui-selected + .MuiToggleButton-root': {
-                                        borderLeftColor: 'white',
+                                    '& .MuiToggleButton-root.Mui-selected': {
+                                        // backgroundColor: 'lightblue', // Selected background color
+                                        color: 'white', // Selected text color
                                     },
                                 }}
-                                onClick={() => handlePriorityChange("Low")}
-                                isSelected={toggleAlignment === "Low"}
+                            >
+                                <ToggleButton
+                                    key={"Low"}
+                                    value={"Low"}
+                                    sx={{
+                                        backgroundColor: theme.palette.priority.low,
+                                        borderRadius: '20px',
+                                        color: 'white',
+                                        marginRight: "10px",
+                                        borderWidth: "3px",
+                                        '&.Mui-selected': {
+                                            borderColor: "white",
+                                            borderBlockColor: "white",
+                                            borderWidth: "3px",
+                                            backgroundColor: theme.palette.priority.low,
+                                        },
+                                        '&:hover': {
+                                            borderColor: "white",
+                                            // backgroundColor: theme.palette.priority.low,
+                                            backgroundColor: darken(theme.palette.priority.low, 0.3),
+                                        },
+                                        '&.Mui-selected + .MuiToggleButton-root': {
+                                            borderLeftColor: 'white',
+                                        },
+                                    }}
+                                    onClick={() => handlePriorityChange("Low")}
+                                    isSelected={toggleAlignment === "Low"}
                                 >
-                                Low
-                            </ToggleButton>
-                            <ToggleButton 
-                                key={"Medium"}
-                                value={"Medium"}
-                                sx={{
-                                    backgroundColor: theme.palette.priority.medium,
-                                    borderRadius: '20px',
-                                    color: 'white',
-                                    marginRight: "10px",
-                                    '&.Mui-selected': {
-                                    borderColor: "black",
-                                    // borderColor: "white",
-                                    color: "white",
-                                    borderWidth: "3px",
-                                    backgroundColor: theme.palette.priority.medium,
-                                    },
-                                    '&:hover': {
-                                    borderColor: "white",
-                                    // backgroundColor: theme.palette.priority.medium,
-                                    backgroundColor: darken(theme.palette.priority.medium, 0.3),
-                                    },
-                                }}
-                                onClick={() => handlePriorityChange("Medium")}
-                                isSelected={toggleAlignment === "Medium"}
+                                    Low
+                                </ToggleButton>
+                                <ToggleButton
+                                    key={"Medium"}
+                                    value={"Medium"}
+                                    sx={{
+                                        backgroundColor: theme.palette.priority.medium,
+                                        borderRadius: '20px',
+                                        color: 'white',
+                                        marginRight: "10px",
+                                        '&.Mui-selected': {
+                                            borderColor: "black",
+                                            // borderColor: "white",
+                                            color: "white",
+                                            borderWidth: "3px",
+                                            backgroundColor: theme.palette.priority.medium,
+                                        },
+                                        '&:hover': {
+                                            borderColor: "white",
+                                            // backgroundColor: theme.palette.priority.medium,
+                                            backgroundColor: darken(theme.palette.priority.medium, 0.3),
+                                        },
+                                    }}
+                                    onClick={() => handlePriorityChange("Medium")}
+                                    isSelected={toggleAlignment === "Medium"}
                                 >
-                                Medium
-                            </ToggleButton>
-                            <ToggleButton 
-                                key={"High"}
-                                value={"High"}
-                                sx={{
-                                    backgroundColor: theme.palette.priority.high,
-                                    borderRadius: '20px',
-                                    color: 'white',
-                                    marginRight: "10px",
-                                    '&.Mui-selected': {
-                                    // borderColor: "black",
-                                    color: "white",
-                                    borderColor: "white",
-                                    borderWidth: "3px",
-                                    backgroundColor: theme.palette.priority.high,
-                                    },
-                                    '&:hover': {
-                                    borderColor: "white",
-                                    backgroundColor: darken(theme.palette.priority.high, 0.3),
-                                    // backgroundColor: theme.palette.priority.high,
-                                    },
-                                    '&.Mui-selected + .MuiToggleButton-root': {
-                                        borderLeftColor: 'white',
-                                    },
-                                }}
-                                onClick={() => handlePriorityChange("High")}
-                                isSelected={toggleAlignment === "High"}
+                                    Medium
+                                </ToggleButton>
+                                <ToggleButton
+                                    key={"High"}
+                                    value={"High"}
+                                    sx={{
+                                        backgroundColor: theme.palette.priority.high,
+                                        borderRadius: '20px',
+                                        color: 'white',
+                                        marginRight: "10px",
+                                        '&.Mui-selected': {
+                                            // borderColor: "black",
+                                            color: "white",
+                                            borderColor: "white",
+                                            borderWidth: "3px",
+                                            backgroundColor: theme.palette.priority.high,
+                                        },
+                                        '&:hover': {
+                                            borderColor: "white",
+                                            backgroundColor: darken(theme.palette.priority.high, 0.3),
+                                            // backgroundColor: theme.palette.priority.high,
+                                        },
+                                        '&.Mui-selected + .MuiToggleButton-root': {
+                                            borderLeftColor: 'white',
+                                        },
+                                    }}
+                                    onClick={() => handlePriorityChange("High")}
+                                    isSelected={toggleAlignment === "High"}
                                 >
-                                High
-                            </ToggleButton>
-                        </ToggleButtonGroup> 
+                                    High
+                                </ToggleButton>
+                            </ToggleButtonGroup>
                         </Grid>
 
                         <Grid item xs={12}>
-                            <Typography sx={{color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
+                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                                 Call Back Number
                             </Typography>
-                            <PhoneNumberField 
-                                phoneNumber={phoneNumber} 
+                            <PhoneNumberField
+                                phoneNumber={phoneNumber}
                                 setPhoneNumber={setPhoneNumber}
                                 setErrorFlag={setErrorFlag}
                                 errorFlag={errorFlag}
@@ -508,7 +502,7 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
 
                         {/* File Upload Field */}
                         <Grid item xs={12}>
-                            <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={"QuoteRequestForm"}/>
+                            <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={"QuoteRequestForm"} />
                         </Grid>
 
                         {/* Submit Button */}
@@ -517,18 +511,18 @@ export default function AddTenantMaintenanceItem({closeAddTenantMaintenanceItem,
                                 width: "100%",
                                 backgroundColor: theme.typography.common.blue,
                                 color: "#FFFFFF",
-                                form:"addTenantMaintenanceItemForm"
+                                form: "addTenantMaintenanceItemForm"
                             }}>
                                 <Typography sx={{
-                                    color: theme.typography.common.white, 
-                                    fontWeight: theme.typography.primary.fontWeight, 
-                                    fontSize:theme.typography.mediumFont,
+                                    color: theme.typography.common.white,
+                                    fontWeight: theme.typography.primary.fontWeight,
+                                    fontSize: theme.typography.mediumFont,
                                     justifyContent: "center",
                                     alignItems: "center",
                                 }}>
-                                        Add Maintenance
+                                    Add Maintenance
                                 </Typography>
-                                <input type="file" hidden/>
+                                <input type="file" hidden />
                             </Button>
                         </Grid>
                     </Grid>

@@ -160,7 +160,7 @@ export default function LeasesDashboard() {
 
 	return (
 		<ThemeProvider theme={theme}>
-			<Container maxWidth="lg" sx={{ paddingTop: '10px', paddingBottom: '20px', marginTop: theme.spacing(2) }}>
+			<Container maxWidth="lg" sx={{ paddingTop: !isMobile && '10px', paddingBottom: '20px', marginTop: theme.spacing(2) }}>
 				{!dataReady ? (
 					<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
 						<CircularProgress color="inherit" />
