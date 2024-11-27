@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import theme from "../../theme/theme";
-import { ThemeProvider, Box, Paper, Stack, Typography, Button, ButtonGroup, Rating, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+import { ThemeProvider, Box, Paper, Stack, Typography, Button, ButtonGroup, Rating, Accordion, AccordionSummary, AccordionDetails, Grid } from "@mui/material";
 import { CheckCircle, ExpandMore, LocationOn, SettingsBackupRestore, TurnedInNot } from "@mui/icons-material";
 import { DateCalendar, DigitalClock, LocalizationProvider } from "@mui/x-date-pickers";
 import Scheduler from "../utils/Scheduler";
@@ -18,7 +18,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import { DataGrid } from "@mui/x-data-grid";
-
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PropertiesMap from "../Maps/PropertiesMap";
 
 dayjs.extend(utc);
@@ -149,10 +149,10 @@ const PropertyInfo = (props) => {
     console.log("ROHIT - 149 - status - ", status)
     if (status === "" || status === "NEW" || status === "WITHDRAWN" || status === "ENDED" || status === "REFUSED" || status === "RESCIND") {
       //navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } });
-      if(status === "" && props.handleSelectProperty != null){
+      if (status === "" && props.handleSelectProperty != null) {
         props.handleSelectProperty(null);
       }
-      if(props.setFirstPage){
+      if (props.setFirstPage) {
         props.setFirstPage(true)
       }
       props.setRightPane({
@@ -238,30 +238,33 @@ const PropertyInfo = (props) => {
   return (
     <ThemeProvider theme={theme}>
       <Scheduler show={showScheduler} setShow={setShowScheduler} date={schedulerDate} setDate={setSchedulerDate} />
-      <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative'>
-        <Button
-          onClick={() => props.setRightPane({ type: "listings" })}
-          sx={{
-            textTransform: "none",
-            padding: "10px 10px 0px 10px",
-            textDecoration: "underline",
-            position: "relative",
-          }}
-        >
-          <img src={backButton} style={{ width: "20px", height: "20px", margin: "0 5px" }} />
+      <Grid Container sx={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
+        <Grid item xs={1} md={1}>
+          <Button onClick={() => props.setRightPane({ type: "listings" })}>
+            <ArrowBackIcon
+              sx={{
+                color: "#160449",
+                fontSize: "30px",
+                margin: "5px",
+              }}
+            />
+          </Button>
+        </Grid>
+        <Grid item xs={10} md={10}>
           <Typography
             sx={{
-              justifySelf: "center",
               color: theme.typography.primary.black,
-              fontWeight: theme.typography.medium.fontWeight,
-              fontSize: theme.typography.smallFont,
-              textAlign: "center",
+              fontWeight: theme.typography.primary.fontWeight,
+              fontSize: "18px",
+              textAlign: "center"
             }}
           >
-            <u>Return to All Listings</u>
+            Property Details
           </Typography>
-        </Button>
-      </Box>
+        </Grid>
+        <Grid item xs={1} md={1} />
+
+      </Grid>
       <Box
         style={{
           display: "flex",
@@ -455,12 +458,12 @@ const PropertyInfo = (props) => {
           >
             <Stack
               direction='column'
-              // justifyContent='space-between'
-              // alignItems='center'
-              // sx={{
-              //   color: theme.typography.common.blue,
-              //   padding: "15px 0",
-              // }}
+            // justifyContent='space-between'
+            // alignItems='center'
+            // sx={{
+            //   color: theme.typography.common.blue,
+            //   padding: "15px 0",
+            // }}
             >
               <Typography
                 sx={{
