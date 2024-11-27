@@ -43,7 +43,7 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
     const renderParts = (item) => {
         try {
             const expenses = JSON.parse(item.quote_services_expenses);
-            console.log('Expenses:', expenses);
+            // console.log('Expenses:', expenses);
             const partsWithIDs = [];
             if (expenses.parts && expenses.parts.length > 0) {
                 expenses.parts.forEach((part, index) => {
@@ -189,6 +189,148 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
         }
         return null;
     };
+
+    const renderLabourHour = (item) => {
+        try {
+            const expenses = JSON.parse(item.quote_services_expenses);
+            console.log('Expenses:', expenses);
+            const partsWithIDs = [];
+            if (expenses.labor && expenses.labor.length > 0) {
+                expenses.labor.forEach((lb, index) => {
+                    partsWithIDs.push({
+                        ...lb,
+                        ID: index,
+                        rate: parseFloat(lb.rate),
+                        hours: parseFloat(lb.hours)
+                    });
+                });
+
+                // console.log('expenses.parts - ', expenses.parts);
+                const partsTotal = expenses.labor.reduce((total, part) => {
+                    const rate = parseFloat(part.rate);
+                    const hours = parseFloat(part.hours);
+                    return total + (rate * hours);
+                }, 0);
+
+                const columns = [
+                    {
+                        field: 'rate',
+                        headerName: 'Charge / Hours',                     
+                        width: 220,  
+                        valueFormatter: (params) => `$${params.value.toFixed(2)}`,
+                        renderCell: (params) => (
+                          <Box sx={{ width: '100%' }}>
+                              {params.formattedValue}
+                          </Box>
+                      ),                                          
+                    },  
+                    {
+                      field: 'hours',
+                      headerName: 'Hours',
+                      headerAlign: 'center',
+                      width: 200,
+                      renderCell: (params) => (
+                        <Box sx={{ textAlign: 'center', width: '100%' }}>
+                            {params.formattedValue}
+                        </Box>
+                      ),                                            
+                    },           
+                    {
+                        field: 'totalCost',
+                        headerName: 'Total Cost',
+                        headerAlign: 'right',
+                        width: 150,
+                        valueGetter: (params) => params.row.rate * params.row.hours,
+                        valueFormatter: (params) => `$${params.value.toFixed(2)}`,
+                        renderCell: (params) => (
+                            <Box sx={{ textAlign: 'right', width: '100%' }}>
+                                {params.formattedValue}
+                            </Box>
+                        ),
+                    },       
+                ];
+
+                return (
+                    <Grid container sx={{ paddingTop: '10px' }} spacing={2}>
+                        <Grid 
+                            container
+                            direction='row'
+                            item
+                            xs={12}
+                            sx={{
+                                borderRadius: '5px',
+                                backgroundColor: '#F2F2F2',
+                                margin: '10px',                                
+                            }}
+
+                        >
+                            <Grid item xs={12} sx={{margin: '10px',}}>
+                                <DataGrid
+                                    // rows={expenses.parts}
+                                    rows={partsWithIDs}
+                                    getRowId={row => row.ID}
+                                    rowHeight={30}
+                                    columnHeaderHeight={30}
+                                    columns={columns}
+                                    initialState={{
+                                        pagination: {
+                                            paginationModel: {
+                                                pageSize: 5,
+                                            },
+                                        },
+                                    }}
+                                    pageSizeOptions={[5]}                                     
+                                    hideFooter={true}                       
+                                    disableRowSelectionOnClick                                
+                                    sx={{
+                                        '& .MuiDataGrid-cell': {
+                                            color: '#160449',                                        
+                                        },                                    
+                                        '& .MuiDataGrid-columnHeaderTitle': {
+                                            lineHeight: 'normal',
+                                            fontWeight: 'bold',
+                                            color: '#160449',
+                                        },
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={12} sx={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', paddingRight: '8%', marginTop: '10px', marginBottom: '10px',}}>
+                                <Typography variant="body2" sx={{ color: '#2c2a75', fontWeight: 'bold', }}>
+                                    Service Charge Total: ${partsTotal.toFixed(2)}
+                                </Typography>
+                            </Grid>
+                        </Grid>                                                
+                    </Grid>
+                );
+            } else {
+                console.log('No Service found in expenses');
+            }
+        } catch (error) {
+            console.error('Error parsing quote_services_expenses:', error);
+        }
+        return null;
+    };
+
+    const computeTotalCost = (item) => {
+        if(item && item.quote_services_expenses){
+            const partsTotal = JSON.parse(item.quote_services_expenses).parts.reduce((total, part) => {
+                const cost = parseFloat(part.cost);
+                const quantity = parseFloat(part.quantity);
+                return total + (cost * quantity);
+            }, 0);
+    
+            const serviceTotal = JSON.parse(item.quote_services_expenses).labor.reduce((total, part) => {
+                const rate = parseFloat(part.rate || part.charge);
+                const hours = parseFloat(part.hours);
+                return total + (rate * hours);
+            }, 0);
+    
+            return partsTotal + serviceTotal
+        
+        }else{
+            return 0;
+        }
+    }
     
 
     const handleSubmit = (quoteStatusParam) => {
@@ -305,7 +447,7 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
 		}
 	};
 
-    const isAnyQuoteAccepted = maintenanceQuotesForItem.some(item => item.quote_status === 'ACCEPTED');
+    const isAnyQuoteAccepted = maintenanceQuotesForItem.some(item => item.quote_status === 'ACCEPTED' || item.quote_status === "FINISHED");
 
 
     return (
@@ -404,14 +546,6 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                                                 Yes
                                             </Typography>
                                         </Grid>
-                                        {/* <Grid item xs={6}>
-                                            <Typography variant="body2" sx={{ color: '#2c2a75' }}>
-                                                Written Quote:
-                                            </Typography>
-                                        </Grid>
-                                        <Grid item xs={6}>
-                                            <DescriptionIcon sx={{ color: '#2c2a75' }} />
-                                        </Grid> */}
 
                                         {/* quote fix bid  */}
                                         {item?.quote_services_expenses && JSON.parse(item?.quote_services_expenses)?.event_type === 'Fixed' ? (
@@ -428,7 +562,7 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                                                         </Typography>
                                                     </Grid>
                                                 </Grid>
-                                        ) : null}
+                                        ) : item?.quote_services_expenses && JSON.parse(item?.quote_services_expenses)?.event_type === 'Hourly' ? renderLabourHour(item) : null}
 
                                         {/* quote expense service for parts */}
                                         {item?.quote_services_expenses ? renderParts(item) : null}
@@ -440,8 +574,11 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                                             </Typography>
                                         </Grid>
                                         <Grid item xs={6}>
-                                            <Typography variant="body2" gutterBottom sx={{ color: '#2c2a75', fontWeight: 'bold'  }}>
+                                            {/* <Typography variant="body2" gutterBottom sx={{ color: '#2c2a75', fontWeight: 'bold'  }}>
                                                 <strong>${item.quote_total_estimate ? parseFloat(item.quote_total_estimate).toFixed(2) : '0.00'}</strong>
+                                            </Typography> */}
+                                            <Typography variant="body2" gutterBottom sx={{ color: '#2c2a75', fontWeight: 'bold'  }}>
+                                                <strong>${computeTotalCost(item)}</strong>
                                             </Typography>
                                         </Grid>
 

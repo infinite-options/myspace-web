@@ -18,7 +18,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 import NoImageAvailable from '../../../images/NoImageAvailable.png';
 
-export default function WorkerInvoiceView({maintenanceItem}){
+export default function ManagerInvoiceView({maintenanceItem}){
     console.log('inside workerinvoice---', maintenanceItem);
 
     const [scrollPosition, setScrollPosition] = useState(0);
@@ -26,15 +26,24 @@ export default function WorkerInvoiceView({maintenanceItem}){
 
     const [totalService, setTotalService] = useState(0)
     const [totalParts, setTotalParts] = useState(0)
+    const [currentQuote, setCurrentQuote] = useState(null)
 
     useEffect(()=>{
-        const partsTotal = JSON.parse(maintenanceItem.quote_services_expenses).parts.reduce((total, part) => {
+        const quotes = JSON.parse(maintenanceItem?.quote_info)
+
+        const curr_quote = quotes.find(quote => quote.quote_status === "FINISHED");
+
+        console.log(" --- finishde - ", curr_quote)
+        setCurrentQuote(curr_quote)
+
+
+        const partsTotal = curr_quote.quote_services_expenses.parts.reduce((total, part) => {
             const cost = parseFloat(part.cost);
             const quantity = parseFloat(part.quantity);
             return total + (cost * quantity);
         }, 0);
 
-        const serviceTotal = JSON.parse(maintenanceItem.quote_services_expenses).labor.reduce((total, part) => {
+        const serviceTotal = curr_quote.quote_services_expenses.labor.reduce((total, part) => {
             const rate = parseFloat(part.rate || part.charge);
             const hours = parseFloat(part.hours);
             return total + (rate * hours);
@@ -71,7 +80,7 @@ export default function WorkerInvoiceView({maintenanceItem}){
 
     const renderParts = (item) => {
         try {
-            const expenses = JSON.parse(item.quote_services_expenses);
+            const expenses = item.quote_services_expenses;
             // console.log('Expenses:', expenses);
             const partsWithIDs = [];
             if (expenses.parts && expenses.parts.length > 0) {
@@ -178,7 +187,7 @@ export default function WorkerInvoiceView({maintenanceItem}){
 
     const renderLabourHour = (item) => {
         try {
-            const expenses = JSON.parse(item.quote_services_expenses);
+            const expenses = item.quote_services_expenses;
             // console.log('Expenses:', expenses);
             const partsWithIDs = [];
             if (expenses.labor && expenses.labor.length > 0) {
@@ -298,12 +307,12 @@ export default function WorkerInvoiceView({maintenanceItem}){
                         borderRadius: "10px",
                         paddingLeft: "10px",
                         display: 'flex',
-                        width: 'flex',
+                        width: '755px',
                     }}
                 >
                     {maintenanceItem.bill_uid ? (
                         <>
-                           <Box sx={{ padding: 2 }}>
+                           <Box sx={{ padding: "2px" }}>
                                     <Grid container spacing={1}>
                                         <Grid item xs={12} marginBottom={"20px"}>
                                             <Typography variant="body1" sx={{ color: '#2c2a75', fontWeight: 'bold', textAlign: 'center', fontSize: "20px"}}>
@@ -352,12 +361,12 @@ export default function WorkerInvoiceView({maintenanceItem}){
                                                         marginTop:"10px",}}>
                                                 Estimation:
                                             </Typography>
-                                            {maintenanceItem?.quote_services_expenses && JSON.parse(maintenanceItem?.quote_services_expenses)?.event_type === 'Hourly' ? renderLabourHour(maintenanceItem) : null}
+                                            {currentQuote?.quote_services_expenses && currentQuote?.quote_services_expenses?.event_type === 'Hourly' ? renderLabourHour(currentQuote) : null}
                                         </Grid>
 
                                         {/* quote expense service for parts */}
                                         <Grid item xs={12} marginTop={"10px"}>
-                                            {maintenanceItem?.quote_services_expenses ? renderParts(maintenanceItem): null}
+                                            {currentQuote?.quote_services_expenses ? renderParts(currentQuote): null}
                                         </Grid>
 
                                         {/* service Total */}
@@ -491,7 +500,7 @@ export default function WorkerInvoiceView({maintenanceItem}){
                                         </Grid>
                                         
                                     </Grid>
-                                </Box>
+                            </Box>
                         </>
                     ) : (
                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.primary.fontWeight, fontSize: "18px"}}>

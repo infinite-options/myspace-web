@@ -171,8 +171,8 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
     const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
     const [checked, setChecked] = useState(true);
     const [showSpinner, setShowSpinner] = useState(false);
-    const [availabilityDate, setAvailabilityDate] = useState(maintenanceItem?.quote_earliest_availability ? maintenanceItem?.quote_earliest_availability.split(" ")[0] : '');
-    const [availabilityTime, setAvailabilityTime] = useState(maintenanceItem?.quote_earliest_availability ? dayjs(maintenanceItem?.quote_earliest_availability.split(" ")[1], "HH:mm").format("h:mm A") : '');
+    const [availabilityDate, setAvailabilityDate] = useState(maintenanceItem?.quote_earliest_available_date ? maintenanceItem?.quote_earliest_available_date.split(" ")[0] : '');
+    const [availabilityTime, setAvailabilityTime] = useState(maintenanceItem?.quote_earliest_available_time ? dayjs(maintenanceItem?.quote_earliest_available_time.split(" ")[0], "HH:mm").format("h:mm A") : '');
     const [rate, setRate] = useState(0);
     const [notes, setNotes] = useState(editBool ? maintenanceItem.quote_notes : "");
     const [jobType, setJobType] = useState("Fixed");
@@ -213,11 +213,12 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
             console.log("quote_notes", maintenanceItem?.quote_notes)
             console.log("quoteServicesExpenses.labor.rate", quoteServicesExpenses.labor[0].rate)
             console.log("quoteServicesExpenses.labor.hours", quoteServicesExpenses.labor[0].hours)
-            console.log("maintenanceItem.event_type", maintenanceItem.event_type)
+            console.log("maintenanceItem.event_type", quoteServicesExpenses.event_type)
             setRate(parseInt(quoteServicesExpenses.labor[0].rate))
-            setJobType(quoteServicesExpenses.labor[0].hours ? quoteServicesExpenses.labor[0].hours : maintenanceItem.event_type)
+            setJobType(quoteServicesExpenses.event_type)
             setPartsObject(quoteServicesExpenses.parts)
             setLabor(quoteServicesExpenses.labor)
+            setHours(quoteServicesExpenses.labor[0].hours)
         }
 
     }, [])
@@ -291,7 +292,8 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
 
     const handleRateChange = (event) => {
         // console.log("handleRateChange", event.target.value)
-        if (jobType === "Fixed Bid"){
+        console.log(" -- job type -- ", jobType)
+        if (jobType === "Fixed"){
             setHours(1)
         }
         setRate(event.target.value);
@@ -338,7 +340,7 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
     }
 
 
-    const handleSubmit = (status) => {
+    const handleSubmit = async (status) => {
         console.log("handleSubmit")
 
         const changeQuoteStatus = async (status) => {
@@ -446,9 +448,9 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                 //     formData.append("qd_files", documentBinary);
                 // }
         
-                for (let [key, value] of formData.entries()) {
-                    console.log(key, value);    
-                }
+                // for (let [key, value] of formData.entries()) {
+                //     console.log(key, value);    
+                // }
 
             } else if (status === "REFUSED"){
                 formData.append("maintenance_quote_uid", maintenanceItem?.maintenance_quote_uid); // 900-xxx
@@ -457,9 +459,9 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                 formData.append("quote_status", status);
             }
             
-            for (var pair of formData.entries()) {
-                console.log(pair[0]+ ' => ' + pair[1]); 
-            }
+            // for (var pair of formData.entries()) {
+            //     console.log(pair[0]+ ' => ' + pair[1]); 
+            // }
 
             try {
                 const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {
@@ -467,7 +469,7 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                     body: formData
                 });
                 const responseData = await response.json();
-                console.log(responseData);
+                // console.log(responseData);
                 if (response.status === 200) {
                     console.log("success - changeQuoteStatus")
                 } else{
@@ -476,15 +478,22 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
             } catch (error){
                 console.log("error", error)
             }
+
             setShowSpinner(false);
         }
 
 
         // changeMaintenanceRequestStatus(status)
-        changeQuoteStatus(status)
+        await changeQuoteStatus(status)
 
         // uploadQuoteDocuments()
+        // if(location.state?.refreshMaintenanceDatafn){
+        //     location.state.refreshMaintenanceDatafn();
+        
+        // }else{
+        // }
         navigate("/maintenanceDashboard2", {state: {refresh: true, key: Date.now()}})
+
     }
 
     function numImages(){
@@ -493,8 +502,9 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
         else { return displayImages.length }
     }
 
+    // set images
     useEffect(() => {
-        let imageArray = JSON.parse(maintenanceItem?.maintenance_images) // quote_maintenance_images not returning anything
+        let imageArray = [...JSON.parse(maintenanceItem?.maintenance_images), ...JSON.parse(maintenanceItem?.quote_maintenance_images)] // quote_maintenance_images not returning anything
         setDisplayImages(imageArray)
     }, [])
 
@@ -534,6 +544,7 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                         paddingRight: "0px",
                     }}
                 >
+                    {/* back button */}
                     <Stack
                         direction="row"
                         justifyContent="center"
@@ -564,32 +575,38 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                             margin: "10px",
                             paddingTop: "25px",
                             minWidth: "300px"
-                        }}>
+                    }}>
                         <Grid container
                             direction="column"
                         >
-                                <Grid item xs={12}>
-                                    <Grid container spacing={2} justifyContent="center">
-                                        <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "20px"}}>
-                                            {maintenanceItem.maintenance_title}
-                                        </Typography>
-                                    </Grid>
+                            <Grid item xs={12}>
+                                <Grid container spacing={2} justifyContent="center">
+                                    <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "20px"}}>
+                                        {maintenanceItem.maintenance_title}
+                                    </Typography>
                                 </Grid>
-                                <ImageCarousel images={displayImages}/>
-                                <Grid item xs={12}>
-                                    <Grid container spacing={2} justifyContent="center" sx={{paddingTop: "20px"}}>
-                                        <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
-                                            { numImages() > 0 ? numImages() + " Images" : "No Images" }
-                                        </Typography>
-                                    </Grid>
+                            </Grid>
 
-                                    <Grid container spacing={2} justifyContent="center" sx={{paddingTop: "20px"}}>
-                                            <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
-                                                <b>{maintenanceItem?.maintenance_priority} Priority</b>
-                                            </Typography>
-                                    </Grid>
+                            <ImageCarousel images={displayImages}/>
+                            
+                            <Grid item xs={12}>
+                                <Grid container spacing={2} justifyContent="center" sx={{paddingTop: "20px"}}>
+                                    <Typography sx={{color: "#000000", fontWeight: "10px", fontSize: "14px"}}>
+                                        { numImages() > 0 ? numImages() + " Images" : "No Images" }
+                                    </Typography>
                                 </Grid>
+
+                                <Grid container spacing={2} justifyContent="center" sx={{paddingTop: "20px"}}>
+                                        <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
+                                            <b>{maintenanceItem?.maintenance_priority} Priority</b>
+                                        </Typography>
+                                </Grid>
+                            </Grid>
+
+                            {/* information and grand total */}
                             <Grid container direction="row">
+
+                                {/* property address */}
                                 <Grid item xs={12}>
                                     <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                                         <b>Property Address</b>
@@ -600,6 +617,8 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                                         </Typography>
                                     </div>
                                 </Grid>
+
+                                {/* reported */}
                                 <Grid item xs={6}>
                                     <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                                         <b>Reported</b>
@@ -610,6 +629,8 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                                         </Typography>
                                     </div>
                                 </Grid>
+
+                                {/* days open */}
                                 <Grid item xs={6}>
                                         <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                                         <b>Days Open</b>
@@ -620,6 +641,8 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                                         </Typography>
                                     </div>
                                 </Grid>
+                                
+                                {/* description */}
                                 <Grid item xs={6} sx={{paddingBottom: "20px"}}>
                                     <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                                         <b>Description</b>
@@ -630,7 +653,9 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                                         </Typography>
                                     </div>
                                 </Grid>
-                                <Grid item xs={6} sx={{paddingBottom: "20px"}}>
+
+                                {/* grand total */}
+                                {acceptBool && <Grid item xs={6} sx={{paddingBottom: "20px"}}>
                                     <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                                         <b>Grand Total: </b>
                                     </Typography>
@@ -639,7 +664,7 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                                             $ {grandTotal}
                                         </Typography>
                                     </div>
-                                </Grid>
+                                </Grid>}
                             </Grid>
                         </Grid>
                         <Grid container direction="row" spacing={1}>
@@ -650,6 +675,7 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                                         Labor Details
                                     </Typography>
                                 </Grid>
+                                    {/* set job type */}
                                     <Grid item xs={12} sx={{paddingTop: "10px"}}>
                                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
                                             Job Type
@@ -662,8 +688,10 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
 										    }
                                         </Select>
                                     </Grid>
+                                    
                                     {jobType === "Hourly" ? (
                                         <>
+                                            {/* hours change */}
                                             <Grid item xs={4} sx={{paddingTop: "10px"}}>
                                                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
                                                     # of hours
@@ -680,6 +708,8 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                                                     onChange={handleHourChange}
                                                 />
                                             </Grid>
+
+                                            {/* charge per hour */}
                                             <Grid item xs={4} sx={{paddingTop: "10px"}}>
                                                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
                                                     Charge/Hour
@@ -691,6 +721,8 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                                                     onChange={handleRateChange}
                                                 />
                                             </Grid>
+
+                                            {/* total cost */}
                                             <Grid item xs={4} sx={{paddingTop: "10px"}}>
                                                 <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px"}}>
                                                     Total Cost
@@ -729,14 +761,18 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                                             />
                                         </Grid>
                                     )}
+
+                                    {/* cost of parts */}
                                     <CostPartsTable parts={partsObject} setParts={setPartsObject}/>
-                                    <Grid item xs={12}>
+                                    
+                                    <Grid item xs={12} marginTop={"20px"}>
                                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                                             Earliest Availability
                                         </Typography>
                                     </Grid>
+                                    
+                                    {/* date */}
                                     <Grid item xs={6} md={6} sx={{paddingTop: "10px"}}>
-                                        
                                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                                             <DatePicker
                                                 value={dayjs(availabilityDate)}
@@ -760,6 +796,8 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                                             />
                                         </LocalizationProvider>
                                     </Grid>
+                                    
+                                    {/* time */}
                                     <Grid item xs={6} md={6} sx={{paddingTop: "10px"}}>
                                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                                             <TimePicker                                                        
@@ -777,11 +815,13 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                                                 }}                                                        
                                                 views={['hours', 'minutes']}
                                                 
-                                                value={dayjs(availabilityTime)}
+                                                value={dayjs(availabilityTime, "hh:mm A")}
                                                 onChange={(newValue) => setAvailabilityTime(newValue.format("HH:mm"))}
                                             />
                                         </LocalizationProvider>
                                     </Grid>
+
+                                    {/* notes */}
                                     <Grid item xs={12} sx={{paddingTop: "10px"}}>
                                         <Typography sx={{color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                                             Notes
@@ -804,6 +844,7 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                                             onChange={handleNotesChange}
                                         />
                                     </Grid>
+
                                     <Grid item xs={12} sx={{paddingTop: "25px"}}>
                                         <FormControlLabel
                                             control={
@@ -822,6 +863,8 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                                             label="Diagnostic fees included"
                                         />
                                     </Grid>
+
+                                    {/* documents */}
                                     <Grid item xs={12} sx={{paddingTop: "25px", paddingBottom:"25px"}}>
                                         {/* <Typography sx={{color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px"}}>
                                             Add Documents
@@ -829,9 +872,12 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                                         <DocumentUploader selectedDocumentList={selectedDocumentList} setSelectedDocumentList={setSelectedDocumentList}/> */}
                                         <Documents isAccord={false} isEditable={true} documents={selectedDocumentList} setDocuments={setSelectedDocumentList} contractFiles={uploadedFiles} setContractFiles={setuploadedFiles} contractFileTypes={uploadedFilesType} setContractFileTypes={setuploadedFilesType} setDeleteDocsUrl={setDeleteDocuments} setIsPreviousFileChange={setIsPreviousFileChange} customName={"Add Documents"}/>
                                     </Grid>
+
+                                    {/* image uploader */}
                                     <Grid item xs={12} sx={{paddingTop: "25px"}}>
                                         <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList}/>
                                     </Grid>
+
                                     <Grid item xs={12} sx={{paddingTop: "25px"}}>
                                         <Button
                                             variant="contained"
