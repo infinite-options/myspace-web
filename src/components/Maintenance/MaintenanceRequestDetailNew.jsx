@@ -284,21 +284,23 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
           width: "100%",
           minHeight: "100vh",
           position: "relative",
+          flex : 1
         }}
       >
         <Paper
           sx={{
-            margin: "5px",
+            // margin: "5px",
             backgroundColor: theme.palette.primary.main,
             width: "100%",
-            paddingTop: "10px",
-            paddingBottom: "30px",
+            // paddingTop: "10px",
+            // paddingBottom: "30px",
+            borderRadius: "10px",
           }}
         >
           {isMobile && (
             <Box position="absolute">
               <Button onClick={() => handleBackButton()}>
-                <ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
+                <ArrowBackIcon sx={{ color: "#160449", fontSize: "30px", margin: "5px" }} />
               </Button>
             </Box>
           )}
