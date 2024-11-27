@@ -189,9 +189,9 @@ export default function LeaseDetailsComponent({
 
   return (
     <>
-      <Card sx={{ height: "100%" }}>
+      <Card sx={{ height: "100%", width: "100%" }}>
         <Grid container justifyContent="center">          
-          <Grid container justifyContent="center" item xs={3.8}>
+          <Grid container justifyContent="center" item xs={3.8} sx={{ padding: "10px" }}>
             <Typography
               sx={{
                 color: "#160449",
