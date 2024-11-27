@@ -66,7 +66,7 @@ function a11yProps(index) {
 
 
 export default function WorkerMaintenanceRequestDetail({maintenance_request_index, propstatus, propmaintenanceItemsForStatus, alldata, maintenance_request_uid, setShowMaintenanceDetail, refreshMaintenanceData}){
-    console.log("----inside WorkerMaintenanceRequestDetail----");
+    // console.log("----inside WorkerMaintenanceRequestDetail----", propmaintenanceItemsForStatus, maintenance_request_index, alldata);
     // console.log(maintenance_request_index, propstatus);
     const location = useLocation();
     let navigate = useNavigate();
@@ -89,7 +89,10 @@ export default function WorkerMaintenanceRequestDetail({maintenance_request_inde
         if (!isMobile) {
           setMaintenanceRequestIndex(maintenance_request_index);
           setStatus(propstatus);
-          setMaintenanceItemsForStatus(propmaintenanceItemsForStatus);
+          if(propmaintenanceItemsForStatus){
+            // console.log("=== ok here i got maintenance status - ", propmaintenanceItemsForStatus)
+              setMaintenanceItemsForStatus(propmaintenanceItemsForStatus);
+          }
           setMaintenanceRequestId(maintenance_request_uid);
         }
       }, [isMobile, maintenance_request_index, propstatus, propmaintenanceItemsForStatus, maintenance_request_uid]);
@@ -207,6 +210,7 @@ export default function WorkerMaintenanceRequestDetail({maintenance_request_inde
         };
     }
 
+    // console.log("=== debug === value, maintenanceItemStatus - ", value, maintenanceItemsForStatus[maintenanceRequestId])
     return(
         <ThemeProvider theme={theme}>
             <Box
@@ -349,6 +353,8 @@ export default function WorkerMaintenanceRequestDetail({maintenance_request_inde
                                     </CustomTabPanel>
                                 </div>
                             )}
+
+                            {/* action button */}
                             <Box
                                 sx={{
                                     paddingBottom: "20px",
@@ -356,11 +362,11 @@ export default function WorkerMaintenanceRequestDetail({maintenance_request_inde
                                 }}
                             >
                                 {colorStatus[value]?.mapping === "REQUESTED" && maintenanceItemsForStatus[maintenanceRequestIndex] ?
-                                    <WorkerQuotesRequestedAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
+                                    <WorkerQuotesRequestedAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} refreshMaintenanceData={refreshMaintenanceData}/>
                                     : null 
                                 }
                                 {colorStatus[value]?.mapping === "SUBMITTED" ?
-                                    <WorkerQuotesSubmittedAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]}/>
+                                    <WorkerQuotesSubmittedAction maintenanceItem={maintenanceItemsForStatus[maintenanceRequestIndex]} refreshMaintenanceData={refreshMaintenanceData}/>
                                     : null
                                 }
                                  {colorStatus[value]?.mapping === "ACCEPTED" ?

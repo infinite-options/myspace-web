@@ -31,7 +31,7 @@ import { useUser } from "../../contexts/UserContext";
 import APIConfig from "../../utils/APIConfig";
 import Chart from "react-apexcharts";
 import WorkerMaintenanceStatusTable from "../Maintenance/Worker/WorkerMaintenanceStatusTable";
-import { format, isEqual, isAfter, parseISO } from "date-fns";
+import { format, isEqual, isAfter, parseISO, set } from "date-fns";
 import useSessionStorage from "../Maintenance/useSessionStorage";
 import WorkerMaintenanceRequestDetail from "../Maintenance/Worker/WorkerMaintenanceRequestDetail";
 import { useLocation } from "react-router-dom";
@@ -258,9 +258,13 @@ export default function MaintenanceDashboard2() {
     setShowMaintenanceDetail(true);
   };
 
+  useEffect(()=>{
+    console.log(" session data after refresh - ", sessionData)
+  }, [sessionData])
+
   const refreshMaintenanceData = () => {
     getMaintenanceData();
-    setShowMaintenanceDetail(false);
+    // setShowMaintenanceDetail(false);
   };
 
   return (
@@ -380,7 +384,7 @@ export default function MaintenanceDashboard2() {
   );
 }
 
-const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, allMaintenanceStatusData, onSelectRequest, setSessionData }) => {
+const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, allMaintenanceStatusData, onSelectRequest, setSessionData, showMaintenanceDetail }) => {
   let navigate = useNavigate();
   const colorStatus = theme.colorStatusMM;
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -422,7 +426,7 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
       }
       setFilterPropertyList(propertyList);
     }
-  }, [maintenanceRequests]);
+  }, [allMaintenanceStatusData]);
 
   function clearFilters() {
     setMonth(null);
@@ -486,6 +490,9 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
     const requestResult = requests?.result;
 
     for (const status in requestResult) {
+
+        const seenKeys = new Set();
+
         filteredRequests[status] = requestResult[status].maintenance_items?.filter((item) => {
             
             const addressMatches = checkedAddresses.has(item.property_address);
@@ -502,7 +509,15 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
                     item.maintenance_request_created_date?.split("-")[2] === String(year);
             }
 
-            return addressMatches && dateMatches;
+            const uniqueKey = `${item.maintenance_request_uid}-${item.maintenance_quote_uid}`;
+            const isUnique = !seenKeys.has(uniqueKey);
+
+            if (addressMatches && dateMatches && isUnique) {
+                seenKeys.add(uniqueKey);
+                return true; 
+            }
+            
+            return false; 
         });
     }
 
@@ -543,12 +558,29 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
 
       const filterMaintenanceRequests = (allMaintenanceStatusData, address) => {
         const filteredRequests = {};
+        const seenKeys = new Set();
+
         for (const status in allMaintenanceStatusData.result) {
           // Check if maintenance_items exists and is an array
           if (allMaintenanceStatusData.result[status].maintenance_items.length > 0) {
             filteredRequests[status] = {
               ...allMaintenanceStatusData.result[status],
-              maintenance_items: allMaintenanceStatusData.result[status].maintenance_items.filter((item) => address.includes(item.property_address) && filteredMaintenanceRequests[status]?.some(filteredItem => JSON.stringify(filteredItem) === JSON.stringify(item))),
+              // maintenance_items: allMaintenanceStatusData.result[status].maintenance_items.filter((item) => address.includes(item.property_address) && filteredMaintenanceRequests[status]?.some(filteredItem => JSON.stringify(filteredItem) === JSON.stringify(item))),
+                maintenance_items: allMaintenanceStatusData.result[status].maintenance_items.filter((item) => {
+                  const uniqueKey = `${item.maintenance_request_uid}-${item.maintenance_quote_uid}`;
+
+                  const isUnique =
+                      !seenKeys.has(uniqueKey) &&
+                      address.includes(item.property_address) &&
+                      filteredMaintenanceRequests[status]?.some(filteredItem => JSON.stringify(filteredItem) === JSON.stringify(item));
+
+                  if (isUnique) {
+                    seenKeys.add(uniqueKey); 
+                    return true; 
+                  }
+
+                  return false; 
+              }),
             };
           } else {
             filteredRequests[status] = {
@@ -603,6 +635,18 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
     setShowSpinner(false)
 
   }, [filteredMaintenanceRequests])
+
+  useEffect(()=>{
+
+    if(showMaintenanceDetail){
+      setSessionData((prev) => ({
+        ...prev,
+        propmaintenanceItemsForStatus: maintenanceRequestsByQuoteStatus[prev.propstatus], 
+        alldata: maintenanceRequestsByStatus, 
+      }));
+    }
+
+  }, [maintenanceRequestsByQuoteStatus, maintenanceRequestsByStatus])
   
 
   // console.log('----filteredMaintenanceRequests-----', allMaintenanceStatusData, filteredMaintenanceRequests);
@@ -742,7 +786,6 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
                 onSelectRequest={onSelectRequest}
                 maintenanceRequestsByQuoteStatus={maintenanceRequestsByQuoteStatus}
                 maintenanceRequestsByStatus={maintenanceRequestsByStatus}
-                setSessionData={setSessionData}
               />
             </Grid>
 
@@ -892,7 +935,7 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
   );
 };
 
-const WorkOrdersAccordion = ({ maintenanceRequests, maintenanceRequestsByQuoteStatus, maintenanceRequestsByStatus, allMaintenanceStatusData, onSelectRequest, setSessionData }) => {
+const WorkOrdersAccordion = ({ maintenanceRequests, maintenanceRequestsByQuoteStatus, maintenanceRequestsByStatus, allMaintenanceStatusData, onSelectRequest }) => {
   const colorStatus = theme.colorStatusMM;
   const [query, setQuery] = useState("");
 
@@ -926,7 +969,6 @@ const WorkOrdersAccordion = ({ maintenanceRequests, maintenanceRequestsByQuoteSt
               allMaintenanceStatusData={allMaintenanceStatusData}
               maintenanceRequestsCount={maintenanceArray}
               onSelectRequest={onSelectRequest}
-              setSessionData={setSessionData}
             />
           );
         })}

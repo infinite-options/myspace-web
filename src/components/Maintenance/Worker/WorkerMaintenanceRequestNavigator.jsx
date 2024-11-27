@@ -25,15 +25,17 @@ async function getInitialImages(requestData, currentIndex) {
 
 export default function WorkerMaintenanceRequestNavigator({ requestIndex, backward_active_status, forward_active_status, updateRequestIndex, requestData, color, item, allData, currentTabValue, status, tabs }) {
   //console.log('----inside WorkerMaintenanceRequestNavigator----');
-  console.log("124 - requestData - ", requestData);
+  // console.log("124 - requestData - ", requestData);
   const [currentIndex, setCurrentIndex] = useState(requestIndex);
   const [activeStep, setActiveStep] = useState(0);
   const [formattedDate, setFormattedDate] = useState("");
   const [numOpenRequestDays, setNumOpenRequestDays] = useState("");
-  const [images, setImages] = useState([maintenanceRequestImage]);
+  const [images, setImages] = useState([]);
   let [currentTab, setCurrentTab]=useState(currentTabValue);
   // const [maxSteps, setMaxSteps] = useState(images.length);
   const navigate = useNavigate();
+
+  const data = requestData[currentIndex];
 
   useEffect(() => {
       setCurrentIndex(requestIndex);
@@ -43,7 +45,11 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
   useEffect(() => {
     const fetchImages = async () => {
         const initialImages = await getInitialImages(requestData, currentIndex);
-        setImages(initialImages);
+        if(initialImages.length === 1 && initialImages[0] === maintenanceRequestImage && JSON.parse(data?.quote_maintenance_images).length > 0 && item.status === "Quotes Requested"){
+          setImages([])
+        }else{
+          setImages(initialImages);
+        }
         setActiveStep(0);
     };
     
@@ -113,8 +119,8 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
     setFormattedDate(formattedDate);
   }
 
-  const data = requestData[currentIndex];
-  console.log("124 - data - ", data);
+  
+  // console.log("124 - data - ", data);
 
    useEffect(() => {
     // console.log("data - ", data);
@@ -124,7 +130,7 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
   }, [data]);  
 
   
-  console.log("124 - data?.quote_maintenance_images - ", data?.quote_maintenance_images);
+  // console.log("124 - data?.quote_maintenance_images - ", data?.quote_maintenance_images);
   const quoteMaintenanceImages = data?.quote_maintenance_images? JSON.parse(data?.quote_maintenance_images) : []
 
   return (
@@ -165,6 +171,8 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
                 <ArrowForwardIcon />
             </Button>
         </Stack>
+
+        {/* title */}
         <Stack
           justifyContent="center"
           alignItems="center"
@@ -173,6 +181,8 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
             { data !== undefined ? (data.maintenance_title !== undefined ? data.maintenance_title : "No Data") : "No data"}
           </Typography>
         </Stack>
+
+        {/* image and info */}
         <Stack alignItems="center" justifyContent="center" sx={{paddingBottom: "0px"}}>
           <Card
             sx={{
@@ -187,6 +197,7 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
               padding: "0px"
             }}
           >
+            {/* request image */}
             <CardContent
               sx={{
                 display: "flex",
@@ -208,7 +219,7 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
               >
                 <CardMedia
                   component="img"
-                  image={[...images, ...quoteMaintenanceImages][activeStep]}
+                  image={data?.maintenance_status !== "REQUESTED" ? [...images][activeStep] : [...images, ...quoteMaintenanceImages][activeStep]}
                   sx={{
                     elevation: "0",
                     boxShadow: "none",
@@ -225,7 +236,7 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
                 />
               </div>
               <MobileStepper
-                steps={maxSteps + quoteMaintenanceImages?.length}
+                steps={data?.maintenance_status !== "REQUESTED" ? maxSteps : maxSteps + quoteMaintenanceImages?.length}
                 position="static"
                 activeStep={activeStep}
                 variant="text"
@@ -240,7 +251,7 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
                   boxShadow: "none",
                 }}
                 nextButton={
-                  <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps + quoteMaintenanceImages?.length - 1} 
+                  <Button size="small" onClick={handleNext} disabled={data?.maintenance_status !== "REQUESTED" ? activeStep === maxSteps -1 : activeStep === maxSteps + quoteMaintenanceImages?.length - 1} 
                     sx={{color: "white"}}
                   > 
                     <KeyboardArrowRight sx={{color: "white"}} />
@@ -255,6 +266,8 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
                 }
               />
             </CardContent>
+
+            {/* info about request */}
             <CardContent
               sx={{
                 flexDirection: "column",
@@ -346,6 +359,18 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
                 >
                   {requestData[currentIndex].maintenance_request_status === "SCHEDULED" ? "Scheduled for " + requestData[currentIndex].maintenance_scheduled_date + " at " + dayjs(requestData[currentIndex].maintenance_scheduled_time,"HH:mm").format("h:mm A"): null}
                 </Typography>
+
+                {/* Info requested indication */}
+                {data?.quote_status === "MORE INFO" && <Typography
+                  sx={{
+                    color: "red",
+                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontSize: theme.typography.mediumFont,
+                    paddingBottom: "10px",
+                  }}
+                >
+                  * You asked for more info from manager
+                </Typography>}
               </div>
             </CardContent>
           </Card>

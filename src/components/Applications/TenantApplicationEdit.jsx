@@ -1394,7 +1394,7 @@ export default function TenantApplicationEdit(props) {
                     </Grid>
 
                     {/* documents details */}
-                    <Grid container direction='column' justifyContent='center' spacing={2} sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+                    <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
                         <Grid item xs={12}>
                             <Accordion
                                 sx={{
@@ -1404,69 +1404,53 @@ export default function TenantApplicationEdit(props) {
                                     margin: "auto", // Center the accordion
                                     minHeight: "50px",
                                 }}
-                                expanded={documentsExpanded}
-                                onChange={() => setDocumentsExpanded((prev) => !prev)}
+                                expanded={occupantsExpanded}
+                                onChange={() => setOccupantsExpanded((prevState) => !prevState)}
                             >
-                                <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='documents-content' id='documents-header'>
-                                    <Typography
-                                        sx={{
-                                            fontWeight: theme.typography.medium.fontWeight,
-                                            color: theme.typography.primary.blue,
-                                            // color: "#160449",
-                                            // fontWeight: theme.typography.primary.fontWeight,
-                                            // fontSize: "20px",
-                                            // textAlign: "center",
-                                            // paddingBottom: "10px",
-                                            // paddingTop: "5px",
-                                            // flexGrow: 1,
-                                        }}
-                                    >
-                                        Document Details
-                                    </Typography>
+                                <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='occupants-content' id='occupants-header'>
+                                    <Grid container>
+                                        <Grid item md={11.2}>
+                                            <Typography
+                                                sx={{
+                                                    fontWeight: theme.typography.medium.fontWeight,
+                                                    color: theme.typography.primary.blue,
+                                                    // color: "#160449",
+                                                    // fontWeight: theme.typography.primary.fontWeight,
+                                                    // fontSize: "20px",
+                                                    // textAlign: "center",
+                                                    // paddingBottom: "10px",
+                                                    // paddingTop: "5px",
+                                                    // flexGrow: 1,
+                                                    // paddingLeft: "50px",
+                                                }}
+                                                paddingTop='5px'
+                                                paddingBottom='10px'
+                                            >
+                                                Document Details
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item md={0.5} />
+                                    </Grid>
                                 </AccordionSummary>
                                 <AccordionDetails>
-                                    <Box sx={{ width: "100%" }}>
-                                        <Documents
-                                            documents={tenantDocuments}
-                                            setDocuments={setTenantDocuments}
-                                            customName={"Application Documents"}
-                                            setContractFiles={setExtraUploadDocument}
-                                            setDeleteDocsUrl={setDeleteDocuments}
-                                            isAccord={false}
-                                            plusIconColor={theme.typography.primary.black}
-                                            plusIconSize={"18px"}
-                                            contractFiles={extraUploadDocument}
-                                            contractFileTypes={extraUploadDocumentType}
-                                            setContractFileTypes={setExtraUploadDocumentType}
-                                            setIsPreviousFileChange={setIsPreviousFileChange}
-                                        />
-                                    </Box>
+                                    <Documents
+                                        documents={tenantDocuments}
+                                        setDocuments={setTenantDocuments}
+                                        customName={"Application Documents"}
+                                        setContractFiles={setExtraUploadDocument}
+                                        setDeleteDocsUrl={setDeleteDocuments}
+                                        isAccord={false}
+                                        plusIconColor={theme.typography.primary.black}
+                                        plusIconSize={"18px"}
+                                        contractFiles={extraUploadDocument}
+                                        contractFileTypes={extraUploadDocumentType}
+                                        setContractFileTypes={setExtraUploadDocumentType}
+                                        setIsPreviousFileChange={setIsPreviousFileChange}
+                                    />
                                 </AccordionDetails>
                             </Accordion>
                         </Grid>
                     </Grid>
-
-                    {/* <Grid item xs={12} md={12}>
-                            <Typography>Documents</Typography>
-                        <Documents
-                            documents={documents}
-                            setDocuments={setDocuments}
-                            setContractFiles={setuploadedFiles}
-                            // editOrUpdateLease={editOrUpdateTenant}
-                            // documentsRef={documentsRef}
-                            setDeleteDocsUrl={setDeletedFiles}
-                            // setDeletedFiles={setDeletedFiles}
-                            // modifiedData={modifiedData}
-                            isAccord={true}
-                            contractFiles={uploadedFiles}
-                            contractFileTypes={uploadedFileTypes}
-                            setContractFileTypes={setUploadedFileTypes}
-                            setIsPreviousFileChange={setIsPreviousFileChange}
-                            // setModifiedData={setModifiedData}
-                            // dataKey={"tenant_documents"}
-                        />
-                        </Grid>
-                    </Grid> */}
 
                     <Grid container xs={12} flexDirection={"row"}>
                         <Grid container justifyContent='center' item xs={12}>

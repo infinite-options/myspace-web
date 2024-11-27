@@ -24,13 +24,17 @@ export const getChipColor = (priority) => {
     case "SENT":
       return "#FFC614";
     case "ACCEPTED":
-      return "#4CAF50";
+      return "#4CAF50"; 
+    case "COMPLETED":
+      return "#C5C4C9"; 
+    case "REFUSED":
+      return "#5D001E";
     default:
       return "default";
   }
 };
 
-export default function WorkerMaintenanceStatusTable({ status, color, maintenanceItemsForStatus, allMaintenanceData, allMaintenanceStatusData, maintenanceRequestsByQuoteStatus, maintenanceRequestsByStatus, maintenanceRequestsCount, onSelectRequest, setSessionData }) {
+export default function WorkerMaintenanceStatusTable({ status, color, maintenanceItemsForStatus, allMaintenanceData, allMaintenanceStatusData, maintenanceRequestsByQuoteStatus, maintenanceRequestsByStatus, maintenanceRequestsCount, onSelectRequest }) {
   // console.log('--inside table---', maintenanceRequestsCount);
   const location = useLocation();
   let navigate = useNavigate();
@@ -125,15 +129,6 @@ export default function WorkerMaintenanceStatusTable({ status, color, maintenanc
       },
     },
   ];
-
-  useEffect(() => {
-    setSessionData((prev) => ({
-      ...prev,
-      propmaintenanceItemsForStatus: maintenanceRequests[status], 
-      alldata: data, 
-    }));
-
-  }, [maintenanceRequestsByQuoteStatus, maintenanceRequestsByStatus])
 
   async function handleRequestDetailPage(maintenance_request_index, property_uid, maintenance_request_uid) {
     

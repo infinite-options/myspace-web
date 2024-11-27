@@ -20,7 +20,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 import { useUser } from '../../../contexts/UserContext';
 
-export default function RequestMoreInfo({fromQuote, showRequestMoreInfo, setShowRequestMoreInfo, maintenanceItem}){
+export default function RequestMoreInfo({fromQuote, showRequestMoreInfo, setShowRequestMoreInfo, maintenanceItem, refreshMaintenanceData}){
     
     const { user, getProfileId, roleName } = useUser();
     const [pmNotes, setPmNotes] = useState();
@@ -32,14 +32,14 @@ export default function RequestMoreInfo({fromQuote, showRequestMoreInfo, setShow
         setPmNotes(event.target.value);
     };
 
-    const handleSendNotes = () => {
+    const handleSendNotes = async () => {
 
-    const headers = { 
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "*",
-        "Access-Control-Allow-Headers": "*",
-        "Access-Control-Allow-Credentials":"*"
-    };
+        const headers = { 
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "*",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Credentials":"*"
+        };
 
         const formData = new FormData();
         let toBeCalledAPI = "";
@@ -55,38 +55,25 @@ export default function RequestMoreInfo({fromQuote, showRequestMoreInfo, setShow
             formData.append("maintenance_request_status","INFO");
             toBeCalledAPI = "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests";
         }
-
-        // console.log('formData>>>>>> in request more info');
-		// for (let [key, value] of formData.entries()) {
-		// 	console.log(key, value);
-		// }
         
-
-        // const input = {
-        //     maintenance_request_uid:maintenanceItem.maintenance_request_uid,
-        //     maintenance_pm_notes:pmNotes,
-        //     maintenance_request_status:"INFO"
-        // };
-
-        // console.log(input.maintenance_request_uid);
-        // console.log(input.maintenance_pm_notes);
-        // console.log(input.maintenance_request_status);
         setShowSpinner(true);
         axios.put(toBeCalledAPI,
-        formData,
-        headers)
-        .then(response => {
-            console.log("PUT result", response);
-            setShowSpinner(false);
-            setShowRequestMoreInfo(false);
-        setPmNotes("");
+            formData,
+            headers)
+            .then(response => {
+                console.log("PUT result", response);
+                setShowSpinner(false);
+                setShowRequestMoreInfo(false);
+                setPmNotes("");
 
-        }).catch(function (error) {
-            console.log(error);
-            setShowSpinner(false);
-        });
-        
-    sendAnnouncement();
+                sendAnnouncement();
+
+                refreshMaintenanceData();
+
+            }).catch(function (error) {
+                console.log(error);
+                setShowSpinner(false);
+            });
     };
     
     const sendAnnouncement = async () => {

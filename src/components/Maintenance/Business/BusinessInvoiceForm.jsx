@@ -44,33 +44,30 @@ function LaborTable({ labor, setLabor }) {
   const [indexToggle, setIndexToggle] = useState(-1);
   const [editToggle, setEditToggle] = useState(false);
 
-  const [laborDescription, setLaborDescription] = useState("");
+  const [laborDescription, setLaborDescription] = useState("Labor");
   const [laborHours, setLaborHours] = useState("1");
   const [laborCharge, setLaborCharge] = useState("0");
 
   function addRow() {
-    console.log("addRows");
     let newRow = {
-      hours: "",
-      cost: "",
+      hours: "1",
+      rate: "0",
       description: "",
     };
     setLabor((prevLabor) => [...prevLabor, newRow]);
   }
 
   function deleteRow(index) {
-    console.log("deleteRow", index);
     let newLabor = [...labor];
     newLabor.splice(index, 1);
     setLabor(newLabor);
   }
 
   function editRow(index) {
-    console.log("editRow", index);
 
     setLaborDescription(labor[index].description);
     setLaborHours(labor[index].hours);
-    setLaborCharge(labor[index].charge);
+    setLaborCharge(labor[index].rate);
 
     setIndexToggle(index);
     setEditToggle(!editToggle);
@@ -80,7 +77,7 @@ function LaborTable({ labor, setLabor }) {
     console.log("saveRow", index);
     let updatedRow = {
       hours: laborHours,
-      charge: laborCharge,
+      rate: laborCharge,
       description: laborDescription,
     };
     let newLabor = [...labor];
@@ -155,7 +152,7 @@ function LaborTable({ labor, setLabor }) {
                 <TextField
                   size="small"
                   value={laborCharge}
-                  defaultValue={laborItem.charge}
+                  defaultValue={laborItem.rate}
                   onChange={(e) => setLaborCharge(e.target.value)}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">$</InputAdornment>,
@@ -163,12 +160,12 @@ function LaborTable({ labor, setLabor }) {
                   }}
                 />
               ) : (
-                <Typography sx={{ color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px" }}>${laborItem.charge}</Typography>
+                <Typography sx={{ color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px" }}>${laborItem.rate}</Typography>
               )}
             </Grid>
             <Grid item xs={3}>
               <Typography sx={{ color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px" }}>
-                ${calculateTotal(laborItem.hours, laborItem.charge)}
+                ${calculateTotal(laborItem.hours, laborItem.rate)}
               </Typography>
             </Grid>
             <Grid item xs={1}>
@@ -198,7 +195,9 @@ function LaborTable({ labor, setLabor }) {
           </Grid>
         ))}
       </Grid>
-      <Grid container>
+
+      {/* add row */}
+      {/* <Grid container>
         <Grid item xs={12}>
           <Button
             sx={{
@@ -211,7 +210,7 @@ function LaborTable({ labor, setLabor }) {
             <Typography sx={{ color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "12px" }}>Add Labor</Typography>
           </Button>
         </Grid>
-      </Grid>
+      </Grid> */}
     </>
   );
 }
@@ -225,24 +224,21 @@ function PartsTable({ parts, setParts }) {
   const [partQuantity, setPartQuantity] = useState("1");
 
   function addRow() {
-    console.log("addRows");
     let newRow = {
       part: "",
-      quantity: "",
-      cost: "",
+      quantity: "1",
+      cost: "0",
     };
     setParts((prevParts) => [...prevParts, newRow]);
   }
 
   function deleteRow(index) {
-    console.log("deleteRow", index);
     let newParts = [...parts];
     newParts.splice(index, 1);
     setParts(newParts);
   }
 
   function editRow(index) {
-    console.log("editRow", index);
 
     setPartName(parts[index].part);
     setPartCost(parts[index].cost);
@@ -403,7 +399,7 @@ export default function BusinessInvoiceForm() {
 
   const maintenanceItem = location.state.maintenanceItem;
 
-  // console.log("maintenanceItem", maintenanceItem);
+  console.log("maintenanceItem", maintenanceItem);
 
   const costData = JSON.parse(maintenanceItem?.quote_services_expenses);
 
@@ -412,10 +408,10 @@ export default function BusinessInvoiceForm() {
   const [parts, setParts] = useState(costData.parts);
   const [labor, setLabor] = useState([
     {
-      description: "",
+      description: "Labor",
       // hours: costData.event_type,
-      hours: costData.event_type === "Fixed Bid" ? 1 : costData.labor[0].hours,
-      charge: costData["per Hour Charge"],
+      hours: costData.event_type === "Fixed" ? 1 : costData.labor[0].hours,
+      rate: costData.labor[0].rate || costData.labor[0].charge,
     },
   ]);
   // const [numParts, setNumParts] = useState(costData.parts.length);
@@ -435,40 +431,68 @@ export default function BusinessInvoiceForm() {
     setDiagnosticToggle(!diagnosticToggle);
   };
 
-  const createPaymentMethodList = (businessProfileObject) => {
-    let paymentMethods = [];
-    paymentMethods.push({
-      method: "Venmo",
-      account: businessProfileObject.business_venmo ? businessProfileObject.business_venmo : "Not Provided",
-    });
-    paymentMethods.push({
-      method: "Cash App",
-      account: businessProfileObject.business_cash_app ? businessProfileObject.business_cash_app : "Not Provided",
-    });
-    paymentMethods.push({
-      method: "PayPal",
-      account: businessProfileObject.business_paypal ? businessProfileObject.business_paypal : "Not Provided",
-    });
-    paymentMethods.push({
-      method: "Zelle",
-      account: businessProfileObject.business_zelle ? businessProfileObject.business_zelle : "Not Provided",
-    });
+  // const createPaymentMethodList = (businessProfileObject) => {
+  //   const buisnessObject = JSON.parse(businessProfileObject)
+  //   let paymentMethods = [];
+  //   paymentMethods.push({
+  //     method: "Venmo",
+  //     account: buisnessObject.business_venmo ? buisnessObject.business_venmo : "Not Provided",
+  //   });
+  //   paymentMethods.push({
+  //     method: "Cash App",
+  //     account: buisnessObject.business_cash_app ? buisnessObject.business_cash_app : "Not Provided",
+  //   });
+  //   paymentMethods.push({
+  //     method: "PayPal",
+  //     account: buisnessObject.business_paypal ? buisnessObject.business_paypal : "Not Provided",
+  //   });
+  //   paymentMethods.push({
+  //     method: "Zelle",
+  //     account: buisnessObject.business_zelle ? buisnessObject.business_zelle : "Not Provided",
+  //   });
 
+  //   setPaymentMethods(paymentMethods);
+  // };
+
+  const createPaymentMethodList = (businessProfileObject) => {
+    const businessArray = JSON.parse(businessProfileObject); // Parse the JSON input
+    const predefinedMethods = ["Venmo", "Cash App", "PayPal", "Zelle"]; // Predefined payment methods
+    const paymentMethods = [];
+  
+    predefinedMethods.forEach((method) => {
+      // Find the corresponding object in the businessArray
+      const matchingObject = businessArray.find(
+        (item) => item.paymentMethod_type.toLowerCase() === method.toLowerCase()
+      );
+      
+      paymentMethods.push({
+        method,
+        account_status: matchingObject? matchingObject.paymentMethod_status : "Not Provided",
+        account: matchingObject ? matchingObject.paymentMethod_name : "Not Provided", // If found, use the account; otherwise, "Not Provided"
+      });
+    });
+  
     setPaymentMethods(paymentMethods);
   };
+  
+  useEffect(()=>{
+    console.log("selected images - ", selectedImageList)
+  }, [selectedImageList])
 
   useEffect(() => {
     const getMaintenanceProfileInfo = async () => {
       setShowSpinner(true);
       try {
         // const response = await fetch(`${APIConfig.baseURL.dev}/businessProfile/${getProfileId()}`, {
-        const response = await fetch(`${APIConfig.baseURL.dev}/businessProfile`, {
+        const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`, {
           method: "GET",
         });
         const responseData = await response.json();
-        // console.log("[DEBUG] Business Profile:", responseData.result[0]);
-        createPaymentMethodList(responseData.result[0]);
-        setProfileInfo(responseData.result[0]);
+        // console.log("[DEBUG] Business Profile:", responseData?.profile.result[0]);
+        
+        createPaymentMethodList(responseData?.profile?.result[0]?.paymentMethods);
+        setProfileInfo(responseData?.profile?.result[0]);
+
       } catch (error) {
         console.log("error", error);
       }
@@ -476,6 +500,13 @@ export default function BusinessInvoiceForm() {
     };
     // console.log("running get maintenance profile info")
     getMaintenanceProfileInfo();
+
+    if(editMode){
+      setSelectedDocumentList(maintenanceItem?.bill_documents ? JSON.parse(maintenanceItem?.bill_documents) : [])
+      // setSelectedImageList(JSON.parse(maintenanceItem?.bill_images).length > 0 ? JSON.parse(maintenanceItem?.bill_images) : [])
+      setNotes(maintenanceItem?.bill_notes)
+    }
+
   }, []);
 
   useEffect(() => {
@@ -488,12 +519,33 @@ export default function BusinessInvoiceForm() {
 
 
     for (let i = 0; i < labor.length; i++) {
-      laborTotal += parseInt(labor[i].hours) * parseInt(labor[i].charge);
+      laborTotal += parseInt(labor[i].hours) * parseInt(labor[i].rate);
     }
     setTotal(partsTotal + laborTotal);
   }, [parts, labor]);
 
-  const handleSendInvoice = () => {
+  function computeTotalCost({hours, rate}){
+    if (!hours || hours === 0) {
+        return parseInt(rate || 0);
+    }
+
+    return parseInt(hours || 0) * parseInt(rate || 0);
+  }
+
+  function compileExpenseObject(){
+    let expenseObject = {
+        "per Hour Charge": labor[0].rate,
+        "event_type": "Hourly",
+        "service_name": labor[0].description || "Labor",
+        "parts": parts.length === 0 ? [] : parts,
+        "labor": labor,
+        "total_estimate": computeTotalCost({hours: labor[0].hours, rate: labor[0].rate})
+
+    }
+    return JSON.stringify(expenseObject)
+  }
+
+  const handleSendInvoice = async () => {
     // console.log("handleSendInvoice");
     // console.log("selectedImageList", selectedImageList);
     // console.log("parts", parts);
@@ -502,13 +554,7 @@ export default function BusinessInvoiceForm() {
     const updateMaintenanceQuote = async () => {
       var formData = new FormData();
       formData.append("maintenance_quote_uid", maintenanceItem.maintenance_quote_uid);
-      formData.append(
-        "quote_services_expenses",
-        JSON.stringify({
-          parts: parts,
-          labor: labor,
-        })
-      );
+      formData.append("quote_services_expenses", compileExpenseObject());
 
       setShowSpinner(true);
       try {
@@ -521,6 +567,7 @@ export default function BusinessInvoiceForm() {
       }
       setShowSpinner(false);
     };
+    
     const uploadBillDocuments = async () => {
       // Get the current date and time
       const currentDatetime = new Date();
@@ -557,6 +604,7 @@ export default function BusinessInvoiceForm() {
         console.log("error", error);
       }
     };
+
     const createBill = async () => {
       setShowSpinner(true);
       try {
@@ -581,36 +629,55 @@ export default function BusinessInvoiceForm() {
 
         if(isPreviousFileChange){
           formData.append("bill_documents", JSON.stringify(selectedDocumentList));
-      }
+        }
 
-      // if new file uploaded in documents
-      if (uploadedFiles && uploadedFiles?.length) {
+        // if new file uploaded in documents
+        if (uploadedFiles && uploadedFiles?.length) {
 
-          const documentsDetails = [];
-          [...uploadedFiles].forEach((file, i) => {
+            const documentsDetails = [];
+            [...uploadedFiles].forEach((file, i) => {
+              
+              // console.log(JSON.stringify(file));
+              
+      
+              formData.append(`file_${i}`, file);
+              const fileType = uploadedFilesType[i] || "";
+              // formData.append("contract")
+              const documentObject = {
+                // file: file,
+                fileIndex: i, //may not need fileIndex - will files be appended in the same order?
+                fileName: file.name, //may not need filename
+                contentType: fileType, // contentType = "contract or lease",  fileType = "pdf, doc"
+              };
+              documentsDetails.push(documentObject);
+            });
+      
+            formData.append("bill_documents_details", JSON.stringify(documentsDetails));
+        }
+
+        // if any previous document delete
+        if(deleteDocuments && deleteDocuments?.length !== 0){
+            formData.append("delete_documents", JSON.stringify(deleteDocuments));
+        }
+
+        //For images
+        let i = 0;
+        for (const file of selectedImageList) {
+          console.log(" inside image uplaod in formdata - ", file)
+        // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+            let key = `img_${i++}`;
+            if (file.file !== null) {
+                // newProperty[key] = file.file;
+                formData.append(key, file.file);
+            } else {
+                // newProperty[key] = file.image;
+                formData.append(key, file.image);
+            }
             
-            // console.log(JSON.stringify(file));
-            
-    
-            formData.append(`file_${i}`, file);
-            const fileType = uploadedFilesType[i] || "";
-            // formData.append("contract")
-            const documentObject = {
-              // file: file,
-              fileIndex: i, //may not need fileIndex - will files be appended in the same order?
-              fileName: file.name, //may not need filename
-              contentType: fileType, // contentType = "contract or lease",  fileType = "pdf, doc"
-            };
-            documentsDetails.push(documentObject);
-          });
-    
-          formData.append("bill_documents_details", JSON.stringify(documentsDetails));
-      }
-
-      // if any previous document delete
-      if(deleteDocuments && deleteDocuments?.length !== 0){
-          formData.append("delete_documents", JSON.stringify(deleteDocuments));
-      }
+            if (file.coverPhoto) {
+                formData.append("img_favorite", key);
+            }
+        }
 
         // TODO: Change this to form data
         const response = await fetch(`${APIConfig.baseURL.dev}/bills`, {
@@ -622,8 +689,9 @@ export default function BusinessInvoiceForm() {
         console.log(responseData);
         if (response.status === 200) {
           console.log("success");
+
+          navigate("/maintenanceDashboard2", {state: {refresh: true}})
           // uploadBillDocuments();
-          navigate("/workerMaintenance");
         } else {
           console.log("error setting status");
         }
@@ -632,8 +700,101 @@ export default function BusinessInvoiceForm() {
       }
       setShowSpinner(false);
     };
-    updateMaintenanceQuote();
-    createBill();
+
+    const updateBill = async () => {
+      setShowSpinner(true);
+      try {
+        var formData = new FormData();
+        formData.append("bill_amount", total);
+
+        // formData.append("bill_docs", JSON.stringify(selectedImageList));
+        formData.append("bill_notes", notes);
+        formData.append("bill_maintenance_quote_id", maintenanceItem.maintenance_quote_uid);
+        formData.append("bill_maintenance_request_id", maintenanceItem.maintenance_request_uid);
+        formData.append("bill_uid", maintenanceItem.bill_uid)
+
+        if(isPreviousFileChange){
+          formData.append("bill_documents", JSON.stringify(selectedDocumentList));
+        }
+
+        // if new file uploaded in documents
+        if (uploadedFiles && uploadedFiles?.length) {
+
+            const documentsDetails = [];
+            [...uploadedFiles].forEach((file, i) => {
+              
+              // console.log(JSON.stringify(file));
+              
+      
+              formData.append(`file_${i}`, file);
+              const fileType = uploadedFilesType[i] || "";
+              // formData.append("contract")
+              const documentObject = {
+                // file: file,
+                fileIndex: i, //may not need fileIndex - will files be appended in the same order?
+                fileName: file.name, //may not need filename
+                contentType: fileType, // contentType = "contract or lease",  fileType = "pdf, doc"
+              };
+              documentsDetails.push(documentObject);
+            });
+      
+            formData.append("bill_documents_details", JSON.stringify(documentsDetails));
+        }
+
+        // if any previous document delete
+        if(deleteDocuments && deleteDocuments?.length !== 0){
+            formData.append("delete_documents", JSON.stringify(deleteDocuments));
+        }
+
+        //For images
+        let i = 0;
+        for (const file of selectedImageList) {
+          console.log(" inside image uplaod in formdata - ", file)
+        // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+            let key = `img_${i++}`;
+            if (file.file !== null) {
+                // newProperty[key] = file.file;
+                formData.append(key, file.file);
+            } else {
+                // newProperty[key] = file.image;
+                formData.append(key, file.image);
+            }
+            
+            if (file.coverPhoto) {
+                formData.append("img_favorite", key);
+            }
+        }
+
+        // TODO: Change this to form data
+        const response = await fetch(`${APIConfig.baseURL.dev}/bills`, {
+          method: "PUT",
+          body: formData,
+        });
+
+        const responseData = await response.json();
+        console.log(responseData);
+        if (response.status === 200) {
+          console.log("success");
+
+          navigate("/maintenanceDashboard2", {state: {refresh: true}})
+          // uploadBillDocuments();
+        } else {
+          console.log("error setting status");
+        }
+      } catch (error) {
+        console.log("error", error);
+      }
+      setShowSpinner(false);
+    };
+
+    await updateMaintenanceQuote();
+    
+    if(editMode){
+      updateBill()
+    }else{
+      createBill();
+    }
+
   };
 
   return (
@@ -676,6 +837,7 @@ export default function BusinessInvoiceForm() {
               paddingRight: "10px",
             }}
           >
+            {/* Invoice heading and close icon */}
             <Box sx={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", position: "relative" }}>
               <Typography sx={{ paddingBottom: "20px", color: "#000000", fontWeight: 800, fontSize: "36px" }}>Invoice</Typography>
               <Box sx={{ position: "absolute", right: 0 }}>
@@ -690,7 +852,8 @@ export default function BusinessInvoiceForm() {
                 </Button>
               </Box>
             </Box>
-
+            
+            {/* Estimate */}
             <Grid container direction="column" rowSpacing={2}>
               <Grid item xs={12}>
                 <Typography sx={{ color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px" }}>Estimate</Typography>
@@ -700,16 +863,44 @@ export default function BusinessInvoiceForm() {
             <LaborTable labor={labor} setLabor={setLabor} />
 
             <PartsTable parts={parts} setParts={setParts} />
+            
+            {/* earliest date and time, document, payment */}
+            <Grid container direction="row" rowSpacing={2} marginTop={"10px"}>
+              
+              {/* new Total */}
+              <Grid item xs={12} marginY={"5px"}>
+                <Typography sx={{ color: "#000000", fontWeight: theme.typography.medium.fontWeight, fontSize: "14px" }}>New Total</Typography>
+                <Typography sx={{ color: "#000000", fontWeight: theme.typography.medium.fontWeight, fontSize: "18px" }}>$ {total}</Typography>
+                {/* <TextField
+                  required
+                  rows={1}
+                  borderRadius="10px"
+                  variant="outlined"
+                  fullWidth
+                  size="small"
+                  disabled={true}
+                  InputProps={{
+                    style: {
+                      backgroundColor: "white",
+                      borderColor: "#000000",
+                    },
+                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                  }}
+                  value={total}
+                /> */}
+              </Grid>
 
-            <Grid container direction="row" rowSpacing={2}>
+              {/* quote_earliest_available_date */}
               <Grid item xs={12}>
-                <Typography sx={{ color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "14px" }}>
+                {/* <Typography sx={{ color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "14px" }}>
                   Estimated Time: {maintenanceItem.quote_event_type}
-                </Typography>
+                </Typography> */}
                 <Typography sx={{ color: "#3D5CAC", fontWeight: theme.typography.medium.fontWeight, fontSize: "14px" }}>
                   Earliest Availability: {maintenanceItem.quote_earliest_available_date} {dayjs(maintenanceItem.quote_earliest_available_time, "HH:mm").format("hh:mm A")}
                 </Typography>
               </Grid>
+              
+              {/* Diagnostic checkbox */}
               <Grid item xs={12}>
                 <Box display="flex" flexDirection="row" alignItems="center" justifyContent="left">
                   <Checkbox checked={diagnosticToggle} onChange={handleDiagnosticToggle} />
@@ -726,60 +917,36 @@ export default function BusinessInvoiceForm() {
                   </Typography>
                 </Box>
               </Grid>
+
+              {/* document */}
               <Grid item xs={12}>
-                {/* <Button
-                  sx={{
-                    color: "#3D5CAC",
-                    textTransform: "none",
-                    margin: "1px",
-                  }}
-                >
-                  <img src={documentIcon} style={{ width: "20px", height: "25px", margin: "0px", paddingLeft: "0px", paddingRight: "15px" }} />
-                  <Typography sx={{ color: "#3D5CAC", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "14px" }}>View Document</Typography>
-                </Button> */}
                 <Documents isEditable={false} isAccord={false} documents={maintenanceItem?.quote_documents? JSON.parse(maintenanceItem?.quote_documents) : []} customName={"Quote Documents"}/>
               </Grid>
-              <Grid item xs={12}>
-                <Typography sx={{ color: "#000000", fontWeight: theme.typography.medium.fontWeight, fontSize: "14px" }}>New Total</Typography>
-                <TextField
-                  required
-                  rows={1}
-                  borderRadius="10px"
-                  variant="outlined"
-                  fullWidth
-                  size="small"
-                  readOnly
-                  InputProps={{
-                    readOnly: false,
-                    style: {
-                      backgroundColor: "white",
-                      borderColor: "#000000",
-                    },
-                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                  }}
-                  value={total}
-                />
-              </Grid>
+
+              {/* payment Method */}
               <Grid item xs={12}>
                 <Typography sx={{ color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px" }}>Payment Methods</Typography>
-                <Grid container direction="row" spacing={2} alignContent="center">
+                <Grid container direction="row" spacing={2} alignContent="center" marginY={"5px"}>
                   {paymentMethods.map((method) => (
                     <>
                       <Grid item xs={4}>
                         {method.method}
                       </Grid>
-                      <Grid item xs={8}>
+                      <Grid item xs={8} sx={{color: method.account === "Not Provided" ? "black" : method.account_status === "Active" ? "#3D5CAC" : "red"}}>
                         {method.account}
                       </Grid>
                     </>
                   ))}
                 </Grid>
               </Grid>
+
+              {/* payment notes */}
               <Grid item xs={12}>
                 <Typography sx={{ color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px" }}>Payment Notes</Typography>
                 <TextField
                   required
                   rows={1}
+                  value={notes}
                   borderRadius="10px"
                   variant="outlined"
                   fullWidth
@@ -794,15 +961,21 @@ export default function BusinessInvoiceForm() {
                   onChange={handleNotesChange}
                 />
               </Grid>
+
+              {/* Image uploader */}
               <Grid item xs={12}>
                 <Typography sx={{ color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px" }}>Add Photos</Typography>
                 <ImageUploader selectedImageList={selectedImageList} setSelectedImageList={setSelectedImageList} page={"QuoteRequestForm"} />
               </Grid>
+
+              {/* Invoice document */}
               <Grid item xs={12}>
                 <Documents isAccord={false} isEditable={true} documents={selectedDocumentList} setDocuments={setSelectedDocumentList} contractFiles={uploadedFiles} setContractFiles={setuploadedFiles} contractFileTypes={uploadedFilesType} setContractFileTypes={setuploadedFilesType} setDeleteDocsUrl={setDeleteDocuments} setIsPreviousFileChange={setIsPreviousFileChange} customName={"Invoice Documents"} customUploadingName={"Uploading Invoice Documents:"}/>
                 {/* <Typography sx={{ color: "#000000", fontWeight: theme.typography.propertyPage.fontWeight, fontSize: "16px" }}>Add Documents</Typography>
                 <DocumentUploader selectedDocumentList={selectedDocumentList} setSelectedDocumentList={setSelectedDocumentList} /> */}
               </Grid>
+
+              {/* send invoice button */}
               <Grid item xs={12}>
                 <Button
                   variant="contained"
