@@ -1435,7 +1435,7 @@ export default function PropertyNavigator2({
                   marginTop: "10px",
                 }}
               >
-                Rent History by Category
+                Rent History
               </Typography>
               <CardContent
                 sx={{
@@ -1514,6 +1514,7 @@ export default function PropertyNavigator2({
                 fontSize: theme.typography.largeFont,
                 textAlign: "center",
                 marginTop: "10px",
+                marginBottom: "10px",
               }}
             >
               Appliances
@@ -1834,7 +1835,7 @@ const PropertyTabPanel = (props) => {
       </Grid>
       <Grid container item xs={12} justifyContent='center'>
         <Grid container item xs={10}>
-          <Grid container item xs={8} sx={{ height: "550px", alignContent: "space-between" }}>
+          <Grid container item xs={8} sx={{ height: "250px", alignContent: "space-between" }}>
             <Grid container item xs={12}>
               <Grid item xs={6}>
                 <Typography
@@ -1961,211 +1962,166 @@ const PropertyTabPanel = (props) => {
                 {property && property.property_area ? `$${(property?.property_value / property?.property_area).toFixed(2)}` : "-"}
               </Grid>
             </Grid>
-            <Grid container item xs={12}>
-              <Grid item xs={6}>
-                <Typography
-                  sx={{
-                    textTransform: "none",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                    textAlign: "left",
-                  }}
-                >
-                  Unit Ammenities:
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                {property && property.property_amenities_unit ? `${(property?.property_amenities_unit)}` : "-"}
-              </Grid>
-            </Grid>
-            <Grid container item xs={12}>
-              <Grid item xs={6}>
-                <Typography
-                  sx={{
-                    textTransform: "none",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                    textAlign: "left",
-                  }}
-                >
-                  Community Ammenities:
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                {property && property.property_amenities_community ? `${(property?.property_amenities_community)}` : "-"}
-              </Grid>
-            </Grid>
-            <Grid container item xs={12}>
-              <Grid item xs={6}>
-                <Typography
-                  sx={{
-                    textTransform: "none",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                    textAlign: "left",
-                  }}
-                >
-                  Nearby Ammenities:
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                {property && property.property_amenities_nearby ? `${(property?.property_amenities_nearby)}` : "-"}
-              </Grid>
-            </Grid>
-            </Grid>
+           </Grid>
           <Grid container item xs={4} justifyContent='center' sx={{ height: "250px", alignContent: "space-between" }}>
-            <Grid item xs={10} sx={{ minHeight: "35px", marginBottom: "20px"  }}>
-              {property && property?.property_available_to_rent === 1 && (property.lease_status == null || property.lease_status !== "ACTIVE") && (
-                // padding extra on the bottom
-                <Box sx={{ minHeight: "35px", marginBottom: "5px"  }}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      flexWrap: "wrap",
-                      alignContent: "center",
-                      justifyContent: "center",
-                      backgroundColor: "#76B148",
-                      borderRadius: "5px",
-                      textTransform: "none",
-                      minWidth: "100px",
-                      minHeight: "35px",
-                      width: "100%",
-                    }}
-                  >
-                    {!isMobile && <CheckIcon sx={{ color: "#FFFFFF", fontSize: isMobile ? "10px" : "18px" }} />}
-                    <Typography
-                      sx={{
-                        textTransform: "none",
-                        color: "#FFFFFF",
-                        fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: isMobile ? "10px" : theme.typography.smallFont,
-                        whiteSpace: "nowrap",
-                        marginLeft: "1%", // Adjusting margin for icon and text
-                      }}
-                    >
-                      {"Listed For Rent"}
-                    </Typography>
-                  </Box>
-                </Box>
-              )}
-             
-              {property &&
-                property.lease_status &&
-                property.lease_status !== "ACTIVE" &&
-                (property?.property_available_to_rent === 0 || property?.property_available_to_rent == null) &&
-                property.business_uid != null &&
-                property.business_uid !== "" && (
-                  <Box sx={{ minHeight: "35px", marginBottom: "5px"  }}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "row",
-                        flexWrap: "wrap",
-                        alignContent: "center",
-                        justifyContent: "center",
-                        backgroundColor: "#A52A2A",
-                        borderRadius: "5px",
-                        textTransform: "none",
-                        minWidth: "100px",
-                        minHeight: "35px",
-                        width: "100%",
-                      }}
-                    >
-                      <CloseIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
-                      <Typography
-                        sx={{
-                          textTransform: "none",
-                          color: "#FFFFFF",
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: isMobile ? "10px" : theme.typography.smallFont,
-                          whiteSpace: "nowrap",
-                          marginLeft: "1%", // Adjusting margin for icon and text
-                        }}
-                      >
-                        {"Not Listed"}
-                      </Typography>
-                    </Box>
-                  </Box>
-                )}
-              {property && property.lease_status && (property.lease_status === "ACTIVE" || property.lease_status === "ACTIVE M2M") && (
-                <Box sx={{ minHeight: "35px", marginBottom: "5px"  }}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      flexWrap: "wrap",
-                      alignContent: "center",
-                      justifyContent: "center",
-                      backgroundColor: "#3D5CAC",
-                      borderRadius: "5px",
-                      textTransform: "none",
-                      minWidth: "100px",
-                      minHeight: "35px",
-                      width: "100%",
-                    }}
-                  >
-                    {!isMobile && <CheckIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />}
-                    <Typography
-                      sx={{
-                        textTransform: "none",
-                        color: "#FFFFFF",
-                        fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: isMobile ? "10px" : theme.typography.smallFont,
-                        whiteSpace: "nowrap",
-                        marginLeft: "1%", // Adjusting margin for icon and text
-                      }}
-                    >
-                      {"Rented"}
-                    </Typography>
-                  </Box>
-                </Box>
-              )}
-              <Box sx={{ minHeight: "35px", marginBottom: "5px"  }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    flexWrap: "wrap",
-                    alignContent: "center",
-                    justifyContent: "center",
-                    backgroundColor: getPaymentStatusColor(property?.rent_status, property),
-                    borderRadius: "5px",
-                    textTransform: "none",
-                    minWidth: "100px",
-                    minHeight: "35px",
-                    width: "100%",
-                    cursor: "pointer",
-                    marginBottom: "8px", 
-                  }}
-                  onClick={() => {
-                    if (getPaymentStatus(property?.rent_status, property) === "Vacant - Not Listed") {
-                      props.onAddListingClick("create_listing");
-                    } else if (getPaymentStatus(property?.rent_status, property) === "No Manager") {
-                      props.onShowSearchManager(1);
-                    }
-                  }}
-                >
-                  {/* <CheckIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} /> */}
-                  <Typography
-                    sx={{
-                      textTransform: "none",
-                      color: "#FFFFFF",
-                      fontWeight: theme.typography.secondary.fontWeight,
-                      fontSize: isMobile ? "10px" : theme.typography.smallFont,
-                      whiteSpace: "nowrap",
-                      marginLeft: "1%", // Adjusting margin for icon and text
-                    }}
-                  >
-                    {getPaymentStatus(property?.rent_status, property)}
-                  </Typography>
-                </Box>
-              </Box>
-            </Grid>
-            <Grid item xs={10} sx={{ marginBottom: "0px" }}>
+          
+  {/* Listed For Rent Box */}
+  <Grid item xs={10} sx={{ minHeight: "35px" }}>
+    {property && property?.property_available_to_rent === 1 && (property.lease_status == null || property.lease_status !== "ACTIVE") ? (
+      <Box sx={{ minHeight: "35px",}}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            alignContent: "center",
+            justifyContent: "center",
+            backgroundColor: "#76B148",
+            borderRadius: "5px",
+            textTransform: "none",
+            minWidth: "100px",
+            minHeight: "35px",
+            width: "100%",
+          }}
+        >
+          {!isMobile && <CheckIcon sx={{ color: "#FFFFFF", fontSize: isMobile ? "10px" : "18px" }} />}
+          <Typography
+            sx={{
+              textTransform: "none",
+              color: "#FFFFFF",
+              fontWeight: theme.typography.secondary.fontWeight,
+              fontSize: isMobile ? "10px" : theme.typography.smallFont,
+              whiteSpace: "nowrap",
+              marginLeft: "1%",
+            }}
+          >
+            {"Listed For Rent"}
+          </Typography>
+        </Box>
+      </Box>
+    ) : (
+      <Box sx={{ minHeight: "35px" }} /> // Placeholder for blank space
+    )}
+  </Grid>
+
+  {/* Not Listed and Rented Boxes */}
+  <Grid item xs={10} sx={{ minHeight: "35px", marginBottom: "20px" }}>
+    {property &&
+      property.lease_status &&
+      property.lease_status !== "ACTIVE" &&
+      (property?.property_available_to_rent === 0 || property?.property_available_to_rent == null) &&
+      property.business_uid != null &&
+      property.business_uid !== "" && (
+        <Box sx={{ minHeight: "35px", marginBottom: "5px" }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              flexWrap: "wrap",
+              alignContent: "center",
+              justifyContent: "center",
+              backgroundColor: "#A52A2A",
+              borderRadius: "5px",
+              textTransform: "none",
+              minWidth: "100px",
+              minHeight: "35px",
+              width: "100%",
+            }}
+          >
+            <CloseIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
+            <Typography
+              sx={{
+                textTransform: "none",
+                color: "#FFFFFF",
+                fontWeight: theme.typography.secondary.fontWeight,
+                fontSize: isMobile ? "10px" : theme.typography.smallFont,
+                whiteSpace: "nowrap",
+                marginLeft: "1%",
+              }}
+            >
+              {"Not Listed"}
+            </Typography>
+          </Box>
+        </Box>
+      )}
+
+    {property && property.lease_status && (property.lease_status === "ACTIVE" || property.lease_status === "ACTIVE M2M") && (
+      <Box sx={{ minHeight: "35px", marginBottom: "5px" }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            alignContent: "center",
+            justifyContent: "center",
+            backgroundColor: "#3D5CAC",
+            borderRadius: "5px",
+            textTransform: "none",
+            minWidth: "100px",
+            minHeight: "35px",
+            width: "100%",
+          }}
+        >
+          {!isMobile && <CheckIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />}
+          <Typography
+            sx={{
+              textTransform: "none",
+              color: "#FFFFFF",
+              fontWeight: theme.typography.secondary.fontWeight,
+              fontSize: isMobile ? "10px" : theme.typography.smallFont,
+              whiteSpace: "nowrap",
+              marginLeft: "1%",
+            }}
+          >
+            {"Rented"}
+          </Typography>
+        </Box>
+      </Box>
+    )}
+      <Box sx={{ minHeight: "35px", marginBottom: "5px" }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "wrap",
+          alignContent: "center",
+          justifyContent: "center",
+          backgroundColor: getPaymentStatusColor(property?.rent_status, property),
+          borderRadius: "5px",
+          textTransform: "none",
+          minWidth: "100px",
+          minHeight: "35px",
+          width: "100%",
+          cursor: "pointer",
+          marginBottom: "8px",
+        }}
+        onClick={() => {
+          if (getPaymentStatus(property?.rent_status, property) === "Vacant - Not Listed") {
+            props.onAddListingClick("create_listing");
+          } else if (getPaymentStatus(property?.rent_status, property) === "No Manager") {
+            props.onShowSearchManager(1);
+          }
+        }}
+      >
+        <Typography
+          sx={{
+            textTransform: "none",
+            color: "#FFFFFF",
+            fontWeight: theme.typography.secondary.fontWeight,
+            fontSize: isMobile ? "10px" : theme.typography.smallFont,
+            whiteSpace: "nowrap",
+            marginLeft: "1%",
+          }}
+        >
+          {getPaymentStatus(property?.rent_status, property)}
+        </Typography>
+      </Box>
+    </Box>
+ 
+  </Grid>
+
+
+<Grid item xs={10} sx={{ marginBottom: "0px" }}>
               <Box sx={{ pb: isMobile ? 0 : 0 }}>
                 {/* Edit Property Button */}
                 <Button
@@ -2270,7 +2226,82 @@ const PropertyTabPanel = (props) => {
           </Grid>
         </Grid>
         <Grid container item xs={12} justifyContent='center' sx = {{ marginTop :"10px", alignContent: "space-between" }}>
-        <Grid container item xs={10}>
+        <Grid container item xs={10}> <Grid container item xs={12}>
+              <Grid item xs={12}>
+                <Typography
+                  sx={{
+                    textTransform: "none",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    textAlign: "left",
+                    marginTop: "10px",
+                  }}
+                >
+                  Property Description:
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                {property && property.property_description ? `${(property?.property_description)}` : "-"}
+              </Grid>
+            </Grid><Grid container item xs={12}>
+              <Grid item xs={12}>
+                <Typography
+                  sx={{
+                    textTransform: "none",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    textAlign: "left",
+                    marginTop: "10px", 
+                  }}
+                >
+                  Unit Amenities:
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                {property && property.property_amenities_unit ? `${(property?.property_amenities_unit)}` : "-"}
+              </Grid>
+            </Grid>
+            <Grid container item xs={12}>
+              <Grid item xs={12}>
+                <Typography
+                  sx={{
+                    textTransform: "none",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    textAlign: "left",
+                    marginTop: "10px",
+                  }}
+                >
+                  Community Amenities:
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                {property && property.property_amenities_community ? `${(property?.property_amenities_community)}` : "-"}
+              </Grid>
+            </Grid>
+            <Grid container item xs={12}>
+              <Grid item xs={12}>
+                <Typography
+                  sx={{
+                    textTransform: "none",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.secondary.fontWeight,
+                    fontSize: theme.typography.smallFont,
+                    textAlign: "left",
+                    marginTop: "10px",
+                  }}
+                >
+                  Nearby Amenities:
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                {property && property.property_amenities_nearby ? `${(property?.property_amenities_nearby)}` : "-"}
+              </Grid>
+            </Grid>
+            
           <PropertyDetailsGrid propertyDetails={property?.property_details || '{}'} />
           </Grid>
           </Grid>
@@ -2295,7 +2326,7 @@ const PropertyDetailsGrid = ({ propertyDetails }) => {
       {rows.map((row, index) => (
         <Grid item xs={12} key={index}>
           {row.details.length > 0 ? (
-            <Accordion sx={{ width: "100%" }}>
+            <Accordion sx={{ width: "100%", marginTop: "10px" }}>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls={`panel${index}-content`}
@@ -2364,6 +2395,7 @@ const PropertyDetailsGrid = ({ propertyDetails }) => {
                 fontWeight: theme.typography.secondary.fontWeight,
                 fontSize: theme.typography.smallFont,
                 textAlign: "left",
+                marginTop: "10px",
               }}
             >
               {row.type}: -

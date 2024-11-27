@@ -644,7 +644,7 @@ export default function ManagementDetailsComponent({
                         sx={{
                           color: theme.typography.primary.black,
                           fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: '20px',
+                          fontSize: theme.typography.mediumFont,
                         }}
                       >
                         Management Fees
@@ -692,7 +692,7 @@ export default function ManagementDetailsComponent({
                           sx={{
                             color: theme.typography.primary.black,
                             fontWeight: theme.typography.secondary.fontWeight,
-                            fontSize: '20px',
+                            fontSize: theme.typography.mediumFont,
                           }}
                         >
                           Contract Documents
@@ -790,7 +790,7 @@ export default function ManagementDetailsComponent({
                           sx={{
                             color: theme.typography.primary.black,
                             fontWeight: theme.typography.secondary.fontWeight,
-                            fontSize: '20px',
+                            fontSize: theme.typography.mediumFont,
                           }}
                         >
                           Contract Documents
@@ -819,7 +819,7 @@ export default function ManagementDetailsComponent({
                     sx={{
                       color: theme.typography.primary.black,
                       fontWeight: theme.typography.secondary.fontWeight,
-                      fontSize: '20px',
+                      fontSize: theme.typography.mediumFont,
                     }}
                   >
                     Open Maintenance Tickets:
