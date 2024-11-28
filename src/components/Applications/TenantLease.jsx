@@ -227,6 +227,35 @@ const TenantLease = () => {
       // initialStartDate = null;                
       // initialEndDate = null;        
       // initialMoveInDate = null;
+      if (page === "renew_lease") {
+        // Calculate the duration between lease_start and lease_end
+        const oldDuration = dayjs(property.lease_end).diff(dayjs(property.lease_start), "day"); // Duration in days
+        let leaseStartDate = dayjs(property.lease_end).add(1, "day");
+        let leaseEndDate = leaseStartDate.add(oldDuration, "day");
+    
+        if((application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") && application.lease_start != null){
+          leaseStartDate = dayjs(application.lease_start);
+        }
+        if((application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") && application.lease_end != null){
+          leaseEndDate = dayjs(application.lease_end);
+        }
+        // const leaseEndDate = leaseStartDate + (dayjs(property.lease_end) - dayjs(property.lease_start));
+        // console.log("In Tenant Lease leaseStartDate", leaseStartDate);
+    
+        // const duration = leaseEndDate.diff(leaseStartDate, "day"); // Duration in days
+    
+        // Set the start date to remain same as lease_start
+        initialStartDate = leaseStartDate;
+        // console.log("In Tenant Lease initialStartDate", initialStartDate);
+        // console.log("In Tenant Lease duration", duration);
+        // Set the new end date to be initialStartDate + duration
+        // console.log("In Tenant Lease initialEndDate", initialStartDate.add(duration, "days"));
+        // initialEndDate = leaseEndDate.add(duration, "day");
+        initialEndDate = leaseEndDate;
+        // console.log("In Tenant Lease initialEndDate", initialEndDate);
+        // Set move-in date same as the start date
+        initialMoveInDate = initialStartDate;
+      }
     }
 
     setStartDate(initialStartDate);
@@ -354,7 +383,7 @@ const TenantLease = () => {
 
 
   const getDatesToggleInitialValue = () => {
-    if(["NEW"].includes(application?.lease_status)){
+    if(["NEW", "RENEW NEW"].includes(application?.lease_status)){
       return "select";
     }
     //  else if(["RENEW NEW", "PROCESSING", "RENEW PROCESSING", "WITHDRAWN", "RENEW WITHDRAWN", "REJECTED", "RENEW REJECTED", "REFUSED", "RENEW REFUSED", "RESCIND", "RENEW RESCINDED"].includes(application.lease_status)) {
@@ -364,7 +393,7 @@ const TenantLease = () => {
       return "current_lease";
     }
   }
-  
+
   const [datesToggle, setDatesToggle] = useState(getDatesToggleInitialValue());
 
   
@@ -1635,7 +1664,7 @@ const TenantLease = () => {
   };
 
   const getLeaseStatusText = (status) => {
-    console.log("ROHIT - 1619 - status - ", status);
+    console.log("ROHIT - 1638 - status - ", status);
     switch(status){
       case "WITHDRAWN":
         return "Withdrawn";
@@ -1889,22 +1918,27 @@ const TenantLease = () => {
                               </Typography>
                             }
                           />
-                          <FormControlLabel
-                            value="current_lease"
-                            control={<Radio />}                        
-                            label={
-                              <Typography
-                                sx={{ 
-                                  color: "#160449",
-                                  fontWeight: "bold",
-                                  fontSize: "14px",
-                                }}
-                              >
-                                {`Dates from ${getLeaseStatusText(application.lease_status)} Lease: ${application?.lease_uid}`} 
-                              </Typography>
-                            }
-                          />
-                          
+                          {
+                            application?.lease_status != "RENEW NEW" && (
+
+
+                              <FormControlLabel
+                                value="current_lease"
+                                control={<Radio />}                        
+                                label={
+                                  <Typography
+                                    sx={{ 
+                                      color: "#160449",
+                                      fontWeight: "bold",
+                                      fontSize: "14px",
+                                    }}
+                                  >
+                                    {`Dates from ${getLeaseStatusText(application.lease_status)} Lease: ${application?.lease_uid}`} 
+                                  </Typography>
+                                }
+                              />
+                            )
+                          }                          
                         </RadioGroup>
                       </FormControl>
                       </Grid>
