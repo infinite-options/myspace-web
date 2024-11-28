@@ -518,7 +518,7 @@ export default function MaintenanceRequestNavigatorNew({
 						>
 							{/* edit icon, data of reported by and all also quote table and details */}
 							<Box style={{ alignContent: 'left', justifyContent: 'left', alignItems: 'left' }}>
-								{(selectedRole === "MANAGER") && <Stack direction="row">
+								{(selectedRole === "MANAGER" || (selectedRole === "OWNER" && (data?.maintenance_request_status === "INFO OWNER" || data?.maintenance_request_status === "INFO"))) && <Stack direction="row">
 									<CreateIcon
 										sx={{
 											color: '#160449',
@@ -640,12 +640,16 @@ export default function MaintenanceRequestNavigatorNew({
 										</Grid>
 									</Grid>
 
-									{data?.maintenance_request_status === "INFO OWNER" && <Typography component="div" variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
-										<strong style={{ minWidth: '150px', color: 'red'}}>You already asked more info from Owner</strong>
+									{selectedRole === "MANAGER" && data?.maintenance_request_status === "INFO OWNER" && <Typography component="div" variant="body1" sx={{ display: 'flex', alignItems: 'center',marginY: 5 }}>
+										<strong style={{ minWidth: '150px', color: 'red'}}>* You asked more info from Owner</strong>
 									</Typography>}
 
-									{data?.maintenance_request_status === "INFO TENANT" && <Typography component="div" variant="body1" sx={{ display: 'flex', alignItems: 'center',marginBottom: 5 }}>
-										<strong style={{ minWidth: '150px', color: 'red'}}>You already asked more info from Tenant</strong>
+									{selectedRole === "MANAGER" && data?.maintenance_request_status === "INFO TENANT" && <Typography component="div" variant="body1" sx={{ display: 'flex', alignItems: 'center',marginY: 5 }}>
+										<strong style={{ minWidth: '150px', color: 'red'}}>* You asked more info from Tenant</strong>
+									</Typography>}
+
+									{selectedRole === "MANAGER" && data?.maintenance_request_status === "INFO" && <Typography component="div" variant="body1" sx={{ display: 'flex', alignItems: 'center',marginY: 5 }}>
+										<strong style={{ minWidth: '150px', color: 'red'}}>* You asked more info from Owner and Tenant</strong>
 									</Typography>}
 								</Box>
 								

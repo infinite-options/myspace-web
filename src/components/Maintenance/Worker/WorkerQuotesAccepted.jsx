@@ -59,7 +59,7 @@ export default function WorkerQuotesAccepted({maintenanceItem, refreshMaintenanc
         if (response){
             console.log("Ticket Cancelled")
             alert("Ticket Cancelled")
-            navigate('/workerMaintenance')
+            navigate('/maintenanceDashboard2')
         } else{
             console.log("Ticket Not Cancelled")
             alert("Error: Ticket Not Cancelled")
@@ -207,6 +207,8 @@ export default function WorkerQuotesAccepted({maintenanceItem, refreshMaintenanc
                         <QuoteDetailInfo maintenanceItem={maintenanceItem}/>
                     </Box>
                 </Grid>
+
+                {/* notes */}
                 <Grid item xs={12} sx={{
                     alignItems: "center",
                     justifyContent: "center",
@@ -233,7 +235,10 @@ export default function WorkerQuotesAccepted({maintenanceItem, refreshMaintenanc
                         </Typography>
                     </Box>
                 </Grid>
-                <Grid item xs={6} sx={{
+
+                {/* action button */}
+
+                {/* <Grid item xs={6} sx={{
                     alignItems: "center",
                     justifyContent: "center",
                 }}>
@@ -254,20 +259,21 @@ export default function WorkerQuotesAccepted({maintenanceItem, refreshMaintenanc
                            Withdraw Quote
                         </Typography>
                     </Button>
-                </Grid>
-                <Grid item xs={6} sx={{
+                </Grid> */}
+
+                {/* schedule button */}
+                <Grid item xs={12} sx={{
+                    display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                 }}>
                     <Button
                         variant="contained"
-                        
                         sx={{
                             backgroundColor: "#FFFFFF",
                             textTransform: "none",
                             borderRadius: "10px",
-                            display: 'flex',
-                            width: "100%",
+                            width: "40%",
                         }}
                         onClick={() => setShowScheduler(true)}
                     >   
@@ -280,6 +286,7 @@ export default function WorkerQuotesAccepted({maintenanceItem, refreshMaintenanc
                         </Typography>
                     </Button>
                 </Grid> 
+
                 <DateTimePickerModal 
                     open={showScheduler}
                     setOpenModal={setShowScheduler} 

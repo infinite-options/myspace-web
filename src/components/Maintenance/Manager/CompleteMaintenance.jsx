@@ -22,8 +22,10 @@ import { useUser } from "../../../contexts/UserContext";
 import TenantProfileLink from "../../Maintenance/MaintenanceComponents/TenantProfileLink";
 import OwnerProfileLink from "../../Maintenance/MaintenanceComponents/OwnerProfileLink";
 import useMediaQuery from '@mui/material/useMediaQuery';
+import WorkerInvoiceView from "../MaintenanceComponents/WorkerInvoiceView";
 
 import { useMaintenance } from "../../../contexts/MaintenanceContext";
+import ManagerInvoiceView from "./ManagerInvoiceView";
 
 export default function CompleteMaintenance({maintenanceItem, navigateParams, quotes}){
     const navigate = useNavigate();
@@ -31,11 +33,12 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams, qu
     const [message, setMessage] = useState("");
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-    console.log("COMPLETE MAINTENANCE QUOTES", quotes)
     const { payMaintenanceView, setPayMaintenanceView, maintenanceData: contextMaintenanceItem, 
 		navigateParams: contextNavigateParams,  maintenanceQuotes, setMaintenanceQuotes, setNavigateParams, setMaintenanceData,setSelectedStatus, setSelectedRequestIndex, setAllMaintenanceData } = useMaintenance();
     
-    let finishedQuote = quotes.find(quote => quote.quote_status === "FINISHED" || quote.quote_status === "COMPLETED")
+    console.log("COMPLETE MAINTENANCE QUOTES", maintenanceItem)
+    
+    let finishedQuote = quotes?.find(quote => quote.quote_status === "FINISHED" || quote.quote_status === "COMPLETED")
 
     function handleNavigate(){
         console.log("navigate to pay Maintenance")
@@ -50,12 +53,15 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams, qu
     } else {
         if (maintenanceItem && navigateParams) {
             try {
-                setMaintenanceData(maintenanceItem);
-                    setNavigateParams(navigateParams);
-					setMaintenanceQuotes(quotes);
-                    setSelectedRequestIndex(navigateParams.maintenanceRequestIndex);
-                    setSelectedStatus(navigateParams.status);
-					setPayMaintenanceView(true);
+                // setMaintenanceData(maintenanceItem);
+                //     setNavigateParams(navigateParams);
+				// 	setMaintenanceQuotes(quotes);
+                //     setSelectedRequestIndex(navigateParams.maintenanceRequestIndex);
+                //     setSelectedStatus(navigateParams.status);
+				// 	setPayMaintenanceView(true);
+
+                navigate("/paymentProcessing", { state: { currentWindow: "PAY_BILLS", selectedRows: [maintenanceItem.pur_group] }});
+                // navigate("/paymentProcessing", { state: { currentWindow: "PAY_BILLS"} });
             } catch (error) {
                 console.error('Error setting sessionStorage: ', error);
             }
@@ -104,40 +110,41 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams, qu
     return(
         <Box 
             sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
                 width: "100%",
-                padding: '20px',
+                // padding: '20px',
             }}
         >
-              
-				<Button
-					variant="contained"
-					sx={{
-						backgroundColor: '#FFC614',
-						color: '#160449',
-						textTransform: 'none',
-						fontWeight: 'bold',
-						borderRadius: '8px',
-						width: '160px',
-						height: '120px',
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						textAlign: 'center',
-						padding: '10px',
-						boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
-						whiteSpace: 'normal',
-						'&:hover': {
-							backgroundColor: '#FFC614',
-						},
-					}}
-					onClick={() => handleNavigate()}
-				>
-                        
-					  {finishedQuote && maintenanceItem.maintenance_status !== "CANCELLED" ? "Pay Maintenance" : "Charge Owner"}
-				</Button></Box>
+            <Grid container item xs={12} marginBottom={"20px"}>
+                {maintenanceItem?.bill_uid && <ManagerInvoiceView maintenanceItem={maintenanceItem}/>}      
+            </Grid>
+            <Grid container item xs={12} display={"flex"} flexDirection={"row"} justifyContent={"center"} alignItems={"center"}>
+                <Button
+                    variant="contained"
+                    sx={{
+                        backgroundColor: '#FFC614',
+                        color: '#160449',
+                        textTransform: 'none',
+                        fontWeight: 'bold',
+                        borderRadius: '8px',
+                        width: '160px',
+                        height: '120px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        textAlign: 'center',
+                        padding: '10px',
+                        boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.3)',
+                        whiteSpace: 'normal',
+                        '&:hover': {
+                            backgroundColor: '#FFC614',
+                        },
+                    }}
+                    disabled={!maintenanceItem?.bill_uid}
+                    onClick={() => handleNavigate()}
+                >    
+                    {finishedQuote && maintenanceItem.maintenance_status !== "CANCELLED" ? "Pay Maintenance" : "Charge Owner"}
+                </Button>
+            </Grid>
+        </Box>
     )
 }

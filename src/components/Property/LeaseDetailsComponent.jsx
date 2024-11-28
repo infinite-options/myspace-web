@@ -191,9 +191,9 @@ export default function LeaseDetailsComponent({
 
   return (
     <>
-      <Card sx={{ height: "100%" }}>
+      <Card sx={{ height: "100%", width: "100%" }}>
         <Grid container justifyContent="center">          
-          <Grid container justifyContent="center" item xs={3.8}>
+          <Grid container justifyContent="center" item xs={3.8} sx={{ padding: "10px" }}>
             <Typography
               sx={{
                 color: "#160449",
@@ -808,7 +808,7 @@ export default function LeaseDetailsComponent({
                       sx={{
                         color: theme.typography.primary.black,
                         fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: '20px',
+                        fontSize: theme.typography.mediumFont,
                       }}
                     >
                       Lease Fees
@@ -832,8 +832,8 @@ export default function LeaseDetailsComponent({
                           <Typography
                             sx={{
                               color: "#A9A9A9",
-                              fontWeight: theme.typography.primary.fontWeight,
-                              fontSize: theme.typography.smallFont,
+                              fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: theme.typography.mediumFont,
                             }}
                           >
                             No Fees
@@ -853,7 +853,7 @@ export default function LeaseDetailsComponent({
                       sx={{
                         color: theme.typography.primary.black,
                         fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: '20px',
+                        fontSize: theme.typography.mediumFont,
                       }}
                     >
                       Lease Fees
@@ -877,8 +877,8 @@ export default function LeaseDetailsComponent({
                           <Typography
                             sx={{
                               color: "#A9A9A9",
-                              fontWeight: theme.typography.primary.fontWeight,
-                              fontSize: theme.typography.smallFont,
+                              fontWeight: theme.typography.secondary.fontWeight,
+                              fontSize: theme.typography.mediumFont,
                             }}
                           >
                             No Fees
@@ -901,7 +901,7 @@ export default function LeaseDetailsComponent({
                         sx={{
                           color: theme.typography.primary.black,
                           fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: '20px',
+                          fontSize: theme.typography.mediumFont,
                         }}
                       >
                         Lease Documents
@@ -919,7 +919,7 @@ export default function LeaseDetailsComponent({
                       sx={{
                         color: theme.typography.primary.black,
                         fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: theme.typography.smallFont,
+                        fontSize: theme.typography.mediumFont,
                       }}
                     >
                       Lease Documents
@@ -937,8 +937,8 @@ export default function LeaseDetailsComponent({
                       <Typography
                         sx={{
                           color: "#A9A9A9",
-                          fontWeight: theme.typography.primary.fontWeight,
-                          fontSize: theme.typography.smallFont,
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.mediumFont,
                         }}
                       >
                         No Documents
@@ -957,7 +957,7 @@ export default function LeaseDetailsComponent({
                         sx={{
                           color: theme.typography.primary.black,
                           fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: '20px',
+                          fontSize: theme.typography.mediumFont,
                         }}
                       >
                         Lease Documents
@@ -975,7 +975,7 @@ export default function LeaseDetailsComponent({
                       sx={{
                         color: theme.typography.primary.black,
                         fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: theme.typography.smallFont,
+                        fontSize: theme.typography.mediumFont,
                       }}
                     >
                       Lease Documents
@@ -993,8 +993,8 @@ export default function LeaseDetailsComponent({
                       <Typography
                         sx={{
                           color: "#A9A9A9",
-                          fontWeight: theme.typography.primary.fontWeight,
-                          fontSize: theme.typography.smallFont,
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.mediumFont,
                         }}
                       >
                         No Documents
@@ -1014,7 +1014,7 @@ export default function LeaseDetailsComponent({
                         textTransform: "none",
                         color: theme.typography.primary.black,
                         fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: '20px',
+                        fontSize: theme.typography.mediumFont,
                         // paddingRight: "103px",
                       }}
                     >
@@ -1046,7 +1046,7 @@ export default function LeaseDetailsComponent({
                           textTransform: "none",
                           color: theme.typography.primary.black,
                           fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: '20px',
+                          fontSize: theme.typography.mediumFont,
                         }}
                       >
                         View All Applications

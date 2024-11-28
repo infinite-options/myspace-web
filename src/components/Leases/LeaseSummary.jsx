@@ -402,7 +402,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                                     color: "#160449",
                                     fontWeight: theme.typography.secondary.fontWeight,
                                     fontSize: theme.typography.smallFont,
-                                }}>Available to Pay</Typography>
+                                }}>{isMobile ? "Avl To Pay" : "Available to Pay"}</Typography>
                             </Grid>
                             <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
                                 <Typography sx={{
@@ -563,7 +563,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                                         color: "#160449",
                                         fontWeight: theme.typography.secondary.fontWeight,
                                         fontSize: theme.typography.smallFont,
-                                    }}>Available to Pay</Typography>
+                                    }}>{isMobile ? "Avl To Pay" : "Available to Pay"}</Typography>
                                 </Grid>
                                 <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
                                     <Typography sx={{

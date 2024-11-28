@@ -117,7 +117,7 @@ export default function ManagementDetailsComponent({
   return (
     <>
       <Card sx={{ height: "100%" }}>
-        <Box sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <Box sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "10px"}}>
           <Typography
             sx={{
               color: theme.typography.primary.black,
@@ -644,7 +644,7 @@ export default function ManagementDetailsComponent({
                         sx={{
                           color: theme.typography.primary.black,
                           fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: '20px',
+                          fontSize: theme.typography.mediumFont,
                         }}
                       >
                         Management Fees
@@ -692,7 +692,7 @@ export default function ManagementDetailsComponent({
                           sx={{
                             color: theme.typography.primary.black,
                             fontWeight: theme.typography.secondary.fontWeight,
-                            fontSize: '20px',
+                            fontSize: theme.typography.mediumFont,
                           }}
                         >
                           Contract Documents
@@ -790,7 +790,7 @@ export default function ManagementDetailsComponent({
                           sx={{
                             color: theme.typography.primary.black,
                             fontWeight: theme.typography.secondary.fontWeight,
-                            fontSize: '20px',
+                            fontSize: theme.typography.mediumFont,
                           }}
                         >
                           Contract Documents
@@ -819,7 +819,7 @@ export default function ManagementDetailsComponent({
                     sx={{
                       color: theme.typography.primary.black,
                       fontWeight: theme.typography.secondary.fontWeight,
-                      fontSize: '20px',
+                      fontSize: theme.typography.mediumFont,
                     }}
                   >
                     Open Maintenance Tickets:

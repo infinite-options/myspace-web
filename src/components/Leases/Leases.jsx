@@ -255,7 +255,7 @@ export default function Leases(props) {
     >
       <Paper
         sx={{
-          marginTop: "10px",
+          marginTop: !isMobile && "10px",
           backgroundColor: theme.palette.primary.main,
           width: "100%", // Occupy full width with 25px margins on each side
           maxWidth: "800px", // You can set a maxWidth if needed
@@ -307,7 +307,7 @@ export default function Leases(props) {
               component='span'
               sx={{
                 color: "#160449",
-                fontSize: "20px",
+                fontSize: "24px",
                 fontWeight: "bold",
                 paddingRight: isMobile ? "40px" : "0px",
               }}
@@ -327,7 +327,7 @@ export default function Leases(props) {
               alignItems: "center",
               justifyContent: "space-between",
               fontWeight: "bold",
-              marginTop: "10px",
+              marginTop: !isMobile && "10px",
             }}
           >
             <Box
