@@ -279,7 +279,11 @@ function TenantLeases(props) {
     const leaseApplicationFormData = new FormData();
 
     leaseApplicationFormData.append("lease_uid", lease.lease_uid);
-    leaseApplicationFormData.append("lease_status", "REFUSED");
+    if(lease.lease_status === "RENEW PROCESSING"){
+      leaseApplicationFormData.append("lease_status", "RENEW REFUSED");
+    } else {
+      leaseApplicationFormData.append("lease_status", "REFUSED");
+    }
 
     const sendAnnouncement = async () => {
       try {
@@ -322,17 +326,78 @@ function TenantLeases(props) {
       if(response.ok){
         // alert("You have successfully Rejected the lease.");
         openDialog("Success",`You have successfully Rejected the lease`,"success");
+        
         await sendAnnouncement();
+
+
+        // if lease status is RENEW PROCESSING update the current lease's renew status
+        if(lease.lease_status === "RENEW PROCESSING"){
+          await updateCurrentLease("RENEW REFUSED");
+        }
+
+
+
         // props.setRightPane({ type: "", state: { property: property, lease: lease } });
         // console.log("--- DEBUD---- rejected")
         props.setReload((prev) => !prev);
         // props.setRightPane("");
+
+
       } else {
         console.log(data);
       }
     } catch (error) {
       console.log(error);
     }
+  }
+
+  async function updateCurrentLease(renewStatus) {
+    const leaseApplicationFormData = new FormData();
+
+    leaseApplicationFormData.append("lease_uid", property.lease_uid);
+    leaseApplicationFormData.append("lease_renew_status", renewStatus);    
+
+    try {
+      const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+        method: "PUT",
+        body: leaseApplicationFormData,
+      });
+      const data = await response.json();
+      // if (data.lease_update.code === 200) {
+      if(response.ok){
+        // alert("You have successfully Rejected the lease.");
+        openDialog("Success",`You have successfully Rejected the lease`,"success");        
+        
+      } else {
+        console.log(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function handleEndApprovedLease() {
+    const leaseApplicationFormData = new FormData();
+
+    leaseApplicationFormData.append("lease_uid", lease.lease_uid);
+    leaseApplicationFormData.append("lease_renew_status", "EARLY TERMINATION");    
+
+    try {
+      const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+        method: "PUT",
+        body: leaseApplicationFormData,
+      });
+      const data = await response.json();
+      // if (data.lease_update.code === 200) {
+      if(response.ok){                
+        openDialog("Success",`Successfully sent a request to the Property Manager to end the approved lease.`,"success");                
+      } else {
+        console.log(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
   }
 
   async function handleTenantAccept() {
@@ -415,12 +480,12 @@ function TenantLeases(props) {
         const leaseDate = new Date(year, month - 1, day); // Month is 0-indexed in JavaScript Date objects
         // console.log("Lease Effective Date, ", leaseDate);
 
-        // if (leaseDate <= date) {
-        //   lease_status = "ACTIVE";
-        //   console.log("Lease Status Changed: ", lease_status);
-        //   // if (lease.lease_effective_date <= date) {
-        //   // status = "ACTIVE";
-        // }
+        if (leaseDate <= date && lease.lease_status === "PROCESSING") {
+          lease_status = "ACTIVE";
+          console.log("Lease Status Changed: ", lease_status);
+          // if (lease.lease_effective_date <= date) {
+          // status = "ACTIVE";
+        }
       }
       console.log("Status: ", status);
       leaseApplicationFormData.append("lease_status", lease_status);
@@ -598,7 +663,7 @@ function TenantLeases(props) {
                 {" "}
                 {/* Increased padding */}
                 
-                <Grid container spacing={3} justifyContent="space-between">
+                <Grid container spacing={3} rowGap={6} justifyContent="space-between">
                   {" "}
                   {/* Increased spacing */}
                   <Grid item xs={2}>
@@ -619,6 +684,12 @@ function TenantLeases(props) {
                       {lease?.lease_m2m == null ? "Not Specified" : ""}
                       {lease?.lease_m2m === 1 ? "Renews Month-to-Month" : ""}
                       {lease?.lease_m2m === 0 ? "Renews Automatically" : ""}
+                    </Typography>
+                  </Grid>                                    
+                  <Grid item xs={4}>
+                    <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Lease End Notice Period</Typography>
+                    <Typography>
+                      {lease?.lease_end_notice_period != null ? `${lease?.lease_end_notice_period} days` : "Not Specified"}                      
                     </Typography>
                   </Grid>                                    
                 </Grid>
@@ -1036,6 +1107,38 @@ function TenantLeases(props) {
                     </Button>
                   </CenteringBox>
                 </Grid>
+              </Grid>
+            )
+          }
+                    {
+            lease.lease_status === "APPROVED" && (            
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <CenteringBox>
+                    <Button
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "#CB8E8E",
+                        borderRadius: "5px",
+                        padding: "5px 10px",
+                        minWidth: "90px",
+                        width: "150px",
+                        fontSize: "14px",
+                        fontWeight: "700",
+                        color: "#FFFFFF",
+                        textTransform: "none",
+                        "&:hover": {
+                          backgroundColor: "#A75A5A",
+                        },
+                      }}
+                      onClick={() => handleEndApprovedLease()}
+                    >
+                      End Lease Early
+                    </Button>
+                  </CenteringBox>
+                </Grid>                
               </Grid>
             )
           }

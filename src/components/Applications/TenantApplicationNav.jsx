@@ -136,7 +136,11 @@ const TenantApplicationNav = (props) => {
   const handleCreateLease = () => {
     // console.log("application - ", application);
     // console.log("property - ", property);
-    navigate("/tenantLease", { state: { page: "create_lease", application, property } });
+    if(application.lease_status === "RENEW REFUSED"){
+      navigate("/tenantLease", { state: { page: "edit_lease", application, property } });  
+    } else {
+      navigate("/tenantLease", { state: { page: "create_lease", application, property } });
+    }
   };
 
   const handleEditLease = () => {
@@ -578,7 +582,7 @@ const TenantApplicationNav = (props) => {
                               {"Renew Lease"}
                             </Button>
                           )}
-                          {application?.lease_status !== "PROCESSING" && application?.lease_status !== "RENEW PROCESSING"  && application?.lease_status !== "RENEW NEW"&& (
+                          {application?.lease_status !== "PROCESSING" && application?.lease_status !== "RENEW PROCESSING"  && application?.lease_status !== "RENEW NEW" && (
                             <Button
                               onClick={handleCreateLease}
                               sx={{
