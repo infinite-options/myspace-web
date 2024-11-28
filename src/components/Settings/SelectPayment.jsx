@@ -77,6 +77,11 @@ export default function SelectPayment(props) {
   const [purchaseUIDs, setPurchaseUIDs] = useState(location.state.paymentData.purchase_uids);
   const [selectedItems, setSelectedItems] = useState(location.state.selectedItems);
   const cashFlowTotal = location.state?.cashFlowTotal;
+
+  const receiverId = location.state?.receiverId;
+  const [receiverPaymentMethods, setReceiverPaymentMethods] = useState([])
+  const [receiverProfile, setReceiverProfile] = useState({})
+
   const [convenience_fee, setFee] = useState(0);
   const [selectedMethod, setSelectedMethod] = useState(""); // Initial selection
   const [totalBalance, setTotalBalance] = useState(balance + convenience_fee); // Initial selection
@@ -120,8 +125,41 @@ export default function SelectPayment(props) {
       }
     };
 
+    const fetchReceiverProfileData = async () => {
+      try {
+        const response = await fetch(`${APIConfig.baseURL.dev}/profile/${receiverId}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch profile data");
+        }
+        const profileData = await response.json();
+
+        console.log("profile data", profileData.profile.result);
+
+        // Initialize an array to hold all parsed payment methods
+        let allPaymentMethods = [];
+
+        setReceiverProfile(profileData.profile?.result[0])
+
+        // Iterate over each object in the result array
+        profileData.profile.result.forEach((item) => {
+          // Parse the paymentMethods string in each object and add to the array
+          const parsedMethods = JSON.parse(item.paymentMethods);
+          allPaymentMethods = [...allPaymentMethods, ...parsedMethods];
+        });
+
+        // Set the combined payment methods array
+        setReceiverPaymentMethods(allPaymentMethods)
+
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+      }
+    };
+
     fetchProfileData();
-  }, [getProfileId]);
+
+    fetchReceiverProfileData();
+
+  }, [getProfileId, receiverId]);
 
   useEffect(() => {
     console.log("test", location.state.leaseDetails);
@@ -455,13 +493,8 @@ export default function SelectPayment(props) {
             <Grid container item xs={12} md={12} justifyContent={"center"}>
               <StripeFeesDialog stripeDialogShow={stripeDialogShow} setStripeDialogShow={setStripeDialogShow} toggleKeys={toggleKeys} setStripePayment={setStripePayment} />
 
-              {/* <Stack direction="row" > */}
+              {/* select payment method 2 heading */}
               <Grid container item xs={12} justifyContent='center'>
-                {/* <Grid item xs={1} >
-                  <Button onClick={() => navigate(-1)}>
-                    <ArrowBackIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
-                  </Button>
-                </Grid> */}
                 <Typography
                   sx={{
                     justifySelf: "center",
@@ -474,6 +507,8 @@ export default function SelectPayment(props) {
                 </Typography>
                 {/* </Stack> */}
               </Grid>
+              
+              {/* balance top card */}
               <Paper
                 style={{
                   width: "100%",
@@ -490,6 +525,7 @@ export default function SelectPayment(props) {
                   // },
                 }}
               >
+                {/* total balance */}
                 <Stack direction='row' justifyContent='center' sx={{ paddingBottom: "5px" }}>
                   <Typography
                     sx={{
@@ -502,7 +538,8 @@ export default function SelectPayment(props) {
                     Total Balance
                   </Typography>
                 </Stack>
-
+                
+                {/* total balance value */}
                 <Stack direction='row' justifyContent='center' sx={{ paddingBottom: "5px" }}>
                   <Typography
                     sx={{
@@ -516,6 +553,8 @@ export default function SelectPayment(props) {
                   </Typography>
                 </Stack>
                 <Divider light />
+
+                {/* balance, convenience fee value */}
                 <Stack>
                   <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                     <Grid item xs={6} justifyContent='center' alignItems='center'>
@@ -598,7 +637,8 @@ export default function SelectPayment(props) {
                   </Grid>
                 </Stack>
               </Paper>
-
+              
+              {/* payment methods card */}
               <Paper
                 style={{
                   margin: "25px",
@@ -617,6 +657,8 @@ export default function SelectPayment(props) {
                   Payment Methods
                 </Typography>
                 <Divider light />
+
+                {/* bank & credit card */}
                 <FormControl component='fieldset'>
                   <RadioGroup aria-label='Number' name='number' value={selectedMethod} onChange={handleChange}>
                     <FormControlLabel
@@ -672,15 +714,15 @@ export default function SelectPayment(props) {
                   </RadioGroup>
                 </FormControl>
 
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.secondaryFont }}>Other Payment Methods</Typography>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.secondaryFont, marginTop: "10px"}}>Other Payment Methods</Typography>
                 <Typography sx={{ color: theme.typography.common.blue, fontWeight: 400, fontSize: "16px" }}>
                   Payment Instructions for Paypal, Apple Pay Zelle, and Venmo: Please make payment via 3rd party app and record payment information here. If you are using Zelle,
                   please include the transaction confirmation number.
                 </Typography>
 
-                <Divider light />
+                <Divider light sx={{marginBottom: "10px"}}/>
 
-                <FormControl component='fieldset'>
+                {/* <FormControl component='fieldset'>
                   <RadioGroup
                     aria-label='Number'
                     name='number'
@@ -733,7 +775,7 @@ export default function SelectPayment(props) {
                                 {method.paymentMethod_name}
                               </Typography>
                               {/* Show confirmation number input only for the selected non-Stripe method */}
-                              {selectedValue === uniqueValue && selectedMethod !== "stripe" && (
+                              {/*{selectedValue === uniqueValue && selectedMethod !== "stripe" && (
                                 <TextField
                                   id={`confirmation-number-${method.paymentMethod_uid}`} // Unique ID for each input
                                   label='Confirmation Number'
@@ -767,6 +809,132 @@ export default function SelectPayment(props) {
                       );
                     })}
                   </RadioGroup>
+                </FormControl> */}
+
+                <FormControl component='fieldset'>
+                  <RadioGroup
+                    aria-label='Number'
+                    name='number'
+                    value={selectedValue} // Binding this to selectedValue, not selectedMethod
+                    onChange={handleChange}
+                  >
+                    {paymentMethods.map((method) => {
+                      const uniqueValue = `${method.paymentMethod_type}-${method.paymentMethod_uid}`; // Unique value for each, looks like zelle-123
+                      
+                      // Check if the method exists in receiverPaymentMethods
+                      const isMethodInReceiver = receiverPaymentMethods.some(
+                        (receiverMethod) => receiverMethod.paymentMethod_type === method.paymentMethod_type
+                      );
+
+                      return (
+                        <FormControlLabel
+                          key={method.paymentMethod_uid}
+                          value={uniqueValue}
+                          control={
+                            <Radio
+                              disabled={!isMethodInReceiver} // Disable if not present in receiverPaymentMethods
+                              sx={{
+                                color: selectedValue === uniqueValue ? "#3D5CAC" : "#000000",
+                                "&.Mui-checked": {
+                                  color: "#3D5CAC",
+                                },
+                              }}
+                            />
+                          }
+                          label={
+                            <div style={{ display: "flex", alignItems: "center" }}>
+                              <img
+                                src={
+                                  method.paymentMethod_type === "zelle"
+                                    ? Zelle
+                                    : method.paymentMethod_type === "credit_card"
+                                    ? CreditCardIcon
+                                    : method.paymentMethod_type === "paypal"
+                                    ? PayPal
+                                    : method.paymentMethod_type === "venmo"
+                                    ? Venmo
+                                    : method.paymentMethod_type === "apple_pay"
+                                    ? ApplePay
+                                    : method.paymentMethod_type === "stripe"
+                                    ? Stripe
+                                    : BankIcon
+                                }
+                                alt={method.paymentMethod_type}
+                                style={{ marginRight: "8px", height: "24px" }}
+                              />
+                              <Typography
+                                sx={{
+                                  color: selectedMethod === method.paymentMethod_type ? "#3D5CAC" : "#000000",
+                                }}
+                              >
+                                {method.paymentMethod_name}
+                              </Typography>
+
+                              {/* If the payment method is selected and not Stripe, show the Confirmation Number input */}
+                              {selectedValue === uniqueValue && selectedMethod !== "stripe" && (
+                                <TextField
+                                  id={`confirmation-number-${method.paymentMethod_uid}`} // Unique ID for each input
+                                  label='Confirmation Number'
+                                  variant='outlined'
+                                  size='small'
+                                  value={confirmationNumber}
+                                  sx={{
+                                    marginLeft: "10px",
+                                    input: {
+                                      color: "#000000",
+                                    },
+                                    "& .MuiOutlinedInput-root": {
+                                      "& fieldset": {
+                                        borderColor: "#000000",
+                                      },
+                                      "&.Mui-focused fieldset": {
+                                        borderColor: "#3D5CAC",
+                                      },
+                                    },
+                                  }}
+                                  InputLabelProps={{
+                                    shrink: true,
+                                    style: { color: "#000000" },
+                                  }}
+                                  onChange={(e) => setConfirmationNumber(e.target.value)}
+                                />
+                              )}
+
+                              {/* If the payment method is available in both paymentMethods and receiverPaymentMethods, show receiver's name */}
+                              {isMethodInReceiver && receiverProfile && receiverPaymentMethods.length > 0 && (
+                                <Typography
+                                  sx={{
+                                    marginLeft: "10px",
+                                    fontSize: "16px",
+                                    fontWeight: "bold",
+                                    color: "#000000",
+                                  }}
+                                >
+                                  To: 
+                                  <span style={{color: "#888888", paddingLeft: "10px", fontSize: "14px", fontWeight: "normal"}}>
+                                  {receiverId.startsWith('600')? receiverProfile?.business_name : receiverProfile?.owner_first_name + " " + receiverProfile?.owner_last_name} ({receiverPaymentMethods.find((receiverMethod) => receiverMethod.paymentMethod_type === method.paymentMethod_type)?.paymentMethod_name})
+                                  </span>
+                                </Typography>
+                              )}
+
+                              {!isMethodInReceiver && receiverProfile && (
+                                <Typography
+                                  sx={{
+                                    marginLeft: "10px",
+                                    fontSize: "14px",
+                                    fontWeight: "bold",
+                                    color: "#888888",
+                                  }}
+                                > 
+                                  ( {receiverId.startsWith('600')? receiverProfile?.business_name : receiverProfile?.owner_first_name + " " + receiverProfile?.owner_last_name} does not accept {method.paymentMethod_type} )
+                                </Typography>
+                              )}
+                            </div>
+                          }
+                        />
+                      );
+                    })}
+                  </RadioGroup>
                 </FormControl>
 
                 <Button
@@ -784,6 +952,7 @@ export default function SelectPayment(props) {
                   Make Payment
                 </Button>
               </Paper>
+
               <Elements stripe={stripePromise}>
                 <StripePayment
                   submit={submit}

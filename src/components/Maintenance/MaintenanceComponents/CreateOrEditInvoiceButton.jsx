@@ -41,14 +41,13 @@ export default function CreateOrEditInvoiceButton({maintenanceItem}){
 
     return (
         <>
-            {maintenanceItem.bill_uid === null ? (
+            {maintenanceItem?.bill_uid === null ? (
                 <Grid item xs={6} sx={{
                     alignItems: "center",
                     justifyContent: "center",
                 }}>
                     <Button
-                        variant="contained"
-                        
+                        variant="contained"     
                         sx={{
                             backgroundColor: "#FFFFFF",
                             textTransform: "none",
@@ -71,7 +70,7 @@ export default function CreateOrEditInvoiceButton({maintenanceItem}){
                 }}>
                     <Button
                         variant="contained"
-                        
+                        disabled={maintenanceItem?.purchase_status === "PAID"}
                         sx={{
                             backgroundColor: "#FFFFFF",
                             textTransform: "none",

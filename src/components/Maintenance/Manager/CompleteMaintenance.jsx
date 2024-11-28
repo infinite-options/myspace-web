@@ -25,7 +25,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import WorkerInvoiceView from "../MaintenanceComponents/WorkerInvoiceView";
 
 import { useMaintenance } from "../../../contexts/MaintenanceContext";
-import ManagerInvoiceView from "./ManagerInvoiceView";
+import NewManagerInvoiceView from "./NewManagerInvoice";
 
 export default function CompleteMaintenance({maintenanceItem, navigateParams, quotes}){
     const navigate = useNavigate();
@@ -36,7 +36,7 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams, qu
     const { payMaintenanceView, setPayMaintenanceView, maintenanceData: contextMaintenanceItem, 
 		navigateParams: contextNavigateParams,  maintenanceQuotes, setMaintenanceQuotes, setNavigateParams, setMaintenanceData,setSelectedStatus, setSelectedRequestIndex, setAllMaintenanceData } = useMaintenance();
     
-    console.log("COMPLETE MAINTENANCE QUOTES", maintenanceItem)
+    // console.log("COMPLETE MAINTENANCE QUOTES", maintenanceItem)
     
     let finishedQuote = quotes?.find(quote => quote.quote_status === "FINISHED" || quote.quote_status === "COMPLETED")
 
@@ -60,7 +60,7 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams, qu
                 //     setSelectedStatus(navigateParams.status);
 				// 	setPayMaintenanceView(true);
 
-                navigate("/paymentProcessing", { state: { currentWindow: "PAY_BILLS", selectedRows: [maintenanceItem.pur_group] }});
+                navigate("/paymentProcessing", { state: { currentWindow: "PAY_BILLS", selectedRows: [maintenanceItem.pur_receiver || maintenanceItem.bill_created_by] }});
                 // navigate("/paymentProcessing", { state: { currentWindow: "PAY_BILLS"} });
             } catch (error) {
                 console.error('Error setting sessionStorage: ', error);
@@ -115,7 +115,7 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams, qu
             }}
         >
             <Grid container item xs={12} marginBottom={"20px"}>
-                {maintenanceItem?.bill_uid && <ManagerInvoiceView maintenanceItem={maintenanceItem}/>}      
+                {maintenanceItem?.bill_uid && <NewManagerInvoiceView maintenanceItem={maintenanceItem}/>}      
             </Grid>
             <Grid container item xs={12} display={"flex"} flexDirection={"row"} justifyContent={"center"} alignItems={"center"}>
                 <Button
@@ -139,7 +139,7 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams, qu
                             backgroundColor: '#FFC614',
                         },
                     }}
-                    disabled={!maintenanceItem?.bill_uid}
+                    disabled={!maintenanceItem?.bill_uid || maintenanceItem?.purchase_status === "PAID"}
                     onClick={() => handleNavigate()}
                 >    
                     {finishedQuote && maintenanceItem.maintenance_status !== "CANCELLED" ? "Pay Maintenance" : "Charge Owner"}

@@ -44,11 +44,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const groupDataByKey = (data, key, byOwner) => {
-  // console.log("ROHIT - data - ", data);
+const groupDataByKey = (data, key, byOwner=false, byRecipient = false, managerId) => {
   const groupedByKey = {};
 
-  if (!byOwner) {
+  if (!byOwner && !byRecipient) {
+
     data?.forEach((payment) => {
       const dataKey = payment[key];
       if (!groupedByKey[dataKey]) {
@@ -56,7 +56,9 @@ const groupDataByKey = (data, key, byOwner) => {
       }
       groupedByKey[dataKey].push(payment);
     });
-  } else {
+
+  } else if (byOwner) {
+
     data?.forEach((item) => {
       const ownerId = item.property_owner_id;
       const propertyId = item.pur_property_id;
@@ -73,10 +75,75 @@ const groupDataByKey = (data, key, byOwner) => {
         groupedByKey[ownerId][propertyId].push(item);
       }
     });
+
+  } else if (byRecipient) {
+
+    // data?.forEach((item) => {
+    //   let recipientId = item.pur_receiver;
+
+    //   if (recipientId === managerId) {
+    //     recipientId = item.pur_payer;
+    //   }
+
+    //   if(recipientId !== "STRIPE" && recipientId !== managerId){
+    //     const propertyId = item.pur_property_id;
+  
+    //     if (!groupedByKey[recipientId]) {
+    //       groupedByKey[recipientId] = {};
+    //     }
+  
+    //     if (!groupedByKey[recipientId][propertyId]) {
+    //       groupedByKey[recipientId][propertyId] = [];
+    //     }
+  
+    //     groupedByKey[recipientId][propertyId].push(item);
+    //   }
+    // });
+
+    const groupedByPurGroup = data.reduce((acc, item) => {
+      const groupKey = item.pur_group;
+      if (!acc[groupKey]) {
+        acc[groupKey] = [];
+      }
+      acc[groupKey].push(item);
+      return acc;
+    }, {});
+  
+    Object.values(groupedByPurGroup).forEach((group) => {
+      const validRecipients = group
+        .map((item) => [item.pur_receiver, item.pur_payer])
+        .flat()
+        .filter(
+          (id) => id !== managerId && !id.startsWith("350") && id !== "STRIPE"
+        );
+  
+      const uniqueRecipients = Array.from(new Set(validRecipients));
+
+      if (uniqueRecipients.length === 0) return;
+  
+      uniqueRecipients.forEach((recipientId) => {
+        group.forEach((item) => {
+          const propertyId = item.pur_property_id;
+  
+          if (!groupedByKey[recipientId]) {
+            groupedByKey[recipientId] = {};
+          }
+  
+          if (!groupedByKey[recipientId][propertyId]) {
+            groupedByKey[recipientId][propertyId] = [];
+          }
+  
+          groupedByKey[recipientId][propertyId].push(item);
+        });
+      });
+
+    });
+
   }
 
   return groupedByKey;
 };
+
 
 function DashboardTab(props) {
   return (
@@ -136,9 +203,11 @@ export default function PaymentsManager(props) {
   const [sortBy, setSortBy] = useState("by_property");
   const [cashFlowTotal, setCashFlowTotal] = useState(0);
   const [globalCashFlowTotal, setGlobalCashFlowTotal] = useState({});
+  const [isDeselecting, setIsDeselecting] = useState(false);
 
   const [transactionDataByProeprty, setTransactionDataByProeprty] = useState({});
   const [transactionDataByOwner, setTransactionDataByOwner] = useState({});
+  const [transactionDataByRecipient, setTransactionDataByRecipient] = useState({});
 
   const [paymentData, setPaymentData] = useState({
     currency: "usd",
@@ -167,6 +236,10 @@ export default function PaymentsManager(props) {
     //     total: "0.0"
     // },
   });
+
+  useEffect(()=>{
+    console.log(" == DHYEY == seletedItems - ", selectedItems)
+  }, [selectedItems])
 
   useEffect(() => {
     // console.log("ROHIT - 96 - paymentData - ", paymentData);
@@ -389,11 +462,13 @@ export default function PaymentsManager(props) {
       const total = getTransactionsTotal(dataWithIndex);
       setTotalTransactions(total);
 
-      const dataByProperty = groupDataByKey(dataWithIndex, "pur_property_id", false);
-      const dataByOwner = groupDataByKey(dataWithIndex, "pur_receiver", true);
-      console.log("---dhyey--- successfully filter data - ", dataByProperty);
+      const dataByProperty = groupDataByKey(dataWithIndex, "pur_property_id", false, false);
+      const dataByOwner = groupDataByKey(dataWithIndex, "pur_receiver", true, false);
+      const dataByRecipient = groupDataByKey(dataWithIndex, "pur_payer", false, true, getProfileId()) 
+      console.log("---dhyey--- successfully filter data - ", dataByProperty, dataByOwner, dataByRecipient);
       setTransactionDataByProeprty(dataByProperty);
       setTransactionDataByOwner(dataByOwner);
+      setTransactionDataByRecipient(dataByRecipient);
 
       // totalMoneyPaidUpdate(moneyPaidData);
     } catch (error) {
@@ -401,6 +476,90 @@ export default function PaymentsManager(props) {
     }
     setShowSpinner(false);
   };
+
+  const columnsList = [
+    {
+      field: "pur_payer",
+      headerName: "Pur Payer",
+      flex: 1.5,
+      renderCell: (params) => <Box>{params.value}</Box>,
+    },
+    {
+      field: "pur_receiver",
+      headerName: "Pur Receiver",
+      flex: 1.5,
+      renderCell: (params) => <Box>{params.value}</Box>,
+    },
+    {
+      field: "pur_group",
+      headerName: "Pur Group",
+      flex: 1.5,
+      renderCell: (params) => <Box>{params.value}</Box>,
+    },
+    {
+      field: "pur_property_id",
+      headerName: "Property UID",
+      flex: 1.5,
+      renderCell: (params) => <Box>{params.value}</Box>,
+    },
+    {
+      field: "property_address",
+      headerName: "Address",
+      flex: 1.5,
+      renderCell: (params) => <Box>{params.value}</Box>,
+    },
+    {
+      field: "property_unit",
+      headerName: "Unit",
+      flex: 0.5,
+      renderCell: (params) => <Box>{params.value}</Box>,
+    },
+    {
+      field: "pur_amount_due",
+      headerName: "Expected",
+      flex: 1.5,
+      headerStyle: {
+        fontWeight: "bold", // Apply inline style to the header cell
+      },
+      renderCell: (params) => (
+        <Box
+          sx={{
+            fontWeight: "bold",
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            color: params.row.pur_payer.startsWith("600") ? "red" : "green",
+          }}
+        >
+          {params.row.pur_payer.startsWith("600") ? `${parseFloat(params.value).toFixed(2)}` : `(${parseFloat(params.value).toFixed(2)})`}
+        </Box>
+      ),
+      headerAlign: "right",
+    },
+    {
+      field: "total_paid",
+      headerName: "Actual",
+      flex: 1,
+      headerStyle: {
+        fontWeight: "bold", // Apply inline style to the header cell
+      },
+      renderCell: (params) => (
+        <Box
+          sx={{
+            fontWeight: "bold",
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+          }}
+        >
+          {params.value ? `${parseFloat(params.value).toFixed(2)}` : "0"}
+        </Box>
+      ),
+      headerAlign: "right",
+    },
+  ];
 
   // useEffect(() => {
   //   fetchPaymentsData();
@@ -527,6 +686,7 @@ export default function PaymentsManager(props) {
                   ></Box>
                 </Box>
 
+                {/* balance, payment button section */}
                 <Paper
                   style={{
                     margin: "25px",
@@ -546,10 +706,12 @@ export default function PaymentsManager(props) {
                       Balance
                     </Typography>
                   </Stack>
+
+                  {/* button and balance value */}
                   <Stack direction='row' justifyContent='center' m={2}>
                     <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                       <Grid item xs={6}>
-                        <Typography sx={{ marginLeft: "20px", color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: "26px" }}>
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: "26px" }}>
                           ${total.toFixed(2)}
                         </Typography>
                       </Grid>
@@ -571,7 +733,7 @@ export default function PaymentsManager(props) {
                             const updatedPaymentData = { ...paymentData, business_code: paymentNotes };
                             console.log("In Payments.jsx and passing paymentData to SelectPayment.jsx: ", paymentData);
                             console.log("In Payments.jsx and passing paymentMethodInfo to SelectPayment.jsx: ", paymentMethodInfo);
-                            console.log("cashflow - ", cashFlowTotal);
+                            console.log("cashflow - ", selectedItems);
                             // if(page != null && page === "paymentProcessing"){
                             //   setSelectedPayment({ paymentData: updatedPaymentData, total: total, selectedItems: selectedItems, paymentMethodInfo: paymentMethodInfo });
                             //   setCurrentWindow("MAKE_PAYMENT");
@@ -587,6 +749,7 @@ export default function PaymentsManager(props) {
                                 paymentMethodInfo: paymentMethodInfo,
                                 managerCashflowWidgetData: managerCashflowWidgetData,
                                 accountBalanceWidgetData: accountBalanceWidgetData,
+                                receiverId: selectedItems[0]?.pur_payer === getProfileId() ? selectedItems[0]?.pur_receiver : selectedItems[0]?.pur_payer
                               },
                             });
                           }}
@@ -607,7 +770,8 @@ export default function PaymentsManager(props) {
                       </Grid>
                     </Grid>
                   </Stack>
-
+                  
+                  {/* payment notes */}
                   <Stack
                     direction='row'
                     justifyContent='center'
@@ -626,6 +790,53 @@ export default function PaymentsManager(props) {
                       }} 
                     />
                   </Stack>
+                  
+                  {/* SELECTED PAYMENT GRID */}
+                  <Stack direction='row' justifyContent='center' m={2}>
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                      <Grid item xs={12}>
+                        <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+                          Selected Payment
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12} marginTop={"10px"}>
+                        <DataGrid
+                          rows={selectedItems}
+                          columns={columnsList}
+                          initialState={{
+                            pagination: {
+                              paginationModel: {
+                                pageSize: 5,
+                              },
+                              sorting: {
+                                sortModel: [
+                                  { field: "pur_group", sort: "asc" },
+                                  { field: "pur_payer", sort: "asc" },
+                                ],
+                              },
+                            },
+                          }}
+                          sx={{
+                            '& .MuiDataGrid-root': {
+                                boxShadow: 'none',
+                            },
+                            '& .MuiDataGrid-cell': {
+                                color: '#160449', 
+                                borderBottom: 'none',                                       
+                            },                                    
+                            '& .MuiDataGrid-columnHeaderTitle': {
+                                lineHeight: 'normal',
+                                fontWeight: 'bold',
+                                color: '#160449',
+                            },
+                          }}
+                          getRowId={(row) => row.index}
+                          pageSizeOptions={[5, 7, 10]}
+                        />
+                      </Grid>
+                    </Grid>
+                  </Stack>
+
                 </Paper>
 
                 {/* What is shown in Balance Details Depends on Role */}
@@ -685,6 +896,7 @@ export default function PaymentsManager(props) {
                       // height: "25%",
                     }}
                   >
+                    {/* transaction and filter button */}
                     <Stack direction='row' justifyContent='space-between'>
                       <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
                         Transactions
@@ -721,6 +933,23 @@ export default function PaymentsManager(props) {
                       >
                         <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Owner</Typography>
                       </Button>
+                      <Button
+                        sx={{
+                          width: "150px",
+                          backgroundColor: tab === "by_recipient" ? "#3D5CAC" : "#9EAED6",
+                          textTransform: "none",
+                          "&:hover": {
+                            backgroundColor: tab === "by_recipient" ? "#3D5CAC" : "#9EAED6",
+                          },
+                        }}
+                        onClick={() => {
+                          setSortBy("by_recipient");
+                          setTab("by_recipient");
+                        }}
+                      >
+                        <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Recipient</Typography>
+                      </Button>
+
                       <Typography
                         sx={{ marginLeft: "20px", color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}
                       >
@@ -738,6 +967,10 @@ export default function PaymentsManager(props) {
                             </Grid>
                             <TransactionsTable
                               data={propertyPayments}
+                              profileId={getProfileId()}
+                              selectedItems={selectedItems}
+                              isDeselecting={isDeselecting}
+                              setIsDeselecting={setIsDeselecting}
                               cashFlowTotal={globalCashFlowTotal[propertyPayments[0].pur_property_id]}
                               setCashFlowTotal={(newTotal) => handleTotalCashFlowChange(propertyPayments[0].pur_property_id, newTotal)}
                               total={globalTotal[propertyPayments[0].pur_property_id]}
@@ -793,6 +1026,9 @@ export default function PaymentsManager(props) {
                                 <AccordionDetails>
                                   <TransactionsTable
                                     data={transactionDataByOwner[ownerID][propertyID]}
+                                    profileId={getProfileId()}
+                                    isDeselecting={isDeselecting}
+                                    setIsDeselecting={setIsDeselecting}
                                     cashFlowTotal={globalCashFlowTotal[transactionDataByOwner[ownerID][propertyID][0].pur_property_id]}
                                     setCashFlowTotal={(newTotal) => handleTotalCashFlowChange(transactionDataByOwner[ownerID][propertyID][0].pur_property_id, newTotal)}
                                     total={globalTotal[transactionDataByOwner[ownerID][propertyID][0].pur_property_id]}
@@ -801,6 +1037,60 @@ export default function PaymentsManager(props) {
                                       handlePaymentDataChange(transactionDataByOwner[ownerID][propertyID][0].pur_property_id, newTotal, purchase_ids)
                                     }
                                     setSelectedItems={setSelectedItems}
+                                    selectedItems={selectedItems}
+                                    selectedRowsForTransaction={selectedRowsForTransaction}
+                                  />
+                                </AccordionDetails>
+                              </Accordion>
+                            ))}
+
+                            <br />
+                          </React.Fragment>
+                        ))}
+
+                      {tab === "by_recipient" &&
+                        Object.keys(transactionDataByRecipient)?.map((recpId, index) => (
+                          <React.Fragment key={recpId}>
+                            <br />
+                            <Grid item xs={12} marginBottom={10}>
+                              <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Recipient ID: {recpId}</Typography>
+                            </Grid>
+
+                            {Object.keys(transactionDataByRecipient[recpId])?.map((propertyID) => (
+                              <Accordion
+                                sx={{
+                                  backgroundColor: theme.palette.primary.main,
+                                  boxShadow: "none",
+                                  marginY: "10px",
+                                }}
+                                key={propertyID}
+                              >
+                                <Grid container justifyContent='flex-start' item xs={8}>
+                                  <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
+                                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls={`panel-${propertyID}-content`} id={`panel-${propertyID}-header`}>
+                                      <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
+                                        Property: {transactionDataByRecipient[recpId][propertyID][0].property_address}
+                                      </Typography>
+                                    </AccordionSummary>
+                                  </Grid>
+                                </Grid>
+
+                                <AccordionDetails>
+                                  <TransactionsTableForRecipient
+                                    data={transactionDataByRecipient[recpId][propertyID]}
+                                    profileId={getProfileId()}
+                                    recpId={recpId}
+                                    isDeselecting={isDeselecting}
+                                    setIsDeselecting={setIsDeselecting}
+                                    cashFlowTotal={globalCashFlowTotal[transactionDataByRecipient[recpId][propertyID][0].pur_property_id]}
+                                    setCashFlowTotal={(newTotal) => handleTotalCashFlowChange(transactionDataByRecipient[recpId][propertyID][0].pur_property_id, newTotal)}
+                                    total={globalTotal[transactionDataByRecipient[recpId][propertyID][0].pur_property_id]}
+                                    setTotal={(newTotal) => handleTotalChange(transactionDataByRecipient[recpId][propertyID][0].pur_property_id, newTotal)}
+                                    setPaymentData={(newTotal, purchase_ids) =>
+                                      handlePaymentDataChange(transactionDataByRecipient[recpId][propertyID][0].pur_property_id, newTotal, purchase_ids)
+                                    }
+                                    setSelectedItems={setSelectedItems}
+                                    selectedItems={selectedItems}
                                     selectedRowsForTransaction={selectedRowsForTransaction}
                                   />
                                 </AccordionDetails>
@@ -931,6 +1221,8 @@ export default function PaymentsManager(props) {
 function TransactionsTable(props) {
   // console.log("In BalanceDetailTable", props);
   const [data, setData] = useState([]);
+  const currentUserId = props?.profileId;
+  const [filteredData, setFilteredData] = useState([])
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedPayments, setSelectedPayments] = useState([]);
   const [paymentDueResult, setPaymentDueResult] = useState([]);
@@ -1002,26 +1294,91 @@ function TransactionsTable(props) {
     if (data && data.length > 0) {
       // console.log("ROHIT - 814 - without filteredData - ", data, " for property - ", data[0].pur_property_id);
       const filteredData = filterTransactions(data);
+
+      setFilteredData(filteredData)
       // setSelectedRows(filteredData.map((row) => row.index));
       // setSelectedRows([]);
-      if (props.selectedRowsForTransaction && props.selectedRowsForTransaction !== "") {
-        const filtereRow = filteredData.filter((row) => props.selectedRowsForTransaction.includes(row.pur_group)).map((row) => row.index);
+      // if (props.selectedRowsForTransaction && props.selectedRowsForTransaction !== "" && props.selectedRowsForTransaction?.length > 0) {
+      //   // const filtereRow = filteredData.filter((row) => props.selectedRowsForTransaction.includes(row.pur_group)).map((row) => row.index);
+      //   const givenIds = props.selectedRowsForTransaction;
 
-        console.log("selected rows - ", props.selectedRowsForTransaction, " calling for property - ", data[0].pur_property_id);
+      //   const preselectedRows = filteredData.filter((row) => {
+      //     const uniqueIds = new Set([ row.pur_payer, row.pur_receiver, ...givenIds, currentUserId]);
+      //     return uniqueIds.size === 2; // Allow only rows with exactly two unique IDs
+      //   });
 
-        setSelectedRows(filtereRow);
-        // setSelectedRows((prevSelectedRows) => {
-        //   const combinedRows = [...prevSelectedRows, ...filtereRow];
-        //   // Remove duplicates if needed
-        //   console.log("previous row - ", prevSelectedRows)
-        //   return Array.from(new Set(combinedRows));
-        // });
+      //   setSelectedRows(preselectedRows.map((row) => row.index));
+      //   // setSelectedRows((prevSelectedRows) => {
+      //   //   const combinedRows = [...prevSelectedRows, ...filtereRow];
+      //   //   // Remove duplicates if needed
+      //   //   console.log("previous row - ", prevSelectedRows)
+      //   //   return Array.from(new Set(combinedRows));
+      //   // });
 
-        console.log("after set selected rows inside data useeffect - ", selectedRows);
-      } else {
-        console.log("---- here-----");
-        setSelectedRows([]);
+      //   props.setSelectedItems((prevState) => {
+      //     const addedItems = preselectedRows.map((row) => ({
+      //       index: row.index,
+      //       ...row,
+      //     }));
+    
+      //     // Merge preselected rows with the global state
+      //     const updatedState = [...prevState, ...addedItems];
+      //     return Array.from(new Set(updatedState.map((item) => item.index))).map((index) =>
+      //       updatedState.find((item) => item.index === index)
+      //     );
+      //   });
+
+      //   // console.log("after set selected rows inside data useeffect - ", selectedRows);
+      // } else {
+
+      //   setSelectedRows([]);
+      // }
+
+      // Determine rows to preselect from props.selectedRowsForTransaction
+      let preselectedRows = [];
+      if (props.selectedRowsForTransaction && props.selectedRowsForTransaction.length > 0) {
+        const givenIds = props.selectedRowsForTransaction;
+
+        preselectedRows = filteredData.filter((row) => {
+          const uniqueIds = new Set([row.pur_payer, row.pur_receiver, ...givenIds, currentUserId]);
+          return uniqueIds.size === 2; // Allow only rows with exactly two unique IDs
+        });
+
       }
+
+      const representativeItem = props.selectedItems?.[0] || null;
+
+      // Include rows related to the selectedItems
+      let relatedRowsFromSelectedItems = [];
+      if (representativeItem) {
+        relatedRowsFromSelectedItems = filteredData.filter((row) => {
+          const uniqueIds = new Set([row.pur_payer, row.pur_receiver, representativeItem.pur_payer, representativeItem.pur_receiver]);
+          return uniqueIds.size === 2;
+        });
+      }
+
+      // Combine preselected rows and relatedrows to the selecteditems
+      const allPreselectedRows = [...preselectedRows, ...relatedRowsFromSelectedItems];
+
+      // Deduplicate rows
+      const uniquePreselectedRows = Array.from(new Set(allPreselectedRows.map((row) => row.index)))
+        .map((index) => allPreselectedRows.find((row) => row.index === index));
+
+      // Update selected rows locally
+      setSelectedRows(uniquePreselectedRows.map((row) => row.index));
+
+      props.setSelectedItems((prevState) => {
+        const addedItems = uniquePreselectedRows.map((row) => ({
+          index: row.index,
+          ...row,
+        }));
+
+        // Merge with previous state and deduplicate
+        const updatedState = [...prevState, ...addedItems];
+        return Array.from(new Set(updatedState.map((item) => item.index))).map((index) =>
+          updatedState.find((item) => item.index === index)
+        );
+      });
 
       setPaymentDueResult(
         filteredData.map((item) => ({
@@ -1031,6 +1388,53 @@ function TransactionsTable(props) {
       );
     }
   }, [data]);
+
+  useEffect(()=>{
+    if(props.isDeselecting){
+      return;
+    }
+
+    const representativeItem = props.selectedItems?.[0] || null;
+
+      // Include rows related to the selectedItems
+      let relatedRowsFromSelectedItems = [];
+      if (representativeItem) {
+        relatedRowsFromSelectedItems = filteredData.filter((row) => {
+          const uniqueIds = new Set([row.pur_payer, row.pur_receiver, representativeItem.pur_payer, representativeItem.pur_receiver]);
+          return uniqueIds.size === 2;
+        });
+      }
+
+      // Combine preselected rows and relatedrows to the selecteditems
+      const allPreselectedRows = [...relatedRowsFromSelectedItems];
+
+      // Deduplicate rows
+      const uniquePreselectedRows = Array.from(new Set(allPreselectedRows.map((row) => row.index)))
+        .map((index) => allPreselectedRows.find((row) => row.index === index));
+
+      // Update selected rows locally
+      setSelectedRows(uniquePreselectedRows.map((row) => row.index));
+
+      props.setSelectedItems((prevState) => {
+        const addedItems = uniquePreselectedRows.map((row) => ({
+          index: row.index,
+          ...row,
+        }));
+
+        // Merge with previous state and deduplicate
+        const updatedState = [...prevState, ...addedItems];
+        const deduplicatedState =  Array.from(new Set(updatedState.map((item) => item.index))).map((index) =>
+          updatedState.find((item) => item.index === index)
+        );
+
+        if (JSON.stringify(deduplicatedState) !== JSON.stringify(prevState)) {
+          return deduplicatedState;
+        }
+        return prevState;
+
+      });
+
+  },[props.selectedItems])
 
   useEffect(() => {
     var total = 0;
@@ -1075,10 +1479,10 @@ function TransactionsTable(props) {
     props.setPaymentData(total.toFixed(2), purchase_uid_mapping);
   }, [selectedRows]);
 
-  useEffect(() => {
-    console.log("selectedPayments - ", selectedPayments);
-    props.setSelectedItems(selectedPayments);
-  }, [selectedPayments]);
+  // useEffect(() => {
+  //   console.log("selectedPayments - ", selectedPayments);
+  //   props.setSelectedItems(selectedPayments);
+  // }, [selectedPayments]);
 
   useEffect(() => {
     const map = paymentDueResult.reduce((acc, row) => {
@@ -1189,44 +1593,84 @@ function TransactionsTable(props) {
   ];
 
   const handleSelectionModelChange = (newRowSelectionModel) => {
-    // console.log("ROHIT - newRowSelectionModel - ", newRowSelectionModel);
-    // console.log("ROHIT - paymentDueResult - ", paymentDueResult);
-    // console.log("ROHIT -  selectedRows - ", selectedRows);
+    props.setIsDeselecting(false)
 
     const addedRows = newRowSelectionModel.filter((rowId) => !selectedRows.includes(rowId));
     const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
 
     let updatedRowSelectionModel = [...newRowSelectionModel];
 
-    // console.log("ROHIT -  addedRows - ", addedRows);
-
     if (addedRows.length > 0) {
       // console.log("Added rows: ", addedRows);
       let newPayments = [];
 
       addedRows.forEach((item, index) => {
-        // console.log("ROHIT - item - ", item)
         // const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
         const addedPayment = paymentDueResult.find((row) => row.index === item);
-        // console.log("ROHIT - addedPayment - ", addedPayment)
 
         if (addedPayment) {
-          const relatedPayments = paymentDueResult.filter((row) => row.pur_group === addedPayment.pur_group);
-          // console.log("ROHIT - relatedPayments - ", relatedPayments)
+          // const relatedPayments = paymentDueResult.filter((row) => row.pur_group === addedPayment.pur_group);
 
-          newPayments = [...newPayments, ...relatedPayments];
-          const relatedRowIds = relatedPayments.map((payment) => payment.index);
-          updatedRowSelectionModel = [...new Set([...updatedRowSelectionModel, ...relatedRowIds])];
+          const relatedPayments = paymentDueResult.filter((row) => {
+            const uniqueIds = new Set([row.pur_payer, row.pur_receiver, addedPayment.pur_payer, addedPayment.pur_receiver]);
+            return uniqueIds.size === 2; 
+          });
+
+
+
+        //     newPayments = [...newPayments, ...relatedPayments];
+        //     const relatedRowIds = relatedPayments.map((payment) => payment.index);
+        //     updatedRowSelectionModel = [...new Set([...updatedRowSelectionModel, ...relatedRowIds])];
+        //   }
+        // });
+
+          if (relatedPayments.length > 0) {
+            // Remove previously selected rows
+
+            // updatedRowSelectionModel = relatedPayments.map((payment) => payment.index);
+            const relatedRowIds = relatedPayments.map((payment) => payment.index);
+            const deselectedRowIds = selectedRows.filter((rowId) => !relatedRowIds.includes(rowId));
+
+            // props.setSelectedItems((prevState) =>
+            //   prevState.filter((item) => !deselectedRowIds.includes(item.index))
+            // );
+            
+            // if(props.selectedItems.length > 0){
+            //   props.setIsDeselecting(true)
+            // }
+
+            props.setSelectedItems([])
+
+            updatedRowSelectionModel = relatedRowIds;
+
+            newPayments = [...relatedPayments];
+          }
         }
       });
 
       // console.log("newPayments - ", newPayments);
-      setSelectedPayments((prevState) => {
-        return [...prevState, ...newPayments];
+      // setSelectedPayments((prevState) => {
+      //   return [...prevState, ...newPayments];
+      // });
+      
+      setSelectedPayments(newPayments);
+
+      props.setSelectedItems((prevState) => {
+        const addedItems = newPayments.map((payment) => ({
+          index: payment.index,
+          ...payment,
+        }));
+  
+        // Merge added items with existing global state, ensuring no duplicates
+        const updatedState = [...prevState, ...addedItems];
+        return Array.from(new Set(updatedState.map((item) => item.index))).map((index) =>
+          updatedState.find((item) => item.index === index)
+        );
       });
     }
 
     if (removedRows.length > 0) {
+      props.setIsDeselecting(true)
       // console.log("Removed rows: ", removedRows);
       let removedPayments = [];
       let relatedRows = [];
@@ -1250,7 +1694,612 @@ function TransactionsTable(props) {
 
       updatedRowSelectionModel = updatedRowSelectionModel.filter((payment) => !allRowRemove.includes(payment));
       setSelectedPayments((prevState) => prevState.filter((payment) => !allRowRemove.includes(payment.index)));
+
+      props.setSelectedItems((prevState) =>
+        prevState.filter((item) => !allRowRemove.includes(item.index))
+      );
     }
+    
+    // setSelectedRows(newRowSelectionModel);
+    setSelectedRows(updatedRowSelectionModel);
+  };
+
+  if (paymentDueResult.length > 0) {
+    // console.log("Passed Data ", paymentDueResult);
+    return (
+      <>
+        <DataGrid
+          rows={paymentDueResult}
+          columns={columnsList}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 100,
+              },
+              sorting: {
+                sortModel: [
+                  { field: "pur_group", sort: "asc" },
+                  { field: "pur_payer", sort: "asc" },
+                ],
+              },
+            },
+          }}
+          // getRowId={(row) => row.purchase_uid}
+          getRowId={(row) => row.index}
+          pageSizeOptions={[10, 50, 100]}
+          checkboxSelection
+          // disableRowSelectionOnClick
+          rowSelectionModel={selectedRows}
+          onRowSelectionModelChange={handleSelectionModelChange}
+          sortModel={sortModel}
+          onSortModelChange={(newSortModel) => setSortModel(newSortModel)}
+        />
+        {/* {selectedRows.length > 0 && (
+          <div>Total selected amount: ${selectedRows.reduce((total, rowId) => total + parseFloat(paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due), 0)}</div>
+        )} */}
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} alignItems='center' sx={{ paddingTop: "15px" }}>
+          <Grid item xs={1} alignItems='center'></Grid>
+          <Grid item xs={9} alignItems='center'>
+            <Typography
+              sx={{
+                color: theme.typography.primary.blue,
+                // color: paymentDueResult.ps === "UNPAID" ? "green" : "red", // Set color based on condition
+                fontWeight: theme.typography.medium.fontWeight,
+                fontSize: theme.typography.smallFont,
+                fontFamily: "Source Sans Pro",
+              }}
+            >
+              Total To Be Paid
+            </Typography>
+          </Grid>
+
+          <Grid item xs={2} alignItems='right'>
+            <Typography
+              sx={{
+                color: theme.typography.primary.blue,
+                fontWeight: theme.typography.medium.fontWeight,
+                fontSize: theme.typography.smallFont,
+                fontFamily: "Source Sans Pro",
+              }}
+            >
+              ${" "}
+              {selectedRows
+                .reduce((total, selectedIndex) => {
+                  // const payment = paymentDueResult.find((row) => row.index === selectedIndex);
+                  const payment = paymentDueResultMap[selectedIndex];
+                  if (payment) {
+                    const amountDue = payment?.pur_amount_due;
+                    // const isExpense = payment.pur_cf_type === "expense";
+
+                    // Adjust the total based on whether the payment is an expense or revenue
+                    // return total + (isExpense ? -amountDue : amountDue);
+
+                    if (payment.pur_payer.startsWith("110")) {
+                      return total - amountDue;
+                    } else if (payment.pur_payer.startsWith("600")) {
+                      return total + amountDue;
+                    }
+                    // return total + 0;
+                  }
+                  return total + 0;
+                }, 0)
+                ?.toFixed(2)}
+            </Typography>
+          </Grid>
+        </Grid>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            marginBottom: "7px",
+            width: "100%",
+            height: "70px",
+          }}
+        >
+          <Typography
+            sx={{
+              color: "#A9A9A9",
+              fontWeight: theme.typography.primary.fontWeight,
+              fontSize: "15px",
+            }}
+          >
+            No Transactions
+          </Typography>
+        </Box>
+      </>
+    );
+  }
+}
+
+function TransactionsTableForRecipient(props) {
+  // console.log("In BalanceDetailTable", props);
+  const [data, setData] = useState([]);
+  const currentUserId = props?.profileId;
+  const [filteredData, setFilteredData] = useState([])
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedPayments, setSelectedPayments] = useState([]);
+  const [paymentDueResult, setPaymentDueResult] = useState([]);
+  const [paymentDueResultMap, setPaymentDueResultMap] = useState([]); // index to row mapping for quick lookup.
+
+  const [sortModel, setSortModel] = useState([
+    { field: "pur_group", sort: "asc" },
+    { field: "pur_payer", sort: "asc" },
+  ]);
+
+  const filterTransactions = (data) => {
+    const verifiedPurGroups = [];
+
+    data.forEach((transaction) => {
+      if (!verifiedPurGroups.includes(transaction.pur_group) && transaction.verified && transaction.verified.toLowerCase() === "verified") {
+        verifiedPurGroups.push(transaction.pur_group);
+      }
+    });
+
+    // console.log("ROHIT - 631 - verifiedPurGroups - ", verifiedPurGroups);
+
+    const newData = data.reduce((acc, item) => {
+      if (!acc[item.pur_group]) {
+        acc[item.pur_group] = [];
+      }
+      acc[item.pur_group].push(item);
+      return acc;
+    }, {});
+
+    const filteredValues = Object.keys(newData).reduce((acc, key) => {
+      const hasNon350Payer = newData[key].every((item) => !item.pur_payer.startsWith("350"));
+
+      if (hasNon350Payer) {
+        acc.push(...newData[key]); // Push the values instead of key-value pairs
+      }
+
+      return acc;
+    }, []);
+
+    filteredValues.forEach((transaction) => {
+      if ((transaction.pur_payer === props.recpId || transaction.pur_receiver === props.recpId) && !verifiedPurGroups.includes(transaction.pur_group) && transaction.payment_status?.toLowerCase() === "unpaid") {
+        verifiedPurGroups.push(transaction.pur_group);
+      }
+    });
+
+    return (
+      data
+        // .filter(item => (item.verified && item.verified.toLowerCase() === "verified"));
+        .filter((item) => verifiedPurGroups.includes(item.pur_group))
+        .filter((item) => item.pur_payer === props.recpId || item.pur_receiver === props.recpId)
+        .filter((item) => {
+          const total_paid = parseFloat(item.total_paid ? item.total_paid : "0");
+          const pur_amount_due = parseFloat(item.pur_amount_due ? item.pur_amount_due : "0");
+
+          return total_paid !== pur_amount_due;
+        })
+    );
+  };
+
+  useEffect(() => {
+    setData(props.data);
+  }, [props.data]);
+
+  // useEffect(() => {
+  //   // console.log("ROHIT - selectedRows - ", selectedRows);
+  // }, [selectedRows]);
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      // console.log("ROHIT - 814 - without filteredData - ", data, " for property - ", data[0].pur_property_id);
+      const filteredData = filterTransactions(data);
+
+      setFilteredData(filteredData)
+      // setSelectedRows(filteredData.map((row) => row.index));
+      // setSelectedRows([]);
+      // if (props.selectedRowsForTransaction && props.selectedRowsForTransaction !== "" && props.selectedRowsForTransaction?.length > 0) {
+      //   // const filtereRow = filteredData.filter((row) => props.selectedRowsForTransaction.includes(row.pur_group)).map((row) => row.index);
+      //   const givenIds = props.selectedRowsForTransaction;
+
+      //   const preselectedRows = filteredData.filter((row) => {
+      //     const uniqueIds = new Set([ row.pur_payer, row.pur_receiver, ...givenIds, currentUserId]);
+      //     return uniqueIds.size === 2; // Allow only rows with exactly two unique IDs
+      //   });
+
+      //   setSelectedRows(preselectedRows.map((row) => row.index));
+      //   // setSelectedRows((prevSelectedRows) => {
+      //   //   const combinedRows = [...prevSelectedRows, ...filtereRow];
+      //   //   // Remove duplicates if needed
+      //   //   console.log("previous row - ", prevSelectedRows)
+      //   //   return Array.from(new Set(combinedRows));
+      //   // });
+
+      //   props.setSelectedItems((prevState) => {
+      //     const addedItems = preselectedRows.map((row) => ({
+      //       index: row.index,
+      //       ...row,
+      //     }));
+    
+      //     // Merge preselected rows with the global state
+      //     const updatedState = [...prevState, ...addedItems];
+      //     return Array.from(new Set(updatedState.map((item) => item.index))).map((index) =>
+      //       updatedState.find((item) => item.index === index)
+      //     );
+      //   });
+
+      //   // console.log("after set selected rows inside data useeffect - ", selectedRows);
+      // } else {
+
+      //   setSelectedRows([]);
+      // }
+
+      // Determine rows to preselect from props.selectedRowsForTransaction
+      let preselectedRows = [];
+      if (props.selectedRowsForTransaction && props.selectedRowsForTransaction.length > 0) {
+        const givenIds = props.selectedRowsForTransaction;
+
+        preselectedRows = filteredData.filter((row) => {
+          const uniqueIds = new Set([row.pur_payer, row.pur_receiver, ...givenIds, currentUserId]);
+          return uniqueIds.size === 2; // Allow only rows with exactly two unique IDs
+        });
+
+      }
+
+      const representativeItem = props.selectedItems?.[0] || null;
+
+      // Include rows related to the selectedItems
+      let relatedRowsFromSelectedItems = [];
+      if (representativeItem) {
+        relatedRowsFromSelectedItems = filteredData.filter((row) => {
+          const uniqueIds = new Set([row.pur_payer, row.pur_receiver, representativeItem.pur_payer, representativeItem.pur_receiver]);
+          return uniqueIds.size === 2;
+        });
+      }
+
+      // Combine preselected rows and relatedrows to the selecteditems
+      const allPreselectedRows = [...preselectedRows, ...relatedRowsFromSelectedItems];
+
+      // Deduplicate rows
+      const uniquePreselectedRows = Array.from(new Set(allPreselectedRows.map((row) => row.index)))
+        .map((index) => allPreselectedRows.find((row) => row.index === index));
+
+      // Update selected rows locally
+      setSelectedRows(uniquePreselectedRows.map((row) => row.index));
+
+      props.setSelectedItems((prevState) => {
+        const addedItems = uniquePreselectedRows.map((row) => ({
+          index: row.index,
+          ...row,
+        }));
+
+        // Merge with previous state and deduplicate
+        const updatedState = [...prevState, ...addedItems];
+        return Array.from(new Set(updatedState.map((item) => item.index))).map((index) =>
+          updatedState.find((item) => item.index === index)
+        );
+      });
+
+      setPaymentDueResult(
+        filteredData.map((item) => ({
+          ...item,
+          pur_amount_due: parseFloat(item.pur_amount_due),
+        }))
+      );
+    }
+  }, [data]);
+
+  useEffect(()=>{
+    if(props.isDeselecting){
+      return;
+    }
+
+    const representativeItem = props.selectedItems?.[0] || null;
+
+      // Include rows related to the selectedItems
+      let relatedRowsFromSelectedItems = [];
+      if (representativeItem) {
+        relatedRowsFromSelectedItems = filteredData.filter((row) => {
+          const uniqueIds = new Set([row.pur_payer, row.pur_receiver, representativeItem.pur_payer, representativeItem.pur_receiver]);
+          return uniqueIds.size === 2;
+        });
+      }
+
+      // Combine preselected rows and relatedrows to the selecteditems
+      const allPreselectedRows = [...relatedRowsFromSelectedItems];
+
+      // Deduplicate rows
+      const uniquePreselectedRows = Array.from(new Set(allPreselectedRows.map((row) => row.index)))
+        .map((index) => allPreselectedRows.find((row) => row.index === index));
+
+      // Update selected rows locally
+      setSelectedRows(uniquePreselectedRows.map((row) => row.index));
+
+      props.setSelectedItems((prevState) => {
+        const addedItems = uniquePreselectedRows.map((row) => ({
+          index: row.index,
+          ...row,
+        }));
+
+        // Merge with previous state and deduplicate
+        const updatedState = [...prevState, ...addedItems];
+        const deduplicatedState =  Array.from(new Set(updatedState.map((item) => item.index))).map((index) =>
+          updatedState.find((item) => item.index === index)
+        );
+
+        if (JSON.stringify(deduplicatedState) !== JSON.stringify(prevState)) {
+          return deduplicatedState;
+        }
+        return prevState;
+
+      });
+
+  },[props.selectedItems])
+
+  useEffect(() => {
+    var total = 0;
+    var cashflow = 0;
+
+    let purchase_uid_mapping = [];
+
+    for (const item of selectedRows) {
+      let paymentItemData = paymentDueResult.find((element) => element.index === item);
+      // console.log("ROHIT - 687 - paymentItemData - ", paymentItemData);
+      // const purchaseIDs = paymentItemData.purchase_uid;
+
+      // JSON.parse(paymentItemData?.transactions).forEach(element => {
+      //   if(purchaseIDs.includes(element.purchase_uid)){
+      //     purchase_uid_mapping.push({ purchase_uid: element.purchase_uid, pur_amount_due: element.pur_amount_due.toFixed(2) });
+      //   }
+      // });
+      const purchaseIDs = paymentItemData.purchase_uid;
+      purchase_uid_mapping.push({ purchase_uid: purchaseIDs, pur_amount_due: paymentItemData.pur_amount_due.toFixed(2) });
+
+      // purchaseIDs.forEach( purID => {
+      // });
+
+      // console.log("payment item data", paymentItemData);
+
+      cashflow += parseFloat(paymentItemData.pur_amount_due);
+      // Adjust total based on pur_cf_type
+      if (paymentItemData.pur_payer.startsWith("110")) {
+        total -= parseFloat(paymentItemData.pur_amount_due);
+      } else if (paymentItemData.pur_payer.startsWith("600")) {
+        total += parseFloat(paymentItemData.pur_amount_due);
+      }
+
+      // total += parseFloat(paymentItemData.pur_amount_due)
+    }
+    console.log("selectedRows useEffect - total - ", total);
+    console.log("selectedRows useEffect - cashFlow total - ", cashflow);
+    console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
+
+    props.setTotal(total);
+    props.setCashFlowTotal(cashflow);
+    props.setPaymentData(total.toFixed(2), purchase_uid_mapping);
+  }, [selectedRows]);
+
+  // useEffect(() => {
+  //   console.log("selectedPayments - ", selectedPayments);
+  //   props.setSelectedItems(selectedPayments);
+  // }, [selectedPayments]);
+
+  useEffect(() => {
+    const map = paymentDueResult.reduce((acc, row) => {
+      acc[row.index] = row;
+      return acc;
+    }, {});
+    setPaymentDueResultMap(map);
+  }, [paymentDueResult]);
+
+  const getFontColor = (ps_value) => {
+    if (ps_value === "PAID") {
+      return theme.typography.primary.blue;
+    } else if (ps_value === "PAID LATE") {
+      return theme.typography.primary.aqua;
+    } else {
+      return theme.typography.primary.red; // UNPAID OR PARTIALLY PAID OR NULL
+    }
+  };
+
+  const columnsList = [
+    {
+      field: "pur_payer",
+      headerName: "Pur Payer",
+      flex: 1.5,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "pur_receiver",
+      headerName: "Pur Receiver",
+      flex: 1.5,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "pur_group",
+      headerName: "Pur Group",
+      flex: 1.5,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "pur_property_id",
+      headerName: "Property UID",
+      flex: 1.5,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "property_address",
+      headerName: "Address",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    {
+      field: "property_unit",
+      headerName: "Unit",
+      flex: 1,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    },
+    // {
+    //   field: "property_owner_id",
+    //   headerName: "Owner UID",
+    //   flex: 1,
+    //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    // },
+    {
+      field: "pur_amount_due",
+      headerName: "Expected",
+      flex: 1.5,
+      headerStyle: {
+        fontWeight: "bold", // Apply inline style to the header cell
+      },
+      renderCell: (params) => (
+        <Box
+          sx={{
+            fontWeight: "bold",
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            color: params.row.pur_payer.startsWith("600") ? "red" : "green",
+          }}
+        >
+          {params.row.pur_payer.startsWith("600") ? `${parseFloat(params.value).toFixed(2)}` : `(${parseFloat(params.value).toFixed(2)})`}
+        </Box>
+      ),
+      headerAlign: "right",
+    },
+    {
+      field: "total_paid",
+      headerName: "Actual",
+      flex: 1,
+      headerStyle: {
+        fontWeight: "bold", // Apply inline style to the header cell
+      },
+      renderCell: (params) => (
+        <Box
+          sx={{
+            fontWeight: "bold",
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+          }}
+        >
+          {params.value ? `${parseFloat(params.value).toFixed(2)}` : "0"}
+        </Box>
+      ),
+      headerAlign: "right",
+    },
+  ];
+
+  const handleSelectionModelChange = (newRowSelectionModel) => {
+    props.setIsDeselecting(false)
+
+    const addedRows = newRowSelectionModel.filter((rowId) => !selectedRows.includes(rowId));
+    const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
+
+    let updatedRowSelectionModel = [...newRowSelectionModel];
+
+    if (addedRows.length > 0) {
+      // console.log("Added rows: ", addedRows);
+      let newPayments = [];
+
+      addedRows.forEach((item, index) => {
+        // const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
+        const addedPayment = paymentDueResult.find((row) => row.index === item);
+
+        if (addedPayment) {
+          // const relatedPayments = paymentDueResult.filter((row) => row.pur_group === addedPayment.pur_group);
+
+          const relatedPayments = paymentDueResult.filter((row) => {
+            const uniqueIds = new Set([row.pur_payer, row.pur_receiver, addedPayment.pur_payer, addedPayment.pur_receiver]);
+            return uniqueIds.size === 2; 
+          });
+
+
+
+        //     newPayments = [...newPayments, ...relatedPayments];
+        //     const relatedRowIds = relatedPayments.map((payment) => payment.index);
+        //     updatedRowSelectionModel = [...new Set([...updatedRowSelectionModel, ...relatedRowIds])];
+        //   }
+        // });
+
+          if (relatedPayments.length > 0) {
+            // Remove previously selected rows
+
+            // updatedRowSelectionModel = relatedPayments.map((payment) => payment.index);
+            const relatedRowIds = relatedPayments.map((payment) => payment.index);
+            const deselectedRowIds = selectedRows.filter((rowId) => !relatedRowIds.includes(rowId));
+
+            // props.setSelectedItems((prevState) =>
+            //   prevState.filter((item) => !deselectedRowIds.includes(item.index))
+            // );
+            
+            // if(props.selectedItems.length > 0){
+            //   props.setIsDeselecting(true)
+            // }
+
+            props.setSelectedItems([])
+
+            updatedRowSelectionModel = relatedRowIds;
+
+            newPayments = [...relatedPayments];
+          }
+        }
+      });
+
+      // console.log("newPayments - ", newPayments);
+      // setSelectedPayments((prevState) => {
+      //   return [...prevState, ...newPayments];
+      // });
+      
+      setSelectedPayments(newPayments);
+
+      props.setSelectedItems((prevState) => {
+        const addedItems = newPayments.map((payment) => ({
+          index: payment.index,
+          ...payment,
+        }));
+  
+        // Merge added items with existing global state, ensuring no duplicates
+        const updatedState = [...prevState, ...addedItems];
+        return Array.from(new Set(updatedState.map((item) => item.index))).map((index) =>
+          updatedState.find((item) => item.index === index)
+        );
+      });
+    }
+
+    if (removedRows.length > 0) {
+      props.setIsDeselecting(true)
+      // console.log("Removed rows: ", removedRows);
+      let removedPayments = [];
+      let relatedRows = [];
+
+      removedRows.forEach((item, index) => {
+        let removedPayment = paymentDueResult.find((row) => row.index === item);
+
+        // we don't want to deselect all rows which are related to purchase_group because for maintenance 
+        // let relatedPayments = [];
+
+        // if (removedPayment) {
+        //   relatedPayments = paymentDueResult.filter((row) => row.pur_group === removedPayment.pur_group);
+        //   relatedRows = relatedPayments.map((payment) => payment.index);
+        // }
+
+        removedPayments.push(removedPayment);
+        // removedPayments.push(relatedPayments);
+      });
+      // console.log("removedPayments - ", removedPayments);
+      const allRowRemove = [...new Set([...removedRows, ...relatedRows])];
+
+      updatedRowSelectionModel = updatedRowSelectionModel.filter((payment) => !allRowRemove.includes(payment));
+      setSelectedPayments((prevState) => prevState.filter((payment) => !allRowRemove.includes(payment.index)));
+
+      props.setSelectedItems((prevState) =>
+        prevState.filter((item) => !allRowRemove.includes(item.index))
+      );
+    }
+    
     // setSelectedRows(newRowSelectionModel);
     setSelectedRows(updatedRowSelectionModel);
   };

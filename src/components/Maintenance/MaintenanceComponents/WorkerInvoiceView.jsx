@@ -28,22 +28,22 @@ export default function WorkerInvoiceView({maintenanceItem}){
     const [totalParts, setTotalParts] = useState(0)
 
     useEffect(()=>{
-        const partsTotal = JSON.parse(maintenanceItem.quote_services_expenses).parts.reduce((total, part) => {
+        const partsTotal = JSON.parse(maintenanceItem?.quote_services_expenses).parts.reduce((total, part) => {
             const cost = parseFloat(part.cost);
             const quantity = parseFloat(part.quantity);
             return total + (cost * quantity);
         }, 0);
 
-        const serviceTotal = JSON.parse(maintenanceItem.quote_services_expenses).labor.reduce((total, part) => {
+        const serviceTotal = JSON.parse(maintenanceItem?.quote_services_expenses).labor.reduce((total, part) => {
             const rate = parseFloat(part.rate || part.charge);
-            const hours = parseFloat(part.hours);
+            const hours = parseFloat(part.hours === 0 ? 1 : part.hours);
             return total + (rate * hours);
         }, 0);
 
         setTotalParts(partsTotal)
         setTotalService(serviceTotal)
 
-    }, [])
+    }, [maintenanceItem])
 
 	useEffect(() => {
 		if (scrollRef.current) {
@@ -186,8 +186,8 @@ export default function WorkerInvoiceView({maintenanceItem}){
                     partsWithIDs.push({
                         ...lb,
                         ID: index,
-                        rate: parseFloat(lb.rate),
-                        hours: parseFloat(lb.hours)
+                        rate: parseFloat(lb.rate || lb.charge),
+                        hours: parseFloat(lb.hours === 0? 1 : lb.hours)
                     });
                 });
 
@@ -352,7 +352,7 @@ export default function WorkerInvoiceView({maintenanceItem}){
                                                         marginTop:"10px",}}>
                                                 Estimation:
                                             </Typography>
-                                            {maintenanceItem?.quote_services_expenses && JSON.parse(maintenanceItem?.quote_services_expenses)?.event_type === 'Hourly' ? renderLabourHour(maintenanceItem) : null}
+                                            {maintenanceItem?.quote_services_expenses || JSON.parse(maintenanceItem?.quote_services_expenses)?.event_type === 'Hourly' ? renderLabourHour(maintenanceItem) : null}
                                         </Grid>
 
                                         {/* quote expense service for parts */}
