@@ -245,13 +245,13 @@ const TenantLease = () => {
         // const duration = leaseEndDate.diff(leaseStartDate, "day"); // Duration in days
     
         // Set the start date to remain same as lease_start
-        initialStartDate = leaseStartDate;
+        initialStartDate = initialStartDate != null ? initialStartDate : leaseStartDate;
         // console.log("In Tenant Lease initialStartDate", initialStartDate);
         // console.log("In Tenant Lease duration", duration);
         // Set the new end date to be initialStartDate + duration
         // console.log("In Tenant Lease initialEndDate", initialStartDate.add(duration, "days"));
         // initialEndDate = leaseEndDate.add(duration, "day");
-        initialEndDate = leaseEndDate;
+        initialEndDate = initialEndDate != null ? initialEndDate : leaseEndDate;
         // console.log("In Tenant Lease initialEndDate", initialEndDate);
         // Set move-in date same as the start date
         initialMoveInDate = initialStartDate;
@@ -433,7 +433,9 @@ const TenantLease = () => {
 
   useEffect(() => {
     console.log("ROHIT - 403 - datesToggle - ", datesToggle);
-    setDates();
+    if(datesToggle !== "select"){
+      setDates();
+    }    
   }, [datesToggle]);
 
   useEffect(() => {
@@ -988,12 +990,38 @@ const TenantLease = () => {
 
   const valueToDayMap = new Map(Array.from(daytoValueMap, ([key, value]) => [value, key]));
 
+  const checkValidDueDate = (fee) => {
+    console.log("ROHIT - fee - ", fee);
+    // ((fee.due_by == null || fee.due_by === "") && (fee.due_by_date == null || fee.due_by_date === "" || !isValidDate(fee.due_by_date))) 
+    
+    if (fee.frequency === "Monthly" || fee.frequency === "Quarterly" || fee.frequency === "Semi-Monthly" || fee.frequency === "Bi-Weekly" || fee.frequency === "Weekly") {
+      if( fee.due_by === ""  || fee.due_by == null) {
+        console.log("due_by is invalid")
+        return true;
+      } else {
+        return false;
+      }
+
+    } else if (fee.frequency === "One Time" || fee.frequency === "Annually" || fee.frequency === "Semi-Annually") {
+      // return fee.due_by_date !== "" ? `${fee.due_by_date}` : "No Due Date";
+      if( fee.due_by_date === ""  || fee.due_by_date == null) {
+        console.log("due_by_date is invalid - ", fee.due_by_date)
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      alert("DEBUG - 1012 - INVALID FEE FREQUENCY - ", fee.frequency);
+    }
+    
+  }
+
   const checkRequiredFields = () => {
     if (fees.length === 0) {
       return false;
     }
     let retVal = true;
-    fees.map((fee) => {
+    fees.forEach((fee) => {
       // console.log("859 - fee.due_by_date - ", fee.due_by_date);
       if (
         fee.fee_name == null ||
@@ -1004,7 +1032,7 @@ const TenantLease = () => {
         fee.charge === "" ||
         fee.frequency == null ||
         fee.frequency === "" ||
-        ((fee.due_by == null || fee.due_by === "") && (fee.due_by_date == null || fee.due_by_date === "" || !isValidDate(fee.due_by_date))) ||
+        checkValidDueDate(fee) ||
         fee.late_by == null ||
         fee.late_fee == null ||
         fee.late_fee === "" ||
@@ -1134,7 +1162,7 @@ const TenantLease = () => {
       if (!checkRequiredFields()) {
         // console.log("check here -- error no fees");
         // setShowMissingFieldsPrompt(true);
-        openDialog("Error", `Please fill out all required fields.`, "error");
+        openDialog("Error", `Please check lease fees.`, "error");
         return;
       }
       setShowSpinner(true);
@@ -1261,7 +1289,7 @@ const TenantLease = () => {
       if (!checkRequiredFields()) {
         // console.log("check here -- error no fees");
         // setShowMissingFieldsPrompt(true);
-        openDialog("Error", `Please fill out all required fields.`, "error");
+        openDialog("Error", `Please check lease fees.`, "error");
         return;
       }
       setShowSpinner(true);
@@ -1666,6 +1694,8 @@ const TenantLease = () => {
   const getLeaseStatusText = (status) => {
     console.log("ROHIT - 1638 - status - ", status);
     switch(status){
+      case "RENEW PROCESSING":
+        return "Extended";
       case "WITHDRAWN":
         return "Withdrawn";
       case "REFUSED":
