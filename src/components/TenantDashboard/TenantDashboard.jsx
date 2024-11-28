@@ -575,6 +575,7 @@ const TenantDashboard = () => {
                       setViewRHS(true);
                     }
                     setRightPane({ type: "listings" });
+                    handleSelectProperty(null);
                   }}
                 >
                   <SearchIcon />

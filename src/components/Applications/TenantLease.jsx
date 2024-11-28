@@ -46,6 +46,10 @@ import ChildrenOccupant from "../Leases/ChildrenOccupant";
 import PetsOccupant from "../Leases/PetsOccupant";
 import VehiclesOccupant from "../Leases/VehiclesOccupant";
 import GenericDialog from "../GenericDialog";
+import Switch from '@mui/material/Switch';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -157,44 +161,117 @@ const TenantLease = () => {
   // Intermediate variables to calculate the initial dates
   let initialStartDate, initialEndDate, initialMoveInDate;
   console.log("158 - In Tenant Lease -  page - ", page);
-  if (page === "create_lease" || page === "refer_tenant") {
-    initialStartDate = dayjs();
-    // initialEndDate = dayjs().add(1, "year").subtract(1, "day");
-    initialEndDate = property.lease_end ? dayjs(property.lease_end) : dayjs().add(1, "year").subtract(1, "day");
-    initialMoveInDate = initialStartDate;
-  } else if (page === "edit_lease") {
-    initialStartDate = application.lease_start ? dayjs(application.lease_start) : dayjs();
-    initialEndDate = application.lease_end ? dayjs(application.lease_end) : dayjs().add(1, "year").subtract(1, "day");
-    initialMoveInDate = application.lease_move_in_date ? dayjs(application.lease_move_in_date) : dayjs();
-  } else if (page === "renew_lease") {
-    // Calculate the duration between lease_start and lease_end
-    const oldDuration = dayjs(property.lease_end).diff(dayjs(property.lease_start), "day"); // Duration in days
-    let leaseStartDate = dayjs(property.lease_end).add(1, "day");
-    let leaseEndDate = leaseStartDate.add(oldDuration, "day");
 
-    if((application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") && application.lease_start != null){
-      leaseStartDate = dayjs(application.lease_start);
+  const setDates = () => {
+    if(datesToggle === "current_lease"){
+      if (page === "create_lease" || page === "refer_tenant") {
+        initialStartDate = dayjs();
+        // initialEndDate = dayjs().add(1, "year").subtract(1, "day");
+        initialEndDate = property.lease_end ? dayjs(property.lease_end) : dayjs().add(1, "year").subtract(1, "day");
+        initialMoveInDate = initialStartDate;
+      } else if (page === "edit_lease") {
+        initialStartDate = application.lease_start ? dayjs(application.lease_start) : dayjs();
+        initialEndDate = application.lease_end ? dayjs(application.lease_end) : dayjs().add(1, "year").subtract(1, "day");
+        initialMoveInDate = application.lease_move_in_date ? dayjs(application.lease_move_in_date) : dayjs();
+      } else if (page === "renew_lease") {
+        // Calculate the duration between lease_start and lease_end
+        const oldDuration = dayjs(property.lease_end).diff(dayjs(property.lease_start), "day"); // Duration in days
+        let leaseStartDate = dayjs(property.lease_end).add(1, "day");
+        let leaseEndDate = leaseStartDate.add(oldDuration, "day");
+    
+        if((application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") && application.lease_start != null){
+          leaseStartDate = dayjs(application.lease_start);
+        }
+        if((application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") && application.lease_end != null){
+          leaseEndDate = dayjs(application.lease_end);
+        }
+        // const leaseEndDate = leaseStartDate + (dayjs(property.lease_end) - dayjs(property.lease_start));
+        // console.log("In Tenant Lease leaseStartDate", leaseStartDate);
+    
+        // const duration = leaseEndDate.diff(leaseStartDate, "day"); // Duration in days
+    
+        // Set the start date to remain same as lease_start
+        initialStartDate = leaseStartDate;
+        // console.log("In Tenant Lease initialStartDate", initialStartDate);
+        // console.log("In Tenant Lease duration", duration);
+        // Set the new end date to be initialStartDate + duration
+        // console.log("In Tenant Lease initialEndDate", initialStartDate.add(duration, "days"));
+        // initialEndDate = leaseEndDate.add(duration, "day");
+        initialEndDate = leaseEndDate;
+        // console.log("In Tenant Lease initialEndDate", initialEndDate);
+        // Set move-in date same as the start date
+        initialMoveInDate = initialStartDate;
+      }
+    } else if (datesToggle === "active_lease" ) {
+      if (page === "create_lease" || page === "refer_tenant") {
+        initialStartDate = dayjs();
+        // initialEndDate = dayjs().add(1, "year").subtract(1, "day");
+        initialEndDate = property.lease_end ? dayjs(property.lease_end) : dayjs().add(1, "year").subtract(1, "day");
+        initialMoveInDate = initialStartDate;
+      } else if (page === "edit_lease") {        
+        initialStartDate = property.lease_start ? dayjs(property.lease_start) : dayjs();
+        initialEndDate = property.lease_end ? dayjs(property.lease_end) : dayjs().add(1, "year").subtract(1, "day");
+        initialMoveInDate = property.lease_move_in_date ? dayjs(property.lease_move_in_date) : dayjs();
+      } else if (page === "renew_lease") {
+        // Calculate the duration between lease_start and lease_end
+        const oldDuration = dayjs(property.lease_end).diff(dayjs(property.lease_start), "day"); // Duration in days
+        let leaseStartDate = dayjs(property.lease_start);
+        let leaseEndDate = dayjs(property.lease_end);            
+        initialStartDate = leaseStartDate;
+                
+        initialEndDate = leaseEndDate;        
+        initialMoveInDate = initialStartDate;
+      }
+
+    } else if(datesToggle === "select"){
+      // initialStartDate = null;                
+      // initialEndDate = null;        
+      // initialMoveInDate = null;
     }
-    if((application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") && application.lease_end != null){
-      leaseEndDate = dayjs(application.lease_end);
-    }
-    // const leaseEndDate = leaseStartDate + (dayjs(property.lease_end) - dayjs(property.lease_start));
-    // console.log("In Tenant Lease leaseStartDate", leaseStartDate);
 
-    // const duration = leaseEndDate.diff(leaseStartDate, "day"); // Duration in days
-
-    // Set the start date to remain same as lease_start
-    initialStartDate = leaseStartDate;
-    // console.log("In Tenant Lease initialStartDate", initialStartDate);
-    // console.log("In Tenant Lease duration", duration);
-    // Set the new end date to be initialStartDate + duration
-    // console.log("In Tenant Lease initialEndDate", initialStartDate.add(duration, "days"));
-    // initialEndDate = leaseEndDate.add(duration, "day");
-    initialEndDate = leaseEndDate;
-    // console.log("In Tenant Lease initialEndDate", initialEndDate);
-    // Set move-in date same as the start date
-    initialMoveInDate = initialStartDate;
+    setStartDate(initialStartDate);
+    setEndDate(initialEndDate);
+    setMoveInDate(initialMoveInDate);
   }
+
+  // if (page === "create_lease" || page === "refer_tenant") {
+  //   initialStartDate = dayjs();
+  //   // initialEndDate = dayjs().add(1, "year").subtract(1, "day");
+  //   initialEndDate = property.lease_end ? dayjs(property.lease_end) : dayjs().add(1, "year").subtract(1, "day");
+  //   initialMoveInDate = initialStartDate;
+  // } else if (page === "edit_lease") {
+  //   initialStartDate = application.lease_start ? dayjs(application.lease_start) : dayjs();
+  //   initialEndDate = application.lease_end ? dayjs(application.lease_end) : dayjs().add(1, "year").subtract(1, "day");
+  //   initialMoveInDate = application.lease_move_in_date ? dayjs(application.lease_move_in_date) : dayjs();
+  // } else if (page === "renew_lease") {
+  //   // Calculate the duration between lease_start and lease_end
+  //   const oldDuration = dayjs(property.lease_end).diff(dayjs(property.lease_start), "day"); // Duration in days
+  //   let leaseStartDate = dayjs(property.lease_end).add(1, "day");
+  //   let leaseEndDate = leaseStartDate.add(oldDuration, "day");
+
+  //   if((application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") && application.lease_start != null){
+  //     leaseStartDate = dayjs(application.lease_start);
+  //   }
+  //   if((application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") && application.lease_end != null){
+  //     leaseEndDate = dayjs(application.lease_end);
+  //   }
+  //   // const leaseEndDate = leaseStartDate + (dayjs(property.lease_end) - dayjs(property.lease_start));
+  //   // console.log("In Tenant Lease leaseStartDate", leaseStartDate);
+
+  //   // const duration = leaseEndDate.diff(leaseStartDate, "day"); // Duration in days
+
+  //   // Set the start date to remain same as lease_start
+  //   initialStartDate = leaseStartDate;
+  //   // console.log("In Tenant Lease initialStartDate", initialStartDate);
+  //   // console.log("In Tenant Lease duration", duration);
+  //   // Set the new end date to be initialStartDate + duration
+  //   // console.log("In Tenant Lease initialEndDate", initialStartDate.add(duration, "days"));
+  //   // initialEndDate = leaseEndDate.add(duration, "day");
+  //   initialEndDate = leaseEndDate;
+  //   // console.log("In Tenant Lease initialEndDate", initialEndDate);
+  //   // Set move-in date same as the start date
+  //   initialMoveInDate = initialStartDate;
+  // }
 
   // Set state using intermediate variables
   const [startDate, setStartDate] = useState(initialStartDate);
@@ -275,6 +352,23 @@ const TenantLease = () => {
   const [dialogMessage, setDialogMessage] = useState("");
   const [dialogSeverity, setDialogSeverity] = useState("info");
 
+
+  const getDatesToggleInitialValue = () => {
+    if(["NEW"].includes(application?.lease_status)){
+      return "select";
+    }
+    //  else if(["RENEW NEW", "PROCESSING", "RENEW PROCESSING", "WITHDRAWN", "RENEW WITHDRAWN", "REJECTED", "RENEW REJECTED", "REFUSED", "RENEW REFUSED", "RESCIND", "RENEW RESCINDED"].includes(application.lease_status)) {
+    //   return "current_lease";
+    // } 
+    else {
+      return "current_lease";
+    }
+  }
+  
+  const [datesToggle, setDatesToggle] = useState(getDatesToggleInitialValue());
+
+  
+
   const openDialog = (title, message, severity) => {
     setDialogTitle(title); // Set custom title
     setDialogMessage(message); // Set custom message
@@ -303,6 +397,15 @@ const TenantLease = () => {
   //   console.log("260 - leaseVehicles - ", leaseVehicles)
 
   // }, [leaseAdults, leaseChildren, leasePets, leaseVehicles]);
+
+  useEffect(() => {    
+    setDates();
+  }, []);
+
+  useEffect(() => {
+    console.log("ROHIT - 403 - datesToggle - ", datesToggle);
+    setDates();
+  }, [datesToggle]);
 
   useEffect(() => {
     const names = utilityNames?.reduce((map, item) => {
@@ -1531,6 +1634,33 @@ const TenantLease = () => {
     setTenants(updatedTenants);
   };
 
+  const getLeaseStatusText = (status) => {
+    console.log("ROHIT - 1619 - status - ", status);
+    switch(status){
+      case "WITHDRAWN":
+        return "Withdrawn";
+      case "REFUSED":
+        return "Refused";
+      case "RENEW REFUSED":
+        return "Refused";
+      case "REJECTED":
+        return "Rejected";
+      case "RENEW REJECTED":
+        return "Rejected";
+      case "RESCIND":
+        return "Rescinded";
+      case "RENEW RESCINDED":
+        return "Rescinded";
+    }
+  }
+
+  const handleDatesRadioChange = (value) => {
+    console.log("Selected value:", value);
+    // Add your logic here based on the selected radio button
+    setDatesToggle(value);
+  };
+  
+
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ backgroundColor: "#F2F2F2", borderRadius: "10px", margin: "10px", padding: "15px", fontFamily: "Source Sans Pro" }}>
@@ -1597,7 +1727,10 @@ const TenantLease = () => {
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       value={startDate}
-                      onChange={handleStartDateChange}
+                      onChange={(newValue) => {
+                        setDatesToggle("select");
+                        handleStartDateChange(newValue);
+                      }}
                       slots={{
                         openPickerIcon: CalendarIcon,
                       }}
@@ -1621,8 +1754,11 @@ const TenantLease = () => {
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       value={endDate}
-                      minDate={startDate}
-                      onChange={handleEndDateChange}
+                      minDate={startDate}                      
+                      onChange={(newValue) => {
+                        setDatesToggle("select");
+                        handleEndDateChange(newValue);
+                      }}
                       slots={{
                         openPickerIcon: CalendarIcon,
                       }}
@@ -1647,8 +1783,11 @@ const TenantLease = () => {
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       value={moveInDate}
-                      minDate={startDate}
-                      onChange={handleMoveInDateChange}
+                      minDate={startDate}                      
+                      onChange={(newValue) => {
+                        setDatesToggle("select");
+                        handleMoveInDateChange(newValue);
+                      }}
                       slots={{
                         openPickerIcon: CalendarIcon,
                       }}
@@ -1699,6 +1838,80 @@ const TenantLease = () => {
                   />
                 </Grid>
               </Grid>
+              {
+                (!(["NEW", "PROCESSING", "WITHDRAWN", "REJECTED", ].includes(application.lease_status))) && (
+                  <Grid container item xs={12} sx={{ marginTop: "10px", justifyContent: "space-evenly" }}>
+                    <Grid item container direction='row' xs={12}>
+                      <Grid item xs={12} sx={{ marginTop: "5px", justifyContent: "flex-start" }}>
+                      <FormControl>
+                        
+                        <RadioGroup
+                          row
+                          sx={{
+                            '& .MuiFormControlLabel-root': {
+                              marginRight: '20px',
+                            },
+                          }}
+                          aria-labelledby="dates-radio-buttons-group-label"
+                          defaultValue="female"
+                          name="radio-buttons-group"
+                          value={datesToggle}
+                          onChange={(event) => handleDatesRadioChange(event.target.value)}
+                        >
+                          <FormControlLabel
+                            value="select"
+                            control={<Radio />}
+                            label={
+                              <Typography
+                                sx={{ 
+                                  color: "#160449",
+                                  fontWeight: "bold",
+                                  fontSize: "14px",
+                                }}
+                              >
+                                Select New Lease Dates
+                              </Typography>
+                            }
+                            
+                          />
+                          <FormControlLabel
+                            value="active_lease"
+                            control={<Radio />}
+                            label={
+                              <Typography
+                                sx={{ 
+                                  color: "#160449",
+                                  fontWeight: "bold",
+                                  fontSize: "14px",
+                                }}
+                              >
+                                Dates from Active Lease: {property?.lease_uid}
+                              </Typography>
+                            }
+                          />
+                          <FormControlLabel
+                            value="current_lease"
+                            control={<Radio />}                        
+                            label={
+                              <Typography
+                                sx={{ 
+                                  color: "#160449",
+                                  fontWeight: "bold",
+                                  fontSize: "14px",
+                                }}
+                              >
+                                {`Dates from ${getLeaseStatusText(application.lease_status)} Lease: ${application?.lease_uid}`} 
+                              </Typography>
+                            }
+                          />
+                          
+                        </RadioGroup>
+                      </FormControl>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                )
+              }                                          
               <Grid container item xs={12} sx={{ marginTop: "10px", justifyContent: "space-evenly" }}>
                 <Grid item container direction='row' xs={12}>
                   <Grid item xs={12} sx={{ marginTop: "5px", justifyContent: "flex-start" }}>

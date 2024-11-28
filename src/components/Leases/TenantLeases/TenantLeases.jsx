@@ -332,7 +332,7 @@ function TenantLeases(props) {
 
         // if lease status is RENEW PROCESSING update the current lease's renew status
         if(lease.lease_status === "RENEW PROCESSING"){
-          await updateCurrentLease();
+          await updateCurrentLease("RENEW REFUSED");
         }
 
 
@@ -351,11 +351,11 @@ function TenantLeases(props) {
     }
   }
 
-  async function updateCurrentLease() {
+  async function updateCurrentLease(renewStatus) {
     const leaseApplicationFormData = new FormData();
 
     leaseApplicationFormData.append("lease_uid", property.lease_uid);
-    leaseApplicationFormData.append("lease_renew_status", "RENEW REFUSED");    
+    leaseApplicationFormData.append("lease_renew_status", renewStatus);    
 
     try {
       const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
@@ -374,6 +374,30 @@ function TenantLeases(props) {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  async function handleEndApprovedLease() {
+    const leaseApplicationFormData = new FormData();
+
+    leaseApplicationFormData.append("lease_uid", lease.lease_uid);
+    leaseApplicationFormData.append("lease_renew_status", "EARLY TERMINATION");    
+
+    try {
+      const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+        method: "PUT",
+        body: leaseApplicationFormData,
+      });
+      const data = await response.json();
+      // if (data.lease_update.code === 200) {
+      if(response.ok){                
+        openDialog("Success",`Successfully sent a request to the Property Manager to end the approved lease.`,"success");                
+      } else {
+        console.log(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
   }
 
   async function handleTenantAccept() {
@@ -1083,6 +1107,38 @@ function TenantLeases(props) {
                     </Button>
                   </CenteringBox>
                 </Grid>
+              </Grid>
+            )
+          }
+                    {
+            lease.lease_status === "APPROVED" && (            
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <CenteringBox>
+                    <Button
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "#CB8E8E",
+                        borderRadius: "5px",
+                        padding: "5px 10px",
+                        minWidth: "90px",
+                        width: "150px",
+                        fontSize: "14px",
+                        fontWeight: "700",
+                        color: "#FFFFFF",
+                        textTransform: "none",
+                        "&:hover": {
+                          backgroundColor: "#A75A5A",
+                        },
+                      }}
+                      onClick={() => handleEndApprovedLease()}
+                    >
+                      End Lease Early
+                    </Button>
+                  </CenteringBox>
+                </Grid>                
               </Grid>
             )
           }

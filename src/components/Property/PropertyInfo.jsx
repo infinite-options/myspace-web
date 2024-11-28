@@ -130,6 +130,7 @@ const PropertyInfo = (props) => {
   }
 
   function renderCorrectButtonText() {
+    console.log("ROHIT - 133 - status - ", status);
     if (status === "" || status === "WITHDRAWN" || status === "ENDED" || status === "REFUSED" || status === "RESCIND" || status === "REJECTED") {
       return "Apply Now";
     } else if (status === "NEW" || status === "RENEW PROCESSING") {

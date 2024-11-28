@@ -42,6 +42,7 @@ import { json, Navigate } from "react-router-dom";
 export default function TenantApplicationEdit(props) {
   const { getList } = useContext(ListsContext);
 //   console.log("44 - props", props);
+  console.log("ROHIT - 45 - props.status", props.status);
   // const [adults, setAdults] = useState(adultOccupants? adultOccupants : []);
   // const [children, setChildren] = useState(childOccupants? childOccupants : []);
   // const [pets, setPets] = useState(petOccupants? petOccupants : []);
@@ -791,7 +792,7 @@ export default function TenantApplicationEdit(props) {
     // } else {
     //     console.log("tenant updating / renewing new lease");
     // }
-    if (lease[0]?.lease_uid == null || status === null || status === "" || status === "WITHDRAWN" || status === "REJECTED" || status === "REFUSED") {
+    if (lease[0]?.lease_uid == null || status === null || status === "" || status === "WITHDRAWN" || status === "REJECTED" || status === "REFUSED" || status === "RESCIND") {
       if (props.setFirstPage) {
         props.setFirstPage(false);
       }
