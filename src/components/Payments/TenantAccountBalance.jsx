@@ -49,7 +49,6 @@ const TenantAccountBalance = ({
   const navigate = useNavigate();
   const open = Boolean(anchorEl);
   const balanceDue = parseFloat(balanceDetails[0]?.amountDue || 0);
-  console.log("==dhyey debug in balance table == ", balanceDetails);
   // // console.log()
   // console.log("lease", leaseDetails);
   // console.log("propertydata", propertyData);
