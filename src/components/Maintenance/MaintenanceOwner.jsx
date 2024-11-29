@@ -366,7 +366,7 @@ export function MaintenanceOwner() {
         </Backdrop>
       ): (
       <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
-        <Grid container sx={{ padding: "10px" }}>
+        <Grid container sx={{ padding: "10px", flex:1 }} spacing={4}>
           {(!isMobile || !viewRHS) && (<Grid
             item
             xs={12}
@@ -380,12 +380,13 @@ export function MaintenanceOwner() {
           >
             <Paper
                 sx={{
-                  margin: "5px",
+                  // margin: "5px",
                   backgroundColor: theme.palette.primary.main,
                   width: "98%",
                   marginRight: isMobile ? "5px" : "10px",
-                  paddingTop: "10px",
-                  paddingBottom: "30px",
+                  // paddingTop: "10px",
+                  // paddingBottom: "30px",
+                  borderRadius: "10px",
                 }}
               >
                 <Stack
@@ -402,7 +403,7 @@ export function MaintenanceOwner() {
                     <Button onClick={handleBackButton}>
                       <ArrowBackIcon
                         sx={{
-                          color: theme.typography.common.blue,
+                          color: "#160449",
                           fontSize: "30px",
                           margin: "5px",
                         }}
@@ -424,7 +425,7 @@ export function MaintenanceOwner() {
                     <Button onClick={() => navigateToAddMaintenanceItem()} id='addMaintenanceButton'>
                       <AddIcon
                         sx={{
-                          color: theme.typography.common.blue,
+                          color: "#160449",
                           fontSize: "30px",
                           margin: "5px",
                         }}

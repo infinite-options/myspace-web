@@ -1,6 +1,7 @@
 .announcement-container {
   fontfamily: "Source Sans Pro";
   color: #160449;
+  margin-bottom: 50px;
 }
 .announcement-title {
   display: flex;
@@ -39,8 +40,7 @@
 .announcement-menu-container {
   display: flex;
   flex-direction: column;
-
-  background-color: #f2f2f2;
+  background-color: #ffffff;
   border-radius: 10px;
   margin-left: 25px;
   margin-right: 25px;
@@ -50,7 +50,7 @@
 .announcement-searchbar-container {
   display: flex;
   flex-direction: row;
-  width: 90%;
+  /* width: 90%; */
   background-color: #f2f2f2;
   border-radius: 10px;
   margin-left: 25px;
@@ -63,13 +63,10 @@
 .announcement-searchbar {
   display: flex;
   flex-direction: row;
-  background-color: #a9aaab19;
   width: 90%;
-  height: 30px;
+  height: 50px;
   align-items: center;
   border-radius: 10px;
-  margin-top: 12px;
-  padding-left: 20px;
 }
 .searchbar-icon {
   margin: 8px;
