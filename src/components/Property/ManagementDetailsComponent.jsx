@@ -50,7 +50,7 @@ export default function ManagementDetailsComponent({
   const [showManagerEndContractDialog, setShowManagerEndContractDialog] = useState(false);
   const [showRenewContractDialog, setShowRenewContractDialog] = useState(false);
   const [contractEndNotice, setContractEndNotice] = useState(activeContract?.contract_end_notice_period ? Number(activeContract?.contract_end_notice_period) : 30);
-
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   // console.log("currentProperty?.maintenance - ", currentProperty?.maintenance);
 
   useEffect(() => {
@@ -124,7 +124,7 @@ export default function ManagementDetailsComponent({
               fontWeight: theme.typography.primary.fontWeight,
               fontSize: theme.typography.largeFont,
               textAlign: "center",
-              paddingLeft: "38%",
+              paddingLeft: isMobile? "28%": "38%",
               // flexGrow: 1
             }}
           >
@@ -520,8 +520,9 @@ export default function ManagementDetailsComponent({
                           textTransform: "none",
                           color: "#3D5CAC",
                           fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: "12px",
-                          whiteSpace: "nowrap",
+                          fontSize: isMobile? "10px": "12px",
+                          whiteSpace: isMobile ? "normal" : "nowrap", // Allow wrapping on mobile, no wrapping on desktop
+    wordWrap: isMobile ? "break-word" : "normal",
                           //   marginLeft: "1%", // Adjusting margin for icon and text
                         }}
                       >
@@ -564,8 +565,9 @@ export default function ManagementDetailsComponent({
                           textTransform: "none",
                           color: "#FFFFFF",
                           fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: "12px",
-                          whiteSpace: "nowrap",
+                          fontSize: isMobile? "10px": "12px",
+                          whiteSpace: isMobile ? "normal" : "nowrap", // Allow wrapping on mobile, no wrapping on desktop
+    wordWrap: isMobile ? "break-word" : "normal",
                           //   marginLeft: "1%", // Adjusting margin for icon and text
                         }}
                       >
@@ -619,8 +621,9 @@ export default function ManagementDetailsComponent({
                           textTransform: "none",
                           color: "#FFFFFF",
                           fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: "12px",
-                          whiteSpace: "nowrap",
+                          fontSize: isMobile? "10px": "12px",
+                          whiteSpace: isMobile ? "normal" : "nowrap", // Allow wrapping on mobile, no wrapping on desktop
+    wordWrap: isMobile ? "break-word" : "normal",
                           //   marginLeft: "1%", // Adjusting margin for icon and text
                         }}
                       >

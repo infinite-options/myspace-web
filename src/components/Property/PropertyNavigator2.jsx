@@ -1369,9 +1369,13 @@ export default function PropertyNavigator2({
         </Grid>
         {/* End Property Navigator Header Including Address and x of y Properties */}
       </Box>
-      <Box sx={{ marginTop: "26px", padding: isMobile ? "0px" : "20px" }}>
-        <Box sx={{ height: "30px" }}>
-          <Tabs sx={{ height: "30px" }} value={currentTab} onChange={handleTabChange} aria-label='property details' variant='fullWidth' indicatorColor='none'>
+      <Box sx={{ marginTop: "26px", padding: isMobile ? "10px" : "20px" }}>
+        <Box sx={{ height: "30px", overflowX: "auto"  }}>
+          <Tabs sx={{ height: "30px",   '& .MuiTab-root': {
+          minWidth: 'auto', // Dynamically adjust width
+          padding: isMobile ? '4px' : '10px',  // Reduce padding for mobile
+          fontSize: isMobile ? '12px' : '14px', // Smaller font size for mobile
+        },}} value={currentTab} onChange={handleTabChange} aria-label='property details' variant='fullWidth' indicatorColor='none'>
             <Tab label='Property' {...a11yProps(0)} sx={tabSX} />
             <Tab label='Lease' {...a11yProps(1)} sx={tabSX} />
             <Tab label={isMobile ? "PM" : "Management"} {...a11yProps(2)} sx={tabSX} />
