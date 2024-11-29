@@ -49,7 +49,7 @@ const TenantAccountBalance = ({
   const navigate = useNavigate();
   const open = Boolean(anchorEl);
   const balanceDue = parseFloat(balanceDetails[0]?.amountDue || 0);
-  // console.log("property 1", selectedProperty.property_uid);
+  console.log("==dhyey debug in balance table == ", balanceDetails);
   // // console.log()
   // console.log("lease", leaseDetails);
   // console.log("propertydata", propertyData);
@@ -385,7 +385,7 @@ const TenantAccountBalance = ({
                 ? `Applied ${leaseDetails?.lease_application_date}`
                 : leaseDetails?.lease_status === "PROCESSING"
                 ? `Approved ${leaseDetails?.lease_application_date}`
-                : balanceDue > 0
+                : balanceDetails?.length > 0
                 ? "Make a Payment"
                 : "No Payment Due"}
             </Button>
