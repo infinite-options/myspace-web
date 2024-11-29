@@ -502,7 +502,7 @@ const PropertyListings = ({ setRightPane, isMobile, setViewRHS, setListingsData,
                 if (appliedData) {
                   status = appliedData.lease_status;
                 }
-                return <PropertyCard data={property} key={i} status={status} leaseData={appliedData} setRightPane={setRightPane} />;
+                return <PropertyCard data={property} key={i} status={status} leaseData={appliedData} setRightPane={setRightPane} appliedData={appliedData} />;
               })}
           </Paper>
         </Box>
@@ -511,7 +511,9 @@ const PropertyListings = ({ setRightPane, isMobile, setViewRHS, setListingsData,
   );
 };
 
-function PropertyCard({ data, status, leaseData, setRightPane }) {
+function PropertyCard({ data, status, leaseData, setRightPane, appliedData }) {
+  console.log("ROHIT - 510 - status - ", status);
+  console.log("ROHIT - 510 - appliedData - ", appliedData);
   const navigate = useNavigate();
   const [lease, setLease] = useState(leaseData || {});
   // console.log("In PropertyCard: ", data);

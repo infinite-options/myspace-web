@@ -18,8 +18,8 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 import NoImageAvailable from '../../../images/NoImageAvailable.png';
 
-export default function ManagerInvoiceView({maintenanceItem}){
-    console.log('inside workerinvoice---', maintenanceItem);
+export default function NewManagerInvoiceView({maintenanceItem}){
+    console.log('inside Manager workerinvoice---', maintenanceItem);
 
     const [scrollPosition, setScrollPosition] = useState(0);
 	const scrollRef = useRef(null);
@@ -30,13 +30,16 @@ export default function ManagerInvoiceView({maintenanceItem}){
 
     useEffect(()=>{
         const quotes = JSON.parse(maintenanceItem?.quote_info)
+        // console.log(" --- quotes - ", quotes)
 
         const curr_quote = quotes?.find(quote => quote.quote_status === "FINISHED");
 
-        console.log(" --- finishde - ", curr_quote)
-        setCurrentQuote(curr_quote)
-
+        // console.log(" --- finishde - ", curr_quote)
+        
         if(curr_quote){
+            
+            setCurrentQuote(curr_quote)
+
             const partsTotal = curr_quote.quote_services_expenses.parts.reduce((total, part) => {
                 const cost = parseFloat(part.cost);
                 const quantity = parseFloat(part.quantity);
@@ -45,7 +48,7 @@ export default function ManagerInvoiceView({maintenanceItem}){
     
             const serviceTotal = curr_quote.quote_services_expenses.labor.reduce((total, service) => {
                 const rate = parseFloat(service.rate || service.charge);
-                const hours = parseFloat(service.hours);
+                const hours = parseFloat(service.hours === 0 ? 1 : service.hours);
                 return total + (rate * hours);
             }, 0);
     
@@ -53,7 +56,7 @@ export default function ManagerInvoiceView({maintenanceItem}){
             setTotalService(serviceTotal)
         }
 
-    }, [])
+    }, [maintenanceItem])
 
 	useEffect(() => {
 		if (scrollRef.current) {
@@ -196,8 +199,8 @@ export default function ManagerInvoiceView({maintenanceItem}){
                     partsWithIDs.push({
                         ...lb,
                         ID: index,
-                        rate: parseFloat(lb.rate),
-                        hours: parseFloat(lb.hours)
+                        rate: parseFloat(lb.rate || lb.charge),
+                        hours: parseFloat(lb.hours === 0? 1 : lb.hours)
                     });
                 });
 
@@ -362,7 +365,7 @@ export default function ManagerInvoiceView({maintenanceItem}){
                                                         marginTop:"10px",}}>
                                                 Estimation:
                                             </Typography>
-                                            {currentQuote?.quote_services_expenses && currentQuote?.quote_services_expenses?.event_type === 'Hourly' ? renderLabourHour(currentQuote) : null}
+                                            {currentQuote?.quote_services_expenses || currentQuote?.quote_services_expenses?.event_type === 'Hourly' ? renderLabourHour(currentQuote) : null}
                                         </Grid>
 
                                         {/* quote expense service for parts */}

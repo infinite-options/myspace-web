@@ -25,6 +25,7 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import EndLeaseButton from "../Leases/EndLeaseButton";
+import EarlyTerminationDialog from "../Leases/EarlyTerminationDialog";
 import FlipIcon from "../TenantDashboard/FlipImage.png"
 import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy, } from "../../utils/fees";
 
@@ -53,6 +54,7 @@ export default function LeaseDetailsComponent({
   const [showEndContractDialog, setShowEndContractDialog] = useState(false);
   const [showManagerEndContractDialog, setShowManagerEndContractDialog] = useState(false);
   const [showRenewContractDialog, setShowRenewContractDialog] = useState(false);
+  const [showEarlyTerminationDialog, setShowEarlyTerminationDialog] = useState(false);
   const [contractEndNotice, setContractEndNotice] = useState(currentProperty?.lease_end_notice_period ? Number(currentProperty?.lease_end_notice_period) : 30);
 
   const tenant_detail =
@@ -460,7 +462,7 @@ export default function LeaseDetailsComponent({
                               {currentProperty?.lease_status}
                             </Typography>
                             {currentProperty?.lease_renew_status &&
-                              (currentProperty?.lease_renew_status.includes("RENEW")) && (
+                              (currentProperty?.lease_renew_status.includes("RENEW") || currentProperty?.lease_renew_status.includes("TERMINATION")) && (
                                 <Typography
                                   sx={{
                                     color: currentProperty?.lease_renew_status?.includes("RENEW") ? "#FF8A00" : "#A52A2A",
@@ -469,8 +471,18 @@ export default function LeaseDetailsComponent({
                                   }}
                                 >
                                   {currentProperty?.lease_renew_status === "RENEW REQUESTED" || currentProperty?.lease_renew_status === "PM RENEW REQUESTED"  ? "RENEWING" : ""}
-                    {currentProperty?.lease_renew_status === "RENEWED" ? "RENEWED" : ""}
+                                  {currentProperty?.lease_renew_status === "RENEWED" ? "RENEWED" : ""}
+                                  {currentProperty?.lease_renew_status === "EARLY TERMINATION" ? "EARLY TERMINATION" : ""}
                                 </Typography>
+                              )}
+                              {selectedRole === "MANAGER" && currentProperty?.lease_renew_status &&
+                              (currentProperty?.lease_renew_status === "EARLY TERMINATION") && (
+                                <KeyboardArrowRightIcon
+                                  sx={{ color: "#A52A2A", cursor: "pointer" }}
+                                  onClick={() => {
+                                    setShowEarlyTerminationDialog(true);
+                                  }}
+                                />
                               )}
                           </>
                         ) : (
@@ -1017,7 +1029,7 @@ export default function LeaseDetailsComponent({
                     >
                       <Badge
                         color='success'
-                        badgeContent={currentProperty.applications.filter((app) => app.lease_status.includes("NEW") || app.lease_status.includes("PROCESSING")).length}
+                        badgeContent={currentProperty.applications.filter((app) => ["NEW", "RENEW NEW", "PROCESSING", "RENEW PROCESSING"].includes(app.lease_status)).length}
                         showZero
                         sx={{
                           paddingRight: "50px",
@@ -1131,6 +1143,17 @@ export default function LeaseDetailsComponent({
                 />
               </Dialog>
             )}
+
+            <Dialog open={showEarlyTerminationDialog} onClose={() => setShowEarlyTerminationDialog(false)} maxWidth='sm' fullWidth>
+              <EarlyTerminationDialog
+                theme={theme}
+                fromProperties={true}
+                leaseDetails={currentProperty} // Pass the lease details as props
+                selectedLeaseId={currentProperty?.lease_uid} // Adjust based on your lease ID reference
+                setIsEndClicked={setShowEarlyTerminationDialog} // Close popup when done
+                handleUpdate={fetchProperties} // Any update handler to refresh data
+              />
+            </Dialog>
 
             {/* <Grid container item spacing={2}>
                         <Grid item xs={6}>

@@ -130,6 +130,7 @@ const PropertyInfo = (props) => {
   }
 
   function renderCorrectButtonText() {
+    console.log("ROHIT - 133 - status - ", status);
     if (status === "" || status === "WITHDRAWN" || status === "ENDED" || status === "REFUSED" || status === "RESCIND" || status === "REJECTED") {
       return "Apply Now";
     } else if (status === "NEW" || status === "RENEW PROCESSING") {
@@ -147,7 +148,7 @@ const PropertyInfo = (props) => {
 
   function navigateToCorrectPage() {
     console.log("ROHIT - 149 - status - ", status)
-    if (status === "" || status === "NEW" || status === "WITHDRAWN" || status === "ENDED" || status === "REFUSED" || status === "RESCIND") {
+    if (status === "" || status === "NEW" || status === "WITHDRAWN" || status === "ENDED" || status === "RESCIND") {
       //navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } });
       if (status === "" && props.handleSelectProperty != null) {
         props.handleSelectProperty(null);
@@ -159,6 +160,19 @@ const PropertyInfo = (props) => {
         type: "tenantApplicationEdit",
         state: { data: property, status: status, lease: lease, from: "PropertyInfo" },
       });
+    } else if(status === "REFUSED"){
+
+      if(status === "" && props.handleSelectProperty != null){
+        props.handleSelectProperty(null);
+      }
+      if(props.setFirstPage){
+        props.setFirstPage(true)
+      }
+      props.setRightPane({
+        type: "tenantApplicationEdit",
+        state: { data: property, status: status, lease: [], from: "PropertyInfo" },
+      });
+      
     } else if (status === "REJECTED") {
       setshowRejectApplicationDialog(true);
     } else if (status === "TENANT APPROVED" || status === "PROCESSING" || status === "RENEW PROCESSING") {
