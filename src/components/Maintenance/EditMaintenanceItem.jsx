@@ -55,18 +55,18 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { useMaintenance } from '../../contexts/MaintenanceContext';
 import ListsContext from '../../contexts/ListsContext';
 
-export default function EditMaintenanceItem({setRefersh, setRightPane, maintenanceRequest, propertyAddress, setViewRHS}) {
+export default function EditMaintenanceItem({ setRefersh, setRightPane, maintenanceRequest, propertyAddress, setViewRHS }) {
 	console.log("inside edit component");
 	const location = useLocation();
-	const { getList, } = useContext(ListsContext);	
+	const { getList, } = useContext(ListsContext);
 	console.log("location state", maintenanceRequest);
-	
-    const maintenanceIssues = getList("maintenance");
+
+	const maintenanceIssues = getList("maintenance");
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
 	// let testIssue1, testProperty1, testIssueItem1, testCost1;
-    // let testTitle1, testPriority1, completionStatus1;
-    // let requestUid1, propID1, maintainanceImages, maintainanceFavImage;
+	// let testTitle1, testPriority1, completionStatus1;
+	// let requestUid1, propID1, maintainanceImages, maintainanceFavImage;
 
 	// const {
 	// 	testIssue,
@@ -113,61 +113,61 @@ export default function EditMaintenanceItem({setRefersh, setRightPane, maintenan
 	//   }
 
 	let testIssue1 = maintenanceRequest?.maintenance_desc || location.state?.testIssue || '';
-    let testProperty1 = propertyAddress || location.state?.testProperty || '';
-    let testIssueItem1 = maintenanceRequest?.maintenance_request_type || location.state?.testIssueItem || '';
-    let testCost1 = maintenanceRequest?.maintenance_estimated_cost || location.state?.testCost || '';
-    let testTitle1 = maintenanceRequest?.maintenance_title || location.state?.testTitle || '';
-    let testPriority1 = maintenanceRequest?.maintenance_priority || location.state?.testPriority || '';
-    let completionStatus1 = maintenanceRequest?.maintenance_request_status || location.state?.completionStatus || '';
-    let requestUid1 = maintenanceRequest?.maintenance_request_uid || location.state?.requestUid || '';
-    let propID1 = maintenanceRequest?.maintenance_property_id || location.state?.propID || '';
-    let maintainanceImages = maintenanceRequest?.maintenance_images || location.state?.maintainanceImages || '[]';
-    let maintainanceFavImage = maintenanceRequest?.maintenance_favorite_image || location.state?.maintainanceFavImage || '';
+	let testProperty1 = propertyAddress || location.state?.testProperty || '';
+	let testIssueItem1 = maintenanceRequest?.maintenance_request_type || location.state?.testIssueItem || '';
+	let testCost1 = maintenanceRequest?.maintenance_estimated_cost || location.state?.testCost || '';
+	let testTitle1 = maintenanceRequest?.maintenance_title || location.state?.testTitle || '';
+	let testPriority1 = maintenanceRequest?.maintenance_priority || location.state?.testPriority || '';
+	let completionStatus1 = maintenanceRequest?.maintenance_request_status || location.state?.completionStatus || '';
+	let requestUid1 = maintenanceRequest?.maintenance_request_uid || location.state?.requestUid || '';
+	let propID1 = maintenanceRequest?.maintenance_property_id || location.state?.propID || '';
+	let maintainanceImages = maintenanceRequest?.maintenance_images || location.state?.maintainanceImages || '[]';
+	let maintainanceFavImage = maintenanceRequest?.maintenance_favorite_image || location.state?.maintainanceFavImage || '';
 
-    const {
-        testIssue,
-        testProperty,
-        testIssueItem,
-        testCost,
-        testTitle,
-        testPriority,
-        completionStatus,
-        requestUid,
-        propID,
-        maintainanceImages: contextmaintainanceImages,
-        maintainanceFavImage: contextmaintainanceFavImage,
-        setEditMaintenanceView,
-        setMaintainanceImages,
-    } = useMaintenance();
+	const {
+		testIssue,
+		testProperty,
+		testIssueItem,
+		testCost,
+		testTitle,
+		testPriority,
+		completionStatus,
+		requestUid,
+		propID,
+		maintainanceImages: contextmaintainanceImages,
+		maintainanceFavImage: contextmaintainanceFavImage,
+		setEditMaintenanceView,
+		setMaintainanceImages,
+	} = useMaintenance();
 
-    // if (!isMobile && !maintenanceRequest) {
-    //     // Use context state in desktop view when maintenanceRequest is not provided
-    //     testIssue1 = testIssue;
-    //     testProperty1 = testProperty;
-    //     testIssueItem1 = testIssueItem;
-    //     testCost1 = testCost;
-    //     testTitle1 = testTitle;
-    //     testPriority1 = testPriority;
-    //     completionStatus1 = completionStatus;
-    //     requestUid1 = requestUid;
-    //     propID1 = propID;
-    //     maintainanceImages = contextmaintainanceImages;
-    //     maintainanceFavImage = contextmaintainanceFavImage;
-    // }
+	// if (!isMobile && !maintenanceRequest) {
+	//     // Use context state in desktop view when maintenanceRequest is not provided
+	//     testIssue1 = testIssue;
+	//     testProperty1 = testProperty;
+	//     testIssueItem1 = testIssueItem;
+	//     testCost1 = testCost;
+	//     testTitle1 = testTitle;
+	//     testPriority1 = testPriority;
+	//     completionStatus1 = completionStatus;
+	//     requestUid1 = requestUid;
+	//     propID1 = propID;
+	//     maintainanceImages = contextmaintainanceImages;
+	//     maintainanceFavImage = contextmaintainanceFavImage;
+	// }
 	if (!maintenanceRequest) {
-        // Use context state in desktop view when maintenanceRequest is not provided
-        testIssue1 = testIssue;
-        testProperty1 = testProperty;
-        testIssueItem1 = testIssueItem;
-        testCost1 = testCost;
-        testTitle1 = testTitle;
-        testPriority1 = testPriority;
-        completionStatus1 = completionStatus;
-        requestUid1 = requestUid;
-        propID1 = propID;
-        maintainanceImages = contextmaintainanceImages;
-        maintainanceFavImage = contextmaintainanceFavImage;
-    }
+		// Use context state in desktop view when maintenanceRequest is not provided
+		testIssue1 = testIssue;
+		testProperty1 = testProperty;
+		testIssueItem1 = testIssueItem;
+		testCost1 = testCost;
+		testTitle1 = testTitle;
+		testPriority1 = testPriority;
+		completionStatus1 = completionStatus;
+		requestUid1 = requestUid;
+		propID1 = propID;
+		maintainanceImages = contextmaintainanceImages;
+		maintainanceFavImage = contextmaintainanceFavImage;
+	}
 
 	// setCost(testCost1);
 	// cost = testCost1;
@@ -214,13 +214,13 @@ export default function EditMaintenanceItem({setRefersh, setRightPane, maintenan
 		}
 	}
 
-const [deletedIcons, setDeletedIcons] = useState(
-  parsedMaintainanceImages.length > 0 ? new Array(parsedMaintainanceImages.length).fill(false) : []
-);
+	const [deletedIcons, setDeletedIcons] = useState(
+		parsedMaintainanceImages.length > 0 ? new Array(parsedMaintainanceImages.length).fill(false) : []
+	);
 
-const [favoriteIcons, setFavoriteIcons] = useState(
-  parsedMaintainanceImages.map(image => image === maintainanceFavImage)
-);
+	const [favoriteIcons, setFavoriteIcons] = useState(
+		parsedMaintainanceImages.map(image => image === maintainanceFavImage)
+	);
 
 	const handlePropertyChange = (event) => {
 		setChange(true)
@@ -291,27 +291,27 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 
 	const handleBackButton = () => {
 		console.log('handleBackButton');
-		if(isMobile){
-			if(setViewRHS){
+		if (isMobile) {
+			if (setViewRHS) {
 				setViewRHS(false)
 			}
 
-			if(selectedRole === "TENANT"){
+			if (selectedRole === "TENANT") {
 
-				setRightPane({type: ""})
+				setRightPane({ type: "" })
 			}
 
 			setEditMaintenanceView(false);
 			// navigate(-1);
 			// setRightPane("");
-        } else {
-			if(selectedRole === "TENANT"){
+		} else {
+			if (selectedRole === "TENANT") {
 
-				setRightPane({type: ""})
+				setRightPane({ type: "" })
 			}
 
 			setEditMaintenanceView(false);
-        }
+		}
 	};
 
 	useEffect(() => {
@@ -336,7 +336,7 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 	const handleSubmit = (event) => {
 		event.preventDefault();
 
-		if(!change){
+		if (!change) {
 			alert("you didn't change anything...");
 			setChange(false)
 			return;
@@ -374,31 +374,31 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 
 		if (imagesTobeDeleted.length > 0) {
 			console.log('-----deleted_images----', imagesTobeDeleted);
-		
+
 			let updatedImages = JSON.parse(maintainanceImages);
 			updatedImages = updatedImages.filter(image => !imagesTobeDeleted.includes(image));
 			maintainanceImages = JSON.stringify(updatedImages);
 			editFormData.append('delete_images', JSON.stringify(imagesTobeDeleted));
-		  }
+		}
 
-		  editFormData.append('maintenance_images', maintainanceImages);
-		  editFormData.append('maintenance_favorite_image', favImage);
-			  
-			  let i = 0;
-			  for (const file of selectedImageList) {
-				  // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
-				  let key = `img_${i++}`;
-				  if (file.file !== null) {
-					  // newProperty[key] = file.file;
-					  editFormData.append(key, file.file);
-				  } else {
-					  // newProperty[key] = file.image;
-					  editFormData.append(key, file.image);
-				   }
-				  if (file.coverPhoto) {
-					editFormData.set('maintenance_favorite_image', key);
-				  }
-			  }
+		editFormData.append('maintenance_images', maintainanceImages);
+		editFormData.append('maintenance_favorite_image', favImage);
+
+		let i = 0;
+		for (const file of selectedImageList) {
+			// let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
+			let key = `img_${i++}`;
+			if (file.file !== null) {
+				// newProperty[key] = file.file;
+				editFormData.append(key, file.file);
+			} else {
+				// newProperty[key] = file.image;
+				editFormData.append(key, file.image);
+			}
+			if (file.coverPhoto) {
+				editFormData.set('maintenance_favorite_image', key);
+			}
+		}
 
 		// for (let i = 0; i < selectedImageList.length; i++) {
 		// 	try {
@@ -424,28 +424,28 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 			try {
 				const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
 					method: 'PUT',
-				// 	// headers: {
-				// 	//     'Content-Type': 'application/json',
-				// 	// },
-				// 	// body : JSON.stringify({
-				// 	//     "maintenance_property_id" : propertyId,
-				// 	//     "maintenance_title": title,
-				// 	//     "maintenance_desc": description,
-				// 	//     "maintenance_request_type": issue,
-				// 	//     "maintenance_request_created_by": getProfileId(),  // problem is here it was 600-000003, changed it 600-000012
-				// 	//     "maintenance_priority": priority,
-				// 	//     "maintenance_can_reschedule": 1,
-				// 	//     "maintenance_assigned_business": null,
-				// 	//     "maintenance_assigned_worker": null,
-				// 	//     "maintenance_scheduled_date": null,
-				// 	//     "maintenance_scheduled_time": null,
-				// 	//     "maintenance_frequency": "One Time",
-				// 	//     "maintenance_notes": null,
-				// 	//     "maintenance_request_created_date": formattedDate, // Convert to ISO string format
-				// 	//     "maintenance_request_closed_date": null,
-				// 	//     "maintenance_request_adjustment_date": null
-				// 	// })
-				// 	// body: JSON.stringify(editFormData)
+					// 	// headers: {
+					// 	//     'Content-Type': 'application/json',
+					// 	// },
+					// 	// body : JSON.stringify({
+					// 	//     "maintenance_property_id" : propertyId,
+					// 	//     "maintenance_title": title,
+					// 	//     "maintenance_desc": description,
+					// 	//     "maintenance_request_type": issue,
+					// 	//     "maintenance_request_created_by": getProfileId(),  // problem is here it was 600-000003, changed it 600-000012
+					// 	//     "maintenance_priority": priority,
+					// 	//     "maintenance_can_reschedule": 1,
+					// 	//     "maintenance_assigned_business": null,
+					// 	//     "maintenance_assigned_worker": null,
+					// 	//     "maintenance_scheduled_date": null,
+					// 	//     "maintenance_scheduled_time": null,
+					// 	//     "maintenance_frequency": "One Time",
+					// 	//     "maintenance_notes": null,
+					// 	//     "maintenance_request_created_date": formattedDate, // Convert to ISO string format
+					// 	//     "maintenance_request_closed_date": null,
+					// 	//     "maintenance_request_adjustment_date": null
+					// 	// })
+					// 	// body: JSON.stringify(editFormData)
 					body: editFormData,
 				});
 				const data = await response.json();
@@ -467,10 +467,10 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 		// setDescription('')
 
 		//undo
-		if(setRefersh){
+		if (setRefersh) {
 			setRefersh(true);
 		}
-		if (selectedRole === "TENANT"){
+		if (selectedRole === "TENANT") {
 
 			handleBackButton();
 		} else {
@@ -494,13 +494,13 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 			setScrollPosition((prevScrollPosition) => {
 				const currentScrollPosition = scrollRef.current.scrollLeft;
 				let newScrollPosition;
-	
+
 				if (direction === 'left') {
 					newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
 				} else {
 					newScrollPosition = currentScrollPosition + scrollAmount;
 				}
-	
+
 				return newScrollPosition;
 			});
 		}
@@ -518,30 +518,30 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 		console.log('Delete image at index:', JSON.stringify(deletedIcons));
 	};
 
-	
+
 
 	const handleFavorite = (index) => {
 		setChange(true)
-    const updatedFavoriteIcons = new Array(favoriteIcons.length).fill(false);
-    updatedFavoriteIcons[index] = true;
-    setFavoriteIcons(updatedFavoriteIcons);
-  
-    const newFavImage = JSON.parse(maintainanceImages)[index];
-    setFavImage(newFavImage);
-    setSelectedImageList(prevState =>
-      prevState.map((file, i) => ({
-        ...file,
-        coverPhoto: i === index
-      }))
-    );
-  
-    console.log(`Favorite image at index: ${index}`);
-  };
+		const updatedFavoriteIcons = new Array(favoriteIcons.length).fill(false);
+		updatedFavoriteIcons[index] = true;
+		setFavoriteIcons(updatedFavoriteIcons);
 
-  const handleUpdateFavoriteIcons = () => {
-	setChange(true)
-    setFavoriteIcons(new Array(favoriteIcons.length).fill(false));
-};
+		const newFavImage = JSON.parse(maintainanceImages)[index];
+		setFavImage(newFavImage);
+		setSelectedImageList(prevState =>
+			prevState.map((file, i) => ({
+				...file,
+				coverPhoto: i === index
+			}))
+		);
+
+		console.log(`Favorite image at index: ${index}`);
+	};
+
+	const handleUpdateFavoriteIcons = () => {
+		setChange(true)
+		setFavoriteIcons(new Array(favoriteIcons.length).fill(false));
+	};
 
 	return (
 		<ThemeProvider theme={theme}>
@@ -549,31 +549,25 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 				<CircularProgress color="inherit" />
 			</Backdrop>
 			<Box
-				style={{
-					display: 'flex',
-					justifyContent: 'center',
-					alignItems: 'flex-start',
-					width: '100%', // Ensure the box spans the full viewport width
-					height: '100vh', // Ensure the box spans the full viewport height
-					paddingTop: '30px',
+				sx={{
+					display: "flex",
+					justifyContent: "center",
+					width: "100%",
+					minHeight: "100vh",
+					position: "relative",
 				}}
 			>
 				<Paper
-					style={{
-						// margin: '30px',
-						padding: theme.spacing(2),
-						backgroundColor: theme.palette.form.main,
-						width: '85%', // Occupy full width with 25px margins on each side
-						[theme.breakpoints.down('sm')]: {
-							width: '80%',
-						},
-						[theme.breakpoints.up('sm')]: {
-							width: '50%',
-						},
-						paddingTop: '10px',
+					sx={{
+						// margin: "5px",
+						backgroundColor: theme.palette.primary.main,
+						width: "100%",
+						// paddingTop: "10px",
+						// paddingBottom: "30px",
+						borderRadius: "10px"
 					}}
 				>
-					<Stack direction="row" justifyContent="center" alignItems="center" position="relative">
+					<Stack direction="row" justifyContent="center" alignItems="center" position="relative" sx={{marginTop:"10px"}}>
 						<Box direction="row" justifyContent="center" alignItems="center">
 							<Typography
 								sx={{
@@ -588,15 +582,15 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 						<Box position="absolute" left={0}>
 							<Button onClick={() => handleBackButton()}>
 								<ArrowBackIcon
-									sx={{ color: theme.typography.common.blue, fontSize: '30px', margin: '5px' }}
+									sx={{ color: "#160449", fontSize: '30px', margin: '5px' }}
 								/>
 							</Button>
 						</Box>
 					</Stack>
-						<Box component="form" onSubmit={handleSubmit} noValidate autoComplete="off">
-							<Grid container columnSpacing={12} rowSpacing={6}>
-								{/* Select Field for Property */}
-								<Grid item xs={12}>
+					<Box component="form" onSubmit={handleSubmit} noValidate autoComplete="off">
+						<Grid container columnSpacing={12} rowSpacing={6} sx={{padding: "0px 10px 0px 10px"}}>
+							{/* Select Field for Property */}
+							<Grid item xs={12}>
 								<Box
 									sx={{
 										display: 'flex',
@@ -633,9 +627,9 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 												},
 											}}
 										>
-											<ImageList 
-											ref={scrollRef}
-											sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
+											<ImageList
+												ref={scrollRef}
+												sx={{ display: 'flex', flexWrap: 'nowrap' }} cols={5}>
 												{parsedMaintainanceImages?.map((image, index) => (
 													<ImageListItem
 														key={index}
@@ -699,101 +693,101 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 										<ArrowForwardIosIcon />
 									</IconButton>
 								</Box>
-							
-									
 
-								</Grid>
-								
-								<Grid item xs={12}>
-									<ImageUploader
-										selectedImageList={selectedImageList}
-										setSelectedImageList={setSelectedImageList}
-										page={'QuoteRequestForm'}
+
+
+							</Grid>
+
+							<Grid item xs={12}>
+								<ImageUploader
+									selectedImageList={selectedImageList}
+									setSelectedImageList={setSelectedImageList}
+									page={'QuoteRequestForm'}
 
 									setDeletedImageList={setDeletedImageList}
-                  setFavImage={setFavImage}
-                  favImage={favImage}
-                  updateFavoriteIcons={handleUpdateFavoriteIcons}
-									/>
-								</Grid>
-								<Grid item xs={12}>
-									<Typography
-										sx={{
-											color: theme.typography.common.blue,
-											fontWeight: theme.typography.primary.fontWeight,
-											fontSize: theme.typography.mediumFont,
-										}}
-									>
-										Property
-									</Typography>
-									<FormControl
-										fullWidth
-										sx={{
-											backgroundColor: 'white',
-											borderColor: 'black',
-										}}
-										size="small"
-									>
-										{/* <Tooltip title={testProperty1} style={{ zIndex: '1' }}>   */}
-										<InputLabel hidden={true} shrink={false}>
-											{testProperty1}
-										</InputLabel>
-										<Select
-											// value={testProperty1}
-											// display={" "}
-											// onFocus={true}
-											onChange={handlePropertyChange}
-											disabled={selectedRole === "TENANT"}
-											MenuProps={{
-												PaperProps: {
-													style: {
-														maxHeight: '250px', // you can adjust this value as needed
-														overflow: 'auto',
-													},
+									setFavImage={setFavImage}
+									favImage={favImage}
+									updateFavoriteIcons={handleUpdateFavoriteIcons}
+								/>
+							</Grid>
+							<Grid item xs={12}>
+								<Typography
+									sx={{
+										color: theme.typography.common.blue,
+										fontWeight: theme.typography.primary.fontWeight,
+										fontSize: theme.typography.mediumFont,
+									}}
+								>
+									Property
+								</Typography>
+								<FormControl
+									fullWidth
+									sx={{
+										backgroundColor: 'white',
+										borderColor: 'black',
+									}}
+									size="small"
+								>
+									{/* <Tooltip title={testProperty1} style={{ zIndex: '1' }}>   */}
+									<InputLabel hidden={true} shrink={false}>
+										{testProperty1}
+									</InputLabel>
+									<Select
+										// value={testProperty1}
+										// display={" "}
+										// onFocus={true}
+										onChange={handlePropertyChange}
+										disabled={selectedRole === "TENANT"}
+										MenuProps={{
+											PaperProps: {
+												style: {
+													maxHeight: '250px', // you can adjust this value as needed
+													overflow: 'auto',
 												},
-											}}
-										>
-											{properties?.map((property) => (
-												<MenuItem key={property.property_uid} value={property.property_uid}>
-													{property.property_address} {property?.property_unit}
-												</MenuItem>
-											))}
-										</Select>
-										{/* </Tooltip> */}
-									</FormControl>
-								</Grid>
-
-
-								{/* Select Field for Issue and Cost Estimate */}
-								<Grid item xs={6}>
-									<Typography
-										sx={{
-											color: theme.typography.common.blue,
-											fontWeight: theme.typography.primary.fontWeight,
-											fontSize: theme.typography.mediumFont,
+											},
 										}}
 									>
-										Issue
-									</Typography>
-									<FormControl
-										fullWidth
-										sx={{
-											backgroundColor: 'white',
-											borderColor: 'black',
-											borderRadius: '7px',
-										}}
-										size="small"
-									>
-										<Select onChange={handleIssueChange} defaultValue={testIssueItem1}>
+										{properties?.map((property) => (
+											<MenuItem key={property.property_uid} value={property.property_uid}>
+												{property.property_address} {property?.property_unit}
+											</MenuItem>
+										))}
+									</Select>
+									{/* </Tooltip> */}
+								</FormControl>
+							</Grid>
+
+
+							{/* Select Field for Issue and Cost Estimate */}
+							<Grid item xs={6}>
+								<Typography
+									sx={{
+										color: theme.typography.common.blue,
+										fontWeight: theme.typography.primary.fontWeight,
+										fontSize: theme.typography.mediumFont,
+									}}
+								>
+									Issue
+								</Typography>
+								<FormControl
+									fullWidth
+									sx={{
+										backgroundColor: 'white',
+										borderColor: 'black',
+										borderRadius: '7px',
+									}}
+									size="small"
+								>
+									<Select onChange={handleIssueChange} defaultValue={testIssueItem1}>
 										{
-											maintenanceIssues?.map( (freq ) => (
+											maintenanceIssues?.map((freq) => (
 												<MenuItem key={freq.list_uid} value={freq.list_item}>{freq.list_item}</MenuItem>
 											))
 										}
-										</Select>
-									</FormControl>
-								</Grid>
-								{selectedRole !== "TENANT" && (
+									</Select>
+								</FormControl>
+							</Grid>
+							{selectedRole !== "TENANT" && (
 								<Grid item xs={6}>
 									<Typography
 										sx={{
@@ -821,183 +815,183 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 									/>
 								</Grid>
 
-								)}{/* Text Field for Title */}
-								<Grid item xs={12}>
-									<Typography
-										sx={{
-											color: theme.typography.common.blue,
-											fontWeight: theme.typography.primary.fontWeight,
-											fontSize: theme.typography.mediumFont,
-										}}
-									>
-										Title
-									</Typography>
-									<TextField
-										placeholder={testTitle1}
-										defaultValue={testTitle1}
-										onChange={handleTitleChange}
-										sx={{
-											backgroundColor: 'white',
-											borderColor: 'black',
-											borderRadius: '7px',
-										}}
-										size="small"
-										fullWidth
-									/>
-								</Grid>
+							)}{/* Text Field for Title */}
+							<Grid item xs={12}>
+								<Typography
+									sx={{
+										color: theme.typography.common.blue,
+										fontWeight: theme.typography.primary.fontWeight,
+										fontSize: theme.typography.mediumFont,
+									}}
+								>
+									Title
+								</Typography>
+								<TextField
+									placeholder={testTitle1}
+									defaultValue={testTitle1}
+									onChange={handleTitleChange}
+									sx={{
+										backgroundColor: 'white',
+										borderColor: 'black',
+										borderRadius: '7px',
+									}}
+									size="small"
+									fullWidth
+								/>
+							</Grid>
 
-								{/* Priority Toggle Field */}
-								<Grid item xs={12}>
-									<Typography
+							{/* Priority Toggle Field */}
+							<Grid item xs={12}>
+								<Typography
+									sx={{
+										color: theme.typography.common.blue,
+										fontWeight: theme.typography.primary.fontWeight,
+										fontSize: theme.typography.mediumFont,
+									}}
+								>
+									Priority
+								</Typography>
+								<ToggleButtonGroup
+									exclusive
+									fullWidth
+									value={testPriority1}
+									// value={toggleAlignment}
+									// onChange={handlePriorityChange}
+									onChange={(event, value) => handlePriorityChange(value)}
+									aria-label="Priority"
+									size="small"
+									sx={{
+										'& .MuiToggleButton-root.Mui-selected': {
+											// backgroundColor: 'transparent', // Selected background color
+											color: 'white', // Selected text color
+										},
+										'&.Mui-selected + .MuiToggleButton-root': {
+											// borderLeftColor: 'white',
+										},
+										// display: "grid",
+										// gridTemplateColumns: "auto auto auto auto",
+										// gridGap: "50px",
+										// padding: "10px",
+									}}
+								>
+									<ToggleButton
+										// value="Low"
+										key={'Low'}
+										value={'Low'}
 										sx={{
-											color: theme.typography.common.blue,
-											fontWeight: theme.typography.primary.fontWeight,
-											fontSize: theme.typography.mediumFont,
+											backgroundColor: theme.palette.priority.low,
+											borderRadius: '20px',
+											color: 'white',
+											marginRight: '10px',
+											borderWidth: '3px',
+											borderColor: theme.palette.priority.low,
+											'&.Mui-selected': {
+												borderColor: 'white',
+												color: 'white',
+												backgroundColor: theme.palette.priority.low,
+												borderWidth: '3px', // Ensure consistent border width
+											},
+											'&:hover': {
+												borderColor: 'white',
+												backgroundColor: darken(theme.palette.priority.low, 0.3),
+											},
 										}}
+										onClick={() => handlePriorityChange('Low')}
+										isSelected={toggleAlignment === 'Low'}
 									>
-										Priority
-									</Typography>
-									<ToggleButtonGroup
-										exclusive
-										fullWidth
-										value={testPriority1}
-										// value={toggleAlignment}
-										// onChange={handlePriorityChange}
-										onChange={(event, value) => handlePriorityChange(value)}
-										aria-label="Priority"
-										size="small"
+										Low
+									</ToggleButton>
+									<ToggleButton
+										// value="Medium"
+										key={'Medium'}
+										value={'Medium'}
 										sx={{
-											'& .MuiToggleButton-root.Mui-selected': {
-												// backgroundColor: 'transparent', // Selected background color
-												color: 'white', // Selected text color
+											backgroundColor: theme.palette.priority.medium,
+											borderRadius: '20px',
+											color: 'white',
+											marginRight: '10px',
+											borderWidth: '3px',
+											borderColor: theme.palette.priority.medium,
+											'&.Mui-selected': {
+												borderColor: 'white',
+												color: 'white',
+												backgroundColor: theme.palette.priority.medium,
+												borderWidth: '3px', // Ensure consistent border width
+											},
+											'&:hover': {
+												borderColor: 'white',
+												backgroundColor: darken(theme.palette.priority.medium, 0.3),
 											},
 											'&.Mui-selected + .MuiToggleButton-root': {
-												// borderLeftColor: 'white',
+												borderLeftColor: 'white',
 											},
-											// display: "grid",
-											// gridTemplateColumns: "auto auto auto auto",
-											// gridGap: "50px",
-											// padding: "10px",
 										}}
+										onClick={() => handlePriorityChange('Medium')}
+										isSelected={toggleAlignment === 'Medium'}
 									>
-										<ToggleButton
-											// value="Low"
-											key={'Low'}
-											value={'Low'}
-											sx={{
-												backgroundColor: theme.palette.priority.low,
-												borderRadius: '20px',
+										Medium
+									</ToggleButton>
+									<ToggleButton
+										key={'High'}
+										value={'High'}
+										// value="High"
+										sx={{
+											backgroundColor: theme.palette.priority.high,
+											borderRadius: '20px',
+											color: 'white',
+											marginRight: '10px',
+											borderWidth: '3px',
+											borderColor: theme.palette.priority.high,
+											'&.Mui-selected': {
+												borderColor: 'white',
 												color: 'white',
-												marginRight: '10px',
-												borderWidth: '3px',
-												borderColor: theme.palette.priority.low,
-												'&.Mui-selected': {
-													borderColor: 'white',
-													color: 'white',
-													backgroundColor: theme.palette.priority.low,
-													borderWidth: '3px', // Ensure consistent border width
-												},
-												'&:hover': {
-													borderColor: 'white',
-													backgroundColor: darken(theme.palette.priority.low, 0.3),
-												},
-											}}
-											onClick={() => handlePriorityChange('Low')}
-											isSelected={toggleAlignment === 'Low'}
-										>
-											Low
-										</ToggleButton>
-										<ToggleButton
-											// value="Medium"
-											key={'Medium'}
-											value={'Medium'}
-											sx={{
-												backgroundColor: theme.palette.priority.medium,
-												borderRadius: '20px',
-												color: 'white',
-												marginRight: '10px',
-												borderWidth: '3px',
-												borderColor: theme.palette.priority.medium,
-												'&.Mui-selected': {
-													borderColor: 'white',
-													color: 'white',
-													backgroundColor: theme.palette.priority.medium,
-													borderWidth: '3px', // Ensure consistent border width
-												},
-												'&:hover': {
-													borderColor: 'white',
-													backgroundColor: darken(theme.palette.priority.medium, 0.3),
-												},
-												'&.Mui-selected + .MuiToggleButton-root': {
-													borderLeftColor: 'white',
-												},
-											}}
-											onClick={() => handlePriorityChange('Medium')}
-											isSelected={toggleAlignment === 'Medium'}
-										>
-											Medium
-										</ToggleButton>
-										<ToggleButton
-											key={'High'}
-											value={'High'}
-											// value="High"
-											sx={{
 												backgroundColor: theme.palette.priority.high,
-												borderRadius: '20px',
-												color: 'white',
-												marginRight: '10px',
-												borderWidth: '3px',
-												borderColor: theme.palette.priority.high,
-												'&.Mui-selected': {
-													borderColor: 'white',
-													color: 'white',
-													backgroundColor: theme.palette.priority.high,
-													borderWidth: '3px', // Ensure consistent border width
-												},
-												'&:hover': {
-													borderColor: 'white',
-													backgroundColor: darken(theme.palette.priority.high, 0.3),
-												},
-												'&.Mui-selected + .MuiToggleButton-root': {
-													borderLeftColor: 'white',
-												},
-											}}
-											onClick={() => handlePriorityChange('High')}
-											isSelected={toggleAlignment === 'High'}
-										>
-											High
-										</ToggleButton>
-									</ToggleButtonGroup>
-								</Grid>
-
-								{/* Text Field for Description */}
-								<Grid item xs={12}>
-									<Typography
-										sx={{
-											color: theme.typography.common.blue,
-											fontWeight: theme.typography.primary.fontWeight,
-											fontSize: theme.typography.mediumFont,
+												borderWidth: '3px', // Ensure consistent border width
+											},
+											'&:hover': {
+												borderColor: 'white',
+												backgroundColor: darken(theme.palette.priority.high, 0.3),
+											},
+											'&.Mui-selected + .MuiToggleButton-root': {
+												borderLeftColor: 'white',
+											},
 										}}
+										onClick={() => handlePriorityChange('High')}
+										isSelected={toggleAlignment === 'High'}
 									>
-										Description
-									</Typography>
-									<TextField
-										fullWidth
-										// label="Description"
-										size="small"
-										multiline
-										placeholder={testIssue1}
-										defaultValue={testIssue1}
-										onChange={handleDescriptionChange}
-										sx={{
-											width: '100%',
-											backgroundColor: 'white',
-										}}
-									/>
-								</Grid>
+										High
+									</ToggleButton>
+								</ToggleButtonGroup>
+							</Grid>
 
-								{/* Radio Button for Already Completed */}
-								{selectedRole !== "TENANT" && (
+							{/* Text Field for Description */}
+							<Grid item xs={12}>
+								<Typography
+									sx={{
+										color: theme.typography.common.blue,
+										fontWeight: theme.typography.primary.fontWeight,
+										fontSize: theme.typography.mediumFont,
+									}}
+								>
+									Description
+								</Typography>
+								<TextField
+									fullWidth
+									// label="Description"
+									size="small"
+									multiline
+									placeholder={testIssue1}
+									defaultValue={testIssue1}
+									onChange={handleDescriptionChange}
+									sx={{
+										width: '100%',
+										backgroundColor: 'white',
+									}}
+								/>
+							</Grid>
+
+							{/* Radio Button for Already Completed */}
+							{selectedRole !== "TENANT" && (
 								<Grid item xs={12}>
 									<Typography
 										sx={{
@@ -1020,32 +1014,32 @@ const [favoriteIcons, setFavoriteIcons] = useState(
 									</FormControl>
 								</Grid>
 
-								)}{/* File Upload Field */}
-								
+							)}{/* File Upload Field */}
 
-								{/* Submit Button */}
-								<Grid item xs={12} display={"flex"} justifyContent={"center"}>
-									<Button
-										variant="contained"
-										color="primary"
-										type="submit"
-										sx={{ backgroundColor: '#9EAED6'}}
+
+							{/* Submit Button */}
+							<Grid item xs={12} display={"flex"} justifyContent={"center"} sx={{margin:"0px 0px 10px 0px"}}>
+								<Button
+									variant="contained"
+									color="primary"
+									type="submit"
+									sx={{ backgroundColor: '#9EAED6' }}
+								>
+									<Typography
+										sx={{
+											color: theme.typography.common.blue,
+											fontWeight: theme.typography.primary.fontWeight,
+											fontSize: theme.typography.mediumFont,
+										}}
 									>
-										<Typography
-											sx={{
-												color: theme.typography.common.blue,
-												fontWeight: theme.typography.primary.fontWeight,
-												fontSize: theme.typography.mediumFont,
-											}}
-										>
-											Save Maintenance
-										</Typography>
-										<input type="file" hidden />
-									</Button>
-								</Grid>
+										Save Maintenance
+									</Typography>
+									<input type="file" hidden />
+								</Button>
 							</Grid>
-						</Box>
-					
+						</Grid>
+					</Box>
+
 				</Paper>
 			</Box>
 		</ThemeProvider>

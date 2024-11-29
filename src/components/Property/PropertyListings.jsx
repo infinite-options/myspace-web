@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import theme from "../../theme/theme";
 import { useNavigate } from "react-router-dom";
-import { ThemeProvider, Box, Paper, Stack, Typography, Button, Menu, MenuItem, IconButton, InputBase, Card, CardContent, CardActions, Rating } from "@mui/material";
+import { ThemeProvider, Box, Paper, Stack, Typography, Button, Menu, MenuItem, IconButton, InputBase, Card, CardContent, CardActions, Rating, Grid } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 import { ArrowDropDown, LocationOn, TurnedInNot } from "@mui/icons-material";
@@ -341,7 +341,7 @@ const PropertyListings = ({ setRightPane, isMobile, setViewRHS, setListingsData,
   };
 
   const handleBack = () => {
-    if(isMobile){
+    if (isMobile) {
       setViewRHS(false)
     }
     setRightPane("");
@@ -355,7 +355,7 @@ const PropertyListings = ({ setRightPane, isMobile, setViewRHS, setListingsData,
           <CircularProgress color='inherit' />
         </Backdrop>
         <Box
-          style={{            
+          style={{
             borderRadius: "10px",
             display: "flex",
             fontFamily: "Source Sans Pro",
@@ -384,28 +384,33 @@ const PropertyListings = ({ setRightPane, isMobile, setViewRHS, setListingsData,
               // paddingTop: "10px",
             }}
           >
-            <Stack direction='row' justifyContent='center' alignItems='center' position='relative' sx={{ paddingBottom: "25px", paddingTop: "15px" }}>
-              {isMobile && (<Button onClick={handleBack}>
-                <ArrowBackIcon
-                  sx={{
-                    color: theme.typography.common.blue,
-                    fontSize: "30px",
-                    margin: "5px",
-                  }}
-                />
-              </Button>)}
-              <Box direction='row' justifyContent='center' alignItems='center'>
+            <Grid Container sx={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
+              <Grid item xs={1} md={1}>
+                <Button onClick={handleBack}>
+                  <ArrowBackIcon
+                    sx={{
+                      color: "#160449",
+                      fontSize: "30px",
+                      margin: "5px",
+                    }}
+                  />
+                </Button>
+              </Grid>
+              <Grid item xs={10} md={10}>
                 <Typography
                   sx={{
                     color: theme.typography.primary.black,
                     fontWeight: theme.typography.primary.fontWeight,
                     fontSize: "18px",
+                    textAlign: "center"
                   }}
                 >
                   Search For Your New Home
                 </Typography>
-              </Box>
-            </Stack>
+              </Grid>
+              <Grid item xs={1} md={1} />
+
+            </Grid>
             <Stack>
               <SearchBar propertyList={sortedProperties} setFilteredItems={setDisplayProperties} sx={{ width: "100%" }} />
             </Stack>
@@ -418,13 +423,13 @@ const PropertyListings = ({ setRightPane, isMobile, setViewRHS, setListingsData,
                   sx={{
                     color: theme.typography.common.blue,
                     fontWeight: theme.typography.common.fontWeight,
-                    ...(isMobile ? {}  : {fontSize: theme.typography.largeFont,}),
+                    ...(isMobile ? {} : { fontSize: theme.typography.largeFont, }),
                   }}
                 >
                   Map
                   <LocationOn
                     sx={{
-                      ...(isMobile ? {}  : {fontSize: theme.typography.largeFont,}),
+                      ...(isMobile ? {} : { fontSize: theme.typography.largeFont, }),
                     }}
                   />
                 </Typography>
@@ -434,13 +439,13 @@ const PropertyListings = ({ setRightPane, isMobile, setViewRHS, setListingsData,
                   sx={{
                     color: theme.typography.common.blue,
                     fontWeight: theme.typography.common.fontWeight,
-                    ...(isMobile ? {}  : {fontSize: theme.typography.largeFont,}),
+                    ...(isMobile ? {} : { fontSize: theme.typography.largeFont, }),
                   }}
                 >
                   Saved Search
                   <TurnedInNot
                     sx={{
-                      ...(isMobile ? {}  : {fontSize: theme.typography.largeFont,}),
+                      ...(isMobile ? {} : { fontSize: theme.typography.largeFont, }),
                     }}
                   />
                 </Typography>
@@ -466,7 +471,7 @@ const PropertyListings = ({ setRightPane, isMobile, setViewRHS, setListingsData,
               </Typography>
             </Stack>
             <Stack sx={{ padding: 5 }}>
-              <PropertiesMap properties={displayProperties} onMarkerClick={handleMarkerClick}/>
+              <PropertiesMap properties={displayProperties} onMarkerClick={handleMarkerClick} />
             </Stack>
             {/* <Stack alignItems='center' justifyContent='center' sx={{ marginTop: "20px" }}>
               <Button
@@ -537,7 +542,7 @@ function PropertyCard({ data, status, leaseData, setRightPane, appliedData }) {
     } catch (e) {
       console.error(e);
     }
-  });  
+  });
 
   const listed_rent = Intl.NumberFormat("en-US", {
     style: "currency",
@@ -841,7 +846,7 @@ function PropertyCard({ data, status, leaseData, setRightPane, appliedData }) {
           items={images}
           showFullscreenButton={false}
           showPlayButton={false}
-          showThumbnails={false} 
+          showThumbnails={false}
           renderItem={(item) => (
             <div style={{ height: '400px' }}>
               <img src={item.original} style={imageStyle} alt="" />

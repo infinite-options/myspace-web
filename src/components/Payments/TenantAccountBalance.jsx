@@ -285,7 +285,7 @@ const TenantAccountBalance = ({
                 // color: leaseDetails?.lease_status === "INACTIVE" && relatedLease?.lease_status === "ACTIVE"
                 // ? returnLeaseStatusColor(relatedLease.lease_status)
                 // : returnLeaseStatusColor(leaseDetails?.lease_status),
-                color: returnLeaseStatusColor(leaseDetails?.lease_status),
+                color: returnLeaseStatusColor(selectedProperty?.lease_status),
                 marginRight: "8px",
                 fontSize: "16px",
                 flexShrink: 0,

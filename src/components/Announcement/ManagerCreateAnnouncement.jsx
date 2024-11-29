@@ -18,6 +18,8 @@ import theme from "../../theme/theme";
 // import TenantDoucments from "../Documents/TenantDocuments/TenantDocuments";
 import FormGroup from "@mui/material/FormGroup";
 import APIConfig from "../../utils/APIConfig";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { Hidden } from "@material-ui/core";
 
 export default function ManagerCreateAnnouncement() {
   const { getProfileId } = useUser();
@@ -387,7 +389,7 @@ export default function ManagerCreateAnnouncement() {
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
         <CircularProgress color='inherit' />
       </Backdrop>
-      <Box
+      {/* <Box
         className='announcement-title'
         sx={{
           display: "flex",
@@ -413,7 +415,44 @@ export default function ManagerCreateAnnouncement() {
           <img src={backButton} style={{ width: "20px", height: "20px", margin: "0 5px" }} />
         </Button>
         <div className='announcement-title-text' style={{ flex: 1, textAlign: "center" }}>{"New Announcement"}</div>
-      </Box>
+      </Box> */}
+      <Grid Container sx={{ alignItems: "center", justifyContent: "space-between", display: "flex" }}>
+        <Grid item xs={1} md={1}>
+          <Button  onClick={() => navigate("/announcements")}>
+            <ArrowBackIcon
+              sx={{
+                color: "#160449",
+                fontSize: "30px",
+                margin: "5px",
+              }}
+            />
+          </Button>
+        </Grid>
+        <Grid item xs={10} md={10}>
+          <Typography
+            sx={{
+              color: theme.typography.primary.black,
+              fontWeight: theme.typography.primary.fontWeight,
+              fontSize: "18px",
+              textAlign: "center"
+            }}
+          >
+            New Announcement
+          </Typography>
+        </Grid>
+        <Grid item xs={1} md={1}>
+          <Button  onClick={() => navigate("/announcements")}>
+            <ArrowBackIcon
+              sx={{
+                color: "#160449",
+                fontSize: "30px",
+                margin: "5px",
+                visibility: "hidden"
+              }}
+            />
+          </Button>
+        </Grid>
+      </Grid>
       <hr />
       <Box className='announcement-menu-container'>
         <form onSubmit={handleSendAnnouncement}>

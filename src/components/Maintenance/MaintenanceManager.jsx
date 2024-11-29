@@ -401,7 +401,7 @@ export default function MaintenanceManager() {
         <CircularProgress color='inherit' />
       </Backdrop>
       <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
-        <Grid container sx={{ padding: "10px" }}>
+        <Grid container sx={{ padding: "10px", flex: 1 }} spacing={8}>
           {(!isMobile || !viewRHS) && (<Grid
             item
             xs={12}
@@ -415,12 +415,13 @@ export default function MaintenanceManager() {
           >
             <Paper
               style={{
-                margin: "5px",
+                // margin: "5px",
                 backgroundColor: theme.palette.primary.main,
                 width: "98%",
                 paddingRight: isMobile ? "5px" : "10px",
-                paddingTop: "10px",
-                paddingBottom: "30px",
+                // paddingTop: "10px",
+                // paddingBottom: "30px",
+                borderRadius: "10px",
               }}
             >
               {/* back, maintenance and add icon */}
@@ -439,7 +440,7 @@ export default function MaintenanceManager() {
                   <Button onClick={handleBackButton}>
                     <ArrowBackIcon
                       sx={{
-                        color: theme.typography.common.blue,
+                        color: "#160449",
                         fontSize: "30px",
                         margin: "5px",
                       }}
@@ -465,7 +466,7 @@ export default function MaintenanceManager() {
                   <Button onClick={() => navigateToAddMaintenanceItem()} id='addMaintenanceButton'>
                     <AddIcon
                       sx={{
-                        color: theme.typography.common.blue,
+                        color: "#160449",
                         fontSize: "30px",
                         margin: "5px",
                       }}
