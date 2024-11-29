@@ -393,7 +393,7 @@ const TenantAccountBalance = ({
         )}
 
         {/* Balance Details */}
-        {(!isMobile || !viewRHS) && balanceDue > 0 && !(leaseDetails?.lease_status === "NEW" || leaseDetails?.lease_status === "PROCESSING") && (
+        {(!isMobile || !viewRHS) && balanceDetails?.length > 0 && !(leaseDetails?.lease_status === "NEW" || leaseDetails?.lease_status === "PROCESSING") && (
           <>
             <Typography sx={{ fontSize: "18px", fontWeight: "bold", color: "#160449", padding: "3px" }}>Balance Details</Typography>
             <Box sx={{ padding: "10px", maxHeight: "200px", overflowY: "auto", width: "100%", backgroundColor: "#f0f0f0", overflowX: "auto" }}>
