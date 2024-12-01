@@ -22,6 +22,7 @@ import {
   Radio,
   Menu,
   TableRow,
+  Dialog,
 } from "@mui/material";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
@@ -45,6 +46,8 @@ import { getDateAdornmentString } from "../../../utils/dates";
 import LeaseFees from "../LeaseFees";
 import GenericDialog from "../../GenericDialog";
 import ListsContext from "../../../contexts/ListsContext";
+import TenantEndLeaseButton from "../../TenantDashboard/TenantEndLeaseButton";
+import EndRenewedLeaseDialog from "../EndRenewedLeaseDialog";
 
 function TenantLeases(props) {
   // console.log("In Tenant Leases", props);
@@ -85,6 +88,7 @@ function TenantLeases(props) {
   const [dialogTitle, setDialogTitle] = useState("");
   const [dialogMessage, setDialogMessage] = useState("");
   const [dialogSeverity, setDialogSeverity] = useState("info");
+  const [showEarlyTerminationDialog, setShowEarlyTerminationDialog] = useState(false);  
 
   const openDialog = (title, message, severity) => {
     setDialogTitle(title); // Set custom title
@@ -1133,7 +1137,8 @@ function TenantLeases(props) {
                           backgroundColor: "#A75A5A",
                         },
                       }}
-                      onClick={() => handleEndApprovedLease()}
+                      // onClick={() => handleEndApprovedLease()}
+                      onClick={() => setShowEarlyTerminationDialog(true)}
                     >
                       End Lease Early
                     </Button>
@@ -1358,6 +1363,19 @@ function TenantLeases(props) {
         ]}
         severity={dialogSeverity}
       />
+      <Dialog open={showEarlyTerminationDialog} onClose={() => setShowEarlyTerminationDialog(false)} maxWidth='md' fullWidth>
+        <EndRenewedLeaseDialog
+          leaseDetails={lease}
+          setRightPane={props.setRightPane}
+          isMobile={props.isMobile}
+          setViewRHS={props.setViewRHS}
+          page="TenantLeases"
+          onClose={() => setShowEarlyTerminationDialog(false)}           
+          updateCurrentLease={updateCurrentLease}
+        />
+        
+        
+      </Dialog>
     </Paper>
   );
 }

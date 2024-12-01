@@ -482,7 +482,14 @@ const TenantDashboard = () => {
           );
 
         case "tenantLeases":
-          return <TenantLeases {...rightPane.state} setRightPane={setRightPane} setReload={setReload} property={selectedProperty}/>;
+          return <TenantLeases 
+                    {...rightPane.state}
+                    setRightPane={setRightPane}
+                    setReload={setReload}
+                    property={selectedProperty}
+                    isMobile={isMobile}
+                    setViewRHS={setViewRHS}
+                />;
         case "payment":
           return (
             <PaymentsPM
@@ -899,7 +906,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
   const daysUntilLeaseEnd = Math.ceil(timeDifference / (1000 * 3600 * 24));
 
   // Check if Renew Lease button should be visible (if within 2x notice period)
-  const showRenewLeaseButton = daysUntilLeaseEnd <= 2 * noticePeriod && leaseDetails?.lease_renew_status !== "RENEW REQUESTED"  && leaseDetails?.lease_renew_status !== "RENEWED"  && leaseDetails?.lease_renew_status !== "RENEW PROCESSING";
+  const showRenewLeaseButton = daysUntilLeaseEnd <= 2 * noticePeriod && leaseDetails?.lease_renew_status !== "RENEW REQUESTED" && leaseDetails?.lease_renew_status !== "PM RENEW REQUESTED"  && leaseDetails?.lease_renew_status !== "RENEWED"  && leaseDetails?.lease_renew_status !== "RENEW PROCESSING";
   const isEndingOrEarlyTermination = leaseDetails?.lease_renew_status === "ENDING" || leaseDetails?.lease_renew_status === "EARLY TERMINATION";
   const tenants = leaseDetails?.tenants ? JSON.parse(leaseDetails?.tenants) : [];
   const tenant_detail = tenants.length > 0 ? tenants[0] : null;
@@ -910,6 +917,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
     }
     if (relatedLease) {
       // console.log("877 - leaseDetails - ", leaseDetails);
+
       setRightPane({
         type: "tenantLeases",
         state: {
@@ -1334,9 +1342,9 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           }}
                         >
                           ACTIVE
-                        </Typography>
+                        </Typography>                        
                         {leaseDetails?.lease_renew_status &&
-                          (leaseDetails?.lease_renew_status === "PM RENEW REQUESTED" || leaseDetails?.lease_renew_status.includes("RENEW REQUESTED") || leaseDetails?.lease_renew_status === "RENEWED" || leaseDetails?.lease_renew_status === "RENEW REJECTED" || leaseDetails?.lease_renew_status === "EARLY TERMINATION") && (
+                          (leaseDetails?.lease_renew_status === "PM RENEW REQUESTED" || leaseDetails?.lease_renew_status.includes("RENEW REQUESTED") || leaseDetails?.lease_renew_status === "RENEWED" || leaseDetails?.lease_renew_status === "RENEW REJECTED" || leaseDetails?.lease_renew_status === "EARLY TERMINATION" || leaseDetails?.lease_renew_status === "CANCEL RENEWAL") && (
                             <Typography
                               sx={{
                                 color: leaseDetails?.lease_renew_status?.includes("RENEW") ? "#FF8A00" : "#A52A2A",
@@ -1347,21 +1355,36 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                               {(leaseDetails?.lease_renew_status == "RENEW REQUESTED" || leaseDetails?.lease_renew_status == "PM RENEW REQUESTED") ? " RENEWING" : ""}
                               {leaseDetails?.lease_renew_status === "RENEWED" ? "RENEWED" : ""}
                               {leaseDetails?.lease_renew_status === "RENEW REJECTED" ? "RENEW REJECTED" : ""}
-                              {(leaseDetails?.lease_renew_status == "EARLY TERMINATION") ? "EARLY END" : ""}
+                              {leaseDetails?.lease_renew_status == "EARLY TERMINATION" ? "END EARLY" : ""}
+                              {leaseDetails?.lease_renew_status == "CANCEL RENEWAL" ? "CANCEL RENEWAL" : ""}
 
                             </Typography>
                           )}
                       </>
                     ) : (
-                      <Typography
-                        sx={{
-                          color: "#3D5CAC",
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        {leaseDetails?.lease_status ? leaseDetails?.lease_status : "No Lease"}
-                      </Typography>
+                      <>
+                        <Typography
+                          sx={{
+                            color: "#3D5CAC",
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          {leaseDetails?.lease_status ? leaseDetails?.lease_status : "No Lease"}
+                        </Typography>
+                        {leaseDetails?.lease_renew_status &&
+                          (leaseDetails?.lease_renew_status === "EARLY TERMINATION") && (
+                            <Typography
+                              sx={{
+                                color: leaseDetails?.lease_renew_status?.includes("RENEW") ? "#FF8A00" : "#A52A2A",
+                                fontWeight: theme.typography.secondary.fontWeight,
+                                fontSize: theme.typography.smallFont,
+                              }}
+                            >                              
+                              {leaseDetails?.lease_renew_status == "EARLY TERMINATION" ? "CANCEL LEASE" : ""}                              
+                            </Typography>
+                          )}
+                      </>
                     )}
                     {/* {currentProperty?.contract_status === "ACTIVE" && selectedRole === "MANAGER" && 
                               <Button
@@ -1661,10 +1684,9 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                     </Button>
                   </Grid>
                 )
-              }
-              {console.log("ROHIT - 1614 - showRenewLeaseButton - ", showRenewLeaseButton)}
+              }              
               {
-                (leaseDetails?.lease_status === "ACTIVE" || leaseDetails?.lease_status === "ACTIVE M2M" ) &&  showRenewLeaseButton && (
+                (leaseDetails?.lease_status === "ACTIVE" || leaseDetails?.lease_status === "ACTIVE M2M" ) &&  showRenewLeaseButton && leaseDetails?.lease_renew_status !== "CANCEL RENEWAL" && (
                   <Grid
                     item
                     xs={6}
@@ -1881,7 +1903,9 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                         }}
                       >
                         {relatedLease.lease_status === "RENEW PROCESSING" ? "View Renewal" : ""}
-                        {relatedLease.lease_status === "APPROVED" ? "View Renewed Lease" : ""}
+                        {(relatedLease.lease_status === "APPROVED" && (relatedLease.lease_status == null || relatedLease.lease_status === "EARLY TERMINATION")) ? "View Renewed Lease" : ""}
+                        {(relatedLease.lease_status === "APPROVED") ? "View Approved Lease" : ""}
+                        
                       </Typography>
                     </Button>
                   </Grid>

@@ -1129,11 +1129,12 @@ const TenantLease = () => {
     return utilitiesArray;
   };
 
-  async function updateCurrentLease() {
+  async function updateCurrentLease(renewStatus) {
     const leaseApplicationFormData = new FormData();
 
     leaseApplicationFormData.append("lease_uid", property.lease_uid);
-    leaseApplicationFormData.append("lease_renew_status", "RENEW REQUESTED");    
+    // leaseApplicationFormData.append("lease_renew_status", "RENEW REQUESTED");    
+    leaseApplicationFormData.append("lease_renew_status", renewStatus);    
 
     try {
       const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
@@ -1245,7 +1246,7 @@ const TenantLease = () => {
 
 
       if(application.lease_status === "RENEW REFUSED" || application.lease_status === "RENEW WITHDRAWN"){
-        await updateCurrentLease();
+        await updateCurrentLease("RENEW REQUESTED");
       }      
 
 
@@ -1307,6 +1308,7 @@ const TenantLease = () => {
         // console.log("968 - property - ", property);
         if(property.lease_status === "ACTIVE"){
           leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");
+          await updateCurrentLease("PM RENEW REQUESTED");
         } else {
           leaseApplicationFormData.append("lease_status", "PROCESSING");
         }
@@ -1691,7 +1693,7 @@ const TenantLease = () => {
     setTenants(updatedTenants);
   };
 
-  const getLeaseStatusText = (status) => {
+  const getLeaseStatusText = (status, renewStatus) => {
     console.log("ROHIT - 1638 - status - ", status);
     switch(status){
       case "RENEW PROCESSING":
@@ -1710,6 +1712,13 @@ const TenantLease = () => {
         return "Rescinded";
       case "RENEW RESCINDED":
         return "Rescinded";
+      case "APPROVED":
+        if(renewStatus == null || renewStatus === "EARLY TERMINATION"){
+          return "Approved";
+        } else {
+          return "Renewed";
+        }       
+        
     }
   }
 
@@ -1933,21 +1942,25 @@ const TenantLease = () => {
                             }
                             
                           />
-                          <FormControlLabel
-                            value="active_lease"
-                            control={<Radio />}
-                            label={
-                              <Typography
-                                sx={{ 
-                                  color: "#160449",
-                                  fontWeight: "bold",
-                                  fontSize: "14px",
-                                }}
-                              >
-                                Dates from Active Lease: {property?.lease_uid}
-                              </Typography>
-                            }
-                          />
+                          {
+                            property?.lease_status != null && (
+                              <FormControlLabel
+                                value="active_lease"
+                                control={<Radio />}
+                                label={
+                                  <Typography
+                                    sx={{ 
+                                      color: "#160449",
+                                      fontWeight: "bold",
+                                      fontSize: "14px",
+                                    }}
+                                  >
+                                    Dates from Active Lease: {property?.lease_uid}
+                                  </Typography>
+                                }
+                              />
+                              )
+                          }
                           {
                             application?.lease_status != "RENEW NEW" && (
 
@@ -1963,7 +1976,7 @@ const TenantLease = () => {
                                       fontSize: "14px",
                                     }}
                                   >
-                                    {`Dates from ${getLeaseStatusText(application.lease_status)} Lease: ${application?.lease_uid}`} 
+                                    {`Dates from ${getLeaseStatusText(application.lease_status, application.lease_renew_status )} Lease: ${application?.lease_uid}`} 
                                   </Typography>
                                 }
                               />

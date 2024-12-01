@@ -15,7 +15,7 @@ import APIConfig from "../../utils/APIConfig";
 import axios from 'axios'; 
 import { PortableWifiOffSharp } from '@mui/icons-material';
 
-const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS, page, onClose }) => {
+const EndRenewedLeaseDialog = ({ leaseDetails, setRightPane, isMobile, setViewRHS, page, onClose, updateCurrentLease }) => {
     const [open, setOpen] = useState(false);
     const {getProfileId } = useUser();
     const [confirmationText, setConfirmationText] = useState("");
@@ -44,25 +44,17 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
         const lowerBoundNoticeDate = new Date(noticeDate);
         lowerBoundNoticeDate.setDate(noticeDate.getDate() - noticePeriod);
 
-        if (leaseData?.lease_status === "ACTIVE" || leaseData?.lease_status === "ACTIVE M2M") {
-            if (selectedValue === "terminate") {
-                setEndLeaseStatus("TERMINATED");
-                return `This lease will be terminated immediately, effective from today. Are you sure you want to terminate the lease?`;
-            } else if (currentDate <= noticeDate && currentDate >= lowerBoundNoticeDate) {
-                setEndLeaseStatus("ENDING");
-                return `Your lease will end on ${leaseEndDateFormatted}, and you are responsible for rent payments until the end of the lease. Are you sure you want to end the lease?`;
-            } else {
-                setEndLeaseStatus("EARLY TERMINATION");
-                return `Notice for ending the lease must be provided ${noticePeriod} days in advance. Ending the lease early may require additional approval. Are you sure you want to end the lease?`;
-            }
+        if(leaseData?.lease_status === "APPROVED"){
+            setEndLeaseStatus("EARLY TERMINATION");
+            return `Ending the lease early may require additional approval. Are you sure you want to request early termination of the lease?`;
         } else {
-            return 'ERROR: lease status is not "ACTIVE" or "ACTIVE-M2M"';
+            return 'ERROR: lease status is not "APPROVED"';
         }
     };
 
     const handleClickOpen = () => {
         const newError = [];
-        if (moveOutDate === null) newError.push("Move Out Date is required");
+        // if ((leaseDetails.lease_status !== "ACTIVE" || leaseDetails.lease_status === "ACTIVE M2M") && moveOutDate === null) newError.push("Move Out Date is required");
         if (moveOutReason === "") newError.push("Move Out Reason is required");
 
         if (newError.length === 0) {
@@ -115,7 +107,13 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
         if(isMobile){
             setViewRHS(false)
         }
-        setRightPane("");
+        if(page && page === "TenantLeases"){
+            //dont set right pane
+            onClose();
+        } else {
+            setRightPane("");
+        }
+        
     };
 
     const formatDate = (dateString) => {
@@ -132,7 +130,6 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
         const leaseApplicationFormData = new FormData();
         const formattedMoveOutDate = formatDate(moveOutDate);
         leaseApplicationFormData.append("lease_uid", leaseData?.lease_uid);        
-        leaseApplicationFormData.append("move_out_date", formattedMoveOutDate);        
         leaseApplicationFormData.append("lease_renew_status", endLeaseStatus);
         leaseApplicationFormData.append("lease_end_reason", moveOutReason);
 
@@ -152,6 +149,14 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
             .then((response) => {
                 setShowSpinner(false);
                 setSuccess(`Your lease has been moved to ${endLeaseStatus} status.`);
+                if(leaseData?.lease_status === "APPROVED"){
+                    if(leaseData?.lease_renew_status == null || leaseData?.lease_renew_status === "EARLY TERMINATION"){                        
+                        // dont update current lease
+                    } else {
+                      updateCurrentLease("CANCEL RENEWAL");
+                    } 
+                    
+                }
             })
             .catch((error) => {
                 if (error.response) {
@@ -495,4 +500,4 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
     );
 };
 
-export default TenantEndLeaseButton;
+export default EndRenewedLeaseDialog;

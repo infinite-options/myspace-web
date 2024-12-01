@@ -531,7 +531,7 @@ const TenantApplicationNav = (props) => {
                               {"Reject Tenant"}
                             </Button>
                           )}
-                          {(application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW PROCESSING") && (
+                          {(application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "APPROVED") && (
                             <div>
                               <Button
                                 onClick={handleWithdrawLease}
@@ -582,7 +582,7 @@ const TenantApplicationNav = (props) => {
                               {"Renew Lease"}
                             </Button>
                           )}
-                          {application?.lease_status !== "PROCESSING" && application?.lease_status !== "RENEW PROCESSING"  && application?.lease_status !== "RENEW NEW" && (
+                          {application?.lease_status !== "PROCESSING" && application?.lease_status !== "RENEW PROCESSING"  && application?.lease_status !== "RENEW NEW"  && application?.lease_status !== "APPROVED" && (
                             <Button
                               onClick={handleCreateLease}
                               sx={{
