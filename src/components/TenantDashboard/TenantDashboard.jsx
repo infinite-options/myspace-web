@@ -179,6 +179,7 @@ const TenantDashboard = () => {
           purchaseStatus: payment.purchase_status,
           purchaseDate: payment.pur_due_date,
           pur_cf_type: payment.pur_cf_type,
+          pur_receiver: payment.pur_receiver
         }));
 
         // Save all balance details to state
@@ -2564,6 +2565,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
   const [dialogTitle, setDialogTitle] = useState("");
   const [dialogMessage, setDialogMessage] = useState("");
   const [dialogSeverity, setDialogSeverity] = useState("error");
+  // console.log(" --- check here --- ", balanceDetails, data)
 
   const [paymentData, setPaymentData] = useState({
     currency: "usd",
@@ -2578,7 +2580,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
   });
 
   useEffect(() => {
-    console.log("data from paymentPM", data);
+    console.log("data from paymentPM", selectedProperty);
     const filteredUnpaidData = data.filter((item) => item.purchaseStatus === "UNPAID" || item.purchaseStatus === "PARTIALLY PAID");
     setUnpaidData(filteredUnpaidData);
 
@@ -2624,7 +2626,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
       business_code: paymentNotes,
       balance: paymentOption === "partial" ? partialAmount : total, // Check here for partial amount getting passed into balance - Abhinav
     };
-    // console.log("check here", updatedPaymentData);
+    // console.log("check here", selectedProperty);
     navigate("/selectPayment", {
       state: {
         paymentData: updatedPaymentData,
@@ -2633,6 +2635,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
         selectedProperty: selectedProperty,
         leaseDetails: leaseDetails,
         balanceDetails: balanceDetails,
+        receiverId: selectedProperty?.business_uid
       },
     });
   };

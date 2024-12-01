@@ -96,7 +96,7 @@ const ManagerSelectPayment = ({ selectedPayment, selectedPurGroup, }) => {
                             //     balanceDetails: balanceDetails,
                             // },
                                 state: {
-                                    ...selectedPayment, paymentData: updatedPaymentData,
+                                    ...selectedPayment, paymentData: updatedPaymentData, 
                                 },
                         });
                         }}
