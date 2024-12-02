@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Box, Grid, Typography, Button, IconButton, Badge, Card, CardContent, Dialog, DialogActions, DialogTitle, DialogContent, ToolTip } from "@mui/material";
+import { RadioGroup, FormControlLabel, Radio } from "@mui/material";
+
 import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
 import { DataGrid } from "@mui/x-data-grid";
@@ -1148,6 +1150,10 @@ export default function LeaseDetailsComponent({
               </>
             )}
 
+<Grid item xs={12}>
+      <UtilitiesSection utilities={currentProperty?.property_utilities} />
+    </Grid>
+
             {isEndLeasePopupOpen && (
               <Dialog open={isEndLeasePopupOpen} onClose={() => setIsEndLeasePopupOpen(false)} maxWidth='md' fullWidth>
                 <EndLeaseButton
@@ -1877,3 +1883,80 @@ const RenewContractDialog = ({ open, handleClose, contract }) => {
     </form>
   );
 };
+
+const UtilitiesSection = ({ utilities }) => {
+  if (!utilities || utilities.length === 0) {
+    return (
+      <Box sx={{ marginTop: "15px" }}>
+        <Typography>No utilities specified.</Typography>
+      </Box>
+    );
+  }
+
+  // Parse the stringified JSON data
+  const parsedUtilities = JSON.parse(utilities);
+
+  return (
+    <Box sx={{ marginTop: "15px" }}>
+      <Typography
+        sx={{
+          textTransform: "none",
+          fontWeight: "bold",
+          fontSize: "16px",
+          marginBottom: "10px",
+        }}
+      >
+        Utilities Paid By:
+      </Typography>
+      <Grid container spacing={2}>
+        {parsedUtilities.map((utility, index) => (
+          <Grid container item spacing={2} key={index} alignItems="center">
+            {/* Utility Name */}
+            <Grid item xs={4}>
+              <Typography
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: "14px",
+                }}
+              >
+                {utility.utility_desc.charAt(0).toUpperCase() + utility.utility_desc.slice(1)}
+              </Typography>
+            </Grid>
+
+            {/* Radio Buttons */}
+            <Grid item xs={8}>
+              <RadioGroup
+                row
+                value={utility.utility_payer.toLowerCase()} // Set selected value
+              >
+                <FormControlLabel
+                  value="owner"
+                  control={<Radio disabled={utility.utility_payer.toLowerCase() !== "owner"} sx={{
+                    color: "black", // Unselected radio button color
+                    "&.Mui-checked": {
+                      color: "black", // Selected radio button color
+                    },
+                  }}/>}
+                  label="Owner"
+                  
+                />
+                <FormControlLabel
+                  value="tenant"
+                  control={<Radio disabled={utility.utility_payer.toLowerCase() !== "tenant"} sx={{
+                    color: "black", // Unselected radio button color
+                    "&.Mui-checked": {
+                      color: "black", // Selected radio button color
+                    },
+                  }}/>}
+                  label="Tenant"
+                />
+              </RadioGroup>
+            </Grid>
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
+  );
+};
+
+

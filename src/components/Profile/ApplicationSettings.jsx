@@ -44,7 +44,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ApplicationSettings({ handleChangePasswordClick, setRHS }) {
+export default function ApplicationSettings({ handleChangePasswordClick, setRHS, handleEditUserInfoClick }) {
   console.log("In Application Settings Widget ");
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { getProfileId, user, logout, updateAppSettings } = useUser(); // Ensure user is destructured from useUser
@@ -352,6 +352,11 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS 
               </select>
             </Box>
           )}
+        </Grid>
+        <Grid container justifyContent='space-between' alignContent='center' item xs={12} sx={{marginTop: '15px', }}>
+          <Link href="#" underline="hover" onClick={handleEditUserInfoClick} sx={{ color: "#3D5CAC" }}>
+            Edit User Information
+          </Link>
         </Grid>
 
         <Grid container justifyContent='space-between' alignContent='center' item xs={12} sx={{marginTop: '15px', }}>
