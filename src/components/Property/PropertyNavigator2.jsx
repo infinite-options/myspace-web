@@ -1155,24 +1155,33 @@ export default function PropertyNavigator2({
     {
       field: "actions",
       headerName: "Actions",
-      // width: 120,
-      flex: 1,
-      renderCell: (params) => {
-        return (
-          <Box sx={{ display: "flex", width: "100%" }}>
-            <IconButton onClick={() => handleInfoClick(params.row)}>
-              <InfoIcon />
-            </IconButton>
-            <IconButton onClick={() => handleEditClick(params.row)}>
-              <EditIcon />
-            </IconButton>
-            <IconButton onClick={() => handleDeleteClick(params.row.appliance_uid)}>
-              <DeleteIcon />
-            </IconButton>
-          </Box>
-        );
-      },
+      width: 150, // Set enough fixed width to fit all three icons
+      sortable: false, // Disable sorting for actions column
+      renderCell: (params) => (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between", // Distribute icons evenly
+            alignItems: "center",
+            gap: "1px", // Add spacing between icons
+            flexWrap: "nowrap", // Prevent wrapping
+            overflow: "visible", // Ensure icons are not cut off
+            minWidth: "120px", // Prevent shrinking below this width
+          }}
+        >
+          <IconButton onClick={() => handleInfoClick(params.row)}>
+            <InfoIcon />
+          </IconButton>
+          <IconButton onClick={() => handleEditClick(params.row)}>
+            <EditIcon />
+          </IconButton>
+          <IconButton onClick={() => handleDeleteClick(params.row.appliance_uid)}>
+            <DeleteIcon />
+          </IconButton>
+        </Box>
+      ),
     },
+    
   ];
 
   const [imagesTobeDeleted, setImagesTobeDeleted] = useState([]);
@@ -1568,30 +1577,43 @@ export default function PropertyNavigator2({
           </IconButton>
         </Box>
         <Box>
-          <DataGrid
-            rows={appliances}
-            columns={applnColumns}
-            pageSize={10}
-            rowsPerPageOptions={[5, 10, 15]}
-            initialState={{
-              pagination: {
-                paginationModel: {
-                  pageSize: 10,
-                  page: 0,
-                },
-              },
-            }}
-            getRowId={(row) => row.appliance_uid}
-            autoHeight
-            sx={{
-              fontSize: "14px",
-              "& .wrap-text": {
-                whiteSpace: "normal !important",
-                wordWrap: "break-word !important",
-                overflow: "visible !important",
-              },
-            }}
-          />
+        <DataGrid
+  rows={appliances}
+  columns={applnColumns}
+  pageSize={10}
+  rowsPerPageOptions={[5, 10, 15]}
+  initialState={{
+    pagination: {
+      paginationModel: {
+        pageSize: 10,
+        page: 0,
+      },
+    },
+  }}
+  getRowId={(row) => row.appliance_uid}
+  autoHeight
+  sx={{
+    fontSize: "14px",
+    "& .MuiDataGrid-root": {
+      overflow: "visible", // Prevent content from being hidden
+    },
+    "& .MuiDataGrid-cell": {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      overflow: "visible", // Ensure all content is visible
+    },
+    "& .MuiDataGrid-cell--actions": {
+      display: "flex",
+      justifyContent: "space-between", // Space out icons
+      gap: "2px", // Add consistent spacing
+      overflow: "visible", // Prevent truncation
+      flexWrap: "nowrap", // Prevent wrapping
+      minWidth: "120px", // Ensure sufficient space
+    },
+  }}
+/>
+
         </Box>
         <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
           <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: "100%" }}>
