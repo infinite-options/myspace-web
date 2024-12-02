@@ -911,7 +911,7 @@ export default function SelectPayment(props) {
                                   }}
                                 >
                                   To: 
-                                  <span style={{color: "#888888", paddingLeft: "10px", fontSize: "14px", fontWeight: "normal"}}>
+                                  <span style={{color: "#888888", paddingLeft: "10px", fontSize: "14px", fontWeight: "bold"}}>
                                   {receiverId?.startsWith('600')? receiverProfile?.business_name : receiverProfile?.owner_first_name + " " + receiverProfile?.owner_last_name} ({receiverPaymentMethods.find((receiverMethod) => receiverMethod.paymentMethod_type === method.paymentMethod_type)?.paymentMethod_name})
                                   </span>
                                 </Typography>
@@ -922,7 +922,6 @@ export default function SelectPayment(props) {
                                   sx={{
                                     marginLeft: "10px",
                                     fontSize: "14px",
-                                    fontWeight: "bold",
                                     color: "#888888",
                                   }}
                                 > 

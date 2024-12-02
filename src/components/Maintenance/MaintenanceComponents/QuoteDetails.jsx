@@ -15,15 +15,18 @@ import Documents from '../../Leases/Documents';
 import theme from "../../../theme/theme";
 import { DataGrid } from '@mui/x-data-grid';
 import { useMaintenance } from '../../../contexts/MaintenanceContext';
+import { useUser } from '../../../contexts/UserContext';
 
 const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem, fetchAndUpdateQuotes, setRefresh, navigateParams}) => {
     console.log('----QuoteDetails maintenanceQuotesForItem----', initialIndex, maintenanceQuotesForItem);
+    const { user, getProfileId, selectedRole } = useUser(); 
 
     const [currentIndex, setCurrentIndex] = useState(initialIndex);
     //console.log('currentIndex=----', currentIndex);
     const currentItem = maintenanceQuotesForItem && maintenanceQuotesForItem[initialIndex];
     console.log('currentItem=----', currentItem);
     const [showSpinner, setShowSpinner] = useState(false);
+
 
     const { setQuoteRequestEditView, setMaintenanceQuotes, setCurrentQuoteIndex, setNavigateParams, setMaintenanceData, setSelectedStatus, setSelectedRequestIndex } = useMaintenance();
 
@@ -751,7 +754,7 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
             {/* Action button */}
             {currentItem && (
                 <Box display="flex" justifyContent="space-between" p={2}>
-                    {currentItem.quote_status === 'REQUESTED' ? (
+                    {selectedRole === "MANAGER" && currentItem.quote_status === 'REQUESTED' ? (
                         <Button
                             variant="contained"
                             sx={{
@@ -767,7 +770,7 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                         >
                             Withdraw
                         </Button>
-                    ) : currentItem.quote_status === 'SENT' ? (
+                    ) : selectedRole === "MANAGER" && currentItem.quote_status === 'SENT' ? (
                         <>
                            {!isAnyQuoteAccepted && (
                                 <Button
@@ -802,7 +805,7 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                                 Decline
                             </Button>
                         </>
-                    ) : currentItem.quote_status === 'ACCEPTED' ? (
+                    ) : selectedRole === "MANAGER" && currentItem.quote_status === 'ACCEPTED' ? (
                         <Button
                             variant="contained"
                             sx={{
@@ -818,7 +821,7 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                         >
                             Reject
                         </Button>
-                    ) : currentItem.quote_status === "MORE INFO" ? (
+                    ) : selectedRole === "MANAGER" && currentItem.quote_status === "MORE INFO" ? (
                         <Button
                             variant="contained"
                             sx={{
