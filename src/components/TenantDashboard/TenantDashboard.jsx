@@ -609,7 +609,8 @@ const TenantDashboard = () => {
             <Grid item xs={12} md={8} sx={{ display: "flex", flexDirection: "column", flex: 1 }} rowGap={8}>
               {/* <Grid container rowGap={5} sx={{alignItems:"stretch"}}> */}
               {/* Top section: Announcements */}
-              {(!isMobile || !viewRHS) && (
+              {
+              (!isMobile || !viewRHS) && (
                 <Grid item xs={12}>
                   <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", paddingBottom: "40px", borderRadius: "10px", height: "100%" }}>
                     <Grid
@@ -661,7 +662,7 @@ const TenantDashboard = () => {
                               cursor: "pointer",
                             }}
                             onClick={() => {
-                              isMobile ? setViewRHS(true) : setViewRHS(false);
+                              setViewRHS(true);
                               setRightPane({ type: "announcements" });
                             }}
                           >
