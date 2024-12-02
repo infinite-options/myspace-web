@@ -731,9 +731,9 @@ export default function PaymentsManager(props) {
                           onClick={() => {
                             // paymentData.business_code = paymentNotes;
                             const updatedPaymentData = { ...paymentData, business_code: paymentNotes };
-                            console.log("In Payments.jsx and passing paymentData to SelectPayment.jsx: ", paymentData);
-                            console.log("In Payments.jsx and passing paymentMethodInfo to SelectPayment.jsx: ", paymentMethodInfo);
-                            console.log("cashflow - ", selectedItems);
+                            // console.log("In Payments.jsx and passing paymentData to SelectPayment.jsx: ", paymentData);
+                            // console.log("In Payments.jsx and passing paymentMethodInfo to SelectPayment.jsx: ", paymentMethodInfo);
+                            // console.log("cashflow - ", selectedItems);
                             // if(page != null && page === "paymentProcessing"){
                             //   setSelectedPayment({ paymentData: updatedPaymentData, total: total, selectedItems: selectedItems, paymentMethodInfo: paymentMethodInfo });
                             //   setCurrentWindow("MAKE_PAYMENT");
@@ -963,7 +963,7 @@ export default function PaymentsManager(props) {
                           <>
                             <br />
                             <Grid item xs={12} marginBottom={10}>
-                              <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Property: {propertyPayments[0].property_address}</Typography>
+                              <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Property: {propertyPayments[0].property_address} ({propertyPayments[0].pur_property_id})</Typography>
                             </Grid>
                             <TransactionsTable
                               data={propertyPayments}
@@ -1017,7 +1017,7 @@ export default function PaymentsManager(props) {
                                   <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                                     <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls={`panel-${propertyID}-content`} id={`panel-${propertyID}-header`}>
                                       <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                        Property: {transactionDataByOwner[ownerID][propertyID][0].property_address}
+                                        Property: {transactionDataByOwner[ownerID][propertyID][0].property_address} ({transactionDataByOwner[ownerID][propertyID][0].pur_property_id})
                                       </Typography>
                                     </AccordionSummary>
                                   </Grid>
@@ -1069,7 +1069,7 @@ export default function PaymentsManager(props) {
                                   <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                                     <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls={`panel-${propertyID}-content`} id={`panel-${propertyID}-header`}>
                                       <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight }}>
-                                        Property: {transactionDataByRecipient[recpId][propertyID][0].property_address}
+                                        Property: {transactionDataByRecipient[recpId][propertyID][0].property_address} ({transactionDataByRecipient[recpId][propertyID][0].pur_property_id})
                                       </Typography>
                                     </AccordionSummary>
                                   </Grid>
@@ -1252,6 +1252,8 @@ function TransactionsTable(props) {
       return acc;
     }, {});
 
+    console.log(" === according to pur group == ", newData)
+
     const filteredValues = Object.keys(newData).reduce((acc, key) => {
       const hasNon350Payer = newData[key].every((item) => !item.pur_payer.startsWith("350"));
 
@@ -1267,6 +1269,8 @@ function TransactionsTable(props) {
         verifiedPurGroups.push(transaction.pur_group);
       }
     });
+
+    // console.log(" == debug == data ", data, verifiedPurGroups)
 
     return (
       data

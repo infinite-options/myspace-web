@@ -48,6 +48,8 @@ import GenericDialog from "../../GenericDialog";
 import ListsContext from "../../../contexts/ListsContext";
 import TenantEndLeaseButton from "../../TenantDashboard/TenantEndLeaseButton";
 import EndRenewedLeaseDialog from "../EndRenewedLeaseDialog";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 function TenantLeases(props) {
   // console.log("In Tenant Leases", props);
@@ -78,7 +80,7 @@ function TenantLeases(props) {
   const [employmentExpanded, setEmploymentExpanded] = useState(true);
   const [utilitiesExpanded, setUtilitiesExpanded] = useState(true);
   const [documentsExpanded, setDocumentsExpanded] = useState(true);
-  const [leaseFeesExpanded, setLeaseFeesExpanded] = useState(true); 
+  const [leaseFeesExpanded, setLeaseFeesExpanded] = useState(true);
   const [mappedUtilitiesPaidBy, setMappedUtilitiesPaidBy] = useState({});
   const [utilitiesRole, setUtilitiesRole] = useState([]);
   const [utilities, setUtilities] = useState([]);
@@ -88,7 +90,8 @@ function TenantLeases(props) {
   const [dialogTitle, setDialogTitle] = useState("");
   const [dialogMessage, setDialogMessage] = useState("");
   const [dialogSeverity, setDialogSeverity] = useState("info");
-  const [showEarlyTerminationDialog, setShowEarlyTerminationDialog] = useState(false);  
+  const [showEarlyTerminationDialog, setShowEarlyTerminationDialog] = useState(false);
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const openDialog = (title, message, severity) => {
     setDialogTitle(title); // Set custom title
@@ -283,7 +286,7 @@ function TenantLeases(props) {
     const leaseApplicationFormData = new FormData();
 
     leaseApplicationFormData.append("lease_uid", lease.lease_uid);
-    if(lease.lease_status === "RENEW PROCESSING"){
+    if (lease.lease_status === "RENEW PROCESSING") {
       leaseApplicationFormData.append("lease_status", "RENEW REFUSED");
     } else {
       leaseApplicationFormData.append("lease_status", "REFUSED");
@@ -316,7 +319,7 @@ function TenantLeases(props) {
       } catch (error) {
         console.log("Error in Tenant refuse announcements:", error);
         // alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
-        openDialog("Error",`We were unable to Text the Property Manager but we were able to send them a notification through the App`,"error");
+        openDialog("Error", `We were unable to Text the Property Manager but we were able to send them a notification through the App`, "error");
       }
     };
 
@@ -327,26 +330,21 @@ function TenantLeases(props) {
       });
       const data = await response.json();
       // if (data.lease_update.code === 200) {
-      if(response.ok){
+      if (response.ok) {
         // alert("You have successfully Rejected the lease.");
-        openDialog("Success",`You have successfully Rejected the lease`,"success");
-        
+        openDialog("Success", `You have successfully Rejected the lease`, "success");
+
         await sendAnnouncement();
 
-
         // if lease status is RENEW PROCESSING update the current lease's renew status
-        if(lease.lease_status === "RENEW PROCESSING"){
+        if (lease.lease_status === "RENEW PROCESSING") {
           await updateCurrentLease("RENEW REFUSED");
         }
-
-
 
         // props.setRightPane({ type: "", state: { property: property, lease: lease } });
         // console.log("--- DEBUD---- rejected")
         props.setReload((prev) => !prev);
         // props.setRightPane("");
-
-
       } else {
         console.log(data);
       }
@@ -359,7 +357,7 @@ function TenantLeases(props) {
     const leaseApplicationFormData = new FormData();
 
     leaseApplicationFormData.append("lease_uid", property.lease_uid);
-    leaseApplicationFormData.append("lease_renew_status", renewStatus);    
+    leaseApplicationFormData.append("lease_renew_status", renewStatus);
 
     try {
       const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
@@ -368,10 +366,9 @@ function TenantLeases(props) {
       });
       const data = await response.json();
       // if (data.lease_update.code === 200) {
-      if(response.ok){
+      if (response.ok) {
         // alert("You have successfully Rejected the lease.");
-        openDialog("Success",`You have successfully Rejected the lease`,"success");        
-        
+        openDialog("Success", `You have successfully Rejected the lease`, "success");
       } else {
         console.log(data);
       }
@@ -384,7 +381,7 @@ function TenantLeases(props) {
     const leaseApplicationFormData = new FormData();
 
     leaseApplicationFormData.append("lease_uid", lease.lease_uid);
-    leaseApplicationFormData.append("lease_renew_status", "EARLY TERMINATION");    
+    leaseApplicationFormData.append("lease_renew_status", "EARLY TERMINATION");
 
     try {
       const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
@@ -393,15 +390,14 @@ function TenantLeases(props) {
       });
       const data = await response.json();
       // if (data.lease_update.code === 200) {
-      if(response.ok){                
-        openDialog("Success",`Successfully sent a request to the Property Manager to end the approved lease.`,"success");                
+      if (response.ok) {
+        openDialog("Success", `Successfully sent a request to the Property Manager to end the approved lease.`, "success");
       } else {
         console.log(data);
       }
     } catch (error) {
       console.log(error);
     }
-
   }
 
   async function handleTenantAccept() {
@@ -447,7 +443,7 @@ function TenantLeases(props) {
       } catch (error) {
         console.log("Error in Tenant accept announcements:", error);
         // alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
-        openDialog("Error",`We were unable to Text the Property Manager but we were able to send them a notification through the App`,"error");
+        openDialog("Error", `We were unable to Text the Property Manager but we were able to send them a notification through the App`, "error");
       }
     };
 
@@ -501,11 +497,11 @@ function TenantLeases(props) {
       // console.log("409 - Data", data);
       if (response.ok) {
         // alert("You have successfully Accepted the lease.");
-        openDialog("Success",`You have successfully Accepted the lease.`,"success");
+        openDialog("Success", `You have successfully Accepted the lease.`, "success");
         //don';t send announcemnt twice
-        if(lease.lease_status === "RENEW PROCESSING"){
+        if (lease.lease_status === "RENEW PROCESSING") {
           await sendRenewalStatus();
-        }        
+        }
         await sendAnnouncement();
         // props.setRightPane("");
         props.setReload((prev) => !prev);
@@ -576,46 +572,54 @@ function TenantLeases(props) {
       <Box
         sx={{
           fontFamily: "Source Sans Pro",
-          padding: "20px",
+          padding: "10px",
         }}
       >
         <Grid container>
-          <Grid item xs={11}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                color: "#160449",
-              }}
-            >
-              <Typography
+          <Grid container sx={{ display: "flex", alignContent: "center", justifyContent: "center" }}>
+            <Grid item xs={1}>
+              <Button
+                onClick={() => {
+                  if (props.from && props.from === "accwidget") {
+                    props.setRightPane("");
+                  } else {
+                    props.setRightPane({ type: "listings" });
+                  }
+                }}
                 sx={{
-                  justifySelf: "center",
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.medium.fontWeight,
-                  fontSize: "25px",
+                  textTransform: "none",
+                  textDecoration: "underline",
                 }}
               >
-                Lease (UID: {lease.lease_uid})
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={1}>
-            <Button
-              onClick={() => {
-                if (props.from && props.from === "accwidget") {
-                  props.setRightPane("");
-                } else {
-                  props.setRightPane({ type: "listings" });
-                }
-              }}
-              sx={{
-                textTransform: "none",
-                textDecoration: "underline",
-              }}
-            >
-              <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px" }} />
-            </Button>
+                <ArrowBackIcon
+                  sx={{
+                    color: "#160449",
+                    fontSize: "25px",
+                  }}
+                />
+              </Button>
+            </Grid>
+            <Grid item xs={10}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  color: "#160449",
+                }}
+              >
+                <Typography
+                  sx={{
+                    justifySelf: "center",
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.medium.fontWeight,
+                    fontSize: "25px",
+                  }}
+                >
+                  Lease (UID: {lease.lease_uid})
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={1} />
           </Grid>
           <Grid item xs={12}>
             <CenteringBox>
@@ -663,39 +667,66 @@ function TenantLeases(props) {
                   Viewing Current Lease
                 </Typography>
               </AccordionSummary>
-              <AccordionDetails sx={{ padding: "30px" }}>
+              <AccordionDetails sx={{ padding: "10px" }}>
                 {" "}
                 {/* Increased padding */}
-                
-                <Grid container spacing={3} rowGap={6} justifyContent="space-between">
+                <Grid container spacing={1} rowGap={6} justifyContent='space-between'>
                   {" "}
                   {/* Increased spacing */}
-                  <Grid item xs={2}>
-                    <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Start Date</Typography>
-                    <Typography>{lease?.lease_start || "N/A"}</Typography>
-                  </Grid>                  
-                  <Grid item xs={2}>
-                    <Typography sx={{ fontWeight: "bold", color: "#160449" }}>End Date</Typography>
-                    <Typography>{lease?.lease_end || "N/A"}</Typography>
-                  </Grid>                  
-                  <Grid item xs={2}>
-                    <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Move-In Date</Typography>
-                    <Typography>{lease?.lease_move_in_date || "N/A"}</Typography>
-                  </Grid>                                    
-                  <Grid item xs={4}>
-                    <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Lease Renewal</Typography>
-                    <Typography>
-                      {lease?.lease_m2m == null ? "Not Specified" : ""}
-                      {lease?.lease_m2m === 1 ? "Renews Month-to-Month" : ""}
-                      {lease?.lease_m2m === 0 ? "Renews Automatically" : ""}
-                    </Typography>
-                  </Grid>                                    
-                  <Grid item xs={4}>
-                    <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Lease End Notice Period</Typography>
-                    <Typography>
-                      {lease?.lease_end_notice_period != null ? `${lease?.lease_end_notice_period} days` : "Not Specified"}                      
-                    </Typography>
-                  </Grid>                                    
+                  <Grid item xs={12} md={2}>
+                    <Grid Container sx={{ display: isMobile && "flex" }}>
+                      <Grid item xs={5} md={12}>
+                        <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Start Date</Typography>
+                      </Grid>
+                      <Grid item xs={7} md={12}>
+                        <Typography>{lease?.lease_start || "N/A"}</Typography>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  <Grid item xs={12} md={2}>
+                    <Grid Container sx={{ display: isMobile && "flex" }}>
+                      <Grid item xs={5} md={12}>
+                        <Typography sx={{ fontWeight: "bold", color: "#160449" }}>End Date</Typography>
+                      </Grid>
+                      <Grid item xs={7} md={12}>
+                        <Typography>{lease?.lease_end || "N/A"}</Typography>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  <Grid item xs={12} md={2}>
+                    <Grid Container sx={{ display: isMobile && "flex" }}>
+                      <Grid item xs={5} md={12}>
+                        <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Move-In Date</Typography>
+                      </Grid>
+                      <Grid item xs={7} md={12}>
+                        <Typography>{lease?.lease_move_in_date || "N/A"}</Typography>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <Grid Container sx={{ display: isMobile && "flex" }}>
+                      <Grid item xs={5} md={12}>
+                        <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Lease Renewal</Typography>
+                      </Grid>
+                      <Grid item xs={7} md={12}>
+                        <Typography>
+                          {lease?.lease_m2m == null ? "Not Specified" : ""}
+                          {lease?.lease_m2m === 1 ? "Renews Month-to-Month" : ""}
+                          {lease?.lease_m2m === 0 ? "Renews Automatically" : ""}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <Grid Container sx={{ display: isMobile && "flex" }}>
+                      <Grid item xs={5} md={12}>
+                        <Typography sx={{ fontWeight: "bold", color: "#160449" }}> {isMobile ? "Notice Period" : "Lease End Notice Period"}</Typography>
+                      </Grid>
+                      <Grid item xs={7} md={12}>
+                        <Typography>{lease?.lease_end_notice_period != null ? `${lease?.lease_end_notice_period} days` : "Not Specified"}</Typography>
+                      </Grid>
+                    </Grid>
+                  </Grid>
                 </Grid>
               </AccordionDetails>
             </Accordion>
@@ -738,16 +769,16 @@ function TenantLeases(props) {
                   </Grid>
                 </AccordionSummary>
                 <AccordionDetails>
-                  <Grid container columnSpacing={2} rowSpacing={3} sx={{ padding: "10px" }}>
+                  <Grid container columnSpacing={2} rowSpacing={3} sx={{ padding: "10px", justifyContent: "center", alignItems: "center" }}>
                     {Object.entries(mappedUtilitiesPaidBy).length > 0 ? (
                       Object.entries(mappedUtilitiesPaidBy).map(([utility, selectedValue]) => (
                         <Fragment key={utility}>
-                          <Grid item xs={6}>
+                          <Grid item xs={5} md={5}>
                             <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                               {formatUtilityName(utility)}
                             </Typography>
                           </Grid>
-                          <Grid item xs={6}>
+                          <Grid item xs={7} md={7}>
                             <FormControlLabel
                               value='owner'
                               control={
@@ -1002,7 +1033,7 @@ function TenantLeases(props) {
           </Grid>
 
           {/* documents details */}
-          <Grid container direction='column' justifyContent='center' spacing={2} sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+          <Grid container justifyContent='center' spacing={2} sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
             <Grid item xs={12}>
               <Accordion
                 sx={{
@@ -1016,21 +1047,26 @@ function TenantLeases(props) {
                 onChange={() => setDocumentsExpanded((prev) => !prev)}
               >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='documents-content' id='documents-header'>
-                  <Typography
-                    sx={{
-                      fontWeight: theme.typography.medium.fontWeight,
-                      color: theme.typography.primary.blue,
-                      // color: "#160449",
-                      // fontWeight: theme.typography.primary.fontWeight,
-                      // fontSize: "20px",
-                      // textAlign: "center",
-                      // paddingBottom: "10px",
-                      // paddingTop: "5px",
-                      // flexGrow: 1,
-                    }}
-                  >
-                    Document Details
-                  </Typography>
+                  <Grid container>
+                    <Grid item md={11.2}>
+                      <Typography
+                        sx={{
+                          fontWeight: theme.typography.medium.fontWeight,
+                          color: theme.typography.primary.blue,
+                          // color: "#160449",
+                          // fontWeight: theme.typography.primary.fontWeight,
+                          // fontSize: "20px",
+                          // textAlign: "center",
+                          // paddingBottom: "10px",
+                          // paddingTop: "5px",
+                          // flexGrow: 1,
+                        }}
+                      >
+                        Document Details
+                      </Typography>
+                    </Grid>
+                    <Grid item md={0.5} />
+                  </Grid>
                 </AccordionSummary>
                 <AccordionDetails>
                   <Documents
@@ -1054,99 +1090,93 @@ function TenantLeases(props) {
           </Grid>
 
           {/* Accept and reject lease button */}
-          {
-            lease.lease_status !== "APPROVED" && (
-
-            
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <CenteringBox>
-                    <Button
-                      sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: "#CB8E8E",
-                        borderRadius: "5px",
-                        padding: "5px 10px",
-                        minWidth: "90px",
-                        width: "150px",
-                        fontSize: "14px",
-                        fontWeight: "700",
-                        color: "#FFFFFF",
-                        textTransform: "none",
-                        "&:hover": {
-                          backgroundColor: "#A75A5A",
-                        },
-                      }}
-                      onClick={() => handleTenantRefuse()}
-                    >
-                      Reject Lease
-                    </Button>
-                  </CenteringBox>
-                </Grid>
-                <Grid item xs={6}>
-                  <CenteringBox>
-                    <Button
-                      sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: "#9EAED6",
-                        borderRadius: "5px",
-                        padding: "5px 10px",
-                        minWidth: "90px",
-                        width: "150px",
-                        fontSize: "14px",
-                        fontWeight: "600",
-                        color: "#FFFFFF",
-                        textTransform: "none",
-                        "&:hover": {
-                          backgroundColor: "#6A8AB3",
-                        },
-                      }}
-                      onClick={() => handleTenantAccept()}
-                    >
-                      Accept Lease
-                    </Button>
-                  </CenteringBox>
-                </Grid>
+          {lease.lease_status !== "APPROVED" && (
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <CenteringBox>
+                  <Button
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "#CB8E8E",
+                      borderRadius: "5px",
+                      padding: "5px 10px",
+                      minWidth: "90px",
+                      width: "150px",
+                      fontSize: "14px",
+                      fontWeight: "700",
+                      color: "#FFFFFF",
+                      textTransform: "none",
+                      "&:hover": {
+                        backgroundColor: "#A75A5A",
+                      },
+                    }}
+                    onClick={() => handleTenantRefuse()}
+                  >
+                    Reject Lease
+                  </Button>
+                </CenteringBox>
               </Grid>
-            )
-          }
-                    {
-            lease.lease_status === "APPROVED" && (            
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <CenteringBox>
-                    <Button
-                      sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: "#CB8E8E",
-                        borderRadius: "5px",
-                        padding: "5px 10px",
-                        minWidth: "90px",
-                        width: "150px",
-                        fontSize: "14px",
-                        fontWeight: "700",
-                        color: "#FFFFFF",
-                        textTransform: "none",
-                        "&:hover": {
-                          backgroundColor: "#A75A5A",
-                        },
-                      }}
-                      // onClick={() => handleEndApprovedLease()}
-                      onClick={() => setShowEarlyTerminationDialog(true)}
-                    >
-                      End Lease Early
-                    </Button>
-                  </CenteringBox>
-                </Grid>                
+              <Grid item xs={6}>
+                <CenteringBox>
+                  <Button
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "#9EAED6",
+                      borderRadius: "5px",
+                      padding: "5px 10px",
+                      minWidth: "90px",
+                      width: "150px",
+                      fontSize: "14px",
+                      fontWeight: "600",
+                      color: "#FFFFFF",
+                      textTransform: "none",
+                      "&:hover": {
+                        backgroundColor: "#6A8AB3",
+                      },
+                    }}
+                    onClick={() => handleTenantAccept()}
+                  >
+                    Accept Lease
+                  </Button>
+                </CenteringBox>
               </Grid>
-            )
-          }
+            </Grid>
+          )}
+          {lease.lease_status === "APPROVED" && (
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <CenteringBox>
+                  <Button
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "#CB8E8E",
+                      borderRadius: "5px",
+                      padding: "5px 10px",
+                      minWidth: "90px",
+                      width: "150px",
+                      fontSize: "14px",
+                      fontWeight: "700",
+                      color: "#FFFFFF",
+                      textTransform: "none",
+                      "&:hover": {
+                        backgroundColor: "#A75A5A",
+                      },
+                    }}
+                    // onClick={() => handleEndApprovedLease()}
+                    onClick={() => setShowEarlyTerminationDialog(true)}
+                  >
+                    End Lease Early
+                  </Button>
+                </CenteringBox>
+              </Grid>
+            </Grid>
+          )}
 
           {/* <Grid
             container
@@ -1359,7 +1389,7 @@ function TenantLeases(props) {
           {
             label: "OK",
             onClick: closeDialog,
-          }
+          },
         ]}
         severity={dialogSeverity}
       />
@@ -1369,12 +1399,10 @@ function TenantLeases(props) {
           setRightPane={props.setRightPane}
           isMobile={props.isMobile}
           setViewRHS={props.setViewRHS}
-          page="TenantLeases"
-          onClose={() => setShowEarlyTerminationDialog(false)}           
+          page='TenantLeases'
+          onClose={() => setShowEarlyTerminationDialog(false)}
           updateCurrentLease={updateCurrentLease}
         />
-        
-        
       </Dialog>
     </Paper>
   );

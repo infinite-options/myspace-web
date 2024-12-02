@@ -13,6 +13,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import AnnouncementPopUp from "./AnnouncementPopUp";
 import Button from "@mui/material/Button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import AddIcon from "@mui/icons-material/Add";
 
 import APIConfig from "../../utils/APIConfig";
 
@@ -130,6 +131,7 @@ export default function Announcements({ sentAnnouncementData, recvAnnouncementDa
   //
 
   const handleAnnouncements = async (announcement) => {
+    console.log("divya", announcement)
     if (announcement.announcement_mode == "PROPERTIES") {
       // console.log(announcement.announcement_title);
       navigate("/newOwnerInquiry", { state: { announcementData: announcement } });
@@ -138,6 +140,7 @@ export default function Announcements({ sentAnnouncementData, recvAnnouncementDa
       // navigate("/propertyContract",{state: {announcementData: announcement}});
       setAnnData(announcement);
       setShowAnnouncement(true);
+      await markAnnouncementAsRead([announcement.announcement_uid]);
     } else if (announcement.announcement_mode == "LEASE") {
       // console.log(announcement.announcement_title);
       setAnnData(announcement);
@@ -293,7 +296,8 @@ export default function Announcements({ sentAnnouncementData, recvAnnouncementDa
           </Button>
         </Box>
       </Box> */}
-      <Box sx={{margin:"0px 10px 0px 0px"}}>
+      <Paper sx={{ backgroundColor: "#f0f0f0", borderRadius:"10px" }}>
+      <Box sx={{ margin: "0px 10px 0px 0px" }}>
         <Grid Container sx={{ alignItems: "center", justifyContent: "space-between", display: "flex" }}>
           <Grid item xs={1} md={1}>
             <Button onClick={handleBackButton}>
@@ -322,23 +326,18 @@ export default function Announcements({ sentAnnouncementData, recvAnnouncementDa
             <Button
               onClick={() => {
                 navigate("/managerCreateAnnouncement");
-              }}
-              sx={{
-                backgroundColor: "#3F51B5",
-                color: "#fff",
-                fontWeight: "bold",
-                textTransform: "none",
-                width: "100%",
-                "&:hover, &:focus, &:active": {
-                  backgroundColor: "#3F51B5",
-                },
-              }}
-            >
-              +
+              }}>
+              <AddIcon
+                sx={{
+                  color: "#160449",
+                  fontSize: "30px",
+                  margin: "5px",
+                }}
+              />
             </Button>
           </Grid>
         </Grid>
-        </Box>
+      </Box>
       <hr />
       {/* <div className="announcement-location">
                 <div className="announcement-location-icon">
@@ -369,6 +368,7 @@ export default function Announcements({ sentAnnouncementData, recvAnnouncementDa
         </div>
       </div>
       <div className='announcement-menu-container'>
+      {/* <Paper> */}
         <div className='announcement-menu-bar'>
           <div className='announcement-view'>
             <div className='announcement-view-icon'>
@@ -502,6 +502,7 @@ export default function Announcements({ sentAnnouncementData, recvAnnouncementDa
           </div>
         </Paper>
       </div>
+      {/* </Paper> */}
 
       {/**
             <hr/>
@@ -513,6 +514,7 @@ export default function Announcements({ sentAnnouncementData, recvAnnouncementDa
         annData={annData}
         sx={{ width: "50%", height: "50%" }} // Adjust the width and height here
       />
+      </Paper>
     </div>
   );
 }

@@ -62,6 +62,7 @@ import { minutesToSeconds } from 'date-fns';
 //standard textfield style 
 
 import { datePickerSlotProps, textFieldSX, textFieldInputProps, } from "../../../styles";
+import { resolve } from 'chart.js/helpers';
 
 
 
@@ -1446,7 +1447,7 @@ const PropertyCard = (props) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         } else {
-          // console.log("Data updated successfully");
+        //   console.log("Data updated successfully");
 		  setIsChange(false)
 		  sendAnnouncement();
         //   navigate("/managerDashboard");
@@ -1811,8 +1812,8 @@ const PropertyCard = (props) => {
 			} else if(props.navigatingFrom && props.navigatingFrom === "ManageContract" && props.handleBackBtn){
 				props.fetchContracts();
 				props.handleBackBtn();
-				// console.log(" inside property Card - 1577  - property uid - ", propertyData?.property_uid)
-				// navigate("/properties", {state: {currentProperty: propertyData?.property_uid, showRHS: "PropertyNavigator"}});
+			}else if(props.navigatingFrom && props.navigatingFrom === "fromManagerDashboard"){
+				navigate("/managerDashboard")
 			} 			
 			else {
 				navigate("/ownerDashboard"); 
@@ -1876,7 +1877,9 @@ const PropertyCard = (props) => {
 				props.handleBackBtn();
 				// console.log(" inside property Card - 1577  - property uid - ", propertyData?.property_uid)
 				// navigate("/properties", {state: {currentProperty: propertyData?.property_uid, showRHS: "PropertyNavigator"}});
-			} 			
+			}else if(props.navigatingFrom && props.navigatingFrom === "fromManagerDashboard"){
+				navigate("/managerDashboard")
+			} 	 			
 			else {
 				navigate("/ownerDashboard"); 
 			}			
@@ -1893,19 +1896,19 @@ const PropertyCard = (props) => {
 	const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
 	console.log("sendAnnouncement - contract - ", contractData)
    // Parse `owners` and extract `owner_uid` and `property_uid`
-  let owners = [];
-  try {
-    owners = Array.isArray(contractData.owners)
-      ? contractData.owners
-      : JSON.parse(contractData.owners); // Parse the JSON string if necessary
-  } catch (error) {
-    console.error("Error parsing owners:", error);
-  }
+	let owners = [];
+	try {
+		owners = Array.isArray(contractData.owners)
+		? contractData.owners
+		: JSON.parse(contractData.owners); // Parse the JSON string if necessary
+	} catch (error) {
+		console.error("Error parsing owners:", error);
+	}
 
-  if (!owners.length) {
-    console.error("No owners available for the contract.");
-    return;
-  }
+	if (!owners.length) {
+		console.error("No owners available for the contract.");
+		return;
+	}
 
   // Assuming we are sending announcements to the first owner
   const firstOwner = owners[0];
@@ -1919,7 +1922,7 @@ const PropertyCard = (props) => {
 	if(contractStatus === "NEW") {
 		announcementTitle = `New Quote for Management Contract`
 		announcementMessage = `You have received a new quote for a Management contract (Property - ${contractData.property_address}${contractData.property_unit ? (", " + contractData.property_unit) : ""}) from ${contractData.business_name}.`
-	} else if (contractStatus === "SENT" || contractStatus === "REJECTED") {
+	} else if (contractStatus === "SENT" || contractStatus === "REJECTED" || contractStatus === "WITHDRAW") {
 		announcementTitle = "Quote Updated by Property Manager"
 		announcementMessage = `Quote for Management contract (Property - ${contractData.property_address}${contractData.property_unit ? (", " + contractData.property_unit) : ""}) has been updated by ${contractData.business_name}.`
 	} else if (contractStatus === "ACTIVE" && action === "UPDATE_CONTACT_INFO") {
@@ -2740,7 +2743,7 @@ return (
 					)}
 				</Box>	
 				{
-					(contractStatus === "NEW" || contractStatus === "SENT" || contractStatus === "REJECTED") && (
+					(contractStatus === "NEW" || contractStatus === "SENT" || contractStatus === "REJECTED" || contractStatus === "WITHDRAW") && (
 						<Box
 							sx={{
 								display: 'flex',
@@ -2753,7 +2756,7 @@ return (
 								width: '100%',
 							}}
 						>
-							{contractStatus !== 'REJECTED' && (
+							{(contractStatus !== 'REJECTED' && contractStatus !== "WITHDRAW") && (
 							<>
 							<Button
 								variant="contained"
@@ -2797,7 +2800,7 @@ return (
 									textTransform: 'none',
 									borderRadius: '5px',
 									display: 'flex',
-									width: contractStatus === 'REJECTED' ? '100%' : '45%',
+									width: contractStatus === 'REJECTED' || contractStatus === "WITHDRAW" ? '100%' : '45%',
 									'&:hover': {
 										backgroundColor: '#9EAED6',
 									},

@@ -17,7 +17,7 @@ import { PortableWifiOffSharp } from '@mui/icons-material';
 
 const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS, page, onClose }) => {
     const [open, setOpen] = useState(false);
-    const {getProfileId } = useUser();
+    const { getProfileId } = useUser();
     const [confirmationText, setConfirmationText] = useState("");
     const [showSpinner, setShowSpinner] = useState(false);
     const [selectedValue, setSelectedValue] = useState('');
@@ -35,7 +35,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
 
     const getEndLeaseConfirmation = () => {
         const currentDate = new Date();
-        const noticePeriod = leaseData?.lease_end_notice_period || 30; 
+        const noticePeriod = leaseData?.lease_end_notice_period || 30;
         const leaseEndDate = new Date(leaseData?.lease_end);
         const leaseEndDateFormatted = dayjs(leaseEndDate).format("MM-DD-YYYY");
 
@@ -82,7 +82,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
     const handleConfirm = () => {
         handleEndLease();
         setOpen(false);
-        if(isMobile){
+        if (isMobile) {
             setViewRHS(false)
         }
         setRightPane("");
@@ -112,7 +112,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
     };
 
     const handleCancel = () => {
-        if(isMobile){
+        if (isMobile) {
             setViewRHS(false)
         }
         setRightPane("");
@@ -161,11 +161,11 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
     };
 
     const handleBack = () => {
-        if(isMobile){
-          setViewRHS(false)
+        if (isMobile) {
+            setViewRHS(false)
         }
         setRightPane("");
-      };
+    };
 
     return (
         <Box
@@ -188,12 +188,40 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
                 </Backdrop>
                 <Grid container sx={{ marginTop: '1px', marginBottom: '15px', alignItems: 'center', justifyContent: 'center' }} rowSpacing={4}>
                     <Grid item xs={12} md={12} display={"flex"} direction={"row"} justifyContent={"center"}>
-                        {isMobile && (<Button onClick={handleBack}>
+                        <Grid container sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+
+                            {isMobile && (
+                                <Grid item xs={1}>
+                                    <Button onClick={handleBack}>
+                                        <ArrowBackIcon
+                                            sx={{
+                                                color: "#160449",
+                                                fontSize: "25px",
+                                                padding: "0px"
+                                            }}
+                                        />
+                                    </Button>
+                                </Grid>)}
+
+                            <Grid Item xs={11} md={12}>
+                                <Typography
+                                    sx={{
+                                        color: "#160449",
+                                        fontWeight: theme.typography.primary.fontWeight,
+                                        fontSize: theme.typography.largeFont,
+                                        textAlign: 'center'
+                                    }}
+                                >
+                                    End Lease
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                        {/* {isMobile && (<Button onClick={handleBack}>
                             <ArrowBackIcon
                                 sx={{
-                                color: theme.typography.common.blue,
-                                fontSize: "25px",
-                                // margin: "5px",
+                                    color: "#160449",
+                                    fontSize: "25px",
+                                    // margin: "5px",
                                 }}
                             />
                         </Button>)}
@@ -206,13 +234,13 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
                             }}
                         >
                             End Lease
-                        </Typography>
+                        </Typography> */}
                     </Grid>
 
                     <Grid item xs={12} md={12}>
                         <Typography
                             sx={{
-                                ...(isMobile? {padding: "2px"} : {}),
+                                ...(isMobile ? { padding: "2px" } : {}),
                                 color: "#160449",
                                 fontWeight: theme.typography.primary.fontWeight,
                                 fontSize: theme.typography.smallFont,
@@ -225,7 +253,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
                     {success.length > 0 && (
                         <Box>
                             <Alert severity="success">
-                                    {success}
+                                {success}
                             </Alert>
                         </Box>
                     )}
@@ -349,7 +377,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
                     </Grid>
 
                     <Grid item xs={12} md={12}>
-                        <Paper sx={{ padding: "10px", backgroundColor: color, width: '95%', margin: isMobile ? "10px 10px 0px 0px" : '10px 10px 0px 10px'}} >
+                        <Paper sx={{ padding: "10px", backgroundColor: color, width: '95%', margin: isMobile ? "10px 10px 0px 0px" : '10px 10px 0px 10px' }} >
                             <FormControl sx={{ width: '100%' }}>
                                 <RadioGroup
                                     aria-labelledby="demo-controlled-radio-buttons-group"
@@ -406,7 +434,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
                 }
                 
 
-                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '10px', marginTop: isMobile ? "20px" : "0px"}}>
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '10px', marginTop: isMobile ? "20px" : "0px" }}>
                     <Button
                         sx={{
                             marginRight: '5px', background: "#D4736D",

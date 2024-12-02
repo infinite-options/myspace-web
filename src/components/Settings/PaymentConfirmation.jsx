@@ -131,7 +131,13 @@ export default function PaymentConfirmation() {
       body: JSON.stringify(paymentData),
 
     }).then((e) => {
-      navigate("/tenantDashboard")
+      if(selectedRole === "MANAGER"){
+        navigate("/managerDashboard")
+      }else if(selectedRole === "TENANT"){
+        navigate("/tenantDashboard")
+      }else{
+        navigate("/ownerDashboard")
+      }
       // setShowSpinner(false)
     });
 

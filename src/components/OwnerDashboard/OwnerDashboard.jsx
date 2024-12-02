@@ -265,7 +265,7 @@ export default function OwnerDashboard() {
                       <ArrowBackIcon />
                     </IconButton>
                   </Box> */}
-                  <Box sx={{ paddingTop: "10px" }}>
+                  <Box>
                     <Announcements sentAnnouncementData={announcementSentData} recvAnnouncementData={announcementRecvData} setView={setView}/>
                   </Box>
                 </Grid>)}

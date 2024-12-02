@@ -239,16 +239,47 @@ export function MaintenanceOwner() {
   }
 
   function handleFilter(maintenanceArray, month, year, filterPropertyList) {
-    var filteredArray = [];
+    // var filteredArray = [];
 
+    // if (month && year) {
+    //   const filterFormatDate = convertToStandardFormat(month, year);
+    //   for (const item of maintenanceArray) {
+    //     if (item.maintenance_request_created_date.startsWith(filterFormatDate)) {
+    //       filteredArray.push(item);
+    //     }
+    //   }
+    // } else {
+    //   filteredArray = maintenanceArray;
+    // }
+
+    // if (filterPropertyList?.length > 0) {
+    //   filteredArray = filteredArray.filter((item) => {
+    //     for (const filterItem of filterPropertyList) {
+    //       if (filterItem.property_uid === item.property_id && filterItem.checked) {
+    //         return true;
+    //       }
+    //     }
+    //     return false;
+    //   });
+    // }
+
+    // return filteredArray;
+    var filteredArray = [];
     if (month && year) {
       const filterFormatDate = convertToStandardFormat(month, year);
       for (const item of maintenanceArray) {
-        if (item.maintenance_request_created_date.startsWith(filterFormatDate)) {
+        if (item.maintenance_request_created_date?.split("-")[0] === filterFormatDate?.split("-")[1] && item.maintenance_request_created_date?.split("-")[2] === filterFormatDate?.split("-")[0]) {
           filteredArray.push(item);
         }
       }
-    } else {
+    } else if(!month && year){
+      for (const item of maintenanceArray) {
+        if (item.maintenance_request_created_date?.split("-")[2] === String(year)) {
+          filteredArray.push(item);
+        }
+      }
+
+    }else {
       filteredArray = maintenanceArray;
     }
 
@@ -262,7 +293,6 @@ export function MaintenanceOwner() {
         return false;
       });
     }
-
     return filteredArray;
   }
 
@@ -502,9 +532,10 @@ export function MaintenanceOwner() {
 
                     let filteredArray = handleFilter(maintenanceArray, month, year, filterPropertyList);
 
-                    for (const item of filteredArray) {
-                      newDataObject[mappingKey].push(item);
-                    }
+                    // for (const item of filteredArray) {
+                    //   newDataObject[mappingKey].push(item);
+                    // }
+                    newDataObject[mappingKey] = filteredArray
 
                     return (
                       <MaintenanceStatusTable
@@ -512,7 +543,7 @@ export function MaintenanceOwner() {
                         status={item.status}
                         color={item.color}
                         maintenanceItemsForStatus={filteredArray}
-                        allMaintenanceData={newDataObject}
+                        allMaintenanceData={allMaintenanceData}
                         maintenanceRequestsCount={filteredArray}
                         onRowClick={handleRowClick}
                       />
@@ -551,8 +582,8 @@ export function MaintenanceOwner() {
                     maintenance_request_index={selectedRequestIndex}
                     status={selectedStatus}
                     setViewRHS={setViewRHS}
-                    maintenanceItemsForStatus={maintenanceData[selectedStatus]}
-                    allMaintenancefilteredData={maintenanceData}
+                    maintenanceItemsForStatus={newDataObject[selectedStatus]}
+                    allMaintenancefilteredData={newDataObject}
                     setRefresh = {setRefresh}
                   />
                 )
