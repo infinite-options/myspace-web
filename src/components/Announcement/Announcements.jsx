@@ -131,6 +131,7 @@ export default function Announcements({ sentAnnouncementData, recvAnnouncementDa
   //
 
   const handleAnnouncements = async (announcement) => {
+    console.log("divya", announcement)
     if (announcement.announcement_mode == "PROPERTIES") {
       // console.log(announcement.announcement_title);
       navigate("/newOwnerInquiry", { state: { announcementData: announcement } });
@@ -139,6 +140,7 @@ export default function Announcements({ sentAnnouncementData, recvAnnouncementDa
       // navigate("/propertyContract",{state: {announcementData: announcement}});
       setAnnData(announcement);
       setShowAnnouncement(true);
+      await markAnnouncementAsRead([announcement.announcement_uid]);
     } else if (announcement.announcement_mode == "LEASE") {
       // console.log(announcement.announcement_title);
       setAnnData(announcement);
