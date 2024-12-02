@@ -258,7 +258,7 @@ const TenantDashboard = () => {
 
       // Find the correct lease to set as relatedLease
       // console.log("233 - leasesForProperty - ", leasesForProperty);
-      if (leasesForProperty.length > 1) {        
+      if (leasesForProperty.length > 1) {
         // const activeLease = leasesForProperty.find((lease) => lease.lease_status === "ACTIVE");
         // const renewalLease = leasesForProperty.find(lease => (lease.lease_status === "RENEW NEW" || lease.lease_status === "RENEW WITHDRAWN" || lease.lease_status === "RENEW PROCESSING"));
         const renewalLease = leasesForProperty.find((lease) => lease.lease_status === "RENEW NEW" || lease.lease_status === "RENEW PROCESSING" || lease.lease_status === "APPROVED");
@@ -308,13 +308,13 @@ const TenantDashboard = () => {
     const allLeasesForProperty = leaseDetailsData.filter((ld) => ld.property_uid === propertyUid);
 
     let leaseForProperty = null;
-    if(allLeasesForProperty?.length > 1){
+    if (allLeasesForProperty?.length > 1) {
       const newLease = allLeasesForProperty.find((ld) => ld.lease_status === "NEW");
       const activeLease = allLeasesForProperty.find((ld) => ld.lease_status === "ACTIVE");
-      if(newLease != null){
+      if (newLease != null) {
         leaseForProperty = newLease;
-      }else {
-        if(activeLease != null){
+      } else {
+        if (activeLease != null) {
           leaseForProperty = activeLease;
         } else {
           leaseForProperty = allLeasesForProperty[allLeasesForProperty?.length - 1];
@@ -323,7 +323,7 @@ const TenantDashboard = () => {
     } else {
       leaseForProperty = allLeasesForProperty[0];
     }
-    
+
     // const leaseForProperty = leaseDetailsData.find((ld) => ld.property_uid === propertyUid);
     console.log("property lease for property", leaseForProperty);
     setLeaseDetails(leaseForProperty);
@@ -483,7 +483,7 @@ const TenantDashboard = () => {
           );
 
         case "tenantLeases":
-          return <TenantLeases {...rightPane.state} setRightPane={setRightPane} setReload={setReload} property={selectedProperty}/>;
+          return <TenantLeases {...rightPane.state} setRightPane={setRightPane} setReload={setReload} property={selectedProperty} />;
         case "payment":
           return (
             <PaymentsPM
@@ -610,79 +610,79 @@ const TenantDashboard = () => {
               {/* <Grid container rowGap={5} sx={{alignItems:"stretch"}}> */}
               {/* Top section: Announcements */}
               {
-              (!isMobile || !viewRHS) && (
-                <Grid item xs={12}>
-                  <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", paddingBottom: "40px", borderRadius: "10px", height: "100%" }}>
-                    <Grid
-                      container
-                      direction='row'
-                      sx={{
-                        paddingTop: "10px",
-                        paddingBottom: "10px",
-                      }}
-                    >
-                      <Grid item xs={2}></Grid>
-                      <Grid item xs={8}>
-                        <Box
-                          sx={{
-                            flexGrow: 1,
-                            display: "flex",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <Typography
-                            variant='h6'
-                            sx={{
-                              color: "#160449",
-                              // fontSize: { xs: "24px", sm: "24px", md: "24px" },
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Announcements
-                          </Typography>
-                        </Box>
-                      </Grid>
-                      <Grid item xs={2}>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            zIndex: 1,
-                            flex: 1,
-                            height: "100%",
-                          }}
-                        >
+                !isMobile && (!viewRHS || rightPane.type !== "announcements") && (
+                  <Grid item xs={12}>
+                    <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", paddingBottom: "40px", borderRadius: "10px", height: "100%" }}>
+                      <Grid
+                        container
+                        direction='row'
+                        sx={{
+                          paddingTop: "10px",
+                          paddingBottom: "10px",
+                        }}
+                      >
+                        <Grid item xs={2}></Grid>
+                        <Grid item xs={8}>
                           <Box
                             sx={{
-                              color: "#007AFF",
-                              fontSize: "15px",
-                              paddingRight: "25px",
-                              fontWeight: "bold",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => {
-                              setViewRHS(true);
-                              setRightPane({ type: "announcements" });
+                              flexGrow: 1,
+                              display: "flex",
+                              justifyContent: "center",
                             }}
                           >
-                            {isMobile
-                              ? `(${announcementRecvData.length + announcementSentData.length})`
-                              : `View all (${announcementRecvData.length + announcementSentData.length})`}
+                            <Typography
+                              variant='h6'
+                              sx={{
+                                color: "#160449",
+                                // fontSize: { xs: "24px", sm: "24px", md: "24px" },
+                                fontWeight: "bold",
+                              }}
+                            >
+                              Announcements
+                            </Typography>
                           </Box>
-                        </Box>
+                        </Grid>
+                        <Grid item xs={2}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              zIndex: 1,
+                              flex: 1,
+                              height: "100%",
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                color: "#007AFF",
+                                fontSize: "15px",
+                                paddingRight: "25px",
+                                fontWeight: "bold",
+                                cursor: "pointer",
+                              }}
+                              onClick={() => {
+                                setViewRHS(true);
+                                setRightPane({ type: "announcements" });
+                              }}
+                            >
+                              {isMobile
+                                ? `(${announcementRecvData.length + announcementSentData.length})`
+                                : `View all (${announcementRecvData.length + announcementSentData.length})`}
+                            </Box>
+                          </Box>
+                        </Grid>
                       </Grid>
+                      {announcementRecvData.length > 0 ? (
+                        <NewCardSlider announcementList={announcementRecvData} isMobile={isMobile} />
+                      ) : (
+                        <Box sx={{ display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "235px" }}>
+                          <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" } }}>No Announcements</Typography>
+                        </Box>
+                      )}
                     </Grid>
-                    {announcementRecvData.length > 0 ? (
-                      <NewCardSlider announcementList={announcementRecvData} isMobile={isMobile} />
-                    ) : (
-                      <Box sx={{ display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "235px" }}>
-                        <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" } }}>No Announcements</Typography>
-                      </Box>
-                    )}
                   </Grid>
-                </Grid>
-              )}
+                )}
 
               {/* Bottom section containing Lease, Maintenance, and Management Details - Abhinav here layouting, margin 1px */}
               <Grid container spacing={8} rowGap={2} sx={{ flex: 1, display: "flex", flexDirection: isMobile ? "column" : "row" }}>
@@ -901,7 +901,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
   const daysUntilLeaseEnd = Math.ceil(timeDifference / (1000 * 3600 * 24));
 
   // Check if Renew Lease button should be visible (if within 2x notice period)
-  const showRenewLeaseButton = daysUntilLeaseEnd <= 2 * noticePeriod && leaseDetails?.lease_renew_status !== "RENEW REQUESTED"  && leaseDetails?.lease_renew_status !== "RENEWED"  && leaseDetails?.lease_renew_status !== "RENEW PROCESSING";
+  const showRenewLeaseButton = daysUntilLeaseEnd <= 2 * noticePeriod && leaseDetails?.lease_renew_status !== "RENEW REQUESTED" && leaseDetails?.lease_renew_status !== "RENEWED" && leaseDetails?.lease_renew_status !== "RENEW PROCESSING";
   const isEndingOrEarlyTermination = leaseDetails?.lease_renew_status === "ENDING" || leaseDetails?.lease_renew_status === "EARLY TERMINATION";
   const tenants = leaseDetails?.tenants ? JSON.parse(leaseDetails?.tenants) : [];
   const tenant_detail = tenants.length > 0 ? tenants[0] : null;
@@ -1005,7 +1005,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
   };
 
   const handleReApply = () => {
-    handleViewTenantApplication();    
+    handleViewTenantApplication();
   }
 
   const leaseDocumentsArray = useMemo(() => {
@@ -1247,7 +1247,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                         fontSize: theme.typography.smallFont,
                       }}
                     >
-                      {leaseDetails?.lease_uid}                      
+                      {leaseDetails?.lease_uid}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -1488,7 +1488,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
               )}
 
               <Grid container item spacing={2} sx={{ marginTop: "3px", marginBottom: "5px" }}>
-              {/* <Grid container item spacing={2} sx={{ marginTop: "3px", marginBottom: "5px", marginRight: "10px", }}>
+                {/* <Grid container item spacing={2} sx={{ marginTop: "3px", marginBottom: "5px", marginRight: "10px", }}>
                 {relatedLease?.lease_status === "RENEW PROCESSING" &&
                   <Grid
                     item
@@ -1531,51 +1531,51 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                     </Button>
                   </Grid>
                 } */}
-              {
-                leaseDetails?.lease_status === "ACTIVE" && (
-                  <Grid
-                    item
-                    xs={relatedLease?.lease_status === "RENEW PROCESSING" ? 4 : 6}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      height: "100%",
-                    }}
-                  >
-                    <Button
-                      onClick={() => {
-                        handleEndLease();
-                      }}
-                      variant='contained'
+                {
+                  leaseDetails?.lease_status === "ACTIVE" && (
+                    <Grid
+                      item
+                      xs={relatedLease?.lease_status === "RENEW PROCESSING" ? 4 : 6}
                       sx={{
-                        background: "#3D5CAC",
-                        color: theme.palette.background.default,
-                        cursor: "pointer",
-                        paddingX: "10px",
-                        textTransform: "none",
-                        maxWidth: "120px", // Fixed width for the button
-                        maxHeight: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100%",
                       }}
-                      size='small'
                     >
-                      <Typography
-                        sx={{
-                          textTransform: "none",
-                          color: "#FFFFFF",
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: "12px",
-                          whiteSpace: "nowrap",
-                          //   marginLeft: "1%", // Adjusting margin for icon and text
+                      <Button
+                        onClick={() => {
+                          handleEndLease();
                         }}
+                        variant='contained'
+                        sx={{
+                          background: "#3D5CAC",
+                          color: theme.palette.background.default,
+                          cursor: "pointer",
+                          paddingX: "10px",
+                          textTransform: "none",
+                          maxWidth: "120px", // Fixed width for the button
+                          maxHeight: "100%",
+                        }}
+                        size='small'
                       >
-                        {"End Lease"}
-                      </Typography>
-                    </Button>
-                  </Grid>
-                )
-              }
-              {
+                        <Typography
+                          sx={{
+                            textTransform: "none",
+                            color: "#FFFFFF",
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: "12px",
+                            whiteSpace: "nowrap",
+                            //   marginLeft: "1%", // Adjusting margin for icon and text
+                          }}
+                        >
+                          {"End Lease"}
+                        </Typography>
+                      </Button>
+                    </Grid>
+                  )
+                }
+                {
                   (leaseDetails?.lease_status === "NEW" || leaseDetails?.lease_status === "PROCESSING") && (
                     <Grid
                       item
@@ -1614,101 +1614,101 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                             //   marginLeft: "1%", // Adjusting margin for icon and text
                           }}
                         >
-                          {"Update Application 1"}                          
+                          {"Update Application 1"}
                         </Typography>
                       </Button>
                     </Grid>
                   )
                 }
-              {
-                (leaseDetails?.lease_status === "WITHDRAWN" || leaseDetails?.lease_status === "REJECTED" || leaseDetails?.lease_status === "REFUSED") && (
-                  <Grid
-                    item
-                    xs={6}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      height: "100%",
-                    }}
-                  >
-                    <Button
-                      onClick={() => {
-                        handleReApply();
-                      }}
-                      variant='contained'
+                {
+                  (leaseDetails?.lease_status === "WITHDRAWN" || leaseDetails?.lease_status === "REJECTED" || leaseDetails?.lease_status === "REFUSED") && (
+                    <Grid
+                      item
+                      xs={6}
                       sx={{
-                        background: "#FFD700",
-                        color: theme.palette.background.default,
-                        cursor: "pointer",
-                        paddingX: "10px",
-                        textTransform: "none",
-                        width: "160px", // Fixed width for the button
-                        maxHeight: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100%",
                       }}
-                      size='small'
                     >
-                      <Typography
-                        sx={{
-                          textTransform: "none",
-                          color: "#FFFFFF",
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: "12px",
-                          whiteSpace: "nowrap",
-                          //   marginLeft: "1%", // Adjusting margin for icon and text
+                      <Button
+                        onClick={() => {
+                          handleReApply();
                         }}
+                        variant='contained'
+                        sx={{
+                          background: "#FFD700",
+                          color: theme.palette.background.default,
+                          cursor: "pointer",
+                          paddingX: "10px",
+                          textTransform: "none",
+                          width: "160px", // Fixed width for the button
+                          maxHeight: "100%",
+                        }}
+                        size='small'
                       >
-                        {"Re-Apply"}
-                      </Typography>
-                    </Button>
-                  </Grid>
-                )
-              }
-              {console.log("ROHIT - 1614 - showRenewLeaseButton - ", showRenewLeaseButton)}
-              {
-                (leaseDetails?.lease_status === "ACTIVE" || leaseDetails?.lease_status === "ACTIVE M2M" ) &&  showRenewLeaseButton && (
-                  <Grid
-                    item
-                    xs={6}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      height: "100%",
-                    }}
-                  >
-                    <Button
-                      onClick={() => {
-                        handleRenewLease();
-                      }}
-                      variant='contained'
+                        <Typography
+                          sx={{
+                            textTransform: "none",
+                            color: "#FFFFFF",
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: "12px",
+                            whiteSpace: "nowrap",
+                            //   marginLeft: "1%", // Adjusting margin for icon and text
+                          }}
+                        >
+                          {"Re-Apply"}
+                        </Typography>
+                      </Button>
+                    </Grid>
+                  )
+                }
+                {console.log("ROHIT - 1614 - showRenewLeaseButton - ", showRenewLeaseButton)}
+                {
+                  (leaseDetails?.lease_status === "ACTIVE" || leaseDetails?.lease_status === "ACTIVE M2M") && showRenewLeaseButton && (
+                    <Grid
+                      item
+                      xs={6}
                       sx={{
-                        background: "#3D5CAC",
-                        color: theme.palette.background.default,
-                        cursor: "pointer",
-                        paddingX: "10px",
-                        textTransform: "none",
-                        maxWidth: "120px", // Fixed width for the button
-                        maxHeight: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100%",
                       }}
-                      size='small'
                     >
-                      <Typography
-                        sx={{
-                          textTransform: "none",
-                          color: "#FFFFFF",
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: "12px",
-                          whiteSpace: "nowrap",
-                          //   marginLeft: "1%", // Adjusting margin for icon and text
+                      <Button
+                        onClick={() => {
+                          handleRenewLease();
                         }}
+                        variant='contained'
+                        sx={{
+                          background: "#3D5CAC",
+                          color: theme.palette.background.default,
+                          cursor: "pointer",
+                          paddingX: "10px",
+                          textTransform: "none",
+                          maxWidth: "120px", // Fixed width for the button
+                          maxHeight: "100%",
+                        }}
+                        size='small'
                       >
-                        {leaseDetails?.lease_renew_status === "RENEW REQUESTED" ? "Review Application" : "Renew Lease"}
-                      </Typography>
-                    </Button>
-                  </Grid>
-                )
-              }
+                        <Typography
+                          sx={{
+                            textTransform: "none",
+                            color: "#FFFFFF",
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: "12px",
+                            whiteSpace: "nowrap",
+                            //   marginLeft: "1%", // Adjusting margin for icon and text
+                          }}
+                        >
+                          {leaseDetails?.lease_renew_status === "RENEW REQUESTED" ? "Review Application" : "Renew Lease"}
+                        </Typography>
+                      </Button>
+                    </Grid>
+                  )
+                }
 
                 {/* {console.log("1531 - relatedLease - ", relatedLease)} */}
                 {
@@ -1826,11 +1826,11 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                             </Button>
                           </Grid>
                         )
-                      )}   
-                    </>             
+                      )}
+                    </>
                   )
-                }           
-                {console.log("ROHIT - 1780 - relatedLease - ", relatedLease)}         
+                }
+                {console.log("ROHIT - 1780 - relatedLease - ", relatedLease)}
 
                 {relatedLease && (relatedLease.lease_status === "RENEW PROCESSING" || relatedLease.lease_status === "APPROVED") && (
                   // <Button
@@ -2512,10 +2512,10 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
           rows={rows}
           columns={columns}
           autoHeight
-          sx={{ minWidth: "550px",}}
-          disableColumnFilter = {isMobile}
-          disableColumnMenu = {isMobile}
-          disableColumnSelector = {isMobile}
+          sx={{ minWidth: "550px", }}
+          disableColumnFilter={isMobile}
+          disableColumnMenu={isMobile}
+          disableColumnSelector={isMobile}
         />
       </Box>
     </Paper>
