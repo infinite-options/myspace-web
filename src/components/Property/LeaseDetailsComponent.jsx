@@ -1148,6 +1148,10 @@ export default function LeaseDetailsComponent({
               </>
             )}
 
+<Grid item xs={12}>
+      <UtilitiesSection utilities={currentProperty?.property_utilities} />
+    </Grid>
+
             {isEndLeasePopupOpen && (
               <Dialog open={isEndLeasePopupOpen} onClose={() => setIsEndLeasePopupOpen(false)} maxWidth='md' fullWidth>
                 <EndLeaseButton
@@ -1877,3 +1881,56 @@ const RenewContractDialog = ({ open, handleClose, contract }) => {
     </form>
   );
 };
+
+const UtilitiesSection = ({ utilities }) => {
+  if (!utilities || utilities.length === 0) {
+    return (
+      <Box sx={{ marginTop: "15px" }}>
+        <Typography>No utilities specified.</Typography>
+      </Box>
+    );
+  }
+
+  // Parse the stringified JSON data
+  const parsedUtilities = JSON.parse(utilities);
+
+  return (
+    <Box sx={{ marginTop: "15px" }}>
+      <Typography   sx={{
+                        textTransform: "none",
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: theme.typography.mediumFont,
+                        marginBottom: "10px",
+                      }}>
+        Utilities Paid By:
+      </Typography>
+      <Grid container item spacing={2}>
+        {parsedUtilities.map((utility, index) => (
+          <Grid container item spacing={2} key={index}>
+          <Grid item xs={4}>
+            <Typography  sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }} >
+              {utility.utility_desc.charAt(0).toUpperCase() + utility.utility_desc.slice(1)}:
+            </Typography>
+          </Grid>
+          <Grid item xs={8}>
+            <Typography sx={{
+                                    color: theme.typography.primary.black,
+                                    fontWeight: theme.typography.light.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                  }}>
+              {utility.utility_payer.charAt(0).toUpperCase() + utility.utility_payer.slice(1)}
+            </Typography>
+          </Grid>
+        </Grid>
+        
+        ))}
+      </Grid>
+    </Box>
+  );
+};
+
