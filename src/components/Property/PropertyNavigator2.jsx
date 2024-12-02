@@ -84,6 +84,7 @@ import ManagementContractContext from "../../contexts/ManagementContractContext"
 
 import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy } from "../../utils/fees";
 import ReferTenantDialog from "../Referral/ReferTenantDialog.jsx";
+import washingMachineIcon from "../../images/washing-machine-icon.svg";
 
 const getAppColor = (app) => {
   if (app.lease_status === "RENEW NEW") {
@@ -1098,8 +1099,8 @@ export default function PropertyNavigator2({
       renderCell: (params) => (
         <Box
           sx={{
-            width: "70px",
-            height: "70px",
+            width: "50px",
+            height: "50px",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -1107,11 +1108,11 @@ export default function PropertyNavigator2({
           }}
         >
           <img
-            src={`${params.row.appliance_favorite_image}`}
+            src={`${params.row.appliance_favorite_image || washingMachineIcon}`}
             alt='Appliance'
             style={{
-              maxWidth: "100%", // Ensures the image takes full width
-              maxHeight: "100%", // Maintain aspect ratio
+              width: "100%", // Ensures the image takes full width
+             height: "100%", // Maintain aspect ratio
               objectFit: "contain",
             }}
           />
@@ -1570,12 +1571,12 @@ export default function PropertyNavigator2({
           <DataGrid
             rows={appliances}
             columns={applnColumns}
-            pageSize={5}
+            pageSize={10}
             rowsPerPageOptions={[5, 10, 15]}
             initialState={{
               pagination: {
                 paginationModel: {
-                  pageSize: 5,
+                  pageSize: 10,
                   page: 0,
                 },
               },
