@@ -519,8 +519,8 @@ function PropertyCard({ data, status, leaseData, setRightPane, appliedData }) {
   // console.log("In PropertyCard: ", data);
   // console.log("In PropertyCard: ", leaseData);
   const property = data;
-  const propertyImages = property?.property_images || "";
-  const ppt_images = propertyImages.split(",");
+  const propertyImages = property?.property_images && JSON.parse(property?.property_images).length > 0 ? JSON.parse(property?.property_images) : [defaultPropertyImage];
+  // const ppt_images = propertyImages.split(",");
 
   function parseImageData(data) {
     if (data === undefined) {
@@ -532,17 +532,28 @@ function PropertyCard({ data, status, leaseData, setRightPane, appliedData }) {
     return imageString;
   }
 
-  const images = ppt_images.map((data) => {
-    try {
-      const url = parseImageData(data);
-      if (url == "") {
-        return { original: defaultPropertyImage };
-      }
-      return { original: url };
-    } catch (e) {
-      console.error(e);
-    }
-  });
+  const sortByFavImage = (favImage, imageList) => {
+    if (!favImage || !imageList) return imageList;
+    const sortedImages = [favImage, ...imageList.filter((img) => img !== favImage)];
+    return sortedImages;
+  };
+
+  // const images = ppt_images.map((data) => {
+  //   try {
+  //     const url = parseImageData(data);
+  //     if (url == "") {
+  //       // return { original: defaultPropertyImage };
+  //       return defaultPropertyImage
+  //     }
+  //     return { original: url };
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  // });
+
+  // console.log("Images before sorting", propertyImages, property);
+  const favImage = property?.property_favorite_image;
+  const sortedByFavImgLst = sortByFavImage(favImage, propertyImages)
 
   const listed_rent = Intl.NumberFormat("en-US", {
     style: "currency",
@@ -843,13 +854,14 @@ function PropertyCard({ data, status, leaseData, setRightPane, appliedData }) {
     <div>
       <Card sx={{ margin: 5 }}>
         <ReactImageGallery
-          items={images}
+          // items={images}
+          items={sortedByFavImgLst}
           showFullscreenButton={false}
           showPlayButton={false}
           showThumbnails={false}
           renderItem={(item) => (
             <div style={{ height: '400px' }}>
-              <img src={item.original} style={imageStyle} alt="" />
+              <img src={item} style={imageStyle} alt="" />
             </div>
           )}
         />
