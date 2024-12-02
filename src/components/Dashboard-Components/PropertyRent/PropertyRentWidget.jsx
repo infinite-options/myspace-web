@@ -395,7 +395,7 @@ export default function PropertyRentWidget(props) {
           onClick={() => {
             // console.log("New Request Clicked");
             // navigate("/pmQuotesList", { state: { property_endpoint_resp: contractRequests } });
-            navigate("/pmQuotesList");
+            navigate("/pmQuotesList", {state: {navigatingFrom : "fromManagerDashboard"}});
           }}
         >
           <Box

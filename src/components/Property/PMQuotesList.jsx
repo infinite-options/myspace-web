@@ -130,7 +130,8 @@ const QuotesList = (props) => {
     <>
       <ThemeProvider theme={theme}>
         <Grid container item xs={12} sx={{ backgroundColor: "#F2F2F2", padding: "10px", borderRadius: "10px", height: "139vh" }}>
-        <Stack
+          {/* sort button */}
+          <Stack
               sx={{
                 // backgroundColor: "#fff",
                 width: "100%", // Occupy full width with 25px margins on each side
@@ -305,6 +306,8 @@ function ContractCard(props) {
   const statusTextColorMap = {
     REJECTED: "#A52A2A",
     REFUSED: "#A52A2A",
+    CANCELLED: "#A52A2A",
+    WITHDRAW: "#A52A2A",
     SENT: "#0CAA25",
   };
 

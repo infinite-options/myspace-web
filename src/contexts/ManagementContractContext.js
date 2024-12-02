@@ -35,8 +35,8 @@ export const ManagementContractProvider = ({ children }) => {
 
     if (data !== "No records for this Uid") {
       setAllContracts(data.result);
-      const newAndSentContracts = data?.result?.filter((contract) => contract.contract_status === "NEW" || contract.contract_status === "SENT");
-      setContractRequests(newAndSentContracts);
+      const newSentRejectedRefusedCancelledWithdrawContracts = data?.result?.filter((contract) => contract.contract_status === "NEW" || contract.contract_status === "SENT" || contract.contract_status === "WITHDRAW" || contract.contract_status === "REJECTED" || contract.contract_status === "REFUSED" || contract.contract_status === "CANCELLED");
+      setContractRequests(newSentRejectedRefusedCancelledWithdrawContracts);
 
       // Set currentContractUID and currentContractPropertyUID after the fetch
       // if (!currentContractUID && !currentContractPropertyUID && data.result.length > 0) {
