@@ -1110,8 +1110,9 @@ export default function PropertyNavigator2({
             src={`${params.row.appliance_favorite_image}`}
             alt='Appliance'
             style={{
-              width: "100%", // Ensures the image takes full width
-              height: "auto", // Maintain aspect ratio
+              maxWidth: "100%", // Ensures the image takes full width
+              maxHeight: "100%", // Maintain aspect ratio
+              objectFit: "contain",
             }}
           />
         </Box>
