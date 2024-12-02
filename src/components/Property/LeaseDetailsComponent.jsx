@@ -64,7 +64,7 @@ export default function LeaseDetailsComponent({
   const [isEndLeasePopupOpen, setIsEndLeasePopupOpen] = useState(false);
   const [renewedLease, setRenewedLease] = useState(null);
   const [isFlipped, setIsFlipped] = useState(false);
-
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
@@ -192,35 +192,48 @@ export default function LeaseDetailsComponent({
   return (
     <>
       <Card sx={{ height: "100%", width: "100%" }}>
-        <Grid container justifyContent="center">          
-          <Grid container justifyContent="center" item xs={3.8} sx={{ padding: "10px" }}>
-            <Typography
-              sx={{
-                color: "#160449",
-                fontWeight: theme.typography.primary.fontWeight,
-                fontSize: theme.typography.largeFont,
-                textAlign: "left",
-              }}
-            >
-              {isFlipped? "Renewed Lease Details" : "Current Lease Details"}
-            </Typography>            
-          </Grid>
-          <Grid container justifyContent="flex-start" item xs={1}>            
-            <IconButton
-                onClick={handleFlip}
-                disabled={renewedLease == null}
-                sx={{
-                  // position: "absolute",
-                  // top: "10px",
-                  // right: "10px",
-                  padding: 0,                  
-                  opacity: renewedLease == null ? 0.2 : 1,
-                }}
-              >
-                <img src={FlipIcon} alt='Flip Icon' style={{ width: "30px", height: "30px" }} />
-              </IconButton>
-          </Grid>
-        </Grid>        
+      <Grid container justifyContent="center">
+  <Grid
+    container
+    item
+    xs={7} // Full width on mobile
+    sm={3.8} // Smaller width on larger screens
+    sx={{
+      display: "flex",
+      alignItems: "center", // Align text and icon vertically
+      justifyContent: "flex-start", // Align content to the left
+      paddingLeft: isMobile? "8%": "0%",
+    }}
+  >
+    {/* Title and Flip Icon */}
+    <Typography
+      sx={{
+        color: "#160449",
+        fontWeight: theme.typography.primary.fontWeight,
+        fontSize: { sm: theme.typography.largeFont,   // Larger font size for larger screens
+        },
+        whiteSpace: "nowrap", // Prevent text from wrapping
+        overflow: "hidden", // Hide any overflowed text
+        textOverflow: "ellipsis", // Show ellipsis if text overflows
+        flexGrow: 1, // Ensure title takes up remaining space
+      }}
+    >
+      {isFlipped ? "Renewed Lease Details" : "Current Lease Details"}
+    </Typography>
+
+    <IconButton
+      onClick={handleFlip}
+      disabled={renewedLease == null}
+      sx={{
+        padding: 0,
+        opacity: renewedLease == null ? 0.2 : 1,
+      }}
+    >
+      <img src={FlipIcon} alt="Flip Icon" style={{ width: "30px", height: "30px" }} />
+    </IconButton>
+  </Grid>
+</Grid>
+       
         <CardContent>
           <Grid container direction="row">
 
@@ -705,8 +718,9 @@ export default function LeaseDetailsComponent({
                           textTransform: "none",
                           color: "#3D5CAC",
                           fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: "12px",
-                          whiteSpace: "nowrap",
+                          fontSize: isMobile? "10px": "12px",
+                          whiteSpace: isMobile ? "normal" : "nowrap", // Allow wrapping on mobile, no wrapping on desktop
+    wordWrap: isMobile ? "break-word" : "normal",
                           //   marginLeft: "1%", // Adjusting margin for icon and text
                         }}
                       >
@@ -743,8 +757,9 @@ export default function LeaseDetailsComponent({
                           textTransform: "none",
                           color: "#FFFFFF",
                           fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: "12px",
-                          whiteSpace: "nowrap",
+                          fontSize: isMobile? "10px": "12px",
+                          whiteSpace: isMobile ? "normal" : "nowrap", // Allow wrapping on mobile, no wrapping on desktop
+    wordWrap: isMobile ? "break-word" : "normal",
                           //   marginLeft: "1%", // Adjusting margin for icon and text
                         }}
                       >
@@ -783,8 +798,10 @@ export default function LeaseDetailsComponent({
                           textTransform: "none",
                           color: "#FFFFFF",
                           fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: "12px",
-                          whiteSpace: "nowrap",
+                          fontSize: isMobile? "10px": "12px",
+                          whiteSpace: isMobile ? "normal" : "nowrap", // Allow wrapping on mobile, no wrapping on desktop
+    wordWrap: isMobile ? "break-word" : "normal", // Ensure proper word wrapping on mobile
+ 
                           //   marginLeft: "1%", // Adjusting margin for icon and text
                         }}
                       >

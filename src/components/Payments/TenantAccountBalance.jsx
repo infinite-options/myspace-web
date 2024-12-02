@@ -49,7 +49,6 @@ const TenantAccountBalance = ({
   const navigate = useNavigate();
   const open = Boolean(anchorEl);
   const balanceDue = parseFloat(balanceDetails[0]?.amountDue || 0);
-  // console.log("property 1", selectedProperty.property_uid);
   // // console.log()
   // console.log("lease", leaseDetails);
   // console.log("propertydata", propertyData);
@@ -385,7 +384,7 @@ const TenantAccountBalance = ({
                 ? `Applied ${leaseDetails?.lease_application_date}`
                 : leaseDetails?.lease_status === "PROCESSING"
                 ? `Approved ${leaseDetails?.lease_application_date}`
-                : balanceDue > 0
+                : balanceDetails?.length > 0
                 ? "Make a Payment"
                 : "No Payment Due"}
             </Button>
@@ -393,7 +392,7 @@ const TenantAccountBalance = ({
         )}
 
         {/* Balance Details */}
-        {(!isMobile || !viewRHS) && balanceDue > 0 && !(leaseDetails?.lease_status === "NEW" || leaseDetails?.lease_status === "PROCESSING") && (
+        {(!isMobile || !viewRHS) && balanceDetails?.length > 0 && !(leaseDetails?.lease_status === "NEW" || leaseDetails?.lease_status === "PROCESSING") && (
           <>
             <Typography sx={{ fontSize: "18px", fontWeight: "bold", color: "#160449", padding: "3px" }}>Balance Details</Typography>
             <Box sx={{ padding: "10px", maxHeight: "200px", overflowY: "auto", width: "100%", backgroundColor: "#f0f0f0", overflowX: "auto" }}>
