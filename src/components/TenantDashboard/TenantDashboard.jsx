@@ -207,23 +207,53 @@ const TenantDashboard = () => {
   useEffect(() => {
     // setLoading(true)
     // console.log("first property - ", selectedProperty)
-    // console.log("propertydata test", propertyListingData.lease_status);
-    if (propertyListingData.length > 0 && !selectedProperty) {
-      // const firstProperty = propertyListingData[0];
-      const firstProperty = propertyListingData.find((property) => property.lease_status !== null);
-      // console.log("first property", firstProperty);
-      if (firstProperty) {
-        setSelectedProperty(firstProperty);
-        handleSelectProperty(firstProperty);
-      }
+    // console.log("propertydata test", propertyListingData);
+    // console.log("property lease data - ", leaseDetailsData)
+    // if (propertyListingData.length > 0 && !selectedProperty) {
+    //   // const firstProperty = propertyListingData[0];
+    //   const firstProperty = propertyListingData.find((property) => property.lease_status !== null);
+    //   // console.log("first property", firstProperty);
+    //   if (firstProperty) {
+    //     setSelectedProperty(firstProperty);
+    //     handleSelectProperty(firstProperty);
+    //   }
 
-    } else if (selectedProperty) {
-      // console.log("--DEBUG property - ", propertyListingData)
-      const firstProperty = propertyListingData.find((property) => property.property_uid === selectedProperty.property_id);
-      // console.log("first property", firstProperty);
+    // } else if (selectedProperty) {
+    //   // console.log("--DEBUG property - ", propertyListingData)
+    //   const firstProperty = propertyListingData.find((property) => property.property_uid === selectedProperty.property_id);
+    //   // console.log("first property", firstProperty);
+    //   if (firstProperty) {
+    //     setSelectedProperty(firstProperty)
+    //     handleSelectProperty(firstProperty);
+    //   }
+    // }
+
+    // fetch lease details from leaseDetailsData and property information as well
+    if (propertyListingData.length > 0 && !selectedProperty) {
+
+      const firstProperty = propertyListingData.find((property) => property.lease_status !== null);
+    
       if (firstProperty) {
-        setSelectedProperty(firstProperty)
-        handleSelectProperty(firstProperty);
+
+        const leaseDetails = leaseDetailsData.find((lease) => lease.lease_uid === firstProperty.lease_uid);
+    
+        if (leaseDetails) {
+          setSelectedProperty(leaseDetails); 
+          handleSelectProperty(leaseDetails); 
+        }
+      }
+    } else if (selectedProperty) {
+
+      const firstProperty = propertyListingData.find((property) => property.property_uid === selectedProperty.property_id);
+    
+      if (firstProperty) {
+
+        const leaseDetails = leaseDetailsData.find((lease) => lease.lease_uid === firstProperty.lease_uid);
+    
+        if (leaseDetails) {
+          setSelectedProperty(leaseDetails); 
+          handleSelectProperty(leaseDetails); 
+        }
       }
     }
 
@@ -2602,7 +2632,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
       business_code: paymentNotes,
       balance: paymentOption === "partial" ? partialAmount : total, // Check here for partial amount getting passed into balance - Abhinav
     };
-    // console.log("check here", selectedProperty);
+    console.log("check here", selectedProperty);
     navigate("/selectPayment", {
       state: {
         paymentData: updatedPaymentData,

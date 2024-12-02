@@ -66,7 +66,7 @@ export default function SelectPayment(props) {
 
   const classes = useStyles();
   const navigate = useNavigate();
-  const [showSpinner, setShowSpinner] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(true);
   // const [balance, setBalance] = useState(parseFloat(location.state.paymentData?.balance));
   const [paymentData, setPaymentData] = useState(location.state.paymentData);
   const [paymentMethodInfo, setPaymentMethodInfo] = useState(location.state.paymentMethodInfo || {});
@@ -97,6 +97,7 @@ export default function SelectPayment(props) {
   // console.log("---debug--- convenience_fee", convenience_fee);
 
   useEffect(() => {
+    setShowSpinner(true)
     // Fetch the profile data and set payment methods
     const fetchProfileData = async () => {
       try {
@@ -159,6 +160,7 @@ export default function SelectPayment(props) {
 
     fetchReceiverProfileData();
 
+    setShowSpinner(false)
   }, [getProfileId, receiverId]);
 
   useEffect(() => {
@@ -488,7 +490,7 @@ export default function SelectPayment(props) {
           <CircularProgress color='inherit' />
         </Backdrop>
 
-        <Container disableGutters maxWidth='lg' sx={{ paddingTop: "10px", height: "90vh" }}>
+        {receiverId && <Container disableGutters maxWidth='lg' sx={{ paddingTop: "10px", height: "90vh" }}>
           <Grid container spacing={6} sx={{ height: "90%" }}>
             <Grid container item xs={12} md={12} justifyContent={"center"}>
               <StripeFeesDialog stripeDialogShow={stripeDialogShow} setStripeDialogShow={setStripeDialogShow} toggleKeys={toggleKeys} setStripePayment={setStripePayment} />
@@ -964,7 +966,7 @@ export default function SelectPayment(props) {
               </Elements>
             </Grid>
           </Grid>
-        </Container>
+        </Container>}
       </ThemeProvider>
 
       {/* </div> */}
