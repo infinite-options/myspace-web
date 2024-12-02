@@ -416,9 +416,9 @@ export default function ManagerCreateAnnouncement() {
         </Button>
         <div className='announcement-title-text' style={{ flex: 1, textAlign: "center" }}>{"New Announcement"}</div>
       </Box> */}
-      <Grid Container sx={{ alignItems: "center", justifyContent: "space-between", display: "flex" }}>
+      <Grid Container sx={{ alignItems: "center", justifyContent: "space-between", display: "flex", width:"100%" }}>
         <Grid item xs={1} md={1}>
-          <Button  onClick={() => navigate("/announcements")}>
+          <Button  onClick={() => navigate(-1)}>
             <ArrowBackIcon
               sx={{
                 color: "#160449",

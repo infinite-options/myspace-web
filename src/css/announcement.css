@@ -1,7 +1,8 @@
 .announcement-container {
   fontfamily: "Source Sans Pro";
   color: #160449;
-  margin-bottom: 50px;
+  align-items: center;
+  justify-content: center;
 }
 .announcement-title {
   display: flex;
