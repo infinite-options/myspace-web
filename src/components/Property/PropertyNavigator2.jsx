@@ -227,6 +227,13 @@ export default function PropertyNavigator2({
     getApplianceCategories();
   }, []);
 
+  const sortByFavImage = (favImage, imageList) => {
+    if (!favImage || !imageList || !imageList.includes(favImage)) return imageList;
+
+    const sortedImages = [favImage, ...imageList.filter((img) => img !== favImage)];
+    return sortedImages;
+  };
+
   // useEffect(() => {
   //   console.log("appliances - ", appliances);
   // }, [appliances]);
@@ -263,8 +270,12 @@ export default function PropertyNavigator2({
   // console.log('parsedImages:', parsedPropertyImages);
   // console.log('parsedImages.length:', parsedPropertyImages.length);
 
+  // sort images based on fav image
+  const favPropImage = propertyData?.property_favorite_image;
+  const sortedByFavImgLst = sortByFavImage(favPropImage, parsedPropertyImages);
+
   // Initialize state with parsed images or fallback to propertyImage if empty
-  const [images, setImages] = useState(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
+  const [images, setImages] = useState(parsedPropertyImages.length === 0 ? [propertyImage] : sortedByFavImgLst);
 
   // Initialize maxSteps state
   const [maxSteps, setMaxSteps] = useState(0);
@@ -332,7 +343,10 @@ export default function PropertyNavigator2({
     setCurrentId(nextId);
     setProperty(propertyList && propertyList[nextIndex]);
     const parsedPropertyImages = propertyList && propertyList[nextIndex] && propertyList[nextIndex].property_images ? JSON.parse(propertyList[nextIndex].property_images) : [];
-    setImages(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
+    // sort images based on fav image
+    const favPropImage = propertyList[nextIndex].property_favorite_image;
+    const sortedByFavImgLst = sortByFavImage(favPropImage, parsedPropertyImages);
+    setImages(parsedPropertyImages.length === 0 ? [propertyImage] : sortedByFavImgLst);
     setContractsData(allContracts);
     // console.log("parsedPropertyImages - ", parsedPropertyImages);
     // console.log("propertyList[nextIndex].property_favorite_image - ", propertyList[nextIndex]?.property_favorite_image);
@@ -457,7 +471,10 @@ export default function PropertyNavigator2({
     const parsedPropertyImages = propertyData && propertyData[nextIndex] && propertyData[nextIndex].property_images ? JSON.parse(propertyData[nextIndex].property_images) : [];
     // console.log('parsedImages:', parsedPropertyImages);
     // console.log('parsedImages.length:', parsedPropertyImages.length);
-    setImages(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
+    // sort images based on fav image
+    const favPropImage = propertyData[nextIndex]?.property_favorite_image;
+    const sortedByFavImgLst = sortByFavImage(favPropImage, parsedPropertyImages);
+    setImages(parsedPropertyImages.length === 0 ? [propertyImage] : sortedByFavImgLst);
 
     setActiveStep(0);
   };
@@ -473,7 +490,10 @@ export default function PropertyNavigator2({
       propertyData && propertyData[previousIndex] && propertyData[previousIndex].property_images ? JSON.parse(propertyData[previousIndex].property_images) : [];
     // console.log('parsedImages:', parsedPropertyImages);
     // console.log('parsedImages.length:', parsedPropertyImages.length);
-    setImages(parsedPropertyImages.length === 0 ? [propertyImage] : parsedPropertyImages);
+     // sort images based on fav image
+     const favPropImage = propertyData[previousIndex]?.property_favorite_image;
+     const sortedByFavImgLst = sortByFavImage(favPropImage, parsedPropertyImages);
+     setImages(parsedPropertyImages.length === 0 ? [propertyImage] : sortedByFavImgLst);
 
     setActiveStep(0);
   };
@@ -628,16 +648,16 @@ export default function PropertyNavigator2({
       },
     },
     {
-        // field: 'total_paid_formatted',\
-        field: "total_paid",
-        headerName: "Total Paid",
-        sortable: isDesktop,
-        flex: 0.7,
-        minWidth: 90,
-        renderCell: (params) => {
-          return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value ? params.value : "-"}</Box>;
-        },
-    },    
+      // field: 'total_paid_formatted',\
+      field: "total_paid",
+      headerName: "Total Paid",
+      sortable: isDesktop,
+      flex: 0.7,
+      minWidth: 90,
+      renderCell: (params) => {
+        return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value ? params.value : "-"}</Box>;
+      },
+    },
 
     {
       field: "rent_status",
@@ -665,15 +685,15 @@ export default function PropertyNavigator2({
       },
     },
     {
-        // field: 'total_paid_formatted',\
-        field: "pur_due_date",
-        headerName: "Due Date",
-        sortable: isDesktop,
-        flex: 0.7,
-        minWidth: 90,
-        renderCell: (params) => {
-          return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value?.split(" ")[0]}</Box>;
-        },
+      // field: 'total_paid_formatted',\
+      field: "pur_due_date",
+      headerName: "Due Date",
+      sortable: isDesktop,
+      flex: 0.7,
+      minWidth: 90,
+      renderCell: (params) => {
+        return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value?.split(" ")[0]}</Box>;
+      },
     },
     // {
     //   field: "fees",
@@ -686,17 +706,17 @@ export default function PropertyNavigator2({
     // },
     ...(!isMobile
       ? [
-          {
-            field: "pur_description",
-            headerName: "Notes",
-            sortable: isDesktop,
-            flex: 3,
-            minWidth: 250,
-            renderCell: (params) => {
-              return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
-            },
+        {
+          field: "pur_description",
+          headerName: "Notes",
+          sortable: isDesktop,
+          flex: 3,
+          minWidth: 250,
+          renderCell: (params) => {
+            return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
           },
-        ]
+        },
+      ]
       : []),
     // {
     //   field: "pur_description",
@@ -1112,7 +1132,7 @@ export default function PropertyNavigator2({
             alt='Appliance'
             style={{
               width: "100%", // Ensures the image takes full width
-             height: "100%", // Maintain aspect ratio
+              height: "100%", // Maintain aspect ratio
               objectFit: "contain",
             }}
           />
@@ -1121,22 +1141,22 @@ export default function PropertyNavigator2({
     },
     ...(!isMobile
       ? [
-          {
-            field: "appliance_purchased_from",
-            headerName: "Purchased From",
-            flex: 1,
-          },
-          {
-            field: "appliance_purchased",
-            headerName: "Purchased On",
-            flex: 1,
-          },
-          {
-            field: "appliance_warranty_till",
-            headerName: "Warranty Till",
-            flex: 1,
-          },
-        ]
+        {
+          field: "appliance_purchased_from",
+          headerName: "Purchased From",
+          flex: 1,
+        },
+        {
+          field: "appliance_purchased",
+          headerName: "Purchased On",
+          flex: 1,
+        },
+        {
+          field: "appliance_warranty_till",
+          headerName: "Warranty Till",
+          flex: 1,
+        },
+      ]
       : []),
     // { field: "appliance_desc", headerName: "Description", width: 80 },
     // { field: "appliance_manufacturer", headerName: "Manufacturer", width: 80 },
@@ -1181,7 +1201,7 @@ export default function PropertyNavigator2({
         </Box>
       ),
     },
-    
+
   ];
 
   const [imagesTobeDeleted, setImagesTobeDeleted] = useState([]);
@@ -1234,13 +1254,6 @@ export default function PropertyNavigator2({
 
   const handleUpdateFavoriteIcons = () => {
     setFavoriteIcons(new Array(favoriteIcons.length).fill(false));
-  };
-
-  const sortByFavImage = (favImage, imageList) => {
-    if (!favImage || !imageList) return;
-
-    const sortedImages = [favImage, ...imageList.filter((img) => img !== favImage)];
-    return sortedImages;
   };
 
   const handleTenantClick = (tenantId) => {
@@ -1381,12 +1394,14 @@ export default function PropertyNavigator2({
         {/* End Property Navigator Header Including Address and x of y Properties */}
       </Box>
       <Box sx={{ marginTop: "26px", padding: isMobile ? "10px" : "20px" }}>
-        <Box sx={{ height: "30px", overflowX: "auto"  }}>
-          <Tabs sx={{ height: "30px",   '& .MuiTab-root': {
-          minWidth: 'auto', // Dynamically adjust width
-          padding: isMobile ? '4px' : '10px',  // Reduce padding for mobile
-          fontSize: isMobile ? '12px' : '14px', // Smaller font size for mobile
-        },}} value={currentTab} onChange={handleTabChange} aria-label='property details' variant='fullWidth' indicatorColor='none'>
+        <Box sx={{ height: "30px", overflowX: "auto" }}>
+          <Tabs sx={{
+            height: "30px", '& .MuiTab-root': {
+              minWidth: 'auto', // Dynamically adjust width
+              padding: isMobile ? '4px' : '10px',  // Reduce padding for mobile
+              fontSize: isMobile ? '12px' : '14px', // Smaller font size for mobile
+            },
+          }} value={currentTab} onChange={handleTabChange} aria-label='property details' variant='fullWidth' indicatorColor='none'>
             <Tab label='Property' {...a11yProps(0)} sx={tabSX} />
             <Tab label='Lease' {...a11yProps(1)} sx={tabSX} />
             <Tab label={isMobile ? "PM" : "Management"} {...a11yProps(2)} sx={tabSX} />
@@ -1406,124 +1421,43 @@ export default function PropertyNavigator2({
           />
         </CustomTabPanel>
         <CustomTabPanel value={currentTab} index={1}>
-            <LeaseDetailsComponent
-              handleViewContractClick={handleViewContractClick}
-              handleManageContractClick={onManageContractClick}
-              activeLease={activeContracts[0]}
-              currentProperty={property}
-              selectedRole={selectedRole}
-              handleViewPMQuotesRequested={handleViewPMQuotesRequested}
-              newContractCount={newContractCount}
-              sentContractCount={sentContractCount}
-              currentIndex={currentIndex}
-              handleOpenMaintenancePage={handleOpenMaintenancePage}
-              onShowSearchManager={onShowSearchManager}
-              handleAppClick={handleAppClick}
-              getAppColor={getAppColor}
-            />
-          
+          <LeaseDetailsComponent
+            handleViewContractClick={handleViewContractClick}
+            handleManageContractClick={onManageContractClick}
+            activeLease={activeContracts[0]}
+            currentProperty={property}
+            selectedRole={selectedRole}
+            handleViewPMQuotesRequested={handleViewPMQuotesRequested}
+            newContractCount={newContractCount}
+            sentContractCount={sentContractCount}
+            currentIndex={currentIndex}
+            handleOpenMaintenancePage={handleOpenMaintenancePage}
+            onShowSearchManager={onShowSearchManager}
+            handleAppClick={handleAppClick}
+            getAppColor={getAppColor}
+          />
+
         </CustomTabPanel>
         <CustomTabPanel value={currentTab} index={2}>
-            <ManagementDetailsComponent
-              handleViewContractClick={handleViewContractClick}
-              handleManageContractClick={onManageContractClick}
-              activeContract={activeContracts[0]}
-              renewContract={renewContracts[0]}
-              currentProperty={property}
-              selectedRole={selectedRole}
-              handleViewPMQuotesRequested={handleViewPMQuotesRequested}
-              newContractCount={newContractCount}
-              sentContractCount={sentContractCount}
-              currentIndex={currentIndex}
-              handleOpenMaintenancePage={handleOpenMaintenancePage}
-              onShowSearchManager={onShowSearchManager}
-            />
-         
+          <ManagementDetailsComponent
+            handleViewContractClick={handleViewContractClick}
+            handleManageContractClick={onManageContractClick}
+            activeContract={activeContracts[0]}
+            renewContract={renewContracts[0]}
+            currentProperty={property}
+            selectedRole={selectedRole}
+            handleViewPMQuotesRequested={handleViewPMQuotesRequested}
+            newContractCount={newContractCount}
+            sentContractCount={sentContractCount}
+            currentIndex={currentIndex}
+            handleOpenMaintenancePage={handleOpenMaintenancePage}
+            onShowSearchManager={onShowSearchManager}
+          />
+
         </CustomTabPanel>
         <CustomTabPanel value={currentTab} index={3}>
-          
-            <Card sx={{ height: "100%" }}>
-              <Typography
-                sx={{
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: theme.typography.largeFont,
-                  textAlign: "center",
-                  marginTop: "10px",
-                }}
-              >
-                Rent History
-              </Typography>
-              <CardContent
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-around",
-                  width: "100%",
-                  overflowX: "auto",
-                }}
-              >
-                <Grid item xs={12} sx={{overflowX: 'auto', }}>
-                    <DataGrid
-                    rows={propertyRentStatus}
-                    columns={rentStatusColumns}
-                    disableColumnMenu={!isDesktop}
-                    autoHeight
-                    initialState={{
-                        pagination: {
-                        paginationModel: {
-                            pageSize: 12,
-                        },
-                        },
-                    }}
-                    getRowId={(row) => row.rent_detail_index}
-                    pageSizeOptions={[12]}
-                    sx={{
-                        minWidth: "700px",
-                        "& .MuiDataGrid-cell": {
-                        justifyContent: "center",
-                        alignItems: "center",
-                        },
-                        "& .MuiDataGrid-columnHeader": {
-                        justifyContent: "center",
-                        alignItems: "center",
-                        color: "#3D5CAC",
-                        textAlign: "center",
-                        },
-                        "& .MuiDataGrid-columnHeaderTitle": {
-                        textAlign: "center",
-                        font: "bold",
-                        width: "100%",
-                        },
-                        "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
-                        "@media (maxWidth: 600px)": {
-                        "& .MuiDataGrid-columnHeaderTitle": {
-                            width: "100%",
-                            margin: "0px",
-                            padding: "0px",
-                        },
-                        },
-                    }}
-                    />
-                </Grid>
-              </CardContent>
-            </Card>
-        
-        </CustomTabPanel>
-        <CustomTabPanel value={currentTab} index={4}>
-  <Box sx={{ width: "100%" }}>
-    <Card sx={{ height: "100%", width: "100%" }}>
-      <Box sx={{ margin: "0px 15px 15px 15px" }}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            margin: "0px 15px 0px 10px",
-          }}
-        >
-          <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
+
+          <Card sx={{ height: "100%" }}>
             <Typography
               sx={{
                 color: theme.typography.primary.black,
@@ -1531,96 +1465,177 @@ export default function PropertyNavigator2({
                 fontSize: theme.typography.largeFont,
                 textAlign: "center",
                 marginTop: "10px",
-                marginBottom: "10px",
               }}
             >
-              Appliances
+              Rent History
             </Typography>
-          </Box>
-          <IconButton
-            variant="outlined"
-            sx={{
-              cursor: "pointer",
-              textTransform: "none",
-              minWidth: "30px",
-              minHeight: "30px",
-              fontWeight: theme.typography.secondary.fontWeight,
-              fontSize: theme.typography.smallFont,
-            }}
-            size="small"
-            onClick={() => {
-              setIsReadOnly(false);
-              setcurrentApplRow({
-                appliance_uid: "",
-                appliance_url: "",
-                appliance_type: "",
-                appliance_desc: "",
-                appliance_images: "",
-                appliance_available: 0,
-                appliance_installed: "",
-                appliance_model_num: "",
-                appliance_purchased: "",
-                appliance_serial_num: "",
-                appliance_property_id: propertyId,
-                appliance_manufacturer: "",
-                appliance_warranty_info: "",
-                appliance_warranty_till: "",
-                appliance_purchase_order: "",
-                appliance_purchased_from: "",
-                appliance_favorite_image: "",
-              });
-              setIsEditing(false);
-              handleOpen();
-            }}
-          >
-            <AddIcon sx={{ color: "black", fontSize: "24px" }} />
-          </IconButton>
-        </Box>
-        <Box>
-        <DataGrid
-  rows={appliances}
-  columns={applnColumns}
-  pageSize={10}
-  rowsPerPageOptions={[5, 10, 15]}
-  initialState={{
-    pagination: {
-      paginationModel: {
-        pageSize: 10,
-        page: 0,
-      },
-    },
-  }}
-  getRowId={(row) => row.appliance_uid}
-  autoHeight
-  sx={{
-    fontSize: "14px",
-    "& .MuiDataGrid-root": {
-      overflow: "visible", // Prevent content from being hidden
-    },
-    "& .MuiDataGrid-cell": {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      overflow: "visible", // Ensure all content is visible
-    },
-    "& .MuiDataGrid-cell--actions": {
-      display: "flex",
-      justifyContent: "space-between", // Space out icons
-      gap: "2px", // Add consistent spacing
-      overflow: "visible", // Prevent truncation
-      flexWrap: "nowrap", // Prevent wrapping
-      minWidth: "120px", // Ensure sufficient space
-    },
-  }}
-/>
+            <CardContent
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-around",
+                width: "100%",
+                overflowX: "auto",
+              }}
+            >
+              <Grid item xs={12} sx={{ overflowX: 'auto', }}>
+                <DataGrid
+                  rows={propertyRentStatus}
+                  columns={rentStatusColumns}
+                  disableColumnMenu={!isDesktop}
+                  autoHeight
+                  initialState={{
+                    pagination: {
+                      paginationModel: {
+                        pageSize: 12,
+                      },
+                    },
+                  }}
+                  getRowId={(row) => row.rent_detail_index}
+                  pageSizeOptions={[12]}
+                  sx={{
+                    minWidth: "700px",
+                    "& .MuiDataGrid-cell": {
+                      justifyContent: "center",
+                      alignItems: "center",
+                    },
+                    "& .MuiDataGrid-columnHeader": {
+                      justifyContent: "center",
+                      alignItems: "center",
+                      color: "#3D5CAC",
+                      textAlign: "center",
+                    },
+                    "& .MuiDataGrid-columnHeaderTitle": {
+                      textAlign: "center",
+                      font: "bold",
+                      width: "100%",
+                    },
+                    "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
+                    "@media (maxWidth: 600px)": {
+                      "& .MuiDataGrid-columnHeaderTitle": {
+                        width: "100%",
+                        margin: "0px",
+                        padding: "0px",
+                      },
+                    },
+                  }}
+                />
+              </Grid>
+            </CardContent>
+          </Card>
 
-        </Box>
-        <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
-          <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: "100%" }}>
-            Please fill in all required fields.
-          </Alert>
-        </Snackbar>
-        <Dialog open={open} onClose={handleClose}>
+        </CustomTabPanel>
+        <CustomTabPanel value={currentTab} index={4}>
+          <Box sx={{ width: "100%" }}>
+            <Card sx={{ height: "100%", width: "100%" }}>
+              <Box sx={{ margin: "0px 15px 15px 15px" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    margin: "0px 15px 0px 10px",
+                  }}
+                >
+                  <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.primary.fontWeight,
+                        fontSize: theme.typography.largeFont,
+                        textAlign: "center",
+                        marginTop: "10px",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      Appliances
+                    </Typography>
+                  </Box>
+                  <IconButton
+                    variant="outlined"
+                    sx={{
+                      cursor: "pointer",
+                      textTransform: "none",
+                      minWidth: "30px",
+                      minHeight: "30px",
+                      fontWeight: theme.typography.secondary.fontWeight,
+                      fontSize: theme.typography.smallFont,
+                    }}
+                    size="small"
+                    onClick={() => {
+                      setIsReadOnly(false);
+                      setcurrentApplRow({
+                        appliance_uid: "",
+                        appliance_url: "",
+                        appliance_type: "",
+                        appliance_desc: "",
+                        appliance_images: "",
+                        appliance_available: 0,
+                        appliance_installed: "",
+                        appliance_model_num: "",
+                        appliance_purchased: "",
+                        appliance_serial_num: "",
+                        appliance_property_id: propertyId,
+                        appliance_manufacturer: "",
+                        appliance_warranty_info: "",
+                        appliance_warranty_till: "",
+                        appliance_purchase_order: "",
+                        appliance_purchased_from: "",
+                        appliance_favorite_image: "",
+                      });
+                      setIsEditing(false);
+                      handleOpen();
+                    }}
+                  >
+                    <AddIcon sx={{ color: "black", fontSize: "24px" }} />
+                  </IconButton>
+                </Box>
+                <Box>
+                  <DataGrid
+                    rows={appliances}
+                    columns={applnColumns}
+                    pageSize={10}
+                    rowsPerPageOptions={[5, 10, 15]}
+                    initialState={{
+                      pagination: {
+                        paginationModel: {
+                          pageSize: 10,
+                          page: 0,
+                        },
+                      },
+                    }}
+                    getRowId={(row) => row.appliance_uid}
+                    autoHeight
+                    sx={{
+                      fontSize: "14px",
+                      "& .MuiDataGrid-root": {
+                        overflow: "visible", // Prevent content from being hidden
+                      },
+                      "& .MuiDataGrid-cell": {
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        overflow: "visible", // Ensure all content is visible
+                      },
+                      "& .MuiDataGrid-cell--actions": {
+                        display: "flex",
+                        justifyContent: "space-between", // Space out icons
+                        gap: "2px", // Add consistent spacing
+                        overflow: "visible", // Prevent truncation
+                        flexWrap: "nowrap", // Prevent wrapping
+                        minWidth: "120px", // Ensure sufficient space
+                      },
+                    }}
+                  />
+
+                </Box>
+                <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+                  <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: "100%" }}>
+                    Please fill in all required fields.
+                  </Alert>
+                </Snackbar>
+                <Dialog open={open} onClose={handleClose}>
                   <DialogTitle>{isReadOnly ? "View Appliance" : isEditing ? "Edit Appliance" : "Add New Appliance"}</DialogTitle>
                   <DialogContent>
                     {/* Appliance UID */}
@@ -2019,10 +2034,10 @@ export default function PropertyNavigator2({
                 </Dialog>
                 {<ReferTenantDialog open={showReferTenantDialog} onClose={() => setShowReferTenantDialog(false)} setShowSpinner={setShowSpinner} property={property} />}
               </Box>
-    </Card>
-  </Box>
-</CustomTabPanel>
-</Box>
+            </Card>
+          </Box>
+        </CustomTabPanel>
+      </Box>
     </Paper>
   );
 }
@@ -2387,166 +2402,166 @@ const PropertyTabPanel = (props) => {
                 {property && property.property_area ? `$${(property?.property_value / property?.property_area).toFixed(2)}` : "-"}
               </Grid>
             </Grid>
-           </Grid>
+          </Grid>
           <Grid container item xs={4} justifyContent='center' sx={{ height: "250px", alignContent: "space-between" }}>
-          
-  {/* Listed For Rent Box */}
-  <Grid item xs={10} sx={{ minHeight: "35px" }}>
-    {property && property?.property_available_to_rent === 1 && (property.lease_status == null || property.lease_status !== "ACTIVE") ? (
-      <Box sx={{ minHeight: "35px",}}>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            alignContent: "center",
-            justifyContent: "center",
-            backgroundColor: "#76B148",
-            borderRadius: "5px",
-            textTransform: "none",
-            minWidth: "100px",
-            minHeight: "35px",
-            width: "100%",
-          }}
-        >
-          {!isMobile && <CheckIcon sx={{ color: "#FFFFFF", fontSize: isMobile ? "10px" : "18px" }} />}
-          <Typography
-            sx={{
-              textTransform: "none",
-              color: "#FFFFFF",
-              fontWeight: theme.typography.secondary.fontWeight,
-              fontSize: isMobile ? "10px" : theme.typography.smallFont,
-              whiteSpace: "nowrap",
-              marginLeft: "1%",
-            }}
-          >
-            {"Listed For Rent"}
-          </Typography>
-        </Box>
-      </Box>
-    ) : (
-      <Box sx={{ minHeight: "35px" }} /> // Placeholder for blank space
-    )}
-  </Grid>
 
-  {/* Not Listed and Rented Boxes */}
-  <Grid item xs={10} sx={{ minHeight: "35px", marginBottom: "20px" }}>
-    {property &&
-      property.lease_status &&
-      property.lease_status !== "ACTIVE" &&
-      (property?.property_available_to_rent === 0 || property?.property_available_to_rent == null) &&
-      property.business_uid != null &&
-      property.business_uid !== "" && (
-        <Box sx={{ minHeight: "35px", marginBottom: "5px" }}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              flexWrap: "wrap",
-              alignContent: "center",
-              justifyContent: "center",
-              backgroundColor: "#A52A2A",
-              borderRadius: "5px",
-              textTransform: "none",
-              minWidth: "100px",
-              minHeight: "35px",
-              width: "100%",
-            }}
-          >
-            <CloseIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
-            <Typography
-              sx={{
-                textTransform: "none",
-                color: "#FFFFFF",
-                fontWeight: theme.typography.secondary.fontWeight,
-                fontSize: isMobile ? "10px" : theme.typography.smallFont,
-                whiteSpace: "nowrap",
-                marginLeft: "1%",
-              }}
-            >
-              {"Not Listed"}
-            </Typography>
-          </Box>
-        </Box>
-      )}
+            {/* Listed For Rent Box */}
+            <Grid item xs={10} sx={{ minHeight: "35px" }}>
+              {property && property?.property_available_to_rent === 1 && (property.lease_status == null || property.lease_status !== "ACTIVE") ? (
+                <Box sx={{ minHeight: "35px", }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      flexWrap: "wrap",
+                      alignContent: "center",
+                      justifyContent: "center",
+                      backgroundColor: "#76B148",
+                      borderRadius: "5px",
+                      textTransform: "none",
+                      minWidth: "100px",
+                      minHeight: "35px",
+                      width: "100%",
+                    }}
+                  >
+                    {!isMobile && <CheckIcon sx={{ color: "#FFFFFF", fontSize: isMobile ? "10px" : "18px" }} />}
+                    <Typography
+                      sx={{
+                        textTransform: "none",
+                        color: "#FFFFFF",
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: isMobile ? "10px" : theme.typography.smallFont,
+                        whiteSpace: "nowrap",
+                        marginLeft: "1%",
+                      }}
+                    >
+                      {"Listed For Rent"}
+                    </Typography>
+                  </Box>
+                </Box>
+              ) : (
+                <Box sx={{ minHeight: "35px" }} /> // Placeholder for blank space
+              )}
+            </Grid>
 
-    {property && property.lease_status && (property.lease_status === "ACTIVE" || property.lease_status === "ACTIVE M2M") && (
-      <Box sx={{ minHeight: "35px", marginBottom: "5px" }}>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            alignContent: "center",
-            justifyContent: "center",
-            backgroundColor: "#3D5CAC",
-            borderRadius: "5px",
-            textTransform: "none",
-            minWidth: "100px",
-            minHeight: "35px",
-            width: "100%",
-          }}
-        >
-          {!isMobile && <CheckIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />}
-          <Typography
-            sx={{
-              textTransform: "none",
-              color: "#FFFFFF",
-              fontWeight: theme.typography.secondary.fontWeight,
-              fontSize: isMobile ? "10px" : theme.typography.smallFont,
-              whiteSpace: "nowrap",
-              marginLeft: "1%",
-            }}
-          >
-            {"Rented"}
-          </Typography>
-        </Box>
-      </Box>
-    )}
-      <Box sx={{ minHeight: "35px", marginBottom: "5px" }}>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          flexWrap: "wrap",
-          alignContent: "center",
-          justifyContent: "center",
-          backgroundColor: getPaymentStatusColor(property?.rent_status, property),
-          borderRadius: "5px",
-          textTransform: "none",
-          minWidth: "100px",
-          minHeight: "35px",
-          width: "100%",
-          cursor: "pointer",
-          marginBottom: "8px",
-        }}
-        onClick={() => {
-          if (getPaymentStatus(property?.rent_status, property) === "Vacant - Not Listed") {
-            props.onAddListingClick("create_listing");
-          } else if (getPaymentStatus(property?.rent_status, property) === "No Manager") {
-            props.onShowSearchManager(1);
-          }
-        }}
-      >
-        <Typography
-          sx={{
-            textTransform: "none",
-            color: "#FFFFFF",
-            fontWeight: theme.typography.secondary.fontWeight,
-            fontSize: isMobile ? "10px" : theme.typography.smallFont,
-            whiteSpace: "nowrap",
-            marginLeft: "1%",
-          }}
-        >
-          {getPaymentStatus(property?.rent_status, property)}
-        </Typography>
-      </Box>
-    </Box>
- 
-  </Grid>
+            {/* Not Listed and Rented Boxes */}
+            <Grid item xs={10} sx={{ minHeight: "35px", marginBottom: "20px" }}>
+              {property &&
+                property.lease_status &&
+                property.lease_status !== "ACTIVE" &&
+                (property?.property_available_to_rent === 0 || property?.property_available_to_rent == null) &&
+                property.business_uid != null &&
+                property.business_uid !== "" && (
+                  <Box sx={{ minHeight: "35px", marginBottom: "5px" }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        flexWrap: "wrap",
+                        alignContent: "center",
+                        justifyContent: "center",
+                        backgroundColor: "#A52A2A",
+                        borderRadius: "5px",
+                        textTransform: "none",
+                        minWidth: "100px",
+                        minHeight: "35px",
+                        width: "100%",
+                      }}
+                    >
+                      <CloseIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />
+                      <Typography
+                        sx={{
+                          textTransform: "none",
+                          color: "#FFFFFF",
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: isMobile ? "10px" : theme.typography.smallFont,
+                          whiteSpace: "nowrap",
+                          marginLeft: "1%",
+                        }}
+                      >
+                        {"Not Listed"}
+                      </Typography>
+                    </Box>
+                  </Box>
+                )}
+
+              {property && property.lease_status && (property.lease_status === "ACTIVE" || property.lease_status === "ACTIVE M2M") && (
+                <Box sx={{ minHeight: "35px", marginBottom: "5px" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      flexWrap: "wrap",
+                      alignContent: "center",
+                      justifyContent: "center",
+                      backgroundColor: "#3D5CAC",
+                      borderRadius: "5px",
+                      textTransform: "none",
+                      minWidth: "100px",
+                      minHeight: "35px",
+                      width: "100%",
+                    }}
+                  >
+                    {!isMobile && <CheckIcon sx={{ color: "#FFFFFF", fontSize: "18px" }} />}
+                    <Typography
+                      sx={{
+                        textTransform: "none",
+                        color: "#FFFFFF",
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: isMobile ? "10px" : theme.typography.smallFont,
+                        whiteSpace: "nowrap",
+                        marginLeft: "1%",
+                      }}
+                    >
+                      {"Rented"}
+                    </Typography>
+                  </Box>
+                </Box>
+              )}
+              <Box sx={{ minHeight: "35px", marginBottom: "5px" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    alignContent: "center",
+                    justifyContent: "center",
+                    backgroundColor: getPaymentStatusColor(property?.rent_status, property),
+                    borderRadius: "5px",
+                    textTransform: "none",
+                    minWidth: "100px",
+                    minHeight: "35px",
+                    width: "100%",
+                    cursor: "pointer",
+                    marginBottom: "8px",
+                  }}
+                  onClick={() => {
+                    if (getPaymentStatus(property?.rent_status, property) === "Vacant - Not Listed") {
+                      props.onAddListingClick("create_listing");
+                    } else if (getPaymentStatus(property?.rent_status, property) === "No Manager") {
+                      props.onShowSearchManager(1);
+                    }
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      textTransform: "none",
+                      color: "#FFFFFF",
+                      fontWeight: theme.typography.secondary.fontWeight,
+                      fontSize: isMobile ? "10px" : theme.typography.smallFont,
+                      whiteSpace: "nowrap",
+                      marginLeft: "1%",
+                    }}
+                  >
+                    {getPaymentStatus(property?.rent_status, property)}
+                  </Typography>
+                </Box>
+              </Box>
+
+            </Grid>
 
 
-<Grid item xs={10} sx={{ marginBottom: "0px" }}>
+            <Grid item xs={10} sx={{ marginBottom: "0px" }}>
               <Box sx={{ pb: isMobile ? 0 : 0 }}>
                 {/* Edit Property Button */}
                 <Button
@@ -2560,14 +2575,14 @@ const PropertyTabPanel = (props) => {
                     minHeight: "35px",
                     height: "35px",
                     width: "100%",
-                    marginBottom: "8px", 
+                    marginBottom: "8px",
                   }}
                   size='small'
                   onClick={() => {
                     // console.log('typeof edit', typeof(onEditClick));
                     props.onEditClick("edit_property");
                   }}
-                  // onClick={handleEditButton}
+                // onClick={handleEditButton}
                 >
                   {!isMobile && <PostAddIcon sx={{ color: "#FFFFFF", fontSize: "18px", margin: "5px" }} />}
                   <Typography
@@ -2584,7 +2599,7 @@ const PropertyTabPanel = (props) => {
                   </Typography>
                 </Button>
               </Box>
-            
+
               {selectedRole === "MANAGER" && property && property?.property_available_to_rent !== 1 && (
                 <Grid item xs={12}>
                   <Button
@@ -2650,8 +2665,26 @@ const PropertyTabPanel = (props) => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid container item xs={12} justifyContent='center' sx = {{ marginTop :"10px", alignContent: "space-between" }}>
-        <Grid container item xs={10}> <Grid container item xs={12}>
+        <Grid container item xs={12} justifyContent='center' sx={{ marginTop: "10px", alignContent: "space-between" }}>
+          <Grid container item xs={10}> <Grid container item xs={12}>
+            <Grid item xs={12}>
+              <Typography
+                sx={{
+                  textTransform: "none",
+                  color: theme.typography.primary.black,
+                  fontWeight: theme.typography.secondary.fontWeight,
+                  fontSize: theme.typography.smallFont,
+                  textAlign: "left",
+                  marginTop: "10px",
+                }}
+              >
+                Property Description:
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              {property && property.property_description ? `${(property?.property_description)}` : "-"}
+            </Grid>
+          </Grid><Grid container item xs={12}>
               <Grid item xs={12}>
                 <Typography
                   sx={{
@@ -2661,24 +2694,6 @@ const PropertyTabPanel = (props) => {
                     fontSize: theme.typography.smallFont,
                     textAlign: "left",
                     marginTop: "10px",
-                  }}
-                >
-                  Property Description:
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                {property && property.property_description ? `${(property?.property_description)}` : "-"}
-              </Grid>
-            </Grid><Grid container item xs={12}>
-              <Grid item xs={12}>
-                <Typography
-                  sx={{
-                    textTransform: "none",
-                    color: theme.typography.primary.black,
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                    textAlign: "left",
-                    marginTop: "10px", 
                   }}
                 >
                   Unit Amenities:
@@ -2726,10 +2741,10 @@ const PropertyTabPanel = (props) => {
                 {property && property.property_amenities_nearby ? `${(property?.property_amenities_nearby)}` : "-"}
               </Grid>
             </Grid>
-            
-          <PropertyDetailsGrid propertyDetails={property?.property_details || '{}'} />
+
+            <PropertyDetailsGrid propertyDetails={property?.property_details || '{}'} />
           </Grid>
-          </Grid>
+        </Grid>
       </Grid>
     </Grid>
   );

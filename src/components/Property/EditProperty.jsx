@@ -155,11 +155,11 @@ function EditProperty(props) {
 	const [deletedIcons, setDeletedIcons] = useState(
 		propertyData?.property_images ? new Array(JSON.parse(propertyData.property_images).length).fill(false) : []
 	);
-	const [favoriteIcons, setFavoriteIcons] = useState(
-		propertyData?.property_images
-			? JSON.parse(propertyData.property_images).map((image) => image === propertyData.property_favorite_image)
-			: []
-	);
+	// const [favoriteIcons, setFavoriteIcons] = useState(
+	// 	propertyData?.property_images
+	// 		? JSON.parse(propertyData.property_images).map((image) => image === propertyData.property_favorite_image)
+	// 		: []
+	// );
 
 
 	const [initialPropertyCodes, setInitialPropertyCodes] = useState([
@@ -188,6 +188,21 @@ function EditProperty(props) {
 	// 	console.log("assessmentYear - ", assessmentYear);
 	//   }, [assessmentYear]);
 
+	const sortByFavImage = (favImage, imageList) => {
+		if (!favImage || !imageList || !imageList.includes(favImage)) return imageList;
+
+		const sortedImages = [favImage, ...imageList.filter((img) => img !== favImage)];
+		return sortedImages;
+	};
+
+	const favPropImage = propertyData.property_favorite_image;
+	const sortedByFavImgLst = sortByFavImage(favPropImage, JSON.parse(propertyData.property_images));
+	const [favoriteIcons, setFavoriteIcons] = useState(
+		propertyData?.property_images
+			? sortedByFavImgLst.map((image) => image === favPropImage)
+			: []
+	);
+
 	useEffect(() => {
 		const property = propertyList[index];
 		setInitialData(property);
@@ -213,7 +228,7 @@ function EditProperty(props) {
 		setInitListed(property.property_available_to_rent === 1 ? true : false);
 		setActiveDate(property.property_active_date);
 		setDescription(property.property_description);
-		setSelectedImageList(JSON.parse(property.property_images));
+		setSelectedImageList(sortedByFavImgLst);
 		setInitSelectedImageList(JSON.parse(property.property_images));
 		setFavImage(property.property_favorite_image);
 		setInitFavImage(property.property_favorite_image);
@@ -554,7 +569,8 @@ function EditProperty(props) {
 		updatedDeletedIcons[index] = !updatedDeletedIcons[index];
 		setDeletedIcons(updatedDeletedIcons);
 
-		const imageToDelete = JSON.parse(propertyData.property_images)[index];
+		// const imageToDelete = JSON.parse(propertyData.property_images)[index];
+		const imageToDelete = sortedByFavImgLst[index];
 
 		setImagesTobeDeleted((prev) => {
 			let updatedImagesToBeDeleted;
@@ -588,7 +604,7 @@ function EditProperty(props) {
 		updatedFavoriteIcons[index] = true;
 		setFavoriteIcons(updatedFavoriteIcons);
 
-		const newFavImage = JSON.parse(propertyData.property_images)[index];
+		const newFavImage = selectedImageList[index];
 		setFavImage(newFavImage);
 		setSelectedImageList((prevState) =>
 			prevState.map((file, i) => ({
@@ -780,7 +796,7 @@ function EditProperty(props) {
 												sx={{ display: 'flex', flexWrap: 'nowrap' }}
 												cols={5}
 											>
-												{JSON.parse(propertyData.property_images)?.map((image, index) => (
+												{sortedByFavImgLst?.map((image, index) => (
 													<ImageListItem
 														key={index}
 														sx={{
