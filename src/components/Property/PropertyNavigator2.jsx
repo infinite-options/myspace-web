@@ -84,6 +84,7 @@ import ManagementContractContext from "../../contexts/ManagementContractContext"
 
 import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy } from "../../utils/fees";
 import ReferTenantDialog from "../Referral/ReferTenantDialog.jsx";
+import washingMachineIcon from "../../images/washing-machine-icon.svg";
 
 const getAppColor = (app) => {
   if (app.lease_status === "RENEW NEW") {
@@ -1098,8 +1099,8 @@ export default function PropertyNavigator2({
       renderCell: (params) => (
         <Box
           sx={{
-            width: "70px",
-            height: "70px",
+            width: "50px",
+            height: "50px",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -1107,11 +1108,12 @@ export default function PropertyNavigator2({
           }}
         >
           <img
-            src={`${params.row.appliance_favorite_image}`}
+            src={`${params.row.appliance_favorite_image || washingMachineIcon}`}
             alt='Appliance'
             style={{
               width: "100%", // Ensures the image takes full width
-              height: "auto", // Maintain aspect ratio
+             height: "100%", // Maintain aspect ratio
+              objectFit: "contain",
             }}
           />
         </Box>
@@ -1153,24 +1155,33 @@ export default function PropertyNavigator2({
     {
       field: "actions",
       headerName: "Actions",
-      // width: 120,
-      flex: 1,
-      renderCell: (params) => {
-        return (
-          <Box sx={{ display: "flex", width: "100%" }}>
-            <IconButton onClick={() => handleInfoClick(params.row)}>
-              <InfoIcon />
-            </IconButton>
-            <IconButton onClick={() => handleEditClick(params.row)}>
-              <EditIcon />
-            </IconButton>
-            <IconButton onClick={() => handleDeleteClick(params.row.appliance_uid)}>
-              <DeleteIcon />
-            </IconButton>
-          </Box>
-        );
-      },
+      width: 150, // Set enough fixed width to fit all three icons
+      sortable: false, // Disable sorting for actions column
+      renderCell: (params) => (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between", // Distribute icons evenly
+            alignItems: "center",
+            gap: "1px", // Add spacing between icons
+            flexWrap: "nowrap", // Prevent wrapping
+            overflow: "visible", // Ensure icons are not cut off
+            minWidth: "120px", // Prevent shrinking below this width
+          }}
+        >
+          <IconButton onClick={() => handleInfoClick(params.row)}>
+            <InfoIcon />
+          </IconButton>
+          <IconButton onClick={() => handleEditClick(params.row)}>
+            <EditIcon />
+          </IconButton>
+          <IconButton onClick={() => handleDeleteClick(params.row.appliance_uid)}>
+            <DeleteIcon />
+          </IconButton>
+        </Box>
+      ),
     },
+    
   ];
 
   const [imagesTobeDeleted, setImagesTobeDeleted] = useState([]);
@@ -1501,190 +1512,203 @@ export default function PropertyNavigator2({
         
         </CustomTabPanel>
         <CustomTabPanel value={currentTab} index={4}>
-        <Box sx={{ width: "100%" }}>
-          <Card sx={{ height: "100%", width: "100%" }}>
-            <Box sx={{ margin: "0px 15px 15px 15px" }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  margin: "0px 15px 0px 10px",
-                }}
-              >
-                <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.primary.fontWeight,
-                      fontSize: theme.typography.largeFont,
-                      textAlign: "center",
-                      marginTop: "10px",
-                      marginBottom: "10px",
-                    }}
-                  >
-                    Appliances
-                  </Typography>
-                </Box>
-                <IconButton
-                  variant="outlined"
-                  sx={{
-                    cursor: "pointer",
-                    textTransform: "none",
-                    minWidth: "30px",
-                    minHeight: "30px",
-                    fontWeight: theme.typography.secondary.fontWeight,
-                    fontSize: theme.typography.smallFont,
-                  }}
-                  size="small"
-                  onClick={() => {
-                    setIsReadOnly(false);
-                    setcurrentApplRow({
-                      appliance_uid: "",
-                      appliance_url: "",
-                      appliance_type: "",
-                      appliance_desc: "",
-                      appliance_images: "",
-                      appliance_available: 0,
-                      appliance_installed: "",
-                      appliance_model_num: "",
-                      appliance_purchased: "",
-                      appliance_serial_num: "",
-                      appliance_property_id: propertyId,
-                      appliance_manufacturer: "",
-                      appliance_warranty_info: "",
-                      appliance_warranty_till: "",
-                      appliance_purchase_order: "",
-                      appliance_purchased_from: "",
-                      appliance_favorite_image: "",
-                    });
-                    setIsEditing(false);
-                    handleOpen();
-                  }}
-                >
-                  <AddIcon sx={{ color: "black", fontSize: "24px" }} />
-                </IconButton>
-              </Box>
-              <Box>
-                <DataGrid
-                  rows={appliances}
-                  columns={applnColumns}
-                  pageSize={5}
-                  rowsPerPageOptions={[5, 10, 15]}
-                  initialState={{
-                    pagination: {
-                      paginationModel: {
-                        pageSize: 5,
-                        page: 0,
-                      },
-                    },
-                  }}
-                  getRowId={(row) => row.appliance_uid}
-                  autoHeight
-                  sx={{
-                    fontSize: "14px",
-                    "& .wrap-text": {
-                      whiteSpace: "normal !important",
-                      wordWrap: "break-word !important",
-                      overflow: "visible !important",
-                    },
-                  }}
-                />
-              </Box>
-              <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
-                <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: "100%" }}>
-                  Please fill in all required fields.
-                </Alert>
-              </Snackbar>
-              <Dialog open={open} onClose={handleClose}>
-                        <DialogTitle>{isReadOnly ? "View Appliance" : isEditing ? "Edit Appliance" : "Add New Appliance"}</DialogTitle>
-                        <DialogContent>
-                          {/* Appliance UID */}
-                          <TextField margin='dense' label='Appliance UID' fullWidth variant='outlined' value={currentApplRow?.appliance_uid || ""} disabled={isReadOnly} />
-                          <FormControl margin='dense' fullWidth variant='outlined' sx={{ marginTop: "10px" }}>
-                            <InputLabel required>Appliance Type</InputLabel>
-                            <Select
-                              margin='dense'
-                              label='Appliance Type'
-                              fullWidth
-                              required
-                              disabled={isReadOnly}
-                              variant='outlined'
-                              value={applianceUIDToCategoryMap[currentApplRow?.appliance_type] || ""}
-                              onChange={(e) => {
-                                const selectedItem = applianceCategories.find((appln) => appln.list_item === e.target.value);
-                                if (selectedItem) {
-                                  setcurrentApplRow({
-                                    ...currentApplRow,
-                                    appliance_type: selectedItem.list_uid,
-                                  });
-                                }
-                              }}
-                            >
-                              {applianceCategories &&
-                                applianceCategories.map((appln) => (
-                                  <MenuItem key={appln.list_uid} value={appln.list_item}>
-                                    {appln.list_item}
-                                  </MenuItem>
-                                ))}
-                            </Select>
-                          </FormControl>
-                          {(isEditing || isReadOnly) && (
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                padding: 2,
-                              }}
-                            >
-                              <IconButton onClick={() => handleScroll("left")} disabled={scrollPosition === 0}>
-                                <ArrowBackIosIcon />
-                              </IconButton>
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  overflowX: "auto",
-                                  scrollbarWidth: "none",
-                                  msOverflowStyle: "none",
-                                  "&::-webkit-scrollbar": {
-                                    display: "none",
-                                  },
-                                }}
-                              >
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    overflowX: "auto",
-                                    scrollbarWidth: "none",
-                                    msOverflowStyle: "none",
-                                    "&::-webkit-scrollbar": {
-                                      display: "none",
-                                    },
-                                  }}
-                                >
-                                  <ImageList ref={scrollRef} sx={{ display: "flex", flexWrap: "nowrap" }} cols={5}>
-                                    {currentApplRow.appliance_images ? (
-                                      currentApplRow.appliance_images.map((image, index) => (
-                                        <ImageListItem
-                                          key={index}
-                                          sx={{
-                                            width: "auto",
-                                            flex: "0 0 auto",
-                                            border: "1px solid #ccc",
-                                            margin: "0 2px",
-                                            position: "relative",
-                                          }}
-                                        >
-                                          <img
-                                            src={image}
-                                            alt={`maintenance-${index}`}
-                                            style={{
-                                              height: "150px",
-                                              width: "150px",
-                                              objectFit: "cover",
-                                            }}
-                                          />
+  <Box sx={{ width: "100%" }}>
+    <Card sx={{ height: "100%", width: "100%" }}>
+      <Box sx={{ margin: "0px 15px 15px 15px" }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            margin: "0px 15px 0px 10px",
+          }}
+        >
+          <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
+            <Typography
+              sx={{
+                color: theme.typography.primary.black,
+                fontWeight: theme.typography.primary.fontWeight,
+                fontSize: theme.typography.largeFont,
+                textAlign: "center",
+                marginTop: "10px",
+                marginBottom: "10px",
+              }}
+            >
+              Appliances
+            </Typography>
+          </Box>
+          <IconButton
+            variant="outlined"
+            sx={{
+              cursor: "pointer",
+              textTransform: "none",
+              minWidth: "30px",
+              minHeight: "30px",
+              fontWeight: theme.typography.secondary.fontWeight,
+              fontSize: theme.typography.smallFont,
+            }}
+            size="small"
+            onClick={() => {
+              setIsReadOnly(false);
+              setcurrentApplRow({
+                appliance_uid: "",
+                appliance_url: "",
+                appliance_type: "",
+                appliance_desc: "",
+                appliance_images: "",
+                appliance_available: 0,
+                appliance_installed: "",
+                appliance_model_num: "",
+                appliance_purchased: "",
+                appliance_serial_num: "",
+                appliance_property_id: propertyId,
+                appliance_manufacturer: "",
+                appliance_warranty_info: "",
+                appliance_warranty_till: "",
+                appliance_purchase_order: "",
+                appliance_purchased_from: "",
+                appliance_favorite_image: "",
+              });
+              setIsEditing(false);
+              handleOpen();
+            }}
+          >
+            <AddIcon sx={{ color: "black", fontSize: "24px" }} />
+          </IconButton>
+        </Box>
+        <Box>
+        <DataGrid
+  rows={appliances}
+  columns={applnColumns}
+  pageSize={10}
+  rowsPerPageOptions={[5, 10, 15]}
+  initialState={{
+    pagination: {
+      paginationModel: {
+        pageSize: 10,
+        page: 0,
+      },
+    },
+  }}
+  getRowId={(row) => row.appliance_uid}
+  autoHeight
+  sx={{
+    fontSize: "14px",
+    "& .MuiDataGrid-root": {
+      overflow: "visible", // Prevent content from being hidden
+    },
+    "& .MuiDataGrid-cell": {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      overflow: "visible", // Ensure all content is visible
+    },
+    "& .MuiDataGrid-cell--actions": {
+      display: "flex",
+      justifyContent: "space-between", // Space out icons
+      gap: "2px", // Add consistent spacing
+      overflow: "visible", // Prevent truncation
+      flexWrap: "nowrap", // Prevent wrapping
+      minWidth: "120px", // Ensure sufficient space
+    },
+  }}
+/>
+
+        </Box>
+        <Snackbar open={snackbarOpen} onClose={handleSnackbarClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+          <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: "100%" }}>
+            Please fill in all required fields.
+          </Alert>
+        </Snackbar>
+        <Dialog open={open} onClose={handleClose}>
+                  <DialogTitle>{isReadOnly ? "View Appliance" : isEditing ? "Edit Appliance" : "Add New Appliance"}</DialogTitle>
+                  <DialogContent>
+                    {/* Appliance UID */}
+                    <TextField margin='dense' label='Appliance UID' fullWidth variant='outlined' value={currentApplRow?.appliance_uid || ""} disabled={isReadOnly} />
+                    <FormControl margin='dense' fullWidth variant='outlined' sx={{ marginTop: "10px" }}>
+                      <InputLabel required>Appliance Type</InputLabel>
+                      <Select
+                        margin='dense'
+                        label='Appliance Type'
+                        fullWidth
+                        required
+                        disabled={isReadOnly}
+                        variant='outlined'
+                        value={applianceUIDToCategoryMap[currentApplRow?.appliance_type] || ""}
+                        onChange={(e) => {
+                          const selectedItem = applianceCategories.find((appln) => appln.list_item === e.target.value);
+                          if (selectedItem) {
+                            setcurrentApplRow({
+                              ...currentApplRow,
+                              appliance_type: selectedItem.list_uid,
+                            });
+                          }
+                        }}
+                      >
+                        {applianceCategories &&
+                          applianceCategories.map((appln) => (
+                            <MenuItem key={appln.list_uid} value={appln.list_item}>
+                              {appln.list_item}
+                            </MenuItem>
+                          ))}
+                      </Select>
+                    </FormControl>
+                    {(isEditing || isReadOnly) && (
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          padding: 2,
+                        }}
+                      >
+                        <IconButton onClick={() => handleScroll("left")} disabled={scrollPosition === 0}>
+                          <ArrowBackIosIcon />
+                        </IconButton>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            overflowX: "auto",
+                            scrollbarWidth: "none",
+                            msOverflowStyle: "none",
+                            "&::-webkit-scrollbar": {
+                              display: "none",
+                            },
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              display: "flex",
+                              overflowX: "auto",
+                              scrollbarWidth: "none",
+                              msOverflowStyle: "none",
+                              "&::-webkit-scrollbar": {
+                                display: "none",
+                              },
+                            }}
+                          >
+                            <ImageList ref={scrollRef} sx={{ display: "flex", flexWrap: "nowrap" }} cols={5}>
+                              {currentApplRow.appliance_images ? (
+                                currentApplRow.appliance_images.map((image, index) => (
+                                  <ImageListItem
+                                    key={index}
+                                    sx={{
+                                      width: "auto",
+                                      flex: "0 0 auto",
+                                      border: "1px solid #ccc",
+                                      margin: "0 2px",
+                                      position: "relative",
+                                    }}
+                                  >
+                                    <img
+                                      src={image}
+                                      alt={`maintenance-${index}`}
+                                      style={{
+                                        height: "150px",
+                                        width: "150px",
+                                        objectFit: "cover",
+                                      }}
+                                    />
 
                                           {/* Conditionally render delete icon if not read-only */}
                                           {!isReadOnly && (

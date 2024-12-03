@@ -26,6 +26,7 @@ import ChangePasswordSettingsManager from "../Settings/ChangePasswordSettingsMan
 import ChangePasswordSettings from "../Settings/ChangePasswordSettings";
 import ChangePasswordSettingsTenant from "../Settings/ChangePasswordSettingsTenant";
 import ChangePasswordSettingsMaintenance from "../Settings/ChangePasswordSettingsMaintenance";
+import EditUserInfo from "../Settings/EditUserInfo";
 import PrivacyPolicy from "./PrivacyPolicy";
 import TermsAndConditions from "./TermsAndConditions";
 
@@ -207,6 +208,11 @@ function ProfileEditor() {
     event.preventDefault();
   };
 
+  const handleEditUserInfoClick = (event) => {
+    setRHS("userInfoChange");
+    event.preventDefault();
+  };
+
   const getPasswordChangeForm = () => {
     if (profileData) {
       if (selectedRole === "OWNER") {
@@ -254,7 +260,7 @@ function ProfileEditor() {
         </Grid>
         <Grid container spacing={6}>
           <Grid item xs={12} md={3}>
-            <ApplicationSettings handleChangePasswordClick={handleChangePasswordClick} setRHS={setRHS} />
+            <ApplicationSettings handleChangePasswordClick={handleChangePasswordClick} setRHS={setRHS} handleEditUserInfoClick={handleEditUserInfoClick}/>
           </Grid>
           {RHS === "form" && (
             <Grid item xs={12} md={9}>
@@ -264,6 +270,11 @@ function ProfileEditor() {
           {RHS === "passwordChange" && (
             <Grid item xs={12} md={9}>
               {getPasswordChangeForm()}
+            </Grid>
+          )}
+          {RHS === "userInfoChange" && (
+            <Grid item xs={12} md={9}>
+              <EditUserInfo></EditUserInfo>
             </Grid>
           )}
           {RHS === "privacyPolicy" && (

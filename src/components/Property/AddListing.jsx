@@ -48,7 +48,10 @@ import ImageListItem from "@mui/material/ImageListItem";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import useMediaQuery from "@mui/material/useMediaQuery";
-
+import { DatePicker } from "@mui/x-date-pickers";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from 'dayjs';
 import APIConfig from "../../utils/APIConfig";
 
 import PropertiesContext from "../../contexts/PropertiesContext";
@@ -126,7 +129,7 @@ export default function AddListing(props) {
   const [communityAmenities, setCommunityAmenities] = useState(propertyData.property_amenities_community);
   const [apartmentAmenities, setApartmentAmenities] = useState(propertyData.property_amenities_unit);
   const [nearbyAmenities, setNearbyAmenities] = useState(propertyData.property_amenities_nearby);
-  const [activeDate, setActiveDate] = useState(propertyData.property_active_date);
+  const [activeDate, setActiveDate] = useState(dayjs(propertyData.property_active_date));
   const [isListed, setListed] = useState(true);
   const [hasUtilitiesChanges, setHasUtilitiesChanges] = useState(false);
   const [changedSaved, setChangedSaved] = useState(false);
@@ -387,6 +390,8 @@ export default function AddListing(props) {
       propertyData.property_amenities_community !== communityAmenities ||
       propertyData.property_amenities_unit !== apartmentAmenities ||
       propertyData.property_amenities_nearby !== nearbyAmenities ||
+      !dayjs
+      (propertyData.property_active_date).isSame(activeDate) ||
       hasUtilitiesChanges;
 
     // console.log("hasPropertyChanges:", hasPropertyChanges);
@@ -518,6 +523,12 @@ export default function AddListing(props) {
 
     if (propertyData.property_available_to_rent !== (isListed ? 1 : 0)) {
       formData.append("property_listed_date", formattedDate);
+      hasPropertyChanges = true;
+    }
+
+    if (!dayjs
+      (propertyData.property_active_date).isSame(activeDate)) {
+      formData.append("property_active_date",  dayjs(activeDate).format('MM-DD-YYYY'));
       hasPropertyChanges = true;
     }
 
@@ -1144,18 +1155,20 @@ export default function AddListing(props) {
                   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
                     Active Date
                   </Typography>
-                  <TextField
-                    fullWidth
-                    sx={{
-                      backgroundColor: "white",
-                      borderColor: "black",
-                      borderRadius: "7px",
-                    }}
-                    size='small'
-                    placeholder={activeDate}
-                    value={activeDate}
-                    onChange={(e) => setActiveDate(e.target.value)}
-                  />
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DatePicker
+          fullWidth
+          sx={{
+            backgroundColor: "white",
+            borderColor: "black",
+            borderRadius: "7px",
+          }}
+          size='small'
+          value={activeDate}
+          onChange={(newDate) => setActiveDate(newDate)} // This will update the state with the selected date
+          renderInput={(params) => <TextField {...params} />}
+        />
+      </LocalizationProvider>
                 </Grid>
                 <Grid item xs={6}>
                   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
