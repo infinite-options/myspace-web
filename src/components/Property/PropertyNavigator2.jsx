@@ -1381,7 +1381,7 @@ export default function PropertyNavigator2({
         {/* End Property Navigator Header Including Address and x of y Properties */}
       </Box>
       <Box sx={{ marginTop: "26px", padding: isMobile ? "10px" : "20px" }}>
-        <Box sx={{ height: "30px", overflowX: "auto"  }}>
+        <Box sx={{ height: "30px"  }}>
           <Tabs sx={{ height: "30px",   '& .MuiTab-root': {
           minWidth: 'auto', // Dynamically adjust width
           padding: isMobile ? '4px' : '10px',  // Reduce padding for mobile

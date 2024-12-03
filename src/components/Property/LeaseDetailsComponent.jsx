@@ -258,7 +258,7 @@ export default function LeaseDetailsComponent({
                 opacity: renewedLease == null ? 0 : 1,
               }}
             >
-              <img src={FlipIcon} alt="Flip Icon" style={{ width: "27px", height: "27px" }} />
+              <img src={FlipIcon} alt="Flip Icon" style={{ width: "10px", height: "10px" }} />
             </IconButton>
           </Box>
         </Box>
