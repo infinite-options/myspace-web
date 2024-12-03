@@ -531,7 +531,7 @@ const TenantDashboard = () => {
         case "announcements":
           return <Announcements handleBack={handleBack} />;
         case "tenantEndLease":
-          return <TenantEndLeaseButton leaseDetails={rightPane.state.leaseDetails} setRightPane={setRightPane} isMobile={isMobile} setViewRHS={setViewRHS} />;
+          return <TenantEndLeaseButton leaseDetails={rightPane.state.leaseDetails} setRightPane={setRightPane} isMobile={isMobile} setViewRHS={setViewRHS} setReload={setReload}/>;
         default:
           return null;
       }
@@ -821,60 +821,65 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
   ];
 
   return (
-    <Paper
-      sx={{
-        padding: isMobile ? "10px" : "20px",
-        backgroundColor: "#f0f0f0",
-        borderRadius: "8px",
-        overflowX: "auto",
-        marginBottom: isMobile ? "10px" : "0px",
-      }}
-    >
-      <Grid Container sx={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
-        <Grid item xs={0.5} md={1}>
-          <Button onClick={onBack}>
-            <ArrowBackIcon
-              sx={{
-                color: "#160449",
-                fontSize: "25px",
-                margin: "5px",
-              }}
-            />
-          </Button>
+    <Grid container sx={{flex: 1 }}>
+      <Paper
+        component={Stack}
+        sx={{
+          padding: isMobile ? "10px" : "20px",
+          backgroundColor: "#f0f0f0",
+          borderRadius: "8px",
+          width: "100%",
+          // height: "100%",          
+          // overflowX: "auto",
+          marginBottom: isMobile ? "10px" : "0px",
+        }}
+      >
+        <Grid Container sx={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
+          <Grid item xs={0.5} md={1}>
+            <Button onClick={onBack}>
+              <ArrowBackIcon
+                sx={{
+                  color: "#160449",
+                  fontSize: "25px",
+                  margin: "5px",
+                }}
+              />
+            </Button>
+          </Grid>
+          <Grid item xs={11} md={10}>
+            <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont, textAlign: "center" }}>
+              Payment History
+            </Typography>
+          </Grid>
+          <Grid item xs={0.5} md={1} />
         </Grid>
-        <Grid item xs={11} md={10}>
-          <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont, textAlign: "center" }}>
-            Payment History
-          </Typography>
-        </Grid>
-        <Grid item xs={0.5} md={1} />
-      </Grid>
-      {data && data.length > 0 ? (
-        <DataGrid
-          rows={data}
-          columns={columns}
-          pageSizeOptions={[5, 10, 25, 100]}
-          initialState={{
-            pagination: {
-              paginationModel: { pageSize: 5 },
-            },
-            sorting: {
-              sortModel: [{ field: "payment_date", sort: "desc" }], // Default sorting by date
-            },
-          }}
-          getRowId={(row) => row.payment_uid} // Use payment_uid as the unique identifier
-          sx={{
-            width: "100%",
-            minWidth: "700px",
-            backgroundColor: "#f0f0f0",
-          }}
-        />
-      ) : (
-        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "200px" }}>
-          <Typography sx={{ fontSize: "16px" }}>No Payment History Available</Typography>
-        </Box>
-      )}
-    </Paper>
+        {data && data.length > 0 ? (
+          <DataGrid
+            rows={data}
+            columns={columns}
+            pageSizeOptions={[5, 10, 25, 100]}
+            initialState={{
+              pagination: {
+                paginationModel: { pageSize: 5 },
+              },
+              sorting: {
+                sortModel: [{ field: "payment_date", sort: "desc" }], // Default sorting by date
+              },
+            }}
+            getRowId={(row) => row.payment_uid} // Use payment_uid as the unique identifier
+            sx={{
+              width: "100%",
+              minWidth: "700px",
+              backgroundColor: "#f0f0f0",
+            }}
+          />
+        ) : (
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "200px" }}>
+            <Typography sx={{ fontSize: "16px" }}>No Payment History Available</Typography>
+          </Box>
+        )}
+      </Paper>
+    </Grid>
   );
 }
 
