@@ -192,48 +192,73 @@ export default function LeaseDetailsComponent({
   return (
     <>
       <Card sx={{ height: "100%", width: "100%" }}>
-      <Grid container justifyContent="center">
-  <Grid
-    container
-    item
-    xs={7} // Full width on mobile
-    sm={3.8} // Smaller width on larger screens
-    sx={{
-      display: "flex",
-      alignItems: "center", // Align text and icon vertically
-      justifyContent: "flex-start", // Align content to the left
-      paddingLeft: isMobile? "8%": "0%",
-    }}
-  >
-    {/* Title and Flip Icon */}
-    <Typography
-      sx={{
-        color: "#160449",
-        fontWeight: theme.typography.primary.fontWeight,
-        fontSize: { sm: theme.typography.largeFont,   // Larger font size for larger screens
-        },
-        whiteSpace: "nowrap", // Prevent text from wrapping
-        overflow: "hidden", // Hide any overflowed text
-        textOverflow: "ellipsis", // Show ellipsis if text overflows
-        flexGrow: 1, // Ensure title takes up remaining space
-      }}
-    >
-      {isFlipped ? "Renewed Lease Details" : "Current Lease Details"}
-    </Typography>
+        {/* <Grid container justifyContent="center">
+          <Grid
+            container
+            item
+            xs={12} 
+            sm={3.8} 
+            sx={{
+              display: "flex",
+              alignItems: "center", // Align text and icon vertically
+              justifyContent: "flex-start", // Align content to the left
+              paddingLeft: isMobile? "8%": "0%",
+            }}
+          > */}
+            {/* Title and Flip Icon */}
+            {/* <Typography
+              sx={{
+                color: "#160449",
+                fontWeight: theme.typography.primary.fontWeight,
+                fontSize: theme.typography.largeFont,
+                // whiteSpace: "nowrap", 
+                // overflow: "hidden", 
+                // textOverflow: "ellipsis", 
+                // flexGrow: 1,
+                textAlign: "center",
+              }}
+            >
+              {isFlipped ? "Renewed Lease Details" : "Current Lease Details"}
+            </Typography>
 
-    <IconButton
-      onClick={handleFlip}
-      disabled={renewedLease == null}
-      sx={{
-        padding: 0,
-        opacity: renewedLease == null ? 0.2 : 1,
-      }}
-    >
-      <img src={FlipIcon} alt="Flip Icon" style={{ width: "30px", height: "30px" }} />
-    </IconButton>
-  </Grid>
-</Grid>
-       
+            <IconButton
+              onClick={handleFlip}
+              disabled={renewedLease == null}
+              sx={{
+                padding: 0,
+                opacity: renewedLease == null ? 0.2 : 1,
+              }}
+            >
+              <img src={FlipIcon} alt="Flip Icon" style={{ width: "30px", height: "30px" }} />
+            </IconButton>
+          </Grid>
+        </Grid>  */}
+        <Box sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "10px"}}>
+          <Typography
+            sx={{
+              color: theme.typography.primary.black,
+              fontWeight: theme.typography.primary.fontWeight,
+              fontSize: theme.typography.largeFont,
+              textAlign: "center",
+              flexGrow: 1,
+              paddingLeft: isMobile? "25%": "7.5%",
+            }}
+          >
+            {isFlipped ? "Renewed Lease Details" : "Current Lease Details"}
+          </Typography>
+          <Box sx={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
+            <IconButton
+              onClick={handleFlip}
+              disabled={renewedLease == null}
+              sx={{
+                paddingRight: 10,
+                opacity: renewedLease == null ? 0 : 1,
+              }}
+            >
+              <img src={FlipIcon} alt="Flip Icon" style={{ width: "27px", height: "27px" }} />
+            </IconButton>
+          </Box>
+        </Box>
         <CardContent>
           <Grid container direction="row">
 
@@ -801,7 +826,7 @@ export default function LeaseDetailsComponent({
                           fontSize: isMobile? "10px": "12px",
                           whiteSpace: isMobile ? "normal" : "nowrap", // Allow wrapping on mobile, no wrapping on desktop
     wordWrap: isMobile ? "break-word" : "normal", // Ensure proper word wrapping on mobile
- 
+
                           //   marginLeft: "1%", // Adjusting margin for icon and text
                         }}
                       >
