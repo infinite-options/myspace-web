@@ -531,7 +531,7 @@ const TenantDashboard = () => {
         case "announcements":
           return <Announcements handleBack={handleBack} />;
         case "tenantEndLease":
-          return <TenantEndLeaseButton leaseDetails={rightPane.state.leaseDetails} setRightPane={setRightPane} isMobile={isMobile} setViewRHS={setViewRHS} />;
+          return <TenantEndLeaseButton leaseDetails={rightPane.state.leaseDetails} setRightPane={setRightPane} isMobile={isMobile} setViewRHS={setViewRHS} setReload={setReload}/>;
         default:
           return null;
       }
