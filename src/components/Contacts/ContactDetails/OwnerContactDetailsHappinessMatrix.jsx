@@ -1530,23 +1530,26 @@ const CashflowDataGrid = ({ cashflowDetails, cashflowDetailsByProperty, cashflow
     {
       field: "expected_cashflow",
       headerName: isMobile ? "Expected" : "Expected Cashflow",
+      renderCell: (params) => <Box sx={{textAlign: "right", width: "100%"}}>{parseFloat(params.row.expected_cashflow).toFixed(2)}</Box>,
       width: 110,
     },
     {
       field: "actual_cashflow",
       headerName: isMobile ? "Actual" : "Actual Cashflow",
+      renderCell: (params) => <Box sx={{textAlign: "right", width: "100%"}}>{parseFloat(params.row.actual_cashflow).toFixed(2)}</Box>,
       width: 100,
     },
     {
       field: "delta_cashflow",
       headerName: isMobile ? "Delta" : "Delta Cashflow",
       width: 100,
-      renderCell: (params) => <span>{parseFloat(params.row.delta_cashflow).toFixed(2)}</span>,
+      renderCell: (params) => <Box sx={{textAlign: "right", width: "100%"}}>{parseFloat(params.row.delta_cashflow).toFixed(2)}</Box>,
     },
     {
       field: "percent_delta_cashflow",
       headerName: isMobile ? "% Delta" : "% Delta Cashflow",
       width: 100,
+      renderCell: (params) => <Box sx={{textAlign: "right", width: "100%"}}>{params.value}</Box>
     },
   ];
 

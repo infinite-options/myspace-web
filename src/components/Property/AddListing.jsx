@@ -109,11 +109,9 @@ export default function AddListing(props) {
   const [bathrooms, setBathrooms] = useState(propertyData.property_num_baths);
 
   const [description, setDescription] = useState(propertyData.property_description);
-  const [selectedImageList, setSelectedImageList] = useState(JSON.parse(propertyData.property_images));
   const [deletedImageList, setDeletedImageList] = useState([]);
   const [favImage, setFavImage] = useState(propertyData.property_favorite_image);
   const [activeStep, setActiveStep] = useState(0);
-  const maxSteps = selectedImageList.length;
   const [coverImage, setCoverImage] = useState(defaultHouseImage);
   const [notes, setNotes] = useState(propertyData.property_notes);
   const [unit, setUnit] = useState(propertyData.property_unit);
@@ -137,7 +135,6 @@ export default function AddListing(props) {
   const [imageState, setImageState] = useState([]);
   const [imagesTobeDeleted, setImagesTobeDeleted] = useState([]);
   const [deletedIcons, setDeletedIcons] = useState(new Array(JSON.parse(propertyData.property_images).length).fill(false));
-  const [favoriteIcons, setFavoriteIcons] = useState(JSON.parse(propertyData.property_images).map((image) => image === propertyData.property_favorite_image));
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   // useEffect(() => {
   //   console.log("deletedImageList - ", deletedImageList);
@@ -161,6 +158,20 @@ export default function AddListing(props) {
   // useEffect(() => {
   //   console.log("newUtilitiesPaidBy - ", newUtilitiesPaidBy);
   // }, [newUtilitiesPaidBy]);
+
+  const sortByFavImage = (favImage, imageList) => {
+    if (!favImage || !imageList || !imageList.includes(favImage)) return imageList;
+
+    const sortedImages = [favImage, ...imageList.filter((img) => img !== favImage)];
+    return sortedImages;
+  };
+
+  const favPropImage = propertyData.property_favorite_image;
+	const sortedByFavImgLst = sortByFavImage(favPropImage, JSON.parse(propertyData.property_images));
+
+  const [selectedImageList, setSelectedImageList] = useState(sortedByFavImgLst);
+  const [favoriteIcons, setFavoriteIcons] = useState(sortedByFavImgLst.map((image) => image === propertyData.property_favorite_image));
+  const maxSteps = selectedImageList.length;
 
   useEffect(() => {
     console.log("ROHIT - 153 - mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
@@ -730,7 +741,8 @@ export default function AddListing(props) {
     updatedDeletedIcons[index] = !updatedDeletedIcons[index];
     setDeletedIcons(updatedDeletedIcons);
 
-    const imageToDelete = JSON.parse(propertyData.property_images)[index];
+    // const imageToDelete = JSON.parse(propertyData.property_images)[index];
+    const imageToDelete = sortedByFavImgLst[index];
     setImagesTobeDeleted((prev) => [...prev, imageToDelete]);
 
     // console.log("Delete image at index:", JSON.stringify(deletedIcons));
@@ -741,7 +753,8 @@ export default function AddListing(props) {
     updatedFavoriteIcons[index] = true;
     setFavoriteIcons(updatedFavoriteIcons);
 
-    const newFavImage = JSON.parse(propertyData.property_images)[index];
+    // const newFavImage = JSON.parse(propertyData.property_images)[index];
+    const newFavImage = selectedImageList[index];
     setFavImage(newFavImage);
     setSelectedImageList((prevState) =>
       prevState.map((file, i) => ({
@@ -840,7 +853,7 @@ export default function AddListing(props) {
                       }}
                     >
                       <ImageList ref={scrollRef} sx={{ display: "flex", flexWrap: "nowrap" }} cols={5}>
-                        {JSON.parse(propertyData.property_images)?.map((image, index) => (
+                        {selectedImageList?.map((image, index) => (
                           <ImageListItem
                             key={index}
                             sx={{
