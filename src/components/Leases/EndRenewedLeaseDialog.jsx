@@ -15,9 +15,9 @@ import APIConfig from "../../utils/APIConfig";
 import axios from 'axios'; 
 import { PortableWifiOffSharp } from '@mui/icons-material';
 
-const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS, page, onClose }) => {
+const EndRenewedLeaseDialog = ({ leaseDetails, setRightPane, isMobile, setViewRHS, page, onClose, updateCurrentLease }) => {
     const [open, setOpen] = useState(false);
-    const { getProfileId } = useUser();
+    const {getProfileId } = useUser();
     const [confirmationText, setConfirmationText] = useState("");
     const [showSpinner, setShowSpinner] = useState(false);
     const [selectedValue, setSelectedValue] = useState('');
@@ -35,7 +35,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
 
     const getEndLeaseConfirmation = () => {
         const currentDate = new Date();
-        const noticePeriod = leaseData?.lease_end_notice_period || 30;
+        const noticePeriod = leaseData?.lease_end_notice_period || 30; 
         const leaseEndDate = new Date(leaseData?.lease_end);
         const leaseEndDateFormatted = dayjs(leaseEndDate).format("MM-DD-YYYY");
 
@@ -44,25 +44,17 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
         const lowerBoundNoticeDate = new Date(noticeDate);
         lowerBoundNoticeDate.setDate(noticeDate.getDate() - noticePeriod);
 
-        if (leaseData?.lease_status === "ACTIVE" || leaseData?.lease_status === "ACTIVE M2M") {
-            if (selectedValue === "terminate") {
-                setEndLeaseStatus("TERMINATED");
-                return `This lease will be terminated immediately, effective from today. Are you sure you want to terminate the lease?`;
-            } else if (currentDate <= noticeDate && currentDate >= lowerBoundNoticeDate) {
-                setEndLeaseStatus("ENDING");
-                return `Your lease will end on ${leaseEndDateFormatted}, and you are responsible for rent payments until the end of the lease. Are you sure you want to end the lease?`;
-            } else {
-                setEndLeaseStatus("EARLY TERMINATION");
-                return `Notice for ending the lease must be provided ${noticePeriod} days in advance. Ending the lease early may require additional approval. Are you sure you want to end the lease?`;
-            }
+        if(leaseData?.lease_status === "APPROVED"){
+            setEndLeaseStatus("EARLY TERMINATION");
+            return `Ending the lease early may require additional approval. Are you sure you want to request early termination of the lease?`;
         } else {
-            return 'ERROR: lease status is not "ACTIVE" or "ACTIVE-M2M"';
+            return 'ERROR: lease status is not "APPROVED"';
         }
     };
 
     const handleClickOpen = () => {
         const newError = [];
-        if (moveOutDate === null) newError.push("Move Out Date is required");
+        // if ((leaseDetails.lease_status !== "ACTIVE" || leaseDetails.lease_status === "ACTIVE M2M") && moveOutDate === null) newError.push("Move Out Date is required");
         if (moveOutReason === "") newError.push("Move Out Reason is required");
 
         if (newError.length === 0) {
@@ -82,7 +74,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
     const handleConfirm = () => {
         handleEndLease();
         setOpen(false);
-        if (isMobile) {
+        if(isMobile){
             setViewRHS(false)
         }
         setRightPane("");
@@ -112,10 +104,16 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
     };
 
     const handleCancel = () => {
-        if (isMobile) {
+        if(isMobile){
             setViewRHS(false)
         }
-        setRightPane("");
+        if(page && page === "TenantLeases"){
+            //dont set right pane
+            onClose();
+        } else {
+            setRightPane("");
+        }
+        
     };
 
     const formatDate = (dateString) => {
@@ -132,7 +130,6 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
         const leaseApplicationFormData = new FormData();
         const formattedMoveOutDate = formatDate(moveOutDate);
         leaseApplicationFormData.append("lease_uid", leaseData?.lease_uid);        
-        leaseApplicationFormData.append("move_out_date", formattedMoveOutDate);        
         leaseApplicationFormData.append("lease_renew_status", endLeaseStatus);
         leaseApplicationFormData.append("lease_end_reason", moveOutReason);
 
@@ -152,6 +149,14 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
             .then((response) => {
                 setShowSpinner(false);
                 setSuccess(`Your lease has been moved to ${endLeaseStatus} status.`);
+                if(leaseData?.lease_status === "APPROVED"){
+                    if(leaseData?.lease_renew_status == null || leaseData?.lease_renew_status === "EARLY TERMINATION"){                        
+                        // dont update current lease
+                    } else {
+                      updateCurrentLease("CANCEL RENEWAL");
+                    } 
+                    
+                }
             })
             .catch((error) => {
                 if (error.response) {
@@ -161,11 +166,11 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
     };
 
     const handleBack = () => {
-        if (isMobile) {
-            setViewRHS(false)
+        if(isMobile){
+          setViewRHS(false)
         }
         setRightPane("");
-    };
+      };
 
     return (
         <Box
@@ -188,40 +193,12 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
                 </Backdrop>
                 <Grid container sx={{ marginTop: '1px', marginBottom: '15px', alignItems: 'center', justifyContent: 'center' }} rowSpacing={4}>
                     <Grid item xs={12} md={12} display={"flex"} direction={"row"} justifyContent={"center"}>
-                        <Grid container sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-
-                            {isMobile && (
-                                <Grid item xs={1}>
-                                    <Button onClick={handleBack}>
-                                        <ArrowBackIcon
-                                            sx={{
-                                                color: "#160449",
-                                                fontSize: "25px",
-                                                padding: "0px"
-                                            }}
-                                        />
-                                    </Button>
-                                </Grid>)}
-
-                            <Grid Item xs={11} md={12}>
-                                <Typography
-                                    sx={{
-                                        color: "#160449",
-                                        fontWeight: theme.typography.primary.fontWeight,
-                                        fontSize: theme.typography.largeFont,
-                                        textAlign: 'center'
-                                    }}
-                                >
-                                    End Lease
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                        {/* {isMobile && (<Button onClick={handleBack}>
+                        {isMobile && (<Button onClick={handleBack}>
                             <ArrowBackIcon
                                 sx={{
-                                    color: "#160449",
-                                    fontSize: "25px",
-                                    // margin: "5px",
+                                color: theme.typography.common.blue,
+                                fontSize: "25px",
+                                // margin: "5px",
                                 }}
                             />
                         </Button>)}
@@ -234,13 +211,13 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
                             }}
                         >
                             End Lease
-                        </Typography> */}
+                        </Typography>
                     </Grid>
 
                     <Grid item xs={12} md={12}>
                         <Typography
                             sx={{
-                                ...(isMobile ? { padding: "2px" } : {}),
+                                ...(isMobile? {padding: "2px"} : {}),
                                 color: "#160449",
                                 fontWeight: theme.typography.primary.fontWeight,
                                 fontSize: theme.typography.smallFont,
@@ -253,7 +230,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
                     {success.length > 0 && (
                         <Box>
                             <Alert severity="success">
-                                {success}
+                                    {success}
                             </Alert>
                         </Box>
                     )}
@@ -377,7 +354,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
                     </Grid>
 
                     <Grid item xs={12} md={12}>
-                        <Paper sx={{ padding: "10px", backgroundColor: color, width: '95%', margin: isMobile ? "10px 10px 0px 0px" : '10px 10px 0px 10px' }} >
+                        <Paper sx={{ padding: "10px", backgroundColor: color, width: '95%', margin: isMobile ? "10px 10px 0px 0px" : '10px 10px 0px 10px'}} >
                             <FormControl sx={{ width: '100%' }}>
                                 <RadioGroup
                                     aria-labelledby="demo-controlled-radio-buttons-group"
@@ -434,7 +411,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
                 }
                 
 
-                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '10px', marginTop: isMobile ? "20px" : "0px" }}>
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '10px', marginTop: isMobile ? "20px" : "0px"}}>
                     <Button
                         sx={{
                             marginRight: '5px', background: "#D4736D",
@@ -523,4 +500,4 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
     );
 };
 
-export default TenantEndLeaseButton;
+export default EndRenewedLeaseDialog;

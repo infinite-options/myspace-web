@@ -13,8 +13,8 @@ import { useUser } from "../../contexts/UserContext";
 import axios from 'axios';
 
 
-const EarlyTerminationDialog = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked, handleUpdate, fromProperties = false }) => {
-    console.log("ROHIT - 17 - leaseDetails - ", leaseDetails);    
+const EarlyTerminationDialog = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked, handleUpdate, isTerminatingRenewedLease, renewedLease }) => {
+    // console.log("17 - leaseDetails - ", leaseDetails);    
     const [confirmationText, setConfirmationText] = useState("")
     const [showSpinner, setShowSpinner] = useState(false);                
 
@@ -27,8 +27,10 @@ const EarlyTerminationDialog = ({ theme, leaseDetails, selectedLeaseId, setIsEnd
             "Access-Control-Allow-Credentials": "*",
         };
 
+        const lease = isTerminatingRenewedLease === true ? renewedLease : leaseDetails;
+
         const leaseApplicationFormData = new FormData();        
-        leaseApplicationFormData.append("lease_uid", leaseDetails.lease_uid);        
+        leaseApplicationFormData.append("lease_uid", lease.lease_uid);        
         leaseApplicationFormData.append("lease_renew_status", "EARLY TERMINATION REJECTED");        
 
         // console.log('leaseApplicationFormData', leaseDetails.lease_uid);
@@ -57,10 +59,23 @@ const EarlyTerminationDialog = ({ theme, leaseDetails, selectedLeaseId, setIsEnd
             "Access-Control-Allow-Credentials": "*",
         };
 
+        const lease = isTerminatingRenewedLease === true ? renewedLease : leaseDetails;
+
+        const today = new Date();
+        const formattedDate = `${(today.getMonth() + 1)}-${today.getDate()}-${today.getFullYear()}`;
+        console.log("ROHIT - 66 - formattedDate - ", formattedDate);        
+
         const leaseApplicationFormData = new FormData();        
-        leaseApplicationFormData.append("lease_uid", leaseDetails.lease_uid);        
-        leaseApplicationFormData.append("lease_renew_status", "ENDING");
-        leaseApplicationFormData.append("lease_end", leaseDetails.move_out_date);        
+        leaseApplicationFormData.append("lease_uid", lease.lease_uid);        
+        
+        if(isTerminatingRenewedLease === true){
+            leaseApplicationFormData.append("lease_status", "ENDED");
+            // leaseApplicationFormData.append("lease_end", formattedDate);
+        } else {
+            leaseApplicationFormData.append("lease_renew_status", "ENDING");
+            leaseApplicationFormData.append("lease_end", lease.move_out_date);                    
+        }
+        
 
         // console.log('leaseApplicationFormData', leaseDetails.lease_uid, leaseDetails.move_out_date);
         // console.log('end form', leaseApplicationFormData);        
@@ -112,8 +127,8 @@ const EarlyTerminationDialog = ({ theme, leaseDetails, selectedLeaseId, setIsEnd
                                 fontSize: theme.typography.largeFont,
                                 textAlign: 'center'
                             }}
-                        >
-                            Early Termination Request
+                        >                            
+                            {isTerminatingRenewedLease === true ? "Lease Renewal Cancellation" : "Early Termination Request"}
                         </Typography>
                     </Grid>
 
@@ -127,7 +142,8 @@ const EarlyTerminationDialog = ({ theme, leaseDetails, selectedLeaseId, setIsEnd
                                 // textAlign: 'center'
                             }}
                         >
-                            The tenant has requested for early termination of the lease.
+                            {isTerminatingRenewedLease === true ? "The tenant would like to cancel the renewed lease." : "The tenant has requested for early termination of the lease."}
+                            
                         </Typography>
                     </Grid>                                                           
                 </Grid>
@@ -155,38 +171,42 @@ const EarlyTerminationDialog = ({ theme, leaseDetails, selectedLeaseId, setIsEnd
                                 // textAlign: 'center'
                             }}
                         >
-                            {leaseDetails.lease_early_end_date}
+                            {isTerminatingRenewedLease === false ? leaseDetails.lease_early_end_date : renewedLease?.lease_early_end_date}
                         </Typography>
                     </Grid>
                 </Grid> 
-                <Grid container sx={{padding: '5px',}}>
-                    <Grid item xs={3}>
-                        <Typography
-                            sx={{
-                                color: "#160449",
-                                fontWeight: theme.typography.primary.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                                marginLeft: '10px',
-                                // textAlign: 'center'
-                            }}
-                        >
-                            Move-out date:
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={9}>
-                        <Typography
-                            sx={{
-                                color: "#160449",
-                                fontWeight: theme.typography.primary.fontWeight,
-                                fontSize: theme.typography.smallFont,
-                                marginLeft: '10px',
-                                // textAlign: 'center'
-                            }}
-                        >
-                            {leaseDetails.move_out_date}
-                        </Typography>
-                    </Grid>
-                </Grid> 
+                {
+                    isTerminatingRenewedLease === false && (
+                        <Grid container sx={{padding: '5px',}}>
+                            <Grid item xs={3}>
+                                <Typography
+                                    sx={{
+                                        color: "#160449",
+                                        fontWeight: theme.typography.primary.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                        marginLeft: '10px',
+                                        // textAlign: 'center'
+                                    }}
+                                >
+                                    Move-out date:
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={9}>
+                                <Typography
+                                    sx={{
+                                        color: "#160449",
+                                        fontWeight: theme.typography.primary.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                        marginLeft: '10px',
+                                        // textAlign: 'center'
+                                    }}
+                                >
+                                    {leaseDetails.move_out_date}
+                                </Typography>
+                            </Grid>
+                        </Grid> 
+                    )
+                }                
                 <Grid container sx={{padding: '5px',}}>
                     <Grid item xs={3}>
                         <Typography
@@ -211,7 +231,7 @@ const EarlyTerminationDialog = ({ theme, leaseDetails, selectedLeaseId, setIsEnd
                                 // textAlign: 'center'
                             }}
                         >
-                            {leaseDetails.lease_end}
+                            {isTerminatingRenewedLease === false ? leaseDetails.lease_end : renewedLease?.lease_end}
                         </Typography>
                     </Grid>
                 </Grid>                     
@@ -239,7 +259,8 @@ const EarlyTerminationDialog = ({ theme, leaseDetails, selectedLeaseId, setIsEnd
                                 // textAlign: 'center'
                             }}
                         >
-                            {leaseDetails.lease_end_notice_period ? `${leaseDetails.lease_end_notice_period} days` : 'Not specified'}
+                            {isTerminatingRenewedLease === false && (leaseDetails.lease_end_notice_period ? `${leaseDetails.lease_end_notice_period} days` : 'Not specified')}
+                            {isTerminatingRenewedLease === true && renewedLease?.lease_end_notice_period ? `${renewedLease?.lease_end_notice_period} days` : 'Not specified'}
                         </Typography>
                     </Grid>
                 </Grid>                     
@@ -267,11 +288,11 @@ const EarlyTerminationDialog = ({ theme, leaseDetails, selectedLeaseId, setIsEnd
                                 // textAlign: 'center'
                             }}
                         >
-                            {leaseDetails.lease_end_reason}
+                            {isTerminatingRenewedLease === false ? leaseDetails.lease_end_reason : renewedLease?.lease_end_reason}                            
                         </Typography>
                     </Grid>
                 </Grid>
-                <Grid container sx={{padding: '5px',}}>
+                {/* <Grid container sx={{padding: '5px',}}>
                     <Grid item xs={3}>
                         <Typography
                             sx={{
@@ -298,7 +319,7 @@ const EarlyTerminationDialog = ({ theme, leaseDetails, selectedLeaseId, setIsEnd
                             {leaseDetails.lease_end_notice_period ? `${leaseDetails.lease_end_notice_period} days` : 'Not specified'}
                         </Typography>
                     </Grid>
-                </Grid>                     
+                </Grid>                      */}
 
                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '10px' }}>
                     <Button
@@ -358,7 +379,7 @@ const EarlyTerminationDialog = ({ theme, leaseDetails, selectedLeaseId, setIsEnd
                     </Button>
                 </Box>                
             </Paper>
-        </Box>
+        </Box>        
 
     );
 };

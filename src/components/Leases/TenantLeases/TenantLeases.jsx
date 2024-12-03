@@ -22,6 +22,7 @@ import {
   Radio,
   Menu,
   TableRow,
+  Dialog,
 } from "@mui/material";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
@@ -45,6 +46,8 @@ import { getDateAdornmentString } from "../../../utils/dates";
 import LeaseFees from "../LeaseFees";
 import GenericDialog from "../../GenericDialog";
 import ListsContext from "../../../contexts/ListsContext";
+import TenantEndLeaseButton from "../../TenantDashboard/TenantEndLeaseButton";
+import EndRenewedLeaseDialog from "../EndRenewedLeaseDialog";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
@@ -87,6 +90,7 @@ function TenantLeases(props) {
   const [dialogTitle, setDialogTitle] = useState("");
   const [dialogMessage, setDialogMessage] = useState("");
   const [dialogSeverity, setDialogSeverity] = useState("info");
+  const [showEarlyTerminationDialog, setShowEarlyTerminationDialog] = useState(false);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const openDialog = (title, message, severity) => {
@@ -332,20 +336,15 @@ function TenantLeases(props) {
 
         await sendAnnouncement();
 
-
         // if lease status is RENEW PROCESSING update the current lease's renew status
         if (lease.lease_status === "RENEW PROCESSING") {
           await updateCurrentLease("RENEW REFUSED");
         }
 
-
-
         // props.setRightPane({ type: "", state: { property: property, lease: lease } });
         // console.log("--- DEBUD---- rejected")
         props.setReload((prev) => !prev);
         // props.setRightPane("");
-
-
       } else {
         console.log(data);
       }
@@ -370,7 +369,6 @@ function TenantLeases(props) {
       if (response.ok) {
         // alert("You have successfully Rejected the lease.");
         openDialog("Success", `You have successfully Rejected the lease`, "success");
-
       } else {
         console.log(data);
       }
@@ -400,7 +398,6 @@ function TenantLeases(props) {
     } catch (error) {
       console.log(error);
     }
-
   }
 
   async function handleTenantAccept() {
@@ -673,11 +670,10 @@ function TenantLeases(props) {
               <AccordionDetails sx={{ padding: "10px" }}>
                 {" "}
                 {/* Increased padding */}
-
-                <Grid container spacing={1} rowGap={6} justifyContent="space-between">
+                <Grid container spacing={1} rowGap={6} justifyContent='space-between'>
                   {" "}
                   {/* Increased spacing */}
-                  <Grid item xs={12} md={2} >
+                  <Grid item xs={12} md={2}>
                     <Grid Container sx={{ display: isMobile && "flex" }}>
                       <Grid item xs={5} md={12}>
                         <Typography sx={{ fontWeight: "bold", color: "#160449" }}>Start Date</Typography>
@@ -727,9 +723,7 @@ function TenantLeases(props) {
                         <Typography sx={{ fontWeight: "bold", color: "#160449" }}> {isMobile ? "Notice Period" : "Lease End Notice Period"}</Typography>
                       </Grid>
                       <Grid item xs={7} md={12}>
-                        <Typography>
-                          {lease?.lease_end_notice_period != null ? `${lease?.lease_end_notice_period} days` : "Not Specified"}
-                        </Typography>
+                        <Typography>{lease?.lease_end_notice_period != null ? `${lease?.lease_end_notice_period} days` : "Not Specified"}</Typography>
                       </Grid>
                     </Grid>
                   </Grid>
@@ -1096,98 +1090,93 @@ function TenantLeases(props) {
           </Grid>
 
           {/* Accept and reject lease button */}
-          {
-            lease.lease_status !== "APPROVED" && (
-
-            
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <CenteringBox>
-                    <Button
-                      sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: "#CB8E8E",
-                        borderRadius: "5px",
-                        padding: "5px 10px",
-                        minWidth: "90px",
-                        width: "150px",
-                        fontSize: "14px",
-                        fontWeight: "700",
-                        color: "#FFFFFF",
-                        textTransform: "none",
-                        "&:hover": {
-                          backgroundColor: "#A75A5A",
-                        },
-                      }}
-                      onClick={() => handleTenantRefuse()}
-                    >
-                      Reject Lease
-                    </Button>
-                  </CenteringBox>
-                </Grid>
-                <Grid item xs={6}>
-                  <CenteringBox>
-                    <Button
-                      sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: "#9EAED6",
-                        borderRadius: "5px",
-                        padding: "5px 10px",
-                        minWidth: "90px",
-                        width: "150px",
-                        fontSize: "14px",
-                        fontWeight: "600",
-                        color: "#FFFFFF",
-                        textTransform: "none",
-                        "&:hover": {
-                          backgroundColor: "#6A8AB3",
-                        },
-                      }}
-                      onClick={() => handleTenantAccept()}
-                    >
-                      Accept Lease
-                    </Button>
-                  </CenteringBox>
-                </Grid>
+          {lease.lease_status !== "APPROVED" && (
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <CenteringBox>
+                  <Button
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "#CB8E8E",
+                      borderRadius: "5px",
+                      padding: "5px 10px",
+                      minWidth: "90px",
+                      width: "150px",
+                      fontSize: "14px",
+                      fontWeight: "700",
+                      color: "#FFFFFF",
+                      textTransform: "none",
+                      "&:hover": {
+                        backgroundColor: "#A75A5A",
+                      },
+                    }}
+                    onClick={() => handleTenantRefuse()}
+                  >
+                    Reject Lease
+                  </Button>
+                </CenteringBox>
               </Grid>
-            )
-          }
-          {
-            lease.lease_status === "APPROVED" && (
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <CenteringBox>
-                    <Button
-                      sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: "#CB8E8E",
-                        borderRadius: "5px",
-                        padding: "5px 10px",
-                        minWidth: "90px",
-                        width: "150px",
-                        fontSize: "14px",
-                        fontWeight: "700",
-                        color: "#FFFFFF",
-                        textTransform: "none",
-                        "&:hover": {
-                          backgroundColor: "#A75A5A",
-                        },
-                      }}
-                      onClick={() => handleEndApprovedLease()}
-                    >
-                      End Lease Early
-                    </Button>
-                  </CenteringBox>
-                </Grid>
+              <Grid item xs={6}>
+                <CenteringBox>
+                  <Button
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "#9EAED6",
+                      borderRadius: "5px",
+                      padding: "5px 10px",
+                      minWidth: "90px",
+                      width: "150px",
+                      fontSize: "14px",
+                      fontWeight: "600",
+                      color: "#FFFFFF",
+                      textTransform: "none",
+                      "&:hover": {
+                        backgroundColor: "#6A8AB3",
+                      },
+                    }}
+                    onClick={() => handleTenantAccept()}
+                  >
+                    Accept Lease
+                  </Button>
+                </CenteringBox>
               </Grid>
-            )
-          }
+            </Grid>
+          )}
+          {lease.lease_status === "APPROVED" && (
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <CenteringBox>
+                  <Button
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "#CB8E8E",
+                      borderRadius: "5px",
+                      padding: "5px 10px",
+                      minWidth: "90px",
+                      width: "150px",
+                      fontSize: "14px",
+                      fontWeight: "700",
+                      color: "#FFFFFF",
+                      textTransform: "none",
+                      "&:hover": {
+                        backgroundColor: "#A75A5A",
+                      },
+                    }}
+                    // onClick={() => handleEndApprovedLease()}
+                    onClick={() => setShowEarlyTerminationDialog(true)}
+                  >
+                    End Lease Early
+                  </Button>
+                </CenteringBox>
+              </Grid>
+            </Grid>
+          )}
 
           {/* <Grid
             container
@@ -1400,10 +1389,21 @@ function TenantLeases(props) {
           {
             label: "OK",
             onClick: closeDialog,
-          }
+          },
         ]}
         severity={dialogSeverity}
       />
+      <Dialog open={showEarlyTerminationDialog} onClose={() => setShowEarlyTerminationDialog(false)} maxWidth='md' fullWidth>
+        <EndRenewedLeaseDialog
+          leaseDetails={lease}
+          setRightPane={props.setRightPane}
+          isMobile={props.isMobile}
+          setViewRHS={props.setViewRHS}
+          page='TenantLeases'
+          onClose={() => setShowEarlyTerminationDialog(false)}
+          updateCurrentLease={updateCurrentLease}
+        />
+      </Dialog>
     </Paper>
   );
 }
