@@ -40,7 +40,7 @@ export default function ManagementDetailsComponent({
   handleViewContractClick,
   handleManageContractClick,
 }) {
-  console.log("---dhyey-- inside new component -", renewContract, "current property contract - ", currentProperty);
+  // console.log("---dhyey-- inside new component -", renewContract, "current property contract - ", currentProperty);
   const { defaultContractFees, allContracts, currentContractUID, currentContractPropertyUID, isChange, setIsChange, fetchContracts } = useContext(ManagementContractContext);
   const { fetchProperties } = useContext(PropertiesContext);
   const [selectedPreviewFile, setSelectedPreviewFile] = useState(null);

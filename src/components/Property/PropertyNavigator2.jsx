@@ -1394,14 +1394,12 @@ export default function PropertyNavigator2({
         {/* End Property Navigator Header Including Address and x of y Properties */}
       </Box>
       <Box sx={{ marginTop: "26px", padding: isMobile ? "10px" : "20px" }}>
-        <Box sx={{ height: "30px", overflowX: "auto" }}>
-          <Tabs sx={{
-            height: "30px", '& .MuiTab-root': {
-              minWidth: 'auto', // Dynamically adjust width
-              padding: isMobile ? '4px' : '10px',  // Reduce padding for mobile
-              fontSize: isMobile ? '12px' : '14px', // Smaller font size for mobile
-            },
-          }} value={currentTab} onChange={handleTabChange} aria-label='property details' variant='fullWidth' indicatorColor='none'>
+        <Box sx={{ height: "30px"  }}>
+          <Tabs sx={{ height: "30px",   '& .MuiTab-root': {
+          minWidth: 'auto', // Dynamically adjust width
+          padding: isMobile ? '4px' : '10px',  // Reduce padding for mobile
+          fontSize: isMobile ? '12px' : '14px', // Smaller font size for mobile
+        },}} value={currentTab} onChange={handleTabChange} aria-label='property details' variant='fullWidth' indicatorColor='none'>
             <Tab label='Property' {...a11yProps(0)} sx={tabSX} />
             <Tab label='Lease' {...a11yProps(1)} sx={tabSX} />
             <Tab label={isMobile ? "PM" : "Management"} {...a11yProps(2)} sx={tabSX} />
@@ -1725,317 +1723,317 @@ export default function PropertyNavigator2({
                                       }}
                                     />
 
-                                    {/* Conditionally render delete icon if not read-only */}
-                                    {!isReadOnly && (
-                                      <Box sx={{ position: "absolute", top: 0, right: 0 }}>
-                                        <IconButton
-                                          onClick={() => handleDelete(index)}
-                                          sx={{
-                                            color: deletedIcons[index] ? "red" : "black",
-                                            backgroundColor: "rgba(255, 255, 255, 0.7)",
-                                            "&:hover": {
-                                              backgroundColor: "rgba(255, 255, 255, 0.9)",
-                                            },
-                                            margin: "2px",
-                                          }}
-                                        >
-                                          <DeleteIcon />
-                                        </IconButton>
-                                      </Box>
-                                    )}
+                                          {/* Conditionally render delete icon if not read-only */}
+                                          {!isReadOnly && (
+                                            <Box sx={{ position: "absolute", top: 0, right: 0 }}>
+                                              <IconButton
+                                                onClick={() => handleDelete(index)}
+                                                sx={{
+                                                  color: deletedIcons[index] ? "red" : "black",
+                                                  backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                                  "&:hover": {
+                                                    backgroundColor: "rgba(255, 255, 255, 0.9)",
+                                                  },
+                                                  margin: "2px",
+                                                }}
+                                              >
+                                                <DeleteIcon />
+                                              </IconButton>
+                                            </Box>
+                                          )}
 
-                                    {/* Conditionally render favorite icon if not read-only */}
-                                    {!isReadOnly && (
-                                      <Box sx={{ position: "absolute", bottom: 0, left: 0 }}>
-                                        <IconButton
-                                          onClick={() => handleFavorite(index)}
-                                          sx={{
-                                            color: favoriteIcons[index] ? "red" : "black",
-                                            backgroundColor: "rgba(255, 255, 255, 0.7)",
-                                            "&:hover": {
-                                              backgroundColor: "rgba(255, 255, 255, 0.9)",
-                                            },
-                                            margin: "2px",
-                                          }}
-                                        >
-                                          {favoriteIcons[index] ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-                                        </IconButton>
-                                      </Box>
+                                          {/* Conditionally render favorite icon if not read-only */}
+                                          {!isReadOnly && (
+                                            <Box sx={{ position: "absolute", bottom: 0, left: 0 }}>
+                                              <IconButton
+                                                onClick={() => handleFavorite(index)}
+                                                sx={{
+                                                  color: favoriteIcons[index] ? "red" : "black",
+                                                  backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                                  "&:hover": {
+                                                    backgroundColor: "rgba(255, 255, 255, 0.9)",
+                                                  },
+                                                  margin: "2px",
+                                                }}
+                                              >
+                                                {favoriteIcons[index] ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                                              </IconButton>
+                                            </Box>
+                                          )}
+                                        </ImageListItem>
+                                      ))
+                                    ) : (
+                                      <></>
                                     )}
-                                  </ImageListItem>
-                                ))
-                              ) : (
-                                <></>
-                              )}
-                            </ImageList>
-                          </Box>
-                        </Box>
-                        <IconButton onClick={() => handleScroll("right")}>
-                          <ArrowForwardIosIcon />
-                        </IconButton>
-                      </Box>
-                    )}
-                    {!isReadOnly && (
-                      <ImageUploader
-                        selectedImageList={selectedImageList}
-                        setSelectedImageList={setSelectedImageList}
-                        page={"Add"}
-                        setDeletedImageList={setDeletedImageList}
-                        setFavImage={setFavImage}
-                        favImage={favImage}
-                        updateFavoriteIcons={handleUpdateFavoriteIcons}
-                      />
-                    )}
-                    <TextField
-                      margin='dense'
-                      label='Description'
-                      fullWidth
-                      variant='outlined'
-                      disabled={isReadOnly}
-                      value={currentApplRow?.appliance_desc || ""}
-                      onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_desc: e.target.value })}
-                    />
-                    <TextField
-                      margin='dense'
-                      label='Manufacturer Name'
-                      fullWidth
-                      variant='outlined'
-                      value={currentApplRow?.appliance_manufacturer || ""}
-                      onChange={(e) =>
-                        setcurrentApplRow({
-                          ...currentApplRow,
-                          appliance_manufacturer: e.target.value,
-                        })
-                      }
-                      disabled={isReadOnly}
-                    />
-                    <TextField
-                      margin='dense'
-                      label='Purchased From'
-                      fullWidth
-                      variant='outlined'
-                      value={currentApplRow?.appliance_purchased_from || ""}
-                      onChange={(e) =>
-                        setcurrentApplRow({
-                          ...currentApplRow,
-                          appliance_purchased_from: e.target.value,
-                        })
-                      }
-                      disabled={isReadOnly}
-                    />
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DesktopDatePicker
-                        label='Purchased On'
-                        value={currentApplRow?.appliance_purchased ? dayjs(currentApplRow.appliance_purchased) : null}
-                        onChange={(date) => {
-                          const formattedDate = dayjs(date).format("MM-DD-YYYY");
-                          setcurrentApplRow({
-                            ...currentApplRow,
-                            appliance_purchased: formattedDate,
-                          });
-                        }}
-                        disabled={isReadOnly}
-                        textField={(params) => (
+                                  </ImageList>
+                                </Box>
+                              </Box>
+                              <IconButton onClick={() => handleScroll("right")}>
+                                <ArrowForwardIosIcon />
+                              </IconButton>
+                            </Box>
+                          )}
+                          {!isReadOnly && (
+                            <ImageUploader
+                              selectedImageList={selectedImageList}
+                              setSelectedImageList={setSelectedImageList}
+                              page={"Add"}
+                              setDeletedImageList={setDeletedImageList}
+                              setFavImage={setFavImage}
+                              favImage={favImage}
+                              updateFavoriteIcons={handleUpdateFavoriteIcons}
+                            />
+                          )}
                           <TextField
-                            {...params}
                             margin='dense'
+                            label='Description'
                             fullWidth
-                            size='small'
-                            disabled={isReadOnly}
                             variant='outlined'
-                            sx={{
-                              "& .MuiInputBase-root": {
-                                fontSize: "14px",
-                              },
-                              "& .MuiSvgIcon-root": {
-                                fontSize: "20px",
-                              },
-                            }}
-                          />
-                        )}
-                        slotProps={{ textField: { fullWidth: true } }}
-                        sx={{ marginTop: "10px" }}
-                      />
-                    </LocalizationProvider>
-                    <TextField
-                      margin='dense'
-                      label='Purchase Order Number'
-                      fullWidth
-                      variant='outlined'
-                      disabled={isReadOnly}
-                      value={currentApplRow?.appliance_purchase_order || ""}
-                      onChange={(e) =>
-                        setcurrentApplRow({
-                          ...currentApplRow,
-                          appliance_purchase_order: e.target.value,
-                        })
-                      }
-                    />
-
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DesktopDatePicker
-                        label='Installed On'
-                        disabled={isReadOnly}
-                        value={currentApplRow?.appliance_installed ? dayjs(currentApplRow.appliance_installed) : null}
-                        onChange={(date) => {
-                          const formattedDate = dayjs(date).format("MM-DD-YYYY");
-                          setcurrentApplRow({
-                            ...currentApplRow,
-                            appliance_installed: formattedDate,
-                          });
-                        }}
-                        textField={(params) => (
-                          <TextField
-                            {...params}
-                            size='small'
                             disabled={isReadOnly}
-                            sx={{
-                              "& .MuiInputBase-root": {
-                                fontSize: "14px",
-                              },
-                              "& .MuiSvgIcon-root": {
-                                fontSize: "20px",
-                              },
-                            }}
+                            value={currentApplRow?.appliance_desc || ""}
+                            onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_desc: e.target.value })}
                           />
-                        )}
-                        slotProps={{ textField: { fullWidth: true } }}
-                        sx={{ marginTop: "10px" }}
-                      />
-                    </LocalizationProvider>
-
-                    <TextField
-                      margin='dense'
-                      label='Serial Number'
-                      fullWidth
-                      variant='outlined'
-                      value={currentApplRow?.appliance_serial_num || ""}
-                      disabled={isReadOnly}
-                      onChange={(e) =>
-                        setcurrentApplRow({
-                          ...currentApplRow,
-                          appliance_serial_num: e.target.value,
-                        })
-                      }
-                    />
-                    <TextField
-                      margin='dense'
-                      label='Model Number'
-                      fullWidth
-                      variant='outlined'
-                      value={currentApplRow?.appliance_model_num || ""}
-                      disabled={isReadOnly}
-                      onChange={(e) =>
-                        setcurrentApplRow({
-                          ...currentApplRow,
-                          appliance_model_num: e.target.value,
-                        })
-                      }
-                    />
-                    <TextField
-                      margin='dense'
-                      label='Warranty Info'
-                      fullWidth
-                      variant='outlined'
-                      value={currentApplRow?.appliance_warranty_info || ""}
-                      disabled={isReadOnly}
-                      onChange={(e) =>
-                        setcurrentApplRow({
-                          ...currentApplRow,
-                          appliance_warranty_info: e.target.value,
-                        })
-                      }
-                    />
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DesktopDatePicker
-                        label='Warranty Till'
-                        disabled={isReadOnly}
-                        value={currentApplRow?.appliance_warranty_till ? dayjs(currentApplRow.appliance_warranty_till) : null}
-                        onChange={(date) => {
-                          const formattedDate = dayjs(date).format("MM-DD-YYYY");
-                          setcurrentApplRow({
-                            ...currentApplRow,
-                            appliance_warranty_till: formattedDate,
-                          });
-                        }}
-                        textField={(params) => (
                           <TextField
-                            {...params}
-                            size='small'
+                            margin='dense'
+                            label='Manufacturer Name'
+                            fullWidth
+                            variant='outlined'
+                            value={currentApplRow?.appliance_manufacturer || ""}
+                            onChange={(e) =>
+                              setcurrentApplRow({
+                                ...currentApplRow,
+                                appliance_manufacturer: e.target.value,
+                              })
+                            }
                             disabled={isReadOnly}
-                            sx={{
-                              "& .MuiInputBase-root": {
-                                fontSize: "14px",
-                              },
-                              "& .MuiSvgIcon-root": {
-                                fontSize: "20px",
-                              },
-                            }}
                           />
-                        )}
-                        slotProps={{ textField: { fullWidth: true } }}
-                        sx={{ marginTop: "10px" }}
-                      />
-                    </LocalizationProvider>
-                    <TextField
-                      margin='dense'
-                      label='URLs'
-                      disabled={isReadOnly}
-                      fullWidth
-                      variant='outlined'
-                      value={currentApplRow?.appliance_url || ""}
-                      onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_url: e.target.value })}
-                    />
-                  </DialogContent>
-                  <DialogActions sx={{ alignContent: "center", justifyContent: "center" }}>
-                    {isReadOnly ? (
-                      // Show "Close" button only if it's read-only
-                      <IconButton onClick={handleClose} sx={{ position: "absolute", top: 8, right: 8 }}>
-                        <CloseIcon variant='icon' />
-                      </IconButton>
-                    ) : (
-                      // Show "Cancel" and "Save" buttons if not read-only
-                      <>
-                        <Button
-                          variant='contained'
-                          sx={{
-                            background: "#3D5CAC",
-                            color: theme.palette.background.default,
-                            cursor: "pointer",
-                            textTransform: "none",
-                            width: "30%",
-                            fontWeight: theme.typography.secondary.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                          }}
-                          size='small'
-                          onClick={handleClose}
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          variant='contained'
-                          sx={{
-                            background: "#3D5CAC",
-                            color: theme.palette.background.default,
-                            cursor: "pointer",
-                            textTransform: "none",
-                            width: "30%",
-                            fontWeight: theme.typography.secondary.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                          }}
-                          size='small'
-                          onClick={handleAddAppln}
-                        >
-                          Save
-                        </Button>
-                      </>
-                    )}
-                  </DialogActions>
-                </Dialog>
-                {<ReferTenantDialog open={showReferTenantDialog} onClose={() => setShowReferTenantDialog(false)} setShowSpinner={setShowSpinner} property={property} />}
-              </Box>
-            </Card>
-          </Box>
+                          <TextField
+                            margin='dense'
+                            label='Purchased From'
+                            fullWidth
+                            variant='outlined'
+                            value={currentApplRow?.appliance_purchased_from || ""}
+                            onChange={(e) =>
+                              setcurrentApplRow({
+                                ...currentApplRow,
+                                appliance_purchased_from: e.target.value,
+                              })
+                            }
+                            disabled={isReadOnly}
+                          />
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DesktopDatePicker
+                              label='Purchased On'
+                              value={currentApplRow?.appliance_purchased ? dayjs(currentApplRow.appliance_purchased) : null}
+                              onChange={(date) => {
+                                const formattedDate = dayjs(date).format("MM-DD-YYYY");
+                                setcurrentApplRow({
+                                  ...currentApplRow,
+                                  appliance_purchased: formattedDate,
+                                });
+                              }}
+                              disabled={isReadOnly}
+                              textField={(params) => (
+                                <TextField
+                                  {...params}
+                                  margin='dense'
+                                  fullWidth
+                                  size='small'
+                                  disabled={isReadOnly}
+                                  variant='outlined'
+                                  sx={{
+                                    "& .MuiInputBase-root": {
+                                      fontSize: "14px",
+                                    },
+                                    "& .MuiSvgIcon-root": {
+                                      fontSize: "20px",
+                                    },
+                                  }}
+                                />
+                              )}
+                              slotProps={{ textField: { fullWidth: true } }}
+                              sx={{ marginTop: "10px" }}
+                            />
+                          </LocalizationProvider>
+                          <TextField
+                            margin='dense'
+                            label='Purchase Order Number'
+                            fullWidth
+                            variant='outlined'
+                            disabled={isReadOnly}
+                            value={currentApplRow?.appliance_purchase_order || ""}
+                            onChange={(e) =>
+                              setcurrentApplRow({
+                                ...currentApplRow,
+                                appliance_purchase_order: e.target.value,
+                              })
+                            }
+                          />
+
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DesktopDatePicker
+                              label='Installed On'
+                              disabled={isReadOnly}
+                              value={currentApplRow?.appliance_installed ? dayjs(currentApplRow.appliance_installed) : null}
+                              onChange={(date) => {
+                                const formattedDate = dayjs(date).format("MM-DD-YYYY");
+                                setcurrentApplRow({
+                                  ...currentApplRow,
+                                  appliance_installed: formattedDate,
+                                });
+                              }}
+                              textField={(params) => (
+                                <TextField
+                                  {...params}
+                                  size='small'
+                                  disabled={isReadOnly}
+                                  sx={{
+                                    "& .MuiInputBase-root": {
+                                      fontSize: "14px",
+                                    },
+                                    "& .MuiSvgIcon-root": {
+                                      fontSize: "20px",
+                                    },
+                                  }}
+                                />
+                              )}
+                              slotProps={{ textField: { fullWidth: true } }}
+                              sx={{ marginTop: "10px" }}
+                            />
+                          </LocalizationProvider>
+
+                          <TextField
+                            margin='dense'
+                            label='Serial Number'
+                            fullWidth
+                            variant='outlined'
+                            value={currentApplRow?.appliance_serial_num || ""}
+                            disabled={isReadOnly}
+                            onChange={(e) =>
+                              setcurrentApplRow({
+                                ...currentApplRow,
+                                appliance_serial_num: e.target.value,
+                              })
+                            }
+                          />
+                          <TextField
+                            margin='dense'
+                            label='Model Number'
+                            fullWidth
+                            variant='outlined'
+                            value={currentApplRow?.appliance_model_num || ""}
+                            disabled={isReadOnly}
+                            onChange={(e) =>
+                              setcurrentApplRow({
+                                ...currentApplRow,
+                                appliance_model_num: e.target.value,
+                              })
+                            }
+                          />
+                          <TextField
+                            margin='dense'
+                            label='Warranty Info'
+                            fullWidth
+                            variant='outlined'
+                            value={currentApplRow?.appliance_warranty_info || ""}
+                            disabled={isReadOnly}
+                            onChange={(e) =>
+                              setcurrentApplRow({
+                                ...currentApplRow,
+                                appliance_warranty_info: e.target.value,
+                              })
+                            }
+                          />
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DesktopDatePicker
+                              label='Warranty Till'
+                              disabled={isReadOnly}
+                              value={currentApplRow?.appliance_warranty_till ? dayjs(currentApplRow.appliance_warranty_till) : null}
+                              onChange={(date) => {
+                                const formattedDate = dayjs(date).format("MM-DD-YYYY");
+                                setcurrentApplRow({
+                                  ...currentApplRow,
+                                  appliance_warranty_till: formattedDate,
+                                });
+                              }}
+                              textField={(params) => (
+                                <TextField
+                                  {...params}
+                                  size='small'
+                                  disabled={isReadOnly}
+                                  sx={{
+                                    "& .MuiInputBase-root": {
+                                      fontSize: "14px",
+                                    },
+                                    "& .MuiSvgIcon-root": {
+                                      fontSize: "20px",
+                                    },
+                                  }}
+                                />
+                              )}
+                              slotProps={{ textField: { fullWidth: true } }}
+                              sx={{ marginTop: "10px" }}
+                            />
+                          </LocalizationProvider>
+                          <TextField
+                            margin='dense'
+                            label='URLs'
+                            disabled={isReadOnly}
+                            fullWidth
+                            variant='outlined'
+                            value={currentApplRow?.appliance_url || ""}
+                            onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_url: e.target.value })}
+                          />
+                        </DialogContent>
+                        <DialogActions sx={{ alignContent: "center", justifyContent: "center" }}>
+                          {isReadOnly ? (
+                            // Show "Close" button only if it's read-only
+                            <IconButton onClick={handleClose} sx={{ position: "absolute", top: 8, right: 8 }}>
+                              <CloseIcon variant='icon' />
+                            </IconButton>
+                          ) : (
+                            // Show "Cancel" and "Save" buttons if not read-only
+                            <>
+                              <Button
+                                variant='contained'
+                                sx={{
+                                  background: "#3D5CAC",
+                                  color: theme.palette.background.default,
+                                  cursor: "pointer",
+                                  textTransform: "none",
+                                  width: "30%",
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                }}
+                                size='small'
+                                onClick={handleClose}
+                              >
+                                Cancel
+                              </Button>
+                              <Button
+                                variant='contained'
+                                sx={{
+                                  background: "#3D5CAC",
+                                  color: theme.palette.background.default,
+                                  cursor: "pointer",
+                                  textTransform: "none",
+                                  width: "30%",
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                }}
+                                size='small'
+                                onClick={handleAddAppln}
+                              >
+                                Save
+                              </Button>
+                            </>
+                          )}
+                        </DialogActions>
+                      </Dialog>
+                      {<ReferTenantDialog open={showReferTenantDialog} onClose={() => setShowReferTenantDialog(false)} setShowSpinner={setShowSpinner} property={property} />}
+                    </Box>
+          </Card>
+        </Box>
         </CustomTabPanel>
       </Box>
     </Paper>

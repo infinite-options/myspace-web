@@ -1416,8 +1416,8 @@ export default function TenantApplicationEdit(props) {
                                     margin: "auto", // Center the accordion
                                     minHeight: "50px",
                                 }}
-                                expanded={occupantsExpanded}
-                                onChange={() => setOccupantsExpanded((prevState) => !prevState)}
+                                expanded={documentsExpanded}
+                                onChange={() => setDocumentsExpanded((prevState) => !prevState)}
                             >
                                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='occupants-content' id='occupants-header'>
                                     <Grid container>

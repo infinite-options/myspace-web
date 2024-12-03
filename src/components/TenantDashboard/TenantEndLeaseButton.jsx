@@ -15,7 +15,7 @@ import APIConfig from "../../utils/APIConfig";
 import axios from 'axios'; 
 import { PortableWifiOffSharp } from '@mui/icons-material';
 
-const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS, page, onClose }) => {
+const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS, page, onClose, setReload }) => {
     const [open, setOpen] = useState(false);
     const { getProfileId } = useUser();
     const [confirmationText, setConfirmationText] = useState("");
@@ -82,10 +82,6 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
     const handleConfirm = () => {
         handleEndLease();
         setOpen(false);
-        if (isMobile) {
-            setViewRHS(false)
-        }
-        setRightPane("");
     };
 
     const handleRadioChange = (event, id) => {
@@ -149,9 +145,14 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
         // API call (commented for now)
         axios
             .put(`${APIConfig.baseURL.dev}/leaseApplication`, leaseApplicationFormData)
-            .then((response) => {
+            .then(async (response) => {
                 setShowSpinner(false);
                 setSuccess(`Your lease has been moved to ${endLeaseStatus} status.`);
+                await setReload(true)
+                if (isMobile) {
+                    setViewRHS(false)
+                }
+                setRightPane("");
             })
             .catch((error) => {
                 if (error.response) {

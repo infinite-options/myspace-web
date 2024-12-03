@@ -274,7 +274,7 @@ function ProfileEditor() {
           )}
           {RHS === "userInfoChange" && (
             <Grid item xs={12} md={9}>
-              <EditUserInfo></EditUserInfo>
+              <EditUserInfo setRHS={setRHS}></EditUserInfo>
             </Grid>
           )}
           {RHS === "privacyPolicy" && (

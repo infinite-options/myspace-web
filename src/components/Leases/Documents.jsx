@@ -355,34 +355,49 @@ const Documents = ({ setRightPane,setRHS, setSelectedDocument, fromRenew, docume
       headerName: "Content Type",
       flex: 2,
       renderCell: (params) => (
-        <Select
-          value={contractFileTypes[params.row.id]? contractFileTypes[params.row.id] : ""}
-          label="Document Type"
-          onChange={(e) => {
-            const updatedTypes = [...contractFileTypes];
-            updatedTypes[params.row.id] = e.target.value;
-            setContractFileTypes(updatedTypes);
-          }}
-          required
-          sx={{
-            backgroundColor: '#D6D5DA',
-            height: '40px',
-            width: '90%', // Adjust the width as needed
-            padding: '8px', // Adjust the padding as needed
-          }}
-        >
-          {contentTypes.map((item, index) => {
-            if (item.list_item != null) {
-                return (
-                  <MenuItem key={index} value={item.list_item}>
-                      {item.list_item}
-                  </MenuItem>
-                );
-            }
-            return null;
-          })}
-        </Select>
-      ),
+        <FormControl
+								margin="dense"
+								fullWidth
+								variant="outlined"
+								sx={{
+									marginTop: '10px',
+									'& .MuiInputLabel-root': {
+										color: 'black', // Normal state
+									},
+									'& .MuiInputLabel-root.Mui-focused': {
+										color: 'black', // Focused state
+									},
+								}}
+							> <InputLabel>Document Type</InputLabel>
+              <Select
+              value={contractFileTypes[params.row.id]? contractFileTypes[params.row.id] : ""}
+              label="Document Type"
+              onChange={(e) => {
+                const updatedTypes = [...contractFileTypes];
+                updatedTypes[params.row.id] = e.target.value;
+                setContractFileTypes(updatedTypes);
+              }}
+              required
+              sx={{
+                backgroundColor: '#D6D5DA',
+                height: '40px',
+                width: '90%', // Adjust the width as needed
+                padding: '8px', // Adjust the padding as needed
+              }}
+            >
+              {contentTypes.map((item, index) => {
+                if (item.list_item != null) {
+                    return (
+                      <MenuItem key={index} value={item.list_item}>
+                          {item.list_item}
+                      </MenuItem>
+                    );
+                }
+                return null;
+              })}
+            </Select>
+          </FormControl>
+       ),
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {

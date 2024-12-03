@@ -1,20 +1,15 @@
 import React, { useState } from 'react';
-import {
-	Paper,
-	Box,
-	Stack,
-	ThemeProvider,
-	TextField,
-	Button,
-	Typography,
-	Grid,
-} from '@mui/material';
+import { Paper, Box, Stack, ThemeProvider, TextField, Button, Typography, Grid } from '@mui/material';
 import theme from '../../theme/theme';
 import UTurnLeftIcon from '@mui/icons-material/UTurnLeft';
 import { makeStyles } from '@material-ui/core/styles';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../contexts/UserContext';
 import axios from 'axios';
+import { RadioGroup, FormControl, FormControlLabel, Radio } from '@mui/material';
+import { useCookies } from 'react-cookie';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import GenericDialog from "../GenericDialog";
 
 const useStyles = makeStyles(() => ({
 	root: {
@@ -30,7 +25,10 @@ const useStyles = makeStyles(() => ({
 export default function EditUserInfo(props) {
 	const classes = useStyles();
 	const navigate = useNavigate();
-	const { user } = useUser();
+	const { user, setUser } = useUser();
+
+	const [cookie, setCookie] = useCookies(['user']);
+	const cookiesData = cookie['user'];
 
 	const [modifiedData, setModifiedData] = useState({ user_uid: user?.user_uid });
 	const [isEdited, setIsEdited] = useState(false);
@@ -39,35 +37,54 @@ export default function EditUserInfo(props) {
 	const [newPassword, setNewPassword] = useState('');
 	const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
-	const [emailAddress, setEmailAddress] = useState('');
-	const [isForgotPassword, setIsForgotPassword] = useState(false);
+	const [emailAddress, setEmailAddress] = useState(cookiesData.email);
+	const [firstName, setFirstName] = useState(cookiesData.first_name);
+	const [lastName, setLastName] = useState(cookiesData.last_name);
+	const [phoneNumber, setPhoneNumber] = useState(cookiesData.phone_number);
+	const [googleAuthProvided, setGoogleAuthProvided] = useState(cookiesData.google_auth_token);
 
+	const [isDialogOpen, setIsDialogOpen] = useState(false);
+const [dialogTitle, setDialogTitle] = useState("");
+const [dialogMessage, setDialogMessage] = useState("");
+const [dialogSeverity, setDialogSeverity] = useState("info");
+
+const openDialog = (title, message, severity) => {
+  setDialogTitle(title); // Set custom title
+  setDialogMessage(message); // Set custom message
+  setDialogSeverity(severity); // Can use this if needed to control styles
+  setIsDialogOpen(true);
+};
+
+const closeDialog = () => {
+  setIsDialogOpen(false);
+};
 	const handleInputChange = (event) => {
 		const { name, value } = event.target;
 
-		if (name === 'current_password') {
-			setCurrentPassword(value);
+		if (name === 'first_name') {
+			setFirstName(value);
 			setModifiedData((prevData) => ({
 				...prevData,
 				[name]: value,
 			}));
-		} else if (name === 'new_password') {
-			setNewPassword(value);
+		} else if (name === 'last_name') {
+			setLastName(value);
 			setModifiedData((prevData) => ({
 				...prevData,
 				[name]: value,
 			}));
-		} else if (name === 'confirm_new_password') {
-			setConfirmNewPassword(value);
-		} else if (name === 'email_address') {
-			setEmailAddress(value);
-			setIsForgotPassword(true);
+		} else if (name === 'phone_number') {
+			setPhoneNumber(value);
+			setModifiedData((prevData) => ({
+				...prevData,
+				[name]: value,
+			}));
 		}
 
 		setIsEdited(true);
 	};
 
-	const handleSubmit = (event) => {
+	const handleSubmit = async(event) => {
 		event.preventDefault();
 		const headers = {
 			'Access-Control-Allow-Origin': '*',
@@ -75,61 +92,65 @@ export default function EditUserInfo(props) {
 			'Access-Control-Allow-Headers': '*',
 			'Access-Control-Allow-Credentials': '*',
 		};
-		const passwordsMatch = newPassword === confirmNewPassword;
 
-		if (!passwordsMatch) {
-			alert('Passwords do not match');
-			return;
-		}
 		if (isEdited) {
-			if (emailAddress === '') {
-				axios
-					.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/password', modifiedData, headers)
-					.then((response) => {
-						setIsEdited(false); // Reset the edit status
-						props.setRHS('form');
-					})
-					.catch((error) => {
-						if (error.response) {
-							alert(error.response.data.message);
-						}
-					});
-			} else {
-				axios
-					.post('https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/SetTempPassword/MYSPACE', {
-						email: emailAddress,
-					})
-					.then((response) => {
-						setEmailAddress('');
-						if (response.data.code === 280) {
-							alert('No account found with that email.');
-							return;
-						}
-					});
-			}
-		}
+			try {
+				const response = await axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo", {
+				  user_uid: cookiesData.user_uid,
+				  first_name: firstName,
+				  last_name: lastName,
+				  phone_number: phoneNumber,
+				});
+			
+				if (response.status === 200) {
+				  console.log("user Info updated successfully");
+
+			const updatedFields = {
+				first_name: firstName,
+				last_name: lastName,
+				phone_number: phoneNumber,
+			};
+				  setUser((prevUser) => {
+					const newUserData = { ...prevUser, ...updatedFields};
+			  
+					// Perform side effects after updating state
+					setCookie("user", newUserData);
+			  
+					// Return the new state
+					return newUserData;
+				  });
+				  openDialog("Success", "Your profile has been successfully updated.", "success");
+            
+				} else {
+				  console.error("Failed to update User Info");
+				}
+			  } catch (error) {
+				console.error("Error updating User Info:", error);
+			  }
+		} else {
+			openDialog("Warning", "You haven't made any changes to the form. Please save after changing the data.", "error");
+		  }
 	};
 
 	return (
 		<ThemeProvider theme={theme}>
-
-				<Paper
-					style={{
-						margin: 'auto',
-						padding: theme.spacing(2),
-						backgroundColor: theme.palette.primary.main,
-						width: '85%',
-						justifyContent: 'center',
-						alignItems: 'center',
-						[theme.breakpoints.down('sm')]: {
-							width: '80%',
-						},
-						[theme.breakpoints.up('sm')]: {
-							width: '50%',
-						},
-					}}
-				>
-					<Box component="form" onSubmit={handleSubmit} noValidate autoComplete="off" id="editProfileForm">
+			<Paper
+				style={{
+					margin: 'auto',
+					padding: theme.spacing(2),
+					backgroundColor: theme.palette.primary.main,
+					width: '85%',
+					justifyContent: 'center',
+					alignItems: 'center',
+					[theme.breakpoints.down('sm')]: {
+						width: '80%',
+					},
+					[theme.breakpoints.up('sm')]: {
+						width: '50%',
+					},
+				}}
+			>
+				<Box component="form" onSubmit={handleSubmit} noValidate autoComplete="off" id="editProfileForm">
 					<Box
 						component="span"
 						display="flex"
@@ -138,20 +159,16 @@ export default function EditUserInfo(props) {
 						alignItems="center"
 						position="relative"
 					>
-						<UTurnLeftIcon
-							sx={{
-								transform: 'rotate(90deg)',
-								color: theme.typography.secondary.black,
-								fontWeight: theme.typography.primary.fontWeight,
-								fontSize: theme.typography.largeFont,
-								padding: 5,
-								position: 'absolute',
-								left: 0,
-							}}
-							onClick={() => {
-								props.setRHS('form');
-							}}
-						/>
+						<ArrowBackIcon
+    onClick={() => props.setRHS('form')}
+    sx={{
+        cursor: 'pointer',
+        color: theme.typography.secondary.black,
+        fontSize: theme.typography.largeFont,
+        position: 'absolute',
+        left: 0,
+    }}
+/>
 						<Typography
 							sx={{
 								justifySelf: 'center',
@@ -164,159 +181,210 @@ export default function EditUserInfo(props) {
 							User Information
 						</Typography>
 					</Box>
-				<Stack spacing={2} sx={{ padding: '0 20px', marginBottom: '20px' }}>
-							
-						<Stack
-                    direction="row"
-                    justifyContent="center"
-                    >
-                    <Typography 
-                    sx={{
-                        justifySelf: 'center',
-                        color: theme.typography.common.black, 
-                        fontWeight: theme.typography.light.fontWeight, 
-                        fontSize:theme.typography.primary.smallFont}}>
-                    Changing User Details Affects All Profiles
-                    </Typography>
-                    </Stack><Typography
-								sx={{
-									color: theme.typography.common.blue,
-									fontWeight: theme.typography.primary.fontWeight,
-								}}
-							>
-								User First Name
-							</Typography>
-							<TextField
-								name="current_password"
-								value={currentPassword}
-								onChange={handleInputChange}
-								variant="filled"
-								fullWidth
-								placeholder="First Name"
-								className={classes.root}
-								InputProps={{
-									style: {
-										textAlign: 'center',
-										paddingTop: '10px',
-										paddingBottom: '25px',paddingBottom: '25px',
-										height: '45px',
-										boxSizing: 'border-box',
-									},
-								}}
-							/>
-						</Stack>
-
-						<Stack spacing={2} sx={{ padding: '0 20px', marginBottom: '20px' }}>
+					<Stack spacing={2} sx={{ padding: '0 20px', marginBottom: '20px' }}>
+						<Stack direction="row" justifyContent="center">
 							<Typography
 								sx={{
-									color: theme.typography.common.blue,
-									fontWeight: theme.typography.primary.fontWeight,
+									justifySelf: 'center',
+									color: theme.typography.common.black,
+									fontWeight: theme.typography.light.fontWeight,
+									fontSize: theme.typography.primary.smallFont,
 								}}
 							>
-								User Last Name
+								Changing User Details Affects All Profiles
 							</Typography>
-							<TextField
-								name="new_password"
-								value={newPassword}
-								onChange={handleInputChange}
-								variant="filled"
-								fullWidth
-								placeholder="Last Name"
-								className={classes.root}
-								InputProps={{
-									style: {
-										textAlign: 'center',
-										paddingTop: '10px',
-										paddingBottom: '25px',
-										height: '45px',
-										boxSizing: 'border-box',
-									},
-								}}
-							/>
 						</Stack>
+						<Typography
+							sx={{
+								color: theme.typography.common.blue,
+								fontWeight: theme.typography.primary.fontWeight,
+							}}
+						>
+							User First Name
+						</Typography>
+						<TextField
+							name="first_name"
+							value={firstName}
+							onChange={handleInputChange}
+							variant="filled"
+							fullWidth
+							placeholder="First Name"
+							className={classes.root}
+							InputProps={{
+								style: {
+									textAlign: 'center',
+									paddingTop: '10px',
+									paddingBottom: '25px',
+									paddingBottom: '25px',
+									height: '45px',
+									boxSizing: 'border-box',
+								},
+							}}
+						/>
+					</Stack>
 
-						<Stack spacing={2} sx={{ padding: '0 20px', marginBottom: '20px' }}>
+					<Stack spacing={2} sx={{ padding: '0 20px', marginBottom: '20px' }}>
+						<Typography
+							sx={{
+								color: theme.typography.common.blue,
+								fontWeight: theme.typography.primary.fontWeight,
+							}}
+						>
+							User Last Name
+						</Typography>
+						<TextField
+							name="last_name"
+							value={lastName}
+							onChange={handleInputChange}
+							variant="filled"
+							fullWidth
+							placeholder="Last Name"
+							className={classes.root}
+							InputProps={{
+								style: {
+									textAlign: 'center',
+									paddingTop: '10px',
+									paddingBottom: '25px',
+									height: '45px',
+									boxSizing: 'border-box',
+								},
+							}}
+						/>
+					</Stack>
+
+					<Stack spacing={2} sx={{ padding: '0 20px', marginBottom: '20px' }}>
+						<Typography
+							sx={{
+								color: theme.typography.common.blue,
+								fontWeight: theme.typography.primary.fontWeight,
+							}}
+						>
+							Phone Number
+						</Typography>
+						<TextField
+							name="phone_number"
+							value={phoneNumber}
+							onChange={handleInputChange}
+							variant="filled"
+							fullWidth
+							placeholder="Phone Number"
+							className={classes.root}
+							InputProps={{
+								style: {
+									textAlign: 'center',
+									paddingTop: '10px',
+									paddingBottom: '25px',
+									height: '45px',
+									boxSizing: 'border-box',
+								},
+							}}
+						/>
+					</Stack>
+					<Stack spacing={2} sx={{ padding: '0 20px', marginBottom: '20px' }}>
+						<Typography
+							sx={{
+								color: theme.typography.common.blue,
+								fontWeight: theme.typography.primary.fontWeight,
+							}}
+						>
+							Email ID
+						</Typography>
+						<TextField
+							name="email_id"
+							value={emailAddress}
+							onChange={handleInputChange}
+							variant="filled"
+							fullWidth
+							disabled
+							placeholder="Email"
+							className={classes.root}
+							InputProps={{
+								style: {
+									textAlign: 'center',
+									paddingTop: '10px',
+									paddingBottom: '25px',
+									height: '45px',
+									boxSizing: 'border-box',
+								},
+							}}
+						/>
+					</Stack>
+					<Stack spacing={2} sx={{ padding: '0 20px', marginBottom: '20px' }}>
+						<Typography
+							sx={{
+								color: theme.typography.common.blue,
+								fontWeight: theme.typography.primary.fontWeight,
+							}}
+						>
+							Google Authentication Provided
+						</Typography>
+						<FormControl>
+							<RadioGroup row name="googleAuthProvided" value={googleAuthProvided ? "yes" : "no"}>
+								<FormControlLabel
+									value="yes"
+									control={<Radio disabled sx={{
+										color: "black", // Unselected radio button color
+										"&.Mui-checked": {
+										  color: "black", // Selected radio button color
+										},
+									  }}/>}
+									label="Yes"
+									sx={{ color: "black" }}
+								/>
+								<FormControlLabel
+									value="no"
+									control={<Radio disabled sx={{
+										color: "black", // Unselected radio button color
+										"&.Mui-checked": {
+										  color: "black", // Selected radio button color
+										},
+									  }}/>}
+									label="No"
+									sx={{ color: "black" }}
+								/>
+							</RadioGroup>
+						</FormControl>
+					</Stack>
+					<Stack spacing={2} sx={{ padding: '0 20px', marginBottom: '20px' }}>
+						<Button
+							variant="contained"
+							type="submit"
+							form="editProfileForm"
+							sx={{
+								width: '100%',
+								backgroundColor: '#3D5CAC',
+								'&:hover': {
+									backgroundColor: '#3D5CAC',
+								},
+								borderRadius: '10px',
+							}}
+						>
 							<Typography
 								sx={{
-									color: theme.typography.common.blue,
+									textTransform: 'none',
+									color: 'white',
 									fontWeight: theme.typography.primary.fontWeight,
+									fontSize: theme.typography.mediumFont,
 								}}
 							>
-								Phone Number
+								Save And Submit
 							</Typography>
-							<TextField
-								name="confirm_new_password"
-								value={confirmNewPassword}
-								onChange={handleInputChange}
-								variant="filled"
-								fullWidth
-								placeholder="Phone Number"
-								className={classes.root}
-								InputProps={{
-									style: {
-										textAlign: 'center',
-										paddingTop: '10px',
-										paddingBottom: '25px',
-										height: '45px',
-										boxSizing: 'border-box',
-									},
-								}}
-							/>
-						</Stack>
-						<Stack spacing={2} sx={{ padding: '0 20px', marginBottom: '20px' }}>
-							<Typography
-								sx={{
-									color: theme.typography.common.blue,
-									fontWeight: theme.typography.primary.fontWeight,
-								}}
-							>
-								Email ID
-							</Typography>
-							<TextField
-								name="confirm_new_password"
-								value={confirmNewPassword}
-								onChange={handleInputChange}
-								variant="filled"
-								fullWidth
-								placeholder="Email"
-								className={classes.root}
-								InputProps={{
-									style: {
-										textAlign: 'center',
-										paddingTop: '10px',
-										paddingBottom: '25px',
-										height: '45px',
-										boxSizing: 'border-box',
-									},
-								}}
-							/>
-						</Stack>
-						<Stack spacing={2} sx={{ padding: '0 20px', marginBottom: '20px' }}>
-						<Button 
-                            variant="contained"
-                            type="submit"
-                            form="editProfileForm"  
-                            sx=
-                                {{ 
-                                    width: '100%',
-                                    backgroundColor: '#3D5CAC',
-                                    '&:hover': {
-                                        backgroundColor: '#3D5CAC',
-                                    },
-                                    borderRadius: '10px',
-                                }}
-                        >
-                            <Typography sx={{ textTransform: 'none', color: "white", fontWeight: theme.typography.primary.fontWeight, fontSize:theme.typography.mediumFont}}>
-                                Save And Submit
-                            </Typography>
-                        </Button>
-
-					
-						
-						</Stack>
-                    </Box>
-				</Paper>
-			
+						</Button>
+					</Stack>
+				
+					<GenericDialog
+      isOpen={isDialogOpen}
+      title={dialogTitle}
+      contextText={dialogMessage}
+      actions={[
+        {
+          label: "OK",
+          onClick: closeDialog,
+        }
+      ]}
+      severity={dialogSeverity}
+    /></Box>
+			</Paper>
 		</ThemeProvider>
 	);
 }

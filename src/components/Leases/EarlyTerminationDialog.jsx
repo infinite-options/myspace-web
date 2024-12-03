@@ -11,12 +11,14 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useUser } from "../../contexts/UserContext";
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 
 const EarlyTerminationDialog = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked, handleUpdate, isTerminatingRenewedLease, renewedLease }) => {
     // console.log("17 - leaseDetails - ", leaseDetails);    
     const [confirmationText, setConfirmationText] = useState("")
-    const [showSpinner, setShowSpinner] = useState(false);                
+    const [showSpinner, setShowSpinner] = useState(false); 
+    const navigate = useNavigate();              
 
     const handleRejectEndRequest = async () => {
         setShowSpinner(true);
@@ -45,9 +47,11 @@ const EarlyTerminationDialog = ({ theme, leaseDetails, selectedLeaseId, setIsEnd
                 if (error.response) {                    
                     console.log(error.response.data);
                 }
-            });        
+            }); 
+
         await handleUpdate();
         await setIsEndClicked(false);
+        navigate("/managerDashboard")
     };
 
     const handleApproveEndRequest = async () => {
@@ -93,6 +97,7 @@ const EarlyTerminationDialog = ({ theme, leaseDetails, selectedLeaseId, setIsEnd
             });        
         await handleUpdate();
         await setIsEndClicked(false);
+        navigate("/managerDashboard")
     };
 
     const handleCancel = () => {
