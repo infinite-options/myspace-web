@@ -83,16 +83,17 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
 
   useEffect(() => {
     setShowSpinner(true);
-    const filtered = leaseDetails.find((lease) => lease.lease_uid === selectedLeaseId);
+    console.log("PM selected lease Id: ", selectedLeaseId);
+    const filtered = leaseDetails?.find((lease) => lease.lease_uid === selectedLeaseId);
     setCurrentLease(filtered);
     console.log("In Renew Lease", leaseDetails, selectedLeaseId);
     // console.log('filtered - ', filtered);
-    const tenantsRow = JSON.parse(filtered.tenants);
+    const tenantsRow = JSON.parse(filtered?.tenants);
     setTenantWithId(tenantsRow);
-    // console.log('----dhyey---- tenantRow', tenantsRow);
+    console.log("----dhyey---- tenantRow", tenantsRow);
 
     //Set utilities details
-    const utils = JSON.parse(filtered.property_utilities);
+    const utils = JSON.parse(filtered?.property_utilities);
     if (utils === null) {
       setUtilities([]);
       setNewUtilities([]);
@@ -105,11 +106,12 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
     // console.log('utils', utils);
 
     //Set fees details
-    const fees = JSON.parse(filtered.lease_fees);
+    const fees = JSON.parse(filtered?.lease_fees);
+    console.log("PM All lease fees", fees);
     setLeaseFees(fees);
 
     // Get the rent details from the list of fees
-    const rentFee = fees.find((fee) => fee.fee_name === "Rent");
+    const rentFee = fees?.find((fee) => fee.fee_name === "Rent");
     console.log("All lease fees", fees);
     console.log("rent values", rentFee);
     setRent(rentFee);
@@ -148,8 +150,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
     // setMoveoutDate(dayjs(filtered.lease_end));
     setNewStartDate(dayjs(filtered.lease_end).add(1, "day"));
     setNewEndDate(dayjs(filtered.lease_end).add(1, "year"));
-    setNewRent(rentFee.charge);
-    setNewFreq(rentFee.frequency);
+    setNewRent(rentFee?.charge);
+    setNewFreq(rentFee?.frequency);
     const adults = JSON.parse(filtered.lease_adults);
     const children = JSON.parse(filtered.lease_children);
     const pets = JSON.parse(filtered.lease_pets);
@@ -464,7 +466,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
       <Paper
         style={{
           marginTop: !isMobile && "10px",
-          marginBottom : isMobile && "10px",
+          marginBottom: isMobile && "10px",
           // marginTop: "10px",
           backgroundColor: theme.palette.primary.main,
           width: "100%", // Occupy full width with 25px margins on each side
@@ -792,9 +794,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                           marginLeft: "1%",
                         }}
                       >
-                        {currentLease.lease_renew_status === "PM RENEW REQUESTED" || currentLease.lease_renew_status === "RENEW REQUESTED"
-                          ? "Review Renewal Application"
-                          : "Edit/Renew Lease"}
+                        {currentLease.lease_renew_status === "PM RENEW REQUESTED" || currentLease.lease_renew_status === "RENEW REQUESTED" ? "Review Renewal Application" : "Edit/Renew Lease"}
                       </Typography>
                     </Button>
                   </Grid>
