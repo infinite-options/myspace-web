@@ -163,7 +163,7 @@ const TenantLease = () => {
   console.log("158 - In Tenant Lease -  page - ", page);
 
   const setDates = () => {
-    if(datesToggle === "current_lease"){
+    if (datesToggle === "current_lease") {
       if (page === "create_lease" || page === "refer_tenant") {
         initialStartDate = dayjs();
         // initialEndDate = dayjs().add(1, "year").subtract(1, "day");
@@ -178,18 +178,18 @@ const TenantLease = () => {
         const oldDuration = dayjs(property.lease_end).diff(dayjs(property.lease_start), "day"); // Duration in days
         let leaseStartDate = dayjs(property.lease_end).add(1, "day");
         let leaseEndDate = leaseStartDate.add(oldDuration, "day");
-    
-        if((application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") && application.lease_start != null){
+
+        if ((application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") && application.lease_start != null) {
           leaseStartDate = dayjs(application.lease_start);
         }
-        if((application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") && application.lease_end != null){
+        if ((application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") && application.lease_end != null) {
           leaseEndDate = dayjs(application.lease_end);
         }
         // const leaseEndDate = leaseStartDate + (dayjs(property.lease_end) - dayjs(property.lease_start));
         // console.log("In Tenant Lease leaseStartDate", leaseStartDate);
-    
+
         // const duration = leaseEndDate.diff(leaseStartDate, "day"); // Duration in days
-    
+
         // Set the start date to remain same as lease_start
         initialStartDate = leaseStartDate;
         // console.log("In Tenant Lease initialStartDate", initialStartDate);
@@ -202,13 +202,13 @@ const TenantLease = () => {
         // Set move-in date same as the start date
         initialMoveInDate = initialStartDate;
       }
-    } else if (datesToggle === "active_lease" ) {
+    } else if (datesToggle === "active_lease") {
       if (page === "create_lease" || page === "refer_tenant") {
         initialStartDate = dayjs();
         // initialEndDate = dayjs().add(1, "year").subtract(1, "day");
         initialEndDate = property.lease_end ? dayjs(property.lease_end) : dayjs().add(1, "year").subtract(1, "day");
         initialMoveInDate = initialStartDate;
-      } else if (page === "edit_lease") {        
+      } else if (page === "edit_lease") {
         initialStartDate = property.lease_start ? dayjs(property.lease_start) : dayjs();
         initialEndDate = property.lease_end ? dayjs(property.lease_end) : dayjs().add(1, "year").subtract(1, "day");
         initialMoveInDate = property.lease_move_in_date ? dayjs(property.lease_move_in_date) : dayjs();
@@ -216,14 +216,14 @@ const TenantLease = () => {
         // Calculate the duration between lease_start and lease_end
         const oldDuration = dayjs(property.lease_end).diff(dayjs(property.lease_start), "day"); // Duration in days
         let leaseStartDate = dayjs(property.lease_start);
-        let leaseEndDate = dayjs(property.lease_end);            
+        let leaseEndDate = dayjs(property.lease_end);
         initialStartDate = leaseStartDate;
-                
-        initialEndDate = leaseEndDate;        
+
+        initialEndDate = leaseEndDate;
         initialMoveInDate = initialStartDate;
       }
 
-    } else if(datesToggle === "select"){
+    } else if (datesToggle === "select") {
       // initialStartDate = null;                
       // initialEndDate = null;        
       // initialMoveInDate = null;
@@ -232,18 +232,18 @@ const TenantLease = () => {
         const oldDuration = dayjs(property.lease_end).diff(dayjs(property.lease_start), "day"); // Duration in days
         let leaseStartDate = dayjs(property.lease_end).add(1, "day");
         let leaseEndDate = leaseStartDate.add(oldDuration, "day");
-    
-        if((application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") && application.lease_start != null){
+
+        if ((application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") && application.lease_start != null) {
           leaseStartDate = dayjs(application.lease_start);
         }
-        if((application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") && application.lease_end != null){
+        if ((application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") && application.lease_end != null) {
           leaseEndDate = dayjs(application.lease_end);
         }
         // const leaseEndDate = leaseStartDate + (dayjs(property.lease_end) - dayjs(property.lease_start));
         // console.log("In Tenant Lease leaseStartDate", leaseStartDate);
-    
+
         // const duration = leaseEndDate.diff(leaseStartDate, "day"); // Duration in days
-    
+
         // Set the start date to remain same as lease_start
         initialStartDate = initialStartDate != null ? initialStartDate : leaseStartDate;
         // console.log("In Tenant Lease initialStartDate", initialStartDate);
@@ -255,7 +255,16 @@ const TenantLease = () => {
         // console.log("In Tenant Lease initialEndDate", initialEndDate);
         // Set move-in date same as the start date
         initialMoveInDate = initialStartDate;
+      } else if (page === "create_lease") {
+        initialStartDate = dayjs();
+        initialEndDate = dayjs().add(1, "year").subtract(1, "day");
+        initialMoveInDate = initialStartDate;
       }
+    } else {
+      //fall back to default
+      initialStartDate = dayjs();
+      initialEndDate = dayjs().add(1, "year").subtract(1, "day");
+      initialMoveInDate = initialStartDate;
     }
 
     setStartDate(initialStartDate);
@@ -370,7 +379,7 @@ const TenantLease = () => {
 
   const [modifiedData, setModifiedData] = useState([]); // not being
 
-  const editOrUpdateTenant = () => {}; // being passed to AdultOccupant, ChildrenOccupant etc but not used in this page.
+  const editOrUpdateTenant = () => { }; // being passed to AdultOccupant, ChildrenOccupant etc but not used in this page.
 
   const [showMissingFileTypePrompt, setShowMissingFileTypePrompt] = useState(false);
   const [showMissingFieldsPrompt, setShowMissingFieldsPrompt] = useState(false);
@@ -383,7 +392,7 @@ const TenantLease = () => {
 
 
   const getDatesToggleInitialValue = () => {
-    if(["NEW", "RENEW NEW"].includes(application?.lease_status)){
+    if (["NEW", "RENEW NEW"].includes(application?.lease_status)) {
       return "select";
     }
     //  else if(["RENEW NEW", "PROCESSING", "RENEW PROCESSING", "WITHDRAWN", "RENEW WITHDRAWN", "REJECTED", "RENEW REJECTED", "REFUSED", "RENEW REFUSED", "RESCIND", "RENEW RESCINDED"].includes(application.lease_status)) {
@@ -396,7 +405,7 @@ const TenantLease = () => {
 
   const [datesToggle, setDatesToggle] = useState(getDatesToggleInitialValue());
 
-  
+
 
   const openDialog = (title, message, severity) => {
     setDialogTitle(title); // Set custom title
@@ -427,15 +436,15 @@ const TenantLease = () => {
 
   // }, [leaseAdults, leaseChildren, leasePets, leaseVehicles]);
 
-  useEffect(() => {    
+  useEffect(() => {
     setDates();
   }, []);
 
   useEffect(() => {
     console.log("ROHIT - 403 - datesToggle - ", datesToggle);
-    if(datesToggle !== "select"){
+    if (datesToggle !== "select") {
       setDates();
-    }    
+    }
   }, [datesToggle]);
 
   useEffect(() => {
@@ -630,11 +639,11 @@ const TenantLease = () => {
         application?.lease_status === "RENEW NEW" ||
         application?.lease_status === "APPROVED"
       ) {
-        
+
         feesList = JSON.parse(application?.lease_fees);
       } else if (application?.lease_status === "NEW" || application?.lease_status === "REJECTED" || application?.lease_status === "REFUSED" || application?.lease_status === "RENEW REFUSED" || application?.lease_status === "WITHDRAWN" || application?.lease_status === "RESCIND") {
         const parsedApplicationFees = application.lease_fees ? JSON.parse(application.lease_fees) : []
-        if(parsedApplicationFees?.length === 0){
+        if (parsedApplicationFees?.length === 0) {
           feesList = initialFees(property, application);
         } else {
           // feesList = JSON.parse(application?.lease_fees);
@@ -993,9 +1002,9 @@ const TenantLease = () => {
   const checkValidDueDate = (fee) => {
     console.log("ROHIT - fee - ", fee);
     // ((fee.due_by == null || fee.due_by === "") && (fee.due_by_date == null || fee.due_by_date === "" || !isValidDate(fee.due_by_date))) 
-    
+
     if (fee.frequency === "Monthly" || fee.frequency === "Quarterly" || fee.frequency === "Semi-Monthly" || fee.frequency === "Bi-Weekly" || fee.frequency === "Weekly") {
-      if( fee.due_by === ""  || fee.due_by == null) {
+      if (fee.due_by === "" || fee.due_by == null) {
         console.log("due_by is invalid")
         return true;
       } else {
@@ -1004,7 +1013,7 @@ const TenantLease = () => {
 
     } else if (fee.frequency === "One Time" || fee.frequency === "Annually" || fee.frequency === "Semi-Annually") {
       // return fee.due_by_date !== "" ? `${fee.due_by_date}` : "No Due Date";
-      if( fee.due_by_date === ""  || fee.due_by_date == null) {
+      if (fee.due_by_date === "" || fee.due_by_date == null) {
         console.log("due_by_date is invalid - ", fee.due_by_date)
         return true;
       } else {
@@ -1013,7 +1022,7 @@ const TenantLease = () => {
     } else {
       alert("DEBUG - 1012 - INVALID FEE FREQUENCY - ", fee.frequency);
     }
-    
+
   }
 
   const checkRequiredFields = () => {
@@ -1134,7 +1143,7 @@ const TenantLease = () => {
 
     leaseApplicationFormData.append("lease_uid", property.lease_uid);
     // leaseApplicationFormData.append("lease_renew_status", "RENEW REQUESTED");    
-    leaseApplicationFormData.append("lease_renew_status", renewStatus);    
+    leaseApplicationFormData.append("lease_renew_status", renewStatus);
 
     try {
       const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
@@ -1143,10 +1152,10 @@ const TenantLease = () => {
       });
       const data = await response.json();
       // if (data.lease_update.code === 200) {
-      if(response.ok){
+      if (response.ok) {
         // alert("You have successfully Rejected the lease.");
-        openDialog("Success",`You have successfully Rejected the lease`,"success");        
-        
+        openDialog("Success", `You have successfully Rejected the lease`, "success");
+
       } else {
         console.log(data);
       }
@@ -1171,25 +1180,25 @@ const TenantLease = () => {
       const leaseApplicationFormData = new FormData();
 
       console.log("---insdie DEBUG Lease fees - ", fees)
-      
-      if(application?.lease_status === "RENEW REFUSED" || application?.lease_status === "RENEW WITHDRAWN") {
-        leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");            
+
+      if (application?.lease_status === "RENEW REFUSED" || application?.lease_status === "RENEW WITHDRAWN") {
+        leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");
       } else {
-        leaseApplicationFormData.append("lease_status", "PROCESSING");            
-      }      
-      leaseApplicationFormData.append("lease_property_id", application.lease_property_id);      
+        leaseApplicationFormData.append("lease_status", "PROCESSING");
+      }
+      leaseApplicationFormData.append("lease_property_id", application.lease_property_id);
       leaseApplicationFormData.append("tenant_uid", application?.tenant_uid);
       leaseApplicationFormData.append("lease_assigned_contacts", application?.lease_assigned_contacts);
       leaseApplicationFormData.append("lease_application_date", application?.lease_application_date);
-      leaseApplicationFormData.append("lease_effective_date", startDate.format("MM-DD-YYYY"));      
+      leaseApplicationFormData.append("lease_effective_date", startDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_start", startDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_end", endDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_fees", JSON.stringify(fees));
       leaseApplicationFormData.append("lease_move_in_date", moveInDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_end_notice_period", endLeaseNoticePeriod);
-      leaseApplicationFormData.append("lease_m2m", leaseContinueM2M === true ? 1 : 0);                  
+      leaseApplicationFormData.append("lease_m2m", leaseContinueM2M === true ? 1 : 0);
       leaseApplicationFormData.append("lease_documents", JSON.stringify(leaseDocuments));
-      
+
 
       const hasMissingType = !checkFileTypeSelected();
       // console.log("HAS MISSING TYPE", hasMissingType);
@@ -1227,8 +1236,8 @@ const TenantLease = () => {
       //     body: leaseApplicationFormData
       //   }
       // );
-      
-        // await putUtilitiesData();
+
+      // await putUtilitiesData();
       const updatedUtilitiesArray = createUpdatedUtilitesArray(mappedUtilitiesPaidBy);
       const utilitiesJSONString = JSON.stringify(updatedUtilitiesArray);
       leaseApplicationFormData.append("lease_utilities", utilitiesJSONString);
@@ -1238,7 +1247,7 @@ const TenantLease = () => {
       leaseApplicationFormData.append("lease_pets", application.lease_pets);
       leaseApplicationFormData.append("lease_vehicles", application.lease_vehicles);
       leaseApplicationFormData.append("lease_income", application?.lease_income)
-      
+
       await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "POST",
         body: leaseApplicationFormData,
@@ -1246,9 +1255,9 @@ const TenantLease = () => {
 
 
 
-      if(application.lease_status === "RENEW REFUSED" || application.lease_status === "RENEW WITHDRAWN"){
+      if (application.lease_status === "RENEW REFUSED" || application.lease_status === "RENEW WITHDRAWN") {
         await updateCurrentLease("RENEW REQUESTED");
-      }      
+      }
 
 
 
@@ -1301,21 +1310,21 @@ const TenantLease = () => {
       console.log("---insdie DEBUG Lease fees - ", fees)
 
       leaseApplicationFormData.append("lease_uid", application.lease_uid);
-      if(application.lease_status === "NEW"){
+      if (application.lease_status === "NEW") {
         leaseApplicationFormData.append("lease_status", "PROCESSING");
       } else if (application.lease_status === "RENEW NEW") {
         leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");
-      } else if(application.lease_status === "APPROVED"){
+      } else if (application.lease_status === "APPROVED") {
         // console.log("968 - property - ", property);
-        if(property.lease_status === "ACTIVE"){
+        if (property.lease_status === "ACTIVE") {
           leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");
           await updateCurrentLease("PM RENEW REQUESTED");
         } else {
           leaseApplicationFormData.append("lease_status", "PROCESSING");
         }
-        
+
       }
-      
+
       leaseApplicationFormData.append("lease_effective_date", startDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_start", startDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_end", endDate.format("MM-DD-YYYY"));
@@ -1502,7 +1511,7 @@ const TenantLease = () => {
         // If 'tenants' field is not available, append property.tenant_uid as a single value array
         if (application?.lease_status === "RENEW NEW") {
           leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify([property.tenant_uid]));
-        } else if (application?.lease_status === "ACTIVE") { 
+        } else if (application?.lease_status === "ACTIVE") {
           leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify([property.tenant_uid]));
           leaseApplicationFormData.append("tenant_uid", property?.tenant_uid);
         } else {
@@ -1696,7 +1705,7 @@ const TenantLease = () => {
 
   const getLeaseStatusText = (status, renewStatus) => {
     console.log("ROHIT - 1638 - status - ", status);
-    switch(status){
+    switch (status) {
       case "RENEW PROCESSING":
         return "Extended";
       case "WITHDRAWN":
@@ -1714,12 +1723,12 @@ const TenantLease = () => {
       case "RENEW RESCINDED":
         return "Rescinded";
       case "APPROVED":
-        if(renewStatus == null || renewStatus === "EARLY TERMINATION"){
+        if (renewStatus == null || renewStatus === "EARLY TERMINATION") {
           return "Approved";
         } else {
           return "Renewed";
-        }       
-        
+        }
+
     }
   }
 
@@ -1728,7 +1737,7 @@ const TenantLease = () => {
     // Add your logic here based on the selected radio button
     setDatesToggle(value);
   };
-  
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -1823,7 +1832,7 @@ const TenantLease = () => {
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       value={endDate}
-                      minDate={startDate}                      
+                      minDate={startDate}
                       onChange={(newValue) => {
                         setDatesToggle("select");
                         handleEndDateChange(newValue);
@@ -1852,7 +1861,7 @@ const TenantLease = () => {
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       value={moveInDate}
-                      minDate={startDate}                      
+                      minDate={startDate}
                       onChange={(newValue) => {
                         setDatesToggle("select");
                         handleMoveInDateChange(newValue);
@@ -1908,88 +1917,88 @@ const TenantLease = () => {
                 </Grid>
               </Grid>
               {
-                (!(["NEW", "PROCESSING", "WITHDRAWN", "REJECTED", ].includes(application.lease_status))) && (
+                (!(["NEW", "PROCESSING", "WITHDRAWN", "REJECTED",].includes(application.lease_status))) && (
                   <Grid container item xs={12} sx={{ marginTop: "10px", justifyContent: "space-evenly" }}>
                     <Grid item container direction='row' xs={12}>
                       <Grid item xs={12} sx={{ marginTop: "5px", justifyContent: "flex-start" }}>
-                      <FormControl>
-                        
-                        <RadioGroup
-                          row
-                          sx={{
-                            '& .MuiFormControlLabel-root': {
-                              marginRight: '20px',
-                            },
-                          }}
-                          aria-labelledby="dates-radio-buttons-group-label"
-                          defaultValue="female"
-                          name="radio-buttons-group"
-                          value={datesToggle}
-                          onChange={(event) => handleDatesRadioChange(event.target.value)}
-                        >
-                          <FormControlLabel
-                            value="select"
-                            control={<Radio />}
-                            label={
-                              <Typography
-                                sx={{ 
-                                  color: "#160449",
-                                  fontWeight: "bold",
-                                  fontSize: "14px",
-                                }}
-                              >
-                                Select New Lease Dates
-                              </Typography>
-                            }
-                            
-                          />
-                          {
-                            property?.lease_status != null && (
-                              <FormControlLabel
-                                value="active_lease"
-                                control={<Radio />}
-                                label={
-                                  <Typography
-                                    sx={{ 
-                                      color: "#160449",
-                                      fontWeight: "bold",
-                                      fontSize: "14px",
-                                    }}
-                                  >
-                                    Dates from Active Lease: {property?.lease_uid}
-                                  </Typography>
-                                }
-                              />
+                        <FormControl>
+
+                          <RadioGroup
+                            row
+                            sx={{
+                              '& .MuiFormControlLabel-root': {
+                                marginRight: '20px',
+                              },
+                            }}
+                            aria-labelledby="dates-radio-buttons-group-label"
+                            defaultValue="female"
+                            name="radio-buttons-group"
+                            value={datesToggle}
+                            onChange={(event) => handleDatesRadioChange(event.target.value)}
+                          >
+                            <FormControlLabel
+                              value="select"
+                              control={<Radio />}
+                              label={
+                                <Typography
+                                  sx={{
+                                    color: "#160449",
+                                    fontWeight: "bold",
+                                    fontSize: "14px",
+                                  }}
+                                >
+                                  Select New Lease Dates
+                                </Typography>
+                              }
+
+                            />
+                            {
+                              property?.lease_status != null && (
+                                <FormControlLabel
+                                  value="active_lease"
+                                  control={<Radio />}
+                                  label={
+                                    <Typography
+                                      sx={{
+                                        color: "#160449",
+                                        fontWeight: "bold",
+                                        fontSize: "14px",
+                                      }}
+                                    >
+                                      Dates from Active Lease: {property?.lease_uid}
+                                    </Typography>
+                                  }
+                                />
                               )
-                          }
-                          {
-                            application?.lease_status != "RENEW NEW" && (
+                            }
+                            {
+                              application?.lease_status != "RENEW NEW" && (
 
 
-                              <FormControlLabel
-                                value="current_lease"
-                                control={<Radio />}                        
-                                label={
-                                  <Typography
-                                    sx={{ 
-                                      color: "#160449",
-                                      fontWeight: "bold",
-                                      fontSize: "14px",
-                                    }}
-                                  >
-                                    {`Dates from ${getLeaseStatusText(application.lease_status, application.lease_renew_status )} Lease: ${application?.lease_uid}`} 
-                                  </Typography>
-                                }
-                              />
-                            )
-                          }                          
-                        </RadioGroup>
-                      </FormControl>
+                                <FormControlLabel
+                                  value="current_lease"
+                                  control={<Radio />}
+                                  label={
+                                    <Typography
+                                      sx={{
+                                        color: "#160449",
+                                        fontWeight: "bold",
+                                        fontSize: "14px",
+                                      }}
+                                    >
+                                      {`Dates from ${getLeaseStatusText(application.lease_status, application.lease_renew_status)} Lease: ${application?.lease_uid}`}
+                                    </Typography>
+                                  }
+                                />
+                              )
+                            }
+                          </RadioGroup>
+                        </FormControl>
                       </Grid>
                     </Grid>
                   </Grid>
                 )
-              }                                          
+              }
               <Grid container item xs={12} sx={{ marginTop: "10px", justifyContent: "space-evenly" }}>
                 <Grid item container direction='row' xs={12}>
                   <Grid item xs={12} sx={{ marginTop: "5px", justifyContent: "flex-start" }}>
@@ -2090,38 +2099,38 @@ const TenantLease = () => {
                       }
                     })()
                   ) : // Display data from `application` directly if `managerInitiatedRenew` is false
-                  application ? (
-                    <Grid container spacing={2}>
-                      <Grid item xs={6}>
-                        <Typography sx={{ fontWeight: "bold" }}>First Name:</Typography>
-                        <Typography>{application.tenant_first_name || "N/A"}</Typography>
+                    application ? (
+                      <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                          <Typography sx={{ fontWeight: "bold" }}>First Name:</Typography>
+                          <Typography>{application.tenant_first_name || "N/A"}</Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography sx={{ fontWeight: "bold" }}>Last Name:</Typography>
+                          <Typography>{application.tenant_last_name || "N/A"}</Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography sx={{ fontWeight: "bold" }}>Email:</Typography>
+                          <Typography>{application.tenant_email || "N/A"}</Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography sx={{ fontWeight: "bold" }}>Phone Number:</Typography>
+                          <Typography>{application.tenant_phone_number || "N/A"}</Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography sx={{ fontWeight: "bold" }}>Address:</Typography>
+                          <Typography>
+                            {application.tenant_address || "N/A"}, {application.tenant_city || "N/A"}, {application.tenant_state || "N/A"}, {application.tenant_zip || "N/A"}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography sx={{ fontWeight: "bold" }}>Responsibility:</Typography>
+                          <Typography>{application.lt_responsibility ? `${application.lt_responsibility * 100}%` : "N/A"}</Typography>
+                        </Grid>
                       </Grid>
-                      <Grid item xs={6}>
-                        <Typography sx={{ fontWeight: "bold" }}>Last Name:</Typography>
-                        <Typography>{application.tenant_last_name || "N/A"}</Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Typography sx={{ fontWeight: "bold" }}>Email:</Typography>
-                        <Typography>{application.tenant_email || "N/A"}</Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Typography sx={{ fontWeight: "bold" }}>Phone Number:</Typography>
-                        <Typography>{application.tenant_phone_number || "N/A"}</Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Typography sx={{ fontWeight: "bold" }}>Address:</Typography>
-                        <Typography>
-                          {application.tenant_address || "N/A"}, {application.tenant_city || "N/A"}, {application.tenant_state || "N/A"}, {application.tenant_zip || "N/A"}
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Typography sx={{ fontWeight: "bold" }}>Responsibility:</Typography>
-                        <Typography>{application.lt_responsibility ? `${application.lt_responsibility * 100}%` : "N/A"}</Typography>
-                      </Grid>
-                    </Grid>
-                  ) : (
-                    <Typography>No Tenant Data Available</Typography>
-                  )}
+                    ) : (
+                      <Typography>No Tenant Data Available</Typography>
+                    )}
                 </>
               )}
               {page === "refer_tenant" && (
@@ -2689,47 +2698,47 @@ const TenantLease = () => {
                 )}
                 {Object.entries(mappedUtilitiesPaidBy).length > 0
                   ? Object.entries(mappedUtilitiesPaidBy).map(([utility, selectedValue]) => (
-                      <Fragment key={utility}>
-                        <Grid item xs={6}>
-                          <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
-                            {formatUtilityName(utility)}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={6}>
-                          <FormControlLabel
-                            value='owner'
-                            control={<Radio checked={selectedValue === "owner"} onChange={() => handleUtilityChange(utility, "owner")} />}
-                            label='Owner'
-                          />
-                          <FormControlLabel
-                            value='tenant'
-                            control={<Radio checked={selectedValue === "tenant"} onChange={() => handleUtilityChange(utility, "tenant")} />}
-                            label='Tenant'
-                          />
-                        </Grid>
-                      </Fragment>
-                    ))
+                    <Fragment key={utility}>
+                      <Grid item xs={6}>
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
+                          {formatUtilityName(utility)}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <FormControlLabel
+                          value='owner'
+                          control={<Radio checked={selectedValue === "owner"} onChange={() => handleUtilityChange(utility, "owner")} />}
+                          label='Owner'
+                        />
+                        <FormControlLabel
+                          value='tenant'
+                          control={<Radio checked={selectedValue === "tenant"} onChange={() => handleUtilityChange(utility, "tenant")} />}
+                          label='Tenant'
+                        />
+                      </Grid>
+                    </Fragment>
+                  ))
                   : Object.entries(defaultUtilities).map(([utility, selectedValue]) => (
-                      <Fragment key={utility}>
-                        <Grid item xs={6}>
-                          <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
-                            {formatUtilityName(utility)}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={6}>
-                          <FormControlLabel
-                            value='owner'
-                            control={<Radio checked={selectedValue === "owner"} onChange={() => handleUtilityChange(utility, "owner")} />}
-                            label='Owner'
-                          />
-                          <FormControlLabel
-                            value='tenant'
-                            control={<Radio checked={selectedValue === "tenant"} onChange={() => handleUtilityChange(utility, "tenant")} />}
-                            label='Tenant'
-                          />
-                        </Grid>
-                      </Fragment>
-                    ))}
+                    <Fragment key={utility}>
+                      <Grid item xs={6}>
+                        <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.mediumFont }}>
+                          {formatUtilityName(utility)}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <FormControlLabel
+                          value='owner'
+                          control={<Radio checked={selectedValue === "owner"} onChange={() => handleUtilityChange(utility, "owner")} />}
+                          label='Owner'
+                        />
+                        <FormControlLabel
+                          value='tenant'
+                          control={<Radio checked={selectedValue === "tenant"} onChange={() => handleUtilityChange(utility, "tenant")} />}
+                          label='Tenant'
+                        />
+                      </Grid>
+                    </Fragment>
+                  ))}
                 <Grid item xs={12}>
                   <Button
                     variant='outlined'
@@ -2761,9 +2770,9 @@ const TenantLease = () => {
           <Button
             // onClick={application?.lease_status === "NEW" ? handleCreateLease : handleRenewLease}
             onClick={() => {
-              if (application?.lease_status === "NEW" || application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW NEW" || application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "APPROVED" ) {
+              if (application?.lease_status === "NEW" || application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW NEW" || application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "APPROVED") {
                 handleCreateLease(); //PUT
-              } else if(application?.lease_status === "REJECTED" || application?.lease_status === "REFUSED" || application?.lease_status === "RESCIND" || application?.lease_status === "WITHDRAWN" || application?.lease_status === "RENEW REFUSED" || application?.lease_status ===  "RENEW WITHDRAWN"){
+              } else if (application?.lease_status === "REJECTED" || application?.lease_status === "REFUSED" || application?.lease_status === "RESCIND" || application?.lease_status === "WITHDRAWN" || application?.lease_status === "RENEW REFUSED" || application?.lease_status === "RENEW WITHDRAWN") {
                 handleCreateNewLease(); //POST
               } else if (application?.lease_status === "ACTIVE" || application?.lease_status === "ACTIVE M2M") {
                 handleRenewLease();
@@ -2779,11 +2788,11 @@ const TenantLease = () => {
               },
             }}
           >
-            {(application?.lease_status === "NEW" ||  application?.lease_status === "REJECTED" || application?.lease_status === "REFUSED" || application?.lease_status === "RENEW REFUSED" || application?.lease_status === "WITHDRAWN" || application?.lease_status === "RESCIND" ) ? "Create Lease" : ""}
+            {(application?.lease_status === "NEW" || application?.lease_status === "REJECTED" || application?.lease_status === "REFUSED" || application?.lease_status === "RENEW REFUSED" || application?.lease_status === "WITHDRAWN" || application?.lease_status === "RESCIND") ? "Create Lease" : ""}
             {application?.lease_status === "PROCESSING" ? "Modify Lease" : ""}
-            {application?.lease_status === "ACTIVE" || application?.lease_status === "ACTIVE M2M" ? "Renew Lease" : ""}            
+            {application?.lease_status === "ACTIVE" || application?.lease_status === "ACTIVE M2M" ? "Renew Lease" : ""}
             {application?.lease_status === "RENEW NEW" ? "Create Lease Renewal" : ""}
-            {application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "APPROVED" ? "Modify Lease Renewal" : ""}            
+            {application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "APPROVED" ? "Modify Lease Renewal" : ""}
           </Button>
         </Grid>
       </Box>
