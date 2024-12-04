@@ -58,7 +58,7 @@ export default function LeaseDetailsComponent({
   const [showRenewContractDialog, setShowRenewContractDialog] = useState(false);
   const [showEarlyTerminationDialog, setShowEarlyTerminationDialog] = useState(false);
   const [showRenewedLeaseEarlyTerminationDialog, setShowRenewedLeaseEarlyTerminationDialog] = useState(false);
-  const [contractEndNotice, setContractEndNotice] = useState(currentProperty?.lease_end_notice_period ? Number(currentProperty?.lease_end_notice_period) : 30);
+  const [contractEndNotice, setContractEndNotice] = useState(0);
   const [isChange, setIsChange] = useState(false);
   const [isEndLeasePopupOpen, setIsEndLeasePopupOpen] = useState(false);
   const [renewedLease, setRenewedLease] = useState(null);
@@ -95,6 +95,7 @@ export default function LeaseDetailsComponent({
     console.log('active lease value', activeLease);
     const tenant_detail = activeLease && activeLease.lease_start && activeLease.tenant_uid ? `${activeLease.tenant_first_name} ${activeLease.tenant_last_name}` : "No Tenant";
     setTenantDetail(tenant_detail);
+    setContractEndNotice(activeLease?.lease_end_notice_period ? Number(activeLease?.lease_end_notice_period) : 30)
     setRenewedLease(renewed);
     setIsFlipped(false);
 
@@ -142,7 +143,7 @@ export default function LeaseDetailsComponent({
     const formData = new FormData();
 
     // formData.append("contract_uid", currentContractUID);
-    formData.append("lease_uid", currentProperty?.lease_uid);
+    formData.append("lease_uid", activeLease?.lease_uid);
     formData.append("lease_renew_status", "ENDING");
     formData.append("lease_early_end_date", formattedDate);
 
@@ -356,7 +357,8 @@ export default function LeaseDetailsComponent({
                       {
                         isFlipped === false && (
                           <Box display='flex' alignItems='center' justifyContent={"space-between"}>
-                            {currentProperty?.lease_status === "ACTIVE" || currentProperty?.lease_status === "ACTIVE M2M" ? (                    
+                            {/* {currentProperty?.lease_status === "ACTIVE" || currentProperty?.lease_status === "ACTIVE M2M" ? ( */}
+                            {activeLease ? (   
                                 <Typography
                                   sx={{
                                     color: theme.typography.primary.black,
@@ -364,7 +366,7 @@ export default function LeaseDetailsComponent({
                                     fontSize: theme.typography.smallFont,
                                   }}
                                 >
-                                  {currentProperty?.lease_uid}
+                                  {activeLease.lease_uid}
                                 </Typography>                                                                                          
                             ) : (
                               <Typography
@@ -459,7 +461,8 @@ export default function LeaseDetailsComponent({
                 </Grid>
                 <Grid item xs={6}>
                   <Box display='flex' alignItems='center' justifyContent={"space-between"}>
-                    {currentProperty?.lease_status === "ACTIVE" || currentProperty?.lease_status === "ACTIVE M2M" ? (                    
+                    {/* {currentProperty?.lease_status === "ACTIVE" || currentProperty?.lease_status === "ACTIVE M2M" ? (                     */}
+                    {activeLease ? ( 
                         <Typography
                           sx={{
                             color: theme.typography.primary.black,
@@ -502,7 +505,8 @@ export default function LeaseDetailsComponent({
                     <Grid item xs={6}>
                       <Box display='flex' alignItems='center' justifyContent={"space-between"}>
                         
-                        {currentProperty?.lease_status === "ACTIVE" || currentProperty?.lease_status === "ACTIVE M2M" ? (
+                        {/* {currentProperty?.lease_status === "ACTIVE" || currentProperty?.lease_status === "ACTIVE M2M" ? ( */}
+                        {activeLease ? (
                           <>
                             <Typography
                               sx={{
@@ -511,25 +515,25 @@ export default function LeaseDetailsComponent({
                                 fontSize: theme.typography.smallFont,
                               }}
                             >
-                              {currentProperty?.lease_status}
+                              {activeLease?.lease_status}
                             </Typography>
-                            {currentProperty?.lease_renew_status &&
-                              (currentProperty?.lease_renew_status.includes("RENEW") || currentProperty?.lease_renew_status.includes("TERMINATION") || currentProperty?.lease_renew_status === "CANCEL RENEWAL") && (
+                            {activeLease?.lease_renew_status &&
+                              (activeLease?.lease_renew_status.includes("RENEW") || activeLease?.lease_renew_status.includes("TERMINATION") || activeLease?.lease_renew_status === "CANCEL RENEWAL") && (
                                 <Typography
                                   sx={{
-                                    color: currentProperty?.lease_renew_status?.includes("RENEW") ? "#FF8A00" : "#A52A2A",
+                                    color: activeLease?.lease_renew_status?.includes("RENEW") ? "#FF8A00" : "#A52A2A",
                                     fontWeight: theme.typography.secondary.fontWeight,
                                     fontSize: theme.typography.smallFont,
                                   }}
                                 >
-                                  {currentProperty?.lease_renew_status === "RENEW REQUESTED" || currentProperty?.lease_renew_status === "PM RENEW REQUESTED"  ? "RENEWING" : ""}
-                                  {currentProperty?.lease_renew_status === "RENEWED" ? "RENEWED" : ""}
-                                  {currentProperty?.lease_renew_status === "EARLY TERMINATION" ? "EARLY TERMINATION" : ""}
-                                  {currentProperty?.lease_renew_status === "CANCEL RENEWAL" ? "CANCEL RENEWAL" : ""}
+                                  {activeLease?.lease_renew_status === "RENEW REQUESTED" || activeLease?.lease_renew_status === "PM RENEW REQUESTED"  ? "RENEWING" : ""}
+                                  {activeLease?.lease_renew_status === "RENEWED" ? "RENEWED" : ""}
+                                  {activeLease?.lease_renew_status === "EARLY TERMINATION" ? "EARLY TERMINATION" : ""}
+                                  {activeLease?.lease_renew_status === "CANCEL RENEWAL" ? "CANCEL RENEWAL" : ""}
                                 </Typography>
                               )}
-                              {selectedRole === "MANAGER" && currentProperty?.lease_renew_status &&
-                              (currentProperty?.lease_renew_status === "EARLY TERMINATION") && (
+                              {selectedRole === "MANAGER" && activeLease?.lease_renew_status &&
+                              (activeLease?.lease_renew_status === "EARLY TERMINATION") && (
                                 <KeyboardArrowRightIcon
                                   sx={{ color: "#A52A2A", cursor: "pointer" }}
                                   onClick={() => {
@@ -571,7 +575,7 @@ export default function LeaseDetailsComponent({
                               (renewedLease?.lease_renew_status === "EARLY TERMINATION") && (
                                 <Typography
                                   sx={{
-                                    color: currentProperty?.lease_renew_status?.includes("RENEW") ? "#FF8A00" : "#A52A2A",
+                                    color: activeLease?.lease_renew_status?.includes("RENEW") ? "#FF8A00" : "#A52A2A",
                                     fontWeight: theme.typography.secondary.fontWeight,
                                     fontSize: theme.typography.smallFont,
                                   }}
@@ -622,9 +626,9 @@ export default function LeaseDetailsComponent({
                             fontSize: theme.typography.smallFont,
                           }}
                         >
-                          {currentProperty?.lease_start}
+                          {activeLease?.lease_start}
                           <span style={{ fontWeight: "bold", margin: "0 10px" }}>to</span>
-                          {currentProperty?.lease_end}
+                          {activeLease?.lease_end}
                         </Typography>
                       )
                     }
@@ -670,7 +674,7 @@ export default function LeaseDetailsComponent({
                             fontSize: theme.typography.smallFont,
                           }}
                         >
-                          {currentProperty?.lease_end_notice_period ? `${currentProperty?.lease_end_notice_period} days` : 'Not specified'}                    
+                          {activeLease?.lease_end_notice_period ? `${activeLease?.lease_end_notice_period} days` : 'Not specified'}                    
                         </Typography>
                       )
                     }
@@ -717,8 +721,8 @@ export default function LeaseDetailsComponent({
                           fontSize: theme.typography.smallFont,
                         }}
                       >
-                        {currentProperty?.lease_m2m == null || currentProperty?.lease_m2m === 0 ? "Not Specified" : ""}
-                        {currentProperty?.lease_m2m === 1 ? "Month To Month" : ""}
+                        {activeLease?.lease_m2m == null || activeLease?.lease_m2m === 0 ? "Not Specified" : ""}
+                        {activeLease?.lease_m2m === 1 ? "Month To Month" : ""}
                       </Typography>
                       )
                   }
@@ -782,7 +786,7 @@ export default function LeaseDetailsComponent({
                           fontWeight: theme.typography.secondary.fontWeight,
                           fontSize: isMobile? "10px": "12px",
                           whiteSpace: isMobile ? "normal" : "nowrap", // Allow wrapping on mobile, no wrapping on desktop
-    wordWrap: isMobile ? "break-word" : "normal",
+                          wordWrap: isMobile ? "break-word" : "normal",
                           //   marginLeft: "1%", // Adjusting margin for icon and text
                         }}
                       >
@@ -821,7 +825,7 @@ export default function LeaseDetailsComponent({
                           fontWeight: theme.typography.secondary.fontWeight,
                           fontSize: isMobile? "10px": "12px",
                           whiteSpace: isMobile ? "normal" : "nowrap", // Allow wrapping on mobile, no wrapping on desktop
-    wordWrap: isMobile ? "break-word" : "normal",
+                          wordWrap: isMobile ? "break-word" : "normal",
                           //   marginLeft: "1%", // Adjusting margin for icon and text
                         }}
                       >
@@ -862,13 +866,13 @@ export default function LeaseDetailsComponent({
                           fontWeight: theme.typography.secondary.fontWeight,
                           fontSize: isMobile? "10px": "12px",
                           whiteSpace: isMobile ? "normal" : "nowrap", // Allow wrapping on mobile, no wrapping on desktop
-    wordWrap: isMobile ? "break-word" : "normal", // Ensure proper word wrapping on mobile
+                          wordWrap: isMobile ? "break-word" : "normal", // Ensure proper word wrapping on mobile
 
                           //   marginLeft: "1%", // Adjusting margin for icon and text
                         }}
                       >
                         {/* {"Edit/Renew Lease"} */}
-                        {currentProperty?.lease_renew_status === "RENEWED" ? "View Renewed Lease" : "Edit/Renew Lease"}
+                        {activeLease?.lease_renew_status === "RENEWED" ? "View Renewed Lease" : "Edit/Renew Lease"}
                       </Typography>
                     </Button>
                   </Grid>
@@ -895,8 +899,8 @@ export default function LeaseDetailsComponent({
                   </AccordionSummary>
                   <AccordionDetails>
                     <Grid container item spacing={2}>
-                      {currentProperty?.lease_fees ? (
-                        <FeesSmallDataGrid data={JSON.parse(currentProperty?.lease_fees)} />
+                      {activeLease?.lease_fees ? (
+                        <FeesSmallDataGrid data={JSON.parse(activeLease.lease_fees)} />
                       ) : (
                         <Box
                           sx={{
@@ -912,7 +916,7 @@ export default function LeaseDetailsComponent({
                             sx={{
                               color: "#A9A9A9",
                               fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: theme.typography.mediumFont,
+                              fontSize: theme.typography.mediumFont,
                             }}
                           >
                             No Fees
@@ -973,7 +977,7 @@ export default function LeaseDetailsComponent({
             {/* Lease Documents */}
             {isFlipped === false && activeLease && (
               <Grid item xs={12}>
-                {currentProperty?.lease_documents && JSON.parse(currentProperty.lease_documents).length > 0 ? (
+                {activeLease?.lease_documents && JSON.parse(activeLease.lease_documents).length > 0 ? (
                   <Accordion theme={theme} sx={{ backgroundColor: "#e6e6e6", marginTop: "10px" }}>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='lease-documents-content' id='lease-documents-header'>
                       <Typography
@@ -988,7 +992,7 @@ export default function LeaseDetailsComponent({
                     </AccordionSummary>
                     <AccordionDetails>
                       <Grid container item>
-                        <DocumentSmallDataGrid data={JSON.parse(currentProperty.lease_documents)} handleFileClick={handleFileClick} />
+                        <DocumentSmallDataGrid data={JSON.parse(activeLease.lease_documents)} handleFileClick={handleFileClick} />
                       </Grid>
                     </AccordionDetails>
                   </Accordion>
@@ -1232,8 +1236,8 @@ export default function LeaseDetailsComponent({
                 <EndLeaseButton
                   theme={theme}
                   fromProperties={true}
-                  leaseDetails={currentProperty} // Pass the lease details as props
-                  selectedLeaseId={currentProperty?.lease_uid} // Adjust based on your lease ID reference
+                  leaseDetails={activeLease} // Pass the lease details as props
+                  selectedLeaseId={activeLease?.lease_uid} // Adjust based on your lease ID reference
                   setIsEndClicked={setIsEndLeasePopupOpen} // Close popup when done
                   handleUpdate={fetchProperties} // Any update handler to refresh data
                 />
@@ -1244,8 +1248,8 @@ export default function LeaseDetailsComponent({
               <EarlyTerminationDialog
                 theme={theme}                
                 fromProperties={true}
-                leaseDetails={currentProperty} // Pass the lease details as props
-                selectedLeaseId={currentProperty?.lease_uid} // Adjust based on your lease ID reference
+                leaseDetails={activeLease} // Pass the lease details as props
+                selectedLeaseId={activeLease?.lease_uid} // Adjust based on your lease ID reference
                 setIsEndClicked={setShowEarlyTerminationDialog} // Close popup when done
                 handleUpdate={fetchProperties} // Any update handler to refresh data
                 renewedLease={renewedLease}                
@@ -1256,7 +1260,7 @@ export default function LeaseDetailsComponent({
               <EarlyTerminationDialog
                 theme={theme}                
                 fromProperties={true}
-                leaseDetails={currentProperty} // Pass the lease details as props
+                leaseDetails={activeLease} // Pass the lease details as props
                 selectedLeaseId={renewedLease?.lease_uid} // Adjust based on your lease ID reference
                 setIsEndClicked={setShowRenewedLeaseEarlyTerminationDialog} // Close popup when done
                 handleUpdate={fetchProperties} // Any update handler to refresh data
@@ -1545,7 +1549,7 @@ const EndContractDialog = ({ open, handleClose, contract }) => {
   const [contractEndDate, setContractEndDate] = useState(contract?.contract_end_date ? new Date(contract?.contract_end_date) : null);
   const today = new Date();
   const noticePeriod = contract?.contract_notice_period || 30;
-  // console.log("noticePeriod - ", noticePeriod);
+  console.log("noticePeriod - ", noticePeriod, contract);
   const [selectedEndDate, setSelectedEndDate] = useState(dayjs(contractEndDate));
 
   useEffect(() => {
