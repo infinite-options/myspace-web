@@ -59,10 +59,6 @@ export default function LeaseDetailsComponent({
   const [showEarlyTerminationDialog, setShowEarlyTerminationDialog] = useState(false);
   const [showRenewedLeaseEarlyTerminationDialog, setShowRenewedLeaseEarlyTerminationDialog] = useState(false);
   const [contractEndNotice, setContractEndNotice] = useState(currentProperty?.lease_end_notice_period ? Number(currentProperty?.lease_end_notice_period) : 30);
-
-  const tenant_detail =
-    currentProperty && currentProperty.lease_start && currentProperty.tenant_uid ? `${currentProperty.tenant_first_name} ${currentProperty.tenant_last_name}` : "No Tenant";
-  const activeLease = currentProperty?.lease_status;
   const [isChange, setIsChange] = useState(false);
   const [isEndLeasePopupOpen, setIsEndLeasePopupOpen] = useState(false);
   const [renewedLease, setRenewedLease] = useState(null);
@@ -70,6 +66,11 @@ export default function LeaseDetailsComponent({
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [applicationsCount, setApplicationsCount] = useState(0);
   const [allApplications, setAllApplications] = useState([]);
+  //const activeLease = currentProperty?.lease_status;
+  //const tenant_detail = currentProperty && currentProperty.lease_start && currentProperty.tenant_uid ? `${currentProperty.tenant_first_name} ${currentProperty.tenant_last_name}` : "No Tenant";
+  const [activeLease, setActiveLease] = useState({});
+  const [tenant_detail, setTenantDetail] = useState("");
+
 
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
@@ -84,13 +85,16 @@ export default function LeaseDetailsComponent({
         // console.log("88 - index - ", index);
         renewed = lease;
       }
-
+    });
     const applicationsCount = currentProperty?.leases.filter((lease) => ["NEW", "RENEW NEW", "PROCESSING", "RENEW PROCESSING"].includes(lease.lease_status)).length;
     const applications = currentProperty?.leases.filter((lease) => !["ACTIVE", "ACTIVE M2M", "ENDED", "TERMINATED"].includes(lease.lease_status));
+    const activeLease = currentProperty?.leases.filter((lease) => ["ACTIVE", "ACTIVE M2M"].includes(lease.lease_status))[0];
     setAllApplications(applications);
     setApplicationsCount(applicationsCount);
-    });
-
+    setActiveLease(activeLease);
+    console.log('active lease value', activeLease);
+    const tenant_detail = activeLease && activeLease.lease_start && activeLease.tenant_uid ? `${activeLease.tenant_first_name} ${activeLease.tenant_last_name}` : "No Tenant";
+    setTenantDetail(tenant_detail);
     setRenewedLease(renewed);
     setIsFlipped(false);
 
