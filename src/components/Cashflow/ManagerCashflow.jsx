@@ -713,7 +713,7 @@ export default function ManagerCashflow() {
       key = "total_paid";
     }
 
-    let expenseItems = data?.filter((item) => item.pur_cf_type === "expense" && item.cf_month === month && item.cf_year === year && item.purchase_type.toUpperCase() !== "DEPOSIT");
+    let expenseItems = data?.filter((item) => item.cf_month === month && item.cf_year === year && item.purchase_type.toUpperCase() !== "DEPOSIT");
 
     let totals = {};
     let hasItems = {};
@@ -1018,7 +1018,7 @@ export default function ManagerCashflow() {
   }
 
   function getTotalExpenseByMonthYear(data, month, year) {
-    let expenseItems = data?.filter((item) => item.cf_month === month && item.cf_year === year && item.pur_payer === profileId && item.purchase_type.toUpperCase() !== "DEPOSIT");
+    let expenseItems = data?.filter((item) => item.cf_month === month && item.cf_year === year && item.purchase_type.toUpperCase() !== "DEPOSIT");
     let totalExpense = expenseItems?.reduce((acc, item) => {
       return acc + parseFloat(item["total_paid"] ? item["total_paid"] : 0.0);
     }, 0.0);
@@ -1038,7 +1038,7 @@ export default function ManagerCashflow() {
 
   function getTotalExpectedExpenseByMonthYear(data, month, year) {
     // console.log(data)
-    let expenseItems = data?.filter((item) => item.cf_month === month && item.cf_year === year && item.pur_payer === profileId && item.purchase_type.toUpperCase() !== "DEPOSIT");
+    let expenseItems = data?.filter((item) => item.cf_month === month && item.cf_year === year && item.purchase_type.toUpperCase() !== "DEPOSIT");
     let totalExpense = expenseItems?.reduce((acc, item) => {
       return acc + parseFloat(item["pur_amount_due"] ? item["pur_amount_due"] : 0.0);
     }, 0.0);
@@ -1119,7 +1119,7 @@ export default function ManagerCashflow() {
       // const payoutsCurrentMonth = currentMonthData?.filter((item) => item.pur_payer === profileId);
       // const payoutsCurrentYear = currentYearData?.filter((item) => item.pur_payer === profileId);
 
-      const payoutsCurrentMonth = currentMonthData?.filter((item) => item.pur_cf_type === "expense");
+      const payoutsCurrentMonth = currentMonthData?.filter((item) => item.pur_cf_type === "expense" || (item.pur_cf_type === "revenue" && item.purchase_type.toUpperCase() === "MANAGEMENT" ));
       const payoutsCurrentYear = currentYearData?.filter((item) => item.pur_cf_type === "expense");
   
       const revenueDataForManager = currentMonthData?.filter((item) => item.pur_payer === profileId || item.pur_receiver === profileId);
@@ -1139,9 +1139,21 @@ export default function ManagerCashflow() {
             property_address: item.property_address,
             property_unit: item.property_unit,
           };
+
+          let totalExpected = 0
+          let totalActual = 0
+
+          if(item.purchase_type.toUpperCase() === "MANAGEMENT"){
+            item.pur_amount_due *= -1
+            item.total_paid *= -1
+
+            totalExpected = parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0) || 0;
+            totalActual = parseFloat(item.total_paid) || 0;
+          }else{
+            totalExpected = parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0) || 0;
+            totalActual = parseFloat(item.total_paid) || 0;
+          }
   
-          const totalExpected = parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0) || 0;
-          const totalActual = parseFloat(item.total_paid) || 0;
   
           if (!acc[propertyUID]) {
             // acc[propertyUID] = [];
@@ -1570,7 +1582,7 @@ export default function ManagerCashflow() {
 
   
       //For unverified
-      const dataListForUnverified = revenueDataForManager?.filter((item) => item.verified === "unverified");
+      const dataListForUnverified = revenueDataForManager?.filter((item) => item.verified === "unverified" && item.purchase_type.toUpperCase() !== "DEPOSIT");
   
       // console.log("dataList for unverified - ", dataListForUnverified);
       const result = {};
@@ -1604,6 +1616,8 @@ export default function ManagerCashflow() {
         // Iterate over each payment inside payment_ids array
         paymentDetails.forEach((payment) => {
           const key = `${data.pur_payer}${payment.payment_date}${payment.payment_intent}`;
+
+          console.log("=== debug dhyey = ", payment, data)
   
           // Create a new object for each payment item
           const newObject = {
@@ -1654,6 +1668,8 @@ export default function ManagerCashflow() {
   
         if (item.cf_month === month && item.cf_year === year && item.purchase_type !== "Deposit") {
           if (item.pur_payer.startsWith("110")) {
+            item.total_paid *= -1
+            item.pur_amount_due *= -1
             totalActual = parseFloat(item.total_paid) || 0;
             totalExpected = parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0) || 0;
           } else {
@@ -2142,6 +2158,8 @@ export default function ManagerCashflow() {
       //   return total;
       // }, 0);
 
+      // let totalPayoutActual = 0
+      // let totalPayoutExpected = 0
       const totalPayoutExpected = (payoutData.totalExpected || 0) * -1;
       const totalPayoutActual = (payoutData.totalActual || 0) * -1;
 
@@ -2150,7 +2168,7 @@ export default function ManagerCashflow() {
 
       // Filter payout items and convert expected/total_paid to negative
       const profitPayoutItems = payoutData.payoutItems
-        .filter((item) => parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0) >= 0 || parseFloat(item.total_paid) >= 0)
+        .filter((item) => parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0) >= 0 || parseFloat(item.total_paid) >= 0 || item.purchase_type.toUpperCase() === "MANAGEMENT")
         .map((item) => ({
           ...item,
           pur_amount_due: (parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0) || 0.0) * -1, // Negative value for expected for display

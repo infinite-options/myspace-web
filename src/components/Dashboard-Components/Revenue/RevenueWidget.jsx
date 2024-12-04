@@ -31,13 +31,16 @@ export default function RevenueWidget({ revenueData, cashflowStatusData }) {
       const isCurrentYear = item.cf_year === currentYear;
 
       if (isCurrentMonth && isCurrentYear) {
-        if (item.pur_cf_type === "revenue" && item.purchase_type?.toUpperCase() !== "MANAGEMENT" && item.purchase_type?.toUpperCase() !== "DEPOSIT") {
+        if (item.pur_cf_type === "revenue" && item.purchase_type?.toUpperCase() !== "DEPOSIT") {
           revenue.total_paid += parseFloat(item.total_paid || 0);
           revenue.pur_amount_due += parseFloat(item.pur_amount_due || 0);
         } else if (item.pur_cf_type === "expense" && item.purchase_type?.toUpperCase() !== "MANAGEMENT") {
           expense.total_paid += parseFloat(item.total_paid || 0);
           expense.pur_amount_due += parseFloat(item.pur_amount_due || 0);
-        } else if (item.purchase_type?.toUpperCase() === "MANAGEMENT") {
+        } 
+        
+        // for profit
+        if (item.purchase_type?.toUpperCase() === "MANAGEMENT") {
           profit.total_paid += parseFloat(item.total_paid || 0);
           profit.pur_amount_due += parseFloat(item.pur_amount_due || 0);
         }

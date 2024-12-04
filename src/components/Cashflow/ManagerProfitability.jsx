@@ -988,7 +988,7 @@ const ManagerProfitability = ({
                   }}
                   onClick={() => {handleSelectTab("by_cashflow")}}
                 >
-                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Cashflow</Typography>
+                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Cashflow By Property</Typography>
                 </Button>
               </Grid>
               <Grid container justifyContent='center' item xs={3} marginRight={6}>
@@ -4461,7 +4461,7 @@ function BalanceDetailsTable(props) {
   }, [props.sortBy]);
 
   useEffect(() => {
-  console.log("--DEBUG Data - " );
+  console.log("--DEBUG Data - ", data);
     if (data && data.length > 0) {
       // setSelectedPayments(data);
       // setSelectedPayments([]);
