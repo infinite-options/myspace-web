@@ -47,7 +47,7 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 // import { DatePicker } from "@mui/x-date-pickers";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-
+import CircularProgress from "@mui/material/CircularProgress";
 import APIConfig from '../../../utils/APIConfig';
 import Documents from '../../Leases/Documents';
 import { FeesDataGrid } from '../../Property/PMQuotesRequested';
@@ -60,7 +60,7 @@ import { minutesToSeconds } from 'date-fns';
 // dhyey
 
 //standard textfield style 
-
+import Backdrop from "@mui/material/Backdrop";
 import { datePickerSlotProps, textFieldSX, textFieldInputProps, } from "../../../styles";
 import { resolve } from 'chart.js/helpers';
 
@@ -868,6 +868,8 @@ const PropertyCard = (props) => {
   const [dialogMessage, setDialogMessage] = useState("");
   const [dialogSeverity, setDialogSeverity] = useState("info");
 
+  const [loading, setLoading] = useState(false);
+
   const openDialog = (title, message, severity) => {
     setDialogTitle(title);  // Set the dialog title
     setDialogMessage(message);  // Set the dialog message
@@ -1347,7 +1349,11 @@ const PropertyCard = (props) => {
   };
 
   const handleSendQuoteClick = () => {
-    // console.log("Send Quote Clicked");
+    console.log("Send Quote Clicked");
+	setLoading(true);
+	try{
+
+	
     const formData = new FormData();	
     
     const hasInvalidCharge = contractFees.some(fee => fee.charge === null || fee.charge === "");
@@ -1457,6 +1463,12 @@ const PropertyCard = (props) => {
       .catch((error) => {
         console.error("There was a problem with the fetch operation:", error);
       });
+
+	} catch (error) {
+		console.error("There was a problem with the fetch operation:", error);
+	  } finally {
+		setLoading(false); // Stop the loader
+	  }
   };
 
   const updateExistingContractStatus = ( contractObj, status, earlyEndDate) => {
@@ -2127,6 +2139,9 @@ const PropertyCard = (props) => {
 return (
 		<>
 		{/* Time since Inquiry was created */}
+		<Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
+        <CircularProgress color='inherit' />
+      </Backdrop>
 			<Box
 				sx={{
 				display: "flex",
