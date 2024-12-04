@@ -68,6 +68,8 @@ export default function LeaseDetailsComponent({
   const [renewedLease, setRenewedLease] = useState(null);
   const [isFlipped, setIsFlipped] = useState(false);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [applicationsCount, setApplicationsCount] = useState(0);
+  const [allApplications, setAllApplications] = useState([]);
 
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
@@ -75,13 +77,18 @@ export default function LeaseDetailsComponent({
 
   useEffect(() => {    
     let renewed = null;
-    currentProperty?.applications?.forEach((application, index) => {
+    currentProperty?.leases?.forEach((lease, index) => {
       // if (application.lease_status === "RENEW NEW" || application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") {
-      if (application.lease_status === "APPROVED") {
-        console.log("73 - application - ", application);
+      if (lease.lease_status === "APPROVED") {
+        console.log("73 - application - ", lease);
         // console.log("88 - index - ", index);
-        renewed = application;
+        renewed = lease;
       }
+
+    const applicationsCount = currentProperty?.leases.filter((lease) => ["NEW", "RENEW NEW", "PROCESSING", "RENEW PROCESSING"].includes(lease.lease_status)).length;
+    const applications = currentProperty?.leases.filter((lease) => !["ACTIVE", "ACTIVE M2M", "ENDED", "TERMINATED"].includes(lease.lease_status));
+    setAllApplications(applications);
+    setApplicationsCount(applicationsCount);
     });
 
     setRenewedLease(renewed);
@@ -160,11 +167,11 @@ export default function LeaseDetailsComponent({
     let renewalApplication = null;
     let renewalApplicationIndex = null;
 
-    currentProperty?.applications?.forEach((application, index) => {
-      if (application.lease_status === "RENEW NEW" || application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") {
-        console.log("88 - application - ", application);
+    currentProperty?.leases?.forEach((lease, index) => {
+      if (lease.lease_status === "RENEW NEW" || lease.lease_status === "RENEW PROCESSING" || lease.lease_status === "APPROVED") {
+        console.log("88 - application - ", lease);
         // console.log("88 - index - ", index);
-        renewalApplication = application;
+        renewalApplication = lease;
         renewalApplicationIndex = index;
       }
     });
@@ -1073,7 +1080,7 @@ export default function LeaseDetailsComponent({
               </Grid>
             )}
 
-            {currentProperty && currentProperty.applications.length > 0 && (
+            {currentProperty && allApplications.length > 0 && (
               <>
                 <Grid item xs={12}>
                   <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -1097,7 +1104,8 @@ export default function LeaseDetailsComponent({
                     >
                       <Badge
                         color='success'
-                        badgeContent={currentProperty.applications.filter((app) => ["NEW", "RENEW NEW", "PROCESSING", "RENEW PROCESSING"].includes(app.lease_status)).length}
+                        // badgeContent={currentProperty.leases.filter((app) => ["NEW", "RENEW NEW", "PROCESSING", "RENEW PROCESSING"].includes(app.lease_status)).length}
+                        badgeContent={applicationsCount}
                         showZero
                         sx={{
                           paddingRight: "50px",
@@ -1127,7 +1135,7 @@ export default function LeaseDetailsComponent({
                         padding: "0px 5px 5px 5px",
                       }}
                     >
-                      {currentProperty.applications.map((app, index) => (
+                      {allApplications.map((app, index) => (
                         <Button
                           key={index}
                           onClick={() => handleAppClick(index)}
