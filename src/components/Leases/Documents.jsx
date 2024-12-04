@@ -356,48 +356,63 @@ const Documents = ({ setRightPane,setRHS, setSelectedDocument, fromRenew, docume
       flex: 2,
       renderCell: (params) => (
         <FormControl
-								margin="dense"
-								fullWidth
-								variant="outlined"
-								sx={{
-									marginTop: '10px',
-									'& .MuiInputLabel-root': {
-										color: 'black', // Normal state
-									},
-									'& .MuiInputLabel-root.Mui-focused': {
-										color: 'black', // Focused state
-									},
-								}}
-							> <InputLabel>Document Type</InputLabel>
-              <Select
-              value={contractFileTypes[params.row.id]? contractFileTypes[params.row.id] : ""}
-              label="Document Type"
-              onChange={(e) => {
-                const updatedTypes = [...contractFileTypes];
-                updatedTypes[params.row.id] = e.target.value;
-                setContractFileTypes(updatedTypes);
-              }}
-              required
-              sx={{
-                backgroundColor: '#D6D5DA',
-                height: '40px',
-                width: '90%', // Adjust the width as needed
-                padding: '8px', // Adjust the padding as needed
-              }}
-            >
-              {contentTypes.map((item, index) => {
-                if (item.list_item != null) {
-                    return (
-                      <MenuItem key={index} value={item.list_item}>
-                          {item.list_item}
-                      </MenuItem>
-                    );
-                }
-                return null;
-              })}
-            </Select>
-          </FormControl>
-       ),
+        margin="dense"
+        fullWidth
+        variant="outlined"
+        sx={{
+          marginTop: "10px",
+          "& .MuiInputLabel-root": {
+            color: "black", // Normal state
+            textAlign: "center", // Center horizontally
+          },
+          "& .MuiInputLabel-root.Mui-focused": {
+            color: "black", // Focused state
+          },
+          "& .MuiInputLabel-root:not(.Mui-focused):not(.MuiInputLabel-shrink)": {
+            // Center the label only when not focused or selected
+            position: "absolute",
+            top: "50%",
+            left: "40%",
+            transform: "translate(-50%, -50%)",
+          },
+        }}
+      >
+        <InputLabel>Document Type</InputLabel>
+        <Select
+          value={contractFileTypes[params.row.id] ? contractFileTypes[params.row.id] : ""}
+          label="Document Type"
+          onChange={(e) => {
+            const updatedTypes = [...contractFileTypes];
+            updatedTypes[params.row.id] = e.target.value;
+            setContractFileTypes(updatedTypes);
+          }}
+          required
+          sx={{
+            backgroundColor: "#D6D5DA",
+            height: "40px",
+            width: "90%", // Adjust the width as needed
+            padding: "8px", // Adjust the padding as needed
+          }}
+        >
+          {contentTypes.map((item, index) => {
+            if (item.list_item != null) {
+              return (
+                <MenuItem
+                  key={index}
+                  value={item.list_item}
+                  sx={{
+                    textAlign: "center", // Center text in the dropdown items
+                  }}
+                >
+                  {item.list_item}
+                </MenuItem>
+              );
+            }
+            return null;
+          })}
+        </Select>
+      </FormControl>
+      ),
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
