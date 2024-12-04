@@ -5,11 +5,12 @@ const PropertiesContext = createContext();
 
 function getPropertyList(data) {
     const propertyList = data["Property"]?.result;
-    const applications = data["Applications"]?.result;
+    // const applications = data["Applications"]?.result;
+    const leases = data["Leases"]?.result;
     const maintenance = data["MaintenanceRequests"]?.result;
 
     const appsMap = new Map();
-    applications?.forEach((a) => {
+    leases?.forEach((a) => {
         const appsByProperty = appsMap.get(a.property_uid) || [];
         appsByProperty.push(a);
         appsMap.set(a.property_uid, appsByProperty);
@@ -26,8 +27,9 @@ function getPropertyList(data) {
 
     //   console.log(maintMap);
     return propertyList?.map((p) => {
-        p.applications = appsMap.get(p.property_uid) || [];
-        p.applicationsCount = [...p.applications].filter((a) => ["NEW", "PROCESSING"].includes(a.lease_status)).length;
+        //p.applications = appsMap.get(p.property_uid) || []; //Replaced applications with leases
+        p.leases = appsMap.get(p.property_uid) || [];
+        p.applicationsCount = [...p.leases].filter((a) => ["NEW", "PROCESSING"].includes(a.lease_status)).length;
         p.maintenance = maintMap.get(p.property_uid) || [];
         p.maintenanceCount = [...p.maintenance].filter((m) => m.maintenance_request_status === "NEW" || m.maintenance_request_status === "PROCESSING").length;
         // p.newContracts = contractsMap.get(p.property_uid) || [];

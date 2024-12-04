@@ -77,11 +77,13 @@ export default function LeasesDashboard() {
 
 	function getPropertyList(data) {
 		const propertyList = data['Property']?.result;
-		const applications = data['Applications']?.result;
+		// const applications = data['Applications']?.result; 
+		// Changed applications to leases as part of properties endpoint change
+		const leases = data['Leases']?.result;
 		const maintenance = data['MaintenanceRequests']?.result;
 
 		const appsMap = new Map();
-		applications.forEach((a) => {
+		leases.forEach((a) => {
 			const appsByProperty = appsMap.get(a.property_uid) || [];
 			appsByProperty.push(a);
 			appsMap.set(a.property_uid, appsByProperty);
@@ -98,8 +100,8 @@ export default function LeasesDashboard() {
 
 		//   console.log(maintMap);
 		return propertyList.map((p) => {
-			p.applications = appsMap.get(p.property_uid) || [];
-			p.applicationsCount = [...p.applications].filter((a) =>
+			p.leases = appsMap.get(p.property_uid) || [];
+			p.applicationsCount = [...p.leases].filter((a) =>
 				['NEW', 'PROCESSING'].includes(a.lease_status)
 			).length;
 			p.maintenance = maintMap.get(p.property_uid) || [];

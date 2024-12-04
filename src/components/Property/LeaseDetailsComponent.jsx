@@ -59,15 +59,18 @@ export default function LeaseDetailsComponent({
   const [showEarlyTerminationDialog, setShowEarlyTerminationDialog] = useState(false);
   const [showRenewedLeaseEarlyTerminationDialog, setShowRenewedLeaseEarlyTerminationDialog] = useState(false);
   const [contractEndNotice, setContractEndNotice] = useState(currentProperty?.lease_end_notice_period ? Number(currentProperty?.lease_end_notice_period) : 30);
-
-  const tenant_detail =
-    currentProperty && currentProperty.lease_start && currentProperty.tenant_uid ? `${currentProperty.tenant_first_name} ${currentProperty.tenant_last_name}` : "No Tenant";
-  const activeLease = currentProperty?.lease_status;
   const [isChange, setIsChange] = useState(false);
   const [isEndLeasePopupOpen, setIsEndLeasePopupOpen] = useState(false);
   const [renewedLease, setRenewedLease] = useState(null);
   const [isFlipped, setIsFlipped] = useState(false);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [applicationsCount, setApplicationsCount] = useState(0);
+  const [allApplications, setAllApplications] = useState([]);
+  //const activeLease = currentProperty?.lease_status;
+  //const tenant_detail = currentProperty && currentProperty.lease_start && currentProperty.tenant_uid ? `${currentProperty.tenant_first_name} ${currentProperty.tenant_last_name}` : "No Tenant";
+  const [activeLease, setActiveLease] = useState({});
+  const [tenant_detail, setTenantDetail] = useState("");
+
 
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
@@ -75,15 +78,23 @@ export default function LeaseDetailsComponent({
 
   useEffect(() => {    
     let renewed = null;
-    currentProperty?.applications?.forEach((application, index) => {
+    currentProperty?.leases?.forEach((lease, index) => {
       // if (application.lease_status === "RENEW NEW" || application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") {
-      if (application.lease_status === "APPROVED") {
-        console.log("73 - application - ", application);
+      if (lease.lease_status === "APPROVED") {
+        console.log("73 - application - ", lease);
         // console.log("88 - index - ", index);
-        renewed = application;
+        renewed = lease;
       }
     });
-
+    const applicationsCount = currentProperty?.leases.filter((lease) => ["NEW", "RENEW NEW", "PROCESSING", "RENEW PROCESSING"].includes(lease.lease_status)).length;
+    const applications = currentProperty?.leases.filter((lease) => !["ACTIVE", "ACTIVE M2M", "ENDED", "TERMINATED"].includes(lease.lease_status));
+    const activeLease = currentProperty?.leases.filter((lease) => ["ACTIVE", "ACTIVE M2M"].includes(lease.lease_status))[0];
+    setAllApplications(applications);
+    setApplicationsCount(applicationsCount);
+    setActiveLease(activeLease);
+    console.log('active lease value', activeLease);
+    const tenant_detail = activeLease && activeLease.lease_start && activeLease.tenant_uid ? `${activeLease.tenant_first_name} ${activeLease.tenant_last_name}` : "No Tenant";
+    setTenantDetail(tenant_detail);
     setRenewedLease(renewed);
     setIsFlipped(false);
 
@@ -160,11 +171,11 @@ export default function LeaseDetailsComponent({
     let renewalApplication = null;
     let renewalApplicationIndex = null;
 
-    currentProperty?.applications?.forEach((application, index) => {
-      if (application.lease_status === "RENEW NEW" || application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") {
-        console.log("88 - application - ", application);
+    currentProperty?.leases?.forEach((lease, index) => {
+      if (lease.lease_status === "RENEW NEW" || lease.lease_status === "RENEW PROCESSING" || lease.lease_status === "APPROVED") {
+        console.log("88 - application - ", lease);
         // console.log("88 - index - ", index);
-        renewalApplication = application;
+        renewalApplication = lease;
         renewalApplicationIndex = index;
       }
     });
@@ -1073,7 +1084,7 @@ export default function LeaseDetailsComponent({
               </Grid>
             )}
 
-            {currentProperty && currentProperty.applications.length > 0 && (
+            {currentProperty && allApplications.length > 0 && (
               <>
                 <Grid item xs={12}>
                   <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -1097,7 +1108,8 @@ export default function LeaseDetailsComponent({
                     >
                       <Badge
                         color='success'
-                        badgeContent={currentProperty.applications.filter((app) => ["NEW", "RENEW NEW", "PROCESSING", "RENEW PROCESSING"].includes(app.lease_status)).length}
+                        // badgeContent={currentProperty.leases.filter((app) => ["NEW", "RENEW NEW", "PROCESSING", "RENEW PROCESSING"].includes(app.lease_status)).length}
+                        badgeContent={applicationsCount}
                         showZero
                         sx={{
                           paddingRight: "50px",
@@ -1127,7 +1139,7 @@ export default function LeaseDetailsComponent({
                         padding: "0px 5px 5px 5px",
                       }}
                     >
-                      {currentProperty.applications.map((app, index) => (
+                      {allApplications.map((app, index) => (
                         <Button
                           key={index}
                           onClick={() => handleAppClick(index)}
