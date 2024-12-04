@@ -45,6 +45,7 @@ function ManagerDashboard() {
   const [happinessData, setHappinessData] = useState([]);
   const [maintenanceStatusData, setMaintenanceStatusData] = useState([]);
   const [cashflowStatusData, setCashflowStatusData] = useState([]);
+  const [profitStatusData, setProfitStatusData] = useState([]);
   const [contractRequests, setContractRequests] = useState([]);
   const [propertyData, setPropertyData] = useState([]);
 
@@ -108,6 +109,9 @@ function ManagerDashboard() {
       setContractRequests(jsonData.newPMRequests.result);
 
       setCashflowStatusData(jsonData.cashflowStatus.result);
+
+      setProfitStatusData(jsonData.profitStatus.result);
+
     } catch (error) {
       console.error(error);
     }
@@ -197,7 +201,7 @@ function ManagerDashboard() {
           </Grid>
           <Grid item xs={12} md={9}>
             {/* <RevenueWidget revenueData={revenueData} cashflowStatusData={cashflowStatusData} /> */}
-            <RevenueWidget cashflowStatusData={cashflowStatusData} />
+            <RevenueWidget cashflowStatusData={profitStatusData} />
             <LeaseWidget leaseData={leaseStatus} />
             <Grid container item xs={12} spacing={6}>
               <Grid item xs={12} md={6}>
