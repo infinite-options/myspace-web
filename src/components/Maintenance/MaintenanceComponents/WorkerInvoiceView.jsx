@@ -28,13 +28,13 @@ export default function WorkerInvoiceView({maintenanceItem}){
     const [totalParts, setTotalParts] = useState(0)
 
     useEffect(()=>{
-        const partsTotal = JSON.parse(maintenanceItem?.quote_services_expenses).parts.reduce((total, part) => {
+        const partsTotal = JSON.parse(maintenanceItem?.quote_services_expenses)?.parts?.reduce((total, part) => {
             const cost = parseFloat(part.cost);
             const quantity = parseFloat(part.quantity);
             return total + (cost * quantity);
         }, 0);
 
-        const serviceTotal = JSON.parse(maintenanceItem?.quote_services_expenses).labor.reduce((total, part) => {
+        const serviceTotal = JSON.parse(maintenanceItem?.quote_services_expenses)?.labor?.reduce((total, part) => {
             const rate = parseFloat(part.rate || part.charge);
             const hours = parseFloat(part.hours === 0 ? 1 : part.hours);
             return total + (rate * hours);
