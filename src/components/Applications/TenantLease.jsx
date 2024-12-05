@@ -152,11 +152,11 @@ const TenantLease = () => {
   const navigate = useNavigate();
   const { getProfileId } = useUser();
   const { state } = useLocation();
-  const { page, application, property, managerInitiatedRenew = false } = state;
+  const { page, lease, property, managerInitiatedRenew = false } = state;
   const { getList, dataLoaded } = useContext(ListsContext);
   const feeFrequencies = getList("frequency");
   console.log("Property: ", property);
-  console.log("Application: ", application);
+  console.log("Lease: ", lease);
   const [showSpinner, setShowSpinner] = useState(false);
   // Intermediate variables to calculate the initial dates
   let initialStartDate, initialEndDate, initialMoveInDate;
@@ -167,23 +167,23 @@ const TenantLease = () => {
       if (page === "create_lease" || page === "refer_tenant") {
         initialStartDate = dayjs();
         // initialEndDate = dayjs().add(1, "year").subtract(1, "day");
-        initialEndDate = property.lease_end ? dayjs(property.lease_end) : dayjs().add(1, "year").subtract(1, "day");
+        initialEndDate = lease.lease_end ? dayjs(lease.lease_end) : dayjs().add(1, "year").subtract(1, "day");
         initialMoveInDate = initialStartDate;
       } else if (page === "edit_lease") {
-        initialStartDate = application.lease_start ? dayjs(application.lease_start) : dayjs();
-        initialEndDate = application.lease_end ? dayjs(application.lease_end) : dayjs().add(1, "year").subtract(1, "day");
-        initialMoveInDate = application.lease_move_in_date ? dayjs(application.lease_move_in_date) : dayjs();
+        initialStartDate = lease.lease_start ? dayjs(lease.lease_start) : dayjs();
+        initialEndDate = lease.lease_end ? dayjs(lease.lease_end) : dayjs().add(1, "year").subtract(1, "day");
+        initialMoveInDate = lease.lease_move_in_date ? dayjs(lease.lease_move_in_date) : dayjs();
       } else if (page === "renew_lease") {
         // Calculate the duration between lease_start and lease_end
-        const oldDuration = dayjs(property.lease_end).diff(dayjs(property.lease_start), "day"); // Duration in days
-        let leaseStartDate = dayjs(property.lease_end).add(1, "day");
+        const oldDuration = dayjs(lease.lease_end).diff(dayjs(lease.lease_start), "day"); // Duration in days
+        let leaseStartDate = dayjs(lease.lease_end).add(1, "day");
         let leaseEndDate = leaseStartDate.add(oldDuration, "day");
 
-        if ((application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") && application.lease_start != null) {
-          leaseStartDate = dayjs(application.lease_start);
+        if ((lease.lease_status === "RENEW PROCESSING" || lease.lease_status === "APPROVED") && lease.lease_start != null) {
+          leaseStartDate = dayjs(lease.lease_start);
         }
-        if ((application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") && application.lease_end != null) {
-          leaseEndDate = dayjs(application.lease_end);
+        if ((lease.lease_status === "RENEW PROCESSING" || lease.lease_status === "APPROVED") && lease.lease_end != null) {
+          leaseEndDate = dayjs(lease.lease_end);
         }
         // const leaseEndDate = leaseStartDate + (dayjs(property.lease_end) - dayjs(property.lease_start));
         // console.log("In Tenant Lease leaseStartDate", leaseStartDate);
@@ -206,17 +206,17 @@ const TenantLease = () => {
       if (page === "create_lease" || page === "refer_tenant") {
         initialStartDate = dayjs();
         // initialEndDate = dayjs().add(1, "year").subtract(1, "day");
-        initialEndDate = property.lease_end ? dayjs(property.lease_end) : dayjs().add(1, "year").subtract(1, "day");
+        initialEndDate = lease.lease_end ? dayjs(lease.lease_end) : dayjs().add(1, "year").subtract(1, "day");
         initialMoveInDate = initialStartDate;
       } else if (page === "edit_lease") {
-        initialStartDate = property.lease_start ? dayjs(property.lease_start) : dayjs();
-        initialEndDate = property.lease_end ? dayjs(property.lease_end) : dayjs().add(1, "year").subtract(1, "day");
-        initialMoveInDate = property.lease_move_in_date ? dayjs(property.lease_move_in_date) : dayjs();
+        initialStartDate = lease.lease_start ? dayjs(lease.lease_start) : dayjs();
+        initialEndDate = lease.lease_end ? dayjs(lease.lease_end) : dayjs().add(1, "year").subtract(1, "day");
+        initialMoveInDate = lease.lease_move_in_date ? dayjs(lease.lease_move_in_date) : dayjs();
       } else if (page === "renew_lease") {
         // Calculate the duration between lease_start and lease_end
-        const oldDuration = dayjs(property.lease_end).diff(dayjs(property.lease_start), "day"); // Duration in days
-        let leaseStartDate = dayjs(property.lease_start);
-        let leaseEndDate = dayjs(property.lease_end);
+        const oldDuration = dayjs(lease.lease_end).diff(dayjs(lease.lease_start), "day"); // Duration in days
+        let leaseStartDate = dayjs(lease.lease_start);
+        let leaseEndDate = dayjs(lease.lease_end);
         initialStartDate = leaseStartDate;
 
         initialEndDate = leaseEndDate;
@@ -229,15 +229,15 @@ const TenantLease = () => {
       // initialMoveInDate = null;
       if (page === "renew_lease") {
         // Calculate the duration between lease_start and lease_end
-        const oldDuration = dayjs(property.lease_end).diff(dayjs(property.lease_start), "day"); // Duration in days
-        let leaseStartDate = dayjs(property.lease_end).add(1, "day");
+        const oldDuration = dayjs(lease.lease_end).diff(dayjs(lease.lease_start), "day"); // Duration in days
+        let leaseStartDate = dayjs(lease.lease_end).add(1, "day");
         let leaseEndDate = leaseStartDate.add(oldDuration, "day");
 
-        if ((application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") && application.lease_start != null) {
-          leaseStartDate = dayjs(application.lease_start);
+        if ((lease.lease_status === "RENEW PROCESSING" || lease.lease_status === "APPROVED") && lease.lease_start != null) {
+          leaseStartDate = dayjs(lease.lease_start);
         }
-        if ((application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") && application.lease_end != null) {
-          leaseEndDate = dayjs(application.lease_end);
+        if ((lease.lease_status === "RENEW PROCESSING" || lease.lease_status === "APPROVED") && lease.lease_end != null) {
+          leaseEndDate = dayjs(lease.lease_end);
         }
         // const leaseEndDate = leaseStartDate + (dayjs(property.lease_end) - dayjs(property.lease_start));
         // console.log("In Tenant Lease leaseStartDate", leaseStartDate);
@@ -316,8 +316,8 @@ const TenantLease = () => {
   const [endDate, setEndDate] = useState(initialEndDate);
   const [moveInDate, setMoveInDate] = useState(initialMoveInDate);
   const [noOfOccupants, setNoOfOccupants] = useState(1);
-  const [endLeaseNoticePeriod, setEndLeaseNoticePeriod] = useState(application.lease_end_notice_period ? application.lease_end_notice_period : 30);
-  const [leaseContinueM2M, setLeaseContinueM2M] = useState(application.lease_m2m && application.lease_m2m === 1 ? true : false);
+  const [endLeaseNoticePeriod, setEndLeaseNoticePeriod] = useState(lease.lease_end_notice_period ? lease.lease_end_notice_period : 30);
+  const [leaseContinueM2M, setLeaseContinueM2M] = useState(lease.lease_m2m && lease.lease_m2m === 1 ? true : false);
 
   const [leaseAdults, setLeaseAdults] = useState([]);
   const [leaseChildren, setLeaseChildren] = useState([]);
@@ -331,7 +331,7 @@ const TenantLease = () => {
 
   const [fees, setFees] = useState([]);
 
-  const [leaseDocuments, setLeaseDocuments] = useState(application?.lease_documents ? JSON.parse(application?.lease_documents) : []);
+  const [leaseDocuments, setLeaseDocuments] = useState(lease?.lease_documents ? JSON.parse(lease?.lease_documents) : []);
 
   const [leaseFiles, setLeaseFiles] = useState([]);
   const [leaseFileTypes, setLeaseFileTypes] = useState([]);
@@ -392,7 +392,7 @@ const TenantLease = () => {
 
 
   const getDatesToggleInitialValue = () => {
-    if (["NEW", "RENEW NEW"].includes(application?.lease_status)) {
+    if (["NEW", "RENEW NEW"].includes(lease?.lease_status)) {
       return "select";
     }
     //  else if(["RENEW NEW", "PROCESSING", "RENEW PROCESSING", "WITHDRAWN", "RENEW WITHDRAWN", "REJECTED", "RENEW REJECTED", "REFUSED", "RENEW REFUSED", "RESCIND", "RENEW RESCINDED"].includes(application.lease_status)) {
@@ -585,7 +585,7 @@ const TenantLease = () => {
   };
 
   // const utilitiesObject = JSON.parse(property.property_utilities);
-  const [utilitiesObject, setUtilitiesObject] = useState(application?.lease_utilities ? JSON.parse(application.lease_utilities) : []);
+  const [utilitiesObject, setUtilitiesObject] = useState(lease?.lease_utilities ? JSON.parse(lease.lease_utilities) : []);
   // console.log("392 - utilitiesObject - ", utilitiesObject);
   // const [utilitiesObject, setUtilitiesObject] = useState(() => {
   //   const utilities = application?.lease_utilities;
@@ -629,25 +629,25 @@ const TenantLease = () => {
   useEffect(() => {
 
     const getLeaseFees = () => {
-      console.log(" -- DEBUG -- in fees - ", application)
+      console.log(" -- DEBUG -- in fees - ", lease)
       let feesList = [];
       if (
-        application?.lease_status === "PROCESSING" ||
-        application?.lease_status === "RENEW PROCESSING" ||
-        application?.lease_status === "ACTIVE" ||
-        application?.lease_status === "ACTIVE M2M" ||
-        application?.lease_status === "RENEW NEW" ||
-        application?.lease_status === "APPROVED"
+        lease?.lease_status === "PROCESSING" ||
+        lease?.lease_status === "RENEW PROCESSING" ||
+        lease?.lease_status === "ACTIVE" ||
+        lease?.lease_status === "ACTIVE M2M" ||
+        lease?.lease_status === "RENEW NEW" ||
+        lease?.lease_status === "APPROVED"
       ) {
 
-        feesList = JSON.parse(application?.lease_fees);
-      } else if (application?.lease_status === "NEW" || application?.lease_status === "REJECTED" || application?.lease_status === "REFUSED" || application?.lease_status === "RENEW REFUSED" || application?.lease_status === "WITHDRAWN" || application?.lease_status === "RESCIND") {
-        const parsedApplicationFees = application.lease_fees ? JSON.parse(application.lease_fees) : []
-        if (parsedApplicationFees?.length === 0) {
-          feesList = initialFees(property, application);
+        feesList = JSON.parse(lease?.lease_fees);
+      } else if (lease?.lease_status === "NEW" || lease?.lease_status === "REJECTED" || lease?.lease_status === "REFUSED" || lease?.lease_status === "RENEW REFUSED" || lease?.lease_status === "WITHDRAWN" || lease?.lease_status === "RESCIND") {
+        const parsedleaseFees = lease.lease_fees ? JSON.parse(lease.lease_fees) : []
+        if (parsedleaseFees?.length === 0) {
+          feesList = initialFees(property, lease);
         } else {
           // feesList = JSON.parse(application?.lease_fees);
-          feesList = parsedApplicationFees;
+          feesList = parsedleaseFees;
         }
       }
       // console.log("Fees: ", feesList);
@@ -664,33 +664,33 @@ const TenantLease = () => {
     const getOccupants = () => {
       let numOccupants = 0;
       try {
-        const adults = application.lease_adults ? JSON.parse(application?.lease_adults) : [];
+        const adults = lease.lease_adults ? JSON.parse(lease?.lease_adults) : [];
         setLeaseAdults(adults);
         numOccupants += adults?.length;
       } catch (error) {
-        console.log("Error parsing application.lease_adults:", error);
+        console.log("Error parsing lease.lease_adults:", error);
       }
 
       try {
-        const children = application.lease_children ? JSON.parse(application?.lease_children) : [];
+        const children = lease.lease_children ? JSON.parse(lease?.lease_children) : [];
         setLeaseChildren(children);
         numOccupants += children?.length;
       } catch (error) {
-        console.log("Error parsing application.lease_children:", error);
+        console.log("Error parsing lease.lease_children:", error);
       }
 
       try {
-        const pets = application.lease_pets ? JSON.parse(application?.lease_pets) : [];
+        const pets = lease.lease_pets ? JSON.parse(lease?.lease_pets) : [];
         setLeasePets(pets);
       } catch (error) {
-        console.log("Error parsing application.lease_pets:", error);
+        console.log("Error parsing lease.lease_pets:", error);
       }
 
       try {
-        const vehicles = application.lease_vehicles ? JSON.parse(application?.lease_vehicles) : [];
+        const vehicles = lease.lease_vehicles ? JSON.parse(lease?.lease_vehicles) : [];
         setLeaseVehicles(vehicles);
       } catch (error) {
-        console.log("Error parsing application.lease_adults:", error);
+        console.log("Error parsing lease.lease_adults:", error);
       }
 
       setNoOfOccupants(numOccupants);
@@ -1141,7 +1141,7 @@ const TenantLease = () => {
   async function updateCurrentLease(renewStatus) {
     const leaseApplicationFormData = new FormData();
 
-    leaseApplicationFormData.append("lease_uid", property.lease_uid);
+    leaseApplicationFormData.append("lease_uid", lease.lease_uid);
     // leaseApplicationFormData.append("lease_renew_status", "RENEW REQUESTED");    
     leaseApplicationFormData.append("lease_renew_status", renewStatus);
 
@@ -1181,15 +1181,15 @@ const TenantLease = () => {
 
       console.log("---insdie DEBUG Lease fees - ", fees)
 
-      if (application?.lease_status === "RENEW REFUSED" || application?.lease_status === "RENEW WITHDRAWN") {
+      if (lease?.lease_status === "RENEW REFUSED" || lease?.lease_status === "RENEW WITHDRAWN") {
         leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");
       } else {
         leaseApplicationFormData.append("lease_status", "PROCESSING");
       }
-      leaseApplicationFormData.append("lease_property_id", application.lease_property_id);
-      leaseApplicationFormData.append("tenant_uid", application?.tenant_uid);
-      leaseApplicationFormData.append("lease_assigned_contacts", application?.lease_assigned_contacts);
-      leaseApplicationFormData.append("lease_application_date", application?.lease_application_date);
+      leaseApplicationFormData.append("lease_property_id", lease.lease_property_id);
+      leaseApplicationFormData.append("tenant_uid", lease?.tenant_uid);
+      leaseApplicationFormData.append("lease_assigned_contacts", lease?.lease_assigned_contacts);
+      leaseApplicationFormData.append("lease_lease_date", lease?.lease_application_date);
       leaseApplicationFormData.append("lease_effective_date", startDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_start", startDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_end", endDate.format("MM-DD-YYYY"));
@@ -1242,11 +1242,11 @@ const TenantLease = () => {
       const utilitiesJSONString = JSON.stringify(updatedUtilitiesArray);
       leaseApplicationFormData.append("lease_utilities", utilitiesJSONString);
 
-      leaseApplicationFormData.append("lease_adults", application.lease_adults);
-      leaseApplicationFormData.append("lease_children", application.lease_children);
-      leaseApplicationFormData.append("lease_pets", application.lease_pets);
-      leaseApplicationFormData.append("lease_vehicles", application.lease_vehicles);
-      leaseApplicationFormData.append("lease_income", application?.lease_income)
+      leaseApplicationFormData.append("lease_adults", lease.lease_adults);
+      leaseApplicationFormData.append("lease_children", lease.lease_children);
+      leaseApplicationFormData.append("lease_pets", lease.lease_pets);
+      leaseApplicationFormData.append("lease_vehicles", lease.lease_vehicles);
+      leaseApplicationFormData.append("lease_income", lease?.lease_income)
 
       await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "POST",
@@ -1255,7 +1255,7 @@ const TenantLease = () => {
 
 
 
-      if (application.lease_status === "RENEW REFUSED" || application.lease_status === "RENEW WITHDRAWN") {
+      if (lease.lease_status === "RENEW REFUSED" || lease.lease_status === "RENEW WITHDRAWN") {
         await updateCurrentLease("RENEW REQUESTED");
       }
 
@@ -1263,7 +1263,7 @@ const TenantLease = () => {
 
 
       const receiverPropertyMapping = {
-        [application.tenant_uid]: [property.property_uid],
+        [lease.tenant_uid]: [property.property_uid],
       };
 
       await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
@@ -1279,7 +1279,7 @@ const TenantLease = () => {
           // announcement_properties: property.property_uid,
           announcement_properties: JSON.stringify(receiverPropertyMapping),
           announcement_mode: "LEASE",
-          announcement_receiver: [application.tenant_uid],
+          announcement_receiver: [lease.tenant_uid],
           announcement_type: ["Email", "Text"],
         }),
       });
@@ -1309,14 +1309,14 @@ const TenantLease = () => {
 
       console.log("---insdie DEBUG Lease fees - ", fees)
 
-      leaseApplicationFormData.append("lease_uid", application.lease_uid);
-      if (application.lease_status === "NEW") {
+      leaseApplicationFormData.append("lease_uid", lease.lease_uid);
+      if (lease.lease_status === "NEW") {
         leaseApplicationFormData.append("lease_status", "PROCESSING");
-      } else if (application.lease_status === "RENEW NEW") {
+      } else if (lease.lease_status === "RENEW NEW") {
         leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");
-      } else if (application.lease_status === "APPROVED") {
+      } else if (lease.lease_status === "APPROVED") {
         // console.log("968 - property - ", property);
-        if (property.lease_status === "ACTIVE") {
+        if (lease.lease_status === "ACTIVE") {
           leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");
           await updateCurrentLease("PM RENEW REQUESTED");
         } else {
@@ -1392,7 +1392,7 @@ const TenantLease = () => {
       });
 
       const receiverPropertyMapping = {
-        [application.tenant_uid]: [property.property_uid],
+        [lease.tenant_uid]: [property.property_uid],
       };
 
       await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
@@ -1408,7 +1408,7 @@ const TenantLease = () => {
           // announcement_properties: property.property_uid,
           announcement_properties: JSON.stringify(receiverPropertyMapping),
           announcement_mode: "LEASE",
-          announcement_receiver: [application.tenant_uid],
+          announcement_receiver: [lease.tenant_uid],
           announcement_type: ["Email", "Text"],
         }),
       });
@@ -1491,7 +1491,7 @@ const TenantLease = () => {
           // console.log('Collected tenant UIDs:', tenantUIDs);
 
           // Append tenant_uid array to the form data as a list of array
-          if (application?.lease_status === "RENEW NEW") {
+          if (lease?.lease_status === "RENEW NEW") {
             leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify(tenantUIDs));
           } else {
             leaseApplicationFormData.append("tenant_uid", tenantUIDs.join(","));
@@ -1501,7 +1501,7 @@ const TenantLease = () => {
           // console.error("Error parsing tenants data: ", error);
 
           // Append the property.tenant_uid as fallback
-          if (application?.lease_status === "RENEW NEW") {
+          if (lease?.lease_status === "RENEW NEW") {
             leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify([property.tenant_uid]));
           } else {
             leaseApplicationFormData.append("tenant_uid", property.tenant_uid);
@@ -1509,9 +1509,9 @@ const TenantLease = () => {
         }
       } else {
         // If 'tenants' field is not available, append property.tenant_uid as a single value array
-        if (application?.lease_status === "RENEW NEW") {
+        if (lease?.lease_status === "RENEW NEW") {
           leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify([property.tenant_uid]));
-        } else if (application?.lease_status === "ACTIVE") {
+        } else if (lease?.lease_status === "ACTIVE") {
           leaseApplicationFormData.append("lease_assigned_contacts", JSON.stringify([property.tenant_uid]));
           leaseApplicationFormData.append("tenant_uid", property?.tenant_uid);
         } else {
@@ -1547,18 +1547,18 @@ const TenantLease = () => {
           };
           documentsDetails.push(documentObject);
         });
-        // leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
+        // leaseleaseFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
       }
 
-      if (application?.lease_status === "RENEW NEW") {
-        leaseApplicationFormData.append("lease_uid", application.lease_uid);
+      if (lease?.lease_status === "RENEW NEW") {
+        leaseApplicationFormData.append("lease_uid", lease.lease_uid);
         await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
           method: "PUT",
           body: leaseApplicationFormData,
         });
       } else {
         const leaseApplicationUpdateFormData = new FormData();
-        leaseApplicationUpdateFormData.append("lease_uid", application.lease_uid);
+        leaseApplicationUpdateFormData.append("lease_uid", lease.lease_uid);
         leaseApplicationUpdateFormData.append("lease_renew_status", "PM RENEW REQUESTED");
 
         await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
@@ -1597,7 +1597,7 @@ const TenantLease = () => {
       }
 
       const receiverPropertyMapping = {
-        [application.tenant_uid]: [property.property_uid],
+        [lease.tenant_uid]: [property.property_uid],
       };
 
       await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
@@ -1613,7 +1613,7 @@ const TenantLease = () => {
           // announcement_properties: property.property_uid,
           announcement_properties: JSON.stringify(receiverPropertyMapping),
           announcement_mode: "LEASE",
-          announcement_receiver: [application.tenant_uid],
+          announcement_receiver: [lease.tenant_uid],
           announcement_type: ["Email", "Text"],
         }),
       });
@@ -1772,7 +1772,7 @@ const TenantLease = () => {
           <Accordion defaultExpanded sx={{ backgroundColor: theme.palette.form.main, marginBottom: "20px", marginTop: "20px", borderRadius: "10px" }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant='h6' sx={{ fontWeight: "bold" }}>
-                Lease Details (UID: {application.lease_uid})
+                Lease Details (UID: {lease.lease_uid})
               </Typography>
             </AccordionSummary>
             <AccordionDetails sx={{ padding: "20px", borderRadius: "10px" }}>
@@ -1917,7 +1917,7 @@ const TenantLease = () => {
                 </Grid>
               </Grid>
               {
-                (!(["NEW", "PROCESSING", "WITHDRAWN", "REJECTED",].includes(application.lease_status))) && (
+                (!(["NEW", "PROCESSING", "WITHDRAWN", "REJECTED",].includes(lease.lease_status))) && (
                   <Grid container item xs={12} sx={{ marginTop: "10px", justifyContent: "space-evenly" }}>
                     <Grid item container direction='row' xs={12}>
                       <Grid item xs={12} sx={{ marginTop: "5px", justifyContent: "flex-start" }}>
@@ -1972,7 +1972,7 @@ const TenantLease = () => {
                               )
                             }
                             {
-                              application?.lease_status != "RENEW NEW" && (
+                              lease?.lease_status != "RENEW NEW" && (
 
 
                                 <FormControlLabel
@@ -1986,7 +1986,7 @@ const TenantLease = () => {
                                         fontSize: "14px",
                                       }}
                                     >
-                                      {`Dates from ${getLeaseStatusText(application.lease_status, application.lease_renew_status)} Lease: ${application?.lease_uid}`}
+                                      {`Dates from ${getLeaseStatusText(lease.lease_status, lease.lease_renew_status)} Lease: ${lease?.lease_uid}`}
                                     </Typography>
                                   }
                                 />
@@ -2053,11 +2053,11 @@ const TenantLease = () => {
           {console.log('--property details in tenant---', property)} */}
 
                   {/* Check if managerInitiatedRenew is true */}
-                  {managerInitiatedRenew && application.tenants ? (
+                  {managerInitiatedRenew && lease.tenants ? (
                     // Parse tenants if managerInitiatedRenew is true
                     (() => {
                       try {
-                        const parsedTenants = JSON.parse(application.tenants);
+                        const parsedTenants = JSON.parse(lease.tenants);
 
                         return parsedTenants.length > 0 ? (
                           parsedTenants.map((tenant, index) => (
@@ -2085,7 +2085,7 @@ const TenantLease = () => {
                               <Grid item xs={6}>
                                 <Typography sx={{ fontWeight: "bold" }}>Address:</Typography>
                                 <Typography>
-                                  {application.tenant_address || "N/A"}, {application.tenant_city || "N/A"}, {application.tenant_state || "N/A"}, {application.tenant_zip || "N/A"}
+                                  {lease.tenant_address || "N/A"}, {lease.tenant_city || "N/A"}, {lease.tenant_state || "N/A"}, {lease.tenant_zip || "N/A"}
                                 </Typography>
                               </Grid>
                             </Grid>
@@ -2099,33 +2099,33 @@ const TenantLease = () => {
                       }
                     })()
                   ) : // Display data from `application` directly if `managerInitiatedRenew` is false
-                    application ? (
+                    lease ? (
                       <Grid container spacing={2}>
                         <Grid item xs={6}>
                           <Typography sx={{ fontWeight: "bold" }}>First Name:</Typography>
-                          <Typography>{application.tenant_first_name || "N/A"}</Typography>
+                          <Typography>{lease.tenant_first_name || "N/A"}</Typography>
                         </Grid>
                         <Grid item xs={6}>
                           <Typography sx={{ fontWeight: "bold" }}>Last Name:</Typography>
-                          <Typography>{application.tenant_last_name || "N/A"}</Typography>
+                          <Typography>{lease.tenant_last_name || "N/A"}</Typography>
                         </Grid>
                         <Grid item xs={6}>
                           <Typography sx={{ fontWeight: "bold" }}>Email:</Typography>
-                          <Typography>{application.tenant_email || "N/A"}</Typography>
+                          <Typography>{lease.tenant_email || "N/A"}</Typography>
                         </Grid>
                         <Grid item xs={6}>
                           <Typography sx={{ fontWeight: "bold" }}>Phone Number:</Typography>
-                          <Typography>{application.tenant_phone_number || "N/A"}</Typography>
+                          <Typography>{lease.tenant_phone_number || "N/A"}</Typography>
                         </Grid>
                         <Grid item xs={6}>
                           <Typography sx={{ fontWeight: "bold" }}>Address:</Typography>
                           <Typography>
-                            {application.tenant_address || "N/A"}, {application.tenant_city || "N/A"}, {application.tenant_state || "N/A"}, {application.tenant_zip || "N/A"}
+                            {lease.tenant_address || "N/A"}, {lease.tenant_city || "N/A"}, {lease.tenant_state || "N/A"}, {lease.tenant_zip || "N/A"}
                           </Typography>
                         </Grid>
                         <Grid item xs={6}>
                           <Typography sx={{ fontWeight: "bold" }}>Responsibility:</Typography>
-                          <Typography>{application.lt_responsibility ? `${application.lt_responsibility * 100}%` : "N/A"}</Typography>
+                          <Typography>{lease.lt_responsibility ? `${lease.lt_responsibility * 100}%` : "N/A"}</Typography>
                         </Grid>
                       </Grid>
                     ) : (
@@ -2367,10 +2367,10 @@ const TenantLease = () => {
             <AccordionDetails sx={{ padding: "20px", borderRadius: "10px" }}>
               {page !== "refer_tenant" && (
                 <>
-                  {application?.lease_income ? (
+                  {lease?.lease_income ? (
                     <>
                       {/* Parse the JSON string and map the income details */}
-                      {JSON.parse(application.lease_income).map((income, index) => (
+                      {JSON.parse(lease.lease_income).map((income, index) => (
                         <Grid container spacing={2} key={index}>
                           <Grid item xs={6}>
                             <Typography sx={{ fontWeight: "bold" }}>Company name:</Typography>
@@ -2770,11 +2770,11 @@ const TenantLease = () => {
           <Button
             // onClick={application?.lease_status === "NEW" ? handleCreateLease : handleRenewLease}
             onClick={() => {
-              if (application?.lease_status === "NEW" || application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW NEW" || application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "APPROVED") {
+              if (lease?.lease_status === "NEW" || lease?.lease_status === "PROCESSING" || lease?.lease_status === "RENEW NEW" || lease?.lease_status === "RENEW PROCESSING" || lease?.lease_status === "APPROVED") {
                 handleCreateLease(); //PUT
-              } else if (application?.lease_status === "REJECTED" || application?.lease_status === "REFUSED" || application?.lease_status === "RESCIND" || application?.lease_status === "WITHDRAWN" || application?.lease_status === "RENEW REFUSED" || application?.lease_status === "RENEW WITHDRAWN") {
+              } else if (lease?.lease_status === "REJECTED" || lease?.lease_status === "REFUSED" || lease?.lease_status === "RESCIND" || lease?.lease_status === "WITHDRAWN" || lease?.lease_status === "RENEW REFUSED" || lease?.lease_status === "RENEW WITHDRAWN") {
                 handleCreateNewLease(); //POST
-              } else if (application?.lease_status === "ACTIVE" || application?.lease_status === "ACTIVE M2M") {
+              } else if (lease?.lease_status === "ACTIVE" || lease?.lease_status === "ACTIVE M2M") {
                 handleRenewLease();
               }
             }}
@@ -2788,11 +2788,11 @@ const TenantLease = () => {
               },
             }}
           >
-            {(application?.lease_status === "NEW" || application?.lease_status === "REJECTED" || application?.lease_status === "REFUSED" || application?.lease_status === "RENEW REFUSED" || application?.lease_status === "WITHDRAWN" || application?.lease_status === "RESCIND") ? "Create Lease" : ""}
-            {application?.lease_status === "PROCESSING" ? "Modify Lease" : ""}
-            {application?.lease_status === "ACTIVE" || application?.lease_status === "ACTIVE M2M" ? "Renew Lease" : ""}
-            {application?.lease_status === "RENEW NEW" ? "Create Lease Renewal" : ""}
-            {application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "APPROVED" ? "Modify Lease Renewal" : ""}
+            {(lease?.lease_status === "NEW" || lease?.lease_status === "REJECTED" || lease?.lease_status === "REFUSED" || lease?.lease_status === "RENEW REFUSED" || lease?.lease_status === "WITHDRAWN" || lease?.lease_status === "RESCIND") ? "Create Lease" : ""}
+            {lease?.lease_status === "PROCESSING" ? "Modify Lease" : ""}
+            {lease?.lease_status === "ACTIVE" || lease?.lease_status === "ACTIVE M2M" ? "Renew Lease" : ""}
+            {lease?.lease_status === "RENEW NEW" ? "Create Lease Renewal" : ""}
+            {lease?.lease_status === "RENEW PROCESSING" || lease?.lease_status === "APPROVED" ? "Modify Lease Renewal" : ""}
           </Button>
         </Grid>
       </Box>

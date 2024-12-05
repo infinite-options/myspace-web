@@ -193,14 +193,14 @@ export default function LeasesDashboard() {
 						)}
 
 						{/* Show TenantApplicationNav when viewMode is 'reviewApplication' */}
-						{console.log('---propertyList---', propertyList, selectedLeaseId)}
+						{console.log('---propertyList---', propertyList, selectedLeaseId, leaseDetails)}
 
 						{(!isMobile || viewRHS) && viewMode === 'reviewApplication' && applicationIndex != null && (
 							<Grid item xs={12} md={8}>
 								<TenantApplicationNav
 									index={applicationIndex}
 									propertyIndex={applicationIndex}
-									property={propertyList.find((property) => property.lease_uid === selectedLeaseId)}
+									property={propertyList.find((property) => property.property_uid === (leaseDetails.find((lease)=>lease.lease_uid === selectedLeaseId)).property_uid)}
 									isDesktop={true}
 									onBackClick={() => {
 										if (setViewRHS) {

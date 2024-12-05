@@ -33,23 +33,25 @@ const TenantApplicationNav = (props) => {
   const { index, property, isDesktop, propertyIndex, onBackClick } = props;
   console.log('Inside TenantApplicationNav - property - ', property);
   console.log('Inside TenantApplicationNav - index - ', index);
-  const { applications } = property;
+  const { leases } = property;
   const [currentIndex, setCurrentIndex] = useState(index || 0);
-  const [application, setApplication] = useState(applications[currentIndex]);
+  // const [application, setApplication] = useState(leases[currentIndex]);
+  const [lease, setLease] = useState(leases[currentIndex]);
+
   //   useEffect(() => {
   //     console.log("application - ", application);
   // }, [application]);
   // console.log("---dhyey--- in property - ", property)
-  console.log("---dhyey--- in application view - ", application)
+  console.log("---dhyey--- in application view - ", lease)
   const [showSpinner, setShowSpinner] = useState(false);
-  const [vehicles, setVehicles] = useState(JSON.parse(application?.lease_vehicles || '["No Vehicle Information"]'));
-  const [adultOccupants, setAdultOccupants] = useState(JSON.parse(application?.lease_adults || '["No Adult Occupants"]'));
-  const [petOccupants, setPetOccupants] = useState(JSON.parse(application?.lease_pets || '["No Pet Occupants"]'));
-  const [childOccupants, setChildOccupants] = useState(JSON.parse(application?.lease_children || '["No Child Occupants"]'));
-  const [applicationDocuments, setApplicationDocuments] = useState(JSON.parse(application?.lease_documents || '["No Lease Documents"]'));
+  const [vehicles, setVehicles] = useState(JSON.parse(lease?.lease_vehicles || '["No Vehicle Information"]'));
+  const [adultOccupants, setAdultOccupants] = useState(JSON.parse(lease?.lease_adults || '["No Adult Occupants"]'));
+  const [petOccupants, setPetOccupants] = useState(JSON.parse(lease?.lease_pets || '["No Pet Occupants"]'));
+  const [childOccupants, setChildOccupants] = useState(JSON.parse(lease?.lease_children || '["No Child Occupants"]'));
+  const [applicationDocuments, setApplicationDocuments] = useState(JSON.parse(lease?.lease_documents || '["No Lease Documents"]'));
   const [leaseFees, setLeaseFees] = useState([])
   const { selectedRole } = useUser();
-  console.log("---dhyey--- in application view 222 - ", application)
+  console.log("---dhyey--- in application view 222 - ", lease)
 
 
   useEffect(() => {
@@ -57,13 +59,13 @@ const TenantApplicationNav = (props) => {
 
     let parsedFees = []
     try {
-      parsedFees = JSON.parse(application?.lease_fees);
+      parsedFees = JSON.parse(lease?.lease_fees);
     } catch (error) {
       console.error("TenantApplicationNav - Error Parsing Lease Fees");
     }
     setLeaseFees(parsedFees);
     // console.log("parsedFees - ", parsedFees);
-  }, [application]);
+  }, [lease]);
 
   // useEffect(() => {
   //     console.log("applicationDocuments - ", applicationDocuments);
@@ -97,17 +99,17 @@ const TenantApplicationNav = (props) => {
   };
 
   const handleNextCard = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % applications.length);
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % leases.length);
   };
   const handlePreviousCard = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + applications.length) % applications.length);
+    setCurrentIndex((prevIndex) => (prevIndex - 1 + leases.length) % leases.length);
   };
   const handleRejectLease = async () => {
     const leaseApplicationFormData = new FormData();
-    leaseApplicationFormData.append("lease_uid", application.lease_uid);
+    leaseApplicationFormData.append("lease_uid", lease.lease_uid);
 
     // leaseApplicationFormData.append("lease_status", "REJECTED");
-    if (application.lease_status === "NEW") {
+    if (lease.lease_status === "NEW") {
       leaseApplicationFormData.append("lease_status", "REJECTED");
     } else { // lease_status === RENEW NEW
       leaseApplicationFormData.append("lease_status", "RENEW REJECTED");
@@ -121,9 +123,9 @@ const TenantApplicationNav = (props) => {
 
     // change old lease's renew status to RENEW REJECTED
 
-    if (application.lease_status === "RENEW NEW") {
+    if (lease.lease_status === "RENEW NEW") {
       const updatePrevLeaseFormData = new FormData();
-      updatePrevLeaseFormData.append("lease_uid", property.lease_uid);
+      updatePrevLeaseFormData.append("lease_uid", lease.lease_uid);
       updatePrevLeaseFormData.append("lease_renew_status", "RENEW REJECTED");
 
       await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`, {
@@ -140,25 +142,25 @@ const TenantApplicationNav = (props) => {
   const handleCreateLease = () => {
     // console.log("application - ", application);
     // console.log("property - ", property);
-    if (application.lease_status === "RENEW REFUSED") {
-      navigate("/tenantLease", { state: { page: "edit_lease", application, property } });
+    if (lease.lease_status === "RENEW REFUSED") {
+      navigate("/tenantLease", { state: { page: "edit_lease", lease, property } });
     } else {
-      navigate("/tenantLease", { state: { page: "create_lease", application, property } });
+      navigate("/tenantLease", { state: { page: "create_lease", lease, property } });
     }
   };
 
   const handleEditLease = () => {
-    navigate("/tenantLease", { state: { page: "edit_lease", application, property } });
+    navigate("/tenantLease", { state: { page: "edit_lease", lease, property } });
   };
   const handleRenewLease = () => {
-    console.log("ROHIT - 146 - application - ", application);
-    navigate("/tenantLease", { state: { page: "renew_lease", application, property } });
+    console.log("ROHIT - 146 - application - ", lease);
+    navigate("/tenantLease", { state: { page: "renew_lease", lease, property } });
   };
 
 
   const handleWithdrawLease = async () => {
     const leaseApplicationFormData = new FormData();
-    leaseApplicationFormData.append("lease_uid", application.lease_uid);
+    leaseApplicationFormData.append("lease_uid", lease.lease_uid);
     leaseApplicationFormData.append("lease_status", "RESCIND");
 
     setShowSpinner(true);
@@ -171,14 +173,14 @@ const TenantApplicationNav = (props) => {
   };
 
   useEffect(() => {
-    const currApp = applications[currentIndex];
-    setApplication(currApp);
+    const currApp = leases[currentIndex];
+    setLease(currApp);
     setVehicles(JSON.parse(currApp?.lease_vehicles || '["No Vehicle Information"]'));
     setAdultOccupants(JSON.parse(currApp?.lease_adults || '["No Adult Occupants"]'));
     setPetOccupants(JSON.parse(currApp?.lease_pets || '["No Pet Occupants"]'));
     setChildOccupants(JSON.parse(currApp?.lease_children || '["No Child Occupants"]'));
     setApplicationDocuments(JSON.parse(currApp?.lease_documents));
-  }, [currentIndex, applications]);
+  }, [currentIndex, leases]);
 
   const handleCloseButton = (e) => {
     e.preventDefault();
@@ -187,8 +189,8 @@ const TenantApplicationNav = (props) => {
 
   const decryptedSSN = (() => {
     try {
-      if (application?.tenant_ssn) {
-        const decrypted = AES.decrypt(application.tenant_ssn, process.env.REACT_APP_ENKEY)?.toString(encUtf8);
+      if (lease?.tenant_ssn) {
+        const decrypted = AES.decrypt(lease.tenant_ssn, process.env.REACT_APP_ENKEY)?.toString(encUtf8);
         return decrypted.slice(-4); // Get the last 4 digits of the SSN
       }
       return "****"; // Fallback if tenant_ssn is not available
@@ -232,14 +234,14 @@ const TenantApplicationNav = (props) => {
                       <ArrowBackIcon sx={{ color: currentIndex === 0 ? "#A0A0A0" : "#FFFFFF", width: "25px", height: "25px", margin: "0px" }} />
                     </Button>
                     <Box sx={{ textAlign: "center" }}>
-                      <Avatar src={application?.tenant_photo_url} sx={{ width: "60px", height: "60px", margin: "0 auto", marginBottom: "10px" }} />
+                      <Avatar src={lease?.tenant_photo_url} sx={{ width: "60px", height: "60px", margin: "0 auto", marginBottom: "10px" }} />
                       <Typography sx={{ color: "#FFFFFF", fontSize: "16px", fontWeight: 800 }}>
-                        {application?.tenant_first_name + " " + application?.tenant_last_name}
+                        {lease?.tenant_first_name + " " + lease?.tenant_last_name}
                       </Typography>
-                      <Typography sx={{ color: "#FFFFFF", fontSize: "14px" }}>{`${currentIndex + 1} of ${applications.length} Applicants`}</Typography>
+                      <Typography sx={{ color: "#FFFFFF", fontSize: "14px" }}>{`${currentIndex + 1} of ${leases.length} Applicants`}</Typography>
                     </Box>
-                    <Button onClick={handleNextCard} disabled={currentIndex === applications.length - 1}>
-                      <ArrowForwardIcon sx={{ color: currentIndex === applications.length - 1 ? "#A0A0A0" : "#FFFFFF", width: "25px", height: "25px", margin: "0px" }} />
+                    <Button onClick={handleNextCard} disabled={currentIndex === leases.length - 1}>
+                      <ArrowForwardIcon sx={{ color: currentIndex === leases.length - 1 ? "#A0A0A0" : "#FFFFFF", width: "25px", height: "25px", margin: "0px" }} />
                     </Button>
                   </Box>
                 </Box>
@@ -253,14 +255,14 @@ const TenantApplicationNav = (props) => {
                         <Typography sx={{ fontWeight: "bold", color: "#160449", marginBottom: "10px" }}>CONTACT INFORMATION</Typography>
                         <Typography display="block">
                           <img src={EmailIcon} alt="email" style={{ marginRight: "10px" }} />
-                          {application?.tenant_email}
+                          {lease?.tenant_email}
                         </Typography>
                         <Typography display="block">
                           <img src={PhoneIcon} alt="phone" style={{ marginRight: "10px" }} />
-                          {application?.tenant_phone_number}
+                          {lease?.tenant_phone_number}
                         </Typography>
                         <Typography display="block">
-                          {application?.tenant_address}, {application?.tenant_city}, {application?.tenant_state} {application?.tenant_zip}
+                          {lease?.tenant_address}, {lease?.tenant_city}, {lease?.tenant_state} {lease?.tenant_zip}
                         </Typography>
                       </Box>
                     </Grid>
@@ -272,8 +274,8 @@ const TenantApplicationNav = (props) => {
                         <Typography display="block" sx={{ color: "#160449" }}>***-**-{decryptedSSN}</Typography>
                         <Typography display="block" sx={{ color: "#3D5CAC" }}>DL:</Typography>
                         <Typography display="block" sx={{ color: "#160449" }}>
-                          {application?.tenant_drivers_license_number
-                            ? `${application?.tenant_drivers_license_number} / ${application?.tenant_drivers_license_state}`
+                          {lease?.tenant_drivers_license_number
+                            ? `${lease?.tenant_drivers_license_number} / ${lease?.tenant_drivers_license_state}`
                             : "Not available"}
                         </Typography></Box>
                     </Grid>
@@ -287,10 +289,10 @@ const TenantApplicationNav = (props) => {
                   </Typography>
 
                   {/* Parsing the stringified JSON data */}
-                  {application?.lease_income &&
+                  {lease?.lease_income &&
                     (() => {
                       try {
-                        const incomeData = JSON.parse(application.lease_income);
+                        const incomeData = JSON.parse(lease.lease_income);
                         return incomeData.map((income, index) => (
                           <Grid container spacing={2} key={index} sx={{ marginBottom: "10px", padding: "10px", backgroundColor: theme.palette.form.main, borderRadius: "5px" }}>
                             <Grid item xs={3}>
@@ -536,7 +538,7 @@ const TenantApplicationNav = (props) => {
                 {/* Action Buttons */}
                 {selectedRole === "MANAGER" &&
                   <Stack direction='row' alignItems='center' justifyContent='space-around' sx={{ padding: "30px 0", paddingRight: "15px" }}>
-                    {(application?.lease_status === "NEW" || application?.lease_status === "RENEW NEW") && (
+                    {(lease?.lease_status === "NEW" || lease?.lease_status === "RENEW NEW") && (
                       <Button
                         onClick={handleRejectLease}
                         sx={{
@@ -552,7 +554,7 @@ const TenantApplicationNav = (props) => {
                         {"Reject Tenant"}
                       </Button>
                     )}
-                    {(application?.lease_status === "PROCESSING" || application?.lease_status === "RENEW PROCESSING" || application?.lease_status === "APPROVED") && (
+                    {(lease?.lease_status === "PROCESSING" || lease?.lease_status === "RENEW PROCESSING" || lease?.lease_status === "APPROVED") && (
                       <div>
                         <Button
                           onClick={handleWithdrawLease}
@@ -587,7 +589,7 @@ const TenantApplicationNav = (props) => {
                         </Button>
                       </div>
                     )}
-                    {application?.lease_status === "RENEW NEW" && (
+                    {lease?.lease_status === "RENEW NEW" && (
                       <Button
                         onClick={handleRenewLease}
                         sx={{
@@ -604,7 +606,7 @@ const TenantApplicationNav = (props) => {
                         {"Renew Lease"}
                       </Button>
                     )}
-                    {application?.lease_status !== "PROCESSING" && application?.lease_status !== "RENEW PROCESSING" && application?.lease_status !== "RENEW NEW" && application?.lease_status !== "APPROVED" && (
+                    {lease?.lease_status !== "PROCESSING" && lease?.lease_status !== "RENEW PROCESSING" && lease?.lease_status !== "RENEW NEW" && lease?.lease_status !== "APPROVED" && (
                       <Button
                         onClick={handleCreateLease}
                         sx={{

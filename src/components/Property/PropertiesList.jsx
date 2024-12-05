@@ -250,7 +250,7 @@ export default function PropertiesList(props) {
       }
       return count;
     } else {
-      return property.leases ? property.leases.filter((app) => app.lease_status?.includes("NEW")).length : 0;
+      return property.leases ? property.leases.filter((app) => app.lease_status === "NEW").length : 0;
     }
   }
 
