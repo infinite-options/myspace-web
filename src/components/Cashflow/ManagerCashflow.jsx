@@ -1584,7 +1584,7 @@ export default function ManagerCashflow() {
       // console.log("revenue by month by type - ", revenueByMonth, "expense by minth by type - ", expenseByMonth)
   
       // for all deposits
-      const totalDepositsByProperty = rentDataCurrentYear?.reduce((acc, item) => {
+      const totalDepositsByProperty = filteredProfitData?.reduce((acc, item) => {
         if (item.purchase_type === "Deposit") {
           const propertyUID = item.pur_property_id;
           const propertyInfo = {

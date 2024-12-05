@@ -300,27 +300,6 @@ const ManagerProfitability = ({
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
-      field: "pur_payer",
-      headerName: "Payer",
-      flex: 1.5,
-      renderCell: (params) => (
-        <Tooltip title={params.row.pur_payer !== null ? params.row.pur_payer : "-"}>
-          <Typography
-            sx={{
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              maxWidth: "100%",
-              fontSize: theme.typography.smallFont,
-            }}
-          >
-            {params.row.pur_payer !== null ? params.row.pur_payer : "-"}
-          </Typography>
-        </Tooltip>
-      ),
-      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
-    },
-    {
       field: "pur_receiver",
       headerName: "Receiver",
       flex: 1.5,
@@ -342,8 +321,30 @@ const ManagerProfitability = ({
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
+      field: "pur_payer",
+      headerName: "Payer UID",
+      flex: 1.5,
+      renderCell: (params) => (
+        <Tooltip title={params.row.pur_payer !== null ? params.row.pur_payer : "-"}>
+          <Typography
+            sx={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              maxWidth: "100%",
+              fontSize: theme.typography.smallFont,
+            }}
+          >
+            {params.row.pur_payer !== null ? params.row.pur_payer : "-"}
+          </Typography>
+        </Tooltip>
+      ),
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    
+    {
       field: "verified",
-      headerName: "Verified",
+      headerName: "Payer",
       flex: 1.2,
       renderCell: (params) => {
         const verificationStatus = getVerificationStatus(params.row);
@@ -3382,27 +3383,7 @@ function NewStatmentTableForByCashflow(props) {
       ),
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
-    {
-      field: "pur_payer",
-      headerName: "Payer",
-      flex: 1.5,
-      renderCell: (params) => (
-        <Tooltip title={params.row.pur_payer !== null ? params.row.pur_payer : "-"}>
-          <Typography
-            sx={{
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              maxWidth: "100%",
-              fontSize: theme.typography.smallFont,
-            }}
-          >
-            {params.row.pur_payer !== null ? params.row.pur_payer : "-"}
-          </Typography>
-        </Tooltip>
-      ),
-      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
-    },
+    
     {
       field: "pur_receiver",
       headerName: "Receiver",
@@ -3425,8 +3406,29 @@ function NewStatmentTableForByCashflow(props) {
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
+      field: "pur_payer",
+      headerName: "Payer UID",
+      flex: 1.5,
+      renderCell: (params) => (
+        <Tooltip title={params.row.pur_payer !== null ? params.row.pur_payer : "-"}>
+          <Typography
+            sx={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              maxWidth: "100%",
+              fontSize: theme.typography.smallFont,
+            }}
+          >
+            {params.row.pur_payer !== null ? params.row.pur_payer : "-"}
+          </Typography>
+        </Tooltip>
+      ),
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
       field: "verified",
-      headerName: "Verified",
+      headerName: "Payer",
       flex: 1,
       renderCell: (params) => {
         const verificationStatus = getVerificationStatus(params.row);
