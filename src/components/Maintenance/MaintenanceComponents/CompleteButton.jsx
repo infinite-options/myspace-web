@@ -39,15 +39,17 @@ export default function CompleteButton(props){
 
             if (quotes){
                 JSON.parse(quotes).find((quote) => {
-                    if (quote.quote_status === maintenanceItem.quote_status_ranked){
+                    if (quote.quote_status === maintenanceItem.quote_status){
                         rankedQuote = quote;
                     }
                 });
             }
     
-            if (maintenanceItem.maintenance_assigned_business === getProfileId()){
+            if (maintenanceItem.business_uid === getProfileId()){
                 await CompleteTicket(id, date);
-            } else if (maintenanceItem.maintenance_assigned_business !== getProfileId()){
+                await FinishQuote(rankedQuote.maintenance_quote_uid);
+
+            } else if (maintenanceItem.business_uid !== getProfileId()){
                 if (maintenanceItem.maintenance_assigned_business === null){
                     try {
                         const formData = new FormData();
@@ -66,7 +68,7 @@ export default function CompleteButton(props){
                     }
                 } else {
                     await CompleteTicket(id, date);
-                    if (maintenanceItem.quote_status_ranked !== "FINISHED" && rankedQuote){
+                    if (maintenanceItem.quote_status !== "FINISHED" && rankedQuote){
                         await FinishQuote(rankedQuote.maintenance_quote_uid);
                     }
                 }
