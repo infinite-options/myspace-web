@@ -727,7 +727,7 @@ export default function ManagerCashflow() {
       const purchaseType = item.purchase_type.toUpperCase();
 
       if (item[key] !== null) {
-        if (purchaseType === "MANAGEMENT") {
+        if (purchaseType === "MANAGEMENT" || (purchaseType === "MAINTENANCE" && item.pur_payer.startsWith("110"))) {
           
           hasItems[purchaseType] = true;
           totals[purchaseType] = (totals[purchaseType] || 0) - parseFloat(item[key]);
@@ -1057,7 +1057,7 @@ export default function ManagerCashflow() {
     let totalExpense = expenseItems?.reduce((acc, item) => {
     const totalPaid = parseFloat(item["pur_amount_due"] || 0.0);
 
-    if (item.purchase_type.toUpperCase() === "MANAGEMENT") {
+    if (item.purchase_type.toUpperCase() === "MANAGEMENT" || (item.purchase_type.toUpperCase() === "MAINTENANCE" && item.pur_payer.startsWith("110"))) {
       return acc - totalPaid;
     }
 
@@ -1133,7 +1133,7 @@ export default function ManagerCashflow() {
       // const rentDataCurrentMonth = profitDatacurrentMonth?.filter((item) => item.pur_payer?.startsWith("350") && item.pur_receiver?.startsWith("600"));
       // Revenue 
       // const rentDataCurrentMonth = currentMonthData?.filter((item) => item.pur_receiver === profileId);
-      const rentDataCurrentMonth = currentMonthData?.filter((item) => item.pur_cf_type === "revenue" && item.purchase_type.toUpperCase() !== "DEPOSIT" && item.purchase_type.toUpperCase() !== "MANAGEMENT");
+      const rentDataCurrentMonth = currentMonthData?.filter((item) => item.pur_cf_type === "revenue" && item.purchase_type.toUpperCase() !== "DEPOSIT" && item.purchase_type.toUpperCase() !== "MANAGEMENT" && item.purchase_type.toUpperCase() !== "MAINTENANCE");
       // const rentDataCurrentYear = currentYearData?.filter((item) => item.pur_receiver === profileId);
       const rentDataCurrentYear = currentYearData?.filter((item) => item.pur_cf_type === "revenue");
       
@@ -1142,16 +1142,29 @@ export default function ManagerCashflow() {
       // const payoutsCurrentMonth = currentMonthData?.filter((item) => item.pur_payer === profileId);
       // const payoutsCurrentYear = currentYearData?.filter((item) => item.pur_payer === profileId);
 
-      const payoutsCurrentMonth = currentMonthData?.filter((item) => item.pur_cf_type === "expense" || (item.pur_cf_type === "revenue" && item.purchase_type.toUpperCase() === "MANAGEMENT" ));
+      const payoutsCurrentMonth = currentMonthData?.filter((item) => item.pur_cf_type === "expense" || (item.pur_cf_type === "revenue" && item.purchase_type.toUpperCase() === "MANAGEMENT" ) || (item.pur_cf_type === "revenue" && item.purchase_type.toUpperCase() === "MAINTENANCE" ));
       const payoutsCurrentYear = currentYearData?.filter((item) => item.pur_cf_type === "expense");
   
-      const revenueDataForManager = currentMonthData?.filter((item) => item.purchase_type.toUpperCase() !== "DEPOSIT" && (item.pur_payer === profileId || item.pur_receiver === profileId));
+      const revenueDataForManager = currentMonthData?.filter((item) => item.purchase_type.toUpperCase() !== "DEPOSIT" && item.purchase_type.toUpperCase() !== "MAINTENANCE" && (item.pur_payer === profileId || item.pur_receiver === profileId));
       // const revenueDataForManager = currentMonthData?.filter((item) => item.pur_cf_type === "revenue" && item.purchase_type.toUpperCase() === "MANAGEMENT");
 
       const revenueList = rentDataCurrentMonth?.filter((item) => item.purchase_type.toUpperCase() !== "DEPOSIT");
   
       setRevenueList(revenueList);
-      setExpenseList(payoutsCurrentMonth);
+
+      // change maintenance and management to negative value
+      const updatedPayouts = payoutsCurrentMonth.map((item) => {
+        const newItem = { ...item };
+      
+        if ((newItem.purchase_type.toUpperCase() === "MAINTENANCE" && newItem.pur_payer.startsWith("110")) || newItem.purchase_type.toUpperCase() === "MANAGEMENT") {
+          newItem.pur_amount_due = -Math.abs(parseFloat(newItem.pur_amount_due || 0)); 
+          newItem.total_paid = -Math.abs(parseFloat(newItem.total_paid || 0));        
+        }
+      
+        return newItem;
+      });
+
+      setExpenseList(updatedPayouts);
   
       // expense by property
       // const payoutsByProperty = payoutsCurrentMonth?.reduce((acc, item) => {
@@ -1222,7 +1235,7 @@ export default function ManagerCashflow() {
           let totalExpected = 0;
           let totalActual = 0;
       
-          if (item.purchase_type.toUpperCase() === "MANAGEMENT") {
+          if (item.purchase_type.toUpperCase() === "MANAGEMENT" || (item.purchase_type.toUpperCase() === "MAINTENANCE" && item.pur_payer.startsWith("110"))) {
             //convert management fee to negative
             const purAmountDue = -Math.abs(parseFloat(item.pur_amount_due || "0"));
             const totalPaid = -Math.abs(parseFloat(item.total_paid || "0"));
