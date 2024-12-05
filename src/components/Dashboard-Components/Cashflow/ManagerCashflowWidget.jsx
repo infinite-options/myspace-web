@@ -38,7 +38,7 @@ const useStyles = makeStyles({
 
 function getTotalRevenueByMonthYear(data, month, year) {
   // console.log("In getTotalRevenueByMonthYear: ", data, month, year);
-  let revenueItems = data?.filter((item) => item.cf_month === month && item.cf_year === year && item.pur_cf_type === "revenue");
+  let revenueItems = data?.filter((item) => month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year && item.pur_cf_type === "revenue");
   // console.log("After filter revenueItems: ", revenueItems);
   let totalRevenue = revenueItems?.reduce((acc, item) => {
     return acc + parseFloat(item["total_paid_total"] ? item["total_paid_total"] : 0.0);
@@ -48,7 +48,7 @@ function getTotalRevenueByMonthYear(data, month, year) {
 }
 
 function getTotalExpenseByMonthYear(data, month, year) {
-  let expenseItems = data?.filter((item) => item.cf_month === month && item.cf_year === year && item.pur_cf_type === "expense");
+  let expenseItems = data?.filter((item) => month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year && item.pur_cf_type === "expense");
   let totalExpense = expenseItems?.reduce((acc, item) => {
     return acc + parseFloat(item["total_paid_total"] ? item["total_paid_total"] : 0.0);
   }, 0.0);
@@ -57,7 +57,7 @@ function getTotalExpenseByMonthYear(data, month, year) {
 
 function getTotalExpectedRevenueByMonthYear(data, month, year) {
   // console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
-  let revenueItems = data?.filter((item) => item.cf_month === month && item.cf_year === year && item.pur_cf_type === "revenue");
+  let revenueItems = data?.filter((item) => month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year && item.pur_cf_type === "revenue");
   let totalRevenue = revenueItems?.reduce((acc, item) => {
     return acc + parseFloat(item["pur_amount_due_total"] ? item["pur_amount_due_total"] : 0.0);
   }, 0.0);
@@ -66,7 +66,7 @@ function getTotalExpectedRevenueByMonthYear(data, month, year) {
 
 function getTotalExpectedExpenseByMonthYear(data, month, year) {
   // console.log(data)
-  let expenseItems = data?.filter((item) => item.cf_month === month && item.cf_year === year && item.pur_cf_type === "expense");
+  let expenseItems = data?.filter((item) => month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year && item.pur_cf_type === "expense");
   let totalExpense = expenseItems?.reduce((acc, item) => {
     return acc + parseFloat(item["pur_amount_due_total"] ? item["pur_amount_due_total"] : 0.0);
   }, 0.0);
@@ -75,7 +75,7 @@ function getTotalExpectedExpenseByMonthYear(data, month, year) {
 
 function getTotalExpectedProfitByMonthYear(data, month, year) {
   // console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
-  let profitItems = data?.filter((item) => item.pur_payer?.startsWith("110") && item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
+  let profitItems = data?.filter((item) => item.pur_payer?.startsWith("110") && item.pur_receiver?.startsWith("600") && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
   // console.log(`270 - profitItems - ${month}, ${year} - `, profitItems);
   let totalProfit = profitItems?.reduce((acc, item) => {
     return acc + parseFloat(item["pur_amount_due"] ? item["pur_amount_due"] : 0.0);
@@ -84,7 +84,7 @@ function getTotalExpectedProfitByMonthYear(data, month, year) {
 }
 
 function getTotalProfitByMonthYear(data, month, year) {
-  let profitItems = data?.filter((item) => item.pur_payer?.startsWith("110") && item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
+  let profitItems = data?.filter((item) => item.pur_payer?.startsWith("110") && item.pur_receiver?.startsWith("600") && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
   let totalProfit = profitItems?.reduce((acc, item) => {
     return acc + parseFloat(item["actual"] ? item["actual"] : 0.0);
   }, 0.0);
@@ -95,7 +95,7 @@ function getTotalExpectedRentByMonthYear(data, month, year) {
   // console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
   // let revenueItems = data?.filter((item) => item.pur_cf_type === "revenue");
   // let rentItems = data?.filter((item) => item.pur_payer?.startsWith("350") && item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
-  let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
+  let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
   let totalRent = rentItems?.reduce((acc, item) => {
     if (item.purchase_type.toUpperCase() !== "DEPOSIT") {
       return acc + parseFloat(item["pur_amount_due"] ? item["pur_amount_due"] : 0.0);
@@ -109,7 +109,7 @@ function getTotalExpectedRentByMonthYear(data, month, year) {
 function getTotalRentByMonthYear(data, month, year) {
   // let revenueItems = data?.filter((item) => item.pur_cf_type === "revenue");
   // let rentItems = data?.filter((item) => item.pur_payer?.startsWith("350") && item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
-  let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
+  let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
   let totalRent = rentItems?.reduce((acc, item) => {
     if (item.purchase_type.toUpperCase() !== "DEPOSIT") {
       return acc + parseFloat(item["total_paid"] ? item["total_paid"] : 0.0);
@@ -123,7 +123,7 @@ function getTotalExpectedPayoutsByMonthYear(data, month, year) {
   // console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
   // let expenseItems = data?.filter((item) => item.pur_cf_type === "expense");
   // let payoutItems = data?.filter((item) => item.pur_payer?.startsWith("600") && item.pur_receiver?.startsWith("110") && item.cf_month === month && item.cf_year === year);
-  let payoutItems = data?.filter((item) => item.pur_payer?.startsWith("600") && item.cf_month === month && item.cf_year === year);
+  let payoutItems = data?.filter((item) => item.pur_payer?.startsWith("600") && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_yearr);
   let totalPayouts = payoutItems?.reduce((acc, item) => {
     if (item.purchase_type.toUpperCase() !== "DEPOSIT") {
       return acc + parseFloat(item["pur_amount_due"] ? item["pur_amount_due"] : 0.0);
@@ -136,7 +136,7 @@ function getTotalExpectedPayoutsByMonthYear(data, month, year) {
 function getTotalPayoutsByMonthYear(data, month, year) {
   // let expenseItems = data?.filter((item) => item.pur_cf_type === "expense");
   // let payoutItems = data?.filter((item) => item.pur_payer?.startsWith("600") && item.pur_receiver?.startsWith("110") && item.cf_month === month && item.cf_year === year);
-  let payoutItems = data?.filter((item) => item.pur_payer?.startsWith("600") && item.cf_month === month && item.cf_year === year);
+  let payoutItems = data?.filter((item) => item.pur_payer?.startsWith("600") && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
   let totalPayouts = payoutItems?.reduce((acc, item) => {
     if (item.purchase_type.toUpperCase() !== "DEPOSIT") {
       return acc + parseFloat(item["total_paid"] ? item["total_paid"] : 0.0);
@@ -147,7 +147,7 @@ function getTotalPayoutsByMonthYear(data, month, year) {
 }
 
 function getTotalExpectedDepositByMonthByYear(data, month, year){
-  let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
+  let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
   let totalDeposit = rentItems?.reduce((acc, item) => {
     if (item.purchase_type.toUpperCase() === "DEPOSIT") {
       return acc + parseFloat(item["pur_amount_due"] ? item["pur_amount_due"] : 0.0);
@@ -159,7 +159,7 @@ function getTotalExpectedDepositByMonthByYear(data, month, year){
 }
 
 function getTotalDepositByMonthByYear(data, month, year){
-  let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
+  let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
   let totalDeposit = rentItems?.reduce((acc, item) => {
     if (item.purchase_type.toUpperCase() === "DEPOSIT") {
       return acc + parseFloat(item["total_paid"] ? item["total_paid"] : 0.0);
@@ -171,7 +171,7 @@ function getTotalDepositByMonthByYear(data, month, year){
 }
 
 function getTotalProfitByMonthByYear(data, month, year){
-  let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
+  let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
   let totalProfit = rentItems?.reduce((acc, item) => {
     if (item.pur_payer && item.pur_payer.startsWith("110")) {
       return acc + parseFloat(item["total_paid"] ? item["total_paid"] : 0.0);
@@ -186,8 +186,11 @@ function getPast12MonthsCashflow(data, month, year) {
   var pastTwelveMonths = [];
   let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
+  console.log(" ==== ", month, year)
   var currentMonth = month;
   var currentYear = year;
+  var displayMonth = month.join(",")
+  var displayYear = year.join(",")
 
   // create a loop that goes back 12 months
   for (var i = 0; i < 12; i++) {
@@ -203,8 +206,8 @@ function getPast12MonthsCashflow(data, month, year) {
     let currentMonthProfit = getTotalProfitByMonthByYear(data, currentMonth, currentYear)
 
     pastTwelveMonths.push({
-      month: currentMonth,
-      year: currentYear,
+      month: currentMonth[0],
+      year: currentYear[0],
 
       expected_profit: expectedMonthRent - expectedMonthPayouts,
       profit: currentMonthProfit,
@@ -217,16 +220,17 @@ function getPast12MonthsCashflow(data, month, year) {
       deposit : currentMonthDeposit,
       expected_deposit: expectedMonthDeposit,
 
-      monthYear: currentMonth?.slice(0, 3) + " " + currentYear?.slice(2, 4),
+      monthYear: currentMonth[0]?.slice(0, 3) + " " + currentYear[0]?.slice(2, 4),
       "expected_revenue": expectedMonthRent,
       "expected_cashflow": expectedMonthRent - expectedMonthPayouts,
     });
-    if (currentMonth === "January") {
-      currentMonth = "December";
-      currentYear = (parseInt(currentYear) - 1).toString();
+
+    if (currentMonth[0] === "January") {
+      currentMonth = ["December"];
+      currentYear = [(parseInt(currentYear) - 1).toString()];
       // console.log(currentYear)
     } else {
-      currentMonth = months[months.indexOf(currentMonth) - 1];
+      currentMonth = [months[months.indexOf(currentMonth) - 1]];
     }
   }
 
@@ -495,7 +499,7 @@ function ManagerCashflowWidget({
               {/* <Typography sx={{ color: theme.typography.primary.black, fontWeight: "800", fontSize: "24px", }}> */}
               {cfPeriodButtonName === "Last 12 Months" && (
                 <Typography variant='h5' sx={{ fontWeight: "bold", color: "#160449" }}>
-                  {month} {year} Cashflow
+                  {month.join(", ")} {year.join(", ")} Cashflow
                 </Typography>
               )}
               {cfPeriodButtonName === "Current Month" && (

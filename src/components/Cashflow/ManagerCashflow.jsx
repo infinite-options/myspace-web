@@ -93,8 +93,8 @@ export default function ManagerCashflow() {
   const currentMonth = currentDate.toLocaleString("default", { month: "long" });
   const currentYear = currentDate.getFullYear().toString();
 
-  const [month, setMonth] = useState(location.state?.month || currentMonth);
-  const [year, setYear] = useState(location.state?.year || currentYear);
+  const [month, setMonth] = useState([location.state?.month || currentMonth]);
+  const [year, setYear] = useState([location.state?.year || currentYear]);
   const cashflowWidgetData = location.state?.cashflowWidgetData;
 
   const [cashflowData, setCashflowData] = useState(null); // Cashflow data from API
@@ -584,7 +584,7 @@ export default function ManagerCashflow() {
     //   (item) => item.pur_receiver === profileId && item.cf_month === month && item.cf_year === year && item.purchase_type.toUpperCase() !== "DEPOSIT"
     // );
     let revenueItems = data?.filter(
-      (item) => item.pur_cf_type === "revenue" && item.cf_month === month && item.cf_year === year && item.purchase_type.toUpperCase() !== "DEPOSIT"
+      (item) => item.pur_cf_type === "revenue" && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year && item.purchase_type.toUpperCase() !== "DEPOSIT"
     );
 
     let totals = {};
@@ -713,7 +713,7 @@ export default function ManagerCashflow() {
       key = "total_paid";
     }
 
-    let expenseItems = data?.filter((item) => item.cf_month === month && item.cf_year === year && item.purchase_type.toUpperCase() !== "DEPOSIT");
+    let expenseItems = data?.filter((item) => month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year && item.purchase_type.toUpperCase() !== "DEPOSIT");
 
     let totals = {};
     let hasItems = {};
@@ -726,12 +726,20 @@ export default function ManagerCashflow() {
     expenseItems?.forEach((item) => {
       const purchaseType = item.purchase_type.toUpperCase();
 
-      if (item[key] !== null && totals.hasOwnProperty(purchaseType)) {
-        hasItems[purchaseType] = true;
-        totals[purchaseType] += parseFloat(item[key]);
-      } else if (item[key] !== null) {
-        hasItems["OTHER"] = true;
-        totals["OTHER"] += parseFloat(item[key]);
+      if (item[key] !== null) {
+        if (purchaseType === "MANAGEMENT") {
+          
+          hasItems[purchaseType] = true;
+          totals[purchaseType] = (totals[purchaseType] || 0) - parseFloat(item[key]);
+        } else if (totals.hasOwnProperty(purchaseType)) {
+          
+          hasItems[purchaseType] = true;
+          totals[purchaseType] += parseFloat(item[key]);
+        } else {
+        
+          hasItems["OTHER"] = true;
+          totals["OTHER"] += parseFloat(item[key]);
+        }
       }
     });
 
@@ -1007,7 +1015,7 @@ export default function ManagerCashflow() {
   function getTotalRevenueByMonthYear(data, month, year) {
     // console.log("In getTotalRevenueByMonthYear: ", data, month, year);
     let revenueItems = data?.filter(
-      (item) => item.cf_month === month && item.cf_year === year && item.pur_receiver === profileId && item.purchase_type.toUpperCase() !== "DEPOSIT"
+      (item) => month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year && item.purchase_type.toUpperCase() !== "DEPOSIT"
     );
     // console.log("After filter revenueItems: ", revenueItems);
     let totalRevenue = revenueItems?.reduce((acc, item) => {
@@ -1018,17 +1026,24 @@ export default function ManagerCashflow() {
   }
 
   function getTotalExpenseByMonthYear(data, month, year) {
-    let expenseItems = data?.filter((item) => item.cf_month === month && item.cf_year === year && item.purchase_type.toUpperCase() !== "DEPOSIT");
+    let expenseItems = data?.filter((item) => month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year && item.purchase_type.toUpperCase() !== "DEPOSIT");
     let totalExpense = expenseItems?.reduce((acc, item) => {
-      return acc + parseFloat(item["total_paid"] ? item["total_paid"] : 0.0);
+      const totalPaid = parseFloat(item["total_paid"] || 0.0);
+  
+      if (item.purchase_type.toUpperCase() === "MANAGEMENT") {
+        return acc - totalPaid;
+      }
+  
+      return acc + totalPaid;
     }, 0.0);
+
     return totalExpense;
   }
 
   function getTotalExpectedRevenueByMonthYear(data, month, year) {
     // console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
     let revenueItems = data?.filter(
-      (item) => item.cf_month === month && item.cf_year === year && item.pur_receiver === profileId && item.purchase_type.toUpperCase() !== "DEPOSIT"
+      (item) => month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year && item.purchase_type.toUpperCase() !== "DEPOSIT"
     );
     let totalRevenue = revenueItems?.reduce((acc, item) => {
       return acc + parseFloat(item["pur_amount_due"] ? item["pur_amount_due"] : 0.0);
@@ -1038,10 +1053,16 @@ export default function ManagerCashflow() {
 
   function getTotalExpectedExpenseByMonthYear(data, month, year) {
     // console.log(data)
-    let expenseItems = data?.filter((item) => item.cf_month === month && item.cf_year === year && item.purchase_type.toUpperCase() !== "DEPOSIT");
+    let expenseItems = data?.filter((item) => month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year && item.purchase_type.toUpperCase() !== "DEPOSIT");
     let totalExpense = expenseItems?.reduce((acc, item) => {
-      return acc + parseFloat(item["pur_amount_due"] ? item["pur_amount_due"] : 0.0);
-    }, 0.0);
+    const totalPaid = parseFloat(item["pur_amount_due"] || 0.0);
+
+    if (item.purchase_type.toUpperCase() === "MANAGEMENT") {
+      return acc - totalPaid;
+    }
+
+    return acc + totalPaid;
+  }, 0.0);
     return totalExpense;
   }
 
@@ -1102,8 +1123,10 @@ export default function ManagerCashflow() {
       }
   
       // const profitDatacurrentMonth = filteredProfitData;
-      const currentMonthData = filteredProfitData?.filter((item) => item.cf_month === month && item.cf_year === year);
-      const currentYearData = filteredProfitData?.filter((item) => item.cf_year === year);
+      // const currentMonthData = filteredProfitData?.filter((item) => item.cf_month === month && item.cf_year === year);
+      const currentMonthData = filteredProfitData?.filter((item) => month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
+
+      const currentYearData = filteredProfitData?.filter((item) => year.includes(item.cf_year));
   
       console.table("226 - currentMonthData - ", currentMonthData)
   
@@ -1122,7 +1145,7 @@ export default function ManagerCashflow() {
       const payoutsCurrentMonth = currentMonthData?.filter((item) => item.pur_cf_type === "expense" || (item.pur_cf_type === "revenue" && item.purchase_type.toUpperCase() === "MANAGEMENT" ));
       const payoutsCurrentYear = currentYearData?.filter((item) => item.pur_cf_type === "expense");
   
-      const revenueDataForManager = currentMonthData?.filter((item) => item.pur_payer === profileId || item.pur_receiver === profileId);
+      const revenueDataForManager = currentMonthData?.filter((item) => item.purchase_type.toUpperCase() !== "DEPOSIT" && (item.pur_payer === profileId || item.pur_receiver === profileId));
       // const revenueDataForManager = currentMonthData?.filter((item) => item.pur_cf_type === "revenue" && item.purchase_type.toUpperCase() === "MANAGEMENT");
 
       const revenueList = rentDataCurrentMonth?.filter((item) => item.purchase_type.toUpperCase() !== "DEPOSIT");
@@ -1131,6 +1154,62 @@ export default function ManagerCashflow() {
       setExpenseList(payoutsCurrentMonth);
   
       // expense by property
+      // const payoutsByProperty = payoutsCurrentMonth?.reduce((acc, item) => {
+      //   if (item.purchase_type.toUpperCase() !== "DEPOSIT") {
+      //     const propertyUID = item.pur_property_id;
+      //     const propertyInfo = {
+      //       property_id: item.pur_property_id,
+      //       property_address: item.property_address,
+      //       property_unit: item.property_unit,
+      //     };
+
+      //     let totalExpected = 0
+      //     let totalActual = 0
+
+      //     if(item.purchase_type.toUpperCase() === "MANAGEMENT"){
+      //       // console.log(" --- ok here -- - ", typeof item.pur_amount_due)
+      //       // item.pur_amount_due = (-Math.abs(parseFloat(item.pur_amount_due || "0"))).toString()
+      //       // item.total_paid = (-Math.abs(parseFloat(item.total_paid || "0"))).toString() 
+
+      //       // totalExpected = parseFloat(item.pur_amount_due) || 0;
+      //       // totalActual = parseFloat(item.total_paid) || 0;
+      //       // Convert to negative strings
+      //       const purAmountDue = -Math.abs(parseFloat(item.pur_amount_due || "0"));
+      //       const totalPaid = -Math.abs(parseFloat(item.total_paid || "0"));
+
+      //       // Update item (ensure it's mutable or create a copy)
+      //       item.pur_amount_due = purAmountDue.toString();
+      //       item.total_paid = totalPaid.toString();
+
+      //       console.log("After conversion: ", item.pur_amount_due, item.total_paid);
+
+      //       // Parse for calculations
+      //       totalExpected = purAmountDue;
+      //       totalActual = totalPaid;
+      //     }else{
+      //       totalExpected = parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0) || 0;
+      //       totalActual = parseFloat(item.total_paid) || 0;
+      //     }
+  
+  
+      //     if (!acc[propertyUID]) {
+      //       // acc[propertyUID] = [];
+      //       acc[propertyUID] = {
+      //         propertyInfo: propertyInfo,
+      //         payoutItems: [],
+      //         totalExpected: 0,
+      //         totalActual: 0,
+      //       };
+      //     }
+  
+      //     acc[propertyUID].payoutItems.push(item);
+      //     acc[propertyUID].totalExpected += totalExpected;
+      //     acc[propertyUID].totalActual += totalActual;
+      //   }
+  
+      //   return acc;
+      // }, {});
+
       const payoutsByProperty = payoutsCurrentMonth?.reduce((acc, item) => {
         if (item.purchase_type.toUpperCase() !== "DEPOSIT") {
           const propertyUID = item.pur_property_id;
@@ -1139,40 +1218,57 @@ export default function ManagerCashflow() {
             property_address: item.property_address,
             property_unit: item.property_unit,
           };
-
-          let totalExpected = 0
-          let totalActual = 0
-
-          if(item.purchase_type.toUpperCase() === "MANAGEMENT"){
-            item.pur_amount_due *= -1
-            item.total_paid *= -1
-
-            totalExpected = parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0) || 0;
-            totalActual = parseFloat(item.total_paid) || 0;
-          }else{
-            totalExpected = parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0) || 0;
-            totalActual = parseFloat(item.total_paid) || 0;
-          }
-  
-  
-          if (!acc[propertyUID]) {
-            // acc[propertyUID] = [];
-            acc[propertyUID] = {
-              propertyInfo: propertyInfo,
-              payoutItems: [],
-              totalExpected: 0,
-              totalActual: 0,
+      
+          let totalExpected = 0;
+          let totalActual = 0;
+      
+          if (item.purchase_type.toUpperCase() === "MANAGEMENT") {
+            //convert management fee to negative
+            const purAmountDue = -Math.abs(parseFloat(item.pur_amount_due || "0"));
+            const totalPaid = -Math.abs(parseFloat(item.total_paid || "0"));
+      
+            const updatedItem = {
+              ...item,
+              pur_amount_due: purAmountDue.toString(),
+              total_paid: totalPaid.toString(),
             };
+      
+            totalExpected = purAmountDue;
+            totalActual = totalPaid;
+      
+            if (!acc[propertyUID]) {
+              acc[propertyUID] = {
+                propertyInfo: propertyInfo,
+                payoutItems: [],
+                totalExpected: 0,
+                totalActual: 0,
+              };
+            }
+      
+            acc[propertyUID].payoutItems.push(updatedItem);
+          } else {
+            totalExpected = parseFloat(item.pur_amount_due || "0") || 0;
+            totalActual = parseFloat(item.total_paid || "0") || 0;
+      
+            if (!acc[propertyUID]) {
+              acc[propertyUID] = {
+                propertyInfo: propertyInfo,
+                payoutItems: [],
+                totalExpected: 0,
+                totalActual: 0,
+              };
+            }
+      
+            acc[propertyUID].payoutItems.push(item);
           }
-  
-          acc[propertyUID].payoutItems.push(item);
+      
           acc[propertyUID].totalExpected += totalExpected;
           acc[propertyUID].totalActual += totalActual;
         }
-  
+      
         return acc;
       }, {});
-  
+      
       // setPayouts(payoutsByProperty);
   
       setUnsortedPayouts(payoutsByProperty);
@@ -1617,7 +1713,7 @@ export default function ManagerCashflow() {
         paymentDetails.forEach((payment) => {
           const key = `${data.pur_payer}${payment.payment_date}${payment.payment_intent}`;
 
-          console.log("=== debug dhyey = ", payment, data)
+          // console.log("=== debug dhyey = ", payment, data)
   
           // Create a new object for each payment item
           const newObject = {
@@ -1637,7 +1733,7 @@ export default function ManagerCashflow() {
         });
       });
   
-      // console.log(" DataForUnverified - ", finalListForUnverified);
+      console.log(" DataForUnverified - ", finalListForUnverified);
   
       const filteredItems = finalListForUnverified.filter((data) => {
         return data.items.some((item) => {
@@ -1666,10 +1762,8 @@ export default function ManagerCashflow() {
         let totalExpected = 0;
         let totalActual = 0;
   
-        if (item.cf_month === month && item.cf_year === year && item.purchase_type !== "Deposit") {
+        if (month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year && item.purchase_type !== "Deposit" && item.purchase_type.toUpperCase() !== "MAINTENANCE") {
           if (item.pur_payer.startsWith("110")) {
-            item.total_paid *= -1
-            item.pur_amount_due *= -1
             totalActual = parseFloat(item.total_paid) || 0;
             totalExpected = parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0) || 0;
           } else {
@@ -1728,7 +1822,7 @@ export default function ManagerCashflow() {
   }, [month, year, cashflowData, selectedProperty, selectedOwnerId]);
 
   useEffect(() => {
-    console.log("becuase of this ...issue happend ... ", unsortedPayouts, unsortedRentsData)
+    // console.log("becuase of this ...issue happend ... ", unsortedPayouts, unsortedRentsData)
     setShowSpinner(true)
     
     if (unsortedPayouts && unsortedRentsData) {
@@ -1963,105 +2057,154 @@ export default function ManagerCashflow() {
     // });
 
     // return profitDataByProperty;
+
+    // previous logic
+    // const profitDataByProperty = {};
+    // const allProfitItems = [];
+
+    // Object.keys(rentsDataByProperty).forEach((propertyUID) => {
+    //   const rentData = rentsDataByProperty[propertyUID];
+    //   const payoutData = payoutsByProperty[propertyUID] || {
+    //     totalExpected: 0,
+    //     totalActual: 0,
+    //     payoutItems: [],
+    //   };
+
+    //   // const totalRentExpected = rentData.totalExpected || 0;
+    //   // const totalRentActual = rentData.totalActual || 0;
+    //   const totalRentExpected = rentData.rentItems.reduce((total, item) => {
+    //     if (item.pur_payer && item.pur_payer.startsWith("110")) {
+    //       return total + parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0 || 0);
+    //     }
+    //     return total;
+    //   }, 0);
+
+    //   const totalRentActual = rentData.rentItems.reduce((total, item) => {
+    //     if (item.pur_payer && item.pur_payer.startsWith("110")) {
+    //       return total + parseFloat(item.total_paid || 0);
+    //     }
+    //     return total;
+    //   }, 0);
+
+    //   const totalPayoutExpected = (payoutData.totalExpected || 0) * -1;
+    //   const totalPayoutActual = (payoutData.totalActual || 0) * -1;
+
+    //   // Filter rent items
+    //   const profitRentItems = rentData.rentItems.filter((item) => parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0) >= 0 || parseFloat(item.total_paid) >= 0);
+
+    //   // Filter payout items and convert expected/total_paid to negative
+    //   const profitPayoutItems = payoutData.payoutItems
+    //     .filter((item) => parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0) >= 0 || parseFloat(item.total_paid) >= 0)
+    //     .map((item) => ({
+    //       ...item,
+    //       pur_amount_due: (parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0) || 0.0) * -1, // Negative value for expected for display
+    //       total_paid: (parseFloat(item.total_paid) || 0.0) * -1,
+    //     }));
+
+    //   // const expectedProfit = totalRentExpected + totalPayoutExpected;
+    //   // const actualProfit = totalRentActual + totalPayoutActual;
+    //   const expectedProfit = totalRentExpected;
+    //   const actualProfit = totalRentActual;
+
+    //   allProfitItems.push(...profitRentItems);
+    //   allProfitItems.push(...profitPayoutItems);
+
+    //   profitDataByProperty[propertyUID] = {
+    //     propertyInfo: rentData.propertyInfo,
+    //     totalRentExpected,
+    //     totalRentActual,
+    //     totalPayoutExpected,
+    //     totalPayoutActual,
+    //     expectedProfit,
+    //     actualProfit,
+    //     profitItems: [...profitRentItems, ...profitPayoutItems],
+    //   };
+    // });
+
+    // Object.keys(payoutsByProperty).forEach((propertyUID) => {
+    //   if (!profitDataByProperty[propertyUID]) {
+    //     const payoutData = payoutsByProperty[propertyUID];
+
+    //     const totalPayoutExpected = (payoutData.totalExpected || 0) * -1;
+    //     const totalPayoutActual = (payoutData.totalActual || 0) * -1;
+
+    //     const totalRentExpected = 0;
+    //     const totalRentActual = 0;
+
+    //     // Filter payout items and convert expected/total_paid to negative
+    //     const profitPayoutItems = payoutData.payoutItems
+    //       .filter((item) => parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0) >= 0 || parseFloat(item.total_paid) >= 0)
+    //       .map((item) => ({
+    //         ...item,
+    //         pur_amount_due: (parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0) || 0.0) * -1,
+    //         total_paid: (parseFloat(item.total_paid) || 0.0) * -1,
+    //       }));
+
+    //     allProfitItems.push(...profitPayoutItems);
+
+    //     const expectedProfit = totalRentExpected;
+    //     // const actualProfit = totalRentActual + totalPayoutActual;
+    //     const actualProfit = totalRentActual;
+
+    //     profitDataByProperty[propertyUID] = {
+    //       propertyInfo: payoutData.propertyInfo,
+    //       totalRentExpected,
+    //       totalRentActual,
+    //       totalPayoutExpected,
+    //       totalPayoutActual,
+    //       expectedProfit,
+    //       actualProfit,
+    //       profitItems: profitPayoutItems,
+    //     };
+    //   }
+    // });
+
     const profitDataByProperty = {};
     const allProfitItems = [];
-
-    Object.keys(rentsDataByProperty).forEach((propertyUID) => {
-      const rentData = rentsDataByProperty[propertyUID];
-      const payoutData = payoutsByProperty[propertyUID] || {
-        totalExpected: 0,
-        totalActual: 0,
-        payoutItems: [],
-      };
-
-      // const totalRentExpected = rentData.totalExpected || 0;
-      // const totalRentActual = rentData.totalActual || 0;
-      const totalRentExpected = rentData.rentItems.reduce((total, item) => {
-        if (item.pur_payer && item.pur_payer.startsWith("110")) {
-          return total + parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0 || 0);
-        }
-        return total;
-      }, 0);
-
-      const totalRentActual = rentData.rentItems.reduce((total, item) => {
-        if (item.pur_payer && item.pur_payer.startsWith("110")) {
-          return total + parseFloat(item.total_paid || 0);
-        }
-        return total;
-      }, 0);
-
-      const totalPayoutExpected = (payoutData.totalExpected || 0) * -1;
-      const totalPayoutActual = (payoutData.totalActual || 0) * -1;
-
-      // Filter rent items
-      const profitRentItems = rentData.rentItems.filter((item) => parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0) >= 0 || parseFloat(item.total_paid) >= 0);
-
-      // Filter payout items and convert expected/total_paid to negative
+    
+    Object.keys(payoutsByProperty).forEach((propertyUID) => {
+      const payoutData = payoutsByProperty[propertyUID];
+    
+      if (!payoutData || !payoutData.payoutItems) return;
+    
       const profitPayoutItems = payoutData.payoutItems
-        .filter((item) => parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0) >= 0 || parseFloat(item.total_paid) >= 0)
+        .filter((item) => item.purchase_type?.toUpperCase() === "MANAGEMENT")
         .map((item) => ({
           ...item,
-          pur_amount_due: (parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0) || 0.0) * -1, // Negative value for expected for display
-          total_paid: (parseFloat(item.total_paid) || 0.0) * -1,
+          pur_amount_due: (parseFloat(item.pur_amount_due || 0.0) || 0.0) * -1, // Convert expected to positive again because in payout it is negative
+          total_paid: (parseFloat(item.total_paid || 0.0) || 0.0) * -1, 
         }));
-
-      // const expectedProfit = totalRentExpected + totalPayoutExpected;
-      // const actualProfit = totalRentActual + totalPayoutActual;
-      const expectedProfit = totalRentExpected;
-      const actualProfit = totalRentActual;
-
-      allProfitItems.push(...profitRentItems);
-      allProfitItems.push(...profitPayoutItems);
-
+    
+      // Calculate total expected and actual profits for "management" items
+      const totalPayoutExpected = profitPayoutItems.reduce(
+        (sum, item) => sum + (parseFloat(item.pur_amount_due || 0.0) || 0.0),
+        0
+      );
+    
+      const totalPayoutActual = profitPayoutItems.reduce(
+        (sum, item) => sum + (parseFloat(item.total_paid || 0.0) || 0.0),
+        0
+      );
+    
+      if (profitPayoutItems.length === 0) return;
+    
+      // Populate profitDataByProperty for this property
       profitDataByProperty[propertyUID] = {
-        propertyInfo: rentData.propertyInfo,
-        totalRentExpected,
-        totalRentActual,
+        propertyInfo: payoutData.propertyInfo || {}, 
+        totalRentExpected: 0, 
+        totalRentActual: 0, 
         totalPayoutExpected,
         totalPayoutActual,
-        expectedProfit,
-        actualProfit,
-        profitItems: [...profitRentItems, ...profitPayoutItems],
+        expectedProfit: totalPayoutExpected, 
+        actualProfit: totalPayoutActual, 
+        profitItems: profitPayoutItems, 
       };
+    
+      // Push profit items to allProfitItems
+      allProfitItems.push(...profitPayoutItems);
     });
 
-    Object.keys(payoutsByProperty).forEach((propertyUID) => {
-      if (!profitDataByProperty[propertyUID]) {
-        const payoutData = payoutsByProperty[propertyUID];
 
-        const totalPayoutExpected = (payoutData.totalExpected || 0) * -1;
-        const totalPayoutActual = (payoutData.totalActual || 0) * -1;
-
-        const totalRentExpected = 0;
-        const totalRentActual = 0;
-
-        // Filter payout items and convert expected/total_paid to negative
-        const profitPayoutItems = payoutData.payoutItems
-          .filter((item) => parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0) >= 0 || parseFloat(item.total_paid) >= 0)
-          .map((item) => ({
-            ...item,
-            pur_amount_due: (parseFloat(item.pur_amount_due ? item.pur_amount_due : 0.0) || 0.0) * -1,
-            total_paid: (parseFloat(item.total_paid) || 0.0) * -1,
-          }));
-
-        allProfitItems.push(...profitPayoutItems);
-
-        const expectedProfit = totalRentExpected;
-        // const actualProfit = totalRentActual + totalPayoutActual;
-        const actualProfit = totalRentActual;
-
-        profitDataByProperty[propertyUID] = {
-          propertyInfo: payoutData.propertyInfo,
-          totalRentExpected,
-          totalRentActual,
-          totalPayoutExpected,
-          totalPayoutActual,
-          expectedProfit,
-          actualProfit,
-          profitItems: profitPayoutItems,
-        };
-      }
-    });
 
     console.log("profit data - ", profitDataByProperty);
 
@@ -2581,12 +2724,12 @@ function StatementTable(props) {
 
   function getCategoryCount(category) {
     console.log("getCategoryCount - allItems - ", allItems);
-    let items = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
+    let items = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
     return "(" + items.length + ")";
   }
 
   function getCategoryItems(category, type) {
-    let filteredIitems = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
+    let filteredIitems = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
     let items = filteredIitems?.map((item) => ({ ...item, property: JSON.parse(item.property) }));
 
     console.log("getCategoryItems", items);

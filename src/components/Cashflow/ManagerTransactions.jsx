@@ -88,8 +88,8 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
 
   const [showChart, setShowChart] = useState("Current");
 
-  const month = propsMonth || "July"; //fix
-  const year = propsYear || "2024";
+  const month = propsMonth || ["July"]; //fix
+  const year = propsYear || ["2024"];
 
   const cashflowWidgetData = location.state?.cashflowWidgetData;
 
@@ -235,7 +235,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
       filteredTransactionsData = allTransactionsData?.filter((item) => item.pur_property_id === selectedProperty);
       // console.log("filteredTransactionsData - test ", filteredTransactionsData);
     }
-    const transactionsCurrentMonth = filteredTransactionsData?.filter((item) => item.cf_month === month && item.cf_year === year);
+    const transactionsCurrentMonth = filteredTransactionsData?.filter((item) =>   month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
 
     // console.log("ROHIT - filteredTransactionsData - ", filteredTransactionsData);
 
@@ -942,20 +942,20 @@ function SelectMonthComponentTest(props) {
         <Box>
           {monthNames.map((month, index) => {
             return (
-              <Typography className={props.selectedMonth === month ? "selected" : "unselected"} key={index} onClick={() => props.setMonth(month)}>
+              <Typography className={props.selectedMonth === month ? "selected" : "unselected"} key={index} onClick={() => props.setMonth([month])}>
                 {month}
               </Typography>
             );
           })}
         </Box>
         <Box>
-          <Typography className={props.selectedYear === lastYear.toString() ? "selected" : "unselected"} onClick={() => props.setYear(lastYear.toString())}>
+          <Typography className={props.selectedYear === lastYear.toString() ? "selected" : "unselected"} onClick={() => props.setYear([lastYear.toString()])}>
             {lastYear}
           </Typography>
-          <Typography className={props.selectedYear === currentYear.toString() ? "selected" : "unselected"} onClick={() => props.setYear(currentYear.toString())}>
+          <Typography className={props.selectedYear === currentYear.toString() ? "selected" : "unselected"} onClick={() => props.setYear([currentYear.toString()])}>
             {currentYear}
           </Typography>
-          <Typography className={props.selectedYear === nextYear.toString() ? "selected" : "unselected"} onClick={() => props.setYear(nextYear.toString())}>
+          <Typography className={props.selectedYear === nextYear.toString() ? "selected" : "unselected"} onClick={() => props.setYear([nextYear.toString()])}>
             {nextYear}
           </Typography>
         </Box>
@@ -994,12 +994,12 @@ function StatementTable(props) {
 
   function getCategoryCount(category) {
     console.log("getCategoryCount - allItems - ", allItems);
-    let items = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
+    let items = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() &&  month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
     return "(" + items.length + ")";
   }
 
   function getCategoryItems(category, type) {
-    let filteredIitems = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
+    let filteredIitems = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() &&  month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
     let items = filteredIitems?.map((item) => ({ ...item, property: JSON.parse(item.property) }));
 
     console.log("getCategoryItems", items);

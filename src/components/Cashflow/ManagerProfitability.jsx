@@ -150,11 +150,13 @@ const ManagerProfitability = ({
   };
 
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  const month = propsMonth || "July"; //fix
-  const year = propsYear || "2024";
+  const month = propsMonth || ["July"]; //fix
+  const year = propsYear || ["2024"];
+  const displayMonth = propsMonth.join(", ") 
+  const displayYear = propsYear.join(", ")
   const date = new Date();
   const currentMonth = monthNames[date.getMonth()];
-  const currentYear = date.getFullYear();
+  let currentYear = date.getFullYear();
 
   useEffect(() => {
     handleSelectTab(view);
@@ -783,7 +785,7 @@ const ManagerProfitability = ({
         >
           <Stack direction='row' justifyContent='center'>
             <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-              {month} {year} Profitability
+              {displayMonth} {displayYear} Profitability
             </Typography>
           </Stack>
 
@@ -834,11 +836,11 @@ const ManagerProfitability = ({
 
                   if (monthIndex === 0) {
                     // If current month is January
-                    setMonth("December");
-                    setYear((currentYear - 1).toString());
+                    setMonth(["December"]);
+                    setYear([(currentYear - 1).toString()]);
                   } else {
-                    setMonth(monthNames[monthIndex - 1]);
-                    setYear(currentYear.toString());
+                    setMonth([monthNames[monthIndex - 1]]);
+                    setYear([currentYear.toString()]);
                   }
 
                   setHeaderTab("last_month");
@@ -857,14 +859,15 @@ const ManagerProfitability = ({
                 }}
                 onClick={() => {
                   setHeaderTab("current_month");
-                  setMonth(currentMonth);
-                  setYear(currentYear.toString());
+                  setMonth([currentMonth]);
+                  setYear([currentYear.toString()]);
                 }}
               >
                 <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>{currentMonth}</Typography>
               </Button>
               <Button
                 sx={{
+                  marginRight: "30px",
                   backgroundColor: headerTab === "next_month" ? "#3D5CAC" : "#9EAED6",
                   textTransform: "none",
                   "&:hover": {
@@ -878,17 +881,54 @@ const ManagerProfitability = ({
 
                   if (monthIndex === 11) {
                     // If current month is December
-                    setMonth("January");
-                    setYear((currentYear + 1).toString());
+                    setMonth(["January"]);
+                    setYear([(currentYear + 1).toString()]);
                   } else {
-                    setMonth(monthNames[monthIndex + 1]);
-                    setYear(currentYear.toString());
+                    setMonth([monthNames[monthIndex + 1]]);
+                    setYear([currentYear.toString()]);
                   }
 
                   setHeaderTab("next_month");
                 }}
               >
                 <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Next Month</Typography>
+              </Button>
+              <Button
+                sx={{
+                  backgroundColor: headerTab === "last_three_months" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: headerTab === "last_three_months" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => {
+                  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+                  let monthIndex = monthNames.indexOf(currentMonth);
+                  let monthsList = [];
+                  let yearsList = [];
+
+                  // Get the last three months
+                  for (let i = 0; i < 3; i++) {
+                    monthsList.push(monthNames[monthIndex]);
+                    yearsList.push(currentYear.toString());
+
+                    monthIndex--;
+
+                    // If we go below index 0, adjust to December of the previous year
+                    if (monthIndex < 0) {
+                      monthIndex = 11;  // December
+                      currentYear--;    // Previous year
+                    }
+                  }
+
+                  setMonth(monthsList);
+                  setYear(yearsList);
+
+                  setHeaderTab("last_three_months");
+                }}
+              >
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Last 3 Month</Typography>
               </Button>
             </Box>
 
@@ -946,10 +986,10 @@ const ManagerProfitability = ({
           {/* Filter buttons */}
           <Grid container item xs={12} marginTop={15} marginBottom={5}>
             <Grid container item xs={8} display={"flex"} direction={"row"}>
-              <Grid container justifyContent='center' item xs={1.5} marginRight={6}>
+              <Grid container justifyContent='center' item xs={2.7} marginRight={4}>
                 <Button
                   sx={{
-                    width: "90px",
+                    width: "150px",
                     backgroundColor: tab === "profit" ? "#3D5CAC" : "#9EAED6",
                     textTransform: "none",
                     "&:hover": {
@@ -958,10 +998,10 @@ const ManagerProfitability = ({
                   }}
                   onClick={() => {handleSelectTab("profit")}}
                 >
-                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit</Typography>
+                  <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit By Property</Typography>
                 </Button>
               </Grid>
-              <Grid container justifyContent='center' item xs={2.5} marginRight={6}>
+              <Grid container justifyContent='center' item xs={2.2} marginRight={4}>
                 <Button
                   sx={{
                     width: "120px",
@@ -976,10 +1016,10 @@ const ManagerProfitability = ({
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit By Type</Typography>
                 </Button>
               </Grid>
-              <Grid container justifyContent='center' item xs={1.5} marginRight={6}>
+              <Grid container justifyContent='center' item xs={3.2} marginRight={4}>
                 <Button
                   sx={{
-                    width: "90px",
+                    width: "150px",
                     backgroundColor: tab === "by_cashflow" ? "#3D5CAC" : "#9EAED6",
                     textTransform: "none",
                     "&:hover": {
@@ -991,7 +1031,7 @@ const ManagerProfitability = ({
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Cashflow By Property</Typography>
                 </Button>
               </Grid>
-              <Grid container justifyContent='center' item xs={3} marginRight={6}>
+              <Grid container justifyContent='center' item xs={2.7} marginRight={4}>
                 <Button
                   sx={{
                     width: "150px",
@@ -1037,7 +1077,7 @@ const ManagerProfitability = ({
                   <Grid container justifyContent='flex-start' item xs={8}>
                     <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month} CashFlow</Typography>
+                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{displayMonth} CashFlow</Typography>
                       </AccordionSummary>
                     </Grid>
                   </Grid>
@@ -1163,7 +1203,7 @@ const ManagerProfitability = ({
                   <Grid container justifyContent='flex-start' item xs={8}>
                     <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month} Revenue</Typography>
+                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{displayMonth} Revenue</Typography>
                       </AccordionSummary>
                     </Grid>
                   </Grid>
@@ -1281,7 +1321,7 @@ const ManagerProfitability = ({
                   <Grid container justifyContent='flex-start' item xs={8}>
                     <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month} Expense</Typography>
+                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{displayMonth} Expense</Typography>
                       </AccordionSummary>
                     </Grid>
                   </Grid>
@@ -1393,7 +1433,7 @@ const ManagerProfitability = ({
                   <Grid container justifyContent='flex-start' item xs={8}>
                     <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month} Cashflow</Typography>
+                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{displayMonth} Cashflow</Typography>
                       </AccordionSummary>
                     </Grid>
                   </Grid>
@@ -1558,7 +1598,7 @@ const ManagerProfitability = ({
                   <Grid container justifyContent='flex-start' item xs={8}>
                     <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month}</Typography>
+                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{displayMonth}</Typography>
                       </AccordionSummary>
                     </Grid>
                   </Grid>
@@ -1815,7 +1855,7 @@ const ManagerProfitability = ({
                   <Grid container justifyContent='flex-start' item xs={8}>
                     <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month}</Typography>
+                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{displayMonth}</Typography>
                       </AccordionSummary>
                     </Grid>
                   </Grid>
@@ -1949,7 +1989,7 @@ const ManagerProfitability = ({
                   <Grid container justifyContent='flex-start' item xs={8}>
                     <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month}</Typography>
+                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{displayMonth}</Typography>
                       </AccordionSummary>
                     </Grid>
                   </Grid>
@@ -2262,7 +2302,7 @@ const ManagerProfitability = ({
                   <Grid container justifyContent='flex-start' item xs={8}>
                     <Grid container direction='row' alignContent='center' sx={{ height: "35px" }}>
                       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{month}</Typography>
+                        <Typography sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight }}>{displayMonth}</Typography>
                       </AccordionSummary>
                     </Grid>
                   </Grid>
@@ -2419,7 +2459,7 @@ function SelectMonthComponentTest(props) {
           <Box sx={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "10px" }}>
             {monthNames.map((month, index) => {
               return (
-                <Typography textAlign={"center"} className={props.selectedMonth === month ? "selected" : "unselected"} key={index} onClick={() => props.setMonth(month)}>
+                <Typography textAlign={"center"} className={props.selectedMonth === month ? "selected" : "unselected"} key={index} onClick={() => props.setMonth([month])}>
                   {month}
                 </Typography>
               );
@@ -2436,7 +2476,7 @@ function SelectMonthComponentTest(props) {
                 <Typography
                   textAlign={"center"}
                   className={props.selectedYear === year.toString() ? "selected" : "unselected"}
-                  onClick={() => props.setYear(year.toString())}
+                  onClick={() => props.setYear([year.toString()])}
                   key={index}
                 >
                   {year}
@@ -2476,7 +2516,7 @@ function StatementTable(props) {
     // console.log("getCategoryCount - category - ", category);
     let filteredItems = allItems.filter((item) => {
       if (item.purchase_type.toUpperCase() === category.toUpperCase()) {
-        return item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year;
+        return item.purchase_type.toUpperCase() === category.toUpperCase() && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year;
       }
       if (category === "OTHER") {
         if (expected) {
@@ -2502,13 +2542,13 @@ function StatementTable(props) {
 
     let filteredIitems = allItems.filter((item) => {
       if (item.purchase_type.toUpperCase() === category.toUpperCase()) {
-        return item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year;
+        return item.purchase_type.toUpperCase() === category.toUpperCase() && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year;
       }
       if (category === "OTHER") {
         if (isExpected) {
-          return !categoryExpectedTotalMapping.hasOwnProperty(item.purchase_type.toUpperCase()) && item.cf_month === month && item.cf_year === year;
+          return !categoryExpectedTotalMapping.hasOwnProperty(item.purchase_type.toUpperCase()) && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year;
         } else {
-          return !categoryTotalMapping.hasOwnProperty(item.purchase_type.toUpperCase()) && item.cf_month === month && item.cf_year === year;
+          return !categoryTotalMapping.hasOwnProperty(item.purchase_type.toUpperCase()) && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year;
         }
       }
     });
@@ -2991,7 +3031,7 @@ function NewStatmentTable(props) {
     // console.log("getCategoryCount - category - ", category);
     let filteredItems = allItems.filter((item) => {
       if (item.purchase_type.toUpperCase() === category.toUpperCase()) {
-        return item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year;
+        return item.purchase_type.toUpperCase() === category.toUpperCase() && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year;
       }
       if (category === "OTHER") {
         if (expected) {
@@ -3038,13 +3078,13 @@ function NewStatmentTable(props) {
 
     let filteredIitems = allItems.filter((item) => {
       if (item.purchase_type.toUpperCase() === category.toUpperCase()) {
-        return item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year;
+        return item.purchase_type.toUpperCase() === category.toUpperCase() && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year;
       }
       if (category === "OTHER") {
         if (isExpected) {
-          return !categoryExpectedTotalMapping.hasOwnProperty(item.purchase_type.toUpperCase()) && item.cf_month === month && item.cf_year === year;
+          return !categoryExpectedTotalMapping.hasOwnProperty(item.purchase_type.toUpperCase()) && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year;
         } else {
-          return !categoryTotalMapping.hasOwnProperty(item.purchase_type.toUpperCase()) && item.cf_month === month && item.cf_year === year;
+          return !categoryTotalMapping.hasOwnProperty(item.purchase_type.toUpperCase()) && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year;
         }
       }
     });
@@ -3478,7 +3518,7 @@ function NewStatmentTableForByCashflow(props) {
     // console.log("getCategoryCount - category - ", category);
     let filteredItems = allItems.filter((item) => {
       if (item.purchase_type.toUpperCase() === category.toUpperCase()) {
-        return item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year;
+        return item.purchase_type.toUpperCase() === category.toUpperCase() && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year;
       }
       if (category === "OTHER") {
         if (expected) {
@@ -3525,13 +3565,13 @@ function NewStatmentTableForByCashflow(props) {
 
     let filteredIitems = allItems.filter((item) => {
       if (item.purchase_type.toUpperCase() === category.toUpperCase()) {
-        return item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year;
+        return item.purchase_type.toUpperCase() === category.toUpperCase() && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year;
       }
       if (category === "OTHER") {
         if (isExpected) {
-          return !categoryExpectedTotalMapping.hasOwnProperty(item.purchase_type.toUpperCase()) && item.cf_month === month && item.cf_year === year;
+          return !categoryExpectedTotalMapping.hasOwnProperty(item.purchase_type.toUpperCase()) && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year;
         } else {
-          return !categoryTotalMapping.hasOwnProperty(item.purchase_type.toUpperCase()) && item.cf_month === month && item.cf_year === year;
+          return !categoryTotalMapping.hasOwnProperty(item.purchase_type.toUpperCase()) && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year;
         }
       }
     });
