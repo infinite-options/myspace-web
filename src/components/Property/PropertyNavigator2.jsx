@@ -1792,6 +1792,12 @@ export default function PropertyNavigator2({
                             disabled={isReadOnly}
                             value={currentApplRow?.appliance_desc || ""}
                             onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_desc: e.target.value })}
+                            sx={{ '& .MuiInputLabel-root': {
+                              color: 'black', // Normal state
+                          },
+                          '& .MuiInputLabel-root.Mui-focused': {
+                              color: 'black', // Focused state
+                          },}}
                           />
                           <TextField
                             margin='dense'
@@ -1806,6 +1812,12 @@ export default function PropertyNavigator2({
                               })
                             }
                             disabled={isReadOnly}
+                            sx={{ '& .MuiInputLabel-root': {
+                              color: 'black', // Normal state
+                          },
+                          '& .MuiInputLabel-root.Mui-focused': {
+                              color: 'black', // Focused state
+                          },}}
                           />
                           <TextField
                             margin='dense'
@@ -1820,6 +1832,12 @@ export default function PropertyNavigator2({
                               })
                             }
                             disabled={isReadOnly}
+                            sx={{ '& .MuiInputLabel-root': {
+                              color: 'black', // Normal state
+                          },
+                          '& .MuiInputLabel-root.Mui-focused': {
+                              color: 'black', // Focused state
+                          },}}
                           />
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DesktopDatePicker
@@ -1847,12 +1865,16 @@ export default function PropertyNavigator2({
                                     },
                                     "& .MuiSvgIcon-root": {
                                       fontSize: "20px",
-                                    },
-                                  }}
+                                    },}}
                                 />
                               )}
                               slotProps={{ textField: { fullWidth: true } }}
-                              sx={{ marginTop: "10px" }}
+                              sx={{ marginTop: "10px", '& .MuiInputLabel-root': {
+                                color: 'black', // Normal state
+                            },
+                            '& .MuiInputLabel-root.Mui-focused': {
+                                color: 'black', // Focused state
+                            } }}
                             />
                           </LocalizationProvider>
                           <TextField
@@ -1868,6 +1890,12 @@ export default function PropertyNavigator2({
                                 appliance_purchase_order: e.target.value,
                               })
                             }
+                            sx={{ '& .MuiInputLabel-root': {
+                              color: 'black', // Normal state
+                          },
+                          '& .MuiInputLabel-root.Mui-focused': {
+                              color: 'black', // Focused state
+                          },}}
                           />
 
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -1893,12 +1921,16 @@ export default function PropertyNavigator2({
                                     },
                                     "& .MuiSvgIcon-root": {
                                       fontSize: "20px",
-                                    },
-                                  }}
+                                    },}}
                                 />
                               )}
                               slotProps={{ textField: { fullWidth: true } }}
-                              sx={{ marginTop: "10px" }}
+                              sx={{ marginTop: "10px",'& .MuiInputLabel-root': {
+                                color: 'black', // Normal state
+                            },
+                            '& .MuiInputLabel-root.Mui-focused': {
+                                color: 'black', // Focused state
+                            } }}
                             />
                           </LocalizationProvider>
 
@@ -1915,6 +1947,12 @@ export default function PropertyNavigator2({
                                 appliance_serial_num: e.target.value,
                               })
                             }
+                            sx={{ '& .MuiInputLabel-root': {
+                              color: 'black', // Normal state
+                          },
+                          '& .MuiInputLabel-root.Mui-focused': {
+                              color: 'black', // Focused state
+                          },}}
                           />
                           <TextField
                             margin='dense'
@@ -1929,6 +1967,12 @@ export default function PropertyNavigator2({
                                 appliance_model_num: e.target.value,
                               })
                             }
+                            sx={{ '& .MuiInputLabel-root': {
+                              color: 'black', // Normal state
+                          },
+                          '& .MuiInputLabel-root.Mui-focused': {
+                              color: 'black', // Focused state
+                          },}}
                           />
                           <TextField
                             margin='dense'
@@ -1943,6 +1987,12 @@ export default function PropertyNavigator2({
                                 appliance_warranty_info: e.target.value,
                               })
                             }
+                            sx={{ '& .MuiInputLabel-root': {
+                              color: 'black', // Normal state
+                          },
+                          '& .MuiInputLabel-root.Mui-focused': {
+                              color: 'black', // Focused state
+                          },}}
                           />
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DesktopDatePicker
@@ -1967,12 +2017,16 @@ export default function PropertyNavigator2({
                                     },
                                     "& .MuiSvgIcon-root": {
                                       fontSize: "20px",
-                                    },
-                                  }}
+                                    },}}
                                 />
                               )}
                               slotProps={{ textField: { fullWidth: true } }}
-                              sx={{ marginTop: "10px" }}
+                              sx={{ marginTop: "10px",'& .MuiInputLabel-root': {
+                                color: 'black', // Normal state
+                            },
+                            '& .MuiInputLabel-root.Mui-focused': {
+                                color: 'black', // Focused state
+                            }, }}
                             />
                           </LocalizationProvider>
                           <TextField
@@ -1983,6 +2037,12 @@ export default function PropertyNavigator2({
                             variant='outlined'
                             value={currentApplRow?.appliance_url || ""}
                             onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_url: e.target.value })}
+                            sx={{ '& .MuiInputLabel-root': {
+                              color: 'black', // Normal state
+                          },
+                          '& .MuiInputLabel-root.Mui-focused': {
+                              color: 'black', // Focused state
+                          },}}
                           />
                         </DialogContent>
                         <DialogActions sx={{ alignContent: "center", justifyContent: "center" }}>

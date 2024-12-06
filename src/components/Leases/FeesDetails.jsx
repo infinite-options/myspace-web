@@ -373,7 +373,7 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
 
     return (
         <>
-            <Accordion sx={{ backgroundColor: color }}>
+        {leaseFees ?      (<Accordion sx={{ backgroundColor: color }}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="occupants-content"
@@ -950,6 +950,47 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
                     }
                 </AccordionDetails>
             </Accordion>
+    ) : (
+        <>
+  <Box
+    sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: isMobile ? 'flex-start' : 'center',
+      marginBottom: '7px',
+      width: '100%',
+    }}
+  >
+    {/* Fee Details */}
+    <Typography
+      sx={{
+        color: "#160449",
+        fontWeight: theme.typography.primary.fontWeight,
+        fontSize: theme.typography.small,
+        textAlign: isMobile ? "left" : "center",
+        paddingBottom: "10px",
+        paddingTop: "5px",
+        paddingLeft: isMobile ? "5px" : "10px",
+      }}
+    >
+      Fee Details
+    </Typography>
+
+    {/* No Documents */}
+    <Typography
+      sx={{
+        color: "#A9A9A9",
+        fontWeight: theme.typography.primary.fontWeight,
+        fontSize: "15px",
+        textAlign: isMobile ? "left" : "center",
+      }}
+    >
+      No Fees
+    </Typography>
+  </Box>
+</>
+
+      )}
         </>
     )
 }

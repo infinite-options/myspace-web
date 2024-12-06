@@ -122,8 +122,11 @@ export default function LeaseWidget(props) {
                     sx={{
                       width: "35px",
                       height: "35px",
-                      backgroundColor: (currentMonth === index + 1 && "#F87C7A") || (currentMonth + 1 === index + 1 && "#FFC85C") || "#FFFFFF",
-                      color: "#160449",
+                      backgroundColor: 
+                      (currentMonth === index + 1 && "#F87C7A") || 
+                      ((currentMonth === 12 && index + 1 === 1) && "#FFC85C") || // Set index 1 (January) to yellow if currentMonth is December
+                      (currentMonth + 1 === index + 1 && "#FFC85C") || 
+                      "#FFFFFF",color: "#160449",
                       textAlign: "center",
                       borderRadius: "5px",
                       padding: "10px",
