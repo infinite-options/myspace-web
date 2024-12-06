@@ -577,10 +577,10 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
             )}
             <Grid item xs={12} md={12}>
               <Paper sx={{ margin: "0px 10px 10px 10px", backgroundColor: color }}>
-                {selectedRole === "OWNER" && leaseFees && (
+                {selectedRole === "OWNER" && (
                   <FeesDetails isMobile={isMobile} isEditable={false} getDateAdornmentString={getDateAdornmentString} leaseFees={leaseFees} setLeaseFees={setLeaseFees} />
                 )}
-                {selectedRole !== "OWNER" && leaseFees && (
+                {selectedRole !== "OWNER"&& (
                   <FeesDetails isMobile={isMobile} isEditable={true} getDateAdornmentString={getDateAdornmentString} leaseFees={leaseFees} setLeaseFees={setLeaseFees} />
                 )}
               </Paper>

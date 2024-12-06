@@ -59,6 +59,7 @@ export default function SelectPayment(props) {
   // console.log("--DEBUG-- props", props);
   // console.log("--DEBUG-- location.state", location.state);
 
+  const selectedPropertyFromTenant = location?.state?.selectedProperty;
   const managerCashflowWidgetData = location.state?.managerCashflowWidgetData;
   const accountBalanceWidgetData = location.state?.accountBalanceWidgetData;
   // console.log("SelectPayment -  managerCashflowWidgetData - ", managerCashflowWidgetData);
@@ -292,7 +293,11 @@ export default function SelectPayment(props) {
     // navigate(routingString);
 
     // navigate("/payments")
-    navigate(-1);
+    if(selectedRole === "TENANT"){
+      navigate("/tenantDashboard", {state: {selectedProperty: selectedPropertyFromTenant}})
+    }else{
+      navigate(-1);
+    }
 
     setShowSpinner(false);
   };
@@ -350,6 +355,7 @@ export default function SelectPayment(props) {
     localStorage.setItem('payment_notes', payment.business_code);
     localStorage.setItem('payment_type', selectedMethod);
     localStorage.setItem('session_id', resultOfResponse.id);
+    localStorage.setItem('selectedProperty', JSON.stringify(selectedPropertyFromTenant))
 
     if (resultOfResponse){ 
       window.location.href = resultOfResponse.url
