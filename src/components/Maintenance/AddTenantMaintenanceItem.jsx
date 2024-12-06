@@ -129,8 +129,10 @@ export default function AddTenantMaintenanceItem({ closeAddTenantMaintenanceItem
         setRightPane("");
     }
 
-    const handleSubmit = (event) => {
-        console.log("handleSubmit")
+    const handleSubmit = async (event) => {
+        // console.log("handleSubmit")
+        setShowSpinner(true);
+
         event.preventDefault();
 
         const formData = new FormData();
@@ -181,7 +183,7 @@ export default function AddTenantMaintenanceItem({ closeAddTenantMaintenanceItem
 
 
         const postData = async () => {
-            setShowSpinner(true);
+            
             try {
 
                 const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
@@ -197,7 +199,7 @@ export default function AddTenantMaintenanceItem({ closeAddTenantMaintenanceItem
             } catch (err) {
                 console.error("Error posting data:", err);
             }
-            setShowSpinner(false);
+            
         }
 
         const sendAnnouncement = async () => {
@@ -234,8 +236,8 @@ export default function AddTenantMaintenanceItem({ closeAddTenantMaintenanceItem
             }
         }
 
-        postData();
-        sendAnnouncement();
+        await postData();
+        await sendAnnouncement();
 
         setSelectedImageList([])
         setProperty('')
@@ -245,7 +247,8 @@ export default function AddTenantMaintenanceItem({ closeAddTenantMaintenanceItem
         setPhoneNumber('')
         setTitle('')
         setDescription('')
-        setReload(prev => !prev);
+        setReload(true);
+        setShowSpinner(false);
         setRightPane("");
         //navigate('/tenantDashboard');
         //navigate(dashboardRoutingBasedOnSelectedRole(), {state: {refresh: true, propertyId: property.property_uid}})

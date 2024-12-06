@@ -131,6 +131,15 @@ const TenantDashboard = () => {
   //     }
   // };
 
+  useEffect(()=>{
+    console.log("=== ok success - ", location?.state?.selectedProperty)
+    if(location?.state?.selectedProperty){
+      setSelectedProperty(location?.state?.selectedProperty)
+      // handleSelectProperty(location?.state?.selectedProperty)
+    }
+
+  },[location?.state?.selectedProperty])
+
   useEffect(() => {
     if (leaseDetailsData != null && leaseDetailsData.length === 0) {
       setRightPane({ type: "listings" });
@@ -523,6 +532,7 @@ const TenantDashboard = () => {
             <EditMaintenanceItem
               setRightPane={setRightPane}
               setViewRHS={setViewRHS}
+              setRefersh={setReload}
               maintenanceRequest={rightPane.state.maintenanceRequest}
               currentPropertyId={rightPane.state.currentPropertyId}
               propertyAddress={rightPane.state.propertyAddress}
@@ -2356,7 +2366,7 @@ const ManagementDetails = ({ leaseDetails }) => {
 };
 
 const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, propertyId, onAdd, setRightPane, isMobile, setViewRHS }) => {
-  // console.log("maintenancestatus", maintenanceStatus);
+  console.log("maintenancestatus", maintenanceStatus);
   const [expandedRows, setExpandedRows] = useState({});
 
   const filteredRequests = maintenanceStatus.filter((request) => request.maintenance_property_id === propertyId);
@@ -2408,7 +2418,7 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
     title: request.maintenance_title,
     createdDate: request.maintenance_request_created_date || "-",
     image: request.maintenance_favorite_image || "PlaceholderImage",
-    scheduledDateTime: request.maintenance_scheduled_date ? `${request.maintenance_scheduled_date} ${request.maintenance_scheduled_time || "--"}` : "--",
+    scheduledDateTime: request.maintenance_scheduled_date && request.maintenance_scheduled_date !== "null" ? `${request.maintenance_scheduled_date} ${request.maintenance_scheduled_time || "--"}` : "--",
     status: request.maintenance_status,
     actions: request,
   }));

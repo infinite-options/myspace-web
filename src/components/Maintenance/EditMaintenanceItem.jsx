@@ -333,14 +333,16 @@ export default function EditMaintenanceItem({ setRefersh, setRightPane, maintena
 		getProperties();
 	}, []);
 
-	const handleSubmit = (event) => {
+	const handleSubmit = async (event) => {
 		event.preventDefault();
 
-		if (!change) {
+		if (!change && selectedImageList.length === 0) {
 			alert("you didn't change anything...");
 			setChange(false)
 			return;
 		}
+
+		setShowSpinner(true);
 
 		const editFormData = new FormData();
 
@@ -420,7 +422,7 @@ export default function EditMaintenanceItem({ setRefersh, setRightPane, maintena
 		}
 
 		const putData = async () => {
-			setShowSpinner(true);
+			
 			try {
 				const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
 					method: 'PUT',
@@ -453,9 +455,10 @@ export default function EditMaintenanceItem({ setRefersh, setRightPane, maintena
 			} catch (err) {
 				console.error('Error: ', err.message);
 			}
-			setShowSpinner(false);
+			
 		};
-		putData(); //undo
+
+		await putData(); //undo
 
 		// setSelectedImageList([])
 		// setProperty('')
@@ -470,8 +473,9 @@ export default function EditMaintenanceItem({ setRefersh, setRightPane, maintena
 		if (setRefersh) {
 			setRefersh(true);
 		}
-		if (selectedRole === "TENANT") {
+		setShowSpinner(false);
 
+		if (selectedRole === "TENANT") {
 			handleBackButton();
 		} else {
 			setEditMaintenanceView(false);
@@ -1008,8 +1012,32 @@ export default function EditMaintenanceItem({ setRefersh, setRightPane, maintena
 											onChange={handleCompletedChange}
 											defaultValue={completionStatus1}
 										>
-											<FormControlLabel value="yes" control={<Radio />} label="Yes" />
-											<FormControlLabel value="no" control={<Radio />} label="No" />
+											<FormControlLabel 
+												value="yes" 
+												control={
+													<Radio 
+														sx={{
+															color: theme.typography.common.blue,
+															'&.Mui-checked': {
+																color: theme.typography.common.blue,
+															},
+														}}
+													/>
+												} 
+												label="Yes" />
+											<FormControlLabel 
+												value="no" 
+												control={
+													<Radio
+														sx={{
+															color: theme.typography.common.blue,
+															'&.Mui-checked': {
+																color: theme.typography.common.blue,
+															},
+														}}
+													/>
+												} 
+												label="No" />
 										</RadioGroup>
 									</FormControl>
 								</Grid>

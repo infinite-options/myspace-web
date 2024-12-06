@@ -4230,9 +4230,11 @@ function TransactionsTable(props) {
               }}
               onClick={(e) => {
                 e.stopPropagation();
-                const selectedPurchaseGroup = selectedPayments.map((payment) => payment.purchase_group);
-                console.log("selected purchase group -- ", selectedPurchaseGroup);
-                navigate("/paymentProcessing", { state: { currentWindow: "PAY_BILLS", selectedRows: selectedPurchaseGroup } });
+                const selectedPurchaseReceiver = [
+                  ...new Set(selectedPayments.map((payment) => payment.pur_receiver))
+                ];
+                // console.log("selected purchase group -- ", selectedPurchaseReceiver);
+                navigate("/paymentProcessing", { state: { currentWindow: "PAY_BILLS", selectedRows: selectedPurchaseReceiver } });
               }}
             >
               <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#ffffff" }}>Pay Owner</Typography>

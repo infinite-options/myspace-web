@@ -134,7 +134,7 @@ export default function PaymentConfirmation() {
       if(selectedRole === "MANAGER"){
         navigate("/managerDashboard")
       }else if(selectedRole === "TENANT"){
-        navigate("/tenantDashboard")
+        navigate("/tenantDashboard", {state: {selectedProperty: JSON.parse(localStorage.getItem("selectedProperty"))}})
       }else{
         navigate("/ownerDashboard")
       }
