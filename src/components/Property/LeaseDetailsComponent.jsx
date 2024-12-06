@@ -87,7 +87,7 @@ export default function LeaseDetailsComponent({
       }
     });
     const applicationsCount = currentProperty?.leases.filter((lease) => ["NEW", "RENEW NEW", "PROCESSING", "RENEW PROCESSING"].includes(lease.lease_status)).length;
-    const applications = currentProperty?.leases.filter((lease) => !["ACTIVE", "ACTIVE M2M", "ENDED", "TERMINATED"].includes(lease.lease_status));
+    const applications = currentProperty?.leases.filter((lease) => lease.lease_status && !["ACTIVE", "ACTIVE M2M", "ENDED", "TERMINATED"].includes(lease.lease_status));
     const activeLease = currentProperty?.leases.filter((lease) => ["ACTIVE", "ACTIVE M2M"].includes(lease.lease_status))[0];
     setAllApplications(applications);
     setApplicationsCount(applicationsCount);
@@ -187,7 +187,7 @@ export default function LeaseDetailsComponent({
       navigate("/tenantLease", {
         state: {
           page: "renew_lease",
-          application: renewalApplication,
+          lease: renewalApplication,
           property: currentProperty,
           managerInitiatedRenew: false,
         },
@@ -196,7 +196,7 @@ export default function LeaseDetailsComponent({
       navigate("/tenantLease", {
         state: {
           page: "renew_lease",
-          application: currentProperty,
+          lease: currentProperty,
           property: currentProperty,
           managerInitiatedRenew: true,
         },

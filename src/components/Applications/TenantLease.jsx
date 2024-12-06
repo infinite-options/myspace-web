@@ -1189,7 +1189,7 @@ const TenantLease = () => {
       leaseApplicationFormData.append("lease_property_id", lease.lease_property_id);
       leaseApplicationFormData.append("tenant_uid", lease?.tenant_uid);
       leaseApplicationFormData.append("lease_assigned_contacts", lease?.lease_assigned_contacts);
-      leaseApplicationFormData.append("lease_lease_date", lease?.lease_application_date);
+      leaseApplicationFormData.append("lease_application_date", lease?.lease_application_date);
       leaseApplicationFormData.append("lease_effective_date", startDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_start", startDate.format("MM-DD-YYYY"));
       leaseApplicationFormData.append("lease_end", endDate.format("MM-DD-YYYY"));
@@ -1259,9 +1259,6 @@ const TenantLease = () => {
         await updateCurrentLease("RENEW REQUESTED");
       }
 
-
-
-
       const receiverPropertyMapping = {
         [lease.tenant_uid]: [property.property_uid],
       };
@@ -1286,7 +1283,7 @@ const TenantLease = () => {
       navigate("/managerDashboard");
       setShowSpinner(false);
     } catch (error) {
-      // console.log("Error Creating Lease:", error);
+      console.log("Error Creating Lease:", error);
       alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
 
       navigate("/managerDashboard");
@@ -1704,7 +1701,7 @@ const TenantLease = () => {
   };
 
   const getLeaseStatusText = (status, renewStatus) => {
-    console.log("ROHIT - 1638 - status - ", status);
+    console.log("ROHIT - 1638 - status - ", status, renewStatus);
     switch (status) {
       case "RENEW PROCESSING":
         return "Extended";
@@ -1972,7 +1969,7 @@ const TenantLease = () => {
                               )
                             }
                             {
-                              lease?.lease_status != "RENEW NEW" && (
+                              lease?.lease_status != "RENEW NEW" || lease?.lease_status !== "ACTIVE" && (
 
 
                                 <FormControlLabel

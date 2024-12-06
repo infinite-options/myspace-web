@@ -442,7 +442,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
       }
     } else {
       //console.log("---on renew---", currentLease);
-      navigate("/tenantLease", { state: { page: "renew_lease", application: currentLease, property: currentLease, managerInitiatedRenew: true } });
+      navigate("/tenantLease", { state: { page: "renew_lease", lease: currentLease, property: currentLease, managerInitiatedRenew: true } });
     }
   };
 
