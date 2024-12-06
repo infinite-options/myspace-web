@@ -238,7 +238,7 @@ export default function PaymentsManager(props) {
   });
 
   useEffect(()=>{
-    console.log(" == DHYEY == seletedItems - ", selectedItems)
+    // console.log(" == DHYEY == seletedItems - ", selectedItems)
   }, [selectedItems])
 
   useEffect(() => {
@@ -1462,14 +1462,14 @@ function TransactionsTable(props) {
       // purchaseIDs.forEach( purID => {
       // });
 
-      // console.log("payment item data", paymentItemData);
+      console.log("payment item data", paymentItemData);
 
-      cashflow += parseFloat(paymentItemData.pur_amount_due);
+      cashflow += parseFloat(paymentItemData.amt_remaining);
       // Adjust total based on pur_cf_type
       if (paymentItemData.pur_payer.startsWith("110")) {
-        total -= parseFloat(paymentItemData.pur_amount_due);
+        total -= parseFloat(paymentItemData.amt_remaining);
       } else if (paymentItemData.pur_payer.startsWith("600")) {
-        total += parseFloat(paymentItemData.pur_amount_due);
+        total += parseFloat(paymentItemData.amt_remaining);
       }
 
       // total += parseFloat(paymentItemData.pur_amount_due)
@@ -1772,7 +1772,7 @@ function TransactionsTable(props) {
                   // const payment = paymentDueResult.find((row) => row.index === selectedIndex);
                   const payment = paymentDueResultMap[selectedIndex];
                   if (payment) {
-                    const amountDue = payment?.pur_amount_due;
+                    const amountDue = parseFloat(payment?.amt_remaining);
                     // const isExpense = payment.pur_cf_type === "expense";
 
                     // Adjust the total based on whether the payment is an expense or revenue
@@ -2064,12 +2064,12 @@ function TransactionsTableForRecipient(props) {
 
       // console.log("payment item data", paymentItemData);
 
-      cashflow += parseFloat(paymentItemData.pur_amount_due);
+      cashflow += parseFloat(paymentItemData.amt_remaining);
       // Adjust total based on pur_cf_type
       if (paymentItemData.pur_payer.startsWith("110")) {
-        total -= parseFloat(paymentItemData.pur_amount_due);
+        total -= parseFloat(paymentItemData.amt_remaining);
       } else if (paymentItemData.pur_payer.startsWith("600")) {
-        total += parseFloat(paymentItemData.pur_amount_due);
+        total += parseFloat(paymentItemData.amt_remaining);
       }
 
       // total += parseFloat(paymentItemData.pur_amount_due)
@@ -2372,7 +2372,7 @@ function TransactionsTableForRecipient(props) {
                   // const payment = paymentDueResult.find((row) => row.index === selectedIndex);
                   const payment = paymentDueResultMap[selectedIndex];
                   if (payment) {
-                    const amountDue = payment?.pur_amount_due;
+                    const amountDue = parseFloat(payment?.amt_remaining);
                     // const isExpense = payment.pur_cf_type === "expense";
 
                     // Adjust the total based on whether the payment is an expense or revenue
@@ -2751,9 +2751,9 @@ function TenantBalanceTable(props) {
       // total += parseFloat(paymentItemData.pur_amount_due);
       // Adjust total based on pur_cf_type
       if (paymentItemData.pur_cf_type === "revenue") {
-        total += parseFloat(paymentItemData.pur_amount_due);
+        total += parseFloat(paymentItemData.amt_remaining);
       } else if (paymentItemData.pur_cf_type === "expense") {
-        total -= parseFloat(paymentItemData.pur_amount_due);
+        total -= parseFloat(paymentItemData.amt_remaining);
       }
     }
     // console.log("selectedRows useEffect - total - ", total);
@@ -2986,7 +2986,7 @@ function TenantBalanceTable(props) {
               {/* $ {selectedRows.reduce((total, rowId) => total + paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due, 0)} */}${" "}
               {selectedRows.reduce((total, rowId) => {
                 const payment = paymentDueResult.find((row) => row.purchase_uid === rowId);
-                const amountDue = payment.pur_amount_due;
+                const amountDue = parseFloat(payment.amt_remaining);
                 const isExpense = payment.pur_cf_type === "expense";
 
                 // Adjust the total based on whether the payment is an expense or revenue
