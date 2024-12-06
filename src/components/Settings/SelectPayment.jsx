@@ -261,7 +261,7 @@ export default function SelectPayment(props) {
     let payment_request_payload = {
       pay_purchase_id: paymentData.purchase_uids,
       pay_fee: convenience_fee,
-      pay_total: totalBalance,
+      pay_total: balance,                 // pass balance only not totalBalance which include fee
       cashflow_total: cashFlowTotal,
       payment_notes: paymentData.business_code,
       pay_charge_id: "stripe transaction key",
@@ -345,7 +345,7 @@ export default function SelectPayment(props) {
     // navigate
     localStorage.setItem('pay_purchase_id', JSON.stringify(payment.purchase_uids));
     localStorage.setItem('pay_fee', convenience_fee);
-    localStorage.setItem('pay_total', totalBalance);
+    localStorage.setItem('pay_total', balance);
     localStorage.setItem('cashflow_total', cashFlowTotal);
     localStorage.setItem('payment_notes', payment.business_code);
     localStorage.setItem('payment_type', selectedMethod);

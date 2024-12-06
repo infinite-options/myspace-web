@@ -310,7 +310,7 @@ const OwnerContactDetailsHappinessMatrix = () => {
   const [cashflowDataByMonth, setCashflowDataByMonth] = useState([]);
   const [cashflowDataByPropertyByMonth, setCashflowDataByPropertyByMonth] = useState([]);
 
-  const [showSpinner, setShowSpinner] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(true);
 
   // useEffect(() => {
   //   console.log("index - ", index);
@@ -381,7 +381,7 @@ const OwnerContactDetailsHappinessMatrix = () => {
   }, [cashflowDataByProperty, cashflowDataByMonth, cashflowDataByPropertyByMonth, contactDetails, index]);
 
   const fetchCashflowData = async () => {
-    setShowSpinner(true);
+    // setShowSpinner(true);
     // const url = `http://localhost:4000/contacts/${getProfileId()}`;
     // console.log("Calling contacts endpoint");
     const url = `${APIConfig.baseURL.dev}/cashflowTransactions/${getProfileId()}/new`;
@@ -393,13 +393,13 @@ const OwnerContactDetailsHappinessMatrix = () => {
     } catch (e) {
       console.error(e);
     }
-    setShowSpinner(false);
+    // setShowSpinner(false);
   };
 
   const getDataFromAPI = async () => {
     // const url = `http://localhost:4000/contacts/${getProfileId()}`;
     // console.log("Calling contacts endpoint");
-    setShowSpinner(true);
+    // setShowSpinner(true);
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
     try {
       const resp = await axios.get(url);
@@ -411,7 +411,7 @@ const OwnerContactDetailsHappinessMatrix = () => {
     } catch (e) {
       console.error(e);
     }
-    setShowSpinner(false);
+
   };
 
   useEffect(() => {
@@ -425,6 +425,8 @@ const OwnerContactDetailsHappinessMatrix = () => {
   }, [ownerUID, contactDetails]);
 
   useEffect(() => {
+    setShowSpinner(true)
+    
     if (navigatingFrom === "HappinessMatrixWidget" || navigatingFrom === "PropertyNavigator") {
       getDataFromAPI();
       // setContactsTab("Owner");
@@ -433,7 +435,10 @@ const OwnerContactDetailsHappinessMatrix = () => {
       // console.log("Set Contact Details 2");
       // setContactsTab(location.state.tab);
     }
+    
     fetchCashflowData();
+
+    // setShowSpinner(false);
   }, [getProfileId, navigatingFrom]);
 
   // Effect to filter cashflow details when contactDetails or index changes
@@ -526,10 +531,10 @@ const OwnerContactDetailsHappinessMatrix = () => {
 
   return (
     <>
-      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color='inherit' />
-      </Backdrop>
       <ThemeProvider theme={theme}>
+        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+          <CircularProgress color='inherit' />
+        </Backdrop>
         <Container maxWidth='lg' sx={{ paddingTop: !isMobile && "10px", paddingBottom: "50px", marginTop: !isMobile && "10px", backgroundColor: "#FFFFFF" }}>
           <Grid container columnSpacing={5} sx={{ marginTop: !isMobile && "10px" }}>
             {!isMobile && (

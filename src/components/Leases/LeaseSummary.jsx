@@ -376,7 +376,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                                     color: "#160449",
                                     fontWeight: theme.typography.light.fontWeight,
                                     fontSize: theme.typography.smallFont,
-                                }}>${rent.charge}</Typography>
+                                }}>${rent?.charge}</Typography>
                             </Grid>
 
                             <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
@@ -393,7 +393,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                                     color: "#160449",
                                     fontWeight: theme.typography.light.fontWeight,
                                     fontSize: theme.typography.smallFont,
-                                }}>{rent.frequency}</Typography>
+                                }}>{rent?.frequency}</Typography>
                             </Grid>
 
                             <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
@@ -410,7 +410,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                                     color: "#160449",
                                     fontWeight: theme.typography.light.fontWeight,
                                     fontSize: theme.typography.smallFont,
-                                }}>{rent.available_topay} Days Before</Typography>
+                                }}>{rent?.available_topay} Days Before</Typography>
                             </Grid>
 
                             <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
@@ -427,7 +427,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                                     color: "#160449",
                                     fontWeight: theme.typography.light.fontWeight,
                                     fontSize: theme.typography.smallFont,
-                                }}>{rent.due_by} {getDateAdornmentString(rent.due_by)}</Typography>
+                                }}>{rent?.due_by} {getDateAdornmentString(rent?.due_by)}</Typography>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -537,7 +537,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                                         color: "#160449",
                                         fontWeight: theme.typography.light.fontWeight,
                                         fontSize: theme.typography.smallFont,
-                                    }}>${rent.charge}</Typography>
+                                    }}>${rent?.charge}</Typography>
                                 </Grid>
 
                                 <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
@@ -554,7 +554,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                                         color: "#160449",
                                         fontWeight: theme.typography.light.fontWeight,
                                         fontSize: theme.typography.smallFont,
-                                    }}>{rent.frequency}</Typography>
+                                    }}>{rent?.frequency}</Typography>
                                 </Grid>
 
                                 <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
@@ -571,7 +571,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                                         color: "#160449",
                                         fontWeight: theme.typography.light.fontWeight,
                                         fontSize: theme.typography.smallFont,
-                                    }}>{rent.available_topay} Days Before</Typography>
+                                    }}>{rent?.available_topay} Days Before</Typography>
                                 </Grid>
 
                                 <Grid item xs={6} md={6} sx={{ marginBottom: "10px" }}>
@@ -588,7 +588,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                                         color: "#160449",
                                         fontWeight: theme.typography.light.fontWeight,
                                         fontSize: theme.typography.smallFont,
-                                    }}>{rent.due_by} {getDateAdornmentString(rent.due_by)}</Typography>
+                                    }}>{rent?.due_by} {getDateAdornmentString(rent?.due_by)}</Typography>
                                 </Grid>
                             </Grid>
                         </Grid>

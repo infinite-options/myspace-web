@@ -2538,7 +2538,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
   const location = useLocation();
   const { getProfileId } = useUser();
 
-  const [showSpinner, setShowSpinner] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(true);
   const [paymentNotes, setPaymentNotes] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
   const [total, setTotal] = useState(0);
@@ -2567,7 +2567,9 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
   });
 
   useEffect(() => {
-    console.log("data from paymentPM", selectedProperty);
+    // setShowSpinner(true)
+
+    // console.log("data from paymentPM", selectedProperty);
     const filteredUnpaidData = data.filter((item) => item.purchaseStatus === "UNPAID" || item.purchaseStatus === "PARTIALLY PAID");
     setUnpaidData(filteredUnpaidData);
 
@@ -2581,6 +2583,8 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
     if (paymentOption === "full") {
       setTotal(totalAmount);
     }
+
+    // setShowSpinner(false)
   }, [data, paymentOption]);
 
   const handlePaymentNotesChange = (event) => {
@@ -2844,7 +2848,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
 
                   <Stack>
                     {/* Pass only the filtered unpaid data */}
-                    <TenantBalanceTablePM data={unpaidData} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
+                    <TenantBalanceTablePM setShowSpinner={setShowSpinner} data={unpaidData} total={total} setTotal={setTotal} setPaymentData={setPaymentData} setSelectedItems={setSelectedItems} />
                   </Stack>
                 </Paper>
               </Paper>
@@ -2894,6 +2898,8 @@ function TenantBalanceTablePM(props) {
   }, [data]);
 
   useEffect(() => {
+    props.setShowSpinner(true)
+
     let total = 0;
     let purchase_uid_mapping = [];
 
@@ -2927,7 +2933,10 @@ function TenantBalanceTablePM(props) {
       balance: total.toFixed(2),
       purchase_uids: purchase_uid_mapping,
     }));
-  }, [selectedRows, paymentDueResult, props]);
+
+    props.setShowSpinner(false)
+    
+  }, [selectedRows, paymentDueResult]);
 
   useEffect(() => {
     props.setSelectedItems(selectedPayments);

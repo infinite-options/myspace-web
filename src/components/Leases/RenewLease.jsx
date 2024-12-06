@@ -109,7 +109,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
     setLeaseFees(fees);
 
     // Get the rent details from the list of fees
-    const rentFee = fees.find((fee) => fee.fee_name === "Rent");
+    const rentFee = fees?.find((fee) => fee.fee_name === "Rent");
     console.log("All lease fees", fees);
     console.log("rent values", rentFee);
     setRent(rentFee);
@@ -148,8 +148,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
     // setMoveoutDate(dayjs(filtered.lease_end));
     setNewStartDate(dayjs(filtered.lease_end).add(1, "day"));
     setNewEndDate(dayjs(filtered.lease_end).add(1, "year"));
-    setNewRent(rentFee.charge);
-    setNewFreq(rentFee.frequency);
+    setNewRent(rentFee?.charge);
+    setNewFreq(rentFee?.frequency);
     const adults = JSON.parse(filtered.lease_adults);
     const children = JSON.parse(filtered.lease_children);
     const pets = JSON.parse(filtered.lease_pets);

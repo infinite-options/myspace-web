@@ -20,21 +20,58 @@ export default function RevenueWidget({ revenueData, cashflowStatusData }) {
 
 
   useEffect(() => {
-    // console.log("ROHIT - cashflowStatusData",cashflowStatusData);
-    const expenseCurrentMonth = cashflowStatusData?.find((item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "expense");
-    const revenueCurrentMonth = cashflowStatusData?.find((item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "revenue");
-    const profitCurrentMonth = {
-      pur_amount_due: (revenueCurrentMonth?.pur_amount_due || 0.00) - (expenseCurrentMonth?.pur_amount_due || 0.00),
-      total_paid: (revenueCurrentMonth?.total_paid || 0.00) - (expenseCurrentMonth?.total_paid || 0.00 ),
-    }
+    console.log("ROHIT - cashflowStatusData", cashflowStatusData);
+
+    let revenue = { total_paid: 0, pur_amount_due: 0 };
+    let expense = { total_paid: 0, pur_amount_due: 0 };
+    let profit = { total_paid: 0, pur_amount_due: 0 };
+
+    cashflowStatusData.forEach((item) => {
+      const isCurrentMonth = item.cf_month === currentMonth;
+      const isCurrentYear = item.cf_year === currentYear;
+
+      if (isCurrentMonth && isCurrentYear) {
+        if (item.pur_cf_type === "revenue" && item.purchase_type?.toUpperCase() !== "DEPOSIT" && item.purchase_type?.toUpperCase() !== "MANAGEMENT" && item.purchase_type?.toUpperCase() !== "MAINTENANCE") {
+          revenue.total_paid += parseFloat(item.total_paid || 0);
+          revenue.pur_amount_due += parseFloat(item.pur_amount_due || 0);
+        } 
+        
+        if (item.pur_cf_type === "expense" || item.purchase_type?.toUpperCase() === "MANAGEMENT" || item.purchase_type?.toUpperCase() === "MAINTENANCE") {
+          if (item.purchase_type?.toUpperCase() === "MANAGEMENT" || (item.purchase_type?.toUpperCase() === "MAINTENANCE" && item.pur_payer.startsWith("110"))) {
+            expense.total_paid -= parseFloat(item.total_paid || 0);
+            expense.pur_amount_due -= parseFloat(item.pur_amount_due || 0);
+          } else {
+            expense.total_paid += parseFloat(item.total_paid || 0);
+            expense.pur_amount_due += parseFloat(item.pur_amount_due || 0);
+          }
+        } 
+        
+        // for profit
+        if (item.purchase_type?.toUpperCase() === "MANAGEMENT") {
+          profit.total_paid += parseFloat(item.total_paid || 0);
+          profit.pur_amount_due += parseFloat(item.pur_amount_due || 0);
+        }
+      }
+    });
+
+    setCurrentMonthRevenue(revenue);
+    setCurrentMonthExpense(expense);
+    setCurrentMonthProfit(profit);
+
+    // const expenseCurrentMonth = cashflowStatusData?.find((item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "expense");
+    // const revenueCurrentMonth = cashflowStatusData?.find((item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "revenue");
+    // const profitCurrentMonth = {
+    //   pur_amount_due: (revenueCurrentMonth?.pur_amount_due || 0.00) - (expenseCurrentMonth?.pur_amount_due || 0.00),
+    //   total_paid: (revenueCurrentMonth?.total_paid || 0.00) - (expenseCurrentMonth?.total_paid || 0.00 ),
+    // }
   
-    // console.log("ROHIT - expenseCurrentMonth", expenseCurrentMonth);
-    // console.log("ROHIT - revenueCurrentMonth", revenueCurrentMonth);
-    // console.log("ROHIT - profitCurrentMonth", profitCurrentMonth);
+    // // console.log("ROHIT - expenseCurrentMonth", expenseCurrentMonth);
+    // // console.log("ROHIT - revenueCurrentMonth", revenueCurrentMonth);
+    // // console.log("ROHIT - profitCurrentMonth", profitCurrentMonth);
     
-    setCurrentMonthExpense(expenseCurrentMonth);
-    setCurrentMonthRevenue(revenueCurrentMonth);
-    setCurrentMonthProfit(profitCurrentMonth);
+    // setCurrentMonthExpense(expenseCurrentMonth);
+    // setCurrentMonthRevenue(revenueCurrentMonth);
+    // setCurrentMonthProfit(profitCurrentMonth);
 
     
   }, [cashflowStatusData]);
@@ -62,7 +99,7 @@ export default function RevenueWidget({ revenueData, cashflowStatusData }) {
           >
             <Grid container>
               <Grid item xs={isMobile? 6.8: 8}>
-                <Typography sx={{width:"100%", textAlign: "left", fontWeight: "bold" }}>{currentMonth} Cashflow (Expected vs Actual)</Typography>
+                <Typography sx={{width:"100%", textAlign: "left", fontWeight: "bold" }}>{currentMonth} Profit (Expected vs Actual)</Typography>
               </Grid>
               <Grid item xs={isMobile? 2.5 : 2}>
                 {/* <Typography sx={{ fontWeight: "bold" }}>{profit? profit.toFixed(2) : '0.00'}</Typography> */}
@@ -91,11 +128,11 @@ export default function RevenueWidget({ revenueData, cashflowStatusData }) {
               </Grid>
               <Grid item xs={isMobile? 2.5: 2}>
                 {/* <Typography sx={{ fontWeight: "bold" }}>{revenue ? revenue : '0.00'}</Typography> */}
-                <Typography sx={{width:"100%", textAlign: "right", fontWeight: "bold" }}>{currentMonthRevenue?.pur_amount_due || '0.00'}</Typography>
+                <Typography sx={{width:"100%", textAlign: "right", fontWeight: "bold" }}>{currentMonthRevenue?.pur_amount_due?.toFixed(2) || '0.00'}</Typography>
               </Grid>
               <Grid item xs={isMobile? 2.5: 2}>
                 {/* <Typography sx={{ fontWeight: "bold" }}>{revenueReceived ? revenueReceived : '0.00'}</Typography> */}
-                <Typography sx={{width:"100%", textAlign: "right", fontWeight: "bold" }}>{currentMonthRevenue?.total_paid || '0.00'}</Typography>
+                <Typography sx={{width:"100%", textAlign: "right", fontWeight: "bold" }}>{currentMonthRevenue?.total_paid?.toFixed(2) || '0.00'}</Typography>
               </Grid>
             </Grid>
           </Grid>
@@ -115,11 +152,11 @@ export default function RevenueWidget({ revenueData, cashflowStatusData }) {
               </Grid>
               <Grid item xs={isMobile? 2.5: 2}>
                 {/* <Typography sx={{ fontWeight: "bold" }}>{expenses ? expenses : '0.00'}</Typography> */}
-                <Typography sx={{width:"100%", textAlign: "right", fontWeight: "bold" }}>{currentMonthExpense?.pur_amount_due || '0.00'}</Typography>
+                <Typography sx={{width:"100%", textAlign: "right", fontWeight: "bold" }}>{currentMonthExpense?.pur_amount_due?.toFixed(2) || '0.00'}</Typography>
               </Grid>
               <Grid item xs={isMobile? 2.5: 2}>
                 {/* <Typography sx={{ fontWeight: "bold" }}>{expensesReceived ? expensesReceived : '0.00'}</Typography> */}
-                <Typography sx={{width:"100%", textAlign: "right", fontWeight: "bold" }}>{currentMonthExpense?.total_paid || '0.00'}</Typography>
+                <Typography sx={{width:"100%", textAlign: "right", fontWeight: "bold" }}>{currentMonthExpense?.total_paid?.toFixed(2) || '0.00'}</Typography>
               </Grid>
             </Grid>
           </Grid>
