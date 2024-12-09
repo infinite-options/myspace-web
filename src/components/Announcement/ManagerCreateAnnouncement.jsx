@@ -104,10 +104,10 @@ export default function ManagerCreateAnnouncement() {
 
     axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`).then((res) => {
       // const applications = res.data.Applications.result;
-      const applications = res.data.Leases.result;
+      const applications = res.data.Leases ? res.data.Leases.result : [];
       const properties = res.data.Property.result;
 
-      const groupedApplicants = applications.reduce((grouped, applicant) => {
+      const groupedApplicants = applications?.reduce((grouped, applicant) => {
         const { tenant_uid } = applicant;
         if (!grouped[tenant_uid]) {
           grouped[tenant_uid] = [];

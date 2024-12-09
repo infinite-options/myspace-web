@@ -3177,7 +3177,7 @@ function TenantBalanceTablePM(props) {
       flex: 1,
       renderCell: (params) => {
         const total = parseFloat(params.row.pur_amount_due) + parseFloat(params.row.totalPaid);
-        return <Box sx={{ fontWeight: "bold" }}>${total.toFixed(2)}</Box>;
+        return <Box sx={{ fontWeight: "bold", textAlign: "right", width: "100%"}}>${total.toFixed(2)}</Box>;
       },
     },
     {
@@ -3202,6 +3202,7 @@ function TenantBalanceTablePM(props) {
             fontWeight: "bold",
             width: "100%",
             display: "flex",
+            textAlign: "right",
             flexDirection: "row",
             justifyContent: "flex-end",
           }}

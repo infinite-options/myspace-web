@@ -629,7 +629,7 @@ function PropertyCard({ data, status, leaseData, setRightPane, appliedData }) {
           fontWeight: "800px",
         }}
       >
-        Applied {lease.lease_application_date}
+        Applied {lease.lease_application_date?.split(' ')[0]}
       </Typography>
     </Box>
   );
@@ -658,7 +658,7 @@ function PropertyCard({ data, status, leaseData, setRightPane, appliedData }) {
           fontWeight: "800px",
         }}
       >
-        Approved {lease.lease_application_date}
+        Approved {lease.lease_application_date?.split(' ')[0]}
       </Typography>
     </Box>
   );
@@ -686,7 +686,7 @@ function PropertyCard({ data, status, leaseData, setRightPane, appliedData }) {
           fontWeight: "800px",
         }}
       >
-        Not Approved {lease.lease_application_date}
+        Not Approved {lease.lease_application_date?.split(' ')[0]}
       </Typography>
     </Box>
   );
@@ -714,7 +714,7 @@ function PropertyCard({ data, status, leaseData, setRightPane, appliedData }) {
           fontWeight: "800px",
         }}
       >
-        Declined {lease.lease_application_date}
+        Declined {lease.lease_application_date?.split(' ')[0]}
       </Typography>
     </Box>
   );
@@ -743,7 +743,7 @@ function PropertyCard({ data, status, leaseData, setRightPane, appliedData }) {
           fontWeight: "800px",
         }}
       >
-        Lease Rescinded {lease.lease_application_date}
+        Lease Rescinded {lease.lease_application_date?.split(' ')[0]}
       </Typography>
     </Box>
   );
@@ -772,7 +772,7 @@ function PropertyCard({ data, status, leaseData, setRightPane, appliedData }) {
           fontWeight: "800px",
         }}
       >
-        Lease Withdrawn{lease.lease_application_date}
+        Lease Withdrawn{lease.lease_application_date?.split(' ')[0]}
       </Typography>
     </Box>
   );
@@ -801,7 +801,7 @@ function PropertyCard({ data, status, leaseData, setRightPane, appliedData }) {
           fontWeight: "800px",
         }}
       >
-        Tenant Approved {lease.lease_application_date}
+        Tenant Approved {lease.lease_application_date?.split(' ')[0]}
       </Typography>
     </Box>
   );
@@ -829,7 +829,7 @@ function PropertyCard({ data, status, leaseData, setRightPane, appliedData }) {
           fontWeight: "800px",
         }}
       >
-        Active {lease.lease_application_date}
+        Active {lease.lease_application_date?.split(' ')[0]}
       </Typography>
     </Box>
   );

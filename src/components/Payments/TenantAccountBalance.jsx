@@ -92,20 +92,70 @@ const TenantAccountBalance = ({
     setAnchorEl(null);
   };
 
+  const leaseStatusPriorityMap = {
+    ACTIVE: 10,
+    "ACTIVE M2M": 11,
+    EXPIRED: 15,
+    APPROVED: 20,
+    "RENEW PROCESSING": 32,
+    PROCESSING: 34,
+    "RENEW NEW": 42,
+    NEW: 44,
+    ENDED: 50,
+    INACTIVE: 51,
+    "RENEW REFUSED": 62,
+    REFUSED: 64,
+    "RENEW WITHDRAWN": 66,
+    WITHDRAWN: 68,
+    "RENEW REJECTED": 72,
+    REJECTED: 74,
+    RESCIND: 80,
+  };
+
   const returnLeaseStatusColor = (status) => {
     // console.log("status", status);
     const statusColorMapping = {
       ACTIVE: "#3D5CAC",
-      REFUSED: "#FF8832",
-      WITHDRAWN: "#FF8832",
-      NEW: "#FAD102",
+      "ACTIVE M2M": "#3D5CAC",
+      EXPIRED: "#AF8DEB",
+      // APPROVED: "#FAD102",
+      APPROVED: "#8DA7EB",
+      "RENEW PROCESSING": "#76B148",
       PROCESSING: "#76B148",
-      APPROVED: "#FAD102",
-      REJECTED: "#FA0202",
+      "RENEW NEW": "#FAD102",
+      NEW: "#FAD102",
       ENDED: "#000000",
-      RESCIND: "#FF8832",
+      INACTIVE: "#000000",
+      "RENEW REFUSED": "#FF8832",
+      REFUSED: "#FF8832",
+      "RENEW WITHDRAWN": "#FF8832",
+      WITHDRAWN: "#FF8832",
+      "RENEW REJECTED": "#FA0203",
+      REJECTED: "#FA0203",
+      RESCIND: "#FA0203",
     };
     return status ? statusColorMapping[status] : "#000";
+  };
+
+  const getSortedLeases = (leases) => {
+    if (!leases || leases.length === 0) return [];
+
+    const sortedLeases = [...leases].sort((a, b) => {
+      // Give highest priority to "ACTIVE" and "ACTIVE M2M" leases
+      const isActiveA = a.lease_status === "ACTIVE" || a.lease_status === "ACTIVE M2M";
+      const isActiveB = b.lease_status === "ACTIVE" || b.lease_status === "ACTIVE M2M";
+
+      if (isActiveA && !isActiveB) return -1;
+      if (!isActiveA && isActiveB) return 1;
+
+      //Return lease with latest date
+      if (a.lease_application_date < b.lease_application_date) return 1;
+      if (a.lease_application_date > b.lease_application_date) return -1;
+
+      return 0;
+    });
+
+    return sortedLeases;
   };
 
   const handleViewTenantApplication = () => {
@@ -146,57 +196,71 @@ const TenantAccountBalance = ({
   const getTextColor = () => {
     if (leaseDetails?.lease_status === "NEW") return "#000000";
     return "#FFFFFF";
-  }
+  };
 
-  const handlePropertySelect = (property) => { // 1
+  const handlePropertySelect = (property) => {
+    // 1
     if (property.lease_status) {
-    if(isMobile){
-      setViewRHS(false)
+      if (isMobile) {
+        setViewRHS(false);
+      }
+      setSelectedProperty(property);
+      handleClose();
     }
-    setSelectedProperty(property);
-    handleClose();
-    }
-  }
+  };
 
-  const uniquePropertiesMap = new Map();
-  propertyData.forEach((property) => {
-    //lease_status is null don't bother
-    if (property.lease_status) {
+  // const uniquePropertiesMap = new Map();
+  // propertyData.forEach((property) => {
+  //   //lease_status is null don't bother
+  //   if (property.lease_status) {
 
-      // const propertyLease = leaseDetailsData.find((ld) => ld.property_uid === property.property_uid);
-      const propertyLease = leaseDetailsData
-        .filter((ld) => ld.property_uid === property.property_uid)
-        .sort((a,b) => {
-          if ((a.lease_status === "ACTIVE" || a.lease_status === "ACTIVE M2M") && (b.lease_status!== "ACTIVE"  || b.lease_status !== "ACTIVE M2M")) {
-            return -1;
-          } else if ((b.lease_status === "ACTIVE" || b.lease_status === "ACTIVE M2M") && (a.lease_status !== "ACTIVE" || a.lease_status !== "ACTIVE M2M")) {
-            return 1;
-          }
-          return 0;
-        });
-        // console.log("after filtering", propertyLease);
-        if (propertyLease.length > 0 && !uniquePropertiesMap.has(property.property_uid)) {
-          uniquePropertiesMap.set(property.property_uid, propertyLease[0]);
-        }
+  //     // const propertyLease = leaseDetailsData.find((ld) => ld.property_uid === property.property_uid);
+  //     const propertyLease = leaseDetailsData
+  //       .filter((ld) => ld.property_uid === property.property_uid)
+  //       .sort((a, b) => {
+  //         if ((a.lease_status === "ACTIVE" || a.lease_status === "ACTIVE M2M") && (b.lease_status !== "ACTIVE" || b.lease_status !== "ACTIVE M2M")) {
+  //           return -1;
+  //         } else if ((b.lease_status === "ACTIVE" || b.lease_status === "ACTIVE M2M") && (a.lease_status !== "ACTIVE" || a.lease_status !== "ACTIVE M2M")) {
+  //           return 1;
+  //         }
+  //         return 0;
+  //       });
+  //     // console.log("after filtering", propertyLease);
+  //     if (propertyLease.length > 0 && !uniquePropertiesMap.has(property.property_uid)) {
+  //       uniquePropertiesMap.set(property.property_uid, propertyLease[0]);
+  //     }
 
-      // if (!uniquePropertiesMap.has(property.property_uid) && propertyLease.lease_status) {
-      //   uniquePropertiesMap.set(property.property_uid, propertyLease);
-      // }
-  }
-  });
-  
-  const uniqueProperties = Array.from(uniquePropertiesMap.values());
+  //     // if (!uniquePropertiesMap.has(property.property_uid) && propertyLease.lease_status) {
+  //     //   uniquePropertiesMap.set(property.property_uid, propertyLease);
+  //     // }
+  //   }
+  // });
+
+  // const uniqueProperties = Array.from(uniquePropertiesMap.values());
   // console.log("unique property", uniqueProperties);
   // console.log("lease details test", leaseDetails);
 
-  const selectedPropertyData = propertyData.find(
-    (property) => property.lt_lease_id === leaseDetails?.lease_uid
-  );
+  const sortedPropertiesMap = new Map();
+  propertyData.forEach((property) => {
+    if (property.lease_status) {
+      const propertyLeases = leaseDetailsData.filter((lease) => lease.property_uid === property.property_uid);
+      const topProrityLease = getSortedLeases(propertyLeases)[0];
 
-  const earliestDueDate = selectedPropertyData?.earliest_due_date
-  ? new Date(selectedPropertyData.earliest_due_date).toLocaleDateString()
-  : null; 
+      if (propertyLeases.length > 0 && topProrityLease != null && !sortedPropertiesMap.has(property.property_uid)) {
+        sortedPropertiesMap.set(property.property_uid, topProrityLease);
+      }
+    }
+  });
 
+  const sortedLeases = [...sortedPropertiesMap.values()].sort((a, b) => {
+    const statusDiff = leaseStatusPriorityMap[a.lease_status] - leaseStatusPriorityMap[b.lease_status];
+    if (statusDiff !== 0) return statusDiff;
+    return a.lease_uid.localeCompare(b.lease_uid);
+  });
+  console.log("sortedPropertiesMap", sortedPropertiesMap, sortedLeases);
+  const selectedPropertyData = propertyData.find((property) => property.lt_lease_id === leaseDetails?.lease_uid);
+
+  const earliestDueDate = selectedPropertyData?.earliest_due_date ? new Date(selectedPropertyData.earliest_due_date).toLocaleDateString() : null;
 
   const totalBalanceDue = balanceDetails.reduce((acc, detail) => acc + parseFloat(detail.amountDue || 0), 0);
 
@@ -204,19 +268,14 @@ const TenantAccountBalance = ({
     return (
       <Paper sx={{ padding: "30px", backgroundColor: "#f0f0f0", borderRadius: "8px", flex: 1 }}>
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-            {/* Property Image */}
-            <Box sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
-              <CardMedia
-                component='img'
-                image={selectedProperty?.property_favorite_image || defaultHouseImage}
-                alt='property image'
-                sx={{ width: "100%", height: "auto", maxHeight: "150px" }}
-              />
-            </Box>
-            <Typography variant="h6" sx={{ fontWeight: "bold", color: "#160449" }}>
-              No Property Selected
-            </Typography>
-          <Typography variant="body1" sx={{ marginTop: "20px", color: "#3D5CAC" }}>
+          {/* Property Image */}
+          <Box sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+            <CardMedia component='img' image={selectedProperty?.property_favorite_image || defaultHouseImage} alt='property image' sx={{ width: "100%", height: "auto", maxHeight: "150px" }} />
+          </Box>
+          <Typography variant='h6' sx={{ fontWeight: "bold", color: "#160449" }}>
+            No Property Selected
+          </Typography>
+          <Typography variant='body1' sx={{ marginTop: "20px", color: "#3D5CAC" }}>
             Please follow the steps below:
           </Typography>
           <ol style={{ textAlign: "left", marginTop: "20px", color: "#160449" }}>
@@ -226,7 +285,7 @@ const TenantAccountBalance = ({
             <li>Once your application is approved, you'll see your property details here.</li>
           </ol>
           <Button
-            variant="contained"
+            variant='contained'
             sx={{
               marginTop: "20px",
               backgroundColor: "#3D5CAC",
@@ -243,7 +302,7 @@ const TenantAccountBalance = ({
   }
 
   return (
-    <Paper sx={{ padding: "15px", backgroundColor: "#f0f0f0", borderRadius: "8px", flex: 1}}>
+    <Paper sx={{ padding: "15px", backgroundColor: "#f0f0f0", borderRadius: "8px", flex: 1 }}>
       <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
         <Typography variant='h6' sx={{ fontWeight: "bold", color: "#160449" }}>
           Account Balance
@@ -251,32 +310,27 @@ const TenantAccountBalance = ({
 
         {/* Property Image */}
         <Box sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
-          <CardMedia
-            component='img'
-            image={selectedProperty?.property_favorite_image || defaultHouseImage}
-            alt='property image'
-            sx={{ width: "100%", height: "auto", maxHeight: "150px" }}
-          />
+          <CardMedia component='img' image={selectedProperty?.property_favorite_image || defaultHouseImage} alt='property image' sx={{ width: "100%", height: "auto", maxHeight: "150px" }} />
         </Box>
 
         {/* Property Address */}
-        <Box 
-          sx={{ 
-            display: "flex", 
-            justifyContent: "center", 
-            alignItems: "center", 
-            marginTop: "10px", 
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "10px",
             position: "relative",
             width: "100%",
-            paddingRight: "20px" 
+            paddingRight: "20px",
           }}
         >
-          <Box 
-            sx={{ 
-              display: "flex", 
-              justifyContent: "center", 
-              alignItems: "center", 
-              width: "100%"
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
             }}
           >
             <CircleIcon
@@ -301,37 +355,37 @@ const TenantAccountBalance = ({
               {`${selectedProperty?.property_address}`}
             </Typography>
           </Box>
-          <IconButton 
-            onClick={handleOpen} 
-            sx={{ 
-              position: "absolute", 
-              right: 0, 
-              top: "50%", 
-              transform: "translateY(-50%)", 
-              padding: 0 
+          <IconButton
+            onClick={handleOpen}
+            sx={{
+              position: "absolute",
+              right: 0,
+              top: "50%",
+              transform: "translateY(-50%)",
+              padding: 0,
             }}
           >
             <KeyboardArrowDownIcon />
           </IconButton>
           {from !== "selectPayment" && (
             <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-            {uniqueProperties.map((property) => {
-              const propertyStatusColor = returnLeaseStatusColor(property.lease_status);
+              {sortedLeases.map((property) => {
+                const propertyStatusColor = returnLeaseStatusColor(property.lease_status);
 
-              return (
-                <MenuItem key={property.property_uid} onClick={() => handlePropertySelect(property)} sx={{ display: "flex", alignItems: "center" }}>
-                  <CircleIcon
-                    sx={{
-                      color: propertyStatusColor,
-                      marginRight: "8px",
-                      fontSize: "16px",
-                    }}
-                  />
-                  {`${property.property_address} ${property.property_unit}`}
-                </MenuItem>
-              );
-            })}
-          </Menu>
+                return (
+                  <MenuItem key={property.property_uid} onClick={() => handlePropertySelect(property)} sx={{ display: "flex", alignItems: "center" }}>
+                    <CircleIcon
+                      sx={{
+                        color: propertyStatusColor,
+                        marginRight: "8px",
+                        fontSize: "16px",
+                      }}
+                    />
+                    {`${property.property_address} ${property.property_unit}`}
+                  </MenuItem>
+                );
+              })}
+            </Menu>
           )}
         </Box>
 
@@ -347,19 +401,14 @@ const TenantAccountBalance = ({
           ${totalBalanceDue.toFixed(2)}
         </Typography>
 
-
-        <Typography>
-            {`${selectedProperty?.property_uid}`}
-        </Typography>
+        <Typography>{`${selectedProperty?.property_uid}`}</Typography>
 
         {earliestDueDate && (
-          <Box sx={{ fontSize: "20px", fontWeight: "600", color: "#160449", marginLeft: "5px", opacity: "50%", alignItems: "center", alignContent: "center" }}>
-            Due: {earliestDueDate}
-          </Box>
-        )}  
+          <Box sx={{ fontSize: "20px", fontWeight: "600", color: "#160449", marginLeft: "5px", opacity: "50%", alignItems: "center", alignContent: "center" }}>Due: {earliestDueDate}</Box>
+        )}
 
         {/* Payment or Application Button */}
-        {(!isMobile || !viewRHS) && (from !== "selectPayment") && (
+        {(!isMobile || !viewRHS) && from !== "selectPayment" && (
           <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", margin: "20px" }}>
             <Button
               variant='contained'
@@ -368,8 +417,8 @@ const TenantAccountBalance = ({
                 // color: "#fff",
                 color: getTextColor(),
                 fontWeight: "bold",
-                '&:hover': {
-                  color: '#fff', // White text color on hover
+                "&:hover": {
+                  color: "#fff", // White text color on hover
                 },
               }}
               onClick={
@@ -381,9 +430,9 @@ const TenantAccountBalance = ({
               }
             >
               {leaseDetails?.lease_status === "NEW"
-                ? `Applied ${leaseDetails?.lease_application_date}`
+                ? `Applied ${leaseDetails?.lease_application_date?.split(" ")[0]}`
                 : leaseDetails?.lease_status === "PROCESSING"
-                ? `Approved ${leaseDetails?.lease_application_date}`
+                ? `Approved ${leaseDetails?.lease_application_date?.split(" ")[0]}`
                 : balanceDetails?.length > 0
                 ? "Make a Payment"
                 : "No Payment Due"}
@@ -448,7 +497,7 @@ const TenantAccountBalance = ({
           </Button>
         )}
 
-      {/* {relatedLease && (
+        {/* {relatedLease && (
         <Button
           variant="contained"
           color="primary"
@@ -511,53 +560,49 @@ const TenantAccountBalance = ({
           </Box>
         )}
       </Box>
-          {/* Payment Details and Management Details for NEW or PROCESSING status */}
-        {(!isMobile || !viewRHS) && (leaseDetails?.lease_status === "NEW" || leaseDetails?.lease_status === "PROCESSING") && (
-        <Box sx={{padding: "10px"}}>
+      {/* Payment Details and Management Details for NEW or PROCESSING status */}
+      {(!isMobile || !viewRHS) && (leaseDetails?.lease_status === "NEW" || leaseDetails?.lease_status === "PROCESSING") && (
+        <Box sx={{ padding: "10px" }}>
           <Typography variant='h6' sx={{ fontWeight: "bold", color: "#160449", marginBottom: "20px", fontSize: "20px", textAlign: "center" }}>
             Rent Details
           </Typography>
           <Grid container spacing={1}>
             <Grid item xs={6}>
-              <Typography sx={{color: "#3D5CAC"}}>Rent:</Typography>
+              <Typography sx={{ color: "#3D5CAC" }}>Rent:</Typography>
             </Grid>
             <Grid item xs={6}>
-              <Typography align="right">
-                ${leaseDetails?.property_listed_rent || "N/A"}
-              </Typography>
+              <Typography align='right'>${leaseDetails?.property_listed_rent || "N/A"}</Typography>
             </Grid>
             <Grid item xs={6}>
-              <Typography sx={{color: "#3D5CAC"}}>Deposit:</Typography>
+              <Typography sx={{ color: "#3D5CAC" }}>Deposit:</Typography>
             </Grid>
             <Grid item xs={6}>
-              <Typography align="right">
-                ${leaseDetails?.property_deposit || "N/A"}
-              </Typography>
+              <Typography align='right'>${leaseDetails?.property_deposit || "N/A"}</Typography>
             </Grid>
           </Grid>
 
-        {/* Management Details */}
+          {/* Management Details */}
           <Typography variant='h6' sx={{ fontWeight: "bold", color: "#160449", marginBottom: "20px", marginTop: "5px", fontSize: "20px", textAlign: "center" }}>
-              Management Details
-            </Typography>
+            Management Details
+          </Typography>
 
-            {/* Business Details */}
-            <Stack spacing={1}>
-              <Stack direction='row' justifyContent='space-between'>
-                <Typography sx={{color: "#3D5CAC"}}>Name:</Typography>
-                <Typography>{leaseDetails?.business_name || "N/A"}</Typography>
-              </Stack>
-              <Stack direction='row' justifyContent='space-between'>
-                <Typography sx={{color: "#3D5CAC"}}>Email:</Typography>
-                <Typography>{leaseDetails?.business_email || "N/A"}</Typography>
-              </Stack>
-              <Stack direction='row' justifyContent='space-between'>
-                <Typography sx={{color: "#3D5CAC"}}>Phone:</Typography>
-                <Typography>{leaseDetails?.business_phone_number || "N/A"}</Typography>
-              </Stack>
+          {/* Business Details */}
+          <Stack spacing={1}>
+            <Stack direction='row' justifyContent='space-between'>
+              <Typography sx={{ color: "#3D5CAC" }}>Name:</Typography>
+              <Typography>{leaseDetails?.business_name || "N/A"}</Typography>
             </Stack>
+            <Stack direction='row' justifyContent='space-between'>
+              <Typography sx={{ color: "#3D5CAC" }}>Email:</Typography>
+              <Typography>{leaseDetails?.business_email || "N/A"}</Typography>
+            </Stack>
+            <Stack direction='row' justifyContent='space-between'>
+              <Typography sx={{ color: "#3D5CAC" }}>Phone:</Typography>
+              <Typography>{leaseDetails?.business_phone_number || "N/A"}</Typography>
+            </Stack>
+          </Stack>
         </Box>
-        )}
+      )}
     </Paper>
   );
 };

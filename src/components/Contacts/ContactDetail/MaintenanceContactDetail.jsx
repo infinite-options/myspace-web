@@ -750,7 +750,7 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex, propert
                 </Typography>
                 <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "26px"}}>
                     {/* ${quotesSubmittedCashflow} */}
-                    {`$${maintenanceRequests?.SUBMITTED?.total_estimate? maintenanceRequests?.SUBMITTED?.total_estimate : 0}`}
+                    {`$${maintenanceRequests?.SUBMITTED?.total_estimate? parseFloat(maintenanceRequests?.SUBMITTED?.total_estimate).toFixed(2) : 0.00}`}
                 </Typography>
                  
               </Grid>
@@ -768,7 +768,7 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex, propert
                 </Typography>
                 <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "26px"}}>
                     {/* ${quotesAcceptedCashflow} */}
-                    {`$${maintenanceRequests?.ACCEPTED?.total_estimate? maintenanceRequests?.ACCEPTED?.total_estimate : 0}`}
+                    {`$${maintenanceRequests?.ACCEPTED?.total_estimate? parseFloat(maintenanceRequests?.ACCEPTED?.total_estimate).toFixed(2) : 0.00}`}
                 </Typography>
                   
               </Grid>
@@ -787,7 +787,7 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex, propert
                 </Typography>
                 <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "26px"}}>
                     {/* ${quotesScheduledCashflow} */}
-                    {`$${maintenanceRequests?.SCHEDULED?.total_estimate? maintenanceRequests?.SCHEDULED?.total_estimate : 0}`}
+                    {`$${maintenanceRequests?.SCHEDULED?.total_estimate? parseFloat(maintenanceRequests?.SCHEDULED?.total_estimate).toFixed(2) : 0.00}`}
                 </Typography>                
               </Grid>
   
@@ -806,7 +806,7 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex, propert
                 </Typography>
                 <Typography sx={{color: "#FFFFFF", fontWeight: theme.typography.primary.fontWeight, fontSize: "26px"}}>
                     {/* ${quotesFinishedCashflow} */}
-                    {`$${maintenanceRequests?.FINISHED?.total_estimate? maintenanceRequests?.FINISHED?.total_estimate : 0}`}
+                    {`$${maintenanceRequests?.FINISHED?.total_estimate? parseFloat(maintenanceRequests?.FINISHED?.total_estimate).toFixed(2) : 0.00}`}
                 </Typography>                
               </Grid>
   

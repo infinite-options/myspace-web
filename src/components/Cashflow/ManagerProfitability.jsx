@@ -561,7 +561,7 @@ const ManagerProfitability = ({
       field: "expected",
       headerName: "Expected",
       flex: 0.7,
-      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
+      renderCell: (params) => <Box sx={{...commonStyles, textAlign: "right", width: "100%"}}>{parseFloat(params.value).toFixed(2)}</Box>,
       renderHeader: (params) => (
         <Box sx={{ fontSize: theme.typography.smallFont }}>
           <strong>{params.colDef.headerName}</strong>
@@ -572,7 +572,7 @@ const ManagerProfitability = ({
       field: "owner_payment",
       headerName: "Owner Payment",
       flex: 0.7,
-      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
+      renderCell: (params) => <Box sx={{...commonStyles, textAlign: "right", width: "100%"}}>{parseFloat(params.value).toFixed(2)}</Box>,
       renderHeader: (params) => (
         <Box sx={{ fontSize: theme.typography.smallFont }}>
           <strong>{params.colDef.headerName}</strong>
@@ -583,7 +583,7 @@ const ManagerProfitability = ({
       field: "management_fee",
       headerName: "Management Fee",
       flex: 0.7,
-      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
+      renderCell: (params) => <Box sx={{...commonStyles, textAlign: "right", width: "100%"}}>{parseFloat(params.value).toFixed(2)}</Box>,
       renderHeader: (params) => (
         <Box sx={{ fontSize: theme.typography.smallFont }}>
           <strong>{params.colDef.headerName}</strong>
@@ -2983,7 +2983,7 @@ function NewStatmentTable(props) {
       field: "pur_amount_due",
       headerName: "Expected",
       flex: 1,
-      renderCell: (params) => <span>$ {params.row.pur_amount_due !== null ? parseFloat(params.row.pur_amount_due).toFixed(2) : parseFloat(0).toFixed(2)}</span>,
+      renderCell: (params) => <span style={{width: "100%", textAlign: "right"}}>$ {params.row.pur_amount_due !== null ? parseFloat(params.row.pur_amount_due).toFixed(2) : parseFloat(0).toFixed(2)}</span>,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
@@ -4057,7 +4057,7 @@ function TransactionsTable(props) {
       field: "received_amt",
       headerName: "Amount Received",
       flex: 0.7,
-      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
+      renderCell: (params) => <Box sx={{...commonStyles, textAlign: "right", width: "100%"}}>{parseFloat(params.value).toFixed(2)}</Box>,
       renderHeader: (params) => (
         <Box sx={{ fontSize: theme.typography.smallFont }}>
           <strong>{params.colDef.headerName}</strong>
@@ -4068,7 +4068,7 @@ function TransactionsTable(props) {
       field: "owner_payment",
       headerName: "Owner Payment",
       flex: 0.7,
-      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
+      renderCell: (params) => <Box sx={{...commonStyles, textAlign: "right", width: "100%"}}>{parseFloat(params.value).toFixed(2)}</Box>,
       renderHeader: (params) => (
         <Box sx={{ fontSize: theme.typography.smallFont }}>
           <strong>{params.colDef.headerName}</strong>
@@ -4079,7 +4079,7 @@ function TransactionsTable(props) {
       field: "management_fee",
       headerName: "Management Fee",
       flex: 0.7,
-      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2)}</Box>,
+      renderCell: (params) => <Box sx={{...commonStyles, textAlign: "right", width: "100%"}}>{parseFloat(params.value).toFixed(2)}</Box>,
       renderHeader: (params) => (
         <Box sx={{ fontSize: theme.typography.smallFont }}>
           <strong>{params.colDef.headerName}</strong>
@@ -4574,7 +4574,7 @@ function BalanceDetailsTable(props) {
       field: "total_paid",
       headerName: "Total Paid",
       flex: 0.8,
-      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2) || 0.0}</Box>,
+      renderCell: (params) => <Box sx={{...commonStyles, textAlign: "right", width: "100%"}}>{parseFloat(params.value).toFixed(2) || 0.0}</Box>,
       renderHeader: (params) => (
         <Box sx={{ fontSize: theme.typography.smallFont }}>
           <strong>{params.colDef.headerName}</strong>
@@ -4665,7 +4665,7 @@ function BalanceDetailsTable(props) {
       field: "pay_amount",
       headerName: "Pay Amount",
       flex: 0.7,
-      renderCell: (params) => <Box sx={commonStyles}>{parseFloat(params.value).toFixed(2) || 0.0}</Box>,
+      renderCell: (params) => <Box sx={{...commonStyles, textAlign:"right", width: "100%"}}>{parseFloat(params.value).toFixed(2) || 0.0}</Box>,
       renderHeader: (params) => (
         <Box sx={{ fontSize: theme.typography.smallFont }}>
           <strong>{params.colDef.headerName}</strong>
@@ -4677,7 +4677,7 @@ function BalanceDetailsTable(props) {
       field: "owner_payment",
       headerName: "Owner Payment",
       flex: 0.7,
-      renderCell: (params) => <Box sx={commonStyles}>{params.value ? parseFloat(params.value).toFixed(2) : "-"}</Box>,
+      renderCell: (params) => <Box sx={{...commonStyles, textAlign:"right", width: "100%"}}>{params.value ? parseFloat(params.value).toFixed(2) : "-"}</Box>,
       renderHeader: (params) => (
         <Box sx={{ fontSize: theme.typography.smallFont }}>
           <strong>{params.colDef.headerName}</strong>
@@ -4688,7 +4688,7 @@ function BalanceDetailsTable(props) {
       field: "management_fee",
       headerName: "Management Fee",
       flex: 0.7,
-      renderCell: (params) => <Box sx={commonStyles}>{params.value ? parseFloat(params.value).toFixed(2) : "-"}</Box>,
+      renderCell: (params) => <Box sx={{...commonStyles, textAlign:"right", width: "100%"}}>{params.value ? parseFloat(params.value).toFixed(2) : "-"}</Box>,
       renderHeader: (params) => (
         <Box sx={{ fontSize: theme.typography.smallFont }}>
           <strong>{params.colDef.headerName}</strong>
@@ -4888,7 +4888,7 @@ function BalanceDetailsTable(props) {
                 marginLeft: "20px",
               }}
             >
-              {/* $ {selectedRows.reduce((total, rowId) => total + paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due, 0)} */}$ {totalVerified}
+              {/* $ {selectedRows.reduce((total, rowId) => total + paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due, 0)} */}$ {parseFloat(totalVerified).toFixed(2)}
             </Typography>
           </Grid>
 

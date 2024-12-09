@@ -2769,12 +2769,12 @@ function StatementTable(props) {
               </TableCell> */}
               <TableCell>
                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-                  ${item["pur_amount_due"] ? item["pur_amount_due"] : 0}
+                  ${item["pur_amount_due"] ? parseFloat(item["pur_amount_due"]).toFixed(2) : 0.00}
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-                  ${item["total_paid"] ? item["total_paid"] : 0}
+                  ${item["total_paid"] ? parseFloat(item["total_paid"]).toFixed(2) : 0.00}
                 </Typography>
               </TableCell>
               {/* <TableCell align="right">
@@ -2890,12 +2890,12 @@ function StatementTable(props) {
                     </TableCell>
                     <TableCell align='right'>
                       <Typography sx={{ fontSize: theme.typography.smallFont }}>
-                        ${property.individual_purchase[0]?.pur_amount_due ? property.individual_purchase[0]?.pur_amount_due : 0}
+                        ${property.individual_purchase[0]?.pur_amount_due ? parseFloat(property.individual_purchase[0]?.pur_amount_due).toFixed(2) : 0.00}
                       </Typography>
                     </TableCell>
                     <TableCell align='right'>
                       <Typography sx={{ fontSize: theme.typography.smallFont, marginRight: "25px" }}>
-                        ${property.individual_purchase[0]?.total_paid ? property.individual_purchase[0]?.total_paid : 0}
+                        ${property.individual_purchase[0]?.total_paid ? parseFloat(property.individual_purchase[0]?.total_paid).toFixed(2) : 0.00}
                       </Typography>
                     </TableCell>
                   </TableRow>
@@ -2932,10 +2932,10 @@ function StatementTable(props) {
                           </Typography>
                         </TableCell>
                         <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? value : 0}</Typography>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? parseFloat(value).toFixed(2) : 0.00}</Typography>
                         </TableCell>
                         <TableCell align='right'>
-                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? value : 0}</Typography>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>${value ? parseFloat(value).toFixed(2) : 0.00}</Typography>
                         </TableCell>
                       </TableRow>
                     </TableHead>
@@ -2978,7 +2978,7 @@ function StatementTable(props) {
                         </TableCell>
                         <TableCell align='right'>
                           <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-                            ${categoryTotalMapping[category] ? categoryTotalMapping[category] : 0}
+                            ${categoryTotalMapping[category] ? parseFloat(categoryTotalMapping[category]).toFixed(2) : 0.00}
                           </Typography>
                         </TableCell>
                       </TableRow>
