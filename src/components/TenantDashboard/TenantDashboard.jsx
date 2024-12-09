@@ -2312,7 +2312,7 @@ export const FeesSmallDataGrid = ({ data, isMobile }) => {
           },
         }}
         autoHeight
-        rowHeight={35}
+        rowHeight={65}
         hideFooter={true} // Display footer with pagination
         disableColumnFilter={isMobile}
         disableColumnSelector={isMobile}

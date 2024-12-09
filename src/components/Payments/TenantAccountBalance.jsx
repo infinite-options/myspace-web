@@ -185,7 +185,27 @@ const TenantAccountBalance = ({
   }
   });
 
-  const uniqueProperties = Array.from(uniquePropertiesMap.values()); 
+  const leaseStatusPriority = {
+    ACTIVE: 1,
+    REFUSED: 5,
+    WITHDRAWN: 6,
+    NEW: 2,
+    PROCESSING: 2,
+    APPROVED: 3,
+    REJECTED: 7,
+    ENDED: 4,
+    RESCIND: 8
+  };
+
+  const sortedUniquePropertiesMap = new Map(
+    Array.from(uniquePropertiesMap.entries()).sort(([, valueA], [, valueB]) => {
+      const aPriority = leaseStatusPriority[valueA.lease_status] || Number.MAX_SAFE_INTEGER;
+      const bPriority = leaseStatusPriority[valueB.lease_status] || Number.MAX_SAFE_INTEGER;
+      return aPriority - bPriority;
+    })
+  );
+  
+  const uniqueProperties = Array.from(sortedUniquePropertiesMap.values());
   // console.log("unique property", uniqueProperties);
   // console.log("lease details test", leaseDetails);
 
