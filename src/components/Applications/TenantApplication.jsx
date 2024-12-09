@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import theme from "../../theme/theme";
-import {Checkbox, FormControlLabel, ThemeProvider, Box, Paper, Stack, Typography, Grid, Divider, Button, ButtonGroup, Rating, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+import { Checkbox, FormControlLabel, ThemeProvider, Box, Paper, Stack, Typography, Grid, Divider, Button, ButtonGroup, Rating, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import { Form, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 import backButton from "../Payments/backIcon.png";
@@ -55,70 +55,70 @@ export default function TenantApplication(props) {
   // useEffect(() => {
   //     console.log("tenantDocuments - ", tenantDocuments);
   // }, [tenantDocuments])
-  
+
 
   // useEffect(() => {
   //   const updateData = () => {
   //       setShowSpinner(true);
-  
+
   //       // First, set the property state
   //       setProperty(props.data);
-  
+
   //       // Then, set the status state
   //       setStatus(props.status);
-  
+
   //       // Once the address is formatted, update the address state
   //       const address = formatAddress();
   //       setFormattedAddress(address);
-  
+
   //       // Finally, set the spinner to false after a 2-second delay
   //       setTimeout(() => {
   //         setShowSpinner(false);
   //       }, 2000); // 2 seconds delay
   //   };
-  
+
   //   updateData();
   // }, [props.data]);
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setShowSpinner(true); // Start the spinner before loading data
-  
+
         // Fetch lease details asynchronously
         const leaseResponse = await axios.get(
           `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`
         );
-        
+
         const fetchedLease = leaseResponse.data["Lease_Details"].result.filter(
           (lease) => lease.lease_uid === props.lease.lease_uid
         );
-        
+
         setLease(fetchedLease);
-  
+
         // Fetch tenant profile information asynchronously
         const profileResponse = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
         const profileData = await profileResponse.json();
         setTenantProfile(profileData.profile.result[0]);
-  
+
         // Set other properties after all data is fetched
         setProperty(props.data);
         setStatus(props.status);
-  
+
         // Format and set address
         const address = formatAddress();
         setFormattedAddress(address);
-  
+
       } catch (error) {
         console.error("Error fetching data", error);
       } finally {
         setShowSpinner(false); // Stop the spinner after all data is loaded
       }
     };
-  
+
     fetchData();
   }, [props.data, props.reload]);
-  
+
 
   const [showWithdrawLeaseDialog, setShowWithdrawLeaseDialog] = useState(false);
 
@@ -257,46 +257,46 @@ export default function TenantApplication(props) {
   useEffect(() => {
 
     // console.log("---dhyey--- props data for property - ", lease)
-    
-    if(props?.vehicles){
+
+    if (props?.vehicles) {
       setVehicles(props.vehicles)
-    }else{
+    } else {
       formatTenantVehicleInfo();
     }
 
-    if(props?.adultOccupants){
+    if (props?.adultOccupants) {
       setAdultOccupants(props.adultOccupants)
-    }else{
+    } else {
       formatTenantAdultOccupants();
     }
 
-    if(props?.petOccupants){
+    if (props?.petOccupants) {
       setPetOccupants(props.petOccupants)
-    }else{
+    } else {
       formatTenantPetOccupants();
     }
 
-    if(props?.childOccupants){
+    if (props?.childOccupants) {
       setChildOccupants(props.childOccupants);
-    }else{
+    } else {
       formatTenantChildOccupants();
     }
 
-    if(props?.extraUploadDocument){
+    if (props?.extraUploadDocument) {
       setExtraUploadDocument(props.extraUploadDocument)
     }
 
-    if(props?.extraUploadDocumentType){
+    if (props?.extraUploadDocumentType) {
       setExtraUploadDocumentType(props.extraUploadDocumentType)
     }
 
-    if(props?.deleteDocuments){
+    if (props?.deleteDocuments) {
       setDeleteDocuments(props.deleteDocuments)
     }
 
-    if(props?.tenantDocuments){
+    if (props?.tenantDocuments) {
       setTenantDocuments(props.tenantDocuments)
-    }else{
+    } else {
       if (lease.length === 0) {
         setTenantDocuments(tenantProfile ? JSON.parse(tenantProfile.tenant_documents) : []);
       } else {
@@ -365,7 +365,15 @@ export default function TenantApplication(props) {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     const year = date.getFullYear();
-    return `${month}-${day}-${year}`;
+    const hrs = String(date.getHours()).padStart(2, "0");
+    const mins = String(date.getMinutes()).padStart(2, "0");
+    const secs = String(date.getSeconds()).padStart(2, "0");
+
+    if (hrs !== "00" || mins !== "00" || secs !== "00") {
+      return `${month}-${day}-${year} ${hrs}:${mins}:${secs}`;
+    } else {
+      return `${month}-${day}-${year}`;
+    }
   }
 
 
@@ -398,16 +406,16 @@ export default function TenantApplication(props) {
         const updateLeaseData = new FormData();
         updateLeaseData.append("lease_uid", lease[0].lease_uid);
         updateLeaseData.append("lease_renew_status", "TRUE"); // HERE CHANGE FOR lease_renew_status -- RENEW REQUESTED
-  
+
         const updateLeaseResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
           method: "PUT",
           body: updateLeaseData,
         });
-  
+
         if (!updateLeaseResponse.ok) {
           throw new Error("Failed to update lease status to RENEW.");
         }
-  
+
         leaseApplicationData.append("lease_status", "RENEW NEW");
       } else {
         leaseApplicationData.append("lease_status", "NEW");
@@ -423,54 +431,54 @@ export default function TenantApplication(props) {
       const documentsDetails = [];
       let index = -1
 
-      if(extraUploadDocument && extraUploadDocument?.length !== 0){
+      if (extraUploadDocument && extraUploadDocument?.length !== 0) {
         [...extraUploadDocument].forEach((file, i) => {
-            index++;
-            leaseApplicationData.append(`file_${index}`, file, file.name);
-            const contentType = extraUploadDocumentType[i]?extraUploadDocumentType[i] : "" 
-            const documentObject = {
-                // file: file,
-                fileIndex: index,
-                fileName: file.name,
-                contentType: contentType,
-                // type: file.type,
-            };
-            documentsDetails.push(documentObject);
+          index++;
+          leaseApplicationData.append(`file_${index}`, file, file.name);
+          const contentType = extraUploadDocumentType[i] ? extraUploadDocumentType[i] : ""
+          const documentObject = {
+            // file: file,
+            fileIndex: index,
+            fileName: file.name,
+            contentType: contentType,
+            // type: file.type,
+          };
+          documentsDetails.push(documentObject);
         });
-        
+
       }
 
       leaseApplicationData.append("lease_documents_details", JSON.stringify(documentsDetails));
-      
+
       // console.log("----dhyey ---- leaseApplication payload before passing- ", leaseApplicationData)
 
-      if(tenantDocuments && tenantDocuments.length !== 0){
+      if (tenantDocuments && tenantDocuments.length !== 0) {
         [...tenantDocuments].forEach((file, i) => {
           index++;
           // const details = []
           // console.log(`file_${index}`,file.link)
-          
+
           // https://s3-us-west-1.amazonaws.com/io-pm/tenants/350-000010/file_0_20240910221710Z
 
           // [{"link": "https://s3-us-west-1.amazonaws.com/io-pm/leases/300-000049/file_0_20240910200747Z", "fileType": "application/pdf", "filename": "Sample Document 1.pdf", "contentType": "Drivers License"}]
-         
+
           // leaseApplicationData.append(`file_${index}`, file.link);
           const documentObject = {
-              // file: file,
-              link : file.link,
-              fileType: file.fileType,
-              filename: file.filename,
-              contentType: file.contentType,
-              // type: file.type,
+            // file: file,
+            link: file.link,
+            fileType: file.fileType,
+            filename: file.filename,
+            contentType: file.contentType,
+            // type: file.type,
           };
           // details.push(documentObject);
           leaseApplicationData.append(`file_${index}`, JSON.stringify(documentObject));
-      });
+        });
       }
 
       // console.log("----dhyey ---- leaseApplication payload after passing - ", leaseApplicationData)
 
-      if(deleteDocuments && deleteDocuments?.length !== 0){
+      if (deleteDocuments && deleteDocuments?.length !== 0) {
         leaseApplicationData.append("delete_documents", JSON.stringify(deleteDocuments));
       }
 
@@ -481,7 +489,7 @@ export default function TenantApplication(props) {
       leaseApplicationData.append("lease_pets", JSON.stringify(petOccupants));
       leaseApplicationData.append("lease_vehicles", JSON.stringify(vehicles));
       leaseApplicationData.append("lease_utilities", property.property_utilities);
-      
+
 
       // if (status === "") {
       //   leaseApplicationData.append("lease_adults", tenantProfile?.tenant_adult_occupants);
@@ -497,11 +505,16 @@ export default function TenantApplication(props) {
 
       leaseApplicationData.append("lease_referred", "[]");
       leaseApplicationData.append("lease_fees", "[]");
-      leaseApplicationData.append("lease_application_date", formatDate(date.toLocaleDateString()));
+      leaseApplicationData.append("lease_application_date", formatDate(date.toLocaleDateString('en-US', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      })));
       leaseApplicationData.append("tenant_uid", getProfileId());
 
       // console.log("----dhyey ---- leaseApplication payload - ", leaseApplicationData)
-      
+
 
       const leaseApplicationResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "POST",
@@ -558,7 +571,7 @@ export default function TenantApplication(props) {
 
   const handleCloseButton = (e) => {
     e.preventDefault();
-    if(props.isMobile){
+    if (props.isMobile) {
       props.setViewRHS(false)
     }
     props.setRightPane?.("");
@@ -566,179 +579,179 @@ export default function TenantApplication(props) {
 
   return (
     <ThemeProvider theme={theme}>
-       {showSpinner ? (
+      {showSpinner ? (
         <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
           <CircularProgress color='inherit' />
         </Backdrop>
       ) : (
-      <Paper
-        style={{
-          padding: 20,
-          backgroundColor: '#F2F2F2',
-          borderRadius: '10px',
-          boxShadow: "0px 2px 4px #00000040"
-        }}
-      >
-        <Box
-          sx={{
-            paddingBottom: "50px",
+        <Paper
+          style={{
+            padding: 20,
+            backgroundColor: '#F2F2F2',
+            borderRadius: '10px',
+            boxShadow: "0px 2px 4px #00000040"
           }}
         >
           <Box
-            component='span'
-            display='flex'
-            justifyContent='center'
-            alignItems='center'
-            position='relative'
             sx={{
-              paddingTop: "20px",
+              paddingBottom: "50px",
             }}
           >
-            {props.from === "accwidget" &&
-              <Box sx={{ position: "absolute", top: 0, right: 0 }}>
-                <Button onClick={(e) => handleCloseButton(e)}>
-                  <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px" }} />
-                </Button>
-              </Box>
-            }
-            <Typography
+            <Box
+              component='span'
+              display='flex'
+              justifyContent='center'
+              alignItems='center'
+              position='relative'
               sx={{
-                justifySelf: "center",
-                color: theme.typography.primary.black,
-                fontWeight: theme.typography.primary.fontWeight,
-                fontSize: theme.typography.largeFont,
+                paddingTop: "20px",
               }}
             >
-              Your Application For
-            </Typography>
-          </Box>
-          
-          <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative'>
-            <Typography
-              sx={{
-                justifySelf: "center",
-                color: theme.typography.primary.black,
-                fontWeight: theme.typography.medium.fontWeight,
-                fontSize: theme.typography.smallFont,
-              }}
-            >
-              {formattedAddress}
-            </Typography>
-          </Box>
-            
-            <Box sx={{padding: "10px"}}>
-            <Accordion 
-              defaultExpanded 
-              sx={{
-                marginBottom: "20px", 
-                backgroundColor: "#f0f0f0", 
-                borderRadius: '8px',
-                margin: "auto", 
-                minHeight: "50px"
-              }}>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography sx={{ fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue}}>Applicant Personal Details</Typography>
-              </AccordionSummary>
-              <AccordionDetails sx={{ padding: "30px" }}> {/* Increased padding */}
-                <Grid container spacing={3}> {/* Increased spacing */}
-                  <Grid item xs={6}>
-                    <Typography>Name: {tenantProfile?.tenant_first_name} {tenantProfile?.tenant_last_name}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography>Email: {tenantProfile?.tenant_email}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography>Phone: {tenantProfile?.tenant_phone_number}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography>SSN: {tenantProfile?.tenant_ssn ? (getDecryptedSSN(tenantProfile?.tenant_ssn)) : "No SSN provided"}</Typography>  
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography>License #: {tenantProfile?.tenant_drivers_license_number}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography>License State: {tenantProfile?.tenant_drivers_license_state}</Typography>
-                  </Grid>
-                </Grid>
-              </AccordionDetails>
-            </Accordion>
+              {props.from === "accwidget" &&
+                <Box sx={{ position: "absolute", top: 0, right: 0 }}>
+                  <Button onClick={(e) => handleCloseButton(e)}>
+                    <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px" }} />
+                  </Button>
+                </Box>
+              }
+              <Typography
+                sx={{
+                  justifySelf: "center",
+                  color: theme.typography.primary.black,
+                  fontWeight: theme.typography.primary.fontWeight,
+                  fontSize: theme.typography.largeFont,
+                }}
+              >
+                Your Application For
+              </Typography>
             </Box>
 
-            <Box sx={{padding: "10px"}}>
-            <Accordion 
-              sx={{
-                marginBottom: "20px", 
-                backgroundColor: "#f0f0f0", 
-                borderRadius: '8px',
-                margin: "auto", // Center the accordion
-                minHeight: "50px" // Increase minimum height for better content display
-              }}>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography sx={{ fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue}}>Applicant Job Details</Typography>
-              </AccordionSummary>
-              <AccordionDetails sx={{ padding: "30px" }}>
-              <EmploymentDataGrid
-                  tenantProfile={tenantProfile}
-                  lease={lease}
-                  selectedJobs={selectedJobs}
-                  setSelectedJobs={setSelectedJobs}
-                  leaseStatus={status}
-                />
-              </AccordionDetails>
-            </Accordion>
+            <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative'>
+              <Typography
+                sx={{
+                  justifySelf: "center",
+                  color: theme.typography.primary.black,
+                  fontWeight: theme.typography.medium.fontWeight,
+                  fontSize: theme.typography.smallFont,
+                }}
+              >
+                {formattedAddress}
+              </Typography>
             </Box>
 
-            <Box sx={{padding: "10px"}}>
-            <Accordion 
-              sx={{
-                marginBottom: "20px", 
-                backgroundColor: "#f0f0f0", 
-                borderRadius: '8px',
-                margin: "auto", // Center the accordion
-                minHeight: "50px" // Increase minimum height for better content display
-              }}>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography sx={{ fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue}}>Occupancy Details</Typography>
-              </AccordionSummary>
-              <AccordionDetails sx={{ padding: "30px" }}>
-                <Grid container spacing={3}>
-                  <Grid item xs={12}>
-                    <Typography>Adults</Typography>
-                    <AdultDataGrid adults={adultOccupants} />
+            <Box sx={{ padding: "10px" }}>
+              <Accordion
+                defaultExpanded
+                sx={{
+                  marginBottom: "20px",
+                  backgroundColor: "#f0f0f0",
+                  borderRadius: '8px',
+                  margin: "auto",
+                  minHeight: "50px"
+                }}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography sx={{ fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue }}>Applicant Personal Details</Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{ padding: "30px" }}> {/* Increased padding */}
+                  <Grid container spacing={3}> {/* Increased spacing */}
+                    <Grid item xs={6}>
+                      <Typography>Name: {tenantProfile?.tenant_first_name} {tenantProfile?.tenant_last_name}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography>Email: {tenantProfile?.tenant_email}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography>Phone: {tenantProfile?.tenant_phone_number}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography>SSN: {tenantProfile?.tenant_ssn ? (getDecryptedSSN(tenantProfile?.tenant_ssn)) : "No SSN provided"}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography>License #: {tenantProfile?.tenant_drivers_license_number}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography>License State: {tenantProfile?.tenant_drivers_license_state}</Typography>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={12}>
-                    <Typography>Children</Typography>
-                    <ChildDataGrid children={childOccupants} />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography>Pets</Typography>
-                    <PetDataGrid pets={petOccupants} />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography>Vehicles</Typography>
-                    <VehicleDataGrid vehicles={vehicles} />
-                  </Grid>
-                </Grid>
-              </AccordionDetails>
-            </Accordion>
+                </AccordionDetails>
+              </Accordion>
             </Box>
 
-            <Box sx={{padding: "10px"}}>
-            <Accordion 
-              sx={{
-                marginBottom: "20px", 
-                backgroundColor: "#f0f0f0", 
-                borderRadius: '8px',
-                margin: "auto", // Center the accordion
-                minHeight: "50px" // Increase minimum height for better content display
-              }}>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography sx={{ fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue}}>Documents</Typography>
-              </AccordionSummary>
-              <AccordionDetails sx={{ padding: "30px" }}>
-                <Documents setRightPane={props.setRightPane} documents={tenantDocuments} setDocuments={setTenantDocuments} isEditable={false} isAccord={false} contractFiles={extraUploadDocument} contractFileTypes={extraUploadDocumentType}/>
-              </AccordionDetails>
-            </Accordion>
+            <Box sx={{ padding: "10px" }}>
+              <Accordion
+                sx={{
+                  marginBottom: "20px",
+                  backgroundColor: "#f0f0f0",
+                  borderRadius: '8px',
+                  margin: "auto", // Center the accordion
+                  minHeight: "50px" // Increase minimum height for better content display
+                }}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography sx={{ fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue }}>Applicant Job Details</Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{ padding: "30px" }}>
+                  <EmploymentDataGrid
+                    tenantProfile={tenantProfile}
+                    lease={lease}
+                    selectedJobs={selectedJobs}
+                    setSelectedJobs={setSelectedJobs}
+                    leaseStatus={status}
+                  />
+                </AccordionDetails>
+              </Accordion>
+            </Box>
+
+            <Box sx={{ padding: "10px" }}>
+              <Accordion
+                sx={{
+                  marginBottom: "20px",
+                  backgroundColor: "#f0f0f0",
+                  borderRadius: '8px',
+                  margin: "auto", // Center the accordion
+                  minHeight: "50px" // Increase minimum height for better content display
+                }}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography sx={{ fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue }}>Occupancy Details</Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{ padding: "30px" }}>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                      <Typography>Adults</Typography>
+                      <AdultDataGrid adults={adultOccupants} />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography>Children</Typography>
+                      <ChildDataGrid children={childOccupants} />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography>Pets</Typography>
+                      <PetDataGrid pets={petOccupants} />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography>Vehicles</Typography>
+                      <VehicleDataGrid vehicles={vehicles} />
+                    </Grid>
+                  </Grid>
+                </AccordionDetails>
+              </Accordion>
+            </Box>
+
+            <Box sx={{ padding: "10px" }}>
+              <Accordion
+                sx={{
+                  marginBottom: "20px",
+                  backgroundColor: "#f0f0f0",
+                  borderRadius: '8px',
+                  margin: "auto", // Center the accordion
+                  minHeight: "50px" // Increase minimum height for better content display
+                }}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography sx={{ fontWeight: theme.typography.medium.fontWeight, color: theme.typography.primary.blue }}>Documents</Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{ padding: "30px" }}>
+                  <Documents setRightPane={props.setRightPane} documents={tenantDocuments} setDocuments={setTenantDocuments} isEditable={false} isAccord={false} contractFiles={extraUploadDocument} contractFileTypes={extraUploadDocumentType} />
+                </AccordionDetails>
+              </Accordion>
             </Box>
 
             <Box
@@ -778,7 +791,7 @@ export default function TenantApplication(props) {
                   </Typography>
                 </Button>
               )}
-              
+
               {(status == null || status === "" || status === "NEW" || status === "REJECTED" || status === "RESCIND" || status === "RENEW" || status === "RENEW NEW") && (
                 <Button
                   variant="contained"
@@ -871,7 +884,7 @@ export default function TenantApplication(props) {
               )}
             </Box>
 
-{/* 
+            {/* 
             {status && (status === "NEW" || status === "RENEW NEW") ? (
                 <>
                   <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
@@ -897,67 +910,67 @@ export default function TenantApplication(props) {
                   </Grid>
                 </>
             ) : null} */}
-            
+
             {showWithdrawLeaseDialog && (
-                <Dialog
-                  open={showWithdrawLeaseDialog}
-                  onClose={() => setShowWithdrawLeaseDialog(false)}
-                  aria-labelledby='alert-dialog-title'
-                  aria-describedby='alert-dialog-description'
-                >
-                  <DialogContent>
-                    <DialogContentText
-                      id='alert-dialog-description'
+              <Dialog
+                open={showWithdrawLeaseDialog}
+                onClose={() => setShowWithdrawLeaseDialog(false)}
+                aria-labelledby='alert-dialog-title'
+                aria-describedby='alert-dialog-description'
+              >
+                <DialogContent>
+                  <DialogContentText
+                    id='alert-dialog-description'
+                    sx={{
+                      fontWeight: theme.typography.common.fontWeight,
+                      paddingTop: "10px",
+                    }}
+                  >
+                    Are you sure you want to withdraw your application for {property.property_address} {property.property_unit}?
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Box
+                    sx={{
+                      width: "100%",
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Button
+                      onClick={() => handleWithdrawLease()}
                       sx={{
-                        fontWeight: theme.typography.common.fontWeight,
-                        paddingTop: "10px",
+                        color: "white",
+                        backgroundColor: "#3D5CAC80",
+                        ":hover": {
+                          backgroundColor: "#3D5CAC",
+                        },
+                        marginRight: "10px",
+                      }}
+                      autoFocus
+                    >
+                      Yes
+                    </Button>
+                    <Button
+                      onClick={() => setShowWithdrawLeaseDialog(false)}
+                      sx={{
+                        color: "white",
+                        backgroundColor: "#3D5CAC80",
+                        ":hover": {
+                          backgroundColor: "#3D5CAC",
+                        },
+                        marginLeft: "10px",
                       }}
                     >
-                      Are you sure you want to withdraw your application for {property.property_address} {property.property_unit}?
-                    </DialogContentText>
-                  </DialogContent>
-                  <DialogActions>
-                    <Box
-                      sx={{
-                        width: "100%",
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Button
-                        onClick={() => handleWithdrawLease()}
-                        sx={{
-                          color: "white",
-                          backgroundColor: "#3D5CAC80",
-                          ":hover": {
-                            backgroundColor: "#3D5CAC",
-                          },
-                          marginRight: "10px",
-                        }}
-                        autoFocus
-                      >
-                        Yes
-                      </Button>
-                      <Button
-                        onClick={() => setShowWithdrawLeaseDialog(false)}
-                        sx={{
-                          color: "white",
-                          backgroundColor: "#3D5CAC80",
-                          ":hover": {
-                            backgroundColor: "#3D5CAC",
-                          },
-                          marginLeft: "10px",
-                        }}
-                      >
-                        No
-                      </Button>
-                    </Box>
-                  </DialogActions>
-                </Dialog>
+                      No
+                    </Button>
+                  </Box>
+                </DialogActions>
+              </Dialog>
             )}
-        </Box>
-      </Paper>)}
+          </Box>
+        </Paper>)}
     </ThemeProvider>
   );
 }
@@ -973,20 +986,28 @@ export const AdultDataGrid = ({ adults }) => {
         <Typography>{params.row.name} {params.row.last_name}</Typography>
       )
     },
-    { field: 'relationship', headerName: 'Relationship',renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
-    width: 100 },
-    { field: 'dob', headerName: 'DoB',renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
-    width: 100 },
-    { field: 'email', headerName: 'Email', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
-    width: 200 },
-    { field: 'phone_number', headerName: 'Phone Number', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
-    width: 200 }
+    {
+      field: 'relationship', headerName: 'Relationship', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      width: 100
+    },
+    {
+      field: 'dob', headerName: 'DoB', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      width: 100
+    },
+    {
+      field: 'email', headerName: 'Email', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      width: 200
+    },
+    {
+      field: 'phone_number', headerName: 'Phone Number', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      width: 200
+    }
   ];
-  
+
 
   let rowsWithId = []
 
-  if(adults && adults?.length !== 0){
+  if (adults && adults?.length !== 0) {
     rowsWithId = adults.map((row, index) => ({
       ...row,
       id: row.id ? index : index,
@@ -995,17 +1016,17 @@ export const AdultDataGrid = ({ adults }) => {
 
   return (
     <Box sx={{ width: '100%', overflow: 'auto' }}>
-    <DataGrid
-      rows={rowsWithId}
-      columns={columns}
-      sx={{
-        marginTop: "10px",
-      }}
-      autoHeight
-      rowHeight={50}
-      hideFooter={true}
-    />
-  </Box>
+      <DataGrid
+        rows={rowsWithId}
+        columns={columns}
+        sx={{
+          marginTop: "10px",
+        }}
+        autoHeight
+        rowHeight={50}
+        hideFooter={true}
+      />
+    </Box>
   );
 
 }
@@ -1021,19 +1042,27 @@ export const ChildDataGrid = ({ children }) => {
         <Typography>{params.row.name} {params.row.last_name}</Typography>
       )
     },
-    { field: 'relationship', headerName: 'Relationship',renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
-    width: 100 },
-    { field: 'dob', headerName: 'DoB',renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
-    width: 100 },
-    { field: 'email', headerName: 'Email', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
-    width: 200 },
-    { field: 'phone_number', headerName: 'Phone Number',renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
-    width: 200 }
+    {
+      field: 'relationship', headerName: 'Relationship', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      width: 100
+    },
+    {
+      field: 'dob', headerName: 'DoB', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      width: 100
+    },
+    {
+      field: 'email', headerName: 'Email', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      width: 200
+    },
+    {
+      field: 'phone_number', headerName: 'Phone Number', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      width: 200
+    }
   ];
 
   let rowsWithId = []
 
-  if(children && children?.length !== 0){
+  if (children && children?.length !== 0) {
     rowsWithId = children.map((row, index) => ({
       ...row,
       id: row.id ? index : index,
@@ -1044,11 +1073,11 @@ export const ChildDataGrid = ({ children }) => {
     <DataGrid
       rows={rowsWithId}
       columns={columns}
-      sx={{        
+      sx={{
         marginTop: "10px",
       }}
       autoHeight
-      rowHeight={50} 
+      rowHeight={50}
       hideFooter={true}
     />
   );
@@ -1057,17 +1086,17 @@ export const ChildDataGrid = ({ children }) => {
 
 export const PetDataGrid = ({ pets }) => {
   const columns = [
-    { field: 'name', headerName: 'Name', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 2, renderCell : (params) => (<Typography>{params.row.name} {params.row.last_name}</Typography>)},
-    { field: 'type', headerName: 'Type', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
-    { field: 'dob', headerName: 'DoB', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
-    { field: 'breed', headerName: 'Breed', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
-    { field: 'weight', headerName: 'Weight', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
-    { field: 'owner', headerName: 'Owner', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+    { field: 'name', headerName: 'Name', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 2, renderCell: (params) => (<Typography>{params.row.name} {params.row.last_name}</Typography>) },
+    { field: 'type', headerName: 'Type', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1 },
+    { field: 'dob', headerName: 'DoB', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1 },
+    { field: 'breed', headerName: 'Breed', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1 },
+    { field: 'weight', headerName: 'Weight', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1 },
+    { field: 'owner', headerName: 'Owner', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1 },
   ];
 
   let rowsWithId = []
 
-  if(pets && pets?.length !== 0){
+  if (pets && pets?.length !== 0) {
     rowsWithId = pets.map((row, index) => ({
       ...row,
       id: row.id ? index : index,
@@ -1078,11 +1107,11 @@ export const PetDataGrid = ({ pets }) => {
     <DataGrid
       rows={rowsWithId}
       columns={columns}
-      sx={{        
+      sx={{
         marginTop: "10px",
       }}
       autoHeight
-      rowHeight={50} 
+      rowHeight={50}
       hideFooter={true}
     />
   );
@@ -1091,17 +1120,17 @@ export const PetDataGrid = ({ pets }) => {
 
 export const VehicleDataGrid = ({ vehicles }) => {
   const columns = [
-    { field: 'make', headerName: 'Make', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 2, renderCell : (params) => (<Typography>{params.row.make}</Typography>)},
-    { field: 'model', headerName: 'Model', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
-    { field: 'license', headerName: 'License', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1, renderCell : (params) => (<Typography>{params.row.license}</Typography>)},
-    { field: 'year', headerName: 'Year', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
-    { field: 'state', headerName: 'State', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
-    { field: 'owner', headerName: 'Owner', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1},
+    { field: 'make', headerName: 'Make', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 2, renderCell: (params) => (<Typography>{params.row.make}</Typography>) },
+    { field: 'model', headerName: 'Model', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1 },
+    { field: 'license', headerName: 'License', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1, renderCell: (params) => (<Typography>{params.row.license}</Typography>) },
+    { field: 'year', headerName: 'Year', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1 },
+    { field: 'state', headerName: 'State', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1 },
+    { field: 'owner', headerName: 'Owner', renderHeader: (params) => <strong>{params.colDef.headerName}</strong>, flex: 1 },
   ];
 
   let rowsWithId = []
 
-  if(vehicles && vehicles?.length !== 0){
+  if (vehicles && vehicles?.length !== 0) {
     rowsWithId = vehicles.map((row, index) => ({
       ...row,
       id: row.id ? index : index,
@@ -1112,11 +1141,11 @@ export const VehicleDataGrid = ({ vehicles }) => {
     <DataGrid
       rows={rowsWithId}
       columns={columns}
-      sx={{        
+      sx={{
         marginTop: "10px",
       }}
       autoHeight
-      rowHeight={50} 
+      rowHeight={50}
       hideFooter={true}
     />
   );
@@ -1129,7 +1158,7 @@ export const EmploymentDataGrid = ({ tenantProfile, selectedJobs, setSelectedJob
     leaseStatus === "PROCESSING" || leaseStatus === "ACTIVE" || leaseStatus === "NEW"
       ? (lease?.[0]?.lease_income ? JSON.parse(lease[0].lease_income) : [])
       : (tenantProfile?.tenant_employment ? JSON.parse(tenantProfile.tenant_employment) : []);
-  
+
   const employmentDataArray = Array.isArray(employmentData) ? employmentData : [];
 
   const handleJobSelection = (job, isChecked) => {

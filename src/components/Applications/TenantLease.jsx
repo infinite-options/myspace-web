@@ -1426,7 +1426,15 @@ const TenantLease = () => {
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     const year = date.getFullYear();
-    return `${month}-${day}-${year}`;
+    const hrs = String(date.getHours()).padStart(2, "0");
+    const mins = String(date.getMinutes()).padStart(2, "0");
+    const secs = String(date.getSeconds()).padStart(2, "0");
+
+    if (hrs !== "00" || mins !== "00" || secs !== "00") {
+      return `${month}-${day}-${year} ${hrs}:${mins}:${secs}`;
+    } else {
+      return `${month}-${day}-${year}`;
+    }
   }
 
   const handleRenewLease = async () => {
@@ -1474,7 +1482,12 @@ const TenantLease = () => {
       leaseApplicationFormData.append("lease_utilities", utilitiesJSONString);
 
       let date = new Date();
-      leaseApplicationFormData.append("lease_application_date", formatDate(date.toLocaleDateString()));
+      leaseApplicationFormData.append("lease_application_date", formatDate(date.toLocaleDateString('en-US', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      })));
       // console.log('before tenant id leaseApplicationFormData', property);
       if (property?.tenants) {
         try {

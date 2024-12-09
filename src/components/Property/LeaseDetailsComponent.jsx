@@ -1186,7 +1186,7 @@ export default function LeaseDetailsComponent({
                                 fontSize: theme.typography.smallFont,
                               }}
                             >
-                              {app.lease_application_date}
+                              {app.lease_application_date?.split(' ')[0]}
                             </Typography>
                           </Box>
 
