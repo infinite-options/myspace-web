@@ -728,6 +728,7 @@ function BalanceDetailsTable(props) {
           sx={{
             fontWeight: "bold",
             width: "100%",
+            textAlign: "right",
             display: "flex",
             flexDirection: "row",
             justifyContent: "flex-end",
@@ -1011,6 +1012,7 @@ function TenantBalanceTable(props) {
         <Box
           sx={{
             fontWeight: "bold",
+            textAlign: "right",
             width: "100%",
             display: "flex",
             flexDirection: "row",
@@ -1254,6 +1256,7 @@ function MoneyReceivedTable(props) {
           sx={{
             fontWeight: "bold",
             width: "100%",
+            textAlign: "right",
             display: "flex",
             flexDirection: "row",
             justifyContent: "flex-end",
@@ -1276,6 +1279,7 @@ function MoneyReceivedTable(props) {
           sx={{
             fontWeight: "bold",
             width: "100%",
+            textAlign: "right",
             display: "flex",
             flexDirection: "row",
             justifyContent: "flex-end",
@@ -1427,6 +1431,7 @@ function MoneyPaidTable(props) {
           sx={{
             fontWeight: "bold",
             width: "100%",
+            textAlign: "right",
             display: "flex",
             flexDirection: "row",
             justifyContent: "flex-end",
@@ -1449,6 +1454,7 @@ function MoneyPaidTable(props) {
           sx={{
             fontWeight: "bold",
             width: "100%",
+            textAlign: "right",
             display: "flex",
             flexDirection: "row",
             justifyContent: "flex-end",
@@ -1612,6 +1618,7 @@ function MoneyPayableTable(props) {
           sx={{
             fontWeight: "bold",
             width: "100%",
+            textAlign: "right",
             display: "flex",
             flexDirection: "row",
             justifyContent: "flex-end",

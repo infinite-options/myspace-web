@@ -939,7 +939,10 @@ function BalanceDetailsTable(props) {
       setPaymentDueResult(
         data.map((item) => ({
           ...item,
-          pur_amount_due: parseFloat(item.pur_amount_due),
+          pur_amount_due: parseFloat(item.pur_amount_due).toFixed(2),
+          total_paid: parseFloat(item.total_paid).toFixed(2),
+          pay_amount : parseFloat(item.pay_amount).toFixed(2)
+
         }))
       );
     }
@@ -978,7 +981,7 @@ function BalanceDetailsTable(props) {
       field: "total_paid",
       headerName: "Total Paid",
       flex: 3,
-      renderCell: (params) => <Box sx={{ ...commonStyles }}>{params.value}</Box>,
+      renderCell: (params) => <Box sx={{ ...commonStyles, textAlign: "right", width: "100%"}}>{params.value}</Box>,
       renderHeader: (params) => (
         <Box sx={{ fontSize: theme.typography.smallFont }}>
           <strong>{params.colDef.headerName}</strong>
@@ -1021,7 +1024,7 @@ function BalanceDetailsTable(props) {
     {
       field: "payment_date",
       headerName: "Payment Date",
-      flex: 5,
+      flex: 3,
       renderCell: (params) => <Box sx={{ ...commonStyles }}>{params.value}</Box>,
       renderHeader: (params) => (
         <Box sx={{ fontSize: theme.typography.smallFont }}>
@@ -1116,8 +1119,8 @@ function BalanceDetailsTable(props) {
     {
       field: "pur_amount_due",
       headerName: "Amount Due",
-      flex: 2,
-      renderCell: (params) => <Box sx={{ ...commonStyles }}>{params.value}</Box>,
+      flex: 2.5,
+      renderCell: (params) => <Box sx={{ ...commonStyles, textAlign: "right", width: "100%" }}>{params.value}</Box>,
       renderHeader: (params) => (
         <Box sx={{ fontSize: theme.typography.smallFont }}>
           <strong>{params.colDef.headerName}</strong>
@@ -1128,7 +1131,7 @@ function BalanceDetailsTable(props) {
       field: "pay_amount",
       headerName: "Pay Amount",
       flex: 2,
-      renderCell: (params) => <Box sx={{ ...commonStyles }}>{params.value}</Box>,
+      renderCell: (params) => <Box sx={{ ...commonStyles, textAlign: "right", width: "100%" }}>{params.value}</Box>,
       renderHeader: (params) => (
         <Box sx={{ fontSize: theme.typography.smallFont }}>
           <strong>{params.colDef.headerName}</strong>
@@ -1327,7 +1330,7 @@ function BalanceDetailsTable(props) {
                 fontFamily: "Source Sans Pro",
               }}
             >
-              {/* $ {selectedRows.reduce((total, rowId) => total + paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due, 0)} */}$ {totalVerified}
+              {/* $ {selectedRows.reduce((total, rowId) => total + paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due, 0)} */}$ {totalVerified?.toFixed(2)}
             </Typography>
           </Grid>
         </Grid>

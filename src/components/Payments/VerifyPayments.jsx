@@ -289,19 +289,19 @@ function BalanceDetailsTable(props) {
       field: "pur_amount_due",
       headerName: "Amount Due",
       flex: 2,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width: "100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
     },
     {
       field: "pay_amount",
       headerName: "Pay Amount",
       flex: 2,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width: "100%"}}>{parseFloat(params.value).toFixed(2)}</Box>,
     },
     {
       field: "total_paid",
       headerName: "Total Paid",
       flex: 2,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width: "100%" }}>{parseFloat(params.value).toFixed(2)}</Box>,
     },
     // {
     //     field: "payment_verify",

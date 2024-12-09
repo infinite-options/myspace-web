@@ -216,7 +216,7 @@ export default function ViewTransactionOwner(props) {
                                 marginTop='30px'
                                 >
                                     <Typography sx={{color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize:24}}>
-                                    ${txn.total_paid}
+                                    ${parseFloat(txn.total_paid).toFixed(2)}
                                     </Typography>
                                 </Stack>
                                 <Stack
