@@ -2599,7 +2599,7 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
     id: request.maintenance_request_uid,
     title: request.maintenance_title,
     createdDate: request.maintenance_request_created_date || "-",
-    image: request.maintenance_favorite_image || "PlaceholderImage",
+    image: request.maintenance_favorite_image || PlaceholderImage,
     scheduledDateTime: request.maintenance_scheduled_date && request.maintenance_scheduled_date !== "null" ? `${request.maintenance_scheduled_date} ${request.maintenance_scheduled_time || "--"}` : "--",
     status: request.maintenance_status,
     actions: request,
