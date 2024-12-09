@@ -526,6 +526,7 @@ export default function PaymentsManager(props) {
           sx={{
             fontWeight: "bold",
             width: "100%",
+            textAlign: "right",
             display: "flex",
             flexDirection: "row",
             justifyContent: "flex-end",
@@ -549,6 +550,7 @@ export default function PaymentsManager(props) {
           sx={{
             fontWeight: "bold",
             width: "100%",
+            textAlign: "right",
             display: "flex",
             flexDirection: "row",
             justifyContent: "flex-end",
@@ -571,6 +573,7 @@ export default function PaymentsManager(props) {
           sx={{
             fontWeight: "bold",
             width: "100%",
+            textAlign: "right",
             display: "flex",
             flexDirection: "row",
             justifyContent: "flex-end",
@@ -1589,6 +1592,7 @@ function TransactionsTable(props) {
             fontWeight: "bold",
             width: "100%",
             display: "flex",
+            textAlign: "right",
             flexDirection: "row",
             justifyContent: "flex-end",
             color: params.row.pur_payer.startsWith("600") ? "red" : "green",
@@ -1612,6 +1616,7 @@ function TransactionsTable(props) {
             fontWeight: "bold",
             width: "100%",
             display: "flex",
+            textAlign: "right",
             flexDirection: "row",
             justifyContent: "flex-end",
           }}
@@ -1633,6 +1638,7 @@ function TransactionsTable(props) {
           sx={{
             fontWeight: "bold",
             width: "100%",
+            textAlign: "right",
             display: "flex",
             flexDirection: "row",
             justifyContent: "flex-end",
@@ -2211,6 +2217,7 @@ function TransactionsTableForRecipient(props) {
             fontWeight: "bold",
             width: "100%",
             display: "flex",
+            textAlign: "right",
             flexDirection: "row",
             justifyContent: "flex-end",
             color: params.row.pur_payer.startsWith("600") ? "red" : "green",
@@ -2233,6 +2240,7 @@ function TransactionsTableForRecipient(props) {
           sx={{
             fontWeight: "bold",
             width: "100%",
+            textAlign: "right",
             display: "flex",
             flexDirection: "row",
             justifyContent: "flex-end",
@@ -2256,6 +2264,7 @@ function TransactionsTableForRecipient(props) {
             fontWeight: "bold",
             width: "100%",
             display: "flex",
+            textAlign: "right",
             flexDirection: "row",
             justifyContent: "flex-end",
           }}
@@ -2648,6 +2657,7 @@ function BalanceDetailsTable(props) {
             fontWeight: "bold",
             width: "100%",
             display: "flex",
+            textAlign: "right",
             flexDirection: "row",
             justifyContent: "flex-end",
           }}
@@ -2877,7 +2887,7 @@ function TenantBalanceTable(props) {
       field: "pur_amount_due",
       headerName: "Purchase Amount Due",
       flex: 1,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>$ ${parseFloat(params.value).toFixed(2)}</Box>,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold", textAlign: "right", width : "100%"}}>$ ${parseFloat(params.value).toFixed(2)}</Box>,
     },
     {
       field: "property_address",
@@ -2938,6 +2948,7 @@ function TenantBalanceTable(props) {
             fontWeight: "bold",
             width: "100%",
             display: "flex",
+            textAlign: "right",
             flexDirection: "row",
             justifyContent: "flex-end",
           }}
@@ -3180,6 +3191,7 @@ function MoneyReceivedTable(props) {
             fontWeight: "bold",
             width: "100%",
             display: "flex",
+            textAlign: "right",
             flexDirection: "row",
             justifyContent: "flex-end",
           }}
@@ -3202,6 +3214,7 @@ function MoneyReceivedTable(props) {
             fontWeight: "bold",
             width: "100%",
             display: "flex",
+            textAlign: "right",
             flexDirection: "row",
             justifyContent: "flex-end",
           }}
@@ -3353,6 +3366,7 @@ function MoneyPaidTable(props) {
             fontWeight: "bold",
             width: "100%",
             display: "flex",
+            textAlign: "right",
             flexDirection: "row",
             justifyContent: "flex-end",
           }}
@@ -3375,6 +3389,7 @@ function MoneyPaidTable(props) {
             fontWeight: "bold",
             width: "100%",
             display: "flex",
+            textAlign: "right",
             flexDirection: "row",
             justifyContent: "flex-end",
           }}
@@ -3538,6 +3553,7 @@ function MoneyPayableTable(props) {
             fontWeight: "bold",
             width: "100%",
             display: "flex",
+            textAlign: "right",
             flexDirection: "row",
             justifyContent: "flex-end",
           }}
