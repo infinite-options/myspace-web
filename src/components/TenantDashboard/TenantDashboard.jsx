@@ -629,8 +629,8 @@ const TenantDashboard = () => {
               {/* <Grid container rowGap={5} sx={{alignItems:"stretch"}}> */}
               {/* Top section: Announcements */}
               {!isMobile && (!viewRHS || rightPane.type !== "announcements") && (
-                <Grid item xs={12}>
-                  <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", paddingBottom: "40px", borderRadius: "10px", height: "100%" }}>
+                <Grid item xs={12} >
+                  <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", borderRadius: "10px",}}>
                     <Grid
                       container
                       direction='row'
@@ -643,7 +643,6 @@ const TenantDashboard = () => {
                       <Grid item xs={8}>
                         <Box
                           sx={{
-                            flexGrow: 1,
                             display: "flex",
                             justifyContent: "center",
                           }}
@@ -668,7 +667,7 @@ const TenantDashboard = () => {
                             alignItems: "center",
                             zIndex: 1,
                             flex: 1,
-                            height: "100%",
+                            
                           }}
                         >
                           <Box
@@ -701,7 +700,7 @@ const TenantDashboard = () => {
               )}
 
               {/* Bottom section containing Lease, Maintenance, and Management Details - Abhinav here layouting, margin 1px */}
-              <Grid container spacing={8} rowGap={2} sx={{ flex: 1, display: "flex", flexDirection: isMobile ? "column" : "row" }}>
+              <Grid container spacing={8} rowGap={2} sx={{ flex: 1, display: "flex", flexDirection: isMobile ? "column" : "row", height: "100%", }}>
                 {rightPane?.type ? (
                   /* Render the rightPane component if available */
                   <Grid item xs={12} sx={{ display: "flex", flexDirection: "column", flex: 1 }} ref={rightPaneRef} marginBottom={isMobile ? "40px" : "0px"}>
@@ -2678,14 +2677,22 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
   ];
 
   return (
+    <ThemeProvider theme={theme}>
+			<Box
+				style={{
+					display: 'flex',
+					justifyContent: 'center',
+					alignItems: 'flex-start',
+					width: '100%', // Ensure the box spans the full viewport width
+					// height: '100vh', // Ensure the box spans the full viewport height
+				}}
+			>
     <Paper
       // elevation={3}
       sx={{
         // padding: "20px",
         backgroundColor: "#f0f0f0",
-        borderRadius: "10px",
         width: "100%",
-        margin: "auto",
         minHeight: "250px",
       }}
     >
@@ -2722,7 +2729,8 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
         <DataGrid rows={rows} columns={columns} autoHeight sx={{ minWidth: "550px" }} disableColumnFilter={isMobile} disableColumnMenu={isMobile} disableColumnSelector={isMobile} />
       </Box>
     </Paper>
-  );
+    </Box>
+    </ThemeProvider>);
 };
 
 function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanceDetails, isMobile, setViewRHS }) {
