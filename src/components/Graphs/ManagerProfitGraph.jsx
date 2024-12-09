@@ -1,6 +1,6 @@
 import { ThemeProvider } from "@emotion/react";
 import React from "react";
-import { Bar, Line, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, ComposedChart, Cell, ReferenceLine } from "recharts";
+import { Bar, Line, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, ComposedChart, Cell, ReferenceLine, Tooltip } from "recharts";
 import theme from "../../theme/theme";
 
 // Custom Legend Component
@@ -43,26 +43,39 @@ const ProfitChart = (props) => {
     o.profit, 
     o.expected_profit, 
     o.rent, 
-    o.payouts
+    o.expected_rent
   ]);
 
-  const max = Math.max.apply(
-    Math,
-    allValues
-  );
-  const min = Math.min.apply(
-    Math,
-    allValues
-  );
+
+  const max = Math.max(...allValues);
+  const min = Math.min(...allValues);
 
   return (
     <ThemeProvider theme={theme}>
       <ResponsiveContainer>
-        <ComposedChart data={data} margin={{ top: 20, right: -45, left: -10, bottom: 5 }}>
+        <ComposedChart data={data} margin={{ top: 20, right: 0, left: 0, bottom: 5 }}>
           <CartesianGrid vertical={false} />
           <XAxis dataKey="monthYear" axisLine={true} type="category" tickCount={12} style={{ fontSize: "10px" }} />
-          <YAxis yAxisId="left" axisLine={false} tickCount={8} domain={[(min - 1000) * 1.1, max * 2]} tickFormatter={(value) => `$${value}`} style={{ fontSize: "10px" }} />
+          <YAxis yAxisId="left" axisLine={false} tickCount={10} domain={[(min - 100) * 1.1, max * 1.1]}
+            tickFormatter={(value) => {
+              if (value >= 1000000) {
+                return `$${(value / 1000000).toFixed(2)}M`; // For millions
+              }
+              if (value >= 1000) {
+                return `$${(value / 1000).toFixed(2)}K`; // For thousands
+              }
+              return `$${value.toFixed(2)}`; 
+            }} 
+            style={{ fontSize: "10px" }} 
+          />
           <ReferenceLine yAxisId="left" y={0} stroke="#000000" strokeWidth={1} />
+          <Tooltip
+            formatter={(value, name, props) => `X: ${props.payload.monthYear}, Y: ${value.toFixed(2)}`}
+            contentStyle={{
+              backgroundColor: '#ffffff',
+              opacity: 1
+            }}
+          />
           <YAxis yAxisId="right" orientation="right" />
           <Legend content={CustomLegend} />
 
@@ -80,7 +93,7 @@ const ProfitChart = (props) => {
 
           <Bar yAxisId="left" dataKey="expected_profit" fill={theme.palette.primary.mustardYellow} barCategoryGap={10} barSize={15} name="Expected Profit">
             {data?.map((entry, index) => (
-              <Cell key={index} fill={entry.expected_cashflow < 0 ? theme.palette.custom.red : theme.palette.primary.mustardYellow} />
+              <Cell key={index} fill={theme.palette.primary.mustardYellow} />
             ))}
           </Bar>
 
@@ -90,7 +103,7 @@ const ProfitChart = (props) => {
                 key={index}
                 fill={
                   (activeButton === "ExpectedCashflow" && entry.expectedCashflow < 0) || (activeButton === "Cashflow" && entry.cashflow < 0)
-                    ? theme.palette.custom.red
+                    ? theme.typography.common.blue
                     : theme.typography.common.blue
                 }
               />

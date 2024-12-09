@@ -5,7 +5,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import "../../../css/cashflow.css";
 import { useNavigate } from "react-router-dom";
 import theme from "../../../theme/theme";
-import DashboardChart from "../../Graphs/ManagerProfitGraph";
+import ProfitChart from "../../Graphs/ManagerProfitGraph";
 import { months } from "moment";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
@@ -95,7 +95,7 @@ function getTotalExpectedRentByMonthYear(data, month, year) {
   // console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
   // let revenueItems = data?.filter((item) => item.pur_cf_type === "revenue");
   // let rentItems = data?.filter((item) => item.pur_payer?.startsWith("350") && item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
-  let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
+  let rentItems = data?.filter((item) => item.pur_cf_type === "revenue" && item.purchase_type.toUpperCase() !== "DEPOSIT" && item.purchase_type.toUpperCase() !== "MANAGEMENT" && item.purchase_type.toUpperCase() !== "MAINTENANCE" && item.cf_month === month && item.cf_year === year);
   let totalRent = rentItems?.reduce((acc, item) => {
     if (item.purchase_type.toUpperCase() !== "DEPOSIT") {
       return acc + parseFloat(item["pur_amount_due"] ? item["pur_amount_due"] : 0.0);
@@ -109,7 +109,7 @@ function getTotalExpectedRentByMonthYear(data, month, year) {
 function getTotalRentByMonthYear(data, month, year) {
   // let revenueItems = data?.filter((item) => item.pur_cf_type === "revenue");
   // let rentItems = data?.filter((item) => item.pur_payer?.startsWith("350") && item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
-  let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
+  let rentItems = data?.filter((item) => item.pur_cf_type === "revenue" && item.purchase_type.toUpperCase() !== "DEPOSIT" && item.purchase_type.toUpperCase() !== "MANAGEMENT" && item.purchase_type.toUpperCase() !== "MAINTENANCE" && item.cf_month === month && item.cf_year === year);
   let totalRent = rentItems?.reduce((acc, item) => {
     if (item.purchase_type.toUpperCase() !== "DEPOSIT") {
       return acc + parseFloat(item["total_paid"] ? item["total_paid"] : 0.0);
@@ -123,7 +123,7 @@ function getTotalExpectedPayoutsByMonthYear(data, month, year) {
   // console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
   // let expenseItems = data?.filter((item) => item.pur_cf_type === "expense");
   // let payoutItems = data?.filter((item) => item.pur_payer?.startsWith("600") && item.pur_receiver?.startsWith("110") && item.cf_month === month && item.cf_year === year);
-  let payoutItems = data?.filter((item) => item.pur_payer?.startsWith("600") && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_yearr);
+  let payoutItems = data?.filter((item) => (item.pur_cf_type === "expense" || (item.pur_cf_type === "revenue" && item.purchase_type.toUpperCase() === "MANAGEMENT" ) || (item.pur_cf_type === "revenue" && item.purchase_type.toUpperCase() === "MAINTENANCE" )) && item.cf_month === month && item.cf_year === year);
   let totalPayouts = payoutItems?.reduce((acc, item) => {
     if (item.purchase_type.toUpperCase() !== "DEPOSIT") {
       return acc + parseFloat(item["pur_amount_due"] ? item["pur_amount_due"] : 0.0);
@@ -136,7 +136,7 @@ function getTotalExpectedPayoutsByMonthYear(data, month, year) {
 function getTotalPayoutsByMonthYear(data, month, year) {
   // let expenseItems = data?.filter((item) => item.pur_cf_type === "expense");
   // let payoutItems = data?.filter((item) => item.pur_payer?.startsWith("600") && item.pur_receiver?.startsWith("110") && item.cf_month === month && item.cf_year === year);
-  let payoutItems = data?.filter((item) => item.pur_payer?.startsWith("600") && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
+  let payoutItems = data?.filter((item) => (item.pur_cf_type === "expense" || (item.pur_cf_type === "revenue" && item.purchase_type.toUpperCase() === "MANAGEMENT" ) || (item.pur_cf_type === "revenue" && item.purchase_type.toUpperCase() === "MAINTENANCE" )) && item.cf_month === month && item.cf_year === year);
   let totalPayouts = payoutItems?.reduce((acc, item) => {
     if (item.purchase_type.toUpperCase() !== "DEPOSIT") {
       return acc + parseFloat(item["total_paid"] ? item["total_paid"] : 0.0);
@@ -147,7 +147,7 @@ function getTotalPayoutsByMonthYear(data, month, year) {
 }
 
 function getTotalExpectedDepositByMonthByYear(data, month, year){
-  let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
+  let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
   let totalDeposit = rentItems?.reduce((acc, item) => {
     if (item.purchase_type.toUpperCase() === "DEPOSIT") {
       return acc + parseFloat(item["pur_amount_due"] ? item["pur_amount_due"] : 0.0);
@@ -159,7 +159,7 @@ function getTotalExpectedDepositByMonthByYear(data, month, year){
 }
 
 function getTotalDepositByMonthByYear(data, month, year){
-  let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
+  let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
   let totalDeposit = rentItems?.reduce((acc, item) => {
     if (item.purchase_type.toUpperCase() === "DEPOSIT") {
       return acc + parseFloat(item["total_paid"] ? item["total_paid"] : 0.0);
@@ -171,10 +171,23 @@ function getTotalDepositByMonthByYear(data, month, year){
 }
 
 function getTotalProfitByMonthByYear(data, month, year){
-  let rentItems = data?.filter((item) => item.pur_receiver?.startsWith("600") && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
+  let rentItems = data?.filter((item) => item.purchase_type?.toUpperCase() === "MANAGEMENT" && item.cf_month === month && item.cf_year === year);
   let totalProfit = rentItems?.reduce((acc, item) => {
     if (item.pur_payer && item.pur_payer.startsWith("110")) {
       return acc + parseFloat(item["total_paid"] ? item["total_paid"] : 0.0);
+    }
+
+    return acc;
+  }, 0.0);
+  return totalProfit;
+}
+
+function getTotalExpectedProfitByMonthByYear(data, month, year){
+  let rentItems = data?.filter((item) => item.purchase_type?.toUpperCase() === "MANAGEMENT" && item.cf_month === month && item.cf_year === year);
+  // console.log(" === rentitems ", rentItems)
+  let totalProfit = rentItems?.reduce((acc, item) => {
+    if (item.pur_payer) {
+      return acc + parseFloat(item["pur_amount_due"] ? item["pur_amount_due"] : 0.0);
     }
 
     return acc;
@@ -186,9 +199,9 @@ function getPast12MonthsCashflow(data, month, year) {
   var pastTwelveMonths = [];
   let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-  console.log(" ==== ", month, year)
-  var currentMonth = month;
-  var currentYear = year;
+  // console.log(" ==== ", month, year)
+  var currentMonth = month[0];
+  var currentYear = year[0];
   var displayMonth = month.join(",")
   var displayYear = year.join(",")
 
@@ -204,12 +217,13 @@ function getPast12MonthsCashflow(data, month, year) {
     let currentMonthDeposit = getTotalDepositByMonthByYear(data, currentMonth, currentYear)
 
     let currentMonthProfit = getTotalProfitByMonthByYear(data, currentMonth, currentYear)
+    let expectedMonthProfit = getTotalExpectedProfitByMonthByYear(data, currentMonth, currentYear)
 
     pastTwelveMonths.push({
-      month: currentMonth[0],
-      year: currentYear[0],
+      month: currentMonth,
+      year: currentYear,
 
-      expected_profit: expectedMonthRent - expectedMonthPayouts,
+      expected_profit: expectedMonthProfit,
       profit: currentMonthProfit,
       cashflow: currentMonthRent - currentMonthPayouts,
       expected_cashflow: expectedMonthRent - expectedMonthPayouts,
@@ -220,17 +234,17 @@ function getPast12MonthsCashflow(data, month, year) {
       deposit : currentMonthDeposit,
       expected_deposit: expectedMonthDeposit,
 
-      monthYear: currentMonth[0]?.slice(0, 3) + " " + currentYear[0]?.slice(2, 4),
+      monthYear: currentMonth?.slice(0, 3) + " " + currentYear?.slice(2, 4),
       "expected_revenue": expectedMonthRent,
       "expected_cashflow": expectedMonthRent - expectedMonthPayouts,
     });
 
-    if (currentMonth[0] === "January") {
-      currentMonth = ["December"];
-      currentYear = [(parseInt(currentYear) - 1).toString()];
+    if (currentMonth === "January") {
+      currentMonth = "December";
+      currentYear = (parseInt(currentYear) - 1).toString();
       // console.log(currentYear)
     } else {
-      currentMonth = [months[months.indexOf(currentMonth) - 1]];
+      currentMonth = months[months.indexOf(currentMonth) - 1];
     }
   }
 
@@ -840,7 +854,7 @@ function ManagerCashflowWidget({
           </Grid>
 
           <Grid item xs={12} sx={{ height: "350px" }}>
-            <DashboardChart revenueCashflowByMonth={last12Months} activeButton={"Cashflow"} />
+            <ProfitChart revenueCashflowByMonth={last12Months} activeButton={"Cashflow"} />
           </Grid>
           <Grid item container xs={12} sx={{ marginTop: "30px", marginBottom: "10px" }}>
             <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
