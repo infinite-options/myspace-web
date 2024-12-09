@@ -69,6 +69,7 @@ import FilePreviewDialog from "../Leases/FilePreviewDialog";
 import CloseIcon from "@mui/icons-material/Close";
 import LeaseIcon from "../Property/leaseIcon.png";
 import { Type } from "ajv/dist/compile/util";
+import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy, } from "../../utils/fees";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -2063,25 +2064,130 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
   );
 };
 
+// export const FeesSmallDataGrid = ({ data, isMobile }) => {
+//   console.log('---data---', data);
+//   const commonStyles = {
+//     color: theme.typography.primary.black,
+//     fontWeight: theme.typography.light.fontWeight,
+//     fontSize: theme.typography.smallFont,
+//   };
+
+//   const columns = [
+//     {
+//       field: "frequency",
+//       headerName: isMobile ? "Freq" : "Frequency",
+//       flex: 1,
+//       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
+//       renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
+//     },
+//     {
+//       field: "fee_name",
+//       headerName: "Name",
+//       flex: isMobile ? 1 : 1.2,
+//       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
+//       renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
+//     },
+//     {
+//       field: "charge",
+//       headerName: "Charge",
+//       flex: 1,
+//       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
+//       renderCell: (params) => {
+//         const feeType = params.row?.fee_type;
+//         const charge = params.value;
+
+//         return <Typography sx={commonStyles}>{charge}</Typography>;
+//       },
+//     },
+//     {
+//       field: "fee_type",
+//       headerName: isMobile ? "Type" : "Fee Type",
+//       flex: 1,
+//       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
+//       renderCell: (params) => {
+//         const feeType = params.row?.fee_type;
+//         const fee_type = params.value;
+
+//         return <Typography sx={commonStyles}>{fee_type}</Typography>;
+//       },
+//     },
+//     {
+//       field: "available_topay",
+//       headerName: "Days In Advance",
+//       flex: 1,
+//       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
+    
+//   },
+//   {
+//       field: "late_by",
+//       headerName: "Late",
+//       flex: 1,
+//       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
+    
+//   },
+//   {
+//       field: "late_fee",
+//       headerName: "Late Fee",
+//       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
+    
+//       flex: 1,
+//   }
+//   ];
+
+//   // Adding a unique id to each row using map if the data doesn't have an id field
+//   const rowsWithId = data.map((row, index) => ({
+//     ...row,
+//     id: row.id ? index : index,
+//   }));
+
+//   return (
+//     <Box sx={{ width: "98%" }}>
+//       <DataGrid
+//         rows={rowsWithId}
+//         columns={columns}
+//         sx={{
+//           marginY: "5px",
+//           overflow: "auto",
+//           "& .MuiDataGrid-columnHeaders": {
+//             minHeight: "35px !important",
+//             maxHeight: "35px !important",
+//             height: 35,
+//           },
+//         }}
+//         autoHeight
+//         rowHeight={35}
+//         hideFooter={true} // Display footer with pagination
+//         disableColumnFilter={isMobile}
+//         disableColumnSelector={isMobile}
+//         disableColumnMenu={isMobile}
+//       />
+//     </Box>
+//   );
+// };
+
 export const FeesSmallDataGrid = ({ data, isMobile }) => {
   const commonStyles = {
     color: theme.typography.primary.black,
     fontWeight: theme.typography.light.fontWeight,
     fontSize: theme.typography.smallFont,
+    whiteSpace: "wrap", // Prevents text from wrapping
   };
+
 
   const columns = [
     {
       field: "frequency",
-      headerName: isMobile ? "Freq" : "Frequency",
-      flex: 1,
+      headerName: "Frequency",
+      flex: 1.2,
+      minWidth: 120, // Ensure column doesn't shrink too much
       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
       renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
     },
     {
       field: "fee_name",
       headerName: "Name",
-      flex: isMobile ? 1 : 1.2,
+      flex: 1,
+      minWidth: 90,
       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
       renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
     },
@@ -2089,6 +2195,7 @@ export const FeesSmallDataGrid = ({ data, isMobile }) => {
       field: "charge",
       headerName: "Charge",
       flex: 1,
+      minWidth: 100,
       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
       renderCell: (params) => {
         const feeType = params.row?.fee_type;
@@ -2099,8 +2206,9 @@ export const FeesSmallDataGrid = ({ data, isMobile }) => {
     },
     {
       field: "fee_type",
-      headerName: isMobile ? "Type" : "Fee Type",
-      flex: 1,
+      headerName: "Fee Type",
+      flex: 0.8,
+      minWidth: 110,
       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
       renderCell: (params) => {
         const feeType = params.row?.fee_type;
@@ -2109,26 +2217,98 @@ export const FeesSmallDataGrid = ({ data, isMobile }) => {
         return <Typography sx={commonStyles}>{fee_type}</Typography>;
       },
     },
+    {
+      field: "due_by",
+      headerName: "Due By",
+      flex: 3,
+      minWidth: 130,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => (
+        <Typography>
+          {/* {params.row.frequency === "Monthly" && `${params.row.due_by}${getDateAdornmentString(params.row.due_by)} of every month`}
+        {params.row.frequency === "One Time" && `${params.row.due_by_date}`}
+        {(params.row.frequency === "Weekly"  || params.row.frequency === "Bi-Weekly") && `${valueToDayMap.get(params.row.due_by)}`} */}
+          {getFeesDueBy(params.row)}
+          { console.log("ROHIT - 1245 - params.row - ", params.row)}
+        </Typography>
+      ),
+    },
+    {
+      field: "available_topay",
+      headerName: "Available To Pay",
+      flex: 3,
+      minWidth: 160,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => (
+        <Typography>
+          {/* { (
+            params.row.frequency === "Monthly" || 
+            params.row.frequency === "Weekly" ||
+            params.row.frequency === "Bi-Weekly" ||
+            params.row.frequency === "One Time"
+          )
+          && `${params.row.available_topay} days before`} */}
+          {getFeesAvailableToPay(params.row)}
+        </Typography>
+      ),
+    },
+    {
+      field: "late_by",
+      headerName: "Late By",
+      flex: 1.4,
+      minWidth: 160,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => (
+        <Typography>
+          {/* {(
+            params.row.frequency === "Monthly" || 
+            params.row.frequency === "Weekly" ||
+            params.row.frequency === "Bi-Weekly" ||
+            params.row.frequency === "One Time"
+          ) 
+        && `${params.row.available_topay} days after`} */}
+          {getFeesLateBy(params.row)}
+        </Typography>
+      ),
+    },
+    {
+      field: "late_fee",
+      headerName: "Late Fee",
+      flex: 0.7,
+      minWidth: 120,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => <Typography>{params.row.late_fee !== ""  ? `$ ${params.row.late_fee}` : "-"}</Typography>,
+    },
+    {
+      field: "perDay_late_fee",
+      flex: 1,
+      minWidth: 120,
+      renderHeader: (params) => (
+        <strong style={{ lineHeight: 1.2, display: "inline-block", textAlign: "center" }}>
+          Late Fee <br /> Per Day
+        </strong>
+      ),
+      renderCell: (params) => <Typography>{params.row.perDay_late_fee !== "" ? `$ ${params.row.perDay_late_fee}` : "-"}</Typography>,
+    },    
   ];
 
   // Adding a unique id to each row using map if the data doesn't have an id field
   const rowsWithId = data.map((row, index) => ({
     ...row,
-    id: row.id ? index : index,
+    id: row.id ? row.id : index, // Use the existing id if available
   }));
 
-  return (
-    <Box sx={{ width: "98%" }}>
+  return (   
+    <Box sx={{ overflowX: 'auto', width: "98%" }}>
       <DataGrid
         rows={rowsWithId}
         columns={columns}
         sx={{
           marginY: "5px",
-          overflow: "auto",
           "& .MuiDataGrid-columnHeaders": {
             minHeight: "35px !important",
             maxHeight: "35px !important",
-            height: 35,
+            height: "auto",
           },
         }}
         autoHeight
@@ -2139,7 +2319,9 @@ export const FeesSmallDataGrid = ({ data, isMobile }) => {
         disableColumnMenu={isMobile}
       />
     </Box>
+    
   );
+
 };
 
 export const DocumentSmallDataGrid = ({ data, handleFileClick }) => {
