@@ -709,40 +709,41 @@ const TenantDashboard = () => {
                   </Grid>
                 ) : (
                   <>
-                    {/* Lease Details: Aligns with Account Balance */}
-                    <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
-                      <LeaseDetails
-                        isMobile={isMobile}
-                        setViewRHS={setViewRHS}
-                        leaseDetails={leaseDetails}
-                        rightPane={rightPane}
-                        setRightPane={setRightPane}
-                        selectedProperty={selectedProperty}
-                        relatedLease={relatedLease}
-                        setReload={setReload}
-                        handleViewTenantApplication={handleViewTenantApplication}
-                      />
-                    </Grid>
+  {/* Management Details and Maintenance: Side by side */}
+  <Grid container item xs={12} spacing={5}>
+    <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
+      <ManagementDetails leaseDetails={leaseDetails} sx={{ flex: 1 }} />
+    </Grid>
+    <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
+      <MaintenanceDetails
+        maintenanceRequests={filteredMaintenanceRequests}
+        selectedProperty={selectedProperty}
+        leaseDetails={leaseDetails}
+        onPropertyClick={handleMaintenanceLegendClick}
+        setRightPane={setRightPane}
+        isMobile={isMobile}
+        setViewRHS={setViewRHS}
+        sx={{ flex: 1 }}
+      />
+    </Grid>
+  </Grid>
 
-                    {/* Maintenance and Management Details: Match height with Lease Details */}
-                    <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
-                      <Grid item xs={12} md={12} sx={{ flex: 1 }}>
-                        <MaintenanceDetails
-                          maintenanceRequests={filteredMaintenanceRequests}
-                          selectedProperty={selectedProperty}
-                          leaseDetails={leaseDetails}
-                          onPropertyClick={handleMaintenanceLegendClick}
-                          setRightPane={setRightPane}
-                          isMobile={isMobile}
-                          setViewRHS={setViewRHS}
-                          sx={{ flex: 1 }}
-                        />
-                      </Grid>
-                      <Grid item xs={12} md={12} sx={{ flex: 1 }} marginTop={10}>
-                        <ManagementDetails leaseDetails={leaseDetails} sx={{ flex: 1 }} />
-                      </Grid>
-                    </Grid>
-                  </>
+  {/* Lease Details: Spanning full width */}
+  <Grid item xs={12} sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
+    <LeaseDetails
+      isMobile={isMobile}
+      setViewRHS={setViewRHS}
+      leaseDetails={leaseDetails}
+      rightPane={rightPane}
+      setRightPane={setRightPane}
+      selectedProperty={selectedProperty}
+      relatedLease={relatedLease}
+      setReload={setReload}
+      handleViewTenantApplication={handleViewTenantApplication}
+    />
+  </Grid>
+
+ </>
                 )}
               </Grid>
               {/* </Grid> */}
