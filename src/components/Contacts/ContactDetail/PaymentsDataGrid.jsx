@@ -118,7 +118,7 @@ const PaymentsDataGrid = ({ data }) => {
         flex: 0.5,
         renderCell: (params) => (
           <Typography sx={{ fontSize: '14px', color: '#160449', }}>
-            {`${params.row.total_amount_due || params.row.pur_amount_due}`}
+            {`${parseFloat(params.row.total_amount_due).toFixed(2) || parseFloat(params.row.pur_amount_due).toFixed(2)}`}
           </Typography>
         )
       },
@@ -134,7 +134,7 @@ const PaymentsDataGrid = ({ data }) => {
         flex: 0.5,
         renderCell: (params) => (
           <Typography sx={{ fontSize: '14px', color: '#160449', }}>
-            {`${params.row.total_paid? params.row.total_paid : "-"}`}
+            {`${params.row.total_paid? parseFloat(params.row.total_paid).toFixed(2) : "-"}`}
           </Typography>
         )
       },

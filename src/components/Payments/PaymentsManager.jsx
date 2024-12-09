@@ -559,6 +559,28 @@ export default function PaymentsManager(props) {
       ),
       headerAlign: "right",
     },
+    {
+      field: "amt_remaining",
+      headerName: "Amt Remaining",
+      flex: 1.5,
+      headerStyle: {
+        fontWeight: "bold", // Apply inline style to the header cell
+      },
+      renderCell: (params) => (
+        <Box
+          sx={{
+            fontWeight: "bold",
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+          }}
+        >
+          {params.value ? `${parseFloat(params.value).toFixed(2)}` : "0"}
+        </Box>
+      ),
+      headerAlign: "right",
+    },
   ];
 
   // useEffect(() => {
@@ -831,7 +853,12 @@ export default function PaymentsManager(props) {
                             },
                           }}
                           getRowId={(row) => row.index}
-                          pageSizeOptions={[5, 7, 10]}
+                          pageSizeOptions={(() => {
+                            const baseOptions = [5, 7, 10];
+                            const allRowsOption = selectedItems.length;
+                            const uniqueOptions = Array.from(new Set([...baseOptions, allRowsOption]));
+                            return uniqueOptions.sort((a, b) => a - b);
+                          })()} 
                         />
                       </Grid>
                     </Grid>
@@ -1552,7 +1579,7 @@ function TransactionsTable(props) {
     {
       field: "pur_amount_due",
       headerName: "Expected",
-      flex: 1.5,
+      flex: 1.3,
       headerStyle: {
         fontWeight: "bold", // Apply inline style to the header cell
       },
@@ -1576,6 +1603,28 @@ function TransactionsTable(props) {
       field: "total_paid",
       headerName: "Actual",
       flex: 1,
+      headerStyle: {
+        fontWeight: "bold", // Apply inline style to the header cell
+      },
+      renderCell: (params) => (
+        <Box
+          sx={{
+            fontWeight: "bold",
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+          }}
+        >
+          {params.value ? `${parseFloat(params.value).toFixed(2)}` : "0"}
+        </Box>
+      ),
+      headerAlign: "right",
+    },
+    {
+      field: "amt_remaining",
+      headerName: "Amt Remaining",
+      flex: 1.5,
       headerStyle: {
         fontWeight: "bold", // Apply inline style to the header cell
       },
@@ -2176,6 +2225,28 @@ function TransactionsTableForRecipient(props) {
       field: "total_paid",
       headerName: "Actual",
       flex: 1,
+      headerStyle: {
+        fontWeight: "bold", // Apply inline style to the header cell
+      },
+      renderCell: (params) => (
+        <Box
+          sx={{
+            fontWeight: "bold",
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+          }}
+        >
+          {params.value ? `${parseFloat(params.value).toFixed(2)}` : "0"}
+        </Box>
+      ),
+      headerAlign: "right",
+    },
+    {
+      field: "amt_remaining",
+      headerName: "Amt Remaining",
+      flex: 1.5,
       headerStyle: {
         fontWeight: "bold", // Apply inline style to the header cell
       },

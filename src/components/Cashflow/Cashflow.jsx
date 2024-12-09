@@ -1281,12 +1281,12 @@ function StatementTable(props) {
               </TableCell>
               <TableCell>
                 <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-                  ${item["expected"] ? item["expected"] : 0}
+                  ${item["expected"] ? parseFloat(item["expected"])?.toFixed(2) : 0.00}
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-                  ${item["actual"] ? item["actual"] : 0}
+                  ${item["actual"] ? parseFloat(item["actual"])?.toFixed(2) : 0.00}
                 </Typography>
               </TableCell>
             </TableRow>
@@ -1312,7 +1312,7 @@ function StatementTable(props) {
                       total_amount_due += (p.pur_amount_due? p.pur_amount_due : 0)
                   })} */}
                   <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont }}>
-                    ${item.expected ? item.expected : 0}
+                    ${item.expected ? parseFloat(item.expected)?.toFixed(2) : 0.00}
                   </Typography>
                 </TableCell>
                 <TableCell align='right'>
@@ -1320,7 +1320,7 @@ function StatementTable(props) {
                       total_amount_paid += (p.total_paid ? p.total_paid : 0)
                   })} */}
                   <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, marginRight: isMobile? "10px" : "25px" }}>
-                    ${item.actual?item.actual:0}
+                    ${item.actual? parseFloat(item.actual).toFixed(2) : 0.00}
                   </Typography>
                 </TableCell>
               </TableRow>
@@ -1395,12 +1395,12 @@ function StatementTable(props) {
                   </Grid>
                   <Grid container alignContent='center' justifyContent='flex-end' item xs={isMobile? 3 : 2}>
                     <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, ...(isMobile? {fontSize: "12px" } :{}) }}>
-                      ${value ? value : 0}
+                      ${value ? parseFloat(value).toFixed(2) : 0}
                     </Typography>
                   </Grid>
                   <Grid container alignContent='center' justifyContent='flex-end' item xs={isMobile? 3 : 2}>
                     <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, ...(isMobile? {fontSize: "12px" } :{}) }}>
-                      ${categoryTotalMapping[category] ? categoryTotalMapping[category] : 0}
+                      ${categoryTotalMapping[category] ? parseFloat(categoryTotalMapping[category]).toFixed(2) : 0.00}
                     </Typography>
                   </Grid>
                 </Grid>

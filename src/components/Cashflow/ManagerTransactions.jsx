@@ -702,13 +702,13 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
                                   </Grid>
                                   <Grid container justifyContent='flex-end' alignItems='center' item xs={3}>
                                     <Typography sx={{ color: "#000000", fontWeight: theme.typography.common.fontWeight }}>
-                                      ${purGroup?.pur_amount_due_total ? purGroup?.pur_amount_due_total : "0.00"}
+                                      ${purGroup?.pur_amount_due_total ? parseFloat(purGroup?.pur_amount_due_total).toFixed(2) : "0.00"}
                                     </Typography>
                                   </Grid>
 
                                   <Grid container justifyContent='flex-end' alignItems='center' item xs={2}>
                                     <Typography sx={{ color: "#000000", fontWeight: theme.typography.common.fontWeight }}>
-                                      ${purGroup?.total_paid_total ? purGroup?.total_paid_total : "0.00"}
+                                      ${purGroup?.total_paid_total ? parseFloat(purGroup?.total_paid_total).toFixed(2) : "0.00"}
                                     </Typography>
                                   </Grid>
                                 </Grid>
@@ -1026,12 +1026,12 @@ function StatementTable(props) {
               </TableCell> */}
               <TableCell>
                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-                  ${item["pur_amount_due"] ? item["pur_amount_due"] : 0}
+                  ${item["pur_amount_due"] ? parseFloat(item["pur_amount_due"]).toFixed(2) : 0.00}
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography sx={{ fontSize: theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>
-                  ${item["total_paid"] ? item["total_paid"] : 0}
+                  ${item["total_paid"] ? parseFloat(item["total_paid"]).toFixed(2) : 0.00}
                 </Typography>
               </TableCell>
               {/* <TableCell align="right">

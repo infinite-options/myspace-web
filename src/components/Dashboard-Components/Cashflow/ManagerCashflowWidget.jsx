@@ -200,8 +200,11 @@ function getPast12MonthsCashflow(data, month, year) {
   let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
   // console.log(" ==== ", month, year)
-  var currentMonth = month[0];
-  var currentYear = year[0];
+  const currentDate = new Date();
+  let currentMonth = currentDate.toLocaleString("default", { month: "long" });
+  let currentYear = currentDate.getFullYear().toString();
+  // var currentMonth = month[0];
+  // var currentYear = year[0];
   var displayMonth = month.join(",")
   var displayYear = year.join(",")
 

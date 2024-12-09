@@ -4888,7 +4888,7 @@ function BalanceDetailsTable(props) {
                 marginLeft: "20px",
               }}
             >
-              {/* $ {selectedRows.reduce((total, rowId) => total + paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due, 0)} */}$ {totalVerified}
+              {/* $ {selectedRows.reduce((total, rowId) => total + paymentDueResult.find((row) => row.purchase_uid === rowId).pur_amount_due, 0)} */}$ {parseFloat(totalVerified).toFixed(2)}
             </Typography>
           </Grid>
 
