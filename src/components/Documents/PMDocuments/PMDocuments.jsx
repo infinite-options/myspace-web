@@ -360,7 +360,7 @@ function PMDocuments() {
                   const start_date = app.lease_start;
                   const end_date = app.lease_end;
                   const applicant = app.tenant_first_name + " " + app.tenant_last_name;
-                  const application_date = app.lease_application_date;
+                  const application_date = app.lease_application_date?.split(' ')[0];
                   const num_adults = app.lease_adults ? JSON.parse(app.lease_adults).length : 0;
                   const num_children = app.lease_children ? JSON.parse(app.lease_children).length : 0;
                   const num_pets = app.lease_pets ? JSON.parse(app.lease_pets).length : 0;
@@ -406,7 +406,7 @@ function PMDocuments() {
                     const city = lease.property_city;
                     const state = lease.property_state;
                     const zip = lease.property_zip;
-                    const application_date = lease.lease_application_date;
+                    const application_date = lease.lease_application_date?.split(' ')[0];
                     const tenant_name = lease.tenant_first_name + " " + lease.tenant_last_name;
                     const num_adults = JSON.parse(lease.lease_adults).length;
                     const num_children = JSON.parse(lease.lease_children).length;

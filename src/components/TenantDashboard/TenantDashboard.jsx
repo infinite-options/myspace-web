@@ -69,6 +69,7 @@ import FilePreviewDialog from "../Leases/FilePreviewDialog";
 import CloseIcon from "@mui/icons-material/Close";
 import LeaseIcon from "../Property/leaseIcon.png";
 import { Type } from "ajv/dist/compile/util";
+import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy, } from "../../utils/fees";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -628,8 +629,8 @@ const TenantDashboard = () => {
               {/* <Grid container rowGap={5} sx={{alignItems:"stretch"}}> */}
               {/* Top section: Announcements */}
               {!isMobile && (!viewRHS || rightPane.type !== "announcements") && (
-                <Grid item xs={12}>
-                  <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", paddingBottom: "40px", borderRadius: "10px", height: "100%" }}>
+                <Grid item xs={12} >
+                  <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", borderRadius: "10px",}}>
                     <Grid
                       container
                       direction='row'
@@ -642,7 +643,6 @@ const TenantDashboard = () => {
                       <Grid item xs={8}>
                         <Box
                           sx={{
-                            flexGrow: 1,
                             display: "flex",
                             justifyContent: "center",
                           }}
@@ -667,7 +667,7 @@ const TenantDashboard = () => {
                             alignItems: "center",
                             zIndex: 1,
                             flex: 1,
-                            height: "100%",
+                            
                           }}
                         >
                           <Box
@@ -700,7 +700,7 @@ const TenantDashboard = () => {
               )}
 
               {/* Bottom section containing Lease, Maintenance, and Management Details - Abhinav here layouting, margin 1px */}
-              <Grid container spacing={8} rowGap={2} sx={{ flex: 1, display: "flex", flexDirection: isMobile ? "column" : "row" }}>
+              <Grid container spacing={8} rowGap={2} sx={{ flex: 1, display: "flex", flexDirection: isMobile ? "column" : "row", height: "100%", }}>
                 {rightPane?.type ? (
                   /* Render the rightPane component if available */
                   <Grid item xs={12} sx={{ display: "flex", flexDirection: "column", flex: 1 }} ref={rightPaneRef} marginBottom={isMobile ? "40px" : "0px"}>
@@ -708,40 +708,41 @@ const TenantDashboard = () => {
                   </Grid>
                 ) : (
                   <>
-                    {/* Lease Details: Aligns with Account Balance */}
-                    <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
-                      <LeaseDetails
-                        isMobile={isMobile}
-                        setViewRHS={setViewRHS}
-                        leaseDetails={leaseDetails}
-                        rightPane={rightPane}
-                        setRightPane={setRightPane}
-                        selectedProperty={selectedProperty}
-                        relatedLease={relatedLease}
-                        setReload={setReload}
-                        handleViewTenantApplication={handleViewTenantApplication}
-                      />
-                    </Grid>
+  {/* Management Details and Maintenance: Side by side */}
+  <Grid container item xs={12} spacing={5}>
+    <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
+      <ManagementDetails leaseDetails={leaseDetails} sx={{ flex: 1 }} />
+    </Grid>
+    <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
+      <MaintenanceDetails
+        maintenanceRequests={filteredMaintenanceRequests}
+        selectedProperty={selectedProperty}
+        leaseDetails={leaseDetails}
+        onPropertyClick={handleMaintenanceLegendClick}
+        setRightPane={setRightPane}
+        isMobile={isMobile}
+        setViewRHS={setViewRHS}
+        sx={{ flex: 1 }}
+      />
+    </Grid>
+  </Grid>
 
-                    {/* Maintenance and Management Details: Match height with Lease Details */}
-                    <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
-                      <Grid item xs={12} md={12} sx={{ flex: 1 }}>
-                        <MaintenanceDetails
-                          maintenanceRequests={filteredMaintenanceRequests}
-                          selectedProperty={selectedProperty}
-                          leaseDetails={leaseDetails}
-                          onPropertyClick={handleMaintenanceLegendClick}
-                          setRightPane={setRightPane}
-                          isMobile={isMobile}
-                          setViewRHS={setViewRHS}
-                          sx={{ flex: 1 }}
-                        />
-                      </Grid>
-                      <Grid item xs={12} md={12} sx={{ flex: 1 }} marginTop={10}>
-                        <ManagementDetails leaseDetails={leaseDetails} sx={{ flex: 1 }} />
-                      </Grid>
-                    </Grid>
-                  </>
+  {/* Lease Details: Spanning full width */}
+  <Grid item xs={12} sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
+    <LeaseDetails
+      isMobile={isMobile}
+      setViewRHS={setViewRHS}
+      leaseDetails={leaseDetails}
+      rightPane={rightPane}
+      setRightPane={setRightPane}
+      selectedProperty={selectedProperty}
+      relatedLease={relatedLease}
+      setReload={setReload}
+      handleViewTenantApplication={handleViewTenantApplication}
+    />
+  </Grid>
+
+ </>
                 )}
               </Grid>
               {/* </Grid> */}
@@ -2063,25 +2064,130 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
   );
 };
 
+// export const FeesSmallDataGrid = ({ data, isMobile }) => {
+//   console.log('---data---', data);
+//   const commonStyles = {
+//     color: theme.typography.primary.black,
+//     fontWeight: theme.typography.light.fontWeight,
+//     fontSize: theme.typography.smallFont,
+//   };
+
+//   const columns = [
+//     {
+//       field: "frequency",
+//       headerName: isMobile ? "Freq" : "Frequency",
+//       flex: 1,
+//       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
+//       renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
+//     },
+//     {
+//       field: "fee_name",
+//       headerName: "Name",
+//       flex: isMobile ? 1 : 1.2,
+//       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
+//       renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
+//     },
+//     {
+//       field: "charge",
+//       headerName: "Charge",
+//       flex: 1,
+//       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
+//       renderCell: (params) => {
+//         const feeType = params.row?.fee_type;
+//         const charge = params.value;
+
+//         return <Typography sx={commonStyles}>{charge}</Typography>;
+//       },
+//     },
+//     {
+//       field: "fee_type",
+//       headerName: isMobile ? "Type" : "Fee Type",
+//       flex: 1,
+//       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
+//       renderCell: (params) => {
+//         const feeType = params.row?.fee_type;
+//         const fee_type = params.value;
+
+//         return <Typography sx={commonStyles}>{fee_type}</Typography>;
+//       },
+//     },
+//     {
+//       field: "available_topay",
+//       headerName: "Days In Advance",
+//       flex: 1,
+//       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
+    
+//   },
+//   {
+//       field: "late_by",
+//       headerName: "Late",
+//       flex: 1,
+//       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
+    
+//   },
+//   {
+//       field: "late_fee",
+//       headerName: "Late Fee",
+//       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
+    
+//       flex: 1,
+//   }
+//   ];
+
+//   // Adding a unique id to each row using map if the data doesn't have an id field
+//   const rowsWithId = data.map((row, index) => ({
+//     ...row,
+//     id: row.id ? index : index,
+//   }));
+
+//   return (
+//     <Box sx={{ width: "98%" }}>
+//       <DataGrid
+//         rows={rowsWithId}
+//         columns={columns}
+//         sx={{
+//           marginY: "5px",
+//           overflow: "auto",
+//           "& .MuiDataGrid-columnHeaders": {
+//             minHeight: "35px !important",
+//             maxHeight: "35px !important",
+//             height: 35,
+//           },
+//         }}
+//         autoHeight
+//         rowHeight={35}
+//         hideFooter={true} // Display footer with pagination
+//         disableColumnFilter={isMobile}
+//         disableColumnSelector={isMobile}
+//         disableColumnMenu={isMobile}
+//       />
+//     </Box>
+//   );
+// };
+
 export const FeesSmallDataGrid = ({ data, isMobile }) => {
   const commonStyles = {
     color: theme.typography.primary.black,
     fontWeight: theme.typography.light.fontWeight,
     fontSize: theme.typography.smallFont,
+    whiteSpace: "wrap", // Prevents text from wrapping
   };
+
 
   const columns = [
     {
       field: "frequency",
-      headerName: isMobile ? "Freq" : "Frequency",
-      flex: 1,
+      headerName: "Frequency",
+      flex: 1.2,
+      minWidth: 120, // Ensure column doesn't shrink too much
       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
       renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
     },
     {
       field: "fee_name",
       headerName: "Name",
-      flex: isMobile ? 1 : 1.2,
+      flex: 1,
+      minWidth: 90,
       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
       renderCell: (params) => <Typography sx={commonStyles}>{params.value}</Typography>,
     },
@@ -2089,6 +2195,7 @@ export const FeesSmallDataGrid = ({ data, isMobile }) => {
       field: "charge",
       headerName: "Charge",
       flex: 1,
+      minWidth: 100,
       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
       renderCell: (params) => {
         const feeType = params.row?.fee_type;
@@ -2099,8 +2206,9 @@ export const FeesSmallDataGrid = ({ data, isMobile }) => {
     },
     {
       field: "fee_type",
-      headerName: isMobile ? "Type" : "Fee Type",
-      flex: 1,
+      headerName: "Fee Type",
+      flex: 0.8,
+      minWidth: 110,
       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
       renderCell: (params) => {
         const feeType = params.row?.fee_type;
@@ -2109,37 +2217,111 @@ export const FeesSmallDataGrid = ({ data, isMobile }) => {
         return <Typography sx={commonStyles}>{fee_type}</Typography>;
       },
     },
+    {
+      field: "due_by",
+      headerName: "Due By",
+      flex: 3,
+      minWidth: 130,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => (
+        <Typography>
+          {/* {params.row.frequency === "Monthly" && `${params.row.due_by}${getDateAdornmentString(params.row.due_by)} of every month`}
+        {params.row.frequency === "One Time" && `${params.row.due_by_date}`}
+        {(params.row.frequency === "Weekly"  || params.row.frequency === "Bi-Weekly") && `${valueToDayMap.get(params.row.due_by)}`} */}
+          {getFeesDueBy(params.row)}
+          { console.log("ROHIT - 1245 - params.row - ", params.row)}
+        </Typography>
+      ),
+    },
+    {
+      field: "available_topay",
+      headerName: "Available To Pay",
+      flex: 3,
+      minWidth: 160,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => (
+        <Typography>
+          {/* { (
+            params.row.frequency === "Monthly" || 
+            params.row.frequency === "Weekly" ||
+            params.row.frequency === "Bi-Weekly" ||
+            params.row.frequency === "One Time"
+          )
+          && `${params.row.available_topay} days before`} */}
+          {getFeesAvailableToPay(params.row)}
+        </Typography>
+      ),
+    },
+    {
+      field: "late_by",
+      headerName: "Late By",
+      flex: 1.4,
+      minWidth: 160,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => (
+        <Typography>
+          {/* {(
+            params.row.frequency === "Monthly" || 
+            params.row.frequency === "Weekly" ||
+            params.row.frequency === "Bi-Weekly" ||
+            params.row.frequency === "One Time"
+          ) 
+        && `${params.row.available_topay} days after`} */}
+          {getFeesLateBy(params.row)}
+        </Typography>
+      ),
+    },
+    {
+      field: "late_fee",
+      headerName: "Late Fee",
+      flex: 0.7,
+      minWidth: 120,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+      renderCell: (params) => <Typography>{params.row.late_fee !== ""  ? `$ ${params.row.late_fee}` : "-"}</Typography>,
+    },
+    {
+      field: "perDay_late_fee",
+      flex: 1,
+      minWidth: 120,
+      renderHeader: (params) => (
+        <strong style={{ lineHeight: 1.2, display: "inline-block", textAlign: "center" }}>
+          Late Fee <br /> Per Day
+        </strong>
+      ),
+      renderCell: (params) => <Typography>{params.row.perDay_late_fee !== "" ? `$ ${params.row.perDay_late_fee}` : "-"}</Typography>,
+    },    
   ];
 
   // Adding a unique id to each row using map if the data doesn't have an id field
   const rowsWithId = data.map((row, index) => ({
     ...row,
-    id: row.id ? index : index,
+    id: row.id ? row.id : index, // Use the existing id if available
   }));
 
-  return (
-    <Box sx={{ width: "98%" }}>
+  return (   
+    <Box sx={{ overflowX: 'auto', width: "98%" }}>
       <DataGrid
         rows={rowsWithId}
         columns={columns}
         sx={{
           marginY: "5px",
-          overflow: "auto",
           "& .MuiDataGrid-columnHeaders": {
             minHeight: "35px !important",
             maxHeight: "35px !important",
-            height: 35,
+            height: "auto",
           },
         }}
         autoHeight
-        rowHeight={35}
+        rowHeight={65}
         hideFooter={true} // Display footer with pagination
         disableColumnFilter={isMobile}
         disableColumnSelector={isMobile}
         disableColumnMenu={isMobile}
       />
     </Box>
+    
   );
+
 };
 
 export const DocumentSmallDataGrid = ({ data, handleFileClick }) => {
@@ -2417,7 +2599,7 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
     id: request.maintenance_request_uid,
     title: request.maintenance_title,
     createdDate: request.maintenance_request_created_date || "-",
-    image: request.maintenance_favorite_image || "PlaceholderImage",
+    image: request.maintenance_favorite_image || PlaceholderImage,
     scheduledDateTime: request.maintenance_scheduled_date && request.maintenance_scheduled_date !== "null" ? `${request.maintenance_scheduled_date} ${request.maintenance_scheduled_time || "--"}` : "--",
     status: request.maintenance_status,
     actions: request,
@@ -2495,14 +2677,22 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
   ];
 
   return (
+    <ThemeProvider theme={theme}>
+			<Box
+				style={{
+					display: 'flex',
+					justifyContent: 'center',
+					alignItems: 'flex-start',
+					width: '100%', // Ensure the box spans the full viewport width
+					// height: '100vh', // Ensure the box spans the full viewport height
+				}}
+			>
     <Paper
       // elevation={3}
       sx={{
         // padding: "20px",
         backgroundColor: "#f0f0f0",
-        borderRadius: "10px",
         width: "100%",
-        margin: "auto",
         minHeight: "250px",
       }}
     >
@@ -2539,7 +2729,8 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
         <DataGrid rows={rows} columns={columns} autoHeight sx={{ minWidth: "550px" }} disableColumnFilter={isMobile} disableColumnMenu={isMobile} disableColumnSelector={isMobile} />
       </Box>
     </Paper>
-  );
+    </Box>
+    </ThemeProvider>);
 };
 
 function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanceDetails, isMobile, setViewRHS }) {

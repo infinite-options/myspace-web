@@ -777,33 +777,33 @@ export default function TenantApplicationEdit(props) {
     const handleSaveButton = async (e) => {
         e.preventDefault();
 
-    console.log("status - ", status);
-    if (status == null) {
-      console.log("tenant creating new lease", status);
-    } else if (status === "NEW" || status === "PROCESSING") {
-      console.log("tenant updating lease", status);
-    } else {
-      console.log("tenant renewing lease", status);
-    }
-    if (status != null) {
-      console.log("lease - ", lease[0]);
-    }
-    // if(lease == null) {
-    //     console.log("tenant creating new lease");
-    // } else {
-    //     console.log("tenant updating / renewing new lease");
-    // }
-    if (lease[0]?.lease_uid == null || status === null || status === "" || status === "WITHDRAWN" || status === "REJECTED" || status === "REFUSED" || status === "RESCIND") {
-      if (props.setFirstPage) {
-        props.setFirstPage(false);
-      }
-      await handleApplicationSubmit();
-    } else if(status === "RENEW NEW" || status === "RENEW PROCESSING" || status === "NEW" || status === "PROCESSING"  ){
-      await updateLeaseData(); // Trigger the PUT request to save data
-    } else {
-      // await updateLeaseData(); 
-      alert("Invalid status");
-    }
+        console.log("status - ", status);
+        if (status == null) {
+            console.log("tenant creating new lease", status);
+        } else if (status === "NEW" || status === "PROCESSING") {
+            console.log("tenant updating lease", status);
+        } else {
+            console.log("tenant renewing lease", status);
+        }
+        if (status != null) {
+            console.log("lease - ", lease[0]);
+        }
+        // if(lease == null) {
+        //     console.log("tenant creating new lease");
+        // } else {
+        //     console.log("tenant updating / renewing new lease");
+        // }
+        if (lease[0]?.lease_uid == null || status === null || status === "" || status === "WITHDRAWN" || status === "REJECTED" || status === "REFUSED" || status === "RESCIND") {
+            if (props.setFirstPage) {
+                props.setFirstPage(false);
+            }
+            await handleApplicationSubmit();
+        } else if (status === "RENEW NEW" || status === "RENEW PROCESSING" || status === "NEW" || status === "PROCESSING") {
+            await updateLeaseData(); // Trigger the PUT request to save data
+        } else {
+            // await updateLeaseData(); 
+            alert("Invalid status");
+        }
 
         // Dhyey Code
         // console.log(status , " lease uid - ", lease[0])
@@ -851,50 +851,50 @@ export default function TenantApplicationEdit(props) {
         setStates(states);
     };
 
-  function handleWithdrawLease() {
+    function handleWithdrawLease() {
 
-    if(lease[0].lease_status === "RENEW NEW"){
-      const withdrawCurrentLeaseData = new FormData();    
-      withdrawCurrentLeaseData.append("lease_uid", props.currentLease.lease_uid);    
-      withdrawCurrentLeaseData.append("lease_renew_status", "WITHDRAWN");            
+        if (lease[0].lease_status === "RENEW NEW") {
+            const withdrawCurrentLeaseData = new FormData();
+            withdrawCurrentLeaseData.append("lease_uid", props.currentLease.lease_uid);
+            withdrawCurrentLeaseData.append("lease_renew_status", "WITHDRAWN");
 
-      // withdrawLeaseData.forEach((value, key) => {
-      //   console.log(`${key}: ${value}`);
-      // });
+            // withdrawLeaseData.forEach((value, key) => {
+            //   console.log(`${key}: ${value}`);
+            // });
 
-      const withdrawCurrentLeaseResponse = fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
-        method: "PUT",
-        body: withdrawCurrentLeaseData,
-      });
-      
+            const withdrawCurrentLeaseResponse = fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+                method: "PUT",
+                body: withdrawCurrentLeaseData,
+            });
+
+        }
+
+        const withdrawNewLeaseData = new FormData();
+        withdrawNewLeaseData.append("lease_uid", lease[0].lease_uid);
+        withdrawNewLeaseData.append("lease_status", "WITHDRAWN");
+
+        // withdrawLeaseData.forEach((value, key) => {
+        //   console.log(`${key}: ${value}`);
+        // });
+
+        const withdrawNewLeaseResponse = fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+            method: "PUT",
+            body: withdrawNewLeaseData,
+        });
+
+        Promise.all([withdrawNewLeaseResponse]).then((values) => {
+            //navigate("/listings"); // send success data back to the propertyInfo page
+            if (props.from === "PropertyInfo") {
+                props.setRightPane({ type: "listings" });
+                props.setReload((prev) => !prev);
+                console.log("lease set right pane");
+            } else {
+                // props.setRightPane("");
+                props.setReload((prev) => !prev);
+                console.log("set right pane to nothing");
+            }
+        });
     }
-
-    const withdrawNewLeaseData = new FormData();    
-    withdrawNewLeaseData.append("lease_uid", lease[0].lease_uid);    
-    withdrawNewLeaseData.append("lease_status", "WITHDRAWN");            
-
-    // withdrawLeaseData.forEach((value, key) => {
-    //   console.log(`${key}: ${value}`);
-    // });
-
-    const withdrawNewLeaseResponse = fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
-      method: "PUT",
-      body: withdrawNewLeaseData,
-    });
-
-    Promise.all([withdrawNewLeaseResponse]).then((values) => {
-      //navigate("/listings"); // send success data back to the propertyInfo page
-      if (props.from === "PropertyInfo") {
-        props.setRightPane({ type: "listings" });
-        props.setReload((prev) => !prev);
-        console.log("lease set right pane");
-      } else {
-        // props.setRightPane("");
-        props.setReload((prev) => !prev);
-        console.log("set right pane to nothing");
-      }
-    });
-  }
 
 
     function formatDate(dateString) {
@@ -903,7 +903,15 @@ export default function TenantApplicationEdit(props) {
         const month = String(date.getMonth() + 1).padStart(2, "0");
         const day = String(date.getDate()).padStart(2, "0");
         const year = date.getFullYear();
-        return `${month}-${day}-${year}`;
+        const hrs = String(date.getHours()).padStart(2, "0");
+        const mins = String(date.getMinutes()).padStart(2, "0");
+        const secs = String(date.getSeconds()).padStart(2, "0");
+    
+        if (hrs !== "00" || mins !== "00" || secs !== "00") {
+          return `${month}-${day}-${year} ${hrs}:${mins}:${secs}`;
+        } else {
+          return `${month}-${day}-${year}`;
+        }
     }
 
     const handleApplicationSubmit = async () => {
@@ -923,11 +931,11 @@ export default function TenantApplicationEdit(props) {
             // leaseApplicationData.append("lease_property_id", property.property_uid != null ? property.property_uid : lease[0].lease_property_id);
             leaseApplicationData.append("lease_property_id", property.property_uid != null ? property.property_uid : currentLease?.lease_property_id);
 
-      if (status === "RENEW NEW" || status === "RENEW PROCESSING" || currentLease?.lease_status === "ACTIVE" || currentLease?.lease_status === "ACTIVE M2M" || currentLease?.lease_status === "ENDED") {
-        const updateLeaseData = new FormData();
-        // updateLeaseData.append("lease_uid", lease[0].lease_uid);
-        updateLeaseData.append("lease_uid", currentLease.lease_uid);
-        updateLeaseData.append("lease_renew_status", "RENEW REQUESTED");
+            if (status === "RENEW NEW" || status === "RENEW PROCESSING" || currentLease?.lease_status === "ACTIVE" || currentLease?.lease_status === "ACTIVE M2M" || currentLease?.lease_status === "ENDED") {
+                const updateLeaseData = new FormData();
+                // updateLeaseData.append("lease_uid", lease[0].lease_uid);
+                updateLeaseData.append("lease_uid", currentLease.lease_uid);
+                updateLeaseData.append("lease_renew_status", "RENEW REQUESTED");
 
                 // console.log(" inside update lease status - ", updateLeaseData)
                 const updateLeaseResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
@@ -988,44 +996,49 @@ export default function TenantApplicationEdit(props) {
             leaseApplicationData.append("lease_pets", JSON.stringify(petOccupants));
             leaseApplicationData.append("lease_vehicles", JSON.stringify(vehicles));
 
-    //   console.log("880 - lease - ", lease);
-      //   const leaseUtils = lease != null && lease?.length > 0 && lease[0].lease_utilities ? JSON.parse(lease[0].lease_utilities) : [];
-      // const leaseUtils = currentLease != null && currentLease.lease_utilities != null ? JSON.parse(currentLease.lease_utilities) : [];
+            //   console.log("880 - lease - ", lease);
+            //   const leaseUtils = lease != null && lease?.length > 0 && lease[0].lease_utilities ? JSON.parse(lease[0].lease_utilities) : [];
+            // const leaseUtils = currentLease != null && currentLease.lease_utilities != null ? JSON.parse(currentLease.lease_utilities) : [];
 
-      // // leaseApplicationData.append("lease_utilities", leaseUtils.length > 0 ? lease[0]?.lease_utilities : JSON.stringify(propertyUtilities)) // propertyUtilities - property utilities from listing
+            // // leaseApplicationData.append("lease_utilities", leaseUtils.length > 0 ? lease[0]?.lease_utilities : JSON.stringify(propertyUtilities)) // propertyUtilities - property utilities from listing
 
-      // //   if (lease == null || lease?.length === 0 || [null, "REFUSED", "RESCIND", "WITHDRAWN", "REJECTED"].includes(lease[0]?.lease_status)) {
-      // if (currentLease == null || [null, "REFUSED", "RESCIND", "WITHDRAWN", "REJECTED"].includes(currentLease.lease_status)) {
-      //   leaseApplicationData.append("lease_utilities", JSON.stringify(propertyUtilities)); // propertyUtilities - property utilities from listing
-      // } else if (["ACTIVE", "ACTIVE M2M", "NEW", "PROCESSING", "ENDED", "EXPIRED", "RENEW PROCESSING", "RENEW NEW", "RENEW REQUESTED"].includes(currentLease?.lease_status)) {
-      //   leaseApplicationData.append("lease_utilities", leaseUtils.length > 0 ? currentLease?.lease_utilities : JSON.stringify([]));
-      // }
+            // //   if (lease == null || lease?.length === 0 || [null, "REFUSED", "RESCIND", "WITHDRAWN", "REJECTED"].includes(lease[0]?.lease_status)) {
+            // if (currentLease == null || [null, "REFUSED", "RESCIND", "WITHDRAWN", "REJECTED"].includes(currentLease.lease_status)) {
+            //   leaseApplicationData.append("lease_utilities", JSON.stringify(propertyUtilities)); // propertyUtilities - property utilities from listing
+            // } else if (["ACTIVE", "ACTIVE M2M", "NEW", "PROCESSING", "ENDED", "EXPIRED", "RENEW PROCESSING", "RENEW NEW", "RENEW REQUESTED"].includes(currentLease?.lease_status)) {
+            //   leaseApplicationData.append("lease_utilities", leaseUtils.length > 0 ? currentLease?.lease_utilities : JSON.stringify([]));
+            // }
 
             leaseApplicationData.append("lease_referred", "[]");
 
             //   const leaseFees = lease != null && lease?.length > 0 && lease[0].lease_fees ? JSON.parse(lease[0].lease_fees) : [];
             const leaseFees = currentLease != null && currentLease.lease_fees != null ? JSON.parse(currentLease.lease_fees) : [];
 
-      // leaseApplicationData.append("lease_fees", "[]");
-      // leaseApplicationData.append("lease_fees", leaseFees.length > 0 ? lease[0]?.lease_fees : JSON.stringify([]));
-      leaseApplicationData.append("lease_fees", leaseFees.length > 0 ? currentLease?.lease_fees : JSON.stringify([]));
+            // leaseApplicationData.append("lease_fees", "[]");
+            // leaseApplicationData.append("lease_fees", leaseFees.length > 0 ? lease[0]?.lease_fees : JSON.stringify([]));
+            leaseApplicationData.append("lease_fees", leaseFees.length > 0 ? currentLease?.lease_fees : JSON.stringify([]));
 
-      const leaseUtils = currentLease != null && currentLease.lease_utilities != null ? JSON.parse(currentLease.lease_utilities) : [];
+            const leaseUtils = currentLease != null && currentLease.lease_utilities != null ? JSON.parse(currentLease.lease_utilities) : [];
 
-      // leaseApplicationData.append("lease_fees", "[]");
-      // leaseApplicationData.append("lease_fees", leaseFees.length > 0 ? lease[0]?.lease_fees : JSON.stringify([]));
-      leaseApplicationData.append("lease_utilities", leaseUtils.length > 0 ? currentLease?.lease_utilities : JSON.stringify(propertyUtilities));
+            // leaseApplicationData.append("lease_fees", "[]");
+            // leaseApplicationData.append("lease_fees", leaseFees.length > 0 ? lease[0]?.lease_fees : JSON.stringify([]));
+            leaseApplicationData.append("lease_utilities", leaseUtils.length > 0 ? currentLease?.lease_utilities : JSON.stringify(propertyUtilities));
 
-            leaseApplicationData.append("lease_application_date", formatDate(date.toLocaleDateString()));
+            leaseApplicationData.append("lease_application_date", formatDate(date.toLocaleDateString('en-US', {
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+            })));
             leaseApplicationData.append("tenant_uid", getProfileId());
 
-      if(currentLease != null && (currentLease.lease_status === "ACTIVE" || currentLease.lease_status === "ACTIVE M2M")) {
-        leaseApplicationData.append("lease_end_notice_period", currentLease.lease_end_notice_period ? currentLease.lease_end_notice_period : 30);
-      }
+            if (currentLease != null && (currentLease.lease_status === "ACTIVE" || currentLease.lease_status === "ACTIVE M2M")) {
+                leaseApplicationData.append("lease_end_notice_period", currentLease.lease_end_notice_period ? currentLease.lease_end_notice_period : 30);
+            }
 
-      if(currentLease != null && (currentLease.lease_status === "ACTIVE" || currentLease.lease_status === "ACTIVE M2M")) {
-        leaseApplicationData.append("lease_m2m", currentLease.lease_m2m ? currentLease.lease_m2m : 0);
-      }
+            if (currentLease != null && (currentLease.lease_status === "ACTIVE" || currentLease.lease_status === "ACTIVE M2M")) {
+                leaseApplicationData.append("lease_m2m", currentLease.lease_m2m ? currentLease.lease_m2m : 0);
+            }
 
             // console.log("we are here -- ")
 
@@ -1654,26 +1667,26 @@ export const EmploymentDataGrid = ({ profileData, employmentDataT = [], setSelec
 
     //       setCheckedJobs(updateJobs);
 
-  //       const selectedJobs = updateJobs.filter((job) => job.checked);
-  //       setSelectedJobs(selectedJobs);
-  //     }
-  //   }, [parsedEmploymentDataT, employmentData]);
-  useEffect(() => {    
-    const updateJobs = employmentData.map((job) => {
-      const matchingJob = parsedEmploymentDataT?.find((leaseJob) => leaseJob.jobTitle === job.jobTitle && leaseJob.companyName === job.companyName);
+    //       const selectedJobs = updateJobs.filter((job) => job.checked);
+    //       setSelectedJobs(selectedJobs);
+    //     }
+    //   }, [parsedEmploymentDataT, employmentData]);
+    useEffect(() => {
+        const updateJobs = employmentData.map((job) => {
+            const matchingJob = parsedEmploymentDataT?.find((leaseJob) => leaseJob.jobTitle === job.jobTitle && leaseJob.companyName === job.companyName);
 
-      return {
-        ...job,
-        checked: matchingJob ? Boolean(matchingJob.checked) : false, // Only mark checked if matching job has `checked: true`
-      };
-    });
+            return {
+                ...job,
+                checked: matchingJob ? Boolean(matchingJob.checked) : false, // Only mark checked if matching job has `checked: true`
+            };
+        });
 
-    setCheckedJobs(updateJobs);
+        setCheckedJobs(updateJobs);
 
-    const selectedJobs = updateJobs.filter((job) => job.checked);
-    setSelectedJobs(selectedJobs);
-    
-  }, [parsedEmploymentDataT, employmentData]);
+        const selectedJobs = updateJobs.filter((job) => job.checked);
+        setSelectedJobs(selectedJobs);
+
+    }, [parsedEmploymentDataT, employmentData]);
 
     useEffect(() => {
         if (profileData?.tenant_employment !== employmentData && parsedEmploymentDataT !== employmentDataT) {

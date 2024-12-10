@@ -351,7 +351,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                                                 color: "#160449",
                                                 fontWeight: theme.typography.secondary.fontWeight,
                                                 fontSize: theme.typography.smallFont,
-                                            }}>Early Termination Requested</Typography>
+                                            }}>Early Termination Requested1</Typography>
                                         </Grid>                                        
                                     </>
                                 )
@@ -606,7 +606,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                                                 color: "#160449",
                                                 fontWeight: theme.typography.secondary.fontWeight,
                                                 fontSize: theme.typography.smallFont,
-                                            }}>Early Termination Requested</Typography>
+                                            }}>Early Termination Requested2</Typography>
                                         </Grid>                                        
                                     </Grid>
                                 </>
