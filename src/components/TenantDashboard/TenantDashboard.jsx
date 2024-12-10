@@ -626,133 +626,133 @@ const TenantDashboard = () => {
 
             {/* Right-hand side */}
             <Grid item xs={12} md={8} sx={{ display: "flex", flexDirection: "column", flex: 1, height: "100%" }} rowGap={8}>
-  {/* Announcements Section: Fixed Height */}
-  {!isMobile && (!viewRHS || rightPane.type !== "announcements") && (
-    <Grid item xs={12} sx={{ height: "300px", flexShrink: 0, flexGrow: 0 }}>
-      <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", borderRadius: "10px", height: "100%" }}>
-        <Grid
-          container
-          direction="row"
-          sx={{
-            paddingTop: "10px",
-            paddingBottom: "10px",
-          }}
-        >
-          <Grid item xs={2}></Grid>
-          <Grid item xs={8}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <Typography
-                variant="h6"
-                sx={{
-                  color: "#160449",
-                  fontWeight: "bold",
-                }}
-              >
-                Announcements
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={2}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                zIndex: 1,
-              }}
-            >
-              <Box
-                sx={{
-                  color: "#007AFF",
-                  fontSize: "15px",
-                  paddingRight: "25px",
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                }}
-                onClick={() => {
-                  setViewRHS(true);
-                  setRightPane({ type: "announcements" });
-                }}
-              >
-                {isMobile
-                  ? `(${announcementRecvData.length + announcementSentData.length})`
-                  : `View all (${announcementRecvData.length + announcementSentData.length})`}
-              </Box>
-            </Box>
-          </Grid>
-        </Grid>
-        {announcementRecvData.length > 0 ? (
-          <NewCardSlider announcementList={announcementRecvData} isMobile={isMobile} />
-        ) : (
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              alignContent: "center",
-              justifyContent: "center",
-              minHeight: "235px",
-            }}
-          >
-            <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" } }}>
-              No Announcements
-            </Typography>
-          </Box>
-        )}
-      </Grid>
-    </Grid>
-  )}
+              {/* Announcements Section: Fixed Height */}
+              {!isMobile && (!viewRHS || rightPane.type !== "announcements") && (
+                <Grid item xs={12} sx={{ height: "300px", flexShrink: 0, flexGrow: 0 }}>
+                  <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", borderRadius: "10px", height: "100%" }}>
+                    <Grid
+                      container
+                      direction="row"
+                      sx={{
+                        paddingTop: "10px",
+                        paddingBottom: "10px",
+                      }}
+                    >
+                      <Grid item xs={2}></Grid>
+                      <Grid item xs={8}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <Typography
+                            variant="h6"
+                            sx={{
+                              color: "#160449",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Announcements
+                          </Typography>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={2}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            zIndex: 1,
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              color: "#007AFF",
+                              fontSize: "15px",
+                              paddingRight: "25px",
+                              fontWeight: "bold",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              setViewRHS(true);
+                              setRightPane({ type: "announcements" });
+                            }}
+                          >
+                            {isMobile
+                              ? `(${announcementRecvData.length + announcementSentData.length})`
+                              : `View all (${announcementRecvData.length + announcementSentData.length})`}
+                          </Box>
+                        </Box>
+                      </Grid>
+                    </Grid>
+                    {announcementRecvData.length > 0 ? (
+                      <NewCardSlider announcementList={announcementRecvData} isMobile={isMobile} />
+                    ) : (
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          alignContent: "center",
+                          justifyContent: "center",
+                          minHeight: "235px",
+                        }}
+                      >
+                        <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" } }}>
+                          No Announcements
+                        </Typography>
+                      </Box>
+                    )}
+                  </Grid>
+                </Grid>
+              )}
 
-  {/* Bottom Section: Flexible Space */}
-  <Grid container spacing={8} rowGap={2} sx={{ flex: 1, display: "flex", flexDirection: isMobile ? "column" : "row", height: "100%" }}>
-    {rightPane?.type ? (
-      <Grid item xs={12} sx={{ display: "flex", flexDirection: "column", flex: 1, height: "200%" }} ref={rightPaneRef} marginBottom={isMobile ? "40px" : "0px"}>
-        {renderRightPane()}
-      </Grid>
-    ) : (
-      <>
-        {/* Management Details and Maintenance: Side by Side */}
-        <Grid container item xs={12} spacing={5}>
-          <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
-            <ManagementDetails leaseDetails={leaseDetails} sx={{ flex: 1 }} />
-          </Grid>
-          <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
-            <MaintenanceDetails
-              maintenanceRequests={filteredMaintenanceRequests}
-              selectedProperty={selectedProperty}
-              leaseDetails={leaseDetails}
-              onPropertyClick={handleMaintenanceLegendClick}
-              setRightPane={setRightPane}
-              isMobile={isMobile}
-              setViewRHS={setViewRHS}
-              sx={{ flex: 1 }}
-            />
-          </Grid>
-        </Grid>
+              {/* Bottom Section: Flexible Space */}
+              <Grid container spacing={8} rowGap={2} sx={{ flex: 1, display: "flex", flexDirection: isMobile ? "column" : "row", height: "100%" }}>
+                {rightPane?.type ? (
+                  <Grid item xs={12} sx={{ display: "flex", flexDirection: "column", flex: 1, height: "200%" }} ref={rightPaneRef} marginBottom={isMobile ? "40px" : "0px"}>
+                    {renderRightPane()}
+                  </Grid>
+                ) : (
+                  <>
+                    {/* Management Details and Maintenance: Side by Side */}
+                    <Grid container item xs={12} spacing={5}>
+                      <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
+                        <ManagementDetails leaseDetails={leaseDetails} sx={{ flex: 1 }} />
+                      </Grid>
+                      <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
+                        <MaintenanceDetails
+                          maintenanceRequests={filteredMaintenanceRequests}
+                          selectedProperty={selectedProperty}
+                          leaseDetails={leaseDetails}
+                          onPropertyClick={handleMaintenanceLegendClick}
+                          setRightPane={setRightPane}
+                          isMobile={isMobile}
+                          setViewRHS={setViewRHS}
+                          sx={{ flex: 1 }}
+                        />
+                      </Grid>
+                    </Grid>
 
-        {/* Lease Details: Spanning Full Width */}
-        <Grid item xs={12} sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
-          <LeaseDetails
-            isMobile={isMobile}
-            setViewRHS={setViewRHS}
-            leaseDetails={leaseDetails}
-            rightPane={rightPane}
-            setRightPane={setRightPane}
-            selectedProperty={selectedProperty}
-            relatedLease={relatedLease}
-            setReload={setReload}
-            handleViewTenantApplication={handleViewTenantApplication}
-          />
-        </Grid>
-      </>
-    )}
-  </Grid>
-</Grid>
-{/* </Grid> */}
+                    {/* Lease Details: Spanning Full Width */}
+                    <Grid item xs={12} sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
+                      <LeaseDetails
+                        isMobile={isMobile}
+                        setViewRHS={setViewRHS}
+                        leaseDetails={leaseDetails}
+                        rightPane={rightPane}
+                        setRightPane={setRightPane}
+                        selectedProperty={selectedProperty}
+                        relatedLease={relatedLease}
+                        setReload={setReload}
+                        handleViewTenantApplication={handleViewTenantApplication}
+                      />
+                    </Grid>
+                  </>
+                )}
+              </Grid>
+            </Grid>
+            {/* </Grid> */}
           </Grid>
         </Container>
       )}
@@ -1478,6 +1478,41 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                 </Grid>
               )}
 
+              {/* Move In/Out Date */}
+              {leaseDetails && (
+                <Grid container item spacing={2} sx={{ marginRight: "10px" }}>
+                  <Grid item xs={5}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      Move In/Out Date:
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={7}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.light.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      <Box sx={{
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}>
+                        <span>{leaseDetails?.lease_move_in_date}</span>
+                        <span>{leaseDetails?.move_out_date}</span>
+                      </Box>
+                    </Typography>
+                  </Grid>
+                </Grid>
+              )}
               {/* Notice Period */}
               {leaseDetails && (
                 <Grid container item spacing={2}>
@@ -2121,20 +2156,20 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
 //       headerName: "Days In Advance",
 //       flex: 1,
 //       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
-    
+
 //   },
 //   {
 //       field: "late_by",
 //       headerName: "Late",
 //       flex: 1,
 //       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
-    
+
 //   },
 //   {
 //       field: "late_fee",
 //       headerName: "Late Fee",
 //       renderHeader: (params) => <strong style={{ fontSize: theme.typography.smallFont }}>{params.colDef.headerName}</strong>,
-    
+
 //       flex: 1,
 //   }
 //   ];
@@ -2294,7 +2329,7 @@ export const FeesSmallDataGrid = ({ data, isMobile }) => {
         </strong>
       ),
       renderCell: (params) => <Typography>{params.row.perDay_late_fee !== "" ? `$ ${params.row.perDay_late_fee}` : "-"}</Typography>,
-    },    
+    },
   ];
 
   // Adding a unique id to each row using map if the data doesn't have an id field
@@ -2303,7 +2338,7 @@ export const FeesSmallDataGrid = ({ data, isMobile }) => {
     id: row.id ? row.id : index, // Use the existing id if available
   }));
 
-  return (   
+  return (
     <Box sx={{ overflowX: 'auto', width: "98%" }}>
       <DataGrid
         rows={rowsWithId}
@@ -2324,7 +2359,7 @@ export const FeesSmallDataGrid = ({ data, isMobile }) => {
         disableColumnMenu={isMobile}
       />
     </Box>
-    
+
   );
 
 };
@@ -2683,58 +2718,58 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
 
   return (
     <ThemeProvider theme={theme}>
-			<Box
-				style={{
-					display: 'flex',
-					justifyContent: 'center',
-					alignItems: 'flex-start',
-					width: '100%', // Ensure the box spans the full viewport width
-					// height: '100vh', // Ensure the box spans the full viewport height
-				}}
-			>
-    <Paper
-      // elevation={3}
-      sx={{
-        // padding: "20px",
-        backgroundColor: "#f0f0f0",
-        width: "100%",
-        minHeight: "250px",
-      }}
-    >
-      <Grid Container sx={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
-        <Grid item xs={2} md={1}>
-          <Button onClick={handleBack}>
-            <ArrowBackIcon
-              sx={{
-                color: "#160449",
-                fontSize: "30px",
-                margin: "5px",
-              }}
-            />
-          </Button>
-        </Grid>
-        <Grid item xs={8} md={10}>
-          <Typography variant='h6' sx={{ fontWeight: "bold", color: "#160449", textAlign: "center" }}>
-            Maintenance Requests for Property {propertyId}
-          </Typography>
-        </Grid>
-        <Grid item xs={2} md={1}>
-          <Button onClick={onAdd}>
-            <AddIcon
-              sx={{
-                color: "#160449",
-                fontSize: "30px",
-                margin: "5px",
-              }}
-            />
-          </Button>
-        </Grid>
-      </Grid>
-      <Box sx={{ width: "100%", overflowX: "auto" }}>
-        <DataGrid rows={rows} columns={columns} autoHeight sx={{ minWidth: "550px" }} disableColumnFilter={isMobile} disableColumnMenu={isMobile} disableColumnSelector={isMobile} />
+      <Box
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'flex-start',
+          width: '100%', // Ensure the box spans the full viewport width
+          // height: '100vh', // Ensure the box spans the full viewport height
+        }}
+      >
+        <Paper
+          // elevation={3}
+          sx={{
+            // padding: "20px",
+            backgroundColor: "#f0f0f0",
+            width: "100%",
+            minHeight: "250px",
+          }}
+        >
+          <Grid Container sx={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
+            <Grid item xs={2} md={1}>
+              <Button onClick={handleBack}>
+                <ArrowBackIcon
+                  sx={{
+                    color: "#160449",
+                    fontSize: "30px",
+                    margin: "5px",
+                  }}
+                />
+              </Button>
+            </Grid>
+            <Grid item xs={8} md={10}>
+              <Typography variant='h6' sx={{ fontWeight: "bold", color: "#160449", textAlign: "center" }}>
+                Maintenance Requests for Property {propertyId}
+              </Typography>
+            </Grid>
+            <Grid item xs={2} md={1}>
+              <Button onClick={onAdd}>
+                <AddIcon
+                  sx={{
+                    color: "#160449",
+                    fontSize: "30px",
+                    margin: "5px",
+                  }}
+                />
+              </Button>
+            </Grid>
+          </Grid>
+          <Box sx={{ width: "100%", overflowX: "auto" }}>
+            <DataGrid rows={rows} columns={columns} autoHeight sx={{ minWidth: "550px" }} disableColumnFilter={isMobile} disableColumnMenu={isMobile} disableColumnSelector={isMobile} />
+          </Box>
+        </Paper>
       </Box>
-    </Paper>
-    </Box>
     </ThemeProvider>);
 };
 
@@ -3141,7 +3176,7 @@ function TenantBalanceTablePM(props) {
     }));
 
     props.setShowSpinner(false)
-    
+
   }, [selectedRows, paymentDueResult]);
 
   useEffect(() => {
