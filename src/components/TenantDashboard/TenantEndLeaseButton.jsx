@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Button, Typography, Box, Grid, Paper, FormControl, RadioGroup, FormControlLabel, Radio,
     Alert, CircularProgress, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, FormGroup, Checkbox, TextField,
@@ -12,26 +12,47 @@ import dayjs from 'dayjs';
 import { useUser } from "../../contexts/UserContext";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import APIConfig from "../../utils/APIConfig";
-import axios from 'axios'; 
+import axios from 'axios';
 import { PortableWifiOffSharp } from '@mui/icons-material';
 
 const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS, page, onClose, setReload }) => {
+    const leaseData = leaseDetails;
+    console.log("data", leaseData);
     const [open, setOpen] = useState(false);
     const { getProfileId } = useUser();
     const [confirmationText, setConfirmationText] = useState("");
     const [showSpinner, setShowSpinner] = useState(false);
     const [selectedValue, setSelectedValue] = useState('');
-    const [moveOutDate, setMoveOutDate] = useState(null);
+    const [moveOutDate, setMoveOutDate] = useState(leaseData?.move_out_date);
     const [selectedOption2Checkbox, setSelectedOption2Checkbox] = useState('');
     const [selectedOption3Checkbox, setSelectedOption3Checkbox] = useState('');
     const [moveOutReason, setMoveOutReason] = useState("");
     const [endLeaseStatus, setEndLeaseStatus] = useState('');
+    const [leaseEarlyEndDate, setLeaseEarlyEndDate] = useState(leaseData?.lease_early_end_date);
     const [error, setError] = useState([]);
     const [success, setSuccess] = useState([]);
     const color = theme.palette.form.main;
+    
 
-    const leaseData = leaseDetails;
-    console.log("data", leaseData);
+    const statusToCheckboxValueMap = {
+        "The tenant is moving into another property.": 'property',
+        "The tenant is moving out of the area.": 'area',
+        "The tenant is unable to pay rent.": 'rent',
+        "I/We is/are starting active military duty.": 'military',
+      };
+
+
+    useEffect(() => {
+        if (leaseData?.lease_end_reason === "I/We do not plan on living here next year." || leaseData?.lease_end_reason === "I/We have deemed the property unsafe or uninhabitable.") {
+            setSelectedValue(leaseData.lease_end_reason)
+        } else {
+            setSelectedValue("I/We has a personal reason(s) for terminating the lease early.");
+            setSelectedOption2Checkbox(statusToCheckboxValueMap[leaseData.lease_end_reason]?statusToCheckboxValueMap[leaseData.lease_end_reason]:"other");
+            setMoveOutReason(leaseData.lease_end_reason.split(":")[1]);
+        }
+    }, [])
+
+
 
     const getEndLeaseConfirmation = () => {
         const currentDate = new Date();
@@ -63,7 +84,9 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
     const handleClickOpen = () => {
         const newError = [];
         if (moveOutDate === null) newError.push("Move Out Date is required");
+        if (leaseEarlyEndDate === null) newError.push("Lease End Date is required");
         if (moveOutReason === "") newError.push("Move Out Reason is required");
+        if (leaseEarlyEndDate < moveOutDate) newError.push("Move Out date must be on/before Lease End date");
 
         if (newError.length === 0) {
             setError([]);
@@ -86,7 +109,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
 
     const handleRadioChange = (event, id) => {
         console.log('event1', event);
-        if (id == 0 || id == 3) {
+        if (id == 0 || id == 2) {
             setMoveOutReason(event.target.value);
         } else {
             setMoveOutReason("");
@@ -127,16 +150,18 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
 
         const leaseApplicationFormData = new FormData();
         const formattedMoveOutDate = formatDate(moveOutDate);
-        leaseApplicationFormData.append("lease_uid", leaseData?.lease_uid);        
-        leaseApplicationFormData.append("move_out_date", formattedMoveOutDate);        
+        leaseApplicationFormData.append("lease_uid", leaseData?.lease_uid);
+        leaseApplicationFormData.append("move_out_date", formattedMoveOutDate);
         leaseApplicationFormData.append("lease_renew_status", endLeaseStatus);
-        leaseApplicationFormData.append("lease_end_reason", moveOutReason);
+        leaseApplicationFormData.append("lease_end_reason", moveOutReason !== "" ? moveOutReason : leaseData.lease_end_reason);
 
-        if (endLeaseStatus === "EARLY TERMINATION") {
-            const currentDate = new Date();
-            const currentDateFormatted = dayjs(currentDate).format("MM-DD-YYYY");
-            leaseApplicationFormData.append("lease_early_end_date", currentDateFormatted);
-        }
+        // if (endLeaseStatus === "EARLY TERMINATION") {
+        //     const currentDate = new Date();
+        //     const currentDateFormatted = dayjs(currentDate).format("MM-DD-YYYY");
+        //     leaseApplicationFormData.append("lease_early_end_date", currentDateFormatted);
+        // }
+        const formattedLeaseEndDate = formatDate(leaseEarlyEndDate);
+        leaseApplicationFormData.append("lease_early_end_date", formattedLeaseEndDate);
 
         for (let pair of leaseApplicationFormData.entries()) {
             console.log(pair[0] + ": " + pair[1]);
@@ -364,6 +389,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
                                                                     label="Please provide a reason."
                                                                     variant="outlined"
                                                                     fullWidth
+                                                                    value={selectedOption2Checkbox === "other"? leaseData.lease_end_reason.split(":")[1] : ""}
                                                                 />
                                                             </Box>
                                                         </FormGroup>
@@ -384,12 +410,12 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
                                     aria-labelledby="demo-controlled-radio-buttons-group"
                                     name="controlled-radio-buttons-group"
                                     value={selectedValue}
-                                    onChange={(event) => handleRadioChange(event, 3)}
-                                    id='3'
+                                    onChange={(event) => handleRadioChange(event, 2)}
+                                    id='2'
                                     sx={{ marginLeft: '5px', width: '100%' }}
                                 >
                                     <FormControlLabel
-                                        id='3'
+                                        id='2'
                                         value="I/We have deemed the property unsafe or uninhabitable."
                                         control={<Radio sx={{ '&.Mui-checked': { color: "#3D5CAC" } }} />}
                                         label={
@@ -414,26 +440,43 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
 
                 {
                     (leaseData?.lease_status === "ACTIVE" || leaseData?.lease_status === "ACTIVE M2M") && (
-                        <Grid container sx={{ marginBottom: "5px", alignItems: "center", marginTop: isMobile ? "20px" : "10px"}}>
-                            <Grid item xs={3} />
-                            <Grid item xs={2}>
-                                <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC" }}>Move-Out Date</Typography>
+                        <>
+                            <Grid container spacing={4} sx={{ marginBottom: "5px", alignItems: "center", marginTop: isMobile ? "20px" : "10px" }}>
+                                <Grid item xs={4} md={5}>
+                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", textAlign: "right" }}>Lease End Date</Typography>
+                                </Grid>
+                                <Grid item xs={8} md={7}>
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DatePicker
+                                            value={dayjs(leaseEarlyEndDate)}
+                                            onChange={e => {
+                                                const formattedDate = e ? e.format("MM-DD-YYYY") : null;
+                                                setLeaseEarlyEndDate(dayjs(formattedDate));
+                                            }}
+                                        />
+                                    </LocalizationProvider>
+                                </Grid>
                             </Grid>
-                            <Grid item xs={7}>
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DatePicker
-                                        value={moveOutDate}
-                                        onChange={e => {
-                                            const formattedDate = e ? e.format("MM-DD-YYYY") : null;
-                                            setMoveOutDate(dayjs(formattedDate));
-                                        }}
-                                    />
-                                </LocalizationProvider>
+                            <Grid container spacing={4} sx={{ marginBottom: "5px", alignItems: "center", marginTop: isMobile ? "20px" : "10px" }}>
+                                <Grid item xs={4} md={5}>
+                                    <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#3D5CAC", textAlign: "right" }}>Move-Out Date</Typography>
+                                </Grid>
+                                <Grid item xs={8} md={7}>
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DatePicker
+                                            value={dayjs(moveOutDate)}
+                                            onChange={e => {
+                                                const formattedDate = e ? e.format("MM-DD-YYYY") : null;
+                                                setMoveOutDate(dayjs(formattedDate));
+                                            }}
+                                        />
+                                    </LocalizationProvider>
+                                </Grid>
                             </Grid>
-                        </Grid>
+                        </>
                     )
                 }
-                
+
 
                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '10px', marginTop: isMobile ? "20px" : "0px" }}>
                     <Button
