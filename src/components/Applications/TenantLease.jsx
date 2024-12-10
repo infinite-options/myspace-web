@@ -1437,6 +1437,30 @@ const TenantLease = () => {
     }
   }
 
+  const sendAnnouncements = async (tenant_uid) => {
+    const receiverPropertyMapping = {
+      [tenant_uid]: [property.property_uid],
+    };
+
+    await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        announcement_title: "New Lease created",
+        announcement_msg: "You have a new lease to be approved for your property",
+        announcement_sender: getProfileId(),
+        announcement_date: new Date().toDateString(),
+        // announcement_properties: property.property_uid,
+        announcement_properties: JSON.stringify(receiverPropertyMapping),
+        announcement_mode: "LEASE",
+        announcement_receiver: [tenant_uid],
+        announcement_type: ["Email", "Text"],
+      }),
+    });
+  }
+
   const handleRenewLease = async () => {
     // console.log('inside handleRenewLease');            
     try {
@@ -1606,27 +1630,16 @@ const TenantLease = () => {
         });
       }
 
-      const receiverPropertyMapping = {
-        [lease.tenant_uid]: [property.property_uid],
-      };
+      if (!Array.isArray(lease.tenants) || lease.tenants.length === 0) {
+        sendAnnouncements(lease.tenant_uid)
+      } else {
+        lease.tenants.forEach((tenant) => {
+          if (tenant?.tenant_uid) {
+            sendAnnouncements(tenant.tenant_uid);
+          }
+        });
+      }
 
-      await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          announcement_title: "New Lease created",
-          announcement_msg: "You have a new lease to be approved for your property",
-          announcement_sender: getProfileId(),
-          announcement_date: new Date().toDateString(),
-          // announcement_properties: property.property_uid,
-          announcement_properties: JSON.stringify(receiverPropertyMapping),
-          announcement_mode: "LEASE",
-          announcement_receiver: [lease.tenant_uid],
-          announcement_type: ["Email", "Text"],
-        }),
-      });
       navigate("/managerDashboard");
       setShowSpinner(false);
     } catch (error) {
