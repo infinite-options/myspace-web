@@ -308,36 +308,42 @@ function getTotalRevenueByType(data, month, year, expected) {
     }
     return acc;
   }, 0.0);
+
   let totalDeposits = revenueItems?.reduce((acc, revenue) => {
     if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "DEPOSIT") {
       return acc + parseFloat(revenue[key]);
     }
     return acc;
   }, 0.0);
+
   let totalExtraCharges = revenueItems?.reduce((acc, revenue) => {
     if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "EXTRA CHARGE") {
       return acc + parseFloat(revenue[key]);
     }
     return acc;
   }, 0.0);
+
   let totalUtilities = revenueItems?.reduce((acc, revenue) => {
     if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "UTILITIES") {
       return acc + parseFloat(revenue[key]);
     }
     return acc;
   }, 0.0);
+
   let totalLateFee = revenueItems?.reduce((acc, revenue) => {
     if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "LATE FEE") {
       return acc + parseFloat(revenue[key]);
     }
     return acc;
   }, 0.0);
+
   let totalMaintenance = revenueItems?.reduce((acc, revenue) => {
     if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "MAINTENANCE") {
       return acc + parseFloat(revenue[key]);
     }
     return acc;
   }, 0.0);
+
   let totalRepairs = revenueItems?.reduce((acc, revenue) => {
     if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "REPAIRS") {
       return acc + parseFloat(revenue[key]);
@@ -360,7 +366,7 @@ function getTotalRevenueByType(data, month, year, expected) {
   }, 0.0);
 
   return {
-    RENT: parseFloat(totalRent).toFixed(2),
+    "RENT" : parseFloat(totalRentDueOwner).toFixed(2),
     DEPOSIT: parseFloat(totalDeposits).toFixed(2),
     "EXTRA CHARGE": parseFloat(totalExtraCharges).toFixed(2),
     UTILITIES: parseFloat(totalUtilities).toFixed(2),
@@ -368,7 +374,6 @@ function getTotalRevenueByType(data, month, year, expected) {
     MAINTENANCE: parseFloat(totalMaintenance).toFixed(2),
     REPAIRS: parseFloat(totalRepairs).toFixed(2),
     OTHER: parseFloat(totalOther).toFixed(2),
-    "RENT DUE OWNER" : parseFloat(totalRentDueOwner).toFixed(2),
   };
 }
 
@@ -533,7 +538,8 @@ function getTotalRevenueByTypeByProperty(data, month, year, expected, propertyId
   }, 0.0);
 
   return {
-    RENT: parseFloat(totalRent).toFixed(2),
+    // RENT: parseFloat(totalRent).toFixed(2),
+    "RENT" : parseFloat(totalRentDueOwner).toFixed(2),
     DEPOSIT: parseFloat(totalDeposits).toFixed(2),
     "EXTRA CHARGE": parseFloat(totalExtraCharges).toFixed(2),
     UTILITIES: parseFloat(totalUtilities).toFixed(2),
@@ -541,7 +547,6 @@ function getTotalRevenueByTypeByProperty(data, month, year, expected, propertyId
     MAINTENANCE: parseFloat(totalMaintenance).toFixed(2),
     REPAIRS: parseFloat(totalRepairs).toFixed(2),
     OTHER: parseFloat(totalOther).toFixed(2),
-    "RENT DUE OWNER" : parseFloat(totalRentDueOwner).toFixed(2),
   };
 }
 

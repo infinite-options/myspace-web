@@ -1229,6 +1229,9 @@ function StatementTable(props) {
 
 
   function getCategoryCount(category) {
+    if(category.toUpperCase() === "RENT"){
+      category = "RENT DUE OWNER";
+    }
     // console.log("getCategoryCount - allItems - ", allItems);
     let filteredItems = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
     // let items = filteredItems?.map((item) => ({ ...item, property: JSON.parse(item.property) }));
@@ -1242,6 +1245,9 @@ function StatementTable(props) {
   }
 
   function getCategoryItems(category, type) {
+    if(category.toUpperCase() === "RENT"){
+      category = "RENT DUE OWNER";
+    }
     let filteredIitems = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
     // let items = filteredIitems?.map((item) => ({ ...item, property: JSON.parse(item.property) }));
 
