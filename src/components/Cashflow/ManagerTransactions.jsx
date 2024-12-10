@@ -88,8 +88,8 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
 
   const [showChart, setShowChart] = useState("Current");
 
-  const month = propsMonth || ["July"]; //fix
-  const year = propsYear || ["2024"];
+  const month = [propsMonth] || ["July"]; //fix
+  const year = [propsYear] || ["2024"];
 
   const cashflowWidgetData = location.state?.cashflowWidgetData;
 
@@ -235,9 +235,9 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
       filteredTransactionsData = allTransactionsData?.filter((item) => item.pur_property_id === selectedProperty);
       // console.log("filteredTransactionsData - test ", filteredTransactionsData);
     }
-    const transactionsCurrentMonth = filteredTransactionsData?.filter((item) =>   month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
+    const transactionsCurrentMonth = filteredTransactionsData?.filter((item) => month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
 
-    // console.log("ROHIT - filteredTransactionsData - ", filteredTransactionsData);
+    // console.log("ROHIT - filteredTransactionsData - ", month);
 
     const sortedTransactions = transactionsCurrentMonth?.map((transaction) => {
       return {
@@ -354,7 +354,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
       });
     }
 
-    console.log(" ROHIT - 302 - transactionsByProperty - ", transactionsByProperty);
+    // console.log(" ROHIT - 302 - transactionsByProperty - ", transactionsByProperty);
 
     setTransactionsNew(transactionsByProperty);
   }, [month, year, transactionsData, selectedProperty]);

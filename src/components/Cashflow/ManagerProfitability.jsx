@@ -2460,7 +2460,12 @@ function SelectMonthComponentTest(props) {
           <Box sx={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "10px" }}>
             {monthNames.map((month, index) => {
               return (
-                <Typography textAlign={"center"} className={props.selectedMonth === month ? "selected" : "unselected"} key={index} onClick={() => props.setMonth([month])}>
+                <Typography textAlign={"center"} className={props.selectedMonth[0] === month ? "selected" : "unselected"} key={index} onClick={() => {
+                    props.setMonth([month])
+                    if (props.selectedYear.length > 1) {
+                      props.setYear([props.selectedYear[0]]);
+                    }
+                  }}>
                   {month}
                 </Typography>
               );
@@ -2476,7 +2481,7 @@ function SelectMonthComponentTest(props) {
               return (
                 <Typography
                   textAlign={"center"}
-                  className={props.selectedYear === year.toString() ? "selected" : "unselected"}
+                  className={props.selectedYear[0] === year.toString() ? "selected" : "unselected"}
                   onClick={() => props.setYear([year.toString()])}
                   key={index}
                 >

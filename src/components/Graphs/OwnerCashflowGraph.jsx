@@ -89,7 +89,7 @@ const MixedChart = (props) => {
           <YAxis yAxisId="right" orientation="right" /> */}
           <CartesianGrid vertical={false} />
           <XAxis dataKey="monthYear" axisLine={true} type="category" tickCount={12} style={{ fontSize: "10px" }} />
-          <YAxis yAxisId="left" axisLine={false} tickCount={8} domain={[(min - 1000) * 1.1, max * 2]} tickFormatter={(value) => `$${value}`} style={{ fontSize: "10px" }} />
+          <YAxis yAxisId="left" axisLine={false} tickCount={8} domain={[(min - 100) * 1.1, max * 1.3]} tickFormatter={(value) => `$${value}`} style={{ fontSize: "10px" }} />
           <ReferenceLine yAxisId="left" y={0} stroke="#000000" strokeWidth={1} />
           <YAxis yAxisId="right" orientation="right" />
           <Legend content={CustomLegend} />
