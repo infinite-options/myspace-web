@@ -625,11 +625,11 @@ const TenantDashboard = () => {
             </Grid>
 
             {/* Right-hand side */}
-            <Grid item xs={12} md={8} sx={{ display: "flex", flexDirection: "column", flex: 1, height: "100%" }} rowGap={8}>
+            <Grid item xs={12} md={8} sx={{ display: "flex", flexDirection: "column", flex: 1,}} rowGap={8}>
   {/* Announcements Section: Fixed Height */}
   {!isMobile && (!viewRHS || rightPane.type !== "announcements") && (
-    <Grid item xs={12} sx={{ height: "300px", flexShrink: 0, flexGrow: 0 }}>
-      <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", borderRadius: "10px", height: "100%" }}>
+    // <Grid item xs={12} sx={{ height: "300px", flexShrink: 0, flexGrow: 0 }}>
+    <Grid item xs={12} sx={{ maxHeight: "180px", backgroundColor: "#F2F2F2", borderRadius: "10px" }}>
         <Grid
           container
           direction="row"
@@ -704,13 +704,13 @@ const TenantDashboard = () => {
           </Box>
         )}
       </Grid>
-    </Grid>
+    
   )}
 
   {/* Bottom Section: Flexible Space */}
   <Grid container spacing={8} rowGap={2} sx={{ flex: 1, display: "flex", flexDirection: isMobile ? "column" : "row", height: "100%" }}>
     {rightPane?.type ? (
-      <Grid item xs={12} sx={{ display: "flex", flexDirection: "column", flex: 1, height: "200%" }} ref={rightPaneRef} marginBottom={isMobile ? "40px" : "0px"}>
+      <Grid item xs={12} md={12} sx={{ display: "flex", flexDirection: "column", flex: 1 }} ref={rightPaneRef} marginBottom={isMobile ? "40px" : "0px"}>
         {renderRightPane()}
       </Grid>
     ) : (
@@ -2687,6 +2687,9 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
 				style={{
 					display: 'flex',
 					justifyContent: 'center',
+          backgroundColor: "#f0f0f0",
+          height:"100%",
+          borderRadius:"10px",
 					alignItems: 'flex-start',
 					width: '100%', // Ensure the box spans the full viewport width
 					// height: '100vh', // Ensure the box spans the full viewport height
