@@ -23,12 +23,12 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
     const [confirmationText, setConfirmationText] = useState("");
     const [showSpinner, setShowSpinner] = useState(false);
     const [selectedValue, setSelectedValue] = useState('');
-    const [moveOutDate, setMoveOutDate] = useState();
+    const [moveOutDate, setMoveOutDate] = useState(dayjs().format("MM-DD-YYYY"));
     const [selectedOption2Checkbox, setSelectedOption2Checkbox] = useState('');
     const [selectedOption3Checkbox, setSelectedOption3Checkbox] = useState('');
     const [moveOutReason, setMoveOutReason] = useState("");
     const [endLeaseStatus, setEndLeaseStatus] = useState('');
-    const [leaseEarlyEndDate, setLeaseEarlyEndDate] = useState();
+    const [leaseEarlyEndDate, setLeaseEarlyEndDate] = useState(dayjs().format("MM-DD-YYYY"));
     const [error, setError] = useState([]);
     const [success, setSuccess] = useState([]);
     const [isTerminateEndLease, setIsTerminateEndLease] = useState(false);
@@ -39,13 +39,14 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
         "The tenant is moving into another property.": 'property',
         "The tenant is moving out of the area.": 'area',
         "The tenant is unable to pay rent.": 'rent',
-        "I/We is/are starting active military duty.": 'military',
+        "The tenant is starting active military duty.": 'military',
     };
 
 
     useEffect(() => {
         if (leaseData.lease_end_reason !== null && leaseData.lease_end_reason !== "") {
             console.log('inside use effect');
+            setMoveOutReason(leaseData?.lease_end_reason);
             setMoveOutDate(leaseData?.move_out_date);
             setLeaseEarlyEndDate(leaseData?.lease_early_end_date);
             if (leaseData?.lease_end_reason === "I/We do not plan on living here next year." || leaseData?.lease_end_reason === "I/We have deemed the property unsafe or uninhabitable.") {
@@ -88,6 +89,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
 
     const handleClickOpen = () => {
         if (isTerminateEndLease === false) {
+            console.log('checking dates', leaseEarlyEndDate, moveOutDate);
             const newError = [];
             if (moveOutDate === null) newError.push("Move Out Date is required");
             if (leaseEarlyEndDate === null) newError.push("Lease End Date is required");
@@ -536,7 +538,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
                                             value={dayjs(leaseEarlyEndDate)}
                                             onChange={e => {
                                                 const formattedDate = e ? e.format("MM-DD-YYYY") : null;
-                                                setLeaseEarlyEndDate(dayjs(formattedDate));
+                                                setLeaseEarlyEndDate(formattedDate);
                                             }}
                                         />
                                     </LocalizationProvider>
@@ -552,7 +554,8 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
                                             value={dayjs(moveOutDate)}
                                             onChange={e => {
                                                 const formattedDate = e ? e.format("MM-DD-YYYY") : null;
-                                                setMoveOutDate(dayjs(formattedDate));
+                                                console.log('formattedDate--', formattedDate);
+                                                setMoveOutDate(formattedDate);
                                             }}
                                         />
                                     </LocalizationProvider>

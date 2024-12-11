@@ -1456,7 +1456,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                       Lease Term:
                     </Typography>
                   </Grid>
-                  <Grid item xs={7}>
+                  <Grid item xs={5}>
                     <Box display='flex' alignItems='center' justifyContent={"space-between"} sx={{ margin: "0px 10px 0px 0px" }}>
                       <>
                         <Typography
@@ -1493,7 +1493,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                       Move In/Out Date:
                     </Typography>
                   </Grid>
-                  <Grid item xs={7}>
+                  <Grid item xs={5}>
                     <Box display='flex' alignItems='center' justifyContent={"space-between"} sx={{ margin: "0px 10px 0px 0px" }}>
                       <>
                         <Typography sx={{ fontSize: theme.typography.smallFont }}>{leaseDetails?.lease_move_in_date ? leaseDetails?.lease_move_in_date : ""}</Typography>
