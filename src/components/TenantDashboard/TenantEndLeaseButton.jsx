@@ -23,32 +23,37 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
     const [confirmationText, setConfirmationText] = useState("");
     const [showSpinner, setShowSpinner] = useState(false);
     const [selectedValue, setSelectedValue] = useState('');
-    const [moveOutDate, setMoveOutDate] = useState(leaseData?.move_out_date);
+    const [moveOutDate, setMoveOutDate] = useState();
     const [selectedOption2Checkbox, setSelectedOption2Checkbox] = useState('');
     const [selectedOption3Checkbox, setSelectedOption3Checkbox] = useState('');
     const [moveOutReason, setMoveOutReason] = useState("");
     const [endLeaseStatus, setEndLeaseStatus] = useState('');
-    const [leaseEarlyEndDate, setLeaseEarlyEndDate] = useState(leaseData?.lease_early_end_date);
+    const [leaseEarlyEndDate, setLeaseEarlyEndDate] = useState();
     const [error, setError] = useState([]);
     const [success, setSuccess] = useState([]);
+    const [isTerminateEndLease, setIsTerminateEndLease] = useState(false);
     const color = theme.palette.form.main;
-    
+
 
     const statusToCheckboxValueMap = {
         "The tenant is moving into another property.": 'property',
         "The tenant is moving out of the area.": 'area',
         "The tenant is unable to pay rent.": 'rent',
         "I/We is/are starting active military duty.": 'military',
-      };
+    };
 
 
     useEffect(() => {
-        if (leaseData?.lease_end_reason === "I/We do not plan on living here next year." || leaseData?.lease_end_reason === "I/We have deemed the property unsafe or uninhabitable.") {
-            setSelectedValue(leaseData.lease_end_reason)
-        } else {
-            setSelectedValue("I/We has a personal reason(s) for terminating the lease early.");
-            setSelectedOption2Checkbox(statusToCheckboxValueMap[leaseData.lease_end_reason]?statusToCheckboxValueMap[leaseData.lease_end_reason]:"other");
-            setMoveOutReason(leaseData.lease_end_reason.split(":")[1]);
+        if (leaseData.lease_end_reason !== null && leaseData.lease_end_reason !== "") {
+            console.log('inside use effect');
+            setMoveOutDate(leaseData?.move_out_date);
+            setLeaseEarlyEndDate(leaseData?.lease_early_end_date);
+            if (leaseData?.lease_end_reason === "I/We do not plan on living here next year." || leaseData?.lease_end_reason === "I/We have deemed the property unsafe or uninhabitable.") {
+                setSelectedValue(leaseData.lease_end_reason)
+            } else {
+                setSelectedValue("I/We has a personal reason(s) for terminating the lease early.");
+                setSelectedOption2Checkbox(statusToCheckboxValueMap[leaseData.lease_end_reason] ? statusToCheckboxValueMap[leaseData.lease_end_reason] : "other");
+            }
         }
     }, [])
 
@@ -82,19 +87,24 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
     };
 
     const handleClickOpen = () => {
-        const newError = [];
-        if (moveOutDate === null) newError.push("Move Out Date is required");
-        if (leaseEarlyEndDate === null) newError.push("Lease End Date is required");
-        if (moveOutReason === "") newError.push("Move Out Reason is required");
-        if (leaseEarlyEndDate < moveOutDate) newError.push("Move Out date must be on/before Lease End date");
+        if (isTerminateEndLease === false) {
+            const newError = [];
+            if (moveOutDate === null) newError.push("Move Out Date is required");
+            if (leaseEarlyEndDate === null) newError.push("Lease End Date is required");
+            if (moveOutReason === "") newError.push("Move Out Reason is required");
+            if (leaseEarlyEndDate < moveOutDate) newError.push("Move Out date must be on/before Lease End date");
 
-        if (newError.length === 0) {
-            setError([]);
-            const confirmationText = getEndLeaseConfirmation();
-            setConfirmationText(confirmationText);
-            setOpen(true);
+            if (newError.length === 0) {
+                setError([]);
+                const confirmationText = getEndLeaseConfirmation();
+                setConfirmationText(confirmationText);
+                setOpen(true);
+            } else {
+                setError(newError);
+            }
         } else {
-            setError(newError);
+            setConfirmationText("Do you want to terminate your End Lease Request?");
+            setOpen(true);
         }
     };
 
@@ -103,19 +113,29 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
     };
 
     const handleConfirm = () => {
-        handleEndLease();
+        if (isTerminateEndLease === true) {
+            handleTerminateEndRequest();
+            setIsTerminateEndLease(false);
+        } else {
+            handleEndLease();
+        }
         setOpen(false);
     };
 
     const handleRadioChange = (event, id) => {
         console.log('event1', event);
-        if (id == 0 || id == 2) {
-            setMoveOutReason(event.target.value);
+        if (id === 3) {
+            setIsTerminateEndLease(true);
         } else {
-            setMoveOutReason("");
+            setIsTerminateEndLease(false);
+            if (id == 0 || id == 2) {
+                setMoveOutReason(event.target.value);
+            } else {
+                setMoveOutReason("");
+            }
+            // setSelectedId(id);
         }
         setSelectedValue(event.target.value);
-        // setSelectedId(id);
     };
 
     const handleOption2CheckboxChange = (event, label) => {
@@ -186,6 +206,35 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
             });
     };
 
+    const handleTerminateEndRequest = () => {
+        setShowSpinner(true);
+
+        const leaseApplicationFormData = new FormData();
+        leaseApplicationFormData.append("lease_uid", leaseData?.lease_uid);
+        leaseApplicationFormData.append("move_out_date", "");
+        leaseApplicationFormData.append("lease_renew_status", "");
+        leaseApplicationFormData.append("lease_end_reason", "");
+        leaseApplicationFormData.append("lease_early_end_date", "");
+
+        // API call 
+        axios
+            .put(`${APIConfig.baseURL.dev}/leaseApplication`, leaseApplicationFormData)
+            .then(async (response) => {
+                setShowSpinner(false);
+                setSuccess(`Your End request has been terminated.`);
+                await setReload(true)
+                if (isMobile) {
+                    setViewRHS(false)
+                }
+                setRightPane("");
+            })
+            .catch((error) => {
+                if (error.response) {
+                    setError(["Cannot end the lease. Please try again."]);
+                }
+            });
+    }
+
     const handleBack = () => {
         if (isMobile) {
             setViewRHS(false)
@@ -229,7 +278,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
                                     </Button>
                                 </Grid>)}
 
-                            <Grid Item xs={11} md={12}>
+                            <Grid item xs={11} md={12}>
                                 <Typography
                                     sx={{
                                         color: "#160449",
@@ -389,7 +438,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
                                                                     label="Please provide a reason."
                                                                     variant="outlined"
                                                                     fullWidth
-                                                                    value={selectedOption2Checkbox === "other"? leaseData.lease_end_reason.split(":")[1] : ""}
+                                                                    value={selectedOption2Checkbox === "other" ? leaseData?.lease_end_reason?.split(":")[1] : ""}
                                                                 />
                                                             </Box>
                                                         </FormGroup>
@@ -436,6 +485,42 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
                             </FormControl>
                         </Paper>
                     </Grid>
+
+                    {leaseData?.lease_renew_status === "EARLY TERMINATION" && (
+                        <Grid item xs={12} md={12}>
+                            <Paper sx={{ padding: "10px", backgroundColor: color, width: '95%', margin: isMobile ? "10px 10px 0px 0px" : '10px 10px 0px 10px' }} >
+                                <FormControl sx={{ width: '100%' }}>
+                                    <RadioGroup
+                                        aria-labelledby="demo-controlled-radio-buttons-group"
+                                        name="controlled-radio-buttons-group"
+                                        value={selectedValue}
+                                        onChange={(event) => handleRadioChange(event, 3)}
+                                        id='3'
+                                        sx={{ marginLeft: '5px', width: '100%' }}
+                                    >
+                                        <FormControlLabel
+                                            id='3'
+                                            value="I/We wish to terminate End Request"
+                                            control={<Radio sx={{ '&.Mui-checked': { color: "#3D5CAC" } }} />}
+                                            label={
+                                                <Box sx={{ display: 'block' }}>
+                                                    <Typography
+                                                        sx={{
+                                                            color: "#160449",
+                                                            fontWeight: theme.typography.primary.fontWeight,
+                                                            fontSize: theme.typography.smallFont,
+                                                        }}
+                                                    >
+                                                        I/We wish to terminate End Request.
+                                                    </Typography>
+                                                </Box>
+                                            }
+                                        />
+                                    </RadioGroup>
+                                </FormControl>
+                            </Paper>
+                        </Grid>
+                    )}
                 </Grid>
 
                 {

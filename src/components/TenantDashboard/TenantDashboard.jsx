@@ -132,14 +132,14 @@ const TenantDashboard = () => {
   //     }
   // };
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log("=== ok success - ", location?.state?.selectedProperty)
-    if(location?.state?.selectedProperty){
+    if (location?.state?.selectedProperty) {
       setSelectedProperty(location?.state?.selectedProperty)
       // handleSelectProperty(location?.state?.selectedProperty)
     }
 
-  },[location?.state?.selectedProperty])
+  }, [location?.state?.selectedProperty])
 
   useEffect(() => {
     if (leaseDetailsData != null && leaseDetailsData.length === 0) {
@@ -542,7 +542,7 @@ const TenantDashboard = () => {
         case "announcements":
           return <Announcements handleBack={handleBack} />;
         case "tenantEndLease":
-          return <TenantEndLeaseButton leaseDetails={rightPane.state.leaseDetails} setRightPane={setRightPane} isMobile={isMobile} setViewRHS={setViewRHS} setReload={setReload}/>;
+          return <TenantEndLeaseButton leaseDetails={rightPane.state.leaseDetails} setRightPane={setRightPane} isMobile={isMobile} setViewRHS={setViewRHS} setReload={setReload} />;
         default:
           return null;
       }
@@ -837,7 +837,7 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
   ];
 
   return (
-    <Grid container sx={{flex: 1 }}>
+    <Grid container sx={{ flex: 1 }}>
       <Paper
         component={Stack}
         sx={{
@@ -1471,7 +1471,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                       }}
                     >
                       {leaseDetails?.lease_start}
-                      <span style={{ fontWeight: "bold", margin: "0 10px" }}>to</span>
+                      <span style={{ fontWeight: "bold", margin: "0px 10px" }}>to</span>
                       {leaseDetails?.lease_end}
                     </Typography>
                   </Grid>
@@ -1480,7 +1480,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
 
               {/* Move In/Out Date */}
               {leaseDetails && (
-                <Grid container item spacing={2} sx={{ marginRight: "10px" }}>
+                <Grid container item spacing={2}>
                   <Grid item xs={5}>
                     <Typography
                       sx={{
@@ -1493,23 +1493,17 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                     </Typography>
                   </Grid>
                   <Grid item xs={7}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.primary.black,
-                        fontWeight: theme.typography.light.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      <Box sx={{
-                        width: "100%",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}>
-                        <span>{leaseDetails?.lease_move_in_date}</span>
-                        <span>{leaseDetails?.move_out_date}</span>
-                      </Box>
-                    </Typography>
+                    <Box display='flex' alignItems='center' justifyContent={"space-between"} sx={{ margin: "0px 10px 0px 0px" }}>
+                      <>
+                        <Typography sx={{fontSize: theme.typography.smallFont,}}>
+                          {leaseDetails?.lease_move_in_date ? leaseDetails?.lease_move_in_date : ""}
+                        </Typography>
+
+                        <Typography sx={{fontSize: theme.typography.smallFont,   color: "#A52A2A", fontWeight: theme.typography.secondary.fontWeight,}}>
+                          {leaseDetails?.move_out_date ? leaseDetails?.move_out_date : ""}
+                        </Typography>
+                      </>
+                    </Box>
                   </Grid>
                 </Grid>
               )}
@@ -2269,7 +2263,7 @@ export const FeesSmallDataGrid = ({ data, isMobile }) => {
         {params.row.frequency === "One Time" && `${params.row.due_by_date}`}
         {(params.row.frequency === "Weekly"  || params.row.frequency === "Bi-Weekly") && `${valueToDayMap.get(params.row.due_by)}`} */}
           {getFeesDueBy(params.row)}
-          { console.log("ROHIT - 1245 - params.row - ", params.row)}
+          {console.log("ROHIT - 1245 - params.row - ", params.row)}
         </Typography>
       ),
     },
@@ -2317,7 +2311,7 @@ export const FeesSmallDataGrid = ({ data, isMobile }) => {
       flex: 0.7,
       minWidth: 120,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
-      renderCell: (params) => <Typography>{params.row.late_fee !== ""  ? `$ ${params.row.late_fee}` : "-"}</Typography>,
+      renderCell: (params) => <Typography>{params.row.late_fee !== "" ? `$ ${params.row.late_fee}` : "-"}</Typography>,
     },
     {
       field: "perDay_late_fee",
@@ -3217,7 +3211,7 @@ function TenantBalanceTablePM(props) {
       flex: 1,
       renderCell: (params) => {
         const total = parseFloat(params.row.pur_amount_due) + parseFloat(params.row.totalPaid);
-        return <Box sx={{ fontWeight: "bold", textAlign: "right", width: "100%"}}>${total.toFixed(2)}</Box>;
+        return <Box sx={{ fontWeight: "bold", textAlign: "right", width: "100%" }}>${total.toFixed(2)}</Box>;
       },
     },
     {
