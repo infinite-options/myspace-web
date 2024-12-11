@@ -787,7 +787,8 @@ function LeaseComponent(props) {
           {`${leaseData.property_address} ${leaseData.property_unit}, ${leaseData.property_city} ${leaseData.property_state} ${leaseData.property_zip}`}
         </Box>
         <Box>
-          {leaseData.lease_end}: {leaseData.lease_renew_status}
+        {/* {leaseData.lease_end}: {leaseData.lease_renew_status} */}
+          {leaseData.lease_end} {leaseData.lease_renew_status === "TRUE" ? "" : `: ${leaseData.lease_renew_status}`}
         </Box>
       </Box>
       <Box
