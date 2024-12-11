@@ -89,13 +89,13 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
 
     const handleClickOpen = () => {
         if (isTerminateEndLease === false) {
-            console.log('checking dates', leaseEarlyEndDate, moveOutDate);
+            // console.log('checking dates', leaseEarlyEndDate, moveOutDate);
             const newError = [];
             if (moveOutDate === null) newError.push("Move Out Date is required");
             if (leaseEarlyEndDate === null) newError.push("Lease End Date is required");
             if (moveOutReason === "") newError.push("Move Out Reason is required");
             if (leaseEarlyEndDate < moveOutDate) newError.push("Move Out date must be on/before Lease End date");
-
+            console.log('Error list is', error);
             if (newError.length === 0) {
                 setError([]);
                 const confirmationText = getEndLeaseConfirmation();
@@ -103,6 +103,11 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
                 setOpen(true);
             } else {
                 setError(newError);
+                const confirmationText = newError.map((err, index) => (
+                    <li key={index}>{err}</li>
+                ))
+                setConfirmationText(confirmationText);
+                setOpen(true);
             }
         } else {
             setConfirmationText("Do you want to terminate your End Lease Request?");
@@ -334,7 +339,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
                             </Alert>
                         </Box>
                     )}
-                    {error.length > 0 && (
+                    {/* {error.length > 0 && (
                         <Box>
                             <Alert severity="error">
                                 <ul>
@@ -344,7 +349,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
                                 </ul>
                             </Alert>
                         </Box>
-                    )}
+                    )} */}
                     <Grid item xs={12} md={12}>
                         <Paper sx={{ padding: "10px", backgroundColor: color, width: '95%', margin: isMobile ? "10px 10px 0px 0px" : '10px 10px 0px 10px' }} >
                             <FormControl sx={{ width: '100%' }}>
@@ -611,42 +616,62 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
                     aria-describedby="alert-dialog-description"
                     maxWidth="md"
                 >
-                    <DialogTitle id="alert-dialog-title">{"End Lease Confirmation"}</DialogTitle>
+                    <DialogTitle id="alert-dialog-title">{error.length === 0 ? "End Lease Confirmation" : "End Lease Request Error"}</DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
                             {confirmationText}
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', }}>
-                        <Button onClick={handleClose} sx={{
-                            background: "#D4736D",
-                            color: "#160449",
-                            cursor: "pointer",
-                            fontWeight: theme.typography.secondary.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                            textTransform: "none",
-                            '&:hover': {
-                                background: '#DEA19C',
-                            },
-                        }}
-                            size="small">
-                            Cancel
-                        </Button>
-                        <Button onClick={handleConfirm} autoFocus variant="contained"
-                            sx={{
-                                background: "#6788B3",
+                        {error.length === 0 && (
+                            <>
+                                <Button onClick={handleClose} sx={{
+                                    background: "#D4736D",
+                                    color: "#160449",
+                                    cursor: "pointer",
+                                    fontWeight: theme.typography.secondary.fontWeight,
+                                    fontSize: theme.typography.smallFont,
+                                    textTransform: "none",
+                                    '&:hover': {
+                                        background: '#DEA19C',
+                                    },
+                                }}
+                                    size="small">
+                                    Cancel
+                                </Button>
+                                <Button onClick={handleConfirm} autoFocus variant="contained"
+                                    sx={{
+                                        background: "#6788B3",
+                                        color: "#160449",
+                                        cursor: "pointer",
+                                        fontWeight: theme.typography.secondary.fontWeight,
+                                        fontSize: theme.typography.smallFont,
+                                        textTransform: "none",
+                                        '&:hover': {
+                                            background: '#92A9CB',
+                                        },
+                                    }}
+                                    size="small">
+                                    Confirm
+                                </Button>
+                            </>
+                        )}
+
+                        {error.length > 0 && (
+                            <Button onClick={handleClose} sx={{
+                                background: "#D4736D",
                                 color: "#160449",
                                 cursor: "pointer",
                                 fontWeight: theme.typography.secondary.fontWeight,
                                 fontSize: theme.typography.smallFont,
                                 textTransform: "none",
                                 '&:hover': {
-                                    background: '#92A9CB',
+                                    background: '#DEA19C',
                                 },
                             }}
-                            size="small">
-                            Confirm
-                        </Button>
+                                size="small">
+                                Ok
+                            </Button>)}
                     </DialogActions>
                 </Dialog>
             </Paper>
