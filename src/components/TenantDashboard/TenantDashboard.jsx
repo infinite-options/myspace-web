@@ -716,7 +716,7 @@ const TenantDashboard = () => {
     ) : (
       <>
         {/* Management Details and Maintenance: Side by Side */}
-        <Grid container item xs={12} spacing={5}>
+        <Grid container item xs={12} spacing={5} direction={isMobile ? "column" : "row"}>
           <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
             <ManagementDetails leaseDetails={leaseDetails} sx={{ flex: 1 }} />
           </Grid>
@@ -1296,7 +1296,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                     Tenant:
                   </Typography>
                 </Grid>
-                <Grid item xs={7}>
+                <Grid item xs={5}>
                   {tenant_detail ? (
                     <Box display='flex' justifyContent='space-between' alignItems='center'>
                       <Typography
@@ -1355,8 +1355,8 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                     Lease Status:
                   </Typography>
                 </Grid>
-                <Grid item xs={7}>
-                  <Box display='flex' alignItems='center' justifyContent={"space-between"} sx={{ marginRight: "10px" }}>
+                <Grid item xs={5}>
+                  <Box display='flex' alignItems='center'  justifyContent={"space-between"} sx={{ marginRight: "10px" }}>
                     {leaseDetails?.lease_status === "ACTIVE" || leaseDetails?.lease_status === "ACTIVE M2M" ? (
                       <>
                         <Typography
