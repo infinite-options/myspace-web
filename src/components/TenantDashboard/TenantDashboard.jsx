@@ -1463,6 +1463,8 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                     </Typography>
                   </Grid>
                   <Grid item xs={7}>
+                  <Box display='flex' alignItems='center' justifyContent={"space-between"} sx={{ margin: "0px 10px 0px 0px" }}>
+                  <>
                     <Typography
                       sx={{
                         color: theme.typography.primary.black,
@@ -1474,6 +1476,11 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                       <span style={{ fontWeight: "bold", margin: "0px 10px" }}>to</span>
                       {leaseDetails?.lease_end}
                     </Typography>
+                    <Typography sx={{fontSize: theme.typography.smallFont,   color: "#A52A2A", fontWeight: theme.typography.secondary.fontWeight,}}>
+                          {leaseDetails?.lease_early_end_date ? leaseDetails?.lease_early_end_date : ""}
+                        </Typography>
+                      </>
+                    </Box>
                   </Grid>
                 </Grid>
               )}
