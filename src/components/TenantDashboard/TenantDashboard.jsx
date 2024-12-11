@@ -710,9 +710,17 @@ const TenantDashboard = () => {
   {/* Bottom Section: Flexible Space */}
   <Grid container spacing={8} rowGap={2} sx={{ flex: 1, display: "flex", flexDirection: isMobile ? "column" : "row", height: "100%" }}>
     {rightPane?.type ? (
-      <Grid item xs={12} sx={{ display: "flex", flexDirection: "column", flex: 1, height: "200%" }} ref={rightPaneRef} marginBottom={isMobile ? "40px" : "0px"}>
-        {renderRightPane()}
-      </Grid>
+       
+        <Paper
+          style={{
+            marginTop: !isMobile && "10px",
+            marginBottom : isMobile && "10px",
+            // marginTop: "10px",
+            backgroundColor: "black",
+            width: "100%", // Occupy full width with 25px margins on each side
+          }}
+        >  {renderRightPane()}
+      </Paper>
     ) : (
       <>
         {/* Management Details and Maintenance: Side by Side */}
@@ -2689,7 +2697,7 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
 					justifyContent: 'center',
 					alignItems: 'flex-start',
 					width: '100%', // Ensure the box spans the full viewport width
-					// height: '100vh', // Ensure the box spans the full viewport height
+					height: '100vh', // Ensure the box spans the full viewport height
 				}}
 			>
     <Paper
