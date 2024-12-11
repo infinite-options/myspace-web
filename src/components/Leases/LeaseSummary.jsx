@@ -343,7 +343,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                                 }}>{currentLease?.lease_m2m && currentLease?.lease_m2m === 1 ? "Yes" : "No"}</Typography>
                             </Grid>
                             {
-                                currentLease.lease_early_end_date != null && (
+                                currentLease.lease_early_end_date != null && currentLease.lease_early_end_date != "" && (
                                     <>
                                         <Grid item xs={12} sx={{ marginBottom: "10px" }}>
                                             <Typography sx={{
@@ -351,7 +351,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                                                 color: "#160449",
                                                 fontWeight: theme.typography.secondary.fontWeight,
                                                 fontSize: theme.typography.smallFont,
-                                            }}>Early Termination Requested1</Typography>
+                                            }}>Early Termination Requested : {currentLease.lease_early_end_date}</Typography>
                                         </Grid>                                        
                                     </>
                                 )
@@ -596,7 +596,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                     </>)}
             </Grid>
             {
-                            currentLease.lease_early_end_date != null && (
+                            currentLease.lease_early_end_date != null && currentLease.lease_early_end_date && (
                                 <>
                                     <Grid container direction="row">
                                         <Grid item xs={3.4} sx={{ marginBottom: "10px" }}></Grid>
@@ -606,7 +606,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
                                                 color: "#160449",
                                                 fontWeight: theme.typography.secondary.fontWeight,
                                                 fontSize: theme.typography.smallFont,
-                                            }}>Early Termination Requested2</Typography>
+                                            }}>Early Termination Requested : {currentLease.lease_early_end_date}</Typography>
                                         </Grid>                                        
                                     </Grid>
                                 </>
