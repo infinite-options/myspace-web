@@ -87,7 +87,7 @@ export default function TenantApplication(props) {
 
         // Fetch lease details asynchronously
         const leaseResponse = await axios.get(
-          `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`
+          `${APIConfig.baseURL.dev}/leaseDetails/${getProfileId()}`
         );
 
         const fetchedLease = leaseResponse.data["Lease_Details"].result.filter(

@@ -11,6 +11,7 @@ import ProfileImg from "../Images/PMProfileImagePlaceholder.png";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import theme from "../../../theme/theme";
+import APIConfig from "../../../utils/APIConfig";
 import { set } from "date-fns";
 
 const TenantProfileEditContext = createContext(null);
@@ -98,7 +99,7 @@ function TenantProfileEdit() {
     console.log("In useEffect 89");
     setShowSpinner(true);
     console.log("Execute axios get");
-    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`).then((res) => {
+    axios.get(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`).then((res) => {
       console.log("res from tenantEditProfile ", res);
       let responseData = res.data.profile.result[0];
       parseJSONFields(responseData);
@@ -297,9 +298,9 @@ function TenantProfileEdit() {
     // Make a PUT request with formData to update data on the backend
     if (isEdited) {
       console.log("EDITED");
-      // axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', modifiedData, headers)
+      // axios.put(`${APIConfig.baseURL.dev}/profile`, modifiedData, headers)
       axios
-        .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, headers)
+        .put(`${APIConfig.baseURL.dev}/profile`, profileFormData, headers)
         // axios.put('http://localhost:4000/profile', profileFormData, headers)
         .then((response) => {
           console.log("Data updated successfully");

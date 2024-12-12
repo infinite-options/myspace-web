@@ -232,7 +232,7 @@ export default function QuoteRequestForm({ setRefresh }) {
 				// console.log("QuoteRequestForm - annReceivers - ", annReceivers);
 				// console.log("QuoteRequestForm - payload - ", payload);
 
-				await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+				await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",

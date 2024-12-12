@@ -1,6 +1,7 @@
 // import React, { Component, useEffect, useState } from "react";
 // import { useUser } from "../../contexts/UserContext";
 import axios from "axios";
+import APIConfig from "../../utils/APIConfig";
 
 // I want to create several functions that compute the cashflow
 // data for the owner.
@@ -9,12 +10,12 @@ import axios from "axios";
 
 async function fetchCashflow2(userProfileId, month, year) {
   try {
-    // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
-    // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
-    // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/${userProfileId}/TTM`);
-    // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/110-000003/TTM`);
-    // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowRevised/${userProfileId}`);
-    const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowTransactions/${userProfileId}/new`)
+    // const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflowByOwner/${userProfileId}/TTM`);
+    // const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflowByOwner/${userProfileId}/TTM`);
+    // const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflow/${userProfileId}/TTM`);
+    // const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflow/110-000003/TTM`);
+    // const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflowRevised/${userProfileId}`);
+    const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflowTransactions/${userProfileId}/new`)
 
     // console.log("Endpoint returns: ", cashflow.data);
     return cashflow.data;

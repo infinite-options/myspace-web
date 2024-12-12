@@ -7,6 +7,7 @@ import { useUser } from "../../../contexts/UserContext";
 import { NavigationType, useLocation, useNavigate } from "react-router-dom";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import APIConfig from '../../../utils/APIConfig';
 
 function TenantDoucments() {
     const { getProfileId } = useUser();
@@ -18,7 +19,7 @@ function TenantDoucments() {
    
     useEffect(() => {
     setShowSpinner(true);
-    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/documents/${getProfileId()}`)  
+    axios.get(`${APIConfig.baseURL.dev}/documents/${getProfileId()}`)  
     .then((res) => {
                 setDocumentsData(res.data.Documents.result);
                 setShowSpinner(false);

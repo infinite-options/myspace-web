@@ -283,7 +283,7 @@ export default function ReferralGoogleSignup({}) {
   }, [firstName, lastName, email, phoneNumber, role]);
 
   const handleFetchBusinesses = async (role) => {
-    const url = "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile";
+    const url = `${APIConfig.baseURL.dev}/businessProfile`;
     const args = {
       "business_type": role === "PM_EMPLOYEE" ? "MANAGEMENT" : "MAINTENANCE",
     }
@@ -304,7 +304,7 @@ export default function ReferralGoogleSignup({}) {
   const getDetailsAfterGoogleSignup = () => {
     setShowSpinner(true);
     // axios.get(`http://localhost:4000/userInfo/${userID}`).then((res) => {
-    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo/${userID}`).then((res) => {
+    axios.get(`${APIConfig.baseURL.dev}/userInfo/${userID}`).then((res) => {
       const data = res.data?.result[0];
       
       setFirstName(googleUserInfo?.first_name);
@@ -483,7 +483,7 @@ export default function ReferralGoogleSignup({}) {
     }
     const { profileApi } = roleMap[userInfo.role];
     const { data } = await axios.post(
-      `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`,
+      `${APIConfig.baseURL.dev}${profileApi}`,
       form,
       headers
     );
@@ -530,7 +530,7 @@ export default function ReferralGoogleSignup({}) {
       formPayload.append(key, payload[key]);
     }
     const { data } = await axios.post(
-      "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee",
+      `${APIConfig.baseURL.dev}/employee`,
       formPayload,
       headers
     );

@@ -102,7 +102,7 @@ export default function ManagerCreateAnnouncement() {
   useEffect(() => {
     setShowSpinner(true);
 
-    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`).then((res) => {
+    axios.get(`${APIConfig.baseURL.dev}/properties/${getProfileId()}`).then((res) => {
       // const applications = res.data.Applications.result;
       const applications = res.data.Leases ? res.data.Leases.result : [];
       const properties = res.data.Property.result;

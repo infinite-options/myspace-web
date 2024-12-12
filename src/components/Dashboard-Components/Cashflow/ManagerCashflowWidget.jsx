@@ -496,7 +496,7 @@ function ManagerCashflowWidget({
       {showSpinner ? (<Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 2 }} open={showSpinner}>
         <CircularProgress color='inherit' />
       </Backdrop>):(
-      <Container sx={{ backgroundColor: "#F2F2F2", borderRadius: "5px", marginTop: "2px" }}>
+      <Container sx={{ backgroundColor: "#F2F2F2", borderRadius: "5px", marginTop: "2px", height: "100%"}}>
         <Grid
           container
           rowSpacing={1}

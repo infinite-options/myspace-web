@@ -93,11 +93,11 @@ function PMContractDetailsList(props) {
       setContractBusinessID(contract_business_id);
       setContractUID(contract_uid);
 
-      // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000096`)
+      // const response = await fetch(`${APIConfig.baseURL.dev}/properties/110-000096`)
 
-      // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${property_owner_id}`)
+      // const response = await fetch(`${APIConfig.baseURL.dev}/properties/${property_owner_id}`)
 
-      // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${property_owner_id}`)
+      // const response = await fetch(`${APIConfig.baseURL.dev}/properties/${property_owner_id}`)
       const response = await fetch(`${APIConfig.baseURL.dev}/properties/${getProfileId()}`);
 
       const responseData = await response.json();

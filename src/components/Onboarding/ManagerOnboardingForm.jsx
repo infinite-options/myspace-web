@@ -331,7 +331,7 @@ const closeDialog = () => {
   const setProfileData = async () => {
     setShowSpinner(true);
     try {
-      //     const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
+      //     const profileResponse = await axios.get(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
       // const profileData = profileResponse.data.profile.result[0];
 
       setBusinessName(profileData.business_name || "");
@@ -397,7 +397,7 @@ const closeDialog = () => {
       setShowSpinner(false);
     }
     try {
-      // const employeeResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee/${getProfileId()}`);
+      // const employeeResponse = await axios.get(`${APIConfig.baseURL.dev}/employee/${getProfileId()}`);
       // const employeeData = employeeResponse.data.employee.result[0];
 
       setEmpFirstName(profileData.employee_first_name || "");
@@ -1169,7 +1169,7 @@ const closeDialog = () => {
       // Make PUT request if there are modified existing payment methods
       if (putPayload.length > 0) {
         await axios.put(
-          "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
+          `${APIConfig.baseURL.dev}/paymentMethod`,
           putPayload,
           { headers: { "Content-Type": "application/json" } }
         );
@@ -1178,7 +1178,7 @@ const closeDialog = () => {
       // Make POST request if there are new payment methods
       if (postPayload.length > 0) {
         await axios.post(
-          "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
+          `${APIConfig.baseURL.dev}/paymentMethod`,
           postPayload,
           { headers: { "Content-Type": "application/json" } }
         );
@@ -1362,7 +1362,7 @@ const closeDialog = () => {
         
 
         axios
-          .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, headers)
+          .put(`${APIConfig.baseURL.dev}/profile`, profileFormData, headers)
           .then((response) => {
             console.log("Data updated successfully", response);
             openDialog("Success", "Your profile has been successfully updated.", "success");
@@ -1804,7 +1804,9 @@ const closeDialog = () => {
       </Grid>
 
         <Grid item xs={12} sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
-          <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
+          <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }} 
+                    paddingTop='5px'
+                    paddingBottom='10px'>
             Property Manager Personal Information
           </Typography>
           <Grid container item xs={12}>
@@ -2078,9 +2080,11 @@ const closeDialog = () => {
           </Grid>
         </Grid>
 
-        <Grid container justifyContent='center' item xs={12}>
+        <Grid container justifyContent='center' item xs={12} sx= {{ backgroundColor:"#F2F2F2", borderRadius: "10px",}} 
+                    paddingTop='10px'
+                    paddingBottom='10px'>
           <Button variant='contained' color='primary' onClick={handleNextStep} disabled={nextStepDisabled} sx={{ mb: 2, backgroundColor: "#3D5CAC" }}>
-            <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Save</Typography>
+            <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }} >Save</Typography>
           </Button>
         </Grid>
 

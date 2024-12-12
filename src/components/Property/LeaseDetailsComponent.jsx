@@ -1587,7 +1587,7 @@ const EndContractDialog = ({ open, handleClose, contract }) => {
     }
 
     try {
-      fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`, {
+      fetch(`${APIConfig.baseURL.dev}/contracts`, {
         method: "PUT",
         body: formData,
       })
@@ -1852,7 +1852,7 @@ const RenewContractDialog = ({ open, handleClose, contract }) => {
     let config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`,
+      url: `${APIConfig.baseURL.dev}/announcements/${getProfileId()}`,
       // url: `http://localhost:4000/announcements/${ownerId}`,
       headers: {
         "Content-Type": "application/json",
@@ -1878,7 +1878,7 @@ const RenewContractDialog = ({ open, handleClose, contract }) => {
     formData.append("contract_renew_status", contractRenewStatus);
 
     try {
-      fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`, {
+      fetch(`${APIConfig.baseURL.dev}/contracts`, {
         method: "PUT",
         body: formData,
       })

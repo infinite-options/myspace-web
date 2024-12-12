@@ -25,6 +25,7 @@ import theme from "../../theme/theme";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 import { useCookies } from "react-cookie";
+import APIConfig from "../../utils/APIConfig";
 
 import DataValidator from "../DataValidator";
 import { formatPhoneNumber, headers, maskNumber, maskEin, roleMap, photoFields } from "./helper";
@@ -152,7 +153,7 @@ const CreateProfile = () => {
 
   const createProfile = async (form, type) => {
     const { profileApi } = roleMap[type];
-    const { data } = await axios.post(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`, form, headers);
+    const { data } = await axios.post(`${APIConfig.baseURL.dev}${profileApi}`, form, headers);
     return data;
   };
 
@@ -320,14 +321,14 @@ const CreateProfile = () => {
     if (validate_form() === false) return;
 
     setCookie("default_form_vals", { ...cookiesData, firstName, lastName, phoneNumber, email });
-
+    
     if (user.isEmailSignup) {
       const url = "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/CreateAccount/MYSPACE";
       const data = {
         ...user,
         first_name: firstName,
         last_name: lastName,
-        phone_number: phoneNumber,
+        phone_number: phoneNumber || businessPhoneNumber,
       };
       fetch(url, {
         method: "POST",
@@ -368,7 +369,7 @@ const CreateProfile = () => {
         ...user,
         first_name: firstName,
         last_name: lastName,
-        phone_number: phoneNumber,
+        phone_number: phoneNumber || businessPhoneNumber,
       };
       fetch(url, {
         method: "POST",

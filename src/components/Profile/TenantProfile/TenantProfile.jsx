@@ -7,6 +7,7 @@ import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import Setting_fill from "../../../images/Setting_fill.png";
+import APIConfig from "../../../utils/APIConfig";
 import CryptoJS from "crypto-js";
 
 function getSSNText(data) {
@@ -42,7 +43,7 @@ function TenantProfile() {
   const [showSpinner, setShowSpinner] = useState(false);
   useEffect(() => {
     setShowSpinner(true);
-    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`).then((res) => {
+    axios.get(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`).then((res) => {
       //   console.log("Res 1: ", res);
       //   console.log("Res 2: ", res.data.profile);
       //   console.log("Res 3: ", res.data.profile.result[0]);

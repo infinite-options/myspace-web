@@ -233,7 +233,7 @@ function Properties() {
 
     // PROPERTIES ENDPOINT
     const property_response = await fetch(`${APIConfig.baseURL.dev}/properties/${profileId}`);
-    //const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000003`)
+    //const response = await fetch(`${APIConfig.baseURL.dev}/properties/110-000003`)
     if (!property_response.ok) {
       // console.log("Error fetching Property Details data");
     }

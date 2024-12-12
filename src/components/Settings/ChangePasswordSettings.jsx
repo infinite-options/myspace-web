@@ -8,6 +8,7 @@ import { alpha, makeStyles } from "@material-ui/core/styles";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 import axios from "axios";
+import APIConfig from "../../utils/APIConfig";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -89,7 +90,7 @@ export default function ChangePasswordSettings(props) {
       if (emailAddress === "") {
         // axios.put('http://localhost:4000/ownerProfile', modifiedData, headers)
         axios
-          .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/password", modifiedData, headers)
+          .put(`${APIConfig.baseURL.dev}/password`, modifiedData, headers)
           .then((response) => {
             console.log("Data updated successfully");
             setIsEdited(false); // Reset the edit status

@@ -10,6 +10,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import GenericDialog from '../GenericDialog';
 import axios from 'axios';
 import { useUser } from '../../contexts/UserContext';
+import APIConfig from '../../utils/APIConfig';
 
 const useStyles = makeStyles((theme) => ({
     textField: {
@@ -95,7 +96,7 @@ const IncomeDetails = ({ employmentList, setEmploymentList, salaryFrequencies })
     
         try {
             setShowSpinner(true);
-            await axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, {
+            await axios.put(`${APIConfig.baseURL.dev}/profile`, profileFormData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -129,7 +130,7 @@ const IncomeDetails = ({ employmentList, setEmploymentList, salaryFrequencies })
     
         try {
             setShowSpinner(true);
-            await axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, {
+            await axios.put(`${APIConfig.baseURL.dev}/profile`, profileFormData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },

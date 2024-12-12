@@ -59,7 +59,7 @@ const Contacts = (props) => {
         setShowSpinner(false);
       });
 
-    const ownerUrl = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsOwnerDetails/${getProfileId()}`;
+    const ownerUrl = `${APIConfig.baseURL.dev}/contactsBusinessContactsOwnerDetails/${getProfileId()}`;
     setShowSpinner(true);
     await axios
       .get(ownerUrl)
@@ -83,7 +83,7 @@ const Contacts = (props) => {
         setShowSpinner(false);
       });
 
-    const tenantUrl = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsTenantDetails/${getProfileId()}`;
+    const tenantUrl = `${APIConfig.baseURL.dev}/contactsBusinessContactsTenantDetails/${getProfileId()}`;
     setShowSpinner(true);
     await axios
       .get(tenantUrl)
@@ -107,7 +107,7 @@ const Contacts = (props) => {
         setShowSpinner(false);
       });
 
-    const maintenanceUrl = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contactsBusinessContactsMaintenanceDetails/${getProfileId()}`;
+    const maintenanceUrl = `${APIConfig.baseURL.dev}/contactsBusinessContactsMaintenanceDetails/${getProfileId()}`;
     setShowSpinner(true);
     await axios
       .get(maintenanceUrl)

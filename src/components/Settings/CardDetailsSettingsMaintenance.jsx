@@ -358,7 +358,7 @@ export default function CardDetailsSettingsMaintenance() {
     //         modifiedPaymentsData.forEach((item, index) => {
     //             // console.log(`Element at index ${index}: `, item);
 
-    //             axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod', item, headers)
+    //             axios.put(`${APIConfig.baseURL.dev}/paymentMethod`, item, headers)
     //             .then((response) => {
     //                 console.log('Payment method updated successfully');
     //                 setIsEdited(false); // Reset the edit status
@@ -378,7 +378,7 @@ export default function CardDetailsSettingsMaintenance() {
     //         newPaymentsData.forEach((item, index) => {
     //             // console.log(`Element at index ${index}: `, item);
 
-    //             axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod', item, headers)
+    //             axios.post('${APIConfig.baseURL.dev}/paymentMethod', item, headers)
     //             .then((response) => {
     //                 console.log('Payment method added successfully');
     //                 setIsNewMethodAdded(false); // Reset the edit status
@@ -418,12 +418,12 @@ export default function CardDetailsSettingsMaintenance() {
 
         if (isEdited) {
             modifiedPaymentsData.forEach((item) => {
-                const request = axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod', item, headers);
+                const request = axios.put(`${APIConfig.baseURL.dev}/paymentMethod`, item, headers);
                 requests.push(request);
             });
             deletedPaymentsData.forEach((item, index) => {
                 // console.log(`Element at index ${index}: `, item.paymentMethod_uid);
-                const request = axios.delete(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod/${item.paymentMethod_uid}`, headers)
+                const request = axios.delete(`${APIConfig.baseURL.dev}/paymentMethod/${item.paymentMethod_uid}`, headers)
                 requests.push(request);
             });
 
@@ -431,7 +431,7 @@ export default function CardDetailsSettingsMaintenance() {
 
         if (isNewMethodAdded) {
             newPaymentsData.forEach((item) => {
-                const request = axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod', item, headers);
+                const request = axios.post(`${APIConfig.baseURL.dev}/paymentMethod`, item, headers);
                 requests.push(request);
             });
         }

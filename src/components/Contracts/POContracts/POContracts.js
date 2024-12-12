@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import APIConfig from '../../../utils/APIConfig';
 
 // const theme = createTheme({
 //     palette: {
@@ -73,7 +74,7 @@ function POContracts(props) {
 
     useEffect(() => {
         setShowSpinner(true);
-        axios.get("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/searchManager")
+        axios.get(`${APIConfig.baseURL.dev}/searchManager`)
             .then((res) => {
                 setManagers(res.data.result);
                 console.log(res.data.result);

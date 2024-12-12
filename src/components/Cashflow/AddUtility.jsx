@@ -163,7 +163,7 @@ const AddUtility = (props) => {
     // let config = {
     //   method: 'post',
     //   maxBodyLength: Infinity,
-    //   url: 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/bills',
+    //   url: `${APIConfig.baseURL.dev}/bills`,
     //   headers: {
     //     'Content-Type': 'application/json'
     //   },

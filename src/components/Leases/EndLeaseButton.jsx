@@ -11,6 +11,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useUser } from "../../contexts/UserContext";
 import axios from 'axios';
+import APIConfig from '../../utils/APIConfig';
 
 
 const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked, handleUpdate, fromProperties = false }) => {
@@ -175,7 +176,7 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked,
         console.log('leaseApplicationFormData', leaseData.lease_uid, formattedMoveOutDate, endLeaseStatus, moveOutReason);
         console.log('end form', leaseApplicationFormData);
         axios
-            .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication", leaseApplicationFormData, headers)
+            .put(`${APIConfig.baseURL.dev}/leaseApplication`, leaseApplicationFormData, headers)
             .then((response) => {
                 setShowSpinner(false);
                 console.log("Data updated successfully", response);

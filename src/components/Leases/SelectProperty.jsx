@@ -4,6 +4,7 @@ import axios from "axios";
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import APIConfig from "../../utils/APIConfig";
 
 function SelectProperty(props) {
   const handleClose = props.closeTab;
@@ -16,7 +17,7 @@ function SelectProperty(props) {
   const [showSpinner, setShowSpinner] = useState(false);
   useEffect(() => {
     setShowSpinner(true);
-    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/propertiesByOwner/${getProfileId()}`).then((res) => {
+    axios.get(`${APIConfig.baseURL.dev}/propertiesByOwner/${getProfileId()}`).then((res) => {
       console.log("Property list ", res.data.Property.result);
       setProperties(res.data.Property.result);
       setShowSpinner(false);

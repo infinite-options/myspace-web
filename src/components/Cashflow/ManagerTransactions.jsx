@@ -51,6 +51,7 @@ import "../../css/selectMonth.css";
 // import ManagerCashflowWidget from "../Dashboard-Components/Cashflow/ManagerCashflowWidget";
 
 import axios from "axios";
+import APIConfig from "../../utils/APIConfig";
 
 // import {
 //   getTotalRevenueByType,
@@ -142,7 +143,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
   async function fetchCashflowTransactions(userProfileId, month, year) {
     setShowSpinner(true);
     try {
-      const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowTransactions/${userProfileId}/new`);
+      const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflowTransactions/${userProfileId}/new`);
       // console.log("Manager Cashflow Data: ", cashflow.data);
       setShowSpinner(false);
       return cashflow.data?.result;

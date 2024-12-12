@@ -17,6 +17,7 @@ import theme from '../../../theme/theme';
 import CloseIcon from '@mui/icons-material/Close';
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
+import APIConfig from '../../../utils/APIConfig';
 
 import { useUser } from '../../../contexts/UserContext';
 
@@ -47,13 +48,13 @@ export default function RequestMoreInfo({fromQuote, showRequestMoreInfo, setShow
             formData.append("maintenance_quote_uid", maintenanceItem.maintenance_quote_uid);
             formData.append("quote_mm_notes", pmNotes);
             formData.append("quote_status", "MORE INFO");
-            toBeCalledAPI = "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceQuotes";
+            toBeCalledAPI = `${APIConfig.baseURL.dev}/maintenanceQuotes`;
         
         } else {
             formData.append("maintenance_request_uid", maintenanceItem.maintenance_request_uid);
             formData.append("maintenance_pm_notes", pmNotes);
             formData.append("maintenance_request_status","INFO");
-            toBeCalledAPI = "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/maintenanceRequests";
+            toBeCalledAPI = `${APIConfig.baseURL.dev}/maintenanceRequests`;
         }
         
         setShowSpinner(true);
@@ -85,7 +86,7 @@ export default function RequestMoreInfo({fromQuote, showRequestMoreInfo, setShow
 
 
 
-        await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+        await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

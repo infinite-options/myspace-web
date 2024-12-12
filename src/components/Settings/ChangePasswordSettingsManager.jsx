@@ -15,6 +15,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../contexts/UserContext';
 import axios from 'axios';
+import APIConfig from '../../utils/APIConfig';
 
 const useStyles = makeStyles(() => ({
 	root: {
@@ -84,7 +85,7 @@ export default function ChangePasswordSettingsManager(props) {
 		if (isEdited) {
 			if (emailAddress === '') {
 				axios
-					.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/password', modifiedData, headers)
+					.put(`${APIConfig.baseURL.dev}/password`, modifiedData, headers)
 					.then((response) => {
 						setIsEdited(false); // Reset the edit status
 						props.setRHS('form');

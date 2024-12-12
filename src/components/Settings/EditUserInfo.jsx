@@ -10,6 +10,7 @@ import { RadioGroup, FormControl, FormControlLabel, Radio } from '@mui/material'
 import { useCookies } from 'react-cookie';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import GenericDialog from "../GenericDialog";
+import APIConfig from '../../utils/APIConfig';
 
 const useStyles = makeStyles(() => ({
 	root: {
@@ -95,7 +96,7 @@ const closeDialog = () => {
 
 		if (isEdited) {
 			try {
-				const response = await axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo", {
+				const response = await axios.put(`${APIConfig.baseURL.dev}/userInfo`, {
 				  user_uid: cookiesData.user_uid,
 				  first_name: firstName,
 				  last_name: lastName,

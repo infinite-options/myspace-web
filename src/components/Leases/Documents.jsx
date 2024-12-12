@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Documents = ({ setRightPane,setRHS, setSelectedDocument, fromRenew, documents, setDocuments, setDeleteDocsUrl, setIsPreviousFileChange, isAccord=false, contractFiles, setContractFiles, contractFileTypes, setContractFileTypes, isEditable=true, customName, customUploadingName, isMobile, titleFontSize, plusIconColor, plusIconSize}) => {
+const Documents = ({ isCenter=false, setRightPane,setRHS, setSelectedDocument, fromRenew, documents, setDocuments, setDeleteDocsUrl, setIsPreviousFileChange, isAccord=false, contractFiles, setContractFiles, contractFileTypes, setContractFileTypes, isEditable=true, customName, customUploadingName, isMobile, titleFontSize, plusIconColor, plusIconSize}) => {
 
   const { getList, } = useContext(ListsContext);	
   
@@ -949,7 +949,7 @@ setSelectedDocument({
           sx={{
             display: 'flex',
             flexDirection: 'row',
-            justifyContent: 'space-between',
+            justifyContent: isCenter ? 'center': 'space-between',
             fontSize: '15px',
             fontWeight: 'bold',
             color: '#3D5CAC',
@@ -968,7 +968,7 @@ setSelectedDocument({
                   marginTop:"10px"
                 }}
               >
-                {customName ? customName : "Documents: "}
+                {customName ? customName : "Documents "}
               </Typography>
             )
           }          

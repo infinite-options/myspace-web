@@ -183,7 +183,7 @@ export default function ReferUser({ onClose, onReferralSuccess, setReferedUser})
         const { profileApi } = roleMap["OWNER"];
 
         const { data } = await axios.post(
-          `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`,
+          `${APIConfig.baseURL.dev}${profileApi}`,
           form,
           headers
         );
@@ -202,7 +202,7 @@ export default function ReferUser({ onClose, onReferralSuccess, setReferedUser})
             "email_body": message + ` Please sign up using the link - ${link}. Don't forget to verify your profile information and create a password to finish setting up your profile. You can also sign up using your Google Account.`,
         }
         const emailResponse = await axios.post(
-            "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/sendEmail",
+            `${APIConfig.baseURL.dev}/sendEmail`,
             emailPayload
         );
 
