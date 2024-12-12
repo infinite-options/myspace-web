@@ -436,7 +436,7 @@ export default function LeaseDetailsComponent({
                             navigate("/ContactsPM", {
                               state: {
                                 contactsTab: "Tenant",
-                                tenentId: currentProperty.tenant_uid,
+                                tenantId: currentProperty.tenant_uid,
                               },
                             });
                           }
