@@ -7,6 +7,7 @@ export const useMaintenance = () => useContext(MaintenanceContext);
 export const MaintenanceProvider = ({ children }) => {
   const [maintenanceData, setMaintenanceData] = useState({});
   const [selectedRequestIndex, setSelectedRequestIndex] = useState(0);
+  const [selectedMaintenanceID, setSelectedMaintenanceID] = useState("");
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
   // const [selectedStatus, setSelectedStatus] = useState('NEW REQUEST');
   const [selectedStatus, setSelectedStatus] = useState('');
@@ -43,6 +44,8 @@ export const MaintenanceProvider = ({ children }) => {
         setMaintenanceData,
         selectedRequestIndex,
         setSelectedRequestIndex,
+        selectedMaintenanceID, 
+        setSelectedMaintenanceID,
         currentQuoteIndex,
         setCurrentQuoteIndex,
         selectedStatus,
