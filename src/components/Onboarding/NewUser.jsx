@@ -42,6 +42,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import { roleMap } from "./helper";
 import DataValidator from "../DataValidator";
 import UserExistsModal from "./UserExistsModal";
+import APIConfig from "../../utils/APIConfig";
 
 const NewUser = () => {
   console.log("In NewUser2");
@@ -100,7 +101,7 @@ const NewUser = () => {
   }, [selectedBusiness]);
 
   const fetchBusinesses = async () => {
-    const url = "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile";
+    const url = `${APIConfig.baseURL.dev}/businessProfile`;
     // const args = {
     //   business_type: isManagementEmployee() ? "MANAGEMENT" : "MAINTENANCE",
     // };
@@ -147,7 +148,7 @@ const NewUser = () => {
   const checkIfUserExists = async (email) => {
     if(email) {
       try {
-        const response = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo/${email}`);
+        const response = await axios.get(`${APIConfig.baseURL.dev}/userInfo/${email}`);
         return response;
       } catch (error) {
         if (error.response && error.response.status === 404 && error.response.data.message === "User not found") {
@@ -158,7 +159,7 @@ const NewUser = () => {
       }
     } else if(user?.email){
       try {
-        const response = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo/${user.email}`);
+        const response = await axios.get(`${APIConfig.baseURL.dev}/userInfo/${user.email}`);
         return response;
       } catch (error) {
         if (error.response && error.response.status === 404 && error.response.data.message === "User not found") {

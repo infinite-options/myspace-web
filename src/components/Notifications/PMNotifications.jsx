@@ -33,7 +33,7 @@ function PMNotifications(props) {
             setShowSpinner(true);
             
             // const response = await fetch(`http://localhost:4000/announcements/600-000003`);
-            // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/600-000051`);
+            // const response = await fetch(`${APIConfig.baseURL.dev}/announcements/600-000051`);
             const response = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`);
             const announcementData = await response.json();
 

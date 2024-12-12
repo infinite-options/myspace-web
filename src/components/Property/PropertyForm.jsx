@@ -500,7 +500,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 				const { profileApi } = roleMap["OWNER"];
 
 				const { data } = await axios.post(
-					`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`,
+					`${APIConfig.baseURL.dev}${profileApi}`,
 					form,
 					headers
 				);
@@ -519,7 +519,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 					"email_body": message + `Please Login to your account and verify your profile information.`,
 				}
 				const emailResponse = await axios.post(
-					"https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/sendEmail",
+					`${APIConfig.baseURL.dev}/sendEmail`,
 					emailPayload
 				);
 
@@ -634,7 +634,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		const { profileApi } = roleMap["OWNER"];
 
 		const { data } = await axios.post(
-			`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`,
+			`${APIConfig.baseURL.dev}${profileApi}`,
 			form,
 			headers
 		);
@@ -653,7 +653,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 			"email_body": message + ` Please sign up using the link - ${link}. Don't forget to verify your profile information and create a password to finish setting up your profile. You can also sign up using your Google Account.`,
 		}
 		const emailResponse = await axios.post(
-			"https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/sendEmail",
+			`${APIConfig.baseURL.dev}/sendEmail`,
 			emailPayload
 		);
 

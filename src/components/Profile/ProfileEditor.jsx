@@ -20,6 +20,7 @@ import OwnerOnBoardDeskTopForm from "../Onboarding/OwnerOnBoardDesktopForm";
 import OwnerOnboardingForm from "../Onboarding/OwnerOnboardingForm";
 import MaintenanceOnBoardDesktopForm from "../Onboarding/MaintenanceOnBoardDesktopForm";
 import MaintenanceOnboardingForm from "../Onboarding/MaintenanceOnboardingForm";
+import APIConfig from "../../utils/APIConfig";
 import PMEmpOnBoardDesktopForm from "../Onboarding/PMEmpOnBoardDesktopForm";
 import MaintEmpOnBoardDesktopForm from "../Onboarding/MaintEmpOnBoardDesktopForm";
 import ChangePasswordSettingsManager from "../Settings/ChangePasswordSettingsManager";
@@ -88,7 +89,7 @@ function ProfileEditor() {
     setActiveForm(selectedRole);
     const fetchProfileData = async () => {
       try {
-        const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getRoleId()}`;
+        const url = `${APIConfig.baseURL.dev}/profile/${getRoleId()}`;
         const profileResponse = await axios.get(url);
         const profileData = profileResponse.data.profile.result[0];
         setProfileData(profileData);
@@ -104,7 +105,7 @@ function ProfileEditor() {
     if (settingsChanged) {
       const updateUserInfo = async () => {
         try {
-          const response = await axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo", {
+          const response = await axios.put(`${APIConfig.baseURL.dev}/userInfo`, {
             notifications: notifications.toString(),
             dark_mode: darkMode.toString(),
             cookies: allowCookies.toString(),

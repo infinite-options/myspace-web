@@ -46,6 +46,7 @@ import Divider from "@mui/material/Divider";
 import { DataGrid } from "@mui/x-data-grid";
 import CloseIcon from "@mui/icons-material/Close";
 import Documents from "./Documents";
+import APIConfig from "../../utils/APIConfig";
 
 import PropertiesContext from "../../contexts/PropertiesContext";
 
@@ -140,7 +141,7 @@ const ViewLease = (props) => {
     leaseApplicationFormData.append("lease_status", "END-REQUEST");
 
     axios
-      .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication", leaseApplicationFormData, headers)
+      .put(`${APIConfig.baseURL.dev}/leaseApplication`, leaseApplicationFormData, headers)
       .then((response) => {
         console.log("Data updated successfully");
       })
@@ -155,7 +156,7 @@ const ViewLease = (props) => {
           [leaseData.business_uid]: [leaseData.lease_property_id],
         };
 
-        await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+        await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -186,7 +187,7 @@ const ViewLease = (props) => {
   // console.log("propertyUID", propertyUID)  
 
   const getLeaseDetails = async () => {
-    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`).then((res) => {
+    axios.get(`${APIConfig.baseURL.dev}/leaseDetails/${getProfileId()}`).then((res) => {
       const data = res.data["Lease_Details"].result;
       // console.log("getLeaseDetails - data -  ", data);      
       setAllLeases(data);

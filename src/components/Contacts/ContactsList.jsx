@@ -749,7 +749,7 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex, setVi
     };
   
     const updateVerification = ( value ) => {
-      const url = 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employeeVerification'; // Replace with your API endpoint
+      const url = `${APIConfig.baseURL.dev}/employeeVerification`; // Replace with your API endpoint
       const data = {
         employee_uid: employee?.employee_uid,
         employee_verification: value,

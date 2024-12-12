@@ -173,11 +173,11 @@ export default function ManagerCashflow() {
   // async function fetchCashflow(userProfileId, month, year) {
   //   setShowSpinner(true);
   //   try {
-  //     // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
-  //     // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowByOwner/${userProfileId}/TTM`);
-  //     // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/${userProfileId}/TTM`);
-  //     // const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflow/110-000003/TTM`);
-  //     const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowRevised/${userProfileId}`);
+  //     // const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflowByOwner/${userProfileId}/TTM`);
+  //     // const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflowByOwner/${userProfileId}/TTM`);
+  //     // const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflow/${userProfileId}/TTM`);
+  //     // const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflow/110-000003/TTM`);
+  //     const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflowRevised/${userProfileId}`);
   //     console.log("Manager Cashflow Data: ", cashflow.data);
   //     setShowSpinner(false);
   //     return cashflow.data;
@@ -190,7 +190,7 @@ export default function ManagerCashflow() {
   async function fetchCashflowTransactions(userProfileId, month, year) {
     // setShowSpinner(true);
     try {
-      const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowTransactions/${userProfileId}/payment`);
+      const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflowTransactions/${userProfileId}/payment`);
       console.log("Manager Cashflow Data: ", cashflow.data);
       // setShowSpinner(false);
       return cashflow.data;
@@ -203,7 +203,7 @@ export default function ManagerCashflow() {
   async function fetchProperties(userProfileId, month, year) {
     // setShowSpinner(true);
     try {
-      const properties = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${userProfileId}`);
+      const properties = await axios.get(`${APIConfig.baseURL.dev}/properties/${userProfileId}`);
       // console.log("Manager Properties: ", properties.data);
       // setShowSpinner(false);
       return properties.data;

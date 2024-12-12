@@ -25,6 +25,7 @@ import theme from "../../theme/theme";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 import { useCookies } from "react-cookie";
+import APIConfig from "../../utils/APIConfig";
 
 import DataValidator from "../DataValidator";
 import { formatPhoneNumber, headers, maskNumber, maskEin, roleMap, photoFields } from "./helper";
@@ -152,7 +153,7 @@ const CreateProfile = () => {
 
   const createProfile = async (form, type) => {
     const { profileApi } = roleMap[type];
-    const { data } = await axios.post(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`, form, headers);
+    const { data } = await axios.post(`${APIConfig.baseURL.dev}${profileApi}`, form, headers);
     return data;
   };
 

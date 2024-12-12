@@ -58,6 +58,7 @@ import ManagerSelectPayment from "./ManagerSelectPayment";
 
 import axios from "axios";
 import VerifyPayments2 from "../Payments/VerifyPayments2";
+import APIConfig from "../../utils/APIConfig";
 
 
 const PaymentProcessing = () => {
@@ -111,7 +112,7 @@ const PaymentProcessing = () => {
         setShowSpinner(true);
         try {
     
-          const cashflow = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/cashflowTransactions/${userProfileId}/payment`);
+          const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflowTransactions/${userProfileId}/payment`);
           console.log("Manager Cashflow Data: ", cashflow.data);
           setShowSpinner(false);
           return cashflow.data?.result;

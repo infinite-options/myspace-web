@@ -11,6 +11,7 @@ import Status23 from "../../images/status_bar_6.png";
 import axios from "axios";
 import AddFeeRowImg from "../../images/AddFeeRowImg.svg";
 import AddLocationRowImg from "../../images/AddLocationRowImg.svg";
+import APIConfig from "../../utils/APIConfig";
 import { formatPhoneNumber, headers, maskNumber, maskEin, roleMap, photoFields } from "./helper";
 import AES from "crypto-js/aes";
 import { useCookies } from "react-cookie";
@@ -322,7 +323,7 @@ const ProfileInfo = () => {
 
   const createProfile = async (form, type) => {
     const { profileApi } = roleMap[type];
-    const { data } = await axios.post(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`, form, headers);
+    const { data } = await axios.post(`${APIConfig.baseURL.dev}${profileApi}`, form, headers);
     return data;
   };
 

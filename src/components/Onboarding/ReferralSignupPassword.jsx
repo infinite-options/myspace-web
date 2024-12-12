@@ -307,7 +307,7 @@ export default function ReferralSignupPassword({}) {
     }
     const { profileApi } = roleMap[userInfo.role];
     const { data } = await axios.post(
-      `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`,
+      `${APIConfig.baseURL.dev}${profileApi}`,
       form,
       headers
     );
@@ -354,7 +354,7 @@ export default function ReferralSignupPassword({}) {
       formPayload.append(key, payload[key]);
     }
     const { data } = await axios.post(
-      "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee",
+      `${APIConfig.baseURL.dev}/employee`,
       formPayload,
       headers
     );

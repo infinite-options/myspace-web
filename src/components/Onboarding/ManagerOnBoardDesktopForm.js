@@ -19,6 +19,7 @@ import ZelleIcon from "../../images/Zelle.png";
 import VenmoIcon from "../../images/Venmo.png";
 import Stripe from "../../images/Stripe.png";
 import ApplePay from "../../images/ApplePay.png";
+import APIConfig from "../../utils/APIConfig";
 import ChaseIcon from "../../images/Chase.png";
 import { useCookies } from "react-cookie";
 
@@ -93,7 +94,7 @@ const ManagerOnBoardDesktopForm = ({ profileData, setIsSave }) => {
     const fetchProfileData = async () => {
       setShowSpinner(true);
       try {
-        //     const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
+        //     const profileResponse = await axios.get(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
         // const profileData = profileResponse.data.profile.result[0];
 
         setBusinessName(profileData.business_name || "");
@@ -151,7 +152,7 @@ const ManagerOnBoardDesktopForm = ({ profileData, setIsSave }) => {
         setShowSpinner(false);
       }
       try {
-        // const employeeResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee/${getProfileId()}`);
+        // const employeeResponse = await axios.get(`${APIConfig.baseURL.dev}/employee/${getProfileId()}`);
         // const employeeData = employeeResponse.data.employee.result[0];
 
         setEmpFirstName(profileData.employee_first_name || "");
@@ -180,7 +181,7 @@ const ManagerOnBoardDesktopForm = ({ profileData, setIsSave }) => {
 
   const saveProfile = async (form) => {
     const profileApi = "/profile";
-    const { data } = await axios.put(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`, form, headers);
+    const { data } = await axios.put(`${APIConfig.baseURL.dev}${profileApi}`, form, headers);
     return data;
   };
 
@@ -451,7 +452,7 @@ const ManagerOnBoardDesktopForm = ({ profileData, setIsSave }) => {
     //   if (key === "employee_photo" && payload[key]) formPayload.append(key, payload[key].file);
     //   else formPayload.append(key, payload[key]);
     // }
-    //const { data } = await axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee", formPayload, headers);
+    //const { data } = await axios.put("${APIConfig.baseURL.dev}/employee", formPayload, headers);
     // setCookie("default_form_vals", { ...cookiesData, firstName, lastName, phoneNumber, email, address, unit, city, state, zip });
     //updateProfileUid({ business_owner_id: data.employee_uid });
     //setShowSpinner(false);
@@ -522,11 +523,11 @@ const ManagerOnBoardDesktopForm = ({ profileData, setIsSave }) => {
     });
 
     if (putPayload.length > 0) {
-      await axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod", putPayload, { headers: { "Content-Type": "application/json" } });
+      await axios.put(`${APIConfig.baseURL.dev}/paymentMethod`, putPayload, { headers: { "Content-Type": "application/json" } });
     }
 
     if (postPayload.length > 0) {
-      await axios.post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod", postPayload, { headers: { "Content-Type": "application/json" } });
+      await axios.post(`${APIConfig.baseURL.dev}/paymentMethod`, postPayload, { headers: { "Content-Type": "application/json" } });
     }
 
     setShowSpinner(false);

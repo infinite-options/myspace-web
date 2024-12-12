@@ -18,6 +18,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import APIConfig from "../../utils/APIConfig";
 import { useUser } from "../../contexts/UserContext";
 
 const ManagerDetails = ({managerDetailsState, handleBackClick, handleShowSearchManager, setReturnIndexByProperty}) => {
@@ -85,7 +86,7 @@ const ManagerDetails = ({managerDetailsState, handleBackClick, handleShowSearchM
 
   const fetchManagerProperties = async () => {
     setShowSpinner(true);
-    const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${managerBusinessId}`;
+    const url = `${APIConfig.baseURL.dev}/properties/${managerBusinessId}`;
     const response = await axios.get(url);
     console.log("Properties endpoint results: ", response);
     sortProperties(response.data.Property.result);
@@ -124,7 +125,7 @@ const ManagerDetails = ({managerDetailsState, handleBackClick, handleShowSearchM
       console.log(formData.contract_uid);
       console.log(formData.contract_status);
 
-      const response = axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts", formData, headers);
+      const response = axios.put(`${APIConfig.baseURL.dev}/contracts`, formData, headers);
       console.log("PUT result", response);
       if (response.code === 200) {
         return true;

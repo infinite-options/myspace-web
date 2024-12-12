@@ -32,7 +32,7 @@ function MaintenanceProfile() {
       setShowSpinner(true);
       if (!isEmployee()) {
         axios
-          .get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`)
+          .get(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`)
           .then((res) => {
             setProfileData(res.data.profile.result[0]);
             setShowSpinner(false);
@@ -48,7 +48,7 @@ function MaintenanceProfile() {
           });
       } else {
         axios
-          .get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`)
+          .get(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`)
           .then((res) => {
             console.log("res is", res)
             setProfileData(res.data.result[0]);

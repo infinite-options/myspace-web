@@ -115,7 +115,7 @@ const RequestQuotes = (props) => {
     let config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${ownerId}`,
+      url: `${APIConfig.baseURL.dev}/announcements/${ownerId}`,
       // url: `http://localhost:4000/announcements/${ownerId}`,
       headers: {
         "Content-Type": "application/json",

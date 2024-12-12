@@ -16,6 +16,7 @@ import {
 import { useMyContext } from '../../contexts/SettingsACHContext';
 import StatusBar from '../../images/status_bar_5.png'
 import { useUser } from "../../contexts/UserContext";
+import APIConfig from '../../utils/APIConfig';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -200,7 +201,7 @@ export default function SettingsACH3() {
         console.log("account_number_repeat",account_number_repeat);
         console.log("account_type",account_type);
 
-        axios.post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/account",
+        axios.post(`${APIConfig.baseURL.dev}/account`,
         input,
         headers)
         .then(response => {
@@ -209,7 +210,7 @@ export default function SettingsACH3() {
             console.log(error);
         });
 
-        axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/account?account_business_id=${getProfileId()}`,
+        axios.get(`${APIConfig.baseURL.dev}/account?account_business_id=${getProfileId()}`,
         headers)
         .then(response => {
             console.log("GET result", response);

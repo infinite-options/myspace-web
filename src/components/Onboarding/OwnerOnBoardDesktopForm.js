@@ -18,6 +18,7 @@ import VenmoIcon from "../../images/Venmo.png";
 import Stripe from "../../images/Stripe.png";
 import ApplePay from "../../images/ApplePay.png";
 import ChaseIcon from "../../images/Chase.png";
+import APIConfig from "../../utils/APIConfig";
 import { useCookies } from "react-cookie";
 
 const useStyles = makeStyles(() => ({
@@ -114,7 +115,7 @@ const OwnerOnBoardDeskTopForm = ({ profileData, setIsSave }) => {
 
   const saveProfile = async (form) => {
     const profileApi = "/profile";
-    const { data } = await axios.put(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`, form, headers);
+    const { data } = await axios.put(`${APIConfig.baseURL.dev}${profileApi}`, form, headers);
     return data;
   };
 
@@ -353,11 +354,11 @@ const OwnerOnBoardDeskTopForm = ({ profileData, setIsSave }) => {
     });
 
     if (putPayload.length > 0) {
-      await axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod", putPayload, { headers: { "Content-Type": "application/json" } });
+      await axios.put(`${APIConfig.baseURL.dev}/paymentMethod`, putPayload, { headers: { "Content-Type": "application/json" } });
     }
 
     if (postPayload.length > 0) {
-      await axios.post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod", postPayload, { headers: { "Content-Type": "application/json" } });
+      await axios.post(`${APIConfig.baseURL.dev}/paymentMethod`, postPayload, { headers: { "Content-Type": "application/json" } });
     }
 
     setShowSpinner(false);

@@ -331,7 +331,7 @@ const closeDialog = () => {
   const setProfileData = async () => {
     setShowSpinner(true);
     try {
-      //     const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
+      //     const profileResponse = await axios.get(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
       // const profileData = profileResponse.data.profile.result[0];
 
       setBusinessName(profileData.business_name || "");
@@ -397,7 +397,7 @@ const closeDialog = () => {
       setShowSpinner(false);
     }
     try {
-      // const employeeResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee/${getProfileId()}`);
+      // const employeeResponse = await axios.get(`${APIConfig.baseURL.dev}/employee/${getProfileId()}`);
       // const employeeData = employeeResponse.data.employee.result[0];
 
       setEmpFirstName(profileData.employee_first_name || "");
@@ -1169,7 +1169,7 @@ const closeDialog = () => {
       // Make PUT request if there are modified existing payment methods
       if (putPayload.length > 0) {
         await axios.put(
-          "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
+          `${APIConfig.baseURL.dev}/paymentMethod`,
           putPayload,
           { headers: { "Content-Type": "application/json" } }
         );
@@ -1178,7 +1178,7 @@ const closeDialog = () => {
       // Make POST request if there are new payment methods
       if (postPayload.length > 0) {
         await axios.post(
-          "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
+          `${APIConfig.baseURL.dev}/paymentMethod`,
           postPayload,
           { headers: { "Content-Type": "application/json" } }
         );
@@ -1362,7 +1362,7 @@ const closeDialog = () => {
         
 
         axios
-          .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, headers)
+          .put(`${APIConfig.baseURL.dev}/profile`, profileFormData, headers)
           .then((response) => {
             console.log("Data updated successfully", response);
             openDialog("Success", "Your profile has been successfully updated.", "success");
