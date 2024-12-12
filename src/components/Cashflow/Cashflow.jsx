@@ -567,11 +567,12 @@ const CashflowDetails = ({
           // marginTop: "30px",
           borderRadius: "10px",
           marginTop: "2px",
-          padding: theme.spacing(3),
+          padding: isMobile ? theme.spacing(0) : theme.spacing(3),
           backgroundColor: activeButton === "Cashflow" ? theme.palette.primary.main : theme.palette.primary.secondary,
-          width: "100%", // Occupy full width with 25px margins on each side
+          width: "100%", 
           boxShadow: "none",
-          height: "100%"
+          height: "100%",
+          overflowX : "hidden",
           // [theme.breakpoints.down("sm")]: {
           //   width: "80%",
           // },
@@ -1109,7 +1110,7 @@ const CashflowDetails = ({
             </Grid>
 
 
-            <AccordionDetails>
+            <AccordionDetails sx={{padding: "0px",}}>
               {/* <RevenueTable totalRevenueByType={revenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/>             */}
               <StatementTable
                 uid={uid}
@@ -1556,16 +1557,16 @@ function StatementTable(props) {
       <>
         {activeView !== "Cashflow" && (<TableRow>
           <TableCell>
-            <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, marginLeft: isMobile? "10px" : "25px"  }}>Property UID</Typography>
+            <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, marginLeft: isMobile? "10px" : "25px"  }}> {isMobile ? "UID" : "Property UID"}</Typography>
           </TableCell>
           <TableCell>
-            <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>Property Address</Typography>
+            <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}> {isMobile ? "Addredd" : "Property Address"}</Typography>
           </TableCell>
           <TableCell>
-            <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>Property Unit</Typography>
+            <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>{isMobile ? "Unit" : "Property Unit"}</Typography>
           </TableCell>
           <TableCell align='right'>
-            <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight }}>Expected</Typography>
+            <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, paddingRight: "24px" }}>Expected</Typography>
           </TableCell>
           <TableCell align='right'>
             <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, fontWeight: theme.typography.primary.fontWeight, marginLeft: isMobile? "10px" : "25px"  }}>Actual</Typography>
@@ -1618,7 +1619,7 @@ function StatementTable(props) {
                   {/* {property.individual_purchase.map((p) => {
                       total_amount_due += (p.pur_amount_due? p.pur_amount_due : 0)
                   })} */}
-                  <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont }}>
+                  <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, paddingRight: "24px"}}>
                     ${item.expected ? parseFloat(item.expected)?.toFixed(2) : 0.00}
                   </Typography>
                 </TableCell>
@@ -1626,7 +1627,7 @@ function StatementTable(props) {
                   {/* {property.individual_purchase.map((p) => {
                       total_amount_paid += (p.total_paid ? p.total_paid : 0)
                   })} */}
-                  <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont, marginRight: isMobile? "10px" : "25px" }}>
+                  <Typography sx={{ fontSize: isMobile? "12px" : theme.typography.smallFont }}>
                     ${item.actual? parseFloat(item.actual).toFixed(2) : 0.00}
                   </Typography>
                 </TableCell>
@@ -1646,6 +1647,7 @@ function StatementTable(props) {
             return (
               <Accordion
                 sx={{
+                  width: "100%",
                   backgroundColor: theme.palette.custom.pink,
                   boxShadow: "none",
                 }}
@@ -1684,6 +1686,7 @@ function StatementTable(props) {
             return (
               <Accordion
                 sx={{
+                  width: "100%",
                   backgroundColor: theme.palette.custom.pink,
                   boxShadow: "none",
                 }}
@@ -1711,7 +1714,7 @@ function StatementTable(props) {
                     </Typography>
                   </Grid>
                 </Grid>
-                <AccordionDetails>
+                <AccordionDetails sx={{padding: "0px"}}>
                   <Table>
                     <TableBody>{getCategoryItems(category)}</TableBody>
                   </Table>
