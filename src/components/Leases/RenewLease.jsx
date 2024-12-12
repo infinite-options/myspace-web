@@ -731,6 +731,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                     setModifiedData={setModifiedData}
                     modifiedData={modifiedData}
                     dataKey={"lease_documents"}
+                    isCenter={true}
                   />
                 )}
                 {selectedRole !== "OWNER" && (
@@ -746,6 +747,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
                     setModifiedData={setModifiedData}
                     modifiedData={modifiedData}
                     dataKey={"lease_documents"}
+                    isCenter={true}
                   />
                 )}
               </Paper>
