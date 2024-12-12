@@ -43,6 +43,7 @@ import theme from "../../theme/theme";
 // import AddRevenueIcon from "../../images/AddRevenueIcon.png";
 import AllOwnerIcon from "../Rent/RentComponents/AllOwnerIcon.png";
 import { useUser } from "../../contexts/UserContext"; // Import the UserContext
+import useMediaQuery from "@mui/material/useMediaQuery";
 // import Backdrop from "@mui/material/Backdrop";
 // import DeleteIcon from "@mui/icons-material/Delete";
 // import EditIcon from "@mui/icons-material/Edit";
@@ -138,6 +139,7 @@ const ManagerProfitability = ({
   });
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectedPayments, setSelectedPayments] = useState([]);
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [sortBy, setSortBy] = useState("");
   const [cashflowExpand, setCashflowExpand] = useState(true);
@@ -784,7 +786,7 @@ const ManagerProfitability = ({
       </Stack>
 
       {/* Select month and all owner button */}
-      <Box component='span' m={2} marginTop={10} display='flex' justifyContent='space-between' alignItems='center'>
+      {!isMobile && <Box component='span' m={2} marginTop={10} display='flex' justifyContent='space-between' alignItems='center'>
         {/* <Button sx={{ textTransform: "capitalize" }} onClick={() => setShowSelectMonth(true)}>
           <CalendarTodayIcon sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: theme.typography.smallFont }} />
           <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>Select Month / Year</Typography>
@@ -900,6 +902,7 @@ const ManagerProfitability = ({
           >
             <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>{currentMonth}</Typography>
           </Button>
+
           <Button
             sx={{
               marginRight: "30px",
@@ -979,84 +982,449 @@ const ManagerProfitability = ({
           //   <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "14px" }}>All Owners</Typography>
           // </Button>
         )}
-      </Box>
+      </Box>}
+
+      {isMobile && (<Box
+            component="span"
+            m={2}
+            marginTop={10}
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              "@media (max-width: 600px)": {
+                flexDirection: "column",
+                alignItems: "flex-start",
+              },
+            }}
+          >
+            {/* Row 1 for mobile view */}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "100%",
+                "@media (max-width: 600px)": {
+                  marginBottom: "10px",
+                },
+              }}
+            >
+              <Button
+                sx={{
+                  backgroundColor: headerTab === "select_month_year" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: headerTab === "select_month_year" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => {
+                  setHeaderTab("select_month_year");
+                  setShowSelectMonth(true);
+                }}
+              >
+                <CalendarTodayIcon
+                  sx={{
+                    color: "#160449",
+                    fontWeight: theme.typography.common.fontWeight,
+                    fontSize: "12px",
+                    margin: "5px",
+                  }}
+                />
+                <Typography
+                  sx={{
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                    color: "#160449",
+                  }}
+                >
+                  Select Month / Year
+                </Typography>
+              </Button>
+
+              {selectedRole === "MANAGER" && (
+                <Button
+                  variant="outlined"
+                  style={{
+                    width: "150px",
+                    fontSize: "13px",
+                    color: "#3D5CAC",
+                    borderRadius: "5px",
+                  }}
+                  onClick={handleSelectOwner}
+                >
+                  <img
+                    src={AllOwnerIcon}
+                    alt="All Owners"
+                    style={{
+                      width: "10px",
+                      height: "10px",
+                    }}
+                  />
+                  <Typography
+                    sx={{
+                      color: theme.typography.common.blue,
+                      fontWeight: theme.typography.common.fontWeight,
+                      fontSize: "14px",
+                    }}
+                  >
+                    {selectedOwnerId}
+                  </Typography>
+                </Button>
+              )}
+            </Box>
+
+            {/* Row 2 for mobile view */}
+            <Box
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "10px",
+                marginTop: "10px",
+                "@media (max-width: 600px)": {
+                  width: "100%",
+                  justifyContent: "flex-start",
+                },
+              }}
+            >
+              <Button
+                sx={{
+                  marginRight: "10px",
+                  backgroundColor: headerTab === "last_three_months" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: headerTab === "last_three_months" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => {
+                  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+                  let monthIndex = monthNames.indexOf(currentMonth);
+                  let monthsList = [];
+                  let yearsList = [];
+
+                  // Get the last three months
+                  for (let i = 0; i < 3; i++) {
+                    monthsList.push(monthNames[monthIndex]);
+                    yearsList.push(currentYear.toString());
+
+                    monthIndex--;
+
+                    // If we go below index 0, adjust to December of the previous year
+                    if (monthIndex < 0) {
+                      monthIndex = 11;  // December
+                      currentYear--;    // Previous year
+                    }
+                  }
+
+                  setMonth(monthsList);
+                  setYear(yearsList);
+
+                  setHeaderTab("last_three_months");
+                }}
+              >
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Last 3 Month</Typography>
+              </Button>
+
+              <Button
+                sx={{
+                  marginRight: "10px",
+                  backgroundColor: headerTab === "last_month" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: headerTab === "last_month" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => {
+                  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+                  let monthIndex = monthNames.indexOf(currentMonth);
+
+                  if (monthIndex === 0) {
+                    // If current month is January
+                    setMonth(["December"]);
+                    setYear([(currentYear - 1).toString()]);
+                  } else {
+                    setMonth([monthNames[monthIndex - 1]]);
+                    setYear([currentYear.toString()]);
+                  }
+
+                  setHeaderTab("last_month");
+                }}
+              >
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Last Month</Typography>
+              </Button>
+              
+              <Button
+                sx={{
+                  marginRight: "10px",
+                  backgroundColor: headerTab === "current_month" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: headerTab === "current_month" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => {
+                  setHeaderTab("current_month");
+                  setMonth([currentMonth]);
+                  setYear([currentYear.toString()]);
+                }}
+              >
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>{currentMonth}</Typography>
+              </Button>
+
+              <Button
+                sx={{
+                  marginRight: "10px",
+                  backgroundColor: headerTab === "next_month" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: headerTab === "next_month" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => {
+                  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+                  let monthIndex = monthNames.indexOf(currentMonth);
+
+                  if (monthIndex === 11) {
+                    // If current month is December
+                    setMonth(["January"]);
+                    setYear([(currentYear + 1).toString()]);
+                  } else {
+                    setMonth([monthNames[monthIndex + 1]]);
+                    setYear([currentYear.toString()]);
+                  }
+
+                  setHeaderTab("next_month");
+                }}
+              >
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Next Month</Typography>
+              </Button>
+            </Box>
+
+            <SelectMonthComponentTest
+              selectedMonth={month}
+              selectedYear={year}
+              setMonth={setMonth}
+              setYear={setYear}
+              showSelectMonth={showSelectMonth}
+              setShowSelectMonth={setShowSelectMonth}
+            />
+      </Box>)}
 
       {/* Filter buttons */}
-      <Grid container item xs={12} marginTop={15} marginBottom={5}>
-        <Grid container item xs={8} display={"flex"} direction={"row"}>
-          <Grid container justifyContent='center' item xs={2.7} marginRight={4}>
-            <Button
-              sx={{
-                width: "150px",
-                backgroundColor: tab === "profit" ? "#3D5CAC" : "#9EAED6",
-                textTransform: "none",
-                "&:hover": {
-                  backgroundColor: tab === "profit" ? "#3D5CAC" : "#9EAED6",
-                },
-              }}
-              onClick={() => {handleSelectTab("profit")}}
-            >
-              <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit By Property</Typography>
-            </Button>
-          </Grid>
-          <Grid container justifyContent='center' item xs={2.2} marginRight={4}>
-            <Button
-              sx={{
-                width: "120px",
-                backgroundColor: tab === "by_sort" ? "#3D5CAC" : "#9EAED6",
-                textTransform: "none",
-                "&:hover": {
-                  backgroundColor: tab === "by_sort" ? "#3D5CAC" : "#9EAED6",
-                },
-              }}
-              onClick={() => {handleSelectTab("by_sort")}}
-            >
-              <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit By Type</Typography>
-            </Button>
-          </Grid>
-          <Grid container justifyContent='center' item xs={3.2} marginRight={4}>
-            <Button
-              sx={{
-                width: "150px",
-                backgroundColor: tab === "by_cashflow" ? "#3D5CAC" : "#9EAED6",
-                textTransform: "none",
-                "&:hover": {
-                  backgroundColor: tab === "by_cashflow" ? "#3D5CAC" : "#9EAED6",
-                },
-              }}
-              onClick={() => {handleSelectTab("by_cashflow")}}
-            >
-              <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Cashflow By Property</Typography>
-            </Button>
-          </Grid>
-          <Grid container justifyContent='center' item xs={2.7} marginRight={4}>
-            <Button
-              sx={{
-                width: "150px",
-                backgroundColor: tab === "type" ? "#3D5CAC" : "#9EAED6",
-                textTransform: "none",
-                "&:hover": {
-                  backgroundColor: tab === "type" ? "#3D5CAC" : "#9EAED6",
-                },
-              }}
-              onClick={() => handleSelectTab("type")}
-            >
-              <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Cashflow By Type</Typography>
-            </Button>
-          </Grid>
-        </Grid>
-        <Grid container justifyContent='flex-end' item xs={2}>
-          <Box sx={{ backgroundColor: "#FFE3AD", padding: "5px", borderRadius: "5px", width: "80px", display: "flex", justifyContent: "center" }}>
-            <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: "15px" }}>Expected</Typography>
-          </Box>
-        </Grid>
 
-        <Grid container justifyContent='flex-end' item xs={2}>
-          <Box sx={{ backgroundColor: "#8696BE", padding: "5px", borderRadius: "5px", width: "80px", display: "flex", justifyContent: "center" }}>
-            <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: "15px" }}>Actual</Typography>
-          </Box>
+      {isMobile ? (
+        <Grid container item xs={12} marginTop={12} marginBottom={5}>
+          {/* Row 1: Filter Buttons */}
+          <Grid container item xs={12} spacing={3} wrap="wrap">
+            <Grid item>
+              <Button
+                sx={{
+                  width: "130px",
+                  backgroundColor: tab === "profit" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: tab === "profit" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => handleSelectTab("profit")}
+              >
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>
+                  Profit By Property
+                </Typography>
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                sx={{
+                  width: "110px",
+                  backgroundColor: tab === "by_sort" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: tab === "by_sort" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => handleSelectTab("by_sort")}
+              >
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>
+                  Profit By Type
+                </Typography>
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                sx={{
+                  width: "150px",
+                  backgroundColor: tab === "by_cashflow" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: tab === "by_cashflow" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => handleSelectTab("by_cashflow")}
+              >
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>
+                  Cashflow By Property
+                </Typography>
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                sx={{
+                  width: "150px",
+                  backgroundColor: tab === "type" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: tab === "type" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => handleSelectTab("type")}
+              >
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>
+                  Cashflow By Type
+                </Typography>
+              </Button>
+            </Grid>
+          </Grid>
+
+          {/* Row 2: Expected and Actual Buttons */}
+          <Grid
+            container
+            item
+            xs={12}
+            justifyContent="flex-end"
+            spacing={2}
+            marginTop="10px"
+          >
+            <Grid item>
+              <Box
+                sx={{
+                  backgroundColor: "#FFE3AD",
+                  padding: "2px",
+                  borderRadius: "5px",
+                  width: "70px",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: "12px",
+                  }}
+                >
+                  Expected
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item>
+              <Box
+                sx={{
+                  backgroundColor: "#8696BE",
+                  padding: "2px",
+                  borderRadius: "5px",
+                  width: "70px",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: theme.typography.primary.black,
+                    fontWeight: theme.typography.primary.fontWeight,
+                    fontSize: "12px",
+                  }}
+                >
+                  Actual
+                </Typography>
+              </Box>
+            </Grid>
+          </Grid>
         </Grid>
-      </Grid>
+      ) : (
+        <Grid container item xs={12} marginTop={15} marginBottom={5}>
+          <Grid container item xs={8} display={"flex"} direction={"row"}>
+            <Grid container justifyContent='center' item xs={2.7} marginRight={4}>
+              <Button
+                sx={{
+                  width: "150px",
+                  backgroundColor: tab === "profit" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: tab === "profit" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => {handleSelectTab("profit")}}
+              >
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit By Property</Typography>
+              </Button>
+            </Grid>
+            <Grid container justifyContent='center' item xs={2.2} marginRight={4}>
+              <Button
+                sx={{
+                  width: "120px",
+                  backgroundColor: tab === "by_sort" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: tab === "by_sort" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => {handleSelectTab("by_sort")}}
+              >
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit By Type</Typography>
+              </Button>
+            </Grid>
+            <Grid container justifyContent='center' item xs={3.2} marginRight={4}>
+              <Button
+                sx={{
+                  width: "150px",
+                  backgroundColor: tab === "by_cashflow" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: tab === "by_cashflow" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => {handleSelectTab("by_cashflow")}}
+              >
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Cashflow By Property</Typography>
+              </Button>
+            </Grid>
+            <Grid container justifyContent='center' item xs={2.7} marginRight={4}>
+              <Button
+                sx={{
+                  width: "150px",
+                  backgroundColor: tab === "type" ? "#3D5CAC" : "#9EAED6",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: tab === "type" ? "#3D5CAC" : "#9EAED6",
+                  },
+                }}
+                onClick={() => handleSelectTab("type")}
+              >
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Cashflow By Type</Typography>
+              </Button>
+            </Grid>
+          </Grid>
+
+          <Grid container justifyContent='flex-end' item xs={2}>
+            <Box sx={{ backgroundColor: "#FFE3AD", padding: "5px", borderRadius: "5px", width: "80px", display: "flex", justifyContent: "center" }}>
+              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: "15px" }}>Expected</Typography>
+            </Box>
+          </Grid>
+
+          <Grid container justifyContent='flex-end' item xs={2}>
+            <Box sx={{ backgroundColor: "#8696BE", padding: "5px", borderRadius: "5px", width: "80px", display: "flex", justifyContent: "center" }}>
+              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: "15px" }}>Actual</Typography>
+            </Box>
+          </Grid>
+        </Grid>
+      )}
+
+
 
       {tab === "by_cashflow" && (
         <>

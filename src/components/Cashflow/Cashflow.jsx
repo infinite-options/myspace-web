@@ -569,7 +569,7 @@ const CashflowDetails = ({
           marginTop: "2px",
           padding: theme.spacing(3),
           backgroundColor: activeButton === "Cashflow" ? theme.palette.primary.main : theme.palette.primary.secondary,
-          width: "95%", // Occupy full width with 25px margins on each side
+          width: "100%", // Occupy full width with 25px margins on each side
           boxShadow: "none",
           height: "100%"
           // [theme.breakpoints.down("sm")]: {
@@ -587,7 +587,7 @@ const CashflowDetails = ({
         </Stack>
 
         {/* -- Select Month and property component-- */}
-        <Box component='span' m={2} display='flex' justifyContent='space-between' alignItems='center' marginY={"20px"}>
+        {!isMobile && (<Box component='span' m={2} display='flex' justifyContent='space-between' alignItems='center' marginY={"20px"}>
           
           {/* All 3 filter button last_month, current_mont and select date */}
           <Box
@@ -720,10 +720,188 @@ const CashflowDetails = ({
             <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "13px" }}>{selectedPropertyName}</Typography>
           </Box>
 
-        </Box>
+        </Box>)}
+
+        {isMobile && (<Box component="span" m={2} display="flex" flexDirection="column" justifyContent="center" marginY="20px">
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row", 
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: isMobile ? "10px" : "0",
+              width: "100%",
+            }}
+          >
+            {/* Select Month/Year Button */}
+            <Button
+              sx={{
+                marginBottom: "10px",
+                backgroundColor: headerTab === "select_month_year" ? "#3D5CAC" : "#9EAED6",
+                textTransform: "none",
+                "&:hover": {
+                  backgroundColor: headerTab === "select_month_year" ? "#3D5CAC" : "#9EAED6",
+                },
+              }}
+              onClick={() => {
+                setHeaderTab("select_month_year");
+                setShowSelectMonth(true);
+              }}
+            >
+              <CalendarTodayIcon
+                sx={{
+                  color: "#160449",
+                  fontWeight: theme.typography.common.fontWeight,
+                  fontSize: "12px",
+                  margin: "5px",
+                }}
+              />
+              <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>
+                Select Month / Year
+              </Typography>
+            </Button>
+
+            {/* All Properties Section */}
+            <Box display="flex" justifyContent="center" alignItems="center" sx={{}}>
+              <HomeWorkIcon
+                sx={{
+                  color: theme.typography.common.blue,
+                  fontWeight: theme.typography.common.fontWeight,
+                  fontSize: theme.typography.smallFont,
+                  margin: "5px",
+                }}
+              />
+              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.common.fontWeight, fontSize: "13px" }}>
+                {selectedPropertyName}
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* Second Row: Remaining Buttons */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              flexWrap: "wrap",
+              justifyContent: "flex-start",
+              gap: "10px",
+              marginTop: "10px",
+              width: "100%",
+            }}
+          >
+            {/* Last Month Button */}
+            <Button
+              sx={{
+                backgroundColor: headerTab === "last_month" ? "#3D5CAC" : "#9EAED6",
+                textTransform: "none",
+                "&:hover": {
+                  backgroundColor: headerTab === "last_month" ? "#3D5CAC" : "#9EAED6",
+                },
+              }}
+              onClick={() => {
+                const monthNames = [
+                  "January",
+                  "February",
+                  "March",
+                  "April",
+                  "May",
+                  "June",
+                  "July",
+                  "August",
+                  "September",
+                  "October",
+                  "November",
+                  "December",
+                ];
+
+                let monthIndex = monthNames.indexOf(currentMonth);
+
+                if (monthIndex === 0) {
+                  setMonth("December");
+                  setYear((currentYear - 1).toString());
+                } else {
+                  setMonth(monthNames[monthIndex - 1]);
+                  setYear(currentYear.toString());
+                }
+
+                setHeaderTab("last_month");
+              }}
+            >
+              <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Last Month</Typography>
+            </Button>
+
+            {/* Current Month Button */}
+            <Button
+              sx={{
+                backgroundColor: headerTab === "current_month" ? "#3D5CAC" : "#9EAED6",
+                textTransform: "none",
+                "&:hover": {
+                  backgroundColor: headerTab === "current_month" ? "#3D5CAC" : "#9EAED6",
+                },
+              }}
+              onClick={() => {
+                setHeaderTab("current_month");
+                setMonth(currentMonth);
+                setYear(currentYear.toString());
+              }}
+            >
+              <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>{currentMonth}</Typography>
+            </Button>
+
+            {/* Next Month Button */}
+            <Button
+              sx={{
+                backgroundColor: headerTab === "next_month" ? "#3D5CAC" : "#9EAED6",
+                textTransform: "none",
+                "&:hover": {
+                  backgroundColor: headerTab === "next_month" ? "#3D5CAC" : "#9EAED6",
+                },
+              }}
+              onClick={() => {
+                const monthNames = [
+                  "January",
+                  "February",
+                  "March",
+                  "April",
+                  "May",
+                  "June",
+                  "July",
+                  "August",
+                  "September",
+                  "October",
+                  "November",
+                  "December",
+                ];
+
+                let monthIndex = monthNames.indexOf(currentMonth);
+
+                if (monthIndex === 11) {
+                  setMonth("January");
+                  setYear((currentYear + 1).toString());
+                } else {
+                  setMonth(monthNames[monthIndex + 1]);
+                  setYear(currentYear.toString());
+                }
+
+                setHeaderTab("next_month");
+              }}
+            >
+              <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Next Month</Typography>
+            </Button>
+          </Box>
+
+          <SelectMonthComponentTest
+            selectedMonth={month}
+            selectedYear={year}
+            setMonth={setMonth}
+            setYear={setYear}
+            showSelectMonth={showSelectMonth}
+            setShowSelectMonth={setShowSelectMonth}
+          />
+        </Box>)}
 
         {/* -- For header of table Actual And Expected-- */}
-        <Box
+        {!isMobile && <Box
           component='span'
           marginY={3}
           padding={3}
@@ -770,7 +948,87 @@ const CashflowDetails = ({
             <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: isMobile? "" : theme.typography.largeFont }}>Expected</Typography>
             <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: isMobile? "" : theme.typography.largeFont }}>Actual</Typography>
           </Box>
-        </Box>
+        </Box>}
+
+        {isMobile && <Box
+          component="span"
+          marginY={3}
+          padding={3}
+          display="flex"
+          flexDirection="column"
+          justifyContent="flex-start"
+          alignItems="center"
+        >
+          {/* First Row: By Month and By Property */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              width: "100%",
+            }}
+          >
+            <Button
+              sx={{
+                width: isMobile ? "80px" : "100px",
+                marginBottom: "10px",
+                marginRight: "10px",
+                backgroundColor: tab === "by_month" ? "#3D5CAC" : "#9EAED6",
+                textTransform: "none",
+                "&:hover": {
+                  backgroundColor: tab === "by_month" ? "#3D5CAC" : "#9EAED6",
+                },
+              }}
+              onClick={() => handleSelectTab("by_month")}
+            >
+              <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Month</Typography>
+            </Button>
+            <Button
+              sx={{
+                width: isMobile ? "90px" : "100px",
+                marginBottom: "10px",
+                backgroundColor: tab === "by_property" ? "#3D5CAC" : "#9EAED6",
+                textTransform: "none",
+                "&:hover": {
+                  backgroundColor: tab === "by_property" ? "#3D5CAC" : "#9EAED6",
+                },
+              }}
+              onClick={() => handleSelectTab("by_property")}
+            >
+              <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>By Property</Typography>
+            </Button>
+          </Box>
+
+          {/* Second Row: Expected and Actual */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flex-end",
+              width: "100%",
+            }}
+          >
+            <Typography
+              sx={{
+                paddingRight: "60px",
+                color: theme.typography.primary.black,
+                fontWeight: theme.typography.primary.fontWeight,
+                fontSize: isMobile ? "" : theme.typography.largeFont,
+              }}
+            >
+              Expected
+            </Typography>
+            <Typography
+              sx={{
+                paddingRight: "20px",
+                color: theme.typography.primary.black,
+                fontWeight: theme.typography.primary.fontWeight,
+                fontSize: isMobile ? "" : theme.typography.largeFont,
+              }}
+            >
+              Actual
+            </Typography>
+          </Box>
+        </Box>}
         
         {/* -- Display Total CashFlow-- */}
         <Box

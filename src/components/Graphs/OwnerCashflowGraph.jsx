@@ -64,7 +64,7 @@ const MixedChart = (props) => {
   return (
     <ThemeProvider theme={theme}>
       <ResponsiveContainer>
-        <ComposedChart data={data} margin={{ top: 20, right: -10, left: -10, bottom: 5 }}>
+        <ComposedChart data={data} margin={{ top: 20, right: 0, left: 5, bottom: 5 }}>
           {/* <CartesianGrid vertical={false} />
           <XAxis
             dataKey="monthYear"
@@ -92,13 +92,13 @@ const MixedChart = (props) => {
           <YAxis yAxisId="left" axisLine={false} tickCount={8} domain={[(min - 100) * 1.1, max * 1.3]} tickFormatter={(value) => `$${value}`} style={{ fontSize: "10px" }} />
           <ReferenceLine yAxisId="left" y={0} stroke="#000000" strokeWidth={1} />
           <YAxis yAxisId="right" orientation="right" />
-          <Tooltip
+          {/* <Tooltip
             formatter={(value, name, props) => `X: ${props.payload.monthYear}, Y: ${value.toFixed(2)}`}
             contentStyle={{
               backgroundColor: '#ffffff',
               opacity: 1
             }}
-          />
+          /> */}
           <Legend content={CustomLegend} />
 
           {/* <Line
