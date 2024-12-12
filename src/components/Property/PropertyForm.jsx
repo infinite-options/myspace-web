@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext,  } from 'react';
+import React, { useState, useEffect, useContext, } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import {
 	TextField,
@@ -124,8 +124,8 @@ const useStyles = makeStyles({
 
 
 
-const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setReloadPropertyList, setPropertyTo}) => {
-	
+const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setReloadPropertyList, setPropertyTo }) => {
+
 	const { getList, } = useContext(ListsContext);
 	const propertyTypes = getList("propertyType");
 	const classes = useStyles();
@@ -135,12 +135,12 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 
 	const { setNewContractUID, setNewContractPropertyUID, fetchProperties, setNewPropertyUid, } = useContext(PropertiesContext);
 
-	const [readOnlyNotes, setReadOnlyNotes] = useState(selectedRole === "MANAGER" ? true : false);	
+	const [readOnlyNotes, setReadOnlyNotes] = useState(selectedRole === "MANAGER" ? true : false);
 	const [selectedImageList, setSelectedImageList] = useState([]);
-	const [referedUser, setReferedUser]=useState(false);
-	const [referredOwner, setReferredOwner]=useState({});
+	const [referedUser, setReferedUser] = useState(false);
+	const [referredOwner, setReferredOwner] = useState({});
 
-	const location = useLocation();	
+	const location = useLocation();
 
 	const [address, setAddress] = useState('');
 	const [unit, setUnit] = useState('');
@@ -155,7 +155,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 	const [cost, setCost] = useState('');
 	const [assessmentYear, setAssessmentYear] = useState('');
 	const [ownerId, setOwnerId] = useState(getProfileId());
-	const [selectedOwner, setSelectedOwner] = useState(null);
+	const [selectedOwner, setSelectedOwner] = useState('');
 	const [notes, setNotes] = useState('');
 	const [showSpinner, setShowSpinner] = useState(false);
 	const [activeStep, setActiveStep] = useState(0);
@@ -167,7 +167,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
 
-	const [showGoBackDialog, setShowGoBackDialog ] = useState(false);
+	const [showGoBackDialog, setShowGoBackDialog] = useState(false);
 
 	const [message, setMessage] = useState("");
 	const [showEmailSentDialog, setShowEmailSentDialog] = useState(false);
@@ -191,13 +191,13 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 	// }, [address, unit, city, state, zip]);
 
 
-	
+
 
 	// useEffect(() => {
 	// 	console.log("194 - referredOwner - ", referredOwner);		
 	// }, [referredOwner]);
 
-	
+
 	useEffect(() => {
 		console.log("selectedOwner - ", selectedOwner);
 		setReferredOwner({})
@@ -240,7 +240,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 
 	const handleCostChange = (event) => {
 		setCost(event.target.value);
-	};	
+	};
 
 	const handleOwnerChange = (event) => {
 		if (event.target.value === 'referOwner') {
@@ -282,12 +282,12 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 
 	//calls properties and contracts
 	const handleSaveProperty = async (ownerUID) => {
-		if(ownerUID == null) return;
+		if (ownerUID == null) return;
 
 		setShowSpinner(true);
 		const formData = new FormData();
 
-		const currentDate = new Date();		
+		const currentDate = new Date();
 		const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}-${currentDate.getFullYear()}`;
 
 		const fullAddress = `${address}, ${city}, ${state}, ${zip}`;
@@ -318,9 +318,9 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		formData.append("property_value_year", assessmentYear);
 		formData.append("property_area", squareFootage);
 		formData.append("property_listed", 0);
-		formData.append("property_notes", notes);		
+		formData.append("property_notes", notes);
 
-		console.log("----selectedAppliances---", JSON.stringify(selectedAppliances));		
+		console.log("----selectedAppliances---", JSON.stringify(selectedAppliances));
 		formData.append("appliances", JSON.stringify(selectedAppliances));
 		console.log("Formdata:", formData);
 
@@ -331,11 +331,11 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 
 		const files = selectedImageList;
 		let i = 0;
-		for (const file of selectedImageList) {			
+		for (const file of selectedImageList) {
 			let key = `img_${i++}`;
-			if (file.file !== null) {				
+			if (file.file !== null) {
 				formData.append(key, file.file);
-			} else {				
+			} else {
 				formData.append(key, file.image);
 			}
 			if (file.coverPhoto) {
@@ -356,9 +356,9 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 			responsePropertyUID = data.property_UID;
 			setNewContractPropertyUID(responsePropertyUID);
 			console.log("response data - property UID: ", responsePropertyUID);
-			
+
 			// setReloadPropertyList(true);
-			
+
 
 			fetchProperties();
 			// setPropertyTo(responsePropertyUID);
@@ -376,8 +376,8 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 
 			const currentDate = new Date();
 			const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}-${currentDate.getFullYear()}`;
-			
-			const PropertyUID = '["' + responsePropertyUID + '"]';
+
+			const PropertyUID = responsePropertyUID === null ? null : '["' + responsePropertyUID + '"]';
 			console.log("Reformated property data: ", PropertyUID);
 			contractFormData.append("contract_property_ids", PropertyUID);
 			console.log("Immediately after: ", contractFormData);
@@ -387,52 +387,55 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 			// console.log("Contract Formdata:", contractFormData);
 
 			console.log("In Create new contract - contractFormData = ", contractFormData);
-			const url = `${APIConfig.baseURL.dev}/contracts`;
+			if (responsePropertyUID !== null) {
+				const url = `${APIConfig.baseURL.dev}/contracts`;
 
-			
 
-			try {
-				const response = await fetch(url, {
-					method: "POST",
-					body: contractFormData,
-				});
 
-				if (!response.ok) {
-					throw new Error("Network response was not ok");
+				try {
+					const response = await fetch(url, {
+						method: "POST",
+						body: contractFormData,
+					});
+
+					if (!response.ok) {
+						throw new Error("Network response was not ok");
+					}
+
+					const data = await response.json();
+					console.log("contracts - POST - response data = ", data);
+
+					responseContractUID = data.contract_UID;
+					setNewContractUID(responseContractUID);
+					console.log("response data - contract UID: ", responseContractUID);
+
+					console.log('navigating to /pmQuotesList', responseContractUID, getProfileId(), responsePropertyUID);
+
+					// navigate("/pmQuotesList", {
+					//   state: {
+					//     selectedContractUID: responseContractUID,		
+					// 	selectedContractPropertyUID: responsePropertyUID[0],   
+					//   },
+					// });			
+				} catch (error) {
+					console.error("Error:", error);
 				}
-
-				const data = await response.json();
-				console.log("contracts - POST - response data = ", data);
-
-				responseContractUID = data.contract_UID;
-				setNewContractUID(responseContractUID);
-				console.log("response data - contract UID: ", responseContractUID);
-
-				console.log('navigating to /pmQuotesList', responseContractUID, getProfileId(), responsePropertyUID);
-				
-				// navigate("/pmQuotesList", {
-				//   state: {
-				//     selectedContractUID: responseContractUID,		
-				// 	selectedContractPropertyUID: responsePropertyUID[0],   
-				//   },
-				// });			
-			} catch (error) {
-				console.error("Error:", error);
 			}
 		}
 
-		
-		if( selectedRole === "MANAGER" && responseContractUID != null && responsePropertyUID != null){		
+
+		if (selectedRole === "MANAGER" && responseContractUID != null && responsePropertyUID != null) {
 			navigate("/pmQuotesList", {
 				state: {
-				selectedContractUID: responseContractUID,		
-				selectedContractPropertyUID: responsePropertyUID,
-				navigatingFrom: "PropertyForm",  
+					selectedContractUID: responseContractUID,
+					selectedContractPropertyUID: responsePropertyUID,
+					navigatingFrom: "PropertyForm",
 				},
-			});	
+			});
 		}
 
 		setAddress("");
+		setUnit("");
 		setCity("");
 		setState("");
 		setZip("");
@@ -445,26 +448,26 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		setActiveStep(0);
 		setShowSpinner(false);
 
-		
-		
+
+
 		if (selectedRole === "OWNER") {
 			onBack();
 		}
 
 	};
 
-	const handleExistingUser = async (createAccResponse) => {    
+	const handleExistingUser = async (createAccResponse) => {
 		const userRolesList = createAccResponse.user_roles?.split(",");
 		const userUID = createAccResponse.user_uid;
-	
+
 		console.log("handleExistingUser - userRolesList - ", userRolesList);
 		console.log("handleExistingUser - userUID - ", userUID);
-	
-		if (userRolesList.includes('OWNER')) {		  			
+
+		if (userRolesList.includes('OWNER')) {
 			//create property with user id
 			handleSaveProperty(userUID);
-		} else {        
-			  //add role
+		} else {
+			//add role
 			// create owner profile
 			setShowSpinner(true);
 			userRolesList.push("OWNER");
@@ -475,8 +478,8 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 				role: updatedRoles,
 			});
 			// Check if the response is successful
-			if (response.status === 200) {				
-				console.log("Role - \"OWNER\" added to existing user successfully");				
+			if (response.status === 200) {
+				console.log("Role - \"OWNER\" added to existing user successfully");
 				const payload = {
 					owner_user_id: userUID,
 					// owner_first_name: response.data.result?.user?.first_name,
@@ -488,10 +491,10 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 					owner_phone_number: referredOwner?.phone_number,
 					owner_email: referredOwner?.email
 				};
-				
+
 				const form = new FormData();
-				for (let key in payload) {      
-					form.append(key, payload[key]);      
+				for (let key in payload) {
+					form.append(key, payload[key]);
 				}
 
 				// for (var pair of form.entries()) {
@@ -508,11 +511,11 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 				// if (data.owner_uid) {
 				//   updateProfileUid({ owner_id: data.owner_uid });
 				// }
-				
+
 				// const userUID = response.data.result?.user?.user_uid;        
 				// const link = `http://localhost:3000/referralSignup/${userUID}`
 				const link = `https://iopropertymanagement.netlify.app/referralSignup/${userUID}`
-				
+
 				const emailPayload = {
 					"receiver": referredOwner.email,
 					"email_subject": `Owner Profile created for your account at ManifestMySpace`,
@@ -523,9 +526,9 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 					emailPayload
 				);
 
-				if(emailResponse.status === 200){
+				if (emailResponse.status === 200) {
 					setShowEmailSentDialog(true);
-				//   onReferralSuccess(data.owner_uid); 
+					//   onReferralSuccess(data.owner_uid); 
 					handleSetSelectedOwner(data.owner_uid);
 					setReferedUser(true)
 				} else {
@@ -539,7 +542,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 				// console.log("data - ", data);
 				if (data.owner_uid) {
 					handleSaveProperty(data.owner_uid);
-				}	
+				}
 
 			} else {
 				alert("An error occurred while updating the roles for the new user.");
@@ -547,24 +550,24 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		}
 	}
 
-	  const isEmptyObject = (obj) => {
-	    return obj && Object.keys(obj).length === 0 && obj.constructor === Object;
-	  };
-	
-	  const handleSubmitNew = async (event) => {
-	    event.preventDefault();
+	const isEmptyObject = (obj) => {
+		return obj && Object.keys(obj).length === 0 && obj.constructor === Object;
+	};
+
+	const handleSubmitNew = async (event) => {
+		event.preventDefault();
 
 		//checks for property fields
 		if (!address) {
 			alert("Address should not be empty.");
 			return;
 		}
-		
+
 		if (!type) {
 			alert("Type of the property should not be empty.");
 			return;
 		}
-		
+
 		if (!squareFootage) {
 			alert("Area of the property should not be empty.");
 			return;
@@ -579,27 +582,27 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 			return;
 		}
 
-		if(selectedRole === "MANAGER" && selectedOwner == null && ( isEmptyObject(referredOwner) || referredOwner == null )){
+		if (selectedRole === "MANAGER" && (selectedOwner == null || selectedOwner == '') && (isEmptyObject(referredOwner) || referredOwner == null || referredOwner == '')) {
 			alert("Please select an owner (or) refer a new owner for the property");
 			return;
 		}
 		console.log("handleSubmitNew - selectedOwner - ", selectedOwner);
 		console.log("handleSubmitNew - referredOwner - ", referredOwner);
 
-		if(selectedRole === "OWNER"){
+		if (selectedRole === "OWNER") {
 			handleSaveProperty(ownerId);
 			return;
 		}
 
-		if(selectedOwner != null){
+		if (selectedOwner != null) {
 			// create property as usual
 			handleSaveProperty(selectedOwner)
 			return;
 		} else {
 			// referring a new owner
 
-			
-			
+
+
 			handleReferOwner()
 				.then(() => {
 					console.log("Successfully Referred Owner ");
@@ -609,8 +612,8 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 					console.error("Error referring owner:", error);
 				});
 		}
-		  		    
-	  };
+
+	};
 
 	const handleNewUser = async (response) => {
 		console.log("---response before payload---", response);
@@ -622,10 +625,10 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 			owner_phone_number: referredOwner?.phone_number,
 			owner_email: referredOwner?.email
 		};
-		
+
 		const form = new FormData();
-		for (let key in payload) {      
-			form.append(key, payload[key]);      
+		for (let key in payload) {
+			form.append(key, payload[key]);
 		}
 
 		// for (var pair of form.entries()) {
@@ -642,11 +645,11 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		// if (data.owner_uid) {
 		//   updateProfileUid({ owner_id: data.owner_uid });
 		// }
-		
-		const userUID = response.data.result?.user?.user_uid;        
+
+		const userUID = response.data.result?.user?.user_uid;
 		// const link = `http://localhost:3000/referralSignup/${userUID}`
 		const link = `https://iopropertymanagement.netlify.app/referralSignup/${userUID}`
-		
+
 		const emailPayload = {
 			"receiver": referredOwner.email,
 			"email_subject": `You have been invited to join ManifestMySpace`,
@@ -657,9 +660,9 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 			emailPayload
 		);
 
-		if(emailResponse.status === 200){
+		if (emailResponse.status === 200) {
 			setShowEmailSentDialog(true);
-		//   onReferralSuccess(data.owner_uid); 
+			//   onReferralSuccess(data.owner_uid); 
 			handleSetSelectedOwner(data.owner_uid);
 			setReferedUser(true)
 		} else {
@@ -672,42 +675,42 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 
 		console.log("handleNewUser - data - ", data);
 		if (data.owner_uid) {
-		  return data.owner_uid;
+			return data.owner_uid;
 		}
 	}
 
 	const handleReferOwner = async () => {
 		// 3 cases
-			//  a - new user - create account, profile - post, properties- post
-			// 	b - existing user without an owner role - createAccount, updateUserByUID, profile- post, properties - post
-			//  c - existing user with an owner role - createAccount, properties - post
+		//  a - new user - create account, profile - post, properties- post
+		// 	b - existing user without an owner role - createAccount, updateUserByUID, profile- post, properties - post
+		//  c - existing user with an owner role - createAccount, properties - post
 
-			setShowSpinner(true);
-			// const role = roles.join(",");
-			const payload = {
-			  "first_name" : referredOwner.first_name,
-			  "last_name" : referredOwner.last_name,
-			  "phone_number" : referredOwner.phone_number,
-			  "email": referredOwner.email,
-			  "password": `referred by ${getProfileId()}`,
-			  "role": "OWNER",
-			  "isEmailSignup": true,      
-			};
+		setShowSpinner(true);
+		// const role = roles.join(",");
+		const payload = {
+			"first_name": referredOwner.first_name,
+			"last_name": referredOwner.last_name,
+			"phone_number": referredOwner.phone_number,
+			"email": referredOwner.email,
+			"password": `referred by ${getProfileId()}`,
+			"role": "OWNER",
+			"isEmailSignup": true,
+		};
 
-			console.log("handleReferOwner - payload - ", payload)
-			// return;
-			
-			// setOnboardingState({
-			//   ...onboardingState,
-			//   roles,
-			// });
-			const isEmailSignup = true
-			if (isEmailSignup) {
-			  const response = await axios.post(
+		console.log("handleReferOwner - payload - ", payload)
+		// return;
+
+		// setOnboardingState({
+		//   ...onboardingState,
+		//   roles,
+		// });
+		const isEmailSignup = true
+		if (isEmailSignup) {
+			const response = await axios.post(
 				"https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/CreateAccount/MYSPACE",
 				payload
-			  );
-			  if (response.data.message === "User already exists") {
+			);
+			if (response.data.message === "User already exists") {
 				// alert(response.data.message);
 				// handleExistingUser(response.data);
 				handleExistingUser(response.data)
@@ -722,19 +725,19 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 					});
 				setShowSpinner(false);
 				return;
-			  } else {
+			} else {
 				// setAuthData(response.data.result); 
 				handleNewUser(response)
 					.then(ownerUID => {
 						// console.log("ownerUID from handleNewUser - ", ownerUID)
-						handleSaveProperty(ownerUID); 
+						handleSaveProperty(ownerUID);
 					})
 					.catch(error => {
 						console.error("Error handling refer owner:", error);
 					});
-				setShowSpinner(false);				
-			  }
+				setShowSpinner(false);
 			}
+		}
 
 	}
 
@@ -770,33 +773,33 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		}
 	}, [setAddress, setUnit, setCity, setState, setZip,]);
 
-	const fetchAppliances = () => {				
-		const validAppliances = getList("appliances");		
-		setApplianceList(validAppliances);		
+	const fetchAppliances = () => {
+		const validAppliances = getList("appliances");
+		setApplianceList(validAppliances);
 	};
 
-	useEffect(() => {		
+	useEffect(() => {
 		fetchAppliances();
 	}, []);
 
 	const handleBackClick = () => {
-		setShowGoBackDialog(true);	
+		setShowGoBackDialog(true);
 	}
 
 	useEffect(() => {
 		const fullAddress = `${address}, ${city}, ${state}, ${zip}`;
-	  
+
 		const updateCoordinates = async () => {
-		  if (address && city && state && zip) {
-			const coords = await getLatLongFromAddress(fullAddress);
-			console.log("Updated coordinates: ", coords);
-			setCoordinates(coords);
-		  }
+			if (address && city && state && zip) {
+				const coords = await getLatLongFromAddress(fullAddress);
+				console.log("Updated coordinates: ", coords);
+				setCoordinates(coords);
+			}
 		};
-	  
+
 		updateCoordinates();
-	  }, [address, city, state, zip]); 
-	
+	}, [address, city, state, zip]);
+
 
 	return (
 		<ThemeProvider theme={theme}>
@@ -815,7 +818,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 						</Button>
 					</Grid>
 					<Grid container justifyContent='center' item xs={8}>
-						<Typography sx={{fontSize: '24px', color: "#160449", fontWeight: 'bold'}}>
+						<Typography sx={{ fontSize: '24px', color: "#160449", fontWeight: 'bold' }}>
 							Enter Property Details
 						</Typography>
 					</Grid>
@@ -1019,9 +1022,10 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 											size="small"
 											fullWidth
 											onChange={handleTypeChange}
+											value={type}
 										>
 											{
-												propertyTypes?.map( type => (
+												propertyTypes?.map(type => (
 													<MenuItem key={type.list_uid} value={type.list_item}>{type.list_item}</MenuItem>
 												))
 											}
@@ -1135,7 +1139,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 											onChange={handleCostChange}
 										/>
 									</Grid>
-									<Grid item xs={2.5} sx={{padding: '2px', }}>
+									<Grid item xs={2.5} sx={{ padding: '2px', }}>
 										<Typography
 											sx={{
 												marginTop: '5px',
@@ -1147,7 +1151,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 											Assessment Year
 										</Typography>
 									</Grid>
-									<Grid item xs={9.5}>										
+									<Grid item xs={9.5}>
 										<LocalizationProvider dateAdapter={AdapterDayjs}>
 											<DatePicker
 												// label="Year"
@@ -1159,7 +1163,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 													const formattedDate = e ? e.format("YYYY") : null;
 													setAssessmentYear(formattedDate)
 												}}
-												sx={{ 
+												sx={{
 													backgroundColor: '#FFFFFF',
 													width: '100%',
 													borderRadius: '3px',
@@ -1242,7 +1246,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 							{
 								isModalOpen && (
 									<Grid item xs={12}>
-										<ReferOwner onClose={handleCloseModal} setReferredOwner={setReferredOwner} setSelectedOwner={setSelectedOwner} setMessage={setMessage}/>
+										<ReferOwner onClose={handleCloseModal} setReferredOwner={setReferredOwner} setSelectedOwner={setSelectedOwner} setMessage={setMessage} />
 									</Grid>
 								)
 							}
@@ -1321,7 +1325,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 							Save Property
 						</Button>
 					</Grid>
-				</Grid>								
+				</Grid>
 				<Dialog
 					open={showGoBackDialog}
 					onClose={() => setShowGoBackDialog(false)}
@@ -1332,296 +1336,296 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 						<DialogContentText
 							id='alert-dialog-description'
 							sx={{
-							fontWeight: theme.typography.common.fontWeight,
-							paddingTop: "10px",
+								fontWeight: theme.typography.common.fontWeight,
+								paddingTop: "10px",
 							}}
 						>
 							Are you sure you want to leave without saving the new property?
 						</DialogContentText>
 					</DialogContent>
 					<DialogActions>
-					<Box
-						sx={{
-						width: "100%",
-						display: "flex",
-						flexDirection: "row",
-						justifyContent: "center",
-						}}
-					>
-						<Button
-							onClick={() => onBack()}
+						<Box
 							sx={{
-								color: "white",
-								backgroundColor: "#3D5CAC80",
-								":hover": {
-								backgroundColor: "#3D5CAC",
-								},
-								marginRight: "10px",
+								width: "100%",
+								display: "flex",
+								flexDirection: "row",
+								justifyContent: "center",
 							}}
-							autoFocus
 						>
-							Yes
-						</Button>
-						<Button
-						onClick={() => setShowGoBackDialog(false)}
-						sx={{
-							color: "white",
-							backgroundColor: "#3D5CAC80",
-							":hover": {
-							backgroundColor: "#3D5CAC",
-							},
-							marginLeft: "10px",
-						}}
-						>
-						No
-						</Button>
-					</Box>
+							<Button
+								onClick={() => onBack()}
+								sx={{
+									color: "white",
+									backgroundColor: "#3D5CAC80",
+									":hover": {
+										backgroundColor: "#3D5CAC",
+									},
+									marginRight: "10px",
+								}}
+								autoFocus
+							>
+								Yes
+							</Button>
+							<Button
+								onClick={() => setShowGoBackDialog(false)}
+								sx={{
+									color: "white",
+									backgroundColor: "#3D5CAC80",
+									":hover": {
+										backgroundColor: "#3D5CAC",
+									},
+									marginLeft: "10px",
+								}}
+							>
+								No
+							</Button>
+						</Box>
 					</DialogActions>
 				</Dialog>
 
 				<Dialog open={showEmailSentDialog} onClose={() => setShowEmailSentDialog(false)} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
 					<DialogTitle id="alert-dialog-title">Referral Sent</DialogTitle>
-					<DialogContent>                
-					<DialogContentText
-						id="alert-dialog-description"
-						sx={{
-						color: theme.typography.common.blue,
-						fontWeight: theme.typography.common.fontWeight,
-						paddingTop: "10px",
-						}}
-					>
-						Thank you for referring a new user to ManifestMySpace. An email has been sent to the user with a link to Sign Up.
-					</DialogContentText>
+					<DialogContent>
+						<DialogContentText
+							id="alert-dialog-description"
+							sx={{
+								color: theme.typography.common.blue,
+								fontWeight: theme.typography.common.fontWeight,
+								paddingTop: "10px",
+							}}
+						>
+							Thank you for referring a new user to ManifestMySpace. An email has been sent to the user with a link to Sign Up.
+						</DialogContentText>
 					</DialogContent>
 					<DialogActions>
-					{/* <Button onClick={() => handleCancel(managerData)} color="primary" autoFocus> */}
-					<Button
-						onClick={() => setShowEmailSentDialog(false)}
-						sx={{
-						color: "white",
-						backgroundColor: "#3D5CAC80",
-						":hover": {
-							backgroundColor: "#3D5CAC",
-						},
-						}}
-						autoFocus
-					>
-						OK
-					</Button>          
+						{/* <Button onClick={() => handleCancel(managerData)} color="primary" autoFocus> */}
+						<Button
+							onClick={() => setShowEmailSentDialog(false)}
+							sx={{
+								color: "white",
+								backgroundColor: "#3D5CAC80",
+								":hover": {
+									backgroundColor: "#3D5CAC",
+								},
+							}}
+							autoFocus
+						>
+							OK
+						</Button>
 					</DialogActions>
 				</Dialog>
-				
+
 			</Container>
 		</ThemeProvider>);
 };
 
 const CustomTextField = withStyles({
-    root: {
-      '& .MuiOutlinedInput-root': {
-        border: "none",
-        '&.Mui-focused fieldset': {
-          borderColor: 'transparent', 
-        },
-        '&:hover fieldset': {
-            borderColor: 'transparent', 
-          },
-      },
-    },
+	root: {
+		'& .MuiOutlinedInput-root': {
+			border: "none",
+			'&.Mui-focused fieldset': {
+				borderColor: 'transparent',
+			},
+			'&:hover fieldset': {
+				borderColor: 'transparent',
+			},
+		},
+	},
 })(TextField);
 
-function ReferOwner({ onClose, onReferralSuccess, setReferedUser, setReferredOwner, setSelectedOwner, setMessage}) {	
-		
+function ReferOwner({ onClose, onReferralSuccess, setReferedUser, setReferredOwner, setSelectedOwner, setMessage }) {
+
 	const { getProfileId, } = useUser();
 	// const [showSpinner, setShowSpinner] = useState(false);
-  
-	
-	
+
+
+
 	const [email, setEmail] = useState("");
 	const [firstName, setFirstName] = useState("");
 	const [lastName, setLastName] = useState("");
-	const [phoneNumber, setPhoneNumber] = useState("");	
+	const [phoneNumber, setPhoneNumber] = useState("");
 	// const [role, setRole] = useState("");
 
-	useEffect(() => {		
-		setReferredOwner( prevState => ({
+	useEffect(() => {
+		setReferredOwner(prevState => ({
 			...prevState,
-			"email": email? email : "",
-			"first_name": firstName? firstName : "",
-			"last_name": lastName? lastName : "",
-			"phone_number": phoneNumber? phoneNumber : "",
+			"email": email ? email : "",
+			"first_name": firstName ? firstName : "",
+			"last_name": lastName ? lastName : "",
+			"phone_number": phoneNumber ? phoneNumber : "",
 			"password": `referred by ${getProfileId()}`,
 			"role": "OWNER",
-			"isEmailSignup": true,    
+			"isEmailSignup": true,
 		}));
-	}, [email, firstName, lastName, phoneNumber]); 
-	  
+	}, [email, firstName, lastName, phoneNumber]);
+
 	return (
-	  // <ThemeProvider theme={theme}>
-	  <>
-		
-		<Stack
-		  style={{
-			display: "flex",
-			flexDirection: "column", // Stack the content vertically
-			justifyContent: "flex-start", // Start content at the top
-			alignItems: "center", // Center content horizontally
-			width: "100%",
-			// minHeight: "100vh",
-			marginTop: theme.spacing(2), // Adjust this for desired distance from the top
-			// paddingBottom: "50px",
-		  }}
-		>
-		  <Paper
-			style={{
-			  margin: "10px",
-			  padding: theme.spacing(2),
-			  backgroundColor: "#F2F2F2",
-			  width: "100%", // Occupy full width with 25px margins on each side
-			//   [theme.breakpoints.down("sm")]: {
-			// 	width: "80%",
-			//   },
-			//   [theme.breakpoints.up("sm")]: {
-			// 	width: "50%",
-			//   },
-			  paddingTop: "10px",
-			}}
-		  >
-			<Stack direction="row" justifyContent="center" alignItems="center" position="relative">
-			  <Box direction="row" justifyContent="center" alignItems="center">
-				<Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-				  Refer an Owner
-				</Typography>
-			  </Box>
-			  {/* <Box position="absolute" right={0}>
+		// <ThemeProvider theme={theme}>
+		<>
+
+			<Stack
+				style={{
+					display: "flex",
+					flexDirection: "column", // Stack the content vertically
+					justifyContent: "flex-start", // Start content at the top
+					alignItems: "center", // Center content horizontally
+					width: "100%",
+					// minHeight: "100vh",
+					marginTop: theme.spacing(2), // Adjust this for desired distance from the top
+					// paddingBottom: "50px",
+				}}
+			>
+				<Paper
+					style={{
+						margin: "10px",
+						padding: theme.spacing(2),
+						backgroundColor: "#F2F2F2",
+						width: "100%", // Occupy full width with 25px margins on each side
+						//   [theme.breakpoints.down("sm")]: {
+						// 	width: "80%",
+						//   },
+						//   [theme.breakpoints.up("sm")]: {
+						// 	width: "50%",
+						//   },
+						paddingTop: "10px",
+					}}
+				>
+					<Stack direction="row" justifyContent="center" alignItems="center" position="relative">
+						<Box direction="row" justifyContent="center" alignItems="center">
+							<Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
+								Refer an Owner
+							</Typography>
+						</Box>
+						{/* <Box position="absolute" right={0}>
 				<Button onClick={onClose}>
 				  <CloseIcon sx={{ color: theme.typography.common.blue, fontSize: "30px", margin: "5px" }} />
 				</Button>
 			  </Box> */}
+					</Stack>
+
+					<Stack direction="column" justifyContent="center" alignItems="center" padding="25px">
+						<Box
+							// component="form"
+							sx={
+								{
+									// '& .MuiTextField-root': { m: 1, width: '25ch' },
+								}
+							}
+							// noValidate
+							autoComplete="off"
+							id="addPropertyForm"
+						>
+							<Grid container columnSpacing={12} rowSpacing={6}>
+								<Grid item xs={12}>
+									<Typography sx={{ color: theme.typography.common.blue, fontSize: theme.typography.mediumFont }}>
+										First Name
+									</Typography>
+									<CustomTextField
+										onChange={(e) => setFirstName(e.target.value)}
+										sx={{
+											backgroundColor: "#D9D9D9",
+											border: "none",
+											outline: "none",
+											//   borderColor: "black",
+											borderRadius: "10px",
+											"&:focus-within": {
+												outline: "none",
+												borderColor: "transparent",
+												boxShadow: "none",
+											},
+										}}
+										size="small"
+										fullWidth
+									/>
+								</Grid>
+
+								<Grid item xs={12}>
+									<Typography sx={{ color: theme.typography.common.blue, fontSize: theme.typography.mediumFont }}>
+										Last Name
+									</Typography>
+									<CustomTextField
+										onChange={(e) => setLastName(e.target.value)}
+										sx={{
+											backgroundColor: "#D9D9D9",
+											border: "none",
+											outline: "none",
+											//   borderColor: "black",
+											borderRadius: "10px",
+											"&:focus-within": {
+												outline: "none",
+												borderColor: "transparent",
+												boxShadow: "none",
+											},
+										}}
+										size="small"
+										fullWidth
+									/>
+								</Grid>
+
+								<Grid item xs={12}>
+									<Typography sx={{ color: theme.typography.common.blue, fontSize: theme.typography.mediumFont }}>
+										Email
+									</Typography>
+									<CustomTextField
+										onChange={(e) => setEmail(e.target.value)}
+										sx={{
+											backgroundColor: "#D9D9D9",
+											borderColor: "black",
+											borderRadius: "7px",
+										}}
+										size="small"
+										fullWidth
+									/>
+								</Grid>
+
+								<Grid item xs={12}>
+									<Typography sx={{ color: theme.typography.common.blue, fontSize: theme.typography.mediumFont }}>
+										{"Phone Number (Optional)"}
+									</Typography>
+									<CustomTextField
+										type="tel"
+										pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+										value={phoneNumber}
+										onChange={(e) =>
+											setPhoneNumber(formatPhoneNumber(e.target.value))
+										}
+										// placeholder="Phone Number"
+										sx={{
+											backgroundColor: "#D9D9D9",
+											borderColor: "black",
+											borderRadius: "7px",
+										}}
+										size="small"
+										fullWidth
+									/>
+								</Grid>
+
+								<Grid item xs={12}>
+									<Typography sx={{ color: theme.typography.common.blue, fontSize: theme.typography.mediumFont }}>
+										Message
+									</Typography>
+									<CustomTextField
+										onChange={(e) => setMessage(e.target.value)}
+										sx={{
+											backgroundColor: "#D9D9D9",
+											borderColor: "black",
+											borderRadius: "7px",
+										}}
+										size="small"
+										fullWidth
+										multiline   // Set multiline to true
+										rows={4}    // Set the number of rows you want
+									/>
+								</Grid>
+							</Grid>
+						</Box>
+					</Stack>
+				</Paper>
+
 			</Stack>
-  
-			<Stack direction="column" justifyContent="center" alignItems="center" padding="25px">
-			  <Box
-				// component="form"
-				sx={
-				  {
-					// '& .MuiTextField-root': { m: 1, width: '25ch' },
-				  }
-				}
-				// noValidate
-				autoComplete="off"
-				id="addPropertyForm"
-			  >
-				<Grid container columnSpacing={12} rowSpacing={6}>                                                
-				  <Grid item xs={12}>
-					<Typography sx={{ color: theme.typography.common.blue, fontSize: theme.typography.mediumFont }}>
-					  First Name
-					</Typography>
-					<CustomTextField
-					  onChange={(e) => setFirstName(e.target.value)}
-					  sx={{
-						backgroundColor: "#D9D9D9",
-						border: "none",
-						outline: "none",
-					  //   borderColor: "black",
-						borderRadius: "10px",
-						"&:focus-within": {
-						  outline: "none",
-						  borderColor: "transparent",
-						  boxShadow: "none",
-						},
-					  }}
-					  size="small"
-					  fullWidth
-					/>
-				  </Grid>
-  
-				  <Grid item xs={12}>
-					<Typography sx={{ color: theme.typography.common.blue, fontSize: theme.typography.mediumFont }}>
-					  Last Name
-					</Typography>
-					<CustomTextField
-					  onChange={(e) => setLastName(e.target.value)}
-					  sx={{
-						backgroundColor: "#D9D9D9",
-						border: "none",
-						outline: "none",
-					  //   borderColor: "black",
-						borderRadius: "10px",
-						"&:focus-within": {
-						  outline: "none",
-						  borderColor: "transparent",
-						  boxShadow: "none",
-						},
-					  }}
-					  size="small"
-					  fullWidth
-					/>
-				  </Grid>
-  
-				  <Grid item xs={12}>
-					<Typography sx={{ color: theme.typography.common.blue, fontSize: theme.typography.mediumFont }}>
-					  Email
-					</Typography>
-					<CustomTextField
-					  onChange={(e) => setEmail(e.target.value)}
-					  sx={{
-						backgroundColor: "#D9D9D9",
-						borderColor: "black",
-						borderRadius: "7px",
-					  }}                    
-					  size="small"
-					  fullWidth                    
-					/>
-				  </Grid>
-  
-				  <Grid item xs={12}>
-					<Typography sx={{ color: theme.typography.common.blue, fontSize: theme.typography.mediumFont }}>
-					  {"Phone Number (Optional)"}
-					</Typography>					
-					<CustomTextField
-					  type="tel"
-					  pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-					  value={phoneNumber}
-					  onChange={(e) =>
-						setPhoneNumber(formatPhoneNumber(e.target.value))
-					  }
-					  // placeholder="Phone Number"
-					  sx={{
-						backgroundColor: "#D9D9D9",
-						borderColor: "black",
-						borderRadius: "7px",
-					  }}
-					  size="small"
-					  fullWidth                    
-					/>
-				  </Grid>
-  
-				  <Grid item xs={12}>
-					  <Typography sx={{ color: theme.typography.common.blue, fontSize: theme.typography.mediumFont }}>
-						  Message
-					  </Typography>
-					  <CustomTextField
-						  onChange={(e) => setMessage(e.target.value)}
-						  sx={{
-							  backgroundColor: "#D9D9D9",
-							  borderColor: "black",
-							  borderRadius: "7px",
-						  }}
-						  size="small"
-						  fullWidth
-						  multiline   // Set multiline to true
-						  rows={4}    // Set the number of rows you want
-					  />
-				  </Grid>				       
-				</Grid>
-			  </Box>
-			</Stack>
-		  </Paper>
-		  
-		</Stack>		
 		</>
-	  // </ThemeProvider>
+		// </ThemeProvider>
 	);
-  }
+}
 
 export default PropertyForm;
