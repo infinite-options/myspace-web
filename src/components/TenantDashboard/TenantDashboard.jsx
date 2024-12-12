@@ -2708,28 +2708,19 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
   ];
 
   return (
-    <ThemeProvider theme={theme}>
-      <Box
-        style={{
-          display: "flex",
-          justifyContent: "center",
+    <Grid container sx={{ flex: 1 }}>
+      <Paper
+        component={Stack}
+        sx={{
+          padding: isMobile ? "10px" : "20px",
           backgroundColor: "#f0f0f0",
-          height: "100%",
-          borderRadius: "10px",
-          alignItems: "flex-start",
-          width: "100%", // Ensure the box spans the full viewport width
-          // height: '100vh', // Ensure the box spans the full viewport height
+          borderRadius: "8px",
+          width: "100%",
+          // height: "100%",
+          // overflowX: "auto",
+          marginBottom: isMobile ? "10px" : "0px",
         }}
       >
-        <Paper
-          // elevation={3}
-          sx={{
-            // padding: "20px",
-            backgroundColor: "#f0f0f0",
-            width: "100%",
-            minHeight: "250px",
-          }}
-        >
           <Grid Container sx={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
             <Grid item xs={2} md={1}>
               <Button onClick={handleBack}>
@@ -2759,12 +2750,10 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
               </Button>
             </Grid>
           </Grid>
-          <Box sx={{ width: "100%", overflowX: "auto" }}>
             <DataGrid rows={rows} columns={columns} autoHeight sx={{ minWidth: "550px" }} disableColumnFilter={isMobile} disableColumnMenu={isMobile} disableColumnSelector={isMobile} />
-          </Box>
+          
         </Paper>
-      </Box>
-    </ThemeProvider>
+      </Grid>
   );
 };
 

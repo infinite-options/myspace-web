@@ -321,14 +321,14 @@ const CreateProfile = () => {
     if (validate_form() === false) return;
 
     setCookie("default_form_vals", { ...cookiesData, firstName, lastName, phoneNumber, email });
-
+    
     if (user.isEmailSignup) {
       const url = "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/CreateAccount/MYSPACE";
       const data = {
         ...user,
         first_name: firstName,
         last_name: lastName,
-        phone_number: phoneNumber,
+        phone_number: phoneNumber || businessPhoneNumber,
       };
       fetch(url, {
         method: "POST",
@@ -369,7 +369,7 @@ const CreateProfile = () => {
         ...user,
         first_name: firstName,
         last_name: lastName,
-        phone_number: phoneNumber,
+        phone_number: phoneNumber || businessPhoneNumber,
       };
       fetch(url, {
         method: "POST",
