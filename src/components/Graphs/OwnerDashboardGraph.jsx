@@ -1,6 +1,6 @@
 import { ThemeProvider } from "@emotion/react";
 import React from "react";
-import { Bar, Line, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, ComposedChart, Cell, ReferenceLine } from "recharts";
+import { Bar, Line, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, ComposedChart, Cell, ReferenceLine, Tooltip } from "recharts";
 import theme from "../../theme/theme";
 
 // Custom Legend Component
@@ -61,6 +61,14 @@ const DashboardChart = (props) => {
           <YAxis yAxisId="left" axisLine={false} tickCount={8} domain={[(min - 1000) * 1.1, max * 2]} tickFormatter={(value) => `$${value}`} style={{ fontSize: "10px" }} />
           <ReferenceLine yAxisId="left" y={0} stroke="#000000" strokeWidth={1} />
           <YAxis yAxisId="right" orientation="right" />
+          <Tooltip
+            formatter={(value, name, props) => `X: ${props.payload.monthYear}, Y: ${value.toFixed(2)}`}
+            contentStyle={{
+              backgroundColor: '#ffffff',
+              opacity: 1
+            }}
+          />
+
           <Legend content={CustomLegend} />
 
           <Line

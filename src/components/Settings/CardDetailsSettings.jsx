@@ -14,6 +14,7 @@ import Venmo from '../../images/Venmo.png'
 import Chase from '../../images/Chase.png'
 import Stripe from '../../images/Stripe.png'
 import ApplePay from '../../images/ApplePay.png'
+import APIConfig from '../../utils/APIConfig';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 const useStyles = makeStyles((theme) => ({
@@ -344,12 +345,12 @@ export default function CardDetailsSettings() {
 
         if (isEdited) {
             modifiedPaymentsData.forEach((item) => {
-                const request = axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod', item, headers);
+                const request = axios.put(`${APIConfig.baseURL.dev}/paymentMethod`, item, headers);
                 requests.push(request);
             });
             deletedPaymentsData.forEach((item, index) => {
                 // console.log(`Element at index ${index}: `, item.paymentMethod_uid);
-                const request = axios.delete(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod/${item.paymentMethod_uid}`, headers)
+                const request = axios.delete(`${APIConfig.baseURL.dev}/paymentMethod/${item.paymentMethod_uid}`, headers)
                 requests.push(request);
             });
 
@@ -357,7 +358,7 @@ export default function CardDetailsSettings() {
 
         if (isNewMethodAdded) {
             newPaymentsData.forEach((item) => {
-                const request = axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod', item, headers);
+                const request = axios.post(`${APIConfig.baseURL.dev}/paymentMethod`, item, headers);
                 requests.push(request);
             });
         }

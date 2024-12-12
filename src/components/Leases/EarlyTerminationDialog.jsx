@@ -12,6 +12,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useUser } from "../../contexts/UserContext";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import APIConfig from '../../utils/APIConfig';
 
 
 const EarlyTerminationDialog = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked, handleUpdate, isTerminatingRenewedLease, renewedLease }) => {
@@ -38,7 +39,7 @@ const EarlyTerminationDialog = ({ theme, leaseDetails, selectedLeaseId, setIsEnd
         // console.log('leaseApplicationFormData', leaseDetails.lease_uid);
         // console.log('end form', leaseApplicationFormData);                
         axios
-            .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication", leaseApplicationFormData, headers)
+            .put(`${APIConfig.baseURL.dev}/leaseApplication`, leaseApplicationFormData, headers)
             .then((response) => {
                 setShowSpinner(false);
                 console.log("Data updated successfully", response);                
@@ -85,7 +86,7 @@ const EarlyTerminationDialog = ({ theme, leaseDetails, selectedLeaseId, setIsEnd
         // console.log('end form', leaseApplicationFormData);        
         
         axios
-            .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication", leaseApplicationFormData, headers)
+            .put(`${APIConfig.baseURL.dev}/leaseApplication`, leaseApplicationFormData, headers)
             .then((response) => {
                 setShowSpinner(false);
                 console.log("Data updated successfully", response);                

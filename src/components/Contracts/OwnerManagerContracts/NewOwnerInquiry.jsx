@@ -76,9 +76,9 @@ function NewOwnerInquiry(props) {
 
       setContractBusinessID(announcementData["announcement_receiver"]);
 
-      // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/110-000096`)
+      // const response = await fetch(`${APIConfig.baseURL.dev}/properties/110-000096`)
 
-      // const response = await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${getProfileId()}`)
+      // const response = await fetch(`${APIConfig.baseURL.dev}/properties/${getProfileId()}`)
 
       const response = await fetch(`${APIConfig.baseURL.dev}/properties/${announcementData["announcement_sender"]}`);
 
@@ -325,7 +325,7 @@ function PropertyCard(props) {
   // }
 
   const sendPutRequest = (data) => {
-    const url = `https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`;
+    const url = `${APIConfig.baseURL.dev}/contracts`;
     // const url = `http://localhost:4000/contracts`;
 
     fetch(url, {

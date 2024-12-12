@@ -33,6 +33,7 @@ import Stripe from "../../images/Stripe.png";
 import ApplePay from "../../images/ApplePay.png";
 import ChaseIcon from "../../images/Chase.png";
 import { useCookies } from "react-cookie";
+import APIConfig from "../../utils/APIConfig";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -82,7 +83,7 @@ const PMEmpOnBoardDesktopForm = ({ profileData, setIsSave }) => {
     const [businessPhoto, setBusinessPhoto] = useState(DefaultProfileImg);
 
     const fetchBusinesses = async () => {
-        const url = "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile";
+        const url = `${APIConfig.baseURL.dev}/businessProfile`;
         const args = {
             business_type: "MANAGEMENT",
         };
@@ -166,7 +167,7 @@ const PMEmpOnBoardDesktopForm = ({ profileData, setIsSave }) => {
 
     const createProfile = async (form) => {
         // const profileApi = "/employeeProfile";
-        const { data } = await axios.put(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile`, form, headers);
+        const { data } = await axios.put(`${APIConfig.baseURL.dev}/profile`, form, headers);
         return data;
     };
 
@@ -421,7 +422,7 @@ const PMEmpOnBoardDesktopForm = ({ profileData, setIsSave }) => {
 
         if (putPayload.length > 0) {
             await axios.put(
-                "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
+                `${APIConfig.baseURL.dev}/paymentMethod`,
                 putPayload,
                 { headers: { "Content-Type": "application/json" } }
             );
@@ -429,7 +430,7 @@ const PMEmpOnBoardDesktopForm = ({ profileData, setIsSave }) => {
 
         if (postPayload.length > 0) {
             await axios.post(
-                "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
+                `${APIConfig.baseURL.dev}/paymentMethod`,
                 postPayload,
                 { headers: { "Content-Type": "application/json" } }
             );

@@ -36,6 +36,7 @@ import ApplePay from "../../images/ApplePay.png";
 import ChaseIcon from "../../images/Chase.png";
 import CloseIcon from "@mui/icons-material/Close";
 import { useCookies } from "react-cookie";
+import APIConfig from "../../utils/APIConfig";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -88,7 +89,7 @@ const TenantOnBoardDesktopForm = ({ profileData, setIsSave }) => {
     const fetchProfileData = async () => {
       setShowSpinner(true);
       try {
-        // const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
+        // const profileResponse = await axios.get(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
         // const profileData = profileResponse.data.profile.result[0];
         setFirstName(profileData.tenant_first_name || "");
         setLastName(profileData.tenant_last_name || "");
@@ -150,7 +151,7 @@ const TenantOnBoardDesktopForm = ({ profileData, setIsSave }) => {
 
   const saveProfile = async (form) => {
     const profileApi = "/profile";
-    const { data } = await axios.put(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`, form, headers);
+    const { data } = await axios.put(`${APIConfig.baseURL.dev}${profileApi}`, form, headers);
     setIsSave(true);
     return data;
   };
@@ -327,11 +328,11 @@ const TenantOnBoardDesktopForm = ({ profileData, setIsSave }) => {
     });
 
     if (putPayload.length > 0) {
-      await axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod", putPayload, { headers: { "Content-Type": "application/json" } });
+      await axios.put(`${APIConfig.baseURL.dev}/paymentMethod`, putPayload, { headers: { "Content-Type": "application/json" } });
     }
 
     if (postPayload.length > 0) {
-      await axios.post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod", postPayload, { headers: { "Content-Type": "application/json" } });
+      await axios.post(`${APIConfig.baseURL.dev}/paymentMethod`, postPayload, { headers: { "Content-Type": "application/json" } });
     }
 
     setShowSpinner(false);

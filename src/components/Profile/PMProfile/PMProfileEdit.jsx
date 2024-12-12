@@ -21,6 +21,7 @@ import {
 import axios from "axios";
 import { useEffect, useState, createContext, useContext } from "react";
 import { useUser } from "../../../contexts/UserContext";
+import APIConfig from "../../../utils/APIConfig";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -133,7 +134,7 @@ function PMProfileEdit() {
 
   useEffect(() => {
     setShowSpinner(true);
-    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`).then((res) => {
+    axios.get(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`).then((res) => {
       let responseData = res.data.profile.result[0];
       parseJSONFields(responseData);
 
@@ -234,7 +235,7 @@ function PMProfileEdit() {
   //     if(isEdited){
   //         console.log("EDITED")
   //         // axios.put('http://localhost:4000/tenantProfile', modifiedData, headers)
-  //         axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', modifiedData, headers)
+  //         axios.put('${APIConfig.baseURL.dev}/profile', modifiedData, headers)
   //         .then((response) => {
   //             console.log('Data updated successfully');
   //             setIsEdited(false); // Reset the edit status
@@ -257,9 +258,9 @@ function PMProfileEdit() {
     if (isEdited) {
       console.log("   modifiedData - ", modifiedData);
       // axios.put('http://localhost:4000/businessProfile', modifiedData, headers)
-      // axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile', modifiedData, headers)
+      // axios.put('${APIConfig.baseURL.dev}/businessProfile', modifiedData, headers)
       axios
-        .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", modifiedData, headers)
+        .put(`${APIConfig.baseURL.dev}/profile`, modifiedData, headers)
         .then((response) => {
           console.log("Data updated successfully");
           setIsEdited(false); // Reset the edit status

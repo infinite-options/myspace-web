@@ -12,6 +12,7 @@ import Status13 from "../../images/status_1_3.svg";
 // import Status12 from "../../images/status_1_2.svg";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
 import NewBusinessLogo from "../../images/NewBusinessLogo.svg";
+import APIConfig from "../../utils/APIConfig";
 import NewProfilePicture from "../../images/NewProfilePicture.svg";
 import { objToQueryString } from "../utils/helper";
 import { useCookies } from "react-cookie";
@@ -177,7 +178,7 @@ const ProfileName = () => {
   };
 
   const handleFetchBusinesses = async () => {
-    const url = "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/businessProfile";
+    const url = `${APIConfig.baseURL.dev}/businessProfile`;
     const args = {
       business_type: isManagementEmployee() ? "MANAGEMENT" : "MAINTENANCE",
     };

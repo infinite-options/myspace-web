@@ -143,7 +143,7 @@ export default function PMQuotesRequested(props) {
 
   const get_manager_info = async () => {
     setLoading(true);
-    const url = "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/searchManager";
+    const url = `${APIConfig.baseURL.dev}/searchManager`;
     const args = {};
     const response = await axios.get(url);
     const managers = response.data.result;
@@ -509,7 +509,7 @@ export default function PMQuotesRequested(props) {
   //     formData.append("contract_uid", obj.contract_uid);
   //     formData.append("contract_status", "ACTIVE");
 
-  //     fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`, {
+  //     fetch(`${APIConfig.baseURL.dev}/contracts`, {
   //       method: "PUT",
   //       body: formData,
   //     })
@@ -565,7 +565,7 @@ export default function PMQuotesRequested(props) {
     }
 
     try {
-      fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`, {
+      fetch(`${APIConfig.baseURL.dev}/contracts`, {
         method: "PUT",
         body: formData,
       })
@@ -600,7 +600,7 @@ export default function PMQuotesRequested(props) {
     formData.append("contract_status", status);
 
     try {
-      fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`, {
+      fetch(`${APIConfig.baseURL.dev}/contracts`, {
         method: "PUT",
         body: formData,
       })
@@ -685,7 +685,7 @@ export default function PMQuotesRequested(props) {
       formData.append("contract_status", "REJECTED");
 
       axios
-        .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts", formData)
+        .put(`${APIConfig.baseURL.dev}/contracts`, formData)
         .then((response) => {
           console.log("PUT result", response);
           sendAnnouncement("DECLINED", obj);
@@ -707,7 +707,7 @@ export default function PMQuotesRequested(props) {
       formData.append("contract_status", status);
 
       axios
-        .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts", formData)
+        .put(`${APIConfig.baseURL.dev}/contracts`, formData)
         .then((response) => {
           console.log("PUT result", response);
           refreshContracts();

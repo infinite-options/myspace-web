@@ -6,6 +6,7 @@ import PhotoIcon from '@mui/icons-material/Photo';
 import { alpha, makeStyles } from "@material-ui/core/styles";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+import APIConfig from '../../utils/APIConfig';
 
 import { 
     Paper, 
@@ -240,7 +241,7 @@ export default function EditProfileSettingsManager() {
             console.log("EDITED");
     
             // Perform the update asynchronously
-            axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile', formData, headers)
+            axios.put(`${APIConfig.baseURL.dev}/profile`, formData, headers)
                 .then((response) => {
                     console.log('Data updated successfully');
                     setIsEdited(false); // Reset the edit status

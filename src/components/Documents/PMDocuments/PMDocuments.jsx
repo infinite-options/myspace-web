@@ -9,6 +9,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { Box, TextField, InputAdornment } from "@mui/material";
 import { ReactComponent as SearchIcon } from "../../../images/search.svg";
 import { makeStyles } from "@material-ui/core/styles";
+import APIConfig from "../../../utils/APIConfig";
 
 const theme = createTheme({
   palette: {
@@ -105,7 +106,7 @@ function PMDocuments() {
 
   useEffect(() => {
     setShowSpinner(true);
-    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/quoteDocuments/${getProfileId()}`).then((res) => {
+    axios.get(`${APIConfig.baseURL.dev}/quoteDocuments/${getProfileId()}`).then((res) => {
       // console.log(res.data);
       // setDocumentsData(res.data.Documents);
       setContractsData(res.data.Documents.Contracts);

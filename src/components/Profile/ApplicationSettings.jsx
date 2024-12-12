@@ -9,6 +9,7 @@ import { makeStyles } from "@material-ui/core";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import theme from "../../theme/theme.js";
 import axios from "axios";
+import APIConfig from "../../utils/APIConfig.jsx";
 import { styled } from '@mui/system';
 
 const useStyles = makeStyles({
@@ -115,7 +116,7 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS,
 
   const updatePrimaryRoleInBackend = async (updatedRoles) => {
     try {
-      const response = await axios.put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo", {
+      const response = await axios.put(`${APIConfig.baseURL.dev}/userInfo`, {
         user_uid: cookies.user.user_uid,
         role: updatedRoles,
       });
@@ -219,7 +220,7 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS,
     // console.log("handleChangeSettings - event.target - ",event.target.name,  event.target.checked)
     const { name, checked } = event.target
 
-    const url = 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo'; // Replace with your API endpoint
+    const url = `${APIConfig.baseURL.dev}/userInfo`; // Replace with your API endpoint
     const userInfoPayload = {
       [name]: checked.toString(),      
       "user_uid": user?.user_uid,

@@ -23,6 +23,7 @@ import { CalendarToday, Chat, Close, Description } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from "../../contexts/UserContext";
 import Documents from './Documents';
+import APIConfig from '../../utils/APIConfig';
 
 import ListsContext from '../../contexts/ListsContext';
 
@@ -222,7 +223,7 @@ const EditLease = (props) => {
             leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
         }
 
-        axios.post('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
+        axios.post(`${APIConfig.baseURL.dev}/leaseApplication`, leaseApplicationFormData, headers)
             .then((response) => {
                 console.log('Data updated successfully');
                 navigate('/managerDashboard', {
@@ -285,7 +286,7 @@ const EditLease = (props) => {
             leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
         }
 
-        axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
+        axios.put(`${APIConfig.baseURL.dev}/leaseApplication`, leaseApplicationFormData, headers)
             .then((response) => {
                 console.log('Data updated successfully');
             })
@@ -301,7 +302,7 @@ const EditLease = (props) => {
                     [leaseData.business_uid]: [leaseData.lease_property_id],
                 };
 
-                await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+                await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
                     // await fetch(`http://localhost:4000/announcements/${getProfileId()}`, {
                     method: "POST",
                     headers: {

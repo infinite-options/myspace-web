@@ -473,7 +473,7 @@ function EditProperty(props) {
 
 		const autoUpdate = async () => {
 			const updateResponse = await fetch(
-				`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/properties/${propertyData.property_uid}`
+				`${APIConfig.baseURL.dev}/properties/${propertyData.property_uid}`
 			);
 
 			const updatedJson = await updateResponse.json();

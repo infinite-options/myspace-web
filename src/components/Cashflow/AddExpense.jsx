@@ -239,7 +239,7 @@ const AddExpense = (props) => {
     // const config = {
     //   method: 'post',
     //   maxBodyLength: Infinity,
-    //   url: 'https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/addPurchase',
+    //   url: '${APIConfig.baseURL.dev}/addPurchase',
     //   headers: { 'Content-Type': 'multipart/form-data' },
     //   data: formData
     // };
@@ -320,19 +320,14 @@ const AddExpense = (props) => {
             <CircularProgress color="inherit" />
         </Backdrop>
         {/* <PropertyListData setShowSpinner={setShowSpinner} setPropertyList={setPropertyList}/> */}
-        <Box
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            width: "100%", // Take up full screen width
-            minHeight: "100vh", // Set the Box height to full height
-            // marginTop: theme.spacing(2), // Set the margin to 20px
-          }}
-        >
-          <Paper
+        <Paper
             sx={{
               // margin: "30px",
               padding: 20,
+              borderRadius: "10px",
+              marginTop: "2px",
+              boxShadow: "none",
+              height: "100%",
               // backgroundColor: theme.palette.primary.main,
               backgroundColor: theme.palette.primary.pink,
               width: "85%", // Occupy full width with 25px margins on each side
@@ -619,8 +614,7 @@ const AddExpense = (props) => {
               {edit ? "Edit" : "+ Add"} Expense
             </Button>
             {/* </form> */}
-          </Paper>
-        </Box>
+        </Paper>
       </ThemeProvider>
   );
 };

@@ -114,7 +114,7 @@ export default function TenantApplicationEdit(props) {
     //     setShowSpinner(true);
     //     try {
     //         if (lease_uid) {
-    //             axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`)
+    //             axios.get(`${APIConfig.baseURL.dev}/leaseDetails/${getProfileId()}`)
     //                 .then((response) => {
     //                     const fetchData = response.data["Lease_Details"].result;
     //                     const leaseData = fetchData.filter((lease) => lease.lease_uid === lease_uid)
@@ -136,7 +136,7 @@ export default function TenantApplicationEdit(props) {
     //                     setShowSpinner(false);
     //                 })
     //         } else {
-    //             const profileResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile/${getProfileId()}`);
+    //             const profileResponse = await axios.get(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
     //             const profileData = profileResponse.data.profile.result[0];
     //             setAdults(profileData && profileData.tenant_adult_occupants ? JSON.parse(profileData.tenant_adult_occupants) : []);
     //             setChildren(profileData && profileData.tenant_children_occupants ? JSON.parse(profileData.tenant_children_occupants) : []);
@@ -274,7 +274,7 @@ export default function TenantApplicationEdit(props) {
                 setShowSpinner(true); // Start the spinner before loading data
 
                 // Fetch lease details asynchronously
-                const leaseResponse = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseDetails/${getProfileId()}`);
+                const leaseResponse = await axios.get(`${APIConfig.baseURL.dev}/leaseDetails/${getProfileId()}`);
 
                 const fetchedLease = leaseResponse.data["Lease_Details"].result.filter((lease) => lease.lease_uid === props.lease.lease_uid);
 
@@ -464,7 +464,7 @@ export default function TenantApplicationEdit(props) {
                 });
                 // leaseApplicationFormData.append('lease_uid', lease[0].lease_uid); // Here is the problem when upload new docs because there is no lease right now and it require lease_uid
 
-                // axios.put('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication', leaseApplicationFormData, headers)
+                // axios.put('${APIConfig.baseURL.dev}/leaseApplication', leaseApplicationFormData, headers)
                 //     .then((response) => {
                 //         console.log('Data updated successfullyyy', response);
                 //         showSnackbar("Your lease application has been successfully updated.", "success");
@@ -533,7 +533,7 @@ export default function TenantApplicationEdit(props) {
     //             profileFormData.append("tenant_uid", profileData.tenant_uid);
 
     //             axios
-    //                 .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/profile", profileFormData, headers)
+    //                 .put("${APIConfig.baseURL.dev}/profile", profileFormData, headers)
     //                 .then((response) => {
     //                     console.log("Data updated successfully", response);
     //                     showSnackbar("Your profile has been successfully updated.", "success");
@@ -689,7 +689,7 @@ export default function TenantApplicationEdit(props) {
                 leaseApplicationFormData.append("lease_uid", lease[0].lease_uid); // Here is the problem when upload new docs because there is no lease right now and it require lease_uid
 
                 axios
-                    .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication", leaseApplicationFormData, headers)
+                    .put(`${APIConfig.baseURL.dev}/leaseApplication`, leaseApplicationFormData, headers)
                     .then((response) => {
                         // console.log('Data updated successfullyyy', response);
                         // showSnackbar("Your lease application has been successfully updated.", "success");

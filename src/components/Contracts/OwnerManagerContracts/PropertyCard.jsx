@@ -1311,7 +1311,7 @@ const PropertyCard = (props) => {
 		updateFormData.append("contract_renew_status", "");
 
 		try {
-			fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`, {
+			fetch(`${APIConfig.baseURL.dev}/contracts`, {
 			  method: "PUT",
 			  body: updateFormData,
 			})
@@ -1509,7 +1509,7 @@ const PropertyCard = (props) => {
     // }
 
     try {
-      fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`, {
+      fetch(`${APIConfig.baseURL.dev}/contracts`, {
         method: "PUT",
         body: formData,
       })
@@ -1546,7 +1546,7 @@ const PropertyCard = (props) => {
 	console.log(" -- DEBUG -- inside accept contract - ", contractId, status)
 
     try {
-      fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts`, {
+      fetch(`${APIConfig.baseURL.dev}/contracts`, {
         method: "PUT",
         body: formData,
       })
@@ -1631,7 +1631,7 @@ const PropertyCard = (props) => {
       formData.append("contract_status", "REJECTED");
 
       axios
-        .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/contracts", formData)
+        .put(`${APIConfig.baseURL.dev}/contracts`, formData)
         .then((response) => {
           sendAcceptAnnouncement()
         })

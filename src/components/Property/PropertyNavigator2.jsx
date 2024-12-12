@@ -781,7 +781,7 @@ export default function PropertyNavigator2({
       "Access-Control-Allow-Credentials": "*",
     };
     axios
-      .get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances/${propertyId}`)
+      .get(`${APIConfig.baseURL.dev}/appliances/${propertyId}`)
       .then((response) => {
         // console.log(typeof (response.data.result));
         // console.log(response.data.result);
@@ -848,7 +848,7 @@ export default function PropertyNavigator2({
         }
       }
       axios
-        .post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
+        .post(`${APIConfig.baseURL.dev}/appliances`, applianceFormData, headers)
         .then((response) => {
           // Check if the response contains the `appliance_uid`
           const newApplianceUID = response?.data?.appliance_UID;
@@ -963,7 +963,7 @@ export default function PropertyNavigator2({
       }
 
       axios
-        .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/appliances", applianceFormData, headers)
+        .put(`${APIConfig.baseURL.dev}/appliances`, applianceFormData, headers)
         .then((response) => {
           if (selectedImageList.length === 0 && imagesTobeDeleted.length === 0) {
             setAppliances((prevAppliances) => {

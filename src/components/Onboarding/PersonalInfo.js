@@ -10,6 +10,7 @@ import axios from "axios";
 import { formatPhoneNumber, headers, maskNumber } from "./helper";
 import AES from "crypto-js/aes";
 import { useCookies } from "react-cookie";
+import APIConfig from "../../utils/APIConfig";
 import DataValidator from "../DataValidator";
 import AddressAutocompleteInput from "../Property/AddressAutocompleteInput";
 
@@ -164,7 +165,7 @@ const PersonalInfo = () => {
       if (key === "employee_photo" && payload[key]) formPayload.append(key, payload[key].file);
       else formPayload.append(key, payload[key]);
     }
-    const { data } = await axios.post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee", formPayload, headers);
+    const { data } = await axios.post(`${APIConfig.baseURL.dev}/employee`, formPayload, headers);
     setCookie("default_form_vals", { ...cookiesData, firstName, lastName, phoneNumber, email, address, unit, city, state, zip });
     handleUpdateProfileUid(data);
 

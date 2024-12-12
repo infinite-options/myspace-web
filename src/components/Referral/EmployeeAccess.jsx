@@ -128,7 +128,7 @@ export default function EmployeeAccess({}) {
     setShowSpinner(true);    
     
 
-    axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employee/${getProfileId()}`).then((res) => {
+    axios.get(`${APIConfig.baseURL.dev}/employee/${getProfileId()}`).then((res) => {
       const data = res.data?.employee?.result;               
 
       setNewRequests(data.filter((employee) => employee.employee_verification == null))
@@ -153,7 +153,7 @@ export default function EmployeeAccess({}) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-        const response = await fetch('https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/employeeVerification', {
+        const response = await fetch(`${APIConfig.baseURL.dev}/employeeVerification`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

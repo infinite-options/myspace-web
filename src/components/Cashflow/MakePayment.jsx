@@ -101,7 +101,7 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
 
   async function fetchPaymentMethods() {
     try {
-      const methods = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod/${getProfileId()}`);
+      const methods = await axios.get(`${APIConfig.baseURL.dev}/paymentMethod/${getProfileId()}`);
       console.log("Manager Payment Method Data: ", methods.data);
       return methods.data;
     } catch (error) {
@@ -141,7 +141,7 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
   const payment_url = {
     "Credit Card": "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createPaymentIntent",
     "Bank Transfer": "https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createEasyACHPaymentIntent",
-    Zelle: "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/makePayment",
+    Zelle: `${APIConfig.baseURL.dev}/makePayment`,
   };
 
   const [stripePromise, setStripePromise] = useState(null);
@@ -338,8 +338,8 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
     console.log("inside toggle keys");
     const url =
       paymentData.business_code === "PMTEST"
-        ? // ? "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
-          // : "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PM";
+        ? // ? `${APIConfig.baseURL.dev}/stripe_key/PMTEST`
+          // : `${APIConfig.baseURL.dev}/stripe_key/PM`;
           "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
         : // : "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST";
           "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PM";

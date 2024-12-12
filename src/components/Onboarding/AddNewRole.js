@@ -9,6 +9,7 @@ import DataValidator from "../DataValidator";
 import { formatPhoneNumber, headers, roleMap } from "./helper";
 
 import axios from "axios";
+import APIConfig from "../../utils/APIConfig";
 
 import managerDashboardImage from "./images/dashboard-images/manager-dashboard.png";
 import maintenanceDashboardImage from "./images/dashboard-images/maintenance-dashboard.png";
@@ -116,7 +117,7 @@ const AddNewRole = () => {
 
   const createProfile = async (form, type) => {
     const { profileApi } = roleMap[type];
-    const { data } = await axios.post(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev${profileApi}`, form, headers);
+    const { data } = await axios.post(`${APIConfig.baseURL.dev}${profileApi}`, form, headers);
     return data;
   };
 
@@ -135,7 +136,7 @@ const AddNewRole = () => {
 
   const checkIfUserExists = async (email) => {
     try {
-      const response = await axios.get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/userInfo/${email}`);
+      const response = await axios.get(`${APIConfig.baseURL.dev}/userInfo/${email}`);
       return response;
     } catch (error) {
       if (error.response && error.response.status === 404 && error.response.data.message === "User not found") {

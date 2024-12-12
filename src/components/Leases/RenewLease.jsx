@@ -283,7 +283,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
         console.log("leaseApplicationFormData", leaseApplicationFormData);
 
         axios
-          .post("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication", leaseApplicationFormData, headers)
+          .post(`${APIConfig.baseURL.dev}/leaseApplication`, leaseApplicationFormData, headers)
           .then((response) => {
             setuploadedFiles([]);
             setShowSpinner(false);
@@ -350,7 +350,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
         leaseApplicationFormData.append("lease_uid", currentLease.lease_uid);
 
         axios
-          .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication", leaseApplicationFormData, headers)
+          .put(`${APIConfig.baseURL.dev}/leaseApplication`, leaseApplicationFormData, headers)
           .then((response) => {
             console.log("Data updated successfully", response);
             showSnackbar("Your lease has been successfully updated.", "success");
@@ -415,7 +415,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
         // console.log("leaseApplicationFormData", leaseApplicationFormData);
 
         axios
-          .put("https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication", leaseApplicationFormData, headers)
+          .put(`${APIConfig.baseURL.dev}/leaseApplication`, leaseApplicationFormData, headers)
           .then((response) => {
             setShowSpinner(false);
             // console.log('Data updated successfully');

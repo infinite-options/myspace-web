@@ -17,7 +17,7 @@ export default function RequestInfoModal({ maintenanceItem, onRequestClose, setS
 
       const recevier = selectedRole === "owner" ? maintenanceItem.owner_uid : maintenanceItem.tenant_uid;
 
-      await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/announcements/${getProfileId()}`, {
+      await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

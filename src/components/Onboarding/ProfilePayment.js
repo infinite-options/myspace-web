@@ -18,6 +18,7 @@ import ApplePay from "../../images/ApplePay.png";
 import { headers } from "./helper";
 import { useCookies } from "react-cookie";
 import ChaseIcon from "../../images/Chase.png";
+import APIConfig from "../../utils/APIConfig";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -133,7 +134,7 @@ function ProfilePayment() {
     });
 
     const response = await axios.post(
-      "https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/paymentMethod",
+      `${APIConfig.baseURL.dev}/paymentMethod`,
       payload,
       headers
     );

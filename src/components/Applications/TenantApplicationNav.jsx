@@ -25,6 +25,7 @@ import { AdultDataGrid, ChildDataGrid, PetDataGrid, VehicleDataGrid } from "./Te
 import { DataGrid } from '@mui/x-data-grid';
 import LeaseFees from "../Leases/LeaseFees";
 import { useUser } from "../../contexts/UserContext";
+import APIConfig from "../../utils/APIConfig";
 
 const TenantApplicationNav = (props) => {
   const navigate = useNavigate();
@@ -116,7 +117,7 @@ const TenantApplicationNav = (props) => {
     }
 
     setShowSpinner(true);
-    await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`, {
+    await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
       method: "PUT",
       body: leaseApplicationFormData,
     });
@@ -128,7 +129,7 @@ const TenantApplicationNav = (props) => {
       updatePrevLeaseFormData.append("lease_uid", lease.lease_uid);
       updatePrevLeaseFormData.append("lease_renew_status", "RENEW REJECTED");
 
-      await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`, {
+      await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "PUT",
         body: updatePrevLeaseFormData,
       });
@@ -164,7 +165,7 @@ const TenantApplicationNav = (props) => {
     leaseApplicationFormData.append("lease_status", "RESCIND");
 
     setShowSpinner(true);
-    await fetch(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/leaseApplication`, {
+    await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
       method: "PUT",
       body: leaseApplicationFormData,
     });

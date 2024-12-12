@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import APIConfig from "../../../utils/APIConfig";
 
 const theme = createTheme({
   palette: {
@@ -39,7 +40,7 @@ function OwnerDocuments() {
   useEffect(() => {
     setShowSpinner(true);
     axios
-      .get(`https://l0h6a9zi1e.execute-api.us-west-1.amazonaws.com/dev/documents/${getProfileId()}`)
+      .get(`${APIConfig.baseURL.dev}/documents/${getProfileId()}`)
       // axios.get(`http://localhost:4000/documents/${getProfileId()}`)
       .then((res) => {
         // console.log(res.data);
