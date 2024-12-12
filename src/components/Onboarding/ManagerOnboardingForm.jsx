@@ -1804,7 +1804,9 @@ const closeDialog = () => {
       </Grid>
 
         <Grid item xs={12} sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
-          <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
+          <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }} 
+                    paddingTop='5px'
+                    paddingBottom='10px'>
             Property Manager Personal Information
           </Typography>
           <Grid container item xs={12}>
@@ -2078,9 +2080,11 @@ const closeDialog = () => {
           </Grid>
         </Grid>
 
-        <Grid container justifyContent='center' item xs={12} sx= {{ backgroundColor:"#F2F2F2", borderRadius: "10px",}}>
+        <Grid container justifyContent='center' item xs={12} sx= {{ backgroundColor:"#F2F2F2", borderRadius: "10px",}} 
+                    paddingTop='10px'
+                    paddingBottom='10px'>
           <Button variant='contained' color='primary' onClick={handleNextStep} disabled={nextStepDisabled} sx={{ mb: 2, backgroundColor: "#3D5CAC" }}>
-            <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Save</Typography>
+            <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }} >Save</Typography>
           </Button>
         </Grid>
 
