@@ -405,12 +405,11 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 					const data = await response.json();
 					console.log("contracts - POST - response data = ", data);
 
-					responseContractUID = data.contract_UID;
+					responseContractUID = data.contract_uid;
 					setNewContractUID(responseContractUID);
 					console.log("response data - contract UID: ", responseContractUID);
 
 					console.log('navigating to /pmQuotesList', responseContractUID, getProfileId(), responsePropertyUID);
-
 					// navigate("/pmQuotesList", {
 					//   state: {
 					//     selectedContractUID: responseContractUID,		
