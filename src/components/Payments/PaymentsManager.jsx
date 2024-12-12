@@ -842,6 +842,7 @@ export default function PaymentsManager(props) {
                             },
                           }}
                           sx={{
+                            minHeight: "170px",
                             '& .MuiDataGrid-root': {
                                 boxShadow: 'none',
                             },

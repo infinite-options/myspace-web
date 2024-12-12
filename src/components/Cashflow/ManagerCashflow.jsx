@@ -2605,103 +2605,146 @@ export default function ManagerCashflow() {
       {showSpinner ? (<Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
         <CircularProgress color='inherit' />
       </Backdrop>) : (
-      <Container maxWidth='lg' sx={{ paddingTop: "10px", height: "90vh", }}>
-        <Grid container spacing={6} sx={{ height: "90%" }}>
-          <Grid item xs={12} md={4}>
-            <ManagerCashflowWidget
-              propsMonth={month}
-              propsYear={year}
-              setView={setView}
-              profitsTotal={profitsTotal}
-              rentsTotal={rentsTotal}
-              payoutsTotal={payoutsTotal}
-              totalDeposit={totalDepositByMonth}
-              graphData={cashflowTransactionsData?.result}
-              setCurrentWindow={setCurrentWindow}
-              propertyList={propertyList}
-              selectedProperty={selectedProperty}
-              setSelectedProperty={setSelectedProperty}
-            />
-          </Grid>
-
-          <Grid container item xs={12} md={8} columnSpacing={6}>
-            {currentWindow === "PROFITABILITY" && (
-              <ManagerProfitability
+        <Container
+          maxWidth="lg"
+          sx={{
+            paddingTop: "10px",
+            paddingBottom: "50px",
+          }}
+        >
+          <Grid
+            container
+            spacing={8}
+            rowGap={1}
+            sx={{
+              alignItems: "stretch", 
+            }}
+          >
+            {/* Left-hand side: Manager Cashflow Widget */}
+            <Grid
+              item
+              xs={12}
+              md={4}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                flex: 1,
+              }}
+            >
+              <ManagerCashflowWidget
                 propsMonth={month}
                 propsYear={year}
+                setView={setView}
                 profitsTotal={profitsTotal}
-                profits={profits}
-                view={view}
-                cashFlowData={cashFlowData}
-                cashFlowtotal={cashFlowTotal}
                 rentsTotal={rentsTotal}
-                rentsByProperty={rentsByProperty}
                 payoutsTotal={payoutsTotal}
-                payouts={payouts}
-                ownerList={ownerList}
-                selectedOwnerId={selectedOwnerId}
-                setSelectedOwnerId={setSelectedOwnerId}
-                // profitsCurrentYear={profitsCurrentYear}
-                // profitsTotalCurrentYear={profitsTotalCurrentYear}
-                // rentsTotalCurrentYear={rentsTotalCurrentYear}
-                // rentsByPropertyCurrentYear={rentsByPropertyCurrentYear}
-                // payoutsCurrentYear={payoutsCurrentYear}
-                // payoutsTotalCurrentYear={payoutsTotalCurrentYear}
-                // revenueByType={revenueByType}
-                // expenseByType={expenseByType}
-                // expectedExpenseByType={expectedExpenseByType}
-                // expectedRevenueByType={expectedRevenueByType}
-                revenueList={revenueList}
-                expenseList={expenseList}
-                revenueByTypeForView={revenueByTypeForView}
-                expenseByTypeForView={expenseByTypeForView}
-                expectedRevenueByTypeForView={expectedRevenueByTypeForView}
-                expectedExpenseByTypeForView={expectedExpenseByTypeForView}
-                // revenueByMonthByType={revenueByMonthByType}
-                // expenseByMonthByType={expenseByMonthByType}
-                totalExpenseByMonth={totalExpenseByMonth}
-                totalRevenueByMonth={totalRevenueByMonth}
-                expectedExpenseByMonth={expectedExpenseByMonth}
-                expectedRevenueByMonth={expectedRevenueByMonth}
-                getTotalValueByTypeMapping={getTotalValueByTypeMapping}
-                getExpectedTotalByTypeMapping={getExpectedTotalByTypeMapping}
-                allProfitDataItems={allProfitDataItems}
-                getSortedExpectedTotalByMapping={getSortedExpectedTotalByMapping}
-                getSortedTotalValueByMapping={getSortedTotalValueByMapping}
-                totalCashflowValueByType={totalCashflowValueByType}
-                expectedCashflowValueByType={expectedCashflowValueByType}
-                allCashflowData={allCashflowData}
-                totalDepositByProperty={totalDepositByProperty}
-                totalDeposit={totalDeposit}
-                revenueDataForManager={revenueDataForManager}
-                totalRevenueData={totalRevenueData}
-                selectedProperty={selectedProperty}
-                fecthPaymentVerification={refreshCashFlowAfterVerified}
-                setMonth={setMonth}
-                setYear={setYear}
-                uid={revenueByType ? revenueByType : expenseByType}
-              />
-            )}
-            {currentWindow === "TRANSACTIONS" && (
-              <ManagerTransactions
-                propsMonth={month}
-                propsYear={year}
-                setMonth={setMonth}
-                setYear={setYear}
-                // transactionsData={transactionsData}
-                transactionsData={cashflowTransactionsData}
-                setSelectedPayment={setSelectedPayment}
+                totalDeposit={totalDepositByMonth}
+                graphData={cashflowTransactionsData?.result}
                 setCurrentWindow={setCurrentWindow}
+                propertyList={propertyList}
                 selectedProperty={selectedProperty}
+                setSelectedProperty={setSelectedProperty}
+                sx={{
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                }} // Ensures this grows to match the height of the right-hand side
               />
-            )}
-            {currentWindow === "PAYMENTS" && <PaymentsManager />}
-            {currentWindow === "MAKE_PAYMENT" && <MakePayment selectedPayment={selectedPayment} refreshCashflowData={refreshCashflowData} setCurrentWindow={setCurrentWindow} />}
-            {currentWindow === "ADD_REVENUE" && <AddRevenue propertyList={propertyList} setCurrentWindow={setCurrentWindow} />}
-            {currentWindow === "ADD_EXPENSE" && <AddExpense propertyList={propertyList} setCurrentWindow={setCurrentWindow} />}
+            </Grid>
+
+            {/* Right-hand side */}
+            <Grid
+              item
+              xs={12}
+              md={8}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                flex: 1,
+              }}
+            >
+              {currentWindow === "PROFITABILITY" && (
+                <ManagerProfitability
+                  propsMonth={month}
+                  propsYear={year}
+                  profitsTotal={profitsTotal}
+                  profits={profits}
+                  view={view}
+                  cashFlowData={cashFlowData}
+                  cashFlowtotal={cashFlowTotal}
+                  rentsTotal={rentsTotal}
+                  rentsByProperty={rentsByProperty}
+                  payoutsTotal={payoutsTotal}
+                  payouts={payouts}
+                  ownerList={ownerList}
+                  selectedOwnerId={selectedOwnerId}
+                  setSelectedOwnerId={setSelectedOwnerId}
+                  revenueList={revenueList}
+                  expenseList={expenseList}
+                  revenueByTypeForView={revenueByTypeForView}
+                  expenseByTypeForView={expenseByTypeForView}
+                  expectedRevenueByTypeForView={expectedRevenueByTypeForView}
+                  expectedExpenseByTypeForView={expectedExpenseByTypeForView}
+                  totalExpenseByMonth={totalExpenseByMonth}
+                  totalRevenueByMonth={totalRevenueByMonth}
+                  expectedExpenseByMonth={expectedExpenseByMonth}
+                  expectedRevenueByMonth={expectedRevenueByMonth}
+                  getTotalValueByTypeMapping={getTotalValueByTypeMapping}
+                  getExpectedTotalByTypeMapping={getExpectedTotalByTypeMapping}
+                  allProfitDataItems={allProfitDataItems}
+                  getSortedExpectedTotalByMapping={getSortedExpectedTotalByMapping}
+                  getSortedTotalValueByMapping={getSortedTotalValueByMapping}
+                  totalCashflowValueByType={totalCashflowValueByType}
+                  expectedCashflowValueByType={expectedCashflowValueByType}
+                  allCashflowData={allCashflowData}
+                  totalDepositByProperty={totalDepositByProperty}
+                  totalDeposit={totalDeposit}
+                  revenueDataForManager={revenueDataForManager}
+                  totalRevenueData={totalRevenueData}
+                  selectedProperty={selectedProperty}
+                  fecthPaymentVerification={refreshCashFlowAfterVerified}
+                  setMonth={setMonth}
+                  setYear={setYear}
+                  uid={revenueByType ? revenueByType : expenseByType}
+                />
+              )}
+              {currentWindow === "TRANSACTIONS" && (
+                <ManagerTransactions
+                  propsMonth={month}
+                  propsYear={year}
+                  setMonth={setMonth}
+                  setYear={setYear}
+                  transactionsData={cashflowTransactionsData}
+                  setSelectedPayment={setSelectedPayment}
+                  setCurrentWindow={setCurrentWindow}
+                  selectedProperty={selectedProperty}
+                />
+              )}
+              {currentWindow === "PAYMENTS" && <PaymentsManager />}
+              {currentWindow === "MAKE_PAYMENT" && (
+                <MakePayment
+                  selectedPayment={selectedPayment}
+                  refreshCashflowData={refreshCashflowData}
+                  setCurrentWindow={setCurrentWindow}
+                />
+              )}
+              {currentWindow === "ADD_REVENUE" && (
+                <AddRevenue
+                  propertyList={propertyList}
+                  setCurrentWindow={setCurrentWindow}
+                />
+              )}
+              {currentWindow === "ADD_EXPENSE" && (
+                <AddExpense
+                  propertyList={propertyList}
+                  setCurrentWindow={setCurrentWindow}
+                />
+              )}
+            </Grid>
           </Grid>
-        </Grid>
-      </Container>
+        </Container>
+
+
       )}
     </ThemeProvider>
   );

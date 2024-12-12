@@ -320,331 +320,325 @@ const AddRevenue = (props) => {
             <CircularProgress color="inherit" />
         </Backdrop>
         {/* <PropertyListData setShowSpinner={setShowSpinner} setPropertyList={setPropertyList}/> */}
-        <Box
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            width: "100%", // Take up full screen width
-            minHeight: "100vh", // Set the Box height to full height
-            // marginTop: theme.spacing(2), // Set the margin to 20px
+        <Paper
+          sx={{
+            // margin: "30px",
+            padding: 20,
+            borderRadius: "10px",
+            marginTop: "2px",
+            boxShadow: "none",
+            // backgroundColor: theme.palette.primary.main,
+            backgroundColor: theme.palette.custom.yellow,
+            width: "85%", // Occupy full width with 25px margins on each side
+            height: "100%"
           }}
         >
-          <Paper
+          <IconButton
+            aria-label="close"
+            onClick={handleClosePopup}
             sx={{
-              // margin: "30px",
-              padding: 20,
-              // backgroundColor: theme.palette.primary.main,
-              backgroundColor: theme.palette.custom.yellow,
-              width: "85%", // Occupy full width with 25px margins on each side
+              position: "sticky",
+              left: "90vw",
+              top: 1,
+              color: theme.typography.common.blue,
+              fontWeight: theme.typography.common.fontWeight,
             }}
           >
-            <IconButton
-              aria-label="close"
-              onClick={handleClosePopup}
-              sx={{
-                position: "sticky",
-                left: "90vw",
-                top: 1,
-                color: theme.typography.common.blue,
-                fontWeight: theme.typography.common.fontWeight,
-              }}
-            >
-              <CloseIcon />
-            </IconButton>
-            <Stack direction="row" justifyContent="center">
-              <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>{edit ? "Edit" : "Add"} Revenue</Typography>
-            </Stack>
-            {/* <form onSubmit={handleExpenseChange}> */}
-            <Stack spacing={-2}>
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Property</Typography>
-              <FormControl variant="filled" fullWidth className={classes.root}>
-                <Select value={selectedProperty} onChange={handlePropertyChange} variant="filled" displayEmpty>
-                  <MenuItem value="" disabled>
-                    Select Property
+            <CloseIcon />
+          </IconButton>
+          <Stack direction="row" justifyContent="center">
+            <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight }}>{edit ? "Edit" : "Add"} Revenue</Typography>
+          </Stack>
+          {/* <form onSubmit={handleExpenseChange}> */}
+          <Stack spacing={-2}>
+            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Property</Typography>
+            <FormControl variant="filled" fullWidth className={classes.root}>
+              <Select value={selectedProperty} onChange={handlePropertyChange} variant="filled" displayEmpty>
+                <MenuItem value="" disabled>
+                  Select Property
+                </MenuItem>
+                {propertyList?.map((option, index) => (
+                  <MenuItem key={index} value={option}>
+                    {option.property_address}
+                    {", "}
+                    {option.property_unit}
+                    {", "}
+                    {option.property_city}, {option.property_state} {option.property_zip}
                   </MenuItem>
-                  {propertyList?.map((option, index) => (
-                    <MenuItem key={index} value={option}>
-                      {option.property_address}
-                      {", "}
-                      {option.property_unit}
-                      {", "}
-                      {option.property_city}, {option.property_state} {option.property_zip}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Stack>
-
-            <Stack spacing={-2}>
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Category</Typography>
-              <FormControl variant="filled" fullWidth className={classes.root}>
-                <Select labelId="category-label" id="category" defaultValue="Insurance" value={category} onChange={handleCategoryChange}>
-                  {/* <MenuItem value="Insurance">Insurance</MenuItem>
-                  <MenuItem value="Maintenance">Maintenance</MenuItem>
-                  <MenuItem value="Management">Management</MenuItem>
-                  <MenuItem value="Mortgage">Mortgage</MenuItem>
-                  <MenuItem value="Repairs">Repairs</MenuItem>
-                  <MenuItem value="Taxes">Taxes</MenuItem>
-                  <MenuItem value="Utilities">Utilities</MenuItem>
-                  <MenuItem value="BILL POSTING">BILL POSTING</MenuItem> */}
-                  {
-                    expenseCategories?.map( (freq ) => (
-                      <MenuItem key={freq.list_uid} value={freq.list_item}>{freq.list_item}</MenuItem>
-                    ))
-                  }
-                </Select>
-              </FormControl>
-            </Stack>
-
-            <Stack spacing={-2}>
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Amount</Typography>
-              <TextField
-                variant="filled"
-                fullWidth
-                inputProps={{ 
-                  autoComplete: 'off'
-                }}
-                placeholder="$"
-                type="number"
-                value={amount}
-                className={classes.root}
-                onChange={handleAmountChange}>
-              </TextField>
-            </Stack>
-
-            <Stack spacing={-2}>
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Transaction Date</Typography>
-              <TextField
-                className={classes.root}
-                type="date"
-                variant="filled"
-                fullWidth
-                placeholder="mm/dd/yyyy"
-                value={date}
-                onChange={handleDateChange}>
-              </TextField>
-            </Stack>
-
-            {/* New Due By Date field */}
-            <Stack spacing={-2}>
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Due by Date</Typography>
-              <TextField
-                className={classes.root}
-                type="date"
-                variant="filled"
-                fullWidth
-                placeholder="mm/dd/yyyy"
-                value={dueDate}
-                onChange={handleDueDateChange}
-                disabled={isCheckedOne}
-              />
-            </Stack>
-
-          {/* Already Paid, Partially Paid, and Reimbursable */}
-          <Stack direction="row" spacing={2} alignItems="center">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={isCheckedOne}
-                  onChange={() => handleCheckboxChange("already_paid")}
-                  sx={{ color: theme.typography.common.blue }}
-                />
-              }
-              label="Already Paid"
-              sx={{ color: theme.typography.common.blue }}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={isCheckedTwo}
-                  onChange={() => handleCheckboxChange("partially_paid")}
-                  sx={{ color: theme.typography.common.blue }}
-                />
-              }
-              label="Partially Paid"
-              sx={{ color: theme.typography.common.blue }}
-            />
-            {/* <Stack direction="row" alignItems="center">
-              <Typography
-                sx={{
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.primary.fontWeight,
-                }}
-              >
-                Reimbursable?
-              </Typography>
-              <Switch
-                checked={reimbursable}
-                onChange={handleReimbursableChange}
-                sx={{ color: theme.typography.common.blue }}
-              />
-            </Stack> */}
+                ))}
+              </Select>
+            </FormControl>
           </Stack>
 
-          {isCheckedTwo && (
-            <Stack spacing={-2}>
-              <Typography sx={{ color: theme.typography.common.blue }}>
-                Partial Payment Amount
-              </Typography>
-              <TextField
-                variant="filled"
-                fullWidth
-                placeholder="$"
-                type="number"
-                value={partialAmount}
-                className={classes.root}
-                onChange={handlePartialAmountChange}
-              />
-            </Stack>
-          )}
+          <Stack spacing={-2}>
+            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Category</Typography>
+            <FormControl variant="filled" fullWidth className={classes.root}>
+              <Select labelId="category-label" id="category" defaultValue="Insurance" value={category} onChange={handleCategoryChange}>
+                {/* <MenuItem value="Insurance">Insurance</MenuItem>
+                <MenuItem value="Maintenance">Maintenance</MenuItem>
+                <MenuItem value="Management">Management</MenuItem>
+                <MenuItem value="Mortgage">Mortgage</MenuItem>
+                <MenuItem value="Repairs">Repairs</MenuItem>
+                <MenuItem value="Taxes">Taxes</MenuItem>
+                <MenuItem value="Utilities">Utilities</MenuItem>
+                <MenuItem value="BILL POSTING">BILL POSTING</MenuItem> */}
+                {
+                  expenseCategories?.map( (freq ) => (
+                    <MenuItem key={freq.list_uid} value={freq.list_item}>{freq.list_item}</MenuItem>
+                  ))
+                }
+              </Select>
+            </FormControl>
+          </Stack>
 
-{/* <Stack spacing={-2}>
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Frequency</Typography>
-              <FormControl variant='filled' fullWidth className={classes.root}>
-                <Select defaultValue='One Time' value={frequency} onChange={handleFrequencyChange}>
-                  {
-                    feeFrequencies?.map( (freq ) => (
-                      <MenuItem key={freq.list_uid} value={freq.list_item}>{freq.list_item}</MenuItem>
-                    ))
-                  }
-                </Select>
-              </FormControl>
-            </Stack> */}
-
-            <Stack spacing={-2}>
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Description</Typography>
-              <TextField
-                className={classes.root}
-                variant="filled"
-                inputProps={{ 
-                  autoComplete: 'off'
-                }}
-                fullWidth
-                placeholder="Add Description"
-                value={description}
-                onChange={handleDescriptionChange}
-                required
-              >
-              </TextField>
-            </Stack>
-            
-            <Stack spacing={-2}>
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Notes</Typography>
-              <TextField
-                className={classes.root}
-                variant="filled"
-                inputProps={{ 
-                  autoComplete: 'off'
-                }}
-                fullWidth
-                placeholder="Add Notes"
-                value={notes}
-                onChange={handleNotesChange}>
-              </TextField>
-            </Stack>
-
-            <Box
-              component="span"
-              display="flex"
-              flexDirection="row" 
-              justifyContent="space-between"
-              alignItems="center"
-              width="100%"
-            >
-            <Stack spacing={-2}>
-              {/* Payer RadioGroup */}
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
-                Payer
-              </Typography>
-              <RadioGroup value={selectedPayer} onChange={handlePayerChange}>
-                <FormControlLabel 
-                  control={<Radio sx={{ 
-                    '&.Mui-checked': { color: theme.palette.custom.blue } 
-                  }} />} 
-                  value="Tenant" label="Tenant" 
-                />
-                <FormControlLabel 
-                  control={<Radio sx={{ 
-                    '&.Mui-checked': { color: theme.palette.custom.blue } 
-                  }} />} 
-                  value="Owner" label="Owner" 
-                />
-                <FormControlLabel 
-                  control={<Radio sx={{ 
-                    '&.Mui-checked': { color: theme.palette.custom.blue } 
-                  }} />} 
-                  value="Property Manager" label="Property Manager" 
-                />
-                <FormControlLabel 
-                  control={<Radio sx={{ 
-                    '&.Mui-checked': { color: theme.palette.custom.blue } 
-                  }} />} 
-                  value="Third Party" label="Third Party" 
-                />
-              </RadioGroup>
-            </Stack>
-
-            <Stack spacing={-2}>
-              {/* Receiver RadioGroup */}
-              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
-                Receiver
-              </Typography>
-              <RadioGroup value={selectedReceiver} onChange={handleReceiverChange}>
-                <FormControlLabel 
-                  control={<Radio sx={{ 
-                    '&.Mui-checked': { color: theme.palette.custom.blue } 
-                  }} />} 
-                  value="Tenant" label="Tenant" 
-                  disabled={selectedPayer === "Tenant"} 
-                />
-                <FormControlLabel 
-                  control={<Radio sx={{ 
-                    '&.Mui-checked': { color: theme.palette.custom.blue } 
-                  }} />} 
-                  value="Owner" label="Owner" 
-                  disabled={selectedPayer === "Owner"} 
-                />
-                <FormControlLabel 
-                  control={<Radio sx={{ 
-                    '&.Mui-checked': { color: theme.palette.custom.blue } 
-                  }} />} 
-                  value="Property Manager" label="Property Manager" 
-                  disabled={selectedPayer === "Property Manager"} 
-                />
-                <FormControlLabel 
-                  control={<Radio sx={{ 
-                    '&.Mui-checked': { color: theme.palette.custom.blue } 
-                  }} />} 
-                  value="Third Party" label="Third Party" 
-                  disabled={selectedPayer === "Third Party"} 
-                />
-              </RadioGroup>
-            </Stack>
-
-              {/* Add Receipt button on the same row */}
-              <Stack direction="row" alignItems="center">
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, marginRight: 2 }}>Add Receipt</Typography>
-                <IconButton sx={{ backgroundColor: "white", width: 70, height: 70, borderRadius: 0 }}>
-                  <img src={File_dock_add}></img>
-                </IconButton>
-              </Stack>
-            </Box>
-
-            <Button
-              variant="contained"
+          <Stack spacing={-2}>
+            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Amount</Typography>
+            <TextField
+              variant="filled"
               fullWidth
+              inputProps={{ 
+                autoComplete: 'off'
+              }}
+              placeholder="$"
+              type="number"
+              value={amount}
+              className={classes.root}
+              onChange={handleAmountChange}>
+            </TextField>
+          </Stack>
+
+          <Stack spacing={-2}>
+            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Transaction Date</Typography>
+            <TextField
+              className={classes.root}
+              type="date"
+              variant="filled"
+              fullWidth
+              placeholder="mm/dd/yyyy"
+              value={date}
+              onChange={handleDateChange}>
+            </TextField>
+          </Stack>
+
+          {/* New Due By Date field */}
+          <Stack spacing={-2}>
+            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Due by Date</Typography>
+            <TextField
+              className={classes.root}
+              type="date"
+              variant="filled"
+              fullWidth
+              placeholder="mm/dd/yyyy"
+              value={dueDate}
+              onChange={handleDueDateChange}
+              disabled={isCheckedOne}
+            />
+          </Stack>
+
+        {/* Already Paid, Partially Paid, and Reimbursable */}
+        <Stack direction="row" spacing={2} alignItems="center">
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isCheckedOne}
+                onChange={() => handleCheckboxChange("already_paid")}
+                sx={{ color: theme.typography.common.blue }}
+              />
+            }
+            label="Already Paid"
+            sx={{ color: theme.typography.common.blue }}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isCheckedTwo}
+                onChange={() => handleCheckboxChange("partially_paid")}
+                sx={{ color: theme.typography.common.blue }}
+              />
+            }
+            label="Partially Paid"
+            sx={{ color: theme.typography.common.blue }}
+          />
+          {/* <Stack direction="row" alignItems="center">
+            <Typography
               sx={{
-                backgroundColor: theme.palette.custom.blue,
-                color: theme.typography.secondary.white,
+                color: theme.typography.common.blue,
                 fontWeight: theme.typography.primary.fontWeight,
               }}
-              onClick={handleExpenseChange}
             >
-              {edit ? "Edit" : "+ Add"} Revenue
-            </Button>
-            {/* </form> */}
-          </Paper>
-        </Box>
+              Reimbursable?
+            </Typography>
+            <Switch
+              checked={reimbursable}
+              onChange={handleReimbursableChange}
+              sx={{ color: theme.typography.common.blue }}
+            />
+          </Stack> */}
+        </Stack>
+
+        {isCheckedTwo && (
+          <Stack spacing={-2}>
+            <Typography sx={{ color: theme.typography.common.blue }}>
+              Partial Payment Amount
+            </Typography>
+            <TextField
+              variant="filled"
+              fullWidth
+              placeholder="$"
+              type="number"
+              value={partialAmount}
+              className={classes.root}
+              onChange={handlePartialAmountChange}
+            />
+          </Stack>
+        )}
+
+{/* <Stack spacing={-2}>
+            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Frequency</Typography>
+            <FormControl variant='filled' fullWidth className={classes.root}>
+              <Select defaultValue='One Time' value={frequency} onChange={handleFrequencyChange}>
+                {
+                  feeFrequencies?.map( (freq ) => (
+                    <MenuItem key={freq.list_uid} value={freq.list_item}>{freq.list_item}</MenuItem>
+                  ))
+                }
+              </Select>
+            </FormControl>
+          </Stack> */}
+
+          <Stack spacing={-2}>
+            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Description</Typography>
+            <TextField
+              className={classes.root}
+              variant="filled"
+              inputProps={{ 
+                autoComplete: 'off'
+              }}
+              fullWidth
+              placeholder="Add Description"
+              value={description}
+              onChange={handleDescriptionChange}
+              required
+            >
+            </TextField>
+          </Stack>
+          
+          <Stack spacing={-2}>
+            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>Notes</Typography>
+            <TextField
+              className={classes.root}
+              variant="filled"
+              inputProps={{ 
+                autoComplete: 'off'
+              }}
+              fullWidth
+              placeholder="Add Notes"
+              value={notes}
+              onChange={handleNotesChange}>
+            </TextField>
+          </Stack>
+
+          <Box
+            component="span"
+            display="flex"
+            flexDirection="row" 
+            justifyContent="space-between"
+            alignItems="center"
+            width="100%"
+          >
+          <Stack spacing={-2}>
+            {/* Payer RadioGroup */}
+            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
+              Payer
+            </Typography>
+            <RadioGroup value={selectedPayer} onChange={handlePayerChange}>
+              <FormControlLabel 
+                control={<Radio sx={{ 
+                  '&.Mui-checked': { color: theme.palette.custom.blue } 
+                }} />} 
+                value="Tenant" label="Tenant" 
+              />
+              <FormControlLabel 
+                control={<Radio sx={{ 
+                  '&.Mui-checked': { color: theme.palette.custom.blue } 
+                }} />} 
+                value="Owner" label="Owner" 
+              />
+              <FormControlLabel 
+                control={<Radio sx={{ 
+                  '&.Mui-checked': { color: theme.palette.custom.blue } 
+                }} />} 
+                value="Property Manager" label="Property Manager" 
+              />
+              <FormControlLabel 
+                control={<Radio sx={{ 
+                  '&.Mui-checked': { color: theme.palette.custom.blue } 
+                }} />} 
+                value="Third Party" label="Third Party" 
+              />
+            </RadioGroup>
+          </Stack>
+
+          <Stack spacing={-2}>
+            {/* Receiver RadioGroup */}
+            <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight }}>
+              Receiver
+            </Typography>
+            <RadioGroup value={selectedReceiver} onChange={handleReceiverChange}>
+              <FormControlLabel 
+                control={<Radio sx={{ 
+                  '&.Mui-checked': { color: theme.palette.custom.blue } 
+                }} />} 
+                value="Tenant" label="Tenant" 
+                disabled={selectedPayer === "Tenant"} 
+              />
+              <FormControlLabel 
+                control={<Radio sx={{ 
+                  '&.Mui-checked': { color: theme.palette.custom.blue } 
+                }} />} 
+                value="Owner" label="Owner" 
+                disabled={selectedPayer === "Owner"} 
+              />
+              <FormControlLabel 
+                control={<Radio sx={{ 
+                  '&.Mui-checked': { color: theme.palette.custom.blue } 
+                }} />} 
+                value="Property Manager" label="Property Manager" 
+                disabled={selectedPayer === "Property Manager"} 
+              />
+              <FormControlLabel 
+                control={<Radio sx={{ 
+                  '&.Mui-checked': { color: theme.palette.custom.blue } 
+                }} />} 
+                value="Third Party" label="Third Party" 
+                disabled={selectedPayer === "Third Party"} 
+              />
+            </RadioGroup>
+          </Stack>
+
+            {/* Add Receipt button on the same row */}
+            <Stack direction="row" alignItems="center">
+              <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, marginRight: 2 }}>Add Receipt</Typography>
+              <IconButton sx={{ backgroundColor: "white", width: 70, height: 70, borderRadius: 0 }}>
+                <img src={File_dock_add}></img>
+              </IconButton>
+            </Stack>
+          </Box>
+
+          <Button
+            variant="contained"
+            fullWidth
+            sx={{
+              backgroundColor: theme.palette.custom.blue,
+              color: theme.typography.secondary.white,
+              fontWeight: theme.typography.primary.fontWeight,
+            }}
+            onClick={handleExpenseChange}
+          >
+            {edit ? "Edit" : "+ Add"} Revenue
+          </Button>
+          {/* </form> */}
+        </Paper>
       </ThemeProvider>
   );
 };
