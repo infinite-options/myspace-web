@@ -534,6 +534,7 @@ export default function PropertiesList(props) {
             marginTop: isMobile ? "0px" : "15px",
             backgroundColor: theme.palette.primary.main,
             width: "100%",
+            height: "100%",
             maxWidth: "800px",
           }}
         >

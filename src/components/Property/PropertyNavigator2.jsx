@@ -1297,11 +1297,11 @@ export default function PropertyNavigator2({
   return (
     <Paper
       style={{
-        marginTop: "10px",
+        // marginTop: "10px",
         backgroundColor: theme.palette.primary.main,
-        height: "96%",
+        height: "100%",
         width: "100%", // Occupy full width with 25px margins on each side
-        paddingBottom: "20px",
+        // paddingBottom: "20px",
       }}
     >
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>

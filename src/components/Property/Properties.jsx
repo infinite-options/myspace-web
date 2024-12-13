@@ -400,7 +400,7 @@ function Properties() {
         <Container maxWidth='lg' sx={{ paddingTop: isMobile ? "0px" : "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
           <Grid container spacing={4}>
             {(!isMobile || !viewRHS) && (
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12} md={4} display="flex">
                 <PropertiesList
                   LHS={LHS}
                   isDesktop={isDesktop}
