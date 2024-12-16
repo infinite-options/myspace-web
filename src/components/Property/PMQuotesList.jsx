@@ -11,6 +11,7 @@ import theme from "../../theme/theme";
 // import refundIcon from "./refundIcon.png";
 // import SearchIcon from "@mui/icons-material/Search";
 // import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 // import { CustomTabPanel } from "../Maintenance/MaintenanceRequestDetail";
 // import { useUser } from "../../contexts/UserContext";
 import CircularProgress from "@mui/material/CircularProgress";

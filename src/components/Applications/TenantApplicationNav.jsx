@@ -26,6 +26,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import LeaseFees from "../Leases/LeaseFees";
 import { useUser } from "../../contexts/UserContext";
 import APIConfig from "../../utils/APIConfig";
+import { fetchMiddleware as fetch } from "../../utils/httpMiddleware";
 
 const TenantApplicationNav = (props) => {
   const navigate = useNavigate();

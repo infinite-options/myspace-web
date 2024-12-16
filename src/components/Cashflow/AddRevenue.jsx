@@ -7,13 +7,13 @@ import { useNavigate, useLocation } from "react-router-dom";
 // import { post, put } from "../utils/api";
 // import PropertyListData from "../Property/PropertyListData";
 import { makeStyles } from "@material-ui/core/styles";
-import axios from "axios";
 import { useUser } from "../../contexts/UserContext";
 // import PropertyData from "../Property/PropertyData";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import ListsContext from "../../contexts/ListsContext";
 import APIConfig from "../../utils/APIConfig";
+import { fetchMiddleware as fetch } from "../../utils/httpMiddleware";
 
 const useStyles = makeStyles((theme) => ({
   root: {

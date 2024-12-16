@@ -45,6 +45,7 @@ import { getLatLongFromAddress } from "../../utils/geocode";
 import AddressAutocompleteInput from "./AddressAutocompleteInput";
 
 import APIConfig from "../../utils/APIConfig";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 // Variable Declaration
 export default function AddProperty({}) {

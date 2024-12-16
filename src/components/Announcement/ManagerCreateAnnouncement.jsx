@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "../../css/announcement.css";
 // import AnnouncementCard from "./AnnouncementCard";
 
-import axios from "axios";
+// import axios from "axios";
 // import SearchFilter from "./SearchFilter";
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
@@ -20,6 +20,8 @@ import FormGroup from "@mui/material/FormGroup";
 import APIConfig from "../../utils/APIConfig";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Hidden } from "@material-ui/core";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from '../../utils/httpMiddleware';
+
 
 export default function ManagerCreateAnnouncement() {
   const { getProfileId } = useUser();

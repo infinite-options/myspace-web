@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
+// import axios from "axios";
 import {
   Typography,
   Box,
@@ -39,7 +39,7 @@ import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
-
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 
 import APIConfig from "../../utils/APIConfig";

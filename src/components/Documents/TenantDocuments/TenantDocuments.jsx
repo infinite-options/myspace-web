@@ -1,6 +1,7 @@
 import { Box, Button, Stack } from '@mui/material';
 import theme from '../../../theme/theme';
-import axios from 'axios';
+// import axios from 'axios';
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 import { ArrowBack } from '@mui/icons-material';
 import { useEffect, useState } from 'react';
 import { useUser } from "../../../contexts/UserContext";

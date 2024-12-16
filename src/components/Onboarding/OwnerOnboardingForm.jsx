@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
+// import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import AES from "crypto-js/aes";
 import CryptoJS from "crypto-js";
 import theme from "../../theme/theme";

@@ -14,7 +14,8 @@ import UTurnLeftIcon from '@mui/icons-material/UTurnLeft';
 import { makeStyles } from '@material-ui/core/styles';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../contexts/UserContext';
-import axios from 'axios';
+// import axios from 'axios';
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import APIConfig from '../../utils/APIConfig';
 
 const useStyles = makeStyles(() => ({

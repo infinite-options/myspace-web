@@ -22,6 +22,7 @@ import PaymentInfoModal from "../../PaymentInfoModal";
 import { useUser } from '../../../contexts/UserContext';
 
 import APIConfig from "../../../utils/APIConfig";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 
 export default function MarkPaidButton({maintenanceItem, disabled}){
 

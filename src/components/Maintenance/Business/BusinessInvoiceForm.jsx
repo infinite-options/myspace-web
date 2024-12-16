@@ -39,6 +39,7 @@ import dayjs from "dayjs";
 
 import APIConfig from "../../../utils/APIConfig";
 import Documents from "../../Leases/Documents";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 
 function LaborTable({ labor, setLabor }) {
   const [indexToggle, setIndexToggle] = useState(-1);

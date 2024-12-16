@@ -1,5 +1,6 @@
 import { Box } from "@mui/system";
-import axios from "axios";
+// import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 import { useEffect, useState } from "react";
 import {
   CalendarIcon,

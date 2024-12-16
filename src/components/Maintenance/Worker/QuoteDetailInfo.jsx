@@ -35,6 +35,7 @@ import ImageListItem from '@mui/material/ImageListItem';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import Documents from "../../Leases/Documents";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 
 function LaborTableReadOnly({labor, setLabor}){
 

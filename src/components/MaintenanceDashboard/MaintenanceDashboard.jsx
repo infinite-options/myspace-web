@@ -15,7 +15,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import MaintenanceWorker from "../Maintenance/Worker/MaintenanceWorker";
 import MaintenanceWorkerDashboardWidget from "../Maintenance/Worker/MaintenanceWorkerDashboardWidget";
-
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import APIConfig from "../../utils/APIConfig";
 
 export default function MaintenanceDashboard() {

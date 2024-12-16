@@ -24,7 +24,7 @@ import {
 import { CalendarToday, Close, Description, ExpandMore } from "@mui/icons-material";
 // import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { ArrowBack, Chat, Visibility } from "@mui/icons-material";
-import axios from "axios";
+// import axios from "axios";
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -47,7 +47,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import CloseIcon from "@mui/icons-material/Close";
 import Documents from "./Documents";
 import APIConfig from "../../utils/APIConfig";
-
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import PropertiesContext from "../../contexts/PropertiesContext";
 
 const useStyles = makeStyles((theme) => ({

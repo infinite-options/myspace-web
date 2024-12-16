@@ -8,7 +8,8 @@ import { useCookies } from "react-cookie";
 import DataValidator from "../DataValidator";
 import { formatPhoneNumber, headers, roleMap } from "./helper";
 
-import axios from "axios";
+// import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import APIConfig from "../../utils/APIConfig";
 
 import managerDashboardImage from "./images/dashboard-images/manager-dashboard.png";

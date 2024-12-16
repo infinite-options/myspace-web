@@ -1,6 +1,7 @@
 // import React, { Component, useEffect, useState } from "react";
 // import { useUser } from "../../contexts/UserContext";
-import axios from "axios";
+// import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import APIConfig from "../../utils/APIConfig";
 
 // I want to create several functions that compute the cashflow

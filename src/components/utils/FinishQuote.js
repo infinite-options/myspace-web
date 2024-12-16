@@ -1,4 +1,5 @@
 import APIConfig from "../../utils/APIConfig";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 export default async function FinishQuote(maintenance_quote_uid, setShowSpinner = () => {}){
     setShowSpinner(true);

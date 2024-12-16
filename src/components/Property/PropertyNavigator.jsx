@@ -23,7 +23,8 @@ import {
   InputLabel,
   Avatar,
 } from "@mui/material";
-import axios from "axios";
+// import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import theme from "../../theme/theme";
 import propertyImage from "./propertyImage.png";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";

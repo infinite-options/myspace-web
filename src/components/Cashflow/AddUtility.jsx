@@ -29,6 +29,7 @@ import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import APIConfig from "../../utils/APIConfig";
+import { fetchMiddleware as fetch } from "../../utils/httpMiddleware";
 
 const useStyles = makeStyles((theme) => ({
   root: {

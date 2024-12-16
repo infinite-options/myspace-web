@@ -12,7 +12,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import CloseIcon from "@mui/icons-material/Close";
 import APIConfig from "../../utils/APIConfig";
-import axios from "axios";
+// import axios from "axios";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import Documents from "../Leases/Documents";
@@ -20,6 +20,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CryptoJS from "crypto-js";
 import AES from "crypto-js/aes";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 export default function TenantApplication(props) {
   console.log("In Tenant Application", props);

@@ -24,7 +24,7 @@ import ChildrenOccupant from "../Leases/ChildrenOccupant";
 import PetsOccupant from "../Leases/PetsOccupant";
 import VehiclesOccupant from "../Leases/VehiclesOccupant";
 import Documents from "../Leases/Documents";
-import axios from "axios";
+// import axios from "axios";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useUser } from "../../contexts/UserContext";
@@ -40,6 +40,7 @@ import GenericDialog from "../GenericDialog";
 import { json, Navigate } from "react-router-dom";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 export default function TenantApplicationEdit(props) {
     const { getList } = useContext(ListsContext);

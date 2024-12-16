@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../../../contexts/UserContext";
-import axios from "axios";
+// import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 import APIConfig from "../../../utils/APIConfig";
 import User_fill from "../../../images/User_fill_dark.png";
 import { Typography, Box, Grid, Container, Paper, Button, ThemeProvider, TextField, InputAdornment, Badge, Backdrop, CircularProgress, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";

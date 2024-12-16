@@ -31,7 +31,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import ManagerProfileLink from "../MaintenanceComponents/ManagerProfileLink";
 import Scheduler from "../../utils/Scheduler";
 import DateTimePickerModal from "../../DateTimePicker";
-
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 import APIConfig from "../../../utils/APIConfig";
 
 export default function WorkerQuotesAccepted({maintenanceItem, refreshMaintenanceData}){

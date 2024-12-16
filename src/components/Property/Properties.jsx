@@ -25,6 +25,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import PropertiesContext from "../../contexts/PropertiesContext";
 import ManagementContractContext from "../../contexts/ManagementContractContext";
 import CloseIcon from "@mui/icons-material/Close";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 function Properties() {
   const location = useLocation();

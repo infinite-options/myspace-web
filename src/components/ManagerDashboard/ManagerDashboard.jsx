@@ -14,7 +14,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import HappinessMatrixWidget from "../Dashboard-Components/HappinessMatrix/HappinessMatrixWidget";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import APIConfig from "../../utils/APIConfig";
-import { fetchMiddleware as fetch } from "../../utils/httpMiddleware";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 const useStyles = makeStyles({
   button: {

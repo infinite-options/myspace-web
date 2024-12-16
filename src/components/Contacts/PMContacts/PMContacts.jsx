@@ -20,7 +20,8 @@ import {
 } from "@mui/material";
 import { Message, Search } from "@mui/icons-material";
 import { getStatusColor } from "../ContactsFunction";
-import axios from "axios";
+// import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";

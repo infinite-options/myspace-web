@@ -1,5 +1,6 @@
 import { Accordion, AccordionDetails, AccordionSummary, Modal, Box, Checkbox, Paper, Button, Stack, Grid, Typography } from "@mui/material";
-import axios from "axios";
+// import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import React from "react";
 import { useEffect, useState } from "react";
 import SelectProperty from "./SelectProperty";

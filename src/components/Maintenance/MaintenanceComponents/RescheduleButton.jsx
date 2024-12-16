@@ -10,6 +10,7 @@ import { useState } from "react";
 import APIConfig from "../../../utils/APIConfig";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../../../contexts/UserContext";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 
 
 export default function RescheduleButton({ maintenanceItem, isWorkerMaintenance = false }) {

@@ -27,7 +27,7 @@ import NewCardSlider from "../Announcement/NewCardSlider";
 import APIConfig from "../../utils/APIConfig";
 import Announcements from "../Announcement/Announcements";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // Import the back arrow icon
-import { fetchMiddleware as fetch } from "../../utils/httpMiddleware";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 const useStyles = makeStyles({
   button: {

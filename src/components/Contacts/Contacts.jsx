@@ -4,13 +4,14 @@ import "./../../css/contacts.css";
 import { ThemeProvider, Box, Paper, Stack, Typography, Button, InputAdornment, TextField, Card, CardContent } from "@mui/material";
 import { Message, Search } from "@mui/icons-material";
 import { getStatusColor } from "./ContactsFunction";
-import axios from "axios";
+// import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { formattedPhoneNumber } from "../utils/privacyMasking";
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import APIConfig from "../../utils/APIConfig";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 const Contacts = (props) => {
   const { getProfileId } = useUser();

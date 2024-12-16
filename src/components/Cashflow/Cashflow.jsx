@@ -67,7 +67,8 @@ import {
   getTotalExpenseByTypeByProperty
 } from "../Cashflow/CashflowFetchData2";
 
-import axios from "axios";
+// import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 export default function Cashflow() {
   const location = useLocation();

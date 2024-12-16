@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop"; 
 import {
@@ -18,6 +18,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import documentIcon from "../../images/Subtract.png"
 import User_fill from '../../images/User_fill.png';
 import APIConfig from '../../utils/APIConfig'
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 function PropertyContract(props) {
 

@@ -13,6 +13,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import QuoteDetailInfo from "../Worker/QuoteDetailInfo";
 import { useMediaQuery } from '@mui/material';
 import APIConfig from "../../../utils/APIConfig";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 
 export default function QuoteAcceptForm({ setRefresh }) {
   const navigate = useNavigate();

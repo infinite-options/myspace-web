@@ -27,7 +27,8 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import PropTypes from "prop-types";
-import axios from "axios";
+// import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import theme from "../../theme/theme";
 import propertyImage from "./propertyImage.png";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";

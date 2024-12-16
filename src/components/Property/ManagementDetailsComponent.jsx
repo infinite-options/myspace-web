@@ -16,7 +16,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { ReactComponent as CalendarIcon } from "../../images/datetime.svg";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import axios from "axios";
+// import axios from "axios";
 import APIConfig from "../../utils/APIConfig";
 import { useUser } from "../../contexts/UserContext";
 import ManagementContractContext from "../../contexts/ManagementContractContext";
@@ -25,6 +25,7 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 export default function ManagementDetailsComponent({
   activeContract,

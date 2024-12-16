@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from "react";
 import FormControlLabel from '@mui/material/FormControlLabel';
-import axios from "axios";
+// import axios from "axios";
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import theme from '../../../theme/theme';
 
@@ -18,7 +18,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Backdrop from "@mui/material/Backdrop"; 
 import CircularProgress from "@mui/material/CircularProgress";
 import APIConfig from '../../../utils/APIConfig';
-
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 import { useUser } from '../../../contexts/UserContext';
 
 export default function RequestMoreInfo({fromQuote, showRequestMoreInfo, setShowRequestMoreInfo, maintenanceItem, refreshMaintenanceData}){

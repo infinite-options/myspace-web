@@ -46,6 +46,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import APIConfig from "../../utils/APIConfig";
 import { useUser } from "../../contexts/UserContext";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 export default function TenantMaintenance(){
     const [filterToggle, setFilterToggle] = useState(false);

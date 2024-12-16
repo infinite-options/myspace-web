@@ -1,4 +1,5 @@
 import APIConfig from "../../utils/APIConfig";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 export default async function CompleteTicket(maintenance_request_uid, date="", setShowSpinner = () => {}){
     setShowSpinner(true);

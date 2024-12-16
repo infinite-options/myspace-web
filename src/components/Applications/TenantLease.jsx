@@ -50,6 +50,7 @@ import Switch from '@mui/material/Switch';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import { fetchMiddleware as fetch} from "../../utils/httpMiddleware";
 
 const useStyles = makeStyles((theme) => ({
   root: {

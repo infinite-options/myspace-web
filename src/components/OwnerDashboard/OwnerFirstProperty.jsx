@@ -26,6 +26,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import NewCardSlider from "../Announcement/NewCardSlider";
 import APIConfig from "../../utils/APIConfig";
 import PropertyForm from "../Property/PropertyForm";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 const useStyles = makeStyles({
   button: {

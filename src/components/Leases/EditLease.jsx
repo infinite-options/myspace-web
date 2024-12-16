@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext, } from 'react';
 import theme from '../../theme/theme';
-import axios from "axios";
+// import axios from "axios";
 import {
     Paper,
     ThemeProvider,
@@ -24,7 +24,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from "../../contexts/UserContext";
 import Documents from './Documents';
 import APIConfig from '../../utils/APIConfig';
-
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import ListsContext from '../../contexts/ListsContext';
 
 const EditLease = (props) => {

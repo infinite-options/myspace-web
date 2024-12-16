@@ -20,7 +20,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import theme from "../../theme/theme";
 import { alpha, makeStyles } from "@material-ui/core/styles";
-import axios, { all } from "axios";
+// import axios, { all } from "axios";
 import { useUser } from "../../contexts/UserContext";
 import StripePayment from "../Settings/StripePayment";
 import BackIcon from "./backIcon.png";
@@ -28,7 +28,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { DataGrid } from "@mui/x-data-grid";
-
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import APIConfig from "../../utils/APIConfig";
 
 import ManagerCashflowWidget from "../Dashboard-Components/Cashflow/ManagerCashflowWidget";

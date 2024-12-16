@@ -31,7 +31,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
 import ClearIcon from '@mui/icons-material/Clear';
 import APIConfig from '../../../utils/APIConfig';
-
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 import { useMaintenance } from "../../../contexts/MaintenanceContext";
 
 export default function QuoteRequestForm({ setRefresh }) {

@@ -24,7 +24,7 @@ import {
   TableRow,
   Dialog,
 } from "@mui/material";
-import axios from "axios";
+// import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
 import { useEffect, useState, Fragment, useContext } from "react";
 import { useUser } from "../../../contexts/UserContext";
@@ -50,6 +50,7 @@ import TenantEndLeaseButton from "../../TenantDashboard/TenantEndLeaseButton";
 import EndRenewedLeaseDialog from "../EndRenewedLeaseDialog";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 
 function TenantLeases(props) {
   // console.log("In Tenant Leases", props);

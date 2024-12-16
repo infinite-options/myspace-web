@@ -16,6 +16,7 @@ import theme from "../../../theme/theme";
 import { DataGrid } from '@mui/x-data-grid';
 import { useMaintenance } from '../../../contexts/MaintenanceContext';
 import { useUser } from '../../../contexts/UserContext';
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 
 const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem, fetchAndUpdateQuotes, setRefresh, navigateParams}) => {
     console.log('----QuoteDetails maintenanceQuotesForItem----', initialIndex, maintenanceQuotesForItem);

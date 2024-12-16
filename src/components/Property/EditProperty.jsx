@@ -57,6 +57,7 @@ import dayjs from 'dayjs';
 import PropertiesContext from '../../contexts/PropertiesContext';
 import AddIcon from '@mui/icons-material/Add';
 import defaultHouseImage from "./defaultHouseImage.png";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 function EditProperty(props) {
 	// console.log("In Edit Property");

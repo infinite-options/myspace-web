@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import { Paper, Box, Stack, ThemeProvider, Button, Typography, Checkbox, Backdrop, CircularProgress } from "@mui/material";
 import theme from "../../theme/theme";
 import { useLocation, useNavigate } from "react-router-dom";

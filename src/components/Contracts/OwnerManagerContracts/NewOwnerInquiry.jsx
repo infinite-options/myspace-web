@@ -1,6 +1,5 @@
 import { useLocation, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import {
@@ -34,6 +33,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ImageCarousel from "../../ImageCarousel";
 
 import APIConfig from "../../../utils/APIConfig";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 
 function NewOwnerInquiry(props) {
   const { getProfileId } = useUser();

@@ -31,6 +31,7 @@ import OwnerProfileLink from '../../Maintenance/MaintenanceComponents/OwnerProfi
 import useMediaQuery from '@mui/material/useMediaQuery';
 import APIConfig from '../../../utils/APIConfig';
 import { useMaintenance } from "../../../contexts/MaintenanceContext";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 
 export default function ScheduleMaintenance({ maintenanceItem,navigateParams, quotes, setRefresh, fetchAndUpdateQuotes }) {
 	const location = useLocation();

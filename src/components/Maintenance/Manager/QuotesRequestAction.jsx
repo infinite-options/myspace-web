@@ -32,6 +32,7 @@ import APIConfig from '../../../utils/APIConfig';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import AlertMessage from "../AlertMessage";
 import { useMaintenance } from "../../../contexts/MaintenanceContext";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 
 export default function QuotesRequestAction({ maintenanceItem, navigateParams, quotes, setRefresh }) {
 	const navigate = useNavigate();

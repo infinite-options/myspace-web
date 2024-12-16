@@ -11,7 +11,7 @@ import SelectPriorityFilter from "../../SelectPriorityFilter/SelectPriorityFilte
 import { useUser } from "../../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 import APIConfig from "../../../utils/APIConfig"
 
 export default function MaintenanceWorker() {
