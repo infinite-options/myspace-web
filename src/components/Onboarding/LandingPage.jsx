@@ -21,6 +21,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import axios from "axios";
 import PasswordModal from "./PasswordModal";
 import UserDoesNotExistModal from "./UserDoesNotExistModal";
+import { axiosMiddleware } from "../../utils/httpMiddleware";
 import { set } from "date-fns";
 
 export default function LandingPage() {
@@ -109,10 +110,13 @@ export default function LandingPage() {
                   email: email,
                   password: hashedPassword,
                 };
+
+
                 console.log(JSON.stringify(loginObject));
-                axios
+                axiosMiddleware
                   .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/Login/MYSPACE", loginObject)
                   .then(async (response) => {
+                    
                     console.log(response.data.message);
                     const { message, result } = response.data;
                     if (message === "Incorrect password") {
