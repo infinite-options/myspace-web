@@ -1,6 +1,8 @@
 import React, { createContext, useState, useEffect, useRef } from 'react';
 import APIConfig from '../utils/APIConfig';
 import { useUser } from './UserContext';
+import { fetchMiddleware as fetch } from '../utils/httpMiddleware';
+
 const PropertiesContext = createContext();
 
 function getPropertyList(data) {

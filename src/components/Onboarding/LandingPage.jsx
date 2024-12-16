@@ -112,7 +112,7 @@ export default function LandingPage() {
                 console.log(JSON.stringify(loginObject));
                 axios
                   .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/Login/MYSPACE", loginObject)
-                  .then((response) => {
+                  .then(async (response) => {
                     console.log(response.data.message);
                     const { message, result } = response.data;
                     if (message === "Incorrect password") {
@@ -122,6 +122,9 @@ export default function LandingPage() {
                       setUserDoesntExist(true);
                       // setShowSpinner(false);
                     } else if (message === "Login successful") {
+                      // const jwtToken = await axios.get(`${APIConfig.baseURL.dev}/jwtToken/${response.data.result.user.user_uid}`);
+                      sessionStorage.setItem('authToken', result.access_token);
+                      sessionStorage.setItem('refreshToken', result.refresh_token)
                       setAuthData(result);
                       const { role } = result.user;
                       const openingRole = role.split(",")[0];

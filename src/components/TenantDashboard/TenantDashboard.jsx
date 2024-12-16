@@ -70,6 +70,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import LeaseIcon from "../Property/leaseIcon.png";
 import { Type } from "ajv/dist/compile/util";
 import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy } from "../../utils/fees";
+import { fetchMiddleware as fetch } from "../../utils/httpMiddleware";
 
 const useStyles = makeStyles((theme) => ({
   input: {
