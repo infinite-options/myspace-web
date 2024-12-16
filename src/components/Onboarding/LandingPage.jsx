@@ -22,6 +22,7 @@ import axios from "axios";
 import PasswordModal from "./PasswordModal";
 import UserDoesNotExistModal from "./UserDoesNotExistModal";
 import { axiosMiddleware } from "../../utils/httpMiddleware";
+import CryptoJS from "crypto-js";
 import { set } from "date-fns";
 
 export default function LandingPage() {
@@ -111,12 +112,24 @@ export default function LandingPage() {
                   password: hashedPassword,
                 };
 
+                // Encrypt data
+                const encryptedPayload = CryptoJS.AES.encrypt(
+                  JSON.stringify(loginObject),
+                  "IO95120secretkey"
+                ).toString();
+                
+                console.log("Encrypt payload - ", encryptedPayload);
+                // Decrypt data
+                const bytes = CryptoJS.AES.decrypt(encryptedPayload, "IO95120secretkey");
+                const decryptedPayload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+                console.log("Decrypted Payload:", decryptedPayload);
+
 
                 console.log(JSON.stringify(loginObject));
-                axiosMiddleware
+                axios
                   .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/Login/MYSPACE", loginObject)
                   .then(async (response) => {
-                    
+
                     console.log(response.data.message);
                     const { message, result } = response.data;
                     if (message === "Incorrect password") {
