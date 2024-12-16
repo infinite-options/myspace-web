@@ -179,6 +179,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   };
   const logout = () => {
     // console.log("In logout as ", user);
+    sessionStorage.clear();
     cookiesObj.remove("user");
     cookiesObj.remove("token");
     cookiesObj.remove("selectedRole");
