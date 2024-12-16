@@ -10,7 +10,8 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useUser } from "../../contexts/UserContext";
-import axios from 'axios';
+// import axios from 'axios';
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import { useNavigate } from 'react-router-dom';
 import APIConfig from '../../utils/APIConfig';
 

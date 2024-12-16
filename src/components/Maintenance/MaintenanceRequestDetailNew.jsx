@@ -22,6 +22,7 @@ import { useUser } from "../../contexts/UserContext";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import APIConfig from "../../utils/APIConfig";
 import { useMaintenance } from "../../contexts/MaintenanceContext";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 export function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;

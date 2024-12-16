@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Modal, Box, Typography, IconButton, RadioGroup, FormControlLabel, Radio, Button, Grid } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import axios from 'axios';
+// import axios from 'axios';
 import APIConfig from '../../utils/APIConfig';
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 export default function RequestInfoModal({ maintenanceItem, onRequestClose, setShowSpinner, setRefresh, getProfileId }){
   const [selectedRole, setSelectedRole] = useState(maintenanceItem?.maintenance_request_status === "INFO OWNER"? 'tenant' : 'owner');

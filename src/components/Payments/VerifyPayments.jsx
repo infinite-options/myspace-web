@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Box, ThemeProvider, Paper, Button, Typography, Stack, Grid, Container } from "@mui/material";
 import theme from "../../theme/theme";
 import { makeStyles } from "@material-ui/core/styles";
-import axios, { all } from "axios";
+// import axios, { all } from "axios";
 import { useUser } from "../../contexts/UserContext";
-
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { DataGrid } from "@mui/x-data-grid";

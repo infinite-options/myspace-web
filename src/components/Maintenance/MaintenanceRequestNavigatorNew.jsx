@@ -35,6 +35,7 @@ import { useUser } from '../../contexts/UserContext';
 
 import { useMaintenance } from '../../contexts/MaintenanceContext'; // Added useMaintenance context
 import ListsContext from '../../contexts/ListsContext';
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 function getInitialImages(requestData, currentIndex) {
 	try {

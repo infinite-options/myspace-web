@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router";
 import { useEffect, useState, useContext } from "react";
 // import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 // import { useUser } from "../../../contexts/UserContext";
 // import Backdrop from "@mui/material/Backdrop";
 import { ThemeProvider, Box, Stack, Typography, Button, Grid, Container } from "@mui/material";

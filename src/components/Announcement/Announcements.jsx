@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "../../css/announcement.css";
 import AnnouncementCard from "./AnnouncementCard";
 // import Searchbar from "./Searchbar";
-import axios from "axios";
+// import axios from "axios";
 // import SearchFilter from "./SearchFilter";
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
@@ -16,6 +16,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddIcon from "@mui/icons-material/Add";
 
 import APIConfig from "../../utils/APIConfig";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from '../../utils/httpMiddleware';
 
 export default function Announcements({ sentAnnouncementData, recvAnnouncementData, setView, handleBack }) {
   // console.log("intial commit");

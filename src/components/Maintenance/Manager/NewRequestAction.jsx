@@ -33,6 +33,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import APIConfig from '../../../utils/APIConfig';
 import { useMaintenance } from "../../../contexts/MaintenanceContext";
 import RequestInfoModal from '../RequestInfoModal';
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 
 export default function NewRequestAction({ setRefresh, maintenanceItem, navigateParams, quotes }) {
     const navigate = useNavigate();

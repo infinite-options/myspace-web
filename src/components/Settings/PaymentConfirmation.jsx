@@ -21,6 +21,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { alpha, makeStyles } from "@material-ui/core/styles";
 import { useUser } from "../../contexts/UserContext";
 import APIConfig from "../../utils/APIConfig";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 
 const useStyles = makeStyles((theme) => ({

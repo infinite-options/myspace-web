@@ -3,13 +3,14 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../contexts/UserContext";
-import axios from "axios";
+// import axios from "axios";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Box, TextField, InputAdornment } from "@mui/material";
 import { ReactComponent as SearchIcon } from "../../../images/search.svg";
 import { makeStyles } from "@material-ui/core/styles";
 import APIConfig from "../../../utils/APIConfig";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 
 const theme = createTheme({
   palette: {

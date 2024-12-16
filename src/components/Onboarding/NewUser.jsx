@@ -26,7 +26,8 @@ import theme from "../../theme/theme";
 // import { makeStyles } from "@material-ui/core/styles";
 // import { TextField } from "@mui/material";
 import GoogleSignup from "./GoogleSignup";
-import axios from "axios";
+// import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import { useCookies } from "react-cookie";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlined";
@@ -235,6 +236,8 @@ const NewUser = () => {
                       //setUserDoesntExist(true);
                       // setShowSpinner(false);
                     } else if (message === "Login successful") {
+                      sessionStorage.setItem('authToken', result.access_token);
+                      sessionStorage.setItem('refreshToken', result.refresh_token)
                       console.log("Login successfull moving to dashboard");
                       
                       const { role } = result.user;

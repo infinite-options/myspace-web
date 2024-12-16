@@ -57,6 +57,7 @@ import APIConfig from "../../utils/APIConfig";
 import PropertiesContext from "../../contexts/PropertiesContext";
 import ListsContext from "../../contexts/ListsContext";
 import ManagementContractContext from '../../contexts/ManagementContractContext';
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 
 export default function AddListing(props) {

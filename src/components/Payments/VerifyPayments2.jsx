@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Box, ThemeProvider, Paper, Button, Typography, Stack, Grid, Container } from "@mui/material";
 import theme from "../../theme/theme";
 import { makeStyles } from "@material-ui/core/styles";
-import axios, { all } from "axios";
+// import axios, { all } from "axios";
 import { useUser } from "../../contexts/UserContext";
 
 import Backdrop from "@mui/material/Backdrop";
@@ -12,6 +12,7 @@ import { DataGrid } from "@mui/x-data-grid";
 
 import APIConfig from "../../utils/APIConfig";
 import { id } from "date-fns/locale";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 const useStyles = makeStyles((theme) => ({
   input: {

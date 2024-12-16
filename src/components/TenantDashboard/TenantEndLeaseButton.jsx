@@ -12,7 +12,8 @@ import dayjs from 'dayjs';
 import { useUser } from "../../contexts/UserContext";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import APIConfig from "../../utils/APIConfig";
-import axios from 'axios';
+// import axios from 'axios';
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import { PortableWifiOffSharp } from '@mui/icons-material';
 
 const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS, page, onClose, setReload }) => {

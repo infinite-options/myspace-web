@@ -8,7 +8,8 @@ import { useCookies } from "react-cookie";
 import { makeStyles } from "@material-ui/core";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import theme from "../../theme/theme.js";
-import axios from "axios";
+// import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import APIConfig from "../../utils/APIConfig.jsx";
 import { styled } from '@mui/system';
 

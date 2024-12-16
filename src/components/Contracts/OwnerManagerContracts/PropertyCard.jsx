@@ -36,7 +36,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import DeleteIcon from '@mui/icons-material/Delete';
-import axios from "axios";
+// import axios from "axios";
 import { isValidDate } from '../../../utils/dates';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -63,7 +63,7 @@ import { minutesToSeconds } from 'date-fns';
 import Backdrop from "@mui/material/Backdrop";
 import { datePickerSlotProps, textFieldSX, textFieldInputProps, } from "../../../styles";
 import { resolve } from 'chart.js/helpers';
-
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 
 
 function AddFeeDialog({ open, handleClose, onAddFee, }) {	

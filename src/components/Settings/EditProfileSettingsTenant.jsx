@@ -5,7 +5,8 @@ import UTurnLeftIcon from "@mui/icons-material/UTurnLeft";
 import PhotoIcon from "@mui/icons-material/Photo";
 import { alpha, makeStyles } from "@material-ui/core/styles";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+// import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import APIConfig from "../../utils/APIConfig";
 
 import {

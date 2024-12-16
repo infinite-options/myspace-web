@@ -54,7 +54,8 @@ import AddExpense from "./AddExpense";
 import ListsContext from "../../contexts/ListsContext";
 import APIConfig from "../../utils/APIConfig";
 
-import axios from "axios";
+// import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import { ConstructionOutlined, PersonOff } from "@mui/icons-material";
 
 // import {

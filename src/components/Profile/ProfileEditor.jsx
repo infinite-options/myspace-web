@@ -1,7 +1,7 @@
 import { Box, Container, Grid, Paper, ThemeProvider, Typography } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import axios from "axios";
-
+// import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import MaintenanceWidget from "../Dashboard-Components/Maintenance/MaintenanceWidget";
 import RevenueWidget from "../Dashboard-Components/Revenue/RevenueWidget";
 import "../../css/maintenance.css";

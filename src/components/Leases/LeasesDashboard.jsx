@@ -5,13 +5,14 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import APIConfig from "../../utils/APIConfig";
 import Leases from "./Leases";
-import axios from "axios";
+// import axios from "axios";
 import theme from "../../theme/theme";
 import RenewLease from "./RenewLease";
 import { useUser } from "../../contexts/UserContext";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import EndLeaseButton from "./EndLeaseButton";
 import TenantApplicationNav from "../Applications/TenantApplicationNav";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 export default function LeasesDashboard() {
   const [leaseDetails, setLeaseDetails] = useState([]);

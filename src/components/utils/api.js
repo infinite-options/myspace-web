@@ -1,3 +1,5 @@
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
+
 const devURL = "http://localhost:5000";
 const liveURL = "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev";
 // const liveURL = "${APIConfig.baseURL.dev}"

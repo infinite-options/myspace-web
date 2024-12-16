@@ -30,7 +30,7 @@ import AddressIcon from "../../Property/addressIconDark.png";
 // import maintenanceIcon from "../../Property/maintenanceIcon.png";
 // import User_fill from "../../../images/User_fill_dark.png";
 import { maskSSN, maskEIN, formattedPhoneNumber } from "../../utils/privacyMasking";
-
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 
 
 // import ExpandMoreIcon from "@mui/icons-material/ExpandMore";

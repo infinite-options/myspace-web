@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { get, post } from "../utils/api";
-import axios from "axios";
+// import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import { days, descendingComparator as descendingComparator, getComparator as getComparator, stableSort as stableSort } from "../utils/helper";
 import { useUser } from "../../contexts/UserContext";
 

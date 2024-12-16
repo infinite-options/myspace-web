@@ -37,6 +37,7 @@ import WorkerMaintenanceRequestDetail from "../Maintenance/Worker/WorkerMaintena
 import { useLocation } from "react-router-dom";
 import SelectMonthComponent from "../SelectMonthComponent";
 import SelectPropertyFilter from "../SelectPropertyFilter/SelectPropertyFilter";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 export default function MaintenanceDashboard2() {
   const location = useLocation();

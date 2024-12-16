@@ -30,12 +30,13 @@ import APIConfig from "../../utils/APIConfig";
 import DataValidator from "../DataValidator";
 import { formatPhoneNumber, headers, maskNumber, maskEin, roleMap, photoFields } from "./helper";
 
-import axios from "axios";
+// import axios from "axios";
 
 import managerDashboardImage from "./images/dashboard-images/manager-dashboard.png";
 import maintenanceDashboardImage from "./images/dashboard-images/maintenance-dashboard.png";
 import ownerDashboardImage from "./images/dashboard-images/owner-dashboard.png";
 import tenantDashboardImage from "./images/dashboard-images/tenant-dashboard.png";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 const CreateProfile = () => {
   const navigate = useNavigate();
@@ -292,6 +293,8 @@ const CreateProfile = () => {
                       //setUserDoesntExist(true);
                       // setShowSpinner(false);
                     } else if (message === "Login successful") {
+                      sessionStorage.setItem('authToken', result.access_token);
+                      sessionStorage.setItem('refreshToken', result.refresh_token)
                       setAuthData(result);
                       const { role } = result.user;
                       const openingRole = role.split(",")[0];

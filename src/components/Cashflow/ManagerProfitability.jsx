@@ -51,6 +51,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import "../../css/selectMonth.css";
 import { isGridCellRoot } from "@mui/x-data-grid/utils/domUtils";
 import VerificationStatus from "../PM_Emp_Dashboard/Waiting_Page";
+import { fetchMiddleware as fetch } from "../../utils/httpMiddleware";
 
 const ManagerProfitability = ({
   propsMonth,

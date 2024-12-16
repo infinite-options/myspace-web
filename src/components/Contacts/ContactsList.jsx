@@ -5,7 +5,6 @@ import theme from "../../theme/theme";
 import { ThemeProvider, Box, Paper, Stack, Typography, Button, InputAdornment, TextField, Card, CardContent, Accordion, AccordionSummary, AccordionDetails, Chip } from "@mui/material";
 import { Message, Search } from "@mui/icons-material";
 import { getStatusColor } from "./ContactsFunction";
-import axios from "axios";
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -30,6 +29,7 @@ import maintenanceIcon from "../Property/maintenanceIcon.png";
 import User_fill from "../../images/User_fill_dark.png";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { maskSSN, maskEIN, formattedPhoneNumber } from "../utils/privacyMasking";
+import { fetchMiddleware as fetch } from "../../utils/httpMiddleware";
 
 
 

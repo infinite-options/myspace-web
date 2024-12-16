@@ -53,7 +53,8 @@ import AddRevenue from "./AddRevenue";
 import AddExpense from "./AddExpense";
 import VerifyPayments from "../Payments/VerifyPayments";
 
-import axios from "axios";
+// import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 
 export default function PaymentVerification() {

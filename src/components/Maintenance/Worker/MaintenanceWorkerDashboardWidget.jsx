@@ -11,7 +11,7 @@ import { InputBase, Paper, IconButton, Button } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 import APIConfig from "../../../utils/APIConfig";
 
 export default function MaintenanceWorkerDashboardWidget(props) {

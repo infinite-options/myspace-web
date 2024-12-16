@@ -30,6 +30,7 @@ import { useMediaQuery } from "@mui/material";
 import APIConfig from "../../../utils/APIConfig";
 import { useUser } from "../../../contexts/UserContext";
 import { useMaintenance } from "../../../contexts/MaintenanceContext";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 
 export default function PayMaintenanceForm() {
   const navigate = useNavigate();

@@ -32,7 +32,7 @@ import DateTimePickerModal from "../../DateTimePicker";
 import { useMediaQuery } from '@mui/material';
 import AlertMessage from '../AlertMessage';
 import APIConfig from "../../../utils/APIConfig";
-
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 
 export default function QuotesAccepted({setRefresh, maintenanceItem, navigateParams, quotes, fetchAndUpdateQuotes}){
     console.log("--debug-- maintenanceItem", maintenanceItem)

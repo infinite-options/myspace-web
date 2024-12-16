@@ -50,7 +50,8 @@ import "../../css/selectMonth.css";
 
 // import ManagerCashflowWidget from "../Dashboard-Components/Cashflow/ManagerCashflowWidget";
 
-import axios from "axios";
+// import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import APIConfig from "../../utils/APIConfig";
 
 // import {

@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import APIConfig from '../utils/APIConfig';
-import { fetchMiddleware as fetch } from '../utils/httpMiddleware';
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from '../utils/httpMiddleware';
 
 const ListsContext = createContext();
 

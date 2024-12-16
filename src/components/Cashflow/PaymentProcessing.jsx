@@ -56,7 +56,8 @@ import AddRevenue from "./AddRevenue";
 import AddExpense from "./AddExpense";
 import ManagerSelectPayment from "./ManagerSelectPayment";
 
-import axios from "axios";
+// import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import VerifyPayments2 from "../Payments/VerifyPayments2";
 import APIConfig from "../../utils/APIConfig";
 

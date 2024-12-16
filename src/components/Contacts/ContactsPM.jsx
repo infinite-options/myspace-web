@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { Container, Grid } from "@mui/material";
-import axios from "axios";
+// import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import { useUser } from "../../contexts/UserContext";
 import APIConfig from "../../utils/APIConfig";
 import ContactsList from "./ContactsList";

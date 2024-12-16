@@ -42,6 +42,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import useSessionStorage from './useSessionStorage';
 import APIConfig from '../../utils/APIConfig';
 import ListsContext from '../../contexts/ListsContext';
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 export default function AddMaintenanceItem({setRefersh, onBack}) {
 	let navigate = useNavigate();

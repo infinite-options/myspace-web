@@ -4,7 +4,7 @@ import { Box, ThemeProvider, Paper, Button, Typography, Stack, Grid, TextField, 
 import CloseIcon from "@mui/icons-material/Close";
 import theme from "../../theme/theme";
 import { alpha, makeStyles } from "@material-ui/core/styles";
-import axios, { all } from "axios";
+// import axios, { all } from "axios";
 import { useUser } from "../../contexts/UserContext";
 import StripePayment from "../Settings/StripePayment";
 import BackIcon from "./backIcon.png";
@@ -13,6 +13,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { DataGrid } from "@mui/x-data-grid";
 
 import APIConfig from "../../utils/APIConfig";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 import ManagerCashflowWidget from "../Dashboard-Components/Cashflow/ManagerCashflowWidget";
 import AccountBalanceWidget from "./TenantAccountBalance";

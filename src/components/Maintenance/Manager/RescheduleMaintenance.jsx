@@ -36,6 +36,7 @@ import DateTimePickerModal from '../../../components/DateTimePicker';
 import { useMediaQuery } from '@mui/material';
 import APIConfig from "../../../utils/APIConfig";
 import { useMaintenance } from "../../../contexts/MaintenanceContext";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 
 export default function RescheduleMaintenance({setRefresh}){
 

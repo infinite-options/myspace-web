@@ -7,6 +7,7 @@ import * as ReactBootStrap from "react-bootstrap";
 import Payment_Failure from "./Payment_Failure";
 
 import CloseIcon from "@mui/icons-material/Close"; // Import the close icon
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 function StripePayment(props) {
   // console.log("in stripepayment page");

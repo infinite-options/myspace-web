@@ -5,7 +5,8 @@ import { makeStyles } from '@material-ui/core/styles'
 import ReturnArrow from '../../../images/refund_back.png'
 import ArrowDown from '../../../images/ArrowDown.png'
 import theme from '../../../theme/theme';
-import axios from "axios";
+// import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 import {
     Typography,
     Button

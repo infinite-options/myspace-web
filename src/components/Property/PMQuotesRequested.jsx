@@ -27,7 +27,7 @@ import refundIcon from "./refundIcon.png";
 import SearchIcon from "@mui/icons-material/Search";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import axios from "axios";
+// import axios from "axios";
 import { useUser } from "../../contexts/UserContext";
 import APIConfig from "../../utils/APIConfig";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -43,7 +43,7 @@ import PropertiesContext from '../../contexts/PropertiesContext';
 import { CheckBox, KeyboardReturnOutlined } from "@mui/icons-material";
 import { id } from "date-fns/locale";
 import ManagementContractContext from '../../contexts/ManagementContractContext';
-
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 const useStyles = makeStyles((theme) => ({
   root: {

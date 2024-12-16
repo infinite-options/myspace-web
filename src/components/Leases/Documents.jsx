@@ -35,7 +35,8 @@ import { Close } from "@mui/icons-material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import ManagementContractContext from "../../contexts/ManagementContractContext";
-import axios from 'axios';
+// import axios from 'axios';
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import FilePreviewDialog from "./FilePreviewDialog";
 
 import ListsContext from "../../contexts/ListsContext";

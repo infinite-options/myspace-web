@@ -42,6 +42,7 @@ import ReturnButtonIcon from '../Property/refundIcon.png';
 
 import APIConfig from '../../utils/APIConfig';
 import ListsContext from "../../contexts/ListsContext";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 export default function AddTenantMaintenanceItem({ closeAddTenantMaintenanceItem, newTenantMaintenanceState, setRightPane, setReload, isMobile, setViewRHS }) {
     console.log("---closeAddTenantMaintenanceItem---", closeAddTenantMaintenanceItem);

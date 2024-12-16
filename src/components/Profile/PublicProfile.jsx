@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 
 import APIConfig from "../../utils/APIConfig";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 export default function PublicProfile(){
     let { id } = useParams();

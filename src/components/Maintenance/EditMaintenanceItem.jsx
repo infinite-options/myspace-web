@@ -54,6 +54,7 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { useMaintenance } from '../../contexts/MaintenanceContext';
 import ListsContext from '../../contexts/ListsContext';
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 export default function EditMaintenanceItem({ setRefersh, setRightPane, maintenanceRequest, propertyAddress, setViewRHS }) {
 	console.log("inside edit component");

@@ -47,6 +47,7 @@ import DocumentUploader from "../../DocumentUploader";
 import APIConfig from "../../../utils/APIConfig";
 import ListsContext from "../../../contexts/ListsContext";
 import Documents from "../../Leases/Documents";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 
 function CostPartsTable({parts, setParts}){
 

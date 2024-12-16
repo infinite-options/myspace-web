@@ -13,8 +13,7 @@ import defaultPropertyImage from "./paintedLadies.jpeg";
 import PropertiesMap from "../Maps/PropertiesMap";
 import APIConfig from "../../utils/APIConfig";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { fetchMiddleware as fetch } from "../../utils/httpMiddleware";
-
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 const SearchBar = ({ propertyList, setFilteredItems, ...props }) => {
   const [searchTerm, setSearchTerm] = useState("");

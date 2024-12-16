@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import APIConfig from "../utils/APIConfig";
 import { useUser } from "./UserContext";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../utils/httpMiddleware";
 const ManagementContractContext = createContext();
 
 export const ManagementContractProvider = ({ children }) => {

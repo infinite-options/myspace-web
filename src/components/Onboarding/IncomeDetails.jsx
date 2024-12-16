@@ -8,7 +8,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { makeStyles } from '@material-ui/core/styles';
 import GenericDialog from '../GenericDialog';
-import axios from 'axios';
+// import axios from 'axios';
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import { useUser } from '../../contexts/UserContext';
 import APIConfig from '../../utils/APIConfig';
 

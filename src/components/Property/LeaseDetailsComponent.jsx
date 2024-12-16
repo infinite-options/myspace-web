@@ -18,7 +18,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { ReactComponent as CalendarIcon } from "../../images/datetime.svg";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import axios from "axios";
+// import axios from "axios";
 import APIConfig from "../../utils/APIConfig";
 import { useUser } from "../../contexts/UserContext";
 import PropertiesContext from "../../contexts/PropertiesContext";
@@ -30,7 +30,7 @@ import EndLeaseButton from "../Leases/EndLeaseButton";
 import EarlyTerminationDialog from "../Leases/EarlyTerminationDialog";
 import FlipIcon from "../TenantDashboard/FlipImage.png"
 import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy, } from "../../utils/fees";
-
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 export default function LeaseDetailsComponent({
   currentProperty,

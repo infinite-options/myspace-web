@@ -95,6 +95,8 @@ function UserLogin() {
                       setUserDoesntExist(true);
                       setShowSpinner(false);
                     } else if (message === "Login successful") {
+                      sessionStorage.setItem('authToken', result.access_token);
+                      sessionStorage.setItem('refreshToken', result.refresh_token)
                       setAuthData(result);
                       const { role } = result.user;
                       const openingRole = role.split(",")[0];
