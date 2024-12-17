@@ -21,7 +21,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import axios from "axios";
 import PasswordModal from "./PasswordModal";
 import UserDoesNotExistModal from "./UserDoesNotExistModal";
-import { axiosMiddleware } from "../../utils/httpMiddleware";
+// import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import CryptoJS from "crypto-js";
 import { set } from "date-fns";
 

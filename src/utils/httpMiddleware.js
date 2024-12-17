@@ -1,10 +1,33 @@
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
 import APIConfig from './APIConfig';
+import { json } from 'react-router-dom';
 
 // AES Encryption Key
 const AES_KEY = "IO95120secretkey"; // Must match the backend
 const BLOCK_SIZE = 16; // Block size in bytes
+
+
+// Encrypt Function For FormData
+const encryptFormDataPayload = (formData) => {
+  const formObject = {};
+  formData.forEach((value, key) => {
+      if (value instanceof File) {
+          // Store file details (name, etc.)
+          formObject[key] = {
+            fileName: value.name,
+            fileType: value.type,
+            fileData: value,  // Store the whole File object
+          };
+      } else {
+          formObject[key] = value.toString(); // Encrypt non-file data
+      }
+  });
+
+  // Encrypt the form data excluding files
+  const encryptedPayload = encryptPayload(formObject); // Encrypt the payload
+  return encryptedPayload;
+};
 
 // Encrypt Function using AES
 function encryptPayload(payload) {
@@ -72,11 +95,21 @@ const fetchMiddleware = async (url, options = {}) => {
     const token = sessionStorage.getItem('authToken');
     const refreshToken = sessionStorage.getItem('refreshToken');
 
-  // Encrypt the request body if present
-  if (options.body) {
-    const payload = JSON.parse(options.body);
-    options.body = JSON.stringify({ encrypted_data: encryptPayload(payload) });
-  }
+    
+    // Encrypt the request body if present
+    if(options.body){
+      if (options.body instanceof FormData) {
+        // console.log(" ==before form data = ", options.body)
+        const encryptedFormData = encryptFormDataPayload(options.body);
+        options.body = JSON.stringify({encrypted_data: encryptedFormData});
+  
+      }else{
+        const payload = JSON.parse(options.body);
+        options.body = { encrypted_data: encryptPayload(payload) };
+      }
+    }
+
+    // console.log(" == after form data = ", options.body)
 
     const headers = {
         ...options.headers,
@@ -90,67 +123,67 @@ const fetchMiddleware = async (url, options = {}) => {
     };
 
     try {
-        // console.log('printing url', url, updatedOptions);
-        let response = await fetch(url, updatedOptions);
+        
+      // console.log('printing url', url, updatedOptions);
+      let response = await fetch(url, updatedOptions);
 
-        if (response.status === 401) {
-            console.warn('Token expired. Attempting to refresh token...');
+      if (response.status === 401) {
+          console.warn('Token expired. Attempting to refresh token...');
 
-            // Call the refresh token endpoint
-            const refreshResponse = await fetch(`${APIConfig.baseURL.dev}/auth/refreshToken`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${refreshToken}`
-                }
-            });
+          // Call the refresh token endpoint
+          const refreshResponse = await fetch(`${APIConfig.baseURL.dev}/auth/refreshToken`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${refreshToken}`
+              }
+          });
 
-            if (!refreshResponse.ok) {
-                console.error('Failed to refresh token');
-                throw new Error('Token refresh failed');
-            }
+          if (!refreshResponse.ok) {
+              console.error('Failed to refresh token');
+              throw new Error('Token refresh failed');
+          }
 
-            const refreshData = await refreshResponse.json();
-            const newAccessToken = refreshData.access_token;
-            console.log('refreshData--', refreshData);
-            // Update the token in sessionStorage
-            sessionStorage.setItem('authToken', newAccessToken);
+          const refreshData = await refreshResponse.json();
+          const newAccessToken = refreshData.access_token;
+          console.log('refreshData--', refreshData);
+          // Update the token in sessionStorage
+          sessionStorage.setItem('authToken', newAccessToken);
 
-            // Retry the original request with the new token
-            const retryHeaders = {
-                ...options.headers,
-                'Authorization': `Bearer ${newAccessToken}`,
-                'Content-Type': 'application/json',
-            };
+          // Retry the original request with the new token
+          const retryHeaders = {
+              ...options.headers,
+              'Authorization': `Bearer ${newAccessToken}`,
+              'Content-Type': 'application/json',
+          };
 
-            const retryOptions = {
-                ...options,
-                headers: retryHeaders
-            };
+          const retryOptions = {
+              ...options,
+              headers: retryHeaders
+          };
 
-            response = await fetch(url, retryOptions);
-        }
+          response = await fetch(url, retryOptions);
+      }
 
-    
-    const responseText = await response.text();
-    const responseData = JSON.parse(responseText);
-    
-    
-    // Decrypt the response data if encrypted
-    if (responseData.encrypted_data) {
-        let decryptedData  = decryptPayload(responseData.encrypted_data);
-        console.log(" -- fetch response - ", decryptedData)
-        // return tempObject;
-        return {
-          json: async () => decryptedData, // Allows dashboardData.json() to work
-          text: async () => JSON.stringify(decryptedData), // Optionally return as text
-        };
-    }
+      // console.log(" == here debug = = ")
+      const responseText = await response.text();
+      const responseData = JSON.parse(responseText);
+      
+      // Decrypt the response data if encrypted
+      if (responseData.encrypted_data) {
+          let decryptedData  = decryptPayload(responseData.encrypted_data);
+          console.log(" -- fetch response - ", decryptedData)
+          // return tempObject;
+          return {
+            json: async () => decryptedData, // Allows dashboardData.json() to work
+            text: async () => JSON.stringify(decryptedData), // Optionally return as text
+          };
+      }
 
-    return {
-      json: async () => responseData,
-      text: async () => responseText,
-    };
+      return {
+        json: async () => responseData,
+        text: async () => responseText,
+      };
 
   } catch (error) {
     console.error('Fetch Error:', error);
@@ -164,10 +197,15 @@ const axiosMiddleware = axios.create({});
 axiosMiddleware.interceptors.request.use(
   (config) => {
     const token = sessionStorage.getItem('authToken');
+    // console.log(" == data = ", config)
 
     if (config.data) {
-      // Encrypt the request data
-      config.data = { encrypted_data: encryptPayload(config.data) };
+      if (config.data instanceof FormData) {
+        config.data = { encrypted_data: encryptFormDataPayload(config.data) };
+      } else {
+        config.data = { encrypted_data: encryptPayload(config.data) };
+      }
+      // config.data = { encrypted_data: encryptPayload(config.data) };
     }
 
     if (token) {
