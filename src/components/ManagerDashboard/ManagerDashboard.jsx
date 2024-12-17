@@ -84,7 +84,7 @@ function ManagerDashboard() {
 
     try {
       const jsonData = await response.json();
-      // console.log("Manager Dashboard jsonData: ", jsonData);
+      console.log("Manager Dashboard jsonData: ", jsonData);
 
       // RENT Status
       setRentStatus(jsonData.rentStatus.result);
