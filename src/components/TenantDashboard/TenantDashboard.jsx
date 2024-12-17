@@ -238,7 +238,7 @@ const TenantDashboard = () => {
     // }
 
     // fetch lease details from leaseDetailsData and property information as well
-    if (propertyListingData.length > 0 && !selectedProperty) {
+    if (propertyListingData?.length > 0 && !selectedProperty) {
       const firstProperty = propertyListingData.find((property) => property.lease_status !== null);
 
       if (firstProperty) {
