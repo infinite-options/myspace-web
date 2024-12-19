@@ -24,6 +24,7 @@ import UserDoesNotExistModal from "./UserDoesNotExistModal";
 // import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import CryptoJS from "crypto-js";
 import { set } from "date-fns";
+import { axiosMiddleware } from "../../utils/httpMiddleware";
 
 export default function LandingPage() {
   // console.log("In Landing Page");

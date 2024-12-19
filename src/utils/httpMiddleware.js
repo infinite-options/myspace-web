@@ -9,24 +9,34 @@ const BLOCK_SIZE = 16; // Block size in bytes
 
 
 // Encrypt Function For FormData
-const encryptFormDataPayload = (formData) => {
+const encryptFormDataPayload = async (formData) => {
   const formObject = {};
-  formData.forEach((value, key) => {
-      if (value instanceof File) {
-          // Store file details (name, etc.)
-          formObject[key] = {
+  for (const [key, value] of formData.entries()) {
+    if (value instanceof File) {
+        const fileData = await fileToBase64(value); // Convert file to Base64
+        formObject[key] = {
             fileName: value.name,
             fileType: value.type,
-            fileData: value,  // Store the whole File object
-          };
-      } else {
-          formObject[key] = value.toString(); // Encrypt non-file data
-      }
-  });
+            fileData: fileData, // Base64 encoded data
+        };
+    } else {
+        formObject[key] = value.toString();
+    }
+  }
 
-  // Encrypt the form data excluding files
+  console.log(" === debug === before encryption = ", formObject)
   const encryptedPayload = encryptPayload(formObject); // Encrypt the payload
   return encryptedPayload;
+};
+
+// Encrypt file or image to base64 String
+const fileToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(",")[1]); // Get Base64 content only
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+  });
 };
 
 // Encrypt Function using AES
@@ -100,22 +110,37 @@ const fetchMiddleware = async (url, options = {}) => {
     if(options.body){
       if (options.body instanceof FormData) {
         // console.log(" ==before form data = ", options.body)
-        const encryptedFormData = encryptFormDataPayload(options.body);
-        options.body = JSON.stringify({encrypted_data: encryptedFormData});
+        const encryptedFormData = new FormData();
+        const encryptedData = await encryptFormDataPayload(options.body);
+        encryptedFormData.append("encrypted_data", encryptedData);
+        options.body = encryptedFormData;
+        // options.body = JSON.stringify({encrypted_data: encryptedFormData, data_type: true});
   
       }else{
         const payload = JSON.parse(options.body);
-        options.body = { encrypted_data: encryptPayload(payload) };
+        console.log(" === debug === before encryption json data = ", payload)
+        options.body = JSON.stringify({encrypted_data: encryptPayload(payload), data_type: false});
       }
     }
 
     // console.log(" == after form data = ", options.body)
 
+    // const headers = {
+    //     ...options.headers,
+    //     'Authorization': `Bearer ${token}`,
+    //     'Content-Type': 'application/json',
+    // };
+
+    // Set headers
     const headers = {
-        ...options.headers,
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
+      ...options.headers,
+      'Authorization': `Bearer ${token}`,
     };
+
+    // Remove 'Content-Type' for FormData
+    if (!(options.body instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+    }
 
     const updatedOptions = {
         ...options,
@@ -152,9 +177,8 @@ const fetchMiddleware = async (url, options = {}) => {
 
           // Retry the original request with the new token
           const retryHeaders = {
-              ...options.headers,
-              'Authorization': `Bearer ${newAccessToken}`,
-              'Content-Type': 'application/json',
+            ...options.headers,
+            'Authorization': `Bearer ${newAccessToken}`,
           };
 
           const retryOptions = {
@@ -172,7 +196,7 @@ const fetchMiddleware = async (url, options = {}) => {
       // Decrypt the response data if encrypted
       if (responseData.encrypted_data) {
           let decryptedData  = decryptPayload(responseData.encrypted_data);
-          console.log(" -- fetch response - ", decryptedData)
+          console.log(" == DEBUG == fetch response: ", decryptedData)
           // return tempObject;
           return {
             json: async () => decryptedData, // Allows dashboardData.json() to work
@@ -195,15 +219,20 @@ const fetchMiddleware = async (url, options = {}) => {
 const axiosMiddleware = axios.create({});
 
 axiosMiddleware.interceptors.request.use(
-  (config) => {
+  async (config) => {
     const token = sessionStorage.getItem('authToken');
     // console.log(" == data = ", config)
 
     if (config.data) {
       if (config.data instanceof FormData) {
-        config.data = { encrypted_data: encryptFormDataPayload(config.data) };
+        const encryptedFormData = new FormData();
+        const encryptedData = await encryptFormDataPayload(config.data);
+        encryptedFormData.append("encrypted_data", encryptedData);
+        config.data = encryptedFormData;
+        // config.data = { encrypted_data: encryptFormDataPayload(config.data), data_type : true};
       } else {
-        config.data = { encrypted_data: encryptPayload(config.data) };
+        console.log(" === debug === before encryption json data = ", config.data)
+        config.data = { encrypted_data: encryptPayload(config.data), data_type: false};
       }
       // config.data = { encrypted_data: encryptPayload(config.data) };
     }
@@ -219,7 +248,7 @@ axiosMiddleware.interceptors.request.use(
 
 axiosMiddleware.interceptors.response.use(
     (response) => {
-    console.log("response - ", response)
+    // console.log("response - ", response)
     if (response.data?.encrypted_data) {
         // Decrypt the response data
         response.data = decryptPayload(response.data.encrypted_data);
