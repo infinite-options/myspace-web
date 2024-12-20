@@ -286,6 +286,11 @@ axiosMiddleware.interceptors.response.use(
                 return Promise.reject(refreshError);
             }
         }
+
+        if (error.response?.data?.encrypted_data) {
+          error.response.data = decryptPayload(error.response.data.encrypted_data);
+        }
+
         return Promise.reject(error);
     }
 );
