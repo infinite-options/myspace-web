@@ -138,9 +138,9 @@ const fetchMiddleware = async (url, options = {}) => {
     };
 
     // Remove 'Content-Type' for FormData
-    if (!(options.body instanceof FormData)) {
-      headers['Content-Type'] = 'application/json';
-    }
+    // if (!(options.body instanceof FormData)) {
+    //   headers['Content-Type'] = 'application/json';
+    // }
 
     const updatedOptions = {
         ...options,
