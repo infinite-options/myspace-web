@@ -356,7 +356,9 @@ const CreateProfile = () => {
           } else {
             setAuthData(responseJSON.result);
             setLoggedIn(true);
-
+            localStorage.removeItem('hasRedirected');
+            sessionStorage.setItem('authToken', responseJSON.result.access_token);
+            sessionStorage.setItem('refreshToken', responseJSON.result.refresh_token)
             createUserProfile(responseJSON.result.user.user_uid, responseJSON.result.user);
             // setShowSpinner(false);
             // navigate(`/onboardingRouter`, { state: { isPrivate:false } });
@@ -394,7 +396,9 @@ const CreateProfile = () => {
             return;
           } else {
             setAuthData(responseJSON.result);
-
+            localStorage.removeItem('hasRedirected');
+            sessionStorage.setItem('authToken', responseJSON.result.access_token);
+            sessionStorage.setItem('refreshToken', responseJSON.result.refresh_token)
             createUserProfile(responseJSON.result.user.user_uid, responseJSON.result.user);
             // setShowSpinner(false);
             // navigate(`/onboardingRouter`, { state: { isPrivate:false } });

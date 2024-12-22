@@ -128,6 +128,7 @@ export default function LandingPage() {
                       // setShowSpinner(false);
                     } else if (message === "Login successful") {
                       // const jwtToken = await axios.get(`${APIConfig.baseURL.dev}/jwtToken/${response.data.result.user.user_uid}`);
+                      localStorage.removeItem('hasRedirected');
                       sessionStorage.setItem('authToken', result.access_token);
                       sessionStorage.setItem('refreshToken', result.refresh_token)
                       setAuthData(result);

@@ -95,6 +95,7 @@ function UserLogin() {
                       setUserDoesntExist(true);
                       setShowSpinner(false);
                     } else if (message === "Login successful") {
+                      localStorage.removeItem('hasRedirected');
                       sessionStorage.setItem('authToken', result.access_token);
                       sessionStorage.setItem('refreshToken', result.refresh_token)
                       setAuthData(result);

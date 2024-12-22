@@ -2,6 +2,7 @@ import axios from 'axios';
 import CryptoJS from 'crypto-js';
 import APIConfig from './APIConfig';
 import { json } from 'react-router-dom';
+import { Cookies } from 'react-cookie';
 
 // AES Encryption Key
 const AES_KEY = "IO95120secretkey"; // Must match the backend
@@ -99,6 +100,15 @@ function decryptPayload(encryptedBlob) {
   }
 }
 
+const logout = () => {
+  const cookiesObj = new Cookies();
+  sessionStorage.clear();
+  cookiesObj.remove("user");
+  cookiesObj.remove("token");
+  cookiesObj.remove("selectedRole");
+  cookiesObj.remove("default_form_vals");
+  window.location.href = "/";
+};
 
 // === FETCH MIDDLEWARE ===
 const fetchMiddleware = async (url, options = {}) => {
@@ -151,7 +161,13 @@ const fetchMiddleware = async (url, options = {}) => {
         
       // console.log('printing url', url, updatedOptions);
       let response = await fetch(url, updatedOptions);
-
+      if (response.status === 404){
+        console.log('JWT is missing/invalid');
+        if (!localStorage.getItem('hasRedirected')){
+          localStorage.setItem('hasRedirected', 'true');
+          logout();
+        }
+      } else {
       if (response.status === 401) {
           console.warn('Token expired. Attempting to refresh token...');
 
@@ -199,16 +215,19 @@ const fetchMiddleware = async (url, options = {}) => {
           console.log(" == DEBUG == fetch response: ", decryptedData)
           // return tempObject;
           return {
+            ok: response.ok,
             json: async () => decryptedData, // Allows dashboardData.json() to work
             text: async () => JSON.stringify(decryptedData), // Optionally return as text
           };
       }
 
       return {
+        ok: response.ok,
         json: async () => responseData,
         text: async () => responseText,
       };
-
+              
+    }
   } catch (error) {
     console.error('Fetch Error:', error);
     throw error;
@@ -257,7 +276,13 @@ axiosMiddleware.interceptors.response.use(
   },
     async (error) => {
         const originalRequest = error.config;
-
+        if (error.response?.status === 404){
+          console.log('JWT is missing/invalid');
+          if (!localStorage.getItem('hasRedirected')){
+            localStorage.setItem('hasRedirected', 'true');
+            logout();
+          }
+        } else {
         if (error.response?.status === 401 && !originalRequest._retry) {
             console.warn('Token expired. Attempting to refresh token...');
             originalRequest._retry = true; 
@@ -290,9 +315,9 @@ axiosMiddleware.interceptors.response.use(
         if (error.response?.data?.encrypted_data) {
           error.response.data = decryptPayload(error.response.data.encrypted_data);
         }
-
         return Promise.reject(error);
-    }
+    }         
+  }
 );
 
 export {
