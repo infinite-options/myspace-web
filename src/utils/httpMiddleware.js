@@ -173,9 +173,8 @@ const fetchMiddleware = async (url, options = {}) => {
 
           // Call the refresh token endpoint
           const refreshResponse = await fetch(`${APIConfig.baseURL.dev}/auth/refreshToken`, {
-              method: 'POST',
+              method: 'GET',
               headers: {
-                  'Content-Type': 'application/json',
                   'Authorization': `Bearer ${refreshToken}`
               }
           });
@@ -186,8 +185,9 @@ const fetchMiddleware = async (url, options = {}) => {
           }
 
           const refreshData = await refreshResponse.json();
-          const newAccessToken = refreshData.access_token;
-          console.log('refreshData--', refreshData);
+          const refreshDataDecrypt = decryptPayload(refreshData.encrypted_data);
+          const newAccessToken = refreshDataDecrypt.access_token;
+          
           // Update the token in sessionStorage
           sessionStorage.setItem('authToken', newAccessToken);
 
@@ -290,14 +290,16 @@ axiosMiddleware.interceptors.response.use(
             const refreshToken = sessionStorage.getItem('refreshToken');
             try {
                 // Call the refresh token endpoint
-                const refreshResponse = await axios.post(`${APIConfig.baseURL.dev}/auth/refreshToken`, null, {
+                const refreshResponse = await axios.get(`${APIConfig.baseURL.dev}/auth/refreshToken`, {
                     headers: {
-                        'Content-Type': 'application/json',
                         'Authorization': `Bearer ${refreshToken}`
                     }
                 });
-
-                const newAccessToken = refreshResponse.data.access_token;
+                
+                //Decrypt the payload to get new access token
+                const decryptedRefResp = decryptPayload(refreshResponse.data.encrypted_data);
+                // const newAccessToken = refreshResponse.data.access_token;
+                const newAccessToken = decryptedRefResp.access_token;
 
                 // Update the token in sessionStorage
                 sessionStorage.setItem('authToken', newAccessToken);
