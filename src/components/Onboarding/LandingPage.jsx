@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Box, Stack, ThemeProvider, Button, Typography, Grid, Paper, Container, Toolbar, OutlinedInput } from "@mui/material";
 import theme from "../../theme/theme";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -18,6 +18,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
+import ListsContext from "../../contexts/ListsContext";
 // import axios from "axios";
 import PasswordModal from "./PasswordModal";
 import UserDoesNotExistModal from "./UserDoesNotExistModal";
@@ -48,6 +49,7 @@ export default function LandingPage() {
   const [userDoesntExist, setUserDoesntExist] = useState(false);
   const [passModal, setpassModal] = useState(false);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  const { fetchLists, } = useContext(ListsContext)
 
   useEffect(() => {
     if(location.state && typeof location.state?.showEmail !== "undefined"){
@@ -136,6 +138,8 @@ export default function LandingPage() {
                       const openingRole = role.split(",")[0];
                       selectRole(openingRole);
                       setLoggedIn(true);
+
+                      await fetchLists();
                       const { dashboardUrl } = roleMap[openingRole];
                       navigate(dashboardUrl);
                     }

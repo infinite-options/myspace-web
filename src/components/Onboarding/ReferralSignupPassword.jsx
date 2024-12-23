@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 // import axios from "axios";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
@@ -44,6 +44,7 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import ListsContext from "../../contexts/ListsContext";
 import GoogleSignup from './GoogleSignup';
 import {
   formatPhoneNumber,
@@ -79,7 +80,7 @@ export default function ReferralSignupPassword({}) {
   const { selectedRole, selectRole, Name, getProfileId, updateProfileUid, setLoggedIn, } = useUser();  
   const { setAuthData, onboardingState, setOnboardingState } = useUser();
   const [showSpinner, setShowSpinner] = useState(false);
-
+  const { fetchLists, } = useContext(ListsContext);
     
   const [password1, setPassword1] = useState("");
   const [password2, setPassword2] = useState("");
@@ -153,7 +154,7 @@ export default function ReferralSignupPassword({}) {
                 axios
                   .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/Login/MYSPACE", loginObject)
                   // .post("http://localhost:2000/api/v2/Login/MYSPACE", loginObject)
-                  .then((response) => {
+                  .then(async(response) => {
                     console.log(response.data.message);
                     const { message, result } = response.data;
                     if (message === "Incorrect password") {
@@ -171,6 +172,9 @@ export default function ReferralSignupPassword({}) {
                       const openingRole = role.split(",")[0];
                       selectRole(openingRole);
                       setLoggedIn(true);
+
+                      await fetchLists();
+                      
                       const { dashboardUrl } = roleMap[openingRole];
                       localStorage.setItem('signedUpWithReferral', 'true');                      
                       // navigate(dashboardUrl); 

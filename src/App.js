@@ -33,7 +33,7 @@ function App() {
     <CookiesProvider defaultSetOptions={{ path: "/" }}>
       <UserProvider>
         <OnboardingProvider>
-          {/* <ListsProvider> */}
+          <ListsProvider>
             <SettingsACHContextProvider>
               <MaintenanceProvider>               
                 <BrowserRouter>
@@ -42,7 +42,7 @@ function App() {
                 </BrowserRouter>              
               </MaintenanceProvider>
             </SettingsACHContextProvider>
-          {/* </ListsProvider> */}
+          </ListsProvider>
         </OnboardingProvider>
       </UserProvider>
     </CookiesProvider>

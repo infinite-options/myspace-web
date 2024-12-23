@@ -270,121 +270,119 @@ export default function MaintenanceDashboard2() {
   };
 
   return (
-    <ListsProvider>
-      <ThemeProvider theme={theme}>
-        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-          <CircularProgress color='inherit' />
-        </Backdrop>
-        <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
-          <Grid container rowSpacing={2} columnSpacing={10}>
-            <Grid item xs={12}>
-              <Box
+    <ThemeProvider theme={theme}>
+      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+        <CircularProgress color='inherit' />
+      </Backdrop>
+      <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
+        <Grid container rowSpacing={2} columnSpacing={10}>
+          <Grid item xs={12}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: isMobile ? "column" : "row",
+                justifyContent: isMobile ? "center" : "left",
+                paddingLeft: "10px",
+                paddingRight: "10px",
+                alignText: "center",
+                alignContent: "center",
+              }}
+            >
+              <Typography
                 sx={{
-                  display: "flex",
-                  flexDirection: isMobile ? "column" : "row",
-                  justifyContent: isMobile ? "center" : "left",
-                  paddingLeft: "10px",
-                  paddingRight: "10px",
-                  alignText: "center",
-                  alignContent: "center",
+                  fontSize: { xs: "22px", sm: "28px", md: "32px" },
+                  fontWeight: "600",
                 }}
               >
-                <Typography
-                  sx={{
-                    fontSize: { xs: "22px", sm: "28px", md: "32px" },
-                    fontWeight: "600",
-                  }}
-                >
-                  Welcome, {user.first_name}.
-                </Typography>
-              </Box>
-            </Grid>
+                Welcome, {user.first_name}.
+              </Typography>
+            </Box>
+          </Grid>
 
-            <Grid item xs={12} md={4}>
-              <WorkOrdersWidget
-                maintenanceRequests={maintenanceRequests}
-                todayData={todayData}
-                nextScheduleData={nextScheduleData}
-                allMaintenanceStatusData={maintenanceStatusRequests}
-                onSelectRequest={handleWorkerMaintenanceRequestSelected}
-                setSessionData = {setSessionData}
-                showMaintenanceDetail={showMaintenanceDetail}
+          <Grid item xs={12} md={4}>
+            <WorkOrdersWidget
+              maintenanceRequests={maintenanceRequests}
+              todayData={todayData}
+              nextScheduleData={nextScheduleData}
+              allMaintenanceStatusData={maintenanceStatusRequests}
+              onSelectRequest={handleWorkerMaintenanceRequestSelected}
+              setSessionData = {setSessionData}
+              showMaintenanceDetail={showMaintenanceDetail}
+            />
+          </Grid>
+
+          {showMaintenanceDetail ? (
+            <Grid item xs={12} md={8} columnSpacing={6} sx={{ position: "relative" }}>
+              <WorkerMaintenanceRequestDetail
+                maintenance_request_index={sessionData.maintenance_request_index}
+                propstatus={sessionData.propstatus}
+                propmaintenanceItemsForStatus={sessionData.propmaintenanceItemsForStatus}
+                alldata={sessionData.alldata}
+                maintenance_request_uid={sessionData.maintenance_request_uid}
+                setShowMaintenanceDetail={setShowMaintenanceDetail}
+                refreshMaintenanceData={refreshMaintenanceData}
               />
             </Grid>
-
-            {showMaintenanceDetail ? (
-              <Grid item xs={12} md={8} columnSpacing={6} sx={{ position: "relative" }}>
-                <WorkerMaintenanceRequestDetail
-                  maintenance_request_index={sessionData.maintenance_request_index}
-                  propstatus={sessionData.propstatus}
-                  propmaintenanceItemsForStatus={sessionData.propmaintenanceItemsForStatus}
-                  alldata={sessionData.alldata}
-                  maintenance_request_uid={sessionData.maintenance_request_uid}
-                  setShowMaintenanceDetail={setShowMaintenanceDetail}
-                  refreshMaintenanceData={refreshMaintenanceData}
-                />
-              </Grid>
-            ) : (
-              <>
-                {/* <Grid item xs={12} md={8} columnSpacing={6} rowGap={4} sx={{ position: "relative" }}> */}
-                <Grid item xs={12} md={8} columnSpacing={6} rowGap={4}>
-                  <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", borderRadius: "10px", height: "400px" }}>
-                    <Stack direction='row' justifyContent='center' width='100%' sx={{ marginBottom: "15px", marginTop: "0px" }}>
-                      <Typography variant='h5' sx={{ fontWeight: "bold", color: "#160449", marginTop: "20px" }}>
-                        Current Activity
-                      </Typography>
-                    </Stack>
-                    <Grid
-                      container
-                      sx={{
-                        display: "flex",
-                        flexDirection: isMobile ? "column" : "row", // Switch layout direction based on screen size
-                        justifyContent: "space-between",
-                      }}
-                      rowSpacing={isMobile ? 30 : 200} // Add spacing between rows in mobile
-                      columnSpacing={isMobile ? 0 : 10} // Remove column spacing in mobile
-                    >
-                      <Grid item xs={12} md={6} sx={{ marginBottom: "0px", marginTop: "0px" }}>
-                        <RadialBarChart data={graphData} />
+          ) : (
+            <>
+              {/* <Grid item xs={12} md={8} columnSpacing={6} rowGap={4} sx={{ position: "relative" }}> */}
+              <Grid item xs={12} md={8} columnSpacing={6} rowGap={4}>
+                <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", borderRadius: "10px", height: "400px" }}>
+                  <Stack direction='row' justifyContent='center' width='100%' sx={{ marginBottom: "15px", marginTop: "0px" }}>
+                    <Typography variant='h5' sx={{ fontWeight: "bold", color: "#160449", marginTop: "20px" }}>
+                      Current Activity
+                    </Typography>
+                  </Stack>
+                  <Grid
+                    container
+                    sx={{
+                      display: "flex",
+                      flexDirection: isMobile ? "column" : "row", // Switch layout direction based on screen size
+                      justifyContent: "space-between",
+                    }}
+                    rowSpacing={isMobile ? 30 : 200} // Add spacing between rows in mobile
+                    columnSpacing={isMobile ? 0 : 10} // Remove column spacing in mobile
+                  >
+                    <Grid item xs={12} md={6} sx={{ marginBottom: "0px", marginTop: "0px" }}>
+                      <RadialBarChart data={graphData} />
+                    </Grid>
+                    {!isMobile && (
+                      <Grid item xs={12} md={6} sx={{ marginBottom: "15px", marginTop: "25px" }}>
+                        <MaintenanceCashflowWidget data={cashflowData} />
                       </Grid>
-                      {!isMobile && (
-                        <Grid item xs={12} md={6} sx={{ marginBottom: "15px", marginTop: "25px" }}>
-                          <MaintenanceCashflowWidget data={cashflowData} />
-                        </Grid>
-                      )}
-                    </Grid>
-                  </Grid>
-                  {isMobile && (
-                    <Grid
-                      item
-                      xs={12}
-                      sx={{
-                        backgroundColor: "#F2F2F2",
-                        display: "flex",
-                        justifyContent: "center", // Horizontally center the widget
-                        alignItems: "center", // Vertically center the widget
-                        borderRadius: "10px",
-                        marginTop: "20px",
-                      }}
-                    >
-                      <MaintenanceCashflowWidget data={cashflowData} />
-                    </Grid>
-                  )}
-                  <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", borderRadius: "10px", height: "600px" }}>
-                    <Stack direction='row' justifyContent='center' width='100%' sx={{ marginBottom: "15px", marginTop: "15px" }}>
-                      <Typography variant='h5' sx={{ fontWeight: "bold", color: "#160449", marginTop: "20px" }}>
-                        Revenue
-                      </Typography>
-                    </Stack>
-                    <RevenueTable data={revenueData}></RevenueTable>
+                    )}
                   </Grid>
                 </Grid>
-              </>
-            )}
-          </Grid>
-        </Container>
-      </ThemeProvider>
-    </ListsProvider>
+                {isMobile && (
+                  <Grid
+                    item
+                    xs={12}
+                    sx={{
+                      backgroundColor: "#F2F2F2",
+                      display: "flex",
+                      justifyContent: "center", // Horizontally center the widget
+                      alignItems: "center", // Vertically center the widget
+                      borderRadius: "10px",
+                      marginTop: "20px",
+                    }}
+                  >
+                    <MaintenanceCashflowWidget data={cashflowData} />
+                  </Grid>
+                )}
+                <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", borderRadius: "10px", height: "600px" }}>
+                  <Stack direction='row' justifyContent='center' width='100%' sx={{ marginBottom: "15px", marginTop: "15px" }}>
+                    <Typography variant='h5' sx={{ fontWeight: "bold", color: "#160449", marginTop: "20px" }}>
+                      Revenue
+                    </Typography>
+                  </Stack>
+                  <RevenueTable data={revenueData}></RevenueTable>
+                </Grid>
+              </Grid>
+            </>
+          )}
+        </Grid>
+      </Container>
+    </ThemeProvider>
   );
 }
 

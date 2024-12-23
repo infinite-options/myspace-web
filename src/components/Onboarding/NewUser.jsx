@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Paper,
@@ -44,6 +44,7 @@ import { roleMap } from "./helper";
 import DataValidator from "../DataValidator";
 import UserExistsModal from "./UserExistsModal";
 import APIConfig from "../../utils/APIConfig";
+import ListsContext from "../../contexts/ListsContext";
 
 const NewUser = () => {
   console.log("In NewUser2");
@@ -55,6 +56,7 @@ const NewUser = () => {
   const [cookies, setCookie] = useCookies(["user"]);
   const [showPassword, setShowPassword] = useState(false);  
   const [googleInfoAvailable, setGoogleInfoAvailable] = useState(false);
+  const { fetchLists, } = useContext(ListsContext)
   const [user, setUser] = useState(location.state?.user ? location.state?.user : null);
 
   useEffect(() => {
@@ -241,6 +243,7 @@ const NewUser = () => {
                       sessionStorage.setItem('refreshToken', result.refresh_token)
                       console.log("Login successfull moving to dashboard");
                       
+                      await fetchLists();
                       const { role } = result.user;
 
                       const existingRoles = role.split(",");

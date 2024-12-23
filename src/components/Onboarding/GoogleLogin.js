@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 // import axios from "axios";
 import { fetchMiddleware as fetchMiddleware, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
+import ListsContext from "../../contexts/ListsContext";
 import { roleMap } from './helper';
 import googleImg from "../../images/ContinueWithGoogle.svg";
 import GoogleIcon from '@mui/icons-material/Google';
@@ -24,6 +25,7 @@ function GoogleLogin({buttonStyle, buttonText, }) {
   const [socialId, setSocialId] = useState("");
   const [refreshToken, setRefreshToken] = useState("");
   const [accessExpiresIn, setAccessExpiresIn] = useState("");
+  const { fetchLists, } = useContext(ListsContext)
   const { setAuthData, setLoggedIn, selectRole } = useUser();
   let codeClient = {};
   function getAuthorizationCode() {
@@ -112,7 +114,7 @@ function GoogleLogin({buttonStyle, buttonText, }) {
                     .get(
                       `https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserSocialLogin/MYSPACE/${e}`
                     )
-                    .then(({ data }) => {
+                    .then(async ({ data }) => {
                       if (
                         data["message"] === "Email ID doesnt exist"
                       ) {
@@ -153,6 +155,8 @@ function GoogleLogin({buttonStyle, buttonText, }) {
                         localStorage.removeItem('hasRedirected');
                         sessionStorage.setItem('authToken', user.access_token);
                         sessionStorage.setItem('refreshToken', user.refresh_token)
+                        await fetchLists();
+
                         let url = `https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateAccessToken/MYSPACE/${user_id}`;
                         axios
                           .post(url, {

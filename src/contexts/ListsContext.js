@@ -13,10 +13,17 @@ export const ListsProvider = ({ children }) => {
 
   const fetchLists = async () => {
     try {
+        const jwtToken = sessionStorage.getItem("authToken");
+        if (!jwtToken) {
+          console.log("No JWT found. Skipping fetch.");
+          return;
+        }
+
         const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
         const data = await response.json();        
         const lists = data.result.filter(item => (item.list_item != null && item.list_item.trim() !== ""));
         setAllLists(lists);
+        setDataLoaded(true);
     } catch (error) {
         console.error("Error fetching fee bases:", error);
     }
@@ -35,10 +42,10 @@ export const ListsProvider = ({ children }) => {
   // }, [dataLoaded]);
 
   useEffect(() => {
-    if (allLists.length === 0) {
-      fetchLists();
+    if (!dataLoaded && allLists.length === 0) {
+      fetchLists(); 
     }
-  }, [allLists]);
+  }, [allLists, dataLoaded]);
 
   // useEffect(() => {
   //   if (!dataLoaded) {
@@ -51,7 +58,8 @@ export const ListsProvider = ({ children }) => {
     <ListsContext.Provider 
       value={{         
         getList,
-        dataLoaded: allLists.length > 0, 
+        fetchLists,
+        dataLoaded, 
       }}
     >
       {children}

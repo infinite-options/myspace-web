@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   Paper,
   Box,
@@ -37,10 +37,13 @@ import maintenanceDashboardImage from "./images/dashboard-images/maintenance-das
 import ownerDashboardImage from "./images/dashboard-images/owner-dashboard.png";
 import tenantDashboardImage from "./images/dashboard-images/tenant-dashboard.png";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
+import ListsContext from "../../contexts/ListsContext";
 
 const CreateProfile = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { fetchLists, } = useContext(ListsContext)
+
   const { user: userFromHook, setAuthData, onboardingState, setOnboardingState, updateProfileUid, updateEmployeeProfileUid, selectRole, setLoggedIn } = useUser();
   const { user, selectedBusiness} = location.state;
   console.log("In CreateProfile user - ", user);
@@ -226,6 +229,8 @@ const CreateProfile = () => {
 
     setCookie("user", { ...userData, ...role_id });
 
+    await fetchLists();
+
     const { dashboardUrl } = roleMap[user.role];
     navigate(dashboardUrl);
   };
@@ -282,7 +287,7 @@ const CreateProfile = () => {
                 console.log(JSON.stringify(loginObject));
                 axios
                   .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/Login/MYSPACE", loginObject)
-                  .then((response) => {
+                  .then(async (response) => {
                     console.log(response.data.message);
                     const { message, result } = response.data;
                     if (message === "Incorrect password") {
@@ -300,6 +305,8 @@ const CreateProfile = () => {
                       const openingRole = role.split(",")[0];
                       selectRole(openingRole);
                       setLoggedIn(true);
+                      await fetchLists();
+
                       const { dashboardUrl } = roleMap[openingRole];
                       navigate(dashboardUrl);
                     }

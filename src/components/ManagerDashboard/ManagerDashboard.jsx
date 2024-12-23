@@ -170,55 +170,53 @@ function ManagerDashboard() {
   }, [happinessData]);
 
   return (
-    <ListsProvider>
-      <ThemeProvider theme={theme}>
-        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-          <CircularProgress color='inherit' />
-        </Backdrop>
-        <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
-          <Grid container spacing={6}>
-            <Grid item xs={12}>
-              <Box
+    <ThemeProvider theme={theme}>
+      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+        <CircularProgress color='inherit' />
+      </Backdrop>
+      <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
+        <Grid container spacing={6}>
+          <Grid item xs={12}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: isMobile ? "column" : "row",
+                justifyContent: isMobile ? "center" : "left",
+                paddingLeft: "10px",
+                paddingRight: "10px",
+                alignText: "center",
+                alignContent: "center",
+              }}
+            >
+              <Typography
                 sx={{
-                  display: "flex",
-                  flexDirection: isMobile ? "column" : "row",
-                  justifyContent: isMobile ? "center" : "left",
-                  paddingLeft: "10px",
-                  paddingRight: "10px",
-                  alignText: "center",
-                  alignContent: "center",
+                  fontSize: { xs: "22px", sm: "28px", md: "32px" },
+                  fontWeight: "600",
                 }}
               >
-                <Typography
-                  sx={{
-                    fontSize: { xs: "22px", sm: "28px", md: "32px" },
-                    fontWeight: "600",
-                  }}
-                >
-                  Welcome, {user.first_name}!
-                </Typography>
-              </Box>
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <PropertyRentWidget rentData={rentStatus} contractRequests={contractRequests} propertyData={propertyData} />
-            </Grid>
-            <Grid item xs={12} md={9}>
-              {/* <RevenueWidget revenueData={revenueData} cashflowStatusData={cashflowStatusData} /> */}
-              <RevenueWidget cashflowStatusData={profitStatusData} />
-              <LeaseWidget leaseData={leaseStatus} />
-              <Grid container item xs={12} spacing={6}>
-                <Grid item xs={12} md={6}>
-                  <HappinessMatrixWidget happinessData={happinessData} page={"ManagerDashBoard"} />
-                </Grid>
-                <Grid item xs={12} md={6} style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end" }}>
-                  <MaintenanceWidget maintenanceData={maintenanceStatusData} />
-                </Grid>
+                Welcome, {user.first_name}!
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <PropertyRentWidget rentData={rentStatus} contractRequests={contractRequests} propertyData={propertyData} />
+          </Grid>
+          <Grid item xs={12} md={9}>
+            {/* <RevenueWidget revenueData={revenueData} cashflowStatusData={cashflowStatusData} /> */}
+            <RevenueWidget cashflowStatusData={profitStatusData} />
+            <LeaseWidget leaseData={leaseStatus} />
+            <Grid container item xs={12} spacing={6}>
+              <Grid item xs={12} md={6}>
+                <HappinessMatrixWidget happinessData={happinessData} page={"ManagerDashBoard"} />
+              </Grid>
+              <Grid item xs={12} md={6} style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end" }}>
+                <MaintenanceWidget maintenanceData={maintenanceStatusData} />
               </Grid>
             </Grid>
           </Grid>
-        </Container>
-      </ThemeProvider>
-    </ListsProvider>
+        </Grid>
+      </Container>
+    </ThemeProvider>
   );
 }
 

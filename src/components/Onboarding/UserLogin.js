@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import { Paper, Box, Stack, ThemeProvider, Button, Typography, Backdrop, CircularProgress } from "@mui/material";
 import theme from "../../theme/theme";
@@ -10,6 +10,7 @@ import PasswordModal from "./PasswordModal";
 import UserDoesNotExistModal from "./UserDoesNotExistModal";
 import { roleMap } from "./helper";
 import { useCookies } from "react-cookie";
+import ListsContext from "../../contexts/ListsContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,6 +36,7 @@ function UserLogin() {
   const [showSpinner, setShowSpinner] = useState(false);
   const { setAuthData, setLoggedIn, selectRole } = useUser();
   const [userDoesntExist, setUserDoesntExist] = useState(false);
+  const { fetchLists, } = useContext(ListsContext);
   const submitForm = async () => {
     if (email === "" || password === "") {
       alert("Please fill out all fields");
@@ -85,7 +87,7 @@ function UserLogin() {
                 console.log(JSON.stringify(loginObject));
                 axios
                   .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/Login/MYSPACE", loginObject)
-                  .then((response) => {
+                  .then(async(response) => {
                     console.log(response.data.message);
                     const { message, result } = response.data;
                     if (message === "Incorrect password") {
@@ -103,6 +105,8 @@ function UserLogin() {
                       const openingRole = role.split(",")[0];
                       selectRole(openingRole);
                       setLoggedIn(true);
+
+                      await fetchLists();
                       const { dashboardUrl } = roleMap[openingRole];
                       navigate(dashboardUrl);
                     }
