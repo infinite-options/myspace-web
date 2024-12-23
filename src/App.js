@@ -9,11 +9,12 @@ import { MaintenanceProvider } from "./contexts/MaintenanceContext";  // Import 
 import { ListsProvider } from "./contexts/ListsContext";
 import ScrollToTop from "./components/ScrollToTop";
 function App() {
+  // console.log("App.js");
   return (
     <CookiesProvider defaultSetOptions={{ path: "/" }}>
       <UserProvider>
         <OnboardingProvider>
-          <ListsProvider>
+          {/* <ListsProvider> */}
             <SettingsACHContextProvider>
               <MaintenanceProvider>               
                 <BrowserRouter>
@@ -22,7 +23,7 @@ function App() {
                 </BrowserRouter>              
               </MaintenanceProvider>
             </SettingsACHContextProvider>
-          </ListsProvider>
+          {/* </ListsProvider> */}
         </OnboardingProvider>
       </UserProvider>
     </CookiesProvider>

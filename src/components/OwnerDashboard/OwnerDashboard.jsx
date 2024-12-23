@@ -28,6 +28,7 @@ import APIConfig from "../../utils/APIConfig";
 import Announcements from "../Announcement/Announcements";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // Import the back arrow icon
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
+import { ListsProvider } from "../../contexts/ListsContext";
 
 const useStyles = makeStyles({
   button: {
@@ -140,172 +141,174 @@ export default function OwnerDashboard() {
   }, [location?.state])
 
   return (
-    <ThemeProvider theme={theme}>
-      {showSpinner ? (
-        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
-          <CircularProgress color='inherit' />
-        </Backdrop>
-      ) : (
-        <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
-          <Grid container spacing={6}>
-            {view === "dashboard" ? (
-              <>
-                <Grid item xs={12}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: isMobile ? "column" : "row",
-                      justifyContent: isMobile ? "center" : "left",
-                      paddingLeft: "10px",
-                      paddingRight: "10px",
-                      alignText: "center",
-                      alignContent: "center",
-                    }}
-                  >
-                    <Typography
+    <ListsProvider>
+      <ThemeProvider theme={theme}>
+        {showSpinner ? (
+          <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+            <CircularProgress color='inherit' />
+          </Backdrop>
+        ) : (
+          <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "50px" }}>
+            <Grid container spacing={6}>
+              {view === "dashboard" ? (
+                <>
+                  <Grid item xs={12}>
+                    <Box
                       sx={{
-                        fontSize: { xs: "22px", sm: "28px", md: "32px" },
-                        fontWeight: "600",
+                        display: "flex",
+                        flexDirection: isMobile ? "column" : "row",
+                        justifyContent: isMobile ? "center" : "left",
+                        paddingLeft: "10px",
+                        paddingRight: "10px",
+                        alignText: "center",
+                        alignContent: "center",
                       }}
                     >
-                      Welcome, {user.first_name}
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <CashflowWidget page={"OwnerDashboard"} allProperties={propertList} data={cashflowStatusData} originalData={cashflowStatusData}/>
-                </Grid>
-                <Grid container item xs={12} md={8} columnSpacing={6}>
-                  <Grid item xs={12} md={6} sx={{ marginBottom: isMobile ? "10px" : "1px" }}>
-                    <OwnerPropertyRentWidget rentData={rentStatus} />
-                  </Grid>
-                  <Grid item xs={12} md={6} sx={{ marginBottom: "1px" }}>
-                    <MaintenanceWidget maintenanceData={maintenanceStatusData} />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <LeaseWidget leaseData={leaseStatus} />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", paddingBottom: "40px", borderRadius: "10px", height: "100%" }}>
-                      <Grid
-                        container
-                        direction='row'
+                      <Typography
                         sx={{
-                          paddingTop: "10px",
-                          paddingBottom: "10px",
+                          fontSize: { xs: "22px", sm: "28px", md: "32px" },
+                          fontWeight: "600",
                         }}
                       >
-                        <Grid item xs={2}></Grid>
-                        <Grid item xs={8}>
-                          <Box
-                            sx={{
-                              flexGrow: 1,
-                              display: "flex",
-                              justifyContent: "center",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                color: "#160449",
-                                fontSize: { xs: "24px", sm: "24px", md: "24px" },
-                                fontWeight: "bold",
-                              }}
-                            >
-                              Announcements
-                            </Typography>
-                          </Box>
-                        </Grid>
-                        <Grid item xs={2}>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              justifyContent: "center",
-                              alignItems: "center",
-                              zIndex: 1,
-                              flex: 1,
-                              height: "100%",
-                            }}
-                          >
+                        Welcome, {user.first_name}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <CashflowWidget page={"OwnerDashboard"} allProperties={propertList} data={cashflowStatusData} originalData={cashflowStatusData}/>
+                  </Grid>
+                  <Grid container item xs={12} md={8} columnSpacing={6}>
+                    <Grid item xs={12} md={6} sx={{ marginBottom: isMobile ? "10px" : "1px" }}>
+                      <OwnerPropertyRentWidget rentData={rentStatus} />
+                    </Grid>
+                    <Grid item xs={12} md={6} sx={{ marginBottom: "1px" }}>
+                      <MaintenanceWidget maintenanceData={maintenanceStatusData} />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <LeaseWidget leaseData={leaseStatus} />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Grid item xs={12} sx={{ backgroundColor: "#F2F2F2", paddingBottom: "40px", borderRadius: "10px", height: "100%" }}>
+                        <Grid
+                          container
+                          direction='row'
+                          sx={{
+                            paddingTop: "10px",
+                            paddingBottom: "10px",
+                          }}
+                        >
+                          <Grid item xs={2}></Grid>
+                          <Grid item xs={8}>
                             <Box
                               sx={{
-                                color: "#007AFF",
-                                fontSize: "15px",
-                                paddingRight: "25px",
-                                fontWeight: "bold",
-                                cursor: "pointer"
-                              }}
-                              onClick={() => {
-                                isMobile ? setViewRHS(true) : setViewRHS(false)
-                                setView("announcements")
+                                flexGrow: 1,
+                                display: "flex",
+                                justifyContent: "center",
                               }}
                             >
-                              {isMobile ? `(${announcementRecvData.length + announcementSentData.length})` : `View all (${announcementRecvData.length + announcementSentData.length})`}
+                              <Typography
+                                sx={{
+                                  color: "#160449",
+                                  fontSize: { xs: "24px", sm: "24px", md: "24px" },
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                Announcements
+                              </Typography>
                             </Box>
-                          </Box>
+                          </Grid>
+                          <Grid item xs={2}>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                zIndex: 1,
+                                flex: 1,
+                                height: "100%",
+                              }}
+                            >
+                              <Box
+                                sx={{
+                                  color: "#007AFF",
+                                  fontSize: "15px",
+                                  paddingRight: "25px",
+                                  fontWeight: "bold",
+                                  cursor: "pointer"
+                                }}
+                                onClick={() => {
+                                  isMobile ? setViewRHS(true) : setViewRHS(false)
+                                  setView("announcements")
+                                }}
+                              >
+                                {isMobile ? `(${announcementRecvData.length + announcementSentData.length})` : `View all (${announcementRecvData.length + announcementSentData.length})`}
+                              </Box>
+                            </Box>
+                          </Grid>
                         </Grid>
+                        {announcementRecvData.length > 0 ? (
+                          <NewCardSlider announcementList={announcementRecvData} isMobile={isMobile} />
+                        ) : (
+                          <Box sx={{ display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "235px" }}>
+                            <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" } }}>No Announcements</Typography>
+                          </Box>
+                        )}
                       </Grid>
-                      {announcementRecvData.length > 0 ? (
-                        <NewCardSlider announcementList={announcementRecvData} isMobile={isMobile} />
-                      ) : (
-                        <Box sx={{ display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "235px" }}>
-                          <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" } }}>No Announcements</Typography>
-                        </Box>
-                      )}
                     </Grid>
                   </Grid>
-                </Grid>
-              </>
-            ) : (
-              <>
-                {(!isMobile || !viewRHS) && (<Grid item xs={12} md={4}>
-                  <CashflowWidget page={"OwnerDashboard"} data={cashflowStatusData} allProperties={propertList} originalData={cashflowStatusData}/>
-                </Grid>)}
-                {(!isMobile || viewRHS) && (<Grid item xs={12} md={8}>
-                  {/* <Box sx={{ display: "flex", alignItems: "center", paddingTop: "10px" }}>
-                    <IconButton onClick={() => setView("dashboard")} sx={{ marginRight: "10px" }}>
-                      <ArrowBackIcon />
-                    </IconButton>
-                  </Box> */}
-                  <Box>
-                    <Announcements sentAnnouncementData={announcementSentData} recvAnnouncementData={announcementRecvData} setView={setView}/>
-                  </Box>
-                </Grid>)}
-              </>
-            )}
-          </Grid>
-        </Container>
-      )}
+                </>
+              ) : (
+                <>
+                  {(!isMobile || !viewRHS) && (<Grid item xs={12} md={4}>
+                    <CashflowWidget page={"OwnerDashboard"} data={cashflowStatusData} allProperties={propertList} originalData={cashflowStatusData}/>
+                  </Grid>)}
+                  {(!isMobile || viewRHS) && (<Grid item xs={12} md={8}>
+                    {/* <Box sx={{ display: "flex", alignItems: "center", paddingTop: "10px" }}>
+                      <IconButton onClick={() => setView("dashboard")} sx={{ marginRight: "10px" }}>
+                        <ArrowBackIcon />
+                      </IconButton>
+                    </Box> */}
+                    <Box>
+                      <Announcements sentAnnouncementData={announcementSentData} recvAnnouncementData={announcementRecvData} setView={setView}/>
+                    </Box>
+                  </Grid>)}
+                </>
+              )}
+            </Grid>
+          </Container>
+        )}
 
-      <Dialog open={showReferralWelcomeDialog} onClose={() => setShowReferralWelcomeDialog(false)} aria-labelledby='alert-dialog-title' aria-describedby='alert-dialog-description'>
-        <DialogContent>
-          <DialogContentText
-            id='alert-dialog-description'
-            sx={{
-              color: theme.typography.common.blue,
-              fontWeight: theme.typography.common.fontWeight,
-              paddingTop: "10px",
-            }}
-          >
-            Hello, {user.first_name}! Welcome to ManifestMySpace. To complete your profile setup, please verify your information by clicking the profile button below. You'll need
-            to add additional details such as your SSN and address. Thank you!
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => setShowReferralWelcomeDialog(false)}
-            sx={{
-              color: "white",
-              backgroundColor: "#3D5CAC80",
-              ":hover": {
-                backgroundColor: "#3D5CAC",
-              },
-            }}
-            autoFocus
-          >
-            OK
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </ThemeProvider>
+        <Dialog open={showReferralWelcomeDialog} onClose={() => setShowReferralWelcomeDialog(false)} aria-labelledby='alert-dialog-title' aria-describedby='alert-dialog-description'>
+          <DialogContent>
+            <DialogContentText
+              id='alert-dialog-description'
+              sx={{
+                color: theme.typography.common.blue,
+                fontWeight: theme.typography.common.fontWeight,
+                paddingTop: "10px",
+              }}
+            >
+              Hello, {user.first_name}! Welcome to ManifestMySpace. To complete your profile setup, please verify your information by clicking the profile button below. You'll need
+              to add additional details such as your SSN and address. Thank you!
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => setShowReferralWelcomeDialog(false)}
+              sx={{
+                color: "white",
+                backgroundColor: "#3D5CAC80",
+                ":hover": {
+                  backgroundColor: "#3D5CAC",
+                },
+              }}
+              autoFocus
+            >
+              OK
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </ThemeProvider>
+    </ListsProvider>
   );
 }
