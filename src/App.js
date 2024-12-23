@@ -8,7 +8,26 @@ import { CookiesProvider } from "react-cookie";
 import { MaintenanceProvider } from "./contexts/MaintenanceContext";  // Import the MaintenanceProvider
 import { ListsProvider } from "./contexts/ListsContext";
 import ScrollToTop from "./components/ScrollToTop";
+import { useEffect, useState } from "react";
+
 function App() {
+  // const [token, setToken] = useState(sessionStorage.getItem('authToken'));
+
+  // useEffect(() => {
+
+  //   const handleSessionStorageUpdate = () => {
+  //     console.log(" === ok we are calling == ")
+  //     const authToken = sessionStorage.getItem('authToken');
+  //     setToken(authToken);
+  //   };
+
+  //   window.addEventListener('sessionStorageUpdated', handleSessionStorageUpdate);
+
+  //   return () => {
+  //     window.removeEventListener('sessionStorageUpdated', handleSessionStorageUpdate);
+  //   };
+  // }, []);
+
   // console.log("App.js");
   return (
     <CookiesProvider defaultSetOptions={{ path: "/" }}>

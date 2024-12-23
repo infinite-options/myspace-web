@@ -27,12 +27,18 @@ export const ListsProvider = ({ children }) => {
     return list;
   }
     
+  // useEffect(() => {
+  //   if (!dataLoaded) {
+  //     setDataLoaded(true);            
+  //     fetchLists();      
+  //   }
+  // }, [dataLoaded]);
+
   useEffect(() => {
-    if (!dataLoaded) {
-      setDataLoaded(true);            
-      fetchLists();      
+    if (allLists.length === 0) {
+      fetchLists();
     }
-  }, [dataLoaded]);
+  }, [allLists]);
 
   // useEffect(() => {
   //   if (!dataLoaded) {
@@ -44,8 +50,8 @@ export const ListsProvider = ({ children }) => {
   return (
     <ListsContext.Provider 
       value={{         
-        getList,    
-        dataLoaded, 
+        getList,
+        dataLoaded: allLists.length > 0, 
       }}
     >
       {children}
