@@ -139,13 +139,23 @@ export default function LeasesDashboard() {
   useEffect(() => {
     const handleBeforeUnload = (event) => {
       // Clear session storage when leaving the page
-      sessionStorage.clear();
+      // sessionStorage.clear();
+      Object.keys(sessionStorage).forEach((key) => {
+        if (key !== 'authToken' && key !== 'refreshToken') {
+          sessionStorage.removeItem(key);
+        }
+      })
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
-      sessionStorage.clear();
+      // sessionStorage.clear();
+      Object.keys(sessionStorage).forEach((key) => {
+        if (key !== 'authToken' && key !== 'refreshToken') {
+          sessionStorage.removeItem(key);
+        }
+      })
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);

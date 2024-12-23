@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
+import { fetchMiddleware as fetchMiddleware, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 import { roleMap } from './helper';
@@ -149,6 +150,9 @@ function GoogleLogin({buttonStyle, buttonText, }) {
                         let user = data.result;
                         let user_id = data.result.user.user_uid;
                         setAccessToken(at);
+                        localStorage.removeItem('hasRedirected');
+                        sessionStorage.setItem('authToken', user.access_token);
+                        sessionStorage.setItem('refreshToken', user.refresh_token)
                         let url = `https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateAccessToken/MYSPACE/${user_id}`;
                         axios
                           .post(url, {
