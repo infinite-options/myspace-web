@@ -76,7 +76,7 @@ export default function MaintenanceDashboard2() {
     if (dashboard_id == null) {
       return;
     }
-    
+
     if (getProfileId() != null) {
       setShowSpinner(true);
 

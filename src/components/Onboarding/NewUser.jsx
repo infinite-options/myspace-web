@@ -152,7 +152,11 @@ const NewUser = () => {
     if(email) {
       try {
         const response = await axios.get(`${APIConfig.baseURL.dev}/userInfo/${email}`);
-        return response;
+        if(response){
+          return response;
+        }else{
+          return null;
+        }
       } catch (error) {
         if (error.response && error.response.status === 404 && error.response.data.message === "User not found") {
           return null;
@@ -163,7 +167,11 @@ const NewUser = () => {
     } else if(user?.email){
       try {
         const response = await axios.get(`${APIConfig.baseURL.dev}/userInfo/${user.email}`);
-        return response;
+        if(response){
+          return response;
+        }else{
+          return null;
+        }
       } catch (error) {
         if (error.response && error.response.status === 404 && error.response.data.message === "User not found") {
           return null;
@@ -329,7 +337,7 @@ const NewUser = () => {
     }
 
     
-    //console.log("user Exists", userExists);
+    // console.log("user Exists", userExists == null);
     //console.log("Current User Info: ", user);
     if (userExists) {
       handleLogin();
