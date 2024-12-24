@@ -114,7 +114,7 @@ import ChangePasswordSettings from "./Settings/ChangePasswordSettings";
 import ChangePasswordSettingsManager from "./Settings/ChangePasswordSettingsManager";
 import ChangePasswordSettingsTenant from "./Settings/ChangePasswordSettingsTenant";
 import ChangePasswordSettingsMaintenance from "./Settings/ChangePasswordSettingsMaintenance";
-import AddCard from "./Settings/AddCard";
+// import AddCard from "./Settings/AddCard";
 import AddPayment from "./Settings/AddPayment";
 import CardDetailsSettings from "./Settings/CardDetailsSettings";
 import CardDetailsSettingsManager from "./Settings/CardDetailsSettingsManager";
@@ -309,7 +309,7 @@ function Main() {
             <Route path='changePasswordSettingsManager' element={<ChangePasswordSettingsManager />} />
             <Route path='changePasswordSettingsTenant' element={<ChangePasswordSettingsTenant />} />
             <Route path='changePasswordSettingsMaintenance' element={<ChangePasswordSettingsMaintenance />} />
-            <Route path='addCardSettings' element={<AddCard />} />
+            {/* <Route path='addCardSettings' element={<AddCard />} /> */}
             <Route path='cardDetailsSettings' element={<CardDetailsSettings />} />
             <Route path='cardDetailsSettingsManager' element={<CardDetailsSettingsManager />} />
             <Route path='cardDetailsSettingsTenant' element={<CardDetailsSettingsTenant />} />
