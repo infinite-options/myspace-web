@@ -408,9 +408,9 @@ function Main() {
             <Route path='tenantLease' element={<TenantLease />} />
             <Route path='tenantApplication' element={<TenantApplication />} />
             <Route path='tenantApplicationNav' element={<TenantApplicationNav />} />
-            <Route path='pmNotifications' element={<PMNotifications />} />
+            {/* <Route path='pmNotifications' element={<PMNotifications />} />
             <Route path='poNotifications' element={<PONotifications />} />
-            <Route path='propertyContract' element={<PropertyContract />} />
+            <Route path='propertyContract' element={<PropertyContract />} /> */}
             <Route path='profile/:id' element={<PublicProfile />} />
 
             <Route path='referUser' element={<ReferUser />} />
