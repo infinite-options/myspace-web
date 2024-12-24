@@ -57,6 +57,7 @@ import dayjs from 'dayjs';
 import PropertiesContext from '../../contexts/PropertiesContext';
 import AddIcon from '@mui/icons-material/Add';
 import defaultHouseImage from "./defaultHouseImage.png";
+import ListsContext from '../../contexts/ListsContext';
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 function EditProperty(props) {
@@ -87,6 +88,9 @@ function EditProperty(props) {
 	let { page, isDesktop, onBackClick } = props;
 
 	let index = returnIndex;
+
+	const { getList, } = useContext(ListsContext);
+	const typesOfProperty = getList("propertyType");
 
 	const [isSaveDisabled, setIsSaveDisabled] = useState(true);
 	const [isReturnDisabled, setIsReturnDisabled] = useState(false);
@@ -960,11 +964,11 @@ function EditProperty(props) {
 									onChange={(e) => setPropertyType(e.target.value)}
 									value={propertyType}
 								>
-									<MenuItem value={'Single Family'}>Single Family</MenuItem>
-									<MenuItem value={'Multi Family'}>Multi Family</MenuItem>
-									<MenuItem value={'Condo'}>Condo</MenuItem>
-									<MenuItem value={'Apartment'}>Apartment</MenuItem>
-									<MenuItem value={'Tiny Home'}>Tiny Home</MenuItem>
+									{
+										typesOfProperty?.map(type => (
+											<MenuItem key={type.list_uid} value={type.list_item}>{type.list_item}</MenuItem>
+										))
+									}
 								</Select>
 							</Grid>
 

@@ -25,7 +25,7 @@ const encryptFormDataPayload = async (formData) => {
     }
   }
 
-  //console.log(" === debug === before encryption = ", formObject)
+  console.log(" === DEBUG === before encryption: ", formObject)
   const encryptedPayload = encryptPayload(formObject); // Encrypt the payload
   return encryptedPayload;
 };
@@ -119,7 +119,6 @@ const fetchMiddleware = async (url, options = {}) => {
     // Encrypt the request body if present
     if(options.body){
       if (options.body instanceof FormData) {
-        // //console.log(" ==before form data = ", options.body)
         const encryptedFormData = new FormData();
         const encryptedData = await encryptFormDataPayload(options.body);
         encryptedFormData.append("encrypted_data", encryptedData);
@@ -128,12 +127,12 @@ const fetchMiddleware = async (url, options = {}) => {
   
       }else{
         const payload = JSON.parse(options.body);
-        //console.log(" === debug === before encryption json data = ", payload)
+        console.log(" == BEFORE ENCRYPTION == Json data: ", payload)
         options.body = JSON.stringify({encrypted_data: encryptPayload(payload), data_type: false});
       }
     }
 
-    // //console.log(" == after form data = ", options.body)
+    // console.log(" == after  form data = ", options.body)
 
     // const headers = {
     //     ...options.headers,
@@ -250,7 +249,7 @@ axiosMiddleware.interceptors.request.use(
         config.data = encryptedFormData;
         // config.data = { encrypted_data: encryptFormDataPayload(config.data), data_type : true};
       } else {
-        //console.log(" === debug === before encryption json data = ", config.data)
+        console.log(" == BEFORE ENCRYPTION == Json data: ", config.data)
         config.data = { encrypted_data: encryptPayload(config.data), data_type: false};
       }
       // config.data = { encrypted_data: encryptPayload(config.data) };

@@ -24,6 +24,7 @@ import {
 	Paper,
 	Radio,
 	RadioGroup,
+	InputAdornment
 } from '@mui/material';
 import { withStyles } from "@mui/styles";
 import Backdrop from "@mui/material/Backdrop";
@@ -228,7 +229,15 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 	};
 
 	const handleSquareFootageChange = (event) => {
-		setSquareFootage(event.target.value);
+		const inputValue = event.target.value;
+
+		const cleanedValue = inputValue.replace(/[^0-9.,]/g, '') // Remove invalid characters
+										.replace(/,/g, '') // Remove commas
+										.replace(/(\..*?)\./g, '$1');
+		
+		const numericValue = Number(cleanedValue);
+
+		setSquareFootage(numericValue);
 	};
 
 	const handleBedroomsChange = (event) => {
@@ -240,7 +249,15 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 	};
 
 	const handleCostChange = (event) => {
-		setCost(event.target.value);
+		const inputValue = event.target.value;
+
+		const cleanedValue = inputValue.replace(/[^0-9.,]/g, '') // Remove invalid characters
+										.replace(/,/g, '') // Remove commas
+										.replace(/(\..*?)\./g, '$1');
+		
+		const numericValue = Number(cleanedValue);
+
+		setCost(numericValue);
 	};
 
 	const handleOwnerChange = (event) => {
@@ -1135,7 +1152,9 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 												height: '40px', // Consistent height for all text fields
 												marginTop: '4px', // Add space above the text field
 											}}
-											placeholder="$"
+											InputProps={{
+												startAdornment: <InputAdornment position="start">$</InputAdornment>,
+											}}
 											onChange={handleCostChange}
 										/>
 									</Grid>
