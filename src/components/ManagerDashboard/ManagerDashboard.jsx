@@ -37,7 +37,7 @@ const useStyles = makeStyles({
 });
 
 function ManagerDashboard() {
-  // console.log("Rendering Manager Dashboard");
+  // //console.log("Rendering Manager Dashboard");
 
   const navigate = useNavigate();
   const { getProfileId, user, selectedRole } = useUser();
@@ -65,7 +65,7 @@ function ManagerDashboard() {
   //
   // Check if No Profile ID
   // Want Manager or Employee Id to load ManagerDashboard
-  // console.log("User Info: ", getProfileId(), selectedRole, user);
+  // //console.log("User Info: ", getProfileId(), selectedRole, user);
 
   let dashboard_id = getProfileId();
   if (selectedRole === "PM_EMPLOYEE") dashboard_id = user.businesses?.MANAGEMENT?.business_uid || user?.pm_supervisor;
@@ -86,7 +86,7 @@ function ManagerDashboard() {
 
     try {
       const jsonData = await response.json();
-      // console.log("Manager Dashboard jsonData: ", jsonData);
+      // //console.log("Manager Dashboard jsonData: ", jsonData);
 
       // RENT Status
       setRentStatus(jsonData.rentStatus.result);
@@ -134,9 +134,9 @@ function ManagerDashboard() {
             throw new Error("Failed to fetch data");
           }
           const data = await response.json();
-          // console.log("data - ", data);
+          // //console.log("data - ", data);
           const employee = data?.profile?.result[0]; // Assuming there's only one employee
-          // console.log("employee?.employee_verification - ", employee?.employee_verification);
+          // //console.log("employee?.employee_verification - ", employee?.employee_verification);
           if (employee?.employee_verification == null) {
             navigate("/emp_waiting");
           }
@@ -158,15 +158,15 @@ function ManagerDashboard() {
 
   // Console Logs for useState variables
   useEffect(() => {
-    // console.log("RentStatus check --", rentStatus);
+    // //console.log("RentStatus check --", rentStatus);
   }, [rentStatus]);
 
   useEffect(() => {
-    // console.log("Contract requests - ", contractRequests);
+    // //console.log("Contract requests - ", contractRequests);
   }, [contractRequests]);
 
   useEffect(() => {
-    // console.log("Happiness Matrix Info - ", happinessData);
+    // //console.log("Happiness Matrix Info - ", happinessData);
   }, [happinessData]);
 
   return (

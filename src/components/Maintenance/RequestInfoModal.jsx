@@ -8,7 +8,7 @@ import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/
 export default function RequestInfoModal({ maintenanceItem, onRequestClose, setShowSpinner, setRefresh, getProfileId }){
   const [selectedRole, setSelectedRole] = useState(maintenanceItem?.maintenance_request_status === "INFO OWNER"? 'tenant' : 'owner');
 
-  console.log("request info --- ", maintenanceItem)
+  //console.log("request info --- ", maintenanceItem)
 
   const sendAnnouncement = async () => {
     try {
@@ -35,7 +35,7 @@ export default function RequestInfoModal({ maintenanceItem, onRequestClose, setS
         }),
       });
     } catch (error) {
-        console.log("Error in sending announcements:", error);
+        //console.log("Error in sending announcements:", error);
         alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
     }
   };
@@ -67,14 +67,14 @@ export default function RequestInfoModal({ maintenanceItem, onRequestClose, setS
             });
             
             if(response.ok){
-                console.log(" update status to info")
+                //console.log(" update status to info")
                 sendAnnouncement();
                 onRequestClose()
                 setShowSpinner(false)
                 setRefresh()
             }
         } catch (error) {
-            console.log('error', error);
+            //console.log('error', error);
         }
   };
 

@@ -187,20 +187,20 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 
 	// useEffect(() => {
 
-	// 	console.log("Address set to 23", address)
-	// 	console.log("Address city set to 23", city)
+	// 	//console.log("Address set to 23", address)
+	// 	//console.log("Address city set to 23", city)
 	// }, [address, unit, city, state, zip]);
 
 
 
 
 	// useEffect(() => {
-	// 	console.log("194 - referredOwner - ", referredOwner);		
+	// 	//console.log("194 - referredOwner - ", referredOwner);		
 	// }, [referredOwner]);
 
 
 	useEffect(() => {
-		console.log("selectedOwner - ", selectedOwner);
+		//console.log("selectedOwner - ", selectedOwner);
 		setReferredOwner({})
 		// if(selectedOwner == null){
 		// 	setIsModalOpen(false);
@@ -295,7 +295,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 
 		const coordinates = await getLatLongFromAddress(fullAddress);
 
-		//console.log("----selectedAppliances----", selectedAppliances);
+		////console.log("----selectedAppliances----", selectedAppliances);
 
 
 		if (coordinates) {
@@ -321,13 +321,13 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		formData.append("property_listed", 0);
 		formData.append("property_notes", notes);
 
-		console.log("----selectedAppliances---", JSON.stringify(selectedAppliances));
+		//console.log("----selectedAppliances---", JSON.stringify(selectedAppliances));
 		formData.append("appliances", JSON.stringify(selectedAppliances));
-		console.log("Formdata:", formData);
+		//console.log("Formdata:", formData);
 
 		for (let [key, value] of formData.entries()) {
-			console.log("Property Data entered");
-			console.log(key, value);
+			//console.log("Property Data entered");
+			//console.log(key, value);
 		}
 
 		const files = selectedImageList;
@@ -353,10 +353,10 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 				body: formData,
 			});
 			const data = await response.json();
-			console.log("response data", data);
+			//console.log("response data", data);
 			responsePropertyUID = data.property_UID;
 			setNewContractPropertyUID(responsePropertyUID);
-			console.log("response data - property UID: ", responsePropertyUID);
+			//console.log("response data - property UID: ", responsePropertyUID);
 
 			// setReloadPropertyList(true);
 
@@ -365,7 +365,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 			// setPropertyTo(responsePropertyUID);
 			setNewPropertyUid(responsePropertyUID)
 		} catch (error) {
-			console.log("Error posting data:", error);
+			//console.log("Error posting data:", error);
 		}
 
 		// create new contract if profile === manager
@@ -373,21 +373,21 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		if (selectedRole === "MANAGER") {
 			const contractFormData = new FormData();
 
-			console.log("In Create new contract");
+			//console.log("In Create new contract");
 
 			const currentDate = new Date();
 			const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}-${currentDate.getFullYear()}`;
 
 			const PropertyUID = responsePropertyUID === null ? null : '["' + responsePropertyUID + '"]';
-			console.log("Reformated property data: ", PropertyUID);
+			//console.log("Reformated property data: ", PropertyUID);
 			contractFormData.append("contract_property_ids", PropertyUID);
-			console.log("Immediately after: ", contractFormData);
+			//console.log("Immediately after: ", contractFormData);
 			contractFormData.append("contract_business_id", getProfileId());
 			contractFormData.append("contract_start_date", formattedDate);
 			contractFormData.append("contract_status", "NEW");
-			// console.log("Contract Formdata:", contractFormData);
+			// //console.log("Contract Formdata:", contractFormData);
 
-			console.log("In Create new contract - contractFormData = ", contractFormData);
+			//console.log("In Create new contract - contractFormData = ", contractFormData);
 			if (responsePropertyUID !== null) {
 				const url = `${APIConfig.baseURL.dev}/contracts`;
 
@@ -404,13 +404,13 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 					}
 
 					const data = await response.json();
-					console.log("contracts - POST - response data = ", data);
+					//console.log("contracts - POST - response data = ", data);
 
 					responseContractUID = data.contract_uid;
 					setNewContractUID(responseContractUID);
-					console.log("response data - contract UID: ", responseContractUID);
+					//console.log("response data - contract UID: ", responseContractUID);
 
-					console.log('navigating to /pmQuotesList', responseContractUID, getProfileId(), responsePropertyUID);
+					//console.log('navigating to /pmQuotesList', responseContractUID, getProfileId(), responsePropertyUID);
 					// navigate("/pmQuotesList", {
 					//   state: {
 					//     selectedContractUID: responseContractUID,		
@@ -460,8 +460,8 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		const userRolesList = createAccResponse.user_roles?.split(",");
 		const userUID = createAccResponse.user_uid;
 
-		console.log("handleExistingUser - userRolesList - ", userRolesList);
-		console.log("handleExistingUser - userUID - ", userUID);
+		//console.log("handleExistingUser - userRolesList - ", userRolesList);
+		//console.log("handleExistingUser - userUID - ", userUID);
 
 		if (userRolesList.includes('OWNER')) {
 			//create property with user id
@@ -479,7 +479,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 			});
 			// Check if the response is successful
 			if (response.status === 200) {
-				console.log("Role - \"OWNER\" added to existing user successfully");
+				//console.log("Role - \"OWNER\" added to existing user successfully");
 				const payload = {
 					owner_user_id: userUID,
 					// owner_first_name: response.data.result?.user?.first_name,
@@ -498,7 +498,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 				}
 
 				// for (var pair of form.entries()) {
-				//   console.log(pair[0]+ ', ' + pair[1]); 
+				//   //console.log(pair[0]+ ', ' + pair[1]); 
 				// }
 				const { profileApi } = roleMap["OWNER"];
 
@@ -539,7 +539,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 
 				// navigate(-1);
 
-				// console.log("data - ", data);
+				// //console.log("data - ", data);
 				if (data.owner_uid) {
 					handleSaveProperty(data.owner_uid);
 				}
@@ -586,8 +586,8 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 			alert("Please select an owner (or) refer a new owner for the property");
 			return;
 		}
-		console.log("handleSubmitNew - selectedOwner - ", selectedOwner);
-		console.log("handleSubmitNew - referredOwner - ", referredOwner);
+		//console.log("handleSubmitNew - selectedOwner - ", selectedOwner);
+		//console.log("handleSubmitNew - referredOwner - ", referredOwner);
 
 		if (selectedRole === "OWNER") {
 			handleSaveProperty(ownerId);
@@ -605,7 +605,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 
 			handleReferOwner()
 				.then(() => {
-					console.log("Successfully Referred Owner ");
+					//console.log("Successfully Referred Owner ");
 					//handleSaveProperty(ownerUID);
 				})
 				.catch(error => {
@@ -616,7 +616,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 	};
 
 	const handleNewUser = async (response) => {
-		console.log("---response before payload---", response);
+		//console.log("---response before payload---", response);
 		setShowSpinner(true);
 		const payload = {
 			owner_user_id: response.data.result?.user?.user_uid,
@@ -632,7 +632,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		}
 
 		// for (var pair of form.entries()) {
-		//   console.log(pair[0]+ ', ' + pair[1]); 
+		//   //console.log(pair[0]+ ', ' + pair[1]); 
 		// }
 		const { profileApi } = roleMap["OWNER"];
 
@@ -673,7 +673,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 
 		// navigate(-1);
 
-		console.log("handleNewUser - data - ", data);
+		//console.log("handleNewUser - data - ", data);
 		if (data.owner_uid) {
 			return data.owner_uid;
 		}
@@ -697,7 +697,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 			"isEmailSignup": true,
 		};
 
-		console.log("handleReferOwner - payload - ", payload)
+		//console.log("handleReferOwner - payload - ", payload)
 		// return;
 
 		// setOnboardingState({
@@ -718,7 +718,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 					// 	handleSaveProperty(ownerUID); // Use the resolved value
 					// })
 					.then(() => {
-						console.log("handleExistingUser successful.")
+						//console.log("handleExistingUser successful.")
 					})
 					.catch(error => {
 						console.error("Error handling refer owner:", error);
@@ -729,7 +729,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 				// setAuthData(response.data.result); 
 				handleNewUser(response)
 					.then(ownerUID => {
-						// console.log("ownerUID from handleNewUser - ", ownerUID)
+						// //console.log("ownerUID from handleNewUser - ", ownerUID)
 						handleSaveProperty(ownerUID);
 					})
 					.catch(error => {
@@ -744,17 +744,17 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 	useEffect(() => {
 		//This runs for a manager who wants to select an owner while adding a property
 		if (selectedRole === "MANAGER") {
-			console.log("MANAGER ID", ownerId);
+			//console.log("MANAGER ID", ownerId);
 			const getOwnerContacts = async () => {
 				try {
 					const response = await fetch(`${APIConfig.baseURL.dev}/contacts/${getProfileId()}`);
 
 					if (!response.ok) {
-						console.log("Error fetching owner data");
+						//console.log("Error fetching owner data");
 						return;
 					}
 					const ownerdata = await response.json();
-					console.log("----ownerdata---", ownerdata);
+					//console.log("----ownerdata---", ownerdata);
 					let contactArray = ownerdata.management_contacts.owners;
 					let ownerObjList = [];
 					contactArray.forEach((contact) => {
@@ -766,7 +766,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 					});
 					setOwnerList(ownerObjList);
 				} catch (error) {
-					console.log(error);
+					//console.log(error);
 				}
 			};
 			getOwnerContacts();
@@ -792,7 +792,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		const updateCoordinates = async () => {
 			if (address && city && state && zip) {
 				const coords = await getLatLongFromAddress(fullAddress);
-				console.log("Updated coordinates: ", coords);
+				//console.log("Updated coordinates: ", coords);
 				setCoordinates(coords);
 			}
 		};

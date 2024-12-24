@@ -87,7 +87,7 @@ const ProfileManager = () => {
             cookies: allowCookies.toString(),
             user_uid: user.user_uid,
           });
-          console.log("User info updated:", response.data);
+          //console.log("User info updated:", response.data);
         } catch (error) {
           console.error("Error updating user info:", error);
         }
@@ -96,7 +96,7 @@ const ProfileManager = () => {
     }
   }, [notifications, darkMode, allowCookies]);
 
-  console.log("user data is", user);
+  //console.log("user data is", user);
 
   const fetchProfileData = async () => {
     try {
@@ -128,7 +128,7 @@ const ProfileManager = () => {
 
   const handleAddRole = async () => {
     try {
-      console.log("cookies.user", cookies.user);
+      //console.log("cookies.user", cookies.user);
 
       // Check if newRole is available
       if (newRole) {
@@ -206,7 +206,7 @@ const ProfileManager = () => {
         navigate("/ChangePasswordSettingsMaintenance", { state: { maintenance_data: profileData } });
       }
     } else {
-      console.log("Profile data is not loaded yet");
+      //console.log("Profile data is not loaded yet");
     }
   };
 

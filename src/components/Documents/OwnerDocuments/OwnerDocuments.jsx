@@ -44,7 +44,7 @@ function OwnerDocuments() {
       .get(`${APIConfig.baseURL.dev}/documents/${getProfileId()}`)
       // axios.get(`http://localhost:4000/documents/${getProfileId()}`)
       .then((res) => {
-        // console.log(res.data);
+        // //console.log(res.data);
         setDocumentsData(res.data.Documents.result);
         setShowSpinner(false);
       });

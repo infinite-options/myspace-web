@@ -28,11 +28,11 @@ const ManagerDetails = ({managerDetailsState, handleBackClick, handleShowSearchM
   const { ownerId, managerBusinessId, managerData, propertyData, index, isDesktop } = managerDetailsState;
   const { user, selectedRole } = useUser();
 
-  // console.log("ownerId", ownerId);
-  // console.log("managerBusinessId", managerBusinessId);
-  // console.log("managerData", managerData);
-  console.log("propertyData", propertyData);
-  // console.log("index", index);
+  // //console.log("ownerId", ownerId);
+  // //console.log("managerBusinessId", managerBusinessId);
+  // //console.log("managerData", managerData);
+  //console.log("propertyData", propertyData);
+  // //console.log("index", index);
 
   propertyData?.sort((a, b) => {
     if (a.address < b.address) {
@@ -89,7 +89,7 @@ const ManagerDetails = ({managerDetailsState, handleBackClick, handleShowSearchM
     setShowSpinner(true);
     const url = `${APIConfig.baseURL.dev}/properties/${managerBusinessId}`;
     const response = await axios.get(url);
-    console.log("Properties endpoint results: ", response);
+    //console.log("Properties endpoint results: ", response);
     sortProperties(response.data.Property.result);
     setProperties(response.data.Property.result);
     setShowSpinner(false);
@@ -98,7 +98,7 @@ const ManagerDetails = ({managerDetailsState, handleBackClick, handleShowSearchM
   const getManagerProperties = async () => {
     // setShowSpinner(true);    
     const managedProperties = propertyData?.filter( property => property.contract_business_id === managerBusinessId);
-    // console.log("managedProperties - ", managedProperties);
+    // //console.log("managedProperties - ", managedProperties);
     setProperties(managedProperties);
     setShowSpinner(false);
   };
@@ -123,16 +123,16 @@ const ManagerDetails = ({managerDetailsState, handleBackClick, handleShowSearchM
       formData.append("contract_uid", obj.contract_uid);
       formData.append("contract_status", "INACTIVE");
 
-      console.log(formData.contract_uid);
-      console.log(formData.contract_status);
+      //console.log(formData.contract_uid);
+      //console.log(formData.contract_status);
 
       const response = axios.put(`${APIConfig.baseURL.dev}/contracts`, formData, headers);
-      console.log("PUT result", response);
+      //console.log("PUT result", response);
       if (response.code === 200) {
         return true;
       }
     } catch (error) {
-      console.log("error", error);
+      //console.log("error", error);
       return false;
     }
 
@@ -443,10 +443,10 @@ const ManagerDetails = ({managerDetailsState, handleBackClick, handleShowSearchM
                 .map((p, i) => {
                   let index = properties.findIndex((property) => property.property_uid === p.property_uid);
                   let navIndex = propertyData.findIndex((property) => property.property_uid === p.property_uid);
-                  // console.log(p)
+                  // //console.log(p)
                   let docList = JSON.parse(p.contract_documents);
         
-                  // console.log(docList, typeof(docList))
+                  // //console.log(docList, typeof(docList))
                   const doc = docList && docList.find((document) => document.type === "contract");
                   const contractDocumentLink = doc ? doc.link : "";
                   return (
@@ -489,7 +489,7 @@ const ManagerDetails = ({managerDetailsState, handleBackClick, handleShowSearchM
                               <Box
                                 onClick={() => {
                                   window.open(contractDocumentLink, "_blank");
-                                  // console.log("we should show a document here")
+                                  // //console.log("we should show a document here")
                                 }}
                               >
                                 <Typography

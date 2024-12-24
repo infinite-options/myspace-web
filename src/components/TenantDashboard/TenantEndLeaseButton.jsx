@@ -18,7 +18,7 @@ import { PortableWifiOffSharp } from '@mui/icons-material';
 
 const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS, page, onClose, setReload }) => {
     const leaseData = leaseDetails;
-    console.log("data", leaseData);
+    //console.log("data", leaseData);
     const [open, setOpen] = useState(false);
     const { getProfileId } = useUser();
     const [confirmationText, setConfirmationText] = useState("");
@@ -46,7 +46,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
 
     useEffect(() => {
         if (leaseData.lease_end_reason !== null && leaseData.lease_end_reason !== "") {
-            console.log('inside use effect');
+            //console.log('inside use effect');
             setMoveOutReason(leaseData?.lease_end_reason);
             setMoveOutDate(leaseData?.move_out_date);
             setLeaseEarlyEndDate(leaseData?.lease_early_end_date);
@@ -90,13 +90,13 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
 
     const handleClickOpen = () => {
         if (isTerminateEndLease === false) {
-            // console.log('checking dates', leaseEarlyEndDate, moveOutDate);
+            // //console.log('checking dates', leaseEarlyEndDate, moveOutDate);
             const newError = [];
             if (moveOutDate === null) newError.push("Move Out Date is required");
             if (leaseEarlyEndDate === null) newError.push("Lease End Date is required");
             if (moveOutReason === "") newError.push("Move Out Reason is required");
             if (leaseEarlyEndDate < moveOutDate) newError.push("Move Out date must be on/before Lease End date");
-            console.log('Error list is', error);
+            //console.log('Error list is', error);
             if (newError.length === 0) {
                 setError([]);
                 const confirmationText = getEndLeaseConfirmation();
@@ -131,7 +131,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
     };
 
     const handleRadioChange = (event, id) => {
-        console.log('event1', event);
+        //console.log('event1', event);
         if (id === 3) {
             setIsTerminateEndLease(true);
         } else {
@@ -147,13 +147,13 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
     };
 
     const handleOption2CheckboxChange = (event, label) => {
-        console.log('event', event);
+        //console.log('event', event);
         setSelectedOption2Checkbox(event.target.value);
         setMoveOutReason(label);
     };
 
     const handleOption3CheckboxChange = (event, label) => {
-        console.log('event', event);
+        //console.log('event', event);
         setSelectedOption3Checkbox(event.target.value);
         setMoveOutReason(label);
     };
@@ -192,7 +192,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
         leaseApplicationFormData.append("lease_early_end_date", formattedLeaseEndDate);
 
         for (let pair of leaseApplicationFormData.entries()) {
-            console.log(pair[0] + ": " + pair[1]);
+            //console.log(pair[0] + ": " + pair[1]);
         }
 
         // API call (commented for now)
@@ -560,7 +560,7 @@ const TenantEndLeaseButton = ({ leaseDetails, setRightPane, isMobile, setViewRHS
                                             value={dayjs(moveOutDate)}
                                             onChange={e => {
                                                 const formattedDate = e ? e.format("MM-DD-YYYY") : null;
-                                                console.log('formattedDate--', formattedDate);
+                                                //console.log('formattedDate--', formattedDate);
                                                 setMoveOutDate(formattedDate);
                                             }}
                                         />

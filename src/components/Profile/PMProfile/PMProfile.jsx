@@ -32,11 +32,11 @@ function PMProfile() {
   useEffect(() => {
     setShowSpinner(true);
     axios.get(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`).then((res) => {
-        console.log(getProfileId());
-        console.log("selectedRole is ",(selectedRole==="PM_EMPLOYEE"));
-        console.log("Res 1: ", res);
-        // console.log("Res 2: ", res.data.profile);
-        // console.log("Res 3: ", res.data.profile.result[0]);
+        //console.log(getProfileId());
+        //console.log("selectedRole is ",(selectedRole==="PM_EMPLOYEE"));
+        //console.log("Res 1: ", res);
+        // //console.log("Res 2: ", res.data.profile);
+        // //console.log("Res 3: ", res.data.profile.result[0]);
       
        
         (selectedRole==="PM_EMPLOYEE" )? 
@@ -318,7 +318,7 @@ function PMProfile() {
                 Account Details
               </Typography>
             </Stack>
-            {console.log("payment_account",payment_accounts)}
+            {/* {console.log("payment_account",payment_accounts)} */}
             {payment_accounts.map((payment_account) => (
               <Box
                 sx={{
@@ -335,7 +335,7 @@ function PMProfile() {
                     height: "25px",
                   }}
                 >
-                  {console.log("payment_account.paymentMethod_type",payment_account.paymentMethod_type)}
+                  {/* {console.log("payment_account.paymentMethod_type",payment_account.paymentMethod_type)} */}
                   {paymentElements[payment_account.paymentMethod_type].icon}
                 </Box>
                 <Typography

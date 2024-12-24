@@ -71,7 +71,7 @@ const TenantContactDetail = ({ data, currentIndex, setCurrentIndex, propertyInde
 			.get(url)
 			.then((resp) => {
 				const data = resp.data;
-				// console.log("properties endpoint - data - ", data);
+				// //console.log("properties endpoint - data - ", data);
 				setPropertiesData(data);
 				// setShowSpinner(false);
 			})
@@ -90,7 +90,7 @@ const TenantContactDetail = ({ data, currentIndex, setCurrentIndex, propertyInde
 			.get(url)
 			.then((resp) => {
 				const data = resp.data?.result;
-				// console.log("properties endpoint - data - ", data);
+				// //console.log("properties endpoint - data - ", data);
 				setContractsData(data);
 				// setShowSpinner(false);
 			})
@@ -162,7 +162,7 @@ const TenantContactDetail = ({ data, currentIndex, setCurrentIndex, propertyInde
 				<Grid item xs={1}>
 					<Box
 						onClick={() => {
-							console.log('Previous button clicked', currentIndex, contactDetails?.length);
+							//console.log('Previous button clicked', currentIndex, contactDetails?.length);
 							currentIndex > 0
 								? setCurrentIndex(currentIndex - 1)
 								: setCurrentIndex(contactDetails?.length - 1);
@@ -226,7 +226,7 @@ const TenantContactDetail = ({ data, currentIndex, setCurrentIndex, propertyInde
 				<Grid item xs={1} container justifyContent="flex-end">
 					<Box
 						onClick={() => {
-							console.log('Next button clicked');
+							//console.log('Next button clicked');
 							currentIndex < contactDetails?.length - 1
 								? setCurrentIndex(currentIndex + 1)
 								: setCurrentIndex(0);
@@ -316,7 +316,7 @@ const TenantPropertyInformation = ({ propertyData, index, selectedRole }) => {
 		propertyData != null ? JSON.parse(propertyData).filter((property) => property.lease_status === "ACTIVE" || property.lease_status === "ACTIVE M2M") : [];
 	const [currentIndex, setCurrentIndex] = useState(index);
 	const navigate = useNavigate();
-	console.log('TenantPropertyInformation - properties - ', properties);
+	//console.log('TenantPropertyInformation - properties - ', properties);
 
 	return (
 		<Grid container sx={{ borderRadius: '10px', padding: '0px' }}>
@@ -342,7 +342,7 @@ const TenantPropertyInformation = ({ propertyData, index, selectedRole }) => {
 				<Grid item xs={1} justifyContent="flex-start" alignContent="center">
 					<Box
 						onClick={() => {
-							console.log('Previous button clicked', currentIndex, properties?.length);
+							//console.log('Previous button clicked', currentIndex, properties?.length);
 							currentIndex > 0
 								? setCurrentIndex(currentIndex - 1)
 								: setCurrentIndex(properties?.length - 1);
@@ -489,7 +489,7 @@ const TenantPropertyInformation = ({ propertyData, index, selectedRole }) => {
 				<Grid item xs={1} container justifyContent="flex-end" alignContent="center">
 					<Box
 						onClick={() => {
-							console.log('Next button clicked');
+							//console.log('Next button clicked');
 							currentIndex < properties?.length - 1
 								? setCurrentIndex(currentIndex + 1)
 								: setCurrentIndex(0);
@@ -614,7 +614,7 @@ const TenantPropertyInformation = ({ propertyData, index, selectedRole }) => {
 };
 
 const RentHistoryDataGrid = ({ data }) => {
-	console.log('RentHistoryDataGrid - props.data -', data);
+	//console.log('RentHistoryDataGrid - props.data -', data);
 
 	const paymentStatusColorMap = {
 		'Paid On Time': theme.palette.priority.clear,
@@ -764,7 +764,7 @@ const RentHistoryDataGrid = ({ data }) => {
 
 // Occupants Section
 const OccupantsSection = ({ contactDetails }) => {
-  console.log('---contactDetails---', contactDetails);
+  //console.log('---contactDetails---', contactDetails);
 	return (
 		<Grid container spacing={2}>
 			{/* Adults Section */}

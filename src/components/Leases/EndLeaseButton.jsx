@@ -38,7 +38,7 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked,
         } else {
 
             const filtered = leaseDetails.find(lease => lease.lease_uid === selectedLeaseId);
-            // console.log('filtered', filtered);
+            // //console.log('filtered', filtered);
             setLeaseData(filtered);
         }
     }, [selectedId])
@@ -50,9 +50,9 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked,
         const leaseEndDate = new Date(leaseData.lease_end);
         const leaseEndDateFormatted = dayjs(leaseEndDate).format("MM-DD-YYYY");
 
-        console.log("Current Date: ", currentDate);
-        console.log("Notice Period: ", noticePeriod);
-        console.log("Lease End Date: ", leaseEndDate);
+        //console.log("Current Date: ", currentDate);
+        //console.log("Notice Period: ", noticePeriod);
+        //console.log("Lease End Date: ", leaseEndDate);
 
         const noticeDate = new Date(leaseEndDate);
         noticeDate.setDate(leaseEndDate.getDate() - noticePeriod);
@@ -60,8 +60,8 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked,
         const lowerBoundNoticeDate = new Date(noticeDate);
         lowerBoundNoticeDate.setDate(noticeDate.getDate() - noticePeriod);
         const lowerBoundNoticeDateFormatted = dayjs(lowerBoundNoticeDate).format("MM-DD-YYYY");
-        console.log("Notice Date: ", noticeDate);
-        console.log("lowerBoundNoticeDateFormatted: ", lowerBoundNoticeDateFormatted);
+        //console.log("Notice Date: ", noticeDate);
+        //console.log("lowerBoundNoticeDateFormatted: ", lowerBoundNoticeDateFormatted);
         let role = "";
         if (selectedRole === "MANAGER") {
             role = "Tenant";
@@ -74,13 +74,13 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked,
                 setEndLeaseStatus("TERMINATED");
                 return `This lease will be terminated immediately, effective from today. Are you sure you want to terminate the lease?`;
             } else if (currentDate <= noticeDate && currentDate >= lowerBoundNoticeDate) {
-                console.log("Inside normal end processing - Ending status");
+                //console.log("Inside normal end processing - Ending status");
                 setEndLeaseStatus("ENDING")
                 return `Your lease will end on ${leaseEndDateFormatted} and 
                 you are responsible for rent payments until the end of the lease. Are you sure you want to end the lease?`;
             } else {
 
-                console.log("Inside early end processing - EarlyTermination status");
+                //console.log("Inside early end processing - EarlyTermination status");
                 setEndLeaseStatus("EARLY TERMINATION")
                 return `Notice for ending the lease must be provided ${noticePeriod} days in advance. 
                 Ending the lease early will require approval from the ${role}. Are you sure you want to end the lease?`;
@@ -95,7 +95,7 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked,
         const newError = [];
         if (moveOutDate === null) newError.push("Move Out Date is required");
         if (moveOutReason === "") newError.push("Move Out Reason is required");
-        console.log('moveOutReason', moveOutReason);
+        //console.log('moveOutReason', moveOutReason);
         if (newError.length === 0) {
             setError([]);
             const confirmationText = getEndLeaseConfirmation();
@@ -118,7 +118,7 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked,
     };
 
     const handleRadioChange = (event, id) => {
-        console.log('event1', event);
+        //console.log('event1', event);
         if (id == 0 || id == 3) {
             setMoveOutReason(event.target.value);
         } else {
@@ -129,13 +129,13 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked,
     };
 
     const handleOption2CheckboxChange = (event, label) => {
-        console.log('event', event);
+        //console.log('event', event);
         setSelectedOption2Checkbox(event.target.value);
         setMoveOutReason(label);
     };
 
     const handleOption3CheckboxChange = (event, label) => {
-        console.log('event', event);
+        //console.log('event', event);
         setSelectedOption3Checkbox(event.target.value);
         setMoveOutReason(label);
     };
@@ -146,7 +146,7 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked,
 
     function formatDate(dateString) {
         const date = new Date(dateString);
-        console.log('check date', dateString, date)
+        //console.log('check date', dateString, date)
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
         const year = date.getFullYear();
@@ -174,19 +174,19 @@ const EndLeaseButton = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked,
             leaseApplicationFormData.append("lease_early_end_date", currentDateFormatted);
         }
 
-        console.log('leaseApplicationFormData', leaseData.lease_uid, formattedMoveOutDate, endLeaseStatus, moveOutReason);
-        console.log('end form', leaseApplicationFormData);
+        //console.log('leaseApplicationFormData', leaseData.lease_uid, formattedMoveOutDate, endLeaseStatus, moveOutReason);
+        //console.log('end form', leaseApplicationFormData);
         axios
             .put(`${APIConfig.baseURL.dev}/leaseApplication`, leaseApplicationFormData, headers)
             .then((response) => {
                 setShowSpinner(false);
-                console.log("Data updated successfully", response);
+                //console.log("Data updated successfully", response);
                 setSuccess(`Your lease has been moved to ${endLeaseStatus} status.`, "success");
             })
             .catch((error) => {
                 if (error.response) {
                     setError(["Cannot End the lease. Please Try Again"]);
-                    console.log(error.response.data);
+                    //console.log(error.response.data);
                 }
             });
     }

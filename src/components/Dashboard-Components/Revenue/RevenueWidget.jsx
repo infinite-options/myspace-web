@@ -5,7 +5,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import theme from "../../../theme/theme";
 
 export default function RevenueWidget({ revenueData, cashflowStatusData }) {
-  // console.log("In Revenue Widget ", revenueData);
+  // //console.log("In Revenue Widget ", revenueData);
 
   const navigate = useNavigate();  
   let currentDate = new Date();
@@ -20,7 +20,7 @@ export default function RevenueWidget({ revenueData, cashflowStatusData }) {
 
 
   useEffect(() => {
-    console.log("ROHIT - cashflowStatusData", cashflowStatusData);
+    //console.log("ROHIT - cashflowStatusData", cashflowStatusData);
 
     let revenue = { total_paid: 0, pur_amount_due: 0 };
     let expense = { total_paid: 0, pur_amount_due: 0 };
@@ -65,9 +65,9 @@ export default function RevenueWidget({ revenueData, cashflowStatusData }) {
     //   total_paid: (revenueCurrentMonth?.total_paid || 0.00) - (expenseCurrentMonth?.total_paid || 0.00 ),
     // }
   
-    // // console.log("ROHIT - expenseCurrentMonth", expenseCurrentMonth);
-    // // console.log("ROHIT - revenueCurrentMonth", revenueCurrentMonth);
-    // // console.log("ROHIT - profitCurrentMonth", profitCurrentMonth);
+    // // //console.log("ROHIT - expenseCurrentMonth", expenseCurrentMonth);
+    // // //console.log("ROHIT - revenueCurrentMonth", revenueCurrentMonth);
+    // // //console.log("ROHIT - profitCurrentMonth", profitCurrentMonth);
     
     // setCurrentMonthExpense(expenseCurrentMonth);
     // setCurrentMonthRevenue(revenueCurrentMonth);

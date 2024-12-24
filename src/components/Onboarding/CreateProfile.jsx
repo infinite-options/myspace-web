@@ -46,7 +46,7 @@ const CreateProfile = () => {
 
   const { user: userFromHook, setAuthData, onboardingState, setOnboardingState, updateProfileUid, updateEmployeeProfileUid, selectRole, setLoggedIn } = useUser();
   const { user, selectedBusiness} = location.state;
-  console.log("In CreateProfile user - ", user);
+  //console.log("In CreateProfile user - ", user);
   const [cookie, setCookie] = useCookies(["default_form_vals"]);
   const cookiesData = cookie["default_form_vals"];
 
@@ -173,7 +173,7 @@ const CreateProfile = () => {
       updateProfileUid({ business_owner_id: data.employee_uid });
     }
     if (data.employee_uid) {
-      // console.log("data.employee_uid - ", data.employee_uid);      
+      // //console.log("data.employee_uid - ", data.employee_uid);      
       updateEmployeeProfileUid({ business_uid: selectedBusiness?.business_uid, business_employee_id: data.employee_uid }, user.role);
       // updateProfileUid({ business_uid: selectedBusiness.business_uid });
       // updateProfileUid({ business_employee_id: data.employee_uid });
@@ -181,9 +181,9 @@ const CreateProfile = () => {
   };
 
   const createUserProfile = async (userUID, userData) => {
-    console.log("createUserProfile - USER UID - ", userUID);
-    console.log("createUserProfile - userData - ", userData);
-    // console.log("createUserProfile - user.role -",  user.role)
+    //console.log("createUserProfile - USER UID - ", userUID);
+    //console.log("createUserProfile - userData - ", userData);
+    // //console.log("createUserProfile - user.role -",  user.role)
     selectRole(user.role);
     const payload = getPayload(user.role, userUID);
     const form = encodeForm(payload);
@@ -193,7 +193,7 @@ const CreateProfile = () => {
     setCookie("default_form_vals", { ...cookiesData, phoneNumber, email });
     
 
-    console.log("userFromHook - ", userFromHook);
+    //console.log("userFromHook - ", userFromHook);
     let role_id = {};
     if (user.role === "OWNER") role_id = { owner_id: data.owner_uid };
 
@@ -279,16 +279,16 @@ const CreateProfile = () => {
                     return byte.toString(16).padStart(2, "0");
                   })
                   .join("");
-                console.log(hashedPassword);
+                //console.log(hashedPassword);
                 let loginObject = {
                   email: email,
                   password: hashedPassword,
                 };
-                console.log(JSON.stringify(loginObject));
+                //console.log(JSON.stringify(loginObject));
                 axios
                   .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/Login/MYSPACE", loginObject)
                   .then(async (response) => {
-                    console.log(response.data.message);
+                    //console.log(response.data.message);
                     const { message, result } = response.data;
                     if (message === "Incorrect password") {
                       alert(response.data.message);
@@ -313,9 +313,9 @@ const CreateProfile = () => {
                   })
                   .catch((err) => {
                     if (err.response) {
-                      console.log(err.response);
+                      //console.log(err.response);
                     }
-                    console.log(err);
+                    //console.log(err);
                   });
               });
             }
@@ -354,7 +354,7 @@ const CreateProfile = () => {
           return response.json();
         })
         .then((responseJSON) => {
-          console.log("createProfile - responseJSON - ", responseJSON);
+          //console.log("createProfile - responseJSON - ", responseJSON);
           if (responseJSON.message === "User already exists") {
             alert("User already exists! Logging with existing credentials");
             handleLogin();
@@ -369,7 +369,7 @@ const CreateProfile = () => {
             createUserProfile(responseJSON.result.user.user_uid, responseJSON.result.user);
             // setShowSpinner(false);
             // navigate(`/onboardingRouter`, { state: { isPrivate:false } });
-            console.log("Success:", responseJSON);
+            //console.log("Success:", responseJSON);
           }
         })
         .catch((error) => {
@@ -397,7 +397,7 @@ const CreateProfile = () => {
           return response.json();
         })
         .then((responseJSON) => {
-          console.log("createProfile - responseJSON - ", responseJSON);
+          //console.log("createProfile - responseJSON - ", responseJSON);
           if (responseJSON.message === "User already exists") {
             alert(responseJSON.message);
             return;
@@ -409,7 +409,7 @@ const CreateProfile = () => {
             createUserProfile(responseJSON.result.user.user_uid, responseJSON.result.user);
             // setShowSpinner(false);
             // navigate(`/onboardingRouter`, { state: { isPrivate:false } });
-            console.log("Success:", responseJSON);
+            //console.log("Success:", responseJSON);
           }
         })
         .catch((error) => {

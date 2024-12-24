@@ -28,7 +28,7 @@ import { set } from "date-fns";
 import { axiosMiddleware } from "../../utils/httpMiddleware";
 
 export default function LandingPage() {
-  // console.log("In Landing Page");
+  // //console.log("In Landing Page");
   const navigate = useNavigate();
   const { setAuthData, setLoggedIn, selectRole } = useUser();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -109,18 +109,18 @@ export default function LandingPage() {
                     return byte.toString(16).padStart(2, "0");
                   })
                   .join("");
-                console.log(hashedPassword);
+                //console.log(hashedPassword);
                 let loginObject = {
                   email: email,
                   password: hashedPassword,
                 };
 
-                console.log(JSON.stringify(loginObject));
+                //console.log(JSON.stringify(loginObject));
                 axios
                   .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/Login/MYSPACE", loginObject)
                   .then(async (response) => {
 
-                    console.log(response.data.message);
+                    //console.log(response.data.message);
                     const { message, result } = response.data;
                     if (message === "Incorrect password") {
                       alert(response.data.message);
@@ -146,9 +146,9 @@ export default function LandingPage() {
                   })
                   .catch((err) => {
                     if (err.response) {
-                      console.log(err.response);
+                      //console.log(err.response);
                     }
-                    console.log(err);
+                    //console.log(err);
                   });
               });
             }
@@ -176,7 +176,7 @@ export default function LandingPage() {
           setPasswordModalOpen(true);
         }
         if (response.data.code === 280) {
-          console.log(response);
+          //console.log(response);
           alert("No account found with that email.");
           return;
         }

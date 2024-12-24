@@ -86,7 +86,7 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
   const [empMask, setEmpMask] = useState("");
 
   useEffect(() => {
-    console.log("calling useeffect")
+    //console.log("calling useeffect")
     //setIsSave(false)
     const fetchProfileData = async () => { 
         setShowSpinner(true);
@@ -441,9 +441,9 @@ const MaintenanceOnBoardDesktopForm = ({profileData, setIsSave}) => {
           role_id = { businesses };
           setCookie("user", { ...user, ...role_id });
           const paymentSetup = await handlePaymentStep(data.business_uid);
-          console.log(paymentSetup);
+          //console.log(paymentSetup);
           const createEmp= await CreateEmpStep(data.business_uid);
-          console.log(createEmp);
+          //console.log(createEmp);
           setDashboardButtonEnabled(true)
           setIsSave(true);
       }

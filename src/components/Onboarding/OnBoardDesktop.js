@@ -108,7 +108,7 @@ const OnBoardDesktop = () => {
       }
     } catch (error) {
       alert("An error occurred while processing your request.");
-      console.log(error)
+      //console.log(error)
       setActiveForm('');
       setShowSpinner(false);
     }

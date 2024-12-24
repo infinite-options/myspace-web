@@ -127,7 +127,7 @@ const tabsManager = [
 
 
 const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex, setViewRHS }) => {
-    console.log("In ContactsList - data - ", data)
+    //console.log("In ContactsList - data - ", data)
     const { getProfileId, selectedRole } = useUser();
     const [contactsTab, setContactsTab] = useState(tab);
     const [ownerData, setOwnerData] = useState([]);
@@ -182,7 +182,7 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex, setVi
     };
   
     useEffect(() => {
-      console.log("contactsTab - ", contactsTab);
+      //console.log("contactsTab - ", contactsTab);
     }, [contactsTab]);
   
     useEffect(() => {
@@ -213,7 +213,7 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex, setVi
     };
   
     const handleSetSelectedCard = (selectedData, index) => {
-      console.log("In handleSelectionCard: ", selectedData, index);
+      //console.log("In handleSelectionCard: ", selectedData, index);
       if(isMobile && setViewRHS){
         setViewRHS(true)
       }
@@ -221,7 +221,7 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex, setVi
       let dataDetails;
       switch (contactsTab) {
         case "Owner":
-          console.log("In Owner: ", displayedOwnersData);
+          //console.log("In Owner: ", displayedOwnersData);
           dataDetails = displayedOwnersData;
           break;
         case "Tenant":
@@ -416,7 +416,7 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex, setVi
     const activeProperties = ownerProperties;
   
     const handleSelection = () => {
-      console.log("In handleSelection: ", owner, index);
+      //console.log("In handleSelection: ", owner, index);
       handleSetSelectedCard(owner, index);
     };
   
@@ -771,7 +771,7 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex, setVi
           return response.json(); 
         })
         .then(data => {
-          console.log('Success:', data); 
+          //console.log('Success:', data); 
         })
         .catch(error => {
           console.error('Error:', error); 
@@ -781,10 +781,10 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex, setVi
   
     const handleVerificationChange = (e) => {
       if(e.target.checked){
-        console.log("CHANGED TO VERIFIED");
+        //console.log("CHANGED TO VERIFIED");
         updateVerification("Y");
       } else{
-        console.log("CHANGED TO UNVERIFIED");
+        //console.log("CHANGED TO UNVERIFIED");
         updateVerification("N");
       }
       setVerified(e.target.checked)

@@ -90,28 +90,28 @@ export default function AddMaintenanceItem({setRefersh, onBack}) {
 	);
 
 	const handlePropertyChange = (event) => {
-		console.log('handlePropertyChange', event.target.value);
+		//console.log('handlePropertyChange', event.target.value);
 		setProperty(event.target.value);
 		setPropertyId(event.target.value);
 	};
 
 	const handleIssueChange = (event) => {
-		// console.log("handleIssueCategoryChange", event.target.value)
+		// //console.log("handleIssueCategoryChange", event.target.value)
 		setIssue(event.target.value);
 	};
 
 	const handleCostChange = (event) => {
-		// console.log("handleCostChange", event.target.value)
+		// //console.log("handleCostChange", event.target.value)
 		setCost(event.target.value);
 	};
 
 	const handleTitleChange = (event) => {
-		// console.log("handleTitleChange", event.target.value)
+		// //console.log("handleTitleChange", event.target.value)
 		setTitle(event.target.value);
 	};
 
 	const handleDescriptionChange = (event) => {
-		// console.log("handleDescriptionChange", event.target.value)
+		// //console.log("handleDescriptionChange", event.target.value)
 		setDescription(event.target.value);
 	};
 
@@ -136,12 +136,12 @@ export default function AddMaintenanceItem({setRefersh, onBack}) {
 	};
 
 	const handleCompletedChange = (event, newToggleGroupValue) => {
-		// console.log("handleToggleGroupChange", newToggleGroupValue)
+		// //console.log("handleToggleGroupChange", newToggleGroupValue)
 		setCompleted(event.target.value);
 	};
 
 	const handleBackButton = () => {
-		console.log('handleBackButton');
+		//console.log('handleBackButton');
 		if (onBack) {
             onBack(); // Call the onBack function if it is provided
         } else {
@@ -150,16 +150,16 @@ export default function AddMaintenanceItem({setRefersh, onBack}) {
 	};
 
 	useEffect(() => {
-		console.log(user.owner_id);
+		//console.log(user.owner_id);
 
 		const getProperties = async () => {
 			// setShowSpinner(true);
 			const response = await fetch(`${APIConfig.baseURL.dev}/properties/${getProfileId()}`);
 
 			const propertyData = await response.json();
-			// console.log("data----", propertyData)
+			// //console.log("data----", propertyData)
 			// const propertyData = data.Property.result
-			// console.log('properties', propertyData);
+			// //console.log('properties', propertyData);
 			// setProperties(properties)
 			setProperties([...propertyData['Property'].result]);
 			// setShowSpinner(false);
@@ -178,8 +178,8 @@ export default function AddMaintenanceItem({setRefersh, onBack}) {
 		const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(
 			currentDate.getDate()
 		).padStart(2, '0')}-${currentDate.getFullYear()}`;
-		console.log(formattedDate);
-		console.log('toggleAlignment', toggleAlignment);
+		//console.log(formattedDate);
+		//console.log('toggleAlignment', toggleAlignment);
 
 		formData.append('maintenance_property_id', propertyId);
 		formData.append('maintenance_title', title);
@@ -217,7 +217,7 @@ export default function AddMaintenanceItem({setRefersh, onBack}) {
     }
 
 		for (let [key, value] of formData.entries()) {
-			console.log(key, value);
+			//console.log(key, value);
 		}
 
 		const postData = async () => {
@@ -228,7 +228,7 @@ export default function AddMaintenanceItem({setRefersh, onBack}) {
 					body: formData,
 				});
 				const data = await response.json();
-				console.log('data response', data);
+				//console.log('data response', data);
 			} catch (err) {
 				console.error('Error: ', err.message);
 			}

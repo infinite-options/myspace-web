@@ -51,7 +51,7 @@ export default function QuotesRequestAction({ maintenanceItem, navigateParams, q
 
 	useEffect(() => {
 		setMaintenanceItemQuotes(quotes);
-		// console.log("--debug-- maintenanceItemQuotes", maintenanceItemQuotes, quotes)
+		// //console.log("--debug-- maintenanceItemQuotes", maintenanceItemQuotes, quotes)
 	}, [quotes]);
 
 	async function handleScheduleStatusChange(id, date, time) {
@@ -70,25 +70,25 @@ export default function QuotesRequestAction({ maintenanceItem, navigateParams, q
 				});
 
 				const responseData = await response.json();
-				console.log(responseData);
+				//console.log(responseData);
 				if (response.status === 200) {
-					console.log('success');
+					//console.log('success');
 				} else {
-					console.log('error setting status');
+					//console.log('error setting status');
 				}
 			} catch (error) {
-				console.log('error', error);
+				//console.log('error', error);
 			}
 			setShowSpinner(false);
 		};
 		const changeMaintenanceQuoteStatus = async () => {
-			console.log(maintenanceItemQuotes.length !== 0, quotes.length !== 0);
+			//console.log(maintenanceItemQuotes.length !== 0, quotes.length !== 0);
 			setShowSpinner(true);
 			const formData = new FormData();
 			let quote = quotes.find((quote) => quote.quote_status === 'ACCEPTED'); // see number 16 in "Testing Maintenance Flow" ticket
 			if (quote) {
-				console.log('changeMaintenanceQuoteStatus maintenanceItemQuotes', maintenanceItemQuotes);
-				console.log(quote);
+				//console.log('changeMaintenanceQuoteStatus maintenanceItemQuotes', maintenanceItemQuotes);
+				//console.log(quote);
 				formData.append('maintenance_quote_uid', quote.maintenance_quote_uid); // 900-xxx
 				formData.append('quote_maintenance_request_id', id); //quote_maintenance_request_id maintenance_request_uid
 				formData.append('quote_status', 'SCHEDULED');
@@ -100,16 +100,16 @@ export default function QuotesRequestAction({ maintenanceItem, navigateParams, q
 					});
 
 					const responseData = await response.json();
-					console.log(responseData);
+					//console.log(responseData);
 					if (response.status === 200) {
-						console.log('success');
+						//console.log('success');
 						changeMaintenanceRequestStatus();
 						navigate(maintenanceRoutingBasedOnSelectedRole(), { state: { refresh: true } });
 					} else {
-						console.log('error setting status');
+						//console.log('error setting status');
 					}
 				} catch (error) {
-					console.log('error', error);
+					//console.log('error', error);
 				}
 			} else {
 				changeMaintenanceRequestStatus();
@@ -122,8 +122,8 @@ export default function QuotesRequestAction({ maintenanceItem, navigateParams, q
 	}
 
 	function handleNavigateToQuotesAccept() {
-		console.log('NewRequestAction', maintenanceItem);
-		console.log(navigateParams);
+		//console.log('NewRequestAction', maintenanceItem);
+		//console.log(navigateParams);
 		if (isMobile) {
 			navigate('/quoteAccept', {
 				state: {
@@ -138,7 +138,7 @@ export default function QuotesRequestAction({ maintenanceItem, navigateParams, q
 					const maintenanceItemStr = JSON.stringify(maintenanceItem);
 					const navigateParamsStr = JSON.stringify(navigateParams);
 					const quotesStr = JSON.stringify(quotes);
-					console.log('Storing data in sessionStorage: ', quotesStr);
+					//console.log('Storing data in sessionStorage: ', quotesStr);
 
 					// Save data to sessionStorage
 					sessionStorage.setItem('maintenanceItem', maintenanceItemStr);

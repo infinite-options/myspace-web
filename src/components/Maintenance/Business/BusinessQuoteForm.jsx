@@ -165,7 +165,7 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
     const jobTypes = getList("bid")
     const maintenanceItem = location.state.maintenanceItem;
 
-    //console.log("navigationParams", navigationParams)
+    ////console.log("navigationParams", navigationParams)
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
     const [displayImages, setDisplayImages] = useState([])
@@ -188,7 +188,7 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
     const [grandTotal, setGrandTotal] = useState(0)
 
     // useEffect(() => {
-    //     console.log("availabilityTime - ", availabilityTime);
+    //     //console.log("availabilityTime - ", availabilityTime);
     // }, [availabilityTime]);
 
     const [partsObject, setPartsObject] = useState([{
@@ -204,17 +204,17 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
     }]);
 
     useEffect(() => {
-        console.log("maintenanceItem", maintenanceItem)
-        console.log("editBool", editBool)
+        //console.log("maintenanceItem", maintenanceItem)
+        //console.log("editBool", editBool)
         const quoteServicesExpenses = JSON.parse(maintenanceItem?.quote_services_expenses)
         if (editBool && quoteServicesExpenses){
-            console.log("quoteServicesExpenses", quoteServicesExpenses)
-            console.log("quote_earliest_available_date", availabilityDate)
-            console.log("quote_earliest_available_time", availabilityTime)
-            console.log("quote_notes", maintenanceItem?.quote_notes)
-            console.log("quoteServicesExpenses.labor.rate", quoteServicesExpenses.labor[0].rate)
-            console.log("quoteServicesExpenses.labor.hours", quoteServicesExpenses.labor[0].hours)
-            console.log("maintenanceItem.event_type", quoteServicesExpenses.event_type)
+            //console.log("quoteServicesExpenses", quoteServicesExpenses)
+            //console.log("quote_earliest_available_date", availabilityDate)
+            //console.log("quote_earliest_available_time", availabilityTime)
+            //console.log("quote_notes", maintenanceItem?.quote_notes)
+            //console.log("quoteServicesExpenses.labor.rate", quoteServicesExpenses.labor[0].rate)
+            //console.log("quoteServicesExpenses.labor.hours", quoteServicesExpenses.labor[0].hours)
+            //console.log("maintenanceItem.event_type", quoteServicesExpenses.event_type)
             setRate(parseInt(quoteServicesExpenses.labor[0].rate))
             setJobType(quoteServicesExpenses.event_type)
             setPartsObject(quoteServicesExpenses.parts)
@@ -226,10 +226,10 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
 
 
     useEffect(() => {
-        console.log("hours, rate, jobType", hours, rate, jobType)
+        //console.log("hours, rate, jobType", hours, rate, jobType)
         setTotal(computeTotalCost({hours: hours, rate: rate}))
         const totalEstimate = computeTotalEstimate()
-        console.log("grand total", totalEstimate)
+        //console.log("grand total", totalEstimate)
         setGrandTotal(totalEstimate)
     }, [rate, hours, partsObject, jobType])
 
@@ -272,28 +272,28 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
     }
 
     const handleCheckChange = (event) => {
-        // console.log("handleCheckChange", event.target.checked)
+        // //console.log("handleCheckChange", event.target.checked)
         setChecked(event.target.checked);
     };
 
     const handleNotesChange = (event) => {
-        // console.log("handleNotesChange", event.target.value)
+        // //console.log("handleNotesChange", event.target.value)
         setNotes(event.target.value);
     }
 
     const handleTimeChange = (event) => {
-        console.log("handleTimeChange", event.target.value)
+        //console.log("handleTimeChange", event.target.value)
         setAvailabilityTime(event.target.value);
     }
 
     const handleDateChange = (event) => {
-        // console.log("handleDateChange", event.target.value)
+        // //console.log("handleDateChange", event.target.value)
         setAvailabilityDate(event.target.value);
     }
 
     const handleRateChange = (event) => {
-        // console.log("handleRateChange", event.target.value)
-        console.log(" -- job type -- ", jobType)
+        // //console.log("handleRateChange", event.target.value)
+        //console.log(" -- job type -- ", jobType)
         if (jobType === "Fixed"){
             setHours(1)
         }
@@ -305,7 +305,7 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
     }
 
     function navigateToAddMaintenanceItem(){
-        console.log("navigateToAddMaintenanceItem")
+        //console.log("navigateToAddMaintenanceItem")
         navigate('/addMaintenanceItem', {state: {month, year}})
     }
 
@@ -342,7 +342,7 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
 
 
     const handleSubmit = async (status) => {
-        console.log("handleSubmit")
+        //console.log("handleSubmit")
 
         const changeQuoteStatus = async (status) => {
             setShowSpinner(true);
@@ -391,7 +391,7 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                     const documentsDetails = [];
                     [...uploadedFiles].forEach((file, i) => {
                       
-                      // console.log(JSON.stringify(file));
+                      // //console.log(JSON.stringify(file));
                       
               
                       formData.append(`file_${i}`, file);
@@ -415,7 +415,7 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                 }
 
                 // formData.append("quote_documents", []);
-                //console.log('---business document---', selectedDocumentList);
+                ////console.log('---business document---', selectedDocumentList);
 
                 // if (selectedDocumentList.length) {
                 //     const documentsDetails = [];
@@ -442,7 +442,7 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                 //             const documentBlob = dataURItoBlob(selectedDocumentList[i]);
                 //             documentBinary.push(documentBlob)
                 //         } catch (error){
-                //             console.log("Error creating document binary", error)
+                //             //console.log("Error creating document binary", error)
                 //         }
                 //     }
 
@@ -450,7 +450,7 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                 // }
         
                 // for (let [key, value] of formData.entries()) {
-                //     console.log(key, value);    
+                //     //console.log(key, value);    
                 // }
 
             } else if (status === "REFUSED"){
@@ -461,7 +461,7 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
             }
             
             // for (var pair of formData.entries()) {
-            //     console.log(pair[0]+ ' => ' + pair[1]); 
+            //     //console.log(pair[0]+ ' => ' + pair[1]); 
             // }
 
             try {
@@ -470,14 +470,14 @@ export default function BusinessQuoteForm({acceptBool, editBool}){
                     body: formData
                 });
                 const responseData = await response.json();
-                // console.log(responseData);
+                // //console.log(responseData);
                 if (response.status === 200) {
-                    console.log("success - changeQuoteStatus")
+                    //console.log("success - changeQuoteStatus")
                 } else{
-                    console.log("error setting status")
+                    //console.log("error setting status")
                 }
             } catch (error){
-                console.log("error", error)
+                //console.log("error", error)
             }
 
             setShowSpinner(false);

@@ -47,7 +47,7 @@ const useStyles = makeStyles({
 });
 
 export default function ApplicationSettings({ handleChangePasswordClick, setRHS, handleEditUserInfoClick }) {
-  console.log("In Application Settings Widget ");
+  //console.log("In Application Settings Widget ");
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { getProfileId, user, logout, updateAppSettings } = useUser(); // Ensure user is destructured from useUser
   const [cookies, setCookie] = useCookies(["user"]);
@@ -94,7 +94,7 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS,
   useEffect(() => {
     if (settingsChanged) {
       // Handle the settings changes here, e.g., save them to the server or local storage
-      console.log("Settings changed:", { notifications, darkMode, allowCookies });
+      //console.log("Settings changed:", { notifications, darkMode, allowCookies });
       setSettingsChanged(false);
     }
   }, [settingsChanged]);
@@ -110,7 +110,7 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS,
     setPrimaryRole(selectedRole);
   
     const updatedRoles = [selectedRole, ...availableRoles.filter(role => role !== selectedRole)].join(",");
-    console.log(`Updated roles with primary role: ${updatedRoles}`);
+    //console.log(`Updated roles with primary role: ${updatedRoles}`);
   
     updatePrimaryRoleInBackend(updatedRoles);
   };
@@ -123,7 +123,7 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS,
       });
   
       if (response.status === 200) {
-        console.log("Primary role updated successfully");
+        //console.log("Primary role updated successfully");
         setCookie("user", { ...cookies.user, role: updatedRoles }, { path: "/" }); // Update the cookie with new roles
       } else {
         console.error("Failed to update primary role");
@@ -153,7 +153,7 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS,
   const handleRoleSelect = (event) => {
     setNewRole(event.target.value);
     // Handle role selection logic here
-    console.log("Selected role:", event.target.value);
+    //console.log("Selected role:", event.target.value);
   };
 
   useEffect(() => {
@@ -165,19 +165,19 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS,
 
   // const handleChangePasswordClick = () => {
   //   // Handle password change logic here
-  //   console.log("Change password clicked");
+  //   //console.log("Change password clicked");
   // };
 
   const handleLogout = () => {
     // Handle logout logic here
-    console.log("User logged out");
+    //console.log("User logged out");
     logout();
     // navigate("/login");
   };
 
   const handleAddRole = async () => {
     try {
-      console.log("cookies.user", cookies.user);
+      //console.log("cookies.user", cookies.user);
 
       // Check if newRole is available
       if (newRole) {
@@ -218,7 +218,7 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS,
   };
 
   const handleChangeSettings = (event) => {
-    // console.log("handleChangeSettings - event.target - ",event.target.name,  event.target.checked)
+    // //console.log("handleChangeSettings - event.target - ",event.target.name,  event.target.checked)
     const { name, checked } = event.target
 
     const url = `${APIConfig.baseURL.dev}/userInfo`; // Replace with your API endpoint
@@ -235,7 +235,7 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS,
       body: JSON.stringify(userInfoPayload), 
     };
 
-    // console.log("handleChangeSettings - userInfoPayload - ", userInfoPayload);
+    // //console.log("handleChangeSettings - userInfoPayload - ", userInfoPayload);
 
     fetch(url, options)
       .then(response => {
@@ -245,7 +245,7 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS,
         return response.json(); 
       })
       .then(data => {
-        console.log('Success:', data);
+        //console.log('Success:', data);
         updateAppSettings({[name]: checked.toString()})
       })
       .catch(error => {
@@ -305,7 +305,7 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS,
         </Grid>
         <Grid container justifyContent='space-between' alignContent='center' item xs={12} sx={{marginTop: '5px', }}>
           <Link href="#" underline="hover" sx={{ color: "#3D5CAC" }} onClick={() => {
-                console.log('clicked privacypolicy');
+                //console.log('clicked privacypolicy');
                 setRHS("privacyPolicy");
               }}>
             Privacy policy

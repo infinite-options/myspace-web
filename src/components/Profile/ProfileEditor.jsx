@@ -51,7 +51,7 @@ const useStyles = makeStyles({
 });
 
 function ProfileEditor() {
-  // console.log("In Profile Editor function");
+  // //console.log("In Profile Editor function");
 
   const classes = useStyles();
   const navigate = useNavigate();
@@ -70,12 +70,12 @@ function ProfileEditor() {
   const [settingsChanged, setSettingsChanged] = useState(false);
   const [RHS, setRHS] = useState("form");
 
-  // console.log("In Profile Editor as (selected Role): ", selectedRole);
-  // console.log("user data is", user);
+  // //console.log("In Profile Editor as (selected Role): ", selectedRole);
+  // //console.log("user data is", user);
   // setActiveForm(selectedRole);
 
   useEffect(() => {
-    // console.log("ProfileEditor useEffect called. isSave - ", isSave);
+    // //console.log("ProfileEditor useEffect called. isSave - ", isSave);
     if (user.dark_mode) {
       setDarkMode(user.dark_mode == "true");
     }
@@ -111,7 +111,7 @@ function ProfileEditor() {
             cookies: allowCookies.toString(),
             user_uid: user.user_uid,
           });
-          console.log("User info updated:", response.data);
+          //console.log("User info updated:", response.data);
         } catch (error) {
           console.error("Error updating user info:", error);
         }
@@ -138,7 +138,7 @@ function ProfileEditor() {
 
   const handleAddRole = async () => {
     try {
-      console.log("cookies.user", cookies.user);
+      //console.log("cookies.user", cookies.user);
 
       // Check if newRole is available
       if (newRole) {
@@ -179,7 +179,7 @@ function ProfileEditor() {
   };
 
   const renderForm = () => {
-    console.log("In render form: ", profileData, activeForm);
+    //console.log("In render form: ", profileData, activeForm);
     if (profileData) {
       switch (activeForm) {
         case "MANAGER":
@@ -230,7 +230,7 @@ function ProfileEditor() {
         return <ChangePasswordSettingsManager manager_data={profileData} setRHS={setRHS} />;
       }
     } else {
-      console.log("Profile data is not loaded yet");
+      //console.log("Profile data is not loaded yet");
     }
   };
 

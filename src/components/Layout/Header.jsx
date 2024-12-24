@@ -16,13 +16,13 @@ import { ThemeProvider } from "@mui/material/styles"; // Correct import for Them
 import GoogleLogin from "../Onboarding/GoogleLogin";
 
 function Header(props) {
-  // console.log("In Header.jsx");
+  // //console.log("In Header.jsx");
   const { user, selectedRole, selectRole, roleName, isLoggedIn } = useUser();
   const [cookie] = useCookies(["user"]); // Removed setCookie since it is unused
   const cookiesData = cookie["user"];
-  // console.log("cookiesData ", cookiesData);
+  // //console.log("cookiesData ", cookiesData);
   const userRoles = user && cookiesData?.role ? cookiesData.role.split(",") : [];
-  // console.log("Current User Roles: ", userRoles);
+  // //console.log("Current User Roles: ", userRoles);
 
   const navigate = useNavigate();
 
@@ -30,11 +30,11 @@ function Header(props) {
   const [anchorEl, setAnchorEl] = useState(null);
 
   useEffect(() => {
-    // console.log("ROHIT - isMenuOpen - ", isMenuOpen);
+    // //console.log("ROHIT - isMenuOpen - ", isMenuOpen);
   }, [isMenuOpen]);
 
   useEffect(() => {
-    // console.log("ROHIT - selectedRole - ", selectedRole);
+    // //console.log("ROHIT - selectedRole - ", selectedRole);
   }, [selectedRole]);
 
   const desiredOrder = ["MANAGER", "OWNER", "TENANT", "MAINTENANCE", "PM_EMPLOYEE", "MAINT_EMPLOYEE"];
@@ -44,7 +44,7 @@ function Header(props) {
   };
 
   const sortedRoles = sortUserRoles([...userRoles], desiredOrder);
-  // console.log("Sorted Roles: ", sortedRoles);
+  // //console.log("Sorted Roles: ", sortedRoles);
 
   const handleMenuToggle = (event) => {
     setAnchorEl(event.currentTarget);
@@ -53,7 +53,7 @@ function Header(props) {
   };
 
   const handleButtonClick = (role) => {
-    // console.log("In handle Button Click: ", role);
+    // //console.log("In handle Button Click: ", role);
     selectRole(role);
     const { dashboardUrl } = roleMap[role];
     if (role === "MAINTENANCE") {
@@ -88,7 +88,7 @@ function Header(props) {
   };
 
   // const handleClick = (event) => {
-  //   console.log("In handle Click: ", event);
+  //   //console.log("In handle Click: ", event);
   //   setAnchorEl(event.currentTarget);
   //   setIsMenuOpen(true);
   // };

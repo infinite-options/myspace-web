@@ -55,8 +55,8 @@ export default function CardDetailsSettingsMaintenance() {
 
     const [paymentsData, setPaymentsData] = useState([]);
     useEffect(() => {
-        console.log("CardDetailsSettingsMaintenance useEffect");
-        console.log("Payments Data", paymentsData);
+        //console.log("CardDetailsSettingsMaintenance useEffect");
+        //console.log("Payments Data", paymentsData);
 
         setModifiedPaymentsData(paymentsData);
 
@@ -75,18 +75,18 @@ export default function CardDetailsSettingsMaintenance() {
 
     const [modifiedPaymentsData, setModifiedPaymentsData] = useState([]);
     useEffect(()=>{
-        console.log("modifiedPaymentsData - ");
-        console.log("   ", modifiedPaymentsData);
+        //console.log("modifiedPaymentsData - ");
+        //console.log("   ", modifiedPaymentsData);
     }, [modifiedPaymentsData]);
     const [newPaymentsData, setNewPaymentsData] = useState([]);
     useEffect(()=>{
-        console.log("newPaymentsData - ");
-        console.log("   ", newPaymentsData);
+        //console.log("newPaymentsData - ");
+        //console.log("   ", newPaymentsData);
     }, [newPaymentsData]);
     const [deletedPaymentsData, setDeletedPaymentsData] = useState([]);
     useEffect(()=>{
-        console.log("deletedPaymentsData - ");
-        console.log("   ", deletedPaymentsData);
+        //console.log("deletedPaymentsData - ");
+        //console.log("   ", deletedPaymentsData);
     }, [deletedPaymentsData]);
 
     
@@ -181,10 +181,10 @@ export default function CardDetailsSettingsMaintenance() {
     }, []); // Include getProfileId in the dependencies array to avoid eslint warnings
 
     const handleInputChange = (event) => {
-        console.log("Input changed")
+        //console.log("Input changed")
         const { name, value } = event.target;
-        // console.log(name)
-        // console.log(value)
+        // //console.log(name)
+        // //console.log(value)
 
         if (name === 'paypal') {
             setPaypal(value);
@@ -242,9 +242,9 @@ export default function CardDetailsSettingsMaintenance() {
 
     const changePaymentMethodStatus = (type, value) => {
         let status = getPaymentMethodStatus(type);
-        console.log("changePaymentMethodStatus - ")
-        console.log("   type - ", type)
-        console.log("   value - ", value)
+        //console.log("changePaymentMethodStatus - ")
+        //console.log("   type - ", type)
+        //console.log("   value - ", value)
         if(modifiedPaymentsData.find(method => method.paymentMethod_type === type)){
             // setModifiedData((prevData) => ({
             //     ...prevData,
@@ -277,16 +277,16 @@ export default function CardDetailsSettingsMaintenance() {
     }
 
     const handleStatusChange = (event, method_type) => {
-        console.log("Status changed")
+        //console.log("Status changed")
         const { name, checked } = event.target;
         let paymentMethodtype = null;
-        console.log(name)
-        console.log(checked)
-        console.log(method_type)
+        //console.log(name)
+        //console.log(checked)
+        //console.log(method_type)
 
         let foundMethod = modifiedPaymentsData.find(method => method.paymentMethod_type === method_type) || newPaymentsData.find(method => method.paymentMethod_type === method_type);
         
-        console.log("handleStatusChange - foundMethod - ", foundMethod)
+        //console.log("handleStatusChange - foundMethod - ", foundMethod)
 
         if (name === 'paypal_status' && foundMethod) {
             setPaypalActiveStatus(checked);
@@ -305,14 +305,14 @@ export default function CardDetailsSettingsMaintenance() {
             paymentMethodtype = "venmo";
         }
 
-        console.log("NAME - ", name);
-        console.log("CHECKED - ", checked);
-        console.log("TYPE - ", paymentMethodtype );
+        //console.log("NAME - ", name);
+        //console.log("CHECKED - ", checked);
+        //console.log("TYPE - ", paymentMethodtype );
 
     }
 
     const handleDeletePaymentMethod = (type) => {
-        console.log("handleDeletePaymentMethod, deleting - ", type);
+        //console.log("handleDeletePaymentMethod, deleting - ", type);
         setIsEdited(true);
         const foundMethod = modifiedPaymentsData.find(method => method.paymentMethod_type === type);
         if(foundMethod){
@@ -349,26 +349,26 @@ export default function CardDetailsSettingsMaintenance() {
     //         "Access-Control-Allow-Credentials":"*"
     //     };
 
-    //     console.log("FORM SUBMITTED");
-    //     console.log("PUT DATA - ");
-    //     console.log("   ", modifiedPaymentsData);
-    //     console.log("POST DATA - ");
-    //     console.log("   ", newPaymentsData);
+    //     //console.log("FORM SUBMITTED");
+    //     //console.log("PUT DATA - ");
+    //     //console.log("   ", modifiedPaymentsData);
+    //     //console.log("POST DATA - ");
+    //     //console.log("   ", newPaymentsData);
 
     //     if(isEdited){
     //         modifiedPaymentsData.forEach((item, index) => {
-    //             // console.log(`Element at index ${index}: `, item);
+    //             // //console.log(`Element at index ${index}: `, item);
 
     //             axios.put(`${APIConfig.baseURL.dev}/paymentMethod`, item, headers)
     //             .then((response) => {
-    //                 console.log('Payment method updated successfully');
+    //                 //console.log('Payment method updated successfully');
     //                 setIsEdited(false); // Reset the edit status
     //                 // setModifiedData(payments_data);
     //                 navigate(-1)
     //             })
     //             .catch((error) => {
     //                 if(error.response){
-    //                     console.log(error.response.data);
+    //                     //console.log(error.response.data);
     //                 }
     //             });
                 
@@ -377,18 +377,18 @@ export default function CardDetailsSettingsMaintenance() {
 
     //     if(isNewMethodAdded){
     //         newPaymentsData.forEach((item, index) => {
-    //             // console.log(`Element at index ${index}: `, item);
+    //             // //console.log(`Element at index ${index}: `, item);
 
     //             axios.post('${APIConfig.baseURL.dev}/paymentMethod', item, headers)
     //             .then((response) => {
-    //                 console.log('Payment method added successfully');
+    //                 //console.log('Payment method added successfully');
     //                 setIsNewMethodAdded(false); // Reset the edit status
     //                 // setNewData([])
     //                 navigate(-1)
     //             })
     //             .catch((error) => {
     //                 if(error.response){
-    //                     console.log(error.response.data);
+    //                     //console.log(error.response.data);
     //                 }
     //             });
                 
@@ -409,13 +409,13 @@ export default function CardDetailsSettingsMaintenance() {
             "Access-Control-Allow-Credentials":"*"
         };
 
-        console.log("FORM SUBMITTED");
-        console.log("PUT DATA - ");
-        console.log("   ", modifiedPaymentsData);
-        console.log("POST DATA - ");
-        console.log("   ", newPaymentsData);
-        console.log("DELETE DATA - ");
-        console.log("   ", deletedPaymentsData);
+        //console.log("FORM SUBMITTED");
+        //console.log("PUT DATA - ");
+        //console.log("   ", modifiedPaymentsData);
+        //console.log("POST DATA - ");
+        //console.log("   ", newPaymentsData);
+        //console.log("DELETE DATA - ");
+        //console.log("   ", deletedPaymentsData);
 
         if (isEdited) {
             modifiedPaymentsData.forEach((item) => {
@@ -423,7 +423,7 @@ export default function CardDetailsSettingsMaintenance() {
                 requests.push(request);
             });
             deletedPaymentsData.forEach((item, index) => {
-                // console.log(`Element at index ${index}: `, item.paymentMethod_uid);
+                // //console.log(`Element at index ${index}: `, item.paymentMethod_uid);
                 const request = axios.delete(`${APIConfig.baseURL.dev}/paymentMethod/${item.paymentMethod_uid}`, headers)
                 requests.push(request);
             });
@@ -439,13 +439,13 @@ export default function CardDetailsSettingsMaintenance() {
 
         Promise.all(requests)
         .then(() => {
-            console.log('All requests completed successfully');
+            //console.log('All requests completed successfully');
             setIsEdited(false);
             setIsNewMethodAdded(false);
             navigate(-1);
         })
         .catch((error) => {
-            console.log('Error in requests:', error);
+            //console.log('Error in requests:', error);
         });
         
         

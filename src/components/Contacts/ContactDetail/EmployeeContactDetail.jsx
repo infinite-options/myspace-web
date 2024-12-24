@@ -50,7 +50,7 @@ const EmployeeContactDetail = ({ data, currentIndex, setCurrentIndex, propertyIn
     let navigate = useNavigate();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-    // console.log("DATA EMPLOYESS", data);
+    // //console.log("DATA EMPLOYESS", data);
   
     useEffect(() => {
       setContactDetails(data)
@@ -92,7 +92,7 @@ const EmployeeContactDetail = ({ data, currentIndex, setCurrentIndex, propertyIn
               <Grid item xs={1}>
                   <Box
                       onClick={() => {
-                        console.log("Previous button clicked", currentIndex, contactDetails.length);
+                        //console.log("Previous button clicked", currentIndex, contactDetails.length);
                         currentIndex > 0 ? setCurrentIndex(currentIndex - 1) : setCurrentIndex(contactDetails.length - 1);
                       }}
                       sx={{
@@ -142,7 +142,7 @@ const EmployeeContactDetail = ({ data, currentIndex, setCurrentIndex, propertyIn
               <Grid item xs={1}  container justifyContent='flex-end'>
                   <Box
                       onClick={() => {
-                        console.log("Next button clicked");
+                        //console.log("Next button clicked");
                         currentIndex < contactDetails.length - 1 ? setCurrentIndex(currentIndex + 1) : setCurrentIndex(0);
                       }}
                       sx={{

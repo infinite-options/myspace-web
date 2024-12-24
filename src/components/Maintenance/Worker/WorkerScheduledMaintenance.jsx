@@ -41,7 +41,7 @@ export default function WorkerScheduledMaintenance({maintenanceItem, refreshMain
     const [message, setMessage] = useState("");
 
     function handleNavigate(){
-        console.log("navigate to Rescheduling Maintenance")
+        //console.log("navigate to Rescheduling Maintenance")
         navigate("/scheduleMaintenance", {
             state:{
                 maintenanceItem
@@ -50,7 +50,7 @@ export default function WorkerScheduledMaintenance({maintenanceItem, refreshMain
     }
 
     async function handleReSchedule(id){
-        console.log("reschedule not implemented yet")
+        //console.log("reschedule not implemented yet")
         alert("RESCHEDULE NOT IMPLEMENTED YET")
     }
 

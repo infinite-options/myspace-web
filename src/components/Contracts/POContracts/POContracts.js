@@ -78,7 +78,7 @@ function POContracts(props) {
         axios.get(`${APIConfig.baseURL.dev}/searchManager`)
             .then((res) => {
                 setManagers(res.data.result);
-                console.log(res.data.result);
+                //console.log(res.data.result);
                 setShowSpinner(false);
             });
     }, []);

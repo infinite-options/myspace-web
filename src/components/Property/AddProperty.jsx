@@ -49,10 +49,10 @@ import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/
 
 // Variable Declaration
 export default function AddProperty({}) {
-  console.log("In AddProperty.jsx");
+  //console.log("In AddProperty.jsx");
   const location = useLocation();
   const { property_endpoint_resp } = location.state;
-  // console.log(property_endpoint_resp);
+  // //console.log(property_endpoint_resp);
   let navigate = useNavigate();
   const { getProfileId } = useUser();
   const { user, selectedRole, selectRole, Name } = useUser();
@@ -93,25 +93,25 @@ export default function AddProperty({}) {
   useEffect(() => {
     //This runs for a manager who wants to select an owner while adding a property
     if (selectedRole === "MANAGER") {
-      console.log("MANAGER ID", ownerId);
+      //console.log("MANAGER ID", ownerId);
       const getOwnerContacts = async () => {
         try {
           const response = await fetch(`${APIConfig.baseURL.dev}/contacts/${getProfileId()}`);
 
           if (!response.ok) {
-            console.log("Error fetching owner data");
+            //console.log("Error fetching owner data");
             return;
           }
           const ownerdata = await response.json();
-          console.log("Owner Data: ", ownerdata);
+          //console.log("Owner Data: ", ownerdata);
           let contactArray = ownerdata.management_contacts.owners;
-          console.log("Number of Contacts: ", contactArray.length);
+          //console.log("Number of Contacts: ", contactArray.length);
           let ownerObjList = [];
 
           // Need if statement to check if number of Contacts is  != 0.
           // What do we do if contacts == 0?
           contactArray.forEach((contact) => {
-            console.log("Inside For Loop: ", contact);
+            //console.log("Inside For Loop: ", contact);
             let obj = {
               owner_id: contact.contact_uid,
               owner_name: contact.owner_first_name + " " + contact.owner_last_name,
@@ -120,7 +120,7 @@ export default function AddProperty({}) {
           });
           setOwnerList(ownerObjList);
         } catch (error) {
-          console.log(error);
+          //console.log(error);
         }
       };
       getOwnerContacts();
@@ -128,11 +128,11 @@ export default function AddProperty({}) {
   }, []);
 
   useEffect(() => {
-    console.log("SELECTED OWNER", selectedOwner);
+    //console.log("SELECTED OWNER", selectedOwner);
   }, [selectedOwner]);
 
   useEffect(() => {
-    console.log("useEffect");
+    //console.log("useEffect");
     setCoverImage(selectedImageList[0] || coverImage);
   }, [selectedImageList]);
 
@@ -182,7 +182,7 @@ export default function AddProperty({}) {
   };
 
   const handleBackButton = () => {
-    console.log("handleBackButton");
+    //console.log("handleBackButton");
     navigate(-1);
   };
 
@@ -227,9 +227,9 @@ export default function AddProperty({}) {
   };
 
   const handleSubmit = async (event) => {
-    console.log("In handleSubmit");
+    //console.log("In handleSubmit");
     event.preventDefault();
-    console.log(event.target);
+    //console.log(event.target);
     setShowSpinner(true);
     const formData = new FormData();
 
@@ -241,14 +241,14 @@ export default function AddProperty({}) {
 
     const coordinates = await getLatLongFromAddress(fullAddress);
 
-    console.log("EditProperty - handleSubmit - coordinates - ", coordinates);
+    //console.log("EditProperty - handleSubmit - coordinates - ", coordinates);
 
     if (coordinates) {
       formData.append("property_latitude", coordinates.latitude);
       formData.append("property_longitude", coordinates.longitude);
     }
 
-    console.log("Setting property_owner_id to: ", selectedOwner, ownerId);
+    //console.log("Setting property_owner_id to: ", selectedOwner, ownerId);
 
     formData.append("property_owner_id", selectedOwner ? selectedOwner : ownerId);
     formData.append("property_available_to_rent", isListed ? 1 : 0);
@@ -288,11 +288,11 @@ export default function AddProperty({}) {
     //             formData.append(key, selectedImageList[i])
     //         }
     //     } catch (error) {
-    //         console.log("Error uploading images", error)
+    //         //console.log("Error uploading images", error)
     //     }
     // }
 
-    console.log("Formdata:", formData);
+    //console.log("Formdata:", formData);
 
     const files = selectedImageList;
     let i = 0;
@@ -312,8 +312,8 @@ export default function AddProperty({}) {
     }
 
     for (let [key, value] of formData.entries()) {
-      console.log("Property Data entered");
-      console.log(key, value);
+      //console.log("Property Data entered");
+      //console.log(key, value);
     }
 
     let responsePropertyUID = null;
@@ -326,37 +326,37 @@ export default function AddProperty({}) {
         method: "POST",
         body: formData,
       });
-      // console.log('formData')
-      // console.log(formData)
-      // console.log('formData')
+      // //console.log('formData')
+      // //console.log(formData)
+      // //console.log('formData')
       const data = await response.json();
-      console.log("response data", data);
+      //console.log("response data", data);
       responsePropertyUID = data.property_UID;
-      console.log("response data - property UID: ", responsePropertyUID);
+      //console.log("response data - property UID: ", responsePropertyUID);
     } catch (error) {
-      console.log("Error posting data:", error);
+      //console.log("Error posting data:", error);
     }
 
     // create new contract if profile === manager
     if (selectedRole === "MANAGER") {
       const contractFormData = new FormData();
 
-      console.log("In Create new contract");
+      //console.log("In Create new contract");
 
       const currentDate = new Date();
       const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}-${currentDate.getFullYear()}`;
 
       // responsePropertyUID = [responsePropertyUID];  // This doesn't work since it returns the string in single quotes
       responsePropertyUID = '["' + responsePropertyUID + '"]';
-      console.log("Reformated property data: ", responsePropertyUID);
+      //console.log("Reformated property data: ", responsePropertyUID);
       contractFormData.append("contract_property_ids", responsePropertyUID);
-      console.log("Immediately after: ", contractFormData);
+      //console.log("Immediately after: ", contractFormData);
       contractFormData.append("contract_business_id", getProfileId());
       contractFormData.append("contract_start_date", formattedDate);
       contractFormData.append("contract_status", "NEW");
-      // console.log("Contract Formdata:", contractFormData);
+      // //console.log("Contract Formdata:", contractFormData);
 
-      console.log("In Create new contract - contractFormData = ", contractFormData);
+      //console.log("In Create new contract - contractFormData = ", contractFormData);
       const url = `${APIConfig.baseURL.dev}/contracts`;
 
       let responseContractUID = null;
@@ -372,12 +372,12 @@ export default function AddProperty({}) {
         }
 
         const data = await response.json();
-        console.log("contracts - POST - response data = ", data);
+        //console.log("contracts - POST - response data = ", data);
 
         responseContractUID = data.contract_UID;
-        console.log("response data - contract UID: ", responseContractUID);
+        //console.log("response data - contract UID: ", responseContractUID);
 
-        // console.log('navigating to /managementContractDetails', responseContractUID, getProfileId(), responsePropertyUID);
+        // //console.log('navigating to /managementContractDetails', responseContractUID, getProfileId(), responsePropertyUID);
 
         navigate("/managementContractDetails", {
           state: {

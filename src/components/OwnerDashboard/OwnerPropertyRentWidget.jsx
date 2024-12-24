@@ -6,7 +6,7 @@ import { useUser } from "../../contexts/UserContext.jsx";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 export default function OwnerPropertyRentWidget(props) {
-  // console.log("In Owner Property Rent Widget ");
+  // //console.log("In Owner Property Rent Widget ");
   const isMediumScreen = useMediaQuery("(min-width:1241px)");
   // const isSmallScreen = useMediaQuery("(maxWidth:1240px)");
   // const isXSmallScreen = useMediaQuery("(maxWidth:960px)");
@@ -16,17 +16,17 @@ export default function OwnerPropertyRentWidget(props) {
 
   const navigate = useNavigate();
   const { propertyRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
-  // console.log("In OwnerPropertyRentWidget Selected Role: ", selectedRole);
-  // console.log("In OwnerPropertyRentWidget: Routing Based on Role", propertyRoutingBasedOnSelectedRole);
-  // console.log(props.rentData);
+  // //console.log("In OwnerPropertyRentWidget Selected Role: ", selectedRole);
+  // //console.log("In OwnerPropertyRentWidget: Routing Based on Role", propertyRoutingBasedOnSelectedRole);
+  // //console.log(props.rentData);
 
-  // console.log("Role: ", user);
-  // console.log("Selected Role: ", selectedRole);
+  // //console.log("Role: ", user);
+  // //console.log("Selected Role: ", selectedRole);
 
   let rentStatusData = props.rentData;
 
   let unpaidCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "UNPAID") : 0;
-  // console.log(unpaidCount);
+  // //console.log(unpaidCount);
   unpaidCount = unpaidCount ? unpaidCount.num : 0;
 
   let partialPaidCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "PARTIALLY PAID") : 0;
@@ -42,7 +42,7 @@ export default function OwnerPropertyRentWidget(props) {
   vacantCount = vacantCount ? vacantCount.num : 0;
 
   let noManagerCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "NO MANAGER") : 0;
-  // console.log(noManagerCount);
+  // //console.log(noManagerCount);
   noManagerCount = noManagerCount ? noManagerCount.num : 0;
 
   // no check if rentSatus does not exist so this could result in a failure

@@ -50,22 +50,22 @@ function SettingsACH1() {
 
       const handleNextStep = () => {
 
-        console.log("account_business_id",account_business_id);
-        console.log("account_business_legal_name",account_business_legal_name);
-        console.log("account_business_name",account_business_name);
-        console.log("account_business_website",account_business_website);
-        console.log("account_business_phone",account_business_phone);
-        console.log("account_business_type",account_business_type);
-        console.log("account_business_ownership_type",account_business_ownership_type);
-        console.log("account_business_incorporation_date",account_business_incorporation_date);
-        console.log("account_business_tax_id",account_business_tax_id);
-        console.log("account_business_address",account_business_address);
-        console.log("account_business_city",account_business_city);
-        console.log("account_business_state",account_business_state);
-        console.log("account_business_zip",account_business_zip);
-        console.log("account_business_country",account_business_country);
+        //console.log("account_business_id",account_business_id);
+        //console.log("account_business_legal_name",account_business_legal_name);
+        //console.log("account_business_name",account_business_name);
+        //console.log("account_business_website",account_business_website);
+        //console.log("account_business_phone",account_business_phone);
+        //console.log("account_business_type",account_business_type);
+        //console.log("account_business_ownership_type",account_business_ownership_type);
+        //console.log("account_business_incorporation_date",account_business_incorporation_date);
+        //console.log("account_business_tax_id",account_business_tax_id);
+        //console.log("account_business_address",account_business_address);
+        //console.log("account_business_city",account_business_city);
+        //console.log("account_business_state",account_business_state);
+        //console.log("account_business_zip",account_business_zip);
+        //console.log("account_business_country",account_business_country);
 
-        console.log("Click Button to page 2 ")
+        //console.log("Click Button to page 2 ")
         navigate('/settingsManagerACH2')
       };
 

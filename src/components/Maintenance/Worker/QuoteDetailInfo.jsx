@@ -44,7 +44,7 @@ function LaborTableReadOnly({labor, setLabor}){
     }
 
     useEffect(() => {
-        console.log("labor", labor)
+        //console.log("labor", labor)
     }, [labor])
 
     return (
@@ -160,7 +160,7 @@ function PartsTableReadOnly({parts, setParts}){
 }
 
 export default function QuoteDetailInfo({maintenanceItem, refreshMaintenanceData}){
-    console.log('inside QuoteDetailInfo - maintenanceItem - ', maintenanceItem);
+    //console.log('inside QuoteDetailInfo - maintenanceItem - ', maintenanceItem);
     const { roleName } = useUser();
 
     const location = useLocation();
@@ -170,7 +170,7 @@ export default function QuoteDetailInfo({maintenanceItem, refreshMaintenanceData
 
     // set cost data from quote_Service_expense
     try {
-        // console.log('----maintenanceItem in quotedetailinfo---', maintenanceItem);
+        // //console.log('----maintenanceItem in quotedetailinfo---', maintenanceItem);
         if (maintenanceItem?.quote_services_expenses) {
             costData = JSON.parse(maintenanceItem?.quote_services_expenses);
         } else {
@@ -198,13 +198,13 @@ export default function QuoteDetailInfo({maintenanceItem, refreshMaintenanceData
     const handleWithdraw = async () => {
         // PUT to withdraw request
 
-        // console.log("handleWithdraw")
+        // //console.log("handleWithdraw")
         var formData = new FormData();
         formData.append("maintenance_quote_uid",  maintenanceItem.maintenance_quote_uid);
         formData.append("quote_status", "WITHDRAW");
 
         try {
-            // console.log("in try block")
+            // //console.log("in try block")
             const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {
                 method: 'PUT',
                 body: formData
@@ -213,14 +213,14 @@ export default function QuoteDetailInfo({maintenanceItem, refreshMaintenanceData
                 await refreshMaintenanceData()
             }
         } catch (error){
-            console.log("error", error)
+            //console.log("error", error)
         }
     }
 
     useEffect(() => {
         const parseServicesExpenses = (expenses) => {
             let servicesObject = JSON.parse(expenses)
-            // console.log("servicesObject", servicesObject)
+            // //console.log("servicesObject", servicesObject)
             var partsCost = 0
             var laborCost = 0
             for (const item in servicesObject?.parts){
@@ -265,14 +265,14 @@ export default function QuoteDetailInfo({maintenanceItem, refreshMaintenanceData
             setEstimatedTime(maintenanceItem?.quote_event_type)
             setEarliestAvailability(maintenanceItem?.quote_earliest_availability)
         } catch (error){
-            console.log("error", error)
+            //console.log("error", error)
             setQuoteImages([]);
         }
 
     }, [maintenanceItem])
 
     const handleUpdateScheduleDateTime = () => {
-        console.log("handleUpdateScheduleDateTime")
+        //console.log("handleUpdateScheduleDateTime")
 
     }
 

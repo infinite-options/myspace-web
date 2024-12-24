@@ -194,9 +194,9 @@ import { ManagementContractProvider } from "../contexts/ManagementContractContex
 import { PropertiesProvider } from "../contexts/PropertiesContext";
 
 function Main() {
-  // console.log("In Main Page");
+  // //console.log("In Main Page");
   const { user, roleName, selectedRole } = useUser();
-  // console.log("Main - user - ", user);
+  // //console.log("Main - user - ", user);
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Box

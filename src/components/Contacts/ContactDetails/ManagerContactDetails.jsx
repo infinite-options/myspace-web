@@ -9,7 +9,7 @@ import { useUser } from "../../../contexts/UserContext";
 import User_fill from "../../../images/User_fill_dark.png";
 
 const ManagerContactDetails = (props) => {
-  console.log("In Manager Contact Details", props);
+  //console.log("In Manager Contact Details", props);
   const { selectedRole } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
@@ -21,19 +21,19 @@ const ManagerContactDetails = (props) => {
   // const passedData = location.state.viewData;
 
   useEffect(() => {
-    console.log("INDEX UPDATED - ", index);
+    //console.log("INDEX UPDATED - ", index);
     // location.state.index = index;
-    console.log("DATA DETAILS", contactDetails[index]);
+    //console.log("DATA DETAILS", contactDetails[index]);
   }, [index]);
 
-  //   console.log("Data details passed 1: ", contactDetails);
-  //   console.log("Data details passed 2: ", contactDetails[0]);
-  //   console.log("Data details passed 3: ", contactDetails[0].entities);
-  //   console.log("Data details passed 4: ", contactDetails[3].entities);
+  //   //console.log("Data details passed 1: ", contactDetails);
+  //   //console.log("Data details passed 2: ", contactDetails[0]);
+  //   //console.log("Data details passed 3: ", contactDetails[0].entities);
+  //   //console.log("Data details passed 4: ", contactDetails[3].entities);
 
-  // console.log(selectedData);
-  console.log("INDEX", index);
-  console.log("SELECTED ROLE - ", selectedRole);
+  // //console.log(selectedData);
+  //console.log("INDEX", index);
+  //console.log("SELECTED ROLE - ", selectedRole);
 
   const handleBackBtn = () => {
     // navigate('/ownerContacts');
@@ -120,7 +120,7 @@ const ManagerContactDetails = (props) => {
               >
                 <Box
                   onClick={() => {
-                    console.log("Previous button clicked");
+                    //console.log("Previous button clicked");
                     index > 0 ? setIndex(index - 1) : setIndex(contactDetails.length - 1);
                   }}
                 >
@@ -143,7 +143,7 @@ const ManagerContactDetails = (props) => {
                 </Box>
                 <Box
                   onClick={() => {
-                    console.log("Next button clicked");
+                    //console.log("Next button clicked");
                     index < contactDetails.length - 1 ? setIndex(index + 1) : setIndex(0);
                   }}
                 >
@@ -303,7 +303,7 @@ const ManagerContactDetails = (props) => {
                         `}
                       </Typography>
 
-                      {console.log("After 1st Map:", entity, typeof entity)}
+                      {/* {console.log("After 1st Map:", entity, typeof entity)} */}
 
                       {entity.properties.map((property, index) => (
                         <Typography

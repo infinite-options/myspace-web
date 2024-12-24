@@ -145,7 +145,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
     setShowSpinner(true);
     try {
       const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflowTransactions/${userProfileId}/new`);
-      // console.log("Manager Cashflow Data: ", cashflow.data);
+      // //console.log("Manager Cashflow Data: ", cashflow.data);
       setShowSpinner(false);
       return cashflow.data?.result;
     } catch (error) {
@@ -168,23 +168,23 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
       });
   }, []);
   //   useEffect(() => {
-  //     console.log("rentsByProperty - ", rentsByProperty);
+  //     //console.log("rentsByProperty - ", rentsByProperty);
   //   }, [rentsByProperty]);
 
   //   useEffect(() => {
-  //     console.log("profits - ", profits);
+  //     //console.log("profits - ", profits);
   //   }, [profits]);
 
   //   useEffect(() => {
-  //     console.log("payouts - ", payouts);
+  //     //console.log("payouts - ", payouts);
   //   }, [payouts]);
 
   // useEffect(() => {
-  //   console.log("transactions - ", transactions);
+  //   //console.log("transactions - ", transactions);
   // }, [transactions]);
 
   // useEffect(() => {
-  //   console.log("transactionsNew - ", transactionsNew);
+  //   //console.log("transactionsNew - ", transactionsNew);
   // }, [transactionsNew]);
 
   const getSortOrder = (transaction) => {
@@ -202,7 +202,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
   };
 
   const getTotalsForPurGroup = (group) => {
-    // console.log("ROHIT - 234 - group.transactions - ", group.transactions)
+    // //console.log("ROHIT - 234 - group.transactions - ", group.transactions)
 
     const purAmountDueTotal = group.transactions.reduce((acc, transaction) => {
       // if(transaction.pur_payer.startsWith("600")){
@@ -227,19 +227,19 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
     //TRANSACTIONS
     // const allTransactionsData = transactionsData?.result;
     const allTransactionsData = transactionsData;
-    // console.log("allTransactionsData - ", allTransactionsData);
-    // console.log("allTransactionsData - selectedProperty", selectedProperty);
+    // //console.log("allTransactionsData - ", allTransactionsData);
+    // //console.log("allTransactionsData - selectedProperty", selectedProperty);
     let filteredTransactionsData = [];
     if (selectedProperty === "ALL") {
       filteredTransactionsData = allTransactionsData;
-      // console.log("filteredTransactionsData - ", filteredTransactionsData);
+      // //console.log("filteredTransactionsData - ", filteredTransactionsData);
     } else {
       filteredTransactionsData = allTransactionsData?.filter((item) => item.pur_property_id === selectedProperty);
-      // console.log("filteredTransactionsData - test ", filteredTransactionsData);
+      // //console.log("filteredTransactionsData - test ", filteredTransactionsData);
     }
     const transactionsCurrentMonth = filteredTransactionsData?.filter((item) => month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
 
-    // console.log("ROHIT - filteredTransactionsData - ", month);
+    // //console.log("ROHIT - filteredTransactionsData - ", month);
 
     const sortedTransactions = transactionsCurrentMonth?.map((transaction) => {
       return {
@@ -252,7 +252,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
 
     setTransactions(sortedTransactions);
 
-    // console.log("ROHIT - sortedTransactions - ", sortedTransactions);
+    // //console.log("ROHIT - sortedTransactions - ", sortedTransactions);
 
     const transactionsByProperty = sortedTransactions?.reduce((acc, item) => {
       const propertyUID = item.pur_property_id;
@@ -295,16 +295,16 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
 
     //update pur group status for each pur group in each property
 
-    // console.log("ROHIT - 211 - transactionsByProperty - ", transactionsByProperty);
+    // //console.log("ROHIT - 211 - transactionsByProperty - ", transactionsByProperty);
 
     if (transactionsByProperty && Object.keys(transactionsByProperty).length > 0) {
       Object.keys(transactionsByProperty)?.forEach((propertyUID) => {
         const purchaseGroups = transactionsByProperty[propertyUID].purchaseGroups;
-        // console.log("ROHIT - 212 - purchaseGroups - ", purchaseGroups);
+        // //console.log("ROHIT - 212 - purchaseGroups - ", purchaseGroups);
 
         Object.keys(purchaseGroups)?.forEach((group) => {
           const purGroup = purchaseGroups[group];
-          // console.log("ROHIT - 220 - purGroup - ", purGroup);
+          // //console.log("ROHIT - 220 - purGroup - ", purGroup);
           const { purAmountDueTotal, totalPaidTotal } = getTotalsForPurGroup(purGroup);
 
           // Add totals to the current group object
@@ -320,13 +320,13 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
       });
     }
 
-    // console.log("ROHIT - 234 - transactionsByProperty - ", transactionsByProperty);
+    // //console.log("ROHIT - 234 - transactionsByProperty - ", transactionsByProperty);
 
     if (transactionsByProperty && Object.keys(transactionsByProperty).length > 0) {
       Object.keys(transactionsByProperty)?.forEach((propertyUID) => {
         const purchaseGroups = Object.values(transactionsByProperty[propertyUID].purchaseGroups);
 
-        // console.log("ROHIT - 272 - purchaseGroups - ", purchaseGroups);
+        // //console.log("ROHIT - 272 - purchaseGroups - ", purchaseGroups);
 
         const allFullyPaid = purchaseGroups.every((group) => group.purchaseGroupStatus === "fully_paid");
         const partiallyPaid = purchaseGroups.find((group) => group.purchaseGroupStatus === "partially_paid");
@@ -356,14 +356,14 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
       });
     }
 
-    // console.log(" ROHIT - 302 - transactionsByProperty - ", transactionsByProperty);
+    // //console.log(" ROHIT - 302 - transactionsByProperty - ", transactionsByProperty);
 
     setTransactionsNew(transactionsByProperty);
   }, [month, year, transactionsData, selectedProperty]);
 
   // useEffect(() => {
-  //     console.log("revenueByType", revenueByType)
-  //     console.log("expenseByType", expenseByType)
+  //     //console.log("revenueByType", revenueByType)
+  //     //console.log("expenseByType", expenseByType)
   // }, [revenueByType, expenseByType])
 
   const getCircleColor = (transaction) => {
@@ -409,7 +409,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
   };
 
   const isPurGroupVerified = (purGroup) => {
-    // console.log("ROHIT - 356 - isPurGroupVerified - purGroup.verified - ", purGroup.verified);
+    // //console.log("ROHIT - 356 - isPurGroupVerified - purGroup.verified - ", purGroup.verified);
     if (purGroup.verified && purGroup.verified.toLowerCase() === "verified") {
       return true;
     }
@@ -417,7 +417,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
   };
 
   const isPurGroupPaid = (purGroup) => {
-    // console.log("ROHIT - 362 - purGroup - ", purGroup);
+    // //console.log("ROHIT - 362 - purGroup - ", purGroup);
     if (purGroup.pur_amount_due_total && purGroup.total_paid_total) {
       if (purGroup.total_paid_total >= purGroup.pur_amount_due_total) {
         return true;
@@ -427,7 +427,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
   };
 
   const handlePayment = (purGroup) => {
-    // console.log("ROHIT - 361 - handlePayment - transactions - ", purGroup.transactions);
+    // //console.log("ROHIT - 361 - handlePayment - transactions - ", purGroup.transactions);
     const purchaseUIDs = [];
     const ownerPayments = purGroup.transactions?.filter((item) => item.pur_payer === getProfileId()); //payments from 600 to 110
     const managerPayments = purGroup.transactions?.filter((item) => item.pur_receiver === getProfileId() && item.pur_payer?.startsWith("110")); //payments from 110 to 600
@@ -443,7 +443,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
       })
     );
 
-    // console.log("handlePayment - purchaseUIDs - ", purchaseUIDs);
+    // //console.log("handlePayment - purchaseUIDs - ", purchaseUIDs);
 
     const totalOwnerPayment = ownerPayments.reduce((acc, transaction) => {
       return acc + transaction.expected;
@@ -455,11 +455,11 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
 
     const total = totalOwnerPayment - totalManagerPayment;
 
-    // console.log("handlePayment - totalOwnerPayment - ", totalOwnerPayment);
-    // console.log("handlePayment - totalManagerPayment - ", totalManagerPayment);
-    // console.log("handlePayment - total - ", total);
-    // console.log("handlePayment - total.toFixed(1) - ", total.toFixed(1));
-    // console.log("handlePayment - parseFloat(total.toFixed(1)) - ", parseFloat(total.toFixed(1)));
+    // //console.log("handlePayment - totalOwnerPayment - ", totalOwnerPayment);
+    // //console.log("handlePayment - totalManagerPayment - ", totalManagerPayment);
+    // //console.log("handlePayment - total - ", total);
+    // //console.log("handlePayment - total.toFixed(1) - ", total.toFixed(1));
+    // //console.log("handlePayment - parseFloat(total.toFixed(1)) - ", parseFloat(total.toFixed(1)));
 
     const paymentData = {
       currency: "usd",
@@ -478,7 +478,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
       purchase_uids: purchaseUIDs,
     };
 
-    // console.log("handlePayment - paymentData - ", paymentData);
+    // //console.log("handlePayment - paymentData - ", paymentData);
 
     // navigate("/selectPayment", {
     //     state: { paymentData: paymentData, total: parseFloat(total.toFixed(1)), selectedItems: [], paymentMethodInfo: {} },
@@ -633,7 +633,7 @@ export default function ManagerTransactions({ propsMonth, propsYear, setMonth, s
                           {Object.values(property.purchaseGroups)?.map((purGroup, index) => {
                             const isPayable = isPurGroupPayable(purGroup);
                             const isVerified = isPurGroupVerified(purGroup);
-                            // console.log("Is Verified:", isVerified);
+                            // //console.log("Is Verified:", isVerified);
                             const isPaid = isPurGroupPaid(purGroup);
                             return (
                               <Accordion
@@ -768,9 +768,9 @@ const VerifiedButton = ({ isVerified, isPaid, isPayable, purGroup }) => {
   return (
     <Button
       onClick={() => {
-        // console.log("ROHIT - purGroup - ", purGroup)
+        // //console.log("ROHIT - purGroup - ", purGroup)
         const propertyID = purGroup.transactions[0]?.pur_property_id;
-        // console.log("ROHIT - propertyID - ", propertyID)
+        // //console.log("ROHIT - propertyID - ", propertyID)
         if (!isVerified) {
           navigate("/paymentVerification", {
             state: {
@@ -885,7 +885,7 @@ function PurGroupTable(props) {
   ];
 
   if (paymentDueResult.length > 0) {
-    // console.log("Passed Data ", paymentDueResult);
+    // //console.log("Passed Data ", paymentDueResult);
     return (
       <>
         <DataGrid
@@ -917,7 +917,7 @@ function PurGroupTable(props) {
 }
 
 function SelectMonthComponentTest(props) {
-  // console.log("SelectMonthComponentTest - props - ",  props);
+  // //console.log("SelectMonthComponentTest - props - ",  props);
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
   const lastYear = new Date().getFullYear() - 1;
@@ -968,7 +968,7 @@ function SelectMonthComponentTest(props) {
 
 // This is the function that controls what and how the cashflow data is displayed
 function StatementTable(props) {
-  console.log("In Statement Table: ", props);
+  //console.log("In Statement Table: ", props);
   const navigate = useNavigate();
 
   const activeView = props.activeView;
@@ -986,16 +986,16 @@ function StatementTable(props) {
   const navigateType = "/edit" + tableType;
 
   function handleNavigation(type, item) {
-    console.log(item);
+    //console.log(item);
     navigate(type, { state: { itemToEdit: item, edit: true } });
   }
 
-  // console.log("--debug-- tableType categoryTotalMapping", tableType, categoryTotalMapping)
-  // console.log("activeView", activeView)
-  // console.log("statement table year/month", year, month)
+  // //console.log("--debug-- tableType categoryTotalMapping", tableType, categoryTotalMapping)
+  // //console.log("activeView", activeView)
+  // //console.log("statement table year/month", year, month)
 
   function getCategoryCount(category) {
-    console.log("getCategoryCount - allItems - ", allItems);
+    //console.log("getCategoryCount - allItems - ", allItems);
     let items = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() &&  month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
     return "(" + items.length + ")";
   }
@@ -1004,7 +1004,7 @@ function StatementTable(props) {
     let filteredIitems = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() &&  month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
     let items = filteredIitems?.map((item) => ({ ...item, property: JSON.parse(item.property) }));
 
-    console.log("getCategoryItems", items);
+    //console.log("getCategoryItems", items);
     var key = "total_paid";
     if (activeView === "Cashflow") {
       key = "total_paid";

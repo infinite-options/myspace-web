@@ -26,14 +26,14 @@ export default function CancelButton(props){
             }
         }
         let response = CancelTicket(id);
-        console.log("handleCancel", response)
+        //console.log("handleCancel", response)
         if (response){
-            console.log("Ticket Cancelled")
+            //console.log("Ticket Cancelled")
             setShowMessage(true);
             setMessage("Ticket Cancelled!! Maintenance Status changed to CANCELLED");
             navigate(maintenanceRoutingBasedOnSelectedRole())
         } else{
-            console.log("Ticket Not Cancelled")
+            //console.log("Ticket Not Cancelled")
             setShowMessage(true);
             setMessage("Error: Ticket Not Cancelled")
         }

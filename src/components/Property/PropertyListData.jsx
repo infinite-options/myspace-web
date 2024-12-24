@@ -19,10 +19,10 @@ const PropertyListData = (props) => {
         //     return;
         // }
         const res = await axios.get(`${APIConfig.baseURL.dev}/properties/${getProfileId()}`);
-        // console.log("response property list ", res.data.Property.result);
+        // //console.log("response property list ", res.data.Property.result);
         props.setPropertyList(res.data.Property.result);
         // if (response.msg === "Token has expired") {
-            // console.log("here msg");
+            // //console.log("here msg");
             // refresh();
             // return;
         // }

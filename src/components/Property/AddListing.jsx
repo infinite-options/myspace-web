@@ -138,7 +138,7 @@ export default function AddListing(props) {
   const [deletedIcons, setDeletedIcons] = useState(new Array(JSON.parse(propertyData.property_images).length).fill(false));
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   // useEffect(() => {
-  //   console.log("deletedImageList - ", deletedImageList);
+  //   //console.log("deletedImageList - ", deletedImageList);
   // }, [deletedImageList]);
 
   // const [utilityNames, setUtilityNames] = useState([]);
@@ -157,7 +157,7 @@ export default function AddListing(props) {
   const [newUtilitiesPaidBy, setNewUtilitiesPaidBy] = useState({});
 
   // useEffect(() => {
-  //   console.log("newUtilitiesPaidBy - ", newUtilitiesPaidBy);
+  //   //console.log("newUtilitiesPaidBy - ", newUtilitiesPaidBy);
   // }, [newUtilitiesPaidBy]);
 
   const sortByFavImage = (favImage, imageList) => {
@@ -175,16 +175,16 @@ export default function AddListing(props) {
   const maxSteps = selectedImageList.length;
 
   useEffect(() => {
-    console.log("ROHIT - 153 - mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
+    //console.log("ROHIT - 153 - mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
   }, [mappedUtilitiesPaidBy]);
 
   useEffect(() => {
-    // console.log("ROHIT - 153 - propertyData - ", propertyData);
-    console.log("ROHIT - 153 - propertyData.property_utilities - ", propertyData.property_utilities);
+    // //console.log("ROHIT - 153 - propertyData - ", propertyData);
+    //console.log("ROHIT - 153 - propertyData.property_utilities - ", propertyData.property_utilities);
   }, [propertyData]);
 
   useEffect(() => {
-    console.log("ROHIT - 153 - utilitiesObject - ", utilitiesObject);
+    //console.log("ROHIT - 153 - utilitiesObject - ", utilitiesObject);
     
   }, [utilitiesObject,]);
 
@@ -218,7 +218,7 @@ export default function AddListing(props) {
       map.set(item.list_uid, item.list_item);
       return map;
     }, new Map());
-    // console.log("278 - names - ", names)
+    // //console.log("278 - names - ", names)
     setUtilitiesMap(names);
   }, [utilityNames]);
   useEffect(() => {
@@ -226,17 +226,17 @@ export default function AddListing(props) {
       map.set(item.list_uid, item.list_item);
       return map;
     }, new Map());
-    // console.log("278 - entities - ", entities)
+    // //console.log("278 - entities - ", entities)
     setEntitiesMap(entities);
   }, [utilityEntities]);
   useEffect(() => {
     const reverseMap = new Map(Array.from(utilitiesMap ? utilitiesMap : [], ([key, value]) => [value, key]));
-    // console.log("296 - reverseMap - ", reverseMap)
+    // //console.log("296 - reverseMap - ", reverseMap)
     setReverseUtilitiesMap(reverseMap);
   }, [utilitiesMap]);
   useEffect(() => {
     const reverseMap = new Map(Array.from(entitiesMap ? entitiesMap : [], ([key, value]) => [value, key]));
-    // console.log("303 - reverseMap - ", reverseMap)
+    // //console.log("303 - reverseMap - ", reverseMap)
     setReverseEntitiesMap(reverseMap);
 
   // }, [adults, children, pets, vehicles]);
@@ -249,7 +249,7 @@ export default function AddListing(props) {
     if (!propertyUtilities) {
       return {};
     }
-    // console.log("----- in mapUIDsToUtilities, input - ", propertyUtilities);
+    // //console.log("----- in mapUIDsToUtilities, input - ", propertyUtilities);
     const mappedUtilities = {};
     for (const key of Object.keys(propertyUtilities)) {
       const utilityName = utilitiesMap.get(key);
@@ -260,7 +260,7 @@ export default function AddListing(props) {
       }
     }
 
-    // console.log("----- in mapUIDsToUtilities, mappedUtilities - ", mappedUtilities);
+    // //console.log("----- in mapUIDsToUtilities, mappedUtilities - ", mappedUtilities);
     return mappedUtilities;
   };
 
@@ -272,32 +272,32 @@ export default function AddListing(props) {
 
   useEffect(() => {
     if (utilitiesObject && utilitiesObject?.length > 0) {
-      // console.log("*****************************************AddListing useEffect*******************************************");
+      // //console.log("*****************************************AddListing useEffect*******************************************");
       for (const utility of utilitiesObject) {
-        // console.log(utility.utility_type_id, utility.utility_payer_id);
+        // //console.log(utility.utility_type_id, utility.utility_payer_id);
         utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
       }
-      // console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
+      // //console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
 
       mappedUtilities2 = mapUIDsToUtilities(utilitiesInUIDForm);
-      // console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
-      // console.log("   ", mappedUtilities2);
+      // //console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
+      // //console.log("   ", mappedUtilities2);
       setMappedUtilitiesPaidBy(mappedUtilities2);
     } else {
       setMappedUtilitiesPaidBy(defaultUtilities);
       setIsDefaultUtilities(true);
     }
-    // console.log("************************************************AddListing useEffect***********************************");
+    // //console.log("************************************************AddListing useEffect***********************************");
   }, [utilitiesObject, utilitiesMap, entitiesMap,]);
 
   const getListDetails = () => {
-    // console.log("543 - getListDetails called");
+    // //console.log("543 - getListDetails called");
     // const relationships = getList("relationships");
     // const states = getList("states");        
     const utilNames = getList("utilities");
     const utilEntities = getList("role");
-    // console.log("285 - utilNames - ", utilNames)
-    // console.log("285 -  utilEntities - ", utilEntities)
+    // //console.log("285 - utilNames - ", utilNames)
+    // //console.log("285 -  utilEntities - ", utilEntities)
     // setRelationships(relationships);
     // setStates(states);
     setUtilityNames(utilNames);
@@ -306,7 +306,7 @@ export default function AddListing(props) {
   };
 
   useEffect(() => {
-    // console.log("543 - dataLoaded - ", dataLoaded);
+    // //console.log("543 - dataLoaded - ", dataLoaded);
     if(dataLoaded === true){
       getListDetails();
     }    
@@ -330,7 +330,7 @@ export default function AddListing(props) {
   const handleUtilityChange = (utility, entity) => {
     const utilityObject = { [utility]: `${entity}` };
     setHasUtilitiesChanges(true);
-    // console.log("----- handleUtilityChange called - ", utilityObject);
+    // //console.log("----- handleUtilityChange called - ", utilityObject);
 
     setMappedUtilitiesPaidBy((prevState) => ({
       ...prevState,
@@ -361,7 +361,7 @@ export default function AddListing(props) {
     updatedNewUtilitiesMappedBy[utility] = "owner";
     setNewUtilitiesPaidBy(updatedNewUtilitiesMappedBy);
 
-    // console.log(`Adding utility: ${utility}`);
+    // //console.log(`Adding utility: ${utility}`);
     handleAddUtilityClose();
   };
 
@@ -370,12 +370,12 @@ export default function AddListing(props) {
   };
 
   useEffect(() => {
-    // console.log("useEffect");
+    // //console.log("useEffect");
     setCoverImage(selectedImageList[0] || coverImage);
   }, [selectedImageList]);
 
   useEffect(() => {
-    // console.log("propertyState", propertyState);
+    // //console.log("propertyState", propertyState);
   }, [propertyState]);
 
   const handleBackButton = async () => {
@@ -406,9 +406,9 @@ export default function AddListing(props) {
       (propertyData.property_active_date).isSame(activeDate) ||
       hasUtilitiesChanges;
 
-    // console.log("hasPropertyChanges:", hasPropertyChanges);
-    // console.log("Property Data:", propertyData);
-    // console.log("State Values:", {
+    // //console.log("hasPropertyChanges:", hasPropertyChanges);
+    // //console.log("Property Data:", propertyData);
+    // //console.log("State Values:", {
     //   address,
     //   unit,
     //   city,
@@ -564,7 +564,7 @@ export default function AddListing(props) {
       formData.append("delete_images", JSON.stringify(imagesTobeDeleted));
       hasPropertyChanges = true;
     }
-    //console.log("--debug selectedImageList--", selectedImageList, selectedImageList.length);
+    ////console.log("--debug selectedImageList--", selectedImageList, selectedImageList.length);
     formData.append("property_images", propertyData.property_images);
     if (favImage !== propertyData.property_favorite_image) {
       formData.append("property_favorite_image", favImage);
@@ -600,9 +600,9 @@ export default function AddListing(props) {
         });
         setShowSpinner(false);
 
-        console.log("Utilities changes saved.");
+        //console.log("Utilities changes saved.");
       } else {
-        console.log("No changes for utilities.");
+        //console.log("No changes for utilities.");
       }
     };
 
@@ -622,7 +622,7 @@ export default function AddListing(props) {
         }
 
         setShowSpinner(false);
-        console.log("Changes saved successfully.");
+        //console.log("Changes saved successfully.");
 
         if (navigateAfterSave) {
           refreshProperties();
@@ -639,7 +639,7 @@ export default function AddListing(props) {
         console.error("Error saving changes:", error);
       }
     } else {
-      console.log("No changes detected.");
+      //console.log("No changes detected.");
       setChangedSaved(true);
       if (navigateAfterSave) {
         navigate("/properties", { state: { isBack: true } });
@@ -649,7 +649,7 @@ export default function AddListing(props) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("handleSubmit");
+    //console.log("handleSubmit");
 
     if (!deposit) {
       alert("Deposit cannot be empty!");
@@ -665,7 +665,7 @@ export default function AddListing(props) {
   };
 
   const handleUpdateAndStay = async () => {
-    console.log("handleUpdateAndStay");
+    //console.log("handleUpdateAndStay");
     await saveChanges(false);
     setChangedSaved(true);
   };
@@ -746,7 +746,7 @@ export default function AddListing(props) {
     const imageToDelete = sortedByFavImgLst[index];
     setImagesTobeDeleted((prev) => [...prev, imageToDelete]);
 
-    // console.log("Delete image at index:", JSON.stringify(deletedIcons));
+    // //console.log("Delete image at index:", JSON.stringify(deletedIcons));
   };
 
   const handleFavorite = (index) => {
@@ -764,7 +764,7 @@ export default function AddListing(props) {
       }))
     );
 
-    console.log(`Favorite image at index: ${index}`);
+    //console.log(`Favorite image at index: ${index}`);
   };
 
   const handleUpdateFavoriteIcons = () => {
@@ -1281,7 +1281,7 @@ export default function AddListing(props) {
               noValidate
               autoComplete='off'
             >
-              {/* {console.log("MAPPED UTILITIES PAID BY", mappedUtilitiesPaidBy)} */}
+              {/* {//console.log("MAPPED UTILITIES PAID BY", mappedUtilitiesPaidBy)} */}
               {/* <UtilitySelection existingSelection={mappedUtilitiesPaidBy} onChangeUtilities={handleUtilityChange}/> */}
 
               <Grid container columnSpacing={2} rowSpacing={3}>

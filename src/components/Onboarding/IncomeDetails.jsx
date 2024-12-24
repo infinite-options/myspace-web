@@ -56,7 +56,7 @@ const IncomeDetails = ({ employmentList, setEmploymentList, salaryFrequencies })
 
     const handleEditClick = (job, index) => {
         setIsEditing(true);
-        console.log("currentrow", job, index);
+        //console.log("currentrow", job, index);
         setCurrentRow({ ...job, index });
         handleOpen();
     };
@@ -67,7 +67,7 @@ const IncomeDetails = ({ employmentList, setEmploymentList, salaryFrequencies })
     
     //     setEmploymentList(updatedList);
     
-    //     // console.log("Updated Employment List:", updatedList);
+    //     // //console.log("Updated Employment List:", updatedList);
     // };
 
     const handleChange = (field, value) => {
@@ -79,7 +79,7 @@ const IncomeDetails = ({ employmentList, setEmploymentList, salaryFrequencies })
 
     const handleSave = async () => {
         const updatedList = [...employmentList];
-        console.log("updated list", updatedList);
+        //console.log("updated list", updatedList);
 
         if (isEditing) {
             updatedList[currentRow.index] = { ...currentRow };
@@ -87,11 +87,11 @@ const IncomeDetails = ({ employmentList, setEmploymentList, salaryFrequencies })
             updatedList.push({ ...currentRow });
         }
     
-        console.log("updated list 2", updatedList);
+        //console.log("updated list 2", updatedList);
         setEmploymentList(updatedList);
     
         const profileFormData = new FormData();
-        console.log("tenant emp7", updatedList);
+        //console.log("tenant emp7", updatedList);
         profileFormData.append("tenant_uid", getProfileId());
         profileFormData.append("tenant_employment", JSON.stringify(updatedList));
     

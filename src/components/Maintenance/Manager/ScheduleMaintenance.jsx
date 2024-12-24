@@ -51,8 +51,8 @@ export default function ScheduleMaintenance({ maintenanceItem,navigateParams, qu
 	}, [quotes]);
 
 	function handleNavigate() {
-		console.log('navigate to Rescheduling Maintenance');
-		console.log('navigateParams to /scheduleMaintenance', navigateParams);
+		//console.log('navigate to Rescheduling Maintenance');
+		//console.log('navigateParams to /scheduleMaintenance', navigateParams);
 		if (isMobile){navigate('/scheduleMaintenance', {
 			state: {
 				maintenanceItem,
@@ -92,7 +92,7 @@ export default function ScheduleMaintenance({ maintenanceItem,navigateParams, qu
 					const maintenanceItemStr = JSON.stringify(maintenanceItem);
 					const navigateParamsStr = JSON.stringify(navigateParams);
 					const quotesStr = JSON.stringify(quotes);
-					console.log('Storing data in sessionStorage: ', quotesStr);
+					//console.log('Storing data in sessionStorage: ', quotesStr);
 
 					// Save data to sessionStorage
 					sessionStorage.setItem('maintenanceItem', maintenanceItemStr);
@@ -145,7 +145,7 @@ export default function ScheduleMaintenance({ maintenanceItem,navigateParams, qu
 
 	const handleSubmit = () => {
 		// TODO: REMOVE BECAUSE IT ISN'T BEING CALLED
-		console.log('handleSubmit');
+		//console.log('handleSubmit');
 		const changeMaintenanceRequestStatus = async () => {
 			setShowSpinner(true);
 			try {
@@ -161,15 +161,15 @@ export default function ScheduleMaintenance({ maintenanceItem,navigateParams, qu
 				});
 
 				const responseData = await response.json();
-				console.log(responseData);
+				//console.log(responseData);
 				if (response.status === 200) {
-					console.log('success');
+					//console.log('success');
 					navigate(maintenanceRoutingBasedOnSelectedRole());
 				} else {
-					console.log('error setting status');
+					//console.log('error setting status');
 				}
 			} catch (error) {
-				console.log('error', error);
+				//console.log('error', error);
 			}
 			setShowSpinner(false);
 		};
@@ -187,16 +187,16 @@ export default function ScheduleMaintenance({ maintenanceItem,navigateParams, qu
 				});
 
 				const responseData = await response.json();
-				console.log(responseData);
+				//console.log(responseData);
 				if (response.status === 200) {
-					console.log('success');
+					//console.log('success');
 					changeMaintenanceRequestStatus();
 					navigate(maintenanceRoutingBasedOnSelectedRole());
 				} else {
-					console.log('error setting status');
+					//console.log('error setting status');
 				}
 			} catch (error) {
-				console.log('error', error);
+				//console.log('error', error);
 			}
 			setShowSpinner(false);
 		};

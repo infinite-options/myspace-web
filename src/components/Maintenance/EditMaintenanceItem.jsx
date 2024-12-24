@@ -57,10 +57,10 @@ import ListsContext from '../../contexts/ListsContext';
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 export default function EditMaintenanceItem({ setRefersh, setRightPane, maintenanceRequest, propertyAddress, setViewRHS }) {
-	console.log("inside edit component");
+	//console.log("inside edit component");
 	const location = useLocation();
 	const { getList, } = useContext(ListsContext);
-	console.log("location state", maintenanceRequest);
+	//console.log("location state", maintenanceRequest);
 
 	const maintenanceIssues = getList("maintenance");
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -178,7 +178,7 @@ export default function EditMaintenanceItem({ setRefersh, setRightPane, maintena
 	// setPriority(testPriority1);
 
 	// setCompleted(completionStatus1);
-	// console.log("completed>>>",completed);
+	// //console.log("completed>>>",completed);
 
 
 	let navigate = useNavigate();
@@ -225,38 +225,38 @@ export default function EditMaintenanceItem({ setRefersh, setRightPane, maintena
 
 	const handlePropertyChange = (event) => {
 		setChange(true)
-		console.log('handlePropertyChange', event.target.value);
+		//console.log('handlePropertyChange', event.target.value);
 		setProperty(event.target.value);
 		setPropertyId(event.target.value);
 	};
 
 	const handleIssueChange = (event) => {
 		setChange(true)
-		console.log('handleIssueCategoryChange', event.target.value);
+		//console.log('handleIssueCategoryChange', event.target.value);
 		setIssue(event.target.value);
 	};
 
 	const handleCostChange = (event) => {
 		setChange(true)
-		console.log('handleCostChange', event.target.value);
+		//console.log('handleCostChange', event.target.value);
 		setCost(event.target.value);
 	};
 
 	const handleTitleChange = (event) => {
 		setChange(true)
-		console.log('handleTitleChange', event.target.value);
+		//console.log('handleTitleChange', event.target.value);
 		setTitle(event.target.value);
 	};
 
 	const handleDescriptionChange = (event) => {
 		setChange(true)
-		console.log('handleDescriptionChange', event.target.value);
+		//console.log('handleDescriptionChange', event.target.value);
 		setDescription(event.target.value);
 	};
 
 	// const handlePriorityChange = (event, newToggleGroupValue) => {
-	//     console.log("handlePriorityChange", event.target.value)
-	//     // console.log("handleToggleGroupChange", newToggleGsroupValue)
+	//     //console.log("handlePriorityChange", event.target.value)
+	//     // //console.log("handleToggleGroupChange", newToggleGsroupValue)
 	//     setPriority(event.target.value)
 	//     // setPriority(testPriority1)
 	//     // setToggleGroupValue(newToggleGroupValue);
@@ -285,13 +285,13 @@ export default function EditMaintenanceItem({ setRefersh, setRightPane, maintena
 
 	const handleCompletedChange = (event, newToggleGroupValue) => {
 		setChange(true)
-		console.log('handleToggleGroupChange', newToggleGroupValue);
+		//console.log('handleToggleGroupChange', newToggleGroupValue);
 		setCompleted(event.target.value);
-		console.log('completed>>>,>>', completed);
+		//console.log('completed>>>,>>', completed);
 	};
 
 	const handleBackButton = () => {
-		console.log('handleBackButton');
+		//console.log('handleBackButton');
 		if (isMobile) {
 			if (setViewRHS) {
 				setViewRHS(false)
@@ -316,16 +316,16 @@ export default function EditMaintenanceItem({ setRefersh, setRightPane, maintena
 	};
 
 	useEffect(() => {
-		console.log(user.owner_id);
+		//console.log(user.owner_id);
 
 		const getProperties = async () => {
 			setShowSpinner(true);
 			const response = await fetch(`${APIConfig.baseURL.dev}/properties/${getProfileId()}`);
 
 			const propertyData = await response.json();
-			console.log('inside edit property useEffect');
+			//console.log('inside edit property useEffect');
 			// const propertyData = data.Property.result
-			console.log('properties', propertyData);
+			//console.log('properties', propertyData);
 			// setProperties(properties)
 			setProperties([...propertyData['Property'].result]);
 			setShowSpinner(false);
@@ -353,9 +353,9 @@ export default function EditMaintenanceItem({ setRefersh, setRightPane, maintena
 			currentDate.getDate()
 		).padStart(2, '0')}-${currentDate.getFullYear()}`;
 
-		console.log('toggleAlignment', toggleAlignment);
-		console.log('*************propertyId******************* ', propertyId);
-		console.log('*************description******************* ', description);
+		//console.log('toggleAlignment', toggleAlignment);
+		//console.log('*************propertyId******************* ', propertyId);
+		//console.log('*************description******************* ', description);
 		editFormData.append('maintenance_request_uid', requestUid1);
 		editFormData.append('maintenance_property_id', propertyId);
 		// editFormData.append("maintenance_property_id", propID1);
@@ -376,7 +376,7 @@ export default function EditMaintenanceItem({ setRefersh, setRightPane, maintena
 		editFormData.append('maintenance_request_adjustment_date', null);
 
 		if (imagesTobeDeleted.length > 0) {
-			console.log('-----deleted_images----', imagesTobeDeleted);
+			//console.log('-----deleted_images----', imagesTobeDeleted);
 
 			let updatedImages = JSON.parse(maintainanceImages);
 			updatedImages = updatedImages.filter(image => !imagesTobeDeleted.includes(image));
@@ -414,12 +414,12 @@ export default function EditMaintenanceItem({ setRefersh, setRightPane, maintena
 		// 			editFormData.append(key, selectedImageList[i]);
 		// 		}
 		// 	} catch (error) {
-		// 		console.log('Error uploading images', error);
+		// 		//console.log('Error uploading images', error);
 		// 	}
 		// }
-		console.log('editFormData>>>>>>');
+		//console.log('editFormData>>>>>>');
 		for (let [key, value] of editFormData.entries()) {
-			console.log(key, value);
+			//console.log(key, value);
 		}
 
 		const putData = async () => {
@@ -452,7 +452,7 @@ export default function EditMaintenanceItem({ setRefersh, setRightPane, maintena
 					body: editFormData,
 				});
 				const data = await response.json();
-				console.log('data response', data);
+				//console.log('data response', data);
 			} catch (err) {
 				console.error('Error: ', err.message);
 			}
@@ -520,7 +520,7 @@ export default function EditMaintenanceItem({ setRefersh, setRightPane, maintena
 		const imageToDelete = JSON.parse(maintainanceImages)[index];
 		setImagesTobeDeleted((prev) => [...prev, imageToDelete]);
 
-		console.log('Delete image at index:', JSON.stringify(deletedIcons));
+		//console.log('Delete image at index:', JSON.stringify(deletedIcons));
 	};
 
 
@@ -540,7 +540,7 @@ export default function EditMaintenanceItem({ setRefersh, setRightPane, maintena
 			}))
 		);
 
-		console.log(`Favorite image at index: ${index}`);
+		//console.log(`Favorite image at index: ${index}`);
 	};
 
 	const handleUpdateFavoriteIcons = () => {

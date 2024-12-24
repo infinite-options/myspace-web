@@ -55,28 +55,28 @@ const ProfileName = () => {
 
   const { user, isLoggedIn, isBusiness, isEmployee, roleName, isManagementEmployee, selectedRole } = useUser();
   // Print out the values
-  // console.log("User:", user);
-  // console.log("Is Logged In:", isLoggedIn);
-  // console.log("Is Business:", isBusiness);
-  // console.log("Is Employee:", isEmployee);
-  // console.log("Role Name:", roleName);
-  // console.log("Is Management Employee:", isManagementEmployee);
-  // console.log("Selected Role:", selectedRole);
+  // //console.log("User:", user);
+  // //console.log("Is Logged In:", isLoggedIn);
+  // //console.log("Is Business:", isBusiness);
+  // //console.log("Is Employee:", isEmployee);
+  // //console.log("Role Name:", roleName);
+  // //console.log("Is Management Employee:", isManagementEmployee);
+  // //console.log("Selected Role:", selectedRole);
 
   const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
 
   // Print out the values
-  // console.log("PN First Name:", firstName);
-  // console.log("PN Last Name:", lastName);
-  // console.log("PN Email:", email);
-  // console.log("PN Phone:", phoneNumber);
-  // console.log("PN Business Name:", businessName);
-  // console.log("PN Photo:", photo);
+  // //console.log("PN First Name:", firstName);
+  // //console.log("PN Last Name:", lastName);
+  // //console.log("PN Email:", email);
+  // //console.log("PN Phone:", phoneNumber);
+  // //console.log("PN Business Name:", businessName);
+  // //console.log("PN Photo:", photo);
 
   const personalInfoPage = isLoggedIn ? "/privatePersonalInfo" : "/personalInfo";
   const profileInfoPage = isLoggedIn ? "/privateProfileInfo" : "/profileInfo";
 
-  // console.log("User Info: ", user);
+  // //console.log("User Info: ", user);
 
   const validate_form = () => {
     if (["PM_EMPLOYEE", "MAINT_EMPLOYEE"].includes(selectedRole)) {
@@ -188,7 +188,7 @@ const ProfileName = () => {
   };
 
   useEffect(() => {
-    // console.log("Data in Cookies: ", cookiesData);
+    // //console.log("Data in Cookies: ", cookiesData);
     setFirstName(cookiesData?.firstName ?? "");
     setLastName(cookiesData?.lastName ?? "");
     setBusinessName(cookiesData?.businessName ?? "");

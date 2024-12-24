@@ -20,7 +20,7 @@ export default async function CompleteTicket(maintenance_request_uid, date="", s
             return true;            
         }
     } catch (error){
-        console.log("error", error)
+        //console.log("error", error)
         return false;
     }
     setShowSpinner(false);

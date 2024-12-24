@@ -34,7 +34,7 @@ const EditLease = (props) => {
     const location = useLocation();
     const [contractFileTypes, setContractFileTypes] = useState([]);
     const leaseData = location.state.leaseData;
-    // console.log("---dhyey--- leasedata Documents- ", JSON.parse(leaseData.lease_documents))
+    // //console.log("---dhyey--- leasedata Documents- ", JSON.parse(leaseData.lease_documents))
     const [leaseDocuments, setLeaseDocuments] = useState(JSON.parse(leaseData.lease_documents));
     const [contractFiles, setContractFiles] = useState([]);
     const [contractName, setContractName] = useState(leaseData.contract_name)
@@ -55,7 +55,7 @@ const EditLease = (props) => {
     const [rentDue, setRentDue] = useState(rentDataFromLease[0].due_by ? rentDataFromLease[0].due_by : 0)
     const [availablePay, setAvailablePay] = useState(rentDataFromLease[0].available_topay ? rentDataFromLease[0].available_topay : 0)
     const [showMissingFileTypePrompt, setShowMissingFileTypePrompt] = useState(false);
-    // console.log("---dhyey---- inside edit lease- leasedata, ", leaseData);
+    // //console.log("---dhyey---- inside edit lease- leasedata, ", leaseData);
 
     // const checkFileTypeSelected = () => {
     //     for (let i = 0; i < contractFiles.length; i++) {
@@ -63,7 +63,7 @@ const EditLease = (props) => {
     //         return false; // Return false if the index is out of bounds
     //       }
     //       const fileType = contractFileTypes[i];
-    //       console.log("FILE TYPE: ", fileType);
+    //       //console.log("FILE TYPE: ", fileType);
     //       if (!fileType || fileType.trim() === "") {
     //         return false;
     //       }
@@ -74,7 +74,7 @@ const EditLease = (props) => {
 
     function formatDate(dateString) {
         const date = new Date(dateString);
-        // console.log('check date', dateString, date)
+        // //console.log('check date', dateString, date)
         const month = String(date.getMonth() + 1).padStart(2, "0");
         const day = String(date.getDate()).padStart(2, "0");
         const year = date.getFullYear();
@@ -225,13 +225,13 @@ const EditLease = (props) => {
 
         axios.post(`${APIConfig.baseURL.dev}/leaseApplication`, leaseApplicationFormData, headers)
             .then((response) => {
-                console.log('Data updated successfully');
+                //console.log('Data updated successfully');
                 navigate('/managerDashboard', {
                 });
             })
             .catch((error) => {
                 if (error.response) {
-                    console.log(error.response.data);
+                    //console.log(error.response.data);
                 }
             });
 
@@ -288,11 +288,11 @@ const EditLease = (props) => {
 
         axios.put(`${APIConfig.baseURL.dev}/leaseApplication`, leaseApplicationFormData, headers)
             .then((response) => {
-                console.log('Data updated successfully');
+                //console.log('Data updated successfully');
             })
             .catch((error) => {
                 if (error.response) {
-                    console.log(error.response.data);
+                    //console.log(error.response.data);
                 }
             });
 
@@ -321,7 +321,7 @@ const EditLease = (props) => {
                     }),
                 });
             } catch (error) {
-                console.log("Error in sending announcements:", error);
+                //console.log("Error in sending announcements:", error);
                 alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
             }
         };
@@ -844,7 +844,7 @@ function getTenantName(leaseData) {
 
     let tenants = leaseData.tenants ? JSON.parse(leaseData.tenants) : [];
 
-    console.log(tenants)
+    //console.log(tenants)
     name += tenants && tenants[0] ? tenants[0].tenant_first_name : "";
     if (name.length > 0) {
         name += " "

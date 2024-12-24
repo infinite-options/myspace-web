@@ -7,7 +7,7 @@ const ScrollToTop = () => {
 
   useEffect(() => {
     if (isMobile) {
-      console.log("Route changed:", location.pathname); // Debug
+      //console.log("Route changed:", location.pathname); // Debug
       window.scrollTo({
         top: 0,
         behavior: "smooth", 

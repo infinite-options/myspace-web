@@ -19,7 +19,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import NoImageAvailable from '../../../images/NoImageAvailable.png';
 
 export default function WorkerInvoiceView({maintenanceItem}){
-    console.log('inside workerinvoice---', maintenanceItem);
+    //console.log('inside workerinvoice---', maintenanceItem);
 
     const [scrollPosition, setScrollPosition] = useState(0);
 	const scrollRef = useRef(null);
@@ -72,7 +72,7 @@ export default function WorkerInvoiceView({maintenanceItem}){
     const renderParts = (item) => {
         try {
             const expenses = JSON.parse(item.quote_services_expenses);
-            // console.log('Expenses:', expenses);
+            // //console.log('Expenses:', expenses);
             const partsWithIDs = [];
             if (expenses.parts && expenses.parts.length > 0) {
                 expenses.parts.forEach((part, index) => {
@@ -83,7 +83,7 @@ export default function WorkerInvoiceView({maintenanceItem}){
                     });
                 });
 
-                // console.log('expenses.parts - ', expenses.parts);
+                // //console.log('expenses.parts - ', expenses.parts);
                 
 
                 const columns = [                    
@@ -168,7 +168,7 @@ export default function WorkerInvoiceView({maintenanceItem}){
                     </Grid>
                 );
             } else {
-                console.log('No parts found in expenses');
+                //console.log('No parts found in expenses');
             }
         } catch (error) {
             console.error('Error parsing quote_services_expenses:', error);
@@ -179,7 +179,7 @@ export default function WorkerInvoiceView({maintenanceItem}){
     const renderLabourHour = (item) => {
         try {
             const expenses = JSON.parse(item.quote_services_expenses);
-            // console.log('Expenses:', expenses);
+            // //console.log('Expenses:', expenses);
             const partsWithIDs = [];
             if (expenses.labor && expenses.labor.length > 0) {
                 expenses.labor.forEach((lb, index) => {
@@ -191,7 +191,7 @@ export default function WorkerInvoiceView({maintenanceItem}){
                     });
                 });
 
-                console.log('expenses.parts - ', partsWithIDs);
+                //console.log('expenses.parts - ', partsWithIDs);
 
                 const columns = [
                     {
@@ -268,7 +268,7 @@ export default function WorkerInvoiceView({maintenanceItem}){
                     </Grid>
                 );
             } else {
-                console.log('No Service found in expenses');
+                //console.log('No Service found in expenses');
             }
         } catch (error) {
             console.error('Error parsing quote_services_expenses:', error);

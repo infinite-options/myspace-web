@@ -7,7 +7,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { maskSSN, maskEIN, formattedPhoneNumber } from "../utils/privacyMasking";
 
 const ContactDetails = (props) => {
-  console.log("In ContractDetails.jsx");
+  //console.log("In ContractDetails.jsx");
   const navigate = useNavigate();
   const location = useLocation();
   const contactDetails = location.state.dataDetails;
@@ -16,9 +16,9 @@ const ContactDetails = (props) => {
   const index = location.state.index;
   const passedData = location.state.viewData;
 
-  console.log(contactDetails);
-  console.log(selectedData);
-  console.log(index);
+  //console.log(contactDetails);
+  //console.log(selectedData);
+  //console.log(index);
 
   const uniqueValues = {};
 
@@ -32,7 +32,7 @@ const ContactDetails = (props) => {
 
   const owner_object = Object.values(uniqueValues)[0];
 
-  console.log(owner_object);
+  //console.log(owner_object);
 
   const handleBackBtn = () => {
     navigate("/contacts");

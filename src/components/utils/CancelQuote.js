@@ -16,7 +16,7 @@ export default async function CancelQuote(maintenance_quote_uid, setShowSpinner 
             return true;
         }
     } catch (error){
-        console.log("error", error)
+        //console.log("error", error)
         return false;
     }
     setShowSpinner(false);

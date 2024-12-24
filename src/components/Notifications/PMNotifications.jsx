@@ -27,7 +27,7 @@ function PMNotifications(props) {
     const [showSpinner, setShowSpinner] = useState(false);
 
     useEffect(() => {
-        console.log("New Owner Inquiry UseEffect");
+        //console.log("New Owner Inquiry UseEffect");
         
         const fetchData = async () => {
             setShowSpinner(true);
@@ -37,7 +37,7 @@ function PMNotifications(props) {
             const response = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`);
             const announcementData = await response.json();
 
-            console.log(announcementData);
+            //console.log(announcementData);
             
             setAnnouncements(announcementData["received"]["result"]);
             
@@ -69,8 +69,8 @@ function PMNotifications(props) {
     }, []);
 
     useEffect(() => {
-        console.log("ANNOUNCEMENT DATA:");
-        console.log(announcements);
+        //console.log("ANNOUNCEMENT DATA:");
+        //console.log(announcements);
     }, [announcements]);
     
     const handleBackBtn = () => {

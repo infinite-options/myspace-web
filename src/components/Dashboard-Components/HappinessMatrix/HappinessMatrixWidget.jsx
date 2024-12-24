@@ -14,9 +14,9 @@ function HappinessMatrixWidget(props) {
   const { happinessData, contactDetails, page, setHappinessData, setOwnerUID, currentOwnerUID } = props;
   const [data, setData] = useState([]);
 
-  // console.log("happiness data initial", happinessData);
-  // console.log("happiness data initial1", happinessData.matrix_data);
-  // console.log("happiness data initial2", happinessData.matrix_data.result[0]);
+  // //console.log("happiness data initial", happinessData);
+  // //console.log("happiness data initial1", happinessData.matrix_data);
+  // //console.log("happiness data initial2", happinessData.matrix_data.result[0]);
 
   const getBorderColor = (x, y) => {
     let quarter;
@@ -57,14 +57,14 @@ function HappinessMatrixWidget(props) {
   };
 
   useEffect(() => {
-    // console.log("In UseEffect: ", happinessData.matrix_data.result);
+    // //console.log("In UseEffect: ", happinessData.matrix_data.result);
     setData(happinessData?.result);
 
     const matrixData = happinessData?.result;
 
     const points = [];
     matrixData?.forEach((owner) => {
-      // console.log("In get points: ", owner.vacancy_perc, owner.percent_delta_cashflow);
+      // //console.log("In get points: ", owner.vacancy_perc, owner.percent_delta_cashflow);
       let x = Number(owner.vacancy_perc);
       let y = Number(owner.percent_delta_cashflow);
 
@@ -82,14 +82,14 @@ function HappinessMatrixWidget(props) {
 
     const adjustedPoints = adjustPoints(points);
 
-    // console.log("points to plot", points);
+    // //console.log("points to plot", points);
     setPointsToPlot(adjustedPoints);
   }, [props.happinessData]);
 
   const [pointsToPlot, setPointsToPlot] = useState([]);
 
   useEffect(() => {
-    // console.log("ROHIT - pointsToPlot - ", pointsToPlot);
+    // //console.log("ROHIT - pointsToPlot - ", pointsToPlot);
   }, [pointsToPlot]);
 
   const axisLabelStyle = {
@@ -103,7 +103,7 @@ function HappinessMatrixWidget(props) {
   const [tooltipVisible, setTooltipVisible] = useState(false);
 
   const handlePointClick = (payload) => {
-    // console.log("In handlePointClick - payload: ", payload);
+    // //console.log("In handlePointClick - payload: ", payload);
     let { index } = payload;
     if (clickedIndex === index) {
       // setHiddenPoints((prevHiddenPoints) => [...prevHiddenPoints, index]);
@@ -263,17 +263,17 @@ export default HappinessMatrixWidget;
 
 // CustomImage Widget
 // const CustomImage = (props) => {
-//   // console.log("In CustomImage");
+//   // //console.log("In CustomImage");
 //   const navigate = useNavigate();
 //   const { cx, cy, payload, onClick, isClicked, isVisible, index, dataforhappiness, page, setIndex, contactDetails, happinessData } = props;
 
 //   const [isClickedState, setIsClickedState] = useState(isClicked);
 
 //   // useEffect(() => {
-//   //   console.log("isClickedState - ", isClickedState);
+//   //   //console.log("isClickedState - ", isClickedState);
 //   // }, [isClickedState]);
 
-//   // console.log("CustomImage - props - ", props);
+//   // //console.log("CustomImage - props - ", props);
 //   if (!isVisible) {
 //     return null;
 //   }
@@ -282,13 +282,13 @@ export default HappinessMatrixWidget;
 //   const outlineWidth = isClicked ? 4 : 2;
 
 //   const handleClick = (payload) => {
-//     console.log("input to  handleClick: ", payload);
+//     //console.log("input to  handleClick: ", payload);
 //     setIsClickedState(true);
-//     console.log("CustomImage - handeClick");
+//     //console.log("CustomImage - handeClick");
 //     if (onClick) {
 //       onClick(payload); // Call the passed onClick function
 //     }
-//     console.log("CustomImage - handleClick - payload - ", payload);
+//     //console.log("CustomImage - handleClick - payload - ", payload);
 //     if (page === "OwnerContactDetails") {
 //       const idx = contactDetails.findIndex((contact) => contact.owner_uid === payload?.owner_uid);
 //       setIndex(idx);
@@ -338,7 +338,7 @@ export default HappinessMatrixWidget;
 // function getPoints(data) {
 //   const points = [];
 //   data?.forEach((owner) => {
-//     // console.log("In get points: ", owner.vacancy_perc, owner.delta_cashflow_perc);
+//     // //console.log("In get points: ", owner.vacancy_perc, owner.delta_cashflow_perc);
 //     let x = Number(owner.vacancy_perc);
 //     let y = Number(owner.delta_cashflow_perc);
 
@@ -351,21 +351,21 @@ export default HappinessMatrixWidget;
 //     points.push(pointObject);
 //   });
 
-//   console.log("points to plot", points);
+//   //console.log("points to plot", points);
 //   setPointsToPlot(points);
 // }
 
 // useEffect(() => {
 
 //   const setting_matrix_data = () => {
-//     // console.log("In Setting Happiness Matrix", happiness_response);
+//     // //console.log("In Setting Happiness Matrix", happiness_response);
 //     // Transforming the data
-//     // console.log("setting_matrix_data - happiness_response - ", happiness_response);
+//     // //console.log("setting_matrix_data - happiness_response - ", happiness_response);
 //     // const transformedData = matrixData.result.map((vacancyItem, i) => {
-//       // console.log("In Happiness Matrix before vacancy");
-//       // console.log("setting_matrix_data - vacancyItem - ", vacancyItem);
+//       // //console.log("In Happiness Matrix before vacancy");
+//       // //console.log("setting_matrix_data - vacancyItem - ", vacancyItem);
 //       const deltaCashflowItem = matrixData.result.find((item) => item.owner_uid === vacancyItem.owner_uid);
-//       // console.log("setting_matrix_data - deltaCashflowItem - ", deltaCashflowItem);
+//       // //console.log("setting_matrix_data - deltaCashflowItem - ", deltaCashflowItem);
 
 //       let fullName = "";
 //       let ownerUID = "";
@@ -376,7 +376,7 @@ export default HappinessMatrixWidget;
 //       let actual_cashflow = 0;
 
 //       if (deltaCashflowItem) {
-//         // console.log("deltaCashflowItem - ", deltaCashflowItem);
+//         // //console.log("deltaCashflowItem - ", deltaCashflowItem);
 //         fullName = `${deltaCashflowItem.owner_first_name} ${deltaCashflowItem.owner_last_name}`;
 //         ownerUID = deltaCashflowItem.owner_uid;
 //         percent_delta_cashflow = deltaCashflowItem.percent_delta_cashflow;
@@ -400,8 +400,8 @@ export default HappinessMatrixWidget;
 //         quarter = 4;
 //       }
 
-//       // console.log("delta_cf_perc, vacancy_perc  - ", delta_cf_perc, vacancy_perc);
-//       // console.log("quarter - ", fullName, quarter);
+//       // //console.log("delta_cf_perc, vacancy_perc  - ", delta_cf_perc, vacancy_perc);
+//       // //console.log("quarter - ", fullName, quarter);
 
 //       let borderColor;
 
@@ -440,7 +440,7 @@ export default HappinessMatrixWidget;
 //     // });
 
 //     setData(transformedData);
-//     console.log('transformedData', transformedData);
+//     //console.log('transformedData', transformedData);
 //     shift(adjustPoints(transformedData));
 //   };
 //   setting_matrix_data();
@@ -453,9 +453,9 @@ export default HappinessMatrixWidget;
 // function overlap(owner1, owner2, margin) {
 //   const { vacancy_perc: x1, delta_cashflow_perc: y1 } = owner1;
 //   const { vacancy_perc: x2, delta_cashflow_perc: y2 } = owner2;
-//   console.log("checking distance1", x1, y1, x2, y2);
+//   //console.log("checking distance1", x1, y1, x2, y2);
 //   const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-//   console.log("checking distance", distance);
+//   //console.log("checking distance", distance);
 //   return distance < margin;
 // }
 
@@ -465,8 +465,8 @@ export default HappinessMatrixWidget;
 //     for (let j = i + 1; j < owners.length; j++) {
 //       while (overlap(owners[i], owners[j], margin)) {
 //         // Move points slightly in both x and y directions
-//         console.log("checking i", owners[i]);
-//         console.log("checking j", owners[j]);
+//         //console.log("checking i", owners[i]);
+//         //console.log("checking j", owners[j]);
 //         if (owners[j].vacancy_perc > -50) {
 //           owners[j].vacancy_perc -= 5;
 //         } else {

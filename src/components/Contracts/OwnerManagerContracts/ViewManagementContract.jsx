@@ -41,7 +41,7 @@ function formatDate(date) {
 }
 
 const ViewManagementContract = (props) => {
-  console.log("In ViewManagementContract ");
+  //console.log("In ViewManagementContract ");
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
@@ -78,26 +78,26 @@ const ViewManagementContract = (props) => {
   const [contractDocuments, setContractDocuments] = useState([]);  
 
   const handleViewButton = (link) => {
-    // console.log("LEASE DATA - documents: ", JSON.parse(leaseData.lease_documents));
+    // //console.log("LEASE DATA - documents: ", JSON.parse(leaseData.lease_documents));
     window.open(link, "_blank", "rel=noopener noreferrer");
   };
 
-  // console.log(location.state)
-  // console.log("leaseID", leaseID)
-  // console.log("propertyUID", propertyUID)
+  // //console.log(location.state)
+  // //console.log("leaseID", leaseID)
+  // //console.log("propertyUID", propertyUID)
   
   useEffect(() => {
     // const index = props.index;
     const index = returnIndex;
     setIndex(index);
-    // console.log("propertyList - ", propertyList);
-    // console.log("index - ", index);
+    // //console.log("propertyList - ", propertyList);
+    // //console.log("index - ", index);
 
     const contractFees = propertyList[index]?.contract_fees ? JSON.parse(propertyList[index]?.contract_fees) : [];
     setContractFees(contractFees);
 
     const contractDocuments = propertyList[index]?.contract_documents ? JSON.parse(propertyList[index]?.contract_documents) : [];
-    // console.log("--dhyey-- inside view manager lease - ", propertyList[index])
+    // //console.log("--dhyey-- inside view manager lease - ", propertyList[index])
     setContractDocuments(contractDocuments);
   }, [ returnIndex ]);  
 

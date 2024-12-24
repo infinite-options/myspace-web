@@ -42,9 +42,9 @@ export default function TenantMaintenanceItem({request}){
     }
 
     // function handleRequestDetailPage(item, color){
-    //     // console.log("handleRequestDetailPage", property_uid, maintenance_request_uid)
+    //     // //console.log("handleRequestDetailPage", property_uid, maintenance_request_uid)
     //     // navigate(`/app/tenantmaintenance/${property_uid}/${maintenance_request_uid}`)
-    //     console.log("handleRequestDetailPage color:", color)
+    //     //console.log("handleRequestDetailPage color:", color)
     //     navigate(`/tenantMaintenanceItem`, {
     //         state: {
     //             item, 

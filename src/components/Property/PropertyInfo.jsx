@@ -27,12 +27,12 @@ dayjs.extend(timezone);
 dayjs.tz.setDefault("America/Los_Angeles");
 
 const PropertyInfo = (props) => {
-  console.log("props in info", props);
+  //console.log("props in info", props);
   const location = useLocation();
   const navigate = useNavigate();
   const index = props.index;
   const property = props.data;
-  // console.log("PropertyInfo - property - ",property )
+  // //console.log("PropertyInfo - property - ",property )
   const status = props.status;
   const lease = props.lease;
   // const ppt_images = property.property_images.split(",");
@@ -40,8 +40,8 @@ const PropertyInfo = (props) => {
   const [showScheduler, setShowScheduler] = useState(false);
   const [schedulerDate, setSchedulerDate] = useState();
   const [buttonColor, setButtonColor] = useState("#3D5CAC");
-  console.log("Property: ", property);
-  console.log("Status: ", status);
+  //console.log("Property: ", property);
+  //console.log("Status: ", status);
 
   const [showRejectApplicationDialog, setshowRejectApplicationDialog] = useState(false);
 
@@ -86,7 +86,7 @@ const PropertyInfo = (props) => {
 
   const utilities = property.property_utilities ? JSON.parse(property.property_utilities) : [];
 
-  // console.log("utilities - ", utilities);
+  // //console.log("utilities - ", utilities);
 
   function parseImageData(data) {
     if (data === undefined) {
@@ -130,7 +130,7 @@ const PropertyInfo = (props) => {
   }
 
   function renderCorrectButtonText() {
-    console.log("ROHIT - 133 - status - ", status);
+    //console.log("ROHIT - 133 - status - ", status);
     if (status === "" || status === "WITHDRAWN" || status === "ENDED" || status === "REFUSED" || status === "RESCIND" || status === "REJECTED") {
       return "Apply Now";
     } else if (status === "NEW" || status === "RENEW PROCESSING") {
@@ -147,7 +147,7 @@ const PropertyInfo = (props) => {
   }
 
   function navigateToCorrectPage() {
-    console.log("ROHIT - 149 - status - ", status)
+    //console.log("ROHIT - 149 - status - ", status)
     if (status === "" || status === "NEW" || status === "WITHDRAWN" || status === "ENDED" || status === "RESCIND") {
       //navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } });
       if (status === "" && props.handleSelectProperty != null) {
@@ -207,7 +207,7 @@ const PropertyInfo = (props) => {
   };
 
   const getFormattedFeeFrequency = (frequency) => {
-    // console.log("getFormattedFeeFrequency(), frequency", frequency);
+    // //console.log("getFormattedFeeFrequency(), frequency", frequency);
     let freq = "";
     switch (frequency) {
       case "one_time":

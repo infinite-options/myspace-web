@@ -81,7 +81,7 @@ const FilterButtons = ({ propertyList, filteredItems, setFilteredItems, ...props
   });
 
   // useEffect(() => {
-  //   console.log(selectedFilters);
+  //   //console.log(selectedFilters);
   // }, [selectedFilters]);
 
   const areAnyFiltersSet = Object.values(selectedFilters).some((value) => value !== "");
@@ -306,15 +306,15 @@ const PropertyListings = ({ setRightPane, isMobile, setViewRHS, setListingsData,
   }
 
   function sortProperties(leaseData, propertyData) {
-    // console.log("Lease Data in PropertyListings.jsx: ", leaseData);
-    // console.log("Property Data in PropertyListings.jsx: ", propertyData);
+    // //console.log("Lease Data in PropertyListings.jsx: ", leaseData);
+    // //console.log("Property Data in PropertyListings.jsx: ", propertyData);
     if (JSON.stringify(leaseData) !== "{}") {
       var activePropertyArray = [];
       const leases = leaseData;
       var sortedProperties = [...propertyData]; // Create a shallow copy to avoid mutating the original array
       leases.forEach((lease) => {
         const appliedPropertyIndex = sortedProperties.findIndex((property) => property.property_uid === lease.property_id);
-        // console.log("applied to property at index", appliedPropertyIndex, lease.lease_status)
+        // //console.log("applied to property at index", appliedPropertyIndex, lease.lease_status)
         if (appliedPropertyIndex > -1) {
           const appliedProperty = sortedProperties.splice(appliedPropertyIndex, 1)[0];
           if (appliedProperty.lease_status === "ACTIVE" || appliedProperty.lease_status === "ACTIVE M2M") {
@@ -512,12 +512,12 @@ const PropertyListings = ({ setRightPane, isMobile, setViewRHS, setListingsData,
 };
 
 function PropertyCard({ data, status, leaseData, setRightPane, appliedData }) {
-  console.log("ROHIT - 510 - status - ", status);
-  console.log("ROHIT - 510 - appliedData - ", appliedData);
+  //console.log("ROHIT - 510 - status - ", status);
+  //console.log("ROHIT - 510 - appliedData - ", appliedData);
   const navigate = useNavigate();
   const [lease, setLease] = useState(leaseData || {});
-  // console.log("In PropertyCard: ", data);
-  // console.log("In PropertyCard: ", leaseData);
+  // //console.log("In PropertyCard: ", data);
+  // //console.log("In PropertyCard: ", leaseData);
   const property = data;
   const propertyImages = property?.property_images && JSON.parse(property?.property_images).length > 0 ? JSON.parse(property?.property_images) : [defaultPropertyImage];
   // const ppt_images = propertyImages.split(",");
@@ -551,7 +551,7 @@ function PropertyCard({ data, status, leaseData, setRightPane, appliedData }) {
   //   }
   // });
 
-  // console.log("Images before sorting", propertyImages, property);
+  // //console.log("Images before sorting", propertyImages, property);
   const favImage = property?.property_favorite_image;
   const sortedByFavImgLst = sortByFavImage(favImage, propertyImages)
 
@@ -677,7 +677,7 @@ function PropertyCard({ data, status, leaseData, setRightPane, appliedData }) {
         alignSelf: "flex-start",
         textTransform: "none",
       }}
-      onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
+      // onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
     >
       <Typography
         sx={{
@@ -705,7 +705,7 @@ function PropertyCard({ data, status, leaseData, setRightPane, appliedData }) {
         alignSelf: "flex-start",
         textTransform: "none",
       }}
-      onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
+      // onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
     >
       <Typography
         sx={{
@@ -734,7 +734,7 @@ function PropertyCard({ data, status, leaseData, setRightPane, appliedData }) {
         alignSelf: "flex-start",
         textTransform: "none",
       }}
-      onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
+      // onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
     >
       <Typography
         sx={{
@@ -763,7 +763,7 @@ function PropertyCard({ data, status, leaseData, setRightPane, appliedData }) {
         alignSelf: "flex-start",
         textTransform: "none",
       }}
-      onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
+      // onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
     >
       <Typography
         sx={{
@@ -792,7 +792,7 @@ function PropertyCard({ data, status, leaseData, setRightPane, appliedData }) {
         alignSelf: "flex-start",
         textTransform: "none",
       }}
-      onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
+      // onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
     >
       <Typography
         sx={{
@@ -820,7 +820,7 @@ function PropertyCard({ data, status, leaseData, setRightPane, appliedData }) {
         alignSelf: "flex-start",
         textTransform: "none",
       }}
-      onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
+      // onClick={() => console.log("Clicked Approved Button for Property", property, "with lease", lease, "and status", status)}
     >
       <Typography
         sx={{

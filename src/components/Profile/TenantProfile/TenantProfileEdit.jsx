@@ -19,8 +19,8 @@ const TenantProfileEditContext = createContext(null);
 
 // function TenantProfileEdit(props) {
 function TenantProfileEdit() {
-  console.log("In TenantProfileEdit");
-  //   console.log("Passed Props: ", props);
+  //console.log("In TenantProfileEdit");
+  //   //console.log("Passed Props: ", props);
 
   const navigate = useNavigate();
   const { getProfileId } = useUser();
@@ -70,7 +70,7 @@ function TenantProfileEdit() {
   const [occupantsDataComplete, setOccupantsDataComplete] = useState(true);
 
   const parseJSONFields = (obj) => {
-    console.log("In parseJSONFields");
+    //console.log("In parseJSONFields");
     if (!obj || typeof obj !== "object") {
       return;
     }
@@ -91,20 +91,20 @@ function TenantProfileEdit() {
   };
 
   const maskSSN = (ssn) => {
-    console.log("maskSSN");
+    //console.log("maskSSN");
     let maskedSSN = "***-**-" + ssn.slice(-4);
     return maskedSSN;
   };
 
   useEffect(() => {
-    console.log("In useEffect 89");
+    //console.log("In useEffect 89");
     setShowSpinner(true);
-    console.log("Execute axios get");
+    //console.log("Execute axios get");
     axios.get(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`).then((res) => {
-      console.log("res from tenantEditProfile ", res);
+      //console.log("res from tenantEditProfile ", res);
       let responseData = res.data.profile.result[0];
       parseJSONFields(responseData);
-      console.log("responseData.tenant_ssn:", responseData.tenant_ssn);
+      //console.log("responseData.tenant_ssn:", responseData.tenant_ssn);
       if (responseData.tenant_ssn) {
         responseData.tenant_ssn = maskSSN(responseData.tenant_ssn);
       } else {
@@ -156,7 +156,7 @@ function TenantProfileEdit() {
   }, []);
 
   useEffect(() => {
-    console.log("In useEffect 146");
+    //console.log("In useEffect 146");
     setModifiedData((prevData) => ({
       ...prevData,
       tenant_adult_occupants: tenantAdultOccupants,
@@ -168,10 +168,10 @@ function TenantProfileEdit() {
 
   // Handle changes to form fields
   const handleInputChange = (event) => {
-    console.log("Input changed");
+    //console.log("Input changed");
     const { name, value } = event.target;
-    console.log(name);
-    console.log(value);
+    //console.log(name);
+    //console.log(value);
 
     if (name === "tenant_first_name") {
       setTenantFirstName(value);
@@ -229,7 +229,7 @@ function TenantProfileEdit() {
 
   // RANJIT Modificatoins
   const profileFormData = new FormData();
-  console.log("modifiedData", modifiedData, typeof modifiedData);
+  //console.log("modifiedData", modifiedData, typeof modifiedData);
   // profileFormData.append("tenant_uid", useUser());
   // profileFormData.append("tenant_uid", '350-000017');
   // profileFormData.append("tenant_uid", getProfileId());
@@ -246,18 +246,18 @@ function TenantProfileEdit() {
 
   profileFormData.append("tenant_uid", getProfileId());
   for (const item of profileFormData) {
-    console.log(item[0], item[1]);
+    //console.log(item[0], item[1]);
   }
 
   // Handle form submission n- RANJIT
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("FORM SUBMITTED");
-    console.log(modifiedData);
+    //console.log("FORM SUBMITTED");
+    //console.log(modifiedData);
 
     profileFormData.append("tenant_documents", JSON.stringify(previouslyUploadedDocs));
     const hasMissingType = !checkFileTypeSelected();
-    console.log("HAS MISSING TYPE", hasMissingType);
+    //console.log("HAS MISSING TYPE", hasMissingType);
 
     if (hasMissingType) {
       setShowMissingFileTypePrompt(true);
@@ -265,7 +265,7 @@ function TenantProfileEdit() {
     }
 
     if (tenantFiles.length) {
-      console.log("---tenantFiles----", tenantFiles);
+      //console.log("---tenantFiles----", tenantFiles);
       setIsEdited(true);
       const documentsDetails = [];
       [...tenantFiles].forEach((file, i) => {
@@ -282,7 +282,7 @@ function TenantProfileEdit() {
       profileFormData.append("tenant_documents_details", JSON.stringify(documentsDetails));
     }
 
-    console.log("---deletedDocs----", deletedDocs);
+    //console.log("---deletedDocs----", deletedDocs);
     if (deletedDocs.length > 0) {
       profileFormData.append("deleted_documents", JSON.stringify(deletedDocs));
     }
@@ -298,19 +298,19 @@ function TenantProfileEdit() {
 
     // Make a PUT request with formData to update data on the backend
     if (isEdited) {
-      console.log("EDITED");
+      //console.log("EDITED");
       // axios.put(`${APIConfig.baseURL.dev}/profile`, modifiedData, headers)
       axios
         .put(`${APIConfig.baseURL.dev}/profile`, profileFormData, headers)
         // axios.put('http://localhost:4000/profile', profileFormData, headers)
         .then((response) => {
-          console.log("Data updated successfully");
+          //console.log("Data updated successfully");
           setIsEdited(false); // Reset the edit status
           navigate(-1);
         })
         .catch((error) => {
           if (error.response) {
-            console.log(error.response.data);
+            //console.log(error.response.data);
           }
         });
     } else {
@@ -350,7 +350,7 @@ function TenantProfileEdit() {
         return false; // Return false if the index is out of bounds
       }
       const fileType = tenantFileTypes[i];
-      console.log("FILE TYPE: ", fileType);
+      //console.log("FILE TYPE: ", fileType);
       if (!fileType || fileType.trim() === "") {
         return false;
       }
@@ -1451,8 +1451,8 @@ function ProfileTenantTable(props) {
   const setData = props.setData;
 
   useEffect(() => {
-    //console.log(`${field} --> ${data}`);
-    console.log(field, " --> ", data);
+    ////console.log(`${field} --> ${data}`);
+    //console.log(field, " --> ", data);
   }, [data]);
 
   const addRow = () => {
@@ -1461,7 +1461,7 @@ function ProfileTenantTable(props) {
       return acc;
     }, {});
 
-    console.log("new Row", newRow);
+    //console.log("new Row", newRow);
     if (data.length < 1) {
       setData([newRow]);
       return;
@@ -1475,7 +1475,7 @@ function ProfileTenantTable(props) {
     }
     setData((prevData) => {
       const newData = prevData.filter((_, i) => i !== index);
-      console.log("Deleted row at index ", index, ", new data: ", newData);
+      //console.log("Deleted row at index ", index, ", new data: ", newData);
       return newData;
     });
   };
@@ -1522,7 +1522,7 @@ function ProfileTenantTable(props) {
       </Grid>
 
       <Grid container columnSpacing={2} rowSpacing={2}>
-        {/* {console.log("debug", data[0])} */}
+        {/* {//console.log("debug", data[0])} */}
         {data && data.length > 0 ? (
           data.map((rowData, index) => (
             <>
@@ -1579,7 +1579,7 @@ function ProfileTableCell(props) {
   const setData = props.setData;
   const index = props.index;
 
-  // console.log("In ProfileTableCell: ",props)
+  // //console.log("In ProfileTableCell: ",props)
 
   if (!props.value && occupantsDataComplete) {
     setOccupantsDataComplete(false);
@@ -1593,9 +1593,9 @@ function ProfileTableCell(props) {
 
     const fieldName = props.field;
 
-    // console.log("In Debug Function")
-    // console.log(fieldName, value)
-    // console.log("prevData: ",prevData)
+    // //console.log("In Debug Function")
+    // //console.log(fieldName, value)
+    // //console.log("prevData: ",prevData)
 
     setData((prevData) => {
       const newData = [...prevData];
@@ -1603,7 +1603,7 @@ function ProfileTableCell(props) {
         ...newData[index],
         [props.subField]: value,
       };
-      console.log("Updated ", fieldName, " with ", newData);
+      //console.log("Updated ", fieldName, " with ", newData);
       return newData;
     });
   };

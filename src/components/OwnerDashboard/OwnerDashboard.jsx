@@ -78,7 +78,7 @@ export default function OwnerDashboard() {
   const [view, setView] = useState("dashboard");
   const [viewRHS, setViewRHS] = useState(false)
   const [showReferralWelcomeDialog, setShowReferralWelcomeDialog] = useState(false);
-  // console.log("getProfileId()", getProfileId());
+  // //console.log("getProfileId()", getProfileId());
 
   const fetchData = async () => {
     setShowSpinner(true); // Show spinner when data fetching starts
@@ -86,7 +86,7 @@ export default function OwnerDashboard() {
       setShowSpinner(false);
       return;
     }
-    // console.log("getProfileId*", getProfileId());
+    // //console.log("getProfileId*", getProfileId());
     // if (!getProfileId()) {
     //   let newRole = "OWNER";
     //   navigate("/addNewRole", { state: { user_uid: user.user_uid, newRole } });

@@ -62,15 +62,15 @@ const StatusText = (status) => {
 };
 
 export function RentDetailBody(props) {
-  console.log("In RentDetailBody props", props);
+  //console.log("In RentDetailBody props", props);
   let [rentDetailsData, propertyID, index, propertyStatus, propertiesData] = props.data;
-  console.log("rentDetailsData:", rentDetailsData);
-  console.log("propertyID:", propertyID);
-  console.log("index:", index);
-  console.log("propertyStatus:", propertyStatus);
+  //console.log("rentDetailsData:", rentDetailsData);
+  //console.log("propertyID:", propertyID);
+  //console.log("index:", index);
+  //console.log("propertyStatus:", propertyStatus);
 
-  //   console.log("In RentDetailBody actual rentDetailsData", rentDetailsData);
-  //   console.log("In RentDetailBody actual image", rentDetailsData.property_favorite_image);
+  //   //console.log("In RentDetailBody actual rentDetailsData", rentDetailsData);
+  //   //console.log("In RentDetailBody actual image", rentDetailsData.property_favorite_image);
   const [decrementIndex, incrementIndex] = props.updator;
   const [getProperties] = props.methods;
   // const property = getProperties(propertyStatus)[index];
@@ -79,8 +79,8 @@ export function RentDetailBody(props) {
   if (properties && properties.length > index) {
     property = properties[index];
   }
-  console.log("Property: ", property);
-  console.log("Rent Details: ", rentDetailsData);
+  //console.log("Property: ", property);
+  //console.log("Rent Details: ", rentDetailsData);
 
   const uid = property?.property_uid;
   if (Array.isArray(rentDetailsData)) rentDetailsData = rentDetailsData.filter((rent_detail) => rent_detail.property_uid === uid);
@@ -318,9 +318,9 @@ export function RentDetailBody(props) {
           </tr>
           {rentDetailsData.length > 0 &&
             rentDetailsData.map((rentDetails, i) => {
-              //   console.log("In map: ", rentDetails);
+              //   //console.log("In map: ", rentDetails);
               let image = rentDetails.property_favorite_image;
-              //   console.log("In map image: ", rentDetails.property_favorite_image);
+              //   //console.log("In map image: ", rentDetails.property_favorite_image);
 
               let month = rentDetails?.cf_month || 0; //These fields need revision
               let payment_date = rentDetails?.latest_date ?? "";
@@ -361,7 +361,7 @@ function PropertyRow(props) {
     if (m !== undefined) {
       return months[m - 1];
     } else {
-      console.log("ERROR: Month value is", m);
+      //console.log("ERROR: Month value is", m);
       return "Invalid Month";
     }
   }

@@ -23,31 +23,31 @@ import refundIcon from "../../Property/refundIcon.png"
 import CryptoJS from "crypto-js";
 
 // function maskSSNnew(ssn) {
-//   console.log("SSN input: ", ssn);
+//   //console.log("SSN input: ", ssn);
 //   // ssn = ssn.replace(/\D/g, "");
-//   // console.log("SSN: ", ssn);
+//   // //console.log("SSN: ", ssn);
 
 //   // Encrypted value (you'll get this from your data source)
 //   const encryptedValue = ssn; // Replace this with the actual encrypted value
 //   const encryptionKey = process.env.REACT_APP_ENKEY; // Your encryption key
-//   console.log("Encrypted Text:", encryptedValue); // This will log the decrypted SSN
-//   console.log("Encryption Key:", encryptionKey);
+//   //console.log("Encrypted Text:", encryptedValue); // This will log the decrypted SSN
+//   //console.log("Encryption Key:", encryptionKey);
 
 //   // Decrypting the value
 //   const decryptedBytes = CryptoJS.AES.decrypt(encryptedValue, encryptionKey);
 //   const decryptedText = decryptedBytes.toString(CryptoJS.enc.Utf8);
 
-//   console.log("Decrypted Text:", decryptedText); // This will log the decrypted SSN
+//   //console.log("Decrypted Text:", decryptedText); // This will log the decrypted SSN
 
 //   ssn = decryptedText.replace(/\D/g, "");
-//   console.log("SSN: ", ssn);
+//   //console.log("SSN: ", ssn);
 
 //   if (ssn.length !== 9) {
 //     console.error("Invalid SSN Length");
 //     return "<SSN-invalid length>";
 //   }
 
-//   console.log("***-**-" + ssn.slice(5));
+//   //console.log("***-**-" + ssn.slice(5));
 //   return "***-**-" + ssn.slice(5);
 //   // return `${ssn.slice(0, 3)}-${ssn.slice(3, 5)}-${ssn.slice(5)}`;
 // }
@@ -71,11 +71,11 @@ function groupByProperty(array) {
     }
   });
 
-  // console.log("propertyList - ", propertyList);
+  // //console.log("propertyList - ", propertyList);
 
   propertyList?.forEach((propertyID) => {
     const filteredTransactions = array.filter((item) => item.pur_property_id === propertyID);
-    // console.log("ROHIT - 56 - filteredTransactions - ", filteredTransactions);
+    // //console.log("ROHIT - 56 - filteredTransactions - ", filteredTransactions);
     const totalPurAmountDue = filteredTransactions?.reduce((acc, transaction) => {
       const purAmountDue = parseFloat(transaction.expected);
       if (transaction.pur_payer.startsWith("110")) {
@@ -96,8 +96,8 @@ function groupByProperty(array) {
       return acc + 0;
     }, 0);
 
-    // console.log("totalPurAmountDue - ", totalPurAmountDue);
-    // console.log("totalPaid - ", totalPaid);
+    // //console.log("totalPurAmountDue - ", totalPurAmountDue);
+    // //console.log("totalPaid - ", totalPaid);
 
     const deltaCashflow = totalPurAmountDue - totalPaid;
     const percentDeltaCashflow = (deltaCashflow / totalPurAmountDue) * 100;
@@ -109,13 +109,13 @@ function groupByProperty(array) {
       delta_cashflow: deltaCashflow,
       percent_delta_cashflow: percentDeltaCashflow.toFixed(2),
     };
-    // console.log("ROHIT - 56 - cashflowItem - ", cashflowItem);
+    // //console.log("ROHIT - 56 - cashflowItem - ", cashflowItem);
 
-    // console.log("ashflowItem - ", cashflowItem);
+    // //console.log("ashflowItem - ", cashflowItem);
     cashflowByProperty.push(cashflowItem);
   });
 
-  // console.log("cashflowByProperty - ", cashflowByProperty);
+  // //console.log("cashflowByProperty - ", cashflowByProperty);
 
   return cashflowByProperty;
 }
@@ -140,30 +140,30 @@ function groupByMonth(array) {
     }
   });
 
-  // console.log("groupByMonth - monthOwnerList - ", monthOwnerList);
+  // //console.log("groupByMonth - monthOwnerList - ", monthOwnerList);
 
   monthOwnerList?.forEach((monthYearOwner) => {
     const filteredTransactions = array.filter((item) => item.cf_month_num + item.cf_year + item.property_owner_id === monthYearOwner);
 
     // const filteredTransactions = array.filter( item => (item.cf_month_num + item.cf_year + item.pur_payer) === monthYearOwner || (item.cf_month_num + item.cf_year + item.pur_receiver) === monthYearOwner);
-    // console.log("groupByMonth - filteredTransactions - ", filteredTransactions);
+    // //console.log("groupByMonth - filteredTransactions - ", filteredTransactions);
 
     const cashflowMonthItem = {
       [`${monthYearOwner}`]: filteredTransactions,
     };
 
-    // console.log("cashflowMonthItem - ", cashflowMonthItem);
+    // //console.log("cashflowMonthItem - ", cashflowMonthItem);
     cashflowByMonth = {
       ...cashflowByMonth,
       ...cashflowMonthItem,
     };
   });
-  // console.log("cashflowByMonth - ", cashflowByMonth);
+  // //console.log("cashflowByMonth - ", cashflowByMonth);
 
   Object.keys(cashflowByMonth)?.forEach((monthYearOwner) => {
     const array = cashflowByMonth[monthYearOwner];
     const filteredTransactions = array;
-    // console.log("277 - filteredTransactions - ", filteredTransactions);
+    // //console.log("277 - filteredTransactions - ", filteredTransactions);
     const totalPurAmountDue = filteredTransactions?.reduce((acc, transaction) => {
       const purAmountDue = parseFloat(transaction.expected);
       if (transaction.pur_payer.startsWith("110")) {
@@ -184,8 +184,8 @@ function groupByMonth(array) {
       return acc + 0;
     }, 0);
 
-    console.log("277 - totalPurAmountDue - ", totalPurAmountDue);
-    console.log("277 - totalPaid - ", totalPaid);
+    //console.log("277 - totalPurAmountDue - ", totalPurAmountDue);
+    //console.log("277 - totalPaid - ", totalPaid);
 
     const deltaCashflow = totalPurAmountDue - totalPaid;
     const percentDeltaCashflow = (deltaCashflow / totalPurAmountDue) * 100;
@@ -198,11 +198,11 @@ function groupByMonth(array) {
       percent_delta_cashflow: percentDeltaCashflow.toFixed(2),
     };
 
-    // console.log("cashflowItem - ", cashflowItem);
+    // //console.log("cashflowItem - ", cashflowItem);
     cashflowByOwnerByMonth.push(cashflowItem);
   });
 
-  // console.log("277 - cashflowByOwnerByMonth - ", cashflowByOwnerByMonth);
+  // //console.log("277 - cashflowByOwnerByMonth - ", cashflowByOwnerByMonth);
 
   return cashflowByOwnerByMonth;
 }
@@ -220,27 +220,27 @@ function groupByPropertyByMonth(array) {
     }
   });
 
-  // console.log("groupByPropertyByMonth - ownermonthPropertyList - ", ownermonthPropertyList);
+  // //console.log("groupByPropertyByMonth - ownermonthPropertyList - ", ownermonthPropertyList);
 
   ownermonthPropertyList?.forEach((ownerMonthProperty) => {
     const filteredTransactions = array.filter((item) => item.property_owner_id + item.cf_month_num + item.cf_year + item.pur_property_id === ownerMonthProperty);
-    // console.log("groupByMonth - filteredTransactions - ", filteredTransactions);
+    // //console.log("groupByMonth - filteredTransactions - ", filteredTransactions);
 
     const cashflowMonthPropertyItem = {
       [`${ownerMonthProperty}`]: filteredTransactions,
     };
 
-    // console.log("cashflowMonthItem - ", cashflowMonthItem);
+    // //console.log("cashflowMonthItem - ", cashflowMonthItem);
     cashflowByPropertyByMonth = {
       ...cashflowByPropertyByMonth,
       ...cashflowMonthPropertyItem,
     };
   });
-  // console.log("cashflowByPropertyByMonth - ", cashflowByPropertyByMonth);
+  // //console.log("cashflowByPropertyByMonth - ", cashflowByPropertyByMonth);
 
   Object.keys(cashflowByPropertyByMonth)?.forEach((ownerMonthProperty) => {
     const filteredTransactions = cashflowByPropertyByMonth[ownerMonthProperty];
-    // console.log("277 - filteredTransactions - ", filteredTransactions);
+    // //console.log("277 - filteredTransactions - ", filteredTransactions);
     const totalPurAmountDue = filteredTransactions?.reduce((acc, transaction) => {
       const purAmountDue = parseFloat(transaction.expected);
       if (transaction.pur_payer.startsWith("110")) {
@@ -261,8 +261,8 @@ function groupByPropertyByMonth(array) {
       return acc + 0;
     }, 0);
 
-    // console.log("277 - totalPurAmountDue - ", totalPurAmountDue);
-    // console.log("277 - totalPaid - ", totalPaid);
+    // //console.log("277 - totalPurAmountDue - ", totalPurAmountDue);
+    // //console.log("277 - totalPaid - ", totalPaid);
 
     const deltaCashflow = totalPurAmountDue - totalPaid;
     const percentDeltaCashflow = (deltaCashflow / totalPurAmountDue) * 100;
@@ -275,11 +275,11 @@ function groupByPropertyByMonth(array) {
       percent_delta_cashflow: percentDeltaCashflow.toFixed(2),
     };
 
-    // console.log("cashflowItem - ", cashflowItem);
+    // //console.log("cashflowItem - ", cashflowItem);
     cashflowByOwnerByPropertyByMonth.push(cashflowItem);
   });
 
-  // console.log("235 - cashflowByOwnerByPropertyByMonth - ", cashflowByOwnerByPropertyByMonth);
+  // //console.log("235 - cashflowByOwnerByPropertyByMonth - ", cashflowByOwnerByPropertyByMonth);
 
   return cashflowByOwnerByPropertyByMonth;
 }
@@ -295,7 +295,7 @@ const OwnerContactDetailsHappinessMatrix = () => {
   const [happinessData, setHappinessData] = useState(location.state?.happinessData);
   const [ownerUID, setOwnerUID] = useState(location.state?.ownerUID);
   const navigatingFrom = location.state.navigatingFrom;
-  // console.log("navigatingFrom - ", navigatingFrom);
+  // //console.log("navigatingFrom - ", navigatingFrom);
   const cashflowDetails = happinessData?.delta_cashflow_details?.result;
   const cashflowDetailsByProperty = happinessData?.delta_cashflow_details_by_property?.result;
   const cashflowDetailsByPropertyByMonth = happinessData?.delta_cashflow_details_by_property_by_month?.result;
@@ -314,16 +314,16 @@ const OwnerContactDetailsHappinessMatrix = () => {
   const [showSpinner, setShowSpinner] = useState(true);
 
   // useEffect(() => {
-  //   console.log("index - ", index);
+  //   //console.log("index - ", index);
   //   if(contactDetails){
-  //     console.log("contactDetails - ", contactDetails);
-  //     console.log("contactDetails[index] - ", contactDetails[index]);
+  //     //console.log("contactDetails - ", contactDetails);
+  //     //console.log("contactDetails[index] - ", contactDetails[index]);
   //   }
   // }, [index]);
 
   // Effect for logging changes
   // useEffect(() => {
-  //   console.log("Happiness is change", happinessData);
+  //   //console.log("Happiness is change", happinessData);
   // }, [happinessData, ownerUID]);
 
   // const [happinessMatrixData, setHappinessMatrixData] = useState([]);
@@ -340,25 +340,25 @@ const OwnerContactDetailsHappinessMatrix = () => {
   // }, []);
 
   // useEffect(() => {
-  //   console.log("filteredCashflowDetails - ", filteredCashflowDetails);
+  //   //console.log("filteredCashflowDetails - ", filteredCashflowDetails);
   // }, [filteredCashflowDetails]);
 
   // useEffect(() => {
-  //   console.log("filteredCashflowDetailsByProperty", filteredCashflowDetailsByProperty)
+  //   //console.log("filteredCashflowDetailsByProperty", filteredCashflowDetailsByProperty)
   // }, [filteredCashflowDetailsByProperty]);
 
   // useEffect(() => {
-  //   console.log("filteredCashflowDetailsByPropertyByMonth", filteredCashflowDetailsByPropertyByMonth)
+  //   //console.log("filteredCashflowDetailsByPropertyByMonth", filteredCashflowDetailsByPropertyByMonth)
   // }, [filteredCashflowDetailsByPropertyByMonth]);
 
   useEffect(() => {
-    // console.log("cashflowData - ", cashflowData);
+    // //console.log("cashflowData - ", cashflowData);
     const groupedByProperty = groupByProperty(cashflowData);
     const groupedByMonth = groupByMonth(cashflowData);
     const groupedByPropertyByMonth = groupByPropertyByMonth(cashflowData);
     // const groupedByOwner = groupByOwner(groupedByMonth)
-    // console.log("groupedByProperty - ", groupedByProperty);
-    // console.log("groupedByMonth - ", groupedByMonth);
+    // //console.log("groupedByProperty - ", groupedByProperty);
+    // //console.log("groupedByMonth - ", groupedByMonth);
     setCashflowDataByProperty(groupedByProperty);
     // const groupedByOwner = groupByOwner(cashflowData);
     // setCashflowDataByOwner(groupedByOwner);
@@ -369,13 +369,13 @@ const OwnerContactDetailsHappinessMatrix = () => {
   useEffect(() => {
     if (!contactDetails || !(index >= 0) || !cashflowDataByOwner) return;
     const currentOwnerID = contactDetails[index]?.owner_uid;
-    console.log("contactDetails[index] - ", contactDetails[index]);
+    //console.log("contactDetails[index] - ", contactDetails[index]);
     if (currentOwnerID) {
       setFilteredCashflowDetailsByProperty(contactDetails ? cashflowDataByProperty?.filter((item) => item.property_owner_id === currentOwnerID) : []);
       setFilteredCashflowDetails(contactDetails ? cashflowDataByMonth?.filter((item) => item.property_owner_id === currentOwnerID) : []);
       // const groupedByMonth = groupByMonth(cashflowDataByOwner[currentOwnerID]);
 
-      // console.log("272 - groupedByMonth - ", groupedByMonth);
+      // //console.log("272 - groupedByMonth - ", groupedByMonth);
       // setFilteredCashflowDetails(groupedByMonth); //by month
       setFilteredCashflowDetailsByPropertyByMonth(contactDetails ? cashflowDataByPropertyByMonth?.filter((item) => item.property_owner_id === currentOwnerID) : []);
     }
@@ -384,7 +384,7 @@ const OwnerContactDetailsHappinessMatrix = () => {
   const fetchCashflowData = async () => {
     // setShowSpinner(true);
     // const url = `http://localhost:4000/contacts/${getProfileId()}`;
-    // console.log("Calling contacts endpoint");
+    // //console.log("Calling contacts endpoint");
     const url = `${APIConfig.baseURL.dev}/cashflowTransactions/${getProfileId()}/new`;
     try {
       const resp = await axios.get(url);
@@ -399,16 +399,16 @@ const OwnerContactDetailsHappinessMatrix = () => {
 
   const getDataFromAPI = async () => {
     // const url = `http://localhost:4000/contacts/${getProfileId()}`;
-    // console.log("Calling contacts endpoint");
+    // //console.log("Calling contacts endpoint");
     // setShowSpinner(true);
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
     try {
       const resp = await axios.get(url);
       const data = resp.data["management_contacts"];
       const ownerContacts = data["owners"];
-      // console.log("ownerContacts - ", ownerContacts);
+      // //console.log("ownerContacts - ", ownerContacts);
       setContactDetails(ownerContacts);
-      // console.log("Set Contact Details 1", ownerContacts);
+      // //console.log("Set Contact Details 1", ownerContacts);
     } catch (e) {
       console.error(e);
     }
@@ -416,9 +416,9 @@ const OwnerContactDetailsHappinessMatrix = () => {
   };
 
   useEffect(() => {
-    // console.log("ownerUID - ", ownerUID);
+    // //console.log("ownerUID - ", ownerUID);
     const index = contactDetails?.findIndex((contact) => contact.owner_uid === ownerUID);
-    // console.log("setting Owner Index: ", index);
+    // //console.log("setting Owner Index: ", index);
 
     if (index >= 0) {
       setIndex(index);
@@ -433,7 +433,7 @@ const OwnerContactDetailsHappinessMatrix = () => {
       // setContactsTab("Owner");
     } else if (navigatingFrom === "PMContacts") {
       setContactDetails(location.state.dataDetails);
-      // console.log("Set Contact Details 2");
+      // //console.log("Set Contact Details 2");
       // setContactsTab(location.state.tab);
     }
     
@@ -452,8 +452,8 @@ const OwnerContactDetailsHappinessMatrix = () => {
   // }, [contactDetails, index, cashflowDetails, cashflowDetailsByProperty, cashflowDetailsByPropertyByMonth]);
 
   // const setting_matrix_data = (happiness_response) => {
-  //   console.log("setting_matrix_data - happiness_response - ", happiness_response);
-  //   console.log("NAVIGATING FROM", navigatingFrom);
+  //   //console.log("setting_matrix_data - happiness_response - ", happiness_response);
+  //   //console.log("NAVIGATING FROM", navigatingFrom);
 
   //   return happiness_response.HappinessMatrix.vacancy.result.map((vacancyItem, i) => {
   //     const deltaCashflowItem = happiness_response.HappinessMatrix.delta_cashflow.result.find((item) => item.owner_uid === vacancyItem.owner_uid);
@@ -599,11 +599,11 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
   const [filteredContactsData, setFilteredContactsData] = useState([]);
 
   // useEffect(() => {
-  //   console.log("AllContacts - contactsData - ", contactsData);
+  //   //console.log("AllContacts - contactsData - ", contactsData);
   // }, [contactsData]);
 
   // useEffect(() => {
-  //   console.log("AllContacts - filteredContactsData - ", filteredContactsData);
+  //   //console.log("AllContacts - filteredContactsData - ", filteredContactsData);
   // }, [filteredContactsData]);
 
   useEffect(() => {
@@ -613,18 +613,18 @@ const AllContacts = ({ data, currentIndex, setIndex }) => {
         entities: contact.entities != null ? JSON.parse(contact.entities) : [],
       };
     });
-    // console.log("AllContacts - processedData -", processedData);
+    // //console.log("AllContacts - processedData -", processedData);
     setContactsData(processedData);
     setFilteredContactsData(processedData);
   }, [data]);
 
   useEffect(() => {
-    // console.log("searchTerm - ", searchTerm);
+    // //console.log("searchTerm - ", searchTerm);
     if (searchTerm && searchTerm !== "") {
       const filteredValues = contactsData?.filter((item) => {
         return item?.owner_first_name?.toLowerCase().includes(searchTerm.toLowerCase()) || item?.owner_last_name?.toLowerCase().includes(searchTerm.toLowerCase());
       });
-      // console.log("Set FilteredContactsData 2");
+      // //console.log("Set FilteredContactsData 2");
       setFilteredContactsData(filteredValues);
     }
   }, [searchTerm, contactsData]);
@@ -717,9 +717,9 @@ const OwnerContactDetail = ({
   let navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  console.log("OwnerContactDetail - filteredCashflowDetails - ", filteredCashflowDetails);
-  console.log("OwnerContactDetail - filteredCashflowDetailsByProperty - ", filteredCashflowDetailsByProperty);
-  console.log("OwnerContactDetail - filteredCashflowDetailsByPropertyByMonth - ", filteredCashflowDetailsByPropertyByMonth);
+  //console.log("OwnerContactDetail - filteredCashflowDetails - ", filteredCashflowDetails);
+  //console.log("OwnerContactDetail - filteredCashflowDetailsByProperty - ", filteredCashflowDetailsByProperty);
+  //console.log("OwnerContactDetail - filteredCashflowDetailsByPropertyByMonth - ", filteredCashflowDetailsByPropertyByMonth);
 
   const getPropertiesData = async () => {
     const url = `${APIConfig.baseURL.dev}/properties/${getProfileId()}`;
@@ -737,7 +737,7 @@ const OwnerContactDetail = ({
 
   const getContractsData = async () => {
     // const url = `http://localhost:4000/contracts/${getProfileId()}`;
-    // console.log("Calling contRacts endpoint");
+    // //console.log("Calling contRacts endpoint");
     const url = `${APIConfig.baseURL.dev}/contracts/${getProfileId()}`;
 
     await axios
@@ -945,7 +945,7 @@ const OwnerContactDetail = ({
 };
 
 const OwnerInformation = ({ contactDetails, index }) => {
-  // console.log("In OwnerInformation: ", index, contactDetails);
+  // //console.log("In OwnerInformation: ", index, contactDetails);
   const [paymentMethods, setPaymentMethods] = useState([]);
 
   useEffect(() => {
@@ -1058,7 +1058,7 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
   const sentContracts = contractsData?.filter((contract) => contract.owner_uid === ownerUID && contract.contract_status === "SENT");
   const newContracts = contractsData?.filter((contract) => contract.owner_uid === ownerUID && contract.contract_status === "NEW");
 
-  // console.log("Active properties:", activeProperties);
+  // //console.log("Active properties:", activeProperties);
 
   return (
     <>
@@ -1276,7 +1276,7 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
   // }
 
   function getPaymentStatusColor(paymentStatus, property) {
-    // console.log("214 - property - ", property);
+    // //console.log("214 - property - ", property);
     if (
       (paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") &&
       property?.property_available_to_rent &&

@@ -19,7 +19,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import NoImageAvailable from '../../../images/NoImageAvailable.png';
 
 export default function NewManagerInvoiceView({maintenanceItem}){
-    console.log('inside Manager workerinvoice---', maintenanceItem);
+    //console.log('inside Manager workerinvoice---', maintenanceItem);
 
     const [scrollPosition, setScrollPosition] = useState(0);
 	const scrollRef = useRef(null);
@@ -30,11 +30,11 @@ export default function NewManagerInvoiceView({maintenanceItem}){
 
     useEffect(()=>{
         const quotes = JSON.parse(maintenanceItem?.quote_info)
-        // console.log(" --- quotes - ", quotes)
+        // //console.log(" --- quotes - ", quotes)
 
         const curr_quote = quotes?.find(quote => quote.quote_status === "FINISHED");
 
-        // console.log(" --- finishde - ", curr_quote)
+        // //console.log(" --- finishde - ", curr_quote)
         
         if(curr_quote){
             
@@ -85,7 +85,7 @@ export default function NewManagerInvoiceView({maintenanceItem}){
     const renderParts = (item) => {
         try {
             const expenses = item.quote_services_expenses;
-            // console.log('Expenses:', expenses);
+            // //console.log('Expenses:', expenses);
             const partsWithIDs = [];
             if (expenses.parts && expenses.parts.length > 0) {
                 expenses.parts.forEach((part, index) => {
@@ -96,7 +96,7 @@ export default function NewManagerInvoiceView({maintenanceItem}){
                     });
                 });
 
-                // console.log('expenses.parts - ', expenses.parts);
+                // //console.log('expenses.parts - ', expenses.parts);
                 
 
                 const columns = [                    
@@ -181,7 +181,7 @@ export default function NewManagerInvoiceView({maintenanceItem}){
                     </Grid>
                 );
             } else {
-                console.log('No parts found in expenses');
+                //console.log('No parts found in expenses');
             }
         } catch (error) {
             console.error('Error parsing quote_services_expenses:', error);
@@ -192,7 +192,7 @@ export default function NewManagerInvoiceView({maintenanceItem}){
     const renderLabourHour = (item) => {
         try {
             const expenses = item.quote_services_expenses;
-            // console.log('Expenses:', expenses);
+            // //console.log('Expenses:', expenses);
             const partsWithIDs = [];
             if (expenses.labor && expenses.labor.length > 0) {
                 expenses.labor.forEach((lb, index) => {
@@ -204,7 +204,7 @@ export default function NewManagerInvoiceView({maintenanceItem}){
                     });
                 });
 
-                console.log('expenses.parts - ', partsWithIDs);
+                //console.log('expenses.parts - ', partsWithIDs);
 
                 const columns = [
                     {
@@ -281,7 +281,7 @@ export default function NewManagerInvoiceView({maintenanceItem}){
                     </Grid>
                 );
             } else {
-                console.log('No Service found in expenses');
+                //console.log('No Service found in expenses');
             }
         } catch (error) {
             console.error('Error parsing quote_services_expenses:', error);

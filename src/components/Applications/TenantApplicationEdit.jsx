@@ -44,7 +44,7 @@ import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/
 
 export default function TenantApplicationEdit(props) {
     const { getList } = useContext(ListsContext);
-    //   console.log("44 - props", props);
+    //   //console.log("44 - props", props);
     // const [adults, setAdults] = useState(adultOccupants? adultOccupants : []);
     // const [children, setChildren] = useState(childOccupants? childOccupants : []);
     // const [pets, setPets] = useState(petOccupants? petOccupants : []);
@@ -92,14 +92,14 @@ export default function TenantApplicationEdit(props) {
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     //   useEffect(() => {
-    //     console.log("74 - lease - ", lease);
+    //     //console.log("74 - lease - ", lease);
     //   }, [lease]);
 
     // const getListDetails = async () => {
     //     try {
     //         const response = await fetch(`${APIConfig.baseURL.dev}/lists`);
     //         if (!response.ok) {
-    //             console.log("Error fetching lists data");
+    //             //console.log("Error fetching lists data");
     //         }
     //         const responseJson = await response.json();
     //         const relationships = responseJson.result.filter((res) => res.list_category === "relationships");
@@ -107,7 +107,7 @@ export default function TenantApplicationEdit(props) {
     //         setRelationships(relationships);
     //         setStates(states);
     //     } catch (error) {
-    //         console.log(error);
+    //         //console.log(error);
     //     }
     // };
 
@@ -202,7 +202,7 @@ export default function TenantApplicationEdit(props) {
             let info = JSON.parse(lease[0].lease_vehicles);
             setVehicles(info);
             // for (const vehicle of info){
-            //     console.log(vehicle)
+            //     //console.log(vehicle)
             // }
         }
         // let info = tenantProfile && tenantProfile.tenant_vehicle_info ? JSON.parse(tenantProfile.tenant_vehicle_info) : [];
@@ -214,11 +214,11 @@ export default function TenantApplicationEdit(props) {
             let info = tenantProfile && tenantProfile.tenant_adult_occupants ? JSON.parse(tenantProfile.tenant_adult_occupants) : [];
             setAdultOccupants(info);
         } else {
-            // console.log(tenantProfile?.tenant_adult_occupants)
+            // //console.log(tenantProfile?.tenant_adult_occupants)
             let info = JSON.parse(lease[0].lease_adults);
             setAdultOccupants(info);
             // for (const occupant of info){
-            //     console.log(occupant)
+            //     //console.log(occupant)
             // }
         }
         // let info = tenantProfile && tenantProfile.tenant_adult_occupants ? JSON.parse(tenantProfile.tenant_adult_occupants) : [];
@@ -233,7 +233,7 @@ export default function TenantApplicationEdit(props) {
             let info = JSON.parse(lease[0].lease_pets);
             setPetOccupants(info);
             // for (const pet of info){
-            //     console.log(pet)
+            //     //console.log(pet)
             // }
         }
         // let info = tenantProfile && tenantProfile.tenant_pet_occupants ? JSON.parse(tenantProfile.tenant_pet_occupants) : [];
@@ -248,7 +248,7 @@ export default function TenantApplicationEdit(props) {
             let info = JSON.parse(lease[0].lease_children);
             setChildOccupants(info);
             // for (const child of info){
-            //     console.log(child)
+            //     //console.log(child)
             // }
         }
         // let info = tenantProfile && tenantProfile.tenant_children_occupants ? JSON.parse(tenantProfile.tenant_children_occupants) : [];
@@ -264,12 +264,12 @@ export default function TenantApplicationEdit(props) {
         } else {
             info = lease[0]?.lease_income ? JSON.parse(lease[0].lease_income) : [];
         }
-        // console.log("245 - info - ", info);
+        // //console.log("245 - info - ", info);
         setEmploymentData(info);
     }
 
     useEffect(() => {
-        console.log("fetch from lease endpoint");
+        //console.log("fetch from lease endpoint");
         const fetchData = async () => {
             try {
                 setShowSpinner(true); // Start the spinner before loading data
@@ -279,7 +279,7 @@ export default function TenantApplicationEdit(props) {
 
                 const fetchedLease = leaseResponse.data["Lease_Details"].result.filter((lease) => lease.lease_uid === props.lease.lease_uid);
 
-                console.log("fetched lease - ", fetchedLease);
+                //console.log("fetched lease - ", fetchedLease);
                 setLease(fetchedLease);
 
                 // Fetch tenant profile information asynchronously
@@ -288,11 +288,11 @@ export default function TenantApplicationEdit(props) {
                 setTenantProfile(profileData.profile.result[0]);
 
                 // Set other properties after all data is fetched
-                console.log("property data --- ", props.data);
-                console.log("listing data --- ", props.listingsData);
+                //console.log("property data --- ", props.data);
+                //console.log("listing data --- ", props.listingsData);
                 // const utilities = JSON.parse(props.data?.property_utilities).length > 0 ? JSON.parse(props.data?.property_utilities) : []
                 const currentPropertyListing = props?.listingsData?.find((listing) => listing.property_uid === props.data.property_uid); // listing data for the current property
-                // console.log("247 - currentPropertyListing - ", currentPropertyListing);
+                // //console.log("247 - currentPropertyListing - ", currentPropertyListing);
                 let utilities = [];
                 if (currentPropertyListing != null && currentPropertyListing.property_utilities != null) {
                     utilities = JSON.parse(currentPropertyListing.property_utilities);
@@ -324,7 +324,7 @@ export default function TenantApplicationEdit(props) {
     }, [props.data, props.reload]);
 
     useEffect(() => {
-        // console.log("calling profileData useEffect");
+        // //console.log("calling profileData useEffect");
 
         // setIsSave(false);
         // setProfileData();
@@ -334,7 +334,7 @@ export default function TenantApplicationEdit(props) {
             const data = await response.json();
             const tenantProfileData = data.profile.result[0];
             setTenantProfile(tenantProfileData);
-            console.log("tenantProfileData", tenantProfileData);
+            //console.log("tenantProfileData", tenantProfileData);
         };
         getTenantProfileInformation();
 
@@ -344,7 +344,7 @@ export default function TenantApplicationEdit(props) {
     }, []);
 
     useEffect(() => {
-        // console.log("---dhyey--- props data for property - ", lease)
+        // //console.log("---dhyey--- props data for property - ", lease)
         setShowSpinner(true);
 
         if (props?.vehicles) {
@@ -400,7 +400,7 @@ export default function TenantApplicationEdit(props) {
     }, [lease, tenantProfile]);
 
     const editOrUpdateLease = async () => {
-        // console.log('--dhyey-- inside edit lease - ', modifiedData);
+        // //console.log('--dhyey-- inside edit lease - ', modifiedData);
         try {
             if (modifiedData.length > 0) {
                 setShowSpinner(true);
@@ -416,9 +416,9 @@ export default function TenantApplicationEdit(props) {
                 // Now set pets, adult, document, children all fields if they change
 
                 modifiedData.forEach((item) => {
-                    // console.log(`Key: ${item.key}`);
+                    // //console.log(`Key: ${item.key}`);
                     // if (item.key === "uploadedFiles") {
-                    //     console.log('uploadedFiles', item.value);
+                    //     //console.log('uploadedFiles', item.value);
                     //     if (item.value.length) {
                     //         // const documentsDetails = [];
                     //         // [...item.value].forEach((file, i) => {
@@ -467,7 +467,7 @@ export default function TenantApplicationEdit(props) {
 
                 // axios.put('${APIConfig.baseURL.dev}/leaseApplication', leaseApplicationFormData, headers)
                 //     .then((response) => {
-                //         console.log('Data updated successfullyyy', response);
+                //         //console.log('Data updated successfullyyy', response);
                 //         showSnackbar("Your lease application has been successfully updated.", "success");
                 //         setIsReload((prev) => !prev);
                 //         setShowSpinner(false);
@@ -476,7 +476,7 @@ export default function TenantApplicationEdit(props) {
                 //         setShowSpinner(false);
                 //         showSnackbar("Cannot update the lease application. Please try again", "error");
                 //         if (error.response) {
-                //             console.log(error.response.data);
+                //             //console.log(error.response.data);
                 //         }
                 //     });
                 setShowSpinner(false);
@@ -488,13 +488,13 @@ export default function TenantApplicationEdit(props) {
         } catch (error) {
             // showSnackbar("Cannot update the lease application. Please try again", "error");
             openDialog("Error", `Cannot update the lease application. Please try again`, "error");
-            console.log("Cannot Update the lease application", error);
+            //console.log("Cannot Update the lease application", error);
             setShowSpinner(false);
         }
     };
 
     // const editOrUpdateTenant = async () => {
-    //     console.log("inside editOrUpdateTenant", modifiedData);
+    //     //console.log("inside editOrUpdateTenant", modifiedData);
     //     try {
     //         if (modifiedData.length > 0) {
     //             setShowSpinner(true);
@@ -508,9 +508,9 @@ export default function TenantApplicationEdit(props) {
     //             const profileFormData = new FormData();
 
     //             modifiedData.forEach((item) => {
-    //                 console.log(`Key: ${item.key}`);
+    //                 //console.log(`Key: ${item.key}`);
     //                 if (item.key === "uploadedFiles") {
-    //                     console.log("uploadedFiles", item.value);
+    //                     //console.log("uploadedFiles", item.value);
     //                     if (item.value.length) {
     //                         const documentsDetails = [];
     //                         [...item.value].forEach((file, i) => {
@@ -536,7 +536,7 @@ export default function TenantApplicationEdit(props) {
     //             axios
     //                 .put("${APIConfig.baseURL.dev}/profile", profileFormData, headers)
     //                 .then((response) => {
-    //                     console.log("Data updated successfully", response);
+    //                     //console.log("Data updated successfully", response);
     //                     showSnackbar("Your profile has been successfully updated.", "success");
     //                     setIsReload((prev) => !prev);
     //                     setShowSpinner(false);
@@ -545,7 +545,7 @@ export default function TenantApplicationEdit(props) {
     //                     setShowSpinner(false);
     //                     showSnackbar("Cannot update your profile. Please try again", "error");
     //                     if (error.response) {
-    //                         console.log(error.response.data);
+    //                         //console.log(error.response.data);
     //                     }
     //                 });
     //             setShowSpinner(false);
@@ -555,7 +555,7 @@ export default function TenantApplicationEdit(props) {
     //         }
     //     } catch (error) {
     //         showSnackbar("Cannot update the lease!!. Please try again", "error");
-    //         console.log("Cannot Update the lease", error);
+    //         //console.log("Cannot Update the lease", error);
     //         setShowSpinner(false);
     //     }
     // };
@@ -590,7 +590,7 @@ export default function TenantApplicationEdit(props) {
                 const leaseApplicationFormData = new FormData();
 
                 // Now set pets, adult, document, children all fields if they change
-                // console.log("526 - status - ", status);
+                // //console.log("526 - status - ", status);
 
                 if (status === "PROCESSING") {
                     leaseApplicationFormData.append("lease_status", "NEW");
@@ -599,9 +599,9 @@ export default function TenantApplicationEdit(props) {
                 }
 
                 // modifiedData.forEach(item => {
-                //     // console.log(`Key: ${item.key}`);
+                //     // //console.log(`Key: ${item.key}`);
                 //     // if (item.key === "uploadedFiles") {
-                //     //     console.log('uploadedFiles', item.value);
+                //     //     //console.log('uploadedFiles', item.value);
                 //     //     if (item.value.length) {
                 //     //         // const documentsDetails = [];
                 //     //         // [...item.value].forEach((file, i) => {
@@ -677,22 +677,22 @@ export default function TenantApplicationEdit(props) {
                 leaseApplicationFormData.append("lease_pets", JSON.stringify(petOccupants));
                 leaseApplicationFormData.append("lease_vehicles", JSON.stringify(vehicles));
 
-                // console.log("selected jobs", selectedJobs);
+                // //console.log("selected jobs", selectedJobs);
 
                 if (selectedJobs?.length > 0) {
-                    // console.log(JSON.stringify(selectedJobs));
+                    // //console.log(JSON.stringify(selectedJobs));
                     leaseApplicationFormData.append("lease_income", JSON.stringify(selectedJobs));
                 } else if (selectedJobs?.length === 0 && JSON.parse(lease[0]?.lease_income).length > 0) {
                     leaseApplicationFormData.append("lease_income", JSON.stringify(selectedJobs));
                 }
 
-                // console.log(lease_uid)
+                // //console.log(lease_uid)
                 leaseApplicationFormData.append("lease_uid", lease[0].lease_uid); // Here is the problem when upload new docs because there is no lease right now and it require lease_uid
 
                 axios
                     .put(`${APIConfig.baseURL.dev}/leaseApplication`, leaseApplicationFormData, headers)
                     .then((response) => {
-                        // console.log('Data updated successfullyyy', response);
+                        // //console.log('Data updated successfullyyy', response);
                         // showSnackbar("Your lease application has been successfully updated.", "success");
                         openDialog("Success", `Your lease application has been successfully updated`, "success");
                         setShowSpinner(false);
@@ -706,7 +706,7 @@ export default function TenantApplicationEdit(props) {
                             // props.setReload((prev) => !prev);
                         }
 
-                        // console.log("--DEBUG--- ")
+                        // //console.log("--DEBUG--- ")
                         props.setReload((prev) => !prev);
                         // Navigate("/tenantDashboard")
                     })
@@ -715,7 +715,7 @@ export default function TenantApplicationEdit(props) {
                         // showSnackbar("Cannot update the lease application. Please try again", "error");
                         openDialog("Error", `Cannot update the lease application. Please try again`, "error");
                         if (error.response) {
-                            console.log(error.response.data);
+                            //console.log(error.response.data);
                         }
                     });
                 setShowSpinner(false);
@@ -731,7 +731,7 @@ export default function TenantApplicationEdit(props) {
         } catch (error) {
             // showSnackbar("Cannot update the lease application. Please try again", "error");
             openDialog("Error", `Cannot update the lease application. Please try again`, "error");
-            console.log("Cannot Update the lease application", error);
+            //console.log("Cannot Update the lease application", error);
             setShowSpinner(false);
         }
     };
@@ -778,21 +778,21 @@ export default function TenantApplicationEdit(props) {
     const handleSaveButton = async (e) => {
         e.preventDefault();
 
-        console.log("status - ", status);
+        //console.log("status - ", status);
         if (status == null) {
-            console.log("tenant creating new lease", status);
+            //console.log("tenant creating new lease", status);
         } else if (status === "NEW" || status === "PROCESSING") {
-            console.log("tenant updating lease", status);
+            //console.log("tenant updating lease", status);
         } else {
-            console.log("tenant renewing lease", status);
+            //console.log("tenant renewing lease", status);
         }
         if (status != null) {
-            console.log("lease - ", lease[0]);
+            //console.log("lease - ", lease[0]);
         }
         // if(lease == null) {
-        //     console.log("tenant creating new lease");
+        //     //console.log("tenant creating new lease");
         // } else {
-        //     console.log("tenant updating / renewing new lease");
+        //     //console.log("tenant updating / renewing new lease");
         // }
         if (lease[0]?.lease_uid == null || status === null || status === "" || status === "WITHDRAWN" || status === "REJECTED" || status === "REFUSED" || status === "RESCIND") {
             if (props.setFirstPage) {
@@ -807,7 +807,7 @@ export default function TenantApplicationEdit(props) {
         }
 
         // Dhyey Code
-        // console.log(status , " lease uid - ", lease[0])
+        // //console.log(status , " lease uid - ", lease[0])
         // if (lease[0]?.lease_uid == null || status === null || status === "" || status === "RENEW") {
         //     if(props.setFirstPage){
         //         props.setFirstPage(false)
@@ -827,7 +827,7 @@ export default function TenantApplicationEdit(props) {
         //     extraUploadDocumentType: extraUploadDocumentType, // Uploaded file types
         //     deleteDocuments: deleteDocuments, // Deleted files
         // };
-        // console.log("updated state", updatedState);
+        // //console.log("updated state", updatedState);
         // props.setRightPane?.({ type: "tenantApplication", state: updatedState });
     };
 
@@ -835,7 +835,7 @@ export default function TenantApplicationEdit(props) {
     const getDecryptedSSN = (encryptedSSN) => {
         try {
             const decrypted = AES.decrypt(encryptedSSN, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8);
-            // console.log("getDecryptedSSN - decrypted - ", decrypted.toString());
+            // //console.log("getDecryptedSSN - decrypted - ", decrypted.toString());
             return "***-**-" + decrypted.toString().slice(-4);
         } catch (error) {
             console.error("Error decrypting SSN:", error);
@@ -860,7 +860,7 @@ export default function TenantApplicationEdit(props) {
             withdrawCurrentLeaseData.append("lease_renew_status", "WITHDRAWN");
 
             // withdrawLeaseData.forEach((value, key) => {
-            //   console.log(`${key}: ${value}`);
+            //   //console.log(`${key}: ${value}`);
             // });
 
             const withdrawCurrentLeaseResponse = fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
@@ -875,7 +875,7 @@ export default function TenantApplicationEdit(props) {
         withdrawNewLeaseData.append("lease_status", "WITHDRAWN");
 
         // withdrawLeaseData.forEach((value, key) => {
-        //   console.log(`${key}: ${value}`);
+        //   //console.log(`${key}: ${value}`);
         // });
 
         const withdrawNewLeaseResponse = fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
@@ -888,11 +888,11 @@ export default function TenantApplicationEdit(props) {
             if (props.from === "PropertyInfo") {
                 props.setRightPane({ type: "listings" });
                 props.setReload((prev) => !prev);
-                console.log("lease set right pane");
+                //console.log("lease set right pane");
             } else {
                 // props.setRightPane("");
                 props.setReload((prev) => !prev);
-                console.log("set right pane to nothing");
+                //console.log("set right pane to nothing");
             }
         });
     }
@@ -900,7 +900,7 @@ export default function TenantApplicationEdit(props) {
 
     function formatDate(dateString) {
         const date = new Date(dateString);
-        // console.log('check date', dateString, date)
+        // //console.log('check date', dateString, date)
         const month = String(date.getMonth() + 1).padStart(2, "0");
         const day = String(date.getDate()).padStart(2, "0");
         const year = date.getFullYear();
@@ -938,7 +938,7 @@ export default function TenantApplicationEdit(props) {
                 updateLeaseData.append("lease_uid", currentLease.lease_uid);
                 updateLeaseData.append("lease_renew_status", "RENEW REQUESTED");
 
-                // console.log(" inside update lease status - ", updateLeaseData)
+                // //console.log(" inside update lease status - ", updateLeaseData)
                 const updateLeaseResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
                     method: "PUT",
                     body: updateLeaseData,
@@ -997,7 +997,7 @@ export default function TenantApplicationEdit(props) {
             leaseApplicationData.append("lease_pets", JSON.stringify(petOccupants));
             leaseApplicationData.append("lease_vehicles", JSON.stringify(vehicles));
 
-            //   console.log("880 - lease - ", lease);
+            //   //console.log("880 - lease - ", lease);
             //   const leaseUtils = lease != null && lease?.length > 0 && lease[0].lease_utilities ? JSON.parse(lease[0].lease_utilities) : [];
             // const leaseUtils = currentLease != null && currentLease.lease_utilities != null ? JSON.parse(currentLease.lease_utilities) : [];
 
@@ -1041,10 +1041,10 @@ export default function TenantApplicationEdit(props) {
                 leaseApplicationData.append("lease_m2m", currentLease.lease_m2m ? currentLease.lease_m2m : 0);
             }
 
-            // console.log("we are here -- ")
+            // //console.log("we are here -- ")
 
             // leaseApplicationData.forEach((value, key) => {
-            //     console.log(`${key}: ${value}`);
+            //     //console.log(`${key}: ${value}`);
             // });
 
             const leaseApplicationResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
@@ -1080,11 +1080,11 @@ export default function TenantApplicationEdit(props) {
                 if (annoucementsResponse.ok) {
 
                 } else {
-                    console.log("Failed to send announcements.");
+                    //console.log("Failed to send announcements.");
                 }
 
             } else {
-                console.log("Failed to process lease application.");
+                //console.log("Failed to process lease application.");
             }
 
             // const annoucementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
@@ -1651,7 +1651,7 @@ export const EmploymentDataGrid = ({ profileData, employmentDataT = [], setSelec
         setCheckedJobs(updatedJobs);
 
         const selectedJobs = updatedJobs.filter((job) => job.checked);
-        // console.log("selected jobs - ", selectedJobs)
+        // //console.log("selected jobs - ", selectedJobs)
         setSelectedJobs(selectedJobs);
         setIsEmployeChange(true);
     };

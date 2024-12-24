@@ -45,35 +45,35 @@ export default function ManagerCreateAnnouncement() {
   const [showInvalidAnnouncementPrompt, setShowInvalidAnnouncementPrompt] = useState(false);
 
   // useEffect(() => {
-  //     console.log("applicantsData - ", applicantsData);
+  //     //console.log("applicantsData - ", applicantsData);
   // }, [applicantsData]);
 
   // useEffect(() => {
-  //     console.log("ownersData - ", ownersData);
+  //     //console.log("ownersData - ", ownersData);
   // }, [ownersData]);
 
   // useEffect(() => {
-  //     console.log("tenantsData - ", tenantsData);
+  //     //console.log("tenantsData - ", tenantsData);
   // }, [tenantsData]);
 
   // useEffect(() => {
-  //     console.log("tenantsByPropertyData - ", tenantsByPropertyData);
+  //     //console.log("tenantsByPropertyData - ", tenantsByPropertyData);
   // }, [tenantsByPropertyData]);
 
   // useEffect(() => {
-  //     console.log("selectedOption - ", selectedOption);
+  //     //console.log("selectedOption - ", selectedOption);
   // }, [selectedOption]);
 
   // useEffect(() => {
-  //     console.log("selectedUsers - ", selectedUsers);
+  //     //console.log("selectedUsers - ", selectedUsers);
   // }, [selectedUsers]);
 
   // useEffect(() => {
-  //     console.log("propertyAddressesMap - ", propertyAddressesMap);
+  //     //console.log("propertyAddressesMap - ", propertyAddressesMap);
   // }, [propertyAddressesMap]);
 
   // useEffect(() => {
-  //     console.log("announcementTypes - ", announcementTypes);
+  //     //console.log("announcementTypes - ", announcementTypes);
   // }, [announcementTypes]);
 
   const [showSpinner, setShowSpinner] = useState(false);
@@ -153,7 +153,7 @@ export default function ManagerCreateAnnouncement() {
         return { ...owner, properties_list: ownerProperties };
       });
       const ownersWithSortedProperties = sortPropertiesList(ownersWithProperties);
-      // console.log("--- DEBUG -- inside managercreate announcement page - ", ownersWithSortedProperties)
+      // //console.log("--- DEBUG -- inside managercreate announcement page - ", ownersWithSortedProperties)
       setOwnersData(ownersWithSortedProperties);
 
       if(location?.state?.ownerName){
@@ -240,9 +240,9 @@ export default function ManagerCreateAnnouncement() {
         announcement_receivers.push(receiver);
       });
 
-      // console.log("sendAnnouncement - announcement_receivers - ", announcement_receivers)
-      // console.log("sendAnnouncement - announcement_properties - ", announcement_properties)
-      // console.log("sendAnnouncement - announcement_properties - string - ", JSON.stringify(announcement_properties))
+      // //console.log("sendAnnouncement - announcement_receivers - ", announcement_receivers)
+      // //console.log("sendAnnouncement - announcement_properties - ", announcement_properties)
+      // //console.log("sendAnnouncement - announcement_properties - string - ", JSON.stringify(announcement_properties))
 
       const announcement_types_list = [];
       if (announcementTypes.email) {
@@ -285,7 +285,7 @@ export default function ManagerCreateAnnouncement() {
         return acc;
       }, {});
 
-      // console.log("tenants_by_name - receiverPropertyMapping - ", receiverPropertyMapping);
+      // //console.log("tenants_by_name - receiverPropertyMapping - ", receiverPropertyMapping);
       sendAnnouncement(receiverPropertyMapping);
     } else if (selectedOption === "owners_by_name") {
       let receiverPropertyMapping = selectedUsers.reduce((acc, obj) => {
@@ -298,7 +298,7 @@ export default function ManagerCreateAnnouncement() {
         return acc;
       }, {});
 
-      // console.log("owners_by_name - receiverPropertyMapping - ", receiverPropertyMapping);
+      // //console.log("owners_by_name - receiverPropertyMapping - ", receiverPropertyMapping);
       sendAnnouncement(receiverPropertyMapping);
     } else if (selectedOption === "applicants_by_name") {
       let groupedData = selectedUsers.reduce((acc, obj) => {
@@ -315,7 +315,7 @@ export default function ManagerCreateAnnouncement() {
         const properties = groupedData[receiver][0].properties_list.map((property) => property.property_uid);
         receiverPropertyMapping[receiver] = properties;
       });
-      // console.log("applicants_by_name - receiverPropertyMapping - ", receiverPropertyMapping);
+      // //console.log("applicants_by_name - receiverPropertyMapping - ", receiverPropertyMapping);
       sendAnnouncement(receiverPropertyMapping);
     } else if (selectedOption === "tenants_by_property") {
       let groupedData = selectedUsers.reduce((acc, obj) => {
@@ -333,14 +333,14 @@ export default function ManagerCreateAnnouncement() {
         receiverPropertyMapping[receiver] = properties;
       });
 
-      // console.log("tenants_by_property - receiverPropertyMapping - ", receiverPropertyMapping);
+      // //console.log("tenants_by_property - receiverPropertyMapping - ", receiverPropertyMapping);
       sendAnnouncement(receiverPropertyMapping);
     }
 
     try {
-      // console.log("promises added - ", promises_added);
+      // //console.log("promises added - ", promises_added);
       await Promise.all(promises);
-      // console.log("All Announcements Sent", promises)
+      // //console.log("All Announcements Sent", promises)
       navigate(-1);
     } catch (error) {
       console.error("Error:", error);

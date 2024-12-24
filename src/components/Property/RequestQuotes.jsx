@@ -62,7 +62,7 @@ const RequestQuotes = (props) => {
   useEffect(() => {
     const propertyData = propertyList;    
     const index = returnIndex;
-    // console.log("RequestQuotes - props.index - ", props.index);
+    // //console.log("RequestQuotes - props.index - ", props.index);
     if (propertyData && index !== undefined) {
       setSelectedProperties([propertyData[index].property_uid]);
     }
@@ -126,9 +126,9 @@ const RequestQuotes = (props) => {
 
     try {
       const response = await axios.request(config);
-      console.log(JSON.stringify(response.data));
+      //console.log(JSON.stringify(response.data));
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
 
   }
@@ -169,12 +169,12 @@ const RequestQuotes = (props) => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-      console.log(response.body);
+      //console.log(response.body);
       sendAnnouncement();
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
     }
-    console.log("Calling refreshContracts");
+    //console.log("Calling refreshContracts");
     refreshContracts();
     navigateToPrev();
   };

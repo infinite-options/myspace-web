@@ -33,12 +33,12 @@ function PropertyContract(props) {
     
     // const [contractBusinessID, setContractBusinessID] = useState(null);
     // useEffect(() => {
-    //     console.log('CONTRACT BUSINESS ID: ', contractBusinessID);
+    //     //console.log('CONTRACT BUSINESS ID: ', contractBusinessID);
     // }, [contractBusinessID]);
  
     // const [contractPropertyID, setContractPropertyID] = useState(null);
     // useEffect(() => {
-    //     console.log('CONTRACT PROPERTY ID: ', contractPropertyID);
+    //     //console.log('CONTRACT PROPERTY ID: ', contractPropertyID);
     // }, [contractPropertyID]);
 
     const [showSpinner, setShowSpinner] = useState(false);
@@ -67,7 +67,7 @@ function PropertyContract(props) {
         
         const fetchData = async () => {
             setShowSpinner(true);
-            console.log("ANNOUNCEMENT DATA", announcementData);
+            //console.log("ANNOUNCEMENT DATA", announcementData);
 
             const responseContract = await fetch(`${APIConfig.baseURL.dev}/contracts/`+ownerId)
             const responseContractData = await responseContract.json();
@@ -91,13 +91,13 @@ function PropertyContract(props) {
 
             setContractFees(contracts[0].contract_fees ? JSON.parse(contracts[0].contract_fees) : []);
             
-            //console.log("Contract: "+JSON.stringify(contract))
+            ////console.log("Contract: "+JSON.stringify(contract))
             
             const responseProperties = await fetch(`${APIConfig.baseURL.dev}/properties/`+ownerId)
             const responsePropertiesData = await responseProperties.json();
             
             const properties = responsePropertiesData.Property.result ? responsePropertiesData.Property.result : [];
-            console.log("PROPERTIES", JSON.stringify(properties));
+            //console.log("PROPERTIES", JSON.stringify(properties));
             
             properties.forEach(property => {
 
@@ -106,7 +106,7 @@ function PropertyContract(props) {
                 }
             });
 
-            //console.log("Property: "+propertyData)
+            ////console.log("Property: "+propertyData)
 
             setIsLoading(false);
             setShowSpinner(false);
@@ -137,7 +137,7 @@ function PropertyContract(props) {
                 durationString = `${seconds} seconds ago`;
             }
 
-            console.log(now, announcement_date, announcementData["announcement_date"], durationString, seconds, minutes, hours, days);
+            //console.log(now, announcement_date, announcementData["announcement_date"], durationString, seconds, minutes, hours, days);
             return durationString;
         };
         fetchData();

@@ -15,7 +15,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { useGridRegisterPipeApplier } from "@mui/x-data-grid/hooks/core/pipeProcessing";
 
 const OwnerContactDetails = (props) => {
-  console.log("In Onwer Contact Details", props);
+  //console.log("In Onwer Contact Details", props);
   const { selectedRole, getProfileId } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
@@ -37,7 +37,7 @@ const OwnerContactDetails = (props) => {
   const [ filteredCashflowDetails, setFilteredCashflowDetails ] = useState(cashflowDetails);
   // .filter((item) => item.owner_uid === ownerUID)
 
-  console.log("cashflowData - ", cashflowData);
+  //console.log("cashflowData - ", cashflowData);
 
   const getDataFromAPI = async () => {
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;    
@@ -64,7 +64,7 @@ const OwnerContactDetails = (props) => {
   };
 
   useEffect(() => {
-    // console.log("navigatingFrom - ", navigatingFrom);
+    // //console.log("navigatingFrom - ", navigatingFrom);
 
     if(navigatingFrom === "HappinessMatrixWidget"){
       getDataFromAPI();
@@ -78,22 +78,22 @@ const OwnerContactDetails = (props) => {
   }, []);
 
   useEffect(() => {
-    console.log("INDEX UPDATED - ", index);
+    //console.log("INDEX UPDATED - ", index);
     // location.state.index = index;
-    contactDetails && console.log("DATA DETAILS", contactDetails[index]);
+    contactDetails && //console.log("DATA DETAILS", contactDetails[index]);
     setFilteredCashflowDetails(contactDetails != null? cashflowDetails.filter((item) => item.owner_uid === contactDetails[index]?.contact_uid) : [])
     setFilteredCashflowData(contactDetails != null? cashflowData.filter((item) => item.owner_uid === contactDetails[index]?.contact_uid) : [])
 
   }, [index]);
 
-  //   console.log("Data details passed 1: ", contactDetails);
-  //   console.log("Data details passed 2: ", contactDetails[0]);
-  //   console.log("Data details passed 3: ", contactDetails[0].entities);
-  //   console.log("Data details passed 4: ", contactDetails[3].entities);
+  //   //console.log("Data details passed 1: ", contactDetails);
+  //   //console.log("Data details passed 2: ", contactDetails[0]);
+  //   //console.log("Data details passed 3: ", contactDetails[0].entities);
+  //   //console.log("Data details passed 4: ", contactDetails[3].entities);
 
-  // console.log(selectedData);
-  console.log("INDEX", index);
-  console.log("SELECTED ROLE - ", selectedRole);
+  // //console.log(selectedData);
+  //console.log("INDEX", index);
+  //console.log("SELECTED ROLE - ", selectedRole);
 
   const handleBackBtn = () => {
     // navigate('/PMContacts');
@@ -180,7 +180,7 @@ const OwnerContactDetails = (props) => {
               >
                 <Box
                   onClick={() => {
-                    console.log("Previous button clicked", index, contactDetails.length);
+                    //console.log("Previous button clicked", index, contactDetails.length);
                     index > 0 ? setIndex(index - 1) : setIndex(contactDetails.length - 1);
                   }}
                 >
@@ -203,7 +203,7 @@ const OwnerContactDetails = (props) => {
                 </Box>
                 <Box
                   onClick={() => {
-                    console.log("Next button clicked");
+                    //console.log("Next button clicked");
                     index < contactDetails.length - 1 ? setIndex(index + 1) : setIndex(0);
                   }}
                 >
@@ -330,7 +330,7 @@ const OwnerContactDetails = (props) => {
                 }}
               >
                 {/* {selectedData.property_count} Properties */}
-                {/* {console.log("In Contact JS:", contactDetails[index].entities, typeof contactDetails[index].entities)} */}
+                {/* {//console.log("In Contact JS:", contactDetails[index].entities, typeof contactDetails[index].entities)} */}
                 {(contactDetails && contactDetails[index].property_count) ? contactDetails[index].property_count : "<PROPERTY_COUNT>"} Properties
               </Typography>
               {contactDetails && contactDetails[index].entities !== null &&
@@ -350,7 +350,7 @@ const OwnerContactDetails = (props) => {
                         `}
                     </Typography>
 
-                    {console.log("After 1st Map:", entity, typeof entity)}
+                    {/* {console.log("After 1st Map:", entity, typeof entity)} */}
 
                     {entity.properties.map((property, index) => (
                       <Typography
@@ -383,7 +383,7 @@ const OwnerContactDetails = (props) => {
                 }}
               >
                 {/* {selectedData.property_count} Properties */}
-                {/* {console.log("In Payment JS:", contactDetails[index].payment_method, typeof contactDetails[index].payment_method)} */}
+                {/* {//console.log("In Payment JS:", contactDetails[index].payment_method, typeof contactDetails[index].payment_method)} */}
                 Payment Methods
               </Typography>
               {contactDetails && contactDetails[index].payment_method !== null &&

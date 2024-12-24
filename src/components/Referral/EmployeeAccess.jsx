@@ -93,7 +93,7 @@ const AccessSwitch = styled(Switch)(({ theme }) => ({
 
 // Variable Declaration
 export default function EmployeeAccess({}) {
-  console.log("In ReferUser.jsx");
+  //console.log("In ReferUser.jsx");
   const location = useLocation();
   let navigate = useNavigate();  
   const { user, selectedRole, selectRole, Name, getProfileId } = useUser();
@@ -104,19 +104,19 @@ export default function EmployeeAccess({}) {
   const [updatedData, setUpdatedData] = useState([]);
 
 //   useEffect(() => {
-//     console.log("newRequests - ", newRequests);
+//     //console.log("newRequests - ", newRequests);
 //   }, [newRequests]);
 
 //   useEffect(() => {
-//     console.log("oldRequests - ", oldRequests);
+//     //console.log("oldRequests - ", oldRequests);
 //   }, [oldRequests]);
 
 //   useEffect(() => {
-//     console.log("updatedData - ", updatedData);
+//     //console.log("updatedData - ", updatedData);
 //   }, [updatedData]);
     
   const handleBackButton = () => {
-    console.log("handleBackButton");
+    //console.log("handleBackButton");
     navigate(-1);
   };
 

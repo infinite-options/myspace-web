@@ -29,21 +29,21 @@ const TenantContacts = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // useEffect(() => {
-  //   console.log("contactsData - ", contactsData);
+  //   //console.log("contactsData - ", contactsData);
   // }, [contactsData]);
 
   // useEffect(() => {
-  //   console.log("currentIndex", currentIndex)
+  //   //console.log("currentIndex", currentIndex)
   // }, [currentIndex]);
   useEffect(() => {
-    console.log("contactsTab", contactsTab);
+    //console.log("contactsTab", contactsTab);
     setCurrentIndex(0);
   }, [contactsTab]);
 
   const fetchData = async () => {
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
     // const url = `${APIConfig.baseURL.dev}/contacts/350-000002`;
-    // console.log("In PMContracts.jsx");
+    // //console.log("In PMContracts.jsx");
     setShowSpinner(true);
 
     await axios
@@ -116,7 +116,7 @@ const ManagerContactDetail = ({ data, currentIndex, setCurrentIndex }) => {
         <Grid item xs={1}>
           <Box
             onClick={() => {
-              console.log("Previous button clicked", currentIndex, contactDetails.length);
+              //console.log("Previous button clicked", currentIndex, contactDetails.length);
               currentIndex > 0 ? setCurrentIndex(currentIndex - 1) : setCurrentIndex(contactDetails.length - 1);
             }}
             sx={{
@@ -163,7 +163,7 @@ const ManagerContactDetail = ({ data, currentIndex, setCurrentIndex }) => {
         <Grid item xs={1} container justifyContent='flex-end'>
           <Box
             onClick={() => {
-              console.log("Next button clicked");
+              //console.log("Next button clicked");
               currentIndex < contactDetails.length - 1 ? setCurrentIndex(currentIndex + 1) : setCurrentIndex(0);
             }}
             sx={{
@@ -351,7 +351,7 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex }) => {
         <Grid item xs={1}>
           <Box
             onClick={() => {
-              console.log("Previous button clicked", currentIndex, contactDetails.length);
+              //console.log("Previous button clicked", currentIndex, contactDetails.length);
               currentIndex > 0 ? setCurrentIndex(currentIndex - 1) : setCurrentIndex(contactDetails.length - 1);
             }}
             sx={{
@@ -400,7 +400,7 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex }) => {
         <Grid item xs={1} container justifyContent='flex-end'>
           <Box
             onClick={() => {
-              console.log("Next button clicked");
+              //console.log("Next button clicked");
               currentIndex < contactDetails.length - 1 ? setCurrentIndex(currentIndex + 1) : setCurrentIndex(0);
             }}
             sx={{

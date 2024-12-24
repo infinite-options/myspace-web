@@ -108,7 +108,7 @@ function PMDocuments() {
   useEffect(() => {
     setShowSpinner(true);
     axios.get(`${APIConfig.baseURL.dev}/quoteDocuments/${getProfileId()}`).then((res) => {
-      // console.log(res.data);
+      // //console.log(res.data);
       // setDocumentsData(res.data.Documents);
       setContractsData(res.data.Documents.Contracts);
       setDisplayedContracts(res.data.Documents.Contracts);

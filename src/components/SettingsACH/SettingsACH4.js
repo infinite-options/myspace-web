@@ -32,19 +32,19 @@ export default function SettingsACH4() {
 
     const handleNextStep = () => {
 
-        console.log("account_business_description",account_business_description);
-        console.log("account_average_card_transaction_amount",account_average_card_transaction_amount);
-        console.log("account_average_echeck_transaction_amount",account_average_echeck_transaction_amount);
-        console.log("account_annual_ach_volume",account_annual_ach_volume);
-        console.log("account_refund_policy",account_refund_policy);
-        console.log("account_btb_volume_percentage",account_btb_volume_percentage);
-        console.log("account_btc_volume_percentage",account_btc_volume_percentage);
-        console.log("account_other_volume",account_other_volume);
-        console.log("account_card_present_percentage",account_card_present_percentage);
-        console.log("account_ecommerce_percentage",account_ecommerce_percentage);
-        console.log("account_mail_tele_order_percentage",account_mail_tele_order_percentage);
+        //console.log("account_business_description",account_business_description);
+        //console.log("account_average_card_transaction_amount",account_average_card_transaction_amount);
+        //console.log("account_average_echeck_transaction_amount",account_average_echeck_transaction_amount);
+        //console.log("account_annual_ach_volume",account_annual_ach_volume);
+        //console.log("account_refund_policy",account_refund_policy);
+        //console.log("account_btb_volume_percentage",account_btb_volume_percentage);
+        //console.log("account_btc_volume_percentage",account_btc_volume_percentage);
+        //console.log("account_other_volume",account_other_volume);
+        //console.log("account_card_present_percentage",account_card_present_percentage);
+        //console.log("account_ecommerce_percentage",account_ecommerce_percentage);
+        //console.log("account_mail_tele_order_percentage",account_mail_tele_order_percentage);
 
-        console.log("Click Button to page 5 ")
+        //console.log("Click Button to page 5 ")
         navigate('/settingsManagerACH5')
     };
 

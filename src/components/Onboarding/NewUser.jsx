@@ -47,7 +47,7 @@ import APIConfig from "../../utils/APIConfig";
 import ListsContext from "../../contexts/ListsContext";
 
 const NewUser = () => {
-  console.log("In NewUser2");
+  //console.log("In NewUser2");
   const navigate = useNavigate();
   const location = useLocation();
   const [role, setRole] = useState(null);
@@ -66,7 +66,7 @@ const NewUser = () => {
   }, [user]);
   
 
-  console.log("ROHIT - user - ", user);
+  //console.log("ROHIT - user - ", user);
 
   const [email, setEmail] = useState(location.state?.user_email || "");
   const [password, setPassword] = useState("");
@@ -83,19 +83,19 @@ const NewUser = () => {
   }
 
   // useEffect(() => {
-  //   console.log("role -  ", role);
+  //   //console.log("role -  ", role);
   // }, [role]);
 
   // useEffect(() => {
-  //   console.log("email -  ", email);
+  //   //console.log("email -  ", email);
   // }, [email]);
 
   // useEffect(() => {
-  //   console.log("businesses -  ", businesses);
+  //   //console.log("businesses -  ", businesses);
   // }, [businesses]);
 
   useEffect(() => {
-    // console.log("selectedBusiness -  ", selectedBusiness);
+    // //console.log("selectedBusiness -  ", selectedBusiness);
     if( selectedBusiness?.business_type === "MANAGEMENT"){
       setRole("PM_EMPLOYEE")
     } else if( selectedBusiness?.business_type === "MAINTENANCE"){
@@ -114,7 +114,7 @@ const NewUser = () => {
   };
 
   const handleRoleChange = (event, newRole) => {
-    // console.log("handleRoleChange - newRole - ", newRole);
+    // //console.log("handleRoleChange - newRole - ", newRole);
     if (newRole !== null) {
       setRole(newRole);
       if( newRole === "EMPLOYEE"){
@@ -217,7 +217,7 @@ const NewUser = () => {
                     return byte.toString(16).padStart(2, "0");
                   })
                   .join("");
-                console.log(hashedPassword);
+                //console.log(hashedPassword);
                 let loginObject = {
                   email: email,
                   password: hashedPassword,
@@ -226,7 +226,7 @@ const NewUser = () => {
                 axios
                   .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/Login/MYSPACE", loginObject)
                   .then(async (response) => {
-                    // console.log(response.data.message);
+                    // //console.log(response.data.message);
                     const { message, result } = response.data;
                     if (message === "Incorrect password") {
                       // alert(response.data.message);
@@ -241,13 +241,13 @@ const NewUser = () => {
                       localStorage.removeItem('hasRedirected');
                       sessionStorage.setItem('authToken', result.access_token);
                       sessionStorage.setItem('refreshToken', result.refresh_token)
-                      console.log("Login successfull moving to dashboard");
+                      //console.log("Login successfull moving to dashboard");
                       
                       await fetchLists();
                       const { role } = result.user;
 
                       const existingRoles = role.split(",");
-                      // console.log("----dhyey---- exisiting role for current user - ", existingRoles)
+                      // //console.log("----dhyey---- exisiting role for current user - ", existingRoles)
 
                       
                       setLoggedIn(true);
@@ -267,7 +267,7 @@ const NewUser = () => {
                           updatedUser.user.role = updatedRole;
                           setAuthData(updatedUser);
                           //setCookie("user", { ...cookies.user, role: updatedRole }, { path: "/" });
-                          // console.log("----dhyey---- before navigating addNewRole updateduser- ", updatedUser, " --- user_id - ", result.user.user_uid, " -- newRole - ", newRole)
+                          // //console.log("----dhyey---- before navigating addNewRole updateduser- ", updatedUser, " --- user_id - ", result.user.user_uid, " -- newRole - ", newRole)
                           alert("Role updated successfully");
                           navigate("/addNewRole", { state: { user_uid: result.user.user_uid, newRole : newRole } });
                           return;
@@ -283,15 +283,15 @@ const NewUser = () => {
                         // }, 0);
                       setLoggedIn(true);
                       const { dashboardUrl } = roleMap[openingRole];
-                      // console.log("---after if condition of exisitingRole Login successfull moving to dashboard ", dashboardUrl);
+                      // //console.log("---after if condition of exisitingRole Login successfull moving to dashboard ", dashboardUrl);
                       navigate(dashboardUrl);
                     }
                   })
                   .catch((err) => {
                     if (err.response) {
-                      console.log(err.response);
+                      //console.log(err.response);
                     }
-                    console.log(err);
+                    //console.log(err);
                   });
               });
             }
@@ -304,7 +304,7 @@ const NewUser = () => {
   };
 
   const handleSignup = async () => {
-    console.log("signup clicked");
+    //console.log("signup clicked");
     //confirmPassword password
     if(confirmPassword != password){
       alert("Passwords don't match. Please check and try again!");
@@ -329,8 +329,8 @@ const NewUser = () => {
     }
 
     
-    console.log("user Exists", userExists);
-    console.log("Current User Info: ", user);
+    //console.log("user Exists", userExists);
+    //console.log("Current User Info: ", user);
     if (userExists) {
       handleLogin();
     } else {

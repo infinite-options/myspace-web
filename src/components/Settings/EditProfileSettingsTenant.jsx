@@ -63,15 +63,15 @@ export default function EditProfileSettingsTenant() {
 
   // Main use Effect
   useEffect(() => {
-    console.log("EditProfileSettingsTenant useEffect");
+    //console.log("EditProfileSettingsTenant useEffect");
   }, []);
 
   // Handle changes to form fields
   const handleInputChange = (event) => {
-    console.log("Input changed");
+    //console.log("Input changed");
     const { name, value } = event.target;
-    // console.log(name)
-    // console.log(value)
+    // //console.log(name)
+    // //console.log(value)
 
     if (name === "tenant_first_name") {
       setFirstName(value);
@@ -110,8 +110,8 @@ export default function EditProfileSettingsTenant() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("FORM SUBMITTED");
-    console.log(modifiedData);
+    //console.log("FORM SUBMITTED");
+    //console.log(modifiedData);
 
     const formData = new FormData();
     for (const key in modifiedData) {
@@ -136,18 +136,18 @@ export default function EditProfileSettingsTenant() {
     };
 
     if (isEdited) {
-      console.log("EDITED");
+      //console.log("EDITED");
       // axios.put('http://localhost:4000/ownerProfile', modifiedData, headers)
       axios
         .put(`${APIConfig.baseURL.dev}/profile`, formData, headers)
         .then((response) => {
-          console.log("Data updated successfully");
+          //console.log("Data updated successfully");
           setIsEdited(false); // Reset the edit status
           navigate(-1);
         })
         .catch((error) => {
           if (error.response) {
-            console.log(error.response.data);
+            //console.log(error.response.data);
           }
         });
     }

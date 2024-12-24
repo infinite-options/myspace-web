@@ -27,7 +27,7 @@ export default function NewCardSlider(props) {
 
   useEffect(() => {
     if (currentIndex - 1 >= 0) {
-      // console.log("prev card", "true", currentIndex-1)
+      // //console.log("prev card", "true", currentIndex-1)
       setPrevCardIndex(currentIndex - 1);
       setPrevCard(true);
     } else {
@@ -37,7 +37,7 @@ export default function NewCardSlider(props) {
 
   useEffect(() => {
     if (currentIndex + 1 < announcementList.length) {
-      // console.log("prev card", "true", currentIndex+1)
+      // //console.log("prev card", "true", currentIndex+1)
       setNextCardIndex(currentIndex + 1);
       setNextCard(true);
     } else {
@@ -55,21 +55,21 @@ export default function NewCardSlider(props) {
 
   const handleAnnouncements = async (announcement) => {
     if (announcement.announcement_mode == "PROPERTIES") {
-      // console.log(announcement.announcement_title);
+      // //console.log(announcement.announcement_title);
       navigate("/newOwnerInquiry", { state: { announcementData: announcement } });
     } else if (announcement.announcement_mode == "CONTRACT") {
-      // console.log(announcement.announcement_title)
+      // //console.log(announcement.announcement_title)
       // navigate("/propertyContract",{state: {announcementData: announcement}});
       setAnnData(announcement);
       setShowAnnouncement(true);
     } else if (announcement.announcement_mode == "LEASE") {
-      // console.log(announcement.announcement_title);
+      // //console.log(announcement.announcement_title);
       setAnnData(announcement);
       await setShowAnnouncement(true);
       // await markAnnouncementAsRead([announcement.announcement_uid]);
     }
     else if (announcement.announcement_mode == "MAINTENANCE") {
-      // console.log(announcement.announcement_title);
+      // //console.log(announcement.announcement_title);
       setAnnData(announcement);
       await setShowAnnouncement(true);
       // await markAnnouncementAsRead([announcement.announcement_uid]);

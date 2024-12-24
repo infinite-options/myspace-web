@@ -46,9 +46,9 @@ const libraries = ['places'];
 const PropertiesMap = ({ properties, mapCenter, onMarkerClick }) => {
   const [selectedProperty, setSelectedProperty] = React.useState(null);
 
-  // console.log("PropertiesMap - properties - ", properties)
+  // //console.log("PropertiesMap - properties - ", properties)
   // const libs = ['places']
-  // console.log("PropertiesMap - mapCenter - ", mapCenter)
+  // //console.log("PropertiesMap - mapCenter - ", mapCenter)
   const [ libraries ] = useState(['places']);
 
   const { isLoaded, loadError } = useJsApiLoader({

@@ -36,7 +36,7 @@ export default function PaidMaintenance({maintenanceItem}){
 
     function handleNavigateToQuotesRequested(){
 
-        console.log("NewRequestAction", maintenanceItem)
+        //console.log("NewRequestAction", maintenanceItem)
         navigate("/quoterequest", {
             state:{
                 maintenanceItem

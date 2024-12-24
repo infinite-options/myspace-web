@@ -181,7 +181,7 @@ export function MaintenanceOwner() {
     if (maintenanceData) {
       const propertyList = [];
       const addedAddresses = [];
-      console.log("maintenace data owner side --- ", maintenanceData)
+      //console.log("maintenace data owner side --- ", maintenanceData)
       for (const key in maintenanceData) {
         for (const item of maintenanceData[key]) {
           if (!addedAddresses.includes(item.property_address)) {
@@ -367,7 +367,7 @@ export function MaintenanceOwner() {
     //   setAllMaintenanceData(maintenanceData);
 
     // }
-    // console.log("clicked on row - ", index, row, maintenanceData, newDataObject)
+    // //console.log("clicked on row - ", index, row, maintenanceData, newDataObject)
     
     await setSelectedRequestIndex(index);
     await setSelectedStatus(row.maintenance_status);

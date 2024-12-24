@@ -26,10 +26,10 @@ export default function ChangePasswordSettings(props) {
   const classes = useStyles();
   const navigate = useNavigate();
   const { user } = useUser();
-  // console.log("USER - ", user);
+  // //console.log("USER - ", user);
   const location = useLocation();
   let owner_data = props.owner_data;
-  console.log('inside owner password change', owner_data);
+  //console.log('inside owner password change', owner_data);
 
   const [modifiedData, setModifiedData] = useState({ user_uid: user?.user_uid });
   const [isEdited, setIsEdited] = useState(false);
@@ -42,10 +42,10 @@ export default function ChangePasswordSettings(props) {
   const [isForgotPassword, setIsForgotPassword] = useState(false);
 
   const handleInputChange = (event) => {
-    console.log("Input changed");
+    //console.log("Input changed");
     const { name, value } = event.target;
-    // console.log(name)
-    // console.log(value)
+    // //console.log(name)
+    // //console.log(value)
 
     if (name === "current_password") {
       setCurrentPassword(value);
@@ -71,8 +71,8 @@ export default function ChangePasswordSettings(props) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("FORM SUBMITTED");
-    console.log(modifiedData);
+    //console.log("FORM SUBMITTED");
+    //console.log(modifiedData);
 
     const headers = {
       "Access-Control-Allow-Origin": "*",
@@ -87,19 +87,19 @@ export default function ChangePasswordSettings(props) {
       return;
     }
     if (isEdited) {
-      console.log("EDITED");
+      //console.log("EDITED");
       if (emailAddress === "") {
         // axios.put('http://localhost:4000/ownerProfile', modifiedData, headers)
         axios
           .put(`${APIConfig.baseURL.dev}/password`, modifiedData, headers)
           .then((response) => {
-            console.log("Data updated successfully");
+            //console.log("Data updated successfully");
             setIsEdited(false); // Reset the edit status
             props.setRHS("form");
           })
           .catch((error) => {
             if (error.response) {
-              console.log(error.response.data);
+              //console.log(error.response.data);
               alert(error.response.data.message);
             }
           });
@@ -111,10 +111,10 @@ export default function ChangePasswordSettings(props) {
           .then((response) => {
             setEmailAddress("");
             if (response.data.code === 200) {
-              console.log(response.data.message);
+              //console.log(response.data.message);
             }
             if (response.data.code === 280) {
-              console.log(response);
+              //console.log(response);
               alert("No account found with that email.");
               return;
             }
@@ -329,7 +329,7 @@ export default function ChangePasswordSettings(props) {
                     }
                 }}
                 ></TextField>
-                {/* <TextField name="email_address" value={(event) => console.log("EMAIL ADDRESS:", event.target.value)} onChange={handleInputChange} variant="filled" fullWidth placeholder="Enter email address" className={classes.root}></TextField> */}
+                {/* <TextField name="email_address" value={(event) => //console.log("EMAIL ADDRESS:", event.target.value)} onChange={handleInputChange} variant="filled" fullWidth placeholder="Enter email address" className={classes.root}></TextField> */}
               </Stack>
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ padding: "10px" }}>
                 <Button

@@ -57,14 +57,14 @@ const useStyles = makeStyles((theme) => ({
 export default function SelectPayment(props) {
   const location = useLocation();
   const { getProfileId, paymentRoutingBasedOnSelectedRole, selectedRole } = useUser();
-  // console.log("--DEBUG-- props", props);
-  // console.log("--DEBUG-- location.state", location.state);
+  // //console.log("--DEBUG-- props", props);
+  // //console.log("--DEBUG-- location.state", location.state);
 
   const selectedPropertyFromTenant = location?.state?.selectedProperty;
   const managerCashflowWidgetData = location.state?.managerCashflowWidgetData;
   const accountBalanceWidgetData = location.state?.accountBalanceWidgetData;
-  // console.log("SelectPayment -  managerCashflowWidgetData - ", managerCashflowWidgetData);
-  // console.log("selectedRole - ", selectedRole);
+  // //console.log("SelectPayment -  managerCashflowWidgetData - ", managerCashflowWidgetData);
+  // //console.log("selectedRole - ", selectedRole);
 
   const classes = useStyles();
   const navigate = useNavigate();
@@ -73,7 +73,7 @@ export default function SelectPayment(props) {
   const [paymentData, setPaymentData] = useState(location.state.paymentData);
   const [paymentMethodInfo, setPaymentMethodInfo] = useState(location.state.paymentMethodInfo || {});
   const [paymentMethods, setPaymentMethods] = useState([]);
-  // console.log("--DEBUG-- paymentData", paymentData);
+  // //console.log("--DEBUG-- paymentData", paymentData);
   const [balance, setBalance] = useState(parseFloat(location.state.paymentData?.balance));
   const [purchaseUID, setPurchaseUID] = useState(location.state.paymentData.purchase_uids[0]?.purchase_uid);
   const [purchaseUIDs, setPurchaseUIDs] = useState(location.state.paymentData.purchase_uids);
@@ -92,11 +92,11 @@ export default function SelectPayment(props) {
   const [confirmationNumber, setConfirmationNumber] = useState("");
   const [isMakePaymentDisabled, setIsMakePaymentDisabled] = useState(true); // State to control the disabled status of the Make Payment button
 
-  //   console.log("DEBUG BALANCE IN SELECT PAYMENT", balance);
-  // console.log("--debug-- PAYMENT DATA IN SELECT PAYMENT", paymentData);
-  // console.log("--debug-- PURCHASE UIDS IN PAYMENT DATA IN SELECT PAYMENT purchase_uid", paymentData.purchase_uids);
-  // console.log("--debug-- location.state", location.state);
-  // console.log("---debug--- convenience_fee", convenience_fee);
+  //   //console.log("DEBUG BALANCE IN SELECT PAYMENT", balance);
+  // //console.log("--debug-- PAYMENT DATA IN SELECT PAYMENT", paymentData);
+  // //console.log("--debug-- PURCHASE UIDS IN PAYMENT DATA IN SELECT PAYMENT purchase_uid", paymentData.purchase_uids);
+  // //console.log("--debug-- location.state", location.state);
+  // //console.log("---debug--- convenience_fee", convenience_fee);
 
   useEffect(() => {
     setShowSpinner(true)
@@ -109,7 +109,7 @@ export default function SelectPayment(props) {
         }
         const profileData = await response.json();
 
-        console.log("profile data", profileData.profile.result);
+        //console.log("profile data", profileData.profile.result);
 
         // Initialize an array to hold all parsed payment methods
         let allPaymentMethods = [];
@@ -136,7 +136,7 @@ export default function SelectPayment(props) {
         }
         const profileData = await response.json();
 
-        console.log("profile data", profileData.profile.result);
+        //console.log("profile data", profileData.profile.result);
 
         // Initialize an array to hold all parsed payment methods
         let allPaymentMethods = [];
@@ -166,11 +166,11 @@ export default function SelectPayment(props) {
   }, [getProfileId, receiverId]);
 
   useEffect(() => {
-    console.log("test", location.state.leaseDetails);
+    //console.log("test", location.state.leaseDetails);
   }, []);
 
   useEffect(() => {
-    console.log("In new UseEffect Current Balance is: ", totalBalance);
+    //console.log("In new UseEffect Current Balance is: ", totalBalance);
   }, [totalBalance]);
 
   const [stripePayment, setStripePayment] = useState(false);
@@ -193,7 +193,7 @@ export default function SelectPayment(props) {
   }, [selectedMethod, confirmationNumber]);
 
   useEffect(() => {
-    console.log("stripe payment", stripePayment);
+    //console.log("stripe payment", stripePayment);
   }, [stripePayment]);
 
   const [stripeDialogShow, setStripeDialogShow] = useState(false);
@@ -209,36 +209,36 @@ export default function SelectPayment(props) {
   function credit_card_handler(notes) {
     if (notes === "PMTEST") {
       // Fetch public key
-      console.log("fetching public key");
+      //console.log("fetching public key");
       setShowSpinner(true);
       axios
         .post("https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/getCorrectKeys/PMTEST")
         .then((result) => {
-          console.log("(1 PaymentDetails) Stripe-key then result (1): " + JSON.stringify(result));
+          //console.log("(1 PaymentDetails) Stripe-key then result (1): " + JSON.stringify(result));
           setShowSpinner(false);
         })
         .catch((err) => {
-          console.log(err);
+          //console.log(err);
           if (err.response) {
-            // console.log("(1 PaymentDetails) error: " + JSON.stringify(err.response));
+            // //console.log("(1 PaymentDetails) error: " + JSON.stringify(err.response));
           }
           setShowSpinner(false);
         });
     } else {
       // Fetch public key live
       setShowSpinner(true);
-      // console.log("fetching public key live");
+      // //console.log("fetching public key live");
       axios
         .post("https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/getCorrectKeys/PM")
         .then((result) => {
-          // console.log("(2 PaymentDetails) Stripe-key then result (1): " + JSON.stringify(result));
+          // //console.log("(2 PaymentDetails) Stripe-key then result (1): " + JSON.stringify(result));
           setSelectedMethod(result.data.publicKey);
           setShowSpinner(false);
         })
         .catch((err) => {
-          console.log(err);
+          //console.log(err);
           if (err.response) {
-            // console.log("(2 PaymentDetails) error: " + JSON.stringify(err.response));
+            // //console.log("(2 PaymentDetails) error: " + JSON.stringify(err.response));
           }
           setShowSpinner(false);
         });
@@ -246,17 +246,17 @@ export default function SelectPayment(props) {
   }
 
   const submit = async (paymentIntent, paymentMethod) => {
-    console.log("In Submit Function");
-    console.log("paymentData", paymentData);
-    console.log("in submit in SelectPayment.jsx", convenience_fee);
+    //console.log("In Submit Function");
+    //console.log("paymentData", paymentData);
+    //console.log("in submit in SelectPayment.jsx", convenience_fee);
     setPaymentConfirm(true);
 
-    console.log("--DEBUG-- in submit in SelectPayment.jsx paymentIntent output", paymentIntent);
-    console.log("--DEBUG-- in submit in SelectPayment.jsx paymentMethod output", paymentMethod);
+    //console.log("--DEBUG-- in submit in SelectPayment.jsx paymentIntent output", paymentIntent);
+    //console.log("--DEBUG-- in submit in SelectPayment.jsx paymentMethod output", paymentMethod);
 
     paymentIntent = paymentIntent === undefined ? "Zelle" : paymentIntent;
     paymentMethod = paymentMethod === undefined ? "Zelle" : paymentMethod;
-    console.log("Re-Setting PI and PM: ", paymentIntent, paymentMethod);
+    //console.log("Re-Setting PI and PM: ", paymentIntent, paymentMethod);
     // AT THIS POINT THE STRIPE TRANSACTION IS COMPLETE AND paymentIntent AND paymentMethod ARE KNOWN
     setShowSpinner(true);
 
@@ -305,7 +305,7 @@ export default function SelectPayment(props) {
   //CreditCardHandler
 
   async function bank_transfer_handler() {
-    // console.log("In Bank Transfer Handler Function");
+    // //console.log("In Bank Transfer Handler Function");
     // Set the Content-Type header
     const headers = {
       "Content-Type": "application/json",
@@ -332,12 +332,12 @@ export default function SelectPayment(props) {
       });
 
       resultOfResponse = await response.json()    // because response has only url so we can't convert into json
-      // console.log(resultOfResponse)
+      // //console.log(resultOfResponse)
 
       if (response.ok) {
 
         
-        console.log("Post request was successful - ", resultOfResponse);
+        //console.log("Post request was successful - ", resultOfResponse);
         // Handle the successful response here
       } else {
         // console.error("Post request failed");
@@ -347,7 +347,7 @@ export default function SelectPayment(props) {
       console.error("An error occurred while making the POST request", error);
     }
     setShowSpinner(false);
-    // console.log("Completed Bank Transfer Handler Function");
+    // //console.log("Completed Bank Transfer Handler Function");
     // navigate
     localStorage.setItem('pay_purchase_id', JSON.stringify(payment.purchase_uids));
     localStorage.setItem('pay_fee', convenience_fee);
@@ -383,7 +383,7 @@ export default function SelectPayment(props) {
   }
 
   function update_fee(e) {
-    // console.log("--debug update_fee -->", selectedMethod);
+    // //console.log("--debug update_fee -->", selectedMethod);
     let fee = 0;
     if (e.target.value === "Bank Transfer") {
       fee = Math.min(parseFloat((balance * 0.008).toFixed(2)), 5);
@@ -416,10 +416,10 @@ export default function SelectPayment(props) {
   };
 
   const handleSubmit = async (e) => {
-    console.log("selectedMethod", selectedMethod);
-    console.log("Payment total", totalBalance);
-    console.log("Convenience Fee", convenience_fee);
-    console.log("PaymentData: ", { total: parseFloat(totalBalance.toFixed(2)) });
+    //console.log("selectedMethod", selectedMethod);
+    //console.log("Payment total", totalBalance);
+    //console.log("Convenience Fee", convenience_fee);
+    //console.log("PaymentData: ", { total: parseFloat(totalBalance.toFixed(2)) });
 
     // e.preventDefault();
     // setPaymentData({ ...paymentData, total: parseFloat(totalBalance.toFixed(2)) });
@@ -435,33 +435,33 @@ export default function SelectPayment(props) {
 
     if (selectedMethod === "Bank Transfer") bank_transfer_handler();
     else if (selectedMethod === "Credit Card") {
-      // console.log("Credit Card Selected");
+      // //console.log("Credit Card Selected");
       // toggleKeys();
 
       setStripeDialogShow(true);
     }
     // credit_card_handler(paymentData.business_code);
     else if (selectedMethod === "zelle") {
-      // console.log("Zelle Selected");
+      // //console.log("Zelle Selected");
       let payment_intent = "Zelle";
       let payment_method = "Zelle";
-      console.log("Setting PI and PM: ", payment_intent, payment_method);
+      //console.log("Setting PI and PM: ", payment_intent, payment_method);
       submit(payment_intent, payment_method);
       // toggleKeys();
     } else if (selectedMethod === "paypal") {
       let payment_intent = "Paypal";
       let payment_method = "Paypal";
-      console.log("Setting PI and PM: (Paypal) ", payment_intent, payment_method);
+      //console.log("Setting PI and PM: (Paypal) ", payment_intent, payment_method);
       submit(payment_intent, payment_method);
     } else if (selectedMethod === "venmo") {
       let payment_intent = "Venmo";
       let payment_method = "Venmo";
-      console.log("Setting PI and PM: Venmo ", payment_intent, payment_method);
+      //console.log("Setting PI and PM: Venmo ", payment_intent, payment_method);
       submit(payment_intent, payment_method);
     } else if (selectedMethod === "apple_pay") {
       let payment_intent = "ApplePay";
       let payment_method = "ApplePay";
-      console.log("Setting PI and PM: ApplePay ", payment_intent, payment_method);
+      //console.log("Setting PI and PM: ApplePay ", payment_intent, payment_method);
       submit(payment_intent, payment_method);
     }
     // credit_card_handler(paymentData.business_code);
@@ -470,7 +470,7 @@ export default function SelectPayment(props) {
   // NEED TO UNDERSTAND WHY WE ARE USING t00 keys instead of PM Keys
   const toggleKeys = async () => {
     setShowSpinner(true);
-    // console.log("inside toggle keys");
+    // //console.log("inside toggle keys");
     const url =
       paymentData.business_code === "PMTEST"
         ? // ? "${APIConfig.baseURL.dev}/stripe_key/PMTEST"
@@ -481,11 +481,11 @@ export default function SelectPayment(props) {
 
     let response = await fetch(url);
     const responseData = await response.json();
-    // console.log("--DEBUG-- response data from Stripe", responseData);
+    // //console.log("--DEBUG-- response data from Stripe", responseData);
     // setStripeResponse(responseData);
     const stripePromise = loadStripe(responseData.publicKey);
     setStripePromise(stripePromise);
-    // console.log("--DEBUG-- stripePromise", stripePromise);
+    // //console.log("--DEBUG-- stripePromise", stripePromise);
     setShowSpinner(false);
   };
 

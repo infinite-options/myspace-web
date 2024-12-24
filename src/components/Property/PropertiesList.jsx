@@ -47,7 +47,7 @@ const paymentStatusMap = {
 };
 
 export function getPaymentStatusColor(paymentStatus, property) {
-  // console.log("214 - property - ", property);
+  // //console.log("214 - property - ", property);
   if ((paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") && property?.property_available_to_rent && property?.property_available_to_rent === 1) {
     return paymentStatusColorMap["Vacant"];
   } else if (
@@ -76,7 +76,7 @@ export function getPaymentStatus(paymentStatus, property) {
 }
 
 export default function PropertiesList(props) {
-  // console.log("In Property List: ", props.propertyList);
+  // //console.log("In Property List: ", props.propertyList);
   const location = useLocation();
   let navigate = useNavigate();
   const { getProfileId, selectedRole } = useUser();
@@ -101,7 +101,7 @@ export default function PropertiesList(props) {
   const returnIndex = returnIndexFromContext || 0;
   const allcontracts = allContractsFromContext || [];
 
-  // console.log("ROHIT - PropertiesList - returnIndex - ", returnIndex);
+  // //console.log("ROHIT - PropertiesList - returnIndex - ", returnIndex);
   // const [propertyList, setPropertyList] = useState([]);
   const [displayedItems, setDisplayedItems] = useState([]);
   const [citySortOrder, setCitySortOrder] = useState("asc");
@@ -123,12 +123,12 @@ export default function PropertiesList(props) {
   const [isDataReady, setIsDataReady] = useState(false);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // console.log("In Property List - propertyList outside: ", propertyList);
-  // console.log("In Property List - displayList outside: ", displayedItems);
-  // console.log("In Property List - propertyIndex outside: ", propertyIndex);
-  // console.log("In Property List - returnIndex outside: ", );
-  // console.log("In Property List - rentStatus outside: ", allRentStatus);
-  // console.log("In Property List - LHS outside: ", LHS);
+  // //console.log("In Property List - propertyList outside: ", propertyList);
+  // //console.log("In Property List - displayList outside: ", displayedItems);
+  // //console.log("In Property List - propertyIndex outside: ", propertyIndex);
+  // //console.log("In Property List - returnIndex outside: ", );
+  // //console.log("In Property List - rentStatus outside: ", allRentStatus);
+  // //console.log("In Property List - LHS outside: ", LHS);
 
   //datagrid current page and page size
   const [page, setPage] = useState(0);
@@ -142,10 +142,10 @@ export default function PropertiesList(props) {
   useEffect(() => {
     //set current page in datagrid
     // Calculate the page based on the current index and page size
-    // console.log("ROHIT - PropertiesList - propertyIndex - ", propertyIndex);
+    // //console.log("ROHIT - PropertiesList - propertyIndex - ", propertyIndex);
     if (propertyList.length > 0 && propertyIndex !== null) {
       const calculatedPage = Math.floor(propertyIndex / 15);
-      // console.log("ROHIT - PropertiesList - calculatedPage - ", calculatedPage);
+      // //console.log("ROHIT - PropertiesList - calculatedPage - ", calculatedPage);
       // setPage(calculatedPage); // Update the current page
       setPaginationModel({
         pageSize: 15,
@@ -156,7 +156,7 @@ export default function PropertiesList(props) {
   }, [propertyIndex, propertyList]);
 
   useEffect(() => {
-    // console.log("74 - props.showOnlyListings - ", propertyList);
+    // //console.log("74 - props.showOnlyListings - ", propertyList);
     const returnIndex = returnIndexFromContext || 0;
     if (props.showOnlyListings && props.showOnlyListings === true) {
       const onlyListings = propertyList?.filter((property) => property.rent_status === "VACANT");
@@ -174,7 +174,7 @@ export default function PropertiesList(props) {
   }, [props.LHS, propertyList, props.showOnlyListings, returnIndexFromContext]);
 
   useEffect(() => {
-    // console.log("displayedItems changed - ", displayedItems);
+    // //console.log("displayedItems changed - ", displayedItems);
     if (displayedItems && displayedItems.length > 0) {
       const firstItem = displayedItems[0];
       const i = propertyList?.findIndex((p) => p.property_uid === firstItem.property_uid);
@@ -192,7 +192,7 @@ export default function PropertiesList(props) {
     const property = params.row;
     // const i = displayedItems.findIndex((p) => p.property_uid === property.property_uid);
     const i = propertyList?.findIndex((p) => p.property_uid === property.property_uid);
-    // console.log("List Item Clicked", property, i, displayedItems);
+    // //console.log("List Item Clicked", property, i, displayedItems);
     setPropertyIndex(property.id);
     setReturnIndex(i);
     setCurrentPropertyID(property.property_uid);
@@ -202,10 +202,10 @@ export default function PropertiesList(props) {
   };
 
   const onPropertyInRentWidgetClicked = (property_uid) => {
-    console.log("onPropertyInRentWidgetClicked Clicked", property_uid, displayedItems);
+    //console.log("onPropertyInRentWidgetClicked Clicked", property_uid, displayedItems);
     if (displayedItems.length > 0) {
       const i = displayedItems.findIndex((p) => p.property_uid === property_uid);
-      // console.log("onPropertyInRentWidgetClicked Clicked", property_uid, i, displayedItems);
+      // //console.log("onPropertyInRentWidgetClicked Clicked", property_uid, i, displayedItems);
       setPropertyIndex(i);
       setReturnIndex(i);
       setCurrentPropertyID(property_uid);
@@ -223,7 +223,7 @@ export default function PropertiesList(props) {
   });
 
   function convertDataToRows(displayedItems) {
-    // console.log("In convertDataToRows: ", displayedItems);
+    // //console.log("In convertDataToRows: ", displayedItems);
     return displayedItems.map((property, index) => ({
       ...property,
       id: index,
@@ -241,7 +241,7 @@ export default function PropertiesList(props) {
       if (allcontracts) {
         const propertyId = property?.property_uid;
         const filtered = allcontracts?.filter((contract) => contract.property_uid === propertyId);
-        // console.log("--dhyey---322 - PropertyNavigator - filtered contracts - ", filtered);
+        // //console.log("--dhyey---322 - PropertyNavigator - filtered contracts - ", filtered);
         filtered.forEach((contract) => {
           if (contract.contract_status == "SENT") {
             count++;
@@ -255,10 +255,10 @@ export default function PropertiesList(props) {
   }
 
   function getCoverPhoto(property) {
-    // console.log("In Property List >> In getCoverPhoto");
-    // console.log(property.property_images);
+    // //console.log("In Property List >> In getCoverPhoto");
+    // //console.log(property.property_images);
     const imageArray = JSON.parse(property.property_images);
-    // console.log("getCoverPhoto - imageArray - ", imageArray);
+    // //console.log("getCoverPhoto - imageArray - ", imageArray);
     if (property.property_favorite_image) {
       const index = imageArray.findIndex((image) => image === property.property_favorite_image);
       if (index !== -1) {
@@ -362,7 +362,7 @@ export default function PropertiesList(props) {
       headerAlign: "center",
       flex: 0.6,
       renderCell: (params) => {
-        console.log("Payment Status params:", params); // Log params
+        //console.log("Payment Status params:", params); // Log params
         return (
           <Box
             sx={{
@@ -419,7 +419,7 @@ export default function PropertiesList(props) {
       flex: 0.5,
       renderCell: (params) => {
         const numOfMaintenanceReqs = getNumOfMaintenanceReqs(params.row);
-        // console.log("params -- ", params)
+        // //console.log("params -- ", params)
         return (
           <Box
             sx={{
@@ -442,7 +442,7 @@ export default function PropertiesList(props) {
                 color: "#000000",
               }}
               onClick={(e) => {
-                // console.log("selected in", params);
+                // //console.log("selected in", params);
                 if (numOfMaintenanceReqs > 0) {
                   if (selectedRole === "OWNER") {
                     navigate("/ownerMaintenance", {

@@ -19,19 +19,19 @@ import CircularProgress from "@mui/material/CircularProgress";
 import APIConfig from "../../../utils/APIConfig";
 
 export default function PMRent({ setLHS, onPropertyInRentWidgetClicked, setInitialPropInRent }) {
-  // console.log("In PMRent --> Consider renaming", props);
-  // console.log("In PM Rent onPropertyInRentWidgetClicked: ", props.onPropertyInRentWidgetClicked);
-  // console.log("In PM Rent setInitialPropInRent: ", props.setInitialPropInRent);
+  // //console.log("In PMRent --> Consider renaming", props);
+  // //console.log("In PM Rent onPropertyInRentWidgetClicked: ", props.onPropertyInRentWidgetClicked);
+  // //console.log("In PM Rent setInitialPropInRent: ", props.setInitialPropInRent);
 
   const { getProfileId } = useUser();
   const [dataNum, setDataNum] = useState(0);
   const [rentData, setRentData] = useState({});
   const [showSpinner, setShowSpinner] = useState(false);
   const [rentDetailIndexList, setRentDetailIndexList] = useState([]);
-  // console.log("checking", props.onPropertyInRentWidgetClicked);
+  // //console.log("checking", props.onPropertyInRentWidgetClicked);
 
   // useEffect(() => {
-  //   console.log("rentDetailIndexList - ", rentDetailIndexList);
+  //   //console.log("rentDetailIndexList - ", rentDetailIndexList);
   // }, [rentDetailIndexList]);
 
   const handleViewAllClick = () => {
@@ -45,7 +45,7 @@ export default function PMRent({ setLHS, onPropertyInRentWidgetClicked, setIniti
     axios.get(requestURL).then((res) => {
       const fetchingData = res.data.RentStatus.result;
       setDataNum(fetchingData.length);
-      // console.log("Rent Data: ", dataNum, fetchingData);
+      // //console.log("Rent Data: ", dataNum, fetchingData);
       const not_paid = [];
       const partial_paid = [];
       const late_paid = [];
@@ -81,8 +81,8 @@ export default function PMRent({ setLHS, onPropertyInRentWidgetClicked, setIniti
       setShowSpinner(false);
     });
   }, []);
-  console.log("Rent Data: ", rentData);
-  console.log("Detailed Data: ", rentDetailIndexList);
+  //console.log("Rent Data: ", rentData);
+  //console.log("Detailed Data: ", rentDetailIndexList);
   return (
     <MainContainer>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>

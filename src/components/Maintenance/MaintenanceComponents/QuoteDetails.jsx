@@ -19,13 +19,13 @@ import { useUser } from '../../../contexts/UserContext';
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 
 const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem, fetchAndUpdateQuotes, setRefresh, navigateParams}) => {
-    console.log('----QuoteDetails maintenanceQuotesForItem----', initialIndex, maintenanceQuotesForItem);
+    //console.log('----QuoteDetails maintenanceQuotesForItem----', initialIndex, maintenanceQuotesForItem);
     const { user, getProfileId, selectedRole } = useUser(); 
 
     const [currentIndex, setCurrentIndex] = useState(initialIndex);
-    //console.log('currentIndex=----', currentIndex);
+    ////console.log('currentIndex=----', currentIndex);
     const currentItem = maintenanceQuotesForItem && maintenanceQuotesForItem[initialIndex];
-    console.log('currentItem=----', currentItem);
+    //console.log('currentItem=----', currentItem);
     const [showSpinner, setShowSpinner] = useState(false);
 
 
@@ -47,7 +47,7 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
     const renderParts = (item) => {
         try {
             const expenses = JSON.parse(item.quote_services_expenses);
-            // console.log('Expenses:', expenses);
+            // //console.log('Expenses:', expenses);
             const partsWithIDs = [];
             if (expenses.parts && expenses.parts.length > 0) {
                 expenses.parts.forEach((part, index) => {
@@ -58,7 +58,7 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                     });
                 });
 
-                // console.log('expenses.parts - ', expenses.parts);
+                // //console.log('expenses.parts - ', expenses.parts);
                 const partsTotal = expenses.parts.reduce((total, part) => {
                     const cost = parseFloat(part.cost);
                     const quantity = parseFloat(part.quantity);
@@ -186,7 +186,7 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                     </Grid>
                 );
             } else {
-                console.log('No parts found in expenses');
+                //console.log('No parts found in expenses');
             }
         } catch (error) {
             console.error('Error parsing quote_services_expenses:', error);
@@ -197,7 +197,7 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
     const renderLabourHour = (item) => {
         try {
             const expenses = JSON.parse(item.quote_services_expenses);
-            console.log('Expenses:', expenses);
+            //console.log('Expenses:', expenses);
             const partsWithIDs = [];
             if (expenses.labor && expenses.labor.length > 0) {
                 expenses.labor.forEach((lb, index) => {
@@ -209,7 +209,7 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                     });
                 });
 
-                // console.log('expenses.parts - ', expenses.parts);
+                // //console.log('expenses.parts - ', expenses.parts);
                 const partsTotal = expenses.labor.reduce((total, part) => {
                     const rate = parseFloat(part.rate);
                     const hours = parseFloat(part.hours);
@@ -307,7 +307,7 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                     </Grid>
                 );
             } else {
-                console.log('No Service found in expenses');
+                //console.log('No Service found in expenses');
             }
         } catch (error) {
             console.error('Error parsing quote_services_expenses:', error);
@@ -338,7 +338,7 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
     
 
     const handleSubmit = (quoteStatusParam) => {
-        console.log("handleSubmit", quoteStatusParam);
+        //console.log("handleSubmit", quoteStatusParam);
     
         const changeMaintenanceQuoteStatus = async (quoteStatusParam) => {
             setShowSpinner(true);
@@ -353,9 +353,9 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                     body: formData,
                 });
                 let responseData = await response.json();
-                console.log(responseData);
+                //console.log(responseData);
                 if (response.status === 200) {
-                    console.log("success");
+                    //console.log("success");
                     
                     // Assign the maintenance request to the business
                     await assignMaintenanceRequest(currentItem?.quote_business_id, maintenanceItem.maintenance_request_uid);
@@ -366,7 +366,7 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
                     }
                 }
             } catch (error) {
-                console.log("error", error);
+                //console.log("error", error);
             }
             setShowSpinner(false);
         };
@@ -379,22 +379,22 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
             formData.append("maintenance_request_status", "PROCESSING");
     
             try {
-                console.log("trying to put maintenance assigned business", formData);
+                //console.log("trying to put maintenance assigned business", formData);
                 const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
                     method: "PUT",
                     body: formData,
                 });
                 let responseData = await response.json();
-                console.log(responseData);
+                //console.log(responseData);
                 if (response.status === 200) {
-                    console.log("success");
+                    //console.log("success");
                     // Call the fetch and update quotes method
                     fetchAndUpdateQuotes();
                 } else {
-                    console.log("error changing maintenance assigned business");
+                    //console.log("error changing maintenance assigned business");
                 }
             } catch (error) {
-                console.log("error", error);
+                //console.log("error", error);
             }
             setShowSpinner(false);
         };
@@ -425,7 +425,7 @@ const QuoteDetails = ({ maintenanceItem, initialIndex, maintenanceQuotesForItem,
     const [scrollPosition, setScrollPosition] = useState(0);
 	const scrollRef = useRef(null);
 
-    // console.log('----QuoteDetails navigate params----', navigateParams);
+    // //console.log('----QuoteDetails navigate params----', navigateParams);
 
 	useEffect(() => {
 		if (scrollRef.current) {

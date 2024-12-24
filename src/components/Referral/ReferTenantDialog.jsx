@@ -153,8 +153,8 @@ const ReferTenantDialog = ({open, onClose, setShowSpinner, property}) => {
     };
 
     const sendReferrals = async () => {
-        console.log("ROHIT - tenants - ", tenants);
-        console.log("ROHIT - property - ", property);        
+        //console.log("ROHIT - tenants - ", tenants);
+        //console.log("ROHIT - property - ", property);        
 
         setShowSpinner(true);
 
@@ -174,9 +174,9 @@ const ReferTenantDialog = ({open, onClose, setShowSpinner, property}) => {
             return response.json()
         })
         .then((data) => {
-            console.log("Referrals sent successfully:", data);
+            //console.log("Referrals sent successfully:", data);
         }).catch( (error) => {
-            console.log("Error:", error)
+            //console.log("Error:", error)
         });
     }
     

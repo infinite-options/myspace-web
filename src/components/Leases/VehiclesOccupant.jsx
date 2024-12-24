@@ -101,8 +101,8 @@ const VehiclesOccupant = ({
 	ownerOptions,
 	isEditable,
 }) => {
-	// console.log('Inside vehicles occupants', leaseVehicles);
-	// console.log('VehiclesOccupant - ownerOptions', ownerOptions);
+	// //console.log('Inside vehicles occupants', leaseVehicles);
+	// //console.log('VehiclesOccupant - ownerOptions', ownerOptions);
 	const [vehicles, setVehicles] = useState([]);
 	const [open, setOpen] = useState(false);
 	const [currentRow, setCurrentRow] = useState(null);
@@ -117,7 +117,7 @@ const VehiclesOccupant = ({
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
 	useEffect(() => {
-		console.log('inside mod vehicles', modifiedData);
+		//console.log('inside mod vehicles', modifiedData);
 		if (modifiedData && modifiedData.length > 0) {
 			editOrUpdateLease();
 			handleClose();
@@ -125,11 +125,11 @@ const VehiclesOccupant = ({
 	}, [isUpdated]);
 
 	// useEffect(() => {
-	//     console.log('vehicles - ', vehicles);
+	//     //console.log('vehicles - ', vehicles);
 	// }, [vehicles]);
 
 	// useEffect(() => {
-	//     console.log('states - ', states);
+	//     //console.log('states - ', states);
 	// }, [states]);
 
 	useEffect(() => {
@@ -157,7 +157,7 @@ const VehiclesOccupant = ({
 	};
 
 	const showSnackbar = (message, severity) => {
-		console.log('Inside show snackbar');
+		//console.log('Inside show snackbar');
 		setSnackbarMessage(message);
 		setSnackbarSeverity(severity);
 		setSnackbarOpen(true);

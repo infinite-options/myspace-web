@@ -284,7 +284,7 @@ const OwnerOnBoardDeskTopForm = ({ profileData, setIsSave }) => {
     const data = await saveProfile(form);
     const paymentSetup = await handlePaymentStep();
     setIsSave(true);
-    console.log(paymentSetup);
+    //console.log(paymentSetup);
     setShowSpinner(false);
   };
 

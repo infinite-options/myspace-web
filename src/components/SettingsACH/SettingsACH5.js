@@ -153,73 +153,73 @@ export default function SettingsACH3() {
             account_type:account_type    
         };
 
-        console.log("account_business_id",account_business_id);
-        console.log("account_business_legal_name",account_business_legal_name);
-        console.log("account_business_name",account_business_name);
-        console.log("account_business_website",account_business_website);
-        console.log("account_business_phone",account_business_phone);
-        console.log("account_business_type",account_business_type);
-        console.log("account_business_ownership_type",account_business_ownership_type);
-        console.log("account_business_incorporation_date",account_business_incorporation_date);
-        console.log("account_business_tax_id",account_business_tax_id);
-        console.log("account_business_address",account_business_address);
-        console.log("account_business_city",account_business_city);
-        console.log("account_business_state",account_business_state);
-        console.log("account_business_zip",account_business_zip);
-        console.log("account_business_country",account_business_country);
-        console.log("account_principal_first_name",account_principal_first_name);
-        console.log("account_principal_last_name",account_principal_last_name);
-        console.log("account_principal_title",account_principal_title);
-        console.log("account_principal_birth_date",account_principal_birth_date);
-        console.log("account_principal_ownership_percentage",account_principal_ownership_percentage);
-        console.log("account_principal_phone",account_principal_phone);
-        console.log("account_principal_ssn",account_principal_ssn);
-        console.log("account_principal_address",account_principal_address);
-        console.log("account_principal_city",account_principal_city);
-        console.log("account_principal_state",account_principal_state);
-        console.log("account_principal_zip",account_principal_zip);
-        console.log("account_principal_country",account_principal_country);
-        console.log("account_principal_email",account_principal_email);
-        console.log("account_annual_card_volume",account_annual_card_volume);
-        console.log("account_merchant_category_code",account_merchant_category_code);
-        console.log("account_default_statement_descriptor",account_default_statement_descriptor);
-        console.log("account_max_card_transaction_amount",account_max_card_transaction_amount);
-        console.log("account_max_ach_transaction_amount",account_max_ach_transaction_amount);
-        console.log("account_business_description",account_business_description);
-        console.log("account_average_card_transaction_amount",account_average_card_transaction_amount);
-        console.log("account_average_echeck_transaction_amount",account_average_echeck_transaction_amount);
-        console.log("account_annual_ach_volume",account_annual_ach_volume);
-        console.log("account_refund_policy",account_refund_policy);
-        console.log("account_btb_volume_percentage",account_btb_volume_percentage);
-        console.log("account_btc_volume_percentage",account_btc_volume_percentage);
-        console.log("account_other_volume",account_other_volume);
-        console.log("account_card_present_percentage",account_card_present_percentage);
-        console.log("account_ecommerce_percentage",account_ecommerce_percentage);
-        console.log("account_mail_tele_order_percentage",account_mail_tele_order_percentage);
-        console.log("account_name",account_name);
-        console.log("account_routing_number",account_routing_number);
-        console.log("account_number",account_number);
-        console.log("account_number_repeat",account_number_repeat);
-        console.log("account_type",account_type);
+        //console.log("account_business_id",account_business_id);
+        //console.log("account_business_legal_name",account_business_legal_name);
+        //console.log("account_business_name",account_business_name);
+        //console.log("account_business_website",account_business_website);
+        //console.log("account_business_phone",account_business_phone);
+        //console.log("account_business_type",account_business_type);
+        //console.log("account_business_ownership_type",account_business_ownership_type);
+        //console.log("account_business_incorporation_date",account_business_incorporation_date);
+        //console.log("account_business_tax_id",account_business_tax_id);
+        //console.log("account_business_address",account_business_address);
+        //console.log("account_business_city",account_business_city);
+        //console.log("account_business_state",account_business_state);
+        //console.log("account_business_zip",account_business_zip);
+        //console.log("account_business_country",account_business_country);
+        //console.log("account_principal_first_name",account_principal_first_name);
+        //console.log("account_principal_last_name",account_principal_last_name);
+        //console.log("account_principal_title",account_principal_title);
+        //console.log("account_principal_birth_date",account_principal_birth_date);
+        //console.log("account_principal_ownership_percentage",account_principal_ownership_percentage);
+        //console.log("account_principal_phone",account_principal_phone);
+        //console.log("account_principal_ssn",account_principal_ssn);
+        //console.log("account_principal_address",account_principal_address);
+        //console.log("account_principal_city",account_principal_city);
+        //console.log("account_principal_state",account_principal_state);
+        //console.log("account_principal_zip",account_principal_zip);
+        //console.log("account_principal_country",account_principal_country);
+        //console.log("account_principal_email",account_principal_email);
+        //console.log("account_annual_card_volume",account_annual_card_volume);
+        //console.log("account_merchant_category_code",account_merchant_category_code);
+        //console.log("account_default_statement_descriptor",account_default_statement_descriptor);
+        //console.log("account_max_card_transaction_amount",account_max_card_transaction_amount);
+        //console.log("account_max_ach_transaction_amount",account_max_ach_transaction_amount);
+        //console.log("account_business_description",account_business_description);
+        //console.log("account_average_card_transaction_amount",account_average_card_transaction_amount);
+        //console.log("account_average_echeck_transaction_amount",account_average_echeck_transaction_amount);
+        //console.log("account_annual_ach_volume",account_annual_ach_volume);
+        //console.log("account_refund_policy",account_refund_policy);
+        //console.log("account_btb_volume_percentage",account_btb_volume_percentage);
+        //console.log("account_btc_volume_percentage",account_btc_volume_percentage);
+        //console.log("account_other_volume",account_other_volume);
+        //console.log("account_card_present_percentage",account_card_present_percentage);
+        //console.log("account_ecommerce_percentage",account_ecommerce_percentage);
+        //console.log("account_mail_tele_order_percentage",account_mail_tele_order_percentage);
+        //console.log("account_name",account_name);
+        //console.log("account_routing_number",account_routing_number);
+        //console.log("account_number",account_number);
+        //console.log("account_number_repeat",account_number_repeat);
+        //console.log("account_type",account_type);
 
         axios.post(`${APIConfig.baseURL.dev}/account`,
         input,
         headers)
         .then(response => {
-            console.log("PUT result", response);
+            //console.log("PUT result", response);
         }).catch(function (error) {
-            console.log(error);
+            //console.log(error);
         });
 
         axios.get(`${APIConfig.baseURL.dev}/account?account_business_id=${getProfileId()}`,
         headers)
         .then(response => {
-            console.log("GET result", response);
+            //console.log("GET result", response);
         }).catch(function (error) {
-            console.log(error);
+            //console.log(error);
         });
 
-        console.log("Click Button Submit ")
+        //console.log("Click Button Submit ")
     };
 
     const handleChange1 = (event) => {

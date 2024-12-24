@@ -7,8 +7,8 @@ const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
 
 const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray, rowID, isRequired }) => {
-  // console.log('In address autocomplete, checking address', defaultValue);
-  // console.log('In address autocomplete, checking gray', gray);  
+  // //console.log('In address autocomplete, checking address', defaultValue);
+  // //console.log('In address autocomplete, checking gray', gray);  
   const autocomplete = useRef(null);
 
   const [address, setAddress] = useState(defaultValue ? defaultValue : "");
@@ -44,7 +44,7 @@ const AddressAutocompleteInput = ({ onAddressSelect, defaultValue, gray, rowID, 
       }
     });
 
-    // console.log("extractAddress - address - ", address);
+    // //console.log("extractAddress - address - ", address);
 
     return address;
   };

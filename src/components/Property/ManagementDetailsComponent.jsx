@@ -41,7 +41,7 @@ export default function ManagementDetailsComponent({
   handleViewContractClick,
   handleManageContractClick,
 }) {
-  // console.log("---dhyey-- inside new component -", renewContract, "current property contract - ", currentProperty);
+  // //console.log("---dhyey-- inside new component -", renewContract, "current property contract - ", currentProperty);
   const { defaultContractFees, allContracts, currentContractUID, currentContractPropertyUID, isChange, setIsChange, fetchContracts } = useContext(ManagementContractContext);
   const { fetchProperties } = useContext(PropertiesContext);
   const [selectedPreviewFile, setSelectedPreviewFile] = useState(null);
@@ -52,10 +52,10 @@ export default function ManagementDetailsComponent({
   const [showRenewContractDialog, setShowRenewContractDialog] = useState(false);
   const [contractEndNotice, setContractEndNotice] = useState(activeContract?.contract_end_notice_period ? Number(activeContract?.contract_end_notice_period) : 30);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  // console.log("currentProperty?.maintenance - ", currentProperty?.maintenance);
+  // //console.log("currentProperty?.maintenance - ", currentProperty?.maintenance);
 
   useEffect(() => {
-    // console.log("activeContract - ", activeContract);
+    // //console.log("activeContract - ", activeContract);
     setContractEndNotice(activeContract?.contract_end_notice_period ? Number(activeContract?.contract_end_notice_period) : 30);
   }, [activeContract]);
 
@@ -71,7 +71,7 @@ export default function ManagementDetailsComponent({
     return acc;
   }, {});
 
-  // console.log("maintenanceGroupedByStatus - ", maintenanceGroupedByStatus);
+  // //console.log("maintenanceGroupedByStatus - ", maintenanceGroupedByStatus);
 
   const handleFileClick = (file) => {
     setSelectedPreviewFile(file);
@@ -85,7 +85,7 @@ export default function ManagementDetailsComponent({
 
   const handleManagerEndContractClick = (endDate) => {
     const formattedDate = endDate.format("MM-DD-YYYY");
-    // console.log("handleEndContractClick - formattedDate - ", formattedDate);
+    // //console.log("handleEndContractClick - formattedDate - ", formattedDate);
 
     const formData = new FormData();
 
@@ -105,7 +105,7 @@ export default function ManagementDetailsComponent({
         if (!response.ok) {
           throw new Error("Network response was not ok");
         } else {
-          // console.log("Data updated successfully");
+          // //console.log("Data updated successfully");
           setIsChange(false);
           fetchProperties();
         }
@@ -142,7 +142,7 @@ export default function ManagementDetailsComponent({
               </IconButton>
               <IconButton
                 onClick={() => {
-                  // console.log("newContractCount - ", newContractCount);
+                  // //console.log("newContractCount - ", newContractCount);
                   if (newContractCount === 0) {
                     onShowSearchManager();
                   } else {
@@ -1043,17 +1043,17 @@ const EndContractDialog = ({ open, handleClose, contract }) => {
   const [contractEndDate, setContractEndDate] = useState(contract?.contract_end_date ? new Date(contract?.contract_end_date) : null);
   const today = new Date();
   const noticePeriod = contract?.contract_notice_period || 30;
-  // console.log("noticePeriod - ", noticePeriod);
+  // //console.log("noticePeriod - ", noticePeriod);
   const [selectedEndDate, setSelectedEndDate] = useState(dayjs(contractEndDate));
 
   useEffect(() => {
-    // console.log("selectedEndDate - ", selectedEndDate);
+    // //console.log("selectedEndDate - ", selectedEndDate);
     setContractEndDate(contract?.contract_end_date ? new Date(contract?.contract_end_date) : null);
   }, [contract]);
 
   useEffect(() => {
-    // console.log("selectedEndDate - ", selectedEndDate);
-    // console.log("contractEndDate - noticePeriod - ", new Date(contractEndDate?.getTime() - noticePeriod * ONE_DAY_MS));
+    // //console.log("selectedEndDate - ", selectedEndDate);
+    // //console.log("contractEndDate - noticePeriod - ", new Date(contractEndDate?.getTime() - noticePeriod * ONE_DAY_MS));
     setSelectedEndDate(dayjs(contractEndDate));
   }, [contractEndDate]);
 
@@ -1089,7 +1089,7 @@ const EndContractDialog = ({ open, handleClose, contract }) => {
           if (!response.ok) {
             throw new Error("Network response was not ok");
           } else {
-            console.log("Data added successfully");
+            //console.log("Data added successfully");
           }
         })
         .catch((error) => {
@@ -1208,7 +1208,7 @@ function ManagerEndContractDialog({ open, handleClose, onEndContract, noticePeri
   const noticePeriodDays = parseInt(noticePeriod, 10);
   const minEndDate = dayjs().add(noticePeriodDays, "day");
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  // console.log("minEndDate - ", minEndDate);
+  // //console.log("minEndDate - ", minEndDate);
   const formattedMinEndDate = minEndDate.format("MM/DD/YYYY");
 
   const [earlyEndDate, setEarlyEndDate] = useState(minEndDate);
@@ -1309,17 +1309,17 @@ const RenewContractDialog = ({ open, handleClose, contract, fetchContracts }) =>
   const [contractEndDate, setContractEndDate] = useState(contract?.contract_end_date ? new Date(contract?.contract_end_date) : null);
   const today = new Date();
   const noticePeriod = contract?.contract_notice_period || 30;
-  // console.log("noticePeriod - ", noticePeriod);
+  // //console.log("noticePeriod - ", noticePeriod);
   const [selectedEndDate, setSelectedEndDate] = useState(dayjs(contractEndDate));
 
   useEffect(() => {
-    // console.log("selectedEndDate - ", selectedEndDate);
+    // //console.log("selectedEndDate - ", selectedEndDate);
     setContractEndDate(contract?.contract_end_date ? new Date(contract?.contract_end_date) : null);
   }, [contract]);
 
   useEffect(() => {
-    // console.log("selectedEndDate - ", selectedEndDate);
-    // console.log("contractEndDate - noticePeriod - ", new Date(contractEndDate?.getTime() - noticePeriod * ONE_DAY_MS));
+    // //console.log("selectedEndDate - ", selectedEndDate);
+    // //console.log("contractEndDate - noticePeriod - ", new Date(contractEndDate?.getTime() - noticePeriod * ONE_DAY_MS));
     setSelectedEndDate(dayjs(contractEndDate));
   }, [contractEndDate]);
 
@@ -1356,9 +1356,9 @@ const RenewContractDialog = ({ open, handleClose, contract, fetchContracts }) =>
 
     try {
       const response = await axios.request(config);
-      // console.log(JSON.stringify(response.data));
+      // //console.log(JSON.stringify(response.data));
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
   };
 
@@ -1381,7 +1381,7 @@ const RenewContractDialog = ({ open, handleClose, contract, fetchContracts }) =>
           if (!response.ok) {
             throw new Error("Network response was not ok");
           } else {
-            console.log("Data added successfully");
+            //console.log("Data added successfully");
           }
         })
         .catch((error) => {
@@ -1413,7 +1413,7 @@ const RenewContractDialog = ({ open, handleClose, contract, fetchContracts }) =>
           if (!response.ok) {
             throw new Error("Network response was not ok");
           } else {
-            console.log("Data added successfully");
+            //console.log("Data added successfully");
             sendAnnouncement();
             fetchContracts();
           }

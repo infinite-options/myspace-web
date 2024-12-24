@@ -87,7 +87,7 @@ export default function PMQuotesRequested(props) {
   const refreshProperties = fetchPropertiesFromContext;
 	const returnIndex = returnIndexFromContext || 0;
 
-  // console.log("allContracts - ", allContracts);
+  // //console.log("allContracts - ", allContracts);
   
   const index = returnIndex || location.state?.index;
   
@@ -171,11 +171,11 @@ export default function PMQuotesRequested(props) {
   }, [contracts]);
 
   useEffect(() => {    
-    // console.log("166 - propertyId - ", propertyId);
+    // //console.log("166 - propertyId - ", propertyId);
     const contractsData = allContracts?.filter(
       (contract) => contract.property_uid === propertyId
     );
-    // console.log("166 - contractsData - ", contractsData);
+    // //console.log("166 - contractsData - ", contractsData);
     setContracts(contractsData);
   }, [allContracts]);
 
@@ -416,10 +416,10 @@ export default function PMQuotesRequested(props) {
 
   const sendAnnouncement = async (status, obj, earlyEndDate) => {    
     // const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
-    // console.log("sendAnnouncement - obj - ", obj);
-    // console.log("sendAnnouncement - property - ", property[returnIndex]);
+    // //console.log("sendAnnouncement - obj - ", obj);
+    // //console.log("sendAnnouncement - property - ", property[returnIndex]);
 
-    // console.log("sendAnnouncement - status - ", status);
+    // //console.log("sendAnnouncement - status - ", status);
     
     // return;
 
@@ -517,7 +517,7 @@ export default function PMQuotesRequested(props) {
   //         if (!response.ok) {
   //           throw new Error("Network response was not ok");
   //         } else {
-  //           console.log("Data added successfully");
+  //           //console.log("Data added successfully");
   //           sendAnnouncement("ACCEPTED", obj);
   //           refreshContracts();
   //           refreshProperties();            
@@ -551,8 +551,8 @@ export default function PMQuotesRequested(props) {
       }
     } else if(status === "ACTIVE"){
       // formData.append("contract_early_end_date", formattedEarlyEndDate);      
-      // console.log("earlyEndDate - ", earlyEndDate)
-      // console.log("actualEndDate - ", actualEndDate)
+      // //console.log("earlyEndDate - ", earlyEndDate)
+      // //console.log("actualEndDate - ", actualEndDate)
       
       if(earlyEndDate < actualEndDate) {
         formData.append("contract_early_end_date", formattedEarlyEndDate);
@@ -573,7 +573,7 @@ export default function PMQuotesRequested(props) {
           if (!response.ok) {
             throw new Error("Network response was not ok");
           } else {
-            console.log("Data added successfully");
+            //console.log("Data added successfully");
             if(status === "ENDING"){
               sendAnnouncement(status, contractObj, formattedEarlyEndDate);  
             } else {
@@ -608,7 +608,7 @@ export default function PMQuotesRequested(props) {
           if (!response.ok) {
             throw new Error("Network response was not ok");
           } else {
-            console.log("Data added successfully");
+            //console.log("Data added successfully");
             sendAnnouncement(status, contract);
             refreshContracts();
             refreshProperties();            
@@ -633,7 +633,7 @@ export default function PMQuotesRequested(props) {
       const existingContractIndex = activeContracts.findIndex(contract => contract.property_uid === newPropertyId && contract.contract_status === "ACTIVE");
 
       if (existingContractIndex < 0){
-        // console.log("ERROR - existing contract not found.");
+        // //console.log("ERROR - existing contract not found.");
         acceptNewContract(obj, "ACTIVE");
         return;
       }
@@ -647,9 +647,9 @@ export default function PMQuotesRequested(props) {
         const existingContractEnd = new Date(existingContract.contract_end_date);
         const today = new Date();
 
-        // console.log("514 - newContractStart - ", newContractStart)
-        // console.log("514 - existingContractEnd - ", existingContractEnd)
-        // console.log("514 - today - ", today)        
+        // //console.log("514 - newContractStart - ", newContractStart)
+        // //console.log("514 - existingContractEnd - ", existingContractEnd)
+        // //console.log("514 - today - ", today)        
 
         
         const earlyEndDate = new Date(newContractStart)
@@ -687,7 +687,7 @@ export default function PMQuotesRequested(props) {
       axios
         .put(`${APIConfig.baseURL.dev}/contracts`, formData)
         .then((response) => {
-          console.log("PUT result", response);
+          //console.log("PUT result", response);
           sendAnnouncement("DECLINED", obj);
           refreshContracts();
         })
@@ -709,7 +709,7 @@ export default function PMQuotesRequested(props) {
       axios
         .put(`${APIConfig.baseURL.dev}/contracts`, formData)
         .then((response) => {
-          console.log("PUT result", response);
+          //console.log("PUT result", response);
           refreshContracts();
         })
         .catch((error) => {
@@ -812,7 +812,7 @@ export default function PMQuotesRequested(props) {
               <Tabs
                 variant="fullWidth"
                 value={tabStatus}
-                onChange={(e) => console.log(e)}
+                // onChange={(e) => console.log(e)}
                 TabIndicatorProps={{
                   style: {
                     backgroundColor: "transparent",
@@ -1084,7 +1084,7 @@ export default function PMQuotesRequested(props) {
 
 function DocumentCard(props) {
   const data = props.data;
-  // console.log("data -", data);
+  // //console.log("data -", data);
   const [fees, setFees] = useState(JSON.parse(data.contract_fees) ? JSON.parse(data.contract_fees) : []);
   const [locations, setLocations] = useState(data.business_locations ? JSON.parse(data.business_locations) : []);
   const [contractDocuments, setContractDocuments] = useState(JSON.parse(data.contract_documents)? JSON.parse(data.contract_documents) : [])
@@ -1108,7 +1108,7 @@ function DocumentCard(props) {
     try {      
       setFees(JSON.parse(data.business_services_fees)? JSON.parse(data.business_services_fees) : []);      
     } catch (error) {
-      console.log("error", error);
+      //console.log("error", error);
     }
   };
 
@@ -1387,10 +1387,10 @@ function SearchManagerDocumentCard(props){
   const newContractsIds = props.newContractsIds;
   const activeContractsIds = props.activeContractsIds;
 
-  // console.log("BUSINESS Locations - ", obj.business_locations);
+  // //console.log("BUSINESS Locations - ", obj.business_locations);
   let location1 = "";
   if(obj.business_locations !== null && obj.business_locations.length > 2){
-    // console.log("Valid business location");
+    // //console.log("Valid business location");
     location1 = JSON.parse(obj.business_locations);
   }  
   let city = "";
@@ -1402,7 +1402,7 @@ function SearchManagerDocumentCard(props){
   let locationsArray = JSON.parse(obj.business_locations);
 
   const handleRequestQuotes = async (obj) => {
-    // console.log('---handle request quotes---', propertyData, index);
+    // //console.log('---handle request quotes---', propertyData, index);
 
     navigate("/requestQuotes",{
       state:{
@@ -1650,7 +1650,7 @@ export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee, handle
     id: row.id ? index : index,
   }));
 
-  // console.log("-- inside fee data grid - ", rowsWithId);
+  // //console.log("-- inside fee data grid - ", rowsWithId);
 
   return (
     <Box sx={{width: "100%", overflowX: "auto"}}>
@@ -1752,7 +1752,7 @@ const LocationsDataGrid = ({ data }) => {
     },
   ];
 
-  // console.log("FeesDataGrid - props.data - ", data);
+  // //console.log("FeesDataGrid - props.data - ", data);
 
   return (
     <>

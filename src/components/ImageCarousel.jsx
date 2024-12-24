@@ -9,10 +9,10 @@ function ImageCarousel(props) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // useEffect(() => {
-  //     console.log("IMAGE INDEX:", currentImageIndex);
+  //     //console.log("IMAGE INDEX:", currentImageIndex);
   // }, [currentImageIndex]);
 
-  // console.log("IMAGE LINK:", images[2]);
+  // //console.log("IMAGE LINK:", images[2]);
 
   return (
     <Grid container justifyContent="center">

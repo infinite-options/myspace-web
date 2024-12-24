@@ -5,7 +5,7 @@ export default async function FinishQuote(maintenance_quote_uid, setShowSpinner 
     setShowSpinner(true);
     try {
         var formData = new FormData();
-        console.log("FinishQuote maintenance_quote_uid", maintenance_quote_uid)
+        //console.log("FinishQuote maintenance_quote_uid", maintenance_quote_uid)
         formData.append("maintenance_quote_uid", maintenance_quote_uid);
         formData.append("quote_status", "FINISHED");
         const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceQuotes`, {
@@ -17,7 +17,7 @@ export default async function FinishQuote(maintenance_quote_uid, setShowSpinner 
             return true;
         }
     } catch (error){
-        console.log("error", error)
+        //console.log("error", error)
         return false;
     }
     setShowSpinner(false);

@@ -105,7 +105,7 @@ const closeDialog = () => {
 				});
 			
 				if (response.status === 200) {
-				  console.log("user Info updated successfully");
+				  //console.log("user Info updated successfully");
 
 			const updatedFields = {
 				first_name: firstName,

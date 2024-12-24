@@ -12,13 +12,13 @@ import { nextMonday } from "date-fns";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 export default function LeaseWidget(props) {
-  // console.log("In Lease Widget", props);
+  // //console.log("In Lease Widget", props);
   const navigate = useNavigate();
   const isMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
   // const { leaseRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
 
-  // console.log("Role: ", user);
-  // console.log("Selected Role: ", selectedRole);
+  // //console.log("Role: ", user);
+  // //console.log("Selected Role: ", selectedRole);
 
   // let date = new Date();
   let moveoutsInSixWeeks = 0;
@@ -27,14 +27,14 @@ export default function LeaseWidget(props) {
 
   // const currentYear = new Date().getFullYear();
   // const currentMonth = new Date().getMonth() + 1; // Adding 1 because getMonth() returns 0-based index
-  // console.log("Current Month: ", currentMonth);
+  // //console.log("Current Month: ", currentMonth);
   var leaseStatus = {};
   const leaseStatusDictionary = {};
 
   // Date object for today
   const today = new Date();
   const currentDay = today.getDate();
-  // console.log("Today: ", today, currentDay);
+  // //console.log("Today: ", today, currentDay);
   let nextMonth = today.getMonth();
   let currentMonth = today.getMonth() + 1; // Adding 1 to adjust to 1-indexed months
   if (currentMonth === 12) {
@@ -43,17 +43,17 @@ export default function LeaseWidget(props) {
     nextMonth = currentMonth + 1;
   }
   const currentYear = new Date().getFullYear();
-  //   console.log("Dates: ", currentDay, currentMonth, nextMonth, currentYear);
+  //   //console.log("Dates: ", currentDay, currentMonth, nextMonth, currentYear);
 
   leaseStatusData.forEach((item) => {
-    // console.log("Lease item: ", item);
-    // console.log("Lease end month ", item.lease_end_month);
-    // console.log("Lease end num ", item.lease_end_num);
-    // console.log("Leases_expiring ", item.leases_expiring);
-    // console.log("Move Out ", item.move_out);
+    // //console.log("Lease item: ", item);
+    // //console.log("Lease end month ", item.lease_end_month);
+    // //console.log("Lease end num ", item.lease_end_num);
+    // //console.log("Leases_expiring ", item.leases_expiring);
+    // //console.log("Move Out ", item.move_out);
     if (item.lease_end_month !== "MTM" && item.lease_end_month !== "FUTURE") {
       leaseStatusDictionary[item.lease_end_num] = item.leases_expiring;
-      // console.log(currentMonth, item.lease_end_num, currentMonth === item.lease_end_num);
+      // //console.log(currentMonth, item.lease_end_num, currentMonth === item.lease_end_num);
       if (currentMonth === item.lease_end_num) {
         moveoutsInSixWeeks = moveoutsInSixWeeks + item.move_out;
       }
@@ -64,8 +64,8 @@ export default function LeaseWidget(props) {
   });
 
   leaseStatus = leaseStatusDictionary;
-  // console.log("Lease Status: ", leaseStatus);
-  // console.log("Lease Status March: ", leaseStatus[3]);
+  // //console.log("Lease Status: ", leaseStatus);
+  // //console.log("Lease Status March: ", leaseStatus[3]);
 
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 

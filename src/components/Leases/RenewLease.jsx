@@ -54,7 +54,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
   const [signedLease, setSignedLease] = useState(null);
   const [remainingUtils, setRemainingUtils] = useState([]);
   const { selectedRole } = useUser();
-  // console.log("---in renewlease page - selected role ", selectedRole)
+  // //console.log("---in renewlease page - selected role ", selectedRole)
   //New contract states
   const [newRent, setNewRent] = useState(null);
   const [newFreq, setNewFreq] = useState(null);
@@ -80,17 +80,17 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
 
   const [rightPane, setRightPane] = useState({ type: "tenantApplication" });
 
-  // console.log('RenewLease - leaseDetails - ', leaseDetails);
+  // //console.log('RenewLease - leaseDetails - ', leaseDetails);
 
   useEffect(() => {
     setShowSpinner(true);
     const filtered = leaseDetails.find((lease) => lease.lease_uid === selectedLeaseId);
     setCurrentLease(filtered);
-    console.log("In Renew Lease", leaseDetails, selectedLeaseId);
-    // console.log('filtered - ', filtered);
+    //console.log("In Renew Lease", leaseDetails, selectedLeaseId);
+    // //console.log('filtered - ', filtered);
     const tenantsRow = JSON.parse(filtered.tenants);
     setTenantWithId(tenantsRow);
-    // console.log('----dhyey---- tenantRow', tenantsRow);
+    // //console.log('----dhyey---- tenantRow', tenantsRow);
 
     //Set utilities details
     const utils = JSON.parse(filtered.property_utilities);
@@ -103,7 +103,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
     }
     // setUtilities(utils);
     // setNewUtilities(utils);
-    // console.log('utils', utils);
+    // //console.log('utils', utils);
 
     //Set fees details
     const fees = JSON.parse(filtered.lease_fees);
@@ -111,8 +111,8 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
 
     // Get the rent details from the list of fees
     const rentFee = fees?.find((fee) => fee.fee_name === "Rent");
-    console.log("All lease fees", fees);
-    console.log("rent values", rentFee);
+    //console.log("All lease fees", fees);
+    //console.log("rent values", rentFee);
     setRent(rentFee);
 
     const newUtilityIds = utils !== null ? new Set(utils.map((utility) => utility.utility_type_id)) : null;
@@ -130,19 +130,19 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
     }
 
     setRemainingUtils(missingUtilitiesMap);
-    console.log("missing", typeof missingUtilitiesMap, missingUtilitiesMap);
+    //console.log("missing", typeof missingUtilitiesMap, missingUtilitiesMap);
 
     const parsedDocs = JSON.parse(filtered.lease_documents);
     const docs = parsedDocs.map((doc, index) => ({
       ...doc,
       id: index,
     }));
-    console.log("initial docs", docs);
+    //console.log("initial docs", docs);
     setDocuments(docs);
 
     //lease link
     const leaseDoc = docs.find((doc) => doc.type && doc.type === "Lease Agreement");
-    console.log("leaselink", leaseDoc);
+    //console.log("leaselink", leaseDoc);
     setSignedLease(leaseDoc);
 
     // Set all new contract values
@@ -185,13 +185,13 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
   };
 
   const handleNewUtilityChange = (e, newUtility, utilityIndex) => {
-    console.log("change", utilityIndex, newUtility);
+    //console.log("change", utilityIndex, newUtility);
     const { value } = e.target;
     setNewUtilities((prevUtilities) => {
       const updatedUtilities = [...prevUtilities];
       const toChange = { ...updatedUtilities[utilityIndex], utility_payer_id: value === "owner" ? "050-000280" : "050-000282" };
       updatedUtilities[utilityIndex] = toChange;
-      console.log("updated util", updatedUtilities);
+      //console.log("updated util", updatedUtilities);
       return updatedUtilities;
     });
   };
@@ -202,7 +202,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
 
   function formatDate(dateString) {
     const date = new Date(dateString);
-    console.log("check date", dateString, date);
+    //console.log("check date", dateString, date);
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     const year = date.getFullYear();
@@ -228,7 +228,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
         "Access-Control-Allow-Headers": "*",
         "Access-Control-Allow-Credentials": "*",
       };
-      console.log("tenantWithId", tenantWithId, typeof tenantWithId);
+      //console.log("tenantWithId", tenantWithId, typeof tenantWithId);
       const leaseApplicationFormData = new FormData();
       let date = new Date();
       for (let i = 0; i < tenantWithId.length; i++) {
@@ -262,10 +262,10 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
         }
 
         if (uploadedFiles.length) {
-          console.log("count", uploadedFiles.length);
+          //console.log("count", uploadedFiles.length);
           const documentsDetails = [];
           [...uploadedFiles].forEach((file, i) => {
-            console.log("file", file, typeof file);
+            //console.log("file", file, typeof file);
             leaseApplicationFormData.append(`file_${i}`, file.file, file.name);
             const fileType = file.name.split(".").pop();
             const documentObject = {
@@ -278,34 +278,34 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
             documentsDetails.push(documentObject);
           });
           leaseApplicationFormData.append("lease_documents", JSON.stringify(documentsDetails));
-          console.log("docs", documentsDetails);
+          //console.log("docs", documentsDetails);
         }
 
-        console.log("leaseApplicationFormData", leaseApplicationFormData);
+        //console.log("leaseApplicationFormData", leaseApplicationFormData);
 
         axios
           .post(`${APIConfig.baseURL.dev}/leaseApplication`, leaseApplicationFormData, headers)
           .then((response) => {
             setuploadedFiles([]);
             setShowSpinner(false);
-            console.log("Data updated successfully");
+            //console.log("Data updated successfully");
             showSnackbar("Your lease has been renewed successfully.", "success");
           })
           .catch((error) => {
             setShowSpinner(false);
             if (error.response) {
-              console.log(error.response.data);
+              //console.log(error.response.data);
               showSnackbar("Cannot Renew the lease. Please Try Again", "error");
             }
           });
       }
     } catch (error) {
-      console.log("Cannot Renew the lease", error);
+      //console.log("Cannot Renew the lease", error);
     }
   };
 
   const editOrUpdateLease = async () => {
-    console.log("inside edit", modifiedData);
+    //console.log("inside edit", modifiedData);
     try {
       if (modifiedData.length > 0 || isPreviousFileChange) {
         setShowSpinner(true);
@@ -322,9 +322,9 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
         // leaseApplicationFormData.append("lease_fees", feesJSON);
         // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
         modifiedData?.forEach((item) => {
-          console.log(`Key: ${item.key}`);
+          //console.log(`Key: ${item.key}`);
           if (item.key === "uploadedFiles") {
-            console.log("uploadedFiles", item.value);
+            //console.log("uploadedFiles", item.value);
             if (item.value.length) {
               const documentsDetails = [];
               [...item.value].forEach((file, i) => {
@@ -353,7 +353,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
         axios
           .put(`${APIConfig.baseURL.dev}/leaseApplication`, leaseApplicationFormData, headers)
           .then((response) => {
-            console.log("Data updated successfully", response);
+            //console.log("Data updated successfully", response);
             showSnackbar("Your lease has been successfully updated.", "success");
             handleUpdate();
             setShowSpinner(false);
@@ -362,7 +362,7 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
             setShowSpinner(false);
             showSnackbar("Cannot update the lease. Please try again", "error");
             if (error.response) {
-              console.log(error.response.data);
+              //console.log(error.response.data);
             }
           });
         setShowSpinner(false);
@@ -372,13 +372,13 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
       }
     } catch (error) {
       showSnackbar("Cannot update the lease. Please try again", "error");
-      console.log("Cannot Update the lease", error);
+      //console.log("Cannot Update the lease", error);
       setShowSpinner(false);
     }
   };
 
   const showSnackbar = (message, severity) => {
-    console.log("Inside show snackbar");
+    //console.log("Inside show snackbar");
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
@@ -413,25 +413,25 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
           leaseApplicationFormData.append("lease_renew_status", "EARLY TERMINATION REJECTED");
         }
 
-        // console.log("leaseApplicationFormData", leaseApplicationFormData);
+        // //console.log("leaseApplicationFormData", leaseApplicationFormData);
 
         axios
           .put(`${APIConfig.baseURL.dev}/leaseApplication`, leaseApplicationFormData, headers)
           .then((response) => {
             setShowSpinner(false);
-            // console.log('Data updated successfully');
+            // //console.log('Data updated successfully');
             showSnackbar("The lease has been ended successfully.", "success");
           })
           .catch((error) => {
             setShowSpinner(false);
             if (error.response) {
-              console.log(error.response.data);
+              //console.log(error.response.data);
               showSnackbar("Could not end the lease. Please Try Again", "error");
             }
           });
       }
     } catch (error) {
-      console.log("Request Failed. Lease was not updated", error);
+      //console.log("Request Failed. Lease was not updated", error);
     }
   };
 
@@ -452,10 +452,10 @@ export default function RenewLease({ leaseDetails, selectedLeaseId, setIsEndClic
       if (onReviewRenewal) {
         const applicationIndex = leaseDetails.findIndex((lease) => lease.lease_uid === selectedLeaseId);
         onReviewRenewal(applicationIndex); // Pass the index to the parent component
-        // console.log("---on renew---", currentLease);
+        // //console.log("---on renew---", currentLease);
       }
     } else {
-      //console.log("---on renew---", currentLease);
+      ////console.log("---on renew---", currentLease);
       navigate("/tenantLease", { state: { page: "renew_lease", lease: currentLease, property: currentLease, managerInitiatedRenew: true } });
     }
   };

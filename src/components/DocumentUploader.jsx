@@ -20,7 +20,7 @@ export default function DocumentUploader({selectedDocumentList, setSelectedDocum
 
     useEffect(() => {
         if(selectedDocumentList.length > 0){
-            console.log("selectedDocumentList", selectedDocumentList)
+            //console.log("selectedDocumentList", selectedDocumentList)
             checkDocumentSizes(selectedDocumentList);
         }
     }, [selectedDocumentList]);

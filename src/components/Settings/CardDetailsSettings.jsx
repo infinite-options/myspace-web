@@ -44,8 +44,8 @@ export default function CardDetailsSettings() {
     let   payments_data = location.state.payments_data;
 
     useEffect(() => {
-        console.log("CardDetailsSettingsManager useEffect");
-        console.log("Payments Data", payments_data);
+        //console.log("CardDetailsSettingsManager useEffect");
+        //console.log("Payments Data", payments_data);
     }, []);
 
     
@@ -54,18 +54,18 @@ export default function CardDetailsSettings() {
     // const [modifiedData, setModifiedData] = useState({ 'business_uid': manager_data?.business_uid, });
     const [modifiedPaymentsData, setModifiedPaymentsData] = useState(payments_data);
     useEffect(()=>{
-        console.log("modifiedPaymentsData - ");
-        console.log("   ", modifiedPaymentsData);
+        //console.log("modifiedPaymentsData - ");
+        //console.log("   ", modifiedPaymentsData);
     }, [modifiedPaymentsData]);
     const [newPaymentsData, setNewPaymentsData] = useState([]);
     useEffect(()=>{
-        console.log("newPaymentsData - ");
-        console.log("   ", newPaymentsData);
+        //console.log("newPaymentsData - ");
+        //console.log("   ", newPaymentsData);
     }, [newPaymentsData]);
     const [deletedPaymentsData, setDeletedPaymentsData] = useState([]);
     useEffect(()=>{
-        console.log("deletedPaymentsData - ");
-        console.log("   ", deletedPaymentsData);
+        //console.log("deletedPaymentsData - ");
+        //console.log("   ", deletedPaymentsData);
     }, [deletedPaymentsData]);
 
 
@@ -146,25 +146,25 @@ export default function CardDetailsSettings() {
     // const hasZellePayment       = (payments_data.find(method => method.paymentMethod_type === "zelle")) ? true: false;
     // const hasVenmoPayment       = (payments_data.find(method => method.paymentMethod_type === "venmo")) ? true: false;
 
-    // console.log("Has Payment Method")
-    // console.log("   paypal - ",hasPaypalPayment);
-    // console.log("   apple_pay - ",hasApplePayPayment);
-    // console.log("   stripe - ",hasStripePayment)   
-    // console.log("   zelle - ",hasZellePayment);
-    // console.log("   venmo - ",hasVenmoPayment);    
+    // //console.log("Has Payment Method")
+    // //console.log("   paypal - ",hasPaypalPayment);
+    // //console.log("   apple_pay - ",hasApplePayPayment);
+    // //console.log("   stripe - ",hasStripePayment)   
+    // //console.log("   zelle - ",hasZellePayment);
+    // //console.log("   venmo - ",hasVenmoPayment);    
 
 
 
 
 
-    // console.log("apple pay - ", payments_data.find(method => method.paymentMethod_type === "apple_pay"));
+    // //console.log("apple pay - ", payments_data.find(method => method.paymentMethod_type === "apple_pay"));
 
 
     const handleInputChange = (event) => {
-        console.log("Input changed")
+        //console.log("Input changed")
         const { name, value } = event.target;
-        // console.log(name)
-        // console.log(value)
+        // //console.log(name)
+        // //console.log(value)
 
         if (name === 'paypal') {
             setPaypal(value);
@@ -226,9 +226,9 @@ export default function CardDetailsSettings() {
 
     const changePaymentMethodStatus = (type, value) => {
         let status = getPaymentMethodStatus(type);
-        console.log("changePaymentMethodStatus - ")
-        console.log("   type - ", type)
-        console.log("   value - ", value)
+        //console.log("changePaymentMethodStatus - ")
+        //console.log("   type - ", type)
+        //console.log("   value - ", value)
         if(modifiedPaymentsData.find(method => method.paymentMethod_type === type)){
             // setModifiedData((prevData) => ({
             //     ...prevData,
@@ -261,16 +261,16 @@ export default function CardDetailsSettings() {
     }
 
     const handleStatusChange = (event, method_type) => {
-        console.log("Status changed")
+        //console.log("Status changed")
         const { name, checked } = event.target;
         let paymentMethodtype = null;
-        console.log(name)
-        console.log(checked)
-        console.log(method_type)
+        //console.log(name)
+        //console.log(checked)
+        //console.log(method_type)
 
         let foundMethod = modifiedPaymentsData.find(method => method.paymentMethod_type === method_type) || newPaymentsData.find(method => method.paymentMethod_type === method_type);
         
-        console.log("handleStatusChange - foundMethod - ", foundMethod)
+        //console.log("handleStatusChange - foundMethod - ", foundMethod)
 
         if (name === 'paypal_status' && foundMethod) {
             setPaypalActiveStatus(checked);
@@ -289,14 +289,14 @@ export default function CardDetailsSettings() {
             paymentMethodtype = "venmo";
         }
 
-        console.log("NAME - ", name);
-        console.log("CHECKED - ", checked);
-        console.log("TYPE - ", paymentMethodtype );
+        //console.log("NAME - ", name);
+        //console.log("CHECKED - ", checked);
+        //console.log("TYPE - ", paymentMethodtype );
 
     }
 
     const handleDeletePaymentMethod = (type) => {
-        console.log("handleDeletePaymentMethod, deleting - ", type);
+        //console.log("handleDeletePaymentMethod, deleting - ", type);
         setIsEdited(true);
         const foundMethod = modifiedPaymentsData.find(method => method.paymentMethod_type === type);
         if(foundMethod){
@@ -336,13 +336,13 @@ export default function CardDetailsSettings() {
             "Access-Control-Allow-Credentials":"*"
         };
 
-        console.log("FORM SUBMITTED");
-        console.log("PUT DATA - ");
-        console.log("   ", modifiedPaymentsData);
-        console.log("POST DATA - ");
-        console.log("   ", newPaymentsData);
-        console.log("DELETE DATA - ");
-        console.log("   ", deletedPaymentsData);
+        //console.log("FORM SUBMITTED");
+        //console.log("PUT DATA - ");
+        //console.log("   ", modifiedPaymentsData);
+        //console.log("POST DATA - ");
+        //console.log("   ", newPaymentsData);
+        //console.log("DELETE DATA - ");
+        //console.log("   ", deletedPaymentsData);
 
         if (isEdited) {
             modifiedPaymentsData.forEach((item) => {
@@ -350,7 +350,7 @@ export default function CardDetailsSettings() {
                 requests.push(request);
             });
             deletedPaymentsData.forEach((item, index) => {
-                // console.log(`Element at index ${index}: `, item.paymentMethod_uid);
+                // //console.log(`Element at index ${index}: `, item.paymentMethod_uid);
                 const request = axios.delete(`${APIConfig.baseURL.dev}/paymentMethod/${item.paymentMethod_uid}`, headers)
                 requests.push(request);
             });
@@ -366,13 +366,13 @@ export default function CardDetailsSettings() {
 
         Promise.all(requests)
         .then(() => {
-            console.log('All requests completed successfully');
+            //console.log('All requests completed successfully');
             setIsEdited(false);
             setIsNewMethodAdded(false);
             navigate(-1);
         })
         .catch((error) => {
-            console.log('Error in requests:', error);
+            //console.log('Error in requests:', error);
         });
         
         

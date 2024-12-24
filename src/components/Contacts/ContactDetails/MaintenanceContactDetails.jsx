@@ -27,17 +27,17 @@ const MaintenanceContactDetails = (props) => {
     // const passedData = location.state.viewData;
 
     useEffect(() => {
-        console.log("INDEX UPDATED - ", index);
+        //console.log("INDEX UPDATED - ", index);
         // location.state.index = index;
-        console.log("DATA DETAILS", contactDetails[index])
+        //console.log("DATA DETAILS", contactDetails[index])
     }, [index]);
 
     // const [currentViewData, setCurrentViewData] = useState();
 
-    console.log(contactDetails);
-    // console.log(selectedData);
-    console.log("INDEX", index);
-    console.log('SELECTED ROLE - ', selectedRole);
+    //console.log(contactDetails);
+    // //console.log(selectedData);
+    //console.log("INDEX", index);
+    //console.log('SELECTED ROLE - ', selectedRole);
 
 
     // const uniqueValues = {};
@@ -53,11 +53,11 @@ const MaintenanceContactDetails = (props) => {
     //     return false;
     // });
 
-    // console.log(uniqueContacts);
+    // //console.log(uniqueContacts);
 
     // const tenant_object = Object.values(uniqueValues)[index];
 
-    // console.log(tenant_object);
+    // //console.log(tenant_object);
 
     const handleBackBtn = () => {
         // navigate('/contacts');
@@ -158,7 +158,7 @@ const MaintenanceContactDetails = (props) => {
                                 }}
                             >
                                 <Box onClick={() => {
-                                        console.log("Previous button clicked. INDEX - ", index);
+                                        //console.log("Previous button clicked. INDEX - ", index);
                                         index > 0? setIndex(index-1) : setIndex(contactDetails.length - 1)
                                     }}
                                 >
@@ -190,7 +190,7 @@ const MaintenanceContactDetails = (props) => {
                                     </Typography>
                                 </Box>
                                 <Box onClick={() => {
-                                        console.log("Next button clicked. INDEX - ", index);
+                                        //console.log("Next button clicked. INDEX - ", index);
                                         (index < contactDetails.length - 1) ? setIndex(index+1) : setIndex(0)
                                     }}
                                 >

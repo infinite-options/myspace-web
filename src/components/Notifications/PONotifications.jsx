@@ -22,7 +22,7 @@ function PONotifications(props) {
     const [showSpinner, setShowSpinner] = useState(false);
 
     useEffect(() => {
-        console.log("New Owner Inquiry UseEffect");
+        //console.log("New Owner Inquiry UseEffect");
         
         const fetchData = async () => {
             setShowSpinner(true);
@@ -31,7 +31,7 @@ function PONotifications(props) {
             const response = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`);
             const announcementData = await response.json();
 
-            console.log(announcementData);
+            //console.log(announcementData);
             
             if(announcementData!==undefined){
                 setAnnouncements(announcementData.result);
@@ -43,8 +43,8 @@ function PONotifications(props) {
     }, []);
 
     useEffect(() => {
-        console.log("ANNOUNCEMENT DATA:");
-        console.log(announcements);
+        //console.log("ANNOUNCEMENT DATA:");
+        //console.log(announcements);
     }, [announcements]);
     
     const handleBackBtn = () => {
@@ -223,7 +223,7 @@ const calculateTimeDiff = (announcement_date) => {
         durationString = `${seconds} seconds ago`;
     }
 
-    //console.log(now, announcement_date, announcementData["announcement_date"], durationString, seconds, minutes, hours, days);
+    ////console.log(now, announcement_date, announcementData["announcement_date"], durationString, seconds, minutes, hours, days);
     return durationString;
 };
 

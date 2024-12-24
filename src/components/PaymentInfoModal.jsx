@@ -32,12 +32,12 @@ export default function PaymentInfoModal(props) {
   const [amount, setAmount] = useState(props.maintenanceItem.bill_amount || "");
 
   const handleAmountChange = (event) => {
-    // console.log(event.target.value);
+    // //console.log(event.target.value);
     setAmount(event.target.value);
   };
 
   const handleCheckNumberChange = (event) => {
-    // console.log(event.target.value);
+    // //console.log(event.target.value);
     setCheckNumber(event.target.value);
   };
 
@@ -49,7 +49,7 @@ export default function PaymentInfoModal(props) {
   };
 
   const submit = (checkNumber, amount) => {
-    // console.log(checkNumber, amount);
+    // //console.log(checkNumber, amount);
     props
       .handleSubmit({
         checkNumber: checkNumber,

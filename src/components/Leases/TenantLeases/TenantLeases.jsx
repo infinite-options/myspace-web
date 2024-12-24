@@ -53,7 +53,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 
 function TenantLeases(props) {
-  // console.log("In Tenant Leases", props);
+  // //console.log("In Tenant Leases", props);
   const location = useLocation();
   const navigate = useNavigate();
   const { getProfileId } = useUser();
@@ -111,18 +111,18 @@ function TenantLeases(props) {
   const [managerID, setManagerID] = useState("");
 
   useEffect(() => {
-    // console.log("Props passed to TenantLeases: ", props.oldLeaseUid);
+    // //console.log("Props passed to TenantLeases: ", props.oldLeaseUid);
     setPrevLeaseId(props.oldLeaseUid);
     setProperty(props.property);
     setLease(props.lease);
   }, [props.property, props.lease]);
 
   // useEffect(() => {
-  //   console.log("62 - lease - ", lease);
+  //   //console.log("62 - lease - ", lease);
   // }, [lease]);
 
   // useEffect(() => {
-  //   console.log("68 - managerID - ", managerID);
+  //   //console.log("68 - managerID - ", managerID);
   // }, [managerID]);
 
   const getListDetails = () => {
@@ -131,7 +131,7 @@ function TenantLeases(props) {
 
     setUtilitiesMap(new Map(utilities.map((utility) => [utility.list_uid, utility.list_item])));
     setUtilitiesRoleMap(new Map(utilitiesRole.map((role) => [role.list_uid, role.list_item])));
-    console.log(" list here -- ", utilitiesMap, utilitiesRoleMap);
+    //console.log(" list here -- ", utilitiesMap, utilitiesRoleMap);
     setUtilities(utilities);
     setUtilitiesRole(utilitiesRole);
   };
@@ -140,7 +140,7 @@ function TenantLeases(props) {
     if (!propertyUtilities) {
       return {};
     }
-    // console.log("----- in mapUIDsToUtilities, input - ", utilitiesMap);
+    // //console.log("----- in mapUIDsToUtilities, input - ", utilitiesMap);
     const mappedUtilities = {};
     for (const key of Object.keys(propertyUtilities)) {
       const utilityName = utilitiesMap.get(key);
@@ -151,19 +151,19 @@ function TenantLeases(props) {
       }
     }
 
-    // console.log("----- in mapUIDsToUtilities, mappedUtilities - ", mappedUtilities);
+    // //console.log("----- in mapUIDsToUtilities, mappedUtilities - ", mappedUtilities);
     return mappedUtilities;
   };
 
   useEffect(() => {
     setShowSpinner(true);
-    // console.log("property", property);
-    // console.log("status", status);
-    console.log("lease", lease);
-    // console.log("fees", fees);
+    // //console.log("property", property);
+    // //console.log("status", status);
+    //console.log("lease", lease);
+    // //console.log("fees", fees);
 
     async function fetchData() {
-      console.log("In fetch data");
+      //console.log("In fetch data");
       const leaseResponse = await fetch(`${APIConfig.baseURL.dev}/leaseDetails/${getProfileId()}`);
 
       if (!leaseResponse.ok) {
@@ -173,19 +173,19 @@ function TenantLeases(props) {
         return;
       }
       const leaseData = await leaseResponse.json();
-      console.log("leaseData.Lease_Details.result", leaseData);
-      console.log("leaseData.Lease_Details.result", leaseData.Lease_Details.result);
+      //console.log("leaseData.Lease_Details.result", leaseData);
+      //console.log("leaseData.Lease_Details.result", leaseData.Lease_Details.result);
 
       const properties_with_details = leaseData.Lease_Details.result;
-      console.log("properties_with_details", properties_with_details);
-      console.log("Lease id: ", lease.lease_uid);
+      //console.log("properties_with_details", properties_with_details);
+      //console.log("Lease id: ", lease.lease_uid);
       let detailed_property = properties_with_details.filter((p) => p.lease_uid === lease.lease_uid);
-      console.log("Lease: ", lease);
-      console.log("detailed_property", detailed_property);
+      //console.log("Lease: ", lease);
+      //console.log("detailed_property", detailed_property);
 
       if (Array.isArray(detailed_property) && detailed_property.length > 0) {
         detailed_property = detailed_property[0];
-        console.log("inside if Detailed Property: ", detailed_property);
+        //console.log("inside if Detailed Property: ", detailed_property);
         setPets(detailed_property.lease_pets ? JSON.parse(detailed_property?.lease_pets) : []);
         setVehicles(detailed_property.lease_vehicles ? JSON.parse(detailed_property?.lease_vehicles) : []);
         setAdultOccupants(detailed_property.lease_adults ? JSON.parse(detailed_property?.lease_adults) : []);
@@ -210,7 +210,7 @@ function TenantLeases(props) {
         //lease link
         const parsedDocs = JSON.parse(detailed_property.lease_documents);
         const leaseDoc = parsedDocs.find((doc) => doc.type && doc.type === "Lease Agreement");
-        console.log("leaselink", leaseDoc);
+        //console.log("leaselink", leaseDoc);
         setSignedLease(leaseDoc);
         setManagerID(detailed_property.contract_business_id);
       }
@@ -223,18 +223,18 @@ function TenantLeases(props) {
   }, []);
 
   useEffect(() => {
-    console.log("UTILITIES - ", leaseUtilities);
+    //console.log("UTILITIES - ", leaseUtilities);
     if (leaseUtilities && leaseUtilities?.length > 0) {
-      console.log("484 - utilitiesObject - ");
+      //console.log("484 - utilitiesObject - ");
       for (const utility of leaseUtilities) {
-        // console.log(utility.utility_type_id, utility.utility_payer_id);
+        // //console.log(utility.utility_type_id, utility.utility_payer_id);
         utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
       }
-      // console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
+      // //console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
 
       mappedUtilities2 = mapUIDsToUtilities(utilitiesInUIDForm);
-      console.log("----- Mapped UIDs to Utilities, mappedUtilities2", mappedUtilities2);
-      // console.log("   ", mappedUtilities2);
+      //console.log("----- Mapped UIDs to Utilities, mappedUtilities2", mappedUtilities2);
+      // //console.log("   ", mappedUtilities2);
       setMappedUtilitiesPaidBy(mappedUtilities2);
     }
   }, [leaseUtilities]);
@@ -267,7 +267,7 @@ function TenantLeases(props) {
   }
 
   function displayPropertyAddress() {
-    console.log("leases", lease);
+    //console.log("leases", lease);
     if (lease.property_unit) {
       return (
         <>
@@ -318,7 +318,7 @@ function TenantLeases(props) {
           }),
         });
       } catch (error) {
-        console.log("Error in Tenant refuse announcements:", error);
+        //console.log("Error in Tenant refuse announcements:", error);
         // alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
         openDialog("Error", `We were unable to Text the Property Manager but we were able to send them a notification through the App`, "error");
       }
@@ -343,14 +343,14 @@ function TenantLeases(props) {
         }
 
         // props.setRightPane({ type: "", state: { property: property, lease: lease } });
-        // console.log("--- DEBUD---- rejected")
+        // //console.log("--- DEBUD---- rejected")
         props.setReload((prev) => !prev);
         // props.setRightPane("");
       } else {
-        console.log(data);
+        //console.log(data);
       }
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
   }
 
@@ -371,10 +371,10 @@ function TenantLeases(props) {
         // alert("You have successfully Rejected the lease.");
         openDialog("Success", `You have successfully Rejected the lease`, "success");
       } else {
-        console.log(data);
+        //console.log(data);
       }
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
   }
 
@@ -394,31 +394,31 @@ function TenantLeases(props) {
       if (response.ok) {
         openDialog("Success", `Successfully sent a request to the Property Manager to end the approved lease.`, "success");
       } else {
-        console.log(data);
+        //console.log(data);
       }
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
   }
 
   async function handleTenantAccept() {
-    // console.log("Data we have1: ", lease);
-    // console.log("Data we have2: ", property);
-    // console.log("Data we have3: ", status);
-    // console.log("Data we have4: ", pets);
-    // console.log("Lease Application Data1: ", leaseApplicationFormData);
-    // console.log("In handle Accept: ", detailed_property?.lease_effective_date);
+    // //console.log("Data we have1: ", lease);
+    // //console.log("Data we have2: ", property);
+    // //console.log("Data we have3: ", status);
+    // //console.log("Data we have4: ", pets);
+    // //console.log("Lease Application Data1: ", leaseApplicationFormData);
+    // //console.log("In handle Accept: ", detailed_property?.lease_effective_date);
     const leaseApplicationFormData = new FormData();
     leaseApplicationFormData.append("lease_uid", lease.lease_uid);
-    console.log("Lease Application Data2: ", leaseApplicationFormData);
+    //console.log("Lease Application Data2: ", leaseApplicationFormData);
 
-    console.log("221 - property: ", property);
-    console.log("221 - lease: ", lease);
+    //console.log("221 - property: ", property);
+    //console.log("221 - lease: ", lease);
 
     const sendAnnouncement = async () => {
       try {
-        console.log("Announcements ID: ", property);
-        console.log("Announcements ID: ", property.contract_business_id);
+        //console.log("Announcements ID: ", property);
+        //console.log("Announcements ID: ", property.contract_business_id);
         const receiverPropertyMapping = {
           [managerID]: [property.property_uid],
         };
@@ -442,7 +442,7 @@ function TenantLeases(props) {
           }),
         });
       } catch (error) {
-        console.log("Error in Tenant accept announcements:", error);
+        //console.log("Error in Tenant accept announcements:", error);
         // alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
         openDialog("Error", `We were unable to Text the Property Manager but we were able to send them a notification through the App`, "error");
       }
@@ -459,14 +459,14 @@ function TenantLeases(props) {
           body: renewalFormData,
         });
         const data = await response.json();
-        // console.log("Renewal status updated:", data);
+        // //console.log("Renewal status updated:", data);
         if (data?.code === 200) {
-          console.log("Lease renewal successfully updated.");
+          //console.log("Lease renewal successfully updated.");
         } else {
-          console.log("Failed to update lease renewal status:", data);
+          //console.log("Failed to update lease renewal status:", data);
         }
       } catch (error) {
-        console.log("Error updating lease renewal status:", error);
+        //console.log("Error updating lease renewal status:", error);
       }
     };
 
@@ -474,28 +474,28 @@ function TenantLeases(props) {
       var lease_status = "APPROVED"; // Abhinav - Tenant Approved
       // var status = "TENANT APPROVED";
       const date = new Date();
-      // console.log("Date: ", date);
-      // console.log("Lease Effective Date, ", status);
+      // //console.log("Date: ", date);
+      // //console.log("Lease Effective Date, ", status);
       if (status) {
         const [month, day, year] = status.split("-").map(Number);
         const leaseDate = new Date(year, month - 1, day); // Month is 0-indexed in JavaScript Date objects
-        // console.log("Lease Effective Date, ", leaseDate);
+        // //console.log("Lease Effective Date, ", leaseDate);
 
         if (leaseDate <= date && lease.lease_status === "PROCESSING") {
           lease_status = "ACTIVE";
-          console.log("Lease Status Changed: ", lease_status);
+          //console.log("Lease Status Changed: ", lease_status);
           // if (lease.lease_effective_date <= date) {
           // status = "ACTIVE";
         }
       }
-      console.log("Status: ", status);
+      //console.log("Status: ", status);
       leaseApplicationFormData.append("lease_status", lease_status);
       const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "PUT",
         body: leaseApplicationFormData,
       });
       const data = await response.json();
-      // console.log("409 - Data", data);
+      // //console.log("409 - Data", data);
       if (response.ok) {
         // alert("You have successfully Accepted the lease.");
         openDialog("Success", `You have successfully Accepted the lease.`, "success");
@@ -507,10 +507,10 @@ function TenantLeases(props) {
         // props.setRightPane("");
         props.setReload((prev) => !prev);
       } else {
-        console.log(data);
+        //console.log(data);
       }
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
   }
 

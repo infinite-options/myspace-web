@@ -12,7 +12,7 @@ import { useUser } from "../../contexts/UserContext";
 import Backdrop from "@mui/material/Backdrop";
 
 export default function ManagerDashboardHappinessMatrix(props) {
-  console.log("In ManagerDashboardHappinessMatrix");
+  //console.log("In ManagerDashboardHappinessMatrix");
   const navigate = useNavigate();
   const location = useLocation();
   let matrixData = location.state.matrixData;

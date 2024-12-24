@@ -118,7 +118,7 @@ const ManagerProfitability = ({
   const [profitsExpanded, setProfitsExpanded] = useState(true);
   const [revenueExpanded, setRevenueExpanded] = useState(true);
   const [expenseExpanded, setExpenseExpanded] = useState(true);
-  // console.log("inside cashflow - view - ", view)
+  // //console.log("inside cashflow - view - ", view)
 
   const [tab, setTab] = useState("profit");
   const [headerTab, setHeaderTab] = useState("current_month");
@@ -617,7 +617,7 @@ const ManagerProfitability = ({
       return acc;
     }, {});
 
-    // console.log("group data - ", groupedData, " for - ", data);
+    // //console.log("group data - ", groupedData, " for - ", data);
 
     const result = Object.keys(groupedData).reduce((acc, group) => {
       let expected = 0;
@@ -744,7 +744,7 @@ const ManagerProfitability = ({
   };
 
   const handleOwnerChange = (ownerId) => {
-    // console.log("ManagerCashflowWidget - handlePropertyChange - value - ", propertyUID);
+    // //console.log("ManagerCashflowWidget - handlePropertyChange - value - ", propertyUID);
     setSelectedOwnerId(ownerId);
     // setPropertyButtonName("View all Properties");
     setAnchorEl(null);
@@ -1465,7 +1465,7 @@ const ManagerProfitability = ({
               {cashFlowData &&
                 Object.keys(cashFlowData)?.map((propertyUID, index) => {
                   const property = cashFlowData[propertyUID];
-                  // console.log("property - ", property);
+                  // //console.log("property - ", property);
                   return (
                     <>
                       <Accordion
@@ -1985,7 +1985,7 @@ const ManagerProfitability = ({
               {revenueDataForManager &&
                 Object.keys(revenueDataForManager)?.map((propertyUID, index) => {
                   const property = revenueDataForManager[propertyUID];
-                  // console.log("property - ", property);
+                  // //console.log("property - ", property);
                   return (
                     <>
                       <Accordion
@@ -2143,7 +2143,7 @@ const ManagerProfitability = ({
               {totalDepositByProperty &&
                 Object.keys(totalDepositByProperty)?.map((propertyUID, index) => {
                   const property = totalDepositByProperty[propertyUID];
-                  // console.log("property - ", property);
+                  // //console.log("property - ", property);
                   return (
                     <>
                       <Accordion
@@ -2376,7 +2376,7 @@ const ManagerProfitability = ({
               {profits &&
                 Object.keys(profits)?.map((propertyUID, index) => {
                   const property = profits[propertyUID];
-                  // console.log("property - ", property);
+                  // //console.log("property - ", property);
                   return (
                     <>
                       <Accordion
@@ -2861,7 +2861,7 @@ function SelectMonthComponentTest(props) {
 }
 
 function StatementTable(props) {
-  // console.log(props)
+  // //console.log(props)
   const navigate = useNavigate();
 
   const activeView = props.activeView;
@@ -2883,7 +2883,7 @@ function StatementTable(props) {
   }
 
   function getCategoryCount(category, expected) {
-    // console.log("getCategoryCount - category - ", category);
+    // //console.log("getCategoryCount - category - ", category);
     let filteredItems = allItems.filter((item) => {
       if (item.purchase_type.toUpperCase() === category.toUpperCase()) {
         return item.purchase_type.toUpperCase() === category.toUpperCase() && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year;
@@ -3186,7 +3186,7 @@ function NewStatmentTable(props) {
   };
 
   const getVerificationStatus = (purchase) => {
-    // console.log("getVerificationStatus - purchase - ", purchase);
+    // //console.log("getVerificationStatus - purchase - ", purchase);
     if (purchase.pur_payer?.startsWith("600")) {
       return getVerificationForManagerPayment(purchase);
     } else if (purchase.pur_payer?.startsWith("110")) {
@@ -3398,7 +3398,7 @@ function NewStatmentTable(props) {
   };
 
   function getCategoryCount(category, expected) {
-    // console.log("getCategoryCount - category - ", category);
+    // //console.log("getCategoryCount - category - ", category);
     let filteredItems = allItems.filter((item) => {
       if (item.purchase_type.toUpperCase() === category.toUpperCase()) {
         return item.purchase_type.toUpperCase() === category.toUpperCase() && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year;
@@ -3661,7 +3661,7 @@ function NewStatmentTableForByCashflow(props) {
   };
 
   const getVerificationStatus = (purchase) => {
-    // console.log("getVerificationStatus - purchase - ", purchase);
+    // //console.log("getVerificationStatus - purchase - ", purchase);
     if (purchase.pur_payer?.startsWith("600")) {
       return getVerificationForManagerPayment(purchase);
     } else if (purchase.pur_payer?.startsWith("110")) {
@@ -3886,7 +3886,7 @@ function NewStatmentTableForByCashflow(props) {
   };
 
   function getCategoryCount(category, expected) {
-    // console.log("getCategoryCount - category - ", category);
+    // //console.log("getCategoryCount - category - ", category);
     let filteredItems = allItems.filter((item) => {
       if (item.purchase_type.toUpperCase() === category.toUpperCase()) {
         return item.purchase_type.toUpperCase() === category.toUpperCase() && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year;
@@ -4108,7 +4108,7 @@ function NewStatmentTableForByCashflow(props) {
 }
 
 function TransactionsTable(props) {
-  // console.log("In TransactionTable", props);
+  // //console.log("In TransactionTable", props);
   const [data, setData] = useState(props.data);
   const navigate = useNavigate();
   const [selectedRows, setSelectedRows] = useState([]);
@@ -4132,7 +4132,7 @@ function TransactionsTable(props) {
   }, [props.data]);
 
   useEffect(() => {
-    // console.log("ROHIT - selectedRows - ", selectedRows);
+    // //console.log("ROHIT - selectedRows - ", selectedRows);
   }, [selectedRows]);
 
   const filterTransactions = (data) => {
@@ -4154,7 +4154,7 @@ function TransactionsTable(props) {
       return acc;
     }, {});
 
-    // console.log("ROHIT - 631 - vgroupByPurchaseGroup - ", groupedData);
+    // //console.log("ROHIT - 631 - vgroupByPurchaseGroup - ", groupedData);
 
     let result = Object.keys(groupedData).reduce((acc, group) => {
       let received_amt = 0;
@@ -4264,7 +4264,7 @@ function TransactionsTable(props) {
       }
     });
 
-    // console.log("ROHIT - 631 - result - ", result);
+    // //console.log("ROHIT - 631 - result - ", result);
 
     return result;
 
@@ -4282,7 +4282,7 @@ function TransactionsTable(props) {
 
   useEffect(() => {
     if (data && data.length > 0) {
-      // console.log("ROHIT - 814 - without filteredData - ", data, " for property - ", data[0].pur_property_id);
+      // //console.log("ROHIT - 814 - without filteredData - ", data, " for property - ", data[0].pur_property_id);
       const filteredData = filterTransactions(data);
       // setSelectedRows(filteredData.map((row) => row.index));
       setSelectedRows([]);
@@ -4301,16 +4301,16 @@ function TransactionsTable(props) {
     let purchase_uid_mapping = [];
 
     for (const item of selectedRows) {
-      // console.log("item in loop", item)
+      // //console.log("item in loop", item)
 
       let paymentItemData = paymentDueResult.find((element) => element.index === item);
-      // console.log("ROHIT - 687 - paymentItemData - ", paymentItemData);
+      // //console.log("ROHIT - 687 - paymentItemData - ", paymentItemData);
       const purchaseIDs = JSON.parse(paymentItemData.purchase_ids);
       purchaseIDs.forEach((purID) => {
         purchase_uid_mapping.push({ purchase_uid: purID, pur_amount_due: paymentItemData.owner_payment.toFixed(2) });
       });
 
-      // console.log("payment item data", paymentItemData);
+      // //console.log("payment item data", paymentItemData);
 
       // total += parseFloat(paymentItemData.pur_amount_due);
       // Adjust total based on pur_cf_type
@@ -4322,8 +4322,8 @@ function TransactionsTable(props) {
 
       total += parseFloat(paymentItemData.owner_payment);
     }
-    // console.log("selectedRows useEffect - total - ", total);
-    // console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
+    // //console.log("selectedRows useEffect - total - ", total);
+    // //console.log("selectedRows useEffect - purchase_uid_mapping - ", purchase_uid_mapping);
     props.setTotal(total);
     props.setPaymentData((prevPaymentData) => ({
       ...prevPaymentData,
@@ -4333,7 +4333,7 @@ function TransactionsTable(props) {
   }, [selectedRows]);
 
   useEffect(() => {
-    console.log("selectedPayments - ", selectedPayments);
+    //console.log("selectedPayments - ", selectedPayments);
     props.setSelectedItems(selectedPayments);
   }, [selectedPayments]);
 
@@ -4458,30 +4458,30 @@ function TransactionsTable(props) {
   ];
 
   const handleSelectionModelChange = (newRowSelectionModel) => {
-    // console.log("ROHIT - newRowSelectionModel - ", newRowSelectionModel);
-    // console.log("ROHIT - paymentDueResult - ", paymentDueResult);
-    // console.log("ROHIT -  selectedRows - ", selectedRows);
+    // //console.log("ROHIT - newRowSelectionModel - ", newRowSelectionModel);
+    // //console.log("ROHIT - paymentDueResult - ", paymentDueResult);
+    // //console.log("ROHIT -  selectedRows - ", selectedRows);
 
     const addedRows = newRowSelectionModel.filter((rowId) => !selectedRows.includes(rowId));
     const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
 
     let updatedRowSelectionModel = [...newRowSelectionModel];
 
-    // console.log("ROHIT -  addedRows - ", addedRows);
+    // //console.log("ROHIT -  addedRows - ", addedRows);
 
     if (addedRows.length > 0) {
-      // console.log("Added rows: ", addedRows);
+      // //console.log("Added rows: ", addedRows);
       let newPayments = [];
 
       addedRows.forEach((item, index) => {
-        // console.log("ROHIT - item - ", item)
+        // //console.log("ROHIT - item - ", item)
         // const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
         const addedPayment = paymentDueResult.find((row) => row.index === item);
-        // console.log("ROHIT - addedPayment - ", addedPayment)
+        // //console.log("ROHIT - addedPayment - ", addedPayment)
 
         if (addedPayment) {
           const relatedPayments = paymentDueResult.filter((row) => row.pur_group === addedPayment.pur_group);
-          // console.log("ROHIT - relatedPayments - ", relatedPayments)
+          // //console.log("ROHIT - relatedPayments - ", relatedPayments)
 
           newPayments = [...newPayments, ...relatedPayments];
           const relatedRowIds = relatedPayments.map((payment) => payment.index);
@@ -4489,21 +4489,21 @@ function TransactionsTable(props) {
         }
       });
 
-      // console.log("newPayments - ", newPayments);
+      // //console.log("newPayments - ", newPayments);
       setSelectedPayments((prevState) => {
         return [...prevState, ...newPayments];
       });
     }
 
     if (removedRows.length > 0) {
-      // console.log("Removed rows: ", removedRows);
+      // //console.log("Removed rows: ", removedRows);
       let removedPayments = [];
       removedRows.forEach((item, index) => {
         let removedPayment = paymentDueResult.find((row) => row.index === item);
 
         removedPayments.push(removedPayment);
       });
-      // console.log("removedPayments - ", removedPayments);
+      // //console.log("removedPayments - ", removedPayments);
       setSelectedPayments((prevState) => prevState.filter((payment) => !removedRows.includes(payment.index)));
     }
     // setSelectedRows(newRowSelectionModel);
@@ -4602,7 +4602,7 @@ function TransactionsTable(props) {
                 const selectedPurchaseReceiver = [
                   ...new Set(selectedPayments.map((payment) => payment.pur_receiver))
                 ];
-                // console.log("selected purchase group -- ", selectedPurchaseReceiver);
+                // //console.log("selected purchase group -- ", selectedPurchaseReceiver);
                 navigate("/paymentProcessing", { state: { currentWindow: "PAY_BILLS", selectedRows: selectedPurchaseReceiver } });
               }}
             >
@@ -4642,7 +4642,7 @@ function TransactionsTable(props) {
 }
 
 function BalanceDetailsTable(props) {
-  // console.log("In BalanceDetailTable", props);
+  // //console.log("In BalanceDetailTable", props);
   const [data, setData] = useState(props.data);
   const selectedPurchaseGroup = props.selectedPurchaseRow || "";
   const [selectedRows, setSelectedRows] = useState([]);
@@ -4840,15 +4840,15 @@ function BalanceDetailsTable(props) {
   ]);
 
   // useEffect(() => {
-  //   console.log("selectedPayments - ", selectedPayments);
+  //   //console.log("selectedPayments - ", selectedPayments);
   // }, [selectedPayments]);
   useEffect(() => {
-    // console.log(" inside use effect of unverified data- ", props.data)
+    // //console.log(" inside use effect of unverified data- ", props.data)
     setData(props.data);
   }, [props.data]);
 
   useEffect(() => {
-    console.log("debug selecte payment -- " )
+    //console.log("debug selecte payment -- " )
     props.setSelectedItems((prevState) => {
       const updatedPaymentData = prevState?.filter((payment) => selectedPayments.some((selected) => selected.id === payment.id));
 
@@ -4874,7 +4874,7 @@ function BalanceDetailsTable(props) {
   }, [props.sortBy]);
 
   useEffect(() => {
-  console.log("--DEBUG Data - ", data);
+  //console.log("--DEBUG Data - ", data);
     if (data && data.length > 0) {
       // setSelectedPayments(data);
       // setSelectedPayments([]);
@@ -4910,10 +4910,10 @@ function BalanceDetailsTable(props) {
   }, [data]);
 
   useEffect(() => {
-    console.log("selectedRows - ", selectedRows);
+    //console.log("selectedRows - ", selectedRows);
     const total = selectedRows?.reduce((total, rowId) => {
       const payment = paymentDueResult.find((row) => row.payment_id === rowId);
-      // console.log("payment - ", payment);
+      // //console.log("payment - ", payment);
       if (payment) {
         const payAmount = parseFloat(payment.pay_amount);
         // const isExpense = payment.pur_cf_type === "expense";
@@ -5091,22 +5091,22 @@ function BalanceDetailsTable(props) {
   ];
 
   const handleSelectionModelChange = (newRowSelectionModel) => {
-    // console.log("newRowSelectionModel - ", newRowSelectionModel);
+    // //console.log("newRowSelectionModel - ", newRowSelectionModel);
 
     const addedRows = newRowSelectionModel.filter((rowId) => !selectedRows.includes(rowId));
     const removedRows = selectedRows.filter((rowId) => !newRowSelectionModel.includes(rowId));
 
-    // console.log("ROHIT - addedRows - ", addedRows);
-    // console.log("remove rows - ", removedRows);
+    // //console.log("ROHIT - addedRows - ", addedRows);
+    // //console.log("remove rows - ", removedRows);
 
     let updatedRowSelectionModel = [...newRowSelectionModel];
 
     if (addedRows.length > 0) {
-      // console.log("Added rows: ", addedRows);
+      // //console.log("Added rows: ", addedRows);
       let newPayments = [];
 
       addedRows.forEach((item, index) => {
-        // console.log("item - ", item);
+        // //console.log("item - ", item);
         // const addedPayment = paymentDueResult.find((row) => row.purchase_uid === addedRows[index]);
         const addedPayment = paymentDueResult.find((row) => row.payment_id === item);
 
@@ -5122,14 +5122,14 @@ function BalanceDetailsTable(props) {
         }
       });
 
-      // console.log("newPayments - ", newPayments);
+      // //console.log("newPayments - ", newPayments);
       setSelectedPayments((prevState) => {
         return [...prevState, ...newPayments];
       });
     }
 
     if (removedRows.length > 0) {
-      // console.log("Removed rows: ", removedRows);
+      // //console.log("Removed rows: ", removedRows);
       let removedPayments = [];
       let relatedRows = [];
 
@@ -5158,12 +5158,12 @@ function BalanceDetailsTable(props) {
   };
 
   const handleVerifyPayments = async () => {
-    // console.log("In handleVerifyPayments");
+    // //console.log("In handleVerifyPayments");
 
-    console.log("before pasing it selectedPayments - ", selectedPayments);
+    //console.log("before pasing it selectedPayments - ", selectedPayments);
     const formData = new FormData();
     const verifiedList = selectedPayments?.map((payment) => payment.payment_id);
-    // console.log("verifiedList - ", verifiedList);
+    // //console.log("verifiedList - ", verifiedList);
     formData.append("payment_uid", JSON.stringify(verifiedList));
     formData.append("payment_verify", "Verified");
 
@@ -5177,20 +5177,20 @@ function BalanceDetailsTable(props) {
       });
 
       const responseData = await response.json();
-      console.log(responseData);
+      //console.log(responseData);
       if (response.status === 200) {
-        console.log("successfuly verified selected payments");
+        //console.log("successfuly verified selected payments");
       } else {
         console.error("Could not update verification for selected payments ");
       }
     } catch (error) {
-      console.log("error", error);
+      //console.log("error", error);
     }
     props.fetchPaymentsData();
   };
 
   if (paymentDueResult.length > 0) {
-    // console.log("Passed Data ", paymentDueResult);
+    // //console.log("Passed Data ", paymentDueResult);
     return (
       <>
         <Grid item xs={12} sx={{ overflowX: "auto" }}>
@@ -5212,10 +5212,10 @@ function BalanceDetailsTable(props) {
             getRowId={(row) => row.payment_id}
             // getRowId={(row) => {
             //   const rowId = row.payment_uid;
-            //   // console.log("Hello Globe");
-            //   // console.log("Row ID:", rowId);
-            //   // console.log("Row Data:", row); // Log the entire row data
-            //   // console.log("Row PS:", row.ps); // Log the ps field
+            //   // //console.log("Hello Globe");
+            //   // //console.log("Row ID:", rowId);
+            //   // //console.log("Row Data:", row); // Log the entire row data
+            //   // //console.log("Row PS:", row.ps); // Log the ps field
             //   return rowId;
             // }}
             pageSizeOptions={[10, 50, 100]}

@@ -93,7 +93,7 @@ const PMEmpOnBoardDesktopForm = ({ profileData, setIsSave }) => {
     };
 
     useEffect(() => {
-        console.log("calling useeffect")
+        //console.log("calling useeffect")
         //setIsSave(false)
         const fetchProfileData = async () => {
             setShowSpinner(true);
@@ -345,7 +345,7 @@ const PMEmpOnBoardDesktopForm = ({ profileData, setIsSave }) => {
         //     role_id = { employee_id: data.employee_uid };
         //     setCookie("user", { ...user, ...role_id });
         //     const paymentSetup = await handlePaymentStep(data.employee_uid);
-        //     console.log(paymentSetup);
+        //     //console.log(paymentSetup);
         //     setDashboardButtonEnabled(true);
         // }
         setCookie("default_form_vals", { ...cookiesData, phoneNumber, email, address, unit, city, state, zip, ssn });

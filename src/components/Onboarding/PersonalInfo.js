@@ -127,14 +127,14 @@ const PersonalInfo = () => {
       }
 
       if (!DataValidator.zipCode_validate(zip)) {
-        console.log(zip);
+        //console.log(zip);
         alert("Please enter a valid zip code");
         return false;
       }
 
       if (!DataValidator.ssn_validate(ssn)) {
-        console.log(ssn);
-        console.log("ssn");
+        //console.log(ssn);
+        //console.log("ssn");
         alert("Please enter a valid SSN");
         return false;
       }

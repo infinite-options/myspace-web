@@ -115,7 +115,7 @@ const TenantDashboard = () => {
   const [view, setView] = useState("dashboard");
 
   // useEffect(() => {
-  //   console.log("Listing Data: ", listingsData);
+  //   //console.log("Listing Data: ", listingsData);
   // }, [listingsData]);
 
   useEffect(() => {
@@ -135,7 +135,7 @@ const TenantDashboard = () => {
   // };
 
   useEffect(() => {
-    console.log("=== ok success - ", location?.state?.selectedProperty);
+    //console.log("=== ok success - ", location?.state?.selectedProperty);
     if (location?.state?.selectedProperty) {
       setSelectedProperty(location?.state?.selectedProperty);
       // handleSelectProperty(location?.state?.selectedProperty)
@@ -160,7 +160,7 @@ const TenantDashboard = () => {
       const dashboardData = await dashboardResponse.json();
 
       if (dashboardData) {
-        // console.log("Dashboard inside check", dashboardData.property?.result);
+        // //console.log("Dashboard inside check", dashboardData.property?.result);
         setPropertyListingData(dashboardData.property?.result);
 
         setLeaseDetailsData(dashboardData.leaseDetails?.result);
@@ -173,7 +173,7 @@ const TenantDashboard = () => {
 
         // Set first property as selected, if available
         // const firstProperty = dashboardData.property?.result[0];
-        // console.log("property", firstProperty.property_uid);
+        // //console.log("property", firstProperty.property_uid);
         // if (firstProperty) {
         //     setSelectedProperty(firstProperty.property_uid);
         //     handleSelectProperty(firstProperty.property_uid);
@@ -217,22 +217,22 @@ const TenantDashboard = () => {
 
   useEffect(() => {
     // setLoading(true)
-    // console.log("first property - ", selectedProperty)
-    // console.log("propertydata test", propertyListingData);
-    // console.log("property lease data - ", leaseDetailsData)
+    // //console.log("first property - ", selectedProperty)
+    // //console.log("propertydata test", propertyListingData);
+    // //console.log("property lease data - ", leaseDetailsData)
     // if (propertyListingData.length > 0 && !selectedProperty) {
     //   // const firstProperty = propertyListingData[0];
     //   const firstProperty = propertyListingData.find((property) => property.lease_status !== null);
-    //   // console.log("first property", firstProperty);
+    //   // //console.log("first property", firstProperty);
     //   if (firstProperty) {
     //     setSelectedProperty(firstProperty);
     //     handleSelectProperty(firstProperty);
     //   }
 
     // } else if (selectedProperty) {
-    //   // console.log("--DEBUG property - ", propertyListingData)
+    //   // //console.log("--DEBUG property - ", propertyListingData)
     //   const firstProperty = propertyListingData.find((property) => property.property_uid === selectedProperty.property_id);
-    //   // console.log("first property", firstProperty);
+    //   // //console.log("first property", firstProperty);
     //   if (firstProperty) {
     //     setSelectedProperty(firstProperty)
     //     handleSelectProperty(firstProperty);
@@ -281,20 +281,20 @@ const TenantDashboard = () => {
     }
     setSelectedProperty(property);
     updateLeaseDetails(property.property_uid);
-    // console.log("leasedetailsdata", leaseDetailsData);
+    // //console.log("leasedetailsdata", leaseDetailsData);
 
     if (leaseDetailsData) {
       const leasesForProperty = leaseDetailsData.filter((lease) => lease.property_uid === property.property_uid);
 
-      // console.log("Leases for property:", leasesForProperty);
+      // //console.log("Leases for property:", leasesForProperty);
 
       //   const renewProcessingLease = leasesForProperty.find((lease) => lease.lease_status === "RENEW PROCESSING" || lease.lease_status === "RENEW NEW");
-      //   console.log("check here", renewProcessingLease);
+      //   //console.log("check here", renewProcessingLease);
       //   setRelatedLease(renewProcessingLease || null);
       // }
 
       // Find the correct lease to set as relatedLease
-      // console.log("233 - leasesForProperty - ", leasesForProperty);
+      // //console.log("233 - leasesForProperty - ", leasesForProperty);
       if (leasesForProperty.length > 1) {
         // const activeLease = leasesForProperty.find((lease) => lease.lease_status === "ACTIVE");
         // const renewalLease = leasesForProperty.find(lease => (lease.lease_status === "RENEW NEW" || lease.lease_status === "RENEW WITHDRAWN" || lease.lease_status === "RENEW PROCESSING"));
@@ -302,17 +302,17 @@ const TenantDashboard = () => {
 
         // setLeaseDetails(activeLease || null);
         setRelatedLease(renewalLease || null);
-        // console.log("first lease", firstLease.lease_status, firstLease.lease_renew_status);
-        // console.log("second lease", secondLease);
-        // console.log("lease details check", leaseDetails);
+        // //console.log("first lease", firstLease.lease_status, firstLease.lease_renew_status);
+        // //console.log("second lease", secondLease);
+        // //console.log("lease details check", leaseDetails);
 
         // if (firstLease.lease_status === "INACTIVE" && (secondLease.lease_status === "ACTIVE" || secondLease.lease_status === "ACTIVE M2M")) {
         //   setLeaseDetails(secondLease || null);
-        //   console.log("here  check 2");
+        //   //console.log("here  check 2");
         // } else {
         //   setLeaseDetails(firstLease || null);
         //   setRelatedLease(secondLease || null);
-        //   // console.log("here  check 1");
+        //   // //console.log("here  check 1");
         // }
       } else {
         // setRelatedLease(leasesForProperty[0] || null);
@@ -362,7 +362,7 @@ const TenantDashboard = () => {
     }
 
     // const leaseForProperty = leaseDetailsData.find((ld) => ld.property_uid === propertyUid);
-    console.log("property lease for property", leaseForProperty);
+    //console.log("property lease for property", leaseForProperty);
     setLeaseDetails(leaseForProperty);
 
     if (leaseForProperty?.lease_status === "NEW") {
@@ -411,7 +411,7 @@ const TenantDashboard = () => {
       setViewRHS(true);
     }
     const paymentHistoryForProperty = paymentHistory.filter((detail) => detail.pur_property_id === selectedProperty.property_uid);
-    // console.log("testing", paymentHistoryForProperty);
+    // //console.log("testing", paymentHistoryForProperty);
     setRightPane({ type: "paymentHistory", state: { data: paymentHistoryForProperty } });
   };
 
@@ -422,7 +422,7 @@ const TenantDashboard = () => {
 
     const paymentHistoryForProperty = allBalanceDetails.filter((detail) => detail.propertyUid === selectedProperty.property_uid);
 
-    // console.log("Payment History for Make Payment:", paymentHistoryForProperty);
+    // //console.log("Payment History for Make Payment:", paymentHistoryForProperty);
     setRightPane({
       type: "payment",
       state: {
@@ -431,14 +431,14 @@ const TenantDashboard = () => {
     });
 
     if (rightPaneRef.current) {
-      // console.log("rightPaneRef - ", rightPaneRef)
+      // //console.log("rightPaneRef - ", rightPaneRef)
       rightPaneRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
-  // console.log("rightPaneRef1 - ", rightPaneRef)
+  // //console.log("rightPaneRef1 - ", rightPaneRef)
   useEffect(() => {
-    // console.log("rightPaneRef2 - ", rightPaneRef)
+    // //console.log("rightPaneRef2 - ", rightPaneRef)
     // if (rightPaneRef.current) {
     //   rightPaneRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     // }
@@ -758,7 +758,7 @@ const TenantDashboard = () => {
 };
 
 function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
-  console.log("data for table", data);
+  //console.log("data for table", data);
 
   const columns = [
     {
@@ -896,12 +896,12 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
 }
 
 const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty, relatedLease, isMobile, setViewRHS, setReload, handleViewTenantApplication }) => {
-  // console.log("Lease Details renewal", relatedLease);
-  // console.log("804 - LeaseDetails - relatedLease - ", relatedLease);
-  // console.log("804 - LeaseDetails - currentLease - ", leaseDetails);
-  // console.log("Lease Details ", leaseDetails);
-  // console.log("selected property - ", selectedProperty)
-  // console.log("Lease Details rightPane", rightPane);
+  // //console.log("Lease Details renewal", relatedLease);
+  // //console.log("804 - LeaseDetails - relatedLease - ", relatedLease);
+  // //console.log("804 - LeaseDetails - currentLease - ", leaseDetails);
+  // //console.log("Lease Details ", leaseDetails);
+  // //console.log("selected property - ", selectedProperty)
+  // //console.log("Lease Details rightPane", rightPane);
   const { getProfileId, selectedRole } = useUser();
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -911,7 +911,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
 
   const isRejected = leaseDetails?.lease_status === "REFUSED" || leaseDetails?.lease_status === "NEW";
 
-  // console.log("lease details", leaseDetails);
+  // //console.log("lease details", leaseDetails);
 
   const currentDate = new Date();
   const leaseEndDate = new Date(leaseDetails?.lease_end);
@@ -938,7 +938,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
       setViewRHS(true);
     }
     if (relatedLease) {
-      // console.log("877 - leaseDetails - ", leaseDetails);
+      // //console.log("877 - leaseDetails - ", leaseDetails);
 
       setRightPane({
         type: "tenantLeases",
@@ -954,8 +954,8 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
   };
 
   const handleViewRenewLease = () => {
-    // console.log("921 - relatedLease - ", relatedLease);
-    console.log("related Lease", relatedLease);
+    // //console.log("921 - relatedLease - ", relatedLease);
+    //console.log("related Lease", relatedLease);
     if (isMobile) {
       setViewRHS(true);
     }
@@ -1665,7 +1665,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                   >
                     <Button
                       onClick={() => {
-                        console.log("ROHIT - 1493 - leaseDetails - ", leaseDetails);
+                        //console.log("ROHIT - 1493 - leaseDetails - ", leaseDetails);
                         handleViewTenantApplication();
                       }}
                       variant='contained'
@@ -1782,7 +1782,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                   </Grid>
                 )}
 
-                {/* {console.log("1531 - relatedLease - ", relatedLease)} */}
+                {/* {//console.log("1531 - relatedLease - ", relatedLease)} */}
                 {relatedLease != null && (
                   <>
                     {relatedLease?.lease_status === "RENEW NEW" || relatedLease?.lease_status === "RENEW PROCESSING" ? (
@@ -1901,7 +1901,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                     )}
                   </>
                 )}
-                {console.log("ROHIT - 1780 - relatedLease - ", relatedLease)}
+                {/* {console.log("ROHIT - 1780 - relatedLease - ", relatedLease)} */}
 
                 {relatedLease && (relatedLease.lease_status === "RENEW PROCESSING" || relatedLease.lease_status === "APPROVED") && (
                   // <Button
@@ -2100,7 +2100,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
 };
 
 // export const FeesSmallDataGrid = ({ data, isMobile }) => {
-//   console.log('---data---', data);
+//   //console.log('---data---', data);
 //   const commonStyles = {
 //     color: theme.typography.primary.black,
 //     fontWeight: theme.typography.light.fontWeight,
@@ -2263,7 +2263,7 @@ export const FeesSmallDataGrid = ({ data, isMobile }) => {
         {params.row.frequency === "One Time" && `${params.row.due_by_date}`}
         {(params.row.frequency === "Weekly"  || params.row.frequency === "Bi-Weekly") && `${valueToDayMap.get(params.row.due_by)}`} */}
           {getFeesDueBy(params.row)}
-          {console.log("ROHIT - 1245 - params.row - ", params.row)}
+          {/* {//console.log("ROHIT - 1245 - params.row - ", params.row)} */}
         </Typography>
       ),
     },
@@ -2422,7 +2422,7 @@ export const DocumentSmallDataGrid = ({ data, handleFileClick }) => {
 };
 
 const MaintenanceDetails = ({ maintenanceRequests, onPropertyClick, selectedProperty, leaseDetails, setRightPane, isMobile, setViewRHS }) => {
-  // console.log("Maintenance Requests:", maintenanceRequests);
+  // //console.log("Maintenance Requests:", maintenanceRequests);
   const maintenanceStatusCounts = {
     "New Requests": maintenanceRequests?.filter((item) => item.maintenance_status.trim().toUpperCase() === "NEW REQUEST").reduce((sum, item) => sum + (item.num || 0), 0), // Sum `num` values
     "Info Requested": maintenanceRequests?.filter((item) => item.maintenance_status.trim().toUpperCase() === "INFO REQUESTED").reduce((sum, item) => sum + (item.num || 0), 0),
@@ -2454,7 +2454,7 @@ const MaintenanceDetails = ({ maintenanceRequests, onPropertyClick, selectedProp
     });
   };
 
-  // console.log("selected property", selectedProperty, leaseDetails);
+  // //console.log("selected property", selectedProperty, leaseDetails);
 
   return (
     <Paper
@@ -2580,7 +2580,7 @@ const ManagementDetails = ({ leaseDetails }) => {
 };
 
 const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, propertyId, onAdd, setRightPane, isMobile, setViewRHS }) => {
-  console.log("maintenancestatus", maintenanceStatus);
+  //console.log("maintenancestatus", maintenanceStatus);
   const [expandedRows, setExpandedRows] = useState({});
 
   const filteredRequests = maintenanceStatus.filter((request) => request.maintenance_property_id === propertyId);
@@ -2607,7 +2607,7 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
 
   const handleEditClick = (request) => {
     // Placeholder function - add your logic here
-    // console.log("edit clicked", request.maintenance_request_type);
+    // //console.log("edit clicked", request.maintenance_request_type);
     setRightPane({
       type: "editmaintenance",
       state: {
@@ -2616,7 +2616,7 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
         propertyAddress: selectedProperty.property_address,
       },
     });
-    // console.log('Edit clicked for:', request);
+    // //console.log('Edit clicked for:', request);
   };
 
   const handleBack = () => {
@@ -2779,7 +2779,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
   const [dialogTitle, setDialogTitle] = useState("");
   const [dialogMessage, setDialogMessage] = useState("");
   const [dialogSeverity, setDialogSeverity] = useState("error");
-  // console.log(" --- check here --- ", balanceDetails, data)
+  // //console.log(" --- check here --- ", balanceDetails, data)
 
   const [paymentData, setPaymentData] = useState({
     currency: "usd",
@@ -2796,7 +2796,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
   useEffect(() => {
     // setShowSpinner(true)
 
-    // console.log("data from paymentPM", selectedProperty);
+    // //console.log("data from paymentPM", selectedProperty);
     const filteredUnpaidData = data.filter((item) => item.purchaseStatus === "UNPAID" || item.purchaseStatus === "PARTIALLY PAID");
     setUnpaidData(filteredUnpaidData);
 
@@ -2844,7 +2844,7 @@ function PaymentsPM({ data, setRightPane, selectedProperty, leaseDetails, balanc
       business_code: paymentNotes,
       balance: paymentOption === "partial" ? partialAmount : total, // Check here for partial amount getting passed into balance - Abhinav
     };
-    console.log("check here", selectedProperty);
+    //console.log("check here", selectedProperty);
     navigate("/selectPayment", {
       state: {
         paymentData: updatedPaymentData,
@@ -3105,11 +3105,11 @@ function TenantBalanceTablePM(props) {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedPayments, setSelectedPayments] = useState([]);
   const [paymentDueResult, setPaymentDueResult] = useState([]);
-  // console.log("props", data);
+  // //console.log("props", data);
 
   useEffect(() => {
     setData(props.data);
-    // console.log("props", props);
+    // //console.log("props", props);
   }, [props.data]);
 
   useEffect(() => {

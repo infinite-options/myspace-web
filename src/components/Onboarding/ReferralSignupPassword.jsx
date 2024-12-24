@@ -74,7 +74,7 @@ const CustomTextField = withStyles({
 // Variable Declaration
 export default function ReferralSignupPassword({}) {  
   
-  console.log("In ReferralSignupPassword.jsx");  
+  //console.log("In ReferralSignupPassword.jsx");  
   let navigate = useNavigate();
   let location = useLocation();  
   const { selectedRole, selectRole, Name, getProfileId, updateProfileUid, setLoggedIn, } = useUser();  
@@ -87,7 +87,7 @@ export default function ReferralSignupPassword({}) {
   const [userInfo, setUserInfo] = useState(null);
   let profileID = null;
   const isGoogleSignup = location.state.isGoogleSignup;
-  console.log("isGoogleSignup - ", isGoogleSignup);
+  //console.log("isGoogleSignup - ", isGoogleSignup);
   selectRole(location.state.userInfo.role);
   
   useEffect(() => {
@@ -96,13 +96,13 @@ export default function ReferralSignupPassword({}) {
   
 
   useEffect(() => {
-    console.log("ReferralSignupPassword - userInfo - ", userInfo);
+    //console.log("ReferralSignupPassword - userInfo - ", userInfo);
   }, [userInfo]);
 
 
   
   const handleBackButton = () => {
-    console.log("handleBackButton");
+    //console.log("handleBackButton");
     navigate(-1);
   };
 
@@ -145,17 +145,17 @@ export default function ReferralSignupPassword({}) {
                     return byte.toString(16).padStart(2, "0");
                   })
                   .join("");
-                console.log(hashedPassword);
+                //console.log(hashedPassword);
                 let loginObject = {
                   email: userInfo.email,
                   password: hashedPassword,
                 };
-                console.log(JSON.stringify(loginObject));
+                //console.log(JSON.stringify(loginObject));
                 axios
                   .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/Login/MYSPACE", loginObject)
                   // .post("http://localhost:2000/api/v2/Login/MYSPACE", loginObject)
                   .then(async(response) => {
-                    console.log(response.data.message);
+                    //console.log(response.data.message);
                     const { message, result } = response.data;
                     if (message === "Incorrect password") {
                       alert(response.data.message);
@@ -182,9 +182,9 @@ export default function ReferralSignupPassword({}) {
                   })
                   .catch((err) => {
                     if (err.response) {
-                      console.log(err.response);
+                      //console.log(err.response);
                     }
-                    console.log(err);
+                    //console.log(err);
                   });
               });
             }
@@ -311,7 +311,7 @@ export default function ReferralSignupPassword({}) {
     const form = encodeForm(payload);
     
     for (var pair of form.entries()) {
-      console.log(pair[0]+ ', ' + pair[1]); 
+      //console.log(pair[0]+ ', ' + pair[1]); 
     }
     const { profileApi } = roleMap[userInfo.role];
     const { data } = await axios.post(

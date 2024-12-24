@@ -16,10 +16,10 @@ import { useMediaQuery } from "@mui/material";
 import APIConfig from "../../utils/APIConfig";
 
 export default function Leases(props) {
-  // console.log("In Leases");
-  console.log("In Leases Props: ", props);
+  // //console.log("In Leases");
+  //console.log("In Leases Props: ", props);
   const { getProfileId, selectedRole } = useUser();
-  // console.log("Selected Role: ", selectedRole);
+  // //console.log("Selected Role: ", selectedRole);
 
   const [open, setOpen] = useState(false);
   let navigate = useNavigate();
@@ -39,19 +39,19 @@ export default function Leases(props) {
   const [endedLeases, setEndedLeases] = useState([]);
   const fetchData = props.leaseDetails;
 
-  console.log("Before Map 1");
+  //console.log("Before Map 1");
   const property_filtered_LeaseDate = new Map(
     [...originalLeaseDate].filter(([date, leases]) => {
       return selectedProperties.length === 0 || leases.some((lease) => selectedProperties.includes(lease.lease_property_id));
     })
   );
-  console.log("Before Map 2");
+  //console.log("Before Map 2");
   const owner_filtered_LeaseDate = new Map(
     [...originalLeaseDate].filter(([date, leases]) => {
       return selectedOwners.length === 0 || leases.some((lease) => selectedOwners.some((owner) => owner.id === lease.property_owner_id));
     })
   );
-  console.log("After Map 2");
+  //console.log("After Map 2");
   const handle_property_checkbox_close = () => {
     setOpen(false);
   };
@@ -146,21 +146,21 @@ export default function Leases(props) {
           num++;
         }
       }
-      console.log("Move out Num: ", num);
+      //console.log("Move out Num: ", num);
       return num;
     }
     setShowSpinner(true);
     // axios.get(`${APIConfig.baseURL.dev}/leaseDetails/${getProfileId()}`).then((res) => {
     // axios.get(`${APIConfig.baseURL.dev}/leaseDetails/110-000003`).then((res) => {
-    // // console.log(res.data['Lease Details'].result);
+    // // //console.log(res.data['Lease Details'].result);
     // const fetchData = res.data["Lease_Details"].result;
-    // console.log("leases fetchData", fetchData);
+    // //console.log("leases fetchData", fetchData);
 
     const fetchData = props.leaseDetails?.filter((lease) => lease.lease_status === "ACTIVE");
     const leasesM2M = props.leaseDetails?.filter((lease) => lease.lease_status === "ACTIVE M2M");
     const leasesEnded = props.leaseDetails?.filter((lease) => lease.lease_status === "ENDED");
-    // console.log("leasesM2M - ", leasesM2M);
-    // console.log("leasesEnded - ", leasesEnded);
+    // //console.log("leasesM2M - ", leasesM2M);
+    // //console.log("leasesEnded - ", leasesEnded);
     setM2MLeases(leasesM2M);
     setEndedLeases(leasesEnded);
 
@@ -180,26 +180,26 @@ export default function Leases(props) {
       obj.lease_end = `${year}-${month}-${day}`;
       // obj.lease_end = `${month}-${day}-${year}`;
     });
-    console.log("leases sorted FetchData", fetchData);
+    //console.log("leases sorted FetchData", fetchData);
 
     const leases = new Map([]);
     let moveoutNum = 0;
     fetchData.forEach((lease) => {
       const currentDate = new Date();
       const leaseDate = new Date(lease.lease_end);
-      // console.log("leaseDate - ", leaseDate);
+      // //console.log("leaseDate - ", leaseDate);
       if (leaseDate.getFullYear() > currentDate.getFullYear() || (leaseDate.getFullYear() === currentDate.getFullYear() && leaseDate.getMonth() >= currentDate.getMonth())) {
         const date = lease.lease_end.slice(0, 7);
-        console.log("Date after slice: ", date);
+        //console.log("Date after slice: ", date);
         if (leases.get(date) === undefined) {
           leases.set(date, [lease]);
         } else {
           const arr = leases.get(date);
           arr.push(lease);
           leases.set(date, arr);
-          console.log("ARR: ", arr);
+          //console.log("ARR: ", arr);
           moveoutNum += getMoveoutNum(arr);
-          console.log("Move out Num Total: ", moveoutNum);
+          //console.log("Move out Num Total: ", moveoutNum);
         }
       }
     });
@@ -225,19 +225,19 @@ export default function Leases(props) {
       });
     set_owner_checkbox_items(uniqueOwners);
 
-    // console.log("leases - ", leases);
+    // //console.log("leases - ", leases);
     setLeaseDate(leases);
     const firstEntry = [...leases.entries()][0];
     const firstLeaseUid = firstEntry ? firstEntry[1][0].lease_uid : null;
     const prevSelectedLeaseId = sessionStorage.getItem("selectedLeaseId");
-    console.log("prevSelectedLeaseId", prevSelectedLeaseId);
+    //console.log("prevSelectedLeaseId", prevSelectedLeaseId);
     if (prevSelectedLeaseId) {
       props.setSelectedLeaseId(prevSelectedLeaseId);
     } else {
       props.setSelectedLeaseId(firstLeaseUid);
       sessionStorage.setItem("selectedLeaseId", firstLeaseUid);
     }
-    // console.log('after sort', firstLeaseUid);
+    // //console.log('after sort', firstLeaseUid);
     setMoveoutCount(moveoutNum);
     setOriginalLeaseDate(leases); // Save original lease dates
     setShowSpinner(false);
@@ -476,7 +476,7 @@ export default function Leases(props) {
             let tabColor = "#FFFFFF";
             // const endMonth = date.split("-")[1];
             const [endYear, endMonth] = date.split("-").map(Number);
-            // console.log("lease endDate ", date, Number(endMonth), Number(currentMonth))
+            // //console.log("lease endDate ", date, Number(endMonth), Number(currentMonth))
             // if (Number(currentMonth) === Number(endMonth)) {
             if (currentYear === endYear && currentMonth === endMonth) {
               tabColor = "#F87C7A";
@@ -576,7 +576,7 @@ export default function Leases(props) {
 function LeaseCard(props) {
   const leaseData = props.data;
 
-  // console.log("leaseData - ", leaseData);
+  // //console.log("leaseData - ", leaseData);
 
   return (
     <Box
@@ -633,7 +633,7 @@ function LeaseMonth(props) {
   let [year, month] = ["-", "-"];
   const [tabColor] = props.style;
 
-  // console.log("leaseData - ", leaseData);
+  // //console.log("leaseData - ", leaseData);
 
   function parseDate(data) {
     const dateList = data.split("-");
@@ -769,7 +769,7 @@ function LeaseComponent(props) {
           //     lease_id: leaseData.lease_uid,
           //   },
           // });
-          console.log("click event", props.setSelectedLeaseId);
+          //console.log("click event", props.setSelectedLeaseId);
           if (props.setViewRHS) {
             props.setViewRHS(true);
           }

@@ -27,7 +27,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
         //set images
         const parsedPropertyImages = currentLease.property_favorite_image ? currentLease.property_favorite_image : null;
         setImage(parsedPropertyImages === null ? propertyImage : parsedPropertyImages);
-        // console.log("currentLease - ", currentLease);
+        // //console.log("currentLease - ", currentLease);
     }, [currentLease])
 
     const handleCloseDialog = () => {
@@ -48,7 +48,7 @@ const LeaseSummary = ({ currentLease, rent, setNewStartDate, setNewEndDate, newS
 
     // function formatDate(dateString) {
     //     const date = new Date(dateString);
-    //     console.log('check date', dateString, date)
+    //     //console.log('check date', dateString, date)
     //     const month = String(date.getMonth() + 1).padStart(2, '0');
     //     const day = String(date.getDate()).padStart(2, '0');
     //     const year = date.getFullYear();

@@ -27,14 +27,14 @@ const MaintenanceContacts = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // useEffect(() => {
-  //   console.log("contactsData - ", contactsData);
+  //   //console.log("contactsData - ", contactsData);
   // }, [contactsData]);
 
   // useEffect(() => {
-  //   console.log("currentIndex", currentIndex)
+  //   //console.log("currentIndex", currentIndex)
   // }, [currentIndex]);
   // useEffect(() => {
-  //   console.log("contactsTab", contactsTab)
+  //   //console.log("contactsTab", contactsTab)
   //   setCurrentIndex(0);
   // }, [contactsTab]);
 
@@ -42,7 +42,7 @@ const MaintenanceContacts = () => {
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
     // const url = `${APIConfig.baseURL.dev}/contacts/600-000003`;
     // const url = `http://localhost:4000/contacts/${getProfileId()}`;
-    // console.log("In PMContracts.jsx");
+    // //console.log("In PMContracts.jsx");
     setShowSpinner(true);
 
     await axios

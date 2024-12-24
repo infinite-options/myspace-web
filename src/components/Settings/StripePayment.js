@@ -10,9 +10,9 @@ import CloseIcon from "@mui/icons-material/Close"; // Import the close icon
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 function StripePayment(props) {
-  // console.log("in stripepayment page");
+  // //console.log("in stripepayment page");
   const { message, amount, paidBy, show, setShow, submit } = props;
-  // console.log(paidBy);
+  // //console.log(paidBy);
   const [showSpinner, setShowSpinner] = useState(false);
   const elements = useElements();
   const stripe = useStripe();
@@ -31,13 +31,13 @@ function StripePayment(props) {
         total: parseFloat(amount),
       },
     };
-    // console.log(paymentData);
+    // //console.log(paymentData);
     const response = await fetch("https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createPaymentIntent", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(paymentData),
     });
-    // console.log(response);
+    // //console.log(response);
     const clientSecret = await response.json();
     const cardElement = await elements.getElement(CardElement);
     const stripeResponse = await stripe.createPaymentMethod({
@@ -57,8 +57,8 @@ function StripePayment(props) {
 
     const paymentIntentID = confirmedCardPayment.paymentIntent.id;
 
-    // console.log("--DEBUG-- in StripePayment paymentMethodID", paymentMethodID);
-    // console.log("--DEBUG-- in StripePayment paymentIntentID", paymentIntentID);
+    // //console.log("--DEBUG-- in StripePayment paymentMethodID", paymentMethodID);
+    // //console.log("--DEBUG-- in StripePayment paymentIntentID", paymentIntentID);
 
     await submit(
       paymentIntentID,

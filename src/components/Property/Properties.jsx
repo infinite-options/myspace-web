@@ -29,12 +29,12 @@ import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/
 
 function Properties() {
   const location = useLocation();
-  // console.log("In Properties");
-  // console.log("In Properties LHS: ", location.state?.showLHS);
-  // console.log("In Properties RHS: ", location.state?.showRHS);
-  // console.log("location.state", location.state);
+  // //console.log("In Properties");
+  // //console.log("In Properties LHS: ", location.state?.showLHS);
+  // //console.log("In Properties RHS: ", location.state?.showRHS);
+  // //console.log("location.state", location.state);
   const [showOnlyListings, setShowOnlyListings] = useState(location.state?.showOnlyListings ? location.state?.showOnlyListings : false);
-  // console.log("Properties - showOnlyListings", showOnlyListings);
+  // //console.log("Properties - showOnlyListings", showOnlyListings);
   // const { propertyList, setPropertyList, returnIndex, setReturnIndex  } = useContext(PropertiesContext);
   const propertiesContext = useContext(PropertiesContext);
   const {
@@ -50,8 +50,8 @@ function Properties() {
   const returnIndex = returnIndexFromContext || 0;
   const setReturnIndex = setReturnIndexFromContext;
 
-  // console.log("----loading issue - propertyList - ", propertyList, dataload)
-  // console.log("returnIndexFromContext - ", returnIndexFromContext);
+  // //console.log("----loading issue - propertyList - ", propertyList, dataload)
+  // //console.log("returnIndexFromContext - ", returnIndexFromContext);
 
   const { updateContractUID, updateContractPropertyUID, fetchContracts} = useContext(ManagementContractContext);
 
@@ -93,7 +93,7 @@ function Properties() {
   // takes index from location.state and sets the current index
   useEffect(() => {
     if (location.state?.index) {
-      // console.log("location.state?.index - ", location.state?.index);
+      // //console.log("location.state?.index - ", location.state?.index);
       setReturnIndex(location.state?.index || 0);
     }
   }, [location?.state]);
@@ -103,7 +103,7 @@ function Properties() {
     // if(currentProperty){
     if (location?.state?.currentProperty) {
       // setShowSpinner(true);
-      // console.log("currentProperty - ", currentProperty);
+      // //console.log("currentProperty - ", currentProperty);
       setPropertyTo(location?.state?.currentProperty);
       // setShowSpinner(false)
     }
@@ -119,10 +119,10 @@ function Properties() {
   useEffect(() => {
     if (rawPropertyData && rawPropertyData.property) {
       setShowSpinner(true);
-      // console.log("returnIndex - ", returnIndex);
+      // //console.log("returnIndex - ", returnIndex);
 
       const properties = rawPropertyData?.Property?.result;
-      // console.log("returnIndex useEffect - properties - ", properties);
+      // //console.log("returnIndex useEffect - properties - ", properties);
       if (properties != null) {
         const state = {
           ownerId: properties[returnIndex]?.owner_uid,
@@ -132,7 +132,7 @@ function Properties() {
           index: returnIndex,
           isDesktop: isDesktop,
         };
-        console.log("---inside prop nav state---", state);
+        //console.log("---inside prop nav state---", state);
         setManagerDetailsState(state);
       }
       setShowSpinner(false);
@@ -151,7 +151,7 @@ function Properties() {
   }, [propertyList, location.state?.filterVacant]);
 
   useEffect(() => {
-    // console.log("Properties - managerDetailsState - ", managerDetailsState);
+    // //console.log("Properties - managerDetailsState - ", managerDetailsState);
     // if (managerDetailsState !== null) {
     //   setRHS("ManagerDetails");
     // }
@@ -170,15 +170,15 @@ function Properties() {
   }, [returnIndexByProp]);
 
   useEffect(() => {
-    // console.log("Properties - newContractUID - ", newContractUID);
+    // //console.log("Properties - newContractUID - ", newContractUID);
   }, [newContractUID]);
 
   // useEffect(() => {
-  //   console.log("Properties - newContractPropertyUID - ", newContractPropertyUID);
+  //   //console.log("Properties - newContractPropertyUID - ", newContractPropertyUID);
   // }, [newContractPropertyUID]);
 
   // useEffect(() => {
-  //   console.log("Properties - managersList - ", managersList);
+  //   //console.log("Properties - managersList - ", managersList);
   // }, [managersList]);
 
   // LHS , RHS
@@ -190,14 +190,14 @@ function Properties() {
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // console.log("View RETURN INDEX : ", returnIndex);
+  // //console.log("View RETURN INDEX : ", returnIndex);
 
-  // console.log("propertyIndex at the beginning 1: ", propertyIndex);
+  // //console.log("propertyIndex at the beginning 1: ", propertyIndex);
 
-  // console.log("LEASE", propertyList[propertyIndex].lease_id)
+  // //console.log("LEASE", propertyList[propertyIndex].lease_id)
 
   function setPropertyTo(newPropertyUid) {
-    // console.log("setPropertyTo - newPropertyUid - ", newPropertyUid);
+    // //console.log("setPropertyTo - newPropertyUid - ", newPropertyUid);
     // setShowSpinner(true);
 
     if (newPropertyUid != "") {
@@ -211,8 +211,8 @@ function Properties() {
       }
 
       // Now, use setReturnIndex to set the found index
-      //  console.log("setting Return Index 215 - propertyList - ", propertyList);
-      //  console.log("setting Return Index 215 - foundIndex - ", foundIndex);
+      //  //console.log("setting Return Index 215 - propertyList - ", propertyList);
+      //  //console.log("setting Return Index 215 - foundIndex - ", foundIndex);
       if (foundIndex >= 0) {
         setReturnIndex(foundIndex);
       }
@@ -222,7 +222,7 @@ function Properties() {
   }
 
   // useEffect(()=>{
-  //   console.log("newPropertyUid - ", newPropertyUid)
+  //   //console.log("newPropertyUid - ", newPropertyUid)
   //   if(newPropertyUid !== ""){
   //      setPropertyTo(newPropertyUid)
   //      setNewPropertyUid("")
@@ -236,18 +236,18 @@ function Properties() {
     const property_response = await fetch(`${APIConfig.baseURL.dev}/properties/${profileId}`);
     //const response = await fetch(`${APIConfig.baseURL.dev}/properties/110-000003`)
     if (!property_response.ok) {
-      // console.log("Error fetching Property Details data");
+      // //console.log("Error fetching Property Details data");
     }
     const propertyData = await property_response.json();
     const propertyList = getPropertyList(propertyData); // This combines Properties with Applications and Maitenance Items to enable the LHS screen
-    // console.log("In Properties > Property Endpoint: ", propertyList);
+    // //console.log("In Properties > Property Endpoint: ", propertyList);
     setRawPropertyData(propertyData); // Sets rawPropertyData to be based into Edit Properties Function
     setPropertyList([...propertyList]);
     setDisplayedItems([...propertyList]);
     setPropertyIndex(0);
 
     if (propertyData.Property.code === 200) {
-      // console.log("Endpoint Data is Ready");
+      // //console.log("Endpoint Data is Ready");
       setDataReady(true);
     }
     setShowSpinner(false);
@@ -274,7 +274,7 @@ function Properties() {
       });
     }
 
-    //   console.log(maintMap);
+    //   //console.log(maintMap);
     return propertyList.map((p) => {
       p.applications = appsMap.get(p.property_uid) || [];
       p.applicationsCount = [...p.applications].filter((a) => ["NEW", "PROCESSING"].includes(a.lease_status)).length;
@@ -296,26 +296,26 @@ function Properties() {
       setViewRHS(true);
     }
 
-    // console.log("handleListClick - newData - ", newData);
+    // //console.log("handleListClick - newData - ", newData);
     setReturnIndex(newData);
-    // console.log("View leases RETURN INDEX : ", returnIndex);
+    // //console.log("View leases RETURN INDEX : ", returnIndex);
   };
 
   const handleViewLeaseClick = () => {
     // setPage("ViewLease");
-    // console.log("View leases before before: ", propertyList);  // Shows entire Property List with Appliances and Maintenance
-    // console.log("View leases before before Index: ", propertyIndex);  // Shows the selected Property
-    // console.log("View leases before: ", propertyList[propertyIndex]); // Shows the Property List details of the selected Property
-    // console.log("View leases", propertyList[propertyIndex].lease_uid);  // Shows the specific Lease UID
+    // //console.log("View leases before before: ", propertyList);  // Shows entire Property List with Appliances and Maintenance
+    // //console.log("View leases before before Index: ", propertyIndex);  // Shows the selected Property
+    // //console.log("View leases before: ", propertyList[propertyIndex]); // Shows the Property List details of the selected Property
+    // //console.log("View leases", propertyList[propertyIndex].lease_uid);  // Shows the specific Lease UID
     setRHS("ViewLease");
   };
 
   const handleAddPropertyClick = () => {
     // setPage("ViewLease");
-    // console.log("View leases before before: ", propertyList);  // Shows entire Property List with Appliances and Maintenance
-    // console.log("View leases before before Index: ", propertyIndex);  // Shows the selected Property
-    // console.log("View leases before: ", propertyList[propertyIndex]); // Shows the Property List details of the selected Property
-    // console.log("View leases", propertyList[propertyIndex].lease_uid);  // Shows the specific Lease UID
+    // //console.log("View leases before before: ", propertyList);  // Shows entire Property List with Appliances and Maintenance
+    // //console.log("View leases before before Index: ", propertyIndex);  // Shows the selected Property
+    // //console.log("View leases before: ", propertyList[propertyIndex]); // Shows the Property List details of the selected Property
+    // //console.log("View leases", propertyList[propertyIndex].lease_uid);  // Shows the specific Lease UID
     if (isMobile) {
       setViewRHS(true);
     }
@@ -324,10 +324,10 @@ function Properties() {
 
   const handleViewContractClick = () => {
     // setPage("ViewLease");
-    // console.log("View Contract before before: ", propertyList);
-    // console.log("View Contract before before Index: ", propertyIndex);
-    // console.log("View Contract before: ", propertyList[propertyIndex]);
-    // console.log("View Contract", propertyList[propertyIndex].contract_uid);
+    // //console.log("View Contract before before: ", propertyList);
+    // //console.log("View Contract before before Index: ", propertyIndex);
+    // //console.log("View Contract before: ", propertyList[propertyIndex]);
+    // //console.log("View Contract", propertyList[propertyIndex].contract_uid);
     setRHS("ViewContract");
   };
 
@@ -366,12 +366,12 @@ function Properties() {
   };
 
   const handleRequestQuotes = (manager) => {
-    // console.log("Properties - handleRequestQuotes - managerData - ", manager);
+    // //console.log("Properties - handleRequestQuotes - managerData - ", manager);
     setManagerData(manager);
     setRHS("RequestQuotes");
   };
   const handleSorting = (propertyList) => {
-    // console.log("handleSorting called ");
+    // //console.log("handleSorting called ");
     setPropertyList(propertyList);
   };
 
@@ -385,7 +385,7 @@ function Properties() {
   };
 
   const handleManageContract = (contractUID, contractPropertyUID) => {
-    // console.log("handleManageContract - ", contractUID, contractPropertyUID);
+    // //console.log("handleManageContract - ", contractUID, contractPropertyUID);
     updateContractUID(contractUID);
     updateContractPropertyUID(contractPropertyUID);
     setRHS("ManageContract");

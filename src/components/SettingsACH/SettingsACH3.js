@@ -31,13 +31,13 @@ export default function SettingsACH3() {
 
     const handleNextStep = () => {
 
-        console.log("account_annual_card_volume",account_annual_card_volume);
-        console.log("account_merchant_category_code",account_merchant_category_code);
-        console.log("account_default_statement_descriptor",account_default_statement_descriptor);
-        console.log("account_max_card_transaction_amount",account_max_card_transaction_amount);
-        console.log("account_max_ach_transaction_amount",account_max_ach_transaction_amount);
+        //console.log("account_annual_card_volume",account_annual_card_volume);
+        //console.log("account_merchant_category_code",account_merchant_category_code);
+        //console.log("account_default_statement_descriptor",account_default_statement_descriptor);
+        //console.log("account_max_card_transaction_amount",account_max_card_transaction_amount);
+        //console.log("account_max_ach_transaction_amount",account_max_ach_transaction_amount);
 
-        console.log("Click Button to page 4 ")
+        //console.log("Click Button to page 4 ")
         navigate('/settingsManagerACH4')
     };
     const { 

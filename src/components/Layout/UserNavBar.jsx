@@ -25,7 +25,7 @@ export default function UserNavBar(props){
  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
  
  const getHomeButtonNav = () => {
-    // console.log("selectedRole ",selectedRole);
+    // //console.log("selectedRole ",selectedRole);
     switch (selectedRole) {
     case 'OWNER':
         return '/ownerDashboard';
@@ -44,7 +44,7 @@ export default function UserNavBar(props){
     }
 };
 const getProfileButtonNav = () => {
-  console.log("nn selectedRole",selectedRole)
+  //console.log("nn selectedRole",selectedRole)
 
   return '/profileEditor'
     switch (selectedRole) {
@@ -101,7 +101,7 @@ const getPhoneButtonNav = () => {
         state: { contactsTab: 'Manager' },
       };
     case 'MAINTENANCE':
-      console.log("here");
+      //console.log("here");
       return {
         pathname: '/contactsPM',
         state: { contactsTab: 'Manager' },

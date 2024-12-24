@@ -121,9 +121,9 @@ export default function PropertyNavigator2({
   props,
   setViewRHS,
 }) {
-  // console.log("In Property Navigator", onEditClick);
-  // console.log(index, propertyList);
-  // console.log("props contracts", contracts);
+  // //console.log("In Property Navigator", onEditClick);
+  // //console.log(index, propertyList);
+  // //console.log("props contracts", contracts);
   const navigate = useNavigate();
   const { getList } = useContext(ListsContext);
   const { getProfileId, isManager, roleName, selectedRole } = useUser();
@@ -180,30 +180,30 @@ export default function PropertyNavigator2({
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // console.log("PropertyNavigator - location state allRentStatus - ", allRentStatus);
+  // //console.log("PropertyNavigator - location state allRentStatus - ", allRentStatus);
 
   // const getDataFromAPI = async () => {
   //   const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
   //   // const url = `${APIConfig.baseURL.dev}/contacts/600-000003`;
   //   try {
   //     const response = await axios.get(url);
-  //     // console.log("--response in nav----", response);
+  //     // //console.log("--response in nav----", response);
   //     const data = response["management_contacts"];
-  //     // console.log("--response data----", data);
+  //     // //console.log("--response data----", data);
   //     const ownerContacts = data["owners"];
-  //     // console.log("--response ownerContacts----", ownerContacts);
+  //     // //console.log("--response ownerContacts----", ownerContacts);
   //     setContactDetails(ownerContacts);
   //   } catch (error) {
-  //     // console.log("Error fetching owner contacts: ", error);
+  //     // //console.log("Error fetching owner contacts: ", error);
   //   }
   // };
 
   // useEffect(() => {
-  //   console.log("PropertyNavigator - property - ", property);
+  //   //console.log("PropertyNavigator - property - ", property);
   // }, [property]);
 
   // useEffect(() => {
-  //   console.log("PropertyNavigator - allContracts - ", allContracts);
+  //   //console.log("PropertyNavigator - allContracts - ", allContracts);
   // }, [allContracts]);
 
   // useEffect(() => {
@@ -211,15 +211,15 @@ export default function PropertyNavigator2({
   // }, [returnIndex]);
 
   // useEffect(() => {
-  //   console.log("PropertyNavigator - property - ", property)
+  //   //console.log("PropertyNavigator - property - ", property)
   // }, [property]);
 
   useEffect(() => {
-    console.log("210 - PropertyNavigator - allRentStatus - ", allRentStatus);
+    //console.log("210 - PropertyNavigator - allRentStatus - ", allRentStatus);
   }, [allRentStatus]);
 
   useEffect(() => {
-    console.log("210 - PropertyNavigator - propertyRentStatus - ", propertyRentStatus);
+    //console.log("210 - PropertyNavigator - propertyRentStatus - ", propertyRentStatus);
   }, [propertyRentStatus]);
 
   useEffect(() => {
@@ -236,23 +236,23 @@ export default function PropertyNavigator2({
   };
 
   // useEffect(() => {
-  //   console.log("appliances - ", appliances);
+  //   //console.log("appliances - ", appliances);
   // }, [appliances]);
 
   // useEffect(() => {
-  //   console.log("currentApplRow - ", currentApplRow);
+  //   //console.log("currentApplRow - ", currentApplRow);
   // }, [currentApplRow]);
 
   // useEffect(() => {
-  //   console.log("modifiedApplRow - ", modifiedApplRow);
+  //   //console.log("modifiedApplRow - ", modifiedApplRow);
   // }, [modifiedApplRow]);
 
   // useEffect(() => {
-  //   console.log("PropertyNavigator - propertyRentStatus - ", propertyRentStatus);
+  //   //console.log("PropertyNavigator - propertyRentStatus - ", propertyRentStatus);
   // }, [propertyRentStatus]);
 
   // useEffect(() => {
-  //   console.log("PropertyNavigator - currentId - ", currentId);
+  //   //console.log("PropertyNavigator - currentId - ", currentId);
   // }, [currentId]);
 
   const handleTabChange = (event, newValue) => {
@@ -268,8 +268,8 @@ export default function PropertyNavigator2({
   // Parse property images once outside the component
   const parsedPropertyImages =
     propertyData && propertyData[currentIndex] && propertyData[currentIndex].property_images ? JSON.parse(propertyData[currentIndex].property_images) : [];
-  // console.log('parsedImages:', parsedPropertyImages);
-  // console.log('parsedImages.length:', parsedPropertyImages.length);
+  // //console.log('parsedImages:', parsedPropertyImages);
+  // //console.log('parsedImages.length:', parsedPropertyImages.length);
 
   // sort images based on fav image
   const favPropImage = propertyData?.property_favorite_image;
@@ -283,12 +283,12 @@ export default function PropertyNavigator2({
 
   // Log images and its length after it's updated
   useEffect(() => {
-    // console.log("What's in Images: ", images, images.length);
+    // //console.log("What's in Images: ", images, images.length);
     setMaxSteps(images.length); // Update maxSteps state
-    // console.log('MaxSteps: ', images.length); // Log maxSteps within useEffect
+    // //console.log('MaxSteps: ', images.length); // Log maxSteps within useEffect
   }, [images]); // This useEffect will re-run whenever the 'images' state changes
 
-  // console.log('MaxSteps: ', maxSteps); // Log maxSteps outside of useEffect
+  // //console.log('MaxSteps: ', maxSteps); // Log maxSteps outside of useEffect
 
   const [activeStep, setActiveStep] = useState(0);
   const [showSpinner, setShowSpinner] = useState(false);
@@ -297,7 +297,7 @@ export default function PropertyNavigator2({
   const [renewContracts, setRenewContracts] = useState([]);
   const [contractsNewSent, setContractsNewSent] = useState(0);
   const [maintenanceReqData, setMaintenanceReqData] = useState([{}]);
-  // console.log('Maintenance Request Data1: ', maintenanceReqData);
+  // //console.log('Maintenance Request Data1: ', maintenanceReqData);
   const [displayMaintenanceData, setDisplayMaintenanceData] = useState([{}]);
   const [newContractCount, setNewContractCount] = useState(0);
   const [sentContractCount, setSentContractCount] = useState(0);
@@ -349,8 +349,8 @@ export default function PropertyNavigator2({
     const sortedByFavImgLst = sortByFavImage(favPropImage, parsedPropertyImages);
     setImages(parsedPropertyImages.length === 0 ? [propertyImage] : sortedByFavImgLst);
     setContractsData(allContracts);
-    // console.log("parsedPropertyImages - ", parsedPropertyImages);
-    // console.log("propertyList[nextIndex].property_favorite_image - ", propertyList[nextIndex]?.property_favorite_image);
+    // //console.log("parsedPropertyImages - ", parsedPropertyImages);
+    // //console.log("propertyList[nextIndex].property_favorite_image - ", propertyList[nextIndex]?.property_favorite_image);
     let favImageIndex = null;
     if (propertyList && propertyList[nextIndex] && propertyList[nextIndex].property_favorite_image) {
       favImageIndex = parsedPropertyImages.findIndex((url) => url === propertyList[nextIndex].property_favorite_image);
@@ -364,21 +364,21 @@ export default function PropertyNavigator2({
 
   useEffect(() => {
     if (propertyData && propertyData[currentIndex]) {
-      // console.log("propertyId use Effect called ***************************************************");
-      // console.log("setting propertyId - ", propertyData[currentIndex]);
-      // console.log("setting propertyId - ", propertyData[currentIndex].property_uid);
+      // //console.log("propertyId use Effect called ***************************************************");
+      // //console.log("setting propertyId - ", propertyData[currentIndex]);
+      // //console.log("setting propertyId - ", propertyData[currentIndex].property_uid);
       setPropertyId(propertyData[currentIndex].property_uid);
 
       var count = 0;
       var newContractCount = 0;
       var sentContractCount = 0;
-      // console.log("PropertyNavigator - allContracts - ", allContracts);
-      // console.log("PropertyNavigator - propertyId - ", propertyId);
+      // //console.log("PropertyNavigator - allContracts - ", allContracts);
+      // //console.log("PropertyNavigator - propertyId - ", propertyId);
       const filtered = allContracts?.filter((contract) => {
         const contractPropertyID = contract.property_id || contract.property_uid;
         return contractPropertyID === propertyId;
       });
-      console.log("PropertyNavigator - filtered - ", filtered);
+      //console.log("PropertyNavigator - filtered - ", filtered);
       const active = filtered?.filter((contract) => contract.contract_status === "ACTIVE");
 
       if (filtered?.length > 1 && active?.length > 0) {
@@ -391,7 +391,7 @@ export default function PropertyNavigator2({
       } else {
         setRenewContracts([]);
       }
-      // console.log("322 - PropertyNavigator - filtered contracts - ", filtered);
+      // //console.log("322 - PropertyNavigator - filtered contracts - ", filtered);
       filtered.forEach((contract) => {
         if (contract.contract_status === "SENT") {
           count++;
@@ -402,7 +402,7 @@ export default function PropertyNavigator2({
           newContractCount++;
         }
       });
-      // console.log("PropertyNavigator - Active contract - ", active);
+      // //console.log("PropertyNavigator - Active contract - ", active);
       setContractsNewSent(count);
       setContractsData(allContracts);
       setActiveContracts(active);
@@ -410,24 +410,24 @@ export default function PropertyNavigator2({
       setSentContractCount(sentContractCount);
 
       const rentDetails = getRentStatus();
-      // console.log("rentDetails - ", rentDetails);
+      // //console.log("rentDetails - ", rentDetails);
       setpropertyRentStatus(rentDetails);
 
       if (property.lease_fees !== null) {
         const rent = JSON.parse(propertyData[currentIndex].lease_fees).find((fee) => fee.fee_name === "Rent");
         setrentFee(rent);
-        // console.log('check rent', rent);
+        // //console.log('check rent', rent);
       } else {
         setrentFee(null);
       }
 
       const propertyApplicances = JSON.parse(propertyData[currentIndex].appliances);
-      // console.log("Appliances ****", propertyApplicances);
-      // console.log("applianceUIDToCategoryMap is %%", applianceUIDToCategoryMap);
+      // //console.log("Appliances ****", propertyApplicances);
+      // //console.log("applianceUIDToCategoryMap is %%", applianceUIDToCategoryMap);
       if (property.appliances != null) {
         setAppliances(propertyApplicances);
 
-        //   console.log('Appliances categories', applianceCategories, typeof (applianceCategories));
+        //   //console.log('Appliances categories', applianceCategories, typeof (applianceCategories));
       } else {
         setAppliances([]);
       }
@@ -470,8 +470,8 @@ export default function PropertyNavigator2({
     setProperty(propertyData && propertyData[nextIndex]);
 
     const parsedPropertyImages = propertyData && propertyData[nextIndex] && propertyData[nextIndex].property_images ? JSON.parse(propertyData[nextIndex].property_images) : [];
-    // console.log('parsedImages:', parsedPropertyImages);
-    // console.log('parsedImages.length:', parsedPropertyImages.length);
+    // //console.log('parsedImages:', parsedPropertyImages);
+    // //console.log('parsedImages.length:', parsedPropertyImages.length);
     // sort images based on fav image
     const favPropImage = propertyData[nextIndex]?.property_favorite_image;
     const sortedByFavImgLst = sortByFavImage(favPropImage, parsedPropertyImages);
@@ -489,8 +489,8 @@ export default function PropertyNavigator2({
 
     const parsedPropertyImages =
       propertyData && propertyData[previousIndex] && propertyData[previousIndex].property_images ? JSON.parse(propertyData[previousIndex].property_images) : [];
-    // console.log('parsedImages:', parsedPropertyImages);
-    // console.log('parsedImages.length:', parsedPropertyImages.length);
+    // //console.log('parsedImages:', parsedPropertyImages);
+    // //console.log('parsedImages.length:', parsedPropertyImages.length);
      // sort images based on fav image
      const favPropImage = propertyData[previousIndex]?.property_favorite_image;
      const sortedByFavImgLst = sortByFavImage(favPropImage, parsedPropertyImages);
@@ -561,8 +561,8 @@ export default function PropertyNavigator2({
       const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
       const formatData = (data) => {
         return data.map((item, index) => {
-          // console.log("item - ", item.rent_detail_index);
-          // console.log("Latest Data Formatted to catch SPLIT Issue: ", item.latest_date);
+          // //console.log("item - ", item.rent_detail_index);
+          // //console.log("Latest Data Formatted to catch SPLIT Issue: ", item.latest_date);
           return {
             ...item,
             // idx: index,
@@ -575,13 +575,13 @@ export default function PropertyNavigator2({
         });
       };
 
-      // console.log("getRentStatus - rentStatus - ", rentStatus);
-      // console.log("getRentStatus - propertyRentStatus - ", propertyRentStatus);
+      // //console.log("getRentStatus - rentStatus - ", rentStatus);
+      // //console.log("getRentStatus - propertyRentStatus - ", propertyRentStatus);
       const formattedData = propertyRentStatus ? formatData(rentStatus) : [];
-      // console.log("getRentStatus - formattedData - ", formattedData);
+      // //console.log("getRentStatus - formattedData - ", formattedData);
       return formattedData;
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
   };
 
@@ -735,12 +735,12 @@ export default function PropertyNavigator2({
     if (sortedImages) {
       row.appliance_images = sortedImages;
     }
-    console.log("handleEditClick - row - ", row);
+    //console.log("handleEditClick - row - ", row);
     await setIsReadOnly(false);
     await setInitialApplData(row);
     await setcurrentApplRow(row);
     await setModifiedApplRow({ appliance_uid: row.appliance_uid });
-    // console.log("---currentApplRow?.appliance_favorite_image---", row);
+    // //console.log("---currentApplRow?.appliance_favorite_image---", row);
     await setFavImage(row?.appliance_favorite_image);
     await setIsEditing(true);
     await handleOpen();
@@ -784,8 +784,8 @@ export default function PropertyNavigator2({
     axios
       .get(`${APIConfig.baseURL.dev}/appliances/${propertyId}`)
       .then((response) => {
-        // console.log(typeof (response.data.result));
-        // console.log(response.data.result);
+        // //console.log(typeof (response.data.result));
+        // //console.log(response.data.result);
         const updatedData = response.data.result.map((appln) => {
           const { list_item, list_uid, list_category, appliance_images, ...rest } = appln;
           return {
@@ -796,19 +796,19 @@ export default function PropertyNavigator2({
             ...rest,
           };
         });
-        console.log("updatedData", updatedData);
+        //console.log("updatedData", updatedData);
         setAppliances(updatedData);
         // Call the function to update appliances in the properties context for the specified property
         updateAppliances(propertyId, updatedData);
         setDeletedIcons(currentApplRow?.appliance_images ? new Array(currentApplRow.appliance_images.length).fill(false) : []);
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
       });
   };
 
   const addAppliance = async (appliance) => {
-    // console.log("inside editOrUpdateAppliance", appliance);
+    // //console.log("inside editOrUpdateAppliance", appliance);
     try {
       setShowSpinner(true);
       const headers = {
@@ -821,17 +821,17 @@ export default function PropertyNavigator2({
       const applianceFormData = new FormData();
 
       Object.keys(appliance).forEach((key) => {
-        // console.log(`Key: ${key}`);
+        // //console.log(`Key: ${key}`);
         if (appliance[key] !== "") {
           applianceFormData.append(key, appliance[key]);
         }
       });
-      // console.log(" editOrUpdateProfile - profileFormData - ");
+      // //console.log(" editOrUpdateProfile - profileFormData - ");
       // for (var pair of profileFormData.entries()) {
-      //   console.log(pair[0]+ ', ' + pair[1]);
+      //   //console.log(pair[0]+ ', ' + pair[1]);
       // }
       let i = 0;
-      console.log("selectedimage", selectedImageList);
+      //console.log("selectedimage", selectedImageList);
       if (selectedImageList.length > 0) {
         for (const file of selectedImageList) {
           // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
@@ -855,13 +855,13 @@ export default function PropertyNavigator2({
           const newApplianceUID = response?.data?.appliance_UID;
           if (newApplianceUID) {
             if (selectedImageList.length == 0) {
-              // console.log("Data updated successfully", response);
+              // //console.log("Data updated successfully", response);
               // showSnackbar("Your profile has been successfully updated.", "success");
               // handleUpdate();
-              // console.log("Appliance befor", appliance);
-              // console.log("applianceUIDToCategoryMap is %%", applianceUIDToCategoryMap);
+              // //console.log("Appliance befor", appliance);
+              // //console.log("applianceUIDToCategoryMap is %%", applianceUIDToCategoryMap);
               const applianceCategory = applianceUIDToCategoryMap[appliance.appliance_type];
-              // console.log("Appliance is $$", applianceCategory);
+              // //console.log("Appliance is $$", applianceCategory);
               setAppliances([...appliances, { ...appliance, appliance_uid: newApplianceUID, appliance_item: applianceCategory }]);
             } else {
               getAppliances();
@@ -903,7 +903,7 @@ export default function PropertyNavigator2({
   };
 
   const editAppliance = async (appliance) => {
-    console.log("inside editAppliance", appliance);
+    //console.log("inside editAppliance", appliance);
     try {
       setShowSpinner(true);
       const headers = {
@@ -915,7 +915,7 @@ export default function PropertyNavigator2({
 
       const changedFields = getAppliancesChanges();
       if (Object.keys(changedFields).length == 0 && selectedImageList.length === 0 && imagesTobeDeleted.length === 0) {
-        console.log("No changes detected.");
+        //console.log("No changes detected.");
         setShowSpinner(false);
         return;
       }
@@ -936,10 +936,10 @@ export default function PropertyNavigator2({
       // if (favImage != null) {
       //   applianceFormData.append("appliance_favorite_image", favImage);
       // }
-      console.log(favImage);
+      //console.log(favImage);
       let i = 0;
       for (const file of selectedImageList) {
-        console.log("file prop", file);
+        //console.log("file prop", file);
         let key = `img_${i++}`;
         if (file.file !== null) {
           applianceFormData.append(key, file.file);
@@ -956,7 +956,7 @@ export default function PropertyNavigator2({
       }
 
       for (let [key, value] of applianceFormData.entries()) {
-        console.log("check here:", key, value);
+        //console.log("check here:", key, value);
       }
 
       if (appliance.appliance_uid) {
@@ -990,14 +990,14 @@ export default function PropertyNavigator2({
           setShowSpinner(false);
           // showSnackbar("Cannot update your profile. Please try again", "error");
           if (error.response) {
-            console.log(error.response.data);
+            //console.log(error.response.data);
           }
         });
       setShowSpinner(false);
       // setModifiedData([]);
     } catch (error) {
       // showSnackbar("Cannot update the lease. Please try again", "error");
-      // console.log("Cannot Update Appliances", error);
+      // //console.log("Cannot Update Appliances", error);
       setShowSpinner(false);
     }
   };
@@ -1011,7 +1011,7 @@ export default function PropertyNavigator2({
       if (isEditing) {
         editAppliance(currentApplRow);
       } else {
-        // console.log("---currentApplRow---", currentApplRow);
+        // //console.log("---currentApplRow---", currentApplRow);
         addAppliance(currentApplRow);
       }
       handleClose();
@@ -1026,32 +1026,32 @@ export default function PropertyNavigator2({
 
   const getApplianceCategories = () => {
     const applnCategories = getList("appliances");
-    // console.log("appliance categories - ", applnCategories);
+    // //console.log("appliance categories - ", applnCategories);
     setApplianceCategories(applnCategories);
     const listItemToUidMapping = applnCategories.reduce((acc, item) => {
       acc[item.list_item] = item.list_uid;
       return acc;
     }, {});
-    // console.log("appliance categories to UIDs- ", listItemToUidMapping);
+    // //console.log("appliance categories to UIDs- ", listItemToUidMapping);
     setApplianceCategoryToUIDMap(listItemToUidMapping);
     const listUidToItemMapping = applnCategories.reduce((acc, item) => {
       acc[item.list_uid] = item.list_item;
       return acc;
     }, {});
-    // console.log("appliance UIDs to categories- ", listUidToItemMapping);
+    // //console.log("appliance UIDs to categories- ", listUidToItemMapping);
     setApplianceUIDToCategoryMap(listUidToItemMapping);
   };
 
   // Define the custom cell renderer for the appliance_images column
   // const ImageCell = (params) => {
-  //   // console.log("---params----", params);
+  //   // //console.log("---params----", params);
   //   let images;
   //   try {
   //     images = JSON.parse(params.value); // Try to parse as JSON
   //   } catch (e) {
   //     images = params.value; // If parsing fails, treat as a single URL string
   //   }
-  //   // console.log("---images----", images);
+  //   // //console.log("---images----", images);
   //   const imageUrl = images?.length > 0 ? images[0] : ""; // Get the first image URL
   //   const appliance = params.row;
   //   const favImage = appliance.appliance_favorite_image;
@@ -1210,7 +1210,7 @@ export default function PropertyNavigator2({
 
   const [deletedImageList, setDeletedImageList] = useState([]);
   const [deletedIcons, setDeletedIcons] = useState(currentApplRow?.appliance_images ? new Array(currentApplRow.appliance_images.length).fill(false) : []);
-  //console.log("---currentApplRow before fav---", currentApplRow);
+  ////console.log("---currentApplRow before fav---", currentApplRow);
   const [favoriteIcons, setFavoriteIcons] = useState([]);
 
   useEffect(() => {
@@ -1219,11 +1219,11 @@ export default function PropertyNavigator2({
         return image === currentApplRow.appliance_favorite_image;
       });
       setFavoriteIcons(newFavoriteIcons);
-      // console.log("Favorite Icons Updated:", newFavoriteIcons);
+      // //console.log("Favorite Icons Updated:", newFavoriteIcons);
     }
   }, [currentApplRow, propertyData, currentIndex]);
 
-  // console.log("Favorite Icons:", favoriteIcons);
+  // //console.log("Favorite Icons:", favoriteIcons);
 
   const handleDelete = (index) => {
     const updatedDeletedIcons = [...deletedIcons];
@@ -1233,7 +1233,7 @@ export default function PropertyNavigator2({
     const imageToDelete = currentApplRow.appliance_images[index];
     setImagesTobeDeleted((prev) => [...prev, imageToDelete]);
 
-    // console.log("Delete image at index:", deletedIcons);
+    // //console.log("Delete image at index:", deletedIcons);
   };
 
   const handleFavorite = (index) => {
@@ -1250,7 +1250,7 @@ export default function PropertyNavigator2({
       }))
     );
 
-    // console.log(`Favorite image at index: ${index}`);
+    // //console.log(`Favorite image at index: ${index}`);
   };
 
   const handleUpdateFavoriteIcons = () => {
@@ -1260,9 +1260,9 @@ export default function PropertyNavigator2({
   const handleTenantClick = (tenantId) => {
     if (selectedRole === "MANAGER" || selectedRole === "OWNER") {
       if (tenant_detail === "No Tenant") {
-        // console.log("There is no tenant");
+        // //console.log("There is no tenant");
       } else {
-        // console.log("Else statement for if there is a tenant");
+        // //console.log("Else statement for if there is a tenant");
         navigate("/ContactsPM", {
           state: {
             contactsTab: "Tenant",
@@ -2638,7 +2638,7 @@ const PropertyTabPanel = (props) => {
                   }}
                   size='small'
                   onClick={() => {
-                    // console.log('typeof edit', typeof(onEditClick));
+                    // //console.log('typeof edit', typeof(onEditClick));
                     props.onEditClick("edit_property");
                   }}
                 // onClick={handleEditButton}

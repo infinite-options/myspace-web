@@ -53,21 +53,21 @@ export default function SettingsACH2() {
 
 const handleNextStep = () => {
 
-    console.log("account_principal_first_name",account_principal_first_name);
-    console.log("account_principal_last_name",account_principal_last_name);
-    console.log("account_principal_title",account_principal_title);
-    console.log("account_principal_birth_date",account_principal_birth_date);
-    console.log("account_principal_ownership_percentage",account_principal_ownership_percentage);
-    console.log("account_principal_phone",account_principal_phone);
-    console.log("account_principal_ssn",account_principal_ssn);
-    console.log("account_principal_address",account_principal_address);
-    console.log("account_principal_city",account_principal_city);
-    console.log("account_principal_state",account_principal_state);
-    console.log("account_principal_zip",account_principal_zip);
-    console.log("account_principal_country",account_principal_country);
-    console.log("account_principal_email",account_principal_email);
+    //console.log("account_principal_first_name",account_principal_first_name);
+    //console.log("account_principal_last_name",account_principal_last_name);
+    //console.log("account_principal_title",account_principal_title);
+    //console.log("account_principal_birth_date",account_principal_birth_date);
+    //console.log("account_principal_ownership_percentage",account_principal_ownership_percentage);
+    //console.log("account_principal_phone",account_principal_phone);
+    //console.log("account_principal_ssn",account_principal_ssn);
+    //console.log("account_principal_address",account_principal_address);
+    //console.log("account_principal_city",account_principal_city);
+    //console.log("account_principal_state",account_principal_state);
+    //console.log("account_principal_zip",account_principal_zip);
+    //console.log("account_principal_country",account_principal_country);
+    //console.log("account_principal_email",account_principal_email);
 
-    console.log("Click Button to page 3 ")
+    //console.log("Click Button to page 3 ")
     navigate('/settingsManagerACH3')
   };
 

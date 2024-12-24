@@ -44,13 +44,13 @@ function NewOwnerInquiry(props) {
 
   const [contractBusinessID, setContractBusinessID] = useState(null);
   useEffect(() => {
-    console.log("CONTRACT BUSINESS ID: ", contractBusinessID);
+    //console.log("CONTRACT BUSINESS ID: ", contractBusinessID);
   }, [contractBusinessID]);
   // let contractBusinessID = "";
 
   const [contractPropertyID, setContractPropertyID] = useState(null);
   useEffect(() => {
-    console.log("CONTRACT PROPERTY ID: ", contractPropertyID);
+    //console.log("CONTRACT PROPERTY ID: ", contractPropertyID);
   }, [contractPropertyID]);
   // let contractPropertyID = "";
 
@@ -67,12 +67,12 @@ function NewOwnerInquiry(props) {
   const [timeDiff, setTimeDiff] = useState(null);
 
   useEffect(() => {
-    console.log("New Owner Inquiry UseEffect");
+    //console.log("New Owner Inquiry UseEffect");
 
     const fetchData = async () => {
       setShowSpinner(true);
 
-      console.log("ANNOUNCEMENT DATA", announcementData);
+      //console.log("ANNOUNCEMENT DATA", announcementData);
 
       setContractBusinessID(announcementData["announcement_receiver"]);
 
@@ -86,7 +86,7 @@ function NewOwnerInquiry(props) {
 
       // setPropertiesData(responseData["Property"]["result"]? responseData["Property"]["result"] : []);
       const properties = responseData["Property"]["result"] ? responseData["Property"]["result"] : [];
-      console.log("PROPERTIES", properties);
+      //console.log("PROPERTIES", properties);
       setPropertiesData(properties);
 
       // setFilteredPropertiesData(propertiesData.filter(property => announcementData.announcement_properties.includes(property.property_uid)));
@@ -94,10 +94,10 @@ function NewOwnerInquiry(props) {
       const announcementPropertiesArray = announcementData.announcement_properties.split(","); //If "announcement_properties" is a string
       const filteredProperties = properties.filter((property) => announcementPropertiesArray.includes(property.property_uid));
       // const filteredProperties = properties.filter(property => announcementData.announcement_properties.includes(property.property_uid)); // if "announcement_properties" is an array
-      // console.log("FILTERED PROPERTIES", filteredProperties);
+      // //console.log("FILTERED PROPERTIES", filteredProperties);
       setFilteredPropertiesData(filteredProperties);
 
-      // console.log("FILTERED PROPERTIES DATA", filteredProperties);
+      // //console.log("FILTERED PROPERTIES DATA", filteredProperties);
 
       setContractPropertyID(filteredProperties[0]["property_uid"]);
 
@@ -136,7 +136,7 @@ function NewOwnerInquiry(props) {
         durationString = `${seconds} seconds ago`;
       }
 
-      console.log(now, announcement_date, announcementData["announcement_date"], durationString, seconds, minutes, hours, days);
+      //console.log(now, announcement_date, announcementData["announcement_date"], durationString, seconds, minutes, hours, days);
       return durationString;
     };
     fetchData();
@@ -188,7 +188,7 @@ function NewOwnerInquiry(props) {
         <Box flexDirection='row' alignItems='center' sx={{ width: "100%", display: "flex", justifyContent: "space-evenly", alignItems: "center" }}>
           <Box
             onClick={() => {
-              console.log("Previous button clicked. INDEX - ", index);
+              //console.log("Previous button clicked. INDEX - ", index);
               index > 0 ? setIndex(index - 1) : setIndex(filteredPropertiesData.length - 1);
             }}
           >
@@ -213,7 +213,7 @@ function NewOwnerInquiry(props) {
           </Box>
           <Box
             onClick={() => {
-              console.log("Next button clicked. INDEX - ", index);
+              //console.log("Next button clicked. INDEX - ", index);
               index < filteredPropertiesData.length - 1 ? setIndex(index + 1) : setIndex(0);
             }}
           >
@@ -254,10 +254,10 @@ function PropertyCard(props) {
   const [contractFileTypes, setContractFileTypes] = useState([]);
 
   useEffect(() => {
-    console.log("CONTRACT FEES - ", contractFees);
+    //console.log("CONTRACT FEES - ", contractFees);
 
     let JSONstring = JSON.stringify(contractFees);
-    console.log("CONTRACT FEES JSON string- ", JSONstring);
+    //console.log("CONTRACT FEES JSON string- ", JSONstring);
   }, [contractFees]);
 
   const handleAddFee = (newFee) => {
@@ -276,8 +276,8 @@ function PropertyCard(props) {
     //     feeAmount: 0,
     // };
     // setContractFees((prevContractFees) => [...prevContractFees, newFee]);
-    console.log("IN handleEditFee of PropertyCard");
-    console.log(newFee, index);
+    //console.log("IN handleEditFee of PropertyCard");
+    //console.log(newFee, index);
     setContractFees((prevContractFees) => {
       const updatedContractFees = prevContractFees.map((fee, i) => {
         if (i === index) {
@@ -299,7 +299,7 @@ function PropertyCard(props) {
 
   const handleOpenEditFee = (feeIndex) => {
     setShowEditFeeDialog(true);
-    console.log("EDITING FEE, Index", feeIndex);
+    //console.log("EDITING FEE, Index", feeIndex);
     setIndexForEditFeeDialog(feeIndex);
   };
 
@@ -320,7 +320,7 @@ function PropertyCard(props) {
   };
 
   // const handleContractFeesChange = (feesList) => {
-  //     console.log("In handleContractFeesChange()");
+  //     //console.log("In handleContractFeesChange()");
   //     //setContractFees() // map to the correct keys
   // }
 
@@ -336,7 +336,7 @@ function PropertyCard(props) {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         } else {
-          console.log("Data updated successfully");
+          //console.log("Data updated successfully");
         }
       })
       .catch((error) => {
@@ -358,9 +358,9 @@ function PropertyCard(props) {
   };
 
   const handleDeclineOfferClick = () => {
-    console.log("Decline Offer Clicked");
+    //console.log("Decline Offer Clicked");
     // let contractFeesJSONString = JSON.stringify(contractFees);
-    // console.log("Decline Offer - contractFeesJSONString : ", contractFeesJSONString);
+    // //console.log("Decline Offer - contractFeesJSONString : ", contractFeesJSONString);
     // const data = {
     //     "contract_uid": contractUID,
     //     "contract_name": contractName,
@@ -374,16 +374,16 @@ function PropertyCard(props) {
     formData.append("contract_uid", contractUID);
     formData.append("contract_status", "REFUSED");
 
-    console.log("Declined offer. Data sent - ", formData);
+    //console.log("Declined offer. Data sent - ", formData);
 
     sendPutRequest(formData);
   };
 
   const handleSendQuoteClick = () => {
-    console.log("Send Quote Clicked");
+    //console.log("Send Quote Clicked");
     const formData = new FormData();
     let contractFeesJSONString = JSON.stringify(contractFees);
-    console.log("Send Quote - contractFeesJSONString : ", contractFeesJSONString);
+    //console.log("Send Quote - contractFeesJSONString : ", contractFeesJSONString);
     // const data = {
     //     "contract_uid": contractUID,
     //     "contract_name": contractName,
@@ -417,17 +417,17 @@ function PropertyCard(props) {
       formData.append("contract_documents_details", JSON.stringify(documentsDetails));
     }
 
-    console.log("Quote sent. Data sent - ");
+    //console.log("Quote sent. Data sent - ");
     for (const pair of formData.entries()) {
-      console.log(`${pair[0]}, ${pair[1]}`);
+      //console.log(`${pair[0]}, ${pair[1]}`);
     }
 
     sendPutRequest(formData);
   };
 
   useEffect(() => {
-    // console.log("PROPERTY CARD USE EFFECT - BUSINESS - ", contractBusinessID);
-    // console.log("PROPERTY CARD USE EFFECT - PROPERTY - ", contractPropertyID);
+    // //console.log("PROPERTY CARD USE EFFECT - BUSINESS - ", contractBusinessID);
+    // //console.log("PROPERTY CARD USE EFFECT - PROPERTY - ", contractPropertyID);
 
     //get contracts
     const fetchData = async () => {
@@ -437,7 +437,7 @@ function PropertyCard(props) {
       // const contractData = data["result"].find(contract => contract.contract_property_id === contractPropertyID && contract.contract_status === "NEW");
       const contractData = data["result"].find((contract) => contract.contract_property_id === contractPropertyID);
 
-      console.log("CONTRACT - ", contractData);
+      //console.log("CONTRACT - ", contractData);
       setContractUID(contractData["contract_uid"] ? contractData["contract_uid"] : "");
       setContractName(contractData["contract_name"] ? contractData["contract_name"] : "");
       setContractStartDate(contractData["contract_start_date"] ? contractData["contract_start_date"] : "");
@@ -1312,47 +1312,47 @@ function TextInputField(props) {
 function AddFeeDialog({ open, handleClose, onAddFee }) {
   const [feeName, setFeeName] = useState("");
   useEffect(() => {
-    console.log("FEE Name: ", feeName);
+    //console.log("FEE Name: ", feeName);
   }, [feeName]);
 
   const [feeType, setFeeType] = useState("PERCENT");
   useEffect(() => {
-    console.log("FEE TYPE: ", feeType);
+    //console.log("FEE TYPE: ", feeType);
   }, [feeType]);
 
   const [isPercentage, setIsPercentage] = useState(true);
   useEffect(() => {
-    console.log("IS PERCENTAGE?: ", isPercentage);
+    //console.log("IS PERCENTAGE?: ", isPercentage);
   }, [isPercentage]);
 
   const [percentage, setPercentage] = useState("0");
   useEffect(() => {
-    console.log("PERCENTAGE: ", percentage);
+    //console.log("PERCENTAGE: ", percentage);
   }, [percentage]);
 
   const [isFlatRate, setIsFlatRate] = useState(false);
   useEffect(() => {
-    console.log("IS FLAT RATE?: ", isFlatRate);
+    //console.log("IS FLAT RATE?: ", isFlatRate);
   }, [isFlatRate]);
 
   const [feeAmount, setFlatRate] = useState("0");
   useEffect(() => {
-    console.log("FEE TYPE: ", feeAmount);
+    //console.log("FEE TYPE: ", feeAmount);
   }, [feeAmount]);
 
   const [feeFrequency, setFeeFrequency] = useState("One Time");
   useEffect(() => {
-    console.log("FEE FREQUENCY: ", feeFrequency);
+    //console.log("FEE FREQUENCY: ", feeFrequency);
   }, [feeFrequency]);
 
   const [feeAppliedTo, setFeeAppliedTo] = useState("Gross Rent");
   useEffect(() => {
-    console.log("FEE APPLIED TO: ", feeAppliedTo);
+    //console.log("FEE APPLIED TO: ", feeAppliedTo);
   }, [feeAppliedTo]);
 
   const handleFeeTypeChange = (event) => {
     setFeeType(event.target.value);
-    // console.log('FEE TYPE: ', selectedFeeType);
+    // //console.log('FEE TYPE: ', selectedFeeType);
     if (event.target.value === "PERCENT") {
       setIsPercentage(true);
       setIsFlatRate(false);
@@ -1373,15 +1373,15 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
   const handleAddFee = (event) => {
     event.preventDefault();
 
-    console.log("FORM SUBMITTED ");
-    console.log("feeName:", feeName);
-    console.log("feeFrequency:", feeFrequency);
-    console.log("feeType:", feeType);
-    console.log("Is percentage?:", isPercentage);
-    console.log("percentage:", percentage);
-    console.log("Is feeAmount?:", isFlatRate);
-    console.log("feeAmount:", feeAmount);
-    console.log("feeAppliedTo:", feeAppliedTo);
+    //console.log("FORM SUBMITTED ");
+    //console.log("feeName:", feeName);
+    //console.log("feeFrequency:", feeFrequency);
+    //console.log("feeType:", feeType);
+    //console.log("Is percentage?:", isPercentage);
+    //console.log("percentage:", percentage);
+    //console.log("Is feeAmount?:", isFlatRate);
+    //console.log("feeAmount:", feeAmount);
+    //console.log("feeAppliedTo:", feeAppliedTo);
 
     const newFee = {
       fee_name: feeName,
@@ -1459,7 +1459,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
               }}
             >
               <Box>Fee Name</Box>
-              {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+              {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={//console.log("input changed")}>Fee Name</TextInputField> */}
               <TextField
                 name='fee_name'
                 placeholder=''
@@ -1486,7 +1486,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
                                     name="fee_name"
                                     placeholder=""
                                     value={""} 
-                                    onChange={console.log("input changed")}
+                                    onChange={//console.log("input changed")}
                                     sx={{ backgroundColor: '#D6D5DA' }}
                                 >
                                     Fee Name
@@ -1495,7 +1495,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
                                     name="frequency"
                                     placeholder=""
                                     value={""}
-                                    onChange={console.log("input changed")}
+                                    onChange={//console.log("input changed")}
                                     InputProps={{
                                         sx: {
                                             backgroundColor: '#D6D5DA',
@@ -1677,47 +1677,47 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
 function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
   const [feeName, setFeeName] = useState(fees[feeIndex].fee_name);
   useEffect(() => {
-    console.log("FEE Name: ", feeName);
+    //console.log("FEE Name: ", feeName);
   }, [feeName]);
 
   const [feeType, setFeeType] = useState(fees[feeIndex].fee_type);
   useEffect(() => {
-    console.log("FEE TYPE: ", feeType);
+    //console.log("FEE TYPE: ", feeType);
   }, [feeType]);
 
   const [isPercentage, setIsPercentage] = useState(fees[feeIndex].isPercentage);
   useEffect(() => {
-    console.log("IS PERCENTAGE?: ", isPercentage);
+    //console.log("IS PERCENTAGE?: ", isPercentage);
   }, [isPercentage]);
 
   const [percentage, setPercentage] = useState(fees[feeIndex].charge);
   useEffect(() => {
-    console.log("PERCENTAGE: ", percentage);
+    //console.log("PERCENTAGE: ", percentage);
   }, [percentage]);
 
   const [isFlatRate, setIsFlatRate] = useState(fees[feeIndex].isFlatRate);
   useEffect(() => {
-    console.log("IS FLAT RATE?: ", isFlatRate);
+    //console.log("IS FLAT RATE?: ", isFlatRate);
   }, [isFlatRate]);
 
   const [feeAmount, setFlatRate] = useState(fees[feeIndex].charge);
   useEffect(() => {
-    console.log("FEE TYPE: ", feeAmount);
+    //console.log("FEE TYPE: ", feeAmount);
   }, [feeAmount]);
 
   const [feeFrequency, setFeeFrequency] = useState(fees[feeIndex].frequency);
   useEffect(() => {
-    console.log("FEE FREQUENCY: ", feeFrequency);
+    //console.log("FEE FREQUENCY: ", feeFrequency);
   }, [feeFrequency]);
 
   const [feeAppliedTo, setFeeAppliedTo] = useState(fees[feeIndex].of);
   useEffect(() => {
-    console.log("FEE APPLIED TO: ", feeAppliedTo);
+    //console.log("FEE APPLIED TO: ", feeAppliedTo);
   }, [feeAppliedTo]);
 
   const handleFeeTypeChange = (event) => {
     setFeeType(event.target.value);
-    // console.log('FEE TYPE: ', selectedFeeType);
+    // //console.log('FEE TYPE: ', selectedFeeType);
     if (event.target.value === "PERCENT") {
       setIsPercentage(true);
       setIsFlatRate(false);
@@ -1738,15 +1738,15 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
   const handleEditFee = (event) => {
     event.preventDefault();
 
-    console.log("FORM SUBMITTED ");
-    console.log("feeName:", feeName);
-    console.log("feeFrequency:", feeFrequency);
-    console.log("feeType:", feeType);
-    console.log("Is percentage?:", isPercentage);
-    console.log("percentage:", percentage);
-    console.log("Is feeAmount?:", isFlatRate);
-    console.log("feeAmount:", feeAmount);
-    console.log("feeAppliedTo:", feeAppliedTo);
+    //console.log("FORM SUBMITTED ");
+    //console.log("feeName:", feeName);
+    //console.log("feeFrequency:", feeFrequency);
+    //console.log("feeType:", feeType);
+    //console.log("Is percentage?:", isPercentage);
+    //console.log("percentage:", percentage);
+    //console.log("Is feeAmount?:", isFlatRate);
+    //console.log("feeAmount:", feeAmount);
+    //console.log("feeAppliedTo:", feeAppliedTo);
 
     const newFee = {
       fee_name: feeName,
@@ -1824,7 +1824,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
               }}
             >
               <Box>Fee Name</Box>
-              {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+              {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={//console.log("input changed")}>Fee Name</TextInputField> */}
               <TextField
                 name='fee_name'
                 placeholder=''
@@ -1851,7 +1851,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
                                     name="fee_name"
                                     placeholder=""
                                     value={""} 
-                                    onChange={console.log("input changed")}
+                                    onChange={//console.log("input changed")}
                                     sx={{ backgroundColor: '#D6D5DA' }}
                                 >
                                     Fee Name
@@ -1860,7 +1860,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
                                     name="frequency"
                                     placeholder=""
                                     value={""}
-                                    onChange={console.log("input changed")}
+                                    onChange={//console.log("input changed")}
                                     InputProps={{
                                         sx: {
                                             backgroundColor: '#D6D5DA',

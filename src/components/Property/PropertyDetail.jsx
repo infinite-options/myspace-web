@@ -10,7 +10,7 @@ import PropertyNavigator from "../Property/PropertyNavigator";
 import refundIcon from "./refundIcon.png";
 
 export default function PropertyDetail({}) {
-  console.log("In Property Detail Mobile");
+  //console.log("In Property Detail Mobile");
   const location = useLocation();
   let navigate = useNavigate();
   //   const [contractsForProperty, setContractsForProperty] = useState([]);
@@ -21,42 +21,42 @@ export default function PropertyDetail({}) {
   const rawPropertyData = location.state.rawPropertyData ? location.state.rawPropertyData : [];
   const isDesktop = location.state.isDesktop ? location.state.isDesktop : true;
 
-  console.log("LOCATION STATE", location.state);
-  console.log("all rentStatus", allRentStatus);
+  //console.log("LOCATION STATE", location.state);
+  //console.log("all rentStatus", allRentStatus);
 
   // useEffect(() => {
-  //   console.log("all rentStatus", allRentStatus)
+  //   //console.log("all rentStatus", allRentStatus)
   // }, [allRentStatus]);
 
   //   const [index, setIndex] = useState(location.state.index);
 
-  // console.log("--debug-- all contracts PropertyDetail", contracts)
+  // //console.log("--debug-- all contracts PropertyDetail", contracts)
 
   //   useEffect(() => {
   //     // filter contracts for this property
   //     if (contracts === undefined) {
   //       // get contracts from database
   //     } else {
-  //       console.log("Welcome to Property: ", propertyList[index]);
+  //       //console.log("Welcome to Property: ", propertyList[index]);
   //       let contractsForThisProperty = contracts.filter((contract) => contract.property_id === propertyList[index].property_uid);
-  //       // console.log("--debug-- contracts for this property", contractsForThisProperty)
+  //       // //console.log("--debug-- contracts for this property", contractsForThisProperty)
   //       setContractsForProperty(contractsForThisProperty);
   //     }
   //   }, []);
 
   function handleBackButton() {
-    console.log("handleBackButton");
+    //console.log("handleBackButton");
     // navigate('/properties', { state: { index: index } }); - PM Changed
     navigate("/properties", { state: { index: index } });
   }
 
   function navigateToAddProperty() {
-    console.log("navigateToAddProperty");
+    //console.log("navigateToAddProperty");
     navigate("/addProperty", { state: { property_endpoint_resp: rawPropertyData } });
   }
 
   function navigateToAddListing() {
-    console.log("navigateToAddListing");
+    //console.log("navigateToAddListing");
     navigate("/addListing");
   }
 

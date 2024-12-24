@@ -28,7 +28,7 @@ function SelectRole() {
   const [showSpinner, setShowSpinner] = useState(false);
 
   // useEffect(() => {
-  //   console.log("SelectRole - roles - ", roles);
+  //   //console.log("SelectRole - roles - ", roles);
   // }, [roles]);
 
   const handleNextStep = async () => {

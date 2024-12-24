@@ -148,7 +148,7 @@ const initialFees = (property, application) => {
 };
 
 const TenantLease = () => {
-  console.log("In Tenant Lease");
+  //console.log("In Tenant Lease");
   const classes = useStyles();
   const navigate = useNavigate();
   const { getProfileId } = useUser();
@@ -156,12 +156,12 @@ const TenantLease = () => {
   const { page, lease, property, managerInitiatedRenew = false } = state;
   const { getList, dataLoaded } = useContext(ListsContext);
   const feeFrequencies = getList("frequency");
-  console.log("Property: ", property);
-  console.log("Lease: ", lease);
+  //console.log("Property: ", property);
+  //console.log("Lease: ", lease);
   const [showSpinner, setShowSpinner] = useState(false);
   // Intermediate variables to calculate the initial dates
   let initialStartDate, initialEndDate, initialMoveInDate;
-  console.log("158 - In Tenant Lease -  page - ", page);
+  //console.log("158 - In Tenant Lease -  page - ", page);
 
   const setDates = () => {
     if (datesToggle === "current_lease") {
@@ -187,19 +187,19 @@ const TenantLease = () => {
           leaseEndDate = dayjs(lease.lease_end);
         }
         // const leaseEndDate = leaseStartDate + (dayjs(property.lease_end) - dayjs(property.lease_start));
-        // console.log("In Tenant Lease leaseStartDate", leaseStartDate);
+        // //console.log("In Tenant Lease leaseStartDate", leaseStartDate);
 
         // const duration = leaseEndDate.diff(leaseStartDate, "day"); // Duration in days
 
         // Set the start date to remain same as lease_start
         initialStartDate = leaseStartDate;
-        // console.log("In Tenant Lease initialStartDate", initialStartDate);
-        // console.log("In Tenant Lease duration", duration);
+        // //console.log("In Tenant Lease initialStartDate", initialStartDate);
+        // //console.log("In Tenant Lease duration", duration);
         // Set the new end date to be initialStartDate + duration
-        // console.log("In Tenant Lease initialEndDate", initialStartDate.add(duration, "days"));
+        // //console.log("In Tenant Lease initialEndDate", initialStartDate.add(duration, "days"));
         // initialEndDate = leaseEndDate.add(duration, "day");
         initialEndDate = leaseEndDate;
-        // console.log("In Tenant Lease initialEndDate", initialEndDate);
+        // //console.log("In Tenant Lease initialEndDate", initialEndDate);
         // Set move-in date same as the start date
         initialMoveInDate = initialStartDate;
       }
@@ -241,19 +241,19 @@ const TenantLease = () => {
           leaseEndDate = dayjs(lease.lease_end);
         }
         // const leaseEndDate = leaseStartDate + (dayjs(property.lease_end) - dayjs(property.lease_start));
-        // console.log("In Tenant Lease leaseStartDate", leaseStartDate);
+        // //console.log("In Tenant Lease leaseStartDate", leaseStartDate);
 
         // const duration = leaseEndDate.diff(leaseStartDate, "day"); // Duration in days
 
         // Set the start date to remain same as lease_start
         initialStartDate = initialStartDate != null ? initialStartDate : leaseStartDate;
-        // console.log("In Tenant Lease initialStartDate", initialStartDate);
-        // console.log("In Tenant Lease duration", duration);
+        // //console.log("In Tenant Lease initialStartDate", initialStartDate);
+        // //console.log("In Tenant Lease duration", duration);
         // Set the new end date to be initialStartDate + duration
-        // console.log("In Tenant Lease initialEndDate", initialStartDate.add(duration, "days"));
+        // //console.log("In Tenant Lease initialEndDate", initialStartDate.add(duration, "days"));
         // initialEndDate = leaseEndDate.add(duration, "day");
         initialEndDate = initialEndDate != null ? initialEndDate : leaseEndDate;
-        // console.log("In Tenant Lease initialEndDate", initialEndDate);
+        // //console.log("In Tenant Lease initialEndDate", initialEndDate);
         // Set move-in date same as the start date
         initialMoveInDate = initialStartDate;
       } else if (page === "create_lease") {
@@ -295,19 +295,19 @@ const TenantLease = () => {
   //     leaseEndDate = dayjs(application.lease_end);
   //   }
   //   // const leaseEndDate = leaseStartDate + (dayjs(property.lease_end) - dayjs(property.lease_start));
-  //   // console.log("In Tenant Lease leaseStartDate", leaseStartDate);
+  //   // //console.log("In Tenant Lease leaseStartDate", leaseStartDate);
 
   //   // const duration = leaseEndDate.diff(leaseStartDate, "day"); // Duration in days
 
   //   // Set the start date to remain same as lease_start
   //   initialStartDate = leaseStartDate;
-  //   // console.log("In Tenant Lease initialStartDate", initialStartDate);
-  //   // console.log("In Tenant Lease duration", duration);
+  //   // //console.log("In Tenant Lease initialStartDate", initialStartDate);
+  //   // //console.log("In Tenant Lease duration", duration);
   //   // Set the new end date to be initialStartDate + duration
-  //   // console.log("In Tenant Lease initialEndDate", initialStartDate.add(duration, "days"));
+  //   // //console.log("In Tenant Lease initialEndDate", initialStartDate.add(duration, "days"));
   //   // initialEndDate = leaseEndDate.add(duration, "day");
   //   initialEndDate = leaseEndDate;
-  //   // console.log("In Tenant Lease initialEndDate", initialEndDate);
+  //   // //console.log("In Tenant Lease initialEndDate", initialEndDate);
   //   // Set move-in date same as the start date
   //   initialMoveInDate = initialStartDate;
   // }
@@ -328,7 +328,7 @@ const TenantLease = () => {
   const [isPreviousFileChange, setIsPreviousFileChange] = useState(false);
   const [deleteFees, setDeleteFees] = useState([]);
 
-  // console.log("# of Occupants", noOfOccupants);
+  // //console.log("# of Occupants", noOfOccupants);
 
   const [fees, setFees] = useState([]);
 
@@ -430,10 +430,10 @@ const TenantLease = () => {
   }
 
   // useEffect(() => {
-  //   console.log("260 - leaseAdults - ", leaseAdults)
-  //   console.log("260 - leaseChildren - ", leaseChildren)
-  //   console.log("260 - leasePets - ", leasePets)
-  //   console.log("260 - leaseVehicles - ", leaseVehicles)
+  //   //console.log("260 - leaseAdults - ", leaseAdults)
+  //   //console.log("260 - leaseChildren - ", leaseChildren)
+  //   //console.log("260 - leasePets - ", leasePets)
+  //   //console.log("260 - leaseVehicles - ", leaseVehicles)
 
   // }, [leaseAdults, leaseChildren, leasePets, leaseVehicles]);
 
@@ -442,7 +442,7 @@ const TenantLease = () => {
   }, []);
 
   useEffect(() => {
-    console.log("ROHIT - 403 - datesToggle - ", datesToggle);
+    //console.log("ROHIT - 403 - datesToggle - ", datesToggle);
     if (datesToggle !== "select") {
       setDates();
     }
@@ -454,7 +454,7 @@ const TenantLease = () => {
       return map;
     }, new Map());
 
-    // console.log("278 - names - ", names)
+    // //console.log("278 - names - ", names)
     setUtilitiesMap(names);
   }, [utilityNames]);
 
@@ -464,19 +464,19 @@ const TenantLease = () => {
       return map;
     }, new Map());
 
-    // console.log("278 - entities - ", entities)
+    // //console.log("278 - entities - ", entities)
     setEntitiesMap(entities);
   }, [utilityEntities]);
 
   useEffect(() => {
     const reverseMap = new Map(Array.from(utilitiesMap ? utilitiesMap : [], ([key, value]) => [value, key]));
-    // console.log("296 - reverseMap - ", reverseMap)
+    // //console.log("296 - reverseMap - ", reverseMap)
     setReverseUtilitiesMap(reverseMap);
   }, [utilitiesMap]);
 
   useEffect(() => {
     const reverseMap = new Map(Array.from(entitiesMap ? entitiesMap : [], ([key, value]) => [value, key]));
-    // console.log("303 - reverseMap - ", reverseMap)
+    // //console.log("303 - reverseMap - ", reverseMap)
     setReverseEntitiesMap(reverseMap);
   }, [entitiesMap]);
 
@@ -485,13 +485,13 @@ const TenantLease = () => {
   }, [utilitiesMap, mappedUtilitiesPaidBy]);
 
   const getListDetails = () => {
-    // console.log("543 - getListDetails called");
+    // //console.log("543 - getListDetails called");
     const relationships = getList("relationships");
     const states = getList("states");
     const utilNames = getList("utilities");
     const utilEntities = getList("role");
-    // console.log("285 - utilityNames - ", utilityNames)
-    // console.log("285 - utilityEntities - ", utilityEntities)
+    // //console.log("285 - utilityNames - ", utilityNames)
+    // //console.log("285 - utilityEntities - ", utilityEntities)
     setRelationships(relationships);
     setStates(states);
     setUtilityNames(utilNames);
@@ -532,11 +532,11 @@ const TenantLease = () => {
   // const reverseEntitiesMap = new Map(Array.from(entitiesMap, ([key, value]) => [value, key]));
 
   // useEffect(() => {
-  //   console.log("newUtilitiesPaidBy - ", newUtilitiesPaidBy);
+  //   //console.log("newUtilitiesPaidBy - ", newUtilitiesPaidBy);
   // }, [newUtilitiesPaidBy]);
 
   // useEffect(() => {
-  //   console.log("332 - mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
+  //   //console.log("332 - mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
   // }, [mappedUtilitiesPaidBy]);
 
   const formatUtilityName = (utility) => {
@@ -561,7 +561,7 @@ const TenantLease = () => {
     updatedNewUtilitiesMappedBy[utility] = "owner";
     setNewUtilitiesPaidBy(updatedNewUtilitiesMappedBy);
 
-    // console.log(`Adding utility: ${utility}`);
+    // //console.log(`Adding utility: ${utility}`);
     handleAddUtilityClose();
   };
 
@@ -569,8 +569,8 @@ const TenantLease = () => {
     if (!propertyUtilities) {
       return {};
     }
-    // console.log("----- in mapUIDsToUtilities, input - ", propertyUtilities);
-    // console.log("----- in mapUIDsToUtilities, entitiesMap - ", entitiesMap);
+    // //console.log("----- in mapUIDsToUtilities, input - ", propertyUtilities);
+    // //console.log("----- in mapUIDsToUtilities, entitiesMap - ", entitiesMap);
     const mappedUtilities = {};
     for (const key of Object.keys(propertyUtilities)) {
       const utilityName = utilitiesMap.get(key);
@@ -581,18 +581,18 @@ const TenantLease = () => {
       }
     }
 
-    // console.log("----- in mapUIDsToUtilities, mappedUtilities - ", mappedUtilities);
+    // //console.log("----- in mapUIDsToUtilities, mappedUtilities - ", mappedUtilities);
     return mappedUtilities;
   };
 
   // const utilitiesObject = JSON.parse(property.property_utilities);
   const [utilitiesObject, setUtilitiesObject] = useState(lease?.lease_utilities ? JSON.parse(lease.lease_utilities) : []);
-  // console.log("392 - utilitiesObject - ", utilitiesObject);
+  // //console.log("392 - utilitiesObject - ", utilitiesObject);
   // const [utilitiesObject, setUtilitiesObject] = useState(() => {
   //   const utilities = application?.lease_utilities;
   //   return utilities && utilities !== "" ? JSON.parse(utilities) : [];
   // });
-  // console.log("392 - utilitiesObject - ", utilitiesObject);
+  // //console.log("392 - utilitiesObject - ", utilitiesObject);
   let utilitiesInUIDForm = {};
   let mappedUtilities2 = {};
 
@@ -600,8 +600,8 @@ const TenantLease = () => {
     const utilityObject = { [utility]: `${entity}` };
     setHasUtilitiesChanges(true);
 
-    // console.log("392 - mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
-    // console.log("392 - utilityObject - ", utilityObject);
+    // //console.log("392 - mappedUtilitiesPaidBy - ", mappedUtilitiesPaidBy);
+    // //console.log("392 - utilityObject - ", utilityObject);
 
     setMappedUtilitiesPaidBy((prevState) => ({
       ...prevState,
@@ -630,7 +630,7 @@ const TenantLease = () => {
   useEffect(() => {
 
     const getLeaseFees = () => {
-      console.log(" -- DEBUG -- in fees - ", lease)
+      //console.log(" -- DEBUG -- in fees - ", lease)
       let feesList = [];
       if (
         lease?.lease_status === "PROCESSING" ||
@@ -651,7 +651,7 @@ const TenantLease = () => {
           feesList = parsedleaseFees;
         }
       }
-      // console.log("Fees: ", feesList);
+      // //console.log("Fees: ", feesList);
 
       // let i = 0;
       // feesList.forEach((fee) => {
@@ -669,7 +669,7 @@ const TenantLease = () => {
         setLeaseAdults(adults);
         numOccupants += adults?.length;
       } catch (error) {
-        console.log("Error parsing lease.lease_adults:", error);
+        //console.log("Error parsing lease.lease_adults:", error);
       }
 
       try {
@@ -677,21 +677,21 @@ const TenantLease = () => {
         setLeaseChildren(children);
         numOccupants += children?.length;
       } catch (error) {
-        console.log("Error parsing lease.lease_children:", error);
+        //console.log("Error parsing lease.lease_children:", error);
       }
 
       try {
         const pets = lease.lease_pets ? JSON.parse(lease?.lease_pets) : [];
         setLeasePets(pets);
       } catch (error) {
-        console.log("Error parsing lease.lease_pets:", error);
+        //console.log("Error parsing lease.lease_pets:", error);
       }
 
       try {
         const vehicles = lease.lease_vehicles ? JSON.parse(lease?.lease_vehicles) : [];
         setLeaseVehicles(vehicles);
       } catch (error) {
-        console.log("Error parsing lease.lease_adults:", error);
+        //console.log("Error parsing lease.lease_adults:", error);
       }
 
       setNoOfOccupants(numOccupants);
@@ -703,16 +703,16 @@ const TenantLease = () => {
 
     // //*************************************UTILITIES********************************************************* */
     // if (utilitiesObject && utilitiesObject?.length > 0) {
-    //   // console.log("484 - utilitiesObject - ", utilitiesObject);
+    //   // //console.log("484 - utilitiesObject - ", utilitiesObject);
     //   for (const utility of utilitiesObject) {
-    //     // console.log(utility.utility_type_id, utility.utility_payer_id);
+    //     // //console.log(utility.utility_type_id, utility.utility_payer_id);
     //     utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
     //   }
-    //   // console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
+    //   // //console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
 
     //   mappedUtilities2 = mapUIDsToUtilities(utilitiesInUIDForm);
-    //   // console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
-    //   // console.log("   ", mappedUtilities2);
+    //   // //console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
+    //   // //console.log("   ", mappedUtilities2);
     //   setMappedUtilitiesPaidBy(mappedUtilities2);
     // } else {
     //   setMappedUtilitiesPaidBy(defaultUtilities);
@@ -722,30 +722,30 @@ const TenantLease = () => {
   }, []);
 
   useEffect(() => {
-    // console.log("543 - dataLoaded - ", dataLoaded);
+    // //console.log("543 - dataLoaded - ", dataLoaded);
     if (dataLoaded === true) {
       getListDetails();
     }
   }, [dataLoaded, getList]);
 
   useEffect(() => {
-    // console.log("551 - entitiesMap - ", entitiesMap);
-    // console.log("551 - utilitiesMap - ", utilitiesMap);
+    // //console.log("551 - entitiesMap - ", entitiesMap);
+    // //console.log("551 - utilitiesMap - ", utilitiesMap);
     //*************************************UTILITIES********************************************************* */
     if (utilitiesObject && utilitiesObject?.length > 0) {
-      console.log("UTILITIES - utilitiesObject - ", utilitiesObject);
+      //console.log("UTILITIES - utilitiesObject - ", utilitiesObject);
       for (const utility of utilitiesObject) {
-        // console.log(utility.utility_type_id, utility.utility_payer_id);
+        // //console.log(utility.utility_type_id, utility.utility_payer_id);
         utilitiesInUIDForm[utility.utility_type_id] = utility.utility_payer_id;
       }
-      console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
+      //console.log("UTILTIES IN UID FORM", utilitiesInUIDForm);
 
       mappedUtilities2 = mapUIDsToUtilities(utilitiesInUIDForm);
-      console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
-      console.log("   ", mappedUtilities2);
+      //console.log("----- Mapped UIDs to Utilities, mappedUtilities2");
+      //console.log("   ", mappedUtilities2);
       setMappedUtilitiesPaidBy(mappedUtilities2);
     } else {
-      console.log("UTILITIES setting else");
+      //console.log("UTILITIES setting else");
       setMappedUtilitiesPaidBy(defaultUtilities);
       setIsDefaultUtilities(true);
     }
@@ -861,7 +861,7 @@ const TenantLease = () => {
   //   setAvailableToPay(e.target.value);
   // };
   const handleDueByDateChange = (v, index) => {
-    // console.log("handleDueByDateChange - v, index - ", v.format("MM-DD-YYYY"), index);
+    // //console.log("handleDueByDateChange - v, index - ", v.format("MM-DD-YYYY"), index);
     const list = [...fees];
     list[index - 1].due_by_date = v.format("MM-DD-YYYY");
     setFees(list);
@@ -1001,12 +1001,12 @@ const TenantLease = () => {
   const valueToDayMap = new Map(Array.from(daytoValueMap, ([key, value]) => [value, key]));
 
   const checkValidDueDate = (fee) => {
-    console.log("ROHIT - fee - ", fee);
+    //console.log("ROHIT - fee - ", fee);
     // ((fee.due_by == null || fee.due_by === "") && (fee.due_by_date == null || fee.due_by_date === "" || !isValidDate(fee.due_by_date))) 
 
     if (fee.frequency === "Monthly" || fee.frequency === "Quarterly" || fee.frequency === "Semi-Monthly" || fee.frequency === "Bi-Weekly" || fee.frequency === "Weekly") {
       if (fee.due_by === "" || fee.due_by == null) {
-        console.log("due_by is invalid")
+        //console.log("due_by is invalid")
         return true;
       } else {
         return false;
@@ -1015,7 +1015,7 @@ const TenantLease = () => {
     } else if (fee.frequency === "One Time" || fee.frequency === "Annually" || fee.frequency === "Semi-Annually") {
       // return fee.due_by_date !== "" ? `${fee.due_by_date}` : "No Due Date";
       if (fee.due_by_date === "" || fee.due_by_date == null) {
-        console.log("due_by_date is invalid - ", fee.due_by_date)
+        //console.log("due_by_date is invalid - ", fee.due_by_date)
         return true;
       } else {
         return false;
@@ -1032,7 +1032,7 @@ const TenantLease = () => {
     }
     let retVal = true;
     fees.forEach((fee) => {
-      // console.log("859 - fee.due_by_date - ", fee.due_by_date);
+      // //console.log("859 - fee.due_by_date - ", fee.due_by_date);
       if (
         fee.fee_name == null ||
         fee.fee_name === "" ||
@@ -1091,7 +1091,7 @@ const TenantLease = () => {
         return false; // Return false if the index is out of bounds
       }
       const fileType = leaseFileTypes[i];
-      // console.log("FILE TYPE: ", fileType);
+      // //console.log("FILE TYPE: ", fileType);
       if (!fileType || fileType.trim() === "") {
         return false;
       }
@@ -1114,18 +1114,18 @@ const TenantLease = () => {
   //     });
   //     setShowSpinner(false);
 
-  //     console.log("Utilities changes saved.");
+  //     //console.log("Utilities changes saved.");
   //   } else {
-  //     console.log("No changes for utilities.");
+  //     //console.log("No changes for utilities.");
   //   }
   // };
 
   const createUpdatedUtilitesArray = (obj) => {
-    // console.log("840 - obj - ", obj);
+    // //console.log("840 - obj - ", obj);
     const utilitiesArray = [];
 
     Object.keys(obj)?.forEach((key) => {
-      // console.log("844 - util - ", key, obj[key]);
+      // //console.log("844 - util - ", key, obj[key]);
       const utilObj = {
         utility_desc: key,
         utility_payer: null,
@@ -1135,7 +1135,7 @@ const TenantLease = () => {
 
       utilitiesArray.push(utilObj);
     });
-    // console.log("854 - utilitiesArray - ", utilitiesArray);
+    // //console.log("854 - utilitiesArray - ", utilitiesArray);
     return utilitiesArray;
   };
 
@@ -1158,10 +1158,10 @@ const TenantLease = () => {
         openDialog("Success", `You have successfully Rejected the lease`, "success");
 
       } else {
-        console.log(data);
+        //console.log(data);
       }
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
   }
 
@@ -1171,7 +1171,7 @@ const TenantLease = () => {
     try {
       // setShowMissingFieldsPrompt(false);
       if (!checkRequiredFields()) {
-        // console.log("check here -- error no fees");
+        // //console.log("check here -- error no fees");
         // setShowMissingFieldsPrompt(true);
         openDialog("Error", `Please check lease fees.`, "error");
         return;
@@ -1180,7 +1180,7 @@ const TenantLease = () => {
 
       const leaseApplicationFormData = new FormData();
 
-      console.log("---insdie DEBUG Lease fees - ", fees)
+      //console.log("---insdie DEBUG Lease fees - ", fees)
 
       if (lease?.lease_status === "RENEW REFUSED" || lease?.lease_status === "RENEW WITHDRAWN") {
         leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");
@@ -1202,7 +1202,7 @@ const TenantLease = () => {
 
 
       const hasMissingType = !checkFileTypeSelected();
-      // console.log("HAS MISSING TYPE", hasMissingType);
+      // //console.log("HAS MISSING TYPE", hasMissingType);
 
       if (hasMissingType) {
         setShowMissingFileTypePrompt(true);
@@ -1227,7 +1227,7 @@ const TenantLease = () => {
       }
 
       // for (let [key, value] of leaseApplicationFormData.entries()) {
-      //   console.log(key, value);
+      //   //console.log(key, value);
       // }
 
       // await fetch(
@@ -1284,7 +1284,7 @@ const TenantLease = () => {
       navigate("/managerDashboard");
       setShowSpinner(false);
     } catch (error) {
-      console.log("Error Creating Lease:", error);
+      //console.log("Error Creating Lease:", error);
       alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
 
       navigate("/managerDashboard");
@@ -1296,7 +1296,7 @@ const TenantLease = () => {
     try {
       // setShowMissingFieldsPrompt(false);
       if (!checkRequiredFields()) {
-        // console.log("check here -- error no fees");
+        // //console.log("check here -- error no fees");
         // setShowMissingFieldsPrompt(true);
         openDialog("Error", `Please check lease fees.`, "error");
         return;
@@ -1305,7 +1305,7 @@ const TenantLease = () => {
 
       const leaseApplicationFormData = new FormData();
 
-      console.log("---insdie DEBUG Lease fees - ", fees)
+      //console.log("---insdie DEBUG Lease fees - ", fees)
 
       leaseApplicationFormData.append("lease_uid", lease.lease_uid);
       if (lease.lease_status === "NEW") {
@@ -1313,7 +1313,7 @@ const TenantLease = () => {
       } else if (lease.lease_status === "RENEW NEW") {
         leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");
       } else if (lease.lease_status === "APPROVED") {
-        // console.log("968 - property - ", property);
+        // //console.log("968 - property - ", property);
         if (lease.lease_status === "ACTIVE") {
           leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");
           await updateCurrentLease("PM RENEW REQUESTED");
@@ -1343,7 +1343,7 @@ const TenantLease = () => {
       }
 
       const hasMissingType = !checkFileTypeSelected();
-      // console.log("HAS MISSING TYPE", hasMissingType);
+      // //console.log("HAS MISSING TYPE", hasMissingType);
 
       if (hasMissingType) {
         setShowMissingFileTypePrompt(true);
@@ -1368,7 +1368,7 @@ const TenantLease = () => {
       }
 
       // for (let [key, value] of leaseApplicationFormData.entries()) {
-      //   console.log(key, value);
+      //   //console.log(key, value);
       // }
 
       // await fetch(
@@ -1413,7 +1413,7 @@ const TenantLease = () => {
       navigate("/managerDashboard");
       setShowSpinner(false);
     } catch (error) {
-      // console.log("Error Creating Lease:", error);
+      // //console.log("Error Creating Lease:", error);
       alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
 
       navigate("/managerDashboard");
@@ -1423,7 +1423,7 @@ const TenantLease = () => {
 
   function formatDate(dateString) {
     const date = new Date(dateString);
-    // console.log('check date', dateString, date)
+    // //console.log('check date', dateString, date)
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     const year = date.getFullYear();
@@ -1463,11 +1463,11 @@ const TenantLease = () => {
   }
 
   const handleRenewLease = async () => {
-    // console.log('inside handleRenewLease');            
+    // //console.log('inside handleRenewLease');            
     try {
       // setShowMissingFieldsPrompt(false);
       if (!checkRequiredFields()) {
-        // console.log('is it inside !checkRequiredFields');
+        // //console.log('is it inside !checkRequiredFields');
         // setShowMissingFieldsPrompt(true);
         openDialog("Error", `Please fill out all required fields.`, "error");
         return;
@@ -1475,7 +1475,7 @@ const TenantLease = () => {
       setShowSpinner(true);
 
       const leaseApplicationFormData = new FormData();
-      // console.log('created leaseApplicationFormData');
+      // //console.log('created leaseApplicationFormData');
       leaseApplicationFormData.append("lease_property_id", property.property_id);
       leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");
       leaseApplicationFormData.append("lease_renew_status", "TRUE");
@@ -1513,7 +1513,7 @@ const TenantLease = () => {
         minute: '2-digit',
         second: '2-digit',
       })));
-      // console.log('before tenant id leaseApplicationFormData', property);
+      // //console.log('before tenant id leaseApplicationFormData', property);
       if (property?.tenants) {
         try {
           // Safely parse the tenants data
@@ -1523,7 +1523,7 @@ const TenantLease = () => {
           let tenantUIDs = parsedData.map((tenant) => tenant.tenant_uid);
 
           // Log for debugging
-          // console.log('Collected tenant UIDs:', tenantUIDs);
+          // //console.log('Collected tenant UIDs:', tenantUIDs);
 
           // Append tenant_uid array to the form data as a list of array
           if (lease?.lease_status === "RENEW NEW") {
@@ -1555,10 +1555,10 @@ const TenantLease = () => {
       }
 
       const hasMissingType = !checkFileTypeSelected();
-      // console.log("HAS MISSING TYPE", hasMissingType);
+      // //console.log("HAS MISSING TYPE", hasMissingType);
 
       if (hasMissingType) {
-        // console.log('inside hasMissingType');
+        // //console.log('inside hasMissingType');
         setShowMissingFileTypePrompt(true);
         setShowSpinner(false);
         return;
@@ -1568,7 +1568,7 @@ const TenantLease = () => {
       let index = -1;
 
       if (leaseFiles.length) {
-        // console.log('inside leaseFiles.length');
+        // //console.log('inside leaseFiles.length');
 
         [...leaseFiles].forEach((file, i) => {
           index += 1;
@@ -1620,9 +1620,9 @@ const TenantLease = () => {
 
         leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
 
-        // console.log("---DEBUG --- leaseapplication form data ---");
+        // //console.log("---DEBUG --- leaseapplication form data ---");
         // for (let [key, value] of leaseApplicationFormData.entries()) {
-        //   console.log(`${key}: ${value}`);
+        //   //console.log(`${key}: ${value}`);
         // }
 
         await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
@@ -1644,7 +1644,7 @@ const TenantLease = () => {
       navigate("/managerDashboard");
       setShowSpinner(false);
     } catch (error) {
-      // console.log("Error Creating Lease:", error);
+      // //console.log("Error Creating Lease:", error);
       alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
 
       navigate("/managerDashboard");
@@ -1728,7 +1728,7 @@ const TenantLease = () => {
   };
 
   const getLeaseStatusText = (status, renewStatus) => {
-    console.log("ROHIT - 1638 - status - ", status, renewStatus);
+    //console.log("ROHIT - 1638 - status - ", status, renewStatus);
     switch (status) {
       case "RENEW PROCESSING":
         return "Extended";
@@ -1757,7 +1757,7 @@ const TenantLease = () => {
   }
 
   const handleDatesRadioChange = (value) => {
-    console.log("Selected value:", value);
+    //console.log("Selected value:", value);
     // Add your logic here based on the selected radio button
     setDatesToggle(value);
   };
@@ -2073,8 +2073,8 @@ const TenantLease = () => {
               {/* Display tenant details */}
               {page !== "refer_tenant" && (
                 <>
-                  {/* {console.log('--application details in tenant---', application)}
-          {console.log('--property details in tenant---', property)} */}
+                  {/* {//console.log('--application details in tenant---', application)}
+          {//console.log('--property details in tenant---', property)} */}
 
                   {/* Check if managerInitiatedRenew is true */}
                   {managerInitiatedRenew && lease.tenants ? (
@@ -2882,7 +2882,7 @@ const OccupantsDataGrid = ({ data }) => {
     },
   ];
 
-  // console.log("FeesDataGrid - props.data - ", data);
+  // //console.log("FeesDataGrid - props.data - ", data);
   const dataWithIds = data.map((row, index) => ({ ...row, id: index }));
 
   return (
@@ -2928,7 +2928,7 @@ const PetsDataGrid = ({ data }) => {
     },
   ];
 
-  // console.log("FeesDataGrid - props.data - ", data);
+  // //console.log("FeesDataGrid - props.data - ", data);
   const dataWithIds = data.map((row, index) => ({ ...row, id: index }));
 
   return (
@@ -2964,7 +2964,7 @@ const VehiclesDataGrid = ({ data }) => {
     },
   ];
 
-  // console.log("FeesDataGrid - props.data - ", data);
+  // //console.log("FeesDataGrid - props.data - ", data);
   const dataWithIds = data.map((row, index) => ({ ...row, id: index }));
 
   return (

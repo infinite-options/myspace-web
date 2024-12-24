@@ -27,7 +27,7 @@ export default function RequestMoreInfo({fromQuote, showRequestMoreInfo, setShow
     const [pmNotes, setPmNotes] = useState();
     const [showSpinner, setShowSpinner] = useState(false);
 
-    // console.log("RequestMoreInfo - props.maintenanceItem - ", maintenanceItem)
+    // //console.log("RequestMoreInfo - props.maintenanceItem - ", maintenanceItem)
 
     const handleChange1 = (event) => {
         setPmNotes(event.target.value);
@@ -62,7 +62,7 @@ export default function RequestMoreInfo({fromQuote, showRequestMoreInfo, setShow
             formData,
             headers)
             .then(response => {
-                console.log("PUT result", response);
+                //console.log("PUT result", response);
                 setShowSpinner(false);
                 setShowRequestMoreInfo(false);
                 setPmNotes("");
@@ -72,7 +72,7 @@ export default function RequestMoreInfo({fromQuote, showRequestMoreInfo, setShow
                 refreshMaintenanceData();
 
             }).catch(function (error) {
-                console.log(error);
+                //console.log(error);
                 setShowSpinner(false);
             });
     };
@@ -106,7 +106,7 @@ export default function RequestMoreInfo({fromQuote, showRequestMoreInfo, setShow
         }),
         });
     } catch (error) {
-        console.log("Error in sending announcement for more info:", error);
+        //console.log("Error in sending announcement for more info:", error);
         alert("We were unable to Text the Tenant but we were able to send them a notification through the App");
     }
     };

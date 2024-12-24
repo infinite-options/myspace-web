@@ -11,7 +11,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   const [onboardingState, setOnboardingState] = useState();
   const [supervisor, setSupervisor] = useState(null);
   const setAuthData = (data) => {
-    console.log("setAuthData - data - ", data);
+    //console.log("setAuthData - data - ", data);
 
     // Update user state
     setUser((prevUser) => {
@@ -27,8 +27,8 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   };
 
   // useEffect(() => {
-  //   console.log("$user set to", user);
-  //   console.log("cookies set to", cookies);    
+  //   //console.log("$user set to", user);
+  //   //console.log("cookies set to", cookies);    
   // }, [user]);
 
   const selectRole = (role) => {
@@ -76,8 +76,8 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     }
   };
   const updateProfileUid = (profileUidObj) => {
-    // console.log("updateProfileUid - profileUidObj - ", profileUidObj)    
-    // console.log("updateProfileUid - selectedRole - ", selectedRole)    
+    // //console.log("updateProfileUid - profileUidObj - ", profileUidObj)    
+    // //console.log("updateProfileUid - selectedRole - ", selectedRole)    
     if (isBusiness() || isEmployee()) {
       setUser((prev) => updateUser(prev, profileUidObj));
     } else {
@@ -86,8 +86,8 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   };
 
   const updateEmployeeProfileUid = (profileUidObj, role) => {
-    // console.log("updateEmployeeProfileUid - profileUidObj - ", profileUidObj)    
-    // console.log("updateEmployeeProfileUid - role - ", role)    
+    // //console.log("updateEmployeeProfileUid - profileUidObj - ", profileUidObj)    
+    // //console.log("updateEmployeeProfileUid - role - ", role)    
     if (["PM_EMPLOYEE", "MAINT_EMPLOYEE"].includes(role)) {      
       setUser((prev) => updateUserEmployee(prev, profileUidObj, role));
       // setUser((prev) => updateUser(prev, profileUidObj));
@@ -97,7 +97,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   };
 
   const updateAppSettings = (settingsObj) => {    
-    // console.log("updateAppSettings - settingsObj - ", settingsObj);    
+    // //console.log("updateAppSettings - settingsObj - ", settingsObj);    
     setUser((prevUser) => {
       const newUserData = { ...prevUser, ...settingsObj };
 
@@ -107,8 +107,8 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   };
 
   const updateUser = (prevUser, profileUidObj) => {
-    // console.log("updateUser - prevUser - ", prevUser)
-    // console.log("updateUser - profileUidObj - ", profileUidObj)
+    // //console.log("updateUser - prevUser - ", prevUser)
+    // //console.log("updateUser - profileUidObj - ", profileUidObj)
     let newBusinesses;
     if (selectedRole === "MANAGER" || selectedRole === "PM_EMPLOYEE") {
       newBusinesses = {
@@ -121,7 +121,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
         MAINTENANCE: updateBusinessSection(prevUser?.businesses?.MAINTENANCE, profileUidObj),
       };
     }
-    // console.log("updateUser - newBusinesses - ", newBusinesses)
+    // //console.log("updateUser - newBusinesses - ", newBusinesses)
     return {
       ...prevUser,
       businesses: newBusinesses,
@@ -129,8 +129,8 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   };
 
   const updateUserEmployee = (prevUser, profileUidObj, role) => {
-    // console.log("updateUserEmployee - prevUser - ", prevUser)
-    // console.log("updateUserEmployee - profileUidObj - ", profileUidObj)
+    // //console.log("updateUserEmployee - prevUser - ", prevUser)
+    // //console.log("updateUserEmployee - profileUidObj - ", profileUidObj)
     let newBusinesses;
     if (role === "PM_EMPLOYEE") {
       newBusinesses = {
@@ -143,7 +143,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
         MAINTENANCE: updateBusinessSection(prevUser?.businesses?.MAINTENANCE, profileUidObj),
       };
     }
-    // console.log("updateUserEmployee - newBusinesses - ", newBusinesses)
+    // //console.log("updateUserEmployee - newBusinesses - ", newBusinesses)
     return {
       ...prevUser,
       businesses: newBusinesses,
@@ -158,8 +158,8 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   };
   const getBusiness = (user, type) => user.businesses[type].business_uid;  //"600-000003"
   const getProfileId = () => {
-    // console.log('getProfileId - ', user.businesses.MANAGEMENT.business_employee_id)
-    // console.log('selectedRole - ', selectedRole)
+    // //console.log('getProfileId - ', user.businesses.MANAGEMENT.business_employee_id)
+    // //console.log('selectedRole - ', selectedRole)
     if (selectedRole === "PM_EMPLOYEE") return user.businesses.MANAGEMENT.business_employee_id;
     if (selectedRole === "MAINT_EMPLOYEE") return user.businesses.MAINTENANCE.business_employee_id;
     if (isManagement()) return getBusiness(user, "MANAGEMENT");
@@ -169,7 +169,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   };
 
   const getRoleId = () => {
-    // console.log('Raminsss', user)
+    // //console.log('Raminsss', user)
     if (selectedRole === "PM_EMPLOYEE") return user.businesses.MANAGEMENT.business_employee_id;
     if (selectedRole === "MAINT_EMPLOYEE") return user.businesses.MAINTENANCE.business_employee_id;
     if (isManagement()) return user.businesses.MANAGEMENT.business_owner_id;
@@ -178,7 +178,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
     if (selectedRole === "OWNER") return user.owner_id;
   };
   const logout = () => {
-    // console.log("In logout as ", user);
+    // //console.log("In logout as ", user);
     sessionStorage.clear();
     cookiesObj.remove("user");
     cookiesObj.remove("token");
@@ -223,7 +223,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   };
 
   const leaseRoutingBasedOnSelectedRole = () => {
-    // console.log("routingWithSelectedRole selectedRole", selectedRole)
+    // //console.log("routingWithSelectedRole selectedRole", selectedRole)
     const role = roleName();
     if (role === "Manager") {
       return "/Leases";
@@ -233,7 +233,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   };
 
   const propertyRoutingBasedOnSelectedRole = () => {
-    // console.log("routingWithSelectedRole selectedRole", selectedRole)
+    // //console.log("routingWithSelectedRole selectedRole", selectedRole)
     const role = roleName();
     if (role === "Manager") {
       sessionStorage.removeItem("isrent");
@@ -244,7 +244,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   };
 
   const dashboardRoutingBasedOnSelectedRole = () => {
-    // console.log("dashboardRoutingBasedOnSelectedRole selectedRole", selectedRole)
+    // //console.log("dashboardRoutingBasedOnSelectedRole selectedRole", selectedRole)
     const role = roleName();
     if (role === "Manager") {
       return "/managerDashboard";
@@ -300,7 +300,7 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
 };
 
 export const useUser = () => {
-  // console.log("In useUser");
+  // //console.log("In useUser");
   const context = useContext(UserContext);
   if (!context) {
     throw new Error("useUser must be used within a UserProvider");

@@ -60,7 +60,7 @@ import defaultHouseImage from "./defaultHouseImage.png";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 function EditProperty(props) {
-	// console.log("In Edit Property");
+	// //console.log("In Edit Property");
 	const { state } = useLocation();
 	let navigate = useNavigate();
 	const { getProfileId } = useUser();
@@ -96,8 +96,8 @@ function EditProperty(props) {
 	const cookiesData = cookies['default_form_vals'];
 
 	const [propertyData, setPropertyData] = useState(propertyList[index]);
-	// console.log("Property propertyData---", propertyData)
-	// console.log("Property Data in Edit Property", propertyData);
+	// //console.log("Property propertyData---", propertyData)
+	// //console.log("Property Data in Edit Property", propertyData);
 	const { user, selectedRole, selectRole, Name } = useUser();
 	const [showSpinner, setShowSpinner] = useState(false);
 
@@ -186,7 +186,7 @@ function EditProperty(props) {
 	}, [propertyData]);
 
 	//   useEffect(() => {
-	// 	console.log("assessmentYear - ", assessmentYear);
+	// 	//console.log("assessmentYear - ", assessmentYear);
 	//   }, [assessmentYear]);
 
 	const sortByFavImage = (favImage, imageList) => {
@@ -207,7 +207,7 @@ function EditProperty(props) {
 	useEffect(() => {
 		const property = propertyList[index];
 		setInitialData(property);
-		console.log('Intial data', initialData);
+		//console.log('Intial data', initialData);
 		setPropertyData(property);
 		setAddress(property.property_address);
 		setInitAddress(property.property_address);
@@ -287,7 +287,7 @@ function EditProperty(props) {
 			changes.property_amenities_nearby = nearbyAmenities;
 		if (favImage !== initialData.property_favorite_image) changes.property_favorite_image = favImage;
 
-		console.log('changes - ', changes);
+		//console.log('changes - ', changes);
 
 		return changes;
 	};
@@ -329,17 +329,17 @@ function EditProperty(props) {
 	]);
 
 	// useEffect(() => {
-	// 	console.log('Size of selectedImageList:', selectedImageList.length);
-	// 	console.log('Contents of selectedImageList:', selectedImageList);
+	// 	//console.log('Size of selectedImageList:', selectedImageList.length);
+	// 	//console.log('Contents of selectedImageList:', selectedImageList);
 	// }, [selectedImageList]);
 
 	const handleUnitChange = (event) => {
-		console.log('handleUnitChange', event.target.value);
+		//console.log('handleUnitChange', event.target.value);
 		setUnit(event.target.value);
 	};
 
 	const handleBackButton = (e) => {
-		console.log('close clicked');
+		//console.log('close clicked');
 		e.preventDefault();
 		onBackClick();
 	};
@@ -350,7 +350,7 @@ function EditProperty(props) {
 
 	const handleSubmit = async (event, hasChanges) => {
 		event.preventDefault();
-		console.log('handleSubmit');
+		//console.log('handleSubmit');
 
 		if (!hasChanges && !hasPropertyDetailsChanged) {
 			navigateBackToDashboard();
@@ -360,7 +360,7 @@ function EditProperty(props) {
 		const changedFields = getChangedFields();
 		if (Object.keys(changedFields).length === 0 && imageState.length === 0 && imagesTobeDeleted.length === 0 && !hasPropertyDetailsChanged) {
 			setHasChanges(false);
-			console.log('No changes detected.');
+			//console.log('No changes detected.');
 			return;
 		}
 
@@ -414,7 +414,7 @@ function EditProperty(props) {
 
 		const coordinates = await getLatLongFromAddress(fullAddress);
 
-		console.log('EditProperty - handleSubmit - coordinates - ', coordinates);
+		//console.log('EditProperty - handleSubmit - coordinates - ', coordinates);
 
 		if (propertyData.property_uid) {
 			formData.append('property_uid', propertyData.property_uid);
@@ -430,7 +430,7 @@ function EditProperty(props) {
 			propertyData.property_images = JSON.stringify(updatedImages);
 			formData.append('delete_images', JSON.stringify(imagesTobeDeleted));
 		}
-		//console.log("--debug selectedImageList--", selectedImageList, selectedImageList.length);
+		////console.log("--debug selectedImageList--", selectedImageList, selectedImageList.length);
 		formData.append('property_images', (propertyData.property_images && propertyData.property_images.length > 0) ? propertyData.property_images : defaultHouseImage);
 		if (favImage) {
 			formData.append('property_favorite_image', favImage);
@@ -449,14 +449,14 @@ function EditProperty(props) {
 			}
 		}
 
-		//console.log('---FavImage----', favImage);
+		////console.log('---FavImage----', favImage);
 
 		if (deletedImageList.length > 0) {
 			formData.append('deleted_images', JSON.stringify(deletedImageList));
 		}
 
 		for (let [key, value] of formData.entries()) {
-			console.log(key, value);
+			//console.log(key, value);
 		}
 
 		const putData = async () => {
@@ -531,7 +531,7 @@ function EditProperty(props) {
 	};
 
 	const handleAddressSelect = (address) => {
-		console.log('handleAddressSelect', address);
+		//console.log('handleAddressSelect', address);
 		setAddress(address.street ? address.street : '');
 		setCity(address.city ? address.city : '');
 		setPropertyState(address.state ? address.state : '');
@@ -597,7 +597,7 @@ function EditProperty(props) {
 			return updatedImagesToBeDeleted;
 		});
 
-		console.log('Delete image at index:', JSON.stringify(updatedDeletedIcons));
+		//console.log('Delete image at index:', JSON.stringify(updatedDeletedIcons));
 	};
 
 	const handleFavorite = (index) => {
@@ -614,7 +614,7 @@ function EditProperty(props) {
 			}))
 		);
 
-		console.log(`Favorite image at index: ${index}`);
+		//console.log(`Favorite image at index: ${index}`);
 		setHasChanges(true);
 		setIsSaveDisabled(false);
 		setIsReturnDisabled(false);

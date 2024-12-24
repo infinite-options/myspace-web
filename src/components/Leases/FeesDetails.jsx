@@ -183,7 +183,7 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
     };
 
     const handleAddNewFee = () => {
-        console.log('add', currentFeeRow);
+        //console.log('add', currentFeeRow);
         const isAllFeildsPresent = checkRequiredFields();
 
         if (isAllFeildsPresent === true) {
@@ -310,26 +310,26 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
     const handleDueByChange = (e) => {
         const value = e.target.value;
         let currFee = { ...currentFeeRow, due_by: daytoValueMap.get(value), due_by_date: null };
-        console.log('currFee', currFee, valueToDayMap);
+        //console.log('currFee', currFee, valueToDayMap);
         setcurrentFeeRow(currFee);
     }
 
     const handleAvailableToPayChange = (e) => {
         const value = e.target.value;
-        console.log('avlToPay', value);
+        //console.log('avlToPay', value);
         let currFee = { ...currentFeeRow, available_topay: value };
         setcurrentFeeRow(currFee);
     };
 
     const handleLateByChange = (e) => {
         const value = e.target.value;
-        console.log('lateby', value);
+        //console.log('lateby', value);
         let currFee = { ...currentFeeRow, late_by: value };
         setcurrentFeeRow(currFee);
     };
 
     const showSnackbar = (message, severity) => {
-        console.log('Inside show snackbar');
+        //console.log('Inside show snackbar');
         setSnackbarMessage(message);
         setSnackbarSeverity(severity);
         setSnackbarOpen(true);
@@ -639,7 +639,7 @@ const FeesDetails = ({ getDateAdornmentString, setLeaseFees, leaseFees, isEditab
                                                             placeholder = "Due By"
                                                             value={currentFeeRow?.due_by_date ? dayjs(currentFeeRow.due_by_date) : null}
                                                             onChange={(e) => {
-                                                                // console.log('dueby row', e)
+                                                                // //console.log('dueby row', e)
                                                                 const formattedDate = e ? e.format("MM-DD-YYYY") : null;
                                                                 setcurrentFeeRow({ ...currentFeeRow, due_by_date: formattedDate, due_by: null })
                                                             }

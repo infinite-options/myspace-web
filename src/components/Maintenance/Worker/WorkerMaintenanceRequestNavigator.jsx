@@ -24,8 +24,8 @@ async function getInitialImages(requestData, currentIndex) {
 }
 
 export default function WorkerMaintenanceRequestNavigator({ requestIndex, backward_active_status, forward_active_status, updateRequestIndex, requestData, color, item, allData, currentTabValue, status, tabs }) {
-  //console.log('----inside WorkerMaintenanceRequestNavigator----');
-  // console.log("124 - requestData - ", requestData);
+  ////console.log('----inside WorkerMaintenanceRequestNavigator----');
+  // //console.log("124 - requestData - ", requestData);
   const [currentIndex, setCurrentIndex] = useState(requestIndex);
   const [activeStep, setActiveStep] = useState(0);
   const [formattedDate, setFormattedDate] = useState("");
@@ -63,8 +63,8 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
     setCurrentIndex((prevIndex) => {
       let newIndex = (Number(prevIndex) + 1);
       if(prevIndex < requestData.length-1){
-        console.log('----requestData[newIndex]---',requestData );
-        console.log('----[newIndex]---',newIndex );
+        //console.log('----requestData[newIndex]---',requestData );
+        //console.log('----[newIndex]---',newIndex );
         
         let nextMaintenanceId = requestData[newIndex].maintenance_request_uid;
 
@@ -114,23 +114,23 @@ export default function WorkerMaintenanceRequestNavigator({ requestIndex, backwa
       const diffInMilliseconds = currentDate.getTime() - postDate.getTime();
       openTime = Math.floor(diffInMilliseconds / (1000 * 3600 * 24));
     }
-    // console.log("formattedDate", formattedDate, "openTime", openTime);
+    // //console.log("formattedDate", formattedDate, "openTime", openTime);
     setNumOpenRequestDays(openTime);
     setFormattedDate(formattedDate);
   }
 
   
-  // console.log("124 - data - ", data);
+  // //console.log("124 - data - ", data);
 
    useEffect(() => {
-    // console.log("data - ", data);
+    // //console.log("data - ", data);
     if(data){
       formatDate(data.maintenance_request_created_date);
     }
   }, [data]);  
 
   
-  // console.log("124 - data?.quote_maintenance_images - ", data?.quote_maintenance_images);
+  // //console.log("124 - data?.quote_maintenance_images - ", data?.quote_maintenance_images);
   const quoteMaintenanceImages = data?.quote_maintenance_images? JSON.parse(data?.quote_maintenance_images) : []
 
   return (

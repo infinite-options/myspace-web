@@ -16,7 +16,7 @@ function DocumentPDF(props) {
     const [numPages, setNumPages] = useState(null);
     const location = useLocation();
     const link = location.state.link;
-    // console.log(location);
+    // //console.log(location);
     const navigate = useNavigate();
 
     // Disabling right click

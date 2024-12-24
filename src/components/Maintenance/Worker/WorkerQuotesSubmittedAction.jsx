@@ -33,7 +33,7 @@ export default function WorkerQuotesSubmittedAction({maintenanceItem, refreshMai
 
     function handleNavigateToQuotesRequested(){
 
-        console.log("NewRequestAction", maintenanceItem)
+        //console.log("NewRequestAction", maintenanceItem)
         navigate("/quoteAccept", {
             state:{
                 maintenanceItem
@@ -43,26 +43,26 @@ export default function WorkerQuotesSubmittedAction({maintenanceItem, refreshMai
 
     async function handleCancel(id){
         let response = CancelTicket(id);
-        console.log("handleCancel", response)
+        //console.log("handleCancel", response)
         if (response){
-            console.log("Ticket Cancelled")
+            //console.log("Ticket Cancelled")
             alert("Ticket Cancelled")
             navigate(maintenanceRoutingBasedOnSelectedRole())
         } else{
-            console.log("Ticket Not Cancelled")
+            //console.log("Ticket Not Cancelled")
             alert("Error: Ticket Not Cancelled")
         }
     }
 
     async function handleComplete(id){
         let response = CompleteTicket(id);
-        console.log("handleComplete", response);
+        //console.log("handleComplete", response);
         if (response){
-            console.log("Ticket Completed")
+            //console.log("Ticket Completed")
             alert("Ticket Completed")
             navigate(maintenanceRoutingBasedOnSelectedRole())
         } else{
-            console.log("Ticket Not Completed")
+            //console.log("Ticket Not Completed")
             alert("Error: Ticket Not Completed")
         }
     }

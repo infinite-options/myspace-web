@@ -30,9 +30,9 @@ export default function PMQuotesList() {
   const location = useLocation();
   const { contractRequests, updateContractUID, updateContractPropertyUID, dataLoaded } = useContext(ManagementContractContext); 
   const navigatingFrom = location.state?.navigatingFrom || null;
-  // console.log("In PMQuoteList");
-  // console.log("In PMQuoteList property_endpoint_resp: ", location.state?.property_endpoint_resp);
-  // console.log("contractRequests from context - ", contractRequests)
+  // //console.log("In PMQuoteList");
+  // //console.log("In PMQuoteList property_endpoint_resp: ", location.state?.property_endpoint_resp);
+  // //console.log("contractRequests from context - ", contractRequests)
 
   const [showSpinner, setShowSpinner] = useState(dataLoaded);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -44,7 +44,7 @@ export default function PMQuotesList() {
   }, [dataLoaded]);
 
   useEffect(() => {
-    // console.log("PMQuotesList - location.state - ",location.state);
+    // //console.log("PMQuotesList - location.state - ",location.state);
     if (location.state?.selectedContractUID && location.state?.selectedContractPropertyUID) {
       updateContractUID(location.state.selectedContractUID);
       updateContractPropertyUID(location.state.selectedContractPropertyUID);
@@ -298,9 +298,9 @@ function ContractCard(props) {
   const { currentContractUID, updateContractUID, updateContractPropertyUID, isChange, setIsChange} = useContext(ManagementContractContext);
   const [showGoBackDialog, setShowGoBackDialog] = useState(false)
 
-  // console.log("props for contract card", props);
+  // //console.log("props for contract card", props);
   const contract = props.contract;
-  // console.log("ContractCard - contract", contract);  
+  // //console.log("ContractCard - contract", contract);  
 
   
   // Define a dictionary to map contract_status to text color
@@ -315,7 +315,7 @@ function ContractCard(props) {
   // Determine text color based on contract_status or use default blue
   const textColor = statusTextColorMap[contract.contract_status] || "#3D5CAC";
   // let announcements = JSON.parse(contract.announcements);
-  // // console.log("Annoncements", announcements);
+  // // //console.log("Annoncements", announcements);
   // if (Array.isArray(announcements)) announcements.sort((a, b) => new Date(b.announcement_date) - new Date(a.announcement_date));
 
   // Extract the first owner's photo (if available) or use a default placeholder
@@ -338,7 +338,7 @@ function ContractCard(props) {
           border: contract.contract_uid === currentContractUID ? "2px solid #4CAF50" : "none", 
         }}
         onClick={() => {
-          console.log("inside pmquote.js - isChange - ", isChange);
+          //console.log("inside pmquote.js - isChange - ", isChange);
           if(isChange){
             setShowGoBackDialog(true)
           }else{

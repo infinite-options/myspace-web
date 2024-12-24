@@ -68,7 +68,7 @@ const AddUtility = (props) => {
     const updatedDropdowns = dropdowns.map((dropdown, i) => (i === index ? { ...dropdown, selectedOption } : dropdown));
 
     setDropdowns(updatedDropdowns);
-    console.log("amount updatedDropdowns", updatedDropdowns)
+    //console.log("amount updatedDropdowns", updatedDropdowns)
   };
 
   const handleAddDropdown = () => {
@@ -107,8 +107,8 @@ const AddUtility = (props) => {
     setNotes(event.target.value);
   };
   const handleAddUtility = async () => {
-    console.log("amount amount");
-    console.log("amount ", amount);
+    //console.log("amount amount");
+    //console.log("amount ", amount);
 
     const propertyUidArray = dropdowns.map((dropdown) => ({
       property_uid: dropdown.selectedOption.property_uid
@@ -152,13 +152,13 @@ const AddUtility = (props) => {
 
       const responseData = await response.json();
       if (response.status === 200){
-        console.log("success")
+        //console.log("success")
         navigate("/cashflow")
       } else {
 
       }
     } catch (error){
-      console.log("error", error)
+      //console.log("error", error)
     }
     
     // let config = {
@@ -173,11 +173,11 @@ const AddUtility = (props) => {
     // setShowSpinner(true);
     // axios.request(config)
     //   .then((response) => {
-    //     console.log(JSON.stringify(response.data));
+    //     //console.log(JSON.stringify(response.data));
     //     setShowSpinner(false);
     //   })
     //   .catch((error) => {
-    //     console.log(error);
+    //     //console.log(error);
     //     setShowSpinner(false);
     //   });
     // navigate(-1);
@@ -424,7 +424,7 @@ const AddUtility = (props) => {
                 color: theme.typography.secondary.white,
                 fontWeight: theme.typography.primary.fontWeight,
               }}
-              onClick={() => { console.log("clicked "); handleAddUtility() }}
+              onClick={() => { handleAddUtility() }}
             >
               + Add Utility
             </Button>

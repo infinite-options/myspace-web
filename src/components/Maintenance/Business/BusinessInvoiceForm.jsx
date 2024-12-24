@@ -75,7 +75,7 @@ function LaborTable({ labor, setLabor }) {
   }
 
   function saveRow(index) {
-    console.log("saveRow", index);
+    //console.log("saveRow", index);
     let updatedRow = {
       hours: laborHours,
       rate: laborCharge,
@@ -92,7 +92,7 @@ function LaborTable({ labor, setLabor }) {
   }
 
   const calculateTotal = (hours, cost) => {
-    console.log("calculateTotal", hours, cost);
+    //console.log("calculateTotal", hours, cost);
     return parseInt(hours) * parseInt(cost);
   };
 
@@ -250,7 +250,7 @@ function PartsTable({ parts, setParts }) {
   }
 
   function saveRow(index) {
-    console.log("saveRow", index);
+    //console.log("saveRow", index);
     let updatedRow = {
       part: partName,
       quantity: partQuantity,
@@ -400,7 +400,7 @@ export default function BusinessInvoiceForm() {
 
   const maintenanceItem = location.state.maintenanceItem;
 
-  console.log("maintenanceItem", maintenanceItem);
+  //console.log("maintenanceItem", maintenanceItem);
 
   const costData = JSON.parse(maintenanceItem?.quote_services_expenses);
 
@@ -424,7 +424,7 @@ export default function BusinessInvoiceForm() {
   const [diagnosticToggle, setDiagnosticToggle] = useState(false);
 
   const handleNotesChange = (e) => {
-    // console.log("handleNotesChange", e.target.value);
+    // //console.log("handleNotesChange", e.target.value);
     setNotes(e.target.value);
   };
 
@@ -477,7 +477,7 @@ export default function BusinessInvoiceForm() {
   };
   
   useEffect(()=>{
-    console.log("selected images - ", selectedImageList)
+    //console.log("selected images - ", selectedImageList)
   }, [selectedImageList])
 
   useEffect(() => {
@@ -489,17 +489,17 @@ export default function BusinessInvoiceForm() {
           method: "GET",
         });
         const responseData = await response.json();
-        // console.log("[DEBUG] Business Profile:", responseData?.profile.result[0]);
+        // //console.log("[DEBUG] Business Profile:", responseData?.profile.result[0]);
         
         createPaymentMethodList(responseData?.profile?.result[0]?.paymentMethods);
         setProfileInfo(responseData?.profile?.result[0]);
 
       } catch (error) {
-        console.log("error", error);
+        //console.log("error", error);
       }
       setShowSpinner(false);
     };
-    // console.log("running get maintenance profile info")
+    // //console.log("running get maintenance profile info")
     getMaintenanceProfileInfo();
 
     if(editMode){
@@ -547,10 +547,10 @@ export default function BusinessInvoiceForm() {
   }
 
   const handleSendInvoice = async () => {
-    // console.log("handleSendInvoice");
-    // console.log("selectedImageList", selectedImageList);
-    // console.log("parts", parts);
-    // console.log("total", total);
+    // //console.log("handleSendInvoice");
+    // //console.log("selectedImageList", selectedImageList);
+    // //console.log("parts", parts);
+    // //console.log("total", total);
 
     const updateMaintenanceQuote = async () => {
       var formData = new FormData();
@@ -564,7 +564,7 @@ export default function BusinessInvoiceForm() {
           body: formData,
         });
       } catch (error) {
-        console.log("error", error);
+        //console.log("error", error);
       }
       setShowSpinner(false);
     };
@@ -602,7 +602,7 @@ export default function BusinessInvoiceForm() {
         });
         // const responseData = await response.json();
       } catch (error) {
-        console.log("error", error);
+        //console.log("error", error);
       }
     };
 
@@ -638,7 +638,7 @@ export default function BusinessInvoiceForm() {
             const documentsDetails = [];
             [...uploadedFiles].forEach((file, i) => {
               
-              // console.log(JSON.stringify(file));
+              // //console.log(JSON.stringify(file));
               
       
               formData.append(`file_${i}`, file);
@@ -664,7 +664,7 @@ export default function BusinessInvoiceForm() {
         //For images
         let i = 0;
         for (const file of selectedImageList) {
-          console.log(" inside image uplaod in formdata - ", file)
+          //console.log(" inside image uplaod in formdata - ", file)
         // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
             let key = `img_${i++}`;
             if (file.file !== null) {
@@ -687,17 +687,17 @@ export default function BusinessInvoiceForm() {
         });
 
         const responseData = await response.json();
-        console.log(responseData);
+        //console.log(responseData);
         if (response.status === 200) {
-          console.log("success");
+          //console.log("success");
 
           navigate("/maintenanceDashboard2", {state: {refresh: true}})
           // uploadBillDocuments();
         } else {
-          console.log("error setting status");
+          //console.log("error setting status");
         }
       } catch (error) {
-        console.log("error", error);
+        //console.log("error", error);
       }
       setShowSpinner(false);
     };
@@ -724,7 +724,7 @@ export default function BusinessInvoiceForm() {
             const documentsDetails = [];
             [...uploadedFiles].forEach((file, i) => {
               
-              // console.log(JSON.stringify(file));
+              // //console.log(JSON.stringify(file));
               
       
               formData.append(`file_${i}`, file);
@@ -750,7 +750,7 @@ export default function BusinessInvoiceForm() {
         //For images
         let i = 0;
         for (const file of selectedImageList) {
-          console.log(" inside image uplaod in formdata - ", file)
+          //console.log(" inside image uplaod in formdata - ", file)
         // let key = file.coverPhoto ? "img_cover" : `img_${i++}`;
             let key = `img_${i++}`;
             if (file.file !== null) {
@@ -773,17 +773,17 @@ export default function BusinessInvoiceForm() {
         });
 
         const responseData = await response.json();
-        console.log(responseData);
+        //console.log(responseData);
         if (response.status === 200) {
-          console.log("success");
+          //console.log("success");
 
           navigate("/maintenanceDashboard2", {state: {refresh: true}})
           // uploadBillDocuments();
         } else {
-          console.log("error setting status");
+          //console.log("error setting status");
         }
       } catch (error) {
-        console.log("error", error);
+        //console.log("error", error);
       }
       setShowSpinner(false);
     };

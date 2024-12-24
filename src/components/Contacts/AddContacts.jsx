@@ -33,7 +33,7 @@ const AddContacts = (props) => {
     const handleFormInputs = (e) => {
         let name = e.target.name;
         let value = e.target.value;
-        // console.log(name, value);
+        // //console.log(name, value);
         setUser({ ...user, [name]: value });
     };
 

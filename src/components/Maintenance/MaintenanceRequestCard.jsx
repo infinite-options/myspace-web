@@ -4,7 +4,7 @@ import theme from "../../theme/theme";
 import maintenanceRequestImage from "./maintenanceRequest.png";
 
 export default function RequestCard({ data, status, color }) {
-  console.log("data", data);
+  //console.log("data", data);
   return (
     <div style={{ paddingBottom: "10px" }}>
       <Box
