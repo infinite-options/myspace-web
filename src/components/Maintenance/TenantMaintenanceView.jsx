@@ -20,7 +20,7 @@ export default function TenantMaintenanceView({tenantMaintenanceData, handleNewR
     const color = "#000000"
 
     const colorStatus = theme.colorStatusTenant;
-    console.log('color status', colorStatus);
+    //console.log('color status', colorStatus);
 
     const tableTextStyle = {
         backgroundColor: color, 

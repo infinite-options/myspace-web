@@ -1,31 +1,31 @@
 import CryptoJS from "crypto-js";
 
 function maskSSN(ssn) {
-  console.log("SSN input: ", ssn);
+  //console.log("SSN input: ", ssn);
   // ssn = ssn.replace(/\D/g, "");
-  // console.log("SSN: ", ssn);
+  // //console.log("SSN: ", ssn);
 
   // Encrypted value (you'll get this from your data source)
   const encryptedValue = ssn; // Replace this with the actual encrypted value
   const encryptionKey = process.env.REACT_APP_ENKEY; // Your encryption key
-  console.log("Encrypted Text:", encryptedValue); // This will log the decrypted SSN
-  console.log("Encryption Key:", encryptionKey);
+  //console.log("Encrypted Text:", encryptedValue); // This will log the decrypted SSN
+  //console.log("Encryption Key:", encryptionKey);
 
   // Decrypting the value
   const decryptedBytes = CryptoJS.AES.decrypt(encryptedValue, encryptionKey);
   const decryptedText = decryptedBytes.toString(CryptoJS.enc.Utf8);
 
-  console.log("Decrypted Text:", decryptedText); // This will log the decrypted SSN
+  //console.log("Decrypted Text:", decryptedText); // This will log the decrypted SSN
 
   ssn = decryptedText.replace(/\D/g, "");
-  console.log("SSN: ", ssn);
+  //console.log("SSN: ", ssn);
 
   if (ssn.length !== 9) {
     console.error("Invalid SSN Length");
     return "<SSN-invalid length>";
   }
 
-  console.log("***-**-" + ssn.slice(5));
+  //console.log("***-**-" + ssn.slice(5));
   return "***-**-" + ssn.slice(5);
   // return `${ssn.slice(0, 3)}-${ssn.slice(3, 5)}-${ssn.slice(5)}`;
 }

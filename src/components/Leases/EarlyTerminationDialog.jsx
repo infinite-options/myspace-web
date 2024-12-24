@@ -17,7 +17,7 @@ import APIConfig from '../../utils/APIConfig';
 
 
 const EarlyTerminationDialog = ({ theme, leaseDetails, selectedLeaseId, setIsEndClicked, handleUpdate, isTerminatingRenewedLease, renewedLease }) => {
-    // console.log("17 - leaseDetails - ", leaseDetails);    
+    // //console.log("17 - leaseDetails - ", leaseDetails);    
     const [confirmationText, setConfirmationText] = useState("")
     const [showSpinner, setShowSpinner] = useState(false); 
     const navigate = useNavigate();              
@@ -37,17 +37,17 @@ const EarlyTerminationDialog = ({ theme, leaseDetails, selectedLeaseId, setIsEnd
         leaseApplicationFormData.append("lease_uid", lease.lease_uid);        
         leaseApplicationFormData.append("lease_renew_status", "EARLY TERMINATION REJECTED");        
 
-        // console.log('leaseApplicationFormData', leaseDetails.lease_uid);
-        // console.log('end form', leaseApplicationFormData);                
+        // //console.log('leaseApplicationFormData', leaseDetails.lease_uid);
+        // //console.log('end form', leaseApplicationFormData);                
         axios
             .put(`${APIConfig.baseURL.dev}/leaseApplication`, leaseApplicationFormData, headers)
             .then((response) => {
                 setShowSpinner(false);
-                console.log("Data updated successfully", response);                
+                //console.log("Data updated successfully", response);                
             })
             .catch((error) => {
                 if (error.response) {                    
-                    console.log(error.response.data);
+                    //console.log(error.response.data);
                 }
             }); 
 
@@ -69,7 +69,7 @@ const EarlyTerminationDialog = ({ theme, leaseDetails, selectedLeaseId, setIsEnd
 
         const today = new Date();
         const formattedDate = `${(today.getMonth() + 1)}-${today.getDate()}-${today.getFullYear()}`;
-        console.log("ROHIT - 66 - formattedDate - ", formattedDate);        
+        //console.log("ROHIT - 66 - formattedDate - ", formattedDate);        
 
         const leaseApplicationFormData = new FormData();        
         leaseApplicationFormData.append("lease_uid", lease.lease_uid);        
@@ -83,18 +83,18 @@ const EarlyTerminationDialog = ({ theme, leaseDetails, selectedLeaseId, setIsEnd
         }
         
 
-        // console.log('leaseApplicationFormData', leaseDetails.lease_uid, leaseDetails.move_out_date);
-        // console.log('end form', leaseApplicationFormData);        
+        // //console.log('leaseApplicationFormData', leaseDetails.lease_uid, leaseDetails.move_out_date);
+        // //console.log('end form', leaseApplicationFormData);        
         
         axios
             .put(`${APIConfig.baseURL.dev}/leaseApplication`, leaseApplicationFormData, headers)
             .then((response) => {
                 setShowSpinner(false);
-                console.log("Data updated successfully", response);                
+                //console.log("Data updated successfully", response);                
             })
             .catch((error) => {
                 if (error.response) {                    
-                    console.log(error.response.data);
+                    //console.log(error.response.data);
                 }
             });        
         await handleUpdate();

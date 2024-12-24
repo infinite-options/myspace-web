@@ -19,13 +19,13 @@ import EditIcon from "@mui/icons-material/Edit";
 import { useMaintenance } from '../../contexts/MaintenanceContext';
 
 export default function TenantMaintenanceItemDetail({ tenantMaintenanceItemDetailState, setRightPane }) {
-  console.log("In Tenant Maintenance Item Detail");
+  //console.log("In Tenant Maintenance Item Detail");
   const [activeStep, setActiveStep] = useState(0);
 
   const location = useLocation();
   let navigate = useNavigate();
-  console.log("location.state---", location.state);
-  console.log("location.state---", tenantMaintenanceItemDetailState);
+  //console.log("location.state---", location.state);
+  //console.log("location.state---", tenantMaintenanceItemDetailState);
 
   const color = "#FFFFF";
   const item = location.state?.item || tenantMaintenanceItemDetailState?.item;
@@ -107,7 +107,7 @@ export default function TenantMaintenanceItemDetail({ tenantMaintenanceItemDetai
 		maintainanceImages,
 		maintainanceFavImage,
 	) {
-    console.log("going to edit component");
+    //console.log("going to edit component");
 			// Setting properties into sessionStorage
 			sessionStorage.setItem('testIssue', testIssue);
 			sessionStorage.setItem('testProperty', tenantMaintenanceItemDetailState.property);

@@ -22,7 +22,7 @@ export default function RescheduleButton({ maintenanceItem, isWorkerMaintenance 
     const [schedulerTime, setSchedulerTime] = useState(maintenanceItem.maintenance_scheduled_time ? maintenanceItem.maintenance_scheduled_time : "");    
 
     async function handleReschedule(id, date, time) {
-        console.log("handleReschedule", id, date, time);
+        //console.log("handleReschedule", id, date, time);
         const changeMaintenanceRequestStatus = async () => {
             setShowSpinner(true);
 
@@ -38,15 +38,15 @@ export default function RescheduleButton({ maintenanceItem, isWorkerMaintenance 
                 });
 
                 const responseData = await response.json();
-                console.log(responseData);
+                //console.log(responseData);
                 if (response.status === 200) {
-                    console.log("success")
+                    //console.log("success")
                     changeQuoteStatus();
                 } else {
-                    console.log("error setting status");
+                    //console.log("error setting status");
                 }
             } catch (error) {
-                console.log("error", error);
+                //console.log("error", error);
             }
             setShowSpinner(false);
         };
@@ -62,14 +62,14 @@ export default function RescheduleButton({ maintenanceItem, isWorkerMaintenance 
                     body: formData
                 });
                 const responseData = await response.json();
-                console.log(responseData);
+                //console.log(responseData);
                 if (responseData.code === 200) {
-                    console.log("Ticket Status Changed");
+                    //console.log("Ticket Status Changed");
                     alert("Ticket Status Changed to SCHEDULED");
                     navigate('/workerMaintenance');
                 }
             } catch (error) {
-                console.log("error", error);
+                //console.log("error", error);
             }
             setShowSpinner(false);
         };

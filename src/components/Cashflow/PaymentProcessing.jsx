@@ -114,7 +114,7 @@ const PaymentProcessing = () => {
         try {
     
           const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflowTransactions/${userProfileId}/payment`);
-          console.log("Manager Cashflow Data: ", cashflow.data);
+          //console.log("Manager Cashflow Data: ", cashflow.data);
           setShowSpinner(false);
           return cashflow.data?.result;
         } catch (error) {

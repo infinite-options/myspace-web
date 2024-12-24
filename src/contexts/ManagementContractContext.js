@@ -18,7 +18,7 @@ export const ManagementContractProvider = ({ children }) => {
     try {
       const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
       const data = await response.json();
-      // console.log("DATA PROFILE", data);
+      // //console.log("DATA PROFILE", data);
 
       if (data?.profile?.result && data?.profile?.result?.length > 0) {
         const profileFees = data?.profile?.result[0].business_services_fees ? JSON.parse(data?.profile?.result[0].business_services_fees) : [];
@@ -75,11 +75,11 @@ export const ManagementContractProvider = ({ children }) => {
   }, [dataLoaded]);
 
   useEffect(() => {
-    // console.log("ManagementContractContext - currentContractUID - ", currentContractUID);
+    // //console.log("ManagementContractContext - currentContractUID - ", currentContractUID);
   }, [currentContractUID]);
 
   useEffect(() => {
-    // console.log("ManagementContractContext - currentContractPropertyUID - ", currentContractPropertyUID);
+    // //console.log("ManagementContractContext - currentContractPropertyUID - ", currentContractPropertyUID);
   }, [currentContractPropertyUID]);
 
   const updateContractUID = (uid) => {

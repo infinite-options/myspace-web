@@ -60,7 +60,7 @@ export default function TenantMaintenance(){
     const { user, getProfileId } = useUser();
     const profileId = getProfileId();
 
-    console.log("tenant ID :"+tenantId)
+    //console.log("tenant ID :"+tenantId)
     let navigate = useNavigate();
 
     const color = "#FFFFFF"
@@ -74,9 +74,9 @@ export default function TenantMaintenance(){
     useEffect(() => {
         const dataObject = {};
         const getTenantMaintenanceData = async () => {
-            console.log("Getting Tenant Maintenance Data")
+            //console.log("Getting Tenant Maintenance Data")
                 setShowSpinner(true);
-                console.log("tenant profile id in getTenantMaintenanceData", profileId)
+                //console.log("tenant profile id in getTenantMaintenanceData", profileId)
                 const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceReq/${profileId}`);//+tenantId);
                 const jsonData = await response.json();
                 const data = jsonData.result;
@@ -158,7 +158,7 @@ export default function TenantMaintenance(){
                             alignItems: 'center'
                         }}>
                         <Button 
-                            onClick={() => console.log("tenant maintenance menu button")}
+                            onClick={() => {}}
                             sx={{
                                 padding: '0px',
                             }}
@@ -230,7 +230,7 @@ export default function TenantMaintenance(){
                                 <TenantMaintenanceView
                                     tenantMaintenanceData={tenantMaintenanceData}
                                     handleNewRequestButton={handleNewRequestButton}
-                                    handleRequestDetailPage={() => console.log("Handle Request Detail Page")}
+                                    handleRequestDetailPage={() => {}}
                                     filterToggle={filterToggle}
                                     handleFilterToggle={handleFilterToggle}
                                 />

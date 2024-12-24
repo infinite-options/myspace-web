@@ -101,11 +101,11 @@ function PMProfileEdit() {
   const [indexForEditFeeDialog, setIndexForEditFeeDialog] = useState(false);
 
   useEffect(() => {
-    console.log("managerFees updated - ", managerFees);
+    //console.log("managerFees updated - ", managerFees);
   }, [managerFees]);
 
   useEffect(() => {
-    console.log("modifiedData updated - ", modifiedData);
+    //console.log("modifiedData updated - ", modifiedData);
   }, [modifiedData]);
 
   const parseJSONFields = (obj) => {
@@ -185,10 +185,10 @@ function PMProfileEdit() {
 
   // Handle changes to form fields
   const handleInputChange = (event) => {
-    console.log("Input changed");
+    //console.log("Input changed");
     const { name, value } = event.target;
-    console.log(name);
-    console.log(value);
+    //console.log(name);
+    //console.log(value);
 
     if (name === "tenant_first_name") {
       setManagerFirstName(value);
@@ -230,21 +230,21 @@ function PMProfileEdit() {
   // Handle form submission
   // const handleSubmit = (event) => {
   //     event.preventDefault();
-  //     console.log("FORM SUBMITTED")
-  //     console.log(modifiedData)
+  //     //console.log("FORM SUBMITTED")
+  //     //console.log(modifiedData)
   //     // Make a PUT request with formData to update data on the backend
   //     if(isEdited){
-  //         console.log("EDITED")
+  //         //console.log("EDITED")
   //         // axios.put('http://localhost:4000/tenantProfile', modifiedData, headers)
   //         axios.put('${APIConfig.baseURL.dev}/profile', modifiedData, headers)
   //         .then((response) => {
-  //             console.log('Data updated successfully');
+  //             //console.log('Data updated successfully');
   //             setIsEdited(false); // Reset the edit status
   //             navigate(-1)
   //         })
   //         .catch((error) => {
   //             if(error.response){
-  //                 console.log(error.response.data);
+  //                 //console.log(error.response.data);
   //             }
   //         });
   //     }
@@ -254,29 +254,29 @@ function PMProfileEdit() {
   // Handle form submission
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("IN HANDLE SUBMIT");
+    //console.log("IN HANDLE SUBMIT");
     // Make a PUT request with formData to update data on the backend
     if (isEdited) {
-      console.log("   modifiedData - ", modifiedData);
+      //console.log("   modifiedData - ", modifiedData);
       // axios.put('http://localhost:4000/businessProfile', modifiedData, headers)
       // axios.put('${APIConfig.baseURL.dev}/businessProfile', modifiedData, headers)
       axios
         .put(`${APIConfig.baseURL.dev}/profile`, modifiedData, headers)
         .then((response) => {
-          console.log("Data updated successfully");
+          //console.log("Data updated successfully");
           setIsEdited(false); // Reset the edit status
           navigate(-1);
         })
         .catch((error) => {
           if (error.response) {
-            console.log(error.response.data);
+            //console.log(error.response.data);
           }
         });
     }
   };
 
   const getFormattedFeeFrequency = (frequency) => {
-    // console.log("getFormattedFeeFrequency(), frequency", frequency);
+    // //console.log("getFormattedFeeFrequency(), frequency", frequency);
     let freq = "";
     switch (frequency) {
       case "one_time":
@@ -316,7 +316,7 @@ function PMProfileEdit() {
 
   const handleOpenEditFee = (feeIndex) => {
     setShowEditFeeDialog(true);
-    console.log("EDITING FEE, Index", feeIndex);
+    //console.log("EDITING FEE, Index", feeIndex);
     setIndexForEditFeeDialog(feeIndex);
   };
 
@@ -329,8 +329,8 @@ function PMProfileEdit() {
   };
 
   const handleEditFee = (newFee, index) => {
-    console.log("IN handleEditFee of PropertyCard");
-    console.log(newFee, index);
+    //console.log("IN handleEditFee of PropertyCard");
+    //console.log(newFee, index);
     setManagerFees((prevManagerFees) => {
       const updatedManagerFees = prevManagerFees.map((fee, i) => {
         if (i === index) {
@@ -343,7 +343,7 @@ function PMProfileEdit() {
   };
 
   const handleDeleteFee = (index, event) => {
-    console.log("Manager Fees", managerFees);
+    //console.log("Manager Fees", managerFees);
     setManagerFees((prevFees) => {
       const feesArray = Array.from(prevFees);
       feesArray.splice(index, 1);
@@ -1080,7 +1080,7 @@ function ProfileTenantTable(props) {
   const setData = props.setData;
 
   // useEffect(() => {
-  //     console.log(`${field} --> ${data}`);
+  //     //console.log(`${field} --> ${data}`);
   // }, [data])
 
   const addRow = () => {
@@ -1089,7 +1089,7 @@ function ProfileTenantTable(props) {
       return acc;
     }, {});
 
-    console.log("new Row", newRow);
+    //console.log("new Row", newRow);
     if (data.length < 1) {
       setData([newRow]);
       return;
@@ -1103,7 +1103,7 @@ function ProfileTenantTable(props) {
     }
     setData((prevData) => {
       const newData = prevData.filter((_, i) => i !== index);
-      console.log("Deleted row at index ", index, ", new data: ", newData);
+      //console.log("Deleted row at index ", index, ", new data: ", newData);
       return newData;
     });
   };
@@ -1217,7 +1217,7 @@ function ProfileTableCell(props) {
 
     const fieldName = props.field;
 
-    // console.log(fieldName, value)
+    // //console.log(fieldName, value)
 
     setData((prevData) => {
       const newData = [...prevData];
@@ -1225,7 +1225,7 @@ function ProfileTableCell(props) {
         ...newData[index],
         [props.subField]: value,
       };
-      // console.log("Updated ", fieldName, " with ", newData)
+      // //console.log("Updated ", fieldName, " with ", newData)
       return newData;
     });
   };
@@ -1249,48 +1249,48 @@ function ProfileTableCell(props) {
 function AddFeeDialog({ open, handleClose, onAddFee }) {
   const [feeName, setFeeName] = useState("");
   useEffect(() => {
-    console.log("FEE Name: ", feeName);
+    //console.log("FEE Name: ", feeName);
   }, [feeName]);
 
   const [feeType, setFeeType] = useState("PERCENT");
   useEffect(() => {
-    console.log("FEE TYPE: ", feeType);
+    //console.log("FEE TYPE: ", feeType);
   }, [feeType]);
 
   const [isPercentage, setIsPercentage] = useState(true);
   useEffect(() => {
-    console.log("IS PERCENTAGE?: ", isPercentage);
+    //console.log("IS PERCENTAGE?: ", isPercentage);
   }, [isPercentage]);
 
   const [percentage, setPercentage] = useState("0");
   useEffect(() => {
-    console.log("PERCENTAGE: ", percentage);
+    //console.log("PERCENTAGE: ", percentage);
   }, [percentage]);
 
   const [isFlatRate, setIsFlatRate] = useState(false);
   useEffect(() => {
-    console.log("IS FLAT RATE?: ", isFlatRate);
+    //console.log("IS FLAT RATE?: ", isFlatRate);
   }, [isFlatRate]);
 
   const [feeAmount, setFlatRate] = useState("0");
   useEffect(() => {
-    console.log("FEE TYPE: ", feeAmount);
+    //console.log("FEE TYPE: ", feeAmount);
   }, [feeAmount]);
 
   const [feeFrequency, setFeeFrequency] = useState("One Time");
   useEffect(() => {
-    console.log("FEE FREQUENCY: ", feeFrequency);
+    //console.log("FEE FREQUENCY: ", feeFrequency);
   }, [feeFrequency]);
 
   const [feeAppliedTo, setFeeAppliedTo] = useState("Gross Rent");
   useEffect(() => {
-    console.log("FEE APPLIED TO: ", feeAppliedTo);
+    //console.log("FEE APPLIED TO: ", feeAppliedTo);
   }, [feeAppliedTo]);
 
   const handleFeeTypeChange = (event) => {
     setFeeType(event.target.value);
-    // console.log("FEE TYPE SELECTED", event.target.value);
-    // console.log('FEE TYPE: ', selectedFeeType);
+    // //console.log("FEE TYPE SELECTED", event.target.value);
+    // //console.log('FEE TYPE: ', selectedFeeType);
 
     // if(event.target.value === "PERCENT"){
     //     setIsPercentage(true)
@@ -1312,15 +1312,15 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
   const handleAddFee = (event) => {
     event.preventDefault();
 
-    console.log("ADD FEE FORM SUBMITTED ");
-    console.log("feeName:", feeName);
-    console.log("feeFrequency:", feeFrequency);
-    console.log("feeType:", feeType);
-    console.log("Is percentage?:", isPercentage);
-    console.log("percentage:", percentage);
-    console.log("Is feeAmount?:", isFlatRate);
-    console.log("feeAmount:", feeAmount);
-    console.log("feeAppliedTo:", feeAppliedTo);
+    //console.log("ADD FEE FORM SUBMITTED ");
+    //console.log("feeName:", feeName);
+    //console.log("feeFrequency:", feeFrequency);
+    //console.log("feeType:", feeType);
+    //console.log("Is percentage?:", isPercentage);
+    //console.log("percentage:", percentage);
+    //console.log("Is feeAmount?:", isFlatRate);
+    //console.log("feeAmount:", feeAmount);
+    //console.log("feeAppliedTo:", feeAppliedTo);
 
     // const newFee = {
     //     fee_name: feeName,
@@ -1408,7 +1408,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
               }}
             >
               <Box>Fee Name</Box>
-              {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+              {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={//console.log("input changed")}>Fee Name</TextInputField> */}
               <TextField
                 name="fee_name"
                 placeholder=""
@@ -1435,7 +1435,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
                                     name="fee_name"
                                     placeholder=""
                                     value={""} 
-                                    onChange={console.log("input changed")}
+                                    onChange={//console.log("input changed")}
                                     sx={{ backgroundColor: '#D6D5DA' }}
                                 >
                                     Fee Name
@@ -1444,7 +1444,7 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
                                     name="frequency"
                                     placeholder=""
                                     value={""}
-                                    onChange={console.log("input changed")}
+                                    onChange={//console.log("input changed")}
                                     InputProps={{
                                         sx: {
                                             backgroundColor: '#D6D5DA',
@@ -1645,47 +1645,47 @@ function AddFeeDialog({ open, handleClose, onAddFee }) {
 function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
   const [feeName, setFeeName] = useState(fees[feeIndex].fee_name);
   useEffect(() => {
-    console.log("FEE Name: ", feeName);
+    //console.log("FEE Name: ", feeName);
   }, [feeName]);
 
   const [feeType, setFeeType] = useState(fees[feeIndex].fee_type);
   useEffect(() => {
-    console.log("FEE TYPE: ", feeType);
+    //console.log("FEE TYPE: ", feeType);
   }, [feeType]);
 
   const [isPercentage, setIsPercentage] = useState(fees[feeIndex].isPercentage);
   useEffect(() => {
-    console.log("IS PERCENTAGE?: ", isPercentage);
+    //console.log("IS PERCENTAGE?: ", isPercentage);
   }, [isPercentage]);
 
   const [percentage, setPercentage] = useState(fees[feeIndex].charge);
   useEffect(() => {
-    console.log("PERCENTAGE: ", percentage);
+    //console.log("PERCENTAGE: ", percentage);
   }, [percentage]);
 
   const [isFlatRate, setIsFlatRate] = useState(fees[feeIndex].isFlatRate);
   useEffect(() => {
-    console.log("IS FLAT RATE?: ", isFlatRate);
+    //console.log("IS FLAT RATE?: ", isFlatRate);
   }, [isFlatRate]);
 
   const [feeAmount, setFlatRate] = useState(fees[feeIndex].charge);
   useEffect(() => {
-    console.log("FEE TYPE: ", feeAmount);
+    //console.log("FEE TYPE: ", feeAmount);
   }, [feeAmount]);
 
   const [feeFrequency, setFeeFrequency] = useState(fees[feeIndex].frequency);
   useEffect(() => {
-    console.log("FEE FREQUENCY: ", feeFrequency);
+    //console.log("FEE FREQUENCY: ", feeFrequency);
   }, [feeFrequency]);
 
   const [feeAppliedTo, setFeeAppliedTo] = useState(fees[feeIndex].of);
   useEffect(() => {
-    console.log("FEE APPLIED TO: ", feeAppliedTo);
+    //console.log("FEE APPLIED TO: ", feeAppliedTo);
   }, [feeAppliedTo]);
 
   const handleFeeTypeChange = (event) => {
     setFeeType(event.target.value);
-    // console.log('FEE TYPE: ', selectedFeeType);
+    // //console.log('FEE TYPE: ', selectedFeeType);
     if (event.target.value === "PERCENT") {
       setIsPercentage(true);
       setIsFlatRate(false);
@@ -1706,15 +1706,15 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
   const handleEditFee = (event) => {
     event.preventDefault();
 
-    console.log("FORM SUBMITTED ");
-    console.log("feeName:", feeName);
-    console.log("feeFrequency:", feeFrequency);
-    console.log("feeType:", feeType);
-    console.log("Is percentage?:", isPercentage);
-    console.log("percentage:", percentage);
-    console.log("Is feeAmount?:", isFlatRate);
-    console.log("feeAmount:", feeAmount);
-    console.log("feeAppliedTo:", feeAppliedTo);
+    //console.log("FORM SUBMITTED ");
+    //console.log("feeName:", feeName);
+    //console.log("feeFrequency:", feeFrequency);
+    //console.log("feeType:", feeType);
+    //console.log("Is percentage?:", isPercentage);
+    //console.log("percentage:", percentage);
+    //console.log("Is feeAmount?:", isFlatRate);
+    //console.log("feeAmount:", feeAmount);
+    //console.log("feeAppliedTo:", feeAppliedTo);
 
     // const newFee = {
     //     fee_name: feeName,
@@ -1800,7 +1800,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
               }}
             >
               <Box>Fee Name</Box>
-              {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+              {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={//console.log("input changed")}>Fee Name</TextInputField> */}
               <TextField
                 name="fee_name"
                 placeholder=""
@@ -1827,7 +1827,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
                                     name="fee_name"
                                     placeholder=""
                                     value={""} 
-                                    onChange={console.log("input changed")}
+                                    onChange={//console.log("input changed")}
                                     sx={{ backgroundColor: '#D6D5DA' }}
                                 >
                                     Fee Name
@@ -1836,7 +1836,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
                                     name="frequency"
                                     placeholder=""
                                     value={""}
-                                    onChange={console.log("input changed")}
+                                    onChange={//console.log("input changed")}
                                     InputProps={{
                                         sx: {
                                             backgroundColor: '#D6D5DA',

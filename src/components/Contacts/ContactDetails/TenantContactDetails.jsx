@@ -22,15 +22,15 @@ const TenantContactDetails = (props) => {
   // const [currentViewData, setCurrentViewData] = useState();
 
   useEffect(() => {
-    console.log("INDEX UPDATED - ", index);
+    //console.log("INDEX UPDATED - ", index);
     // location.state.index = index;
-    console.log("DATA DETAILS", contactDetails[index]);
+    //console.log("DATA DETAILS", contactDetails[index]);
   }, [index]);
 
-  // console.log(contactDetails);
-  // console.log(selectedData);
-  console.log("INDEX", index);
-  console.log("SELECTED ROLE - ", selectedRole);
+  // //console.log(contactDetails);
+  // //console.log(selectedData);
+  //console.log("INDEX", index);
+  //console.log("SELECTED ROLE - ", selectedRole);
 
   // const uniqueValues = {};
 
@@ -45,11 +45,11 @@ const TenantContactDetails = (props) => {
   //     return false;
   // });
 
-  // console.log(uniqueContacts);
+  // //console.log(uniqueContacts);
 
   // const tenant_object = Object.values(uniqueValues)[index];
 
-  // console.log(tenant_object);
+  // //console.log(tenant_object);
 
   const handleBackBtn = () => {
     // navigate('/contacts');
@@ -141,7 +141,7 @@ const TenantContactDetails = (props) => {
               >
                 <Box
                   onClick={() => {
-                    console.log("Previous button clicked");
+                    //console.log("Previous button clicked");
                     index > 0 ? setIndex(index - 1) : setIndex(contactDetails.length - 1);
                   }}
                 >
@@ -164,7 +164,7 @@ const TenantContactDetails = (props) => {
                 </Box>
                 <Box
                   onClick={() => {
-                    console.log("Next button clicked");
+                    //console.log("Next button clicked");
                     index < contactDetails.length - 1 ? setIndex(index + 1) : setIndex(0);
                   }}
                 >
@@ -294,7 +294,7 @@ const TenantContactDetails = (props) => {
                 }}
               >
                 {/* {selectedData.property_count} Properties */}
-                {console.log("In Contact JS:", contactDetails[index].entities, typeof contactDetails[index].entities)}
+                {/* {console.log("In Contact JS:", contactDetails[index].entities, typeof contactDetails[index].entities)} */}
                 {contactDetails[index].property_count ? contactDetails[index].property_count : "<PROPERTY_COUNT>"} Properties
               </Typography>
               {contactDetails[index].entities !== null &&
@@ -314,7 +314,7 @@ const TenantContactDetails = (props) => {
                         `}
                     </Typography>
 
-                    {console.log("After 1st Map:", entity, typeof entity)}
+                    {/* {console.log("After 1st Map:", entity, typeof entity)} */}
 
                     {entity.properties.map((property, index) => (
                       <Typography

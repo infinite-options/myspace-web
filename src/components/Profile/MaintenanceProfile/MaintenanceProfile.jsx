@@ -51,7 +51,7 @@ function MaintenanceProfile() {
         axios
           .get(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`)
           .then((res) => {
-            console.log("res is", res)
+            //console.log("res is", res)
             setProfileData(res.data.result[0]);
             setShowSpinner(false);
             try {

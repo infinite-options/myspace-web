@@ -41,16 +41,16 @@ import AES from "crypto-js/aes";
 // import APIConfig from "../../../utils/APIConfig";
 
 const ProfileInformation = ({ contactDetails, type }) => {
-    // console.log("ProfileInformation - props.type - ", type)
+    // //console.log("ProfileInformation - props.type - ", type)
     const [ paymentMethods, setPaymentMethods ] = useState([]);  
   
     useEffect( () => {
-      console.log("ProfileInformation - contactDetails - ", contactDetails);                        
+      //console.log("ProfileInformation - contactDetails - ", contactDetails);                        
       setPaymentMethods( JSON.parse(contactDetails?.payment_method || '[]') );    
     }, [contactDetails]);
   
     useEffect( () => {        
-      console.log("ProfileInformation - paymentMethods - ", paymentMethods);        
+      //console.log("ProfileInformation - paymentMethods - ", paymentMethods);        
     }, [paymentMethods]);
   
     const formatPaymentMethodType = (type) => {
@@ -64,7 +64,7 @@ const ProfileInformation = ({ contactDetails, type }) => {
     const getDecryptedSSN = (encryptedSSN) => {
       try {
         const decrypted = AES.decrypt(encryptedSSN, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8);
-        // console.log("getDecryptedSSN - decrypted - ", decrypted.toString());
+        // //console.log("getDecryptedSSN - decrypted - ", decrypted.toString());
         return "***-**-" + decrypted.toString().slice(-4);
       } catch (error) {
         console.error('Error decrypting SSN:', error);
@@ -214,7 +214,7 @@ const ProfileInformation = ({ contactDetails, type }) => {
             {paymentMethods
               .filter( method => method.paymentMethod_status === "Active")
               .map( (method, index) => {
-                // console.log("payment method - ", method);
+                // //console.log("payment method - ", method);
                 return (
                   <Typography key={index} sx={{ fontSize: '15px', color: '#160449',}}>
                     {formatPaymentMethodType(method.paymentMethod_type)}

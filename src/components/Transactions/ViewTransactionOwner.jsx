@@ -43,13 +43,13 @@ export default function ViewTransactionOwner(props) {
         const initialRows = history.map((txn) => {
             return txn
         })
-        console.log("printing - initialRows", initialRows);
+        //console.log("printing - initialRows", initialRows);
         return initialRows;
     }
 
     useEffect(() => {
         setRows(getInitialRows());
-        console.log("printing - history, purchase_uid ", history, purchase_uid, rows)
+        //console.log("printing - history, purchase_uid ", history, purchase_uid, rows)
         setActiveStep(history.findIndex((txn) => txn.purchase_uid === purchase_uid));
       }, [history, purchase_uid]);
 

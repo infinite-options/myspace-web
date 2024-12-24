@@ -93,7 +93,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function TenantOnBoardingForm({ profileData, setIsSave }) {
-  console.log("In TenenatOnBoardingForm  - profileData", profileData);
+  //console.log("In TenenatOnBoardingForm  - profileData", profileData);
 
   const { getList, } = useContext(ListsContext)
   const salaryFrequencies = getList("frequency");	
@@ -223,20 +223,20 @@ const closeDialog = () => {
   }, [profileData]);
   
   // useEffect(() => {
-  //   console.log("adults - ", adults);
+  //   //console.log("adults - ", adults);
   // }, [adults]);
 
   // useEffect(() => {
-  //   console.log("paymentMethods - ", paymentMethods);
+  //   //console.log("paymentMethods - ", paymentMethods);
   // }, [paymentMethods]);
 
   // useEffect(() => {
-  //   console.log("modifiedData - ", modifiedData);
+  //   //console.log("modifiedData - ", modifiedData);
   // }, [modifiedData]);
 
   // useEffect(() => {
-  //   console.log("148 - ssn - ", ssn);
-  //   console.log("148 - profileData.tenant_ssn - ", profileData.tenant_ssn);
+  //   //console.log("148 - ssn - ", ssn);
+  //   //console.log("148 - profileData.tenant_ssn - ", profileData.tenant_ssn);
     
   // }, [ssn]);
 
@@ -411,14 +411,14 @@ const closeDialog = () => {
       }));
 
       const parsedDocs = JSON.parse(profileData.tenant_documents);
-      // console.log("parsedDocs - ", parsedDocs);
+      // //console.log("parsedDocs - ", parsedDocs);
       // const docs = parsedDocs
       //   ? parsedDocs.map((doc, index) => ({
       //       ...doc,
       //       id: index,
       //     }))
       //   : [];
-      // console.log('initial docs', docs);
+      // //console.log('initial docs', docs);
       setDocuments(parsedDocs);
       documentsRef.current = parsedDocs;
 
@@ -458,7 +458,7 @@ const closeDialog = () => {
   };
 
   useEffect(() => {
-    console.log("calling useeffect");
+    //console.log("calling useeffect");
     setIsSave(false);
 
     setProfileData();
@@ -467,7 +467,7 @@ const closeDialog = () => {
   }, []);
 
   useEffect(() => {
-    console.log("calling profileData useEffect");
+    //console.log("calling profileData useEffect");
 
     setIsSave(false);
     setProfileData();
@@ -666,7 +666,7 @@ const closeDialog = () => {
   };
 
   const getIconForMethod = (type) => {
-    console.log("payments icon ---", type);
+    //console.log("payments icon ---", type);
     switch (type) {
       case "paypal":
         return PayPal;
@@ -969,7 +969,7 @@ const closeDialog = () => {
   };
   
   const showSnackbar = (message, severity) => {
-    console.log("Inside show snackbar");
+    //console.log("Inside show snackbar");
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
@@ -981,12 +981,12 @@ const closeDialog = () => {
 
   const handleUpdate = () => {
     // setIsUpdate( prevState => !prevState);
-    console.log("handleUpdate called");
+    //console.log("handleUpdate called");
     setIsSave(true);
   };
 
   const editOrUpdateTenant = async () => {
-    console.log("inside editOrUpdateTenant", modifiedData);
+    //console.log("inside editOrUpdateTenant", modifiedData);
     try {
       if (modifiedData.length > 0) {
         setShowSpinner(true);
@@ -1003,9 +1003,9 @@ const closeDialog = () => {
         // leaseApplicationFormData.append("lease_fees", feesJSON);
         // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
         modifiedData.forEach((item) => {
-          console.log(`Key: ${item.key}`);
+          //console.log(`Key: ${item.key}`);
           // if (item.key === "uploadedFiles") {
-          //   console.log("uploadedFiles", item.value);
+          //   //console.log("uploadedFiles", item.value);
           //   if (item.value.length) {
           //     const documentsDetails = [];
           //     [...item.value].forEach((file, i) => {
@@ -1054,12 +1054,12 @@ const closeDialog = () => {
       setDialogTitle("Error");
       setDialogMessage("Cannot update your profile. Please try again.");
       setDialogSeverity("error");
-      console.log("Cannot Update the lease", error);
+      //console.log("Cannot Update the lease", error);
     }
   };
 
   const saveProfile = async () => {
-    console.log("inside saveProfile", modifiedData);
+    //console.log("inside saveProfile", modifiedData);
     try {
       if (modifiedData.length > 0 || isPreviousFileChange || deletedFiles?.length > 0 || uploadedFiles?.length > 0) {
         setShowSpinner(true);

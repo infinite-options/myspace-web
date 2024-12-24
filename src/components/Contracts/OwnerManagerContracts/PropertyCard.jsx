@@ -72,51 +72,51 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 	const feeFrequencies = getList("frequency");	
 	const [feeName, setFeeName] = useState('');	  
 
-	// console.log("feeBases from Context - ", feeBases);
+	// //console.log("feeBases from Context - ", feeBases);
 
 	// useEffect(() => {
-	// 	console.log('FEE Name: ', feeName);
+	// 	//console.log('FEE Name: ', feeName);
 	// }, [feeName]);
 
 	const [feeType, setFeeType] = useState('PERCENT');
 	// useEffect(() => {
-	// 	console.log('FEE TYPE: ', feeType);
+	// 	//console.log('FEE TYPE: ', feeType);
 	// }, [feeType]);
 
 	const [isPercentage, setIsPercentage] = useState(true);
 	// useEffect(() => {
-	// 	console.log('IS PERCENTAGE?: ', isPercentage);
+	// 	//console.log('IS PERCENTAGE?: ', isPercentage);
 	// }, [isPercentage]);
 
 	const [percentage, setPercentage] = useState('0');
 	// useEffect(() => {
-	// 	console.log('PERCENTAGE: ', percentage);
+	// 	//console.log('PERCENTAGE: ', percentage);
 	// }, [percentage]);
 
 	const [isFlatRate, setIsFlatRate] = useState(false);
 	// useEffect(() => {
-	// 	console.log('IS FLAT RATE?: ', isFlatRate);
+	// 	//console.log('IS FLAT RATE?: ', isFlatRate);
 	// }, [isFlatRate]);
 
 	const [feeAmount, setFlatRate] = useState('0');
 	// useEffect(() => {
-	// 	console.log('FEE TYPE: ', feeAmount);
+	// 	//console.log('FEE TYPE: ', feeAmount);
 	// }, [feeAmount]);
 
 	const [feeFrequency, setFeeFrequency] = useState('One Time');
 	// useEffect(() => {
-	// 	console.log('FEE FREQUENCY: ', feeFrequency);
+	// 	//console.log('FEE FREQUENCY: ', feeFrequency);
 	// }, [feeFrequency]);
 
 	const [feeAppliedTo, setFeeAppliedTo] = useState('');
 	// useEffect(() => {
-	// 	console.log('FEE APPLIED TO: ', feeAppliedTo);
+	// 	//console.log('FEE APPLIED TO: ', feeAppliedTo);
 	// }, [feeAppliedTo]);
 
 	const handleFeeTypeChange = (event) => {
 		setFeeType(event.target.value);
-		// console.log("FEE TYPE SELECTED", event.target.value);
-		// console.log('FEE TYPE: ', selectedFeeType);		
+		// //console.log("FEE TYPE SELECTED", event.target.value);
+		// //console.log('FEE TYPE: ', selectedFeeType);		
 	};
 
 	const handleFrequencyChange = (event) => {
@@ -130,15 +130,15 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 	const handleAddFee = (event) => {
 		event.preventDefault();
 
-		console.log('FORM SUBMITTED ');
-		console.log('feeName:', feeName);
-		console.log('feeFrequency:', feeFrequency);
-		console.log('feeType:', feeType);
-		console.log('Is percentage?:', isPercentage);
-		console.log('percentage:', percentage);
-		console.log('Is feeAmount?:', isFlatRate);
-		console.log('feeAmount:', feeAmount);
-		console.log('feeAppliedTo:', feeAppliedTo);
+		//console.log('FORM SUBMITTED ');
+		//console.log('feeName:', feeName);
+		//console.log('feeFrequency:', feeFrequency);
+		//console.log('feeType:', feeType);
+		//console.log('Is percentage?:', isPercentage);
+		//console.log('percentage:', percentage);
+		//console.log('Is feeAmount?:', isFlatRate);
+		//console.log('feeAmount:', feeAmount);
+		//console.log('feeAppliedTo:', feeAppliedTo);
 
 		const newFee = {
 			fee_name: feeName,
@@ -416,47 +416,47 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 	const feeFrequencies = getList("frequency");	
 	const [feeName, setFeeName] = useState(fees[feeIndex].fee_name);
 	// useEffect(() => {
-	// 	console.log('FEE Name: ', feeName);
+	// 	//console.log('FEE Name: ', feeName);
 	// }, [feeName]);
 
 	const [feeType, setFeeType] = useState(fees[feeIndex].fee_type);
 	// useEffect(() => {
-	// 	console.log('FEE TYPE: ', feeType);
+	// 	//console.log('FEE TYPE: ', feeType);
 	// }, [feeType]);
 
 	const [isPercentage, setIsPercentage] = useState(fees[feeIndex].isPercentage);
 	// useEffect(() => {
-	// 	console.log('IS PERCENTAGE?: ', isPercentage);
+	// 	//console.log('IS PERCENTAGE?: ', isPercentage);
 	// }, [isPercentage]);
 
 	const [percentage, setPercentage] = useState(fees[feeIndex].charge);
 	// useEffect(() => {
-	// 	console.log('PERCENTAGE: ', percentage);
+	// 	//console.log('PERCENTAGE: ', percentage);
 	// }, [percentage]);
 
 	const [isFlatRate, setIsFlatRate] = useState(fees[feeIndex].isFlatRate);
 	// useEffect(() => {
-	// 	console.log('IS FLAT RATE?: ', isFlatRate);
+	// 	//console.log('IS FLAT RATE?: ', isFlatRate);
 	// }, [isFlatRate]);
 
 	const [feeAmount, setFlatRate] = useState(fees[feeIndex].charge);
 	// useEffect(() => {
-	// 	console.log('FEE TYPE: ', feeAmount);
+	// 	//console.log('FEE TYPE: ', feeAmount);
 	// }, [feeAmount]);
 
 	const [feeFrequency, setFeeFrequency] = useState(fees[feeIndex].frequency);
 	// useEffect(() => {
-	// 	console.log('FEE FREQUENCY: ', feeFrequency);
+	// 	//console.log('FEE FREQUENCY: ', feeFrequency);
 	// }, [feeFrequency]);
 
 	const [feeAppliedTo, setFeeAppliedTo] = useState(fees[feeIndex].of);
 	// useEffect(() => {
-	// 	console.log('FEE APPLIED TO: ', feeAppliedTo);
+	// 	//console.log('FEE APPLIED TO: ', feeAppliedTo);
 	// }, [feeAppliedTo]);
 
 	const handleFeeTypeChange = (event) => {
 		setFeeType(event.target.value);
-		// console.log('FEE TYPE: ', selectedFeeType);
+		// //console.log('FEE TYPE: ', selectedFeeType);
 		if (event.target.value === 'PERCENT') {
 			setIsPercentage(true);
 			setIsFlatRate(false);
@@ -477,15 +477,15 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 	const handleEditFee = (event) => {
 		event.preventDefault();
 
-		console.log('FORM SUBMITTED ');
-		console.log('feeName:', feeName);
-		console.log('feeFrequency:', feeFrequency);
-		console.log('feeType:', feeType);
-		console.log('Is percentage?:', isPercentage);
-		console.log('percentage:', percentage);
-		console.log('Is feeAmount?:', isFlatRate);
-		console.log('feeAmount:', feeAmount);
-		console.log('feeAppliedTo:', feeAppliedTo);
+		//console.log('FORM SUBMITTED ');
+		//console.log('feeName:', feeName);
+		//console.log('feeFrequency:', feeFrequency);
+		//console.log('feeType:', feeType);
+		//console.log('Is percentage?:', isPercentage);
+		//console.log('percentage:', percentage);
+		//console.log('Is feeAmount?:', isFlatRate);
+		//console.log('feeAmount:', feeAmount);
+		//console.log('feeAppliedTo:', feeAppliedTo);
 
 		// const newFee = {
 		//     fee_name: feeName,
@@ -579,7 +579,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 							}}
 						>
 							<Box>Fee Name</Box>
-							{/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+							{/* <TextInputField name="fee_name" placeholder="" value={""} onChange={//console.log("input changed")}>Fee Name</TextInputField> */}
 							<TextField
 								name="fee_name"
 								placeholder=""
@@ -606,7 +606,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
                                     name="fee_name"
                                     placeholder=""
                                     value={""} 
-                                    onChange={console.log("input changed")}
+                                    onChange={//console.log("input changed")}
                                     sx={{ backgroundColor: '#D6D5DA' }}
                                 >
                                     Fee Name
@@ -615,7 +615,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
                                     name="frequency"
                                     placeholder=""
                                     value={""}
-                                    onChange={console.log("input changed")}
+                                    onChange={//console.log("input changed")}
                                     InputProps={{
                                         sx: {
                                             backgroundColor: '#D6D5DA',
@@ -815,7 +815,7 @@ const PropertyCard = (props) => {
 //   const { getProfileId } = useUser();
   const { getProfileId, selectedRole } = useUser();
   const { defaultContractFees, allContracts, currentContractUID, currentContractPropertyUID, isChange, setIsChange, fetchContracts} = useContext(ManagementContractContext);  
-//   console.log("PropertyCard - props - ", props);
+//   //console.log("PropertyCard - props - ", props);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [propertyData, setPropertyData] = useState(props.data);
@@ -824,7 +824,7 @@ const PropertyCard = (props) => {
 //   const [contractPropertyID, setContractPropertyID] = useState(props.contractPropertyID);
   const today = dayjs(new Date()); // Convert new Date() to Day.js object
 
-  // console.log("--debug-- PropertyCard props", props);
+  // //console.log("--debug-- PropertyCard props", props);
 
   const [showAddFeeDialog, setShowAddFeeDialog] = useState(false);
   const [showEditFeeDialog, setShowEditFeeDialog] = useState(false);
@@ -885,7 +885,7 @@ const PropertyCard = (props) => {
   const setContractDetails = () => {
 	if (allContracts !== null && allContracts !== undefined) {
 	  const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
-	  console.log("setContractDetails - contractData - ", contractData);	  
+	  //console.log("setContractDetails - contractData - ", contractData);	  
 	  // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
 	  if (contractData) {
 		setContractName(contractData["contract_name"] ? contractData["contract_name"] : "");
@@ -914,7 +914,7 @@ const PropertyCard = (props) => {
 		const fees = JSON.parse(contractData["contract_fees"])? JSON.parse(contractData["contract_fees"]) : [];
 		// setContractFees(fees);
 
-		// console.log("---dhyey--- contract fees - ", contractFees, "fees is - ", fees);
+		// //console.log("---dhyey--- contract fees - ", contractFees, "fees is - ", fees);
 		if(fees?.length === 0 && contractData["contract_status"] === "NEW"){
 			const feesWithoutId = defaultContractFees.map(({ id, ...rest }) => rest);
 			setContractFees([...feesWithoutId]);
@@ -965,18 +965,18 @@ const PropertyCard = (props) => {
 	
 	
     setContractDetails();
-	console.log("contract files - ", contractFiles, " isPReviousChange - ", isPreviousFileChange);
+	//console.log("contract files - ", contractFiles, " isPReviousChange - ", isPreviousFileChange);
 
 	//debug
 	const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
-	// console.log("946 - contractData - ", contractData);
+	// //console.log("946 - contractData - ", contractData);
 	
 
   }, [currentContractUID, allContracts, defaultContractFees]);
 
   useEffect(() => {
 	const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
-		  // console.log("setData - CONTRACT - ", contractData);
+		  // //console.log("setData - CONTRACT - ", contractData);
 		  // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
 	if (contractData) {
 		setContractEndDate(contractData["contract_end_date"] ? dayjs(contractData["contract_end_date"]) : contractStartDate.add(1, "year").subtract(1, "day"));
@@ -1004,11 +1004,11 @@ const PropertyCard = (props) => {
   }, [contractEndDate]);
 
   useEffect(() => {
-    // console.log("CONTRACT ASSIGNED CONTACTS - ", contractAssignedContacts);
+    // //console.log("CONTRACT ASSIGNED CONTACTS - ", contractAssignedContacts);
   }, [contractAssignedContacts]);
 
   useEffect(()=>{
-	// console.log("yess here ---- dhyey ---- ")
+	// //console.log("yess here ---- dhyey ---- ")
 		if(isPreviousFileChange || contractFiles?.length > 0){
 			setIsChange(true)
 		}
@@ -1017,12 +1017,12 @@ const PropertyCard = (props) => {
 
 
 //   useEffect(() => {
-    // console.log("DEFAULT CONTRACT FEES - ", defaultContractFees);
+    // //console.log("DEFAULT CONTRACT FEES - ", defaultContractFees);
     // let JSONstring = JSON.stringify(defaultContractFees);
-    // console.log("DEFAULT CONTRACT FEES JSON string- ", JSONstring);
+    // //console.log("DEFAULT CONTRACT FEES JSON string- ", JSONstring);
 	
-	// console.log("contractFees.length - ", contractFees.length);
-	// console.log("contractFees - ", contractFees);
+	// //console.log("contractFees.length - ", contractFees.length);
+	// //console.log("contractFees - ", contractFees);
 //     if (!contractFees.length) {
 //       setContractFees([...defaultContractFees]);
 //     }	
@@ -1039,7 +1039,7 @@ const PropertyCard = (props) => {
   const saveContacts = async () => {    
     const formData = new FormData();	            
     let contractContactsJSONString = JSON.stringify(contractAssignedContacts);
-    // console.log("Send Quote - contractContactsJSONString : ", contractContactsJSONString);        
+    // //console.log("Send Quote - contractContactsJSONString : ", contractContactsJSONString);        
 
     
 
@@ -1057,7 +1057,7 @@ const PropertyCard = (props) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         } else {
-          // console.log("Data updated successfully");
+          // //console.log("Data updated successfully");
 		      setIsChange(false)		      
         }
       })
@@ -1082,21 +1082,21 @@ const PropertyCard = (props) => {
 
   },[contractAssignedContacts])
 //   useEffect(() => {
-//     // console.log("CONTRACT FEES - ", contractFees);
+//     // //console.log("CONTRACT FEES - ", contractFees);
 //     // let JSONstring = JSON.stringify(contractFees);
-//     // console.log("CONTRACT FEES JSON string- ", JSONstring);
+//     // //console.log("CONTRACT FEES JSON string- ", JSONstring);
 //   }, [contractFees]);
 
 //   useEffect(() => {
-//     // console.log("CONTRACT FILE TYPES - ", contractFileTypes);
+//     // //console.log("CONTRACT FILE TYPES - ", contractFileTypes);
 //     // let JSONstring = JSON.stringify(contractFileTypes);
-//     // console.log("CONTRACT FILE TYPES JSON string- ", JSONstring);	
+//     // //console.log("CONTRACT FILE TYPES JSON string- ", JSONstring);	
 //   }, [contractFileTypes]);
 
 //   useEffect(() => {
-//     // console.log("PREVIOUSLY UPLOADED DOCS - ", previouslyUploadedDocs);
+//     // //console.log("PREVIOUSLY UPLOADED DOCS - ", previouslyUploadedDocs);
 //     // let JSONstring = JSON.stringify(previouslyUploadedDocs);
-//     // console.log("PREVIOUSLY UPLOADED DOCS JSON string- ", JSONstring);
+//     // //console.log("PREVIOUSLY UPLOADED DOCS JSON string- ", JSONstring);
 //   }, [previouslyUploadedDocs]);
 
   const handleAddFee = (newFee) => {
@@ -1105,7 +1105,7 @@ const PropertyCard = (props) => {
     //     feeName: 'New Fee',
     //     feeAmount: 0,
     // };
-	// console.log("---dhyey--- inside adding fee old fee - ", contractFees, " new fee - ", newFee)
+	// //console.log("---dhyey--- inside adding fee old fee - ", contractFees, " new fee - ", newFee)
 	setIsChange(true)
     setContractFees((prevContractFees) => [...prevContractFees, newFee]);
   };
@@ -1117,8 +1117,8 @@ const PropertyCard = (props) => {
     //     feeAmount: 0,
     // };
     // setContractFees((prevContractFees) => [...prevContractFees, newFee]);
-    // console.log("IN handleEditFee of PropertyCard");
-    // console.log(newFee, index);
+    // //console.log("IN handleEditFee of PropertyCard");
+    // //console.log(newFee, index);
 	  setIsChange(true)
     setContractFees((prevContractFees) => {
       const updatedContractFees = prevContractFees.map((fee, i) => {
@@ -1132,7 +1132,7 @@ const PropertyCard = (props) => {
   };
 
   const handleDeleteFee = (index, event) => {
-    // console.log("Contract Fees", contractFees);
+    // //console.log("Contract Fees", contractFees);
 	setIsChange(true)
     setContractFees((prevFees) => {
       const feesArray = Array.from(prevFees);
@@ -1152,7 +1152,7 @@ const PropertyCard = (props) => {
 
   const handleOpenEditFee = (feeIndex) => {
     setShowEditFeeDialog(true);
-    // console.log("EDITING FEE, Index", feeIndex);
+    // //console.log("EDITING FEE, Index", feeIndex);
     setIndexForEditFeeDialog(feeIndex);
   };
 
@@ -1167,7 +1167,7 @@ const PropertyCard = (props) => {
   const handleOpenEditContact = (contactIndex) => {
     setIndexForEditContactDialog(contactIndex);
     setShowEditContactDialog(true);
-    // console.log("EDITING CONTACT, Index", contactIndex);
+    // //console.log("EDITING CONTACT, Index", contactIndex);
   };
 
   const handleCloseEditContact = () => {
@@ -1198,7 +1198,7 @@ const PropertyCard = (props) => {
   };
 
   // const handleContractFeesChange = (feesList) => {
-  //     console.log("In handleContractFeesChange()");
+  //     //console.log("In handleContractFeesChange()");
   //     //setContractFees() // map to the correct keys
   // }
 
@@ -1208,14 +1208,14 @@ const PropertyCard = (props) => {
   }            
 
   const handleAddContact = (newContact) => {
-    // console.log("newContact - ", newContact);
+    // //console.log("newContact - ", newContact);
 	  setIsChange(true)
     setContractAssignedContacts((prevContractContacts) => [...prevContractContacts, newContact]);
   };
   
   const handleEditContact = (newContact, index) => {
-    // console.log("In handleEditContact of PropertyCard");
-    // console.log(newContact, index);
+    // //console.log("In handleEditContact of PropertyCard");
+    // //console.log(newContact, index);
 	  setIsChange(true)
     setContractAssignedContacts((prevContacts) => {
       const updatedContacts = prevContacts.map((contact, i) => {
@@ -1229,7 +1229,7 @@ const PropertyCard = (props) => {
   };
 
   const handleDeleteContact = (index, event) => {
-    // console.log("Contract Assigned Contacts", contractAssignedContacts);
+    // //console.log("Contract Assigned Contacts", contractAssignedContacts);
 	setIsChange(true)
     setContractAssignedContacts((prevContacts) => {
       const contactsArray = Array.from(prevContacts);
@@ -1243,7 +1243,7 @@ const PropertyCard = (props) => {
     const url = `${APIConfig.baseURL.dev}/contracts`;
     // const url = `http://localhost:4000/contracts`;
 
-	console.log(data)
+	//console.log(data)
     fetch(url, {
       method: "PUT",
       body: data,
@@ -1299,11 +1299,11 @@ const PropertyCard = (props) => {
     // formData.append("contract_status", "REFUSED");
 	formData.append("contract_status", newContractStatus);
 
-    // console.log("Declined offer. Data sent - ", formData);
+    // //console.log("Declined offer. Data sent - ", formData);
 
 	const existingContract = allContracts.find(contract => contract.property_uid === currentContractPropertyUID && contract.contract_status === "ACTIVE");
 
-	// console.log("----in withdraw -- ", existingContract)
+	// //console.log("----in withdraw -- ", existingContract)
 
 	if (existingContract){
 		const updateFormData = new FormData();
@@ -1319,7 +1319,7 @@ const PropertyCard = (props) => {
 				if (!response.ok) {
 				  throw new Error("Network response was not ok");
 				} else {
-				  console.log("Data update successfully");           
+				  //console.log("Data update successfully");           
 				}
 			  })
 			  .catch((error) => {
@@ -1339,7 +1339,7 @@ const PropertyCard = (props) => {
         return false; // Return false if the index is out of bounds
       }
       const fileType = contractFileTypes[i];
-      // console.log("FILE TYPE: ", fileType);
+      // //console.log("FILE TYPE: ", fileType);
       if (!fileType || fileType.trim() === "") {
         return false;
       }
@@ -1349,7 +1349,7 @@ const PropertyCard = (props) => {
   };
 
   const handleSendQuoteClick = () => {
-    console.log("Send Quote Clicked");
+    //console.log("Send Quote Clicked");
 	setLoading(true);
 	try{
 
@@ -1363,9 +1363,9 @@ const PropertyCard = (props) => {
     }
     
     let contractFeesJSONString = JSON.stringify(contractFees);
-    // console.log("Send Quote - contractFeesJSONString : ", contractFeesJSONString);
+    // //console.log("Send Quote - contractFeesJSONString : ", contractFeesJSONString);
     let contractContactsJSONString = JSON.stringify(contractAssignedContacts);
-    // console.log("Send Quote - contractContactsJSONString : ", contractContactsJSONString);
+    // //console.log("Send Quote - contractContactsJSONString : ", contractContactsJSONString);
     // const data = {
     //     "contract_uid": contractUID,
     //     "contract_name": contractName,
@@ -1414,7 +1414,7 @@ const PropertyCard = (props) => {
       const documentsDetails = [];
       [...contractFiles].forEach((file, i) => {
 		
-		// console.log(JSON.stringify(file));
+		// //console.log(JSON.stringify(file));
 		
 
         formData.append(`file_${i}`, file);
@@ -1432,9 +1432,9 @@ const PropertyCard = (props) => {
       formData.append("contract_documents_details", JSON.stringify(documentsDetails));
     }
 
-    // console.log("Quote sent. Data sent - ");
+    // //console.log("Quote sent. Data sent - ");
     // for (const pair of formData.entries()) {
-    //   console.log(`${pair[0]}, ${pair[1]}`);
+    //   //console.log(`${pair[0]}, ${pair[1]}`);
     // }
 
     // sendPutRequest(formData);
@@ -1453,7 +1453,7 @@ const PropertyCard = (props) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         } else {
-        //   console.log("Data updated successfully");
+        //   //console.log("Data updated successfully");
 		  setIsChange(false)
 		  sendAnnouncement();
         //   navigate("/managerDashboard");
@@ -1490,8 +1490,8 @@ const PropertyCard = (props) => {
       }
     } else if(status === "ACTIVE"){
       // formData.append("contract_early_end_date", formattedEarlyEndDate);      
-      // console.log("earlyEndDate - ", earlyEndDate)
-      // console.log("actualEndDate - ", actualEndDate)
+      // //console.log("earlyEndDate - ", earlyEndDate)
+      // //console.log("actualEndDate - ", actualEndDate)
       
       if(earlyEndDate < actualEndDate) {
         formData.append("contract_early_end_date", formattedEarlyEndDate);
@@ -1503,9 +1503,9 @@ const PropertyCard = (props) => {
       
     }
 
-	// console.log("updateExistingContract Data sent - ");
+	// //console.log("updateExistingContract Data sent - ");
     // for (const pair of formData.entries()) {
-    //   console.log(`${pair[0]}, ${pair[1]}`);
+    //   //console.log(`${pair[0]}, ${pair[1]}`);
     // }
 
     try {
@@ -1517,7 +1517,7 @@ const PropertyCard = (props) => {
           if (!response.ok) {
             throw new Error("Network response was not ok");
           } else {
-            console.log("Data added successfully");
+            //console.log("Data added successfully");
             // if(status === "ENDING"){
             //   sendAnnouncement(status, contractObj, formattedEarlyEndDate);  
             // } else {
@@ -1543,7 +1543,7 @@ const PropertyCard = (props) => {
     formData.append("contract_uid", contractId);
     formData.append("contract_status", status);
 
-	console.log(" -- DEBUG -- inside accept contract - ", contractId, status)
+	//console.log(" -- DEBUG -- inside accept contract - ", contractId, status)
 
     try {
       fetch(`${APIConfig.baseURL.dev}/contracts`, {
@@ -1554,7 +1554,7 @@ const PropertyCard = (props) => {
           if (!response.ok) {
             throw new Error("Network response was not ok");
           } else {
-            console.log("Data added successfully");
+            //console.log("Data added successfully");
 			sendAcceptAnnouncement("APPROVED_CONTRACT");
             // sendAnnouncement("CONTRACT_APPROVED");
             // refreshContracts();
@@ -1579,12 +1579,12 @@ const PropertyCard = (props) => {
       const existingContract = allContracts.find(contract => contract.property_uid === currentContractPropertyUID && contract.contract_status === "ACTIVE");
 
       if (!existingContract){
-        // console.log("ERROR - existing contract not found.");
+        // //console.log("ERROR - existing contract not found.");
         acceptNewContract(currentContractUID, "ACTIVE");
         return;
       }
 
-	  console.log("existing contract -- ", existingContract)
+	  //console.log("existing contract -- ", existingContract)
 
       
     //   const existingContract = activeContracts[existingContractIndex];
@@ -1595,9 +1595,9 @@ const PropertyCard = (props) => {
         const existingContractEnd = new Date(existingContract.contract_end_date);
         const today = new Date();
 
-        // console.log("514 - newContractStart - ", newContractStart)
-        // console.log("514 - existingContractEnd - ", existingContractEnd)
-        // console.log("514 - today - ", today)        
+        // //console.log("514 - newContractStart - ", newContractStart)
+        // //console.log("514 - existingContractEnd - ", existingContractEnd)
+        // //console.log("514 - today - ", today)        
 
         
         const earlyEndDate = new Date(newContractStart)
@@ -1697,7 +1697,7 @@ const PropertyCard = (props) => {
       
       [...contractFiles].forEach((file, i) => {
 		
-		// console.log(JSON.stringify(file));
+		// //console.log(JSON.stringify(file));
         formData.append(`file_${index}`, file);
         const fileType = contractFileTypes[i] || "";
 		// formData.append("contract")
@@ -1722,9 +1722,9 @@ const PropertyCard = (props) => {
 
 	formData.append("contract_documents_details", JSON.stringify(documentsDetails));
 	
-    // console.log("Quote sent. Data sent - ");
+    // //console.log("Quote sent. Data sent - ");
     // for (const pair of formData.entries()) {
-    //   console.log(`${pair[0]}, ${pair[1]}`);
+    //   //console.log(`${pair[0]}, ${pair[1]}`);
     // }
 
 	const url = `${APIConfig.baseURL.dev}/contracts`;
@@ -1744,7 +1744,7 @@ const PropertyCard = (props) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         } else {
-          console.log("Data updated successfully");
+          //console.log("Data updated successfully");
         }
       })
       .catch((error) => {
@@ -1765,7 +1765,7 @@ const PropertyCard = (props) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         } else {
-          // console.log("Data updated successfully");
+          // //console.log("Data updated successfully");
 		  setIsChange(false)
 		  sendAnnouncement("CREATE_NEW_CONTRACT");
         //   navigate("/managerDashboard");
@@ -1778,7 +1778,7 @@ const PropertyCard = (props) => {
 
   const sendWithdrawAnnouncement = async (action) => {
 	const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
-	console.log("sendAnnouncement - contract - ", contractData)
+	//console.log("sendAnnouncement - contract - ", contractData)
     const receiverPropertyMapping = {
         // [contractData.property_owner_id]: [contractData.property_id],
 		[contractData.business_uid]: [contractData.property_uid],
@@ -1797,7 +1797,7 @@ const PropertyCard = (props) => {
 	 
 	
 
-	console.log(" --- inside announcement - ", announcementMessage, announcementTitle, " contract status - ", contractStatus)
+	//console.log(" --- inside announcement - ", announcementMessage, announcementTitle, " contract status - ", contractStatus)
 
 	try {
 		const response = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
@@ -1841,7 +1841,7 @@ const PropertyCard = (props) => {
 
   const sendAcceptAnnouncement = async (action) => {
 	const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
-	console.log("sendAnnouncement - contract - ", contractData)
+	//console.log("sendAnnouncement - contract - ", contractData)
     const receiverPropertyMapping = {
         // [contractData.property_owner_id]: [contractData.property_id],
 		[contractData.business_uid]: [contractData.property_uid],
@@ -1860,7 +1860,7 @@ const PropertyCard = (props) => {
 	 
 	
 
-	console.log(" --- inside announcement - ", announcementMessage, announcementTitle, " contract status - ", contractStatus)
+	//console.log(" --- inside announcement - ", announcementMessage, announcementTitle, " contract status - ", contractStatus)
 
 	try {
 		const response = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
@@ -1887,7 +1887,7 @@ const PropertyCard = (props) => {
 			} else if(props.navigatingFrom && props.navigatingFrom === "ManageContract" && props.handleBackBtn){
 				props.fetchContracts();
 				props.handleBackBtn();
-				// console.log(" inside property Card - 1577  - property uid - ", propertyData?.property_uid)
+				// //console.log(" inside property Card - 1577  - property uid - ", propertyData?.property_uid)
 				// navigate("/properties", {state: {currentProperty: propertyData?.property_uid, showRHS: "PropertyNavigator"}});
 			}else if(props.navigatingFrom && props.navigatingFrom === "fromManagerDashboard"){
 				navigate("/managerDashboard")
@@ -1906,7 +1906,7 @@ const PropertyCard = (props) => {
 
   const sendAnnouncement = async (action) => {    
 	const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
-	console.log("sendAnnouncement - contract - ", contractData)
+	//console.log("sendAnnouncement - contract - ", contractData)
    // Parse `owners` and extract `owner_uid` and `property_uid`
 	let owners = [];
 	try {
@@ -1950,7 +1950,7 @@ const PropertyCard = (props) => {
 		return;
 	}
 
-	console.log(" --- inside announcement - ", announcementMessage, announcementTitle, " contytract status - ", contractStatus)
+	//console.log(" --- inside announcement - ", announcementMessage, announcementTitle, " contytract status - ", contractStatus)
 
 	try {
 		const response = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
@@ -1977,7 +1977,7 @@ const PropertyCard = (props) => {
 			} else if(props.navigatingFrom && props.navigatingFrom === "ManageContract" && props.handleBackBtn){
 				props.fetchContracts();
 				props.handleBackBtn();
-				// console.log(" inside property Card - 1577  - property uid - ", propertyData?.property_uid)
+				// //console.log(" inside property Card - 1577  - property uid - ", propertyData?.property_uid)
 				// navigate("/properties", {state: {currentProperty: propertyData?.property_uid, showRHS: "PropertyNavigator"}});
 			} 			
 			else {
@@ -1993,7 +1993,7 @@ const PropertyCard = (props) => {
   };
 
   const getFormattedFeeFrequency = (frequency) => {
-    // console.log("getFormattedFeeFrequency(), frequency", frequency);
+    // //console.log("getFormattedFeeFrequency(), frequency", frequency);
     let freq = "";
     switch (frequency) {
       case "one_time":
@@ -3024,11 +3024,11 @@ function AddContactDialog({ open, handleClose, onAddContact }) {
 	const handleSaveContact = (event) => {
 		event.preventDefault();
 
-		// console.log("Adding Contact ");
-		// console.log("   firstName:", contactFirstName);
-		// console.log("   lastName:", contactLastName);
-		// console.log("   email:", contactEmail);
-		// console.log("   phone:", contactPhone);
+		// //console.log("Adding Contact ");
+		// //console.log("   firstName:", contactFirstName);
+		// //console.log("   lastName:", contactLastName);
+		// //console.log("   email:", contactEmail);
+		// //console.log("   phone:", contactPhone);
 
 		const newContact = {
 			contact_first_name: contactFirstName,
@@ -3184,7 +3184,7 @@ function AddContactDialog({ open, handleClose, onAddContact }) {
 }
 
 function EditContactDialog({ open, handleClose, onEditContact, contactIndex, contacts }) {
-	// console.log("--dhyey-- contactIndex - ", contactIndex, "contacts - ", contacts);
+	// //console.log("--dhyey-- contactIndex - ", contactIndex, "contacts - ", contacts);
 	const [contactFirstName, setContactFirstName] = useState(contacts[contactIndex].contact_first_name);
 	const [contactLastName, setContactLastName] = useState(contacts[contactIndex].contact_last_name);
 	const [contactEmail, setContactEmail] = useState(contacts[contactIndex].contact_email);
@@ -3193,11 +3193,11 @@ function EditContactDialog({ open, handleClose, onEditContact, contactIndex, con
 	const handleSaveContact = (event) => {
 		event.preventDefault();
 
-		console.log('Editing Contact ');
-		console.log('   firstName:', contactFirstName);
-		console.log('   lastName:', contactLastName);
-		console.log('   email:', contactEmail);
-		console.log('   phone:', contactPhone);
+		//console.log('Editing Contact ');
+		//console.log('   firstName:', contactFirstName);
+		//console.log('   lastName:', contactLastName);
+		//console.log('   email:', contactEmail);
+		//console.log('   phone:', contactPhone);
 
 		const newContact = {
 			contact_first_name: contactFirstName,

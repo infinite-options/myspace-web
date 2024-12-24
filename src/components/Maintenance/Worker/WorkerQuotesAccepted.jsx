@@ -45,7 +45,7 @@ export default function WorkerQuotesAccepted({maintenanceItem, refreshMaintenanc
 
     function handleNavigateToQuotesRequested(){
 
-        console.log("NewRequestAction", maintenanceItem)
+        //console.log("NewRequestAction", maintenanceItem)
         navigate("/quoterequest", {
             state:{
                 maintenanceItem
@@ -55,20 +55,20 @@ export default function WorkerQuotesAccepted({maintenanceItem, refreshMaintenanc
 
     async function handleCancel(id){ // Change
         let response = CancelTicket(id, setShowSpinner);
-        console.log("handleCancel", response)
+        //console.log("handleCancel", response)
         if (response){
-            console.log("Ticket Cancelled")
+            //console.log("Ticket Cancelled")
             alert("Ticket Cancelled")
             navigate('/maintenanceDashboard2')
         } else{
-            console.log("Ticket Not Cancelled")
+            //console.log("Ticket Not Cancelled")
             alert("Error: Ticket Not Cancelled")
         }
     }
 
     async function handleScheduleChange(id, date, time){
 
-        console.log("handleScheduleChange", id, date, time)
+        //console.log("handleScheduleChange", id, date, time)
 
         const changeMaintenanceRequestStatus = async () => {
             setShowSpinner(true);
@@ -85,15 +85,15 @@ export default function WorkerQuotesAccepted({maintenanceItem, refreshMaintenanc
                 });
 
                 const responseData = await response.json();
-                // console.log(responseData);
+                // //console.log(responseData);
                 if (response.status === 200) {
-                    console.log("success")
+                    //console.log("success")
                     changeQuoteStatus();
                 } else{
-                    console.log("error setting status")
+                    //console.log("error setting status")
                 }
             } catch (error){
-                console.log("error", error)
+                //console.log("error", error)
             }
             setShowSpinner(false);
         }
@@ -109,16 +109,16 @@ export default function WorkerQuotesAccepted({maintenanceItem, refreshMaintenanc
                     body: formData
                 });
                 const responseData = await response.json();
-                console.log(responseData)
+                //console.log(responseData)
                 // if (responseData.code === 200){
                 if (response.status === 200){
-                    // console.log("Ticket Status Changed")
+                    // //console.log("Ticket Status Changed")
                     // alert("Ticket Status Changed to SCHEDULED")
                     refreshMaintenanceData();
                     // navigate('/workerMaintenance')
                 }
             } catch(error){
-                console.log("error", error)
+                //console.log("error", error)
             }
             setShowSpinner(false);
         }
@@ -129,13 +129,13 @@ export default function WorkerQuotesAccepted({maintenanceItem, refreshMaintenanc
 
     async function handleComplete(id){
         let response = CompleteTicket(id, setShowSpinner);
-        console.log("handleComplete", response);
+        //console.log("handleComplete", response);
         if (response){
-            console.log("Ticket Completed")
+            //console.log("Ticket Completed")
             alert("Ticket Completed")
             navigate(maintenanceRoutingBasedOnSelectedRole())
         } else{
-            console.log("Ticket Not Completed")
+            //console.log("Ticket Not Completed")
             alert("Error: Ticket Not Completed")
         }
     }
@@ -155,14 +155,14 @@ export default function WorkerQuotesAccepted({maintenanceItem, refreshMaintenanc
                 })
             });
             const responseData = await response.json();
-            console.log(responseData)
+            //console.log(responseData)
             if (responseData.code === 200){
-                console.log("Ticket Status Changed")
+                //console.log("Ticket Status Changed")
                 alert("Ticket Status Changed")
                 navigate(maintenanceRoutingBasedOnSelectedRole())
             }
         } catch (error){
-            console.log("error", error)
+            //console.log("error", error)
         }
         setShowSpinner(false);
     }

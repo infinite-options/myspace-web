@@ -45,10 +45,10 @@ import PaymentsDataGrid from "./PaymentsDataGrid";
 
 const PaymentsInformation = ({ data }) => {      
   
-    console.log("PaymentsInformation - data - ", data);    
+    //console.log("PaymentsInformation - data - ", data);    
     // const payments = owner?.total_paid != null ? JSON.parse(owner?.total_paid) : [];
     const payments = (data!= null && data!= undefined) ? JSON.parse(data) : [];
-    console.log("PaymentsInformation - payments - ", payments);
+    //console.log("PaymentsInformation - payments - ", payments);
   
     const mappedPayments = payments.map((payment, index) => {
       return {
@@ -59,7 +59,7 @@ const PaymentsInformation = ({ data }) => {
     });
     mappedPayments.sort((a, b) => b.cf_month_year - a.cf_month_year);
   
-    console.log("PaymentsInformation - mappedPayments - ", mappedPayments);  
+    //console.log("PaymentsInformation - mappedPayments - ", mappedPayments);  
   
   return (
     <Container disableGutters sx={{height: '100%', }}>

@@ -45,9 +45,9 @@ function TenantProfile() {
   useEffect(() => {
     setShowSpinner(true);
     axios.get(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`).then((res) => {
-      //   console.log("Res 1: ", res);
-      //   console.log("Res 2: ", res.data.profile);
-      //   console.log("Res 3: ", res.data.profile.result[0]);
+      //   //console.log("Res 1: ", res);
+      //   //console.log("Res 2: ", res.data.profile);
+      //   //console.log("Res 3: ", res.data.profile.result[0]);
       setProfileData(res.data.profile.result[0]);
       setAdultTenantData(JSON.parse(res.data.profile.result[0].tenant_adult_occupants));
       setChildTenantData(JSON.parse(res.data.profile.result[0].tenant_children_occupants));
@@ -56,7 +56,7 @@ function TenantProfile() {
       setShowSpinner(false);
     });
   }, []);
-  // console.log(adultTenantData, childTenantData, petTenantData, vehicleTenantData);
+  // //console.log(adultTenantData, childTenantData, petTenantData, vehicleTenantData);
   return (
     <>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>

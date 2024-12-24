@@ -88,7 +88,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function ManagerOnboardingForm({ profileData, setIsSave }) {
-  console.log("In ManagerOnboardingForm  - profileData", profileData);
+  //console.log("In ManagerOnboardingForm  - profileData", profileData);
 
   const { getList, } = useContext(ListsContext);	
   const classes = useStyles();
@@ -181,7 +181,7 @@ const closeDialog = () => {
   const [ errors, setErrors ] = useState({})
 
   const getIconForMethod = (type) => {
-    console.log("payments icon ---", type);
+    //console.log("payments icon ---", type);
     switch (type) {
       case "paypal":
         return PayPal;
@@ -212,15 +212,15 @@ const closeDialog = () => {
   }
 
   // useEffect(() => {
-  //   console.log("paymentMethods - ", paymentMethods);
+  //   //console.log("paymentMethods - ", paymentMethods);
   // }, [paymentMethods]);
 
   // useEffect(() => {
-  //   console.log("fees - ", fees);
+  //   //console.log("fees - ", fees);
   // }, [fees]);
 
   // useEffect(() => {
-  //   console.log("modifiedData - ", modifiedData);
+  //   //console.log("modifiedData - ", modifiedData);
   // }, [modifiedData]);
   
   const updateModifiedData = (updatedItem) => {
@@ -295,7 +295,7 @@ const closeDialog = () => {
   };
 
   const handlePersonalAddressSelect = (address) => {
-    // console.log("handlePersonalAddressSelect - address - ", address);
+    // //console.log("handlePersonalAddressSelect - address - ", address);
     setEmpAddress(address.street ? address.street : "");
 
     updateModifiedData({ key: "employee_address", value: address.street ? address.street : "" });
@@ -364,7 +364,7 @@ const closeDialog = () => {
       }
 
       const paymentMethods = JSON.parse(profileData.paymentMethods);
-      console.log("payment methods test", paymentMethods);
+      //console.log("payment methods test", paymentMethods);
       const updatedPaymentMethods = {
         paypal: { value: "", checked: false, uid: "" },
         apple_pay: { value: "", checked: false, uid: "" },
@@ -422,7 +422,7 @@ const closeDialog = () => {
   };
 
   // useEffect(() => {
-  //   console.log("calling profileData useEffect");
+  //   //console.log("calling profileData useEffect");
 
   //   setIsSave(false);
   //   setProfileData();
@@ -504,10 +504,10 @@ const closeDialog = () => {
   //   //   )
   //   // );
   //   const list = [...fees];
-  //   console.log("list - ", list);
-  //   console.log("handleFeeChange - name - ", name);
+  //   //console.log("list - ", list);
+  //   //console.log("handleFeeChange - name - ", name);
   //   list[index][name] = value;
-  //   console.log("list - ", list);
+  //   //console.log("list - ", list);
   //   setFees(list);
   // };
 
@@ -947,7 +947,7 @@ const closeDialog = () => {
   const [parsedPaymentMethods, setParsedPaymentMethods] = useState([]);
 
   useEffect(() => {
-    console.log("calling useeffect");
+    //console.log("calling useeffect");
     setIsSave(false);
 
     setProfileData();   
@@ -1102,7 +1102,7 @@ const closeDialog = () => {
   };
 
   const handleAddPaymentMethod = (event) => {
-    // console.log("check", event)
+    // //console.log("check", event)
     event.stopPropagation();
     const newPaymentMethod = {
       paymentMethod_uid: `new_${Date.now()}`, 
@@ -1112,7 +1112,7 @@ const closeDialog = () => {
       checked: false,
     };
     setParsedPaymentMethods([...parsedPaymentMethods, newPaymentMethod]);
-    console.log("parsed", parsedPaymentMethods);
+    //console.log("parsed", parsedPaymentMethods);
   };
 
   const handlePaymentStep = async (validPaymentMethods = []) => {
@@ -1199,7 +1199,7 @@ const closeDialog = () => {
   const handleDeletePaymentMethod = async (paymentMethodUid) => {
     try {
       const tenantUid = getProfileId();
-      console.log("paymentmethoduid", paymentMethodUid);
+      //console.log("paymentmethoduid", paymentMethodUid);
       const url = `${APIConfig.baseURL.dev}/paymentMethod/${tenantUid}/${paymentMethodUid}`;
   
       setShowSpinner(true); 
@@ -1232,7 +1232,7 @@ const closeDialog = () => {
     let atLeastOneActive = false;
   
     const validPaymentMethods = parsedPaymentMethods.filter((method) => method.paymentMethod_type !== "");
-    console.log("payment methods valid", validPaymentMethods);
+    //console.log("payment methods valid", validPaymentMethods);
   
     validPaymentMethods.forEach((method) => {
       if (method.checked && method.paymentMethod_name === "") {
@@ -1312,7 +1312,7 @@ const closeDialog = () => {
   
 
   const showSnackbar = (message, severity) => {
-    console.log("Inside show snackbar");
+    //console.log("Inside show snackbar");
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
@@ -1324,13 +1324,13 @@ const closeDialog = () => {
 
   const handleUpdate = () => {
     // setIsUpdate( prevState => !prevState);
-    console.log("handleUpdate called");
+    //console.log("handleUpdate called");
     setIsSave(true);
   };
   
 
   const saveProfile = async () => {
-    // console.log("inside saveProfile", modifiedData);
+    // //console.log("inside saveProfile", modifiedData);
     try {
       if (modifiedData.length > 0) {
         setShowSpinner(true);
@@ -1353,7 +1353,7 @@ const closeDialog = () => {
         let hasBusinessFields = false;
 
         modifiedData.forEach((item) => {
-          console.log(`Key: ${item.key}`);
+          //console.log(`Key: ${item.key}`);
           if(hasBusinessFields === false && item.key.startsWith("business")) hasBusinessFields = true;
           if(hasEmployeeFields === false && item.key.startsWith("employee")) hasEmployeeFields = true;
           profileFormData.append(item.key, item.value);
@@ -1369,7 +1369,7 @@ const closeDialog = () => {
         axios
           .put(`${APIConfig.baseURL.dev}/profile`, profileFormData, headers)
           .then((response) => {
-            console.log("Data updated successfully", response);
+            //console.log("Data updated successfully", response);
             openDialog("Success", "Your profile has been successfully updated.", "success");
             handleUpdate();
             setShowSpinner(false);
@@ -1378,7 +1378,7 @@ const closeDialog = () => {
             setShowSpinner(false);
             openDialog("Error", "Cannot update your profile. Please try again", "error");
             if (error.response) {
-              console.log(error.response.data);
+              //console.log(error.response.data);
             }
           });
         setShowSpinner(false);
@@ -1388,8 +1388,8 @@ const closeDialog = () => {
       } 
     } catch (error) {
       openDialog("Error", "Cannot update the lease. Please try again", "error");
-      console.log("Cannot Update the lease", error);
-      setShowSpinner(false); 
+      //console.log("Cannot Update the lease", error);
+      setShowSpinner(false);
     }
   };
 

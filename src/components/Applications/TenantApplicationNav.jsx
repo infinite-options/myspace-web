@@ -31,20 +31,20 @@ import { fetchMiddleware as fetch } from "../../utils/httpMiddleware";
 const TenantApplicationNav = (props) => {
   const navigate = useNavigate();
   const { state } = useLocation();
-  console.log('Inside TenantApplicationNav', props, state);
+  //console.log('Inside TenantApplicationNav', props, state);
   const { index, property, isDesktop, propertyIndex, onBackClick } = props;
-  console.log('Inside TenantApplicationNav - property - ', property);
-  console.log('Inside TenantApplicationNav - index - ', index);
+  //console.log('Inside TenantApplicationNav - property - ', property);
+  //console.log('Inside TenantApplicationNav - index - ', index);
   const { leases } = property;
   const [currentIndex, setCurrentIndex] = useState(index || 0);
   // const [application, setApplication] = useState(leases[currentIndex]);
   const [lease, setLease] = useState(leases[currentIndex]);
 
   //   useEffect(() => {
-  //     console.log("application - ", application);
+  //     //console.log("application - ", application);
   // }, [application]);
-  // console.log("---dhyey--- in property - ", property)
-  console.log("---dhyey--- in application view - ", lease)
+  // //console.log("---dhyey--- in property - ", property)
+  //console.log("---dhyey--- in application view - ", lease)
   const [showSpinner, setShowSpinner] = useState(false);
   const [vehicles, setVehicles] = useState(JSON.parse(lease?.lease_vehicles || '["No Vehicle Information"]'));
   const [adultOccupants, setAdultOccupants] = useState(JSON.parse(lease?.lease_adults || '["No Adult Occupants"]'));
@@ -53,11 +53,11 @@ const TenantApplicationNav = (props) => {
   const [applicationDocuments, setApplicationDocuments] = useState(JSON.parse(lease?.lease_documents || '["No Lease Documents"]'));
   const [leaseFees, setLeaseFees] = useState([])
   const { selectedRole } = useUser();
-  console.log("---dhyey--- in application view 222 - ", lease)
+  //console.log("---dhyey--- in application view 222 - ", lease)
 
 
   useEffect(() => {
-    // console.log("lease fees - ", application?.lease_fees);
+    // //console.log("lease fees - ", application?.lease_fees);
 
     let parsedFees = []
     try {
@@ -66,11 +66,11 @@ const TenantApplicationNav = (props) => {
       console.error("TenantApplicationNav - Error Parsing Lease Fees");
     }
     setLeaseFees(parsedFees);
-    // console.log("parsedFees - ", parsedFees);
+    // //console.log("parsedFees - ", parsedFees);
   }, [lease]);
 
   // useEffect(() => {
-  //     console.log("applicationDocuments - ", applicationDocuments);
+  //     //console.log("applicationDocuments - ", applicationDocuments);
   // }, [applicationDocuments]);
   function formatDocumentType(type) {
     switch (type) {
@@ -142,8 +142,8 @@ const TenantApplicationNav = (props) => {
     navigate("/managerDashboard");
   };
   const handleCreateLease = () => {
-    // console.log("application - ", application);
-    // console.log("property - ", property);
+    // //console.log("application - ", application);
+    // //console.log("property - ", property);
     if (lease.lease_status === "RENEW REFUSED") {
       navigate("/tenantLease", { state: { page: "edit_lease", lease, property } });
     } else {
@@ -155,7 +155,7 @@ const TenantApplicationNav = (props) => {
     navigate("/tenantLease", { state: { page: "edit_lease", lease, property } });
   };
   const handleRenewLease = () => {
-    console.log("ROHIT - 146 - application - ", lease);
+    //console.log("ROHIT - 146 - application - ", lease);
     navigate("/tenantLease", { state: { page: "renew_lease", lease, property } });
   };
 

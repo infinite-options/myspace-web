@@ -86,7 +86,7 @@ export default function ManagerCashflow() {
   const { getList } = useContext(ListsContext);
   let revenueCategories = getList("revenue");
   let expenseCategories = getList("expense");
-  // console.log("profit categories - ", profitCategories);
+  // //console.log("profit categories - ", profitCategories);
 
   const [showChart, setShowChart] = useState("Current");
 
@@ -179,7 +179,7 @@ export default function ManagerCashflow() {
   //     // const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflow/${userProfileId}/TTM`);
   //     // const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflow/110-000003/TTM`);
   //     const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflowRevised/${userProfileId}`);
-  //     console.log("Manager Cashflow Data: ", cashflow.data);
+  //     //console.log("Manager Cashflow Data: ", cashflow.data);
   //     setShowSpinner(false);
   //     return cashflow.data;
   //   } catch (error) {
@@ -192,7 +192,7 @@ export default function ManagerCashflow() {
     // setShowSpinner(true);
     try {
       const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflowTransactions/${userProfileId}/payment`);
-      console.log("Manager Cashflow Data: ", cashflow.data);
+      //console.log("Manager Cashflow Data: ", cashflow.data);
       // setShowSpinner(false);
       return cashflow.data;
     } catch (error) {
@@ -205,7 +205,7 @@ export default function ManagerCashflow() {
     // setShowSpinner(true);
     try {
       const properties = await axios.get(`${APIConfig.baseURL.dev}/properties/${userProfileId}`);
-      // console.log("Manager Properties: ", properties.data);
+      // //console.log("Manager Properties: ", properties.data);
       // setShowSpinner(false);
       return properties.data;
     } catch (error) {
@@ -220,14 +220,14 @@ export default function ManagerCashflow() {
       // return res.data.result;
       setPaymentVerificationData(res.data.result);
 
-      console.log(" res data - ", res.data.result);
+      //console.log(" res data - ", res.data.result);
 
       const groupedByProperty = groupDataByKey(res.data.result, "pur_property_id");
       setPaymentVerificationByProperty(groupedByProperty);
 
       refreshCashFlowAfterVerified();
 
-      console.log(" after refreshcashflow data - ", groupedByProperty);
+      //console.log(" after refreshcashflow data - ", groupedByProperty);
 
       return res.data.result;
     } catch (error) {
@@ -236,37 +236,37 @@ export default function ManagerCashflow() {
   }
 
   // useEffect(() => {
-  //   console.log("ROHIT - currentWindow - ", currentWindow);
+  //   //console.log("ROHIT - currentWindow - ", currentWindow);
   // }, [currentWindow]);
 
   useEffect(() => {
-    // console.log("cashflowData - ", cashflowData);
+    // //console.log("cashflowData - ", cashflowData);
   }, [cashflowData]);
 
   useEffect(() => {
-    // console.log("propertyList - ", propertyList);
+    // //console.log("propertyList - ", propertyList);
   }, [propertyList]);
 
   useEffect(() => {
-    // console.log("ManagerCashflow - selectedProperty - ", selectedProperty);
+    // //console.log("ManagerCashflow - selectedProperty - ", selectedProperty);
   }, [selectedProperty]);
 
   useEffect(() => {
-    // console.log("ROHIT - cashflowTransactionsData - ", cashflowTransactionsData);
+    // //console.log("ROHIT - cashflowTransactionsData - ", cashflowTransactionsData);
   }, [cashflowTransactionsData]);
 
   //   useEffect(() => {
-  //     console.log("rentsByProperty - ", rentsByProperty);
+  //     //console.log("rentsByProperty - ", rentsByProperty);
   //   }, [rentsByProperty]);
 
   //   useEffect(() => {
-  //     console.log("profits - ", profits);
+  //     //console.log("profits - ", profits);
   //   }, [profits]);
   //   useEffect(() => {
-  //     console.log("payouts - ", payouts);
+  //     //console.log("payouts - ", payouts);
   //   }, [payouts]);
   const groupDataByKey = (data, key) => {
-    // console.log("ROHIT - data - ", data);
+    // //console.log("ROHIT - data - ", data);
     const groupedByKey = {};
 
     data?.forEach((payment) => {
@@ -295,7 +295,7 @@ export default function ManagerCashflow() {
 
     // fetchCashflowTransactions(profileId)
     //   .then((data) => {
-    //     console.log(" for graph data - ", data);
+    //     //console.log(" for graph data - ", data);
     //     setCashflowTransactionsData(data);
     //     setCashflowData(data);
     //     // setProfitabilityData(data?.Profit);
@@ -316,7 +316,7 @@ export default function ManagerCashflow() {
 
     // fecthPaymentVerification(getProfileId())
     //   .then((data) => {
-    //     console.log("successfully fetch payment verification");
+    //     //console.log("successfully fetch payment verification");
     //     // setPaymentVerificationData(data);
 
     //     // const groupedByProperty = groupDataByKey(data, "pur_property_id");
@@ -332,7 +332,7 @@ export default function ManagerCashflow() {
     Promise.all([
       fetchCashflowTransactions(profileId)
         .then((data) => {
-          console.log(" for graph data - ", data);
+          //console.log(" for graph data - ", data);
           setCashflowTransactionsData(data);
           setCashflowData(data);
           // setProfitabilityData(data?.Profit);
@@ -352,7 +352,7 @@ export default function ManagerCashflow() {
 
       fecthPaymentVerification(getProfileId())
         .then((data) => {
-          console.log("successfully fetched payment verification");
+          //console.log("successfully fetched payment verification");
           // setPaymentVerificationData(data);
 
           // const groupedByProperty = groupDataByKey(data, "pur_property_id");
@@ -366,7 +366,7 @@ export default function ManagerCashflow() {
         // expenseCategories = getList("expense")
     ])
     .finally(() => {
-      // console.log("ok finally done --- ")
+      // //console.log("ok finally done --- ")
       // setShowSpinner(false); // Hide spinner after all fetches finish
     });
 
@@ -407,7 +407,7 @@ export default function ManagerCashflow() {
   };
 
   const getTotalRevenueByType = (data, month, year, expected) => {
-    // console.log(data, month, year)
+    // //console.log(data, month, year)
 
     var key = "total_paid";
 
@@ -420,8 +420,8 @@ export default function ManagerCashflow() {
     let revenueItems = data;
     let totalRent = revenueItems?.reduce((acc, revenue) => {
       if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "RENT") {
-        // console.log("revenue", revenue[key])
-        // console.log("acc", acc)
+        // //console.log("revenue", revenue[key])
+        // //console.log("acc", acc)
         return acc + parseFloat(revenue[key]);
       }
       return acc;
@@ -556,7 +556,7 @@ export default function ManagerCashflow() {
       return acc;
     }, 0.0);
 
-    console.log("inside expense mapping - ", totalMaintenance);
+    //console.log("inside expense mapping - ", totalMaintenance);
     return {
       MAINTENANCE: totalMaintenance,
       REPAIRS: totalRepairs,
@@ -571,7 +571,7 @@ export default function ManagerCashflow() {
   };
 
   const getRevenueByType = (data, month, year, expected) => {
-    // console.log(data, month, year)
+    // //console.log(data, month, year)
 
     var key = "total_paid";
 
@@ -608,7 +608,7 @@ export default function ManagerCashflow() {
       }
     });
 
-    // console.log(" --- revenue by type - ", totals, revenueCategories)
+    // //console.log(" --- revenue by type - ", totals, revenueCategories)
 
     const nonZeroTotals = Object.entries(totals).filter(([key, value]) => hasItems[key]);
 
@@ -643,8 +643,8 @@ export default function ManagerCashflow() {
 
     // let totalRent = revenueItems?.reduce((acc, revenue) => {
     //   if (revenue[key] !== null && revenue.purchase_type.toUpperCase() === "RENT") {
-    //     // console.log("revenue", revenue[key])
-    //     // console.log("acc", acc)
+    //     // //console.log("revenue", revenue[key])
+    //     // //console.log("acc", acc)
     //     return acc + parseFloat(revenue[key]);
     //   }
     //   return acc;
@@ -833,7 +833,7 @@ export default function ManagerCashflow() {
     //   return acc;
     // }, 0.0);
 
-    // console.log("inside expense mapping - ", totalMaintenance)
+    // //console.log("inside expense mapping - ", totalMaintenance)
     // return {
     //   MAINTENANCE: totalMaintenance,
     //   REPAIRS: totalRepairs,
@@ -1014,15 +1014,15 @@ export default function ManagerCashflow() {
   };
 
   function getTotalRevenueByMonthYear(data, month, year) {
-    // console.log("In getTotalRevenueByMonthYear: ", data, month, year);
+    // //console.log("In getTotalRevenueByMonthYear: ", data, month, year);
     let revenueItems = data?.filter(
       (item) => month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year && item.purchase_type.toUpperCase() !== "DEPOSIT"
     );
-    // console.log("After filter revenueItems: ", revenueItems);
+    // //console.log("After filter revenueItems: ", revenueItems);
     let totalRevenue = revenueItems?.reduce((acc, item) => {
       return acc + parseFloat(item["total_paid"] ? item["total_paid"] : 0.0);
     }, 0.0);
-    // console.log("Cashflow Fetch Data total Revenue: ", totalRevenue);
+    // //console.log("Cashflow Fetch Data total Revenue: ", totalRevenue);
     return totalRevenue;
   }
 
@@ -1042,7 +1042,7 @@ export default function ManagerCashflow() {
   }
 
   function getTotalExpectedRevenueByMonthYear(data, month, year) {
-    // console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
+    // //console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
     let revenueItems = data?.filter(
       (item) => month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year && item.purchase_type.toUpperCase() !== "DEPOSIT"
     );
@@ -1053,7 +1053,7 @@ export default function ManagerCashflow() {
   }
 
   function getTotalExpectedExpenseByMonthYear(data, month, year) {
-    // console.log(data)
+    // //console.log(data)
     let expenseItems = data?.filter((item) => month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year && item.purchase_type.toUpperCase() !== "DEPOSIT");
     let totalExpense = expenseItems?.reduce((acc, item) => {
     const totalPaid = parseFloat(item["pur_amount_due"] || 0.0);
@@ -1076,10 +1076,10 @@ export default function ManagerCashflow() {
       let filteredProfitData = [];
       if (selectedProperty === "ALL") {
         filteredProfitData = allProfitData;
-        // console.log("filteredProfitData - ", filteredProfitData);
+        // //console.log("filteredProfitData - ", filteredProfitData);
       } else {
         filteredProfitData = allProfitData?.filter((item) => item.pur_property_id === selectedProperty);
-        // console.log("filteredProfitData - ", filteredProfitData);
+        // //console.log("filteredProfitData - ", filteredProfitData);
       }
   
       if (selectedOwnerId !== "All Owner") {
@@ -1096,9 +1096,9 @@ export default function ManagerCashflow() {
   
         filteredProfitData = finalList?.flat();
   
-        console.log("filteredData list - ", filteredProfitData);
+        //console.log("filteredData list - ", filteredProfitData);
       } else {
-        // console.log(" filteredProfitData list - ", filteredProfitData)
+        // //console.log(" filteredProfitData list - ", filteredProfitData)
         const ownerInfoMap = filteredProfitData?.reduce((acc, item) => {
           let ownerID = "";
   
@@ -1120,7 +1120,7 @@ export default function ManagerCashflow() {
   
         setOwnerList(ownerInfoMap);
   
-        console.log(" owner list - ", ownerInfoMap);
+        //console.log(" owner list - ", ownerInfoMap);
       }
   
       // const profitDatacurrentMonth = filteredProfitData;
@@ -1181,7 +1181,7 @@ export default function ManagerCashflow() {
       //     let totalActual = 0
 
       //     if(item.purchase_type.toUpperCase() === "MANAGEMENT"){
-      //       // console.log(" --- ok here -- - ", typeof item.pur_amount_due)
+      //       // //console.log(" --- ok here -- - ", typeof item.pur_amount_due)
       //       // item.pur_amount_due = (-Math.abs(parseFloat(item.pur_amount_due || "0"))).toString()
       //       // item.total_paid = (-Math.abs(parseFloat(item.total_paid || "0"))).toString() 
 
@@ -1195,7 +1195,7 @@ export default function ManagerCashflow() {
       //       item.pur_amount_due = purAmountDue.toString();
       //       item.total_paid = totalPaid.toString();
 
-      //       console.log("After conversion: ", item.pur_amount_due, item.total_paid);
+      //       //console.log("After conversion: ", item.pur_amount_due, item.total_paid);
 
       //       // Parse for calculations
       //       totalExpected = purAmountDue;
@@ -1334,7 +1334,7 @@ export default function ManagerCashflow() {
         return acc;
       }, {});
   
-      // console.log("rents data by property - ", rentsDataByProperty)
+      // //console.log("rents data by property - ", rentsDataByProperty)
   
       setUnsortedRentsData(rentsDataByProperty);
   
@@ -1496,7 +1496,7 @@ export default function ManagerCashflow() {
       // setExpenseByType(expenseMapping);
       // setExpectedExpenseByType(expectedExpenseMapping);
   
-      // console.log("revenue by type - ", revenueMapping, " expense by type - ", expenseMapping)
+      // //console.log("revenue by type - ", revenueMapping, " expense by type - ", expenseMapping)
   
       //for type page ----
   
@@ -1595,7 +1595,7 @@ export default function ManagerCashflow() {
   
       // setExpenseByMonthByType(expenseByMonth)
   
-      // console.log("revenue by month by type - ", revenueByMonth, "expense by minth by type - ", expenseByMonth)
+      // //console.log("revenue by month by type - ", revenueByMonth, "expense by minth by type - ", expenseByMonth)
   
       // for all deposits
       const totalDepositsByProperty = filteredProfitData?.reduce((acc, item) => {
@@ -1643,7 +1643,7 @@ export default function ManagerCashflow() {
   
       setTotalDeposit(totalDeposits);
   
-      // console.log(" total deposits - ", totalDeposits, " deposits by property - ", totalDepositsByProperty)
+      // //console.log(" total deposits - ", totalDeposits, " deposits by property - ", totalDepositsByProperty)
       const totalDepositsByPropertyByMonth = currentMonthData?.reduce((acc, item) => {
         if (item.purchase_type === "Deposit") {
           const propertyUID = item.pur_property_id;
@@ -1694,7 +1694,7 @@ export default function ManagerCashflow() {
       //For unverified
       const dataListForUnverified = revenueDataForManager?.filter((item) => item.verified === "unverified" && item.purchase_type.toUpperCase() !== "DEPOSIT");
   
-      // console.log("dataList for unverified - ", dataListForUnverified);
+      // //console.log("dataList for unverified - ", dataListForUnverified);
       const result = {};
   
       dataListForUnverified?.forEach((data) => {
@@ -1716,7 +1716,7 @@ export default function ManagerCashflow() {
         });
       });
   
-      // console.log("result mapping for unverified - ", result);
+      // //console.log("result mapping for unverified - ", result);
   
       const finalListForUnverified = [];
   
@@ -1727,7 +1727,7 @@ export default function ManagerCashflow() {
         paymentDetails.forEach((payment) => {
           const key = `${data.pur_payer}${payment.payment_date}${payment.payment_intent}`;
 
-          // console.log("=== debug dhyey = ", payment, data)
+          // //console.log("=== debug dhyey = ", payment, data)
   
           // Create a new object for each payment item
           const newObject = {
@@ -1747,7 +1747,7 @@ export default function ManagerCashflow() {
         });
       });
   
-      console.log(" DataForUnverified - ", finalListForUnverified);
+      //console.log(" DataForUnverified - ", finalListForUnverified);
   
       const filteredItems = finalListForUnverified.filter((data) => {
         return data.items.some((item) => {
@@ -1826,17 +1826,17 @@ export default function ManagerCashflow() {
       setTotalRevenueData(totalrevenueData);
 
       // setShowSpinner(false)
-      // console.log("revenue data for manager by property - ", revenueDataForManagerByProperty);
+      // //console.log("revenue data for manager by property - ", revenueDataForManagerByProperty);
     }
     
 
-    // console.log("final result for unverified - ", DataForUnverified);
+    // //console.log("final result for unverified - ", DataForUnverified);
 
 
   }, [month, year, cashflowData, selectedProperty, selectedOwnerId]);
 
   useEffect(() => {
-    // console.log("becuase of this ...issue happend ... ", unsortedPayouts, unsortedRentsData)
+    // //console.log("becuase of this ...issue happend ... ", unsortedPayouts, unsortedRentsData)
     setShowSpinner(true)
     
     if (unsortedPayouts && unsortedRentsData) {
@@ -2001,7 +2001,7 @@ export default function ManagerCashflow() {
   // }, [unsortedPayoutsCurrentYear, unsortedRentsDataCurrentYear]);
 
   const calculateProfitsByProperty = (rentsDataByProperty, payoutsByProperty) => {
-    // console.log(" -- unsorted data - ", rentsDataByProperty, payoutsByProperty)
+    // //console.log(" -- unsorted data - ", rentsDataByProperty, payoutsByProperty)
     // const profitDataByProperty = {};
 
     // Object.keys(rentsDataByProperty).forEach((propertyUID) => {
@@ -2220,7 +2220,7 @@ export default function ManagerCashflow() {
 
 
 
-    console.log("profit data - ", profitDataByProperty);
+    //console.log("profit data - ", profitDataByProperty);
 
     return [profitDataByProperty, allProfitItems];
   };
@@ -2389,7 +2389,7 @@ export default function ManagerCashflow() {
       }
     });
 
-    console.log("second profit data - ", profitDataByProperty);
+    //console.log("second profit data - ", profitDataByProperty);
 
     return [profitDataByProperty, allProfitData];
   };
@@ -2491,7 +2491,7 @@ export default function ManagerCashflow() {
     //   });
     // });
 
-    // console.log("profit data By month - ", profitDataByMonth)
+    // //console.log("profit data By month - ", profitDataByMonth)
     // return profitDataByMonth;
 
     const profitDataByMonth = {};
@@ -2592,13 +2592,13 @@ export default function ManagerCashflow() {
       });
     });
 
-    console.log("profit data By month - ", profitDataByMonth);
+    //console.log("profit data By month - ", profitDataByMonth);
     return profitDataByMonth;
   };
 
   // useEffect(() => {
-  //     console.log("revenueByType", revenueByType)
-  //     console.log("expenseByType", expenseByType)
+  //     //console.log("revenueByType", revenueByType)
+  //     //console.log("expenseByType", expenseByType)
   // }, [revenueByType, expenseByType])
 
   return (
@@ -2753,7 +2753,7 @@ export default function ManagerCashflow() {
 
 // This is the function that controls what and how the cashflow data is displayed
 function StatementTable(props) {
-  console.log("--DEBUg-- In Statement Table: ", props);
+  //console.log("--DEBUg-- In Statement Table: ", props);
   const navigate = useNavigate();
 
   const activeView = props.activeView;
@@ -2771,16 +2771,16 @@ function StatementTable(props) {
   const navigateType = "/edit" + tableType;
 
   function handleNavigation(type, item) {
-    console.log(item);
+    //console.log(item);
     navigate(type, { state: { itemToEdit: item, edit: true } });
   }
 
-  // console.log("--debug-- tableType categoryTotalMapping", tableType, categoryTotalMapping)
-  // console.log("activeView", activeView)
-  // console.log("statement table year/month", year, month)
+  // //console.log("--debug-- tableType categoryTotalMapping", tableType, categoryTotalMapping)
+  // //console.log("activeView", activeView)
+  // //console.log("statement table year/month", year, month)
 
   function getCategoryCount(category) {
-    console.log("getCategoryCount - allItems - ", allItems);
+    //console.log("getCategoryCount - allItems - ", allItems);
     let items = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
     return "(" + items.length + ")";
   }
@@ -2789,7 +2789,7 @@ function StatementTable(props) {
     let filteredIitems = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
     let items = filteredIitems?.map((item) => ({ ...item, property: JSON.parse(item.property) }));
 
-    console.log("getCategoryItems", items);
+    //console.log("getCategoryItems", items);
     var key = "total_paid";
     if (activeView === "Cashflow") {
       key = "total_paid";

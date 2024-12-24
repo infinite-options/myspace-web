@@ -16,7 +16,7 @@ function App() {
   // useEffect(() => {
 
   //   const handleSessionStorageUpdate = () => {
-  //     console.log(" === ok we are calling == ")
+  //     //console.log(" === ok we are calling == ")
   //     const authToken = sessionStorage.getItem('authToken');
   //     setToken(authToken);
   //   };
@@ -28,7 +28,7 @@ function App() {
   //   };
   // }, []);
 
-  // console.log("App.js");
+  // //console.log("App.js");
   return (
     <CookiesProvider defaultSetOptions={{ path: "/" }}>
       <UserProvider>

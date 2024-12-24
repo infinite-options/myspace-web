@@ -191,7 +191,7 @@ export default function MaintenanceDashboard2() {
       }
       const data = await response.json();
       const employee = data?.profile?.result[0]; // Assuming there's only one employee
-      //   console.log("employee?.employee_verification - ", employee?.employee_verification)
+      //   //console.log("employee?.employee_verification - ", employee?.employee_verification)
       if (employee?.employee_verification == null) {
         navigate("/emp_waiting");
       }
@@ -201,13 +201,13 @@ export default function MaintenanceDashboard2() {
   };
 
   // useEffect(() => {
-  // 	console.log('location.state?.key useeffect----');
+  // 	//console.log('location.state?.key useeffect----');
   // 	if (location.state?.key || !location.state) {
   // 		if (selectedRole === "MAINT_EMPLOYEE" && getProfileId() != null) {
   // 			emp_verification();
   // 			setShowSpinner(false);
   // 		}
-  // 		console.log('key is it in useeffect if----', location.state?.key );
+  // 		//console.log('key is it in useeffect if----', location.state?.key );
   // 		getMaintenanceData(); // Fetch data on navigation
   // 	}
   // }, [location.state?.key]); // The effect will trigger when `key` changes or if location.state is empty
@@ -230,11 +230,11 @@ export default function MaintenanceDashboard2() {
   }, [user]);
 
   useEffect(() => {
-    // console.log("dataLoaded - ", dataLoaded);
-    // console.log("user - ", user);
+    // //console.log("dataLoaded - ", dataLoaded);
+    // //console.log("user - ", user);
     if (prevUserStateRef.current !== userState) {
       prevUserStateRef.current = userState;
-      // console.log("User state has deeply changed:", userState);
+      // //console.log("User state has deeply changed:", userState);
       if (dataLoaded === false) {
         setShowSpinner(true);
         if (selectedRole === "MAINT_EMPLOYEE") dashboard_id = user.businesses?.MAINTENANCE?.business_uid || user?.maint_supervisor;
@@ -249,7 +249,7 @@ export default function MaintenanceDashboard2() {
   }, [userState]);
 
   const handleWorkerMaintenanceRequestSelected = (maintenance_request_index, propstatus, propmaintenanceItemsForStatus, alldata, maintenance_request_uid) => {
-    console.log( " === calling itemof status, all data - ", propmaintenanceItemsForStatus, alldata)
+    //console.log( " === calling itemof status, all data - ", propmaintenanceItemsForStatus, alldata)
     setSessionData({
       maintenance_request_index,
       propstatus,
@@ -261,7 +261,7 @@ export default function MaintenanceDashboard2() {
   };
 
   useEffect(()=>{
-    console.log(" session data after refresh - ", sessionData)
+    //console.log(" session data after refresh - ", sessionData)
   }, [sessionData])
 
   const refreshMaintenanceData = () => {
@@ -480,7 +480,7 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
   }
 
   const filterCheckedAddresses = (requests, filterList) => {
-    // console.log("--- inside filter function - ", requests)
+    // //console.log("--- inside filter function - ", requests)
     const checkedAddresses = new Set(filterList.filter((property) => property.checked).map((property) => property.address));
 
     // const filteredRequests = {};
@@ -547,7 +547,7 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
       //const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${getProfileId()}`);
       //const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/600-000012`);
       //const data = await response.json();
-      //console.log('-----data inside workerMaintenanceTable----', data);
+      ////console.log('-----data inside workerMaintenanceTable----', data);
 
       const addresses = new Set();
       for (const status in filteredAllMaintenanceRequests.result) {
@@ -596,8 +596,8 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
 
       const data = filterMaintenanceRequests(filteredAllMaintenanceRequests, Array.from(addresses));
 
-      // console.log('-----data inside workerMaintenanceTable----', data);
-      // console.log('-----filteredRequests inside workerMaintenanceTable----', filteredMaintenanceRequests);
+      // //console.log('-----data inside workerMaintenanceTable----', data);
+      // //console.log('-----filteredRequests inside workerMaintenanceTable----', filteredMaintenanceRequests);
 
       const statusMappings = [
         { status: "Quotes Requested", mapping: "REQUESTED" },
@@ -618,7 +618,7 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
           tempdata[key] = data[key].maintenance_items;
         }
       });
-      // console.log('status table---', result);
+      // //console.log('status table---', result);
 
       setMaintenanceRequestsByQuoteStatus(result);
       setMaintenanceRequestsByStatus(tempdata);
@@ -629,7 +629,7 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
   };
 
   useEffect(() => {
-    // console.log("---- here here here ---- ")
+    // //console.log("---- here here here ---- ")
     setShowSpinner(true)
 
     filterAllMaintenanceData(allMaintenanceStatusData);
@@ -651,16 +651,16 @@ const WorkOrdersWidget = ({ maintenanceRequests, todayData, nextScheduleData, al
   }, [maintenanceRequestsByQuoteStatus, maintenanceRequestsByStatus])
   
 
-  // console.log('----filteredMaintenanceRequests-----', allMaintenanceStatusData, filteredMaintenanceRequests);
+  // //console.log('----filteredMaintenanceRequests-----', allMaintenanceStatusData, filteredMaintenanceRequests);
 
   async function handleRequestDetailPage(maintenance_request_index, mapping, property_uid, maintenance_request_uid) {
     const colorStatusItem = colorStatus?.find((item) => item.mapping === mapping);
     const status = colorStatusItem.status;
 
-    //console.log("maintenance_request_index", maintenance_request_index)
-    //console.log("status", status);
-    //console.log("maintenanceItemsForStatus", maintenanceItemsForStatus);
-    //console.log("inside func allMaintenanceData", allMaintenanceData);
+    ////console.log("maintenance_request_index", maintenance_request_index)
+    ////console.log("status", status);
+    ////console.log("maintenanceItemsForStatus", maintenanceItemsForStatus);
+    ////console.log("inside func allMaintenanceData", allMaintenanceData);
     if (isMobile) {
       navigate(`/workerMaintenance/detail`, {
         state: {

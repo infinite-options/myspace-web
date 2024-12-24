@@ -58,8 +58,8 @@ const ManagerContactDetail = ({ data, currentIndex, setCurrentIndex, propertyInd
     }, [data]);
 
     useEffect(() => {
-      console.log("Manager Contact Details:", contactDetails);
-      console.log("Current Index:", currentIndex);
+      //console.log("Manager Contact Details:", contactDetails);
+      //console.log("Current Index:", currentIndex);
     }, [contactDetails, currentIndex]);
   
     return (
@@ -98,7 +98,7 @@ const ManagerContactDetail = ({ data, currentIndex, setCurrentIndex, propertyInd
               <Grid item xs={1}>
                   <Box
                       onClick={() => {
-                        console.log("Previous button clicked", currentIndex, contactDetails.length);
+                        //console.log("Previous button clicked", currentIndex, contactDetails.length);
                         currentIndex > 0 ? setCurrentIndex(currentIndex - 1) : setCurrentIndex(contactDetails.length - 1);
                       }}
                       sx={{
@@ -145,7 +145,7 @@ const ManagerContactDetail = ({ data, currentIndex, setCurrentIndex, propertyInd
               <Grid item xs={1}  container justifyContent='flex-end'>
                   <Box
                       onClick={() => {
-                        console.log("Next button clicked");
+                        //console.log("Next button clicked");
                         currentIndex < contactDetails.length - 1 ? setCurrentIndex(currentIndex + 1) : setCurrentIndex(0);
                       }}
                       sx={{

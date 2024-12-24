@@ -40,7 +40,7 @@ import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../uti
 
 export default function RescheduleMaintenance({setRefresh}){
 
-    // console.log("RescheduleMaintenance")
+    // //console.log("RescheduleMaintenance")
     const location = useLocation();
     const navigate = useNavigate();
     const { setMaintenanceItemsForStatus , maintenanceData: contextMaintenanceItem, 
@@ -57,7 +57,7 @@ export default function RescheduleMaintenance({setRefresh}){
         maintenanceItem = contextMaintenanceItem;
 		navigationParams = contextNavigateParams;
     }
-    // console.log("maintenanceItem", maintenanceItem)
+    // //console.log("maintenanceItem", maintenanceItem)
     const [month, setMonth] = useState(new Date().getMonth());
     const [year, setYear] = useState(new Date().getFullYear());
     const [displayImages, setDisplayImages] = useState([])
@@ -74,17 +74,17 @@ export default function RescheduleMaintenance({setRefresh}){
 
 
 
-    // console.log("RescheduleMaintenance", maintenanceItem)
+    // //console.log("RescheduleMaintenance", maintenanceItem)
 
     const [selectedValue, setSelectedValue] = useState("no");
 
     useEffect(() => {
-        console.log("availabilityDate", availabilityDate)
-        console.log("availabilityTime", availabilityTime)
+        //console.log("availabilityDate", availabilityDate)
+        //console.log("availabilityTime", availabilityTime)
     }, [availabilityDate, availabilityTime])
 
     const handleChange = (value) => {
-        console.log("Changing selectedValue to", value)
+        //console.log("Changing selectedValue to", value)
         setSelectedValue(value)
     };
 
@@ -111,7 +111,7 @@ export default function RescheduleMaintenance({setRefresh}){
                     body: formData
                 });
             } catch (error){
-                console.log("error", error)
+                //console.log("error", error)
             }
             setShowSpinner(false);
         }
@@ -158,7 +158,7 @@ export default function RescheduleMaintenance({setRefresh}){
     }
 
     function handleBackButton(){
-        console.log("handleBackButton");
+        //console.log("handleBackButton");
 
         setSelectedRequestIndex(maintenance_request_index);
         setSelectedStatus(status);
@@ -180,7 +180,7 @@ export default function RescheduleMaintenance({setRefresh}){
     }
 
     function navigateToAddMaintenanceItem(){
-        console.log("navigateToAddMaintenanceItem")
+        //console.log("navigateToAddMaintenanceItem")
         navigate('/addMaintenanceItem', {state: {month, year}})
     }
 

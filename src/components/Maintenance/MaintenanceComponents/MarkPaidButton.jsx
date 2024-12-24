@@ -34,7 +34,7 @@ export default function MarkPaidButton({maintenanceItem, disabled}){
     }
 
     const handleSubmitMarkPaid = async ({ checkNumber, amount, id }) => {
-        console.log("handleMarkPaid", checkNumber, amount, id, getProfileId());
+        //console.log("handleMarkPaid", checkNumber, amount, id, getProfileId());
 
         try {
             fetch(`${APIConfig.baseURL.dev}/makePayment`, {
@@ -59,7 +59,7 @@ export default function MarkPaidButton({maintenanceItem, disabled}){
 
             })
         } catch (error) {
-            console.log(error);
+            //console.log(error);
         }
     }
 

@@ -84,12 +84,12 @@ const ProfileInfo = () => {
   const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
 
   // Print out the values
-  // console.log("PI First Name:", firstName);
-  // console.log("PI Last Name:", lastName);
-  // console.log("PI Email:", email);
-  // console.log("PI Phone:", phoneNumber);
-  // console.log("PI Business Name:", businessName);
-  // console.log("PI Photo:", photo);
+  // //console.log("PI First Name:", firstName);
+  // //console.log("PI Last Name:", lastName);
+  // //console.log("PI Email:", email);
+  // //console.log("PI Phone:", phoneNumber);
+  // //console.log("PI Business Name:", businessName);
+  // //console.log("PI Photo:", photo);
 
   const [showSpinner, setShowSpinner] = useState(false);
   const [fees, setFees] = useState([{ id: 1, fee_name: "", frequency: "", charge: "", of: "" }]);
@@ -828,7 +828,7 @@ const ProfileInfo = () => {
                   {"Service Locations"}
                 </Typography>
               </Box>
-              {console.log(locations)}
+              {/* {console.log(locations)} */}
               {locations.map((row) => (
                 <div key={row.id}>
                   <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>

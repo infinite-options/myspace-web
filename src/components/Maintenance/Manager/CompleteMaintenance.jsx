@@ -36,12 +36,12 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams, qu
     const { payMaintenanceView, setPayMaintenanceView, maintenanceData: contextMaintenanceItem, 
 		navigateParams: contextNavigateParams,  maintenanceQuotes, setMaintenanceQuotes, setNavigateParams, setMaintenanceData,setSelectedStatus, setSelectedRequestIndex, setAllMaintenanceData } = useMaintenance();
     
-    // console.log("COMPLETE MAINTENANCE QUOTES", maintenanceItem)
+    // //console.log("COMPLETE MAINTENANCE QUOTES", maintenanceItem)
     
     let finishedQuote = quotes?.find(quote => quote.quote_status === "FINISHED" || quote.quote_status === "COMPLETED")
 
     function handleNavigate(){
-        console.log("navigate to pay Maintenance")
+        //console.log("navigate to pay Maintenance")
 
         if (isMobile) {
             navigate("/payMaintenance", {
@@ -85,7 +85,7 @@ export default function CompleteMaintenance({maintenanceItem, navigateParams, qu
                 const maintenanceItemStr = JSON.stringify(maintenanceItem);
                 const navigateParamsStr = JSON.stringify(navigateParams);
                 const quotesStr = JSON.stringify(quotes);
-                console.log('Storing data in sessionStorage: ', quotesStr);
+                //console.log('Storing data in sessionStorage: ', quotesStr);
 
                 // Save data to sessionStorage
                 sessionStorage.setItem('maintenanceItem', maintenanceItemStr);

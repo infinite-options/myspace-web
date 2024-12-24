@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function UserLogin() {
-  console.log("In User Login");
+  //console.log("In User Login");
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
@@ -79,16 +79,16 @@ function UserLogin() {
                     return byte.toString(16).padStart(2, "0");
                   })
                   .join("");
-                console.log(hashedPassword);
+                //console.log(hashedPassword);
                 let loginObject = {
                   email: email,
                   password: hashedPassword,
                 };
-                console.log(JSON.stringify(loginObject));
+                //console.log(JSON.stringify(loginObject));
                 axios
                   .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/Login/MYSPACE", loginObject)
                   .then(async(response) => {
-                    console.log(response.data.message);
+                    //console.log(response.data.message);
                     const { message, result } = response.data;
                     if (message === "Incorrect password") {
                       alert(response.data.message);
@@ -113,9 +113,9 @@ function UserLogin() {
                   })
                   .catch((err) => {
                     if (err.response) {
-                      console.log(err.response);
+                      //console.log(err.response);
                     }
-                    console.log(err);
+                    //console.log(err);
                   });
               });
             }
@@ -143,7 +143,7 @@ function UserLogin() {
           setpassModal(true);
         }
         if (response.data.code === 280) {
-          console.log(response);
+          //console.log(response);
           alert("No account found with that email.");
           return;
         }

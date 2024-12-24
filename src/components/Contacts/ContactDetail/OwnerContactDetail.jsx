@@ -97,7 +97,7 @@ const OwnerContactDetail = ({ data, currentIndex, setCurrentIndex, propertyIndex
               <Grid item xs={1}>
                   <Box
                       onClick={() => {
-                        console.log("Previous button clicked", currentIndex, contactDetails.length);
+                        //console.log("Previous button clicked", currentIndex, contactDetails.length);
                         currentIndex > 0 ? setCurrentIndex(currentIndex - 1) : setCurrentIndex(contactDetails.length - 1);
                       }}
                       sx={{
@@ -147,7 +147,7 @@ const OwnerContactDetail = ({ data, currentIndex, setCurrentIndex, propertyIndex
               <Grid item xs={1}  container justifyContent='flex-end'>
                   <Box
                       onClick={() => {
-                        console.log("Next button clicked");
+                        //console.log("Next button clicked");
                         currentIndex < contactDetails.length - 1 ? setCurrentIndex(currentIndex + 1) : setCurrentIndex(0);
                       }}
                       sx={{

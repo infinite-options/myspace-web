@@ -15,7 +15,7 @@ export const ListsProvider = ({ children }) => {
     try {
         const jwtToken = sessionStorage.getItem("authToken");
         if (!jwtToken) {
-          console.log("No JWT found. Skipping fetch.");
+          //console.log("No JWT found. Skipping fetch.");
           return;
         }
 

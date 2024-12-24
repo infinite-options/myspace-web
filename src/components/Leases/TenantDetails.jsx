@@ -44,7 +44,7 @@ const TenantDetails = ({ tenantWithId, setTenantWithId, isMobile }) => {
     const color = theme.palette.form.main;
 
     useEffect(() => {
-        console.log('tenantwithid', tenantWithId);
+        //console.log('tenantwithid', tenantWithId);
         setRows(tenantWithId);
         const total = calculateTotalResponsibility();
         setTotalResponsibility(total);
@@ -103,7 +103,7 @@ const TenantDetails = ({ tenantWithId, setTenantWithId, isMobile }) => {
     const handleAddClick = (e) => {
         e.stopPropagation();
         const total = calculateTotalResponsibility();
-        console.log('add', total)
+        //console.log('add', total)
         if (total <= 100) {
             setError(null);
         }
@@ -117,7 +117,7 @@ const TenantDetails = ({ tenantWithId, setTenantWithId, isMobile }) => {
 
     const handleEditClick = (row) => {
         const total = calculateTotalResponsibility();
-        console.log('edit', total)
+        //console.log('edit', total)
         if (total <= 100) {
             setError(null);
         }
@@ -155,12 +155,12 @@ const TenantDetails = ({ tenantWithId, setTenantWithId, isMobile }) => {
     const handleSave = () => {
         let currTotalResp = calculateTotalResponsibility();
         if (isEditing) {
-            console.log('in edit', resp, totalResponsility);
+            //console.log('in edit', resp, totalResponsility);
             currTotalResp = currTotalResp - resp;
         }
-        console.log('before', currTotalResp);
+        //console.log('before', currTotalResp);
         currTotalResp = currTotalResp + Number(currentRow.lt_responsibility);
-        console.log('after', currTotalResp);
+        //console.log('after', currTotalResp);
         if (currTotalResp > 100) {
             setError("The total responsibility shared by all tenants should not exceed 100%.")
         } else {
@@ -188,7 +188,7 @@ const TenantDetails = ({ tenantWithId, setTenantWithId, isMobile }) => {
         for (let i = 0; i < rows.length; i++) {
             total += rows[i].lt_responsibility !== null ? Number(rows[i].lt_responsibility) : 0;
         }
-        console.log('total', total)
+        //console.log('total', total)
         return total
     }
 

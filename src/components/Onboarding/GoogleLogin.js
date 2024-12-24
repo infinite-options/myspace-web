@@ -166,21 +166,21 @@ function GoogleLogin({buttonStyle, buttonText, }) {
                             socialGoogle(email, user);
                           })
                           .catch((err) => {
-                            console.log(err);
+                            //console.log(err);
                           });
                         return accessToken;
                       }
                     });
                 })
                 .catch((error) => {
-                  console.log(error);
+                  //console.log(error);
                 });
               return (
                 accessToken, refreshToken, accessExpiresIn, email, socialId
               );
             })
             .catch((err) => {
-              console.log(err);
+              //console.log(err);
             });
         }
       },

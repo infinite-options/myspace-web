@@ -32,9 +32,9 @@ const useStyles = makeStyles({
 });
 
 export default function PropertyRentWidget(props) {
-  // console.log("In Property Rent Widget ");
-  // console.log("In Property Rent Widget - PM Contracts - props - ", props);
-  // console.log("In Property Rent Widget - PM Contracts: ", props.contractRequests);
+  // //console.log("In Property Rent Widget ");
+  // //console.log("In Property Rent Widget - PM Contracts - props - ", props);
+  // //console.log("In Property Rent Widget - PM Contracts: ", props.contractRequests);
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const classes = useStyles();
@@ -45,13 +45,13 @@ export default function PropertyRentWidget(props) {
   const [rawPropertyData, setRawPropertyData] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
 
-  // console.log("In Property Rent Widget - Selected Role: ", propertyRoutingBasedOnSelectedRole());
-  // console.log("Selected Role: ", selectedRole);
-  // console.log("Role: ", user);
-  // console.log("Is it in mobile", isMobile);
-  // console.log("PropertyRentWidget - props for rentData", props.rentData);
-  // console.log("PropertyRentWidget - props for contract requests- ", props.contractRequests);
-  // console.log("PropertyRentWidget - props for propertyData", props.propertyData);
+  // //console.log("In Property Rent Widget - Selected Role: ", propertyRoutingBasedOnSelectedRole());
+  // //console.log("Selected Role: ", selectedRole);
+  // //console.log("Role: ", user);
+  // //console.log("Is it in mobile", isMobile);
+  // //console.log("PropertyRentWidget - props for rentData", props.rentData);
+  // //console.log("PropertyRentWidget - props for contract requests- ", props.contractRequests);
+  // //console.log("PropertyRentWidget - props for propertyData", props.propertyData);
 
   useEffect(() => {
     setRawPropertyData(props.propertyData);
@@ -59,17 +59,17 @@ export default function PropertyRentWidget(props) {
   }, [props.propertyData]);
 
   // useEffect(() => {
-  //   console.log("PropertyRentWidget - propertyList - ", propertyList);
+  //   //console.log("PropertyRentWidget - propertyList - ", propertyList);
   // }, [propertyList]);
 
   // SET RENT STATUS
   let rentStatusData = props.rentData;
 
   const contractRequests = props?.contractRequests;
-  // console.log("PropertyRentWidget - contractRequests - ", contractRequests);
+  // //console.log("PropertyRentWidget - contractRequests - ", contractRequests);
 
   let unpaidCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "UNPAID") : 0;
-  // console.log(unpaidCount);
+  // //console.log(unpaidCount);
   unpaidCount = unpaidCount ? unpaidCount.num : 0;
 
   let partialPaidCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "PARTIALLY PAID") : 0;
@@ -85,7 +85,7 @@ export default function PropertyRentWidget(props) {
   vacantCount = vacantCount ? vacantCount.num : 0;
 
   let noManagerCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "NO MANAGER") : 0;
-  // console.log(noManagerCount);
+  // //console.log(noManagerCount);
   noManagerCount = noManagerCount ? noManagerCount.num : 0;
 
   // no check if rentSatus does not exist so this could result in a failure
@@ -119,20 +119,20 @@ export default function PropertyRentWidget(props) {
   // };
 
   // useEffect(() => {
-  //   // console.log("PropertyRentWidget - anchorEl - ", anchorEl);
+  //   // //console.log("PropertyRentWidget - anchorEl - ", anchorEl);
   // }, [anchorEl]);
 
   // SET PROPERTY DATA
   const handleSelectPropertyClick = async (event) => {
     setAnchorEl(event.currentTarget);
     if (propertyList?.length > 0) {
-      // console.log("Properties in List: ", propertyList);
+      // //console.log("Properties in List: ", propertyList);
       return;
     }
     // try {
     //   const propertyList = getPropertyList(props.propertyData);
-    //   // console.log("In Property List >> Property List: ", propertyList);
-    //   // console.log("Testing Property Data", propertyData.Property.result);
+    //   // //console.log("In Property List >> Property List: ", propertyList);
+    //   // //console.log("Testing Property Data", propertyData.Property.result);
 
     //   setPropertyList([...propertyList]);
     // } catch (error) {
@@ -154,9 +154,9 @@ export default function PropertyRentWidget(props) {
   //     p.maintenanceCount = [...p.maintenance].filter((m) => m.maintenance_request_status === "NEW" || m.maintenance_request_status === "PROCESSING").length;
   //     // p.newContracts = contractsMap.get(p.property_uid) || [];
   //     // p.newContractsCount = [...p.newContracts].filter((m) => m.contract_status === "NEW").length;
-  //     // console.log("P:", p);
-  //     // console.log("P:", p.applications);
-  //     // console.log("P:", p.applicationsCount);
+  //     // //console.log("P:", p);
+  //     // //console.log("P:", p.applications);
+  //     // //console.log("P:", p.applicationsCount);
   //     return p;
   //   });
   // }
@@ -200,7 +200,7 @@ export default function PropertyRentWidget(props) {
               borderRadius: "5px",
             }}
             onClick={() => {
-              // console.log("Clicked 1");
+              // //console.log("Clicked 1");
               navigate(propertyRoutingBasedOnSelectedRole());
             }}
           >
@@ -233,7 +233,7 @@ export default function PropertyRentWidget(props) {
                 <MenuItem
                   key={property.property_uid}
                   // onClick={() => {
-                  //   console.log("navigating to propertyDetail - i, propertiesList - ", index, propertyList);
+                  //   //console.log("navigating to propertyDetail - i, propertiesList - ", index, propertyList);
                   //   navigate(`/properties`, { state: { index, propertyList, rawPropertyData } });
                   // }}
                   onClick={() => navigate("/properties", { state: { showLHS: "Rent", showRHS: "PropertyNavigator", showOnlyListings: false } })}
@@ -393,7 +393,7 @@ export default function PropertyRentWidget(props) {
             borderRadius: "5px",
           }}
           onClick={() => {
-            // console.log("New Request Clicked");
+            // //console.log("New Request Clicked");
             // navigate("/pmQuotesList", { state: { property_endpoint_resp: contractRequests } });
             navigate("/pmQuotesList", {state: {navigatingFrom : "fromManagerDashboard"}});
           }}
@@ -432,7 +432,7 @@ export default function PropertyRentWidget(props) {
             marginTop: "10px",
           }}
           onClick={() => {
-            // console.log("New Request Clicked");
+            // //console.log("New Request Clicked");
             // navigate("/pmQuotesList", { state: { property_endpoint_resp: contractRequests } });
             // navigate("/announcements")
             navigate("/managerCreateAnnouncement");

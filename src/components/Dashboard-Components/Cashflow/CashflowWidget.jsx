@@ -49,15 +49,15 @@ import AddRevenueIcon from "../../../images/AddRevenueIcon.png";
 // "../../images/AddRevenueIcon.png"
 
 function CashflowWidget({ data, monthForData, yearForData, originalData, setCurrentWindow, page, setSelectedProperty, setData, selectedProperty, allProperties, window }) {
-  // console.log("In Cashflow Widget ");
-  // console.log("Cashflow Widget - data - ", data);
+  // //console.log("In Cashflow Widget ");
+  // //console.log("Cashflow Widget - data - ", data);
   const navigate = useNavigate();
 
   let date = new Date();
   let currentMonth = date.toLocaleString("default", { month: "long" });
   let currentYear = date.getFullYear().toString();
 
-  // console.log(currentMonth)
+  // //console.log(currentMonth)
   const [month, setMonth] = useState(currentMonth);
   const [year, setYear] = useState(currentYear);
   const { user, getProfileId } = useUser();
@@ -75,7 +75,7 @@ function CashflowWidget({ data, monthForData, yearForData, originalData, setCurr
   const[widgetselectedProperty, setWidgetSelectedProperty] = useState(selectedProperty ? selectedProperty : "All Properties");
   const [propertyButtonName, setPropertyButtonName ] = useState(selectedProperty? (selectedProperty !== "All Properties"? "View all Properties" : "Select Property") : "Select Property")
   const [cfPeriodButtonName, setCfPeriodButtonName ] = useState("Last 12 Months")
-  // console.log("From Cashflowwidget ", data)
+  // //console.log("From Cashflowwidget ", data)
   // const expenseCurrentMonth = data?.result?.find((item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "expense");
   // const revenueCurrentMonth = data?.result?.find((item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "revenue");
 
@@ -85,7 +85,7 @@ function CashflowWidget({ data, monthForData, yearForData, originalData, setCurr
   // useEffect(() => {
   //   fetchCashflow(profileId)
   //     .then((data) => {
-  //       // console.log("Back in Widget: ", data);
+  //       // //console.log("Back in Widget: ", data);
   //       setCashflowData(data);
   //       let currentMonthYearRevenue = getTotalRevenueByMonthYear(data, currentMonth, currentYear);
   //       let currentMonthYearExpense = getTotalExpenseByMonthYear(data, currentMonth, currentYear);
@@ -116,7 +116,7 @@ function CashflowWidget({ data, monthForData, yearForData, originalData, setCurr
       // const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflow/110-000003/TTM`);
       const properties = await axios.get(`${APIConfig.baseURL.dev}/properties/${userProfileId}`);
 
-      // console.log("Owner Properties: ", properties.data);
+      // //console.log("Owner Properties: ", properties.data);
       return properties.data;
     } catch (error) {
       console.error("Error fetching properties data:", error);
@@ -265,7 +265,7 @@ function CashflowWidget({ data, monthForData, yearForData, originalData, setCurr
     // 
 
     
-    // console.log("from cashflowwidget - ", widgetselectedProperty);
+    // //console.log("from cashflowwidget - ", widgetselectedProperty);
 
     // 
 

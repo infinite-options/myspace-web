@@ -25,11 +25,11 @@ const OnboardingRouter = () => {
 
     if (roles.length === 0) {
       if (openingRole) {
-        console.log("Selected openingRole:", openingRole);
+        //console.log("Selected openingRole:", openingRole);
         selectRole(openingRole);
         setLoggedIn(true);
         const { dashboardUrl } = roleMap[openingRole];
-        console.log("Navigating to:", dashboardUrl);
+        //console.log("Navigating to:", dashboardUrl);
         navigate(dashboardUrl);
       } else {
         console.error("Opening role is undefined. Handle this case appropriately.");
@@ -45,7 +45,7 @@ const OnboardingRouter = () => {
         });
       }
       selectRole(nextRole);
-      console.log("Navigating to:", pageToNavigate);
+      //console.log("Navigating to:", pageToNavigate);
       navigate(pageToNavigate);
     }
   }, [onboardingState, selectRole, setLoggedIn, setOnboardingState, isLoggedIn, navigate]);

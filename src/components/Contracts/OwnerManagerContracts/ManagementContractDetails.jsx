@@ -13,7 +13,7 @@ import ManagementContractContext from "../../../contexts/ManagementContractConte
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 function ManagementContractDetails(props) {
-  // console.log("In ManagementContractDetails.jsx - props - ", props);
+  // //console.log("In ManagementContractDetails.jsx - props - ", props);
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   // const propertiesContext = useContext(PropertiesContext);
@@ -35,7 +35,7 @@ function ManagementContractDetails(props) {
   }, [props.page, contractRequestsFromContext, allContractsFromContext]);
 
   useEffect(() => {
-    // console.log("ROHIT - contractRequests - ", contractRequests);
+    // //console.log("ROHIT - contractRequests - ", contractRequests);
   }, [contractRequests]);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -45,12 +45,12 @@ function ManagementContractDetails(props) {
 
   // const property_endpoint_resp = contractRequests;
 
-  console.log("ManagementContractDetails - currentContractUID - ", currentContractUID);
+  //console.log("ManagementContractDetails - currentContractUID - ", currentContractUID);
 
-  console.log("ManagementContractDetails - currentContractPropertyID - ", currentContractPropertyUID);
+  //console.log("ManagementContractDetails - currentContractPropertyID - ", currentContractPropertyUID);
 
   useEffect(() => {
-    console.log("ManagementContractDetails - currentContractPropertyUID changed - ", currentContractPropertyUID);
+    //console.log("ManagementContractDetails - currentContractPropertyUID changed - ", currentContractPropertyUID);
     fetchData();
   }, [currentContractUID, currentContractPropertyUID, contractRequests]);
 
@@ -58,15 +58,15 @@ function ManagementContractDetails(props) {
 
   const fetchData = async () => {
     const properties = contractRequests ? contractRequests : [];
-    // console.log("PROPERTIES", properties);
+    // //console.log("PROPERTIES", properties);
     // setPropertiesData(properties);
 
     const filteredProperties = properties.filter((property) => property.property_uid === currentContractPropertyUID);
-    // console.log("FILTERED PROPERTIES - contractPropertyID - ", contractPropertyID);
-    // console.log("FILTERED PROPERTIES", filteredProperties);
+    // //console.log("FILTERED PROPERTIES - contractPropertyID - ", contractPropertyID);
+    // //console.log("FILTERED PROPERTIES", filteredProperties);
     setFilteredPropertiesData(filteredProperties);
 
-    // console.log("FILTERED PROPERTIES DATA", filteredProperties);
+    // //console.log("FILTERED PROPERTIES DATA", filteredProperties);
 
     setIsLoading(false);
   };
@@ -95,13 +95,13 @@ function ManagementContractDetails(props) {
       durationString = `${seconds} seconds ago`;
     }
 
-    // console.log(now, announcement_date, announcementData["announcement_date"], durationString, seconds, minutes, hours, days);
+    // //console.log(now, announcement_date, announcementData["announcement_date"], durationString, seconds, minutes, hours, days);
     return durationString;
   };
 
   useEffect(() => {
-    // console.log("Management Contract Details UseEffect in ManagementContractDetails");
-    // console.log("New PM Requests in MCD: ", property_endpoint_resp);
+    // //console.log("Management Contract Details UseEffect in ManagementContractDetails");
+    // //console.log("New PM Requests in MCD: ", property_endpoint_resp);
     fetchData();
   }, []);
 

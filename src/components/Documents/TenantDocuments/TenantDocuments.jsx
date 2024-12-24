@@ -190,7 +190,7 @@ function TenantDoucments() {
                 </Box>
                 {documentsData.map((document) => {
                     const docs = JSON.parse(document.tenant_documents);
-                    // console.log("Docs "+docs)
+                    // //console.log("Docs "+docs)
                     return (
                         <>
                             {docs.map((doc) => (

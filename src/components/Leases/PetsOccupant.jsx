@@ -73,7 +73,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isEditable, ownerOptions }) => {
-    // console.log('Inside Pets occupants', leasePets);
+    // //console.log('Inside Pets occupants', leasePets);
     const [pets, setPets] = useState([]);
     const [open, setOpen] = useState(false);
     const [currentRow, setCurrentRow] = useState(null);
@@ -88,7 +88,7 @@ const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, setModifiedD
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     useEffect(() => {
-        console.log('inside mod', modifiedData);
+        //console.log('inside mod', modifiedData);
         if (modifiedData && modifiedData.length > 0) {
             editOrUpdateLease();
             handleClose();
@@ -97,7 +97,7 @@ const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, setModifiedD
 
     useEffect(() => {
         if (leasePets && leasePets.length > 0) {
-            console.log('leasePets', leasePets, typeof (leasePets));
+            //console.log('leasePets', leasePets, typeof (leasePets));
             //Need Id for datagrid
             if(!setLeasePets){
                 const petsWithIds = leasePets.map((pet, index) => ({ ...pet, id: index }));
@@ -121,7 +121,7 @@ const PetsOccupant = ({ leasePets, setLeasePets, editOrUpdateLease, setModifiedD
     };
 
     const showSnackbar = (message, severity) => {
-        console.log('Inside show snackbar');
+        //console.log('Inside show snackbar');
         setSnackbarMessage(message);
         setSnackbarSeverity(severity);
         setSnackbarOpen(true);

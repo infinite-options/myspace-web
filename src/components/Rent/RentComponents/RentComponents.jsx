@@ -209,13 +209,13 @@ export const getStatusColor = (status) => {
 };
 
 export function RentAccordionView(props) {
-  console.log("In RentComponents");
+  //console.log("In RentComponents");
   const rentData = props.data;
   const rentDetailUrl = props.link;
   const rentDetailIndexList = props.rentDetailIndexList;
-  // console.log("In Rent Accordion View: rentDetailIndexList - ", props.rentDetailIndexList);
-  // console.log("In Rent Accordian View: ", props.data);
-  // console.log("In Rent Accordian View Links: ", props.link);
+  // //console.log("In Rent Accordion View: rentDetailIndexList - ", props.rentDetailIndexList);
+  // //console.log("In Rent Accordian View: ", props.data);
+  // //console.log("In Rent Accordian View Links: ", props.link);
   const [unpaid, setUnpaid] = useState([]);
   const [partial, setPartial] = useState([]);
   const [late, setLate] = useState([]);
@@ -229,7 +229,7 @@ export function RentAccordionView(props) {
       setPaid(rentData.paid);
       setVacant(rentData.vacant);
       if (rentData.unpaid && rentData.unpaid.length > 0) {
-        console.log("checking widget");
+        //console.log("checking widget");
         props.setInitialPropInRent(rentData.unpaid[0].property_uid);
       } else if (rentData.partial && rentData.partial.length > 0) {
         props.setInitialPropInRent(rentData.partial[0].property_uid);
@@ -295,9 +295,9 @@ export function RentAccordion(props) {
   const rentDetailUrl = props.link;
   const rentDetailIndexList = props.rentDetailIndexList;
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  // console.log("In Rent Accordian: ", props.data);
-  // console.log("In Rent Accordian Links: ", props.link);
-  // console.log("In Rent Accordian Status: ", props.status);
+  // //console.log("In Rent Accordian: ", props.data);
+  // //console.log("In Rent Accordian Links: ", props.link);
+  // //console.log("In Rent Accordian Status: ", props.status);
   const StatusText = () => {
     switch (status) {
       case "UNPAID":
@@ -316,9 +316,9 @@ export function RentAccordion(props) {
   };
   const navigate = useNavigate();
   function navigateTo(url, index) {
-    // console.log("Navigate to: ", status, index, rentData, url);
-    // console.log(rentData.status);
-    // console.log(rentData.late);
+    // //console.log("Navigate to: ", status, index, rentData, url);
+    // //console.log(rentData.status);
+    // //console.log(rentData.late);
     navigate(url, {
       state: {
         status: status,
@@ -356,7 +356,7 @@ export function RentAccordion(props) {
           <Box>{properties.length}</Box>
         </Box>
       </AccordionSummary>
-      {console.log("---properties----", properties)}
+      {/* {console.log("---properties----", properties)} */}
       {properties.map((property, index) => {
         const address =
           property.property_address +

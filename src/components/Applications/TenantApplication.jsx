@@ -23,19 +23,19 @@ import AES from "crypto-js/aes";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 export default function TenantApplication(props) {
-  console.log("In Tenant Application", props);
+  //console.log("In Tenant Application", props);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, getProfileId, roleName } = useUser();
 
-  // console.log("props in tenantApplication", props);
+  // //console.log("props in tenantApplication", props);
 
   const [property, setProperty] = useState([]);
   const [status, setStatus] = useState("");
   const [lease, setLease] = useState([]);
-  // console.log("in tenant application status", status);
-  // console.log("lease", lease);
-  // console.log("property", property);
+  // //console.log("in tenant application status", status);
+  // //console.log("lease", lease);
+  // //console.log("property", property);
 
   const [tenantProfile, setTenantProfile] = useState(null);
   const [showSpinner, setShowSpinner] = useState(false);
@@ -54,7 +54,7 @@ export default function TenantApplication(props) {
 
 
   // useEffect(() => {
-  //     console.log("tenantDocuments - ", tenantDocuments);
+  //     //console.log("tenantDocuments - ", tenantDocuments);
   // }, [tenantDocuments])
 
 
@@ -192,7 +192,7 @@ export default function TenantApplication(props) {
       let info = JSON.parse(lease[0].lease_vehicles);
       setVehicles(info);
       // for (const vehicle of info){
-      //     console.log(vehicle)
+      //     //console.log(vehicle)
       // }
     }
   }
@@ -202,11 +202,11 @@ export default function TenantApplication(props) {
       let info = tenantProfile && tenantProfile.tenant_adult_occupants ? JSON.parse(tenantProfile.tenant_adult_occupants) : [];
       setAdultOccupants(info);
     } else {
-      // console.log(tenantProfile?.tenant_adult_occupants)
+      // //console.log(tenantProfile?.tenant_adult_occupants)
       let info = JSON.parse(lease[0].lease_adults);
       setAdultOccupants(info);
       // for (const occupant of info){
-      //     console.log(occupant)
+      //     //console.log(occupant)
       // }
     }
   }
@@ -219,7 +219,7 @@ export default function TenantApplication(props) {
       let info = JSON.parse(lease[0].lease_pets);
       setPetOccupants(info);
       // for (const pet of info){
-      //     console.log(pet)
+      //     //console.log(pet)
       // }
     }
   }
@@ -231,7 +231,7 @@ export default function TenantApplication(props) {
       let info = JSON.parse(lease[0].lease_children);
       setChildOccupants(info);
       // for (const child of info){
-      //     console.log(child)
+      //     //console.log(child)
       // }
     }
   }
@@ -250,14 +250,14 @@ export default function TenantApplication(props) {
       const data = await response.json();
       const tenantProfileData = data.profile.result[0];
       setTenantProfile(tenantProfileData);
-      // console.log("tenantProfileData", tenantProfileData);
+      // //console.log("tenantProfileData", tenantProfileData);
     };
     getTenantProfileInformation();
   }, []);
 
   useEffect(() => {
 
-    // console.log("---dhyey--- props data for property - ", lease)
+    // //console.log("---dhyey--- props data for property - ", lease)
 
     if (props?.vehicles) {
       setVehicles(props.vehicles)
@@ -314,7 +314,7 @@ export default function TenantApplication(props) {
   const getDecryptedSSN = (encryptedSSN) => {
     try {
       const decrypted = AES.decrypt(encryptedSSN, process.env.REACT_APP_ENKEY).toString(CryptoJS.enc.Utf8);
-      // console.log("getDecryptedSSN - decrypted - ", decrypted.toString());
+      // //console.log("getDecryptedSSN - decrypted - ", decrypted.toString());
       return "***-**-" + decrypted.toString().slice(-4);
     } catch (error) {
       console.error('Error decrypting SSN:', error);
@@ -323,7 +323,7 @@ export default function TenantApplication(props) {
   };
 
   function displaySSN() {
-    // console.log('ssn is', tenantProfile)
+    // //console.log('ssn is', tenantProfile)
     if (tenantProfile && (tenantProfile.tenant_ssn != null || tenantProfile.tenant_ssn != "")) {
       return `${tenantProfile?.tenant_ssn?.slice(-4)}`;
     } else {
@@ -342,7 +342,7 @@ export default function TenantApplication(props) {
     withdrawLeaseData.append("lease_status", "WITHDRAWN");
 
     withdrawLeaseData.forEach((value, key) => {
-      console.log(`${key}: ${value}`);
+      //console.log(`${key}: ${value}`);
     });
 
     const withdrawLeaseResponse = fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
@@ -362,7 +362,7 @@ export default function TenantApplication(props) {
 
   function formatDate(dateString) {
     const date = new Date(dateString);
-    // console.log('check date', dateString, date)
+    // //console.log('check date', dateString, date)
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     const year = date.getFullYear();
@@ -380,19 +380,19 @@ export default function TenantApplication(props) {
 
   // useEffect(() => {
   //   if (props.status !== "NEW" && tenantProfile?.selected_jobs) {
-  //     console.log("in here");
+  //     //console.log("in here");
   //     setSelectedJobs(tenantProfile.selected_jobs);
   //   }
   // }, [props.status, tenantProfile]);
 
   async function handleApplicationSubmit() {
     //submit to backend
-    // console.log("Application Submitted")
-    // console.log("should call /annoucements")
-    // console.log("should call /leases")
-    // console.log("lease status", status);
+    // //console.log("Application Submitted")
+    // //console.log("should call /annoucements")
+    // //console.log("should call /leases")
+    // //console.log("lease status", status);
 
-    // console.log("386 - property - ", property);    
+    // //console.log("386 - property - ", property);    
     try {
       let date = new Date();
 
@@ -451,13 +451,13 @@ export default function TenantApplication(props) {
 
       leaseApplicationData.append("lease_documents_details", JSON.stringify(documentsDetails));
 
-      // console.log("----dhyey ---- leaseApplication payload before passing- ", leaseApplicationData)
+      // //console.log("----dhyey ---- leaseApplication payload before passing- ", leaseApplicationData)
 
       if (tenantDocuments && tenantDocuments.length !== 0) {
         [...tenantDocuments].forEach((file, i) => {
           index++;
           // const details = []
-          // console.log(`file_${index}`,file.link)
+          // //console.log(`file_${index}`,file.link)
 
           // https://s3-us-west-1.amazonaws.com/io-pm/tenants/350-000010/file_0_20240910221710Z
 
@@ -477,7 +477,7 @@ export default function TenantApplication(props) {
         });
       }
 
-      // console.log("----dhyey ---- leaseApplication payload after passing - ", leaseApplicationData)
+      // //console.log("----dhyey ---- leaseApplication payload after passing - ", leaseApplicationData)
 
       if (deleteDocuments && deleteDocuments?.length !== 0) {
         leaseApplicationData.append("delete_documents", JSON.stringify(deleteDocuments));
@@ -514,7 +514,7 @@ export default function TenantApplication(props) {
       })));
       leaseApplicationData.append("tenant_uid", getProfileId());
 
-      // console.log("----dhyey ---- leaseApplication payload - ", leaseApplicationData)
+      // //console.log("----dhyey ---- leaseApplication payload - ", leaseApplicationData)
 
 
       const leaseApplicationResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
@@ -523,7 +523,7 @@ export default function TenantApplication(props) {
       });
 
       leaseApplicationData.forEach((value, key) => {
-        console.log(`${key}: ${value}`);
+        //console.log(`${key}: ${value}`);
       });
 
       const annoucementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
@@ -556,7 +556,7 @@ export default function TenantApplication(props) {
         }
       });
     } catch (error) {
-      console.log("Error submitting application:", error);
+      //console.log("Error submitting application:", error);
       alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
 
       // navigate("/listings");
@@ -1154,7 +1154,7 @@ export const VehicleDataGrid = ({ vehicles }) => {
 }
 
 export const EmploymentDataGrid = ({ tenantProfile, selectedJobs, setSelectedJobs, leaseStatus, lease }) => {
-  console.log("lease", lease);
+  //console.log("lease", lease);
   const employmentData =
     leaseStatus === "PROCESSING" || leaseStatus === "ACTIVE" || leaseStatus === "NEW"
       ? (lease?.[0]?.lease_income ? JSON.parse(lease[0].lease_income) : [])

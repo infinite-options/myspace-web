@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const LeaseFees = ({ leaseFees, titleFontSize, isEditable, setLeaseFees, setDeleteFees, startDate }) => {
-  // console.log("lease fees", leaseFees);
+  // //console.log("lease fees", leaseFees);
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -526,7 +526,7 @@ const LeaseFees = ({ leaseFees, titleFontSize, isEditable, setLeaseFees, setDele
   const handleClickEditFee = (row) => {
     // const {id, ...currentFee} = row;
     // setCurrentEditingIndex(row.id);
-    console.log("edit click ", row);
+    //console.log("edit click ", row);
     setCurrentRow(row);
     setIsEditing(true);
     setOpen(true);
@@ -534,7 +534,7 @@ const LeaseFees = ({ leaseFees, titleFontSize, isEditable, setLeaseFees, setDele
 
   const handleDeleteClickFee = (index) => {
     if(leaseFees[index].leaseFees_uid){
-      // console.log(leaseFees[index].leaseFees_uid)
+      // //console.log(leaseFees[index].leaseFees_uid)
       setDeleteFees((prev)=> [...prev, leaseFees[index].leaseFees_uid]);
     }
     const list = [...leaseFees];
@@ -934,7 +934,7 @@ const LeaseFees = ({ leaseFees, titleFontSize, isEditable, setLeaseFees, setDele
                           };
                         });
                         // setCurrentRow((prev) => {
-                        //   console.log(v.format("MM-DD-YYYY"));
+                        //   //console.log(v.format("MM-DD-YYYY"));
                         //   return {
                         //     ...prev,
                         //     due_by_date: v.format("MM-DD-YYYY"),

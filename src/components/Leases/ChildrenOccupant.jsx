@@ -77,7 +77,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isEditable }) => {
-    // console.log('Inside Children occupants', leaseChildren);
+    // //console.log('Inside Children occupants', leaseChildren);
     const [children, setChildren] = useState([]);
     const [open, setOpen] = useState(false);
     const [currentRow, setCurrentRow] = useState(null);
@@ -93,9 +93,9 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
 
 
     useEffect(() => {
-        console.log('inside children mod', modifiedData);
+        //console.log('inside children mod', modifiedData);
         if (modifiedData && modifiedData.length > 0) {
-            console.log('hap')
+            //console.log('hap')
             editOrUpdateLease();
             handleClose();
         }
@@ -103,7 +103,7 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
 
     useEffect(() => {
         if (leaseChildren && leaseChildren.length > 0) {
-            console.log('leaseChildren', leaseChildren, typeof (leaseChildren));
+            //console.log('leaseChildren', leaseChildren, typeof (leaseChildren));
             //Need Id for datagrid
             if(!setLeaseChildren){
                 const childrenWithIds = leaseChildren.map((child, index) => ({ ...child, id: index }));
@@ -127,7 +127,7 @@ const ChildrenOccupant = ({ leaseChildren, setLeaseChildren, relationships, edit
     };
 
     const showSnackbar = (message, severity) => {
-        console.log('Inside show snackbar');
+        //console.log('Inside show snackbar');
         setSnackbarMessage(message);
         setSnackbarSeverity(severity);
         setSnackbarOpen(true);

@@ -27,15 +27,15 @@ export default function PublicProfile(){
     let maintenanceItem = location.state.maintenanceItem
     let profile = location.state.profile
 
-    console.log("id", id)
-    console.log(maintenanceItem)
+    //console.log("id", id)
+    //console.log(maintenanceItem)
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await fetch(`${APIConfig.baseURL.dev}/profile/${profile}`);
                 const data = await response.json();
-                console.log(data);
+                //console.log(data);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }

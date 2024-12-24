@@ -45,7 +45,7 @@ export default function MaintenanceWorker() {
 
   useEffect(() => {
     if (maintenanceData) {
-      // console.log("maintenanceData", maintenanceData)
+      // //console.log("maintenanceData", maintenanceData)
 
       const propertyList = [];
       const priorityList = [];
@@ -72,7 +72,7 @@ export default function MaintenanceWorker() {
 
       setFilterPriorityList(priorityList);
 
-      // console.log("filterPropertyList", propertyList)
+      // //console.log("filterPropertyList", propertyList)
       setFilterPropertyList(propertyList);
     }
   }, [maintenanceData]);
@@ -170,10 +170,10 @@ export default function MaintenanceWorker() {
     const dataObject = {};
     const getMaintenanceData = async () => {
       setShowSpinner(true);
-      console.log("About to call maintenanceStatus endpoint Maintenance Worker");
+      //console.log("About to call maintenanceStatus endpoint Maintenance Worker");
       const maintenanceRequests = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${getProfileId()}`); // Change back to ${getProfileId()}
       const maintenanceRequestsData = await maintenanceRequests.json();
-      // console.log("maintenanceRequestsData", maintenanceRequestsData)
+      // //console.log("maintenanceRequestsData", maintenanceRequestsData)
 
       let array1 = maintenanceRequestsData.result.REQUESTED?.maintenance_items ?? [];
       let array2 = maintenanceRequestsData.result.SUBMITTED?.maintenance_items ?? [];
@@ -189,7 +189,7 @@ export default function MaintenanceWorker() {
       dataObject["FINISHED"] = [...array5];
       dataObject["PAID"] = [...array6];
 
-      // console.log("dataObject from new api call", dataObject)
+      // //console.log("dataObject from new api call", dataObject)
       setMaintenanceData((prevData) => ({
         ...prevData,
         ...dataObject,

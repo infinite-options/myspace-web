@@ -97,8 +97,8 @@ export default function EditProfileSettings() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log("FORM SUBMITTED");
-        console.log(modifiedData);
+        //console.log("FORM SUBMITTED");
+        //console.log(modifiedData);
 
         const formData = new FormData();
         for (const key in modifiedData) {
@@ -125,17 +125,17 @@ export default function EditProfileSettings() {
         };
 
         if(isEdited){
-            console.log("EDITED")
+            //console.log("EDITED")
             // axios.put('http://localhost:4000/ownerProfile', modifiedData, headers)
             axios.put(`${APIConfig.baseURL.dev}/profile`, formData, headers)
             .then((response) => {
-                console.log('Data updated successfully');
+                //console.log('Data updated successfully');
                 setIsEdited(false); // Reset the edit status
                 navigate(-1)
             })
             .catch((error) => {
                 if(error.response){
-                    console.log(error.response.data);
+                    //console.log(error.response.data);
                 }
             });
         }

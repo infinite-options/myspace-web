@@ -53,7 +53,7 @@ export default function QuoteRequestForm({ setRefresh }) {
 		navigationParams = location.state.navigateParams;
 	}
 
-	// console.log("maintenance quote from request form  - ", maintenanceQuotes);
+	// //console.log("maintenance quote from request form  - ", maintenanceQuotes);
 
 	const alreadyRequestedQuotes = selectedStatus !== "New Requests" ? (maintenanceQuotes ? maintenanceQuotes : []) : [];
 
@@ -63,7 +63,7 @@ export default function QuoteRequestForm({ setRefresh }) {
 	);
 
 	useEffect(() => {
-		// console.log(alreadyRequestedQuotes);
+		// //console.log(alreadyRequestedQuotes);
 	}, []);
 
 	const [selectedImageList, setSelectedImageList] = useState([]);
@@ -79,18 +79,18 @@ export default function QuoteRequestForm({ setRefresh }) {
 	const [showSpinner, setShowSpinner] = useState(false);
 
 	const handleMaintenanceChange = (event) => {
-		// console.log("handleStateChange", event.target.value);
+		// //console.log("handleStateChange", event.target.value);
 		setMaintenanceContacts((prevContacts) => new Set([...prevContacts, event.target.value]));
 	};
 
 	function navigateToAddMaintenanceItem() {
-		// console.log("navigateToAddMaintenanceItem")
+		// //console.log("navigateToAddMaintenanceItem")
 		navigate('/addMaintenanceItem', { state: { month, year } });
 	}
 
 	function handleBackButton() {
 		
-		// console.log("handleBackButton")
+		// //console.log("handleBackButton")
 		let maintenance_request_index = navigationParams.maintenanceRequestIndex;
 		let status = navigationParams.status;
 		let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus;
@@ -141,7 +141,7 @@ export default function QuoteRequestForm({ setRefresh }) {
 			  body: formData,
 			});
 		  } catch (error) {
-			console.log('error', error);
+			//console.log('error', error);
 		  }
 		  setShowSpinner(false);
 		};
@@ -149,7 +149,7 @@ export default function QuoteRequestForm({ setRefresh }) {
 		// Creates a list of business_uids from the maintenanceContacts set.
 		let maintenanceContactIds = [];
 		for (let contact of maintenanceContacts) {
-			// console.log("maintenanceContacts[i].maintenance_contact_uid", contact.business_uid);
+			// //console.log("maintenanceContacts[i].maintenance_contact_uid", contact.business_uid);
 			maintenanceContactIds.push(contact.contact_uid);
 		}
 	  
@@ -173,7 +173,7 @@ export default function QuoteRequestForm({ setRefresh }) {
 			});
 	  
 			if (response.status === 200) {
-			  console.log("Quote request sent successfully");
+			  //console.log("Quote request sent successfully");
 			  
 			  // Call the function to change the maintenance request status
 			  await changeMaintenanceRequestStatus();
@@ -192,15 +192,15 @@ export default function QuoteRequestForm({ setRefresh }) {
 			  console.error(`Request failed with status: ${response.status}`);
 			}
 		  } catch (error) {
-			console.log('An error occurred while submitting the quote:', error);
+			//console.log('An error occurred while submitting the quote:', error);
 		  }
 	  
 		  setShowSpinner(false);
 		};
 	  
 		const sendAnnouncement = async (maintenanceContactIds) => {
-			// console.log("sendAnnouncement - maintenanceContactIds - ", maintenanceContactIds);
-			// console.log("sendAnnouncement - maintenanceItem - ", maintenanceItem);			
+			// //console.log("sendAnnouncement - maintenanceContactIds - ", maintenanceContactIds);
+			// //console.log("sendAnnouncement - maintenanceItem - ", maintenanceItem);			
 			try {
 				let receiverPropertyMapping = {}
 				const annReceivers = []
@@ -228,9 +228,9 @@ export default function QuoteRequestForm({ setRefresh }) {
 					announcement_type: ["Email", "Text"],
 				})
 
-				// console.log("QuoteRequestForm - receiverPropertyMapping - ", receiverPropertyMapping);
-				// console.log("QuoteRequestForm - annReceivers - ", annReceivers);
-				// console.log("QuoteRequestForm - payload - ", payload);
+				// //console.log("QuoteRequestForm - receiverPropertyMapping - ", receiverPropertyMapping);
+				// //console.log("QuoteRequestForm - annReceivers - ", annReceivers);
+				// //console.log("QuoteRequestForm - payload - ", payload);
 
 				await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
 				method: "POST",
@@ -240,7 +240,7 @@ export default function QuoteRequestForm({ setRefresh }) {
 				body: payload,
 				});
 			} catch (error) {
-				console.log("Error in sending announcement for requesting quotes:", error);
+				//console.log("Error in sending announcement for requesting quotes:", error);
 				alert("We were unable to send a Text but we were able to send them a notification through the App");
 			}
 			};
@@ -261,9 +261,9 @@ export default function QuoteRequestForm({ setRefresh }) {
 	}
 
 	function displayContactList() {
-		// console.log("displayContactList")
-		// console.log("contactList length", contactList.length)
-		// console.log("contactList", contactList)
+		// //console.log("displayContactList")
+		// //console.log("contactList length", contactList.length)
+		// //console.log("contactList", contactList)
 		if (contactList.length > 0) {
 			return contactList.map((contact, index) => (
 				<MenuItem key={index} value={contact}>
@@ -277,7 +277,7 @@ export default function QuoteRequestForm({ setRefresh }) {
 	}
 
 	useEffect(() => {
-		// console.log("get all maintenance workers")
+		// //console.log("get all maintenance workers")
 
 		const getMaintenanceWorkers = async (requestedQuotes) => {
 			setShowSpinner(true);
@@ -289,11 +289,11 @@ export default function QuoteRequestForm({ setRefresh }) {
 
 			const workers = data.maintenance_businesses.result;
 
-			console.log('workers', workers);
+			//console.log('workers', workers);
 			//workers.filter((worker) => worker.business_name != "DoLittle Maintenance")
 			// Get a list of maint_business_uid values from requestedQuotes
 			const requestedBusinessUids = requestedQuotes.map((quote) => quote.contact_uid);
-			console.log('requestedBusinessUids', requestedBusinessUids);
+			//console.log('requestedBusinessUids', requestedBusinessUids);
 
 			// Filter out workers whose business_uid is in requestedBusinessUids
 
@@ -314,7 +314,7 @@ export default function QuoteRequestForm({ setRefresh }) {
 	}, []);
 
 	// useEffect(() => {
-	//     console.log("selectedImageList", selectedImageList)
+	//     //console.log("selectedImageList", selectedImageList)
 	// }, [selectedImageList])
 
 	return (

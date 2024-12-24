@@ -45,7 +45,7 @@ import ListsContext from "../../contexts/ListsContext";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 export default function AddTenantMaintenanceItem({ closeAddTenantMaintenanceItem, newTenantMaintenanceState, setRightPane, setReload, isMobile, setViewRHS }) {
-    console.log("---closeAddTenantMaintenanceItem---", closeAddTenantMaintenanceItem);
+    //console.log("---closeAddTenantMaintenanceItem---", closeAddTenantMaintenanceItem);
     const location = useLocation();
     let navigate = useNavigate();
     const { user, getProfileId, dashboardRoutingBasedOnSelectedRole } = useUser();
@@ -66,11 +66,11 @@ export default function AddTenantMaintenanceItem({ closeAddTenantMaintenanceItem
     const [errorFlag, setErrorFlag] = useState(false);
 
     // useEffect(() => {
-    //     console.log(selectedImageList)
+    //     //console.log(selectedImageList)
     // }, [selectedImageList])
 
     useEffect(() => {
-        console.log("property - ", property, lease);
+        //console.log("property - ", property, lease);
     }, [property])
 
     const handlePropertyChange = (event) => {
@@ -123,7 +123,7 @@ export default function AddTenantMaintenanceItem({ closeAddTenantMaintenanceItem
     };
 
     const handleBackButton = () => {
-        console.log("handleBackButton");
+        //console.log("handleBackButton");
         if (isMobile) {
             setViewRHS(false)
         }
@@ -131,7 +131,7 @@ export default function AddTenantMaintenanceItem({ closeAddTenantMaintenanceItem
     }
 
     const handleSubmit = async (event) => {
-        // console.log("handleSubmit")
+        // //console.log("handleSubmit")
         setShowSpinner(true);
 
         event.preventDefault();
@@ -179,7 +179,7 @@ export default function AddTenantMaintenanceItem({ closeAddTenantMaintenanceItem
 
 
         for (let [key, value] of formData.entries()) {
-            console.log(key, value);
+            //console.log(key, value);
         }
 
 
@@ -196,7 +196,7 @@ export default function AddTenantMaintenanceItem({ closeAddTenantMaintenanceItem
                 //     body: formData,
                 // })
                 const data = await response.json();
-                console.log("data response", data)
+                //console.log("data response", data)
             } catch (err) {
                 console.error("Error posting data:", err);
             }
@@ -209,7 +209,7 @@ export default function AddTenantMaintenanceItem({ closeAddTenantMaintenanceItem
                 const receiverPropertyMapping = {
                     [lease.business_uid]: [property.property_uid],
                 };
-                // console.log("sendAnnouncement - receiverPropertyMapping - ", receiverPropertyMapping);
+                // //console.log("sendAnnouncement - receiverPropertyMapping - ", receiverPropertyMapping);
 
                 await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
                     // const annoucementsResponse = fetch(`http://localhost:4000/announcements/${getProfileId()}`, {
@@ -231,7 +231,7 @@ export default function AddTenantMaintenanceItem({ closeAddTenantMaintenanceItem
                 })
 
             } catch (error) {
-                console.log("Error in Tenant Maintainance announcements:", error);
+                //console.log("Error in Tenant Maintainance announcements:", error);
                 alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
 
             }

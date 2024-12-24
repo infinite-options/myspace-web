@@ -71,23 +71,23 @@ const ContactsPM = () => {
   }, []);
 
   useEffect(() => {
-    // console.log("ROHIT - currentIndex - ", currentIndex);
+    // //console.log("ROHIT - currentIndex - ", currentIndex);
   }, [currentIndex]);
 
   useEffect(() => {
     if (location.state && contactsData) {
       let newTab = contactsTabState;
       let newIndex = 0;
-      // console.log("ROHIT - here 1")
+      // //console.log("ROHIT - here 1")
 
       if (newTab === "Manager" && managerIdState) {
         const managerIndex = contactsData?.managers?.findIndex((manager) => manager.business_uid === managerIdState);
 
         newIndex = managerIndex >= 0 ? managerIndex : 0;
       } else if (newTab === "Tenant" && tenantId && selectedRole !== "TENANT") {
-        // console.log("ROHIT - here 2");
+        // //console.log("ROHIT - here 2");
         const tenantIndex = contactsData?.tenants?.findIndex((tenant) => tenant.tenant_uid === tenantId);
-        // console.log("ROHIT - tenantIndex - ", tenantIndex);
+        // //console.log("ROHIT - tenantIndex - ", tenantIndex);
         newIndex = tenantIndex >= 0 ? tenantIndex : 0;
       } else if (newTab === "Owner" && ownerId) {
         const ownerIndex = contactsData?.owners?.findIndex((owner) => owner.owner_uid === ownerId);
@@ -105,8 +105,8 @@ const ContactsPM = () => {
   //   }
   // }, [contactsTab]);
   useEffect(() => {
-    // console.log("ROHIT - 103 - contactsTab - ", contactsTab)
-    // console.log("ROHIT - 103 - prevContactsTabRef.current - ", prevContactsTabRef.current)
+    // //console.log("ROHIT - 103 - contactsTab - ", contactsTab)
+    // //console.log("ROHIT - 103 - prevContactsTabRef.current - ", prevContactsTabRef.current)
 
     if (contactsTab !== prevContactsTabRef.current) {
       setCurrentIndex(0);

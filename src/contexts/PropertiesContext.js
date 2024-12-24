@@ -27,7 +27,7 @@ function getPropertyList(data) {
         });
     }
 
-    //   console.log(maintMap);
+    //   //console.log(maintMap);
     return propertyList?.map((p) => {
         //p.applications = appsMap.get(p.property_uid) || []; //Replaced applications with leases
         p.leases = appsMap.get(p.property_uid) || [];
@@ -66,12 +66,12 @@ export const PropertiesProvider = ({ children }) => {
   const [ currentProperty, setCurrentProperty ] = useState(null);
 
   const handleSortPropertyList = (propertyList) => {
-    // console.log("handleSorting called ");
+    // //console.log("handleSorting called ");
     setPropertyList(propertyList);
   };
 
   function setPropertyTo(newPropertyUid){
-    console.log("setPropertyTo - newPropertyUid - ", newPropertyUid);
+    //console.log("setPropertyTo - newPropertyUid - ", newPropertyUid);
     // setShowSpinner(true);
 
     if(newPropertyUid != ""){
@@ -102,19 +102,19 @@ export const PropertiesProvider = ({ children }) => {
     propertyListRef.current = propertyList;
   },[propertyList, newPropertyUid])
 //   useEffect(() => {
-//     console.log("PropertiesProvider - propertyList - ",propertyList);
+//     //console.log("PropertiesProvider - propertyList - ",propertyList);
 //   }, [propertyList]);
 
 //   useEffect(() => {
-//     console.log("PropertiesProvider - returnIndex - ",returnIndex);
+//     //console.log("PropertiesProvider - returnIndex - ",returnIndex);
 //   }, [returnIndex]);
 
 //   useEffect(() => {
-//     console.log("PropertiesProvider - currentPropertyID - ",currentPropertyID);
+//     //console.log("PropertiesProvider - currentPropertyID - ",currentPropertyID);
 //   }, [currentPropertyID]);
 
 //   useEffect(() => {
-//     console.log("PropertiesProvider - currentProperty - ",currentProperty);
+//     //console.log("PropertiesProvider - currentProperty - ",currentProperty);
 //   }, [currentProperty]);
 
   const fetchProperties = async () => {        
@@ -124,7 +124,7 @@ export const PropertiesProvider = ({ children }) => {
     }
     const propertyData = await property_response.json();
     const propertyList = getPropertyList(propertyData); // This combines Properties with Applications and Maitenance Items to enable the LHS screen
-    // console.log("In Properties > Property Endpoint: ", propertyList);
+    // //console.log("In Properties > Property Endpoint: ", propertyList);
     
     
     // setRawPropertyData(propertyData); // Sets rawPropertyData to be based into Edit Properties Function
@@ -136,7 +136,7 @@ export const PropertiesProvider = ({ children }) => {
     
 
     if (propertyData.Property.code === 200) {
-      // console.log("Endpoint Data is Ready");
+      // //console.log("Endpoint Data is Ready");
       setDataReady(true);
     }    
   };
@@ -147,7 +147,7 @@ export const PropertiesProvider = ({ children }) => {
         console.error("Error fetching Rent Details data");
     }
     const rentResponse = await rent_response.json();
-    // console.log("In Properties > Rent Endpoint: ", rentResponse.RentStatus.result);
+    // //console.log("In Properties > Rent Endpoint: ", rentResponse.RentStatus.result);
     setAllRentStatus(rentResponse.RentStatus.result);
 }
 
@@ -157,7 +157,7 @@ const fetchContracts = async () => {
         console.error("Error fetching Contract Details data");
     }
     const contractsResponse = await contract_response.json();
-    // console.log("In Properties > Contract Endpoint: ", contractsResponse.result);
+    // //console.log("In Properties > Contract Endpoint: ", contractsResponse.result);
     setAllContracts(contractsResponse.result);
 }
 

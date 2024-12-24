@@ -21,7 +21,7 @@ const AddNewRole = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user_uid, newRole } = location.state; // Access passed state here
-  console.log("----dhyey--- , from addnewrole file newRole - ", newRole)
+  //console.log("----dhyey--- , from addnewrole file newRole - ", newRole)
   const { user, setUser, setAuthData, updateProfileUid, selectRole, setLoggedIn } = useUser();
   const [cookie, setCookie] = useCookies(["default_form_vals"]);
   const cookiesData = cookie["default_form_vals"];
@@ -34,9 +34,9 @@ const AddNewRole = () => {
   const [phoneNumber, setPhoneNumber] = useState(user.phone_number);
   const [businessPhoneNumber, setBusinessPhoneNumber] = useState(user.phone_number);
 
-  console.log("cookiesData is set to ****", cookiesData);
+  //console.log("cookiesData is set to ****", cookiesData);
 
-  console.log("user data has ***$$", user);
+  //console.log("user data has ***$$", user);
 
   const validate_form = () => {
     if ((newRole === "TENANT" || newRole === "OWNER") && (firstName === "" || lastName === "" || phoneNumber === "" || email === "")) {
@@ -151,19 +151,19 @@ const AddNewRole = () => {
   const createUserProfile = async () => {
     const emailToCheck = newRole === "TENANT" || newRole === "OWNER" ? email : businessEmail;
     const userExists = await checkIfUserExists(emailToCheck);
-    console.log(" userExists  ", userExists);
+    //console.log(" userExists  ", userExists);
     if (userExists && userExists.data.result[0].user_uid != user.user_uid) {
       alert("User with this email already exists");
       return;
     }
-    // console.log("newRole - ", newRole);
+    // //console.log("newRole - ", newRole);
     const payload = getPayload(newRole, user_uid);
     const form = encodeForm(payload);
     const data = await createProfile(form, newRole);
     handleUpdateProfileUid(data);
-    console.log("Cookies before setting default_form_vals:", document.cookie);
+    //console.log("Cookies before setting default_form_vals:", document.cookie);
     setCookie("default_form_vals", { ...cookiesData, phoneNumber, email });
-    console.log("Cookies after setting default_form_vals:", document.cookie);
+    //console.log("Cookies after setting default_form_vals:", document.cookie);
 
     selectRole(newRole);
     const existingRoles = user.role ? user.role.split(",") : [];
@@ -188,9 +188,9 @@ const AddNewRole = () => {
       role_id = { businesses };
     }
 
-    console.log("user will have %%%", user);
-    console.log("user will have role_id%%%", role_id);
-    console.log("user will have role%%%", updatedRole);
+    //console.log("user will have %%%", user);
+    //console.log("user will have role_id%%%", role_id);
+    //console.log("user will have role%%%", updatedRole);
     setCookie("user", { ...user, ...role_id, role: updatedRole });
     setUser({ ...user, ...role_id, role: updatedRole });
 

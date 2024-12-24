@@ -35,12 +35,12 @@ export const getChipColor = (priority) => {
 };
 
 export default function WorkerMaintenanceStatusTable({ status, color, maintenanceItemsForStatus, allMaintenanceData, allMaintenanceStatusData, maintenanceRequestsByQuoteStatus, maintenanceRequestsByStatus, maintenanceRequestsCount, onSelectRequest }) {
-  // console.log('--inside table---', maintenanceRequestsCount);
+  // //console.log('--inside table---', maintenanceRequestsCount);
   const location = useLocation();
   let navigate = useNavigate();
   const { user, getProfileId, } = useUser();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  console.log("MaintenanceStatusTable", maintenanceItemsForStatus, status);	
+  //console.log("MaintenanceStatusTable", maintenanceItemsForStatus, status);	
   let maintenanceRequests = maintenanceRequestsByQuoteStatus;
   let data = maintenanceRequestsByStatus;
 
@@ -132,11 +132,11 @@ export default function WorkerMaintenanceStatusTable({ status, color, maintenanc
 
   async function handleRequestDetailPage(maintenance_request_index, property_uid, maintenance_request_uid) {
     
-    // console.log("handleRequestDetailPage")
-    //console.log("maintenance_request_index", maintenance_request_index)
-    //console.log("status", status);
-    //console.log("maintenanceItemsForStatus", maintenanceItemsForStatus);
-    //console.log("inside func allMaintenanceData", allMaintenanceData);
+    // //console.log("handleRequestDetailPage")
+    ////console.log("maintenance_request_index", maintenance_request_index)
+    ////console.log("status", status);
+    ////console.log("maintenanceItemsForStatus", maintenanceItemsForStatus);
+    ////console.log("inside func allMaintenanceData", allMaintenanceData);
     if (isMobile) {
 
       navigate(`/workerMaintenance/detail`, {

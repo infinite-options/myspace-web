@@ -91,7 +91,7 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex, propert
               <Grid item xs={1}>
                   <Box
                       onClick={() => {
-                        console.log("Previous button clicked", currentIndex, contactDetails.length);
+                        //console.log("Previous button clicked", currentIndex, contactDetails.length);
                         currentIndex > 0 ? setCurrentIndex(currentIndex - 1) : setCurrentIndex(contactDetails.length - 1);
                       }}
                       sx={{
@@ -140,7 +140,7 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex, propert
               <Grid item xs={1}  container justifyContent='flex-end'>
                   <Box
                       onClick={() => {
-                        console.log("Next button clicked");
+                        //console.log("Next button clicked");
                         currentIndex < contactDetails.length - 1 ? setCurrentIndex(currentIndex + 1) : setCurrentIndex(0);
                       }}
                       sx={{
@@ -345,7 +345,7 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex, propert
   
   const WorkOrdersAccordion = ({ data }) => {
     const colorStatus = theme.colorStatusMM;
-    console.log("WorkOrdersAccordion - data - ", data);
+    //console.log("WorkOrdersAccordion - data - ", data);
     // const allMaintenanceRequests = [];
     const [ maintenanceRequests, setMaintenanceRequests ] = useState({})
   
@@ -376,7 +376,7 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex, propert
     }, [data]);
   
     useEffect(() => {
-      console.log("WorkOrdersAccordion - maintenanceRequests - ", maintenanceRequests);
+      //console.log("WorkOrdersAccordion - maintenanceRequests - ", maintenanceRequests);
     }, [maintenanceRequests]);
   
     
@@ -421,7 +421,7 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex, propert
     
     //         // dataObject["REJECTED"] = [...rejectedQuotes];
     
-    //         // console.log("dataObject from new api call", dataObject)
+    //         // //console.log("dataObject from new api call", dataObject)
     //         setMaintenanceRequests((prevData) => ({
     //             ...prevData,
     //             ...dataObject,
@@ -450,14 +450,14 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex, propert
                     let maintenanceArray = maintenanceRequests[mappingKey];
                     // let maintenanceItems = maintenanceArray? JSON.parse(maintenanceArray?.maintenance_request_info) : []
                     let maintenanceItems = maintenanceArray? maintenanceArray?.maintenance_request_info : []
-                    console.log("maintenanceArray - ", maintenanceArray);
-                    console.log("maintenanceArray.maintenance_request_info - ", maintenanceArray?.maintenance_request_info);                  
-                    console.log("maintenanceItems - ", maintenanceItems);
+                    //console.log("maintenanceArray - ", maintenanceArray);
+                    //console.log("maintenanceArray.maintenance_request_info - ", maintenanceArray?.maintenance_request_info);                  
+                    //console.log("maintenanceItems - ", maintenanceItems);
   
                     // let maintenanceArray = maintenanceRequests[mappingKey]?  JSON.parse(maintenanceRequests[mappingKey]?.maintenance_request_info) : [];
   
                     let filteredArray = handleFilter(query, maintenanceRequests[mappingKey]);
-                    // console.log("[DEBUG] MaintenanceWorkerDashboardWidget.jsx before MaintenanceStatusTable01")
+                    // //console.log("[DEBUG] MaintenanceWorkerDashboardWidget.jsx before MaintenanceStatusTable01")
   
                     return (
                     <WorkerMaintenanceStatusTable
@@ -501,8 +501,8 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex, propert
     const location = useLocation();
     let navigate = useNavigate();
   
-    console.log("WorkerMaintenanceStatusTable - maintenanceItemsForStatus - ", maintenanceItemsForStatus);
-    // console.log("MaintenanceStatusTable", status, color, maintenanceItemsForStatus)
+    //console.log("WorkerMaintenanceStatusTable - maintenanceItemsForStatus - ", maintenanceItemsForStatus);
+    // //console.log("MaintenanceStatusTable", status, color, maintenanceItemsForStatus)
   
     const tableTextStyle = {
       backgroundColor: color,
@@ -591,11 +591,11 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex, propert
     ];
   
     function handleRequestDetailPage(maintenance_request_index, property_uid, maintenance_request_uid) {
-      // console.log("handleRequestDetailPage")
-      // console.log("maintenance_request_index", maintenance_request_index)
-      // console.log("status", status)
-      // console.log("maintenanceItemsForStatus", maintenanceItemsForStatus)
-      // console.log("allMaintenanceData", allMaintenanceData)
+      // //console.log("handleRequestDetailPage")
+      // //console.log("maintenance_request_index", maintenance_request_index)
+      // //console.log("status", status)
+      // //console.log("maintenanceItemsForStatus", maintenanceItemsForStatus)
+      // //console.log("allMaintenanceData", allMaintenanceData)
   
       navigate(`/workerMaintenance/detail`, {
         state: {
@@ -725,7 +725,7 @@ const MaintenanceContactDetail = ({ data, currentIndex, setCurrentIndex, propert
     }, [data]);
   
     useEffect(() => {
-      console.log("MaintenanceCashflowWidget - maintenanceRequests - ", maintenanceRequests);
+      //console.log("MaintenanceCashflowWidget - maintenanceRequests - ", maintenanceRequests);
     }, [maintenanceRequests]);
   
   

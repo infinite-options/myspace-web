@@ -52,7 +52,7 @@ const WaiverForm = () => {
         e.preventDefault();
         if (validateForm()) {
           // Process form submission (send data to backend)
-          console.log('Form submitted', formData);
+          //console.log('Form submitted', formData);
           navigate('/confirmation');
         }
       };

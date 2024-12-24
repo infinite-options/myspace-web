@@ -40,14 +40,14 @@ const ManagerSelectPayment = ({ selectedPayment, selectedPurGroup, }) => {
     //         }
     //     }, 0);
         
-    //     console.log("ROHIT - total - ", total);
+    //     //console.log("ROHIT - total - ", total);
     // }, [transactionsList]);
     const handlePaymentNotesChange = (event) => {
         setPaymentNotes(event.target.value);
     };
-    console.log("selectedPayment - ", selectedPayment);
-    console.log("selectedPurGroup - ", selectedPurGroup);
-    console.log("payment Notes", paymentNotes);
+    //console.log("selectedPayment - ", selectedPayment);
+    //console.log("selectedPurGroup - ", selectedPurGroup);
+    //console.log("payment Notes", paymentNotes);
   
     return (
         <>

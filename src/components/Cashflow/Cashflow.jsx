@@ -84,7 +84,7 @@ export default function Cashflow() {
   ];
 
   const date = new Date();
-  console.log("month fetch - ", location.state.month)
+  //console.log("month fetch - ", location.state.month)
   const [month, setMonth] = useState(location.state.month || "January");
   const [year, setYear] = useState(location.state.year || "2024");
   const currentMonth = monthNames[date.getMonth()];
@@ -93,7 +93,7 @@ export default function Cashflow() {
 
   const [cashflowData, setCashflowData] = useState(null); // Cashflow data from API
   const [cashflowData2, setCashflowData2] = useState(location.state?.cashFlowData?location.state?.cashFlowData : null); // Cashflow data from API
-  // console.log(location.state?.cashFlowData);
+  // //console.log(location.state?.cashFlowData);
 
   const [expectedRevenueByMonth, setExpectedRevenueByMonth] = useState(0);
   const [expectedExpenseByMonth, setExpectedExpenseByMonth] = useState(0);
@@ -141,7 +141,7 @@ export default function Cashflow() {
   //     // const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflow/${userProfileId}/TTM`);
   //     // const cashflow = await axios.get(`${APIConfig.baseURL.dev}/cashflow/110-000003/TTM`);
   //     const properties = await axios.get(`${APIConfig.baseURL.dev}/properties/${userProfileId}`);
-  //     // console.log("Owner Properties: ", properties.data);
+  //     // //console.log("Owner Properties: ", properties.data);
   //     return properties.data;
   //   } catch (error) {
   //     console.error("Error fetching properties data:", error);
@@ -154,7 +154,7 @@ export default function Cashflow() {
     if(currentWindow === "CASHFLOW_DETAILS"){
       fetchCashflow2(profileId)
       .then((data) => {
-        // console.log("yes window is change")
+        // //console.log("yes window is change")
 
         setOriginalCashFlowData(data)
 
@@ -297,7 +297,7 @@ export default function Cashflow() {
     
         // const RevenueByType = getTotalRevenueByTypeByProperty({ result: expe }, month, year, false, propertyUID);
         const ExpenseByType = getTotalExpenseByTypeByProperty({ result: expenseItems }, month, year, false, propertyUID);
-        // console.log("inside expense by property - ", ExpenseByType)
+        // //console.log("inside expense by property - ", ExpenseByType)
       
         // const expectedRevenueByType = getTotalRevenueByTypeByProperty({ result: revenueItems }, month, year, true, propertyUID);
         const expectedExpenseByType = getTotalExpenseByTypeByProperty({ result: expenseItems }, month, year, true, propertyUID);
@@ -313,15 +313,15 @@ export default function Cashflow() {
 
       let revenueMapping = getTotalRevenueByType(cashflowData2, month, year, false);
       let expenseMapping = getTotalExpenseByType(cashflowData2, month, year, false);
-      // console.log("revenueMapping", revenueMapping)
-      // console.log("expenseMapping", expenseMapping)
+      // //console.log("revenueMapping", revenueMapping)
+      // //console.log("expenseMapping", expenseMapping)
       setRevenueByType(revenueMapping);
       setExpenseByType(expenseMapping);
 
       let expectedRevenueByType = getTotalRevenueByType(cashflowData2, month, year, true);
       let expectedExpenseByType = getTotalExpenseByType(cashflowData2, month, year, true);
-      // console.log("expectedRevenueByType", expectedRevenueByType)
-      // console.log("expectedExpenseByType", expectedExpenseByType)
+      // //console.log("expectedRevenueByType", expectedRevenueByType)
+      // //console.log("expectedExpenseByType", expectedExpenseByType)
       setExpectedRevenueByType(expectedRevenueByType);
       setExpectedExpenseByType(expectedExpenseByType);
 
@@ -348,11 +348,11 @@ export default function Cashflow() {
   }
 
   // useEffect(() => {
-  //   console.log("propertyList - ", propertyList);
+  //   //console.log("propertyList - ", propertyList);
   // }, [propertyList]);
 
   // useEffect(() => {
-  //   console.log("cashflowData2 - ", cashflowData2);
+  //   //console.log("cashflowData2 - ", cashflowData2);
   // }, [cashflowData2]);
 
   return (
@@ -1223,7 +1223,7 @@ const CashflowDetails = ({
               {/* <RevenueTable totalRevenueByType={revenueByType} expectedRevenueByType={expectedRevenueByType} revenueList={revenueList} activeView={activeButton}/>             */}
               {revenueByTypeByProperty && Object.keys(revenueByTypeByProperty).map((propertyUID, index) => {
                 const property = revenueByTypeByProperty[propertyUID];
-                // console.log("property - ", property);
+                // //console.log("property - ", property);
                 return (
                   <>
                     <Accordion
@@ -1507,7 +1507,7 @@ function SelectMonthComponentTest(props) {
 
 // This is the function that controls what and how the cashflow data is displayed
 function StatementTable(props) {
-  // console.log(props)
+  // //console.log(props)
   const navigate = useNavigate();
 
   const isMobile = props.isMobile;
@@ -1535,7 +1535,7 @@ function StatementTable(props) {
     if(category.toUpperCase() === "RENT"){
       category = "RENT DUE OWNER";
     }
-    // console.log("getCategoryCount - allItems - ", allItems);
+    // //console.log("getCategoryCount - allItems - ", allItems);
     let filteredItems = allItems.filter((item) => item.purchase_type.toUpperCase() === category.toUpperCase() && item.cf_month === month && item.cf_year === year);
     // let items = filteredItems?.map((item) => ({ ...item, property: JSON.parse(item.property) }));
     let count = 0

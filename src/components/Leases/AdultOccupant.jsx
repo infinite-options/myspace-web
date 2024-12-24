@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdateLease, setModifiedData, modifiedData, dataKey, isEditable }) => {
-    // console.log('Inside Adult occupants', leaseAdults, relationships);
+    // //console.log('Inside Adult occupants', leaseAdults, relationships);
     const [adults, setAdults] = useState([]);
     const [open, setOpen] = useState(false);
     const [currentRow, setCurrentRow] = useState(null);
@@ -68,9 +68,9 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
     const [isUpdated, setIsUpdated] = useState(false);
 
     useEffect(() => {
-        console.log('inside mod', modifiedData);
+        //console.log('inside mod', modifiedData);
         if (modifiedData && modifiedData.length > 0) {
-            console.log('hap1', modifiedData);
+            //console.log('hap1', modifiedData);
             editOrUpdateLease();
             handleClose();
         }
@@ -78,7 +78,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
 
     useEffect(() => {
         if (leaseAdults && leaseAdults.length > 0) {
-            // console.log('leaseAdults', leaseAdults, typeof (leaseAdults));
+            // //console.log('leaseAdults', leaseAdults, typeof (leaseAdults));
             //Need Id for datagrid
             if(!setLeaseAdults){
                 const adultsWithIds = leaseAdults.map((adult, index) => ({ ...adult, id: index }));
@@ -102,7 +102,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
     };
 
     const showSnackbar = (message, severity) => {
-        console.log('Inside show snackbar');
+        //console.log('Inside show snackbar');
         setSnackbarMessage(message);
         setSnackbarSeverity(severity);
         setSnackbarOpen(true);
@@ -120,7 +120,7 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
                 const rowWithoutId = updatedRow.map(({ id, ...rest }) => rest);
                
 
-                // console.log("129 - updatedRow - ", updatedRow);
+                // //console.log("129 - updatedRow - ", updatedRow);
                 if(setLeaseAdults){
                     setLeaseAdults((prevLeaseAdults) =>
                         prevLeaseAdults.map((adult) => 
@@ -132,8 +132,8 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
                 }
                 
                 
-                // console.log("--- DEBUG -- rows without id in edit adult - ", rowWithoutId)
-                // console.log("--- DEBUG -- modified data - ", modifiedData)
+                // //console.log("--- DEBUG -- rows without id in edit adult - ", rowWithoutId)
+                // //console.log("--- DEBUG -- modified data - ", modifiedData)
                 // Check if `prev` is an array before spreading it
                 // setModifiedData((prev) => Array.isArray(prev) ? [...prev, { key: dataKey, value: rowWithoutId }] : [{ key: dataKey, value: rowWithoutId }]);
                 setModifiedData((prev) => {
@@ -160,11 +160,11 @@ const AdultOccupant = ({ leaseAdults, setLeaseAdults, relationships, editOrUpdat
         } else {
             const { id, ...newRowWithoutId } = currentRow;
 
-            // console.log("139 - currentRow - ", currentRow);
+            // //console.log("139 - currentRow - ", currentRow);
     
             // Check if `prev` is an array before spreading it
-            // console.log("--- DEBUG -- rows without id in add adult - ", newRowWithoutId)
-            // console.log("--- DEBUG -- modified data - ", modifiedData)
+            // //console.log("--- DEBUG -- rows without id in add adult - ", newRowWithoutId)
+            // //console.log("--- DEBUG -- modified data - ", modifiedData)
             // setModifiedData((prev) => Array.isArray(prev) ? [...prev, { key: dataKey, value: [...leaseAdults, newRowWithoutId] }] : [{ key: dataKey, value: [...leaseAdults, newRowWithoutId] }]);            
             if(setLeaseAdults){
                 setLeaseAdults((prevLeaseAdults) => [

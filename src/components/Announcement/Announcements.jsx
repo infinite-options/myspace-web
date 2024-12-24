@@ -19,7 +19,7 @@ import APIConfig from "../../utils/APIConfig";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from '../../utils/httpMiddleware';
 
 export default function Announcements({ sentAnnouncementData, recvAnnouncementData, setView, handleBack }) {
-  // console.log("intial commit");
+  // //console.log("intial commit");
   const { user, getProfileId, selectedRole, selectRole, Name } = useUser();
   const [announcementData, setAnnouncementData] = useState([]);
   const [sentData, setSentData] = useState(sentAnnouncementData ? sentAnnouncementData : []);
@@ -86,7 +86,7 @@ export default function Announcements({ sentAnnouncementData, recvAnnouncementDa
   const [dataDetails, setDataDetails] = useState({});
 
   // useEffect(() => {
-  //     console.log("dataDetails - ", dataDetails);
+  //     //console.log("dataDetails - ", dataDetails);
   // }, [dataDetails]);
 
   const fetchContactData = async () => {
@@ -97,7 +97,7 @@ export default function Announcements({ sentAnnouncementData, recvAnnouncementDa
     await axios
       .get(url)
       .then((resp) => {
-        // console.log("selectedRole - ", selectedRole);
+        // //console.log("selectedRole - ", selectedRole);
         if (selectedRole === "MANAGER") {
           data = resp.data["management_contacts"];
           setDataDetails((prev) => {
@@ -121,7 +121,7 @@ export default function Announcements({ sentAnnouncementData, recvAnnouncementDa
         console.error(e);
         setShowSpinner(false);
       });
-    // console.log(dataDetails);
+    // //console.log(dataDetails);
   };
 
   useEffect(() => {
@@ -132,24 +132,24 @@ export default function Announcements({ sentAnnouncementData, recvAnnouncementDa
   //
 
   const handleAnnouncements = async (announcement) => {
-    console.log("divya", announcement)
+    //console.log("divya", announcement)
     if (announcement.announcement_mode == "PROPERTIES") {
-      // console.log(announcement.announcement_title);
+      // //console.log(announcement.announcement_title);
       navigate("/newOwnerInquiry", { state: { announcementData: announcement } });
     } else if (announcement.announcement_mode == "CONTRACT") {
-      // console.log(announcement.announcement_title)
+      // //console.log(announcement.announcement_title)
       // navigate("/propertyContract",{state: {announcementData: announcement}});
       setAnnData(announcement);
       setShowAnnouncement(true);
       await markAnnouncementAsRead([announcement.announcement_uid]);
     } else if (announcement.announcement_mode == "LEASE") {
-      // console.log(announcement.announcement_title);
+      // //console.log(announcement.announcement_title);
       setAnnData(announcement);
       await setShowAnnouncement(true);
       await markAnnouncementAsRead([announcement.announcement_uid]);
     }
     else if (announcement.announcement_mode == "MAINTENANCE") {
-      // console.log(announcement.announcement_title);
+      // //console.log(announcement.announcement_title);
       setAnnData(announcement);
       await setShowAnnouncement(true);
       await markAnnouncementAsRead([announcement.announcement_uid]);
@@ -166,14 +166,14 @@ export default function Announcements({ sentAnnouncementData, recvAnnouncementDa
         announcement_uid: announcementList
       }),
     }).then((res) => {
-      console.log('res is', res);
+      //console.log('res is', res);
       if (res.status === 200) {
         setIsMsgRead(prev => !prev);
         return res.status
       }
 
     }).catch((err) => {
-      console.log('Cannot update read', err)
+      //console.log('Cannot update read', err)
     })
   }
 
@@ -182,12 +182,12 @@ export default function Announcements({ sentAnnouncementData, recvAnnouncementDa
     const announcementList = [];
 
     receivedData.forEach((ann) => {
-      // console.log(ann);
+      // //console.log(ann);
       if (ann.announcement_read === null) {
         announcementList.push(ann.announcement_uid);
       }
     })
-    console.log('read all', announcementList, readAll);
+    //console.log('read all', announcementList, readAll);
     if (readAll === false) { //check with prev state
       if (announcementList.length === 0) {
         showSnackbar("You do not have any unread announcements", "error");
@@ -202,7 +202,7 @@ export default function Announcements({ sentAnnouncementData, recvAnnouncementDa
   };
 
   const showSnackbar = (message, severity) => {
-    console.log('Inside show snackbar');
+    //console.log('Inside show snackbar');
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
@@ -418,7 +418,7 @@ export default function Announcements({ sentAnnouncementData, recvAnnouncementDa
                       };
                     }
                   } catch (e) {
-                    // console.log(e);
+                    // //console.log(e);
                   }
 
                   return (
@@ -473,7 +473,7 @@ export default function Announcements({ sentAnnouncementData, recvAnnouncementDa
                       };
                     }
                   } catch (e) {
-                    // console.log(e);
+                    // //console.log(e);
                   }
 
                   return (

@@ -38,7 +38,7 @@ export default function ChangePasswordSettingsMaintenance(props) {
 	const classes = useStyles();
 	const navigate = useNavigate();
 	const { user } = useUser();
-	// console.log("USER - ", user);
+	// //console.log("USER - ", user);
 	const location = useLocation();
 	let maintenance_data = props.maintenance_data;
 
@@ -53,10 +53,10 @@ export default function ChangePasswordSettingsMaintenance(props) {
 	const [isForgotPassword, setIsForgotPassword] = useState(false);
 
 	const handleInputChange = (event) => {
-		console.log('Input changed');
+		//console.log('Input changed');
 		const { name, value } = event.target;
-		// console.log(name)
-		// console.log(value)
+		// //console.log(name)
+		// //console.log(value)
 
 		if (name === 'current_password') {
 			setCurrentPassword(value);
@@ -82,8 +82,8 @@ export default function ChangePasswordSettingsMaintenance(props) {
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		console.log('FORM SUBMITTED');
-		console.log(modifiedData);
+		//console.log('FORM SUBMITTED');
+		//console.log(modifiedData);
 
 		const headers = {
 			'Access-Control-Allow-Origin': '*',
@@ -98,19 +98,19 @@ export default function ChangePasswordSettingsMaintenance(props) {
 			return;
 		}
 		if (isEdited) {
-			console.log('EDITED');
+			//console.log('EDITED');
 			if (emailAddress === '') {
 				// axios.put('http://localhost:4000/ownerProfile', modifiedData, headers)
 				axios
 					.put(`${APIConfig.baseURL.dev}/password`, modifiedData, headers)
 					.then((response) => {
-						console.log('Data updated successfully');
+						//console.log('Data updated successfully');
 						setIsEdited(false); // Reset the edit status
 						props.setRHS('form');
 					})
 					.catch((error) => {
 						if (error.response) {
-							console.log(error.response.data);
+							//console.log(error.response.data);
 							alert(error.response.data.message);
 						}
 					});
@@ -122,10 +122,10 @@ export default function ChangePasswordSettingsMaintenance(props) {
 					.then((response) => {
 						setEmailAddress('');
 						if (response.data.code === 200) {
-							console.log(response.data.message);
+							//console.log(response.data.message);
 						}
 						if (response.data.code === 280) {
-							console.log(response);
+							//console.log(response);
 							alert('No account found with that email.');
 							return;
 						}
@@ -390,7 +390,7 @@ export default function ChangePasswordSettingsMaintenance(props) {
                                         }
                                     }}
 								></TextField>
-								{/* <TextField name="email_address" value={(event) => console.log("EMAIL ADDRESS:", event.target.value)} onChange={handleInputChange} variant="filled" fullWidth placeholder="Enter email address" className={classes.root}></TextField> */}
+								{/* <TextField name="email_address" value={(event) => //console.log("EMAIL ADDRESS:", event.target.value)} onChange={handleInputChange} variant="filled" fullWidth placeholder="Enter email address" className={classes.root}></TextField> */}
 							</Stack>
 							<Grid
 								container

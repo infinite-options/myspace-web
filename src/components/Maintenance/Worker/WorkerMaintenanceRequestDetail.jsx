@@ -66,8 +66,8 @@ function a11yProps(index) {
 
 
 export default function WorkerMaintenanceRequestDetail({maintenance_request_index, propstatus, propmaintenanceItemsForStatus, alldata, maintenance_request_uid, setShowMaintenanceDetail, refreshMaintenanceData}){
-    // console.log("----inside WorkerMaintenanceRequestDetail----", propmaintenanceItemsForStatus, maintenance_request_index, alldata);
-    // console.log(maintenance_request_index, propstatus);
+    // //console.log("----inside WorkerMaintenanceRequestDetail----", propmaintenanceItemsForStatus, maintenance_request_index, alldata);
+    // //console.log(maintenance_request_index, propstatus);
     const location = useLocation();
     let navigate = useNavigate();
     const colorStatus = theme.colorStatusMM
@@ -90,7 +90,7 @@ export default function WorkerMaintenanceRequestDetail({maintenance_request_inde
           setMaintenanceRequestIndex(maintenance_request_index);
           setStatus(propstatus);
           if(propmaintenanceItemsForStatus){
-            // console.log("=== ok here i got maintenance status - ", propmaintenanceItemsForStatus)
+            // //console.log("=== ok here i got maintenance status - ", propmaintenanceItemsForStatus)
               setMaintenanceItemsForStatus(propmaintenanceItemsForStatus);
           }
           setMaintenanceRequestId(maintenance_request_uid);
@@ -100,12 +100,12 @@ export default function WorkerMaintenanceRequestDetail({maintenance_request_inde
  
       
     function navigateToAddMaintenanceItem(){
-        // console.log("navigateToAddMaintenanceItem")
+        // //console.log("navigateToAddMaintenanceItem")
         navigate('/addMaintenanceItem', {state: {month, year}})
     }
 
     function handleBackButton(){
-        // console.log("handleBackButton")
+        // //console.log("handleBackButton")
         if(isMobile){
             navigate(-1); 
         } else {
@@ -134,11 +134,11 @@ export default function WorkerMaintenanceRequestDetail({maintenance_request_inde
     }
 
     useEffect(() => {
-        // console.log("useEffect")
-        // console.log("status value", status)
+        // //console.log("useEffect")
+        // //console.log("status value", status)
         colorStatus.find((item, index) => {
             if(item.status === status){
-                // console.log("status", item.status, "===", status)
+                // //console.log("status", item.status, "===", status)
                 setValue(index);
             }
         })
@@ -161,7 +161,7 @@ export default function WorkerMaintenanceRequestDetail({maintenance_request_inde
 
 
     const handleChange = (event, newValue) => {
-        console.log("handleChange", newValue, colorStatus[newValue].status, colorStatus[newValue].mapping.toUpperCase())
+        //console.log("handleChange", newValue, colorStatus[newValue].status, colorStatus[newValue].mapping.toUpperCase())
         setStatus(colorStatus[newValue].status)
         setValue(newValue);
         setMaintenanceRequestIndex(0);
@@ -210,7 +210,7 @@ export default function WorkerMaintenanceRequestDetail({maintenance_request_inde
         };
     }
 
-    // console.log("=== debug === value, maintenanceItemStatus - ", value, maintenanceItemsForStatus[maintenanceRequestId])
+    // //console.log("=== debug === value, maintenanceItemStatus - ", value, maintenanceItemsForStatus[maintenanceRequestId])
     return(
         <ThemeProvider theme={theme}>
             <Box

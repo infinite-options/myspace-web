@@ -32,7 +32,7 @@ import MarkPaidButton from "../MaintenanceComponents/MarkPaidButton";
 import WorkerInvoiceView from "../MaintenanceComponents/WorkerInvoiceView";
 
 export default function WorkerFinishedMaintenance({maintenanceItem}){
-    console.log('---inside WorkerFinishedMaintenance---', maintenanceItem);
+    //console.log('---inside WorkerFinishedMaintenance---', maintenanceItem);
     const navigate = useNavigate();
     const { maintenanceRoutingBasedOnSelectedRole } = useUser();
 
@@ -42,7 +42,7 @@ export default function WorkerFinishedMaintenance({maintenanceItem}){
 
     function computeTotalCost(estimate){
         let costObject = JSON.parse(estimate)
-        // console.log(costObject)
+        // //console.log(costObject)
         let laborTotal = 0;
         let partsTotal = 0;
         let laborTime = 0;
@@ -60,7 +60,7 @@ export default function WorkerFinishedMaintenance({maintenanceItem}){
             setEstimatedPartsCost(partsTotal)
             setEstimateLaborTime(laborTime)
         } catch (error){
-            console.log(error)
+            //console.log(error)
         }
         
     }

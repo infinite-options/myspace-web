@@ -139,7 +139,7 @@ function ProfilePayment() {
       payload,
       headers
     );
-    console.log("POST response: ", response);
+    //console.log("POST response: ", response);
     setShowSpinner(false);
     setCookie("default_form_vals", { ...cookiesData, paymentMethods });
     if (isBusiness()) {

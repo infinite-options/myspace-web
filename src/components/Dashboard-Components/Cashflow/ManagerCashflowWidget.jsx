@@ -37,13 +37,13 @@ const useStyles = makeStyles({
 });
 
 function getTotalRevenueByMonthYear(data, month, year) {
-  // console.log("In getTotalRevenueByMonthYear: ", data, month, year);
+  // //console.log("In getTotalRevenueByMonthYear: ", data, month, year);
   let revenueItems = data?.filter((item) => month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year && item.pur_cf_type === "revenue");
-  // console.log("After filter revenueItems: ", revenueItems);
+  // //console.log("After filter revenueItems: ", revenueItems);
   let totalRevenue = revenueItems?.reduce((acc, item) => {
     return acc + parseFloat(item["total_paid_total"] ? item["total_paid_total"] : 0.0);
   }, 0.0);
-  // console.log("Cashflow Fetch Data total Revenue: ", totalRevenue);
+  // //console.log("Cashflow Fetch Data total Revenue: ", totalRevenue);
   return totalRevenue;
 }
 
@@ -56,7 +56,7 @@ function getTotalExpenseByMonthYear(data, month, year) {
 }
 
 function getTotalExpectedRevenueByMonthYear(data, month, year) {
-  // console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
+  // //console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
   let revenueItems = data?.filter((item) => month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year && item.pur_cf_type === "revenue");
   let totalRevenue = revenueItems?.reduce((acc, item) => {
     return acc + parseFloat(item["pur_amount_due_total"] ? item["pur_amount_due_total"] : 0.0);
@@ -65,7 +65,7 @@ function getTotalExpectedRevenueByMonthYear(data, month, year) {
 }
 
 function getTotalExpectedExpenseByMonthYear(data, month, year) {
-  // console.log(data)
+  // //console.log(data)
   let expenseItems = data?.filter((item) => month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year && item.pur_cf_type === "expense");
   let totalExpense = expenseItems?.reduce((acc, item) => {
     return acc + parseFloat(item["pur_amount_due_total"] ? item["pur_amount_due_total"] : 0.0);
@@ -74,9 +74,9 @@ function getTotalExpectedExpenseByMonthYear(data, month, year) {
 }
 
 function getTotalExpectedProfitByMonthYear(data, month, year) {
-  // console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
+  // //console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
   let profitItems = data?.filter((item) => item.pur_payer?.startsWith("110") && item.pur_receiver?.startsWith("600") && month.includes(item.cf_month) && year[month.indexOf(item.cf_month)] === item.cf_year);
-  // console.log(`270 - profitItems - ${month}, ${year} - `, profitItems);
+  // //console.log(`270 - profitItems - ${month}, ${year} - `, profitItems);
   let totalProfit = profitItems?.reduce((acc, item) => {
     return acc + parseFloat(item["pur_amount_due"] ? item["pur_amount_due"] : 0.0);
   }, 0.0);
@@ -92,7 +92,7 @@ function getTotalProfitByMonthYear(data, month, year) {
 }
 
 function getTotalExpectedRentByMonthYear(data, month, year) {
-  // console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
+  // //console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
   // let revenueItems = data?.filter((item) => item.pur_cf_type === "revenue");
   // let rentItems = data?.filter((item) => item.pur_payer?.startsWith("350") && item.pur_receiver?.startsWith("600") && item.cf_month === month && item.cf_year === year);
   let rentItems = data?.filter((item) => item.pur_cf_type === "revenue" && item.purchase_type.toUpperCase() !== "DEPOSIT" && item.purchase_type.toUpperCase() !== "MANAGEMENT" && item.purchase_type.toUpperCase() !== "MAINTENANCE" && item.cf_month === month && item.cf_year === year);
@@ -120,7 +120,7 @@ function getTotalRentByMonthYear(data, month, year) {
 }
 
 function getTotalExpectedPayoutsByMonthYear(data, month, year) {
-  // console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
+  // //console.log("In getTotalExpectedRevenueByMonthYear: ", data, month, year);
   // let expenseItems = data?.filter((item) => item.pur_cf_type === "expense");
   // let payoutItems = data?.filter((item) => item.pur_payer?.startsWith("600") && item.pur_receiver?.startsWith("110") && item.cf_month === month && item.cf_year === year);
   let payoutItems = data?.filter((item) => (item.pur_cf_type === "expense" || (item.pur_cf_type === "revenue" && item.purchase_type.toUpperCase() === "MANAGEMENT" ) || (item.pur_cf_type === "revenue" && item.purchase_type.toUpperCase() === "MAINTENANCE" )) && item.cf_month === month && item.cf_year === year);
@@ -184,7 +184,7 @@ function getTotalProfitByMonthByYear(data, month, year){
 
 function getTotalExpectedProfitByMonthByYear(data, month, year){
   let rentItems = data?.filter((item) => item.purchase_type?.toUpperCase() === "MANAGEMENT" && item.cf_month === month && item.cf_year === year);
-  // console.log(" === rentitems ", rentItems)
+  // //console.log(" === rentitems ", rentItems)
   let totalProfit = rentItems?.reduce((acc, item) => {
     if (item.pur_payer) {
       return acc + parseFloat(item["pur_amount_due"] ? item["pur_amount_due"] : 0.0);
@@ -199,7 +199,7 @@ function getPast12MonthsCashflow(data, month, year) {
   var pastTwelveMonths = [];
   let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-  // console.log(" ==== ", month, year)
+  // //console.log(" ==== ", month, year)
   const currentDate = new Date();
   let currentMonth = currentDate.toLocaleString("default", { month: "long" });
   let currentYear = currentDate.getFullYear().toString();
@@ -245,7 +245,7 @@ function getPast12MonthsCashflow(data, month, year) {
     if (currentMonth === "January") {
       currentMonth = "December";
       currentYear = (parseInt(currentYear) - 1).toString();
-      // console.log(currentYear)
+      // //console.log(currentYear)
     } else {
       currentMonth = months[months.indexOf(currentMonth) - 1];
     }
@@ -270,8 +270,8 @@ function ManagerCashflowWidget({
   setSelectedProperty,
   setView
 }) {
-  // console.log("In ManagerCashflow Widget ");
-  // console.log("ManagerCashflow widget - propertyList - ", propertyList);
+  // //console.log("In ManagerCashflow Widget ");
+  // //console.log("ManagerCashflow widget - propertyList - ", propertyList);
   const navigate = useNavigate();
   const classes = useStyles();
 
@@ -282,9 +282,9 @@ function ManagerCashflowWidget({
   //   const monthNumber = new Date(Date.parse(currentMonth + " 1, 2024")).getMonth() + 1;
   //   // let currentMonthNumber = date.getMonth() + 1;
   // //   let currentYear = date.getFullYear().toString();
-  //   console.log("Cashflow Widget Current Month: ", currentMonth);
-  //   // console.log("Cashflow Widget Current Month Number: ", currentMonthNumber);
-  //   console.log("Cashflow Widget Current Year: ", currentYear);
+  //   //console.log("Cashflow Widget Current Month: ", currentMonth);
+  //   // //console.log("Cashflow Widget Current Month Number: ", currentMonthNumber);
+  //   //console.log("Cashflow Widget Current Year: ", currentYear);
 
   //   const monthIndex = new Date(Date.parse(propsMonth + " 1, 2024")).getMonth();
   //   const date = new Date(propsYear, monthIndex);
@@ -292,8 +292,8 @@ function ManagerCashflowWidget({
   //   let currentYear = date.getFullYear().toString();
   let currentMonth = propsMonth;
   let currentYear = propsYear;
-  // console.log("ManagerCashflowWidget Current Month: ", currentMonth);
-  // console.log("ManagerCashflowWidget Current Year: ", currentYear);
+  // //console.log("ManagerCashflowWidget Current Month: ", currentMonth);
+  // //console.log("ManagerCashflowWidget Current Year: ", currentYear);
 
   const [month, setMonth] = useState(currentMonth);
   const [year, setYear] = useState(currentYear);
@@ -304,8 +304,8 @@ function ManagerCashflowWidget({
   //   const expenseCurrentMonth = data?.result?.find( (item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "expense")
   //   const revenueCurrentMonth = data?.result?.find( (item) => item.cf_month === currentMonth && item.cf_year === currentYear && item.pur_cf_type === "revenue")
 
-  //   console.log("expenseCurrentMonth - ", expenseCurrentMonth);
-  //   console.log("revenueCurrentMonth - ", revenueCurrentMonth);
+  //   //console.log("expenseCurrentMonth - ", expenseCurrentMonth);
+  //   //console.log("revenueCurrentMonth - ", revenueCurrentMonth);
 
   const [profits, setProfits] = useState(null);
   const [rents, setRents] = useState(null);
@@ -327,7 +327,7 @@ function ManagerCashflowWidget({
   const [cfPeriodButtonName, setCfPeriodButtonName] = useState("Last 12 Months");
 
   useEffect(() => {
-    // console.log("270 - last12Months - ", last12Months);
+    // //console.log("270 - last12Months - ", last12Months);
 
     const totals = last12Months?.reduce(
       (acc, month) => {
@@ -357,21 +357,21 @@ function ManagerCashflowWidget({
       }
     );
 
-    // console.log("Total Expected Profit:", totals.totalExpectedProfit);
-    // console.log("Total Actual Profit:", totals.totalActualProfit);
-    // console.log("Total Expected Rent:", totals.totalExpectedRent);
-    // console.log("Total Actual Rent:", totals.totalActualRent);
-    // console.log("Total Expected Payouts:", totals.totalExpectedPayouts);
-    // console.log("Total Actual Payouts:", totals.totalActualPayouts);
+    // //console.log("Total Expected Profit:", totals.totalExpectedProfit);
+    // //console.log("Total Actual Profit:", totals.totalActualProfit);
+    // //console.log("Total Expected Rent:", totals.totalExpectedRent);
+    // //console.log("Total Actual Rent:", totals.totalActualRent);
+    // //console.log("Total Expected Payouts:", totals.totalExpectedPayouts);
+    // //console.log("Total Actual Payouts:", totals.totalActualPayouts);
 
-    // console.log("270 - totals - ", totals);
+    // //console.log("270 - totals - ", totals);
     setLast12MonthsTotals(totals);
   }, [last12Months]);
 
   // useEffect(() => {
   //   fetchCashflow(profileId)
   //     .then((data) => {
-  //       // console.log("Back in Widget: ", data);
+  //       // //console.log("Back in Widget: ", data);
   //       setCashflowData(data);
   //       let currentMonthYearRevenue = getTotalRevenueByMonthYear(data, currentMonth, currentYear);
   //       let currentMonthYearExpense = getTotalExpenseByMonthYear(data, currentMonth, currentYear);
@@ -400,7 +400,7 @@ function ManagerCashflowWidget({
     // const past12Months = getPast12MonthsCashflow(data, month, year)
     const past12Months = getPast12MonthsCashflow(data, month, year);
 
-    // console.log("getCashflowData - past12Months - ", past12Months);
+    // //console.log("getCashflowData - past12Months - ", past12Months);
 
     return past12Months;
   };
@@ -426,7 +426,7 @@ function ManagerCashflowWidget({
     setShowSpinner(true)
 
     setProfits(profitsTotal);
-    // console.log("profitsTotal - ", profitsTotal);
+    // //console.log("profitsTotal - ", profitsTotal);
     // setProfitsCurMonth(profitsTotal?.filter((item) => item.cf_month === month && item.cf_year === year))
     setRents(rentsTotal);
     setPayouts(payoutsTotal);
@@ -435,10 +435,10 @@ function ManagerCashflowWidget({
     let filteredGraphdata = [];
     if (selectedProperty === "ALL") {
       filteredGraphdata = graphData;
-      // console.log("filteredGraphdata - ", filteredGraphdata);
+      // //console.log("filteredGraphdata - ", filteredGraphdata);
     } else {
       filteredGraphdata = graphData?.filter((item) => item.pur_property_id === selectedProperty);
-      // console.log("filteredGraphdata - ", filteredGraphdata);
+      // //console.log("filteredGraphdata - ", filteredGraphdata);
     }
     let cashflowLast12Months = getCashflowData(filteredGraphdata);
     setLast12Months(cashflowLast12Months);
@@ -450,7 +450,7 @@ function ManagerCashflowWidget({
   }, [profitsTotal, rentsTotal, payoutsTotal, propsMonth, propsYear, graphData]);
 
   const handlePropertyChange = (propertyUID) => {
-    // console.log("ManagerCashflowWidget - handlePropertyChange - value - ", propertyUID);
+    // //console.log("ManagerCashflowWidget - handlePropertyChange - value - ", propertyUID);
     setSelectedProperty(propertyUID);
     setPropertyButtonName("View all Properties");
     setAnchorEl(null);

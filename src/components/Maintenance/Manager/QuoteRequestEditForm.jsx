@@ -57,10 +57,10 @@ export default function QuoteRequestEditForm({ setRefresh }) {
 	const currentQuote = selectedStatus !== "New Requests" ? (maintenanceQuotes ? maintenanceQuotes[currentQuoteIndex] : null) : null;
 
     
-	console.log("maintenance quote from request form  - ", currentQuote);
+	//console.log("maintenance quote from request form  - ", currentQuote);
 
 	useEffect(() => {
-		// console.log(alreadyRequestedQuotes);
+		// //console.log(alreadyRequestedQuotes);
 	}, []);
 
 	const [selectedImageList, setSelectedImageList] = useState([]);
@@ -77,18 +77,18 @@ export default function QuoteRequestEditForm({ setRefresh }) {
 	const [showSpinner, setShowSpinner] = useState(false);
 
 	const handleMaintenanceChange = (event) => {
-		// console.log("handleStateChange", event.target.value);
+		// //console.log("handleStateChange", event.target.value);
 		setMaintenanceContacts((prevContacts) => new Set([...prevContacts, event.target.value]));
 	};
 
 	function navigateToAddMaintenanceItem() {
-		// console.log("navigateToAddMaintenanceItem")
+		// //console.log("navigateToAddMaintenanceItem")
 		navigate('/addMaintenanceItem', { state: { month, year } });
 	}
 
 	function handleBackButton() {
 		
-		// console.log("handleBackButton")
+		// //console.log("handleBackButton")
 		let maintenance_request_index = navigationParams.maintenanceRequestIndex;
 		let status = navigationParams.status;
 		let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus;
@@ -139,7 +139,7 @@ export default function QuoteRequestEditForm({ setRefresh }) {
 			  body: formData,
 			});
 		  } catch (error) {
-			console.log('error', error);
+			//console.log('error', error);
 		  }
 		  setShowSpinner(false);
 		};
@@ -147,7 +147,7 @@ export default function QuoteRequestEditForm({ setRefresh }) {
 		// Creates a list of business_uids from the maintenanceContacts set.
 		let maintenanceContactIds = [];
 		for (let contact of maintenanceContacts) {
-			// console.log("maintenanceContacts[i].maintenance_contact_uid", contact.business_uid);
+			// //console.log("maintenanceContacts[i].maintenance_contact_uid", contact.business_uid);
 			maintenanceContactIds.push(contact.contact_uid);
 		}
 	  
@@ -172,7 +172,7 @@ export default function QuoteRequestEditForm({ setRefresh }) {
 			});
 	  
 			if (response.status === 200) {
-			  console.log("Quote request sent successfully");
+			  //console.log("Quote request sent successfully");
 			  
 			  // Call the function to change the maintenance request status
 			  // await changeMaintenanceRequestStatus();
@@ -191,15 +191,15 @@ export default function QuoteRequestEditForm({ setRefresh }) {
 			  console.error(`Request failed with status: ${response.status}`);
 			}
 		  } catch (error) {
-			console.log('An error occurred while submitting the quote:', error);
+			//console.log('An error occurred while submitting the quote:', error);
 		  }
 	  
 		  setShowSpinner(false);
 		};
 	  
 		const sendAnnouncement = async (maintenanceContactIds) => {
-			// console.log("sendAnnouncement - maintenanceContactIds - ", maintenanceContactIds);
-			// console.log("sendAnnouncement - maintenanceItem - ", maintenanceItem);			
+			// //console.log("sendAnnouncement - maintenanceContactIds - ", maintenanceContactIds);
+			// //console.log("sendAnnouncement - maintenanceItem - ", maintenanceItem);			
 			try {
 				let receiverPropertyMapping = {}
 				const annReceivers = []
@@ -227,9 +227,9 @@ export default function QuoteRequestEditForm({ setRefresh }) {
 					announcement_type: ["Email", "Text"],
 				})
 
-				// console.log("QuoteRequestForm - receiverPropertyMapping - ", receiverPropertyMapping);
-				// console.log("QuoteRequestForm - annReceivers - ", annReceivers);
-				// console.log("QuoteRequestForm - payload - ", payload);
+				// //console.log("QuoteRequestForm - receiverPropertyMapping - ", receiverPropertyMapping);
+				// //console.log("QuoteRequestForm - annReceivers - ", annReceivers);
+				// //console.log("QuoteRequestForm - payload - ", payload);
 
 				await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
 				method: "POST",
@@ -239,7 +239,7 @@ export default function QuoteRequestEditForm({ setRefresh }) {
 				body: payload,
 				});
 			} catch (error) {
-				console.log("Error in sending announcement for requesting quotes:", error);
+				//console.log("Error in sending announcement for requesting quotes:", error);
 				alert("We were unable to send a Text but we were able to send them a notification through the App");
 			}
 		};

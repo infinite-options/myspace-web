@@ -79,7 +79,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
-  console.log("In MaintenanceOnboardingForm  - profileData", profileData);
+  //console.log("In MaintenanceOnboardingForm  - profileData", profileData);
 
   const { getList, } = useContext(ListsContext);	
   const classes = useStyles();
@@ -176,19 +176,19 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   };
 
   // useEffect(() => {
-  //   console.log("paymentMethods - ", paymentMethods);
+  //   //console.log("paymentMethods - ", paymentMethods);
   // }, [paymentMethods]);
 
   // useEffect(() => {
-  //   console.log("fees - ", fees);
+  //   //console.log("fees - ", fees);
   // }, [fees]);
 
   // useEffect(() => {
-  //   console.log("modifiedData - ", modifiedData);
+  //   //console.log("modifiedData - ", modifiedData);
   // }, [modifiedData]);
 
   // useEffect(() => {
-  //   console.log("documents - ", documents);
+  //   //console.log("documents - ", documents);
   // }, [documents]);
 
   const updateModifiedData = (updatedItem) => {
@@ -338,14 +338,14 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
       }
 
       const parsedDocs = JSON.parse(profileData.business_documents);
-      // console.log("parsedDocs - ", parsedDocs);
+      // //console.log("parsedDocs - ", parsedDocs);
       // const docs = parsedDocs
       //   ? parsedDocs.map((doc, index) => ({
       //       ...doc,
       //       id: index,
       //     }))
       //   : [];
-      // console.log('initial docs', docs);
+      // //console.log('initial docs', docs);
       setDocuments(parsedDocs || []);
 
       const paymentMethodsData = JSON.parse(profileData.paymentMethods);
@@ -409,7 +409,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   };
 
   useEffect(() => {
-    console.log("calling useeffect");
+    //console.log("calling useeffect");
     setIsSave(false);
 
     setProfileData();
@@ -418,7 +418,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   }, []);
 
   useEffect(() => {
-    console.log("calling profileData useEffect");
+    //console.log("calling profileData useEffect");
 
     setIsSave(false);
     setProfileData();
@@ -894,7 +894,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
     const { name, checked } = e.target;
     const map = { ...paymentMethods };
     map[name].checked = checked;
-    // console.log("handleChangeChecked - map[name]", map[name])
+    // //console.log("handleChangeChecked - map[name]", map[name])
     // if (name === "bank_account") {
     //   if (!checked) {
     //     map.bank_account.account_number = "";
@@ -992,7 +992,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
     let paymentMethodsError = false;
     let atleaseOneActive = false;
     Object.keys(paymentMethods)?.forEach( method => {
-      // console.log("payment method - ", paymentMethods[method]);
+      // //console.log("payment method - ", paymentMethods[method]);
       const payMethod = paymentMethods[method];
       
       if(payMethod.value === '' && payMethod.checked === true ){
@@ -1067,7 +1067,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
   };
 
   const showSnackbar = (message, severity) => {
-    console.log("Inside show snackbar");
+    //console.log("Inside show snackbar");
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
@@ -1079,12 +1079,12 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
 
   const handleUpdate = () => {
     // setIsUpdate( prevState => !prevState);
-    console.log("handleUpdate called");
+    //console.log("handleUpdate called");
     setIsSave(true);
   };
 
   const saveProfile = async () => {
-    console.log("inside saveProfile", modifiedData);
+    //console.log("inside saveProfile", modifiedData);
     try {
       if (modifiedData.length > 0 || isPreviousFileChange || deletedFiles?.length > 0 || uploadedFiles?.length > 0) {
         setShowSpinner(true);
@@ -1103,7 +1103,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
         let hasEmployeeKey = false;
         let hasBusinessKey = false;
         modifiedData.forEach((item) => {
-          console.log(`Key: ${item.key}`);
+          //console.log(`Key: ${item.key}`);
           profileFormData.append(item.key, item.value);
 
           if (item.key.startsWith("employee_")) {
@@ -1155,7 +1155,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
           .put(`${APIConfig.baseURL.dev}/profile`, profileFormData, headers)
           // axios.put('http://localhost:4000/profile', profileFormData, headers)
           .then((response) => {
-            console.log("Data updated successfully", response);
+            //console.log("Data updated successfully", response);
             openDialog("Success","Your profile has been successfully updated.", "success");
             handleUpdate();
             setShowSpinner(false);
@@ -1164,7 +1164,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
             setShowSpinner(false);
             openDialog("Error","Cannot update your profile. Please try again", "error");
             if (error.response) {
-              console.log(error.response.data);
+              //console.log(error.response.data);
             }
           });
         setShowSpinner(false);
@@ -1179,13 +1179,13 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
       // }
     } catch (error) {
       openDialog("Error","Cannot update your profile. Please try again", "error");
-      console.log("Cannot Update your profile", error);
+      //console.log("Cannot Update your profile", error);
       setShowSpinner(false);
     }
   };
 
   const editOrUpdateProfile = async () => {
-    console.log("inside editOrUpdateProfile", modifiedData);
+    //console.log("inside editOrUpdateProfile", modifiedData);
     try {
       if (modifiedData.length > 0) {
         setShowSpinner(true);
@@ -1202,9 +1202,9 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
         // leaseApplicationFormData.append("lease_fees", feesJSON);
         // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
         modifiedData.forEach((item) => {
-          console.log(`Key: ${item.key}`);
+          //console.log(`Key: ${item.key}`);
           // if (item.key === "uploadedFiles") {
-          //   console.log("uploadedFiles", item.value);
+          //   //console.log("uploadedFiles", item.value);
           //   if (item.value.length) {
           //     const documentsDetails = [];
           //     [...item.value].forEach((fileItem, i) => {
@@ -1233,15 +1233,15 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
 
         profileFormData.append("business_uid", profileData.business_uid);
 
-        // console.log("editOrUpdateProfile - profileFormData - ");
+        // //console.log("editOrUpdateProfile - profileFormData - ");
         for (var pair of profileFormData.entries()) {
-          console.log(pair[0] + ", " + pair[1]);
+          //console.log(pair[0] + ", " + pair[1]);
         }
 
         axios
           .put(`${APIConfig.baseURL.dev}/profile`, profileFormData, headers)
           .then((response) => {
-            // console.log("Data updated successfully", response);
+            // //console.log("Data updated successfully", response);
             openDialog("Success","Your profile has been successfully updated.", "success");
             handleUpdate();
             setShowSpinner(false);
@@ -1250,7 +1250,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
             setShowSpinner(false);
             openDialog("Error","Cannot update your profile. Please try again", "error");
             if (error.response) {
-              console.log(error.response.data);
+              //console.log(error.response.data);
             }
           });
         setShowSpinner(false);
@@ -1260,7 +1260,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
       }
     } catch (error) {
       openDialog("Error","Cannot update the lease. Please try again", "error");
-      // console.log("Cannot Update the lease", error);
+      // //console.log("Cannot Update the lease", error);
       setShowSpinner(false);
     }
   };

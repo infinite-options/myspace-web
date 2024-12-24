@@ -286,7 +286,7 @@ export default function TenantProperty({ }) {
                                                                 sx={{
                                                                     padding: "0px"
                                                                 }}
-                                                                onClick={() => { console.log("View Lease"); navigate('/tenantLeases')}}
+                                                                onClick={() => { navigate('/tenantLeases')}}
                                                             >
                                                                 <Typography
                                                                     sx={{

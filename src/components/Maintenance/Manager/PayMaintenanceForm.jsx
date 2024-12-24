@@ -63,7 +63,7 @@ export default function PayMaintenanceForm() {
   let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus;
   let allMaintenanceData = navigationParams.allData;
 
-  // console.log("[DEBUG] maintenance item with payment info?", maintenanceItem)
+  // //console.log("[DEBUG] maintenance item with payment info?", maintenanceItem)
 
   useEffect(() => {
     const getBusinessProfile = async (profileId) => {
@@ -71,7 +71,7 @@ export default function PayMaintenanceForm() {
       const businessProfileResult = await fetch(`${APIConfig.baseURL.dev}/businessProfile`);
       const data2 = await businessProfileResult.json();
       const businessProfileData = data2["result"][0];
-      //console.log("businessProfileData", businessProfileData);
+      ////console.log("businessProfileData", businessProfileData);
       setBusinessProfile(businessProfileData);
     };
     if (maintenanceItem.bill_uid !== null) {
@@ -90,19 +90,19 @@ export default function PayMaintenanceForm() {
         business_zelle: maintenanceItem.owner_zelle,
       });
     } else {
-      console.log("no business profile data yet");
+      //console.log("no business profile data yet");
     }
-    console.log("calling determinePayerAndPayee");
+    //console.log("calling determinePayerAndPayee");
     determinePayerAndPayee();
-    console.log("after determinePayerAndPayee");
+    //console.log("after determinePayerAndPayee");
   }, []);
 
   const determinePayerAndPayee = () => {
     if (maintenanceItem.maintenance_assigned_business === getProfileId()) {
-      console.log("Is current profile", maintenanceItem.maintenance_assigned_business, getProfileId());
+      //console.log("Is current profile", maintenanceItem.maintenance_assigned_business, getProfileId());
     }
     if (maintenanceItem.maintenance_assigned_business !== getProfileId()) {
-      console.log("Not current profile", maintenanceItem.maintenance_assigned_business);
+      //console.log("Not current profile", maintenanceItem.maintenance_assigned_business);
     }
   };
 
@@ -124,11 +124,11 @@ export default function PayMaintenanceForm() {
   };
 
   const modalSubmit = async (chargeAmount) => {
-    console.log("Printing modal submit");
+    //console.log("Printing modal submit");
 
     const now = new Date();
     const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-    console.log("now, nextWeek", now, nextWeek);
+    //console.log("now, nextWeek", now, nextWeek);
 
     const formData = new FormData();
     // WIP TODO
@@ -142,7 +142,7 @@ export default function PayMaintenanceForm() {
     formData.append("bill_maintenance_quote_id", null);
     formData.append("bill_maintenance_request_id", maintenanceItem.maintenance_request_uid);
 
-    console.log(`url ${APIConfig.baseURL.dev}/bills`);
+    //console.log(`url ${APIConfig.baseURL.dev}/bills`);
 
     try {
       fetch(`${APIConfig.baseURL.dev}/bills`, {
@@ -150,7 +150,7 @@ export default function PayMaintenanceForm() {
         body: formData,
       });
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
   };
 
@@ -168,7 +168,7 @@ export default function PayMaintenanceForm() {
   }
 
   function navigateToAddMaintenanceItem() {
-    console.log("navigateToAddMaintenanceItem");
+    //console.log("navigateToAddMaintenanceItem");
     navigate("/addMaintenanceItem", { state: { month, year } });
   }
 

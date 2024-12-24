@@ -122,12 +122,12 @@ const GoogleSignup = (props) => {
                     socialGoogle();
                   })
                   .catch((error) => {
-                    console.log(error);
+                    //console.log(error);
                   });
                 return accessToken, refreshToken, accessExpiresIn, email, socialId;
               })
               .catch((err) => {
-                console.log(err);
+                //console.log(err);
               });
           }
         },

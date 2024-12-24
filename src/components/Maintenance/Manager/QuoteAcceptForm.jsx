@@ -45,10 +45,10 @@ export default function QuoteAcceptForm({ setRefresh }) {
   
   // Determine the initial state value based on the condition
   const initialQuotes = isMobile ? location.state.quotes : JSON.parse(sessionStorage.getItem('quotes')) || [];
-  console.log('Is it here before----', initialQuotes);
+  //console.log('Is it here before----', initialQuotes);
   // Use the determined initial state value
   const [maintenanceQuotes, setMaintenanceQuotes] = useState(initialQuotes);
-  console.log('Is it here after----', maintenanceQuotes);
+  //console.log('Is it here after----', maintenanceQuotes);
   const [showSpinner, setShowSpinner] = useState(false);
   const [estimatedTotalCost, setEstimatedTotalCost] = useState(0);
   const [estimatedLaborCost, setEstimatedLaborCost] = useState(0);
@@ -65,7 +65,7 @@ export default function QuoteAcceptForm({ setRefresh }) {
   };
 
   useEffect(() => {
-    console.log("In UseEffect currentQuoteIndex = ", currentQuoteIndex);
+    //console.log("In UseEffect currentQuoteIndex = ", currentQuoteIndex);
     const currentQuote = maintenanceQuotes[currentQuoteIndex];
     if (currentQuote && currentQuote.maintenance_quote_uid !== null && currentQuote.quote_services_expenses !== null) {
       const parseServicesExpenses = (expenses) => {
@@ -87,12 +87,12 @@ export default function QuoteAcceptForm({ setRefresh }) {
   }, [currentQuoteIndex, maintenanceQuotes]);
 
   function navigateToAddMaintenanceItem() {
-    // console.log("navigateToAddMaintenanceItem")
+    // //console.log("navigateToAddMaintenanceItem")
     navigate("/addMaintenanceItem", { state: { month, year } });
   }
 
   function handleBackButton() {
-    // console.log("handleBackButton")
+    // //console.log("handleBackButton")
     let maintenance_request_index = navigationParams.maintenanceRequestIndex;
     let status = navigationParams.status;
     let maintenanceItemsForStatus = navigationParams.maintenanceItemsForStatus;
@@ -134,7 +134,7 @@ export default function QuoteAcceptForm({ setRefresh }) {
   }
 
   const handleSubmit = (quoteStatusParam) => {
-    console.log("handleSubmit", quoteStatusParam);
+    //console.log("handleSubmit", quoteStatusParam);
 
     const changeMaintenanceQuoteStatus = async (quoteStatusParam) => {
       setShowSpinner(true);
@@ -149,13 +149,13 @@ export default function QuoteAcceptForm({ setRefresh }) {
           body: formData,
         });
         let responseData = await response.json();
-        console.log(responseData);
+        //console.log(responseData);
         if (response.status === 200) {
-          console.log("success");
+          //console.log("success");
           assignMaintenanceRequest(maintenanceQuotes[currentQuoteIndex]?.quote_business_id, maintenanceItem.maintenance_request_uid);
         }
       } catch (error) {
-        console.log("error", error);
+        //console.log("error", error);
       }
       setShowSpinner(false);
     };
@@ -168,15 +168,15 @@ export default function QuoteAcceptForm({ setRefresh }) {
       formData.append("maintenance_request_status", "PROCESSING");
 
       try {
-        console.log("trying to put maintenance assigned business", formData);
+        //console.log("trying to put maintenance assigned business", formData);
         const response = await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
           method: "PUT",
           body: formData,
         });
         let responseData = await response.json();
-        console.log(responseData);
+        //console.log(responseData);
         if (response.status === 200) {
-          console.log("success");
+          //console.log("success");
           if (isMobile){
             if (setRefresh) {
               setRefresh(true);
@@ -186,10 +186,10 @@ export default function QuoteAcceptForm({ setRefresh }) {
             handleBackButton();
           }
         } else {
-          console.log("error changing maintenance assigned business");
+          //console.log("error changing maintenance assigned business");
         }
       } catch (error) {
-        console.log("error", error);
+        //console.log("error", error);
       }
       setShowSpinner(false);
     };
@@ -207,7 +207,7 @@ export default function QuoteAcceptForm({ setRefresh }) {
 
   useEffect(() => {
     try {
-      console.log('inside accept form--', maintenanceQuotes, currentQuoteIndex);
+      //console.log('inside accept form--', maintenanceQuotes, currentQuoteIndex);
       let imageArray = JSON.parse(maintenanceItem?.maintenance_images || "[]");
       let quoteImageArray = JSON.parse(maintenanceItem?.quote_maintenance_images || "[]");
       setDisplayImages(imageArray);

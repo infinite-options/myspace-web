@@ -170,7 +170,7 @@ export default function MaintenanceDashboard() {
           }
         }
       } catch (error) {
-        console.log("Error getting maintenance worker dashboard data: ", error);
+        //console.log("Error getting maintenance worker dashboard data: ", error);
       }
       setShowSpinner(false);
     };

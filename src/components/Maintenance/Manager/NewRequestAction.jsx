@@ -91,7 +91,7 @@ export default function NewRequestAction({ setRefresh, maintenanceItem, navigate
                     body: formData,
                 });
             } catch (error) {
-                console.log('error', error);
+                //console.log('error', error);
             }
             setShowSpinner(false);
         };

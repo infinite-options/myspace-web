@@ -19,7 +19,7 @@ function SelectProperty(props) {
   useEffect(() => {
     setShowSpinner(true);
     axios.get(`${APIConfig.baseURL.dev}/propertiesByOwner/${getProfileId()}`).then((res) => {
-      console.log("Property list ", res.data.Property.result);
+      //console.log("Property list ", res.data.Property.result);
       setProperties(res.data.Property.result);
       setShowSpinner(false);
     });
@@ -137,7 +137,7 @@ function SelectProperty(props) {
         }}
         onClick={() => {
           setSelectedProperty({});
-          console.log("selectedProperty set to blank");
+          //console.log("selectedProperty set to blank");
         }}
       >
         Show All
@@ -173,7 +173,7 @@ function PropertyCard(props) {
         height: "40px",
       }}
       onClick={() => {
-        console.log("property selected ", property);
+        //console.log("property selected ", property);
         setSelected(property);
         setSelectedProperty && setSelectedProperty(property);
       }}

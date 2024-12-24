@@ -71,7 +71,7 @@ const CustomTextField = withStyles({
 
 // Variable Declaration
 export default function ReferralSignup({}) {
-  console.log("In ReferralSignup.jsx");  
+  //console.log("In ReferralSignup.jsx");  
   let navigate = useNavigate();
   let location = useLocation();
   const { isGoogleSignup, googleUserInfo } = location.state || {};  
@@ -99,7 +99,7 @@ export default function ReferralSignup({}) {
   const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
 
   // useEffect(() => {
-  //   console.log("userInfo - ", userInfo);
+  //   //console.log("userInfo - ", userInfo);
   // }, [userInfo]);
 
   // Update userInfo object whenever input values change
@@ -178,7 +178,7 @@ export default function ReferralSignup({}) {
   }, []);
   
   const handleBackButton = () => {
-    console.log("handleBackButton");
+    //console.log("handleBackButton");
     navigate(-1);
   };
 

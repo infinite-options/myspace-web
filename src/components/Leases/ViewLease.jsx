@@ -74,7 +74,7 @@ function formatDate(date) {
 }
 
 const ViewLease = (props) => {
-  console.log("---props in                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ---", props);
+  //console.log("---props in                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ---", props);
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
@@ -112,7 +112,7 @@ const ViewLease = (props) => {
   const [allLeases, setAllLeases] = useState([]);  
 
   // useEffect(() => {
-  //   console.log("leaseData - ", leaseData);
+  //   //console.log("leaseData - ", leaseData);
   // }, [leaseData]);
 
   useEffect(() => {
@@ -143,11 +143,11 @@ const ViewLease = (props) => {
     axios
       .put(`${APIConfig.baseURL.dev}/leaseApplication`, leaseApplicationFormData, headers)
       .then((response) => {
-        console.log("Data updated successfully");
+        //console.log("Data updated successfully");
       })
       .catch((error) => {
         if (error.response) {
-          console.log(error.response.data);
+          //console.log(error.response.data);
         }
       });
     const sendAnnouncement = async () => {
@@ -173,7 +173,7 @@ const ViewLease = (props) => {
           }),
         });
       } catch (error) {
-        console.log("Error in View Lease sending announcements:", error);
+        //console.log("Error in View Lease sending announcements:", error);
         alert("We were unable to Text the Property Manager but we were able to send them a notification through the App");
       }
     };
@@ -182,14 +182,14 @@ const ViewLease = (props) => {
     setConfirmEndLeaseDialogOpen(false);
     navigate(-1);
   };
-  // console.log(location.state)
-  // console.log("leaseID", leaseID)
-  // console.log("propertyUID", propertyUID)  
+  // //console.log(location.state)
+  // //console.log("leaseID", leaseID)
+  // //console.log("propertyUID", propertyUID)  
 
   const getLeaseDetails = async () => {
     axios.get(`${APIConfig.baseURL.dev}/leaseDetails/${getProfileId()}`).then((res) => {
       const data = res.data["Lease_Details"].result;
-      // console.log("getLeaseDetails - data -  ", data);      
+      // //console.log("getLeaseDetails - data -  ", data);      
       setAllLeases(data);
       setShowSpinner(false);
     });
@@ -206,21 +206,21 @@ const ViewLease = (props) => {
 
     const leaseID = propertyList[index]?.lease_uid || props.lease_id;
 
-    // console.log("--dhyey-- index useEffect -  const leaseID - ", leaseID);
+    // //console.log("--dhyey-- index useEffect -  const leaseID - ", leaseID);
 
     if (leaseID != null) {
       allLeases?.forEach((lease) => {
         if (lease.lease_uid === leaseID) {
-          // console.log("---dhyey--- lease data - ", lease);
+          // //console.log("---dhyey--- lease data - ", lease);
           setLeaseFees(JSON.parse(lease.lease_fees));
           setLeaseDocuments(JSON.parse(lease.lease_documents));
           const utilities = JSON.parse(lease.property_utilities);
 
           const utils = utilities?.map((utility) => utility.utility_desc).join(", ");
-          // console.log(utils)
+          // //console.log(utils)
           setUtilityString(utils);
 
-          // console.log("index useEffect -  lease - ", lease);
+          // //console.log("index useEffect -  lease - ", lease);
           setLeaseData(lease);
           setTenantsData(lease.tenants ? JSON.parse(lease?.tenants) : []);
           setAdultsData(lease.tenants ? JSON.parse(lease?.lease_adults) : []);
@@ -228,19 +228,19 @@ const ViewLease = (props) => {
           setVehiclesData(lease.tenants ? JSON.parse(lease?.lease_vehicles) : []);
           setPetsData(lease.tenants ? JSON.parse(lease?.lease_pets) : []);
 
-          // console.log("Lease data", lease);
-          // console.log("lease fees", lease.leaseFees);
+          // //console.log("Lease data", lease);
+          // //console.log("lease fees", lease.leaseFees);
           // setDocument(lease.lease_documents);
         }
       });
     } else {
-      console.log(" index useEffect - Setting lease data to null.");
+      //console.log(" index useEffect - Setting lease data to null.");
       setLeaseData(null);
     }
   }, [returnIndex, props.propertyList, allLeases]);  
 
   const handleRenewLease = () => {
-    console.log('leaseData----', leaseData);
+    //console.log('leaseData----', leaseData);
     navigate("/tenantLease", { state: { page: "renew_lease", application: leaseData, property: leaseData } });
         
   };
@@ -264,43 +264,43 @@ const ViewLease = (props) => {
       const leaseEndDate = new Date(leaseData.lease_end);
       const leaseEndDateFormatted = dayjs(leaseEndDate).format("MM-DD-YYYY");
 
-      console.log("Current Date: ", currentDate);
-      console.log("Notice Period: ", noticePeriod);
-      console.log("Lease End Date: ", leaseEndDate);
+      //console.log("Current Date: ", currentDate);
+      //console.log("Notice Period: ", noticePeriod);
+      //console.log("Lease End Date: ", leaseEndDate);
 
-      console.log("MoveOutDate In: ", moveOutDate.$d);      
-      // console.log("MoveOutDate Out: ", moveOutDate);
+      //console.log("MoveOutDate In: ", moveOutDate.$d);      
+      // //console.log("MoveOutDate Out: ", moveOutDate);
 
       const noticeDate = new Date(leaseEndDate);
       noticeDate.setDate(leaseEndDate.getDate() - noticePeriod);
       const noticeDateFormatted = dayjs(noticeDate).format("MM-DD-YYYY");
-      console.log("Notice Date: ", noticeDate);
+      //console.log("Notice Date: ", noticeDate);
       const futureDate = new Date(currentDate);
-      console.log("Future Date 1: ", noticeDate);
+      //console.log("Future Date 1: ", noticeDate);
       futureDate.setDate(currentDate.getDate() + noticePeriod);
-      console.log("Future Notice Date: ", noticeDate);
+      //console.log("Future Notice Date: ", noticeDate);
       const newLeaseEndDate = new Date(futureDate.getFullYear(), futureDate.getMonth() + 1, 0);
-      console.log("New Lease End Date: ", newLeaseEndDate);
+      //console.log("New Lease End Date: ", newLeaseEndDate);
 
-      console.log("Lease Status: ", leaseData.lease_status);
-      console.log("Dialog Box Open or Closed: ", confirmEndLeaseDialogOpen);
-      console.log("EndLeaseDialogOpen Open or Closed: ", endLeaseDialogOpen);
+      //console.log("Lease Status: ", leaseData.lease_status);
+      //console.log("Dialog Box Open or Closed: ", confirmEndLeaseDialogOpen);
+      //console.log("EndLeaseDialogOpen Open or Closed: ", endLeaseDialogOpen);
       if (leaseData.lease_status === "ACTIVE" || leaseData.lease_status === "ACTIVE M2M") {
-        console.log("In IF Statement", currentDate, noticeDate, moveOutDate.$d, leaseEndDate, newLeaseEndDate);
-        console.log("In IF Statement", currentDateFormatted, noticeDateFormatted, moveOut, leaseEndDateFormatted);
+        //console.log("In IF Statement", currentDate, noticeDate, moveOutDate.$d, leaseEndDate, newLeaseEndDate);
+        //console.log("In IF Statement", currentDateFormatted, noticeDateFormatted, moveOut, leaseEndDateFormatted);
 
         if (currentDate <= noticeDate) {
-          console.log("Current Date is before Notice Date");
+          //console.log("Current Date is before Notice Date");
           if (moveOutDate.$d >= leaseEndDate) {
             // Lease Ending at End of Lease Term
-            console.log("Lease Ending at End of Lease Term");
+            //console.log("Lease Ending at End of Lease Term");
             return `Your lease will end on ${moveOutDate.format(
               "dddd MMM DD YYYY"
             )} and you are responsible for rent payments until the end of the lease. Are you sure you want to end the lease?`;
           }
           if (moveOutDate.$d < leaseEndDate) {
             // Lease Ending Before End of Lease Term
-            console.log("Lease Ending Before End of Lease Term");
+            //console.log("Lease Ending Before End of Lease Term");
             return `Ending the lease early will require approval from the Property Manager. Your application to end the lease on ${moveOutDate.format(
               "dddd MMM DD YYYY"
             )} will be sent to the Property Manager for approval.  Please note that until you receive approval from the Property Manager, you are responsible for rent payments until the end of the lease ${dayjs(
@@ -309,7 +309,7 @@ const ViewLease = (props) => {
           }
         } else {
           // Lease Ending After End of Lease Term
-          console.log("Lease Ending After End of Lease Term");
+          //console.log("Lease Ending After End of Lease Term");
           return `Notice for ending the lease must be provided ${noticePeriod} days in advance. The lease can be terminated on ${dayjs(newLeaseEndDate).format(
             "dddd MMM DD YYYY"
           )} and you will be responsible for payments through that date. Are you sure you want to end the lease?`;
@@ -317,13 +317,13 @@ const ViewLease = (props) => {
       } else if (leaseData.lease_status === "ACTIVE-M2M") {
         if (currentDate < noticeDate) {
           // M2M Lease Ending Before Notice Date
-          console.log("M2M Lease Ending");
+          //console.log("M2M Lease Ending");
           return `Your lease will end on ${moveOutDate.format(
             "dddd MMM DD YYYY"
           )} and you are responsible for rent payments until the end of the lease. Ending the lease early will require approval from the Property Manager. Are you sure you want to end the lease?`;
         } else {
           // M2M Lease Ending After Notice Date
-          console.log("Lease Ending After End of Lease Term");
+          //console.log("Lease Ending After End of Lease Term");
           return `Notice for ending the lease must be provided ${noticePeriod} days in advance. The lease can be terminated on ${dayjs(newLeaseEndDate).format(
             "dddd MMM DD YYYY"
           )} and you will be responsible for payments through that date. Are you sure you want to end the lease?`;
@@ -332,7 +332,7 @@ const ViewLease = (props) => {
         return 'ERROR: lease status is not "ACTIVE" or "ACTIVE-M2M"';
       }
     };
-    console.log("Exit Notifications");
+    //console.log("Exit Notifications");
 
     const memoizedDialogText = useMemo(() => getConfirmEndLeaseDialogText(leaseData), [leaseData]);
 
@@ -796,8 +796,8 @@ function countNoOfOccupents(leaseData) {
 
   let no_of_occupants = 0;
   if (adultNo) {
-    // console.log("Adults: ", JSON.parse(leaseData.lease_adults));
-    console.log("Adults: ", adultNo);
+    // //console.log("Adults: ", JSON.parse(leaseData.lease_adults));
+    //console.log("Adults: ", adultNo);
     no_of_occupants += adultNo.length;
   }
   if (ChildNo) {
@@ -820,7 +820,7 @@ function getTenantName(leaseData) {
 
   let tenants = leaseData.tenants ? JSON.parse(leaseData.tenants) : [];
 
-  console.log(tenants);
+  //console.log(tenants);
   name += tenants && tenants[0] ? tenants[0].tenant_first_name : "";
   if (name.length > 0) {
     name += " ";
@@ -842,7 +842,7 @@ const TenantsDataGrid = ({ data }) => {
     { field: "lt_responsibility", headerName: "Responsibility", width: 150 },
   ];
 
-  console.log("TenantsDataGrid - props.data - ", data);
+  //console.log("TenantsDataGrid - props.data - ", data);
 
   return (
     <>
@@ -865,7 +865,7 @@ const AdultsDataGrid = ({ data }) => {
     { field: "relationship", headerName: "Relationship", width: 150 },
   ];
 
-  console.log("AdultsDataGrid - props.data - ", data);
+  //console.log("AdultsDataGrid - props.data - ", data);
 
   return (
     <>
@@ -888,7 +888,7 @@ const ChildrenDataGrid = ({ data }) => {
     { field: "relationship", headerName: "Relationship", width: 150 },
   ];
 
-  console.log("AdultsDataGrid - props.data - ", data);
+  //console.log("AdultsDataGrid - props.data - ", data);
 
   return (
     <>
@@ -912,7 +912,7 @@ const PetsDataGrid = ({ data }) => {
     { field: "weight", headerName: "Weight", width: 150 },
   ];
 
-  console.log("PetsDataGrid - props.data - ", data);
+  //console.log("PetsDataGrid - props.data - ", data);
 
   return (
     <>
@@ -937,7 +937,7 @@ const VehiclesDataGrid = ({ data }) => {
     { field: "license", headerName: "License Plate", width: 150 },
   ];
 
-  console.log("VehiclesDataGrid - props.data - ", data);
+  //console.log("VehiclesDataGrid - props.data - ", data);
 
   return (
     <>

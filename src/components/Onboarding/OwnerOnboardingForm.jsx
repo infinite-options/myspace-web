@@ -75,7 +75,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function OwnerOnboardingForm({ profileData, setIsSave }) {
-  console.log("In TenenatOnBoardingForm  - profileData", profileData);
+  //console.log("In TenenatOnBoardingForm  - profileData", profileData);
 
   const { getList } = useContext(ListsContext);
   const classes = useStyles();
@@ -175,15 +175,15 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
   };
 
   // useEffect(() => {
-  //   console.log("adults - ", adults);
+  //   //console.log("adults - ", adults);
   // }, [adults]);
 
   // useEffect(() => {
-  //   console.log("paymentMethods - ", paymentMethods);
+  //   //console.log("paymentMethods - ", paymentMethods);
   // }, [paymentMethods]);
 
   // useEffect(() => {
-  //   console.log("modifiedData - ", modifiedData);
+  //   //console.log("modifiedData - ", modifiedData);
   // }, [modifiedData]);
 
   const updateModifiedData = (updatedItem) => {
@@ -311,7 +311,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
   };
 
   useEffect(() => {
-    console.log("calling useeffect");
+    //console.log("calling useeffect");
     setIsSave(false);
 
     setProfileData();
@@ -320,7 +320,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
   }, []);
 
   useEffect(() => {
-    console.log("calling profileData useEffect");
+    //console.log("calling profileData useEffect");
 
     setIsSave(false);
     setProfileData();
@@ -520,7 +520,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
   
 
   const getIconForMethod = (type) => {
-    console.log("payments icon ---", type);
+    //console.log("payments icon ---", type);
     switch (type) {
       case "paypal":
         return PayPal;
@@ -710,7 +710,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
   };
 
   const showSnackbar = (message, severity) => {
-    console.log("Inside show snackbar");
+    //console.log("Inside show snackbar");
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
@@ -722,12 +722,12 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
 
   const handleUpdate = () => {
     // setIsUpdate( prevState => !prevState);
-    console.log("handleUpdate called");
+    //console.log("handleUpdate called");
     setIsSave(true);
   };
 
   const editOrUpdateOwner = async () => {
-    console.log("inside editOrUpdateOwner", modifiedData);
+    //console.log("inside editOrUpdateOwner", modifiedData);
     try {
       if (modifiedData.length > 0) {
         setShowSpinner(true);
@@ -744,7 +744,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
         // leaseApplicationFormData.append("lease_fees", feesJSON);
         // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
         modifiedData.forEach((item) => {
-          console.log(`Key: ${item.key}`);
+          //console.log(`Key: ${item.key}`);
           profileFormData.append(item.key, JSON.stringify(item.value));
         });
         profileFormData.append("owner_uid", profileData.owner_uid);
@@ -752,7 +752,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
         axios
           .put(`${APIConfig.baseURL.dev}/profile`, profileFormData, headers)
           .then((response) => {
-            console.log("Data updated successfully", response);
+            //console.log("Data updated successfully", response);
             openDialog("Success", "Your profile has been successfully updated.", "success");
             handleUpdate();
             setShowSpinner(false);
@@ -761,7 +761,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
             setShowSpinner(false);
             openDialog("Error", "Cannot update your profile. Please try again", "error");
             if (error.response) {
-              console.log(error.response.data);
+              //console.log(error.response.data);
             }
           });
         setShowSpinner(false);
@@ -771,13 +771,13 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
       }
     } catch (error) {
       openDialog("Error", "Cannot update the lease. Please try again", "error");
-      console.log("Cannot Update the lease", error);
+      //console.log("Cannot Update the lease", error);
       setShowSpinner(false);
     }
   };
 
   const saveProfile = async () => {
-    console.log("inside saveProfile", modifiedData);
+    //console.log("inside saveProfile", modifiedData);
     try {
       if (modifiedData.length > 0) {
         setShowSpinner(true);
@@ -794,7 +794,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
         // leaseApplicationFormData.append("lease_fees", feesJSON);
         // leaseApplicationFormData.append('lease_adults', leaseAdults ? JSON.stringify(adultsRef.current) : null);
         modifiedData.forEach((item) => {
-          console.log(`Key: ${item.key}`);
+          //console.log(`Key: ${item.key}`);
           profileFormData.append(item.key, item.value);
         });
         profileFormData.append("owner_uid", profileData.owner_uid);
@@ -802,7 +802,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
         axios
           .put(`${APIConfig.baseURL.dev}/profile`, profileFormData, headers)
           .then((response) => {
-            console.log("Data updated successfully", response);
+            //console.log("Data updated successfully", response);
             openDialog("Success", "Your profile has been successfully updated.", "success");
             handleUpdate();
             setShowSpinner(false);
@@ -811,7 +811,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
             setShowSpinner(false);
             openDialog("Error", "Cannot update your profile. Please try again", "error");
             if (error.response) {
-              console.log(error.response.data);
+              //console.log(error.response.data);
             }
           });
         setShowSpinner(false);
@@ -821,7 +821,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
       }
     } catch (error) {
       openDialog("Error", "Cannot update the lease. Please try again", "error");
-      console.log("Cannot Update the lease", error);
+      //console.log("Cannot Update the lease", error);
       setShowSpinner(false);
     }
   };

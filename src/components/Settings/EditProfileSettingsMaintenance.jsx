@@ -72,7 +72,7 @@ export default function EditProfileSettingsMaintenance() {
 
 
     useEffect(() => {
-        console.log("maintenanceFees updated - ", maintenanceFees)
+        //console.log("maintenanceFees updated - ", maintenanceFees)
         setModifiedData((prevData) => ({
             ...prevData,
             'business_services_fees': JSON.stringify(maintenanceFees)
@@ -81,7 +81,7 @@ export default function EditProfileSettingsMaintenance() {
     }, [maintenanceFees]);
 
     useEffect(() => {
-        console.log("businessLocations updated - ", businessLocations)
+        //console.log("businessLocations updated - ", businessLocations)
         setModifiedData((prevData) => ({
             ...prevData,
             'business_locations': JSON.stringify(businessLocations)
@@ -99,7 +99,7 @@ export default function EditProfileSettingsMaintenance() {
 
     const handleOpenEditService = (serviceIndex) => {
         setShowEditServiceDialog(true);
-        console.log("EDITING Service, Index", serviceIndex);
+        //console.log("EDITING Service, Index", serviceIndex);
         setIndexForEditServiceDialog(serviceIndex);
     };
 
@@ -113,8 +113,8 @@ export default function EditProfileSettingsMaintenance() {
     }
 
     const handleEditService = (newService, index) => {
-        console.log("IN handleEditService of PropertyCard");
-        console.log(newService, index);
+        //console.log("IN handleEditService of PropertyCard");
+        //console.log(newService, index);
         setMaintenanceFees((prevServices) => {
             const updatedServices = prevServices.map((service, i) => {
                 if (i === index) {
@@ -128,7 +128,7 @@ export default function EditProfileSettingsMaintenance() {
     }
 
     const handleDeleteService = (index, event) => {
-        console.log("Maintenance Services", maintenanceFees);
+        //console.log("Maintenance Services", maintenanceFees);
         setMaintenanceFees(prevServices => {
             const servicesArray = Array.from(prevServices);
             servicesArray.splice(index, 1);
@@ -159,7 +159,7 @@ export default function EditProfileSettingsMaintenance() {
 
     const handleOpenEditLocation = (locationIndex) => {
         setShowEditLocationDialog(true);
-        console.log("EDITING Location, Index", locationIndex);
+        //console.log("EDITING Location, Index", locationIndex);
         setIndexForEditLocationDialog(locationIndex);
     };
 
@@ -173,8 +173,8 @@ export default function EditProfileSettingsMaintenance() {
     }
 
     const handleEditLocation = (newLocation, index) => {
-        console.log("IN handleEditLocation");
-        console.log(newLocation, index);
+        //console.log("IN handleEditLocation");
+        //console.log(newLocation, index);
         setBusinessLocations((prevLocations) => {
             const updatedLocations = prevLocations.map((location, i) => {
                 if (i === index) {
@@ -210,15 +210,15 @@ export default function EditProfileSettingsMaintenance() {
 
     // Main use Effect
     useEffect(()=>{
-        console.log('EditProfileSettingsMaintenance useEffect');
+        //console.log('EditProfileSettingsMaintenance useEffect');
     }, []);
 
     // Handle changes to form fields
     const handleInputChange = (event) => {
-        console.log("Input changed")
+        //console.log("Input changed")
         const { name, value } = event.target;
-        // console.log(name)
-        // console.log(value)
+        // //console.log(name)
+        // //console.log(value)
 
         if (name === 'business_name') {
             setBusinessName(value);
@@ -256,8 +256,8 @@ export default function EditProfileSettingsMaintenance() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log("FORM SUBMITTED");
-        console.log(modifiedData);
+        //console.log("FORM SUBMITTED");
+        //console.log(modifiedData);
 
         const formData = new FormData();
         for (const key in modifiedData) {
@@ -286,17 +286,17 @@ export default function EditProfileSettingsMaintenance() {
         };
 
         if(isEdited){
-            console.log("EDITED")
+            //console.log("EDITED")
             // axios.put('http://localhost:4000/ownerProfile', modifiedData, headers)
             axios.put(`${APIConfig.baseURL.dev}/profile`, formData, headers)
             .then((response) => {
-                console.log('Data updated successfully');
+                //console.log('Data updated successfully');
                 setIsEdited(false); // Reset the edit status
                 navigate(-1)
             })
             .catch((error) => {
                 if(error.response){
-                    console.log(error.response.data);
+                    //console.log(error.response.data);
                 }
             });
         }
@@ -808,27 +808,27 @@ function AddServiceDialog({ open, handleClose, onAddService }) {
 
     const [serviceName, setServiceName] = useState('');
     useEffect(() => {
-        console.log('serviceName: ', serviceName);
+        //console.log('serviceName: ', serviceName);
     }, [serviceName]);
 
     const [numHours, setNumHours] = useState(0);
     useEffect(() => {
-        console.log('numHours: ', numHours);
+        //console.log('numHours: ', numHours);
     }, [numHours]);
 
     const [charge, setCharge] = useState(0);
     useEffect(() => {
-        console.log('Charge: ', charge);
+        //console.log('Charge: ', charge);
     }, [charge]);
 
     const [feeType, setFeeType] = useState("Fixed Bid");
     useEffect(() => {
-        console.log('feeType: ', feeType);
+        //console.log('feeType: ', feeType);
     }, [feeType]);
 
     const [totalCost, setTotalCost] = useState(0);
     useEffect(() => {
-        console.log('totalCost: ', totalCost);
+        //console.log('totalCost: ', totalCost);
     }, [totalCost]);
 
     useEffect(() => {
@@ -856,12 +856,12 @@ function AddServiceDialog({ open, handleClose, onAddService }) {
     const handleAddService = (event) => {
         event.preventDefault();
 
-        console.log("ADD SERVICE FORM SUBMITTED ");
-        console.log('serviceName:', serviceName);
-        console.log('numHours:', numHours);
-        console.log('charge:', charge);
-        console.log('feeType:', feeType);
-        console.log('totalCost:', totalCost);
+        //console.log("ADD SERVICE FORM SUBMITTED ");
+        //console.log('serviceName:', serviceName);
+        //console.log('numHours:', numHours);
+        //console.log('charge:', charge);
+        //console.log('feeType:', feeType);
+        //console.log('totalCost:', totalCost);
 
         const newService = {
             service_name: serviceName,            
@@ -937,7 +937,7 @@ function AddServiceDialog({ open, handleClose, onAddService }) {
                                 }}
                             >
                                 <Box>Service Name</Box>
-                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={//console.log("input changed")}>Fee Name</TextInputField> */}
                                 <TextField
                                     name="service_name"
                                     placeholder=""
@@ -1036,7 +1036,7 @@ function AddServiceDialog({ open, handleClose, onAddService }) {
                                 }}
                             >
                                 <Box>Charge</Box>
-                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={//console.log("input changed")}>Fee Name</TextInputField> */}
                                 <TextField
                                     name="charge"
                                     placeholder=""
@@ -1146,28 +1146,28 @@ function EditServiceDialog({ open, handleClose, onEditService, serviceIndex, ser
 
     const [serviceName, setServiceName] = useState(services[serviceIndex].service_name);
     useEffect(() => {
-        console.log('FEE Name: ', serviceName);
+        //console.log('FEE Name: ', serviceName);
     }, [serviceName]);
 
     const [feeType, setFeeType] = useState(services[serviceIndex].fee_type);
     useEffect(() => {
-        console.log('FEE TYPE: ', feeType);
+        //console.log('FEE TYPE: ', feeType);
     }, [feeType]);
 
     const [numHours, setNumHours] = useState(services[serviceIndex].num_hours);
     useEffect(() => {
-        console.log('numHours: ', numHours);
+        //console.log('numHours: ', numHours);
     }, [numHours]);
 
     const [charge, setCharge] = useState(services[serviceIndex].charge);
     useEffect(() => {
-        console.log('Charge: ', charge);
+        //console.log('Charge: ', charge);
     }, [charge]);
 
 
     const [totalCost, setTotalCost] = useState(services[serviceIndex].total_cost);
     useEffect(() => {
-        console.log('totalCost: ', totalCost);
+        //console.log('totalCost: ', totalCost);
     }, [totalCost]);
 
     useEffect(() => {
@@ -1184,12 +1184,12 @@ function EditServiceDialog({ open, handleClose, onEditService, serviceIndex, ser
     const handleEditService = (event) => {
         event.preventDefault();
 
-        console.log("EDIT SERVICE FORM SUBMITTED ");
-        console.log('serviceName:', serviceName);
-        console.log('numHours:', numHours);
-        console.log('charge:', charge);
-        console.log('feeType:', feeType);
-        console.log('totalCost:', totalCost);
+        //console.log("EDIT SERVICE FORM SUBMITTED ");
+        //console.log('serviceName:', serviceName);
+        //console.log('numHours:', numHours);
+        //console.log('charge:', charge);
+        //console.log('feeType:', feeType);
+        //console.log('totalCost:', totalCost);
 
         const newService = {
             service_name: serviceName,
@@ -1264,7 +1264,7 @@ function EditServiceDialog({ open, handleClose, onEditService, serviceIndex, ser
                                 }}
                             >
                                 <Box>Service Name</Box>
-                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={//console.log("input changed")}>Fee Name</TextInputField> */}
                                 <TextField
                                     name="service_name"
                                     placeholder=""
@@ -1361,7 +1361,7 @@ function EditServiceDialog({ open, handleClose, onEditService, serviceIndex, ser
                                 }}
                             >
                                 <Box>Charge</Box>
-                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={//console.log("input changed")}>Fee Name</TextInputField> */}
                                 <TextField
                                     name="charge"
                                     placeholder=""
@@ -1467,22 +1467,22 @@ function AddLocationDialog({ open, handleClose, onAddLocation }) {
 
     const [address, setAddress] = useState('');
     useEffect(() => {
-        console.log('address: ', address);
+        //console.log('address: ', address);
     }, [address]);
 
     const [city, setCity] = useState('');
     useEffect(() => {
-        console.log('city: ', city);
+        //console.log('city: ', city);
     }, [city]);
 
     const [state, setState] = useState('');
     useEffect(() => {
-        console.log('state: ', state);
+        //console.log('state: ', state);
     }, [state]);
 
     const [miles, setMiles] = useState(0);
     useEffect(() => {
-        console.log('miles: ', miles);
+        //console.log('miles: ', miles);
     }, [miles]);
 
     // const handleFeeTypeChange = (event) => {
@@ -1501,11 +1501,11 @@ function AddLocationDialog({ open, handleClose, onAddLocation }) {
     const handleAddLocation = (event) => {
         event.preventDefault();
 
-        console.log("ADD LOCATION FORM SUBMITTED ");
-        console.log('address:', address);
-        console.log('city:', city);
-        console.log('state:', state);
-        console.log('miles:', miles);
+        //console.log("ADD LOCATION FORM SUBMITTED ");
+        //console.log('address:', address);
+        //console.log('city:', city);
+        //console.log('state:', state);
+        //console.log('miles:', miles);
 
         const newLocation = {
             address: address,
@@ -1579,7 +1579,7 @@ function AddLocationDialog({ open, handleClose, onAddLocation }) {
                                 }}
                             >
                                 <Box>Address</Box>
-                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={//console.log("input changed")}>Fee Name</TextInputField> */}
                                 <TextField
                                     name="address"
                                     placeholder=""
@@ -1603,7 +1603,7 @@ function AddLocationDialog({ open, handleClose, onAddLocation }) {
                                 }}
                             >
                                 <Box>City</Box>
-                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={//console.log("input changed")}>Fee Name</TextInputField> */}
                                 <TextField
                                     name="city"
                                     placeholder=""
@@ -1678,7 +1678,7 @@ function AddLocationDialog({ open, handleClose, onAddLocation }) {
                                 }}
                             >
                                 <Box>Miles</Box>
-                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={//console.log("input changed")}>Fee Name</TextInputField> */}
                                 <TextField
                                     name="miles"
                                     placeholder=""
@@ -1794,22 +1794,22 @@ function EditLocationDialog({ open, handleClose, onEditLocation, locationIndex, 
 
     const [address, setAddress] = useState(locations[locationIndex].address);
     useEffect(() => {
-        console.log('Address: ', address);
+        //console.log('Address: ', address);
     }, [address]);
 
     const [city, setCity] = useState(locations[locationIndex].city);
     useEffect(() => {
-        console.log('city: ', city);
+        //console.log('city: ', city);
     }, [city]);
 
     const [state, setState] = useState(locations[locationIndex].state);
     useEffect(() => {
-        console.log('state: ', state);
+        //console.log('state: ', state);
     }, [state]);
 
     const [miles, setMiles] = useState(locations[locationIndex].miles);
     useEffect(() => {
-        console.log('miles: ', miles);
+        //console.log('miles: ', miles);
     }, [miles]);
     
     
@@ -1822,11 +1822,11 @@ function EditLocationDialog({ open, handleClose, onEditLocation, locationIndex, 
     const handleEditLocation = (event) => {
         event.preventDefault();
 
-        console.log("EDIT LOCATION FORM SUBMITTED ");
-        console.log('address:', address);
-        console.log('city:', city);
-        console.log('state:', state);
-        console.log('miles:', miles);
+        //console.log("EDIT LOCATION FORM SUBMITTED ");
+        //console.log('address:', address);
+        //console.log('city:', city);
+        //console.log('state:', state);
+        //console.log('miles:', miles);
 
         const newLocation = {
             address: address,
@@ -1899,7 +1899,7 @@ function EditLocationDialog({ open, handleClose, onEditLocation, locationIndex, 
                                 }}
                             >
                                 <Box>Address</Box>
-                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={//console.log("input changed")}>Fee Name</TextInputField> */}
                                 <TextField
                                     name="address"
                                     placeholder=""
@@ -1923,7 +1923,7 @@ function EditLocationDialog({ open, handleClose, onEditLocation, locationIndex, 
                                 }}
                             >
                                 <Box>City</Box>
-                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={//console.log("input changed")}>Fee Name</TextInputField> */}
                                 <TextField
                                     name="city"
                                     placeholder=""
@@ -1997,7 +1997,7 @@ function EditLocationDialog({ open, handleClose, onEditLocation, locationIndex, 
                                 }}
                             >
                                 <Box>Miles</Box>
-                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={console.log("input changed")}>Fee Name</TextInputField> */}
+                                {/* <TextInputField name="fee_name" placeholder="" value={""} onChange={//console.log("input changed")}>Fee Name</TextInputField> */}
                                 <TextField
                                     name="miles"
                                     placeholder=""

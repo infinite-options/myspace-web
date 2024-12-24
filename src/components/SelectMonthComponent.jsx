@@ -12,13 +12,13 @@ const SelectMonthComponent = (props) => {
   const handleMonthChange = (month) => {
     setSelectedMonth(month);
     props.setMonth(month);
-    // console.log("month ", month)
+    // //console.log("month ", month)
     // props.setShowSelectMonth(false)
   };
   const handleYearChange = (year) => {
     props.setYear(year);
     setSelectedYear(year);
-    // console.log("year ", year)
+    // //console.log("year ", year)
   };
 
   const getYear = (selection) => {

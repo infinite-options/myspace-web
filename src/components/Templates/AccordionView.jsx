@@ -57,7 +57,7 @@ export default function AccordionView({colorStatusType, data, ItemComponent}){
             //         dataObject[colorStatusMap].push(item);
             //     }
             // });
-            console.log(dataObject)
+            //console.log(dataObject)
             setFormattedData(prevData => ({...prevData, ...dataObject}));
         }
         parseData(); // This created keys for each status type and pushed the data into the array

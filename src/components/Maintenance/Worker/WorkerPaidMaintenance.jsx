@@ -38,7 +38,7 @@ export default function WorkerPaidMaintenance({maintenanceItem}){
 
     function handleNavigateToQuotesRequested(){
 
-        console.log("NewRequestAction", maintenanceItem)
+        //console.log("NewRequestAction", maintenanceItem)
         navigate("/quoterequest", {
             state:{
                 maintenanceItem
@@ -47,32 +47,32 @@ export default function WorkerPaidMaintenance({maintenanceItem}){
     }
 
     function handleCancel(id){
-        console.log("handleCancel", id)
+        //console.log("handleCancel", id)
         let response = CancelTicket(id);
-        console.log("handleCancel", response)
+        //console.log("handleCancel", response)
         if (response){
-            console.log("Ticket Cancelled")
+            //console.log("Ticket Cancelled")
             alert("Ticket Cancelled")
             navigate(maintenanceRoutingBasedOnSelectedRole())
         } else{
-            console.log("Ticket Not Cancelled")
+            //console.log("Ticket Not Cancelled")
             alert("Error: Ticket Not Cancelled")
         }
     }
 
     async function handleComplete(id){
         CompleteTicket(id).then(response => {
-            console.log("handleComplete", response);
+            //console.log("handleComplete", response);
             if (response.ok){
-                console.log("Ticket Completed")
+                //console.log("Ticket Completed")
                 alert("Ticket Completed")
                 navigate(maintenanceRoutingBasedOnSelectedRole())
             } else{
-                console.log("Ticket Not Completed")
+                //console.log("Ticket Not Completed")
                 alert("Error: Ticket Not Completed")
             }
         }).catch(error => {
-            console.log("handleComplete", error);
+            //console.log("handleComplete", error);
         });
     }
 

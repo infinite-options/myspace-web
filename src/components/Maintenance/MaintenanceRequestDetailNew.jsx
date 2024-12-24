@@ -231,7 +231,7 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
         temp[index] = isGrey;
         return temp;
       });
-      // console.log("ohhh here its mistake -- ", index)
+      // //console.log("ohhh here its mistake -- ", index)
       let firstTab = temp.indexOf(0);
       let lastTab = temp.lastIndexOf(0);
       setTabs({ firstTab, lastTab });

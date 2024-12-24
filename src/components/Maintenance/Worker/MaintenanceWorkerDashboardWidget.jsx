@@ -30,7 +30,7 @@ export default function MaintenanceWorkerDashboardWidget(props) {
     // const fetchMaintenanceDashboardData = async () => {
     //   setShowSpinner(true);
     //   const jsonData = props.dashboard_data;
-    //   console.log("DEBUG jsonData", jsonData);
+    //   //console.log("DEBUG jsonData", jsonData);
     //   setWorkOrders(jsonData.workOrders.result);
     //   setCurrentActivities(jsonData.currentActivities.result);
     //   setShowSpinner(false);
@@ -68,7 +68,7 @@ export default function MaintenanceWorkerDashboardWidget(props) {
 
       // dataObject["REJECTED"] = [...rejectedQuotes];
 
-      // console.log("dataObject from new api call", dataObject)
+      // //console.log("dataObject from new api call", dataObject)
       setMaintenanceRequests((prevData) => ({
         ...prevData,
         ...dataObject,
@@ -134,7 +134,7 @@ export default function MaintenanceWorkerDashboardWidget(props) {
         <Grid item xs={10} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
           <Paper component='form' style={{ padding: "2px 4px", display: "flex", alignItems: "center", width: 400, alignContent: "center" }}>
             <InputBase style={{ marginLeft: "8px", flex: 1 }} placeholder='Search' inputProps={{ "aria-label": "search" }} value={query} onChange={handleInputChange} />
-            <IconButton type='submit' style={{ padding: "10px" }} onClick={() => console.log("test")} aria-label='search'>
+            <IconButton type='submit' style={{ padding: "10px" }} onClick={() => {}} aria-label='search'>
               <SearchIcon />
             </IconButton>
           </Paper>
@@ -146,7 +146,7 @@ export default function MaintenanceWorkerDashboardWidget(props) {
             let maintenanceArray = maintenanceRequests[mappingKey] || [];
 
             let filteredArray = handleFilter(query, maintenanceRequests[mappingKey]);
-            // console.log("[DEBUG] MaintenanceWorkerDashboardWidget.jsx before MaintenanceStatusTable01")
+            // //console.log("[DEBUG] MaintenanceWorkerDashboardWidget.jsx before MaintenanceStatusTable01")
 
             return (
               <WorkerMaintenanceStatusTable

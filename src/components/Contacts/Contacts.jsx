@@ -37,7 +37,7 @@ const Contacts = (props) => {
       .get(url)
       .then((resp) => {
         const data = resp.data["Business_Contacts"].result;
-        // console.log(data);
+        // //console.log(data);
 
         const ownerCon = data.filter((val) => {
           return val.contact_uid && val.contact_uid.includes("110-");
@@ -66,7 +66,7 @@ const Contacts = (props) => {
       .get(ownerUrl)
       .then((resp) => {
         const ownerCon = resp.data["Owner_Details"].result;
-        // console.log(ownerCon);
+        // //console.log(ownerCon);
         const uniqueValues = {};
 
         const uniqueContacts = ownerCon.filter((item) => {
@@ -310,7 +310,7 @@ const OwnerContactsCard = (props) => {
   const index = props.index;
 
   const handleSelection = () => {
-    console.log(index);
+    //console.log(index);
     handleSetSelectedCard(owner, index);
   };
 
@@ -381,7 +381,7 @@ const TenantContactsCard = (props) => {
   const index = props.index;
 
   const handleSelection = () => {
-    console.log(index);
+    //console.log(index);
     handleSetSelectedCard(tenant, index);
   };
 

@@ -30,7 +30,7 @@ import QuoteRequestEditForm from "./Manager/QuoteRequestEditForm";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 export async function maintenanceManagerDataCollectAndProcess(maintenanceData, setMaintenanceData, setShowSpinner, setDisplayMaintenanceData, profileId, selectedStatus,  setSelectedStatus, setMaintenanceItemsForStatus, setAllMaintenanceData) {
-  // console.log('is it in maintenanceManagerDataCollectAndProcess----');
+  // //console.log('is it in maintenanceManagerDataCollectAndProcess----');
   const dataObject = {};
   
   function dedupeQuotes(array) {
@@ -69,7 +69,7 @@ export async function maintenanceManagerDataCollectAndProcess(maintenanceData, s
 
   const getMaintenanceData = async () => {
     setShowSpinner(true);
-    // console.log('is it in getMaintenanceData----');
+    // //console.log('is it in getMaintenanceData----');
     const maintenanceRequests = await fetch(`${APIConfig.baseURL.dev}/maintenanceStatus/${profileId}`);
     const maintenanceRequestsData = await maintenanceRequests.json();
 
@@ -108,7 +108,7 @@ export async function maintenanceManagerDataCollectAndProcess(maintenanceData, s
     } else {
       setMaintenanceItemsForStatus(dataObject[getKeyForSelectedStatus(selectedStatus)]);
     }
-    // console.log('---what is set here---', maintenanceData);
+    // //console.log('---what is set here---', maintenanceData);
     
     setAllMaintenanceData(dataObject);
 
@@ -189,7 +189,7 @@ export default function MaintenanceManager() {
 
   const { selectedRequestIndex, setSelectedRequestIndex, selectedStatus, setSelectedStatus, maintenanceItemsForStatus, setMaintenanceItemsForStatus, allMaintenanceData, setAllMaintenanceData } = useMaintenance();
 
-  // console.log("selectedStatus - ", selectedStatus);
+  // //console.log("selectedStatus - ", selectedStatus);
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [cookies] = useCookies(["selectedRole"]);
@@ -220,7 +220,7 @@ export default function MaintenanceManager() {
 
   useEffect(() => {
     if (maintenanceData) {
-      console.log("maintenace data manager side --- ", maintenanceData)
+      //console.log("maintenace data manager side --- ", maintenanceData)
       const propertyList = [];
       const addedAddresses = [];
       for (const key in maintenanceData) {
@@ -278,7 +278,7 @@ export default function MaintenanceManager() {
   }
 
   function handleFilter(maintenanceArray, month, year, filterPropertyList) {
-    // console.log(" -- DEBUG -- month, year, filter Property list - ", month, typeof year, filterPropertyList, maintenanceArray)
+    // //console.log(" -- DEBUG -- month, year, filter Property list - ", month, typeof year, filterPropertyList, maintenanceArray)
 
     var filteredArray = [];
     if (month && year) {
@@ -350,7 +350,7 @@ export default function MaintenanceManager() {
   }, [refresh]);
 
   useEffect(()=>{
-    console.log(" -- inside useeffect to show data maintenanceData - ", maintenanceData, " - selectedstatus - ", selectedStatus, " - selected index - ", selectedRequestIndex)
+    //console.log(" -- inside useeffect to show data maintenanceData - ", maintenanceData, " - selectedstatus - ", selectedStatus, " - selected index - ", selectedRequestIndex)
   }, [maintenanceData, selectedStatus, allMaintenanceData, displayMaintenanceData])
 
   useEffect(() => {
@@ -377,7 +377,7 @@ export default function MaintenanceManager() {
     //   setAllMaintenanceData(maintenanceData);
 
     // }
-    // console.log("clicked on row - ", index, row, maintenanceData, newDataObject)
+    // //console.log("clicked on row - ", index, row, maintenanceData, newDataObject)
     await setSelectedRequestIndex(index);
     await setSelectedStatus(row.maintenance_status);
     setMaintenanceItemsForStatus(maintenanceData[row.maintenance_status]);

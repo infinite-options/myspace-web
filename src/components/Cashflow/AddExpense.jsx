@@ -55,15 +55,15 @@ const AddExpense = (props) => {
   const [partialAmount, setPartialAmount] = useState(null);
   const setCurrentWindow = props.setCurrentWindow;
   const [selectedFinalPayer, setSelectedFinalPayer] = useState(null);
-  console.log("props", props);
+  //console.log("props", props);
 
   useEffect(() => {
     setPropertyList(props.propertyList);
-    console.log(props.propertyList);
+    //console.log(props.propertyList);
   }, [props.propertyList]);
 
   const handleCheckboxChange = (option) => {
-    // console.log(option)
+    // //console.log(option)
     if (option === "already_paid") {
       setIsCheckedOne(!isCheckedOne);
       setIsCheckedTwo(false);
@@ -83,7 +83,7 @@ const AddExpense = (props) => {
 
   useEffect(() => {
     if (edit && itemToEdit){
-      // console.log("itemToEdit", itemToEdit)
+      // //console.log("itemToEdit", itemToEdit)
       // setSelectedProperty(itemToEdit.property_uid)
       setCategory(itemToEdit.purchase_type)
       if(!itemToEdit.pur_frequency){
@@ -95,7 +95,7 @@ const AddExpense = (props) => {
       setPayable(itemToEdit.pur_payer)
       // setDate(itemToEdit.purchase_date.replace("-", "/"))
       propertyList.find((property) => {
-        // console.log(property)
+        // //console.log(property)
         if (property.property_address === itemToEdit.property_address && property.property_unit === itemToEdit.property_unit){
           setSelectedProperty(property)
         }
@@ -106,13 +106,13 @@ const AddExpense = (props) => {
 
   useEffect(() => {
     if (payable === "Property Manager") {
-      // console.log("Set purPayerId to", selectedProperty.business_uid)
+      // //console.log("Set purPayerId to", selectedProperty.business_uid)
       setPurPayerId(selectedProperty.business_uid)
     } else if (payable === "Tenant") {
-      // console.log("Set purPayerId to", selectedProperty.tenant_uid)
+      // //console.log("Set purPayerId to", selectedProperty.tenant_uid)
       setPurPayerId(selectedProperty.tenant_uid)
     } else if (payable === "Owner") {
-      // console.log("Set purPayerId to", selectedProperty.owner_uid)
+      // //console.log("Set purPayerId to", selectedProperty.owner_uid)
       setPurPayerId(selectedProperty.owner_uid)
     }
   }, [payable, selectedProperty]);
@@ -210,7 +210,7 @@ const AddExpense = (props) => {
     const formData = new FormData();
 
     // if (edit && itemToEdit){
-    //   console.log("itemToEdit", itemToEdit)
+    //   //console.log("itemToEdit", itemToEdit)
     // }
 
     formData.append("pur_property_id", selectedProperty.property_uid);
@@ -233,7 +233,7 @@ const AddExpense = (props) => {
     }
 
     formData.forEach((value, key) => {
-      console.log(key, value);
+      //console.log(key, value);
     });
     
     // const config = {
@@ -257,7 +257,7 @@ const AddExpense = (props) => {
       }
   
       const data = await response.json();
-      console.log(data);
+      //console.log(data);
   
       if (selectedRole === "OWNER") {
         setCurrentWindow("CASHFLOW_DETAILS");

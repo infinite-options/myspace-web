@@ -79,30 +79,30 @@ export default function OwnerFirstProperty() {
   // const [allAnnouncementsData, setAllAnnouncementsData] = useState([]);
 
   const [showReferralWelcomeDialog, setShowReferralWelcomeDialog] = useState(false);
-  // console.log("getProfileId()", getProfileId());
+  // //console.log("getProfileId()", getProfileId());
   useEffect(() => {
     const dataObject = {};
-    // console.log("getProfileI$", getProfileId());
+    // //console.log("getProfileI$", getProfileId());
     const fetchData = async () => {
       if (!getProfileId()) {
         return;
       }
-      // console.log("getProfileId*", getProfileId());
+      // //console.log("getProfileId*", getProfileId());
       if (!getProfileId()) {
         let newRole = "OWNER";
         navigate("/addNewRole", { state: { user_uid: user.user_uid, newRole } });
       }
       setShowSpinner(true);
-      // console.log("getProfileId()", getProfileId());
+      // //console.log("getProfileId()", getProfileId());
       const response = await fetch(`${APIConfig.baseURL.dev}/dashboard/${getProfileId()}`);
       const jsonData = await response.json();
-      console.log("Owner First Property jsonData", jsonData);
+      //console.log("Owner First Property jsonData", jsonData);
 
       const announcementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`);
       const announcementsResponseData = await announcementsResponse.json();
 
       let announcementsReceivedData = announcementsResponseData?.received?.result;
-      // console.log("OwnerDashboar2 - announcementsReceivedData", announcementsReceivedData);
+      // //console.log("OwnerDashboar2 - announcementsReceivedData", announcementsReceivedData);
       setAnnouncementsData(announcementsReceivedData || ["Card 1", "Card 2", "Card 3", "Card 4", "Card 5"]);
 
       // MAINTENANCE Status

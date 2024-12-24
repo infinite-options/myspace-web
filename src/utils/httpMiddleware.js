@@ -25,7 +25,7 @@ const encryptFormDataPayload = async (formData) => {
     }
   }
 
-  console.log(" === debug === before encryption = ", formObject)
+  //console.log(" === debug === before encryption = ", formObject)
   const encryptedPayload = encryptPayload(formObject); // Encrypt the payload
   return encryptedPayload;
 };
@@ -119,7 +119,7 @@ const fetchMiddleware = async (url, options = {}) => {
     // Encrypt the request body if present
     if(options.body){
       if (options.body instanceof FormData) {
-        // console.log(" ==before form data = ", options.body)
+        // //console.log(" ==before form data = ", options.body)
         const encryptedFormData = new FormData();
         const encryptedData = await encryptFormDataPayload(options.body);
         encryptedFormData.append("encrypted_data", encryptedData);
@@ -128,12 +128,12 @@ const fetchMiddleware = async (url, options = {}) => {
   
       }else{
         const payload = JSON.parse(options.body);
-        console.log(" === debug === before encryption json data = ", payload)
+        //console.log(" === debug === before encryption json data = ", payload)
         options.body = JSON.stringify({encrypted_data: encryptPayload(payload), data_type: false});
       }
     }
 
-    // console.log(" == after form data = ", options.body)
+    // //console.log(" == after form data = ", options.body)
 
     // const headers = {
     //     ...options.headers,
@@ -159,10 +159,10 @@ const fetchMiddleware = async (url, options = {}) => {
 
     try {
         
-      // console.log('printing url', url, updatedOptions);
+      // //console.log('printing url', url, updatedOptions);
       let response = await fetch(url, updatedOptions);
       if (response.status === 404){
-        console.log('JWT is missing/invalid');
+        //console.log('JWT is missing/invalid');
         if (!localStorage.getItem('hasRedirected')){
           localStorage.setItem('hasRedirected', 'true');
           logout();
@@ -205,14 +205,14 @@ const fetchMiddleware = async (url, options = {}) => {
           response = await fetch(url, retryOptions);
       }
 
-      // console.log(" == here debug = = ")
+      // //console.log(" == here debug = = ")
       const responseText = await response.text();
       const responseData = JSON.parse(responseText);
       
       // Decrypt the response data if encrypted
       if (responseData.encrypted_data) {
           let decryptedData  = decryptPayload(responseData.encrypted_data);
-          console.log(" == DEBUG == fetch response: ", decryptedData)
+          console.log(" == DEBUG == Decrypted response For : ", response.url, " Response: ", decryptedData)
           // return tempObject;
           return {
             ok: response.ok,
@@ -240,7 +240,7 @@ const axiosMiddleware = axios.create({});
 axiosMiddleware.interceptors.request.use(
   async (config) => {
     const token = sessionStorage.getItem('authToken');
-    // console.log(" == data = ", config)
+    // //console.log(" == data = ", config)
 
     if (config.data) {
       if (config.data instanceof FormData) {
@@ -250,7 +250,7 @@ axiosMiddleware.interceptors.request.use(
         config.data = encryptedFormData;
         // config.data = { encrypted_data: encryptFormDataPayload(config.data), data_type : true};
       } else {
-        console.log(" === debug === before encryption json data = ", config.data)
+        //console.log(" === debug === before encryption json data = ", config.data)
         config.data = { encrypted_data: encryptPayload(config.data), data_type: false};
       }
       // config.data = { encrypted_data: encryptPayload(config.data) };
@@ -267,17 +267,18 @@ axiosMiddleware.interceptors.request.use(
 
 axiosMiddleware.interceptors.response.use(
     (response) => {
-    // console.log("response - ", response)
+    // //console.log("response - ", response)
     if (response.data?.encrypted_data) {
         // Decrypt the response data
         response.data = decryptPayload(response.data.encrypted_data);
     }
+    console.log(" == DEBUG == Decrypted response For : ", response.url, " Response: ", response.data)
     return response;
   },
     async (error) => {
         const originalRequest = error.config;
         if (error.response?.status === 404){
-          console.log('JWT is missing/invalid');
+          //console.log('JWT is missing/invalid');
           if (!localStorage.getItem('hasRedirected')){
             localStorage.setItem('hasRedirected', 'true');
             logout();

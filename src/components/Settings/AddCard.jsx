@@ -36,10 +36,10 @@ export default function AddCard() {
 
 
     const handleInputChange = (event) => {
-      console.log("Input changed")
+      //console.log("Input changed")
       const { name, value } = event.target;
-      // console.log(name)
-      // console.log(value)
+      // //console.log(name)
+      // //console.log(value)
 
       if (name === 'credit_card_number') {
         setCreditCardNumber(value);
@@ -60,8 +60,8 @@ export default function AddCard() {
 
   const handleSubmit = (event) => {
       event.preventDefault();
-      console.log("FORM SUBMITTED");
-      console.log(modifiedData);
+      //console.log("FORM SUBMITTED");
+      //console.log(modifiedData);
 
       const headers = { 
           "Access-Control-Allow-Origin": "*",
@@ -71,17 +71,17 @@ export default function AddCard() {
       };
 
       // if(isEdited){
-      //     console.log("EDITED")
+      //     //console.log("EDITED")
       //     // axios.put('http://localhost:4000/ownerProfile', modifiedData, headers)
       //     axios.put('${APIConfig.baseURL.dev}/profile', modifiedData, headers)
       //     .then((response) => {
-      //         console.log('Data updated successfully');
+      //         //console.log('Data updated successfully');
       //         setIsEdited(false); // Reset the edit status
       //         navigate(-1)
       //     })
       //     .catch((error) => {
       //         if(error.response){
-      //             console.log(error.response.data);
+      //             //console.log(error.response.data);
       //         }
       //     });
       // }

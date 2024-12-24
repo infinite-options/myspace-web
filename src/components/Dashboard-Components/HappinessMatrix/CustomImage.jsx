@@ -24,7 +24,7 @@ function CustomImage(props) {
       setHappinessData(happinessData);
       setOwnerUID(payload.property_owner_id);
     }
-    // console.log("ROHIT - payload - ", payload);
+    // //console.log("ROHIT - payload - ", payload);
     navigate(`/ownerContactDetailsHappinessMatrix`, {
       state: {
         ownerUID: payload.property_owner_id,

@@ -16,7 +16,7 @@ export default async function CancelTicket(maintenance_request_uid, setShowSpinn
             return true;
         }
     } catch (error){
-        console.log("error", error)
+        //console.log("error", error)
         return false;
     }
     setShowSpinner(false);

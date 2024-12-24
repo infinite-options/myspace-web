@@ -46,8 +46,8 @@ const ManagerOnBoardDesktopForm = ({ profileData, setIsSave }) => {
   const cookiesDataUser = cookie["user"];
 
   const userRoles = cookiesDataUser?.role.split(",");
-  //   console.log("cookiesData ", cookiesDataUser);
-  //   console.log("Current User Roles in management: ", userRoles);
+  //   //console.log("cookiesData ", cookiesDataUser);
+  //   //console.log("Current User Roles in management: ", userRoles);
 
   //
   const [fees, setFees] = useState([{ id: 1, fee_name: "", frequency: "", charge: "", of: "" }]);
@@ -62,7 +62,7 @@ const ManagerOnBoardDesktopForm = ({ profileData, setIsSave }) => {
   const [dashboardButtonEnabled, setDashboardButtonEnabled] = useState(false);
   const { user, isBusiness, isManager, roleName, selectRole, selectedRole, setLoggedIn, updateProfileUid, isLoggedIn, getProfileId, getRoleId } = useUser();
 
-  console.log("user from Useuser ", user);
+  //console.log("user from Useuser ", user);
   const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
   const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
   const [employee_photo_url, setEmployeePhoto] = useState("");
@@ -90,7 +90,7 @@ const ManagerOnBoardDesktopForm = ({ profileData, setIsSave }) => {
   const [empMask, setEmpMask] = useState("");
 
   useEffect(() => {
-    console.log("calling useeffect");
+    //console.log("calling useeffect");
     //setIsSave(false)
     const fetchProfileData = async () => {
       setShowSpinner(true);
@@ -272,8 +272,8 @@ const ManagerOnBoardDesktopForm = ({ profileData, setIsSave }) => {
   };
 
   const getPayload = () => {
-    console.log("fees", fees);
-    console.log("location", locations);
+    //console.log("fees", fees);
+    //console.log("location", locations);
     return {
       business_user_id: user.user_uid,
       business_uid: getProfileId(),
@@ -395,8 +395,8 @@ const ManagerOnBoardDesktopForm = ({ profileData, setIsSave }) => {
       return false;
     }
 
-    console.log("fees", fees);
-    console.log("location", locations);
+    //console.log("fees", fees);
+    //console.log("location", locations);
     const payload = getPayload();
     const form = encodeForm(payload);
     const data = await saveProfile(form);
@@ -415,9 +415,9 @@ const ManagerOnBoardDesktopForm = ({ profileData, setIsSave }) => {
     //       role_id = { businesses };
     //       setCookie("user", { ...user, ...role_id });
     //       const paymentSetup = await handlePaymentStep(data.business_uid);
-    //       console.log(paymentSetup);
+    //       //console.log(paymentSetup);
     //       const createEmp= await SaveEmpStep(data.business_uid);
-    //       console.log(createEmp);
+    //       //console.log(createEmp);
     //       setDashboardButtonEnabled(true);
 
     //   }

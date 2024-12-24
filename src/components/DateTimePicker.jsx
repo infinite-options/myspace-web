@@ -35,7 +35,7 @@ const style = {
 function DateTimePickerModal(props) {
   const [availabilityDate, setAvailabilityDate] = useState(props.date || "");
   const [availabilityTime, setAvailabilityTime] = useState(props.time || "");
-//   console.log("--availability time - ", props)
+//   //console.log("--availability time - ", props)
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [cancelTicketFlag, setcancelTicketFlag] = useState(false);
   useEffect(() => {
@@ -45,7 +45,7 @@ function DateTimePickerModal(props) {
     //         setAvailabilityTime(props.maintenanceItem.maintenance_scheduled_time)
     //     }        
     // }
-    // console.log("props.maintenanceItem - ", props.maintenanceItem);
+    // //console.log("props.maintenanceItem - ", props.maintenanceItem);
     const scheduledDate = props.maintenanceItem?.maintenance_scheduled_date;
     const scheduledTime = props.maintenanceItem?.maintenance_scheduled_time;
     setAvailabilityDate((scheduledDate !== "" && scheduledDate !== null && scheduledDate !== undefined && scheduledDate !== "null")  ? props.maintenanceItem.maintenance_scheduled_date : props.date);
@@ -70,7 +70,7 @@ function DateTimePickerModal(props) {
   }
 
   const changeActiveDateSelector = (event) => {
-    console.log("changeActiveDateSelector", event.target.value, event.target.checked)
+    ////console.log("changeActiveDateSelector", event.target.value, event.target.checked)
     setShowDatePicker(event.target.checked && event.target.value === 'select');
     handleAuxillaryButton(event.target.value)
   }
@@ -89,14 +89,14 @@ function DateTimePickerModal(props) {
   
 
   async function submit(){
-    // console.log("in submit for datetimepicker")
+    // //console.log("in submit for datetimepicker")
     if(cancelTicketFlag) {
-        console.log("Cancel ticket---", props.cancelTicket);
+        //console.log("Cancel ticket---", props.cancelTicket);
         await props.cancelTicket(props.maintenanceItem.maintenance_request_uid, JSON.parse(props.maintenanceItem.quote_info));
         await handleClose();
     }
     else if (props.completeTicket) {
-        console.log("complete ticket", props.maintenanceItem.maintenance_request_uid, props.maintenanceItem.quote_info, availabilityDate, availabilityTime)
+        //console.log("complete ticket", props.maintenanceItem.maintenance_request_uid, props.maintenanceItem.quote_info, availabilityDate, availabilityTime)
         props.completeTicket(props.maintenanceItem.maintenance_request_uid, props.maintenanceItem.quote_info, availabilityDate, availabilityTime).then( () =>
             {
                 handleClose();

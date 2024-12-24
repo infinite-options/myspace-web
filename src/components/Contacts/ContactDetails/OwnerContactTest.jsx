@@ -39,7 +39,7 @@ const OwnerContactTest = (props) => {
   const [contactsTab, setContactsTab] = useState("");
 
   useEffect(() => {
-    console.log("location state", location.state);
+    //console.log("location state", location.state);
     if (location.state?.happinessMatrixData) {
       setHappinessMatrixData(setting_matrix_data(location.state.happinessMatrixData));
     }
@@ -52,7 +52,7 @@ const OwnerContactTest = (props) => {
         const resp = await axios.get(url);
         const data = resp.data["management_contacts"];
         const ownerContacts = data["owners"];
-        console.log("Owner Contact info", ownerContacts);
+        //console.log("Owner Contact info", ownerContacts);
         setContactDetails(ownerContacts);
         const ownerIndex = ownerContacts.findIndex(contact => contact.owner_uid === ownerUID);
         setIndex(ownerIndex);
@@ -68,11 +68,11 @@ const OwnerContactTest = (props) => {
   }, [location.state, getProfileId, ownerUID]);
 
   useEffect(() => {
-    console.log("OwnerContactTest - contactDetails", contactDetails);
-    console.log("OwnerContactTest - index", index);
-    console.log("OwnerContactTest - happinessData", happinessData);
-    console.log("OwnerContactTest - happinessMatrixData", happinessMatrixData);
-    console.log("OwnerContactTest - happinessMatrixData isArray", Array.isArray(happinessMatrixData));
+    //console.log("OwnerContactTest - contactDetails", contactDetails);
+    //console.log("OwnerContactTest - index", index);
+    //console.log("OwnerContactTest - happinessData", happinessData);
+    //console.log("OwnerContactTest - happinessMatrixData", happinessMatrixData);
+    //console.log("OwnerContactTest - happinessMatrixData isArray", Array.isArray(happinessMatrixData));
   }, [contactDetails, index, happinessData, happinessMatrixData]);
 
   useEffect(() => {

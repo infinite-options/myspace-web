@@ -28,7 +28,7 @@ export default function LeasesDashboard() {
   const [viewRHS, setViewRHS] = useState(false);
 
   // useEffect(() => {
-  //     console.log("LeasesDashboard - leaseDetails - ", leaseDetails);
+  //     //console.log("LeasesDashboard - leaseDetails - ", leaseDetails);
   // }, [leaseDetails]);
 
   useEffect(() => {
@@ -45,17 +45,17 @@ export default function LeasesDashboard() {
     const property_response = await fetch(`${APIConfig.baseURL.dev}/properties/${profileId}`);
     //const response = await fetch(`${APIConfig.baseURL.dev}/properties/110-000003`)
     if (!property_response.ok) {
-      // console.log("Error fetching Property Details data");
+      // //console.log("Error fetching Property Details data");
     }
     const propertyData = await property_response.json();
 
-    // console.log('---propertyData--', propertyData);
+    // //console.log('---propertyData--', propertyData);
     setPropertyList(getPropertyList(propertyData)); // This combines Properties with Applications and Maitenance Items to enable the LHS screen
-    // console.log("In Properties > Property Endpoint: ", propertyList);
+    // //console.log("In Properties > Property Endpoint: ", propertyList);
   };
 
   useEffect(() => {
-    console.log("useeffect called");
+    //console.log("useeffect called");
     axios
       .get(`${APIConfig.baseURL.dev}/leaseDetails/${getProfileId()}`)
       .then((res) => {
@@ -63,18 +63,18 @@ export default function LeasesDashboard() {
         const fetchData = res.data["Lease_Details"].result;
 
         fetchData?.forEach((lease) => {
-          console.log("lease_uid - ", lease.lease_uid);
-          console.log("lease_end - ", lease.lease_end);
+          //console.log("lease_uid - ", lease.lease_uid);
+          //console.log("lease_end - ", lease.lease_end);
         });
         if (res.status === 200) {
-          console.log("In Leases dashboard", fetchData);
+          //console.log("In Leases dashboard", fetchData);
           setLeaseDetails(fetchData);
           // setSelectedLeaseId(fetchData[0].lease_uid);
           setDataReady(true);
         }
       })
       .catch((err) => {
-        console.log("Error in fetching lease details", err);
+        //console.log("Error in fetching lease details", err);
       });
   }, [isUpdate]);
 
@@ -101,7 +101,7 @@ export default function LeasesDashboard() {
       });
     }
 
-    //   console.log(maintMap);
+    //   //console.log(maintMap);
     return propertyList.map((p) => {
       p.leases = appsMap.get(p.property_uid) || [];
       p.applicationsCount = [...p.leases].filter((a) => ["NEW", "PROCESSING"].includes(a.lease_status)).length;
@@ -114,21 +114,21 @@ export default function LeasesDashboard() {
   }
 
   useEffect(() => {
-    console.log("useeffect called");
+    //console.log("useeffect called");
     axios
       .get(`${APIConfig.baseURL.dev}/leaseDetails/${getProfileId()}`)
       .then((res) => {
         //axios.get(`${APIConfig.baseURL.dev}/leaseDetails/110-000003`).then((res) => {
         const fetchData = res.data["Lease_Details"].result;
         if (res.status === 200) {
-          console.log("In Leases dashboard", fetchData);
+          //console.log("In Leases dashboard", fetchData);
           setLeaseDetails(fetchData);
           // setSelectedLeaseId(fetchData[0].lease_uid);
           setDataReady(true);
         }
       })
       .catch((err) => {
-        console.log("Error in fetching lease details", err);
+        //console.log("Error in fetching lease details", err);
       });
   }, [isUpdate]);
 
@@ -198,7 +198,7 @@ export default function LeasesDashboard() {
             )}
 
             {/* Show TenantApplicationNav when viewMode is 'reviewApplication' */}
-            {console.log("---propertyList---", propertyList, selectedLeaseId, leaseDetails)}
+            {/* {console.log("---propertyList---", propertyList, selectedLeaseId, leaseDetails)} */}
 
             {(!isMobile || viewRHS) && viewMode === "reviewApplication" && applicationIndex != null && (
               <Grid item xs={12} md={8}>

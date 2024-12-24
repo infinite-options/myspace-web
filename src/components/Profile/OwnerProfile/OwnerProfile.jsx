@@ -48,9 +48,9 @@ function OwnerProfile() {
   useEffect(() => {
     setShowSpinner(true);
     axios.get(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`).then((res) => {
-      //   console.log("Res 1: ", res);
-      //   console.log("Res 2: ", res.data.ownerProfile);
-      //   console.log("Res 3: ", res.data.ownerProfile.result[0]);
+      //   //console.log("Res 1: ", res);
+      //   //console.log("Res 2: ", res.data.ownerProfile);
+      //   //console.log("Res 3: ", res.data.ownerProfile.result[0]);
       setProfileData(res.data.profile.result[0]);
       setShowSpinner(false);
     });

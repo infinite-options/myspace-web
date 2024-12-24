@@ -9,7 +9,7 @@ import { useMediaQuery } from "@mui/material";
 const formatUtilityName = (name) => name || "";
 
 const UtilityComponent = ({ newUtilities, utilities, utilitiesMap, handleNewUtilityChange }) => {
-  console.log("utilcomp", newUtilities);
+  //console.log("utilcomp", newUtilities);
   return (
     <Grid container sx={{ marginBottom: "20px", marginTop: "5px" }} spacing={4}>
       <Grid item xs={4} md={3} />
@@ -123,7 +123,7 @@ const UtilitiesManager = ({ newUtilities, setNewUtilities, utils, utilitiesMap, 
   };
 
   const handleClose = () => {
-    console.log("newlyAddedUtils", newlyAddedUtils, newUtilList);
+    //console.log("newlyAddedUtils", newlyAddedUtils, newUtilList);
     if (newlyAddedUtils !== null) {
       setNewUtilList((prev) => prev.slice(0, -newlyAddedUtils.length));
       setCurrentRemainingUtils(remainingUtils);
@@ -132,7 +132,7 @@ const UtilitiesManager = ({ newUtilities, setNewUtilities, utils, utilitiesMap, 
     setOpen(false);
   };
 
-  console.log("Inside Utilities", newUtilities);
+  //console.log("Inside Utilities", newUtilities);
 
   useEffect(() => {
     setNewUtilList(newUtilities);
@@ -145,20 +145,20 @@ const UtilitiesManager = ({ newUtilities, setNewUtilities, utils, utilitiesMap, 
   };
 
   const handleNewUtilityChange = (e, newUtility, utilityIndex) => {
-    console.log("change", utilityIndex, newUtility);
+    //console.log("change", utilityIndex, newUtility);
     const { value } = e.target;
     setNewUtilList((prevUtilities) => {
       const updatedUtilities = [...prevUtilities];
       const toChange = { ...updatedUtilities[utilityIndex], utility_payer_id: value === "owner" ? "050-000280" : "050-000282" };
       updatedUtilities[utilityIndex] = toChange;
-      console.log("updated util", updatedUtilities);
+      //console.log("updated util", updatedUtilities);
       return updatedUtilities;
     });
   };
 
   const onAddUtilitiesClick = () => {
     const utilityTypeId = selectedAddUtil;
-    console.log("utilityTypeId", utilityTypeId);
+    //console.log("utilityTypeId", utilityTypeId);
     if (utilityTypeId !== null) {
       const name = utilitiesMap.get(utilityTypeId);
 
@@ -172,7 +172,7 @@ const UtilitiesManager = ({ newUtilities, setNewUtilities, utils, utilitiesMap, 
           utility_payer_id: "050-000280",
           utility_type_id: utilityTypeId,
         };
-        console.log("Adding new util", newUtil);
+        //console.log("Adding new util", newUtil);
         setNewUtilList((prevUtilities) => [...prevUtilities, newUtil]);
         setNewlyAddedUtils((prevUtilities) => (prevUtilities ? [...prevUtilities, newUtil] : [newUtil]));
         setCurrentRemainingUtils((prevUtils) => {
@@ -185,7 +185,7 @@ const UtilitiesManager = ({ newUtilities, setNewUtilities, utils, utilitiesMap, 
   };
 
   const handleSave = () => {
-    console.log("newly added", newlyAddedUtils, newUtilities);
+    //console.log("newly added", newlyAddedUtils, newUtilities);
 
     setNewUtilities(newUtilList);
     setRemainingUtils(currentRemainingUtils);

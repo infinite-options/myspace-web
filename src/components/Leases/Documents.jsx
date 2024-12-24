@@ -78,7 +78,7 @@ const Documents = ({ isCenter=false, setRightPane,setRHS, setSelectedDocument, f
   const [previewDialogOpen, setPreviewDialogOpen] = useState(false) 
 
   // useEffect(() => {
-  //   console.log("inside documents mod", modifiedData);
+  //   //console.log("inside documents mod", modifiedData);
   //   if (modifiedData && modifiedData?.length > 0) {
   //     // editOrUpdateLease();
   //     handleClose();
@@ -107,8 +107,8 @@ const Documents = ({ isCenter=false, setRightPane,setRHS, setSelectedDocument, f
 
   const checkRequiredFields = () => {
     let retVal = true;
-    // console.log("name", currentRow.filename, currentRow.name);
-    // console.log("type", currentRow.contentType);
+    // //console.log("name", currentRow.filename, currentRow.name);
+    // //console.log("type", currentRow.contentType);
 
     if (!currentRow.filename && !currentRow.name) {
       console.error("Filename is either empty, null, or undefined.");
@@ -122,7 +122,7 @@ const Documents = ({ isCenter=false, setRightPane,setRHS, setSelectedDocument, f
 
     //update setDocuments
     if (isEditing === true) {
-      console.log("current row is", currentRow);
+      //console.log("current row is", currentRow);
       
       // remove id of currentRow before adding to it
       // const docswithoutid = currentRow.map(({ id, ...rest }) => rest);
@@ -137,7 +137,7 @@ const Documents = ({ isCenter=false, setRightPane,setRHS, setSelectedDocument, f
       handleClose();
 
     } else {
-      // console.log("---dhyey--- arr", uploadedFiles);
+      // //console.log("---dhyey--- arr", uploadedFiles);
       // const updatedDocsWithoutId = documents.map(({ id, ...rest }) => rest);
 
       // setModifiedData((prev) => [...prev, { key: dataKey, value: updatedDocsWithoutId }]);
@@ -158,14 +158,14 @@ const Documents = ({ isCenter=false, setRightPane,setRHS, setSelectedDocument, f
   };
 
   const handleFileUpload = (e) => {
-    // console.log("uploaded file", e.target.files);
-    // console.log("documents", documents);
+    // //console.log("uploaded file", e.target.files);
+    // //console.log("documents", documents);
     if (isEditing === true) {
       const curr = { ...currentRow, filename: e.target.files[0].name };
       setcurrentRow(curr);
     } else {
       const curr = { ...currentRow, filename: e.target.files[0].name, id: documents?.length };
-      // console.log("curr", curr);
+      // //console.log("curr", curr);
       setcurrentRow(curr);
     }
 
@@ -174,7 +174,7 @@ const Documents = ({ isCenter=false, setRightPane,setRHS, setSelectedDocument, f
       contentType: currentRow.contentType,
       file: file,
     }));
-    // console.log("--dhyey--- filesArray", filesArray);
+    // //console.log("--dhyey--- filesArray", filesArray);
     setNewFiles(filesArray);
     setuploadedFiles(filesArray);
     // Create a URL for the file preview
@@ -183,7 +183,7 @@ const Documents = ({ isCenter=false, setRightPane,setRHS, setSelectedDocument, f
   };
 
   const showSnackbar = (message, severity) => {
-    console.log("Inside show snackbar");
+    //console.log("Inside show snackbar");
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
@@ -192,16 +192,16 @@ const Documents = ({ isCenter=false, setRightPane,setRHS, setSelectedDocument, f
   const handleSubmit = () => {
     const isValid = checkRequiredFields();
     if (isValid === true) {
-      console.log("success occured");
+      //console.log("success occured");
     } else {
-      console.log("error occured");
+      //console.log("error occured");
       showSnackbar("Kindly enter all the required fields", "error");
       setSnackbarOpen(true);
     }
   };
 
   const handleEditClick = (row) => {
-    console.log("on edit", row);
+    //console.log("on edit", row);
     setFilePreview(row.link);
     setcurrentRow(row);
     setIsEditing(true);
@@ -211,10 +211,10 @@ const Documents = ({ isCenter=false, setRightPane,setRHS, setSelectedDocument, f
   const handleDelete = async () => {
     setDeleteDocsUrl(prevList => [...prevList, currentRow.link])
     setDocuments((prevFiles) => {
-        // console.log("deleted - ", currentRow.link);
+        // //console.log("deleted - ", currentRow.link);
         return prevFiles.filter((f)=> f.link !== currentRow.link);
     });
-      // console.log("currentRow.id", currentRow.id);
+      // //console.log("currentRow.id", currentRow.id);
       // const updatedDocuments = documents.filter((doc) => doc.id !== currentRow.id);
       // const updatedDocsWithoutId = updatedDocuments.map(({ id, ...rest }) => rest);
       // setModifiedData((prev) => [...prev, { key: dataKey, value: updatedDocsWithoutId }]);
@@ -994,7 +994,7 @@ setSelectedDocument({
 							hidden
 							// onChange={(e) => setContractFiles(e.target.files)}
 							onChange={(e) => {
-                // console.log("inside contract file upload --- dhyey")
+                // //console.log("inside contract file upload --- dhyey")
                 setContractFiles((prevFiles) => [...prevFiles, ...e.target.files])}
               }
 							multiple
@@ -1042,7 +1042,7 @@ setSelectedDocument({
 				// 		</Box>
 				// 		{[...documents].map((doc, i) => (
 				// 			<React.Fragment key={i}>
-				// 			{/* {console.log("details of doc-", doc)} */}
+				// 			{/* {//console.log("details of doc-", doc)} */}
 				// 				<Box
 				// 					// key={i}
 				// 					sx={{

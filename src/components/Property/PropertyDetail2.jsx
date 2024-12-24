@@ -4,7 +4,7 @@ import theme from "../../theme/theme";
 import PropertyNavigator from "../Property/PropertyNavigator";
 
 export default function PropertyDetail({ setEditPropertyState, setTenantAppNavState, setPmQuoteRequestedState, setManagerDetailsState, onShowSearchManager, index, propertyList, allRentStatus, isDesktop, allContracts }) {
-  console.log("In Property Detail Desktop", allContracts);
+  //console.log("In Property Detail Desktop", allContracts);
   return (
     <ThemeProvider theme={theme}>
       <Box

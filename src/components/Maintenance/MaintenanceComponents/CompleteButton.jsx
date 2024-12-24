@@ -23,7 +23,7 @@ export default function CompleteButton(props){
     const [showModal, setShowModal] = useState(false);
     const [cancelTicket, setCancelTicket] = useState(false);
     let maintenanceItem = props.maintenanceItem;
-    console.log(" maintenace item inside complete buttonm - ", maintenanceItem)
+    //console.log(" maintenace item inside complete buttonm - ", maintenanceItem)
     let setShowMessage = props.setShowMessage;
     let setMessage = props.setMessage;
     let quotes = props.quotes;
@@ -31,9 +31,9 @@ export default function CompleteButton(props){
 
     
     async function handleComplete(id, quotes, date, time){
-        console.log("handleComplete quotes", quotes)
+        //console.log("handleComplete quotes", quotes)
         let role = roleName();
-        console.log("role name", role);
+        //console.log("role name", role);
 
         if (role === "PM Employee" || role === "Manager"){
             let rankedQuote;
@@ -65,7 +65,7 @@ export default function CompleteButton(props){
                             await CompleteTicket(id);
                         }
                     } catch (error){
-                        console.log("error", error);
+                        //console.log("error", error);
                     }
                 } else {
                     await CompleteTicket(id, date);
@@ -80,7 +80,7 @@ export default function CompleteButton(props){
                 await CompleteTicket(id);
             }
         } else {
-            console.log("Unsupported role is trying to complete a ticket");
+            //console.log("Unsupported role is trying to complete a ticket");
         }
 
         // Call setRefresh to trigger a refresh after completion

@@ -19,8 +19,8 @@ import { useNavigate } from 'react-router-dom';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 export default function QuotesTable({ maintenanceItem, onQuoteSelect, navigateParams, maintenanceQuotesForItem }) {
-	//console.log('In QuotesTable');
-	//console.log('maintenanceQuotesForItem: ', maintenanceQuotesForItem);
+	////console.log('In QuotesTable');
+	////console.log('maintenanceQuotesForItem: ', maintenanceQuotesForItem);
 	// maintenanceQuotes is a state variable that is set in the grandparent component
 	// maintenanceItem is a prop that is passed from the parent component
 	let navigate = useNavigate();
@@ -60,9 +60,9 @@ export default function QuotesTable({ maintenanceItem, onQuoteSelect, navigatePa
 	];
 
 	const handleViewQuotesNavigate = (quote_id, params) => {
-		// console.log('In handleViewQuotesNavigate');
-		// console.log('quotes: ', maintenanceQuotesForItem);
-		// console.log(
+		// //console.log('In handleViewQuotesNavigate');
+		// //console.log('quotes: ', maintenanceQuotesForItem);
+		// //console.log(
 		// 	'index: ',
 		// 	maintenanceQuotesForItem.findIndex((item) => item.maintenance_quote_uid === quote_id)
 		// );
@@ -76,7 +76,7 @@ export default function QuotesTable({ maintenanceItem, onQuoteSelect, navigatePa
 				},
 			});
 		} else {
-    //   console.log('inside else Quotes table---', onQuoteSelect);
+    //   //console.log('inside else Quotes table---', onQuoteSelect);
 		const selectedIndex = maintenanceQuotesForItem.findIndex(item => item.maintenance_quote_uid === params.row.maintenance_quote_uid);
         onQuoteSelect(selectedIndex);
     

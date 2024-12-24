@@ -32,7 +32,7 @@ const EndRenewedLeaseDialog = ({ leaseDetails, setRightPane, isMobile, setViewRH
     const color = theme.palette.form.main;
 
     const leaseData = leaseDetails;
-    console.log("data", leaseData);
+    //console.log("data", leaseData);
 
     const getEndLeaseConfirmation = () => {
         const currentDate = new Date();
@@ -82,7 +82,7 @@ const EndRenewedLeaseDialog = ({ leaseDetails, setRightPane, isMobile, setViewRH
     };
 
     const handleRadioChange = (event, id) => {
-        console.log('event1', event);
+        //console.log('event1', event);
         if (id == 0 || id == 3) {
             setMoveOutReason(event.target.value);
         } else {
@@ -93,13 +93,13 @@ const EndRenewedLeaseDialog = ({ leaseDetails, setRightPane, isMobile, setViewRH
     };
 
     const handleOption2CheckboxChange = (event, label) => {
-        console.log('event', event);
+        //console.log('event', event);
         setSelectedOption2Checkbox(event.target.value);
         setMoveOutReason(label);
     };
 
     const handleOption3CheckboxChange = (event, label) => {
-        console.log('event', event);
+        //console.log('event', event);
         setSelectedOption3Checkbox(event.target.value);
         setMoveOutReason(label);
     };
@@ -141,7 +141,7 @@ const EndRenewedLeaseDialog = ({ leaseDetails, setRightPane, isMobile, setViewRH
         }
 
         for (let pair of leaseApplicationFormData.entries()) {
-            console.log(pair[0] + ": " + pair[1]);
+            //console.log(pair[0] + ": " + pair[1]);
         }
 
         // API call (commented for now)

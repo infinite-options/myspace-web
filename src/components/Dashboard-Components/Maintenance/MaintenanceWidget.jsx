@@ -8,27 +8,27 @@ import { ReactComponent as HomeIcon } from "../../../images/home_icon.svg";
 import { ReactComponent as CalendarIcon } from "../../../images/calendar_icon.svg";
 
 export default function MaintenanceWidget({ maintenanceData, onMaintenanceClick }) {
-  // console.log("In MaintenanceWidget", maintenanceData);
+  // //console.log("In MaintenanceWidget", maintenanceData);
   const navigate = useNavigate();
   const { maintenanceRoutingBasedOnSelectedRole, user, selectedRole } = useUser();
   const [isAddingNewMaintenance, setIsAddingNewMaintenance] = useState(false);
 
-  // console.log("Role: ", user);
-  // console.log("Selected Role: ", selectedRole);
+  // //console.log("Role: ", user);
+  // //console.log("Selected Role: ", selectedRole);
 
   const [maintenanceRequestCounts, setMaintenanceRequestCounts] = useState({});
   const colorStatus = selectColorStatus();
 
   // useEffect(() => {
-  //   console.log("maintenanceRequestCounts -  ", maintenanceRequestCounts);
+  //   //console.log("maintenanceRequestCounts -  ", maintenanceRequestCounts);
   // }, [maintenanceRequestCounts]);
 
   // TODO: We need to make the /maintenanceRequests endpoint return the data in the format we need for the Status component
   useEffect(() => {
     const dataObject = {};
-    // console.log("maintenanceData", maintenanceData);
+    // //console.log("maintenanceData", maintenanceData);
     for (const item of maintenanceData) {
-      // console.log(item)
+      // //console.log(item)
       if (!dataObject[item.maintenance_status]) {
         dataObject[item.maintenance_status] = item.num;
       }
@@ -38,7 +38,7 @@ export default function MaintenanceWidget({ maintenanceData, onMaintenanceClick 
   }, [maintenanceData]);
 
   // function routingWithSelectedRole() {
-  //   // console.log("routingWithSelectedRole selectedRole", selectedRole)
+  //   // //console.log("routingWithSelectedRole selectedRole", selectedRole)
   //   if (selectedRole === "MANAGER") {
   //     return "/managerMaintenance";
   //   } else if (selectedRole === "OWNER") {
@@ -47,7 +47,7 @@ export default function MaintenanceWidget({ maintenanceData, onMaintenanceClick 
   // }
 
   function selectColorStatus() {
-    // console.log("selectColorStatus selectedRole", selectedRole)
+    // //console.log("selectColorStatus selectedRole", selectedRole)
     if (selectedRole === "MANAGER" || selectedRole === "PM_EMPLOYEE") {
       return theme.colorStatusPMO;
     } else if (selectedRole === "OWNER" || selectedRole === "TENANT") {

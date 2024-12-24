@@ -85,7 +85,7 @@ const TenantOnBoardDesktopForm = ({ profileData, setIsSave }) => {
   const [companyName, setCompanyName] = useState("");
 
   useEffect(() => {
-    console.log("calling useeffect");
+    //console.log("calling useeffect");
     setIsSave(false);
     const fetchProfileData = async () => {
       setShowSpinner(true);
@@ -147,7 +147,7 @@ const TenantOnBoardDesktopForm = ({ profileData, setIsSave }) => {
   }, []);
 
   // useEffect(() => {
-  //   console.log("148 - ssn - ", ssn);
+  //   //console.log("148 - ssn - ", ssn);
   // }, [ssn]);
 
   const saveProfile = async (form) => {
