@@ -65,7 +65,7 @@ export default function MaintenanceDashboard2() {
     maintenance_request_uid: null,
   });
 
-  let dataLoaded = false;
+  const [dataLoaded, setDataLoaded] = useState(false);
   const [userState, setUserState] = useState(user);
   const prevUserStateRef = useRef();
 
@@ -76,7 +76,7 @@ export default function MaintenanceDashboard2() {
     if (dashboard_id == null) {
       return;
     }
-
+    
     if (getProfileId() != null) {
       setShowSpinner(true);
 
@@ -178,7 +178,7 @@ export default function MaintenanceDashboard2() {
       await settodayData(filteredTodayData);
       await setnextScheduleData(filteredData);
       setShowSpinner(false);
-      dataLoaded = true;
+      setDataLoaded(true);
     }
   };
 
@@ -213,12 +213,21 @@ export default function MaintenanceDashboard2() {
   // }, [location.state?.key]); // The effect will trigger when `key` changes or if location.state is empty
 
   useEffect(() => {
-    setShowSpinner(true);
-    if (selectedRole === "MAINT_EMPLOYEE" && getProfileId() != null) {
-      emp_verification();
-    }
-    getMaintenanceData();
-    setShowSpinner(false);
+    const fetchInitialData = async () => {
+      setShowSpinner(true);
+  
+      if (selectedRole === "MAINT_EMPLOYEE" && getProfileId() != null) {
+        await emp_verification();
+      }
+
+      // if(dataLoaded === false){
+      //   await getMaintenanceData();
+      // }
+  
+      setShowSpinner(false);
+    };
+  
+    fetchInitialData();
   }, []);
 
   // useEffect(() => {
@@ -232,20 +241,45 @@ export default function MaintenanceDashboard2() {
   useEffect(() => {
     // //console.log("dataLoaded - ", dataLoaded);
     // //console.log("user - ", user);
-    if (prevUserStateRef.current !== userState) {
-      prevUserStateRef.current = userState;
-      // //console.log("User state has deeply changed:", userState);
-      if (dataLoaded === false) {
+    // if (prevUserStateRef.current !== userState) {
+    //   prevUserStateRef.current = userState;
+    //   // //console.log("User state has deeply changed:", userState);
+    //   if (dataLoaded === false) {
+    //     setShowSpinner(true);
+    //     if (selectedRole === "MAINT_EMPLOYEE") dashboard_id = user.businesses?.MAINTENANCE?.business_uid || user?.maint_supervisor;
+    //     if (selectedRole === "MAINT_EMPLOYEE" && getProfileId() != null) {
+    //       emp_verification();
+    //       setShowSpinner(false);
+    //     }
+
+    //     getMaintenanceData();
+    //   }
+    // }
+    const fetchMaintenanceData = async () => {
+      if (!dataLoaded) {
         setShowSpinner(true);
-        if (selectedRole === "MAINT_EMPLOYEE") dashboard_id = user.businesses?.MAINTENANCE?.business_uid || user?.maint_supervisor;
-        if (selectedRole === "MAINT_EMPLOYEE" && getProfileId() != null) {
-          emp_verification();
-          setShowSpinner(false);
+  
+        if (selectedRole === "MAINT_EMPLOYEE") {
+          dashboard_id =
+            user.businesses?.MAINTENANCE?.business_uid || user?.maint_supervisor;
         }
 
-        getMaintenanceData();
+        if (selectedRole === "MAINT_EMPLOYEE" && getProfileId() != null) {
+          await emp_verification();
+          setShowSpinner(false);
+        }
+  
+        await getMaintenanceData();
+  
+        setShowSpinner(false);
       }
+    };
+  
+    if (prevUserStateRef.current !== userState) {
+      prevUserStateRef.current = userState;
+      fetchMaintenanceData();
     }
+
   }, [userState]);
 
   const handleWorkerMaintenanceRequestSelected = (maintenance_request_index, propstatus, propmaintenanceItemsForStatus, alldata, maintenance_request_uid) => {
