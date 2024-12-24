@@ -114,7 +114,7 @@ import ChangePasswordSettings from "./Settings/ChangePasswordSettings";
 import ChangePasswordSettingsManager from "./Settings/ChangePasswordSettingsManager";
 import ChangePasswordSettingsTenant from "./Settings/ChangePasswordSettingsTenant";
 import ChangePasswordSettingsMaintenance from "./Settings/ChangePasswordSettingsMaintenance";
-import AddCard from "./Settings/AddCard";
+// import AddCard from "./Settings/AddCard";
 import AddPayment from "./Settings/AddPayment";
 import CardDetailsSettings from "./Settings/CardDetailsSettings";
 import CardDetailsSettingsManager from "./Settings/CardDetailsSettingsManager";
@@ -179,10 +179,10 @@ import AddListing from "./Property/AddListing";
 import RequestQuotes from "./Property/RequestQuotes";
 import ViewDocument from "./Property/ViewDocument";
 
-import PMNotifications from "./Notifications/PMNotifications";
+// import PMNotifications from "./Notifications/PMNotifications";
 import TenantApplicationNav from "./Applications/TenantApplicationNav";
-import PONotifications from "./Notifications/PONotifications";
-import PropertyContract from "./Notifications/PropertyContract";
+// import PONotifications from "./Notifications/PONotifications";
+// import PropertyContract from "./Notifications/PropertyContract";
 import TenantLease from "./Applications/TenantLease";
 import PMQuotesList from "./Property/PMQuotesList";
 import LandingPage from "./Onboarding/LandingPage";
@@ -309,7 +309,7 @@ function Main() {
             <Route path='changePasswordSettingsManager' element={<ChangePasswordSettingsManager />} />
             <Route path='changePasswordSettingsTenant' element={<ChangePasswordSettingsTenant />} />
             <Route path='changePasswordSettingsMaintenance' element={<ChangePasswordSettingsMaintenance />} />
-            <Route path='addCardSettings' element={<AddCard />} />
+            {/* <Route path='addCardSettings' element={<AddCard />} /> */}
             <Route path='cardDetailsSettings' element={<CardDetailsSettings />} />
             <Route path='cardDetailsSettingsManager' element={<CardDetailsSettingsManager />} />
             <Route path='cardDetailsSettingsTenant' element={<CardDetailsSettingsTenant />} />
@@ -408,9 +408,9 @@ function Main() {
             <Route path='tenantLease' element={<TenantLease />} />
             <Route path='tenantApplication' element={<TenantApplication />} />
             <Route path='tenantApplicationNav' element={<TenantApplicationNav />} />
-            <Route path='pmNotifications' element={<PMNotifications />} />
+            {/* <Route path='pmNotifications' element={<PMNotifications />} />
             <Route path='poNotifications' element={<PONotifications />} />
-            <Route path='propertyContract' element={<PropertyContract />} />
+            <Route path='propertyContract' element={<PropertyContract />} /> */}
             <Route path='profile/:id' element={<PublicProfile />} />
 
             <Route path='referUser' element={<ReferUser />} />

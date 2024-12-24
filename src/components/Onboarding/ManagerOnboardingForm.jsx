@@ -541,8 +541,8 @@ const closeDialog = () => {
 
   const renderManagementFees = () => {
     return fees?.map((row, index) => (
-      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id} overflowX={"auto"} minWidth = {isMobile ? "650px" : "0px"}>
-          <Grid item xs={3}>
+      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id} overflowX={"auto"} minWidth = {isMobile ? "650px" : "0px"} width="100%">
+          <Grid item xs={3} md={3}>
             <Stack spacing={isMobile ? 1 : -2} m={2}>
               <Typography
                 sx={{
@@ -1186,6 +1186,9 @@ const closeDialog = () => {
       }
   
       setCookie("default_form_vals", { ...cookiesData, paymentMethods });
+      if(modifiedData.length === 0 && modifiedPayment === true){
+        openDialog("Success", "Your profile has been successfully updated for payments.", "success");
+      }
     } catch (error) {
       console.error("Error handling payment methods:", error);
     } finally {
@@ -1300,6 +1303,7 @@ const closeDialog = () => {
     // Handle payment step if payment is modified
     if (modifiedPayment) {
       await handlePaymentStep(validPaymentMethods);
+      setModifiedPayment(false)
     }
   
     setShowSpinner(false);
@@ -1379,9 +1383,9 @@ const closeDialog = () => {
           });
         setShowSpinner(false);
         setModifiedData([]);
-      } else {
+      } else if (modifiedData.length === 0 && modifiedPayment === false) {
         openDialog("Warning", "You haven't made any changes to the form. Please save after changing the data.", "error");
-      }
+      } 
     } catch (error) {
       openDialog("Error", "Cannot update the lease. Please try again", "error");
       //console.log("Cannot Update the lease", error);
@@ -1725,7 +1729,7 @@ const closeDialog = () => {
             <Box
               sx={{
                 overflowX: "auto",
-                
+                width: "100%",
               }}
             >
               {renderManagementFees()}
