@@ -179,10 +179,10 @@ import AddListing from "./Property/AddListing";
 import RequestQuotes from "./Property/RequestQuotes";
 import ViewDocument from "./Property/ViewDocument";
 
-import PMNotifications from "./Notifications/PMNotifications";
+// import PMNotifications from "./Notifications/PMNotifications";
 import TenantApplicationNav from "./Applications/TenantApplicationNav";
-import PONotifications from "./Notifications/PONotifications";
-import PropertyContract from "./Notifications/PropertyContract";
+// import PONotifications from "./Notifications/PONotifications";
+// import PropertyContract from "./Notifications/PropertyContract";
 import TenantLease from "./Applications/TenantLease";
 import PMQuotesList from "./Property/PMQuotesList";
 import LandingPage from "./Onboarding/LandingPage";
