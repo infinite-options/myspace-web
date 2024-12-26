@@ -62,6 +62,7 @@ export default function OwnerDashboard() {
   const [maintenanceStatusData, setMaintenanceStatusData] = useState([]);
   const [cashflowStatusData, setCashflowStatusData] = useState([]);
   const [propertList, setPropertyList] = useState([]);
+  const [dataLoaded, setDataLoaded] = useState(false);
 
   const [showSpinner, setShowSpinner] = useState(true); // Initially set to true
   const [currentMonth, setCurrentMonth] = useState(date.getMonth() + 1);
@@ -111,22 +112,38 @@ export default function OwnerDashboard() {
     setCashflowStatusData(jsonData.cashflowStatus);
     setRentStatus(jsonData.rentStatus.result);
     setLeaseStatus(jsonData.leaseStatus.result);
+    setDataLoaded(true);
     setShowSpinner(false); // Hide spinner when data is loaded
   };
 
   useEffect(() => {    
     
-    fetchData();
+    // Already called fetchData() in "user" useeffect
+
+    // const fetchInitialData = async () => {
+    //   if(!dataLoaded){
+    //     await fetchData();
+    //   }
+    // };
+  
+    // fetchInitialData();
+
     const signedUpWithReferral = localStorage.getItem("signedUpWithReferral");
     if (signedUpWithReferral && signedUpWithReferral === "true") {
       setShowReferralWelcomeDialog(true);
       localStorage.removeItem("signedUpWithReferral");
     }
+
   }, []);
 
   useEffect(() => {    
     
-    fetchData();
+    const fetchInitialData = async () => {
+      await fetchData();
+    };
+  
+    fetchInitialData();
+
     const signedUpWithReferral = localStorage.getItem("signedUpWithReferral");
     if (signedUpWithReferral && signedUpWithReferral === "true") {
       setShowReferralWelcomeDialog(true);
