@@ -339,7 +339,7 @@ const NewUser = () => {
     
     // console.log("user Exists", userExists == null);
     //console.log("Current User Info: ", user);
-    if (userExists) {
+    if (userExists != null) {
       handleLogin();
     } else {
       if (validate_form() === false) return;

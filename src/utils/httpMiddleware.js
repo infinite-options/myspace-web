@@ -110,8 +110,31 @@ const logout = () => {
   window.location.href = "/";
 };
 
-// === FETCH MIDDLEWARE ===
+
+// == Code For Change Login Signup endpoint based on DEBUG Mode ==
+
+const isDebug = process.env.REACT_APP_DEBUG === "true";
+
+const getApiUrl = (url) => {
+  const targetDomain = "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2";
+  const searchString = "/MYSPACE";
+  const replaceString = "/MYSPACE-DEV";
+
+  if (isDebug && url.startsWith(targetDomain) && url.includes(searchString)) {
+    return url.replace(searchString, replaceString);
+  }
+
+  return url;
+};
+
+
+
+/* 
+ *  === FETCH MIDDLEWARE ===
+*/
 const fetchMiddleware = async (url, options = {}) => {
+    
+    const apiUrl = getApiUrl(url);
     const token = sessionStorage.getItem('authToken');
     const refreshToken = sessionStorage.getItem('refreshToken');
 
@@ -159,7 +182,7 @@ const fetchMiddleware = async (url, options = {}) => {
     try {
         
       // //console.log('printing url', url, updatedOptions);
-      let response = await fetch(url, updatedOptions);
+      let response = await fetch(apiUrl, updatedOptions);
       if (response.status === 404){
         //console.log('JWT is missing/invalid');
         if (!localStorage.getItem('hasRedirected')){
@@ -201,7 +224,7 @@ const fetchMiddleware = async (url, options = {}) => {
               headers: retryHeaders
           };
 
-          response = await fetch(url, retryOptions);
+          response = await fetch(apiUrl, retryOptions);
       }
 
       // //console.log(" == here debug = = ")
@@ -233,13 +256,16 @@ const fetchMiddleware = async (url, options = {}) => {
   }
 };
 
-// === AXIOS MIDDLEWARE ===
+/*
+ *  === AXIOS MIDDLEWARE ===
+ */
 const axiosMiddleware = axios.create({});
 
 axiosMiddleware.interceptors.request.use(
   async (config) => {
+    config.url = getApiUrl(config.url);
     const token = sessionStorage.getItem('authToken');
-    // //console.log(" == data = ", config)
+    // console.log(" == JUST FOR DEBUG URL == ", config)
 
     if (config.data) {
       if (config.data instanceof FormData) {
