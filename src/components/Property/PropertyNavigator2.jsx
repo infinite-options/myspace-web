@@ -272,6 +272,7 @@ export default function PropertyNavigator2({
   // //console.log('parsedImages.length:', parsedPropertyImages.length);
 
   // sort images based on fav image
+
   const favPropImage = propertyData?.property_favorite_image;
   const sortedByFavImgLst = sortByFavImage(favPropImage, parsedPropertyImages);
 
@@ -338,14 +339,16 @@ export default function PropertyNavigator2({
 
   useEffect(() => {
     setPropertyData(propertyList || []);
-    const nextIndex = returnIndex !== undefined ? returnIndex : 0;
+    const nextIndex = returnIndex !== undefined && returnIndex >= 0? returnIndex : 0;
+
     setCurrentIndex(nextIndex);
     const nextId = propertyList && propertyList[nextIndex] ? propertyList[nextIndex].property_uid : null;
     setCurrentId(nextId);
     setProperty(propertyList && propertyList[nextIndex]);
     const parsedPropertyImages = propertyList && propertyList[nextIndex] && propertyList[nextIndex].property_images ? JSON.parse(propertyList[nextIndex].property_images) : [];
     // sort images based on fav image
-    const favPropImage = propertyList[nextIndex].property_favorite_image;
+    // console.log("==propertyData == ", propertyList, nextIndex);
+    const favPropImage = propertyList[nextIndex]?.property_favorite_image;
     const sortedByFavImgLst = sortByFavImage(favPropImage, parsedPropertyImages);
     setImages(parsedPropertyImages.length === 0 ? [propertyImage] : sortedByFavImgLst);
     setContractsData(allContracts);

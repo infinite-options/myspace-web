@@ -228,28 +228,28 @@ export default function AddMaintenanceItem({setRefersh, onBack}) {
 					body: formData,
 				});
 				const data = await response.json();
-				//console.log('data response', data);
+				setSelectedImageList([]);
+				setProperty('');
+				setIssue('');
+				setToggleGroupValue('');
+				setToggleAlignment('');
+				setCost('');
+				setTitle('');
+				setDescription('');
+				setRefersh(true);
+				
+				if (onBack) {
+					onBack(); // Call the onBack function if it is provided
+				} else {
+					navigate(maintenanceRoutingBasedOnSelectedRole(), { state: { refresh: true } });
+				}
 			} catch (err) {
 				console.error('Error: ', err.message);
 			}
 			setShowSpinner(false);
 		};
-		postData();
 
-		setSelectedImageList([]);
-		setProperty('');
-		setIssue('');
-		setToggleGroupValue('');
-		setToggleAlignment('');
-		setCost('');
-		setTitle('');
-		setDescription('');
-		await setRefersh(true);
-        if (onBack) {
-            onBack(); // Call the onBack function if it is provided
-        } else {
-            navigate(maintenanceRoutingBasedOnSelectedRole(), { state: { refresh: true } });
-		}
+		postData();
 	};
 
 	return (
