@@ -700,7 +700,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
     // const form = encodeForm(payload);
     // const data = await saveProfile(form);
 
-    saveProfile();
+    await saveProfile();
 
     if (modifiedPayment) {
       await handlePaymentStep(validPaymentMethods);
@@ -802,7 +802,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
         axios
           .put(`${APIConfig.baseURL.dev}/profile`, profileFormData, headers)
           .then((response) => {
-            //console.log("Data updated successfully", response);
+            console.log("Data updated successfully", response);
             openDialog("Success", "Your profile has been successfully updated.", "success");
             handleUpdate();
             setShowSpinner(false);

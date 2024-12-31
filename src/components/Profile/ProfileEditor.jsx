@@ -87,6 +87,22 @@ function ProfileEditor() {
     }
 
     setActiveForm(selectedRole);
+    // const fetchProfileData = async () => {
+    //   try {
+    //     const url = `${APIConfig.baseURL.dev}/profile/${getRoleId()}`;
+    //     const profileResponse = await axios.get(url);
+    //     const profileData = profileResponse.data.profile.result[0];
+    //     setProfileData(profileData);
+    //   } catch (error) {
+    //     console.error("Error fetching profile data:", error);
+    //   }
+    // };
+
+    // fetchProfileData();
+
+  }, [getRoleId, selectedRole, user.allowCookies, user.dark_mode, user.notifications]);
+
+  useEffect(() => {
     const fetchProfileData = async () => {
       try {
         const url = `${APIConfig.baseURL.dev}/profile/${getRoleId()}`;
@@ -99,7 +115,7 @@ function ProfileEditor() {
     };
 
     fetchProfileData();
-  }, [getRoleId, isSave, selectedRole, user.allowCookies, user.dark_mode, user.notifications]);
+  }, [isSave]);
 
   useEffect(() => {
     if (settingsChanged) {

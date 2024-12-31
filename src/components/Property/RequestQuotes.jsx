@@ -10,6 +10,7 @@ import { useUser } from "../../contexts/UserContext";
 import ReturnArrow from "../../images/refund_back.png";
 import APIConfig from "../../utils/APIConfig";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import PropertiesContext from '../../contexts/PropertiesContext';
 import ManagementContractContext from '../../contexts/ManagementContractContext';
@@ -237,7 +238,13 @@ const RequestQuotes = (props) => {
                 }}
                 onClick={() => navigateToPrev()}
               >
-                <img src={ReturnArrow} style={{ verticalAlign: "middle", paddingRight: "5px" }} alt='back' />
+                <ArrowBackIcon
+                      sx={{
+                        color: theme.typography.common.blue,
+                        fontSize: "25px",
+                        margin: "5px",
+                    }}
+                />
                 <Typography
                   sx={{
                     color: theme.typography.common.blue,
@@ -348,7 +355,7 @@ const RequestQuotes = (props) => {
                         }}
                       >
                         <Checkbox sx={{ color: theme.typography.common.blue }} name={property.property_uid} onChange={handlePropertyCheck} checked={determineChecked(property)} />
-                        <Typography sx={{ paddingTop: "2%" }}>{property.property_address + " #" + property.property_unit}</Typography>
+                        <Typography sx={{ paddingTop: "2%" }}>{property.property_address}</Typography>
                       </Box>
                     </Box>
                   ))}

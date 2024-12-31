@@ -38,6 +38,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Documents from "../Leases/Documents";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import PropertiesContext from '../../contexts/PropertiesContext';
 import { CheckBox, KeyboardReturnOutlined } from "@mui/icons-material";
@@ -759,7 +760,60 @@ export default function PMQuotesRequested(props) {
           }}
         >
           {/* Search for property manager section */}
-          <Stack direction="column" justifyContent="center" alignItems="center" sx={{ paddingBottom: "0px" }}>
+          <Stack 
+            direction="row" 
+            justifyContent="space-between" 
+            alignItems="center" 
+            sx={{ paddingBottom: "0px", position: "relative", marginBottom: "10px" }}
+          >
+            {/* Left Section - Icon */}
+            <Box onClick={viewAllProperties} sx={{ position: "absolute", left: "10px" }}>
+              <Button
+                sx={{
+                  textTransform: "none",
+                  color: theme.typography.common.blue,
+                  fontWeight: theme.typography.common.fontWeight,
+                  fontSize: "16px",
+                  "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
+                }}
+              >
+                <ArrowBackIcon
+                    sx={{
+                        color: "#160449",
+                        fontSize: "25px",
+                        margin: "5px",
+                    }}
+                />
+              </Button>
+            </Box>
+
+            {/* Center Section - Text */}
+            <Typography
+              sx={{
+                color: theme.typography.primary.black,
+                fontWeight: theme.typography.primary.fontWeight,
+                fontSize: theme.typography.largeFont,
+                textAlign: "center",
+                flexGrow: 1, // Ensures the text is centered
+              }}
+            >
+              {tabStatus === 0 ? "All Requested Quotes" : "Search for Properties Manager"}
+            </Typography>
+          </Stack>
+          {/* <Stack direction="column" justifyContent="center" alignItems="center" sx={{ paddingBottom: "0px" }}>
+            <Box onClick={viewAllProperties} position="absolute" left={10}>
+              <Button
+                sx={{
+                  textTransform: "none",
+                  color: theme.typography.common.blue,
+                  fontWeight: theme.typography.common.fontWeight,
+                  fontSize: "16px",
+                  "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
+                }}
+              >
+                <img src={refundIcon} style={{ width: "25px", height: "25px", margin: "5px" }} />
+              </Button>
+            </Box>
             <Box direction="row" justifyContent="center" alignItems="center">
               <Typography
                 sx={{
@@ -770,16 +824,16 @@ export default function PMQuotesRequested(props) {
               >
                 {tabStatus === 0? "All Requested Quotes" : "Search for Properties Manager"}
               </Typography>
-            </Box>
+            </Box> */}
             {/* <Box position="absolute" right={30}>
               <Button>
                 <SearchIcon />
               </Button>
             </Box> */}
-          </Stack>
+          {/* </Stack> */}
 
           {/* return to all property section */}
-          <Stack direction="column" justifyContent="center" alignItems="center">
+          {/* <Stack direction="column" justifyContent="center" alignItems="center">
             <Box onClick={viewAllProperties}>
               <Button
                 sx={{
@@ -794,7 +848,7 @@ export default function PMQuotesRequested(props) {
                 <Typography>Return to All Properties</Typography>
               </Button>
             </Box>
-          </Stack>
+          </Stack> */}
 
           {/* tab section */}
           <Stack

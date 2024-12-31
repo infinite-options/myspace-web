@@ -13,6 +13,8 @@ import DataValidator from "../DataValidator";
 import { formatPhoneNumber, formatSSN, formatEIN, identifyTaxIdType, maskNumber, newmaskNumber,} from "./helper";
 import { useOnboardingContext } from "../../contexts/OnboardingContext";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 import {
   Button,
   TextField,
@@ -97,7 +99,7 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   
-  const [showSpinner, setShowSpinner] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(true);
   const [addPhotoImg, setAddPhotoImg] = useState();
   const [nextStepDisabled, setNextStepDisabled] = useState(false);
   const [dashboardButtonEnabled, setDashboardButtonEnabled] = useState(false);
@@ -947,7 +949,8 @@ const closeDialog = () => {
   const [parsedPaymentMethods, setParsedPaymentMethods] = useState([]);
 
   useEffect(() => {
-    //console.log("calling useeffect");
+    // console.log("calling useeffect");
+    setShowSpinner(true);
     setIsSave(false);
 
     setProfileData();   
@@ -963,6 +966,8 @@ const closeDialog = () => {
         console.error("Error parsing payment methods:", error);
       }
     }
+
+    setShowSpinner(false);  
   }, [profileData]);
 
   const renderPaymentMethods = () => {
@@ -1223,6 +1228,8 @@ const closeDialog = () => {
   };
 
   const handleNextStep = async () => {
+    // setShowSpinner(true);
+
     const newErrors = {};
     
     let isAddingPaymentMethod = parsedPaymentMethods.some(method => method.paymentMethod_uid.startsWith('new_') || modifiedPayment);
@@ -1298,7 +1305,7 @@ const closeDialog = () => {
     setCookie("default_form_vals", { ...cookiesData, firstName, lastName });
   
     // Save the profile
-    saveProfile();
+    await saveProfile();
   
     // Handle payment step if payment is modified
     if (modifiedPayment) {
@@ -1324,7 +1331,7 @@ const closeDialog = () => {
 
   const handleUpdate = () => {
     // setIsUpdate( prevState => !prevState);
-    //console.log("handleUpdate called");
+    // console.log("handleUpdate called");
     setIsSave(true);
   };
   
@@ -1364,15 +1371,15 @@ const closeDialog = () => {
         if (hasEmployeeFields) {
           profileFormData.append("employee_uid", profileData.employee_uid);
         }
-        
 
         axios
           .put(`${APIConfig.baseURL.dev}/profile`, profileFormData, headers)
           .then((response) => {
-            //console.log("Data updated successfully", response);
+            // console.log("Data updated successfully", response);
             openDialog("Success", "Your profile has been successfully updated.", "success");
             handleUpdate();
             setShowSpinner(false);
+            setModifiedData([]);
           })
           .catch((error) => {
             setShowSpinner(false);
@@ -1381,8 +1388,9 @@ const closeDialog = () => {
               //console.log(error.response.data);
             }
           });
+        
         setShowSpinner(false);
-        setModifiedData([]);
+
       } else if (modifiedData.length === 0 && modifiedPayment === false) {
         openDialog("Warning", "You haven't made any changes to the form. Please save after changing the data.", "error");
       } 
@@ -1400,8 +1408,13 @@ const closeDialog = () => {
 
   return (
     <>
-      
-        <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", cursor: "pointer", marginBottom: "10px", padding: "10px" }}>
+    {showSpinner ? (
+        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+          <CircularProgress color='inherit' />
+        </Backdrop>
+      ) : (
+        <>
+          <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", cursor: "pointer", marginBottom: "10px", padding: "10px" }}>
           <Grid item xs={12}>
             <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
               Property Manager Profile Information
@@ -2095,18 +2108,19 @@ const closeDialog = () => {
 
 
         <GenericDialog
-      isOpen={isDialogOpen}
-      title={dialogTitle}
-      contextText={dialogMessage}
-      actions={[
-        {
-          label: "OK",
-          onClick: closeDialog,
-        }
-      ]}
-      severity={dialogSeverity}
-    />
-      
+          isOpen={isDialogOpen}
+          title={dialogTitle}
+          contextText={dialogMessage}
+          actions={[
+            {
+              label: "OK",
+              onClick: closeDialog,
+            }
+          ]}
+          severity={dialogSeverity}
+        />
+        </>
+    )}
     </>
   );
 }
