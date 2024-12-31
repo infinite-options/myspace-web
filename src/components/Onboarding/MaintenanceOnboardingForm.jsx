@@ -1162,7 +1162,11 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
           })
           .catch((error) => {
             setShowSpinner(false);
-            openDialog("Error","Cannot update your profile. Please try again", "error");
+            if(error.code === "ERR_NETWORK"){
+              openDialog("Error", "Image is too large. Please try again", "error");
+            }else{
+              openDialog("Error", "Cannot update your profile. Please try again", "error");
+            }
             if (error.response) {
               //console.log(error.response.data);
             }
@@ -1265,8 +1269,8 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
     }
   };
 
-  const [showSSN, setShowSSN] = useState(false);
-  const [showempSsn, setShowempSsn] = useState(false);
+  const [showSSN, setShowSSN] = useState(ein?.length > 0 ? false : true);
+  const [showempSsn, setShowempSsn] = useState(empSsn?.length > 0 ? false : true);
 
   return (
     <>
@@ -1543,7 +1547,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     <TextField
                       fullWidth
                       // value={mask}
-                      value={showSSN ? ein : "***-**-****"}
+                      value={ein?.length > 0 ? showSSN ? ein : "***-**-****" : ""}
                       // onChange={(e) => setSsn(e.target.value)}
                       // onChange={handleEINChange}
                       onChange={(e) => handleTaxIDChange(e.target.value, true)}
@@ -1909,7 +1913,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                   <TextField
                     fullWidth
                     // value={mask}
-                    value={showempSsn? empSsn : "***-**-****"}
+                    value={empSsn?.length > 0 ? showempSsn? empSsn : "***-**-****" : ""}
                     // onChange={(e) => setSsn(e.target.value)}
                     onChange={handleEmpSSNChange}
                     variant='filled'

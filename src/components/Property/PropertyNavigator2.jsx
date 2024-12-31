@@ -2846,7 +2846,7 @@ const PropertyDetailsGrid = ({ propertyDetails }) => {
                   {row.type}
                 </Typography>
               </AccordionSummary>
-              <AccordionDetails>
+              {row.type !== "Property Codes" ? (<AccordionDetails>
                 {/* Render Headers Once */}
                 <Grid container item xs={12} sx={{ fontWeight: "bold", marginBottom: 1 }}>
                   <Grid item sx={{ flex: 1.5 }}>
@@ -2887,7 +2887,56 @@ const PropertyDetailsGrid = ({ propertyDetails }) => {
                     </Grid>
                   </Grid>
                 ))}
-              </AccordionDetails>
+              </AccordionDetails>): (<AccordionDetails>
+                {/* Render Headers Once */}
+                <Grid container item xs={12} sx={{ fontWeight: "bold", marginBottom: 1 }}>
+                  <Grid item sx={{ flex: 1.5 }}>
+                    <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                      Description
+                    </Typography>
+                  </Grid>
+                  <Grid item sx={{ flex: 0.4 }}>
+                    <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                      Code
+                    </Typography>
+                  </Grid>
+                  <Grid item sx={{ flex: 0.6 }}>
+                    <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                      Days
+                    </Typography>
+                  </Grid>
+                  <Grid item sx={{ flex: 0.5 }}>
+                    <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                      Start Time
+                    </Typography>
+                  </Grid>
+                  <Grid item sx={{ flex: 0.5 }}>
+                    <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                      End Time
+                    </Typography>
+                  </Grid>
+                </Grid>
+                {/* Render Data Rows */}
+                {row.details.map((detail, detailIndex) => (
+                  <Grid container item xs={12} key={detailIndex} sx={{ marginBottom: 1 }}>
+                    <Grid item sx={{ flex: 1.5 }}>
+                      <Typography variant="body2">{detail.description || "-"}</Typography>
+                    </Grid>
+                    <Grid item sx={{ flex: 0.4 }}>
+                      <Typography variant="body2">{detail?.code || "-"}</Typography>
+                    </Grid>
+                    <Grid item sx={{ flex: 0.6 }}>
+                      <Typography variant="body2">{detail.days || "-"}</Typography>
+                    </Grid>
+                    <Grid item sx={{ flex: 0.5 }}>
+                      <Typography variant="body2">{detail.startTime || "-"}</Typography>
+                    </Grid>
+                    <Grid item sx={{ flex: 0.5 }}>
+                      <Typography variant="body2">{detail.endTime || "-"}</Typography>
+                    </Grid>
+                  </Grid>
+                ))}
+              </AccordionDetails>)}
             </Accordion>
           ) : (
             <Typography

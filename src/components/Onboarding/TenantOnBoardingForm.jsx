@@ -1175,7 +1175,8 @@ const closeDialog = () => {
     // Update tenant_employment in modifiedData
     updateModifiedData({ key: "tenant_employment", value: updatedList });
   };
-  const [showSsn, setShowSsn] = useState(false);
+  const [showSsn, setShowSsn] = useState(ssn?.length > 0 ? false : true);
+  
   return (
     <>
       <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", cursor: "pointer", marginBottom: "10px", padding: "10px" }}>
@@ -1522,12 +1523,12 @@ const closeDialog = () => {
                     <TextField
                       fullWidth
                       // value={mask}
-                      value={showSsn ? ssn : "***-**-****"}
+                      value={ssn.length > 0 ? showSsn ? ssn : "***-**-****" : ""}
                       // onChange={(e) => setSsn(e.target.value)}
                       // onChange={handleSSNChange}
                       onChange={(e) => handleTaxIDChange(e.target.value, true)}
                       variant='filled'
-                      placeholder='SSN'
+                      placeholder={taxIDType === "SSN" ? 'SSN' : "EIN"}
                       className={classes.root}
                       InputProps={{
                         className: errors.ssn || !ssn ? classes.errorBorder : '',

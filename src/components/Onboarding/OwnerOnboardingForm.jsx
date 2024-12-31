@@ -95,7 +95,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
   const [dialogTitle, setDialogTitle] = useState("");
   const [dialogMessage, setDialogMessage] = useState("");
   const [dialogSeverity, setDialogSeverity] = useState("info");
-  const [showPassword, setShowPassword] = useState(false); 
+  const [showPassword, setShowPassword] = useState(ssn?.length > 0 ? false : true); 
 
   const openDialog = (title, message, severity) => {
     setDialogTitle(title); // Set custom title
@@ -809,7 +809,11 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
           })
           .catch((error) => {
             setShowSpinner(false);
-            openDialog("Error", "Cannot update your profile. Please try again", "error");
+            if(error.code === "ERR_NETWORK"){
+              openDialog("Error", "Image is too large. Please try again", "error");
+            }else{
+              openDialog("Error", "Cannot update your profile. Please try again", "error");
+            }
             if (error.response) {
               //console.log(error.response.data);
             }
@@ -1151,7 +1155,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                     <TextField
                       fullWidth
                       // value={mask}
-                      value= {showPassword ? ssn : '***-**-****'} 
+                      value= {ssn.length > 0 ? showPassword ? ssn : "***-**-****" : ""} 
                       // onChange={(e) => setSsn(e.target.value)}
                       // onChange={handleSSNChange}
                       onChange={(e) => handleTaxIDChange(e.target.value, true)}

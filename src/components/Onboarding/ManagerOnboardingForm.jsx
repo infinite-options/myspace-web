@@ -1383,10 +1383,15 @@ const closeDialog = () => {
           })
           .catch((error) => {
             setShowSpinner(false);
-            openDialog("Error", "Cannot update your profile. Please try again", "error");
-            if (error.response) {
-              //console.log(error.response.data);
+            if(error.code === "ERR_NETWORK"){
+              openDialog("Error", "Image is too large. Please try again", "error");
+            }else{
+              openDialog("Error", "Cannot update your profile. Please try again", "error");
             }
+
+            // if (error.response) {
+            //   console.log(error.response.data);
+            // }
           });
         
         setShowSpinner(false);
@@ -1403,8 +1408,8 @@ const closeDialog = () => {
 
   const [showMasked, setShowMasked] = useState(true);
   const displaySsn = showMasked ? newmaskNumber(ein) : formatSSN(ein);
-  const [showSSNEIN, setshowSSNEIN] = useState(false); 
-  const [showEmpSsn, setshowEmpSsn] = useState(false); 
+  const [showSSNEIN, setshowSSNEIN] = useState(ein?.length > 0 ? false : true); 
+  const [showEmpSsn, setshowEmpSsn] = useState(empSsn?.length > 0 ? false: true); 
 
   return (
     <>
@@ -1688,7 +1693,7 @@ const closeDialog = () => {
                       <TextField
                         fullWidth
                         // value={mask}
-                        value={showSSNEIN? ein : "***-**-****"} 
+                        value={ein?.length > 0? showSSNEIN? ein : "***-**-****" : ""} 
                         // onChange={(e) => setSsn(e.target.value)}
                         onChange={(e) => handleTaxIDChange(e.target.value, true)} 
                         variant='filled'
@@ -2070,7 +2075,7 @@ const closeDialog = () => {
                     <TextField
                       fullWidth
                       // value={mask}
-                      value={showEmpSsn? empSsn : "***-**-****"}
+                      value={empSsn?.length > 0 ? showEmpSsn? empSsn : "***-**-****" : ""}
                       // onChange={(e) => setSsn(e.target.value)}
                       onChange={handleEmpSSNChange}
                       variant='filled'

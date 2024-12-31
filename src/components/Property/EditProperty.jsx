@@ -260,20 +260,20 @@ function EditProperty(props) {
 
 	const getChangedFields = () => {
 		const changes = {};
-		if (bedrooms !== initialData.property_num_beds) changes.property_num_beds = bedrooms;
+		if (parseInt(bedrooms) !== parseInt(initialData.property_num_beds)) changes.property_num_beds = bedrooms;
 		if (address !== initialData.property_address) changes.property_address = address;
 		if (city !== initialData.property_city) changes.property_city = city;
 		if (propertyState !== initialData.property_state) changes.property_state = propertyState;
 		if (zip !== initialData.property_zip) changes.property_zip = zip;
 		if (propertyType !== initialData.property_type) changes.property_type = propertyType;
-		if (squareFootage !== initialData.property_area) changes.property_area = squareFootage;
-		if (bathrooms !== initialData.property_num_baths) changes.property_num_baths = bathrooms;
+		if (parseFloat(squareFootage) !== parseFloat(initialData.property_area)) changes.property_area = squareFootage;
+		if (parseInt(bathrooms) !== parseInt(initialData.property_num_baths)) changes.property_num_baths = bathrooms;
 		if (isListed !== (initialData.property_available_to_rent === 1))
 			changes.property_available_to_rent = isListed ? 1 : 0;
 		if (description !== initialData.property_description) changes.property_description = description;
 		if (notes !== initialData.property_notes) changes.property_notes = notes;
 		if (unit !== initialData.property_unit) changes.property_unit = unit;
-		if (propertyValue !== initialData.property_value) changes.property_value = propertyValue;
+		if (parseInt(propertyValue) !== parseInt(initialData.property_value)) changes.property_value = propertyValue;
 		if (assessmentYear !== initialData.property_value_year) changes.property_value_year = assessmentYear;
 		if (deposit !== initialData.property_deposit) changes.property_deposit = deposit;
 		if (listedRent !== initialData.property_listed_rent) changes.property_listed_rent = listedRent;
@@ -1409,7 +1409,7 @@ function EditProperty(props) {
 					<Stack direction="row" spacing={6} justifyContent="center" sx={{ marginTop: '20px' }}>
 						<Button
 							variant="contained"
-							sx={{ backgroundColor: theme.typography.formButton.background }}
+							sx={{ backgroundColor: "#3D5CAC" }}
 							onClick={(event) => handleSubmit(event, hasChanges)}
 							disabled={false} // The button should always be enabled
 						>

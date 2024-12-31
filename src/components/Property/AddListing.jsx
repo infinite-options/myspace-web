@@ -1290,11 +1290,11 @@ export default function AddListing(props) {
                     Utilities Paid by
                   </Typography>
                 </Grid>
-                {isDefaultUtilities && (
+                {/* {isDefaultUtilities && (
                   <Grid item xs={12}>
                     <Typography sx={{ fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.smallFont }}>{`<--Displaying Default Utilities-->`}</Typography>
                   </Grid>
-                )}
+                )} */}
                 {Object.entries(mappedUtilitiesPaidBy).length > 0
                   && Object.entries(mappedUtilitiesPaidBy).map(([utility, selectedValue]) => (
                       <Fragment key={utility}>

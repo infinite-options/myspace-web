@@ -270,58 +270,80 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 						name="fee-type-radio-buttons-group"
 						value={feeType}
 						onChange={handleFeeTypeChange}
+						sx={{
+							display: 'flex',
+							flexDirection: 'row',
+							justifyContent: 'space-between',
+							fontSize: '13px',
+							fontWeight: 'bold',
+							padding: '5px',
+							color: '#3D5CAC',
+						}}
 					>
 						<Box
 							sx={{
 								display: 'flex',
-								flexDirection: 'column',
+								flexDirection: 'row',
+								justifyContent: 'space-between',
+								fontSize: '13px',
+								fontWeight: 'bold',
+								padding: '5px',
+								color: '#3D5CAC',
 							}}
 						>
-							<FormControlLabel
-								value="PERCENT"
-								control={<Radio sx={{ '&.Mui-checked': { color: '#3D5CAC' } }} />}
-								label="Percent"
-							/>							
-							{feeType === 'PERCENT' && (
-								<Box>
-									<TextField
-										value={percentage}
-										label=""
-										variant="outlined"										
-										InputProps={{
-											sx: {
-												backgroundColor: '#D6D5DA',
-												width: '60px',
-												height: '40px',
-											},
-										}}
-										onChange={(event) => {
-											setPercentage(event.target.value);
-										}}
-									/>
-								</Box>
-							)}
-						</Box>
+							<Box
+								sx={{
+									display: 'flex',
+									flexDirection: 'column',
+								}}
+							>
+								<FormControlLabel
+									value="PERCENT"
+									control={<Radio sx={{ '&.Mui-checked': { color: '#3D5CAC' } }} />}
+									label="Percent"
+								/>							
+								{feeType === 'PERCENT' && (
+									<Box>
+										<TextField
+											value={percentage}
+											label=""
+											variant="outlined"										
+											InputProps={{
+												sx: {
+													backgroundColor: '#D6D5DA',
+													width: '60px',
+													height: '40px',
+												},
+											}}
+											onChange={(event) => {
+												setPercentage(event.target.value);
+											}}
+										/>
+									</Box>
+								)}
+							</Box>
 
-						<Box
-							sx={{
-								display: 'flex',
-								flexDirection: 'column',
-							}}
-						>
-							<FormControlLabel
-								value="FLAT-RATE"
-								control={<Radio sx={{ '&.Mui-checked': { color: '#3D5CAC' } }} />}
-								label="Flat Rate"
-							/>
-							<Box sx={{ width: '60px', height: '40px' }}></Box>
+							<Box
+								sx={{
+									display: 'flex',
+									flexDirection: 'column',
+								}}
+							>
+								<FormControlLabel
+									value="FLAT-RATE"
+									control={<Radio sx={{ '&.Mui-checked': { color: '#3D5CAC' } }} />}
+									label="Flat Rate"
+								/>
+								<Box sx={{ width: '60px', height: '40px' }}></Box>
+							</Box>
 						</Box>
+						
 						{feeType === 'FLAT-RATE' && (
 							<Box
 								sx={{
 									display: 'flex',
 									flexDirection: 'column',
-									paddingLeft: '20px',
+									paddingLeft: '40px',
 								}}
 							>
 								Amount
@@ -336,8 +358,9 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 									InputProps={{
 										sx: {
 											backgroundColor: '#D6D5DA',
-											width: '100px',
+											width: '200px',
 											height: '40px',
+											padding: '8px',
 										},
 									}}
 									onChange={(event) => {
@@ -351,7 +374,7 @@ function AddFeeDialog({ open, handleClose, onAddFee, }) {
 								sx={{
 									display: 'flex',
 									flexDirection: 'column',
-									paddingLeft: '20px',
+									paddingLeft: '40px',
 									height: '40px',
 								}}
 							>
@@ -650,7 +673,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 						flexDirection: 'row',
 						fontSize: '13px',
 						fontWeight: 'bold',
-						padding: '15px',
+						padding: '5px',
 						color: '#3D5CAC',
 					}}
 				>
@@ -660,63 +683,86 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 						name="fee-type-radio-buttons-group"
 						value={feeType}
 						onChange={handleFeeTypeChange}
+						sx={{
+							display: 'flex',
+							flexDirection: 'row',
+							justifyContent: 'space-between',
+							fontSize: '13px',
+							fontWeight: 'bold',
+							padding: '5px',
+							color: '#3D5CAC',
+						}}
 					>
-						<Box
+						<Box 
 							sx={{
 								display: 'flex',
-								flexDirection: 'column',
+								flexDirection: 'row',
+								justifyContent: 'space-between',
+								fontSize: '13px',
+								fontWeight: 'bold',
+								padding: '5px',
+								color: '#3D5CAC',
 							}}
 						>
-							<FormControlLabel
-								value="PERCENT"
-								control={<Radio sx={{ '&.Mui-checked': { color: '#3D5CAC' } }} />}
-								label="Percent"
-							/>
-							{/* <TextField value={percentage} label="" variant="outlined" onChange={(event) => {setPercentage(event.target.value)}}/> */}
-							{feeType === 'PERCENT' && (
-								<Box>
-									<TextField
-										value={percentage}
-										label=""
-										variant="outlined"
-										// sx={{
-										//     width: '45px',
-										//     height: '3px',
-										// }}
-										InputProps={{
-											sx: {
-												backgroundColor: '#D6D5DA',
-												width: '100px',
-												height: '40px',
-											},
-										}}
-										onChange={(event) => {
-											setPercentage(event.target.value);
-										}}
-									/>
-								</Box>
-							)}
-						</Box>
+							<Box
+								sx={{
+									display: 'flex',
+									flexDirection: 'column',
+								}}
+							>
+								<FormControlLabel
+									value="PERCENT"
+									control={<Radio sx={{ '&.Mui-checked': { color: '#3D5CAC' } }} />}
+									label="Percent"
+								/>
+								{/* <TextField value={percentage} label="" variant="outlined" onChange={(event) => {setPercentage(event.target.value)}}/> */}
+								{feeType === 'PERCENT' && (
+									<Box>
+										<TextField
+											value={percentage}
+											label=""
+											variant="outlined"
+											// sx={{
+											//     width: '45px',
+											//     height: '3px',
+											// }}
+											InputProps={{
+												sx: {
+													backgroundColor: '#D6D5DA',
+													width: '100px',
+													height: '40px',
+												},
+											}}
+											onChange={(event) => {
+												setPercentage(event.target.value);
+											}}
+										/>
+									</Box>
+								)}
+							</Box>
 
-						<Box
-							sx={{
-								display: 'flex',
-								flexDirection: 'column',
-							}}
-						>
-							<FormControlLabel
-								value="FLAT-RATE"
-								control={<Radio sx={{ '&.Mui-checked': { color: '#3D5CAC' } }} />}
-								label="Flat Rate"
-							/>
-							<Box sx={{ width: '60px', height: '40px' }}></Box>
+							<Box
+								sx={{
+									display: 'flex',
+									flexDirection: 'column',
+								}}
+							>
+								<FormControlLabel
+									value="FLAT-RATE"
+									control={<Radio sx={{ '&.Mui-checked': { color: '#3D5CAC' } }} />}
+									label="Flat Rate"
+								/>
+								<Box sx={{ width: '60px', height: '40px' }}></Box>
+							</Box>
 						</Box>
+						
+								
 						{feeType === 'FLAT-RATE' && (
 							<Box
 								sx={{
 									display: 'flex',
 									flexDirection: 'column',
-									paddingLeft: '20px',
+									paddingLeft: '45px',
 								}}
 							>
 								Amount
@@ -727,15 +773,17 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 									label=""
 									variant="outlined"
 									// sx={{
-									//     width: '45px',
-									//     height: '3px',
+									//     height: '40px',
+									// 	width: '200px',
+									// 	padding: '8px',
 									// }}
 
 									InputProps={{
 										sx: {
 											backgroundColor: '#D6D5DA',
-											width: '60px',
-											height: '20px',
+											width: '200px',
+											height: '40px',
+											padding: '8px',
 										},
 									}}
 									onChange={(event) => {
@@ -749,7 +797,7 @@ function EditFeeDialog({ open, handleClose, onEditFee, feeIndex, fees }) {
 								sx={{
 									display: 'flex',
 									flexDirection: 'column',
-									paddingLeft: '20px',
+									paddingLeft: '45px',
 								}}
 							>
 								Applied To								
@@ -2699,6 +2747,17 @@ return (
 				<Box sx={{width: '100%', marginLeft: '10px', paddingRight: '10px',}}>				
 					<Documents isEditable={selectedRole !== "OWNER" && contractStatus !== "APPROVED" ? true : false} setIsPreviousFileChange={setIsPreviousFileChange} isAccord={false} documents={previouslyUploadedDocs} setDocuments={setPreviouslyUploadedDocs} setDeleteDocsUrl={setDeletedDocsUrl} contractFiles={contractFiles} contractFileTypes={contractFileTypes} setContractFiles={setContractFiles} setContractFileTypes={setContractFileTypes}/>				
 				</Box>
+
+				{showMissingFileTypePrompt && (
+					<Box
+						sx={{
+							color: 'red',
+							fontSize: '13px',
+						}}
+					>
+						Please select Document Type.
+					</Box>
+				)}
 
 				{/* Contact details */}
 				<Box sx={{width: '100%'}}>				
