@@ -202,7 +202,6 @@ const RequestQuotes = (props) => {
         sx={{
           fontFamily: "Source Sans Pro",
           color: "text.darkblue",
-          padding: "15px",
           height: "100%",
         }}
       >
@@ -210,8 +209,6 @@ const RequestQuotes = (props) => {
           sx={{
             backgroundColor: "background.gray",
             borderRadius: "10px",
-            padding: "10px",
-            paddingLeft: "15px",
             paddingRight: "15px",
             height: "100%",
           }}

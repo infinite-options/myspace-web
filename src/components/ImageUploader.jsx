@@ -33,7 +33,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
 export default function ImageUploader({ updateFavoriteIcons, selectedImageList, setSelectedImageList, setDeletedImageList, page, setFavImage, favImage }) {
-  const [imageOverLimit, setImageOverLimit] = useState(false);
+  const [imageFormatError, setImageFormatError] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
 
   useEffect(() => {
@@ -44,18 +44,40 @@ export default function ImageUploader({ updateFavoriteIcons, selectedImageList, 
 
   function checkImageSizes(selectedImageList) {
     const MAX_SIZE = 2.5 * 1024 * 1024; // 2.5 MB in bytes
+    const ALLOWED_TYPES = ["image/jpeg", "image/png"];
 
+    let isInvalidType = false;
+  
     const sumImageSizes = selectedImageList.reduce((acc, image) => {
+      if (!ALLOWED_TYPES.includes(image.file?.type)) {
+        isInvalidType = true; // Mark as invalid type
+      }
       return acc + (image.file?.size ?? 0);
     }, 0);
-
+  
+    if (isInvalidType) {
+      setImageFormatError(true);
+    }else{
+      setImageFormatError(false);
+    }
+  
     if (sumImageSizes > MAX_SIZE) {
-      setImageOverLimit(true);
       setShowErrorMessage(true);
     } else {
-      setImageOverLimit(false);
       setShowErrorMessage(false);
     }
+
+    // const sumImageSizes = selectedImageList.reduce((acc, image) => {
+    //   return acc + (image.file?.size ?? 0);
+    // }, 0);
+
+    // if (sumImageSizes > MAX_SIZE) {
+    //   setImageOverLimit(true);
+    //   setShowErrorMessage(true);
+    // } else {
+    //   setImageOverLimit(false);
+    //   setShowErrorMessage(false);
+    // }
   }
 
   const readImage = (file) => {
@@ -129,6 +151,15 @@ export default function ImageUploader({ updateFavoriteIcons, selectedImageList, 
       ) : (
         <Typography></Typography>
       )}
+
+      {imageFormatError? (
+        <Stack direction='row'>
+          <Typography sx={{ color: "red", fontSize: "16px" }}>One or more files have invalid formats. Only JPEG and PNG are allowed.</Typography>
+        </Stack>
+      ): (
+        <Typography></Typography>
+      )}
+      
       <Container
         fixed
         sx={{

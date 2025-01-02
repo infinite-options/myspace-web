@@ -399,7 +399,12 @@ function Properties() {
         </Backdrop>
       ) : (
         <Container maxWidth='lg' sx={{ paddingTop: isMobile ? "0px" : "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
-          <Grid container spacing={4}>
+          <Grid container spacing={4} rowGap={1}
+            sx={{
+              marginTop: isMobile ? "0px" : "15px",
+              alignItems: "stretch", 
+            }} 
+          >
             {(!isMobile || !viewRHS) && (
               <Grid item xs={12} md={4}>
                 <PropertiesList
@@ -566,7 +571,7 @@ function DocumentPreview({ file, onClose }) {
     <Box
       sx={{
         width: "100%",
-        height: "150%",
+        height: "100%",
         backgroundColor: "white",
         boxShadow: 3,
         borderRadius: 2, // Rounded edges for the outer box

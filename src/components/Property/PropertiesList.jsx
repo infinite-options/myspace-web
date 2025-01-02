@@ -520,198 +520,198 @@ export default function PropertiesList(props) {
   }
 
   return (
-    <Grid item xs={12} md={12}>
-      <Box
+    // <Grid item xs={12} md={12}>
+      
+    // </Grid>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        width: "100%",
+        height: "100%",
+      }}
+    >
+      <Paper
         sx={{
-          display: "flex",
-          justifyContent: "center",
+          backgroundColor: theme.palette.primary.main,
           width: "100%",
-          height: "100%",
+          maxWidth: "800px",
         }}
       >
-        <Paper
-          sx={{
-            marginTop: isMobile ? "0px" : "15px",
-            backgroundColor: theme.palette.primary.main,
-            width: "100%",
-            maxWidth: "800px",
-          }}
-        >
-          <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ padding: theme.spacing(2), position: "relative" }}>
-            {!isMobile && <Box sx={{ flex: 1 }} />}
-            {isMobile && (
-              <Box component='span' display='flex' justifyContent='flex-start' alignItems='flex-start' position='relative' flex={"1"}>
-                <Button
-                  onClick={() => {
-                    if (selectedRole === "OWNER") {
-                      navigate("/ownerDashboard");
-                    } else if (selectedRole === "MANAGER") {
-                      navigate("/managerDashboard");
-                    }
-                  }}
-                >
-                  <ArrowBackIcon
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontSize: "30px",
-                      margin: "5px",
-                    }}
-                  />
-                </Button>
-              </Box>
-            )}
-            <Box position='absolute' left='50%' sx={{ transform: "translateX(-50%)" }}>
-              <Typography
-                sx={{
-                  color: theme.typography.primary.black,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: theme.typography.largeFont,
+        <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ padding: theme.spacing(2), position: "relative" }}>
+          {!isMobile && <Box sx={{ flex: 1 }} />}
+          {isMobile && (
+            <Box component='span' display='flex' justifyContent='flex-start' alignItems='flex-start' position='relative' flex={"1"}>
+              <Button
+                onClick={() => {
+                  if (selectedRole === "OWNER") {
+                    navigate("/ownerDashboard");
+                  } else if (selectedRole === "MANAGER") {
+                    navigate("/managerDashboard");
+                  }
                 }}
               >
-                All Properties PM
-              </Typography>
+                <ArrowBackIcon
+                  sx={{
+                    color: theme.typography.primary.black,
+                    fontSize: "30px",
+                    margin: "5px",
+                  }}
+                />
+              </Button>
             </Box>
-            <Button position='absolute' right={0} sx={{ "&:hover, &:focus, &:active": { background: theme.palette.primary.main } }} onClick={props.onAddPropertyClick}>
-              <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
-            </Button>
-          </Stack>
-
-          <Box sx={{ padding: "10px" }}>
-            {LHS === "Rent" && isDataReady === true ? (
-              <Box sx={{ marginTop: "20px" }}>
-                <Grid item xs={12} md={12}>
-                  <PMRent setLHS={setLHS} onPropertyInRentWidgetClicked={onPropertyInRentWidgetClicked} setInitialPropInRent={setInitialPropInRent} />
-                </Grid>
-              </Box>
-            ) : (
-              <>
-                <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ position: "relative" }}>
-                  {/* New Buttons */}
-                  <Box sx={{ display: "flex", width: "100%", alignItems: "center", justifyContent: "space-between", paddingBottom: "10px" }}>
-                    <Button
-                      onClick={sortByZip}
-                      variant='contained'
-                      sx={{
-                        background: "#3D5CAC",
-                        fontWeight: theme.typography.secondary.fontWeight,
-                        color: theme.palette.background.default,
-                        fontSize: theme.typography.smallFont,
-                        cursor: "pointer",
-                        textTransform: "none",
-                        minWidth: "100px", // Fixed width for the button
-                        minHeight: "35px",
-                      }}
-                      size='small'
-                    >
-                      Zip
-                    </Button>
-                    <Button
-                      onClick={sortByAddress}
-                      variant='contained'
-                      sx={{
-                        background: "#3D5CAC",
-                        color: theme.palette.background.default,
-                        fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                        cursor: "pointer",
-                        textTransform: "none",
-                        minWidth: "100px",
-                        minHeight: "35px",
-                      }}
-                      size='small'
-                    >
-                      Address
-                    </Button>
-                    <Button
-                      onClick={sortByStatus}
-                      variant='contained'
-                      sx={{
-                        background: "#3D5CAC",
-                        fontWeight: theme.typography.secondary.fontWeight,
-                        color: theme.palette.background.default,
-                        fontSize: theme.typography.smallFont,
-                        cursor: "pointer",
-                        textTransform: "none",
-                        minWidth: "100px", // Fixed width for the button
-                        minHeight: "35px",
-                        whiteSpace: "nowrap",
-                      }}
-                      size='small'
-                    >
-                      Rent Status
-                    </Button>
-                  </Box>
-                </Stack>
-                <PropertiesSearch propertyList={propertyList} setFilteredItems={setDisplayedItems} sx={{ width: "100%" }} />
-
-                <Box sx={{ marginTop: "20px" }}>
-                  <DataGrid
-                    getRowHeight={() => "auto"}
-                    rows={rows}
-                    columns={columns}
-                    autoHeight
-                    // pageSizeOptions={[15, 20, 25]}
-                    // pageSize={pageSize}
-                    // page={page}
-                    // pagination
-                    // onPaginationModelChange={(newModel) => {
-                    //   setPage(newModel.page || 0);
-                    //   setPageSize(newModel.pageSize || 15);
-                    // }}
-                    paginationModel={paginationModel}
-
-                    pageSizeOptions={[5, 10, 15]}
-                    onPaginationModelChange={setPaginationModel}
-                    // initialState={{
-                    //   pagination: {
-                    //     paginationModel: {
-                    //       pageSize: 15,
-                    //       page: 0,
-                    //     },
-                    //   },
-                    // }}
-                    onRowClick={onPropertyClick}
-                    rowSelectionModel={[propertyIndex]}
-                    getRowSpacing={getRowSpacing}
-                    hideHeader={true} // This hides the headers
-                    sx={{
-                      "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
-                      "& .MuiDataGrid-row:hover": {
-                        cursor: "pointer",
-                      },
-                      "& .MuiDataGrid-cell": {
-                        padding: "0px",
-                        margin: "0px",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      },
-                      "& .MuiDataGrid-row.Mui-selected": {
-                        backgroundColor: "#ffffff !important",
-                      },
-                      [`& .${gridClasses.row}`]: {
-                        bgcolor: (row) => (row.id === propertyIndex ? "#ffffff" : theme.palette.form.main), // White for selected row
-                        "&:before": {
-                          content: '""',
-                          display: "block",
-                          height: "100%",
-                          backgroundColor: "#ffffff",
-                          position: "absolute",
-                          left: "0",
-                          right: "0",
-                          zIndex: "-1",
-                        },
-                      },
-                      "& .MuiDataGrid-columnHeaders": {
-                        display: "none", // This ensures headers are hidden
-                      },
-                    }}
-                  />
-                </Box>
-              </>
-            )}
+          )}
+          <Box position='absolute' left='50%' sx={{ transform: "translateX(-50%)" }}>
+            <Typography
+              sx={{
+                color: theme.typography.primary.black,
+                fontWeight: theme.typography.primary.fontWeight,
+                fontSize: theme.typography.largeFont,
+              }}
+            >
+              All Properties PM
+            </Typography>
           </Box>
-        </Paper>
-      </Box>
-    </Grid>
+          <Button position='absolute' right={0} sx={{ "&:hover, &:focus, &:active": { background: theme.palette.primary.main } }} onClick={props.onAddPropertyClick}>
+            <AddIcon sx={{ color: theme.typography.primary.black, fontSize: "30px", margin: "5px" }} />
+          </Button>
+        </Stack>
+
+        <Box sx={{ padding: "10px" }}>
+          {LHS === "Rent" && isDataReady === true ? (
+            <Box sx={{ marginTop: "20px" }}>
+              <Grid item xs={12} md={12}>
+                <PMRent setLHS={setLHS} onPropertyInRentWidgetClicked={onPropertyInRentWidgetClicked} setInitialPropInRent={setInitialPropInRent} />
+              </Grid>
+            </Box>
+          ) : (
+            <>
+              <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ position: "relative" }}>
+                {/* New Buttons */}
+                <Box sx={{ display: "flex", width: "100%", alignItems: "center", justifyContent: "space-between", paddingBottom: "10px" }}>
+                  <Button
+                    onClick={sortByZip}
+                    variant='contained'
+                    sx={{
+                      background: "#3D5CAC",
+                      fontWeight: theme.typography.secondary.fontWeight,
+                      color: theme.palette.background.default,
+                      fontSize: theme.typography.smallFont,
+                      cursor: "pointer",
+                      textTransform: "none",
+                      minWidth: "100px", // Fixed width for the button
+                      minHeight: "35px",
+                    }}
+                    size='small'
+                  >
+                    Zip
+                  </Button>
+                  <Button
+                    onClick={sortByAddress}
+                    variant='contained'
+                    sx={{
+                      background: "#3D5CAC",
+                      color: theme.palette.background.default,
+                      fontWeight: theme.typography.secondary.fontWeight,
+                      fontSize: theme.typography.smallFont,
+                      cursor: "pointer",
+                      textTransform: "none",
+                      minWidth: "100px",
+                      minHeight: "35px",
+                    }}
+                    size='small'
+                  >
+                    Address
+                  </Button>
+                  <Button
+                    onClick={sortByStatus}
+                    variant='contained'
+                    sx={{
+                      background: "#3D5CAC",
+                      fontWeight: theme.typography.secondary.fontWeight,
+                      color: theme.palette.background.default,
+                      fontSize: theme.typography.smallFont,
+                      cursor: "pointer",
+                      textTransform: "none",
+                      minWidth: "100px", // Fixed width for the button
+                      minHeight: "35px",
+                      whiteSpace: "nowrap",
+                    }}
+                    size='small'
+                  >
+                    Rent Status
+                  </Button>
+                </Box>
+              </Stack>
+              <PropertiesSearch propertyList={propertyList} setFilteredItems={setDisplayedItems} sx={{ width: "100%" }} />
+
+              <Box sx={{ marginTop: "20px" }}>
+                <DataGrid
+                  getRowHeight={() => "auto"}
+                  rows={rows}
+                  columns={columns}
+                  autoHeight
+                  // pageSizeOptions={[15, 20, 25]}
+                  // pageSize={pageSize}
+                  // page={page}
+                  // pagination
+                  // onPaginationModelChange={(newModel) => {
+                  //   setPage(newModel.page || 0);
+                  //   setPageSize(newModel.pageSize || 15);
+                  // }}
+                  paginationModel={paginationModel}
+
+                  pageSizeOptions={[5, 10, 15]}
+                  onPaginationModelChange={setPaginationModel}
+                  // initialState={{
+                  //   pagination: {
+                  //     paginationModel: {
+                  //       pageSize: 15,
+                  //       page: 0,
+                  //     },
+                  //   },
+                  // }}
+                  onRowClick={onPropertyClick}
+                  rowSelectionModel={[propertyIndex]}
+                  getRowSpacing={getRowSpacing}
+                  hideHeader={true} // This hides the headers
+                  sx={{
+                    "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
+                    "& .MuiDataGrid-row:hover": {
+                      cursor: "pointer",
+                    },
+                    "& .MuiDataGrid-cell": {
+                      padding: "0px",
+                      margin: "0px",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    },
+                    "& .MuiDataGrid-row.Mui-selected": {
+                      backgroundColor: "#ffffff !important",
+                    },
+                    [`& .${gridClasses.row}`]: {
+                      bgcolor: (row) => (row.id === propertyIndex ? "#ffffff" : theme.palette.form.main), // White for selected row
+                      "&:before": {
+                        content: '""',
+                        display: "block",
+                        height: "100%",
+                        backgroundColor: "#ffffff",
+                        position: "absolute",
+                        left: "0",
+                        right: "0",
+                        zIndex: "-1",
+                      },
+                    },
+                    "& .MuiDataGrid-columnHeaders": {
+                      display: "none", // This ensures headers are hidden
+                    },
+                  }}
+                />
+              </Box>
+            </>
+          )}
+        </Box>
+      </Paper>
+    </Box>
   );
 }

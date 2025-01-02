@@ -305,8 +305,9 @@ axiosMiddleware.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
         if (error.response?.status === 404){
-          //console.log('JWT is missing/invalid');
-          if (!localStorage.getItem('hasRedirected')){
+          error.response.data = decryptPayload(error.response?.data?.encrypted_data);
+          // console.log('JWT is missing/invalid', error.response?.data);
+          if (!localStorage.getItem('hasRedirected') && error.response?.data?.message !== "User not found"){
             localStorage.setItem('hasRedirected', 'true');
             logout();
           }

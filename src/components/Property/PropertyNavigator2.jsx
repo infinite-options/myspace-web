@@ -1301,11 +1301,10 @@ export default function PropertyNavigator2({
   return (
     <Paper
       style={{
-        marginTop: "10px",
         backgroundColor: theme.palette.primary.main,
-        height: "96%",
-        width: "100%", // Occupy full width with 25px margins on each side
-        paddingBottom: "20px",
+        width: "100%", 
+        // paddingBottom: "10px",
+        height: "100%",
       }}
     >
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
@@ -1316,6 +1315,7 @@ export default function PropertyNavigator2({
           flexDirection: "column", // Added this to stack children vertically
           justifyContent: "center",
           width: "100%", // Take up full screen width
+          // marginTop: "15px",
           // height: "100%",
         }}
       >
@@ -1328,7 +1328,7 @@ export default function PropertyNavigator2({
         )}
 
         {/* Property Navigator Header Including Address and x of y Properties */}
-        <Grid container sx={{ marginTop: "15px", alignItems: "center", justifyContent: "center" }}>
+        <Grid container sx={{ alignItems: "center", justifyContent: "center" }}>
           <Grid item md={1} xs={2} sx={{ display: "flex", justifyContent: "center" }}>
             <Button onClick={handlePreviousCard} disabled={currentIndex === 0 || !propertyData || propertyData.length === 0}>
               {currentIndex === 0 ? (
@@ -1397,7 +1397,7 @@ export default function PropertyNavigator2({
         </Grid>
         {/* End Property Navigator Header Including Address and x of y Properties */}
       </Box>
-      <Box sx={{ marginTop: "26px", padding: isMobile ? "10px" : "20px" }}>
+      <Box sx={{padding: isMobile ? "10px" : "20px", marginTop: "10px",}}>
         <Box sx={{ height: "30px"  }}>
           <Tabs sx={{ height: "30px",   '& .MuiTab-root': {
           minWidth: 'auto', // Dynamically adjust width

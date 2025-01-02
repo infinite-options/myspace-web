@@ -219,10 +219,8 @@ const TenantApplicationNav = (props) => {
       >
         <Paper
           sx={{
-            marginTop: "15px",
             backgroundColor: theme.palette.primary.main,
             width: "100%",
-            maxWidth: "800px",
           }}
         >
           <Stack direction="column" justifyContent="center" alignItems="center">

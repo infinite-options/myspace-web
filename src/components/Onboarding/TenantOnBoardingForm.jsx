@@ -488,12 +488,34 @@ const closeDialog = () => {
       file: e.target.files[0],
       image: null,
     };
-    let isLarge = file.file.size > 5000000;
-    let file_size = (file.file.size / 1000000).toFixed(1);
-    if (isLarge) {
-      openDialog("Alert",`Your file size is too large (${file_size} MB)`,"info");
+    // let isLarge = file.file.size > 5000000;
+    // let file_size = (file.file.size / 1000000).toFixed(1);
+    // if (isLarge) {
+    //   openDialog("Alert",`Your file size is too large (${file_size} MB)`,"info");
+    //   return;
+    // }
+
+    const maxSize = 2.5 * 1024 * 1024; // 2.5 MB in bytes
+    const isLarge = file.file.size > maxSize;
+    const fileSizeMB = (file.file.size / 1024 / 1024).toFixed(1); 
+  
+    // Check file format
+    const allowedFormats = ["image/jpeg", "image/png"];
+    const isInvalidFormat = !allowedFormats.includes(file.file.type);
+  
+    if (isLarge || isInvalidFormat) {
+      let errorMessage = "";
+      if (isLarge) {
+        errorMessage += `File size is too large (${fileSizeMB} MB). Max allowed size is 2.5 MB.`;
+      }
+      if (isInvalidFormat) {
+        errorMessage += `Invalid file format. Only JPEG and PNG formats are allowed.`;
+      }
+  
+      openDialog("Alert", errorMessage, "info");
       return;
     }
+    
     updateModifiedData({ key: "tenant_photo_url", value: e.target.files[0] });
     readImage(file);
   };

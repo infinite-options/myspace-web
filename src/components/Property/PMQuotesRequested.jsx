@@ -208,10 +208,11 @@ export default function PMQuotesRequested(props) {
       <div>
         {contracts?.length > 0 ? activeContractsIds?.length !== contracts?.length ?(
           contracts.map((contract) => {
+            const manager = displayed_managers.find((m) => m.business_uid === contract.contract_business_id);
             if (contract.contract_status === "SENT" || contract.contract_status === "REFUSED"  || contract.contract_status === "WITHDRAW" || contract.contract_status === "REJECTED") {
               return (
                 <div key={contract.contract_uid}>
-                  <DocumentCard data={contract} />
+                  <DocumentCard data={contract} manager={manager}/>
                   {
                     contract.contract_status === "SENT" && (                    
                       <Stack
@@ -737,7 +738,8 @@ export default function PMQuotesRequested(props) {
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    // <ThemeProvider theme={theme}>
+    <>
       {loading ? (
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
           <CircularProgress color='inherit' />
@@ -747,13 +749,11 @@ export default function PMQuotesRequested(props) {
           display: "flex",
           justifyContent: "center",
           width: "100%",
-          minHeight: "100vh",
-          marginTop: theme.spacing(2),
+          height: "100%",
         }}
       >
         <Paper
           sx={{
-            margin: "30px",
             backgroundColor: theme.palette.primary.main,
             width: "100%",
             paddingTop: "10px",
@@ -961,7 +961,8 @@ export default function PMQuotesRequested(props) {
             </Box>
           </Stack>
         </Paper>
-      </Box>)}
+      </Box>
+    )}
 
       <Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="md" fullWidth>
         <DialogTitle sx={{ textAlign: "center", fontWeight: "bold", color: theme.typography.common.blue }}>
@@ -1132,15 +1133,18 @@ export default function PMQuotesRequested(props) {
         </DialogActions>
       </Dialog>
 
-    </ThemeProvider>
+    {/* </ThemeProvider> */}
+    </>
   );
 }
 
 function DocumentCard(props) {
   const data = props.data;
-  // //console.log("data -", data);
+  const manager = props.manager;
+  // console.log("data -", data, manager);
+
   const [fees, setFees] = useState(JSON.parse(data.contract_fees) ? JSON.parse(data.contract_fees) : []);
-  const [locations, setLocations] = useState(data.business_locations ? JSON.parse(data.business_locations) : []);
+  const [locations, setLocations] = useState(manager.business_locations ? JSON.parse(manager.business_locations) : []);
   const [contractDocuments, setContractDocuments] = useState(JSON.parse(data.contract_documents)? JSON.parse(data.contract_documents) : [])
 
   const [feesExpanded, setFeesExpanded ] = useState(false);
@@ -1180,16 +1184,15 @@ function DocumentCard(props) {
   };
 
   const getContractStatusColor = () => {
-    switch(data.contract_status){
+    switch(data.contract_status.trim()){
       case "SENT":
-        return "#160449";
-        break;
+        return theme.palette.success.main;
       case "REFUSED":
+        return "#D32F2F";
+      case "REJECTED":
         return "#D32F2F"
-        break;
       default:
         return "#160449";
-        break; 
     }
   }
 
@@ -1210,39 +1213,30 @@ function DocumentCard(props) {
           alignItems: "center",
         }}
       >
-        <Typography sx={{ fontWeight: "bold", fontSize: "24px" }}>
+        <Typography sx={{ fontWeight: "bold", fontSize: "20px" }}>
           {data.business_name}
         </Typography>
       </Box>
-      <Box
+      {/* <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center",
         }}
       >
-        <Typography sx={{ fontWeight: "bold", fontSize: "18px" }}>
-          Contract name: {data.contract_name}
-        </Typography>        
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "flex-start",
-          alignItems: "flex-start",
-        }}
-      >
-        <Typography sx={{ fontWeight: "bold", fontSize: "18px" }}>
-          Start Date: {data.contract_start_date}
+        <Typography sx={{fontSize: "14px" }}>
+        <span style={{ fontWeight: "bold"}}></span>
+        </Typography> 
+        <Typography sx={{fontSize: "14px" }}>
+          <span style={{ fontWeight: "bold"}}></span>
         </Typography>
-        <Typography sx={{ fontWeight: "bold", fontSize: "18px", marginLeft: "20px", }}>
-          End Date: {data.contract_end_date}
+        <Typography sx={{fontSize: "14px"}}>
+        <span style={{ fontWeight: "bold"}}></span>
         </Typography>
-        <Typography sx={{ fontWeight: "bold", fontSize: "18px", marginLeft: "20px", }}>
-          Notice Period: {data.contract_end_notice_period ? data.contract_end_notice_period : "0"} days
+        <Typography sx={{fontSize: "14px"}}>
+        <span style={{ fontWeight: "bold"}}></span>
         </Typography>    
-      </Box>
-      <Box
+      </Box> */}
+      {/* <Box
         sx={{
           display: "flex",
           justifyContent: "flex-start",
@@ -1256,7 +1250,7 @@ function DocumentCard(props) {
             }}     
             control={
               <Checkbox
-                sx={{alignSelf: 'flex-start', padding: '2px 0px',}}
+                sx={{alignSelf: 'flex-start', padding: '2px 0px', fontSize: '14px',}}
                 checked={data.contract_m2m && data.contract_m2m === 1 ? true : false}
                 // onChange={() => {
                 //   setContinueM2M( prevState => !prevState)
@@ -1267,7 +1261,7 @@ function DocumentCard(props) {
                 }}
               />	          
             } 
-            label={<Typography sx={{fontWeight: "bold", fontSize: '20px',}}>Continues Month-to-Month</Typography> }
+            label={<Typography sx={{fontWeight: "bold", fontSize: '14px',}}>Continues Month-to-Month</Typography> }
           />
           <FormControlLabel 
             sx={{
@@ -1287,49 +1281,158 @@ function DocumentCard(props) {
                 }}
               />	          
             } 
-            label={<Typography sx={{fontWeight: "bold", fontSize: '20px',}}>Renews Automatically</Typography> }
+            label={<Typography sx={{fontWeight: "bold", fontSize: '14px',}}>Renews Automatically</Typography> }
           />                         
-      </Box>      
-      <Grid container alignItems="flex-start" spacing={2}>
+      </Box>       */}
+      <Grid container alignItems="flex-start" spacing={2} marginTop={"10px"} marginBottom={"10px"}>
         <Grid container item xs={6}>
           <Grid item xs={12}>
-            <Typography sx={{ color: '#3D5CAC', fontSize: '18px', fontWeight: 'bold' }}>
-              Area of Service
+            <Typography sx={{ color: '#3D5CAC', fontSize: '14px', fontWeight: 'bold' }}>
+              Contract name: 
             </Typography>
           </Grid>
           <Grid item xs={12}>
-            {locations?.map((location, index) => (
-              <Typography key={index} sx={{ color: '#160449', fontSize: '15px' }}>
-                {location.city} ± {location.miles} miles
-              </Typography>
-            ))}
+            <Typography sx={{ color: '#160449', fontSize: '14px' }}>
+              {data.contract_name}
+            </Typography>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Typography sx={{ color: '#3D5CAC', fontSize: '14px', fontWeight: 'bold' }}>
+              Start Date: 
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography sx={{ color: '#160449', fontSize: '14px' }}>
+              {data.contract_start_date}
+            </Typography>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Typography sx={{ color: '#3D5CAC', fontSize: '14px', fontWeight: 'bold' }}>
+              Notice Period:  
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography sx={{ color: '#160449', fontSize: '14px' }}>
+              {data.contract_end_notice_period ? data.contract_end_notice_period : "0"} days
+            </Typography>
+          </Grid>
+
+          <Grid item xs={12} sx={{ marginTop: "10px" }}>
+            <FormControlLabel 
+              sx={{
+                marginLeft: '-2px',
+                alignItems: 'center',                            
+              }}     
+              control={
+                <Checkbox
+                  disabled
+                  sx={{alignSelf: 'flex-start', padding: '2px 0px', '& .MuiSvgIcon-root': { fontSize: '18px',}, }}
+                  checked={data.contract_m2m && data.contract_m2m === 1 ? true : false}
+                  // onChange={() => {
+                  //   setContinueM2M( prevState => !prevState)
+                  // }}                
+                  inputProps={{ 
+                    'aria-label': 'controlled',
+                    style: { alignSelf: 'flex-start', margin: '0' }
+                  }}
+                />	          
+              } 
+              label={<Typography sx={{fontWeight: "600", fontSize: '14px', marginLeft: "3px"}}>Continues Month-to-Month</Typography> }
+            />
           </Grid>
         </Grid>
-        <Grid container item xs={3}>
+
+        <Grid container item xs={6}>
           <Grid item xs={12}>
-            <Typography sx={{ color: '#3D5CAC', fontSize: '18px', fontWeight: 'bold' }}>
-              Status
+            <Typography sx={{ color: '#3D5CAC', fontSize: '14px', fontWeight: 'bold' }}>
+              Contract ID:
             </Typography>
           </Grid>
           <Grid item xs={12}>
-            <Typography sx={{ color: getContractStatusColor(), fontSize: '15px', fontWeight: 'bold' }}>
-              {data.contract_status}
-            </Typography>
-          </Grid>
-        </Grid>
-        <Grid container item xs={3}>
-          <Grid item xs={12}>
-            <Typography sx={{ color: '#3D5CAC', fontSize: '18px', fontWeight: 'bold' }}>
-              Contract ID
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography sx={{ color: '#160449', fontSize: '15px' }}>
+            <Typography sx={{ color: '#160449', fontSize: '14px' }}>
               {data.contract_uid}
             </Typography>
           </Grid>
+
+          <Grid item xs={12}>
+            <Typography sx={{ color: '#3D5CAC', fontSize: '14px', fontWeight: 'bold' }}>
+              End Date: 
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography sx={{ color: '#160449', fontSize: '14px' }}>
+              {data.contract_end_date}
+            </Typography>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Typography sx={{ color: '#3D5CAC', fontSize: '14px', fontWeight: 'bold' }}>
+              Status:
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography sx={{ color: getContractStatusColor(), fontSize: '14px', fontWeight: 'bold' }}>
+              {data.contract_status}
+            </Typography>
+          </Grid>
+          
+          <Grid item xs={12} sx={{ marginTop: "10px" }}>
+            <FormControlLabel 
+              sx={{
+                marginLeft: '-2px',
+                alignItems: 'center',                            
+              }}     
+              control={
+                <Checkbox
+                  disabled
+                  sx={{alignSelf: 'flex-start', padding: '2px 0px', '& .MuiSvgIcon-root': { fontSize: '18px',}, }}
+                  checked={data.contract_m2m && data.contract_m2m === 2 ? true : false}
+                  // onChange={() => {
+                  //   setContinueM2M( prevState => !prevState)
+                  // }}                
+                  inputProps={{ 
+                    'aria-label': 'controlled',
+                    style: { alignSelf: 'flex-start', margin: '0' }
+                  }}
+                />	          
+              } 
+              label={<Typography sx={{fontWeight: "bold", fontSize: '14px', marginLeft: "3px"}}>Renews Automatically</Typography> }
+            /> 
+          </Grid>
         </Grid>
       </Grid>
+      
+      <Accordion sx={{ backgroundColor: "#D6D5DA", boxShadow: "none", marginTop:"20px"}}>
+        <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+        >
+            <Typography 
+              sx={{
+                color: "#160449",
+                fontWeight: '600',
+                fontSize: "18px",
+                // textAlign: "center",
+                flexGrow: 1,
+              }}
+            >
+                Service Locations
+            </Typography>
+        </AccordionSummary>
+        <AccordionDetails>                        
+            {
+              locations && (
+                <>
+                  <LocationsDataGrid data={locations} />
+                </>
+              )
+            }
+        </AccordionDetails>
+      </Accordion>
+
       <Accordion sx={{ backgroundColor: "#D6D5DA", boxShadow: "none" }} expanded={feesExpanded} onChange={() => setFeesExpanded(prevState => !prevState)}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='fees-content' id='fees-header'>
             <Grid container>
@@ -1338,15 +1441,12 @@ function DocumentCard(props) {
                         sx={{
                             color: "#160449",
                             fontWeight: '600',
-                            fontSize: "20px",
+                            fontSize: "18px",
                             // textAlign: "center",
-                            paddingBottom: "10px",
-                            paddingTop: "5px",
                             flexGrow: 1,
                             // paddingLeft: "50px",
                         }}
                         paddingTop='5px'
-                        paddingBottom='10px'
                     >
                         {data.contract_status === "NEW" ? "Estimated Fees" : "Quoted Fees"}
                     </Typography>
@@ -1397,15 +1497,12 @@ function DocumentCard(props) {
                           sx={{
                               color: "#160449",
                               fontWeight: '600',
-                              fontSize: "20px",
+                              fontSize: "18px",
                               // textAlign: "center",
-                              paddingBottom: "10px",
-                              paddingTop: "5px",
                               flexGrow: 1,
                               // paddingLeft: "50px",
                           }}
                           paddingTop='5px'
-                          paddingBottom='10px'
                       >
                           {"Attached Documents"}
                       </Typography>

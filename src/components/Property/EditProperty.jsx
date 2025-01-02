@@ -694,23 +694,22 @@ function EditProperty(props) {
 			<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
 				<CircularProgress color="inherit" />
 			</Backdrop>
-			<Stack
+			<Paper
 				style={{
 					display: 'flex',
 					flexDirection: 'column',
 					justifyContent: 'flex-start',
 					alignItems: 'center',
 					width: '100%',
-					minHeight: '100vh',
 					paddingBottom: '25px',
 				}}
 			>
 				<Paper
 					style={{
-						marginTop: '15px',
+						// marginTop: '15px',
 						backgroundColor: theme.palette.form.main,
-						width: '80%', // Adjust width as needed
-						padding: '25px',
+						// width: '100%', 
+						padding: '15px',
 						boxShadow: theme.shadows[3],
 					}}
 				>
@@ -1150,10 +1149,10 @@ function EditProperty(props) {
 				</Paper>
 				<Paper
 					style={{
-						marginTop: '15px',
+						// marginTop: '15px',
 						backgroundColor: theme.palette.form.main,
-						width: '80%', // Adjust width as needed
-						padding: '25px',
+						// width: '100%', // Adjust width as needed
+						padding: '15px',
 						boxShadow: theme.shadows[3],
 					}}
 				>
@@ -1401,9 +1400,7 @@ function EditProperty(props) {
 				</Paper>
 				<Box
 					sx={{
-						marginBottom: '30px',
-						width: '80%',
-						paddingBottom: '30px',
+						width: '100%',
 					}}
 				>
 					<Stack direction="row" spacing={6} justifyContent="center" sx={{ marginTop: '20px' }}>
@@ -1425,7 +1422,7 @@ function EditProperty(props) {
 						</Button>
 					</Stack>
 				</Box>
-			</Stack>
+			</Paper>
 		</ThemeProvider>
 	);
 }

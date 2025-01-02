@@ -72,7 +72,12 @@ export default function PMQuotesList() {
           <CircularProgress color='inherit' />
         </Backdrop>
         <Container maxWidth='lg' sx={{ paddingTop: "10px", paddingBottom: "20px", marginTop: theme.spacing(2) }}>
-          <Grid container spacing={4}>
+          <Grid container spacing={4}
+            rowGap={1}
+            sx={{
+              alignItems: "stretch", 
+            }}
+          >
             {(!isMobile || !viewRHS) && (<Grid item xs={12} md={4}>
               <QuotesList setViewRHS={setViewRHS}/>
             </Grid>)}
@@ -130,7 +135,7 @@ const QuotesList = (props) => {
   return (
     <>
       <ThemeProvider theme={theme}>
-        <Grid container item xs={12} sx={{ backgroundColor: "#F2F2F2", padding: "10px", borderRadius: "10px", height: "139vh" }}>
+        <Grid container item xs={12} sx={{ backgroundColor: "#F2F2F2", padding: "10px", borderRadius: "10px", height: "100%"}}>
           {/* sort button */}
           <Stack
               sx={{

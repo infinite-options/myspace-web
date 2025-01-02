@@ -337,7 +337,7 @@ const NewUser = () => {
     }
 
     
-    // console.log("user Exists", userExists == null);
+    // console.log("user Exists", userExists);
     //console.log("Current User Info: ", user);
     if (userExists != null) {
       handleLogin();

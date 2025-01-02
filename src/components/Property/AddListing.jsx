@@ -783,14 +783,12 @@ export default function AddListing(props) {
           justifyContent: "flex-start",
           alignItems: "center",
           width: "100%",
-          minHeight: "100vh",
-          marginTop: theme.spacing(2),
           paddingBottom: "25px",
         }}
       >
         <Paper
           style={{
-            marginTop: "15px",
+            // marginTop: "15px",
             // padding: theme.spacing(2),
             backgroundColor: theme.palette.form.main,
             width: "80%",

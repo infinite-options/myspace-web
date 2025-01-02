@@ -823,7 +823,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 			<Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
 				<CircularProgress color="inherit" />
 			</Backdrop>
-			<Container maxWidth="md" style={{ backgroundColor: '#F2F2F2', padding: '16px', borderRadius: '8px', marginTop: '15px', }}>
+			<Container maxWidth="lg" style={{ backgroundColor: '#F2F2F2', padding: '16px', borderRadius: '8px',}}>
 				<Grid container spacing={8}>
 					<Grid item xs={2}>
 						<Button onClick={handleBackClick} sx={{
