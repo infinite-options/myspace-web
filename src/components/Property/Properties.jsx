@@ -50,7 +50,7 @@ function Properties() {
   const returnIndex = returnIndexFromContext || 0;
   const setReturnIndex = setReturnIndexFromContext;
 
-  // //console.log("----loading issue - propertyList - ", propertyList, dataload)
+  console.log("----loading issue - propertyList - ", propertyList, dataload)
   // //console.log("returnIndexFromContext - ", returnIndexFromContext);
 
   const { updateContractUID, updateContractPropertyUID, fetchContracts} = useContext(ManagementContractContext);

@@ -180,9 +180,13 @@ const updateAppliances = (property_uid, appliances) => {
       // fetchRentStatus();
       // fetchContracts();
       // setDataLoaded(true); 
-      Promise.all([fetchProperties(), fetchRentStatus()])
-      .then(() => {
+      const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+      Promise.all([fetchProperties()])
+      .then(async () => {
         setDataLoaded(true);
+        await delay(5000); 
+        await fetchRentStatus(); 
       })
       .catch(error => {
         console.error("Error during data fetching:", error);

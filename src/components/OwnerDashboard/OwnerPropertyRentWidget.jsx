@@ -173,7 +173,7 @@ export default function OwnerPropertyRentWidget(props) {
     <Grid container style={{ backgroundColor: "#F2F2F2", borderRadius: "10px", height: "100%", alignContent: "flex-start" }}>
       <Grid item xs={12} style={{ display: "flex", justifyContent: "center", height: "50px" }}>
         <Typography variant='h5' sx={{ fontWeight: "bold", paddingTop: "15px", color: "#160449" }}>
-          Property Rent 589
+          Property Rent
         </Typography>
       </Grid>
       {/* <Grid item xs={12}> */}

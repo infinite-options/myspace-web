@@ -279,7 +279,7 @@ export default function PMQuotesRequested(props) {
             if (contract.contract_status === "NEW") {
               return (
                 <div key={contract.contract_uid}>
-                  <DocumentCard data={contract} />
+                  <DocumentCard data={contract} manager={manager}/>
                   <Stack
                     direction="row"
                     justifyContent="space-between"
@@ -1144,7 +1144,7 @@ function DocumentCard(props) {
   // console.log("data -", data, manager);
 
   const [fees, setFees] = useState(JSON.parse(data.contract_fees) ? JSON.parse(data.contract_fees) : []);
-  const [locations, setLocations] = useState(manager.business_locations ? JSON.parse(manager.business_locations) : []);
+  const [locations, setLocations] = useState(manager?.business_locations ? JSON.parse(manager?.business_locations) : []);
   const [contractDocuments, setContractDocuments] = useState(JSON.parse(data.contract_documents)? JSON.parse(data.contract_documents) : [])
 
   const [feesExpanded, setFeesExpanded ] = useState(false);
@@ -1193,6 +1193,25 @@ function DocumentCard(props) {
         return "#D32F2F"
       default:
         return "#160449";
+    }
+  }
+
+  const getContractStatusText = () => {
+    switch(data.contract_status.trim()){
+      case "SENT":
+        return "New Contract Received";
+      case "NEW":
+        return "Management Quote Requested";
+      case "REJECTED":
+        return "REJECTED";
+      case "CANCELLED":
+        return "CANCELLED";
+      case "REFUSED":
+        return "Property Manager Declined";
+      case "WITHDRAW":
+        return "Contract WIthdrawn";  
+      default:
+        return "";
     }
   }
 
@@ -1374,7 +1393,7 @@ function DocumentCard(props) {
           </Grid>
           <Grid item xs={12}>
             <Typography sx={{ color: getContractStatusColor(), fontSize: '14px', fontWeight: 'bold' }}>
-              {data.contract_status}
+              {getContractStatusText().toUpperCase()}
             </Typography>
           </Grid>
           
