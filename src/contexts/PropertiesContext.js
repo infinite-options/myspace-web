@@ -1,56 +1,55 @@
-import React, { createContext, useState, useEffect, useRef } from 'react';
-import APIConfig from '../utils/APIConfig';
-import { useUser } from './UserContext';
-import { fetchMiddleware as fetch, axiosMiddleware as axios } from '../utils/httpMiddleware';
+import React, { createContext, useState, useEffect, useRef } from "react";
+import APIConfig from "../utils/APIConfig";
+import { useUser } from "./UserContext";
+import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../utils/httpMiddleware";
 
 const PropertiesContext = createContext();
 
 function getPropertyList(data) {
-    const propertyList = data["Property"]?.result;
-    // const applications = data["Applications"]?.result;
-    const leases = data["Leases"]?.result;
-    const maintenance = data["MaintenanceRequests"]?.result;
+  const propertyList = data["Property"]?.result;
+  // const applications = data["Applications"]?.result;
+  const leases = data["Leases"]?.result;
+  const maintenance = data["MaintenanceRequests"]?.result;
 
-    const appsMap = new Map();
-    leases?.forEach((a) => {
-        const appsByProperty = appsMap.get(a.property_uid) || [];
-        appsByProperty.push(a);
-        appsMap.set(a.property_uid, appsByProperty);
+  const appsMap = new Map();
+  leases?.forEach((a) => {
+    const appsByProperty = appsMap.get(a.property_uid) || [];
+    appsByProperty.push(a);
+    appsMap.set(a.property_uid, appsByProperty);
+  });
+
+  const maintMap = new Map();
+  if (maintenance) {
+    maintenance?.forEach((m) => {
+      const maintByProperty = maintMap.get(m.maintenance_property_id) || [];
+      maintByProperty.push(m);
+      maintMap.set(m.maintenance_property_id, maintByProperty);
     });
+  }
 
-    const maintMap = new Map();
-    if (maintenance) {
-        maintenance?.forEach((m) => {
-        const maintByProperty = maintMap.get(m.maintenance_property_id) || [];
-        maintByProperty.push(m);
-        maintMap.set(m.maintenance_property_id, maintByProperty);
-        });
-    }
-
-    //   //console.log(maintMap);
-    return propertyList?.map((p) => {
-        //p.applications = appsMap.get(p.property_uid) || []; //Replaced applications with leases
-        p.leases = appsMap.get(p.property_uid) || [];
-        p.applicationsCount = [...p.leases].filter((a) => ["NEW", "PROCESSING"].includes(a.lease_status)).length;
-        p.maintenance = maintMap.get(p.property_uid) || [];
-        p.maintenanceCount = [...p.maintenance].filter((m) => m.maintenance_request_status === "NEW" || m.maintenance_request_status === "PROCESSING").length;
-        // p.newContracts = contractsMap.get(p.property_uid) || [];
-        // p.newContractsCount = [...p.newContracts].filter((m) => m.contract_status === "NEW").length;
-        return p;
-    });
+  //   //console.log(maintMap);
+  return propertyList?.map((p) => {
+    //p.applications = appsMap.get(p.property_uid) || []; //Replaced applications with leases
+    p.leases = appsMap.get(p.property_uid) || [];
+    p.applicationsCount = [...p.leases].filter((a) => ["NEW", "PROCESSING"].includes(a.lease_status)).length;
+    p.maintenance = maintMap.get(p.property_uid) || [];
+    p.maintenanceCount = [...p.maintenance].filter((m) => m.maintenance_request_status === "NEW" || m.maintenance_request_status === "PROCESSING").length;
+    // p.newContracts = contractsMap.get(p.property_uid) || [];
+    // p.newContractsCount = [...p.newContracts].filter((m) => m.contract_status === "NEW").length;
+    return p;
+  });
 }
-
 
 export const PropertiesProvider = ({ children }) => {
   const { getProfileId } = useUser();
-  const [ dataLoaded, setDataLoaded ] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
   // const [ rawPropertyData, setRawPropertyData ] = useState([]);
-  const [ propertyList, setPropertyList ] = useState([]);
+  const [propertyList, setPropertyList] = useState([]);
   const propertyListRef = useRef();
-  const [ allRentStatus, setAllRentStatus ] = useState([]);
-  const [ allContracts, setAllContracts ] = useState([]);
-  const [ contracts, setContracts ] = useState([]);
-  const [ dataReady, setDataReady ] = useState(false);
+  const [allRentStatus, setAllRentStatus] = useState([]);
+  const [allContracts, setAllContracts] = useState([]);
+  const [contracts, setContracts] = useState([]);
+  const [dataReady, setDataReady] = useState(false);
 
   const [newContractUID, setNewContractUID] = useState(null);
   const [newContractPropertyUID, setNewContractPropertyUID] = useState(null);
@@ -59,151 +58,145 @@ export const PropertiesProvider = ({ children }) => {
   // const [currentContractPropertyUID, setCurrentContractPropertyUID] = useState(null);
 
   //add property
-  const [ newPropertyUid,setNewPropertyUid ]=useState("");
+  const [newPropertyUid, setNewPropertyUid] = useState("");
 
-  const [ returnIndex, setReturnIndex ] = useState(0);
-  const [ currentPropertyID, setCurrentPropertyID ] = useState(null);
-  const [ currentProperty, setCurrentProperty ] = useState(null);
+  const [returnIndex, setReturnIndex] = useState(0);
+  const [currentPropertyID, setCurrentPropertyID] = useState(null);
+  const [currentProperty, setCurrentProperty] = useState(null);
 
   const handleSortPropertyList = (propertyList) => {
     // //console.log("handleSorting called ");
     setPropertyList(propertyList);
   };
 
-  function setPropertyTo(newPropertyUid){
+  function setPropertyTo(newPropertyUid) {
     //console.log("setPropertyTo - newPropertyUid - ", newPropertyUid);
     // setShowSpinner(true);
 
-    if(newPropertyUid != ""){
+    if (newPropertyUid != "") {
       let foundIndex = -1; // Initialize with 0 to indicate not found
 
-       for (let i = 0; i < propertyList.length; i++) {
-         if (propertyList[i].property_uid === newPropertyUid) {
-           foundIndex = i; // Found the index
-           break; // Exit the loop since we found the matching object
-         }
-         }
+      for (let i = 0; i < propertyList.length; i++) {
+        if (propertyList[i].property_uid === newPropertyUid) {
+          foundIndex = i; // Found the index
+          break; // Exit the loop since we found the matching object
+        }
+      }
 
-      // Now, use setReturnIndex to set the found index       
-       if(foundIndex >= 0){
+      // Now, use setReturnIndex to set the found index
+      if (foundIndex >= 0) {
         setReturnIndex(foundIndex);
-       }
-       
-      //  setShowSpinner(false);
-   }
+      }
 
+      //  setShowSpinner(false);
+    }
   }
 
-  useEffect(()=>{    
-    if(newPropertyUid !== "" && propertyListRef.current != propertyList){
-       setPropertyTo(newPropertyUid)
-       setNewPropertyUid("")
+  useEffect(() => {
+    if (newPropertyUid !== "" && propertyListRef.current != propertyList) {
+      setPropertyTo(newPropertyUid);
+      setNewPropertyUid("");
     }
     propertyListRef.current = propertyList;
-  },[propertyList, newPropertyUid])
-//   useEffect(() => {
-//     //console.log("PropertiesProvider - propertyList - ",propertyList);
-//   }, [propertyList]);
+  }, [propertyList, newPropertyUid]);
+  //   useEffect(() => {
+  //     //console.log("PropertiesProvider - propertyList - ",propertyList);
+  //   }, [propertyList]);
 
-//   useEffect(() => {
-//     //console.log("PropertiesProvider - returnIndex - ",returnIndex);
-//   }, [returnIndex]);
+  //   useEffect(() => {
+  //     //console.log("PropertiesProvider - returnIndex - ",returnIndex);
+  //   }, [returnIndex]);
 
-//   useEffect(() => {
-//     //console.log("PropertiesProvider - currentPropertyID - ",currentPropertyID);
-//   }, [currentPropertyID]);
+  //   useEffect(() => {
+  //     //console.log("PropertiesProvider - currentPropertyID - ",currentPropertyID);
+  //   }, [currentPropertyID]);
 
-//   useEffect(() => {
-//     //console.log("PropertiesProvider - currentProperty - ",currentProperty);
-//   }, [currentProperty]);
+  //   useEffect(() => {
+  //     //console.log("PropertiesProvider - currentProperty - ",currentProperty);
+  //   }, [currentProperty]);
 
-  const fetchProperties = async () => {        
-    const property_response = await fetch(`${APIConfig.baseURL.dev}/properties/${getProfileId()}`);    
+  const fetchProperties = async () => {
+    const property_response = await fetch(`${APIConfig.baseURL.dev}/properties/${getProfileId()}`);
     if (!property_response.ok) {
       console.error("Error fetching Property Details data");
     }
     const propertyData = await property_response.json();
     const propertyList = getPropertyList(propertyData); // This combines Properties with Applications and Maitenance Items to enable the LHS screen
     // //console.log("In Properties > Property Endpoint: ", propertyList);
-    
-    
+
     // setRawPropertyData(propertyData); // Sets rawPropertyData to be based into Edit Properties Function
-    setPropertyList(propertyList)
+    setPropertyList(propertyList);
     // setPropertyList([...propertyList]);
     // setDisplayedItems([...propertyList]);
     // setPropertyIndex(0);
 
-    
-
     if (propertyData.Property.code === 200) {
       // //console.log("Endpoint Data is Ready");
       setDataReady(true);
-    }    
+    }
   };
 
-  const fetchRentStatus = async () => {          
-    const rent_response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`);    
+  const fetchRentStatus = async () => {
+    const rent_response = await fetch(`${APIConfig.baseURL.dev}/rentDetails/${getProfileId()}`);
     if (!rent_response.ok) {
-        console.error("Error fetching Rent Details data");
+      console.error("Error fetching Rent Details data");
     }
     const rentResponse = await rent_response.json();
     // //console.log("In Properties > Rent Endpoint: ", rentResponse.RentStatus.result);
     setAllRentStatus(rentResponse.RentStatus.result);
-}
+  };
 
-const fetchContracts = async () => {
-    const contract_response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);    
+  const fetchContracts = async () => {
+    const contract_response = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
     if (!contract_response.ok) {
-        console.error("Error fetching Contract Details data");
+      console.error("Error fetching Contract Details data");
     }
     const contractsResponse = await contract_response.json();
     // //console.log("In Properties > Contract Endpoint: ", contractsResponse.result);
     setAllContracts(contractsResponse.result);
-}
+  };
 
-const updateAppliances = (property_uid, appliances) => {
-  setPropertyList(propertyList.map((property)=>{
-    if(property.property_uid === property_uid){
-      return {...property, appliances:JSON.stringify(appliances)};
-    } else {
-      return property;
-    }
-  }))
-
-}
+  const updateAppliances = (property_uid, appliances) => {
+    setPropertyList(
+      propertyList.map((property) => {
+        if (property.property_uid === property_uid) {
+          return { ...property, appliances: JSON.stringify(appliances) };
+        } else {
+          return property;
+        }
+      })
+    );
+  };
 
   useEffect(() => {
     if (!dataLoaded) {
-           
-      
       // fetchProperties();
       // fetchRentStatus();
       // fetchContracts();
-      // setDataLoaded(true); 
-      const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+      // setDataLoaded(true);
+      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
       Promise.all([fetchProperties()])
-      .then(async () => {
-        setDataLoaded(true);
-        await delay(5000); 
-        await fetchRentStatus(); 
-      })
-      .catch(error => {
-        console.error("Error during data fetching:", error);
-      });
-      
+        .then(async () => {
+          setDataLoaded(true);
+          // await delay(5000);
+          fetchRentStatus();
+        })
+        .catch((error) => {
+          console.error("Error during data fetching:", error);
+        });
     }
   }, [dataLoaded]);
 
   return (
-    <PropertiesContext.Provider 
-      value={{ 
+    <PropertiesContext.Provider
+      value={{
         propertyList,
         setPropertyList,
         allRentStatus,
         // allContracts,
         // fetchContracts,
-        fetchProperties, // refresh properties        
+        fetchProperties, // refresh properties
         newContractUID,
         setNewContractUID,
         newContractPropertyUID,
@@ -215,7 +208,7 @@ const updateAppliances = (property_uid, appliances) => {
         currentProperty,
         setCurrentProperty,
         setNewPropertyUid,
-        dataLoaded, 
+        dataLoaded,
         updateAppliances,
       }}
     >
@@ -223,6 +216,5 @@ const updateAppliances = (property_uid, appliances) => {
     </PropertiesContext.Provider>
   );
 };
-
 
 export default PropertiesContext;
