@@ -1196,6 +1196,25 @@ function DocumentCard(props) {
     }
   }
 
+  const getContractStatusText = () => {
+    switch(data.contract_status.trim()){
+      case "SENT":
+        return "New Contract Received";
+      case "NEW":
+        return "Management Quote Requested";
+      case "REJECTED":
+        return "REJECTED";
+      case "CANCELLED":
+        return "CANCELLED";
+      case "REFUSED":
+        return "Property Manager Declined";
+      case "WITHDRAW":
+        return "Contract WIthdrawn";  
+      default:
+        return "";
+    }
+  }
+
   return (
     <Box
       sx={{
@@ -1374,7 +1393,7 @@ function DocumentCard(props) {
           </Grid>
           <Grid item xs={12}>
             <Typography sx={{ color: getContractStatusColor(), fontSize: '14px', fontWeight: 'bold' }}>
-              {data.contract_status}
+              {getContractStatusText().toUpperCase()}
             </Typography>
           </Grid>
           
