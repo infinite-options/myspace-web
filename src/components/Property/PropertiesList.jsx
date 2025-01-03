@@ -390,7 +390,7 @@ export default function PropertiesList(props) {
                 color: "#000000",
                 width: "100%",
               }}
-              onClick={(e) => {props.handleTabChange(e, 2)}}
+              onClick={(e) => {params.row.rent_status === "NO MANAGER" ? props.handleTabChange(e, 2) : props.handleTabChange(e, 1)}}
             >
               <Typography
                 sx={{
