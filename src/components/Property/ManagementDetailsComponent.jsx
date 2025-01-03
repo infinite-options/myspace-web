@@ -52,10 +52,17 @@ export default function ManagementDetailsComponent({
   const [showRenewContractDialog, setShowRenewContractDialog] = useState(false);
   const [contractEndNotice, setContractEndNotice] = useState(activeContract?.contract_end_notice_period ? Number(activeContract?.contract_end_notice_period) : 30);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [contactDocument, setContractDocument] = useState(null);
   // //console.log("currentProperty?.maintenance - ", currentProperty?.maintenance);
 
   useEffect(() => {
-    // //console.log("activeContract - ", activeContract);
+    const activeDocs = activeContract?.contract_documents || null;
+    const contractDoc = activeDocs !== null
+  ? JSON.parse(activeDocs).filter(
+      (cont) => cont.contentType === "Contract" || cont.contentType === "Agreement"
+    )
+  : [];
+    setContractDocument(contractDoc);
     setContractEndNotice(activeContract?.contract_end_notice_period ? Number(activeContract?.contract_end_notice_period) : 30);
   }, [activeContract]);
 
@@ -74,6 +81,7 @@ export default function ManagementDetailsComponent({
   // //console.log("maintenanceGroupedByStatus - ", maintenanceGroupedByStatus);
 
   const handleFileClick = (file) => {
+    console.log(file);
     setSelectedPreviewFile(file);
     setPreviewDialogOpen(true);
   };
@@ -498,7 +506,8 @@ export default function ManagementDetailsComponent({
                     }}
                   >
                     <Button
-                      onClick={() => {                        
+                      onClick={() => {    
+                        contactDocument.length > 0 && handleFileClick(contactDocument[0])                    
                       }}
                       variant='contained'
                       sx={{

@@ -42,7 +42,7 @@ const FilePreviewDialog = ({file, onClose }) => {
                     left: '50%',
                     transform: 'translate(-50%, -50%)', // center the box
                     width: { xs: '90%', sm: '500px', md:'700px' }, // responsive width based on screen size
-                    height: { xs: '90%', sm: '700px', md:'900px' }, // responsive height
+                    height: { xs: '90%', sm: '700px', md:'700px' }, // responsive height
                     backgroundColor: 'white',
                     boxShadow: 3,
                     borderRadius: 2,
