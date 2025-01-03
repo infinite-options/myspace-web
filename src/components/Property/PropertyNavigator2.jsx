@@ -120,6 +120,9 @@ export default function PropertyNavigator2({
   handleViewManagerDetailsClick,
   props,
   setViewRHS,
+  handleTabChange,
+  currentTab,
+  setCurrentTab,
 }) {
   // //console.log("In Property Navigator", onEditClick);
   // //console.log(index, propertyList);
@@ -147,7 +150,7 @@ export default function PropertyNavigator2({
   const returnIndex = returnIndexFromContext || 0;
   const updateAppliances = updateAppliancesFromContext;
 
-  const [currentTab, setCurrentTab] = useState(0);
+  // const [currentTab, setCurrentTab] = useState(0);
   const [propertyData, setPropertyData] = useState(propertyList || []);
   const [currentIndex, setCurrentIndex] = useState(returnIndex !== undefined ? returnIndex : 0);
   const [property, setProperty] = useState(propertyList ? propertyList[currentIndex] : null);
@@ -255,9 +258,9 @@ export default function PropertyNavigator2({
   //   //console.log("PropertyNavigator - currentId - ", currentId);
   // }, [currentId]);
 
-  const handleTabChange = (event, newValue) => {
-    setCurrentTab(newValue);
-  };
+  // const handleTabChange = (event, newValue) => {
+  //   setCurrentTab(newValue);
+  // };
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {

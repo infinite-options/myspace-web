@@ -390,6 +390,7 @@ export default function PropertiesList(props) {
                 color: "#000000",
                 width: "100%",
               }}
+              onClick={(e) => {props.handleTabChange(e, 2)}}
             >
               <Typography
                 sx={{

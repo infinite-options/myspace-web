@@ -83,6 +83,7 @@ function Properties() {
   const [managerDetailsState, setManagerDetailsState] = useState(null);
   const [newPropertyUid, setNewPropertyUid] = useState("");
   const [selectedDocument, setSelectedDocument] = useState("");
+  const [currentTab, setCurrentTab] = useState(0);
 
   // const [ currentProperty, setCurrentProperty ] = useState(location?.state?.currentProperty? location?.state?.currentProperty : null);
 
@@ -391,6 +392,11 @@ function Properties() {
     setRHS("ManageContract");
   };
 
+  const handleTabChange = (event, newValue) => {
+    // console.log('called tab change', event, newValue);
+    setCurrentTab(newValue);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       {showSpinner ? (
@@ -416,6 +422,7 @@ function Properties() {
                   setRHS={setRHS}
                   setViewRHS={setViewRHS}
                   showOnlyListings={showOnlyListings}
+                  handleTabChange={handleTabChange}
                 />
               </Grid>
             )}
@@ -466,6 +473,9 @@ function Properties() {
                         handleViewManagerDetailsClick={handleViewManagerDetailsClick}
                         showOnlyListings={showOnlyListings}
                         setViewRHS={setViewRHS}
+                        handleTabChange={handleTabChange}
+                        currentTab={currentTab}
+                        setCurrentTab={setCurrentTab}
                       />
                     )}
                     {RHS === "EditProperty" && (
