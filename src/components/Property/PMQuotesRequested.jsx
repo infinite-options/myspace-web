@@ -279,7 +279,7 @@ export default function PMQuotesRequested(props) {
             if (contract.contract_status === "NEW") {
               return (
                 <div key={contract.contract_uid}>
-                  <DocumentCard data={contract} />
+                  <DocumentCard data={contract} manager={manager}/>
                   <Stack
                     direction="row"
                     justifyContent="space-between"
@@ -1144,7 +1144,7 @@ function DocumentCard(props) {
   // console.log("data -", data, manager);
 
   const [fees, setFees] = useState(JSON.parse(data.contract_fees) ? JSON.parse(data.contract_fees) : []);
-  const [locations, setLocations] = useState(manager.business_locations ? JSON.parse(manager.business_locations) : []);
+  const [locations, setLocations] = useState(manager?.business_locations ? JSON.parse(manager?.business_locations) : []);
   const [contractDocuments, setContractDocuments] = useState(JSON.parse(data.contract_documents)? JSON.parse(data.contract_documents) : [])
 
   const [feesExpanded, setFeesExpanded ] = useState(false);
