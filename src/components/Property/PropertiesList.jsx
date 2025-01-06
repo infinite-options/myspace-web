@@ -255,7 +255,7 @@ export default function PropertiesList(props) {
   }
 
   function getCoverPhoto(property) {
-    // //console.log("In Property List >> In getCoverPhoto");
+    // console.log("In Property List >> In getCoverPhoto");
     // //console.log(property.property_images);
     const imageArray = JSON.parse(property.property_images);
     // //console.log("getCoverPhoto - imageArray - ", imageArray);
@@ -339,8 +339,9 @@ export default function PropertiesList(props) {
           }}
         >
           <img
-            src={`${getCoverPhoto(params.row)}?${Date.now()}`}
-            alt='property image'
+            // src={`${getCoverPhoto(params.row)}?${Date.now()}`}
+            src={`${getCoverPhoto(params.row)}`}
+            alt='property'
             style={{
               width: "100%", // Ensures the image takes full width
               height: "auto", // Maintain aspect ratio
