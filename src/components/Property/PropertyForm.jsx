@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import {
 	TextField,
@@ -52,6 +52,16 @@ import { formatPhoneNumber, headers, roleMap } from "../Onboarding/helper"
 
 import PropertiesContext from '../../contexts/PropertiesContext';
 import ListsContext from '../../contexts/ListsContext';
+import IconButton from '@mui/material/IconButton';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 const useStyles = makeStyles({
 	card: {
@@ -173,6 +183,11 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 
 	const [message, setMessage] = useState("");
 	const [showEmailSentDialog, setShowEmailSentDialog] = useState(false);
+	const [zillowImages, setZillowImages] = useState([]);
+	const [scrollPosition, setScrollPosition] = useState(0);
+	const scrollRef = useRef(null);
+	const [favoriteIcons, setFavoriteIcons] = useState([]);
+	const [favImg, setFavImg] = useState('');
 
 	const handleCloseModal = () => {
 		setIsModalOpen(false);
@@ -183,7 +198,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		SINGLE_FAMILY: "Single Family",
 		CONDO: "Condo",
 		APARTMENT: "Apartment",
-	  };
+	};
 
 	const handleAddressSelect = async (address) => {
 
@@ -191,34 +206,38 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		setCity(address.city ? address.city : "");
 		setState(address.state ? address.state : "");
 		setZip(address.zip ? address.zip : "");
-		
+
 		//Get property details from Zillow Rapid API 
 		const fullAddress = `${address.street}, ${address.city}, ${address.state}, ${address.zip}`;
 		const options = {
 			method: 'GET',
 			url: 'https://zillow-working-api.p.rapidapi.com/pro/byaddress',
 			params: {
-			  propertyaddress: fullAddress
+				propertyaddress: fullAddress
 			},
 			headers: {
-			  'x-rapidapi-key': process.env.REACT_APP_RAPID_API_KEY,
-			  'x-rapidapi-host': process.env.REACT_APP_RAPID_API_HOST
+				'x-rapidapi-key': process.env.REACT_APP_RAPID_API_KEY,
+				'x-rapidapi-host': process.env.REACT_APP_RAPID_API_HOST
 			}
-		  };
-		  
-		  try {
+		};
+
+		try {
 			const response = await axios.request(options);
-			console.log('Rapid API result', response.data);
-			setNotes(response.data.propertyDetails.description);
+			// console.log('Rapid API result', response.data);
+			response.data.propertyDetails.description && setNotes(response.data.propertyDetails.description);
 			response.data.propertyDetails.lotSize && setSquareFootage(response.data.propertyDetails.lotSize);
 			response.data.propertyDetails.bathrooms && setBathrooms(response.data.propertyDetails.bathrooms);
 			response.data.propertyDetails.bedrooms && setBedrooms(response.data.propertyDetails.bedrooms);
 			response.data.propertyDetails.price && setCost(response.data.propertyDetails.price);
-            const homeType = propertyTypeMapping[response.data.propertyDetails.homeType] || "Other";
+			const homeType = propertyTypeMapping[response.data.propertyDetails.homeType] || "Other";
 			setType(homeType);
-		  } catch (error) {
-			  console.error(error);
-		  }
+			const zillowImages = response.data.propertyDetails.originalPhotos.map((file) => file?.mixedSources?.jpeg?.[1]?.url).slice(0, 5);
+			setZillowImages(zillowImages);
+			console.log(zillowImages)
+			setFavoriteIcons(new Array(zillowImages.length).fill(false))
+		} catch (error) {
+			console.error(error);
+		}
 	};
 
 	// useEffect(() => {
@@ -234,6 +253,11 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 	// 	//console.log("194 - referredOwner - ", referredOwner);		
 	// }, [referredOwner]);
 
+	useEffect(() => {
+		if (scrollRef.current) {
+			scrollRef.current.scrollLeft = scrollPosition;
+		}
+	}, [scrollPosition]);
 
 	useEffect(() => {
 		//console.log("selectedOwner - ", selectedOwner);
@@ -267,9 +291,9 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		const inputValue = event.target.value;
 
 		const cleanedValue = inputValue.replace(/[^0-9.,]/g, '') // Remove invalid characters
-										.replace(/,/g, '') // Remove commas
-										.replace(/(\..*?)\./g, '$1');
-		
+			.replace(/,/g, '') // Remove commas
+			.replace(/(\..*?)\./g, '$1');
+
 		const numericValue = Number(cleanedValue);
 
 		setSquareFootage(numericValue);
@@ -287,9 +311,9 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		const inputValue = event.target.value;
 
 		const cleanedValue = inputValue.replace(/[^0-9.,]/g, '') // Remove invalid characters
-										.replace(/,/g, '') // Remove commas
-										.replace(/(\..*?)\./g, '$1');
-		
+			.replace(/,/g, '') // Remove commas
+			.replace(/(\..*?)\./g, '$1');
+
 		const numericValue = Number(cleanedValue);
 
 		setCost(numericValue);
@@ -380,6 +404,14 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		for (let [key, value] of formData.entries()) {
 			//console.log("Property Data entered");
 			//console.log(key, value);
+		}
+
+		if(zillowImages.length > 0){
+			formData.append('property_images', JSON.stringify(zillowImages));
+		}
+
+		if (favImg) {
+			formData.append('property_favorite_image', favImg);
 		}
 
 		const files = selectedImageList;
@@ -852,13 +884,53 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		updateCoordinates();
 	}, [address, city, state, zip]);
 
+	const handleScroll = (direction) => {
+		if (scrollRef.current) {
+			const scrollAmount = 200;
+			setScrollPosition((prevScrollPosition) => {
+				const currentScrollPosition = scrollRef.current.scrollTop;
+				let newScrollPosition;
+
+				if (direction === 'up') {
+					newScrollPosition = Math.max(currentScrollPosition - scrollAmount, 0);
+				} else {
+					newScrollPosition = currentScrollPosition + scrollAmount;
+				}
+
+				scrollRef.current.scrollTo({
+					top: newScrollPosition,
+				});
+
+				return newScrollPosition;
+			});
+		}
+	};
+
+	const handleDelete = (index) => {
+		const imgToDel = zillowImages[index];
+		setZillowImages(zillowImages.filter((img) => img != imgToDel));
+	};
+
+	const handleFavorite = (index) => {
+		const updatedFavoriteIcons = new Array(zillowImages.length).fill(false);
+		updatedFavoriteIcons[index] = true;
+		setFavoriteIcons(updatedFavoriteIcons);
+
+		const newFavImage = zillowImages[index];
+		setFavImg(newFavImage);
+	};
+
+	const handleUpdateFavoriteIcons = () => {
+		setFavoriteIcons(new Array(favoriteIcons.length).fill(false));
+	};
+
 
 	return (
 		<ThemeProvider theme={theme}>
 			<Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
 				<CircularProgress color="inherit" />
 			</Backdrop>
-			<Container maxWidth="lg" style={{ backgroundColor: '#F2F2F2', padding: '16px', borderRadius: '8px',}}>
+			<Container maxWidth="lg" style={{ backgroundColor: '#F2F2F2', padding: '16px', borderRadius: '8px', }}>
 				<Grid container spacing={8}>
 					<Grid item xs={2}>
 						<Button onClick={handleBackClick} sx={{
@@ -1038,16 +1110,147 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 				<Card sx={{ backgroundColor: '#D6D5DA', marginBottom: '18px', padding: '16px', borderRadius: '8px' }}>
 					<CardContent className={classes.cardContent}>
 						<Grid container spacing={8}>
-							<Grid item xs={12} sm={4} sx={{
-								display: 'flex',
-								justifyContent: 'center',
-								alignItems: 'center',
-							}}>
-								<ImageUploader
-									selectedImageList={selectedImageList}
-									setSelectedImageList={setSelectedImageList}
-									page={'Add'}
-								/>
+							<Grid item xs={12} sm={4} md={4}>
+								{zillowImages.length > 0 &&
+									<Grid item xs={12} sm={12} md={12}>
+										<Box
+											sx={{
+												display: 'block',
+												alignItems: 'center',
+												justifyContent: 'center',
+												padding: 2,
+											}}
+										>
+											<Box
+												sx={{
+													display: 'flex',
+													alignItems: 'center',
+													justifyContent: 'center',
+													width: '100%',
+												}}
+											>
+												<IconButton onClick={() => handleScroll('up')} disabled={scrollPosition === 0}>
+													<ArrowUpwardIcon />
+												</IconButton>
+											</Box>
+											<Box
+												sx={{
+													display: 'flex',
+													overflowY: 'auto',
+													overflowX: 'hidden',
+													scrollbarWidth: 'none',
+													msOverflowStyle: 'none',
+													'&::-webkit-scrollbar': {
+														display: 'none',
+													},
+													maxHeight: '250px',
+												}}
+											>
+												<Box
+													sx={{
+														display: 'flex',
+														overflowY: 'auto',
+														overflowX: 'hidden',
+														scrollbarWidth: 'none',
+														msOverflowStyle: 'none',
+														'&::-webkit-scrollbar': {
+															display: 'none',
+														},
+														width: "600px",
+													}}
+												>
+													<ImageList
+														ref={scrollRef}
+														sx={{ display: 'block', flexWrap: 'nowrap' }}
+														cols={5}
+													>
+														{zillowImages?.map((image, index) => (
+															<ImageListItem
+																key={index}
+																sx={{
+																	width: 'auto',
+																	flex: '0 0 auto',
+																	border: '1px solid #ccc',
+																	margin: '0 2px',
+																	position: 'relative', // Added to position icons
+																}}
+															>
+																<img
+																	src={image}
+																	alt={`maintenance-${index}`}
+																	style={{
+																		height: '150px',
+																		width: '200px',
+																		objectFit: 'cover',
+																	}}
+																/>
+																<Box sx={{ position: 'absolute', top: 0, right: 0 }}>
+																	<IconButton
+																		onClick={() => handleDelete(index)}
+																		sx={{
+																			backgroundColor: 'rgba(255, 255, 255, 0.7)',
+																			'&:hover': {
+																				backgroundColor: 'rgba(255, 255, 255, 0.9)',
+																			},
+																			margin: '2px',
+																		}}
+																	>
+																		<DeleteIcon />
+																	</IconButton>
+																</Box>
+																<Box sx={{ position: 'absolute', bottom: 0, left: 0 }}>
+																	<IconButton
+																		onClick={() => handleFavorite(index)}
+																		sx={{
+																			color: favoriteIcons[index] ? 'red' : 'black',
+																			backgroundColor: 'rgba(255, 255, 255, 0.7)',
+																			'&:hover': {
+																				backgroundColor: 'rgba(255, 255, 255, 0.9)',
+																			},
+																			margin: '2px',
+																		}}
+																	>
+																		{favoriteIcons[index] ? (
+																			<FavoriteIcon />
+																		) : (
+																			<FavoriteBorderIcon />
+																		)}
+																	</IconButton>
+																</Box>
+															</ImageListItem>
+														))}
+													</ImageList>
+												</Box>
+											</Box>
+											<Box
+												sx={{
+													display: 'flex',
+													alignItems: 'center',
+													justifyContent: 'center',
+													width: '100%',
+												}}
+											>
+												<IconButton onClick={() => handleScroll('down')}>
+													<ArrowDownwardIcon />
+												</IconButton>
+											</Box>
+										</Box>
+									</Grid>
+								}
+								<Grid item xs={12} sm={12} sx={{
+									display: 'flex',
+									justifyContent: 'center',
+									alignItems: 'center',
+								}}>
+									<ImageUploader
+										selectedImageList={selectedImageList}
+										setSelectedImageList={setSelectedImageList}
+										page={'Add'}
+										setFavImage={setFavImg}
+									    favImage={favImg}
+									    updateFavoriteIcons={handleUpdateFavoriteIcons}
+									/>
+								</Grid>
 							</Grid>
 							<Grid item xs={12} sm={8}>
 								<Grid container spacing={3} columnSpacing={12}>
