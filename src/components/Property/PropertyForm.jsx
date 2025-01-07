@@ -46,8 +46,8 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-// import axios from "axios";
-import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
+import axios from "axios";
+import { fetchMiddleware as fetch, axiosMiddleware } from "../../utils/httpMiddleware";
 import { formatPhoneNumber, headers, roleMap } from "../Onboarding/helper"
 
 import PropertiesContext from '../../contexts/PropertiesContext';
@@ -178,12 +178,47 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		setIsModalOpen(false);
 	};
 
-	const handleAddressSelect = (address) => {
+	const propertyTypeMapping = {
+		MULTI_FAMILY: "Multi Family",
+		SINGLE_FAMILY: "Single Family",
+		CONDO: "Condo",
+		APARTMENT: "Apartment",
+	  };
+
+	const handleAddressSelect = async (address) => {
 
 		setAddress(address.street ? address.street : "");
 		setCity(address.city ? address.city : "");
 		setState(address.state ? address.state : "");
 		setZip(address.zip ? address.zip : "");
+		
+		//Get property details from Zillow Rapid API 
+		const fullAddress = `${address.street}, ${address.city}, ${address.state}, ${address.zip}`;
+		const options = {
+			method: 'GET',
+			url: 'https://zillow-working-api.p.rapidapi.com/pro/byaddress',
+			params: {
+			  propertyaddress: fullAddress
+			},
+			headers: {
+			  'x-rapidapi-key': process.env.REACT_APP_RAPID_API_KEY,
+			  'x-rapidapi-host': process.env.REACT_APP_RAPID_API_HOST
+			}
+		  };
+		  
+		  try {
+			const response = await axios.request(options);
+			console.log('Rapid API result', response.data);
+			setNotes(response.data.propertyDetails.description);
+			response.data.propertyDetails.lotSize && setSquareFootage(response.data.propertyDetails.lotSize);
+			response.data.propertyDetails.bathrooms && setBathrooms(response.data.propertyDetails.bathrooms);
+			response.data.propertyDetails.bedrooms && setBedrooms(response.data.propertyDetails.bedrooms);
+			response.data.propertyDetails.price && setCost(response.data.propertyDetails.price);
+            const homeType = propertyTypeMapping[response.data.propertyDetails.homeType] || "Other";
+			setType(homeType);
+		  } catch (error) {
+			  console.error(error);
+		  }
 	};
 
 	// useEffect(() => {
@@ -490,7 +525,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 			userRolesList.push("OWNER");
 			const updatedRoles = userRolesList.join(",");
 			// Send the update request to the server
-			const response = await axios.put("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateUserByUID/MYSPACE", {
+			const response = await axiosMiddleware.put("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateUserByUID/MYSPACE", {
 				user_uid: userUID,
 				role: updatedRoles,
 			});
@@ -519,7 +554,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 				// }
 				const { profileApi } = roleMap["OWNER"];
 
-				const { data } = await axios.post(
+				const { data } = await axiosMiddleware.post(
 					`${APIConfig.baseURL.dev}${profileApi}`,
 					form,
 					headers
@@ -538,7 +573,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 					"email_subject": `Owner Profile created for your account at ManifestMySpace`,
 					"email_body": message + `Please Login to your account and verify your profile information.`,
 				}
-				const emailResponse = await axios.post(
+				const emailResponse = await axiosMiddleware.post(
 					`${APIConfig.baseURL.dev}/sendEmail`,
 					emailPayload
 				);
@@ -653,7 +688,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		// }
 		const { profileApi } = roleMap["OWNER"];
 
-		const { data } = await axios.post(
+		const { data } = await axiosMiddleware.post(
 			`${APIConfig.baseURL.dev}${profileApi}`,
 			form,
 			headers
@@ -672,7 +707,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 			"email_subject": `You have been invited to join ManifestMySpace`,
 			"email_body": message + ` Please sign up using the link - ${link}. Don't forget to verify your profile information and create a password to finish setting up your profile. You can also sign up using your Google Account.`,
 		}
-		const emailResponse = await axios.post(
+		const emailResponse = await axiosMiddleware.post(
 			`${APIConfig.baseURL.dev}/sendEmail`,
 			emailPayload
 		);
@@ -723,7 +758,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		// });
 		const isEmailSignup = true
 		if (isEmailSignup) {
-			const response = await axios.post(
+			const response = await axiosMiddleware.post(
 				"https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/CreateAccount/MYSPACE",
 				payload
 			);
@@ -1072,6 +1107,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 												marginTop: '4px', // Add space above the text field
 											}}
 											placeholder="Enter sqft"
+											value={squareFootage}
 											onChange={handleSquareFootageChange}
 										/>
 									</Grid>
@@ -1099,6 +1135,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 												marginTop: '4px', // Add space above the text field
 											}}
 											placeholder="# of bedrooms"
+											value={bedrooms}
 											onChange={handleBedroomsChange}
 										/>
 									</Grid>
@@ -1126,6 +1163,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 												marginTop: '4px', // Add space above the text field
 											}}
 											placeholder="# of bathrooms"
+											value={bathrooms}
 											onChange={handleBathroomsChange}
 										/>
 									</Grid>
@@ -1155,6 +1193,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 											InputProps={{
 												startAdornment: <InputAdornment position="start">$</InputAdornment>,
 											}}
+											value={cost}
 											onChange={handleCostChange}
 										/>
 									</Grid>
@@ -1295,6 +1334,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 								}}
 								size="small"
 								multiline={true}
+								value={notes}
 								onChange={handleNotesChange}
 							/>
 						</Grid>
