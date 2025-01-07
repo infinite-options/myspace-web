@@ -231,7 +231,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 			response.data.propertyDetails.price && setCost(response.data.propertyDetails.price);
 			const homeType = propertyTypeMapping[response.data.propertyDetails.homeType] || "Other";
 			setType(homeType);
-			const zillowImages = response.data.propertyDetails.originalPhotos.map((file) => file?.mixedSources?.jpeg?.[1]?.url).slice(0, 5);
+			const zillowImages = response.data.propertyDetails.originalPhotos.map((file) => file?.mixedSources?.jpeg?.[1]?.url);
 			setZillowImages(zillowImages);
 			console.log(zillowImages)
 			setFavoriteIcons(new Array(zillowImages.length).fill(false))
