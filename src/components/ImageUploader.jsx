@@ -32,7 +32,7 @@ import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
-export default function ImageUploader({ updateFavoriteIcons, selectedImageList, setSelectedImageList, setDeletedImageList, page, setFavImage, favImage }) {
+export default function ImageUploader({ updateFavoriteIcons, selectedImageList, setSelectedImageList, setDeletedImageList, page, setFavImage, favImage, setIsRapidImages }) {
   const [imageFormatError, setImageFormatError] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
 
@@ -103,6 +103,9 @@ export default function ImageUploader({ updateFavoriteIcons, selectedImageList, 
       readImage(fileObj);
       currentIndex++;
     });
+    if(page === "Add"){
+      setIsRapidImages(false);
+    }
   };
 
   const deleteImage = (image) => {

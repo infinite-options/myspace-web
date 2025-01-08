@@ -209,8 +209,10 @@ function EditProperty(props) {
 			? sortedByFavImgLst.map((image) => image === favPropImage)
 			: []
 	);
-	const [sortedImgLst, setSortedImgLst] = useState(sortedByFavImgLst)
+	const [sortedImgLst, setSortedImgLst] = useState(sortedByFavImgLst);
+	const [initialSortedImgList, setInitialSortedImgList] = useState([]);
 	const [zillowPhotos, setZillowPhotos] = useState([]);
+	const [isRapidImages, setIsRapidImages] = useState(false);
 
 	useEffect(() => {
 		const property = propertyList[index];
@@ -260,6 +262,7 @@ function EditProperty(props) {
 		setCommunityAmenities(property.property_amenities_community);
 		setUnitAmenities(property.property_amenities_unit);
 		setNearbyAmenities(property.property_amenities_nearby);
+		setInitialSortedImgList(sortedImgLst);
 	}, [index]);
 
 	const getChangedFields = () => {
@@ -302,7 +305,7 @@ function EditProperty(props) {
 
 	useEffect(() => {
 		const hasImageChanges =
-			imageState.length > 0 || deletedImageList.length > 0 || favImage !== propertyData.property_favorite_image;
+			imageState.length > 0 || deletedImageList.length > 0 || favImage !== propertyData.property_favorite_image || JSON.stringify(initialSortedImgList) != JSON.stringify(sortedImgLst);
 		const otherChanges = Object.keys(getChangedFields()).length > 0;
 
 		const hasUnsavedChanges = hasImageChanges || otherChanges || hasPropertyDetailsChanged;
@@ -334,6 +337,7 @@ function EditProperty(props) {
 		listedRent,
 		depositForRent,
 		hasPropertyDetailsChanged,
+		sortedImgLst,
 	]);
 
 	// useEffect(() => {
@@ -432,36 +436,52 @@ function EditProperty(props) {
 			formData.append('property_latitude', coordinates.latitude);
 			formData.append('property_longitude', coordinates.longitude);
 		}
+
+		let updatedImagesToBeDeleted = imagesTobeDeleted;
+		let updatedZillowPhotos = zillowPhotos;
 		if (imagesTobeDeleted.length > 0) {
-			let updatedImages = JSON.parse(propertyData.property_images);
-			updatedImages = updatedImages.filter((image) => !imagesTobeDeleted.includes(image));
-			propertyData.property_images = JSON.stringify(updatedImages);
-			formData.append('delete_images', JSON.stringify(imagesTobeDeleted));
+			if (isRapidImages === true) {
+				const newZillowImagesToDel = imagesTobeDeleted.filter(img => zillowPhotos.includes(img) && !initialSortedImgList.includes(img));
+
+				// Update zillowPhotos by removing the deleted images
+				updatedZillowPhotos = zillowPhotos.filter(img => !newZillowImagesToDel.includes(img));
+				updatedImagesToBeDeleted = imagesTobeDeleted.filter(img => !newZillowImagesToDel.includes(img));
+			}
+
+			if (updatedImagesToBeDeleted.length > 0) {
+				let updatedImages = JSON.parse(propertyData.property_images);
+				updatedImages = updatedImages.filter((image) => !updatedImagesToBeDeleted.includes(image));
+				propertyData.property_images = JSON.stringify(updatedImages);
+				formData.append('delete_images', JSON.stringify(updatedImagesToBeDeleted));
+			}
 		}
 		////console.log("--debug selectedImageList--", selectedImageList, selectedImageList.length);
-		if(zillowPhotos.length > 0){
+		if (updatedZillowPhotos.length > 0 && isRapidImages) {
 			const propertyImages = propertyData.property_images && propertyData.property_images.length > 0 ? JSON.parse(propertyData.property_images) : []
-			const combined = [...new Set([...propertyImages, ...zillowPhotos])];
+			const combined = [...new Set([...propertyImages, ...updatedZillowPhotos])];
 			formData.append('property_images', (combined.length > 0) ? JSON.stringify(combined) : defaultHouseImage);
 		} else {
 			formData.append('property_images', (propertyData.property_images && propertyData.property_images.length > 0) ? propertyData.property_images : defaultHouseImage);
 		}
-		
+
 		if (favImage) {
 			formData.append('property_favorite_image', favImage);
 		}
 		// const files = imageState;
-		let i = 0;
-		for (const file of imageState) {
-			let key = `img_${i++}`;
-			if (file.file !== null) {
-				formData.append(key, file.file);
-			} else {
-				formData.append(key, file.image);
+		if (isRapidImages === false) {
+			let i = 0;
+			for (const file of imageState) {
+				let key = `img_${i++}`;
+				if (file.file !== null) {
+					formData.append(key, file.file);
+				} else {
+					formData.append(key, file.image);
+				}
+				if (file.coverPhoto) {
+					formData.set('property_favorite_image', key);
+				}
 			}
-			if (file.coverPhoto) {
-				formData.set('property_favorite_image', key);
-			}
+
 		}
 
 		////console.log('---FavImage----', favImage);
@@ -470,9 +490,9 @@ function EditProperty(props) {
 			formData.append('deleted_images', JSON.stringify(deletedImageList));
 		}
 
-		for (let [key, value] of formData.entries()) {
-			//console.log(key, value);
-		}
+		// for (let [key, value] of formData.entries()) {
+		// 	//console.log(key, value);
+		// }
 
 		const putData = async () => {
 			setShowSpinner(true);
@@ -486,6 +506,7 @@ function EditProperty(props) {
 			setShowSpinner(false);
 			setImageState([]);
 			setZillowPhotos([]);
+			setIsRapidImages(false);
 		};
 
 		const autoUpdate = async () => {
@@ -706,29 +727,28 @@ function EditProperty(props) {
 		SINGLE_FAMILY: "Single Family",
 		CONDO: "Condo",
 		APARTMENT: "Apartment",
-	  };
+	};
 
-	const getRapidApiData = async() => {
+	const getRapidApiData = async () => {
 		//Get property details from Zillow Rapid API 
 		const fullAddress = `${address}, ${city}, ${propertyState}, ${zip}`;
-		console.log('full address', process.env.RAPID_API_KEY);
 		const options = {
 			method: 'GET',
 			url: 'https://zillow-working-api.p.rapidapi.com/pro/byaddress',
 			params: {
-			  propertyaddress: fullAddress
+				propertyaddress: fullAddress
 			},
 			headers: {
-			  'x-rapidapi-key': process.env.REACT_APP_RAPID_API_KEY,
-			  'x-rapidapi-host': process.env.REACT_APP_RAPID_API_HOST
+				'x-rapidapi-key': process.env.REACT_APP_RAPID_API_KEY,
+				'x-rapidapi-host': process.env.REACT_APP_RAPID_API_HOST
 			}
-		  };
-		  
-		  try {
+		};
+
+		try {
 			const response = await axios.request(options);
 			// console.log('Rapid API result', response.data, response.status);
 			const statusCode = response.data.message.split(":")[0].trim();
-			if(statusCode === "200"){
+			if (statusCode === "200") {
 				response.data.propertyDetails.description && setNotes(response.data.propertyDetails.description);
 				response.data.propertyDetails.lotSize && setSquareFootage(response.data.propertyDetails.lotSize);
 				response.data.propertyDetails.bathrooms && setBathrooms(response.data.propertyDetails.bathrooms);
@@ -739,14 +759,15 @@ function EditProperty(props) {
 				const zillowPhotos = response.data.propertyDetails.originalPhotos.map((file) => file?.mixedSources?.jpeg?.[1]?.url);
 
 				// console.log('zillowPhotos', sortedByFavImgLst);
-				const updatedImages = [...sortedImgLst, ...zillowPhotos];
+				const updatedImages = [...new Set([...sortedImgLst, ...zillowPhotos])];
 				setZillowPhotos(zillowPhotos);
 				setSortedImgLst(updatedImages)
-				console.log(updatedImages);
+				// console.log('updatedImages', updatedImages);
+				setIsRapidImages(true);
 			}
-		  } catch (error) {
-			  console.error(error);
-		  }
+		} catch (error) {
+			console.error(error);
+		}
 	}
 
 
@@ -854,7 +875,7 @@ function EditProperty(props) {
 												'&::-webkit-scrollbar': {
 													display: 'none',
 												},
-												maxWidth:"600px",
+												maxWidth: "600px",
 											}}
 										>
 											<ImageList
@@ -938,8 +959,19 @@ function EditProperty(props) {
 									updateFavoriteIcons={handleUpdateFavoriteIcons}
 								/>
 							</Grid>
-
-							<Grid item xs={2} md={2}>
+							<Grid
+								item
+								xs={0.5}
+								md={0.5}
+								sx={{
+									display: "flex",
+									alignItems: "center",
+									justifyContent: "center"
+								}}
+							>
+								<h4 style={{ textAlign: "center" }}>OR</h4>
+							</Grid>
+							<Grid item xs={1.5} md={1.5}>
 								<Button
 									onClick={() => {
 										getRapidApiData()
@@ -949,7 +981,7 @@ function EditProperty(props) {
 										alignItems: "center",
 										justifyContent: "center",
 										padding: 0,
-										margin: 0, 
+										margin: 0,
 										width: "100%",
 										height: "100%",
 									}}
@@ -959,7 +991,7 @@ function EditProperty(props) {
 										alt="Rapid API Icon"
 										style={{
 											cursor: "pointer",
-											width: "100%", 
+											width: "100%",
 											maxWidth: "50px",
 											height: "auto",
 										}}
