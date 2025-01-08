@@ -210,7 +210,7 @@ function EditProperty(props) {
 			: []
 	);
 	const [sortedImgLst, setSortedImgLst] = useState(sortedByFavImgLst);
-	const [initialSortedImgList, setInitialSortedImgList] = useState([]);
+	const [initialSortedImgList, setInitialSortedImgList] = useState(sortedImgLst);
 	const [zillowPhotos, setZillowPhotos] = useState([]);
 	const [isRapidImages, setIsRapidImages] = useState(false);
 
@@ -340,6 +340,14 @@ function EditProperty(props) {
 		sortedImgLst,
 	]);
 
+	useEffect(() => {
+		if(isRapidImages === false){
+			setSortedImgLst(initialSortedImgList);
+		} else {
+			setImageState([]);
+		}
+	  }, [isRapidImages]);
+
 	// useEffect(() => {
 	// 	//console.log('Size of selectedImageList:', selectedImageList.length);
 	// 	//console.log('Contents of selectedImageList:', selectedImageList);
@@ -437,8 +445,8 @@ function EditProperty(props) {
 			formData.append('property_longitude', coordinates.longitude);
 		}
 
-		let updatedImagesToBeDeleted = imagesTobeDeleted;
-		let updatedZillowPhotos = zillowPhotos;
+		let updatedImagesToBeDeleted = [...imagesTobeDeleted];
+		let updatedZillowPhotos = [...zillowPhotos];
 		if (imagesTobeDeleted.length > 0) {
 			if (isRapidImages === true) {
 				const newZillowImagesToDel = imagesTobeDeleted.filter(img => zillowPhotos.includes(img) && !initialSortedImgList.includes(img));
@@ -904,19 +912,21 @@ function EditProperty(props) {
 															}}
 														/>
 														<Box sx={{ position: 'absolute', top: 0, right: 0 }}>
-															<IconButton
-																onClick={() => handleDelete(index)}
-																sx={{
-																	color: deletedIcons[index] ? 'red' : 'black',
-																	backgroundColor: 'rgba(255, 255, 255, 0.7)',
-																	'&:hover': {
-																		backgroundColor: 'rgba(255, 255, 255, 0.9)',
-																	},
-																	margin: '2px',
-																}}
-															>
-																<DeleteIcon />
-															</IconButton>
+															{!isRapidImages && (
+																<IconButton
+																	onClick={() => handleDelete(index)}
+																	sx={{
+																		color: deletedIcons[index] ? 'red' : 'black',
+																		backgroundColor: 'rgba(255, 255, 255, 0.7)',
+																		'&:hover': {
+																			backgroundColor: 'rgba(255, 255, 255, 0.9)',
+																		},
+																		margin: '2px',
+																	}}
+																>
+																	<DeleteIcon />
+																</IconButton>
+															)}
 														</Box>
 														<Box sx={{ position: 'absolute', bottom: 0, left: 0 }}>
 															<IconButton
@@ -957,6 +967,7 @@ function EditProperty(props) {
 									setFavImage={setFavImage}
 									favImage={favImage}
 									updateFavoriteIcons={handleUpdateFavoriteIcons}
+									setIsRapidImages={setIsRapidImages}
 								/>
 							</Grid>
 							<Grid

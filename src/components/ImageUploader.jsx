@@ -103,7 +103,7 @@ export default function ImageUploader({ updateFavoriteIcons, selectedImageList, 
       readImage(fileObj);
       currentIndex++;
     });
-    if(page === "Add"){
+    if(page === "Add" || page === "edit_property"){
       setIsRapidImages(false);
     }
   };
