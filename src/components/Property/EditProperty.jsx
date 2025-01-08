@@ -213,6 +213,7 @@ function EditProperty(props) {
 	const [initialSortedImgList, setInitialSortedImgList] = useState(sortedImgLst);
 	const [zillowPhotos, setZillowPhotos] = useState([]);
 	const [isRapidImages, setIsRapidImages] = useState(false);
+	const [canDelImages, setCanDelImages] = useState([]);
 
 	useEffect(() => {
 		const property = propertyList[index];
@@ -341,12 +342,12 @@ function EditProperty(props) {
 	]);
 
 	useEffect(() => {
-		if(isRapidImages === false){
+		if (isRapidImages === false) {
 			setSortedImgLst(initialSortedImgList);
 		} else {
 			setImageState([]);
 		}
-	  }, [isRapidImages]);
+	}, [isRapidImages]);
 
 	// useEffect(() => {
 	// 	//console.log('Size of selectedImageList:', selectedImageList.length);
@@ -515,6 +516,7 @@ function EditProperty(props) {
 			setImageState([]);
 			setZillowPhotos([]);
 			setIsRapidImages(false);
+			setCanDelImages([]);
 		};
 
 		const autoUpdate = async () => {
@@ -766,10 +768,25 @@ function EditProperty(props) {
 				setPropertyType(homeType);
 				const zillowPhotos = response.data.propertyDetails.originalPhotos.map((file) => file?.mixedSources?.jpeg?.[1]?.url);
 
-				// console.log('zillowPhotos', sortedByFavImgLst);
-				const updatedImages = [...new Set([...sortedImgLst, ...zillowPhotos])];
+				// console.log('zillowPhotos', zillowPhotos);
+				const sortedImgLstSet = [...new Set(sortedImgLst)];
+				const filteredZillowPhotos = zillowPhotos.filter(
+					(photo) => !sortedImgLstSet.includes(photo)
+				);
+				const updatedImagesFromRapid = [
+					...sortedImgLst,
+					...filteredZillowPhotos
+				];
+
+				const rapidApiCanDelImages = [
+					...sortedImgLst.map(() => false),
+					...filteredZillowPhotos.map(() => true)
+				];
+
+				setSortedImgLst(updatedImagesFromRapid);
 				setZillowPhotos(zillowPhotos);
-				setSortedImgLst(updatedImages)
+				setCanDelImages(rapidApiCanDelImages);
+
 				// console.log('updatedImages', updatedImages);
 				setIsRapidImages(true);
 			}
@@ -904,7 +921,7 @@ function EditProperty(props) {
 													>
 														<img
 															src={image}
-															alt={`maintenance-${index}`}
+															alt={`property-${index}`}
 															style={{
 																height: '150px',
 																width: '150px',
@@ -912,7 +929,7 @@ function EditProperty(props) {
 															}}
 														/>
 														<Box sx={{ position: 'absolute', top: 0, right: 0 }}>
-															{!isRapidImages && (
+															{((!isRapidImages) || (isRapidImages && canDelImages[index])) && (
 																<IconButton
 																	onClick={() => handleDelete(index)}
 																	sx={{
