@@ -1149,180 +1149,255 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 							<Grid item xs={12} sm={4} md={4}>
 								{isRapidImages && zillowImages.length > 0 &&
 									<Grid item xs={12} sm={12} md={12}>
-											<Box
-												sx={{
-													display: 'flex',
-													overflowY: 'auto',
-													overflowX: 'hidden',
-													scrollbarWidth: 'none',
-													msOverflowStyle: 'none',
-													'&::-webkit-scrollbar': {
-														display: 'none',
-													},
-													maxHeight: '250px',
-													maxWidth: "450px",
-													// backgroundColor: '#D6D5DA',
-												}}
+										<Box
+											sx={{
+												display: 'flex',
+												overflowY: 'auto',
+												overflowX: 'hidden',
+												scrollbarWidth: 'none',
+												msOverflowStyle: 'none',
+												'&::-webkit-scrollbar': {
+													display: 'none',
+												},
+												maxHeight: '250px',
+												maxWidth: "450px",
+											}}
+										>
+											<ImageList
+												ref={scrollRef}
+												sx={{ display: 'block', flexWrap: 'nowrap', height: '250px' }}
+												cols={5}
 											>
-												<ImageList
-													ref={scrollRef}
-													sx={{ display: 'block', flexWrap: 'nowrap', height:'250px'}}
-													cols={5}
-												>
-													{zillowImages?.map((image, index) => (
-														<ImageListItem
-															key={index}
-															sx={{
-																width: 'auto',
-																flex: '0 0 auto',
-																border: '1px solid #ccc',
-																margin: '0 2px',
-																position: 'relative', // Added to position icons
+												{zillowImages?.map((image, index) => (
+													<ImageListItem
+														key={index}
+														sx={{
+															width: 'auto',
+															flex: '0 0 auto',
+															border: '1px solid #ccc',
+															margin: '0 2px',
+															position: 'relative', // Added to position icons
+														}}
+													>
+														<img
+															src={image}
+															alt={`property-${index}`}
+															style={{
+																height: '150px',
+																width: '200px',
+																objectFit: 'cover',
 															}}
-														>
-															<img
-																src={image}
-																alt={`property-${index}`}
-																style={{
-																	height: '150px',
-																	width: '200px',
-																	objectFit: 'cover',
+														/>
+														<Box sx={{ position: 'absolute', top: 0, right: 0 }}>
+															<IconButton
+																onClick={() => handleDelete(index)}
+																sx={{
+																	backgroundColor: 'rgba(255, 255, 255, 0.7)',
+																	'&:hover': {
+																		backgroundColor: 'rgba(255, 255, 255, 0.9)',
+																	},
+																	margin: '2px',
 																}}
-															/>
-															<Box sx={{ position: 'absolute', top: 0, right: 0 }}>
-																<IconButton
-																	onClick={() => handleDelete(index)}
-																	sx={{
-																		backgroundColor: 'rgba(255, 255, 255, 0.7)',
-																		'&:hover': {
-																			backgroundColor: 'rgba(255, 255, 255, 0.9)',
-																		},
-																		margin: '2px',
-																	}}
-																>
-																	<DeleteIcon />
-																</IconButton>
-															</Box>
-															<Box sx={{ position: 'absolute', bottom: 0, left: 0 }}>
-																<IconButton
-																	onClick={() => handleFavorite(index)}
-																	sx={{
-																		color: favoriteIcons[index] ? 'red' : 'black',
-																		backgroundColor: 'rgba(255, 255, 255, 0.7)',
-																		'&:hover': {
-																			backgroundColor: 'rgba(255, 255, 255, 0.9)',
-																		},
-																		margin: '2px',
-																	}}
-																>
-																	{favoriteIcons[index] ? (
-																		<FavoriteIcon />
-																	) : (
-																		<FavoriteBorderIcon />
-																	)}
-																</IconButton>
-															</Box>
-														</ImageListItem>
-													))}
-												</ImageList>
-											</Box>
+															>
+																<DeleteIcon />
+															</IconButton>
+														</Box>
+														<Box sx={{ position: 'absolute', bottom: 0, left: 0 }}>
+															<IconButton
+																onClick={() => handleFavorite(index)}
+																sx={{
+																	color: favoriteIcons[index] ? 'red' : 'black',
+																	backgroundColor: 'rgba(255, 255, 255, 0.7)',
+																	'&:hover': {
+																		backgroundColor: 'rgba(255, 255, 255, 0.9)',
+																	},
+																	margin: '2px',
+																}}
+															>
+																{favoriteIcons[index] ? (
+																	<FavoriteIcon />
+																) : (
+																	<FavoriteBorderIcon />
+																)}
+															</IconButton>
+														</Box>
+													</ImageListItem>
+												))}
+											</ImageList>
+										</Box>
 									</Grid>
 								}
-								{zillowImages.length > 0 &&
+
+								{zillowImages.length > 0 ? (
 									<>
 										{isRapidImages && <h4 style={{ textAlign: 'center' }}>OR</h4>}
 										<Grid item xs={12} sm={12}>
-											<Box justifyContent='center' alignItems='center' display='block'>
-												<Container
-													fixed
-													sx={{
-														backgroundColor: "white",
-														borderColor: "black",
-														borderRadius: "7px",
-														borderStyle: "dashed",
-														borderColor: theme.typography.common.blue,
-														display: 'flex',
-														justifyContent: 'center',
-														alignItems: 'center',
-														padding: '10px',
-													}}
-												>
-													<Button
-														component="label"
-														sx={{
-															display: 'flex',
-															alignItems: 'center',
-															justifyContent: 'center',
-															padding: '10px',
-															boxShadow: 'none',
-															border: 'none',
-															backgroundColor: "white",
-															':hover': {
-																backgroundColor: 'white',
-																color: 'primary.main',
-																boxShadow: 'none',
-																border: 'none',
-															},
-															width: '100%',
-														}}
-														onClick={handleToggle}
-													>
-														{isRapidImages ? (
-															<AddPhotoAlternateIcon
-																sx={{
-																	color: theme.typography.common.blue,
-																	fontSize: '30px',
-																	marginRight: '10px',
-																}}
-															/>
-														) : (
-															<img
-																src={RapidAPIIcon}
-																alt="Rapid API Icon"
-																style={{
-																	cursor: 'pointer',
-																	width: '100%',
-																	maxWidth: '20px',
-																	height: '20px',
-																	marginRight: "15px",
-																	marginLeft: "20px"
-																}}
-															/>
-														)}
-
-														<Typography
+											{isRapidImages ? (
+												selectedImageList.length === 0 ? (
+													<ImageUploader
+														selectedImageList={selectedImageList}
+														setSelectedImageList={setSelectedImageList}
+														page="Add"
+														setFavImage={setFavImg}
+														favImage={favImg}
+														updateFavoriteIcons={handleUpdateFavoriteIcons}
+														setIsRapidImages={setIsRapidImages}
+													/>
+												) : (
+													<Box justifyContent="center" alignItems="center" display="block">
+														<Container
+															fixed
 															sx={{
-																color: theme.typography.common.blue,
-																fontWeight: theme.typography.primary.fontWeight,
-																fontSize: theme.typography.mediumFont,
+																backgroundColor: 'white',
+																borderColor: 'black',
+																borderRadius: '7px',
+																borderStyle: 'dashed',
+																borderColor: theme.typography.common.blue,
+																display: 'flex',
+																justifyContent: 'center',
+																alignItems: 'center',
+																padding: '10px',
 															}}
 														>
-															{isRapidImages ? 'Add Pictures' : 'Add Rapid Pictures'}
-														</Typography>
-													</Button>
-												</Container>
-											</Box>
+															<Button
+																component="label"
+																sx={{
+																	display: 'flex',
+																	alignItems: 'center',
+																	justifyContent: 'center',
+																	padding: '10px',
+																	boxShadow: 'none',
+																	border: 'none',
+																	backgroundColor: 'white',
+																	':hover': {
+																		backgroundColor: 'white',
+																		color: 'primary.main',
+																		boxShadow: 'none',
+																		border: 'none',
+																	},
+																	width: '100%',
+																}}
+																onClick={handleToggle}
+															>
+																<AddPhotoAlternateIcon
+																	sx={{
+																		color: theme.typography.common.blue,
+																		fontSize: '30px',
+																		marginRight: '10px',
+																	}}
+																/>
+																<Typography
+																	sx={{
+																		color: theme.typography.common.blue,
+																		fontWeight: theme.typography.primary.fontWeight,
+																		fontSize: theme.typography.mediumFont,
+																	}}
+																>
+																	Add Pictures Button
+																</Typography>
+															</Button>
+														</Container>
+													</Box>
+												)
+											) : (
+												<>
+													<Box justifyContent="center" alignItems="center" display="block">
+														<Container
+															fixed
+															sx={{
+																backgroundColor: 'white',
+																borderColor: 'black',
+																borderRadius: '7px',
+																borderStyle: 'dashed',
+																borderColor: theme.typography.common.blue,
+																display: 'flex',
+																justifyContent: 'center',
+																alignItems: 'center',
+																padding: '10px',
+															}}
+														>
+															<Button
+																component="label"
+																sx={{
+																	display: 'flex',
+																	alignItems: 'center',
+																	justifyContent: 'center',
+																	padding: '10px',
+																	boxShadow: 'none',
+																	border: 'none',
+																	backgroundColor: 'white',
+																	':hover': {
+																		backgroundColor: 'white',
+																		color: 'primary.main',
+																		boxShadow: 'none',
+																		border: 'none',
+																	},
+																	width: '100%',
+																}}
+																onClick={handleToggle}
+															>
+																<img
+																	src={RapidAPIIcon}
+																	alt="Rapid API Icon"
+																	style={{
+																		cursor: 'pointer',
+																		width: '100%',
+																		maxWidth: '20px',
+																		height: '20px',
+																		marginRight: '15px',
+																		marginLeft: '20px',
+																	}}
+																/>
+																<Typography
+																	sx={{
+																		color: theme.typography.common.blue,
+																		fontWeight: theme.typography.primary.fontWeight,
+																		fontSize: theme.typography.mediumFont,
+																	}}
+																>
+																	Add Rapid Pictures
+																</Typography>
+															</Button>
+														</Container>
+													</Box>
+													<h4 style={{ textAlign: 'center' }}>OR</h4>
+													<ImageUploader
+														selectedImageList={selectedImageList}
+														setSelectedImageList={setSelectedImageList}
+														page="Add"
+														setFavImage={setFavImg}
+														favImage={favImg}
+														updateFavoriteIcons={handleUpdateFavoriteIcons}
+														setIsRapidImages={setIsRapidImages}
+													/>
+												</>
+											)}
 										</Grid>
-										{!isRapidImages && <h4 style={{ textAlign: 'center' }}>OR</h4>}
 									</>
-								}
-								{!isRapidImages && (
-									<Grid item xs={12} sm={12} sx={{
-										display: 'flex',
-										justifyContent: 'center',
-										alignItems: 'center',
-									}}>
+								) : (
+									<Grid
+										item
+										xs={12}
+										sm={12}
+										sx={{
+											display: 'flex',
+											justifyContent: 'center',
+											alignItems: 'center',
+										}}
+									>
 										<ImageUploader
 											selectedImageList={selectedImageList}
 											setSelectedImageList={setSelectedImageList}
-											page={'Add'}
+											page="Add"
 											setFavImage={setFavImg}
 											favImage={favImg}
 											updateFavoriteIcons={handleUpdateFavoriteIcons}
 											setIsRapidImages={setIsRapidImages}
 										/>
-									</Grid>)}
+									</Grid>
+								)}
 							</Grid>
+							
 							<Grid item xs={12} sm={8}>
 								<Grid container spacing={3} columnSpacing={12}>
 									<Grid item xs={2}>
