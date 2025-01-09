@@ -185,6 +185,7 @@ export default function ImageUploader({ updateFavoriteIcons, selectedImageList, 
         {selectedImageList.length > 0 && (
           <Box justifyContent='center' alignItems='center' display='flex' padding={10}>
             <Grid container>
+              <Grid item md={10} sx={{ display: "flex", flexWrap: "wrap", gap:"0px"}}>
               {selectedImageList.map((file, index) => (
                 <Box
                   key={index}
@@ -273,10 +274,11 @@ export default function ImageUploader({ updateFavoriteIcons, selectedImageList, 
                   </Grid>
                 </Box>
               ))}
-              <Grid item xs={2}>
+              </Grid>
+              <Grid item xs={1}>
                 <Button component='label'>
                   <input type='file' accept='image/*' multiple hidden onChange={addFile} />
-                  <AddPhotoAlternateIcon sx={{ color: theme.typography.common.blue, fontSize: "75px", marginRight: "10px" }} />
+                  <AddPhotoAlternateIcon sx={{ color: theme.typography.common.blue, fontSize: "60px", marginRight: "10px" }} />
                 </Button>
               </Grid>
             </Grid>
