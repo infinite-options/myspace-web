@@ -191,6 +191,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 	const [favoriteIcons, setFavoriteIcons] = useState([]);
 	const [favImg, setFavImg] = useState('');
 	const [isRapidImages, setIsRapidImages] = useState(false);
+	const [isImgUploaderToBeDis, setIsImgUploaderToBeDis] = useState(false);
 
 
 	const handleCloseModal = () => {
@@ -227,7 +228,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 
 		try {
 			const response = await axios.request(options);
-			// console.log('Rapid API result', response.data);
+			console.log('Rapid API result', response.data);
 			const statusCode = response.data.message.split(":")[0].trim();
 			if (statusCode === "200") {
 				setNotes(response.data.propertyDetails.description || '');
@@ -298,6 +299,18 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		// 	setIsModalOpen(false);
 		// }
 	}, [selectedOwner]);
+
+	useEffect(() => {
+		if (isRapidImages === true) {
+			if (selectedImageList.length > 0) {
+				setIsImgUploaderToBeDis(false)
+			} else {
+				setIsImgUploaderToBeDis(true);
+			}
+		} else {
+			setIsImgUploaderToBeDis(true);
+		}
+	}, [isRapidImages])
 
 	const handleUnitChange = (event) => {
 		setUnit(event.target.value);
@@ -1147,8 +1160,8 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 					<CardContent className={classes.cardContent}>
 						<Grid container spacing={8}>
 							<Grid item xs={12} sm={4} md={4}>
-								{isRapidImages && zillowImages.length > 0 &&
-									<Grid item xs={12} sm={12} md={12}>
+								{isRapidImages ?
+									(<Grid item xs={12} sm={12} md={12}>
 										<Box
 											sx={{
 												display: 'flex',
@@ -1181,7 +1194,8 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 													>
 														<img
 															src={image}
-															alt={`property-${index}`}
+															alt={`property-${image}`}
+															referrerPolicy="no-referrer"
 															style={{
 																height: '150px',
 																width: '200px',
@@ -1226,154 +1240,129 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 											</ImageList>
 										</Box>
 									</Grid>
+									) : (zillowImages.length > 0 && (
+										<>
+											<Box justifyContent="center" alignItems="center" display="block">
+												<Container
+													fixed
+													sx={{
+														backgroundColor: 'white',
+														borderColor: 'black',
+														borderRadius: '7px',
+														borderStyle: 'dashed',
+														borderColor: theme.typography.common.blue,
+														display: 'flex',
+														justifyContent: 'center',
+														alignItems: 'center',
+														padding: '10px',
+													}}
+												>
+													<Button
+														component="label"
+														sx={{
+															display: 'flex',
+															alignItems: 'center',
+															justifyContent: 'center',
+															padding: '10px',
+															boxShadow: 'none',
+															border: 'none',
+															backgroundColor: 'white',
+															':hover': {
+																backgroundColor: 'white',
+																color: 'primary.main',
+																boxShadow: 'none',
+																border: 'none',
+															},
+															width: '100%',
+														}}
+														onClick={handleToggle}
+													>
+														<img
+															src={RapidAPIIcon}
+															alt="Rapid API Icon"
+															style={{
+																cursor: 'pointer',
+																width: '100%',
+																maxWidth: '20px',
+																height: '20px',
+																marginRight: '15px',
+																marginLeft: '20px',
+															}}
+														/>
+														<Typography
+															sx={{
+																color: theme.typography.common.blue,
+																fontWeight: theme.typography.primary.fontWeight,
+																fontSize: theme.typography.mediumFont,
+															}}
+														>
+															Add Rapid Pictures
+														</Typography>
+													</Button>
+												</Container>
+											</Box>
+										</>
+									)
+									)
 								}
 
-								{zillowImages.length > 0 ? (
-									<>
-										{isRapidImages && <h4 style={{ textAlign: 'center' }}>OR</h4>}
-										<Grid item xs={12} sm={12}>
-											{isRapidImages ? (
-												selectedImageList.length === 0 ? (
-													<ImageUploader
-														selectedImageList={selectedImageList}
-														setSelectedImageList={setSelectedImageList}
-														page="Add"
-														setFavImage={setFavImg}
-														favImage={favImg}
-														updateFavoriteIcons={handleUpdateFavoriteIcons}
-														setIsRapidImages={setIsRapidImages}
-													/>
-												) : (
-													<Box justifyContent="center" alignItems="center" display="block">
-														<Container
-															fixed
-															sx={{
-																backgroundColor: 'white',
-																borderColor: 'black',
-																borderRadius: '7px',
-																borderStyle: 'dashed',
-																borderColor: theme.typography.common.blue,
-																display: 'flex',
-																justifyContent: 'center',
-																alignItems: 'center',
-																padding: '10px',
-															}}
-														>
-															<Button
-																component="label"
-																sx={{
-																	display: 'flex',
-																	alignItems: 'center',
-																	justifyContent: 'center',
-																	padding: '10px',
-																	boxShadow: 'none',
-																	border: 'none',
-																	backgroundColor: 'white',
-																	':hover': {
-																		backgroundColor: 'white',
-																		color: 'primary.main',
-																		boxShadow: 'none',
-																		border: 'none',
-																	},
-																	width: '100%',
-																}}
-																onClick={handleToggle}
-															>
-																<AddPhotoAlternateIcon
-																	sx={{
-																		color: theme.typography.common.blue,
-																		fontSize: '30px',
-																		marginRight: '10px',
-																	}}
-																/>
-																<Typography
-																	sx={{
-																		color: theme.typography.common.blue,
-																		fontWeight: theme.typography.primary.fontWeight,
-																		fontSize: theme.typography.mediumFont,
-																	}}
-																>
-																	Add Pictures Button
-																</Typography>
-															</Button>
-														</Container>
-													</Box>
-												)
-											) : (
-												<>
-													<Box justifyContent="center" alignItems="center" display="block">
-														<Container
-															fixed
-															sx={{
-																backgroundColor: 'white',
-																borderColor: 'black',
-																borderRadius: '7px',
-																borderStyle: 'dashed',
-																borderColor: theme.typography.common.blue,
-																display: 'flex',
-																justifyContent: 'center',
-																alignItems: 'center',
-																padding: '10px',
-															}}
-														>
-															<Button
-																component="label"
-																sx={{
-																	display: 'flex',
-																	alignItems: 'center',
-																	justifyContent: 'center',
-																	padding: '10px',
-																	boxShadow: 'none',
-																	border: 'none',
-																	backgroundColor: 'white',
-																	':hover': {
-																		backgroundColor: 'white',
-																		color: 'primary.main',
-																		boxShadow: 'none',
-																		border: 'none',
-																	},
-																	width: '100%',
-																}}
-																onClick={handleToggle}
-															>
-																<img
-																	src={RapidAPIIcon}
-																	alt="Rapid API Icon"
-																	style={{
-																		cursor: 'pointer',
-																		width: '100%',
-																		maxWidth: '20px',
-																		height: '20px',
-																		marginRight: '15px',
-																		marginLeft: '20px',
-																	}}
-																/>
-																<Typography
-																	sx={{
-																		color: theme.typography.common.blue,
-																		fontWeight: theme.typography.primary.fontWeight,
-																		fontSize: theme.typography.mediumFont,
-																	}}
-																>
-																	Add Rapid Pictures
-																</Typography>
-															</Button>
-														</Container>
-													</Box>
-													<h4 style={{ textAlign: 'center' }}>OR</h4>
-													<ImageUploader
-														selectedImageList={selectedImageList}
-														setSelectedImageList={setSelectedImageList}
-														page="Add"
-														setFavImage={setFavImg}
-														favImage={favImg}
-														updateFavoriteIcons={handleUpdateFavoriteIcons}
-														setIsRapidImages={setIsRapidImages}
-													/>
-												</>
-											)}
-										</Grid>
-									</>
+								{zillowImages.length > 0 && <h4 style={{ textAlign: 'center' }}>OR</h4>}
+
+								{isImgUploaderToBeDis === false ? (
+									<Box justifyContent="center" alignItems="center" display="block">
+										<Container
+											fixed
+											sx={{
+												backgroundColor: 'white',
+												borderColor: 'black',
+												borderRadius: '7px',
+												borderStyle: 'dashed',
+												borderColor: theme.typography.common.blue,
+												display: 'flex',
+												justifyContent: 'center',
+												alignItems: 'center',
+												padding: '10px',
+											}}
+										>
+											<Button
+												component="label"
+												sx={{
+													display: 'flex',
+													alignItems: 'center',
+													justifyContent: 'center',
+													padding: '10px',
+													boxShadow: 'none',
+													border: 'none',
+													backgroundColor: 'white',
+													':hover': {
+														backgroundColor: 'white',
+														color: 'primary.main',
+														boxShadow: 'none',
+														border: 'none',
+													},
+													width: '100%',
+												}}
+												onClick={handleToggle}
+											>
+												<AddPhotoAlternateIcon
+													sx={{
+														color: theme.typography.common.blue,
+														fontSize: '30px',
+														marginRight: '10px',
+													}}
+												/>
+												<Typography
+													sx={{
+														color: theme.typography.common.blue,
+														fontWeight: theme.typography.primary.fontWeight,
+														fontSize: theme.typography.mediumFont,
+													}}
+												>
+													Add Pictures
+												</Typography>
+											</Button>
+										</Container>
+									</Box>
 								) : (
 									<Grid
 										item
@@ -1395,9 +1384,10 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 											setIsRapidImages={setIsRapidImages}
 										/>
 									</Grid>
-								)}
+								)
+								}
 							</Grid>
-							
+
 							<Grid item xs={12} sm={8}>
 								<Grid container spacing={3} columnSpacing={12}>
 									<Grid item xs={2}>
