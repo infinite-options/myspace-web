@@ -239,7 +239,7 @@ const QuotesList = (props) => {
             justifyContent='flex-start'
             sx={{
               width: "100%", // Take up full screen width
-              height: "1500px", 
+              height: "100%", 
               overflowY: "auto",
               overflowX: "hidden",
               marginTop: "10px",              
