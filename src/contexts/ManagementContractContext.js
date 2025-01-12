@@ -14,22 +14,22 @@ export const ManagementContractProvider = ({ children }) => {
   const [contractRequests, setContractRequests] = useState([]);
   const [isChange, setIsChange] = useState(false);
 
-  // const fetchDefaultContractFees = async () => {
-  //   try {
-  //     console.log(" == before profile calling == ")
-  //     const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
-  //     const data = await response.json();
-  //     // //console.log("DATA PROFILE", data);
+  const fetchDefaultContractFees = async () => {
+    try {
+      // console.log(" == before profile calling == ")
+      const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
+      const data = await response.json();
+      // //console.log("DATA PROFILE", data);
 
-  //     if (data?.profile?.result && data?.profile?.result?.length > 0) {
-  //       const profileFees = data?.profile?.result[0].business_services_fees ? JSON.parse(data?.profile?.result[0].business_services_fees) : [];
+      if (data?.profile?.result && data?.profile?.result?.length > 0) {
+        const profileFees = data?.profile?.result[0].business_services_fees ? JSON.parse(data?.profile?.result[0].business_services_fees) : [];
 
-  //       setDefaultContractFees(profileFees);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching profile data: ", error);
-  //   }
-  // };
+        setDefaultContractFees(profileFees);
+      }
+    } catch (error) {
+      console.error("Error fetching profile data: ", error);
+    }
+  };
 
   const fetchContracts = async () => {
     const result = await fetch(`${APIConfig.baseURL.dev}/contracts/${getProfileId()}`);
@@ -101,6 +101,7 @@ export const ManagementContractProvider = ({ children }) => {
         updateContractUID,
         currentContractPropertyUID,
         updateContractPropertyUID,
+        fetchDefaultContractFees,
         isChange,
         setIsChange,
         dataLoaded,

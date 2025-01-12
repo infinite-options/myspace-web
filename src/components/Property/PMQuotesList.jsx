@@ -28,7 +28,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 export default function PMQuotesList() {
   // let navigate = useNavigate();  
   const location = useLocation();
-  const { contractRequests, updateContractUID, updateContractPropertyUID, dataLoaded } = useContext(ManagementContractContext); 
+  const { contractRequests, updateContractUID, updateContractPropertyUID, dataLoaded} = useContext(ManagementContractContext); 
   const navigatingFrom = location.state?.navigatingFrom || null;
   // //console.log("In PMQuoteList");
   // //console.log("In PMQuoteList property_endpoint_resp: ", location.state?.property_endpoint_resp);

@@ -862,7 +862,7 @@ const PropertyCard = (props) => {
   const navigate = useNavigate();
 //   const { getProfileId } = useUser();
   const { getProfileId, selectedRole } = useUser();
-  const { defaultContractFees, allContracts, currentContractUID, currentContractPropertyUID, isChange, setIsChange, fetchContracts} = useContext(ManagementContractContext);  
+  const { defaultContractFees, allContracts, currentContractUID, currentContractPropertyUID, isChange, setIsChange, fetchDefaultContractFees} = useContext(ManagementContractContext);  
 //   //console.log("PropertyCard - props - ", props);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -929,6 +929,14 @@ const PropertyCard = (props) => {
     setIsDialogOpen(false);
   };
 
+  const setDefaultContractFees = async () => {
+	await fetchDefaultContractFees();
+  };
+
+  useEffect(() => {
+	setDefaultContractFees();
+  }, []);
+
 
   const setContractDetails = () => {
 	if (allContracts !== null && allContracts !== undefined) {
@@ -962,8 +970,8 @@ const PropertyCard = (props) => {
 		const fees = JSON.parse(contractData["contract_fees"])? JSON.parse(contractData["contract_fees"]) : [];
 		// setContractFees(fees);
 
-		// //console.log("---dhyey--- contract fees - ", contractFees, "fees is - ", fees);
 		if(fees?.length === 0 && contractData["contract_status"] === "NEW"){
+			console.log("---dhyey--- contract fees - ", fees, "default fess = ", defaultContractFees);
 			const feesWithoutId = defaultContractFees.map(({ id, ...rest }) => rest);
 			setContractFees([...feesWithoutId]);
 		}else{
