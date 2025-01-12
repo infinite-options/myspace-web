@@ -236,12 +236,13 @@ const QuotesList = (props) => {
           <Stack
             direction='column'
             alignItems='center'
-            // justifyContent='center'
+            justifyContent='flex-start'
             sx={{
               width: "100%", // Take up full screen width
-              height: "132vh", // Set the Box height to full height
+              height: "1500px", 
               overflowY: "auto",
-              overflowX: "hidden",              
+              overflowX: "hidden",
+              marginTop: "10px",              
               // marginTop: theme.spacing(2), // Set the margin to 20px
               "&::-webkit-scrollbar": {
                 width: "6px",                

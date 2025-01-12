@@ -131,16 +131,18 @@ function ManagementContractDetails(props) {
           // marginTop: "15px",
           padding: "15px",
           height: "100%",
-          overflowX: "hidden",
+          overflow: "hidden",
           borderRadius: "10px",
           fontFamily: "Source Sans Pro",
         }}
       >
-        <Stack
+        {/* <Stack
           flexDirection='row'
           alignItems='center'
           sx={{
             width: "100%",
+            minHeight: "10px",
+            maxHeight: "20px",
             display: "flex",
             justifyContent: "space-between",
           }}
@@ -180,6 +182,7 @@ function ManagementContractDetails(props) {
           sx={{
             display: "flex",
             justifyContent: "center",
+            height: "20px",
             width: "100%",
           }}
         >
@@ -191,7 +194,81 @@ function ManagementContractDetails(props) {
           >
             Contract UID: {currentContractUID}
           </Typography>
-        </Box>
+        </Box> */}
+
+        <Stack
+          flexDirection="column"
+          alignItems="center"
+          sx={{
+            width: "100%",
+            height: "60px",
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <Stack
+            flexDirection="row"
+            alignItems="center"
+            sx={{
+              width: "100%",
+              height: "30px", // Half of the fixed height
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <Button
+              onClick={handleBackBtn}
+              sx={{
+                textTransform: "none",
+                color: theme.typography.common.blue,
+                fontWeight: theme.typography.common.fontWeight,
+                fontSize: "16px",
+                "&:hover, &:focus, &:active": {
+                  background: theme.palette.primary.main,
+                },
+              }}
+            >
+              <ArrowBackIcon
+                sx={{
+                  color: "#160449",
+                  fontSize: "20px",
+                }}
+              />
+            </Button>
+            <Box
+              sx={{
+                fontSize: "20px",
+                fontWeight: "bold",
+                color: "text.darkblue",
+                textAlign: "center",
+                flex: 1,
+                paddingRight: "60px",
+              }}
+            >
+              Management Contract MCD
+            </Box>
+          </Stack>
+
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+              height: "30px", // Remaining half of the fixed height
+            }}
+          >
+            <Typography
+              sx={{
+                fontWeight: theme.typography.primary.fontWeight,
+                textAlign: "center",
+              }}
+            >
+              Contract UID: {currentContractUID}
+            </Typography>
+          </Box>
+        </Stack>
+              
         <PropertyCard data={filteredPropertiesData[index] ? filteredPropertiesData[index] : []} navigatingFrom={props.navigatingFrom} handleBackBtn={handleBackBtn} fetchContracts={props.fetchContracts}/>
       </Grid>
       {/* <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>

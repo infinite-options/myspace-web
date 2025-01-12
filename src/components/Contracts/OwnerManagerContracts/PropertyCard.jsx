@@ -2193,12 +2193,12 @@ const PropertyCard = (props) => {
 	];
 
 return (
-		<>
+		<Box sx={{width:"100%", height:"100%"}}>
 			{/* Time since Inquiry was created */}
 			<Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
 				<CircularProgress color='inherit' />
 			</Backdrop>
-			<Box sx={{ width: "100%"}}>
+			<Box>
 				<Box
 						sx={{
 						display: "flex",
@@ -3042,7 +3042,7 @@ return (
 					severity={dialogSeverity}
 				/>
 			</Box>	
-		</>
+		</Box>
 	);
 };
 
