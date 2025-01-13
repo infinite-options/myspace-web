@@ -337,13 +337,9 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
   const toggleKeys = async () => {
     setShowSpinner(true);
     //console.log("inside toggle keys");
-    const url =
-      paymentData.business_code === "PMTEST"
-        ? // ? `${APIConfig.baseURL.dev}/stripe_key/PMTEST`
-          // : `${APIConfig.baseURL.dev}/stripe_key/PM`;
-          "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
-        : // : "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST";
-          "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PM";
+    const url = paymentData.business_code === "PMTEST" ? `${APIConfig.baseURL.dev}/stripe_key/PMTEST` : `${APIConfig.baseURL.dev}/stripe_key/PM`;
+    //   "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
+    // : "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PM";
 
     let response = await fetch(url);
     const responseData = await response.json();
@@ -582,9 +578,7 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
                   },
                 }}
               >
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                  Payment Methods
-                </Typography>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>Payment Methods</Typography>
                 <Divider light />
                 <FormControl component='fieldset'>
                   <RadioGroup aria-label='Number' name='number' value={selectedMethod} onChange={handleChange}>
@@ -598,9 +592,7 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
                             <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.mediumFont }}>Bank Transfer</Typography>
                           </div>
                           <div sx={{ paddingTop: "10px", paddingLeft: "20px" }}>
-                            <Typography sx={{ color: theme.typography.common.gray, fontWeight: 400, fontSize: theme.typography.smallFont }}>
-                              .08% Convenience Fee - max $5
-                            </Typography>
+                            <Typography sx={{ color: theme.typography.common.gray, fontWeight: 400, fontSize: theme.typography.smallFont }}>.08% Convenience Fee - max $5</Typography>
                           </div>
                         </>
                       }
@@ -623,9 +615,7 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
                   </RadioGroup>
                 </FormControl>
 
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.secondaryFont, marginTop: "20px" }}>
-                  Other Payment Methods
-                </Typography>
+                <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.secondaryFont, marginTop: "20px" }}>Other Payment Methods</Typography>
                 <Typography sx={{ color: theme.typography.common.blue, fontWeight: 400, fontSize: "16px" }}>
                   Payment Instructions for Paypal, Apple Pay, Zelle, and Venmo: Please make payment via 3rd party app and record the transaction confirmation number here.
                 </Typography>
@@ -790,14 +780,7 @@ export default function MakePayment({ selectedPayment, refreshCashflowData, setC
                 </Button>
               </Paper>
               <Elements stripe={stripePromise}>
-                <StripePayment
-                  submit={submit}
-                  message={paymentData.business_code}
-                  amount={totalBalance}
-                  paidBy={paymentData.customer_uid}
-                  show={stripePayment}
-                  setShow={setStripePayment}
-                />
+                <StripePayment submit={submit} message={paymentData.business_code} amount={totalBalance} paidBy={paymentData.customer_uid} show={stripePayment} setShow={setStripePayment} />
               </Elements>
             </Grid>
           </Grid>
