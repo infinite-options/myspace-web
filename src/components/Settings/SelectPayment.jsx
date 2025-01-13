@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 // import axios from "axios";
-import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
+import { fetchMiddleware, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -81,8 +81,8 @@ export default function SelectPayment(props) {
   const cashFlowTotal = location.state?.cashFlowTotal;
 
   const receiverId = location.state?.receiverId;
-  const [receiverPaymentMethods, setReceiverPaymentMethods] = useState([])
-  const [receiverProfile, setReceiverProfile] = useState({})
+  const [receiverPaymentMethods, setReceiverPaymentMethods] = useState([]);
+  const [receiverProfile, setReceiverProfile] = useState({});
 
   const [convenience_fee, setFee] = useState(0);
   const [selectedMethod, setSelectedMethod] = useState(""); // Initial selection
@@ -99,11 +99,11 @@ export default function SelectPayment(props) {
   // //console.log("---debug--- convenience_fee", convenience_fee);
 
   useEffect(() => {
-    setShowSpinner(true)
+    setShowSpinner(true);
     // Fetch the profile data and set payment methods
     const fetchProfileData = async () => {
       try {
-        const response = await fetch(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
+        const response = await fetchMiddleware(`${APIConfig.baseURL.dev}/profile/${getProfileId()}`);
         if (!response.ok) {
           throw new Error("Failed to fetch profile data");
         }
@@ -130,7 +130,7 @@ export default function SelectPayment(props) {
 
     const fetchReceiverProfileData = async () => {
       try {
-        const response = await fetch(`${APIConfig.baseURL.dev}/profile/${receiverId}`);
+        const response = await fetchMiddleware(`${APIConfig.baseURL.dev}/profile/${receiverId}`);
         if (!response.ok) {
           throw new Error("Failed to fetch profile data");
         }
@@ -141,7 +141,7 @@ export default function SelectPayment(props) {
         // Initialize an array to hold all parsed payment methods
         let allPaymentMethods = [];
 
-        setReceiverProfile(profileData.profile?.result[0])
+        setReceiverProfile(profileData.profile?.result[0]);
 
         // Iterate over each object in the result array
         profileData.profile.result.forEach((item) => {
@@ -151,8 +151,7 @@ export default function SelectPayment(props) {
         });
 
         // Set the combined payment methods array
-        setReceiverPaymentMethods(allPaymentMethods)
-
+        setReceiverPaymentMethods(allPaymentMethods);
       } catch (error) {
         console.error("Error fetching profile data:", error);
       }
@@ -162,7 +161,7 @@ export default function SelectPayment(props) {
 
     fetchReceiverProfileData();
 
-    setShowSpinner(false)
+    setShowSpinner(false);
   }, [getProfileId, receiverId]);
 
   useEffect(() => {
@@ -263,7 +262,7 @@ export default function SelectPayment(props) {
     let payment_request_payload = {
       pay_purchase_id: paymentData.purchase_uids,
       pay_fee: convenience_fee,
-      pay_total: balance,                 // pass balance only not totalBalance which include fee
+      pay_total: balance, // pass balance only not totalBalance which include fee
       cashflow_total: cashFlowTotal,
       payment_notes: paymentData.business_code,
       pay_charge_id: "stripe transaction key",
@@ -273,15 +272,14 @@ export default function SelectPayment(props) {
       payment_intent: paymentIntent,
       payment_method: paymentMethod,
     };
-    if (paymentMethod == "Zelle" || paymentMethod == "Paypal" || paymentMethod == "Venmo" || paymentMethod == "ApplePay")
-      payment_request_payload.payment_intent = confirmationNumber;
+    if (paymentMethod == "Zelle" || paymentMethod == "Paypal" || paymentMethod == "Venmo" || paymentMethod == "ApplePay") payment_request_payload.payment_intent = confirmationNumber;
     // if (paymentMethod == "Stripe"){
     //   payment_request_payload.payment_intent =  paymentIntent;
     // } else {
     //   payment_request_payload.payment_intent =  confirmationNumber;
     // }
 
-    await fetch(`${APIConfig.baseURL.dev}/makePayment`, {
+    await fetchMiddleware(`${APIConfig.baseURL.dev}/makePayment`, {
       // await fetch("http://localhost:4000/makePayment2", {
       method: "POST",
       headers: {
@@ -294,9 +292,9 @@ export default function SelectPayment(props) {
     // navigate(routingString);
 
     // navigate("/payments")
-    if(selectedRole === "TENANT"){
-      navigate("/tenantDashboard", {state: {selectedProperty: selectedPropertyFromTenant}})
-    }else{
+    if (selectedRole === "TENANT") {
+      navigate("/tenantDashboard", { state: { selectedProperty: selectedPropertyFromTenant } });
+    } else {
       navigate(-1);
     }
 
@@ -312,18 +310,20 @@ export default function SelectPayment(props) {
     };
 
     // Make the POST request
-    let payment = {...paymentData,
+    let payment = {
+      ...paymentData,
       payment_summary: {
         ...paymentData.payment_summary,
-        total: parseFloat(totalBalance.toFixed(2))
+        total: parseFloat(totalBalance.toFixed(2)),
       },
-      site: window.location.hostname === "localhost" ? "LOCAL_PM" : "PM"
-    }
+      site: window.location.hostname === "localhost" ? "LOCAL_PM" : "PM",
+    };
 
     let resultOfResponse;
 
     setShowSpinner(true);
     try {
+      console.log("In SelectPayment");
       const response = await fetch(payment_url[selectedMethod], {
         // Use http instead of https
         method: "POST",
@@ -331,12 +331,10 @@ export default function SelectPayment(props) {
         body: JSON.stringify(payment),
       });
 
-      resultOfResponse = await response.json()    // because response has only url so we can't convert into json
+      resultOfResponse = await response.json(); // because response has only url so we can't convert into json
       // //console.log(resultOfResponse)
 
       if (response.ok) {
-
-        
         //console.log("Post request was successful - ", resultOfResponse);
         // Handle the successful response here
       } else {
@@ -349,17 +347,17 @@ export default function SelectPayment(props) {
     setShowSpinner(false);
     // //console.log("Completed Bank Transfer Handler Function");
     // navigate
-    localStorage.setItem('pay_purchase_id', JSON.stringify(payment.purchase_uids));
-    localStorage.setItem('pay_fee', convenience_fee);
-    localStorage.setItem('pay_total', balance);
-    localStorage.setItem('cashflow_total', cashFlowTotal);
-    localStorage.setItem('payment_notes', payment.business_code);
-    localStorage.setItem('payment_type', selectedMethod);
-    localStorage.setItem('session_id', resultOfResponse.id);
-    localStorage.setItem('selectedProperty', JSON.stringify(selectedPropertyFromTenant))
+    localStorage.setItem("pay_purchase_id", JSON.stringify(payment.purchase_uids));
+    localStorage.setItem("pay_fee", convenience_fee);
+    localStorage.setItem("pay_total", balance);
+    localStorage.setItem("cashflow_total", cashFlowTotal);
+    localStorage.setItem("payment_notes", payment.business_code);
+    localStorage.setItem("payment_type", selectedMethod);
+    localStorage.setItem("session_id", resultOfResponse.id);
+    localStorage.setItem("selectedProperty", JSON.stringify(selectedPropertyFromTenant));
 
-    if (resultOfResponse){ 
-      window.location.href = resultOfResponse.url
+    if (resultOfResponse) {
+      window.location.href = resultOfResponse.url;
     }
 
     // let paymentIntent = "BankTransfer";
@@ -429,8 +427,8 @@ export default function SelectPayment(props) {
       ...paymentData,
       payment_summary: {
         ...paymentData.payment_summary,
-        total: parseFloat(totalBalance.toFixed(2))
-      }
+        total: parseFloat(totalBalance.toFixed(2)),
+      },
     });
 
     if (selectedMethod === "Bank Transfer") bank_transfer_handler();
@@ -471,15 +469,11 @@ export default function SelectPayment(props) {
   const toggleKeys = async () => {
     setShowSpinner(true);
     // //console.log("inside toggle keys");
-    const url =
-      paymentData.business_code === "PMTEST"
-        ? // ? "${APIConfig.baseURL.dev}/stripe_key/PMTEST"
-          // : "${APIConfig.baseURL.dev}/stripe_key/PM";
-          "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
-        : // : "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST";
-          "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PM";
+    const url = paymentData.business_code === "PMTEST" ? `${APIConfig.baseURL.dev}/stripe_key/PMTEST` : `${APIConfig.baseURL.dev}/stripe_key/PM`;
+    //   "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PMTEST"
+    // : "https://t00axvabvb.execute-api.us-west-1.amazonaws.com/dev/stripe_key/PM";
 
-    let response = await fetch(url);
+    let response = await fetchMiddleware(url);
     const responseData = await response.json();
     // //console.log("--DEBUG-- response data from Stripe", responseData);
     // setStripeResponse(responseData);
@@ -497,241 +491,238 @@ export default function SelectPayment(props) {
           <CircularProgress color='inherit' />
         </Backdrop>
 
-        {receiverId && <Container disableGutters maxWidth='lg' sx={{ paddingTop: "10px", height: "90vh" }}>
-          <Grid container spacing={6} sx={{ height: "90%" }}>
-            <Grid container item xs={12} md={12} justifyContent={"center"}>
-              <StripeFeesDialog stripeDialogShow={stripeDialogShow} setStripeDialogShow={setStripeDialogShow} toggleKeys={toggleKeys} setStripePayment={setStripePayment} />
+        {receiverId && (
+          <Container disableGutters maxWidth='lg' sx={{ paddingTop: "10px", height: "90vh" }}>
+            <Grid container spacing={6} sx={{ height: "90%" }}>
+              <Grid container item xs={12} md={12} justifyContent={"center"}>
+                <StripeFeesDialog stripeDialogShow={stripeDialogShow} setStripeDialogShow={setStripeDialogShow} toggleKeys={toggleKeys} setStripePayment={setStripePayment} />
 
-              {/* select payment method 2 heading */}
-              <Grid container item xs={12} justifyContent='center'>
-                <Typography
-                  sx={{
-                    justifySelf: "center",
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.primary.fontWeight,
-                    fontSize: theme.typography.largeFont,
+                {/* select payment method 2 heading */}
+                <Grid container item xs={12} justifyContent='center'>
+                  <Typography
+                    sx={{
+                      justifySelf: "center",
+                      color: theme.typography.common.blue,
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: theme.typography.largeFont,
+                    }}
+                  >
+                    Select Payment Method (NEW)
+                  </Typography>
+                  {/* </Stack> */}
+                </Grid>
+
+                {/* balance top card */}
+                <Paper
+                  style={{
+                    width: "100%",
+                    margin: "25px",
+                    marginBottom: "0px",
+                    padding: "10px",
+                    backgroundColor: theme.palette.primary.main,
+                    // height: "25%",
+                    // [theme.breakpoints.down("sm")]: {
+                    //   width: "80%",
+                    // },
+                    // [theme.breakpoints.up("sm")]: {
+                    //   width: "50%",
+                    // },
                   }}
                 >
-                  Select Payment Method (NEW)
-                </Typography>
-                {/* </Stack> */}
-              </Grid>
-              
-              {/* balance top card */}
-              <Paper
-                style={{
-                  width: "100%",
-                  margin: "25px",
-                  marginBottom: "0px",
-                  padding: "10px",
-                  backgroundColor: theme.palette.primary.main,
-                  // height: "25%",
-                  // [theme.breakpoints.down("sm")]: {
-                  //   width: "80%",
-                  // },
-                  // [theme.breakpoints.up("sm")]: {
-                  //   width: "50%",
-                  // },
-                }}
-              >
-                {/* total balance */}
-                <Stack direction='row' justifyContent='center' sx={{ paddingBottom: "5px" }}>
-                  <Typography
-                    sx={{
-                      justifySelf: "center",
-                      color: "#160449",
-                      fontWeight: theme.typography.medium.fontWeight,
-                      fontSize: theme.typography.largeFont,
-                    }}
-                  >
-                    Total Balance
-                  </Typography>
-                </Stack>
-                
-                {/* total balance value */}
-                <Stack direction='row' justifyContent='center' sx={{ paddingBottom: "5px" }}>
-                  <Typography
-                    sx={{
-                      justifySelf: "center",
-                      color: "#7A9AEA",
-                      fontWeight: theme.typography.medium.fontWeight,
-                      fontSize: theme.typography.largeFont,
-                    }}
-                  >
-                    {"$" + (balance + convenience_fee).toFixed(2)}
-                  </Typography>
-                </Stack>
-                <Divider light />
+                  {/* total balance */}
+                  <Stack direction='row' justifyContent='center' sx={{ paddingBottom: "5px" }}>
+                    <Typography
+                      sx={{
+                        justifySelf: "center",
+                        color: "#160449",
+                        fontWeight: theme.typography.medium.fontWeight,
+                        fontSize: theme.typography.largeFont,
+                      }}
+                    >
+                      Total Balance
+                    </Typography>
+                  </Stack>
 
-                {/* balance, convenience fee value */}
-                <Stack>
-                  <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    <Grid item xs={6} justifyContent='center' alignItems='center'>
-                      <Typography
-                        sx={{
-                          justifySelf: "center",
-                          color: "#160449",
-                          fontWeight: theme.typography.light.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        Balance
-                      </Typography>
-                    </Grid>
+                  {/* total balance value */}
+                  <Stack direction='row' justifyContent='center' sx={{ paddingBottom: "5px" }}>
+                    <Typography
+                      sx={{
+                        justifySelf: "center",
+                        color: "#7A9AEA",
+                        fontWeight: theme.typography.medium.fontWeight,
+                        fontSize: theme.typography.largeFont,
+                      }}
+                    >
+                      {"$" + (balance + convenience_fee).toFixed(2)}
+                    </Typography>
+                  </Stack>
+                  <Divider light />
 
-                    <Grid container item xs={6} justifyContent='flex-end'>
-                      <Typography
-                        sx={{
-                          justifySelf: "flex-end",
-                          // width: '100px',
-                          color: "#160449",
-                          fontWeight: theme.typography.light.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        {"$" + balance.toFixed(2)}
-                      </Typography>
-                    </Grid>
-
-                    <Grid item xs={6} alignItems='center'>
-                      <Typography
-                        sx={{
-                          justifySelf: "center",
-                          color: "#160449",
-                          fontWeight: theme.typography.light.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        Convenience Fees
-                      </Typography>
-                    </Grid>
-
-                    <Grid container item xs={6} justifyContent='flex-end'>
-                      <Typography
-                        sx={{
-                          justifySelf: "center",
-                          color: "#160449",
-                          fontWeight: theme.typography.light.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        {"$" + convenience_fee.toFixed(2)}
-                      </Typography>
-                    </Grid>
-
-                    <Grid item xs={6} alignItems='center'>
-                      <Typography
-                        sx={{
-                          justifySelf: "center",
-                          color: "#160449",
-                          fontWeight: theme.typography.medium.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        Total
-                      </Typography>
-                    </Grid>
-                    <Grid container item xs={6} justifyContent='flex-end'>
-                      <Typography
-                        sx={{
-                          justifySelf: "center",
-                          color: "#160449",
-                          fontWeight: theme.typography.medium.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        {"$" + (balance + convenience_fee).toFixed(2)}
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                </Stack>
-              </Paper>
-              
-              {/* payment methods card */}
-              <Paper
-                style={{
-                  margin: "25px",
-                  padding: "20px",
-                  backgroundColor: theme.palette.primary.main,
-                  // height: '25%',
-                  [theme.breakpoints.down("sm")]: {
-                    width: "80%",
-                  },
-                  [theme.breakpoints.up("sm")]: {
-                    width: "50%",
-                  },
-                }}
-              >
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>
-                  Payment Methods
-                </Typography>
-                <Divider light />
-
-                {/* bank & credit card */}
-                <FormControl component='fieldset'>
-                  <RadioGroup aria-label='Number' name='number' value={selectedMethod} onChange={handleChange}>
-                    <FormControlLabel
-                      value='Bank Transfer'
-                      control={
-                        <Radio
+                  {/* balance, convenience fee value */}
+                  <Stack>
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                      <Grid item xs={6} justifyContent='center' alignItems='center'>
+                        <Typography
                           sx={{
-                            color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000", // Blue when selected, black otherwise
-                            "&.Mui-checked": {
-                              color: "#3D5CAC", // Blue color for the selected state
-                            },
+                            justifySelf: "center",
+                            color: "#160449",
+                            fontWeight: theme.typography.light.fontWeight,
+                            fontSize: theme.typography.smallFont,
                           }}
-                        />
-                      }
-                      label={
-                        <>
-                          <div style={{ display: "flex", alignItems: "center", paddingTop: "10px" }}>
-                            <img src={BankIcon} alt='Chase' style={{ marginRight: "8px", height: "24px" }} />
-                            <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.mediumFont }}>Bank Transfer</Typography>
-                          </div>
-                          <div sx={{ paddingTop: "10px", paddingLeft: "20px" }}>
-                            <Typography sx={{ color: theme.typography.common.gray, fontWeight: 400, fontSize: theme.typography.smallFont }}>
-                              .08% Convenience Fee - max $5
-                            </Typography>
-                          </div>
-                        </>
-                      }
-                    />
-                    <FormControlLabel
-                      value='Credit Card'
-                      control={
-                        <Radio
+                        >
+                          Balance
+                        </Typography>
+                      </Grid>
+
+                      <Grid container item xs={6} justifyContent='flex-end'>
+                        <Typography
                           sx={{
-                            color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000", // Blue when selected, black otherwise
-                            "&.Mui-checked": {
-                              color: "#3D5CAC", // Blue color for the selected state
-                            },
+                            justifySelf: "flex-end",
+                            // width: '100px',
+                            color: "#160449",
+                            fontWeight: theme.typography.light.fontWeight,
+                            fontSize: theme.typography.smallFont,
                           }}
-                        />
-                      }
-                      label={
-                        <>
-                          <div style={{ display: "flex", alignItems: "center" }}>
-                            <img src={CreditCardIcon} alt='Chase' style={{ marginRight: "8px", height: "24px" }} />
-                            Credit Card
-                          </div>
-                          <div sx={{ paddingTop: "10px", paddingLeft: "20px" }}>
-                            <Typography sx={{ color: theme.typography.common.gray, fontWeight: 400, fontSize: theme.typography.smallFont }}>3% Convenience Fee</Typography>
-                          </div>
-                        </>
-                      }
-                    />
-                  </RadioGroup>
-                </FormControl>
+                        >
+                          {"$" + balance.toFixed(2)}
+                        </Typography>
+                      </Grid>
 
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.secondaryFont, marginTop: "10px"}}>Other Payment Methods</Typography>
-                <Typography sx={{ color: theme.typography.common.blue, fontWeight: 400, fontSize: "16px" }}>
-                  Payment Instructions for Paypal, Apple Pay Zelle, and Venmo: Please make payment via 3rd party app and record payment information here. If you are using Zelle,
-                  please include the transaction confirmation number.
-                </Typography>
+                      <Grid item xs={6} alignItems='center'>
+                        <Typography
+                          sx={{
+                            justifySelf: "center",
+                            color: "#160449",
+                            fontWeight: theme.typography.light.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          Convenience Fees
+                        </Typography>
+                      </Grid>
 
-                <Divider light sx={{marginBottom: "10px"}}/>
+                      <Grid container item xs={6} justifyContent='flex-end'>
+                        <Typography
+                          sx={{
+                            justifySelf: "center",
+                            color: "#160449",
+                            fontWeight: theme.typography.light.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          {"$" + convenience_fee.toFixed(2)}
+                        </Typography>
+                      </Grid>
 
-                {/* <FormControl component='fieldset'>
+                      <Grid item xs={6} alignItems='center'>
+                        <Typography
+                          sx={{
+                            justifySelf: "center",
+                            color: "#160449",
+                            fontWeight: theme.typography.medium.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          Total
+                        </Typography>
+                      </Grid>
+                      <Grid container item xs={6} justifyContent='flex-end'>
+                        <Typography
+                          sx={{
+                            justifySelf: "center",
+                            color: "#160449",
+                            fontWeight: theme.typography.medium.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          {"$" + (balance + convenience_fee).toFixed(2)}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </Stack>
+                </Paper>
+
+                {/* payment methods card */}
+                <Paper
+                  style={{
+                    margin: "25px",
+                    padding: "20px",
+                    backgroundColor: theme.palette.primary.main,
+                    // height: '25%',
+                    [theme.breakpoints.down("sm")]: {
+                      width: "80%",
+                    },
+                    [theme.breakpoints.up("sm")]: {
+                      width: "50%",
+                    },
+                  }}
+                >
+                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont }}>Payment Methods</Typography>
+                  <Divider light />
+
+                  {/* bank & credit card */}
+                  <FormControl component='fieldset'>
+                    <RadioGroup aria-label='Number' name='number' value={selectedMethod} onChange={handleChange}>
+                      <FormControlLabel
+                        value='Bank Transfer'
+                        control={
+                          <Radio
+                            sx={{
+                              color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000", // Blue when selected, black otherwise
+                              "&.Mui-checked": {
+                                color: "#3D5CAC", // Blue color for the selected state
+                              },
+                            }}
+                          />
+                        }
+                        label={
+                          <>
+                            <div style={{ display: "flex", alignItems: "center", paddingTop: "10px" }}>
+                              <img src={BankIcon} alt='Chase' style={{ marginRight: "8px", height: "24px" }} />
+                              <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.mediumFont }}>Bank Transfer</Typography>
+                            </div>
+                            <div sx={{ paddingTop: "10px", paddingLeft: "20px" }}>
+                              <Typography sx={{ color: theme.typography.common.gray, fontWeight: 400, fontSize: theme.typography.smallFont }}>.08% Convenience Fee - max $5</Typography>
+                            </div>
+                          </>
+                        }
+                      />
+                      <FormControlLabel
+                        value='Credit Card'
+                        control={
+                          <Radio
+                            sx={{
+                              color: selectedMethod === "Zelle" ? "#3D5CAC" : "#000000", // Blue when selected, black otherwise
+                              "&.Mui-checked": {
+                                color: "#3D5CAC", // Blue color for the selected state
+                              },
+                            }}
+                          />
+                        }
+                        label={
+                          <>
+                            <div style={{ display: "flex", alignItems: "center" }}>
+                              <img src={CreditCardIcon} alt='Chase' style={{ marginRight: "8px", height: "24px" }} />
+                              Credit Card
+                            </div>
+                            <div sx={{ paddingTop: "10px", paddingLeft: "20px" }}>
+                              <Typography sx={{ color: theme.typography.common.gray, fontWeight: 400, fontSize: theme.typography.smallFont }}>3% Convenience Fee</Typography>
+                            </div>
+                          </>
+                        }
+                      />
+                    </RadioGroup>
+                  </FormControl>
+
+                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: 800, fontSize: theme.typography.secondaryFont, marginTop: "10px" }}>Other Payment Methods</Typography>
+                  <Typography sx={{ color: theme.typography.common.blue, fontWeight: 400, fontSize: "16px" }}>
+                    Payment Instructions for Paypal, Apple Pay Zelle, and Venmo: Please make payment via 3rd party app and record payment information here. If you are using Zelle, please include the
+                    transaction confirmation number.
+                  </Typography>
+
+                  <Divider light sx={{ marginBottom: "10px" }} />
+
+                  {/* <FormControl component='fieldset'>
                   <RadioGroup
                     aria-label='Number'
                     name='number'
@@ -784,7 +775,7 @@ export default function SelectPayment(props) {
                                 {method.paymentMethod_name}
                               </Typography>
                               {/* Show confirmation number input only for the selected non-Stripe method */}
-                              {/*{selectedValue === uniqueValue && selectedMethod !== "stripe" && (
+                  {/*{selectedValue === uniqueValue && selectedMethod !== "stripe" && (
                                 <TextField
                                   id={`confirmation-number-${method.paymentMethod_uid}`} // Unique ID for each input
                                   label='Confirmation Number'
@@ -820,160 +811,154 @@ export default function SelectPayment(props) {
                   </RadioGroup>
                 </FormControl> */}
 
-                <FormControl component='fieldset'>
-                  <RadioGroup
-                    aria-label='Number'
-                    name='number'
-                    value={selectedValue} // Binding this to selectedValue, not selectedMethod
-                    onChange={handleChange}
-                  >
-                    {paymentMethods.map((method) => {
-                      const uniqueValue = `${method.paymentMethod_type}-${method.paymentMethod_uid}`; // Unique value for each, looks like zelle-123
-                      
-                      // Check if the method exists in receiverPaymentMethods
-                      const isMethodInReceiver = receiverPaymentMethods.some(
-                        (receiverMethod) => receiverMethod.paymentMethod_type === method.paymentMethod_type
-                      );
+                  <FormControl component='fieldset'>
+                    <RadioGroup
+                      aria-label='Number'
+                      name='number'
+                      value={selectedValue} // Binding this to selectedValue, not selectedMethod
+                      onChange={handleChange}
+                    >
+                      {paymentMethods.map((method) => {
+                        const uniqueValue = `${method.paymentMethod_type}-${method.paymentMethod_uid}`; // Unique value for each, looks like zelle-123
 
-                      return (
-                        <FormControlLabel
-                          key={method.paymentMethod_uid}
-                          value={uniqueValue}
-                          control={
-                            <Radio
-                              disabled={!isMethodInReceiver} // Disable if not present in receiverPaymentMethods
-                              sx={{
-                                color: selectedValue === uniqueValue ? "#3D5CAC" : "#000000",
-                                "&.Mui-checked": {
-                                  color: "#3D5CAC",
-                                },
-                              }}
-                            />
-                          }
-                          label={
-                            <div style={{ display: "flex", alignItems: "center" }}>
-                              <img
-                                src={
-                                  method.paymentMethod_type === "zelle"
-                                    ? Zelle
-                                    : method.paymentMethod_type === "credit_card"
-                                    ? CreditCardIcon
-                                    : method.paymentMethod_type === "paypal"
-                                    ? PayPal
-                                    : method.paymentMethod_type === "venmo"
-                                    ? Venmo
-                                    : method.paymentMethod_type === "apple_pay"
-                                    ? ApplePay
-                                    : method.paymentMethod_type === "stripe"
-                                    ? Stripe
-                                    : BankIcon
-                                }
-                                alt={method.paymentMethod_type}
-                                style={{ marginRight: "8px", height: "24px" }}
-                              />
-                              <Typography
+                        // Check if the method exists in receiverPaymentMethods
+                        const isMethodInReceiver = receiverPaymentMethods.some((receiverMethod) => receiverMethod.paymentMethod_type === method.paymentMethod_type);
+
+                        return (
+                          <FormControlLabel
+                            key={method.paymentMethod_uid}
+                            value={uniqueValue}
+                            control={
+                              <Radio
+                                disabled={!isMethodInReceiver} // Disable if not present in receiverPaymentMethods
                                 sx={{
-                                  color: selectedMethod === method.paymentMethod_type ? "#3D5CAC" : "#000000",
+                                  color: selectedValue === uniqueValue ? "#3D5CAC" : "#000000",
+                                  "&.Mui-checked": {
+                                    color: "#3D5CAC",
+                                  },
                                 }}
-                              >
-                                {method.paymentMethod_name}
-                              </Typography>
-
-                              {/* If the payment method is selected and not Stripe, show the Confirmation Number input */}
-                              {selectedValue === uniqueValue && selectedMethod !== "stripe" && (
-                                <TextField
-                                  id={`confirmation-number-${method.paymentMethod_uid}`} // Unique ID for each input
-                                  label='Confirmation Number'
-                                  variant='outlined'
-                                  size='small'
-                                  value={confirmationNumber}
-                                  sx={{
-                                    marginLeft: "10px",
-                                    input: {
-                                      color: "#000000",
-                                    },
-                                    "& .MuiOutlinedInput-root": {
-                                      "& fieldset": {
-                                        borderColor: "#000000",
-                                      },
-                                      "&.Mui-focused fieldset": {
-                                        borderColor: "#3D5CAC",
-                                      },
-                                    },
-                                  }}
-                                  InputLabelProps={{
-                                    shrink: true,
-                                    style: { color: "#000000" },
-                                  }}
-                                  onChange={(e) => setConfirmationNumber(e.target.value)}
+                              />
+                            }
+                            label={
+                              <div style={{ display: "flex", alignItems: "center" }}>
+                                <img
+                                  src={
+                                    method.paymentMethod_type === "zelle"
+                                      ? Zelle
+                                      : method.paymentMethod_type === "credit_card"
+                                      ? CreditCardIcon
+                                      : method.paymentMethod_type === "paypal"
+                                      ? PayPal
+                                      : method.paymentMethod_type === "venmo"
+                                      ? Venmo
+                                      : method.paymentMethod_type === "apple_pay"
+                                      ? ApplePay
+                                      : method.paymentMethod_type === "stripe"
+                                      ? Stripe
+                                      : BankIcon
+                                  }
+                                  alt={method.paymentMethod_type}
+                                  style={{ marginRight: "8px", height: "24px" }}
                                 />
-                              )}
-
-                              {/* If the payment method is available in both paymentMethods and receiverPaymentMethods, show receiver's name */}
-                              {isMethodInReceiver && receiverProfile && receiverPaymentMethods.length > 0 && (
                                 <Typography
                                   sx={{
-                                    marginLeft: "10px",
-                                    fontSize: "16px",
-                                    fontWeight: "bold",
-                                    color: "#000000",
+                                    color: selectedMethod === method.paymentMethod_type ? "#3D5CAC" : "#000000",
                                   }}
                                 >
-                                  To: 
-                                  <span style={{color: "#888888", paddingLeft: "10px", fontSize: "14px", fontWeight: "bold"}}>
-                                  {receiverId?.startsWith('600')? receiverProfile?.business_name : receiverProfile?.owner_first_name + " " + receiverProfile?.owner_last_name} ({receiverPaymentMethods.find((receiverMethod) => receiverMethod.paymentMethod_type === method.paymentMethod_type)?.paymentMethod_name})
-                                  </span>
+                                  {method.paymentMethod_name}
                                 </Typography>
-                              )}
 
-                              {!isMethodInReceiver && receiverProfile && (
-                                <Typography
-                                  sx={{
-                                    marginLeft: "10px",
-                                    fontSize: "14px",
-                                    color: "#888888",
-                                  }}
-                                > 
-                                  ( {receiverId?.startsWith('600')? receiverProfile?.business_name : receiverProfile?.owner_first_name + " " + receiverProfile?.owner_last_name} does not accept {method.paymentMethod_type} )
-                                </Typography>
-                              )}
-                            </div>
-                          }
-                        />
-                      );
-                    })}
-                  </RadioGroup>
-                </FormControl>
+                                {/* If the payment method is selected and not Stripe, show the Confirmation Number input */}
+                                {selectedValue === uniqueValue && selectedMethod !== "stripe" && (
+                                  <TextField
+                                    id={`confirmation-number-${method.paymentMethod_uid}`} // Unique ID for each input
+                                    label='Confirmation Number'
+                                    variant='outlined'
+                                    size='small'
+                                    value={confirmationNumber}
+                                    sx={{
+                                      marginLeft: "10px",
+                                      input: {
+                                        color: "#000000",
+                                      },
+                                      "& .MuiOutlinedInput-root": {
+                                        "& fieldset": {
+                                          borderColor: "#000000",
+                                        },
+                                        "&.Mui-focused fieldset": {
+                                          borderColor: "#3D5CAC",
+                                        },
+                                      },
+                                    }}
+                                    InputLabelProps={{
+                                      shrink: true,
+                                      style: { color: "#000000" },
+                                    }}
+                                    onChange={(e) => setConfirmationNumber(e.target.value)}
+                                  />
+                                )}
 
-                <Button
-                  variant='contained'
-                  onClick={handleSubmit}
-                  sx={{
-                    backgroundColor: "#3D5CAC",
-                    color: theme.palette.background.default,
-                    width: "100%", // Center the button horizontally
-                    borderRadius: "10px", // Rounded corners
-                    marginTop: "20px", // Add some spacing to the top
-                  }}
-                  disabled={isMakePaymentDisabled}
-                >
-                  Make Payment
-                </Button>
-              </Paper>
+                                {/* If the payment method is available in both paymentMethods and receiverPaymentMethods, show receiver's name */}
+                                {isMethodInReceiver && receiverProfile && receiverPaymentMethods.length > 0 && (
+                                  <Typography
+                                    sx={{
+                                      marginLeft: "10px",
+                                      fontSize: "16px",
+                                      fontWeight: "bold",
+                                      color: "#000000",
+                                    }}
+                                  >
+                                    To:
+                                    <span style={{ color: "#888888", paddingLeft: "10px", fontSize: "14px", fontWeight: "bold" }}>
+                                      {receiverId?.startsWith("600") ? receiverProfile?.business_name : receiverProfile?.owner_first_name + " " + receiverProfile?.owner_last_name} (
+                                      {receiverPaymentMethods.find((receiverMethod) => receiverMethod.paymentMethod_type === method.paymentMethod_type)?.paymentMethod_name})
+                                    </span>
+                                  </Typography>
+                                )}
 
-              <Elements stripe={stripePromise}>
-                <StripePayment
-                  submit={submit}
-                  message={paymentData.business_code}
-                  amount={totalBalance}
-                  paidBy={paymentData.customer_uid}
-                  show={stripePayment}
-                  setShow={setStripePayment}
-                />
-              </Elements>
+                                {!isMethodInReceiver && receiverProfile && (
+                                  <Typography
+                                    sx={{
+                                      marginLeft: "10px",
+                                      fontSize: "14px",
+                                      color: "#888888",
+                                    }}
+                                  >
+                                    ( {receiverId?.startsWith("600") ? receiverProfile?.business_name : receiverProfile?.owner_first_name + " " + receiverProfile?.owner_last_name} does not accept{" "}
+                                    {method.paymentMethod_type} )
+                                  </Typography>
+                                )}
+                              </div>
+                            }
+                          />
+                        );
+                      })}
+                    </RadioGroup>
+                  </FormControl>
+
+                  <Button
+                    variant='contained'
+                    onClick={handleSubmit}
+                    sx={{
+                      backgroundColor: "#3D5CAC",
+                      color: theme.palette.background.default,
+                      width: "100%", // Center the button horizontally
+                      borderRadius: "10px", // Rounded corners
+                      marginTop: "20px", // Add some spacing to the top
+                    }}
+                    disabled={isMakePaymentDisabled}
+                  >
+                    Make Payment
+                  </Button>
+                </Paper>
+
+                <Elements stripe={stripePromise}>
+                  <StripePayment submit={submit} message={paymentData.business_code} amount={totalBalance} paidBy={paymentData.customer_uid} show={stripePayment} setShow={setStripePayment} />
+                </Elements>
+              </Grid>
             </Grid>
-          </Grid>
-        </Container>}
+          </Container>
+        )}
       </ThemeProvider>
 
       {/* </div> */}

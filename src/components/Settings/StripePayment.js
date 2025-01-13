@@ -7,7 +7,8 @@ import * as ReactBootStrap from "react-bootstrap";
 import Payment_Failure from "./Payment_Failure";
 
 import CloseIcon from "@mui/icons-material/Close"; // Import the close icon
-import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
+// import { fetchMiddleware, axiosMiddleware as axios } from "../../utils/httpMiddleware";
+// import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 function StripePayment(props) {
   // //console.log("in stripepayment page");
@@ -23,6 +24,7 @@ function StripePayment(props) {
   };
 
   const submitPayment = async () => {
+    console.log("In StripePayment");
     // setShowSpinner(true);
     const paymentData = {
       customer_uid: paidBy,
@@ -60,9 +62,7 @@ function StripePayment(props) {
     // //console.log("--DEBUG-- in StripePayment paymentMethodID", paymentMethodID);
     // //console.log("--DEBUG-- in StripePayment paymentIntentID", paymentIntentID);
 
-    await submit(
-      paymentIntentID,
-      paymentMethodID);
+    await submit(paymentIntentID, paymentMethodID);
     // setShowSpinner(false);
   };
 

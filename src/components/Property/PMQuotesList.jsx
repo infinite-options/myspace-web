@@ -28,7 +28,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 export default function PMQuotesList() {
   // let navigate = useNavigate();  
   const location = useLocation();
-  const { contractRequests, updateContractUID, updateContractPropertyUID, dataLoaded } = useContext(ManagementContractContext); 
+  const { contractRequests, updateContractUID, updateContractPropertyUID, dataLoaded} = useContext(ManagementContractContext); 
   const navigatingFrom = location.state?.navigatingFrom || null;
   // //console.log("In PMQuoteList");
   // //console.log("In PMQuoteList property_endpoint_resp: ", location.state?.property_endpoint_resp);
@@ -236,12 +236,13 @@ const QuotesList = (props) => {
           <Stack
             direction='column'
             alignItems='center'
-            // justifyContent='center'
+            justifyContent='flex-start'
             sx={{
               width: "100%", // Take up full screen width
-              height: "132vh", // Set the Box height to full height
+              height: "100%", 
               overflowY: "auto",
-              overflowX: "hidden",              
+              overflowX: "hidden",
+              marginTop: "10px",              
               // marginTop: theme.spacing(2), // Set the margin to 20px
               "&::-webkit-scrollbar": {
                 width: "6px",                
