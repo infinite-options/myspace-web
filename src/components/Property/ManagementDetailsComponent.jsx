@@ -885,7 +885,7 @@ export default function ManagementDetailsComponent({
         </CardContent>
       </Card>
       {previewDialogOpen && selectedPreviewFile && <FilePreviewDialog file={selectedPreviewFile} onClose={handlePreviewDialogClose} />}
-      <EndContractDialog open={showEndContractDialog} handleClose={() => setShowEndContractDialog(false)} contract={activeContract} />
+      <EndContractDialog open={showEndContractDialog} handleClose={() => setShowEndContractDialog(false)} contract={activeContract} fetchContracts={fetchContracts}/>
       {showManagerEndContractDialog && (
         <Box>
           <ManagerEndContractDialog
@@ -1046,7 +1046,7 @@ export const DocumentSmallDataGrid = ({ data, handleFileClick }) => {
   );
 };
 
-const EndContractDialog = ({ open, handleClose, contract }) => {
+const EndContractDialog = ({ open, handleClose, contract, fetchContracts }) => {
   const ONE_DAY_MS = 1000 * 60 * 60 * 24;
 
   const [contractEndDate, setContractEndDate] = useState(contract?.contract_end_date ? new Date(contract?.contract_end_date) : null);
@@ -1094,11 +1094,13 @@ const EndContractDialog = ({ open, handleClose, contract }) => {
         method: "PUT",
         body: formData,
       })
-        .then((response) => {
+        .then(async (response) => {
           if (!response.ok) {
             throw new Error("Network response was not ok");
           } else {
-            //console.log("Data added successfully");
+            const res = await fetchContracts();
+            console.log("Data added successfully");
+            handleClose();
           }
         })
         .catch((error) => {
@@ -1107,8 +1109,6 @@ const EndContractDialog = ({ open, handleClose, contract }) => {
     } catch (error) {
       console.error(error);
     }
-
-    handleClose();
   };
 
   return (
