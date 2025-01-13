@@ -179,6 +179,10 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 	const [selectedAppliances, setSelectedAppliances] = useState([]);
 	const [coordinates, setCoordinates] = useState(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [parcelId, setParcelId] = useState("");
+	const [zestimate, setZestimate] = useState("");
+	const [yearBuit, setYearBuilt] = useState("");
+	const [rentZestimate, setRentZestimate] = useState("");
 
 
 	const [showGoBackDialog, setShowGoBackDialog] = useState(false);
@@ -232,10 +236,14 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 			const statusCode = response.data.message.split(":")[0].trim();
 			if (statusCode === "200") {
 				setNotes(response.data.propertyDetails.description || '');
-				setSquareFootage(response.data.propertyDetails.lotSize || '');
+				setSquareFootage(response.data.propertyDetails.livingArea || '');
 				setBathrooms(response.data.propertyDetails.bathrooms || '');
 				setBedrooms(response.data.propertyDetails.bedrooms || '');
 				setCost(response.data.propertyDetails.price || '');
+				setRentZestimate(response.data.propertyDetails.rentZestimate || '');
+				setYearBuilt(response.data.propertyDetails.yearBuilt || '');
+				setZestimate(response.data.propertyDetails.zestimate || '');
+				setParcelId(response.data.propertyDetails.parcelId || '');
 				const homeType = propertyTypeMapping[response.data.propertyDetails.homeType] || "Other";
 				setType(homeType);
 				const zillowImages = response.data.propertyDetails.originalPhotos.map((file) => file?.mixedSources?.jpeg?.[1]?.url);
@@ -270,6 +278,10 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		setBedrooms('');
 		setCost('');
 		setType('');
+		setrentZestimate('');
+		setYearBuilt('');
+		setZestimate('');
+		setParcelId('');
 		resetImageStates();
 	};
 
@@ -452,6 +464,11 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		}
 
 		if (isRapidImages === true) {
+			formData.append("property_rentZestimate", rentZestimate);
+			formData.append("property_yearBuilt", yearBuit);
+			formData.append("property_zestimate", zestimate);
+			formData.append("property_parcelid", parcelId);
+
 			if (zillowImages.length > 0) {
 				formData.append('property_images', JSON.stringify(zillowImages));
 			}

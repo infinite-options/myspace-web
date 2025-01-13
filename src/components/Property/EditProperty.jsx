@@ -179,6 +179,10 @@ function EditProperty(props) {
 
 	// Track if changes occurred
 	const [hasPropertyDetailsChanged, setHasPropertyDetailsChanged] = useState(false);
+	const [parcelId, setParcelId] = useState("");
+	const [zestimate, setZestimate] = useState("");
+	const [yearBuit, setYearBuilt] = useState("");
+	const [rentZestimate, setRentZestimate] = useState("");
 
 
 	// Update the initial states when component mounts
@@ -491,6 +495,11 @@ function EditProperty(props) {
 				}
 			}
 
+		} else {
+			formData.append("property_rentZestimate", rentZestimate);
+			formData.append("property_yearBuilt", yearBuit);
+			formData.append("property_zestimate", zestimate);
+			formData.append("property_parcelid", parcelId);
 		}
 
 		////console.log('---FavImage----', favImage);
@@ -760,10 +769,16 @@ function EditProperty(props) {
 			const statusCode = response.data.message.split(":")[0].trim();
 			if (statusCode === "200") {
 				response.data.propertyDetails.description && setNotes(response.data.propertyDetails.description);
-				response.data.propertyDetails.lotSize && setSquareFootage(response.data.propertyDetails.lotSize);
+				response.data.propertyDetails.livingArea && setSquareFootage(response.data.propertyDetails.livingArea);
 				response.data.propertyDetails.bathrooms && setBathrooms(response.data.propertyDetails.bathrooms);
 				response.data.propertyDetails.bedrooms && setBedrooms(response.data.propertyDetails.bedrooms);
 				response.data.propertyDetails.price && setPropertyValue(response.data.propertyDetails.price);
+
+				response.data.propertyDetails.parcelId && setParcelId(response.data.propertyDetails.parcelId);
+				response.data.propertyDetails.zestimate && setZestimate(response.data.propertyDetails.zestimate);
+				response.data.propertyDetails.yearBuit && setYearBuilt(response.data.propertyDetails.yearBuit);
+				response.data.propertyDetails.rentZestimate && setRentZestimate(response.data.propertyDetails.rentZestimate);
+
 				const homeType = propertyTypeMapping[response.data.propertyDetails.homeType] || "Other";
 				setPropertyType(homeType);
 				const zillowPhotos = response.data.propertyDetails.originalPhotos.map((file) => file?.mixedSources?.jpeg?.[1]?.url);
