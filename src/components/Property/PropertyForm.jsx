@@ -278,7 +278,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		setBedrooms('');
 		setCost('');
 		setType('');
-		setrentZestimate('');
+		setRentZestimate('');
 		setYearBuilt('');
 		setZestimate('');
 		setParcelId('');

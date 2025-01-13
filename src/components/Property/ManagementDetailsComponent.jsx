@@ -58,10 +58,10 @@ export default function ManagementDetailsComponent({
   useEffect(() => {
     const activeDocs = activeContract?.contract_documents || null;
     const contractDoc = activeDocs !== null
-  ? JSON.parse(activeDocs).filter(
-      (cont) => cont.contentType === "Contract" || cont.contentType === "Agreement"
-    )
-  : [];
+      ? JSON.parse(activeDocs).filter(
+        (cont) => cont.contentType === "Contract" || cont.contentType === "Agreement"
+      )
+      : [];
     setContractDocument(contractDoc);
     setContractEndNotice(activeContract?.contract_end_notice_period ? Number(activeContract?.contract_end_notice_period) : 30);
   }, [activeContract]);
@@ -126,14 +126,14 @@ export default function ManagementDetailsComponent({
   return (
     <>
       <Card sx={{ height: "100%" }}>
-        <Box sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "10px"}}>
+        <Box sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "10px" }}>
           <Typography
             sx={{
               color: theme.typography.primary.black,
               fontWeight: theme.typography.primary.fontWeight,
               fontSize: theme.typography.largeFont,
               textAlign: "center",
-              paddingLeft: isMobile? "28%": "38%",
+              paddingLeft: isMobile ? "28%" : "38%",
               // flexGrow: 1
             }}
           >
@@ -334,18 +334,18 @@ export default function ManagementDetailsComponent({
                         >
                           ACTIVE
                         </Typography>
-                        {activeContract?.contract_renew_status && (activeContract?.contract_renew_status === "ENDING" || activeContract?.contract_renew_status.includes("EARLY") || activeContract?.contract_renew_status.includes("RENEW")) && 
-                            (
-                                <Typography
-                                    sx={{
-                                        color: activeContract?.contract_renew_status?.includes("RENEW")? "#FF8A00" : "#A52A2A",
-                                        fontWeight: theme.typography.secondary.fontWeight,
-                                        fontSize: theme.typography.smallFont,
-                                    }}
-                                >
-                                    {activeContract?.contract_renew_status?.includes("RENEW") ? " RENEWING" : (activeContract?.contract_renew_status?.includes("EARLY") ? "EARLY END" : activeContract?.contract_renew_status) }
-                                </Typography>
-                            )
+                        {activeContract?.contract_renew_status && (activeContract?.contract_renew_status === "ENDING" || activeContract?.contract_renew_status.includes("EARLY") || activeContract?.contract_renew_status.includes("RENEW")) &&
+                          (
+                            <Typography
+                              sx={{
+                                color: activeContract?.contract_renew_status?.includes("RENEW") ? "#FF8A00" : "#A52A2A",
+                                fontWeight: theme.typography.secondary.fontWeight,
+                                fontSize: theme.typography.smallFont,
+                              }}
+                            >
+                              {activeContract?.contract_renew_status?.includes("RENEW") ? " RENEWING" : (activeContract?.contract_renew_status?.includes("EARLY") ? "EARLY END" : activeContract?.contract_renew_status)}
+                            </Typography>
+                          )
                         }
                         {/* {activeContract?.contract_renew_status && (renewContract?.contract_status === "SENT" || renewContract?.contract_status.includes("RENEW")) && (
                           <Typography
@@ -490,10 +490,10 @@ export default function ManagementDetailsComponent({
                     </Typography>
                   </Box>
                 </Grid>
-              </Grid>              
+              </Grid>
             </Grid>
             <Grid container spacing={3} xs={3}>
-            {(selectedRole === "OWNER" || selectedRole === "MANAGER") && activeContract && (
+              {(selectedRole === "OWNER" || selectedRole === "MANAGER") && activeContract && (
                 <Grid container item spacing={2} sx={{ marginTop: "3px", marginBottom: "5px" }}>
                   <Grid
                     item
@@ -506,8 +506,8 @@ export default function ManagementDetailsComponent({
                     }}
                   >
                     <Button
-                      onClick={() => {    
-                        contactDocument.length > 0 && handleFileClick(contactDocument[0])                    
+                      onClick={() => {
+                        contactDocument.length > 0 && handleFileClick(contactDocument[0])
                       }}
                       variant='contained'
                       sx={{
@@ -518,7 +518,7 @@ export default function ManagementDetailsComponent({
                         textTransform: "none",
                         width: "80%",
                         maxHeight: "100%",
-                        "&:hover" : {
+                        "&:hover": {
                           backgroundColor: "#FFFFFF",
                           color: "#3D5CAC",
                         },
@@ -530,9 +530,9 @@ export default function ManagementDetailsComponent({
                           textTransform: "none",
                           color: "#3D5CAC",
                           fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: isMobile? "10px": "12px",
+                          fontSize: isMobile ? "10px" : "12px",
                           whiteSpace: isMobile ? "normal" : "nowrap", // Allow wrapping on mobile, no wrapping on desktop
-    wordWrap: isMobile ? "break-word" : "normal",
+                          wordWrap: isMobile ? "break-word" : "normal",
                           //   marginLeft: "1%", // Adjusting margin for icon and text
                         }}
                       >
@@ -575,9 +575,9 @@ export default function ManagementDetailsComponent({
                           textTransform: "none",
                           color: "#FFFFFF",
                           fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: isMobile? "10px": "12px",
+                          fontSize: isMobile ? "10px" : "12px",
                           whiteSpace: isMobile ? "normal" : "nowrap", // Allow wrapping on mobile, no wrapping on desktop
-    wordWrap: isMobile ? "break-word" : "normal",
+                          wordWrap: isMobile ? "break-word" : "normal",
                           //   marginLeft: "1%", // Adjusting margin for icon and text
                         }}
                       >
@@ -599,9 +599,9 @@ export default function ManagementDetailsComponent({
                       onClick={() => {
                         if (selectedRole === "OWNER") {
                           if (renewContract) {
-                              if(renewContract.contract_status === "SENT" || renewContract.contract_status === "APPROVED"){
-                                handleManageContractClick(renewContract.contract_uid, currentProperty.contract_property_id);
-                              }
+                            if (renewContract.contract_status === "SENT" || renewContract.contract_status === "APPROVED") {
+                              handleManageContractClick(renewContract.contract_uid, currentProperty.contract_property_id);
+                            }
                           } else {
                             setShowRenewContractDialog(true);
                           }
@@ -631,22 +631,22 @@ export default function ManagementDetailsComponent({
                           textTransform: "none",
                           color: "#FFFFFF",
                           fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: isMobile? "10px": "12px",
+                          fontSize: isMobile ? "10px" : "12px",
                           whiteSpace: isMobile ? "normal" : "nowrap", // Allow wrapping on mobile, no wrapping on desktop
-    wordWrap: isMobile ? "break-word" : "normal",
+                          wordWrap: isMobile ? "break-word" : "normal",
                           //   marginLeft: "1%", // Adjusting margin for icon and text
                         }}
                       >
-                        {renewContract ? (renewContract?.contract_status === "SENT" ? (selectedRole === "MANAGER" ? "Edit/Renew Contract" : "Manage Renew Contract") : (renewContract?.contract_status === "NEW" ? (selectedRole === "MANAGER" ? "Owner Renew Requested" : "Already Requested") : (renewContract?.contract_status === "REJECTED" ? (selectedRole === "MANAGER" ? "Edit Renew Contract" : "Rejected By Owner")  : "View Renewed Contract"))) : "Renew Contract"}
+                        {renewContract ? (renewContract?.contract_status === "SENT" ? (selectedRole === "MANAGER" ? "Edit/Renew Contract" : "Manage Renew Contract") : (renewContract?.contract_status === "NEW" ? (selectedRole === "MANAGER" ? "Owner Renew Requested" : "Already Requested") : (renewContract?.contract_status === "REJECTED" ? (selectedRole === "MANAGER" ? "Edit Renew Contract" : "Rejected By Owner") : "View Renewed Contract"))) : "Renew Contract"}
                       </Typography>
                     </Button>
                   </Grid>
                 </Grid>
               )}
             </Grid>
-              
-              
-              <Grid container spacing={3}>
+
+
+            <Grid container spacing={3}>
 
               {/* Management Fees */}
               {activeContract && (
@@ -894,6 +894,7 @@ export default function ManagementDetailsComponent({
             onEndContract={handleManagerEndContractClick}
             noticePeriod={contractEndNotice}
             fetchContracts={fetchContracts}
+            contract={activeContract}
           />
         </Box>
       )}
@@ -1054,6 +1055,10 @@ const EndContractDialog = ({ open, handleClose, contract }) => {
   const noticePeriod = contract?.contract_notice_period || 30;
   // //console.log("noticePeriod - ", noticePeriod);
   const [selectedEndDate, setSelectedEndDate] = useState(dayjs(contractEndDate));
+  const minEndDate = dayjs().add(noticePeriod, "day");
+  const formattedMinEndDate = minEndDate.format("MM/DD/YYYY");
+  // console.log('start is', contract.contract_start_date);
+  const startDate = dayjs(contract?.contract_start_date);
 
   useEffect(() => {
     // //console.log("selectedEndDate - ", selectedEndDate);
@@ -1142,7 +1147,8 @@ const EndContractDialog = ({ open, handleClose, contract }) => {
           <Grid container>
             <Grid container item xs={12} sx={{ marginTop: "10px" }}>
               <Grid item xs={12}>
-                <Typography sx={{ fontWeight: "bold", color: "#3D5CAC" }}>This contract is scheduled to end on {contract?.contract_end_date}.</Typography>
+                <Typography sx={{ fontWeight: "bold", color: "#3D5CAC", mb: "10px" }}>This contract is scheduled to end on {contract?.contract_end_date}.</Typography>
+                {`The notice period to end this contract is ${noticePeriod} days. The earliest possible end date is ${formattedMinEndDate}.`}
               </Grid>
             </Grid>
             <Grid item xs={12} sx={{ marginTop: "15px" }}>
@@ -1156,8 +1162,10 @@ const EndContractDialog = ({ open, handleClose, contract }) => {
             <Grid item xs={12}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  value={selectedEndDate}
-                  // minDate={minEndDate}
+                  // value={selectedEndDate}
+                  // // minDate={minEndDate}
+                  value={minEndDate}
+                  minDate={startDate}
                   onChange={(v) => setSelectedEndDate(v)}
                   slots={{
                     openPickerIcon: CalendarIcon,
@@ -1213,13 +1221,13 @@ const EndContractDialog = ({ open, handleClose, contract }) => {
   );
 };
 
-function ManagerEndContractDialog({ open, handleClose, onEndContract, noticePeriod }) {
+function ManagerEndContractDialog({ open, handleClose, onEndContract, noticePeriod, contract }) {
   const noticePeriodDays = parseInt(noticePeriod, 10);
   const minEndDate = dayjs().add(noticePeriodDays, "day");
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   // //console.log("minEndDate - ", minEndDate);
   const formattedMinEndDate = minEndDate.format("MM/DD/YYYY");
-
+  const startDate = dayjs(contract?.contract_start_date);
   const [earlyEndDate, setEarlyEndDate] = useState(minEndDate);
 
   const handleEndContract = (event) => {
@@ -1249,6 +1257,7 @@ function ManagerEndContractDialog({ open, handleClose, onEndContract, noticePeri
               {/* <Typography sx={{width: 'auto', color: 'red'}}>
                 {`DEBUG - Notice period is 30 days by default if not specified.`}
             </Typography> */}
+              <Typography sx={{ fontWeight: "bold", color: "#3D5CAC", mb: "10px" }}>This contract is scheduled to end on {contract?.contract_end_date}.</Typography>
               <Typography sx={{ width: "auto" }}>
                 {`The notice period to end this contract is ${noticePeriod} days. The earliest possible end date is ${formattedMinEndDate}.`}
               </Typography>
@@ -1261,7 +1270,7 @@ function ManagerEndContractDialog({ open, handleClose, onEndContract, noticePeri
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     value={earlyEndDate}
-                    minDate={minEndDate}
+                    minDate={startDate}
                     onChange={(v) => setEarlyEndDate(v)}
                     slots={{
                       openPickerIcon: CalendarIcon,
@@ -1290,7 +1299,7 @@ function ManagerEndContractDialog({ open, handleClose, onEndContract, noticePeri
               fontWeight: "bold",
             }}
           >
-            Yes
+            End Contract
           </Button>
           <Button
             onClick={handleClose}
@@ -1303,7 +1312,7 @@ function ManagerEndContractDialog({ open, handleClose, onEndContract, noticePeri
               fontWeight: "bold",
             }}
           >
-            No
+            Keep Existing Contract
           </Button>
         </DialogActions>
       </Dialog>
@@ -1400,10 +1409,10 @@ const RenewContractDialog = ({ open, handleClose, contract, fetchContracts }) =>
       console.error(error);
     }
 
-    const currentDate = new Date();    
+    const currentDate = new Date();
     const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}-${currentDate.getFullYear()}`;
 
-  
+
     const NewFormData = new FormData();
     NewFormData.append("contract_property_ids", JSON.stringify([contract.contract_property_id]));
     NewFormData.append("contract_business_id", contract.contract_business_id);

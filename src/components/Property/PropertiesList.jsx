@@ -410,6 +410,24 @@ export default function PropertiesList(props) {
                 {getPaymentStatus(params.row.rent_status, params.row)}
               </Typography>
             </Badge>
+
+            {(params.row.contract_renew_status === "ENDING" || params.row.contract_renew_status === "EARLY TERMINATION") && (
+              <Badge
+                overlap="circular"
+                color="info"
+                badgeContent="E"
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+                style={{
+                  color: "#000000",
+                  // width: "100%",
+                  backgroundColor:"yellow",
+                  transform: 'translate(-70px, -17px)',
+                }}
+              />
+            )}
           </Box>
         );
       },
