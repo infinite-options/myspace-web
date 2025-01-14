@@ -416,7 +416,11 @@ export default function PropertyNavigator2({
       setSentContractCount(sentContractCount);
 
       const rentDetails = getRentStatus();
-      // //console.log("rentDetails - ", rentDetails);
+      console.log("rentDetails - ", rentDetails);
+      // const updatedRentDetails = rentDetails.map((rent)=>({...rent, 
+      //   amount_Due: rent.total_paid ? rent.pur_amount_due - rent.total_paid : rent.pur_amount_due,
+      //   formatted_date_paid = dayjs(rent.)
+      // }))
       setpropertyRentStatus(rentDetails);
 
       if (property.lease_fees !== null) {
@@ -574,17 +578,29 @@ export default function PropertyNavigator2({
             // idx: index,
             cf_monthName: monthNames[item.cf_month - 1],
             total_paid_formatted: item.total_paid ? `$${item.total_paid}` : "-",
-            latest_date_formatted: item.latest_date ? item.latest_date : "-",
+            latest_date_formatted: dayjs(item.latest_date).format('YYYY-MM-DD') ? item.latest_date : "-",
             // latest_date_formatted: item.latest_date || "-",
             fees: "-",
+            amount_due: item.total_paid ? item.pur_amount_due - item.total_paid : item.pur_amount_due,
+            due_date_formatted: dayjs(item.pur_due_date).format('YYYY-MM-DD')
           };
+        }).sort((a, b) => {
+          // Sort by latest_date_formatted (latest date first)
+          const dateA = a.latest_date_formatted ? dayjs(a.latest_date_formatted) : null;
+          const dateB = b.latest_date_formatted ? dayjs(b.latest_date_formatted) : null;
+    
+          if (!dateA && !dateB) return 0; 
+          if (!dateA) return 1; 
+          if (!dateB) return -1; 
+    
+          return dateB.diff(dateA);
         });
       };
 
       // //console.log("getRentStatus - rentStatus - ", rentStatus);
       // //console.log("getRentStatus - propertyRentStatus - ", propertyRentStatus);
       const formattedData = propertyRentStatus ? formatData(rentStatus) : [];
-      // //console.log("getRentStatus - formattedData - ", formattedData);
+      // console.log("getRentStatus - formattedData - ", formattedData);
       return formattedData;
     } catch (error) {
       //console.log(error);
@@ -665,7 +681,16 @@ export default function PropertyNavigator2({
         return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value ? params.value : "-"}</Box>;
       },
     },
-
+    {
+      field: "amount_due",
+      headerName: "Amount Due",
+      sortable: isDesktop,
+      flex: 0.7,
+      minWidth: 90,
+      renderCell: (params) => {
+        return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
+      },
+    },
     {
       field: "rent_status",
       headerName: "Rent Status",
@@ -693,7 +718,7 @@ export default function PropertyNavigator2({
     },
     {
       // field: 'total_paid_formatted',\
-      field: "pur_due_date",
+      field: "due_date_formatted",
       headerName: "Due Date",
       sortable: isDesktop,
       flex: 0.7,
