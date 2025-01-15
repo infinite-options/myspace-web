@@ -1253,11 +1253,11 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
 
           <>
             <Grid container spacing={3}>
-              <Grid item xs={10} md={10}>
+              <Grid item xs={9} md={9}>
                 {/* Lease Term */}
                 {leaseDetails && (
                   <Grid container item spacing={2} mb={2}>
-                    <Grid item xs={5}>
+                    <Grid item xs={4}>
                       <Typography
                         sx={{
                           color: theme.typography.primary.black,
@@ -1268,7 +1268,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                         Lease UID:
                       </Typography>
                     </Grid>
-                    <Grid item xs={7}>
+                    <Grid item xs={8}>
                       <Typography
                         sx={{
                           color: theme.typography.primary.black,
@@ -1283,7 +1283,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                 )}
                 {/* Tenant Details */}
                 <Grid container item spacing={2} mb={2}>
-                  <Grid item xs={5}>
+                  <Grid item xs={4}>
                     <Typography
                       sx={{
                         color: theme.typography.primary.black,
@@ -1294,7 +1294,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                       Tenant:
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={8}>
                     {tenant_detail ? (
                       <Box display='flex' justifyContent='space-between' alignItems='center'>
                         <Typography
@@ -1342,7 +1342,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
 
                 {/* Lease Status */}
                 <Grid container item spacing={2} mb={2}>
-                  <Grid item xs={5}>
+                  <Grid item xs={4}>
                     <Typography
                       sx={{
                         color: theme.typography.primary.black,
@@ -1353,7 +1353,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                       Lease Status:
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={8}>
                     <Box display='flex' alignItems='center' justifyContent={"space-between"} sx={{ marginRight: "10px" }}>
                       {leaseDetails?.lease_status === "ACTIVE" || leaseDetails?.lease_status === "ACTIVE M2M" ? (
                         <>
@@ -1449,7 +1449,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                 {/* Lease Term */}
                 {leaseDetails && (
                   <Grid container item spacing={2} mb={2}>
-                    <Grid item xs={5}>
+                    <Grid item xs={4}>
                       <Typography
                         sx={{
                           color: theme.typography.primary.black,
@@ -1460,7 +1460,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                         Lease Term:
                       </Typography>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={8}>
                       <Box display='flex' alignItems='center' justifyContent={"space-between"} sx={{ margin: "0px 10px 0px 0px" }}>
                         <>
                           <Typography
@@ -1486,7 +1486,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                 {/* Move In/Out Date */}
                 {leaseDetails && (
                   <Grid container item spacing={2} mb={2}>
-                    <Grid item xs={5}>
+                    <Grid item xs={4}>
                       <Typography
                         sx={{
                           color: theme.typography.primary.black,
@@ -1497,7 +1497,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                         Move In/Out Date:
                       </Typography>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={8}>
                       <Box display='flex' alignItems='center' justifyContent={"space-between"} sx={{ margin: "0px 10px 0px 0px" }}>
                         <>
                           <Typography sx={{ fontSize: theme.typography.smallFont }}>{leaseDetails?.lease_move_in_date ? leaseDetails?.lease_move_in_date : ""}</Typography>
@@ -1513,7 +1513,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                 {/* Notice Period */}
                 {leaseDetails && (
                   <Grid container item spacing={2} mb={2}>
-                    <Grid item xs={5}>
+                    <Grid item xs={4}>
                       <Typography
                         sx={{
                           color: theme.typography.primary.black,
@@ -1524,7 +1524,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                         End Notice Period:
                       </Typography>
                     </Grid>
-                    <Grid item xs={7}>
+                    <Grid item xs={8}>
                       <Typography
                         sx={{
                           color: theme.typography.primary.black,
@@ -1541,7 +1541,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                 {/* Lease Renewal */}
                 {leaseDetails && (
                   <Grid container item spacing={2} mb={2}>
-                    <Grid item xs={5}>
+                    <Grid item xs={4}>
                       <Typography
                         sx={{
                           color: theme.typography.primary.black,
@@ -1552,7 +1552,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                         Lease Renewal:
                       </Typography>
                     </Grid>
-                    <Grid item xs={7}>
+                    <Grid item xs={8}>
                       <Typography
                         sx={{
                           color: theme.typography.primary.black,
@@ -1569,7 +1569,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                 )}
               </Grid>
 
-              <Grid item xs={2} md={2}>
+              <Grid item xs={3} md={3}>
                 <Grid container item spacing={4} sx={{display: "flex", flexDirection: "column " , alignItems:"center", justifyContent:"center", width:"100%"}}>
                   {/* <Grid container item spacing={2} sx={{ marginTop: "3px", marginBottom: "5px", marginRight: "10px", }}>
                 {relatedLease?.lease_status === "RENEW PROCESSING" &&
@@ -1637,8 +1637,9 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           cursor: "pointer",
                           paddingX: "10px",
                           textTransform: "none",
-                          maxWidth: "120px", // Fixed width for the button
+                          // maxWidth: "120px", // Fixed width for the button
                           maxHeight: "100%",
+                          width:"150px"
                         }}
                         size='medium'
                       >
@@ -1682,6 +1683,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           textTransform: "none",
                           maxWidth: "200px", // Fixed width for the button
                           maxHeight: "100%",
+                          width:"150px"
                         }}
                         size='medium'
                       >
@@ -1695,7 +1697,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                             //   marginLeft: "1%", // Adjusting margin for icon and text
                           }}
                         >
-                          {"Update Application 1"}
+                          {"Update Application"}
                         </Typography>
                       </Button>
                     </Grid>
@@ -1724,6 +1726,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           textTransform: "none",
                           width: "160px", // Fixed width for the button
                           maxHeight: "100%",
+                          width:"150px"
                         }}
                         size='medium'
                       >
@@ -1768,6 +1771,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           textTransform: "none",
                           maxWidth: "120px", // Fixed width for the button
                           maxHeight: "100%",
+                          width:"150px"
                         }}
                         size='medium'
                       >
@@ -1829,6 +1833,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                               textTransform: "none",
                               maxWidth: "100%", // Fixed width for the button
                               maxHeight: "100%",
+                              width:"150px"
                             }}
                             size='medium'
                           >
@@ -1842,7 +1847,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                                 //   marginLeft: "1%", // Adjusting margin for icon and text
                               }}
                             >
-                              {"Update Application 2"}
+                              {"Update Application"}
                             </Typography>
                           </Button>
                         </Grid>
@@ -1886,6 +1891,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                                 textTransform: "none",
                                 width: "100%", // Fixed width for the button
                                 maxHeight: "100%",
+                                width:"150px"
                               }}
                               size='medium'
                             >
@@ -1944,6 +1950,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           cursor: "pointer",
                           paddingX: "10px",
                           textTransform: "none",
+                          width:"150px"
                           // maxWidth: "130px", // Fixed width for the button
                           // maxHeight: "100%",
                         }}
@@ -1971,7 +1978,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
 
               {/* Lease Fees */}
               {leaseDetails && (
-                <Grid container item spacing={2}>
+                <Grid container item spacing={2} sx={{mt:5}}>
                   <Grid item xs={6}>
                     <Typography
                       sx={{
@@ -1987,7 +1994,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
               )}
 
               {leaseDetails && (
-                <Grid container item spacing={2}>
+                <Grid container item spacing={2} sx={{mt:"5"}}>
                   {leaseDetails?.lease_fees ? (
                     <FeesSmallDataGrid data={JSON.parse(leaseDetails?.lease_fees)} isMobile={isMobile} />
                   ) : (
@@ -2019,7 +2026,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
 
               {/* Lease Documents */}
               {leaseDetails && (
-                <Grid container item spacing={2}>
+                <Grid container item spacing={2} sx={{mt:5}}>
                   <Grid item xs={6}>
                     <Typography
                       sx={{
