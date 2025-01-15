@@ -1379,7 +1379,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                                 fontSize: theme.typography.smallFont,
                               }}
                             >
-                              {leaseDetails?.lease_renew_status == "RENEW REQUESTED" || leaseDetails?.lease_renew_status == "PM RENEW REQUESTED" ? " RENEWING" : ""}
+                              {leaseDetails?.lease_renew_status == "RENEW REQUESTED" || leaseDetails?.lease_renew_status == "PM RENEW REQUESTED" ? " RENEW REQUESTED" : ""}
                               {leaseDetails?.lease_renew_status === "RENEWED" ? "RENEWED" : ""}
                               {leaseDetails?.lease_renew_status === "RENEW REJECTED" ? "RENEW REJECTED" : ""}
                               {leaseDetails?.lease_renew_status == "EARLY TERMINATION" ? "END EARLY" : ""}
@@ -3163,7 +3163,6 @@ function TenantBalanceTablePM(props) {
     }));
 
     props.setShowSpinner(false);
-    console.log('paymentDueResult', paymentDueResult);
   }, [selectedRows, paymentDueResult]);
 
   useEffect(() => {

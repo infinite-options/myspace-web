@@ -526,7 +526,7 @@ export default function LeaseDetailsComponent({
                                     fontSize: theme.typography.smallFont,
                                   }}
                                 >
-                                  {activeLease?.lease_renew_status === "RENEW REQUESTED" || activeLease?.lease_renew_status === "PM RENEW REQUESTED"  ? "RENEWING" : ""}
+                                  {activeLease?.lease_renew_status === "RENEW REQUESTED" || activeLease?.lease_renew_status === "PM RENEW REQUESTED"  ? "RENEW REQUESTED" : ""}
                                   {activeLease?.lease_renew_status === "RENEWED" ? "RENEWED" : ""}
                                   {activeLease?.lease_renew_status === "EARLY TERMINATION" ? "EARLY TERMINATION" : ""}
                                   {activeLease?.lease_renew_status === "CANCEL RENEWAL" ? "CANCEL RENEWAL" : ""}
