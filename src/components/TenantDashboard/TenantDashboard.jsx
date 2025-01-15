@@ -1253,9 +1253,36 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
 
           <>
             <Grid container spacing={3}>
-              {/* Lease Term */}
-              {leaseDetails && (
-                <Grid container item spacing={2}>
+              <Grid item xs={10} md={10}>
+                {/* Lease Term */}
+                {leaseDetails && (
+                  <Grid container item spacing={2} mb={2}>
+                    <Grid item xs={5}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        Lease UID:
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={7}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.light.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        {leaseDetails?.lease_uid}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                )}
+                {/* Tenant Details */}
+                <Grid container item spacing={2} mb={2}>
                   <Grid item xs={5}>
                     <Typography
                       sx={{
@@ -1264,114 +1291,115 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                         fontSize: theme.typography.smallFont,
                       }}
                     >
-                      Lease UID:
+                      Tenant:
                     </Typography>
                   </Grid>
-                  <Grid item xs={7}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.primary.black,
-                        fontWeight: theme.typography.light.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      {leaseDetails?.lease_uid}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              )}
-              {/* Tenant Details */}
-              <Grid container item spacing={2}>
-                <Grid item xs={5}>
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.secondary.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                    }}
-                  >
-                    Tenant:
-                  </Typography>
-                </Grid>
-                <Grid item xs={5}>
-                  {tenant_detail ? (
-                    <Box display='flex' justifyContent='space-between' alignItems='center'>
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.light.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        {tenant_detail?.tenant_first_name} {tenant_detail?.tenant_last_name}
-                      </Typography>
-                      <KeyboardArrowRightIcon
-                        sx={{ color: "blue", cursor: "pointer", paddingRight: "5px" }}
-                        onClick={() => {
-                          if (selectedRole === "TENANT") {
-                            navigate("/profileEditor");
-                          } else {
-                            if (tenant_detail && tenant_detail.tenant_uid) {
-                              navigate("/ContactsPM", {
-                                state: {
-                                  contactsTab: "Tenant",
-                                  tenantId: tenant_detail.tenant_uid,
-                                },
-                              });
-                            }
-                          }
-                        }}
-                      />
-                    </Box>
-                  ) : (
-                    <Box display='flex' justifyContent='space-between' alignItems='center'>
-                      <Typography
-                        sx={{
-                          color: theme.typography.primary.black,
-                          fontWeight: theme.typography.light.fontWeight,
-                          fontSize: theme.typography.smallFont,
-                        }}
-                      >
-                        No Tenant Selected
-                      </Typography>
-                    </Box>
-                  )}
-                </Grid>
-              </Grid>
-
-              {/* Lease Status */}
-              <Grid container item spacing={2}>
-                <Grid item xs={5}>
-                  <Typography
-                    sx={{
-                      color: theme.typography.primary.black,
-                      fontWeight: theme.typography.secondary.fontWeight,
-                      fontSize: theme.typography.smallFont,
-                    }}
-                  >
-                    Lease Status:
-                  </Typography>
-                </Grid>
-                <Grid item xs={5}>
-                  <Box display='flex' alignItems='center' justifyContent={"space-between"} sx={{ marginRight: "10px" }}>
-                    {leaseDetails?.lease_status === "ACTIVE" || leaseDetails?.lease_status === "ACTIVE M2M" ? (
-                      <>
+                  <Grid item xs={6}>
+                    {tenant_detail ? (
+                      <Box display='flex' justifyContent='space-between' alignItems='center'>
                         <Typography
                           sx={{
-                            color: theme.palette.success.main,
-                            fontWeight: theme.typography.secondary.fontWeight,
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.light.fontWeight,
                             fontSize: theme.typography.smallFont,
                           }}
                         >
-                          {leaseDetails?.lease_status}
+                          {tenant_detail?.tenant_first_name} {tenant_detail?.tenant_last_name}
                         </Typography>
-                        {leaseDetails?.lease_renew_status &&
-                          (leaseDetails?.lease_renew_status === "PM RENEW REQUESTED" ||
-                            leaseDetails?.lease_renew_status.includes("RENEW REQUESTED") ||
-                            leaseDetails?.lease_renew_status === "RENEWED" ||
-                            leaseDetails?.lease_renew_status === "RENEW REJECTED" ||
-                            leaseDetails?.lease_renew_status === "EARLY TERMINATION" ||
-                            leaseDetails?.lease_renew_status === "CANCEL RENEWAL") && (
+                        <KeyboardArrowRightIcon
+                          sx={{ color: "blue", cursor: "pointer", paddingRight: "5px" }}
+                          onClick={() => {
+                            if (selectedRole === "TENANT") {
+                              navigate("/profileEditor");
+                            } else {
+                              if (tenant_detail && tenant_detail.tenant_uid) {
+                                navigate("/ContactsPM", {
+                                  state: {
+                                    contactsTab: "Tenant",
+                                    tenantId: tenant_detail.tenant_uid,
+                                  },
+                                });
+                              }
+                            }
+                          }}
+                        />
+                      </Box>
+                    ) : (
+                      <Box display='flex' justifyContent='space-between' alignItems='center'>
+                        <Typography
+                          sx={{
+                            color: theme.typography.primary.black,
+                            fontWeight: theme.typography.light.fontWeight,
+                            fontSize: theme.typography.smallFont,
+                          }}
+                        >
+                          No Tenant Selected
+                        </Typography>
+                      </Box>
+                    )}
+                  </Grid>
+                </Grid>
+
+                {/* Lease Status */}
+                <Grid container item spacing={2} mb={2}>
+                  <Grid item xs={5}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.secondary.fontWeight,
+                        fontSize: theme.typography.smallFont,
+                      }}
+                    >
+                      Lease Status:
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Box display='flex' alignItems='center' justifyContent={"space-between"} sx={{ marginRight: "10px" }}>
+                      {leaseDetails?.lease_status === "ACTIVE" || leaseDetails?.lease_status === "ACTIVE M2M" ? (
+                        <>
+                          <Typography
+                            sx={{
+                              color: theme.palette.success.main,
+                              fontWeight: theme.typography.secondary.fontWeight,
+                              fontSize: theme.typography.smallFont,
+                            }}
+                          >
+                            {leaseDetails?.lease_status}
+                          </Typography>
+                          {leaseDetails?.lease_renew_status &&
+                            (leaseDetails?.lease_renew_status === "PM RENEW REQUESTED" ||
+                              leaseDetails?.lease_renew_status.includes("RENEW REQUESTED") ||
+                              leaseDetails?.lease_renew_status === "RENEWED" ||
+                              leaseDetails?.lease_renew_status === "RENEW REJECTED" ||
+                              leaseDetails?.lease_renew_status === "EARLY TERMINATION" ||
+                              leaseDetails?.lease_renew_status === "CANCEL RENEWAL") && (
+                              <Typography
+                                sx={{
+                                  color: leaseDetails?.lease_renew_status?.includes("RENEW") ? "#FF8A00" : "#A52A2A",
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: theme.typography.smallFont,
+                                }}
+                              >
+                                {leaseDetails?.lease_renew_status == "RENEW REQUESTED" || leaseDetails?.lease_renew_status == "PM RENEW REQUESTED" ? " RENEW REQUESTED" : ""}
+                                {leaseDetails?.lease_renew_status === "RENEWED" ? "RENEWED" : ""}
+                                {leaseDetails?.lease_renew_status === "RENEW REJECTED" ? "RENEW REJECTED" : ""}
+                                {leaseDetails?.lease_renew_status == "EARLY TERMINATION" ? "END EARLY" : ""}
+                                {leaseDetails?.lease_renew_status == "CANCEL RENEWAL" ? "CANCEL RENEWAL" : ""}
+                              </Typography>
+                            )}
+                        </>
+                      ) : (
+                        <>
+                          <Typography
+                            sx={{
+                              color: "#3D5CAC",
+                              fontWeight: theme.typography.secondary.fontWeight,
+                              fontSize: theme.typography.smallFont,
+                            }}
+                          >
+                            {leaseDetails?.lease_status ? leaseDetails?.lease_status : "No Lease"}
+                          </Typography>
+                          {leaseDetails?.lease_renew_status && leaseDetails?.lease_renew_status === "EARLY TERMINATION" && (
                             <Typography
                               sx={{
                                 color: leaseDetails?.lease_renew_status?.includes("RENEW") ? "#FF8A00" : "#A52A2A",
@@ -1379,39 +1407,12 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                                 fontSize: theme.typography.smallFont,
                               }}
                             >
-                              {leaseDetails?.lease_renew_status == "RENEW REQUESTED" || leaseDetails?.lease_renew_status == "PM RENEW REQUESTED" ? " RENEW REQUESTED" : ""}
-                              {leaseDetails?.lease_renew_status === "RENEWED" ? "RENEWED" : ""}
-                              {leaseDetails?.lease_renew_status === "RENEW REJECTED" ? "RENEW REJECTED" : ""}
-                              {leaseDetails?.lease_renew_status == "EARLY TERMINATION" ? "END EARLY" : ""}
-                              {leaseDetails?.lease_renew_status == "CANCEL RENEWAL" ? "CANCEL RENEWAL" : ""}
+                              {leaseDetails?.lease_renew_status == "EARLY TERMINATION" ? "CANCEL LEASE" : ""}
                             </Typography>
                           )}
-                      </>
-                    ) : (
-                      <>
-                        <Typography
-                          sx={{
-                            color: "#3D5CAC",
-                            fontWeight: theme.typography.secondary.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                          }}
-                        >
-                          {leaseDetails?.lease_status ? leaseDetails?.lease_status : "No Lease"}
-                        </Typography>
-                        {leaseDetails?.lease_renew_status && leaseDetails?.lease_renew_status === "EARLY TERMINATION" && (
-                          <Typography
-                            sx={{
-                              color: leaseDetails?.lease_renew_status?.includes("RENEW") ? "#FF8A00" : "#A52A2A",
-                              fontWeight: theme.typography.secondary.fontWeight,
-                              fontSize: theme.typography.smallFont,
-                            }}
-                          >
-                            {leaseDetails?.lease_renew_status == "EARLY TERMINATION" ? "CANCEL LEASE" : ""}
-                          </Typography>
-                        )}
-                      </>
-                    )}
-                    {/* {currentProperty?.contract_status === "ACTIVE" && selectedRole === "MANAGER" && 
+                        </>
+                      )}
+                      {/* {currentProperty?.contract_status === "ACTIVE" && selectedRole === "MANAGER" && 
                               <Button
                                   onClick={() => {                                    
                                           handleManageContractClick(currentProperty.contract_uid, currentProperty.contract_property_id )                                                                        
@@ -1441,134 +1442,136 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                                   {"Manage Contract"}
                               </Typography>
                               </Button>} */}
-                  </Box>
+                    </Box>
+                  </Grid>
                 </Grid>
+
+                {/* Lease Term */}
+                {leaseDetails && (
+                  <Grid container item spacing={2} mb={2}>
+                    <Grid item xs={5}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        Lease Term:
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Box display='flex' alignItems='center' justifyContent={"space-between"} sx={{ margin: "0px 10px 0px 0px" }}>
+                        <>
+                          <Typography
+                            sx={{
+                              color: theme.typography.primary.black,
+                              fontWeight: theme.typography.light.fontWeight,
+                              fontSize: theme.typography.smallFont,
+                            }}
+                          >
+                            {leaseDetails?.lease_start}
+                            <span style={{ fontWeight: "bold", margin: "0px 10px" }}>to</span>
+                            {leaseDetails?.lease_end}
+                          </Typography>
+                          <Typography sx={{ fontSize: theme.typography.smallFont, color: "#A52A2A", fontWeight: theme.typography.secondary.fontWeight }}>
+                            {leaseDetails?.lease_early_end_date ? leaseDetails?.lease_early_end_date : ""}
+                          </Typography>
+                        </>
+                      </Box>
+                    </Grid>
+                  </Grid>
+                )}
+
+                {/* Move In/Out Date */}
+                {leaseDetails && (
+                  <Grid container item spacing={2} mb={2}>
+                    <Grid item xs={5}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        Move In/Out Date:
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Box display='flex' alignItems='center' justifyContent={"space-between"} sx={{ margin: "0px 10px 0px 0px" }}>
+                        <>
+                          <Typography sx={{ fontSize: theme.typography.smallFont }}>{leaseDetails?.lease_move_in_date ? leaseDetails?.lease_move_in_date : ""}</Typography>
+
+                          <Typography sx={{ fontSize: theme.typography.smallFont, color: "#A52A2A", fontWeight: theme.typography.secondary.fontWeight }}>
+                            {leaseDetails?.move_out_date ? leaseDetails?.move_out_date : ""}
+                          </Typography>
+                        </>
+                      </Box>
+                    </Grid>
+                  </Grid>
+                )}
+                {/* Notice Period */}
+                {leaseDetails && (
+                  <Grid container item spacing={2} mb={2}>
+                    <Grid item xs={5}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        End Notice Period:
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={7}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.light.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        {leaseDetails?.lease_end_notice_period ? `${leaseDetails?.lease_end_notice_period} days` : "Not Specified"}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                )}
+
+                {/* Lease Renewal */}
+                {leaseDetails && (
+                  <Grid container item spacing={2} mb={2}>
+                    <Grid item xs={5}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.secondary.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        Lease Renewal:
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={7}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.primary.black,
+                          fontWeight: theme.typography.light.fontWeight,
+                          fontSize: theme.typography.smallFont,
+                        }}
+                      >
+                        {leaseDetails?.lease_m2m == null ? "Not Specified" : ""}
+                        {leaseDetails?.lease_m2m === 1 ? "Renews Month-to-Month" : ""}
+                        {leaseDetails?.lease_m2m === 0 ? "Renews Automatically" : ""}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                )}
               </Grid>
 
-              {/* Lease Term */}
-              {leaseDetails && (
-                <Grid container item spacing={2}>
-                  <Grid item xs={5}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.primary.black,
-                        fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      Lease Term:
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={5}>
-                    <Box display='flex' alignItems='center' justifyContent={"space-between"} sx={{ margin: "0px 10px 0px 0px" }}>
-                      <>
-                        <Typography
-                          sx={{
-                            color: theme.typography.primary.black,
-                            fontWeight: theme.typography.light.fontWeight,
-                            fontSize: theme.typography.smallFont,
-                          }}
-                        >
-                          {leaseDetails?.lease_start}
-                          <span style={{ fontWeight: "bold", margin: "0px 10px" }}>to</span>
-                          {leaseDetails?.lease_end}
-                        </Typography>
-                        <Typography sx={{ fontSize: theme.typography.smallFont, color: "#A52A2A", fontWeight: theme.typography.secondary.fontWeight }}>
-                          {leaseDetails?.lease_early_end_date ? leaseDetails?.lease_early_end_date : ""}
-                        </Typography>
-                      </>
-                    </Box>
-                  </Grid>
-                </Grid>
-              )}
-
-              {/* Move In/Out Date */}
-              {leaseDetails && (
-                <Grid container item spacing={2}>
-                  <Grid item xs={5}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.primary.black,
-                        fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      Move In/Out Date:
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={5}>
-                    <Box display='flex' alignItems='center' justifyContent={"space-between"} sx={{ margin: "0px 10px 0px 0px" }}>
-                      <>
-                        <Typography sx={{ fontSize: theme.typography.smallFont }}>{leaseDetails?.lease_move_in_date ? leaseDetails?.lease_move_in_date : ""}</Typography>
-
-                        <Typography sx={{ fontSize: theme.typography.smallFont, color: "#A52A2A", fontWeight: theme.typography.secondary.fontWeight }}>
-                          {leaseDetails?.move_out_date ? leaseDetails?.move_out_date : ""}
-                        </Typography>
-                      </>
-                    </Box>
-                  </Grid>
-                </Grid>
-              )}
-              {/* Notice Period */}
-              {leaseDetails && (
-                <Grid container item spacing={2}>
-                  <Grid item xs={5}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.primary.black,
-                        fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      End Notice Period:
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={7}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.primary.black,
-                        fontWeight: theme.typography.light.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      {leaseDetails?.lease_end_notice_period ? `${leaseDetails?.lease_end_notice_period} days` : "Not Specified"}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              )}
-
-              {/* Lease Renewal */}
-              {leaseDetails && (
-                <Grid container item spacing={2}>
-                  <Grid item xs={5}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.primary.black,
-                        fontWeight: theme.typography.secondary.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      Lease Renewal:
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={7}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.primary.black,
-                        fontWeight: theme.typography.light.fontWeight,
-                        fontSize: theme.typography.smallFont,
-                      }}
-                    >
-                      {leaseDetails?.lease_m2m == null ? "Not Specified" : ""}
-                      {leaseDetails?.lease_m2m === 1 ? "Renews Month-to-Month" : ""}
-                      {leaseDetails?.lease_m2m === 0 ? "Renews Automatically" : ""}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              )}
-
-              <Grid container item spacing={2} sx={{ marginTop: "3px", marginBottom: "5px" }}>
-                {/* <Grid container item spacing={2} sx={{ marginTop: "3px", marginBottom: "5px", marginRight: "10px", }}>
+              <Grid item xs={2} md={2}>
+                <Grid container item spacing={4} sx={{display: "flex", flexDirection: "column " , alignItems:"center", justifyContent:"center", width:"100%"}}>
+                  {/* <Grid container item spacing={2} sx={{ marginTop: "3px", marginBottom: "5px", marginRight: "10px", }}>
                 {relatedLease?.lease_status === "RENEW PROCESSING" &&
                   <Grid
                     item
@@ -1611,135 +1614,136 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                     </Button>
                   </Grid>
                 } */}
-                {leaseDetails?.lease_status === "ACTIVE" && (
-                  <Grid
-                    item
-                    xs={relatedLease?.lease_status === "RENEW PROCESSING" ? 4 : 6}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      height: "100%",
-                    }}
-                  >
-                    <Button
-                      onClick={() => {
-                        handleEndLease();
-                      }}
-                      variant='contained'
+                  {leaseDetails?.lease_status === "ACTIVE" && (
+                    <Grid
+                      item
+                      // xs={relatedLease?.lease_status === "RENEW PROCESSING" ? 4 : 6}
                       sx={{
-                        background: "#3D5CAC",
-                        color: theme.palette.background.default,
-                        cursor: "pointer",
-                        paddingX: "10px",
-                        textTransform: "none",
-                        maxWidth: "120px", // Fixed width for the button
-                        maxHeight: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100%",
+                        width:"100%",
                       }}
-                      size='small'
                     >
-                      <Typography
-                        sx={{
-                          textTransform: "none",
-                          color: "#FFFFFF",
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: "12px",
-                          whiteSpace: "nowrap",
-                          //   marginLeft: "1%", // Adjusting margin for icon and text
+                      <Button
+                        onClick={() => {
+                          handleEndLease();
                         }}
-                      >
-                        {"End Lease"}
-                      </Typography>
-                    </Button>
-                  </Grid>
-                )}
-                {(leaseDetails?.lease_status === "NEW" || leaseDetails?.lease_status === "PROCESSING") && (
-                  <Grid
-                    item
-                    xs={6}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      height: "100%",
-                    }}
-                  >
-                    <Button
-                      onClick={() => {
-                        //console.log("ROHIT - 1493 - leaseDetails - ", leaseDetails);
-                        handleViewTenantApplication();
-                      }}
-                      variant='contained'
-                      sx={{
-                        background: "#FFD700",
-                        color: theme.palette.background.default,
-                        cursor: "pointer",
-                        paddingX: "10px",
-                        textTransform: "none",
-                        maxWidth: "120px", // Fixed width for the button
-                        maxHeight: "100%",
-                      }}
-                      size='small'
-                    >
-                      <Typography
+                        variant='contained'
                         sx={{
+                          background: "#3D5CAC",
+                          color: theme.palette.background.default,
+                          cursor: "pointer",
+                          paddingX: "10px",
                           textTransform: "none",
-                          color: "#FFFFFF",
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: "12px",
-                          whiteSpace: "nowrap",
-                          //   marginLeft: "1%", // Adjusting margin for icon and text
+                          maxWidth: "120px", // Fixed width for the button
+                          maxHeight: "100%",
                         }}
+                        size='medium'
                       >
-                        {"Update Application 1"}
-                      </Typography>
-                    </Button>
-                  </Grid>
-                )}
-                {(leaseDetails?.lease_status === "WITHDRAWN" || leaseDetails?.lease_status === "REJECTED" || leaseDetails?.lease_status === "REFUSED") && (
-                  <Grid
-                    item
-                    xs={6}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      height: "100%",
-                    }}
-                  >
-                    <Button
-                      onClick={() => {
-                        handleReApply();
-                      }}
-                      variant='contained'
+                        <Typography
+                          sx={{
+                            textTransform: "none",
+                            color: "#FFFFFF",
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: "12px",
+                            whiteSpace: "nowrap",
+                            //   marginLeft: "1%", // Adjusting margin for icon and text
+                          }}
+                        >
+                          {"End Lease"}
+                        </Typography>
+                      </Button>
+                    </Grid>
+                  )}
+                  {(leaseDetails?.lease_status === "NEW" || leaseDetails?.lease_status === "PROCESSING") && (
+                    <Grid
+                      item
+                      // xs={6}
                       sx={{
-                        background: "#FFD700",
-                        color: theme.palette.background.default,
-                        cursor: "pointer",
-                        paddingX: "10px",
-                        textTransform: "none",
-                        width: "160px", // Fixed width for the button
-                        maxHeight: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100%",
                       }}
-                      size='small'
                     >
-                      {"Re-Apply"}
-                      {/* </Typography> */}
-                    </Button>
-                  </Grid>
-                )}
-                {(leaseDetails?.lease_status === "ACTIVE" || leaseDetails?.lease_status === "ACTIVE M2M") && showRenewLeaseButton && leaseDetails?.lease_renew_status !== "CANCEL RENEWAL" && (
-                  <Grid
-                    item
-                    xs={6}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      height: "100%",
-                    }}
-                  >
-                    {/* <Button
+                      <Button
+                        onClick={() => {
+                          //console.log("ROHIT - 1493 - leaseDetails - ", leaseDetails);
+                          handleViewTenantApplication();
+                        }}
+                        variant='contained'
+                        sx={{
+                          background: "#FFD700",
+                          color: theme.palette.background.default,
+                          cursor: "pointer",
+                          paddingX: "10px",
+                          textTransform: "none",
+                          maxWidth: "200px", // Fixed width for the button
+                          maxHeight: "100%",
+                        }}
+                        size='medium'
+                      >
+                        <Typography
+                          sx={{
+                            textTransform: "none",
+                            color: "#FFFFFF",
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: "12px",
+                            whiteSpace: "nowrap",
+                            //   marginLeft: "1%", // Adjusting margin for icon and text
+                          }}
+                        >
+                          {"Update Application 1"}
+                        </Typography>
+                      </Button>
+                    </Grid>
+                  )}
+                  {(leaseDetails?.lease_status === "WITHDRAWN" || leaseDetails?.lease_status === "REJECTED" || leaseDetails?.lease_status === "REFUSED") && (
+                    <Grid
+                      item
+                      // xs={6}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100%",
+                      }}
+                    >
+                      <Button
+                        onClick={() => {
+                          handleReApply();
+                        }}
+                        variant='contained'
+                        sx={{
+                          background: "#FFD700",
+                          color: theme.palette.background.default,
+                          cursor: "pointer",
+                          paddingX: "10px",
+                          textTransform: "none",
+                          width: "160px", // Fixed width for the button
+                          maxHeight: "100%",
+                        }}
+                        size='medium'
+                      >
+                        {"Re-Apply"}
+                        {/* </Typography> */}
+                      </Button>
+                    </Grid>
+                  )}
+                  {(leaseDetails?.lease_status === "ACTIVE" || leaseDetails?.lease_status === "ACTIVE M2M") && showRenewLeaseButton && leaseDetails?.lease_renew_status !== "CANCEL RENEWAL" && (
+                    <Grid
+                      item
+                      // xs={6}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100%",
+                      }}
+                    >
+                      {/* <Button
                       onClick={() => {
                         handleRenewLease();
                       }}
@@ -1751,138 +1755,82 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                         height: "100%",
                       }}
                     > */}
-                    <Button
-                      onClick={() => {
-                        handleRenewLease();
-                      }}
-                      variant='contained'
-                      sx={{
-                        background: "#3D5CAC",
-                        color: theme.palette.background.default,
-                        cursor: "pointer",
-                        paddingX: "10px",
-                        textTransform: "none",
-                        maxWidth: "120px", // Fixed width for the button
-                        maxHeight: "100%",
-                      }}
-                      size='small'
-                    >
-                      <Typography
+                      <Button
+                        onClick={() => {
+                          handleRenewLease();
+                        }}
+                        variant='contained'
                         sx={{
+                          background: "#3D5CAC",
+                          color: theme.palette.background.default,
+                          cursor: "pointer",
+                          paddingX: "10px",
                           textTransform: "none",
-                          color: "#FFFFFF",
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: "12px",
-                          whiteSpace: "nowrap",
-                          //   marginLeft: "1%", // Adjusting margin for icon and text
+                          maxWidth: "120px", // Fixed width for the button
+                          maxHeight: "100%",
                         }}
+                        size='medium'
                       >
-                        {leaseDetails?.lease_renew_status === "RENEW REQUESTED" ? "Review Application" : "Renew Lease"}
-                      </Typography>
-                    </Button>
-                  </Grid>
-                )}
-
-                {/* {//console.log("1531 - relatedLease - ", relatedLease)} */}
-                {relatedLease != null && (
-                  <>
-                    {relatedLease?.lease_status === "RENEW NEW" || relatedLease?.lease_status === "RENEW PROCESSING" ? (
-                      // <Button
-                      //   variant='contained'
-                      //   size='small'
-                      //   sx={{
-                      //     backgroundColor: "#FFD700",
-                      //     color: "#FFFFF",
-                      //     fontWeight: "bold",
-                      //     textTransform: "none",
-                      //     marginLeft: "10px",
-                      //   }}
-                      //   onClick={handleViewRenewLease}
-                      // >
-                      //   RENEWAL APPLICATION
-                      // </Button>
-                      <Grid
-                        item
-                        xs={relatedLease?.lease_status === "RENEW PROCESSING" ? 4 : 6}
-                        sx={{
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          height: "100%",
-                        }}
-                      >
-                        <Button
-                          onClick={() => {
-                            handleViewRenewLease();
-                          }}
-                          variant='contained'
+                        <Typography
                           sx={{
-                            background: "#FFD700",
-                            color: theme.palette.background.default,
-                            cursor: "pointer",
-                            paddingX: "10px",
                             textTransform: "none",
-                            maxWidth: "100%", // Fixed width for the button
-                            maxHeight: "100%",
+                            color: "#FFFFFF",
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: "12px",
+                            whiteSpace: "nowrap",
+                            //   marginLeft: "1%", // Adjusting margin for icon and text
                           }}
-                          size='small'
                         >
-                          <Typography
-                            sx={{
-                              textTransform: "none",
-                              color: "#FFFFFF",
-                              fontWeight: theme.typography.secondary.fontWeight,
-                              fontSize: "12px",
-                              whiteSpace: "nowrap",
-                              //   marginLeft: "1%", // Adjusting margin for icon and text
-                            }}
-                          >
-                            {"Update Application 2"}
-                          </Typography>
-                        </Button>
-                      </Grid>
-                    ) : (
-                      showRenewLeaseButton &&
-                      relatedLease?.lease_status !== "RENEW PROCESSING" &&
-                      relatedLease?.lease_status !== "APPROVED" && (
+                          {leaseDetails?.lease_renew_status === "RENEW REQUESTED" ? "Review Application" : "Renew Lease"}
+                        </Typography>
+                      </Button>
+                    </Grid>
+                  )}
+
+                  {/* {//console.log("1531 - relatedLease - ", relatedLease)} */}
+                  {relatedLease != null && (
+                    <>
+                      {relatedLease?.lease_status === "RENEW NEW" || relatedLease?.lease_status === "RENEW PROCESSING" ? (
                         // <Button
                         //   variant='contained'
                         //   size='small'
-                        //   onClick={handleRenewLease}
                         //   sx={{
-                        //     marginLeft: "10px",
+                        //     backgroundColor: "#FFD700",
+                        //     color: "#FFFFF",
                         //     fontWeight: "bold",
-                        //     backgroundColor: "#3D5CAC",
-                        //     color: "white",
+                        //     textTransform: "none",
+                        //     marginLeft: "10px",
                         //   }}
+                        //   onClick={handleViewRenewLease}
                         // >
-                        //   Renew Lease
+                        //   RENEWAL APPLICATION
                         // </Button>
                         <Grid
                           item
-                          xs={6}
+                          // xs={relatedLease?.lease_status === "RENEW PROCESSING" ? 4 : 6}
                           sx={{
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
                             height: "100%",
+                            width:"100%"
                           }}
                         >
                           <Button
                             onClick={() => {
-                              handleRenewLease();
+                              handleViewRenewLease();
                             }}
                             variant='contained'
                             sx={{
-                              background: "#3D5CAC",
+                              background: "#FFD700",
                               color: theme.palette.background.default,
                               cursor: "pointer",
                               paddingX: "10px",
                               textTransform: "none",
-                              width: "100%", // Fixed width for the button
+                              maxWidth: "100%", // Fixed width for the button
                               maxHeight: "100%",
                             }}
-                            size='small'
+                            size='medium'
                           >
                             <Typography
                               sx={{
@@ -1894,73 +1842,131 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                                 //   marginLeft: "1%", // Adjusting margin for icon and text
                               }}
                             >
-                              {leaseDetails?.lease_renew_status === "RENEW REQUESTED" ? "Review Application" : "Renew Lease"}
+                              {"Update Application 2"}
                             </Typography>
                           </Button>
                         </Grid>
-                      )
-                    )}
-                  </>
-                )}
-                {/* {console.log("ROHIT - 1780 - relatedLease - ", relatedLease)} */}
+                      ) : (
+                        showRenewLeaseButton &&
+                        relatedLease?.lease_status !== "RENEW PROCESSING" &&
+                        relatedLease?.lease_status !== "APPROVED" && (
+                          // <Button
+                          //   variant='contained'
+                          //   size='small'
+                          //   onClick={handleRenewLease}
+                          //   sx={{
+                          //     marginLeft: "10px",
+                          //     fontWeight: "bold",
+                          //     backgroundColor: "#3D5CAC",
+                          //     color: "white",
+                          //   }}
+                          // >
+                          //   Renew Lease
+                          // </Button>
+                          <Grid
+                            item
+                            // xs={6}
+                            sx={{
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              height: "100%",
+                            }}
+                          >
+                            <Button
+                              onClick={() => {
+                                handleRenewLease();
+                              }}
+                              variant='contained'
+                              sx={{
+                                background: "#3D5CAC",
+                                color: theme.palette.background.default,
+                                cursor: "pointer",
+                                paddingX: "10px",
+                                textTransform: "none",
+                                width: "100%", // Fixed width for the button
+                                maxHeight: "100%",
+                              }}
+                              size='medium'
+                            >
+                              <Typography
+                                sx={{
+                                  textTransform: "none",
+                                  color: "#FFFFFF",
+                                  fontWeight: theme.typography.secondary.fontWeight,
+                                  fontSize: "12px",
+                                  whiteSpace: "nowrap",
+                                  //   marginLeft: "1%", // Adjusting margin for icon and text
+                                }}
+                              >
+                                {leaseDetails?.lease_renew_status === "RENEW REQUESTED" ? "Review Application" : "Renew Lease"}
+                              </Typography>
+                            </Button>
+                          </Grid>
+                        )
+                      )}
+                    </>
+                  )}
+                  {/* {console.log("ROHIT - 1780 - relatedLease - ", relatedLease)} */}
 
-                {relatedLease && (relatedLease.lease_status === "RENEW PROCESSING" || relatedLease.lease_status === "APPROVED") && (
-                  // <Button
-                  //   variant='contained'
-                  //   size='small'
-                  //   onClick={handleViewRenewProcessingLease}
-                  //   sx={{
-                  //     marginLeft: "10px",
-                  //     fontWeight: "bold",
-                  //     backgroundColor: "#76B148",
-                  //     color: "white",
-                  //   }}
-                  // >
-                  //   View Renewal Lease
-                  // </Button>
-                  <Grid
-                    item
-                    xs={relatedLease?.lease_status === "RENEW PROCESSING" || relatedLease?.lease_status === "APPROVED" ? 4 : 6}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      height: "100%",
-                    }}
-                  >
-                    <Button
-                      onClick={() => {
-                        handleViewRenewProcessingLease();
-                      }}
-                      variant='contained'
+                  {relatedLease && (relatedLease.lease_status === "RENEW PROCESSING" || relatedLease.lease_status === "APPROVED") && (
+                    // <Button
+                    //   variant='contained'
+                    //   size='small'
+                    //   onClick={handleViewRenewProcessingLease}
+                    //   sx={{
+                    //     marginLeft: "10px",
+                    //     fontWeight: "bold",
+                    //     backgroundColor: "#76B148",
+                    //     color: "white",
+                    //   }}
+                    // >
+                    //   View Renewal Lease
+                    // </Button>
+                    <Grid
+                      item
+                      // xs={relatedLease?.lease_status === "RENEW PROCESSING" || relatedLease?.lease_status === "APPROVED" ? 4 : 6}
                       sx={{
-                        background: relatedLease?.lease_status === "APPROVED" ? "#3D5CAC" : "#76B148",
-                        color: theme.palette.background.default,
-                        cursor: "pointer",
-                        paddingX: "10px",
-                        textTransform: "none",
-                        // maxWidth: "130px", // Fixed width for the button
-                        // maxHeight: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100%",
                       }}
-                      size='small'
                     >
-                      <Typography
-                        sx={{
-                          textTransform: "none",
-                          color: "#FFFFFF",
-                          fontWeight: theme.typography.secondary.fontWeight,
-                          fontSize: "12px",
-                          whiteSpace: "nowrap",
-                          //   marginLeft: "1%", // Adjusting margin for icon and text
+                      <Button
+                        onClick={() => {
+                          handleViewRenewProcessingLease();
                         }}
+                        variant='contained'
+                        sx={{
+                          background: relatedLease?.lease_status === "APPROVED" ? "#3D5CAC" : "#76B148",
+                          color: theme.palette.background.default,
+                          cursor: "pointer",
+                          paddingX: "10px",
+                          textTransform: "none",
+                          // maxWidth: "130px", // Fixed width for the button
+                          // maxHeight: "100%",
+                        }}
+                        size='medium'
                       >
-                        {relatedLease.lease_status === "RENEW PROCESSING" ? "View Renewal" : ""}
-                        {relatedLease.lease_status === "APPROVED" && (relatedLease.lease_status == null || relatedLease.lease_status === "EARLY TERMINATION") ? "View Renewed Lease" : ""}
-                        {relatedLease.lease_status === "APPROVED" ? "View Approved Lease" : ""}
-                      </Typography>
-                    </Button>
-                  </Grid>
-                )}
+                        <Typography
+                          sx={{
+                            textTransform: "none",
+                            color: "#FFFFFF",
+                            fontWeight: theme.typography.secondary.fontWeight,
+                            fontSize: "12px",
+                            whiteSpace: "nowrap",
+                            //   marginLeft: "1%", // Adjusting margin for icon and text
+                          }}
+                        >
+                          {relatedLease.lease_status === "RENEW PROCESSING" ? "View Renewal" : ""}
+                          {relatedLease.lease_status === "APPROVED" && (relatedLease.lease_status == null || relatedLease.lease_status === "EARLY TERMINATION") ? "View Renewed Lease" : ""}
+                          {relatedLease.lease_status === "APPROVED" ? "View Approved Lease" : ""}
+                        </Typography>
+                      </Button>
+                    </Grid>
+                  )}
+                </Grid>
               </Grid>
 
               {/* Lease Fees */}
@@ -3242,7 +3248,7 @@ function TenantBalanceTablePM(props) {
       headerName: "Amount Due",
       flex: 1,
       renderCell: (params) => {
-      return <Box sx={{ fontWeight: "bold", textAlign: "right", width: "100%" }}>${parseFloat(params.row.amountDue).toFixed(2)}</Box>;
+        return <Box sx={{ fontWeight: "bold", textAlign: "right", width: "100%" }}>${parseFloat(params.row.amountDue).toFixed(2)}</Box>;
       },
     },
   ];
@@ -3266,7 +3272,7 @@ function TenantBalanceTablePM(props) {
           getRowId={(row) => row.purchase_uid}
           initialState={{
             pagination: {
-              paginationModel: { pageSize: 15, page: 0 }, 
+              paginationModel: { pageSize: 15, page: 0 },
             },
             sorting: {
               sortModel: [{ field: "due_date_formatted", sort: "desc" }],
