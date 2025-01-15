@@ -282,7 +282,7 @@ export default function LeaseDetailsComponent({
               {/* Property Manager */}
               {selectedRole === "OWNER" && (
                 <Grid container item spacing={2}>
-                  <Grid item xs={6}>
+                  <Grid item xs={4}>
                     <Typography
                       sx={{
                         color: theme.typography.primary.black,
@@ -293,7 +293,7 @@ export default function LeaseDetailsComponent({
                       Tenant:
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={8}>
                     {activeLease ? (
                       <Box display='flex' justifyContent='space-between' alignItems='center'>
                         <Typography
@@ -342,7 +342,7 @@ export default function LeaseDetailsComponent({
               {
                 (activeLease || renewedLease != null) && (
                   <Grid container item spacing={2}>
-                    <Grid item xs={6}>
+                    <Grid item xs={4}>
                       <Typography
                         sx={{
                           color: theme.typography.primary.black,
@@ -353,7 +353,7 @@ export default function LeaseDetailsComponent({
                         Lease UID:
                       </Typography>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={8}>
                       {
                         isFlipped === false && (
                           <Box display='flex' alignItems='center' justifyContent={"space-between"}>
@@ -407,7 +407,7 @@ export default function LeaseDetailsComponent({
               {/* Owner Info for Managers */}
               {selectedRole === "MANAGER" && (
                 <Grid container item spacing={2}>
-                  <Grid item xs={6}>
+                  <Grid item xs={4}>
                     <Typography
                       sx={{
                         color: theme.typography.primary.black,
@@ -418,7 +418,7 @@ export default function LeaseDetailsComponent({
                       Tenant:
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={8}>
                     <Box display='flex' justifyContent='space-between' alignItems='center'>
                       <Typography
                         sx={{
@@ -448,7 +448,7 @@ export default function LeaseDetailsComponent({
               )}
 
               <Grid container item spacing={2}>
-                <Grid item xs={6}>
+                <Grid item xs={4}>
                   <Typography
                     sx={{
                       color: theme.typography.primary.black,
@@ -459,7 +459,7 @@ export default function LeaseDetailsComponent({
                     Lease Name:
                   </Typography>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={8}>
                   <Box display='flex' alignItems='center' justifyContent={"space-between"}>
                     {/* {currentProperty?.lease_status === "ACTIVE" || currentProperty?.lease_status === "ACTIVE M2M" ? (                     */}
                     {activeLease ? ( 
@@ -489,7 +489,7 @@ export default function LeaseDetailsComponent({
 
               {/* Lease Status */}
               <Grid container item spacing={2}>
-                <Grid item xs={6}>
+                <Grid item xs={4}>
                   <Typography
                     sx={{
                       color: theme.typography.primary.black,
@@ -502,7 +502,7 @@ export default function LeaseDetailsComponent({
                 </Grid>
                 {
                   isFlipped === false && (
-                    <Grid item xs={6}>
+                    <Grid item xs={8}>
                       <Box display='flex' alignItems='center' justifyContent={"space-between"}>
                         
                         {/* {currentProperty?.lease_status === "ACTIVE" || currentProperty?.lease_status === "ACTIVE M2M" ? ( */}
@@ -559,7 +559,7 @@ export default function LeaseDetailsComponent({
                 }
                 {
                   isFlipped === true && (
-                    <Grid item xs={6}>
+                    <Grid item xs={8}>
                       <Box display='flex' alignItems='center' justifyContent={"space-between"}>                                                
                           <>
                             <Typography
@@ -605,7 +605,7 @@ export default function LeaseDetailsComponent({
               {/* Lease Term */}
               {(activeLease || renewedLease != null ) && (
                 <Grid container item spacing={2}>
-                  <Grid item xs={6}>
+                  <Grid item xs={4}>
                     <Typography
                       sx={{
                         color: theme.typography.primary.black,
@@ -616,7 +616,7 @@ export default function LeaseDetailsComponent({
                       Lease Term:
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={8}>
                     {
                       isFlipped === false && (
                         <Typography
@@ -653,7 +653,7 @@ export default function LeaseDetailsComponent({
 
         {(activeLease || renewedLease != null) && (
                 <Grid container item spacing={2}>
-                  <Grid item xs={6}>
+                  <Grid item xs={4}>
                     <Typography
                       sx={{
                         color: theme.typography.primary.black,
@@ -664,7 +664,7 @@ export default function LeaseDetailsComponent({
                       End Notice Period:
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={8}>
                     {
                       isFlipped === false && (
                         <Typography
@@ -699,7 +699,7 @@ export default function LeaseDetailsComponent({
 
         {(activeLease || renewedLease != null) && (
                 <Grid container item spacing={2}>
-                  <Grid item xs={6}>
+                  <Grid item xs={4}>
                     <Typography
                       sx={{
                         color: theme.typography.primary.black,
@@ -710,7 +710,7 @@ export default function LeaseDetailsComponent({
                       Lease Renewal:
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={8}>
                   <>
                   {
                     isFlipped === false && (
