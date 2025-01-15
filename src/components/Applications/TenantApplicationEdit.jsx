@@ -41,6 +41,7 @@ import { json, Navigate } from "react-router-dom";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
+import dayjs from "dayjs";
 
 export default function TenantApplicationEdit(props) {
     const { getList } = useContext(ListsContext);
@@ -917,6 +918,15 @@ export default function TenantApplicationEdit(props) {
 
     const handleApplicationSubmit = async () => {
         const currentLease = props.currentLease;
+        let announcement_title = "";
+        let announcement_msg = "";
+        if(status === "NEW"){
+            announcement_title = "New Tenant Application";
+            announcement_msg = "You have a new tenant application for your property"
+        } else {
+            announcement_title= "Lease Renewal Request";
+            announcement_msg= "An existing tenant would like to renew their lease.";
+        }
         // if (lease != null && lease[0]?.lease_status === "INACTIVE") {
         if (currentLease != null && currentLease?.lease_status === "INACTIVE") {
             alert("Lease status is INACTIVE");
@@ -955,16 +965,163 @@ export default function TenantApplicationEdit(props) {
 
                 }
                 leaseApplicationData.append("lease_status", "RENEW NEW");
+                // const oldDuration = dayjs(props.data.lease_end).diff(dayjs(props.data.lease_start), "day"); // Duration in days
+                // let leaseStartDate = dayjs(props.data.lease_end).add(1, "day");
+                // let leaseEndDate = leaseStartDate.add(oldDuration, "day");
+                // console.log('oldDuration', oldDuration)
+                // console.log('lease start date', leaseStartDate);
+                // console.log('lease end date', leaseEndDate);
+                // leaseApplicationData.append("lease_start", dayjs(leaseStartDate).format('MM/DD/YYYY'));
+                // leaseApplicationData.append("lease_end", dayjs(leaseEndDate).format('MM/DD/YYYY'));
+
+                leaseApplicationData.append("lease_start", dayjs(props.data.lease_start).format('MM-DD-YYYY'));
+                leaseApplicationData.append("lease_end", dayjs(props.data.lease_end).format('MM-DD-YYYY'));
 
                 //Announcements
+                // const annoucementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
+                //     method: "POST",
+                //     headers: {
+                //         "Content-Type": "application/json",
+                //     },
+                //     body: JSON.stringify({
+                //         announcement_title: "Lease Renewal Request",
+                //         announcement_msg: "An existing tenant would like to renew their lease.",
+                //         announcement_sender: getProfileId(),
+                //         announcement_date: date.toDateString(),
+                //         announcement_properties: JSON.stringify(receiverPropertyMapping),
+                //         announcement_mode: "LEASE",
+                //         announcement_receiver: [props.data.business_uid],
+                //         announcement_type: ["Email", "Text"],
+                //     }),
+                // });
+
+                // if (annoucementsResponse.ok) {
+
+                // } else {
+                //     console.log("Failed to send announcements.");
+                //     alert("We were unable to send the notification through text, but a notification was sent through the app.");
+                // }
+            } else {
+                leaseApplicationData.append("lease_status", "NEW");
+            }
+
+            console.log('In common')
+            leaseApplicationData.append("lease_assigned_contacts", JSON.stringify([getProfileId()]));
+            leaseApplicationData.append("lease_income", JSON.stringify(selectedJobs));
+
+            let index = -1;
+            const documentsDetails = [];
+
+            if (extraUploadDocument && extraUploadDocument.length !== 0) {
+                [...extraUploadDocument].forEach((file, i) => {
+                    index++;
+                    leaseApplicationData.append(`file_${index}`, file, file.name);
+                    const contentType = extraUploadDocumentType[i] || "";
+                    const documentObject = {
+                        fileIndex: index,
+                        fileName: file.name,
+                        contentType: contentType,
+                    };
+                    documentsDetails.push(documentObject);
+                });
+            }
+
+            leaseApplicationData.append("lease_documents_details", JSON.stringify(documentsDetails));
+
+            if (tenantDocuments && tenantDocuments.length !== 0) {
+                [...tenantDocuments].forEach((file, i) => {
+                    index++;
+                    const documentObject = {
+                        link: file.link,
+                        fileType: file.fileType,
+                        filename: file.filename,
+                        contentType: file.contentType,
+                    };
+                    leaseApplicationData.append(`file_${index}`, JSON.stringify(documentObject));
+                });
+            }
+
+            if (deleteDocuments && deleteDocuments.length !== 0) {
+                leaseApplicationData.append("delete_documents", JSON.stringify(deleteDocuments));
+            }
+
+            // Use the updated state values for occupancy details
+            leaseApplicationData.append("lease_adults", JSON.stringify(adultOccupants));
+            leaseApplicationData.append("lease_children", JSON.stringify(childOccupants));
+            leaseApplicationData.append("lease_pets", JSON.stringify(petOccupants));
+            leaseApplicationData.append("lease_vehicles", JSON.stringify(vehicles));
+
+            //   //console.log("880 - lease - ", lease);
+            //   const leaseUtils = lease != null && lease?.length > 0 && lease[0].lease_utilities ? JSON.parse(lease[0].lease_utilities) : [];
+            // const leaseUtils = currentLease != null && currentLease.lease_utilities != null ? JSON.parse(currentLease.lease_utilities) : [];
+
+            // // leaseApplicationData.append("lease_utilities", leaseUtils.length > 0 ? lease[0]?.lease_utilities : JSON.stringify(propertyUtilities)) // propertyUtilities - property utilities from listing
+
+            // //   if (lease == null || lease?.length === 0 || [null, "REFUSED", "RESCIND", "WITHDRAWN", "REJECTED"].includes(lease[0]?.lease_status)) {
+            // if (currentLease == null || [null, "REFUSED", "RESCIND", "WITHDRAWN", "REJECTED"].includes(currentLease.lease_status)) {
+            //   leaseApplicationData.append("lease_utilities", JSON.stringify(propertyUtilities)); // propertyUtilities - property utilities from listing
+            // } else if (["ACTIVE", "ACTIVE M2M", "NEW", "PROCESSING", "ENDED", "EXPIRED", "RENEW PROCESSING", "RENEW NEW", "RENEW REQUESTED"].includes(currentLease?.lease_status)) {
+            //   leaseApplicationData.append("lease_utilities", leaseUtils.length > 0 ? currentLease?.lease_utilities : JSON.stringify([]));
+            // }
+
+            leaseApplicationData.append("lease_referred", "[]");
+
+            //   const leaseFees = lease != null && lease?.length > 0 && lease[0].lease_fees ? JSON.parse(lease[0].lease_fees) : [];
+            const leaseFees = currentLease != null && currentLease.lease_fees != null ? JSON.parse(currentLease.lease_fees) : [];
+
+            // leaseApplicationData.append("lease_fees", "[]");
+            // leaseApplicationData.append("lease_fees", leaseFees.length > 0 ? lease[0]?.lease_fees : JSON.stringify([]));
+            leaseApplicationData.append("lease_fees", leaseFees.length > 0 ? currentLease?.lease_fees : JSON.stringify([]));
+
+            const leaseUtils = currentLease != null && currentLease.lease_utilities != null ? JSON.parse(currentLease.lease_utilities) : [];
+
+            // leaseApplicationData.append("lease_fees", "[]");
+            // leaseApplicationData.append("lease_fees", leaseFees.length > 0 ? lease[0]?.lease_fees : JSON.stringify([]));
+            leaseApplicationData.append("lease_utilities", leaseUtils.length > 0 ? currentLease?.lease_utilities : JSON.stringify(propertyUtilities));
+
+            leaseApplicationData.append("lease_application_date", formatDate(date.toLocaleDateString('en-US', {
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+            })));
+            leaseApplicationData.append("tenant_uid", getProfileId());
+
+            if (currentLease != null && (currentLease.lease_status === "ACTIVE" || currentLease.lease_status === "ACTIVE M2M")) {
+                leaseApplicationData.append("lease_end_notice_period", currentLease.lease_end_notice_period ? currentLease.lease_end_notice_period : 30);
+            }
+
+            if (currentLease != null && (currentLease.lease_status === "ACTIVE" || currentLease.lease_status === "ACTIVE M2M")) {
+                leaseApplicationData.append("lease_m2m", currentLease.lease_m2m ? currentLease.lease_m2m : 0);
+            }
+
+            // //console.log("we are here -- ")
+
+            // leaseApplicationData.forEach((value, key) => {
+            //     //console.log(`${key}: ${value}`);
+            // });
+
+            const leaseApplicationResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+                method: "POST",
+                body: leaseApplicationData,
+            });
+
+            if (leaseApplicationResponse.ok) {
+
+                props.setReload((prev) => !prev);
+
+                if (props.from === "PropertyInfo") {
+                    props.setRightPane({ type: "listings" });
+                }
+
                 const annoucementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        announcement_title: "Lease Renewal Request",
-                        announcement_msg: "An existing tenant would like to renew their lease.",
+                        announcement_title: announcement_title,
+                        announcement_msg: announcement_msg,
                         announcement_sender: getProfileId(),
                         announcement_date: date.toDateString(),
                         announcement_properties: JSON.stringify(receiverPropertyMapping),
@@ -975,150 +1132,14 @@ export default function TenantApplicationEdit(props) {
                 });
 
                 if (annoucementsResponse.ok) {
-                    
+
                 } else {
-                    console.log("Failed to send announcements.");
                     alert("We were unable to send the notification through text, but a notification was sent through the app.");
+                    //console.log("Failed to send announcements.");
                 }
+
             } else {
-                leaseApplicationData.append("lease_status", "NEW");
-
-
-                leaseApplicationData.append("lease_assigned_contacts", JSON.stringify([getProfileId()]));
-                leaseApplicationData.append("lease_income", JSON.stringify(selectedJobs));
-
-                let index = -1;
-                const documentsDetails = [];
-
-                if (extraUploadDocument && extraUploadDocument.length !== 0) {
-                    [...extraUploadDocument].forEach((file, i) => {
-                        index++;
-                        leaseApplicationData.append(`file_${index}`, file, file.name);
-                        const contentType = extraUploadDocumentType[i] || "";
-                        const documentObject = {
-                            fileIndex: index,
-                            fileName: file.name,
-                            contentType: contentType,
-                        };
-                        documentsDetails.push(documentObject);
-                    });
-                }
-
-                leaseApplicationData.append("lease_documents_details", JSON.stringify(documentsDetails));
-
-                if (tenantDocuments && tenantDocuments.length !== 0) {
-                    [...tenantDocuments].forEach((file, i) => {
-                        index++;
-                        const documentObject = {
-                            link: file.link,
-                            fileType: file.fileType,
-                            filename: file.filename,
-                            contentType: file.contentType,
-                        };
-                        leaseApplicationData.append(`file_${index}`, JSON.stringify(documentObject));
-                    });
-                }
-
-                if (deleteDocuments && deleteDocuments.length !== 0) {
-                    leaseApplicationData.append("delete_documents", JSON.stringify(deleteDocuments));
-                }
-
-                // Use the updated state values for occupancy details
-                leaseApplicationData.append("lease_adults", JSON.stringify(adultOccupants));
-                leaseApplicationData.append("lease_children", JSON.stringify(childOccupants));
-                leaseApplicationData.append("lease_pets", JSON.stringify(petOccupants));
-                leaseApplicationData.append("lease_vehicles", JSON.stringify(vehicles));
-
-                //   //console.log("880 - lease - ", lease);
-                //   const leaseUtils = lease != null && lease?.length > 0 && lease[0].lease_utilities ? JSON.parse(lease[0].lease_utilities) : [];
-                // const leaseUtils = currentLease != null && currentLease.lease_utilities != null ? JSON.parse(currentLease.lease_utilities) : [];
-
-                // // leaseApplicationData.append("lease_utilities", leaseUtils.length > 0 ? lease[0]?.lease_utilities : JSON.stringify(propertyUtilities)) // propertyUtilities - property utilities from listing
-
-                // //   if (lease == null || lease?.length === 0 || [null, "REFUSED", "RESCIND", "WITHDRAWN", "REJECTED"].includes(lease[0]?.lease_status)) {
-                // if (currentLease == null || [null, "REFUSED", "RESCIND", "WITHDRAWN", "REJECTED"].includes(currentLease.lease_status)) {
-                //   leaseApplicationData.append("lease_utilities", JSON.stringify(propertyUtilities)); // propertyUtilities - property utilities from listing
-                // } else if (["ACTIVE", "ACTIVE M2M", "NEW", "PROCESSING", "ENDED", "EXPIRED", "RENEW PROCESSING", "RENEW NEW", "RENEW REQUESTED"].includes(currentLease?.lease_status)) {
-                //   leaseApplicationData.append("lease_utilities", leaseUtils.length > 0 ? currentLease?.lease_utilities : JSON.stringify([]));
-                // }
-
-                leaseApplicationData.append("lease_referred", "[]");
-
-                //   const leaseFees = lease != null && lease?.length > 0 && lease[0].lease_fees ? JSON.parse(lease[0].lease_fees) : [];
-                const leaseFees = currentLease != null && currentLease.lease_fees != null ? JSON.parse(currentLease.lease_fees) : [];
-
-                // leaseApplicationData.append("lease_fees", "[]");
-                // leaseApplicationData.append("lease_fees", leaseFees.length > 0 ? lease[0]?.lease_fees : JSON.stringify([]));
-                leaseApplicationData.append("lease_fees", leaseFees.length > 0 ? currentLease?.lease_fees : JSON.stringify([]));
-
-                const leaseUtils = currentLease != null && currentLease.lease_utilities != null ? JSON.parse(currentLease.lease_utilities) : [];
-
-                // leaseApplicationData.append("lease_fees", "[]");
-                // leaseApplicationData.append("lease_fees", leaseFees.length > 0 ? lease[0]?.lease_fees : JSON.stringify([]));
-                leaseApplicationData.append("lease_utilities", leaseUtils.length > 0 ? currentLease?.lease_utilities : JSON.stringify(propertyUtilities));
-
-                leaseApplicationData.append("lease_application_date", formatDate(date.toLocaleDateString('en-US', {
-                    hour12: false,
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                })));
-                leaseApplicationData.append("tenant_uid", getProfileId());
-
-                if (currentLease != null && (currentLease.lease_status === "ACTIVE" || currentLease.lease_status === "ACTIVE M2M")) {
-                    leaseApplicationData.append("lease_end_notice_period", currentLease.lease_end_notice_period ? currentLease.lease_end_notice_period : 30);
-                }
-
-                if (currentLease != null && (currentLease.lease_status === "ACTIVE" || currentLease.lease_status === "ACTIVE M2M")) {
-                    leaseApplicationData.append("lease_m2m", currentLease.lease_m2m ? currentLease.lease_m2m : 0);
-                }
-
-                // //console.log("we are here -- ")
-
-                // leaseApplicationData.forEach((value, key) => {
-                //     //console.log(`${key}: ${value}`);
-                // });
-
-                const leaseApplicationResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
-                    method: "POST",
-                    body: leaseApplicationData,
-                });
-
-                if (leaseApplicationResponse.ok) {
-
-                    props.setReload((prev) => !prev);
-
-                    if (props.from === "PropertyInfo") {
-                        props.setRightPane({ type: "listings" });
-                    }
-
-                    const annoucementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                            announcement_title: "New Tenant Application",
-                            announcement_msg: "You have a new tenant application for your property",
-                            announcement_sender: getProfileId(),
-                            announcement_date: date.toDateString(),
-                            announcement_properties: JSON.stringify(receiverPropertyMapping),
-                            announcement_mode: "LEASE",
-                            announcement_receiver: [property.contract_business_id],
-                            announcement_type: ["Email", "Text"],
-                        }),
-                    });
-
-                    if (annoucementsResponse.ok) {
-
-                    } else {
-                        alert("We were unable to send the notification through text, but a notification was sent through the app.");
-                        //console.log("Failed to send announcements.");
-                    }
-
-                } else {
-                    //console.log("Failed to process lease application.");
-                }
+                //console.log("Failed to process lease application.");
             }
             // const annoucementsResponse = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
             //   method: "POST",

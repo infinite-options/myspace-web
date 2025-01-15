@@ -1746,6 +1746,8 @@ const TenantLease = () => {
         return "Rescinded";
       case "RENEW RESCINDED":
         return "Rescinded";
+      case "RENEW NEW":
+        return "Renewal";
       case "APPROVED":
         if (renewStatus == null || renewStatus === "EARLY TERMINATION") {
           return "Approved";
