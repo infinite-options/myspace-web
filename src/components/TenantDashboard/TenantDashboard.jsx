@@ -72,6 +72,7 @@ import { Type } from "ajv/dist/compile/util";
 import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy } from "../../utils/fees";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import { ListsProvider } from "../../contexts/ListsContext";
+import dayjs from "dayjs";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -802,10 +803,10 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
       headerName: "Date",
       flex: 1,
       renderCell: (params) => {
-        const date = new Date(params.value);
+        const date = dayjs(params.value).format('YYYY-MM-DD');
         return (
           <Box sx={{ fontWeight: "bold" }}>
-            {date.toLocaleDateString("en-US")} {/* Format date to MM/DD/YYYY */}
+            {date}
           </Box>
         );
       },
@@ -869,10 +870,10 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
           <DataGrid
             rows={data}
             columns={columns}
-            pageSizeOptions={[5, 10, 25, 100]}
+            pageSizeOptions={[15, 25, 100]}
             initialState={{
               pagination: {
-                paginationModel: { pageSize: 5 },
+                paginationModel: { pageSize: 15, page: 0 },
               },
               sorting: {
                 sortModel: [{ field: "payment_date", sort: "desc" }], // Default sorting by date
@@ -3118,6 +3119,7 @@ function TenantBalanceTablePM(props) {
         data.map((item) => ({
           ...item,
           pur_amount_due: parseFloat(item.amountDue),
+          due_date_formatted: dayjs(item.dueDate).format('YYYY-MM-DD')
         }))
       );
     }
@@ -3161,6 +3163,7 @@ function TenantBalanceTablePM(props) {
     }));
 
     props.setShowSpinner(false);
+    console.log('paymentDueResult', paymentDueResult);
   }, [selectedRows, paymentDueResult]);
 
   useEffect(() => {
@@ -3211,10 +3214,10 @@ function TenantBalanceTablePM(props) {
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
-      field: "purchaseDate",
+      field: "due_date_formatted",
       headerName: "Due Date",
       flex: 1,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value.split(" ")[0]}</Box>,
+      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
     },
     {
       field: "totalPaid",
@@ -3235,6 +3238,14 @@ function TenantBalanceTablePM(props) {
         </Box>
       ),
     },
+    {
+      field: "amount_due",
+      headerName: "Amount Due",
+      flex: 1,
+      renderCell: (params) => {
+      return <Box sx={{ fontWeight: "bold", textAlign: "right", width: "100%" }}>${parseFloat(params.row.amountDue).toFixed(2)}</Box>;
+      },
+    },
   ];
 
   return (
@@ -3247,15 +3258,19 @@ function TenantBalanceTablePM(props) {
           }}
           rows={paymentDueResult}
           columns={columnsList}
-          pageSizeOptions={[10, 50, 100]}
+          pageSize={15}
+          pageSizeOptions={[15, 25, 50, 100]}
           checkboxSelection
           disableRowSelectionOnClick
           rowSelectionModel={selectedRows}
           onRowSelectionModelChange={handleSelectionModelChange}
           getRowId={(row) => row.purchase_uid}
           initialState={{
+            pagination: {
+              paginationModel: { pageSize: 15, page: 0 }, 
+            },
             sorting: {
-              sortModel: [{ field: "purchaseDate", sort: "asc" }],
+              sortModel: [{ field: "due_date_formatted", sort: "desc" }],
             },
           }}
         />
