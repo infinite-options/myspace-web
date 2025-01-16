@@ -348,7 +348,7 @@ const TenantDashboard = () => {
     let leaseForProperty = null;
     if (allLeasesForProperty?.length > 1) {
       const newLease = allLeasesForProperty.find((ld) => ld.lease_status === "NEW");
-      const activeLease = allLeasesForProperty.find((ld) => ld.lease_status === "ACTIVE");
+      const activeLease = allLeasesForProperty.find((ld) => ld.lease_status === "ACTIVE" || ld.lease_status === "ACTIVE M2M");
       if (newLease != null) {
         leaseForProperty = newLease;
       } else {
@@ -803,7 +803,7 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
       headerName: "Date",
       flex: 1,
       renderCell: (params) => {
-        const date = dayjs(params.value).format('YYYY-MM-DD');
+        const date = dayjs(params.value).format('MM-DD-YYYY');
         return (
           <Box sx={{ fontWeight: "bold" }}>
             {date}
@@ -1769,7 +1769,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           cursor: "pointer",
                           paddingX: "10px",
                           textTransform: "none",
-                          maxWidth: "120px", // Fixed width for the button
+                          // maxWidth: "120px", // Fixed width for the button
                           maxHeight: "100%",
                           width:"150px"
                         }}
@@ -3132,7 +3132,7 @@ function TenantBalanceTablePM(props) {
         data.map((item) => ({
           ...item,
           pur_amount_due: parseFloat(item.amountDue),
-          due_date_formatted: dayjs(item.dueDate).format('YYYY-MM-DD')
+          due_date_formatted: dayjs(item.dueDate).format('MM-DD-YYYY')
         }))
       );
     }

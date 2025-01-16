@@ -393,7 +393,7 @@ const TenantLease = () => {
 
 
   const getDatesToggleInitialValue = () => {
-    if (["NEW", "RENEW NEW"].includes(lease?.lease_status)) {
+    if (["ACTIVE", "RENEW NEW"].includes(lease?.lease_status)) {
       return "select";
     }
     //  else if(["RENEW NEW", "PROCESSING", "RENEW PROCESSING", "WITHDRAWN", "RENEW WITHDRAWN", "REJECTED", "RENEW REJECTED", "REFUSED", "RENEW REFUSED", "RESCIND", "RENEW RESCINDED"].includes(application.lease_status)) {
@@ -442,7 +442,7 @@ const TenantLease = () => {
   }, []);
 
   useEffect(() => {
-    //console.log("ROHIT - 403 - datesToggle - ", datesToggle);
+    console.log("ROHIT - 403 - datesToggle - ", datesToggle, lease);
     if (datesToggle !== "select") {
       setDates();
     }
@@ -1767,6 +1767,9 @@ const TenantLease = () => {
 
   return (
     <ThemeProvider theme={theme}>
+       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+          <CircularProgress color='inherit' />
+        </Backdrop>
       <Box sx={{ backgroundColor: "#F2F2F2", borderRadius: "10px", margin: "10px", padding: "15px", fontFamily: "Source Sans Pro" }}>
         <Grid item xs={11} textAlign='center' sx={{ paddingTop: "5px" }}>
           <Typography
@@ -1948,7 +1951,6 @@ const TenantLease = () => {
                     <Grid item container direction='row' xs={12}>
                       <Grid item xs={12} sx={{ marginTop: "5px", justifyContent: "flex-start" }}>
                         <FormControl>
-
                           <RadioGroup
                             row
                             sx={{
@@ -1998,9 +2000,7 @@ const TenantLease = () => {
                               )
                             }
                             {
-                              lease?.lease_status != "RENEW NEW" || lease?.lease_status !== "ACTIVE" && (
-
-
+                              lease?.lease_status != "RENEW NEW" && lease?.lease_status !== "ACTIVE" && (
                                 <FormControlLabel
                                   value="current_lease"
                                   control={<Radio />}

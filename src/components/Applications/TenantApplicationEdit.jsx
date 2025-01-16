@@ -1534,6 +1534,35 @@ export default function TenantApplicationEdit(props) {
 
                     <Grid container xs={12} flexDirection={"row"}>
                         <Grid container justifyContent='center' item xs={12}>
+                        {(status === "NEW" || status === "RENEW NEW") && (
+                                <Button
+                                    variant='contained'
+                                    sx={{
+                                        backgroundColor: "#ffe230",
+                                        color: "#160449",
+                                        fontWeight: theme.typography.medium.fontWeight,
+                                        borderRadius: "5px",
+                                        display: "flex",
+                                        width: "30%",
+                                        ":hover": {
+                                            backgroundColor: "#ffeb99",
+                                            color: "#160449",
+                                        },
+                                    }}
+                                    onClick={() => setShowWithdrawLeaseDialog(true)}
+                                >
+                                    <Typography
+                                        sx={{
+                                            fontWeight: theme.typography.primary.fontWeight,
+                                            fontSize: isMobile ? "14px" : "16px",
+                                            color: "#160449",
+                                            textTransform: "none",
+                                        }}
+                                    >
+                                        Withdraw
+                                    </Typography>
+                                </Button>
+                            )}
                             <Button
                                 variant='contained'
                                 sx={{
@@ -1571,35 +1600,6 @@ export default function TenantApplicationEdit(props) {
                                         : ""}
                                 </Typography>
                             </Button>
-                            {(status === "NEW" || status === "RENEW NEW") && (
-                                <Button
-                                    variant='contained'
-                                    sx={{
-                                        backgroundColor: "#ffe230",
-                                        color: "#160449",
-                                        fontWeight: theme.typography.medium.fontWeight,
-                                        borderRadius: "5px",
-                                        display: "flex",
-                                        width: "30%",
-                                        ":hover": {
-                                            backgroundColor: "#ffeb99",
-                                            color: "#160449",
-                                        },
-                                    }}
-                                    onClick={() => setShowWithdrawLeaseDialog(true)}
-                                >
-                                    <Typography
-                                        sx={{
-                                            fontWeight: theme.typography.primary.fontWeight,
-                                            fontSize: isMobile ? "14px" : "16px",
-                                            color: "#160449",
-                                            textTransform: "none",
-                                        }}
-                                    >
-                                        Withdraw
-                                    </Typography>
-                                </Button>
-                            )}
                         </Grid>
                     </Grid>
 
