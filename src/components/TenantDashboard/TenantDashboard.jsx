@@ -1369,6 +1369,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           {leaseDetails?.lease_renew_status &&
                             (leaseDetails?.lease_renew_status === "PM RENEW REQUESTED" ||
                               leaseDetails?.lease_renew_status.includes("RENEW REQUESTED") ||
+                              leaseDetails?.lease_renew_status.includes("RENEW PROCESSING") || 
                               leaseDetails?.lease_renew_status === "RENEWED" ||
                               leaseDetails?.lease_renew_status === "RENEW REJECTED" ||
                               leaseDetails?.lease_renew_status === "EARLY TERMINATION" ||
@@ -1381,6 +1382,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                                 }}
                               >
                                 {leaseDetails?.lease_renew_status == "RENEW REQUESTED" || leaseDetails?.lease_renew_status == "PM RENEW REQUESTED" ? " RENEW REQUESTED" : ""}
+                                {leaseDetails?.lease_renew_status === "RENEW PROCESSING" ? "RENEWAL SENT" : ""}
                                 {leaseDetails?.lease_renew_status === "RENEWED" ? "RENEWED" : ""}
                                 {leaseDetails?.lease_renew_status === "RENEW REJECTED" ? "RENEW REJECTED" : ""}
                                 {leaseDetails?.lease_renew_status == "EARLY TERMINATION" ? "END EARLY" : ""}

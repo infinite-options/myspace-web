@@ -156,8 +156,8 @@ const TenantLease = () => {
   const { page, lease, property, managerInitiatedRenew = false } = state;
   const { getList, dataLoaded } = useContext(ListsContext);
   const feeFrequencies = getList("frequency");
-  //console.log("Property: ", property);
-  //console.log("Lease: ", lease);
+  console.log("Property: ", property);  // Property holds the current lease
+  console.log("Lease: ", lease.lease_uid); //Lease holds new lease 
   const [showSpinner, setShowSpinner] = useState(false);
   // Intermediate variables to calculate the initial dates
   let initialStartDate, initialEndDate, initialMoveInDate;
@@ -1142,7 +1142,7 @@ const TenantLease = () => {
   async function updateCurrentLease(renewStatus) {
     const leaseApplicationFormData = new FormData();
 
-    leaseApplicationFormData.append("lease_uid", lease.lease_uid);
+    leaseApplicationFormData.append("lease_uid", property.lease_uid);
     // leaseApplicationFormData.append("lease_renew_status", "RENEW REQUESTED");    
     leaseApplicationFormData.append("lease_renew_status", renewStatus);
 
@@ -1155,7 +1155,7 @@ const TenantLease = () => {
       // if (data.lease_update.code === 200) {
       if (response.ok) {
         // alert("You have successfully Rejected the lease.");
-        openDialog("Success", `You have successfully Rejected the lease`, "success");
+        openDialog("Success", `You have successfully Created the lease`, "success");
 
       } else {
         //console.log(data);
@@ -1312,14 +1312,16 @@ const TenantLease = () => {
         leaseApplicationFormData.append("lease_status", "PROCESSING");
       } else if (lease.lease_status === "RENEW NEW") {
         leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");
+        await updateCurrentLease("RENEW PROCESSING");
       } else if (lease.lease_status === "APPROVED") {
         // //console.log("968 - property - ", property);
-        if (lease.lease_status === "ACTIVE") {
-          leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");
-          await updateCurrentLease("PM RENEW REQUESTED");
-        } else {
-          leaseApplicationFormData.append("lease_status", "PROCESSING");
-        }
+        await updateCurrentLease("RENEWED");
+        // if (property.lease_status === "ACTIVE" || lease.lease_status === "ACTIVE M2M" ) {
+        //   leaseApplicationFormData.append("lease_status", "RENEW PROCESSING");
+        //   await updateCurrentLease("PM RENEW REQUESTED");
+        // } else {
+        //   leaseApplicationFormData.append("lease_status", "PROCESSING");
+        // }
 
       }
 

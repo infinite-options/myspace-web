@@ -595,7 +595,8 @@ export default function TenantApplicationEdit(props) {
 
                 if (status === "PROCESSING") {
                     leaseApplicationFormData.append("lease_status", "NEW");
-                } else if (status === "RENEW PROCESSING") {
+                // } else if (status === "RENEW PROCESSING") {
+                } else if (status.includes("RENEW")) {
                     leaseApplicationFormData.append("lease_status", "RENEW NEW");
                 }
 
@@ -779,7 +780,7 @@ export default function TenantApplicationEdit(props) {
     const handleSaveButton = async (e) => {
         e.preventDefault();
 
-        //console.log("status - ", status);
+        console.log("status - ", status);
         if (status == null) {
             //console.log("tenant creating new lease", status);
         } else if (status === "NEW" || status === "PROCESSING") {
@@ -800,8 +801,12 @@ export default function TenantApplicationEdit(props) {
                 props.setFirstPage(false);
             }
             await handleApplicationSubmit();
-        } else if (status === "RENEW NEW" || status === "RENEW PROCESSING" || status === "NEW" || status === "PROCESSING") {
+        } else if (status === "NEW" || status === "PROCESSING") {
             await updateLeaseData(); // Trigger the PUT request to save data
+        } else if (status === "RENEW NEW" || status === "RENEW PROCESSING") {
+            await updateLeaseData(); // Trigger the PUT request to save data Divya
+            console.log('props.currentLease.lease_uid', props.currentLease.lease_uid)
+            await handleOriginalLeaseUpdate( props.currentLease.lease_uid,"RENEW NEW")
         } else {
             // await updateLeaseData(); 
             alert("Invalid status");
@@ -916,6 +921,22 @@ export default function TenantApplicationEdit(props) {
         }
     }
 
+    const handleOriginalLeaseUpdate = async(lease_uid, lease_renew_status) => {
+        const updateLeaseData = new FormData();
+        updateLeaseData.append("lease_uid", lease_uid);
+        updateLeaseData.append("lease_renew_status", lease_renew_status);
+
+        console.log(" inside update lease status - ", updateLeaseData)
+        const updateLeaseResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+            method: "PUT",
+            body: updateLeaseData,
+        });
+
+        if (!updateLeaseResponse.ok) {
+            throw new Error("Failed to update lease status to RENEW.");
+        } 
+    }
+
     const handleApplicationSubmit = async () => {
         const currentLease = props.currentLease;
         let announcement_title = "";
@@ -948,22 +969,22 @@ export default function TenantApplicationEdit(props) {
             leaseApplicationData.append("lease_property_id", property.property_uid != null ? property.property_uid : currentLease?.lease_property_id);
 
             if (status === "RENEW NEW" || status === "RENEW PROCESSING" || currentLease?.lease_status === "ACTIVE" || currentLease?.lease_status === "ACTIVE M2M" || currentLease?.lease_status === "ENDED") {
-                const updateLeaseData = new FormData();
-                // updateLeaseData.append("lease_uid", lease[0].lease_uid);
-                updateLeaseData.append("lease_uid", currentLease.lease_uid);
-                updateLeaseData.append("lease_renew_status", "RENEW REQUESTED");
+                // const updateLeaseData = new FormData();
+                // // updateLeaseData.append("lease_uid", lease[0].lease_uid);
+                // updateLeaseData.append("lease_uid", currentLease.lease_uid);
+                // updateLeaseData.append("lease_renew_status", "RENEW REQUESTED");
 
-                // //console.log(" inside update lease status - ", updateLeaseData)
-                const updateLeaseResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
-                    method: "PUT",
-                    body: updateLeaseData,
-                });
+                // // //console.log(" inside update lease status - ", updateLeaseData)
+                // const updateLeaseResponse = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
+                //     method: "PUT",
+                //     body: updateLeaseData,
+                // });
 
-                if (!updateLeaseResponse.ok) {
-                    throw new Error("Failed to update lease status to RENEW.");
-                } else {
-
-                }
+                // if (!updateLeaseResponse.ok) {
+                //     throw new Error("Failed to update lease status to RENEW.");
+                // } else {
+                // }
+                await handleOriginalLeaseUpdate(currentLease.lease_uid, "RENEW REQUESTED");
                 leaseApplicationData.append("lease_status", "RENEW NEW");
                 // const oldDuration = dayjs(props.data.lease_end).diff(dayjs(props.data.lease_start), "day"); // Duration in days
                 // let leaseStartDate = dayjs(props.data.lease_end).add(1, "day");
@@ -1548,6 +1569,7 @@ export default function TenantApplicationEdit(props) {
                                             backgroundColor: "#ffeb99",
                                             color: "#160449",
                                         },
+                                        marginRight: "20px",
                                     }}
                                     onClick={() => setShowWithdrawLeaseDialog(true)}
                                 >
@@ -1569,7 +1591,6 @@ export default function TenantApplicationEdit(props) {
                                     width: "40%",
                                     backgroundColor: "#3D5CAC",
                                     borderRadius: "5px",
-                                    marginRight: "20px",
                                 }}
                                 onClick={handleSaveButton}
                             >
