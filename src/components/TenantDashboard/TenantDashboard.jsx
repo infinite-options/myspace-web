@@ -81,10 +81,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const TenantDashboard = () => {
+  // console.log('Inside Tenant dashboard')
   const { user } = useUser();
   const { getProfileId } = useUser();
   const location = useLocation();
-
+  const [reload, setReload] = useState(true);
   const [propertyListingData, setPropertyListingData] = useState([]);
   const [listingsData, setListingsData] = useState([]);
   const [selectedProperty, setSelectedProperty] = useState(null);
@@ -106,7 +107,6 @@ const TenantDashboard = () => {
   const [balanceDetails, setBalanceDetails] = useState([]);
   const [filteredMaintenanceRequests, setFilteredMaintenanceRequests] = useState([]);
   const [allBalanceDetails, setAllBalanceDetails] = useState([]);
-  const [reload, setReload] = useState(true);
   const [relatedLease, setRelatedLease] = useState(null);
 
   const [announcementSentData, setAnnouncementSentData] = useState([]);
@@ -155,6 +155,8 @@ const TenantDashboard = () => {
     try {
       // Set loading to true before fetching data
       const profileId = getProfileId();
+      // console.log("profile id is", profileId)
+      // console.log("user is", user)
       if (!profileId) return;
 
       const dashboardResponse = await fetch(`${APIConfig.baseURL.dev}/dashboard/${profileId}`);
@@ -214,7 +216,7 @@ const TenantDashboard = () => {
       //fetchCashflowDetails();
       setReload(false);
     }
-  }, [reload, user]);
+  }, [reload, user, getProfileId]);
 
   useEffect(() => {
     // setLoading(true)

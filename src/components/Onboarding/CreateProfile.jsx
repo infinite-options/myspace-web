@@ -161,20 +161,20 @@ const CreateProfile = () => {
     return data;
   };
 
-  const handleUpdateProfileUid = (data) => {    
+  const handleUpdateProfileUid = async (data) => {    
     if (data.owner_uid) {
-      updateProfileUid({ owner_id: data.owner_uid });
+      await updateProfileUid({ owner_id: data.owner_uid });
     }
     if (data.tenant_uid) {
-      updateProfileUid({ tenant_id: data.tenant_uid });
+      await updateProfileUid({ tenant_id: data.tenant_uid });
     }
     if (data.business_uid) {
-      updateProfileUid({ business_uid: data.business_uid });
-      updateProfileUid({ business_owner_id: data.employee_uid });
+      await updateProfileUid({ business_uid: data.business_uid });
+      await updateProfileUid({ business_owner_id: data.employee_uid });
     }
     if (data.employee_uid) {
       // //console.log("data.employee_uid - ", data.employee_uid);      
-      updateEmployeeProfileUid({ business_uid: selectedBusiness?.business_uid, business_employee_id: data.employee_uid }, user.role);
+      await updateEmployeeProfileUid({ business_uid: selectedBusiness?.business_uid, business_employee_id: data.employee_uid }, user.role);
       // updateProfileUid({ business_uid: selectedBusiness.business_uid });
       // updateProfileUid({ business_employee_id: data.employee_uid });
     }
@@ -189,7 +189,7 @@ const CreateProfile = () => {
     const form = encodeForm(payload);
     const data = await createProfile(form, user.role);        
     
-    handleUpdateProfileUid(data);
+    const resp = await handleUpdateProfileUid(data);
     setCookie("default_form_vals", { ...cookiesData, phoneNumber, email });
     
 

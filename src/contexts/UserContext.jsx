@@ -77,7 +77,8 @@ export const UserProvider = ({ children, cookiesObj = new Cookies() }) => {
   };
   const updateProfileUid = (profileUidObj) => {
     // //console.log("updateProfileUid - profileUidObj - ", profileUidObj)    
-    // //console.log("updateProfileUid - selectedRole - ", selectedRole)    
+    // //console.log("updateProfileUid - selectedRole - ", selectedRole) 
+    // console.log('In UserContext');   
     if (isBusiness() || isEmployee()) {
       setUser((prev) => updateUser(prev, profileUidObj));
     } else {

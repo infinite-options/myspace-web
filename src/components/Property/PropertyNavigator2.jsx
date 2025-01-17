@@ -2848,9 +2848,9 @@ const PropertyDetailsGrid = ({ propertyDetails }) => {
   const { otherDetails = [], propertyCodes = [], propertyAmenities = [] } = parsedDetails;
 
   const rows = [
-    { type: "Other Details", details: otherDetails },
     { type: "Property Codes", details: propertyCodes },
     { type: "Property Amenities", details: propertyAmenities },
+    { type: "Other Details", details: otherDetails },
   ];
 
   return (
