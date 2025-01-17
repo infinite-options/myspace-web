@@ -42,7 +42,8 @@ const TenantApplicationNav = (props) => {
   const [lease, setLease] = useState([]);
 
   useEffect(() => {
-    const filteredLeases = allLeases.filter((lease) => lease.lease_status && !["ACTIVE", "ACTIVE M2M", "ENDED", "TERMINATED"].includes(lease.lease_status));
+    //Need the change the below filter in LeaseDetailsComponent and TenantApplicationNav component.
+    const filteredLeases = allLeases.filter((lease) => lease.lease_status && !["ACTIVE", "ACTIVE M2M", "ENDED", "TERMINATED", "EXPIRED"].includes(lease.lease_status));
     // console.log("application - ", filteredLeases, filteredLeases);
     setLeases(filteredLeases);
     setLease(filteredLeases[currentIndex]);

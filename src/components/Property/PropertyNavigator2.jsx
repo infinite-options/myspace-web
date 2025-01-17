@@ -22,6 +22,7 @@ import {
   FormControl,
   InputLabel,
   Avatar,
+  ThemeProvider,
 } from "@mui/material";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import Tabs from "@mui/material/Tabs";
@@ -2159,11 +2160,14 @@ const PropertyTabPanel = (props) => {
 
   const [scrollPosition, setScrollPosition] = useState(0);
   const scrollRef = useRef(null);
+  const [showSpinner, setShowSpinner] = useState(false);
 
   useEffect(() => {
+    setShowSpinner(true);
     if (scrollRef.current) {
       scrollRef.current.scrollLeft = scrollPosition;
     }
+    setShowSpinner(false);
   }, [scrollPosition]);
 
   const handleScroll = (direction) => {
@@ -2197,6 +2201,10 @@ const PropertyTabPanel = (props) => {
   }, [props.activeStep]);
 
   return (
+    <ThemeProvider theme={theme}>
+			<Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+				<CircularProgress color="inherit" />
+			</Backdrop>
     <Grid container sx={{ padding: "10px" }}>
       <Grid item xs={12} sx={{ marginBottom: "40px" }}>
         <Card
@@ -2828,6 +2836,7 @@ const PropertyTabPanel = (props) => {
         </Grid>
       </Grid>
     </Grid>
+     </ThemeProvider>
   );
 };
 

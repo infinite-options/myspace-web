@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Box, Grid, Typography, Button, IconButton, Badge, Card, CardContent, Dialog, DialogActions, DialogTitle, DialogContent, ToolTip } from "@mui/material";
+import { Box, Grid, Typography, Button, IconButton, Badge, Card, CardContent, Dialog, DialogActions, DialogTitle, DialogContent, ToolTip, ThemeProvider } from "@mui/material";
 import { RadioGroup, FormControlLabel, Radio } from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
@@ -31,6 +31,8 @@ import EarlyTerminationDialog from "../Leases/EarlyTerminationDialog";
 import FlipIcon from "../TenantDashboard/FlipImage.png"
 import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy, } from "../../utils/fees";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function LeaseDetailsComponent({
   currentProperty,
@@ -70,13 +72,15 @@ export default function LeaseDetailsComponent({
   //const tenant_detail = currentProperty && currentProperty.lease_start && currentProperty.tenant_uid ? `${currentProperty.tenant_first_name} ${currentProperty.tenant_last_name}` : "No Tenant";
   const [activeLease, setActiveLease] = useState({});
   const [tenant_detail, setTenantDetail] = useState("");
+  const [showSpinner, setShowSpinner] = useState(false);
 
 
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
   };
 
-  useEffect(() => {    
+  useEffect(() => {  
+    setShowSpinner(true);  
     let renewed = null;
     currentProperty?.leases?.forEach((lease, index) => {
       // if (application.lease_status === "RENEW NEW" || application.lease_status === "RENEW PROCESSING" || application.lease_status === "APPROVED") {
@@ -87,7 +91,8 @@ export default function LeaseDetailsComponent({
       }
     });
     const applicationsCount = currentProperty?.leases.filter((lease) => ["NEW", "RENEW NEW", "PROCESSING", "RENEW PROCESSING"].includes(lease.lease_status)).length;
-    const applications = currentProperty?.leases.filter((lease) => lease.lease_status && !["ACTIVE", "ACTIVE M2M", "ENDED", "TERMINATED"].includes(lease.lease_status));
+    //Need the change the below filter in LeaseDetailsComponent and TenantApplicationNav component.
+    const applications = currentProperty?.leases.filter((lease) => lease.lease_status && !["ACTIVE", "ACTIVE M2M", "ENDED", "TERMINATED", "EXPIRED"].includes(lease.lease_status));
     const activeLease = currentProperty?.leases.filter((lease) => ["ACTIVE", "ACTIVE M2M"].includes(lease.lease_status))[0];
     setAllApplications(applications);
     setApplicationsCount(applicationsCount);
@@ -98,7 +103,7 @@ export default function LeaseDetailsComponent({
     setContractEndNotice(activeLease?.lease_end_notice_period ? Number(activeLease?.lease_end_notice_period) : 30)
     setRenewedLease(renewed);
     setIsFlipped(false);
-
+    setShowSpinner(false);
   }, [currentProperty]);
 
   useEffect(() => {    
@@ -206,6 +211,10 @@ export default function LeaseDetailsComponent({
 
   return (
     <>
+     <ThemeProvider theme={theme}>
+			<Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+				<CircularProgress color="inherit" />
+			</Backdrop>
       <Card sx={{ height: "100%", width: "100%" }}>
         {/* <Grid container justifyContent="center">
           <Grid
@@ -1312,6 +1321,7 @@ export default function LeaseDetailsComponent({
         </Box>
       )}
       <RenewContractDialog open={showRenewContractDialog} handleClose={() => setShowRenewContractDialog(false)} contract={activeLease} />{" "}
+      </ThemeProvider>
     </>
   );
 }
