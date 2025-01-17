@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Box, Grid, Typography, Button, IconButton, Badge, Card, CardContent, Dialog, DialogActions, DialogTitle, DialogContent, ToolTip } from "@mui/material";
+import { Box, Grid, Typography, Button, IconButton, Badge, Card, CardContent, Dialog, DialogActions, DialogTitle, DialogContent, ToolTip, ThemeProvider } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
 import { DataGrid } from "@mui/x-data-grid";
@@ -26,6 +26,8 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function ManagementDetailsComponent({
   activeContract,
@@ -54,8 +56,10 @@ export default function ManagementDetailsComponent({
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [contactDocument, setContractDocument] = useState(null);
   // //console.log("currentProperty?.maintenance - ", currentProperty?.maintenance);
+  const [showSpinner, setShowSpinner] = useState(false);
 
   useEffect(() => {
+    setShowSpinner(true);
     const activeDocs = activeContract?.contract_documents || null;
     const contractDoc = activeDocs !== null
       ? JSON.parse(activeDocs).filter(
@@ -64,6 +68,7 @@ export default function ManagementDetailsComponent({
       : [];
     setContractDocument(contractDoc);
     setContractEndNotice(activeContract?.contract_end_notice_period ? Number(activeContract?.contract_end_notice_period) : 30);
+    setShowSpinner(false);
   }, [activeContract]);
 
   const maintenanceGroupedByStatus = currentProperty?.maintenance?.reduce((acc, request) => {
@@ -92,6 +97,7 @@ export default function ManagementDetailsComponent({
   };
 
   const handleManagerEndContractClick = (endDate) => {
+    setShowSpinner(true);
     const formattedDate = endDate.format("MM-DD-YYYY");
     // //console.log("handleEndContractClick - formattedDate - ", formattedDate);
 
@@ -117,14 +123,20 @@ export default function ManagementDetailsComponent({
           setIsChange(false);
           fetchProperties();
         }
+        setShowSpinner(false);
       })
       .catch((error) => {
         console.error("There was a problem with the fetch operation:", error);
+        setShowSpinner(false);
       });
   };
 
   return (
     <>
+    <ThemeProvider theme={theme}>
+			<Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
+				<CircularProgress color="inherit" />
+			</Backdrop>
       <Card sx={{ height: "100%" }}>
         <Box sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "10px" }}>
           <Typography
@@ -900,6 +912,7 @@ export default function ManagementDetailsComponent({
       )}
 
       <RenewContractDialog open={showRenewContractDialog} handleClose={() => setShowRenewContractDialog(false)} contract={activeContract} fetchContracts={fetchContracts} />
+    </ThemeProvider>
     </>
   );
 }
