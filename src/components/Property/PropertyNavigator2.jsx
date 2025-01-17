@@ -575,11 +575,11 @@ export default function PropertyNavigator2({
             // idx: index,
             cf_monthName: monthNames[item.cf_month - 1],
             total_paid_formatted: item.total_paid ? `$${item.total_paid}` : "-",
-            latest_date_formatted: item.latest_date ? dayjs(item.latest_date).format('YYYY-MM-DD') : "-",
+            latest_date_formatted: item.latest_date ? dayjs(item.latest_date).format('MM-DD-YYYY') : "-",
             // latest_date_formatted: item.latest_date || "-",
             fees: "-",
             amount_due: item.total_paid ? item.pur_amount_due - item.total_paid : item.pur_amount_due,
-            due_date_formatted: dayjs(item.pur_due_date).format('YYYY-MM-DD')
+            due_date_formatted: dayjs(item.pur_due_date).format('MM-DD-YYYY')
           };
         })
       
@@ -646,6 +646,7 @@ export default function PropertyNavigator2({
         const value = params.value || "-";
         return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
       },
+      sortComparator: (v1, v2) => new Date(v1) - new Date(v2),
     },
     {
       // field: 'total_paid_formatted',\
@@ -714,6 +715,7 @@ export default function PropertyNavigator2({
       renderCell: (params) => {
         return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
       },
+      sortComparator: (v1, v2) => new Date(v1) - new Date(v2),
     },
     // {
     //   field: "fees",

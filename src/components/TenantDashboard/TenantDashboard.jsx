@@ -810,6 +810,7 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
           </Box>
         );
       },
+      sortComparator: (v1, v2) => new Date(v1) - new Date(v2),
     },
     {
       field: "pay_amount",
@@ -3232,6 +3233,7 @@ function TenantBalanceTablePM(props) {
       headerName: "Due Date",
       flex: 1,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+      sortComparator: (v1, v2) => new Date(v1) - new Date(v2),
     },
     {
       field: "totalPaid",
