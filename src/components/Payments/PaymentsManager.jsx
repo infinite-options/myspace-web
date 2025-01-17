@@ -789,7 +789,7 @@ export default function PaymentsManager(props) {
                               fontWeight: "600",
                             }}
                           >
-                            Select Payment 2
+                            Select Payment
                           </Typography>
                         </Button>
                       </Grid>

@@ -115,13 +115,15 @@ export default function ManagementDetailsComponent({
       method: "PUT",
       body: formData,
     })
-      .then((response) => {
+      .then(async(response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         } else {
-          // //console.log("Data updated successfully");
+          // fetchProperties();
+          const res = await fetchContracts();
+          await fetchProperties();
           setIsChange(false);
-          fetchProperties();
+          // console.log("Data updated successfully");
         }
         setShowSpinner(false);
       })
@@ -897,7 +899,7 @@ export default function ManagementDetailsComponent({
         </CardContent>
       </Card>
       {previewDialogOpen && selectedPreviewFile && <FilePreviewDialog file={selectedPreviewFile} onClose={handlePreviewDialogClose} />}
-      <EndContractDialog open={showEndContractDialog} handleClose={() => setShowEndContractDialog(false)} contract={activeContract} fetchContracts={fetchContracts}/>
+      <EndContractDialog open={showEndContractDialog} handleClose={() => setShowEndContractDialog(false)} contract={activeContract} fetchContracts={fetchContracts} fetchProperties={fetchProperties}/>
       {showManagerEndContractDialog && (
         <Box>
           <ManagerEndContractDialog
@@ -1060,7 +1062,7 @@ export const DocumentSmallDataGrid = ({ data, handleFileClick }) => {
   );
 };
 
-const EndContractDialog = ({ open, handleClose, contract, fetchContracts }) => {
+const EndContractDialog = ({ open, handleClose, contract, fetchContracts, fetchProperties }) => {
   const ONE_DAY_MS = 1000 * 60 * 60 * 24;
 
   const [contractEndDate, setContractEndDate] = useState(contract?.contract_end_date ? new Date(contract?.contract_end_date) : null);
@@ -1117,7 +1119,8 @@ const EndContractDialog = ({ open, handleClose, contract, fetchContracts }) => {
             throw new Error("Network response was not ok");
           } else {
             const res = await fetchContracts();
-            console.log("Data added successfully");
+            await fetchProperties();
+            console.log("Data added successfully", res);
             handleClose();
           }
         })
@@ -1177,7 +1180,7 @@ const EndContractDialog = ({ open, handleClose, contract, fetchContracts }) => {
                 <DatePicker
                   // value={selectedEndDate}
                   // // minDate={minEndDate}
-                  value={minEndDate}
+                  value={selectedEndDate}
                   minDate={startDate}
                   onChange={(v) => setSelectedEndDate(v)}
                   slots={{
