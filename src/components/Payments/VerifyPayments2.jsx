@@ -106,7 +106,7 @@ export default function VerifyPayments2(props) {
     try {
       const res = await axios.get(`${APIConfig.baseURL.dev}/paymentVerification/${getProfileId()}`);
       const moneyPayableData = res.data.result;
-      //console.log("Verfiy Payment GET Results: ", moneyPayableData);
+      console.log("Verfiy Payment GET Results: ", moneyPayableData, res.data.result);
 
       setMoneyPayable(moneyPayableData);
       totalMoneyPayable(moneyPayableData);
@@ -765,7 +765,7 @@ export default function VerifyPayments2(props) {
                   </Stack>
 
                   <Stack marginTop={"20px"}>
-                    {tab === "DEFAULT" && (
+                    {tab === "DEFAULT" && moneyPayable?.length > 0 && (
                       <BalanceDetailsTable
                         data={moneyPayable}
                         selectedPurchaseRow={selectedPurchaserow}
@@ -1250,8 +1250,7 @@ function BalanceDetailsTable(props) {
       });
 
       const responseData = await response.json();
-      //console.log(responseData);
-      if (response.status === 200) {
+      if (responseData.payment_info.code === 200) {
         //console.log("successfuly verified selected payments");
       } else {
         console.error("Could not update verification for selected payments ");
@@ -1259,7 +1258,7 @@ function BalanceDetailsTable(props) {
     } catch (error) {
       //console.log("error", error);
     }
-    props.fetchPaymentsData();
+    await props.fetchPaymentsData();
   };
 
   if (paymentDueResult.length > 0) {
