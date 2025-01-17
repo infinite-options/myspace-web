@@ -106,7 +106,7 @@ export default function VerifyPayments2(props) {
     try {
       const res = await axios.get(`${APIConfig.baseURL.dev}/paymentVerification/${getProfileId()}`);
       const moneyPayableData = res.data.result;
-      console.log("Verfiy Payment GET Results: ", moneyPayableData, res.data.result);
+      // console.log("Verfiy Payment GET Results: ", moneyPayableData, res.data.result);
 
       setMoneyPayable(moneyPayableData);
       totalMoneyPayable(moneyPayableData);
