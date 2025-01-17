@@ -35,14 +35,19 @@ const TenantApplicationNav = (props) => {
   const { index, property, isDesktop, propertyIndex, onBackClick } = props;
   //console.log('Inside TenantApplicationNav - property - ', property);
   //console.log('Inside TenantApplicationNav - index - ', index);
-  const { leases } = property;
+  const [allLeases, setAllLeases] = useState(property.leases);
+  const [leases, setLeases] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(index || 0);
   // const [application, setApplication] = useState(leases[currentIndex]);
-  const [lease, setLease] = useState(leases[currentIndex]);
+  const [lease, setLease] = useState([]);
 
-  //   useEffect(() => {
-  //     //console.log("application - ", application);
-  // }, [application]);
+  useEffect(() => {
+    const filteredLeases = allLeases.filter((lease) => lease.lease_status && !["ACTIVE", "ACTIVE M2M", "ENDED", "TERMINATED"].includes(lease.lease_status));
+    // console.log("application - ", filteredLeases, filteredLeases);
+    setLeases(filteredLeases);
+    setLease(filteredLeases[currentIndex]);
+  }, []);
+
   // //console.log("---dhyey--- in property - ", property)
   //console.log("---dhyey--- in application view - ", lease)
   const [showSpinner, setShowSpinner] = useState(false);
@@ -58,15 +63,16 @@ const TenantApplicationNav = (props) => {
 
   useEffect(() => {
     // //console.log("lease fees - ", application?.lease_fees);
-
-    let parsedFees = []
-    try {
-      parsedFees = JSON.parse(lease?.lease_fees);
-    } catch (error) {
-      console.error("TenantApplicationNav - Error Parsing Lease Fees");
+    if (lease) {
+      let parsedFees = []
+      try {
+        parsedFees = JSON.parse(lease?.lease_fees);
+      } catch (error) {
+        console.error("TenantApplicationNav - Error Parsing Lease Fees");
+      }
+      setLeaseFees(parsedFees);
+      // //console.log("parsedFees - ", parsedFees);
     }
-    setLeaseFees(parsedFees);
-    // //console.log("parsedFees - ", parsedFees);
   }, [lease]);
 
   // useEffect(() => {
@@ -175,13 +181,16 @@ const TenantApplicationNav = (props) => {
   };
 
   useEffect(() => {
-    const currApp = leases[currentIndex];
-    setLease(currApp);
-    setVehicles(JSON.parse(currApp?.lease_vehicles || '["No Vehicle Information"]'));
-    setAdultOccupants(JSON.parse(currApp?.lease_adults || '["No Adult Occupants"]'));
-    setPetOccupants(JSON.parse(currApp?.lease_pets || '["No Pet Occupants"]'));
-    setChildOccupants(JSON.parse(currApp?.lease_children || '["No Child Occupants"]'));
-    setApplicationDocuments(JSON.parse(currApp?.lease_documents));
+    if (leases.length > 0) {
+      const currApp = leases[currentIndex];
+      // console.log('currApp', leases, currApp)
+      setLease(currApp);
+      setVehicles(JSON.parse(currApp?.lease_vehicles || '["No Vehicle Information"]'));
+      setAdultOccupants(JSON.parse(currApp?.lease_adults || '["No Adult Occupants"]'));
+      setPetOccupants(JSON.parse(currApp?.lease_pets || '["No Pet Occupants"]'));
+      setChildOccupants(JSON.parse(currApp?.lease_children || '["No Child Occupants"]'));
+      setApplicationDocuments(JSON.parse(currApp?.lease_documents));
+    }
   }, [currentIndex, leases]);
 
   const handleCloseButton = (e) => {
