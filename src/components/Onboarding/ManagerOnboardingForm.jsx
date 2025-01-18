@@ -61,6 +61,7 @@ import GenericDialog from "../GenericDialog";
 // import { id } from "date-fns/locale";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { styled } from "@mui/material/styles";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -85,6 +86,18 @@ const useStyles = makeStyles((theme) => ({
   },
   error: {
     color: 'red',
+  },
+}));
+
+const StyledSelect = styled(Select)(({ theme }) => ({
+  "& .MuiOutlinedInput-notchedOutline": {
+    borderColor: "rgba(0, 0, 0, 0.1)", // Default border color
+  },
+  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+    borderColor: "rgba(0, 0, 0, 0.1)", // Border color on focus
+  },
+  "&:hover .MuiOutlinedInput-notchedOutline": {
+    borderColor: "rgba(0, 0, 0, 0.1)", // Border color on hover
   },
 }));
 
@@ -620,14 +633,24 @@ const closeDialog = () => {
               >
                 {"Fee Type"}
               </Typography>
-              <Select 
+              <StyledSelect 
                 name='fee_type'
                 value={row.fee_type}
                 size='small'
                 fullWidth
                 onChange={(e) => handleFeeChange(e, row.id)}
-                placeholder='Select Type'
-                className={classes.select}                
+                placeholder='Select Type' 
+                // sx={{
+                //   "& .MuiOutlinedInput-notchedOutline": {
+                //     borderColor: "rgba(0, 0, 0, 0.1)", 
+                //   },
+                //   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                //     borderColor: "rgba(0, 0, 0, 0.1)", 
+                //   },
+                //   "&:hover .MuiOutlinedInput-notchedOutline": {
+                //     borderColor: "rgba(0, 0, 0, 0.1)", 
+                //   },
+                // }}          
               >
                 {/* <MenuItem value='PERCENT'>Percentage</MenuItem>
                 <MenuItem value='FLAT-RATE'>Flat-Rate</MenuItem> */}
@@ -636,7 +659,7 @@ const closeDialog = () => {
                     <MenuItem key={type.list_uid} value={getFeeTypeValue(type.list_item)}>{type.list_item}</MenuItem>
                   ))
                 }
-              </Select>
+              </StyledSelect>
             </Stack>
           </Grid>
           <Grid item xs={2}>
@@ -649,7 +672,7 @@ const closeDialog = () => {
               >
                 {"Frequency"}
               </Typography>
-              <Select
+              <StyledSelect
                 name='frequency'
                 value={row.frequency}
                 size='small'
@@ -663,7 +686,7 @@ const closeDialog = () => {
 										<MenuItem key={index} value={freq.list_item}>{freq.list_item}</MenuItem>
 									) )
 								}
-              </Select>
+              </StyledSelect>
             </Stack>
           </Grid>
           {row.fee_type === "PERCENT" && (
@@ -715,7 +738,7 @@ const closeDialog = () => {
                     {"Of"}
                   </Typography>
                   {/* <TextField name='of' value={row.of} variant='filled' fullWidth placeholder='Rent' className={classes.root} onChange={(e) => handleFeeChange(e, row.id)} /> */}
-                  <Select 
+                  <StyledSelect 
                     name='of'
                     value={row.of}
                     size='small'
@@ -729,14 +752,14 @@ const closeDialog = () => {
                         <MenuItem value={basis.list_item}>{basis.list_item}</MenuItem>    
                       ))
                     }                    
-                  </Select>
+                  </StyledSelect>
                 </Stack>
               </Grid>
             </>
           )}
           {row.fee_type === "FLAT-RATE" && (
             <>
-              <Grid item xs={2}>
+              <Grid item xs={1.5}>
                 <Stack spacing={isMobile ? 1 : -2} m={2}>
                   <Typography
                     sx={{
@@ -749,7 +772,7 @@ const closeDialog = () => {
                   <TextField name='charge' value={row.charge} variant='filled' fullWidth placeholder='Rent' className={classes.root} onChange={(e) => handleFeeChange(e, row.id)} />
                 </Stack>
               </Grid>
-              <Grid item xs={1.5}></Grid>
+              <Grid item xs={2}></Grid>
             </>
           )}
           <Grid container justifyContent='center' alignContent='center' item xs={1}>
