@@ -327,7 +327,7 @@ const CreateProfile = () => {
       });
   };
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     if (validate_form() === false) return;
 
     setCookie("default_form_vals", { ...cookiesData, firstName, lastName, phoneNumber, email });

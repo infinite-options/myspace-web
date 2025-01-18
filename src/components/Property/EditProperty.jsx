@@ -382,6 +382,7 @@ function EditProperty(props) {
 			return;
 		}
 
+		setShowSpinner(true);
 		const changedFields = getChangedFields();
 		if (Object.keys(changedFields).length === 0 && imageState.length === 0 && imagesTobeDeleted.length === 0 && !hasPropertyDetailsChanged) {
 			setHasChanges(false);
@@ -513,7 +514,6 @@ function EditProperty(props) {
 		// }
 
 		const putData = async () => {
-			setShowSpinner(true);
 			promises.push(
 				// fetch(`http://localhost:4000/properties`, {
 				fetch(`${APIConfig.baseURL.dev}/properties`, {
@@ -521,7 +521,7 @@ function EditProperty(props) {
 					body: formData,
 				})
 			);
-			setShowSpinner(false);
+			// setShowSpinner(false);
 			setImageState([]);
 			setZillowPhotos([]);
 			setIsRapidImages(false);
@@ -562,8 +562,10 @@ function EditProperty(props) {
 			await Promise.all(promises);
 			await autoUpdate();
 			navigateBackToDashboard();
+			setShowSpinner(false);
 		} catch (error) {
 			console.error('Error:', error);
+			setShowSpinner(false);
 		}
 	};
 
@@ -749,6 +751,7 @@ function EditProperty(props) {
 	};
 
 	const getRapidApiData = async () => {
+		setShowSpinner(true);
 		//Get property details from Zillow Rapid API 
 		const fullAddress = `${address}, ${city}, ${propertyState}, ${zip}`;
 		const options = {
@@ -805,8 +808,10 @@ function EditProperty(props) {
 				// console.log('updatedImages', updatedImages);
 				setIsRapidImages(true);
 			}
+			setShowSpinner(false);
 		} catch (error) {
 			console.error(error);
+			setShowSpinner(false);
 		}
 	}
 

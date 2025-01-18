@@ -82,8 +82,8 @@ const useStyles = makeStyles((theme) => ({
 
 const TenantDashboard = () => {
   // console.log('Inside Tenant dashboard')
-  const { user } = useUser();
-  const { getProfileId } = useUser();
+  const { user, getProfileId } = useUser();
+  // const [profileId, setProfileId] = useState(getProfileId());
   const location = useLocation();
   const [reload, setReload] = useState(true);
   const [propertyListingData, setPropertyListingData] = useState([]);
@@ -135,6 +135,10 @@ const TenantDashboard = () => {
   //     }
   // };
 
+  // useEffect(() => {
+  //   console.log('Inside user useeffect', user);
+  // }, [user])
+
   useEffect(() => {
     //console.log("=== ok success - ", location?.state?.selectedProperty);
     if (location?.state?.selectedProperty) {
@@ -149,64 +153,125 @@ const TenantDashboard = () => {
     }
   }, [leaseDetailsData]);
 
-  const fetchData = async () => {
-    setLoading(true);
+  // const fetchData = async () => {
+  //   setLoading(true);
 
-    try {
-      // Set loading to true before fetching data
-      const profileId = getProfileId();
-      // console.log("profile id is", profileId)
-      // console.log("user is", user)
-      if (!profileId) return;
+  //   try {
+  //     // Set loading to true before fetching data
+  //     // const profileId = getProfileId();
+  //     const profileId = user.tenant_id;
+  //     console.log("profile id is", profileId)
+  //     console.log("user is", user)
+  //     if (!profileId) return;
 
-      const dashboardResponse = await fetch(`${APIConfig.baseURL.dev}/dashboard/${profileId}`);
-      const dashboardData = await dashboardResponse.json();
+  //     const dashboardResponse = await fetch(`${APIConfig.baseURL.dev}/dashboard/${profileId}`);
+  //     const dashboardData = await dashboardResponse.json();
 
-      if (dashboardData) {
-        // //console.log("Dashboard inside check", dashboardData.property?.result);
-        setPropertyListingData(dashboardData.property?.result);
+  //     if (dashboardData) {
+  //       // //console.log("Dashboard inside check", dashboardData.property?.result);
+  //       setPropertyListingData(dashboardData.property?.result);
 
-        setLeaseDetailsData(dashboardData.leaseDetails?.result);
-        setMaintenanceRequestsNew(dashboardData.maintenanceRequests?.result);
-        setMaintenanceStatus(dashboardData.maintenanceStatus?.result);
-        setAnnouncements(dashboardData.announcementsReceived?.result);
-        setPaymentHistory(dashboardData.tenantPayments?.result);
-        setAnnouncementRecvData(dashboardData.announcementsReceived?.result || []);
-        setAnnouncementSentData(dashboardData.announcementsSent?.result || []);
+  //       setLeaseDetailsData(dashboardData.leaseDetails?.result);
+  //       setMaintenanceRequestsNew(dashboardData.maintenanceRequests?.result);
+  //       setMaintenanceStatus(dashboardData.maintenanceStatus?.result);
+  //       setAnnouncements(dashboardData.announcementsReceived?.result);
+  //       setPaymentHistory(dashboardData.tenantPayments?.result);
+  //       setAnnouncementRecvData(dashboardData.announcementsReceived?.result || []);
+  //       setAnnouncementSentData(dashboardData.announcementsSent?.result || []);
 
-        // Set first property as selected, if available
-        // const firstProperty = dashboardData.property?.result[0];
-        // //console.log("property", firstProperty.property_uid);
-        // if (firstProperty) {
-        //     setSelectedProperty(firstProperty.property_uid);
-        //     handleSelectProperty(firstProperty.property_uid);
-        // }
-        const allBalanceDetails = dashboardData.tenantTransactions?.result.map((payment) => ({
-          //here
-          purchase_uid: payment.purchase_uid,
-          propertyUid: payment.pur_property_id,
-          purchaseType: payment.purchase_type,
-          dueDate: payment.pur_due_date,
-          amountDue: parseFloat(payment.amt_remaining || 0),
-          totalPaid: parseFloat(payment.total_paid || 0),
-          description: payment.pur_description || "N/A",
-          purchaseStatus: payment.purchase_status,
-          purchaseDate: payment.pur_due_date,
-          pur_cf_type: payment.pur_cf_type,
-          pur_receiver: payment.pur_receiver,
-        }));
+  //       // Set first property as selected, if available
+  //       // const firstProperty = dashboardData.property?.result[0];
+  //       // //console.log("property", firstProperty.property_uid);
+  //       // if (firstProperty) {
+  //       //     setSelectedProperty(firstProperty.property_uid);
+  //       //     handleSelectProperty(firstProperty.property_uid);
+  //       // }
+  //       const allBalanceDetails = dashboardData.tenantTransactions?.result.map((payment) => ({
+  //         //here
+  //         purchase_uid: payment.purchase_uid,
+  //         propertyUid: payment.pur_property_id,
+  //         purchaseType: payment.purchase_type,
+  //         dueDate: payment.pur_due_date,
+  //         amountDue: parseFloat(payment.amt_remaining || 0),
+  //         totalPaid: parseFloat(payment.total_paid || 0),
+  //         description: payment.pur_description || "N/A",
+  //         purchaseStatus: payment.purchase_status,
+  //         purchaseDate: payment.pur_due_date,
+  //         pur_cf_type: payment.pur_cf_type,
+  //         pur_receiver: payment.pur_receiver,
+  //       }));
 
-        // Save all balance details to state
-        setAllBalanceDetails(allBalanceDetails);
-      }
-    } catch (error) {
-      console.error("Error fetching data: ", error);
-    } finally {
-      // setLoading(false);
-    }
-  };
+  //       // Save all balance details to state
+  //       setAllBalanceDetails(allBalanceDetails);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching data: ", error);
+  //   } finally {
+  //     // setLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
+    // console.log('Main useeffect called', reload)
+    const fetchData = async () => {
+      setLoading(true);
+  
+      try {
+        // Set loading to true before fetching data
+        const profileId = getProfileId();
+        // const profileId = user.tenant_id;
+        // console.log("profile id is", profileId)
+        // console.log("user is", user)
+        if (!profileId) return;
+  
+        const dashboardResponse = await fetch(`${APIConfig.baseURL.dev}/dashboard/${profileId}`);
+        const dashboardData = await dashboardResponse.json();
+  
+        if (dashboardData) {
+          // //console.log("Dashboard inside check", dashboardData.property?.result);
+          setPropertyListingData(dashboardData.property?.result);
+  
+          setLeaseDetailsData(dashboardData.leaseDetails?.result);
+          setMaintenanceRequestsNew(dashboardData.maintenanceRequests?.result);
+          setMaintenanceStatus(dashboardData.maintenanceStatus?.result);
+          setAnnouncements(dashboardData.announcementsReceived?.result);
+          setPaymentHistory(dashboardData.tenantPayments?.result);
+          setAnnouncementRecvData(dashboardData.announcementsReceived?.result || []);
+          setAnnouncementSentData(dashboardData.announcementsSent?.result || []);
+  
+          // Set first property as selected, if available
+          // const firstProperty = dashboardData.property?.result[0];
+          // //console.log("property", firstProperty.property_uid);
+          // if (firstProperty) {
+          //     setSelectedProperty(firstProperty.property_uid);
+          //     handleSelectProperty(firstProperty.property_uid);
+          // }
+          const allBalanceDetails = dashboardData.tenantTransactions?.result.map((payment) => ({
+            //here
+            purchase_uid: payment.purchase_uid,
+            propertyUid: payment.pur_property_id,
+            purchaseType: payment.purchase_type,
+            dueDate: payment.pur_due_date,
+            amountDue: parseFloat(payment.amt_remaining || 0),
+            totalPaid: parseFloat(payment.total_paid || 0),
+            description: payment.pur_description || "N/A",
+            purchaseStatus: payment.purchase_status,
+            purchaseDate: payment.pur_due_date,
+            pur_cf_type: payment.pur_cf_type,
+            pur_receiver: payment.pur_receiver,
+          }));
+  
+          // Save all balance details to state
+          setAllBalanceDetails(allBalanceDetails);
+        }
+        setReload(false);
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+        setReload(false);
+      } finally {
+        // setLoading(false);
+      }
+    };
     if (reload === true) {
       fetchData();
 
@@ -214,9 +279,9 @@ const TenantDashboard = () => {
       //   handleSelectProperty(selectedProperty);
       // }
       //fetchCashflowDetails();
-      setReload(false);
+      // setReload(false);
     }
-  }, [reload, user, getProfileId]);
+  }, [reload, user]);
 
   useEffect(() => {
     // setLoading(true)
