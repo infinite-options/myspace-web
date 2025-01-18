@@ -320,7 +320,7 @@ export default function Announcements({ sentAnnouncementData, recvAnnouncementDa
                 textAlign: "center"
               }}
             >
-              Announcements 1
+              Announcements
             </Typography>
           </Grid>
           <Grid item xs={1} md={1}>

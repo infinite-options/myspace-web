@@ -762,10 +762,11 @@ const TenantDashboard = () => {
                         alignItems: "center",
                         alignContent: "center",
                         justifyContent: "center",
-                        minHeight: "235px",
+                        minHeight: "100px",
+                        backgroundColor:"#F0EFED",
                       }}
                     >
-                      <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" } }}>No Announcements</Typography>
+                      <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" }, textAlign:"center" }}>No Announcements</Typography>
                     </Box>
                   )}
                 </Grid>
