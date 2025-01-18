@@ -12,6 +12,7 @@ import theme from "../../theme/theme.js";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import APIConfig from "../../utils/APIConfig.jsx";
 import { styled } from '@mui/system';
+import GenericDialog from "../GenericDialog";
 
 const useStyles = makeStyles({
   button: {
@@ -63,9 +64,25 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS,
   const [availableRoles, setAvailableRoles] = useState([]); 
   const allRoles = ["MANAGER", "PM_EMPLOYEE", "OWNER", "TENANT", "MAINTENANCE", "MAINT_EMPLOYEE"];
   const [showPrimaryRoleDropdown, setShowPrimaryRoleDropdown] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState("");
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [dialogSeverity, setDialogSeverity] = useState("info");
 
   const handlePrimaryRoleLinkClick = () => {
     setShowPrimaryRoleDropdown(!showPrimaryRoleDropdown);
+  };
+
+  const openDialog = (title, message, severity) => {
+    setDialogTitle(title); // Set custom title
+    setDialogMessage(message); // Set custom message
+    setDialogSeverity(severity); // Can use this if needed to control styles
+    setIsDialogOpen(true);
+  };
+
+  const closeDialog = () => {
+    setIsDialogOpen(false);
+    navigate("/addNewRole", { state: { user_uid: cookies.user.user_uid, newRole } });
   };
 
 
@@ -203,8 +220,9 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS,
         // Check if the response is successful
         if (response.status === 200) {
           setCookie("user", { ...cookies.user, role: updatedRole }, { path: "/" });
-          alert("Role updated successfully");
-          navigate("/addNewRole", { state: { user_uid: cookies.user.user_uid, newRole } });
+          // alert("Role updated successfully");
+          openDialog("Success", "Role updated successfully.", "success");
+          // navigate("/addNewRole", { state: { user_uid: cookies.user.user_uid, newRole } });
         } else {
           alert("An error occurred while updating the role.");
         }
@@ -372,6 +390,18 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS,
           </Button>
         </Grid>
       </Grid>
+      <GenericDialog
+        isOpen={isDialogOpen}
+        title={dialogTitle}
+        contextText={dialogMessage}
+        actions={[
+          {
+            label: "OK",
+            onClick: closeDialog,
+          }
+        ]}
+        severity={dialogSeverity}
+      />
     </Grid>
   );
 }
