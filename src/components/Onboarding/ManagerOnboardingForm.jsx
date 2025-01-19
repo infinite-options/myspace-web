@@ -6,11 +6,11 @@ import AES from "crypto-js/aes";
 import CryptoJS from "crypto-js";
 import theme from "../../theme/theme";
 import { useUser } from "../../contexts/UserContext";
-import AddIcon from '@mui/icons-material/Add'; 
+import AddIcon from "@mui/icons-material/Add";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
 import AddressAutocompleteInput from "../Property/AddressAutocompleteInput";
 import DataValidator from "../DataValidator";
-import { formatPhoneNumber, formatSSN, formatEIN, identifyTaxIdType, maskNumber, newmaskNumber,} from "./helper";
+import { formatPhoneNumber, formatSSN, formatEIN, identifyTaxIdType, maskNumber, newmaskNumber } from "./helper";
 import { useOnboardingContext } from "../../contexts/OnboardingContext";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Backdrop from "@mui/material/Backdrop";
@@ -18,11 +18,11 @@ import CircularProgress from "@mui/material/CircularProgress";
 import {
   Button,
   TextField,
-  Typography,  
+  Typography,
   Stack,
   Checkbox,
   FormControlLabel,
-  Grid,  
+  Grid,
   IconButton,
   MenuItem,
   Select,
@@ -72,20 +72,20 @@ const useStyles = makeStyles((theme) => ({
       marginBlock: 10,
       paddingBottom: "15px",
     },
-    '& input:-webkit-autofill': {
-      backgroundColor: '#D6D5DA !important',
-      color: '#000000 !important',
-      transition: 'background-color 0s 600000s, color 0s 600000s !important',
+    "& input:-webkit-autofill": {
+      backgroundColor: "#D6D5DA !important",
+      color: "#000000 !important",
+      transition: "background-color 0s 600000s, color 0s 600000s !important",
     },
-    '& input:-webkit-autofill:focus': {
-      transition: 'background-color 0s 600000s, color 0s 600000s !important',
+    "& input:-webkit-autofill:focus": {
+      transition: "background-color 0s 600000s, color 0s 600000s !important",
     },
   },
   errorBorder: {
-    border: '1px solid red',
+    border: "1px solid red",
   },
   error: {
-    color: 'red',
+    color: "red",
   },
 }));
 
@@ -101,17 +101,16 @@ const StyledSelect = styled(Select)(({ theme }) => ({
   },
 }));
 
-
 export default function ManagerOnboardingForm({ profileData, setIsSave }) {
   //console.log("In ManagerOnboardingForm  - profileData", profileData);
 
-  const { getList, } = useContext(ListsContext);	
+  const { getList } = useContext(ListsContext);
   const classes = useStyles();
   const [cookies, setCookie] = useCookies(["default_form_vals"]);
   const cookiesData = cookies["default_form_vals"];
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  
+
   const [showSpinner, setShowSpinner] = useState(true);
   const [addPhotoImg, setAddPhotoImg] = useState();
   const [nextStepDisabled, setNextStepDisabled] = useState(false);
@@ -119,32 +118,32 @@ export default function ManagerOnboardingForm({ profileData, setIsSave }) {
   const { user, isBusiness, isManager, roleName, selectRole, setLoggedIn, selectedRole, updateProfileUid, isLoggedIn, getProfileId } = useUser();
   const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
   const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
-  
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-const [dialogTitle, setDialogTitle] = useState("");
-const [dialogMessage, setDialogMessage] = useState("");
-const [dialogSeverity, setDialogSeverity] = useState("info");
-const [ paymentExpanded, setPaymentExpanded ] = useState(true);
+  const [dialogTitle, setDialogTitle] = useState("");
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [dialogSeverity, setDialogSeverity] = useState("info");
+  const [paymentExpanded, setPaymentExpanded] = useState(true);
 
-const openDialog = (title, message, severity) => {
-  setDialogTitle(title); // Set custom title
-  setDialogMessage(message); // Set custom message
-  setDialogSeverity(severity); // Can use this if needed to control styles
-  setIsDialogOpen(true);
-};
+  const openDialog = (title, message, severity) => {
+    setDialogTitle(title); // Set custom title
+    setDialogMessage(message); // Set custom message
+    setDialogSeverity(severity); // Can use this if needed to control styles
+    setIsDialogOpen(true);
+  };
 
-const closeDialog = () => {
-  setIsDialogOpen(false);
-};
+  const closeDialog = () => {
+    setIsDialogOpen(false);
+  };
 
-  const [ taxIDType, setTaxIDType ] = useState("SSN");  
-  useEffect(()=> {    
-    if(ein && identifyTaxIdType(ein) === "EIN") setTaxIDType("EIN");
-  }, [ein])
+  const [taxIDType, setTaxIDType] = useState("SSN");
+  useEffect(() => {
+    if (ein && identifyTaxIdType(ein) === "EIN") setTaxIDType("EIN");
+  }, [ein]);
 
-  useEffect(()=> {      
-    handleTaxIDChange(ein, false);    
-  }, [taxIDType])
+  useEffect(() => {
+    handleTaxIDChange(ein, false);
+  }, [taxIDType]);
 
   const [employeePhoto, setEmployeePhoto] = useState("");
   const [paymentMethods, setPaymentMethods] = useState({
@@ -162,9 +161,9 @@ const closeDialog = () => {
   const [deletedFiles, setDeletedFiles] = useState([]);
 
   const states = getList("states");
-  const feeBases = getList("basis");          
-  const feeFrequencies = getList("frequency");          
-  const feeTypes = getList("feeType");  
+  const feeBases = getList("basis");
+  const feeFrequencies = getList("frequency");
+  const feeTypes = getList("feeType");
 
   const [fees, setFees] = useState([{ id: 1, fee_name: "", frequency: "", charge: "", of: "", fee_type: "" }]);
   const [services, setServices] = useState([{ id: 1, service_name: "", hours: "", charge: "", total_cost: "" }]);
@@ -193,7 +192,7 @@ const closeDialog = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
-  const [ errors, setErrors ] = useState({})
+  const [errors, setErrors] = useState({});
 
   const getIconForMethod = (type) => {
     //console.log("payments icon ---", type);
@@ -216,15 +215,15 @@ const closeDialog = () => {
   const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
   const getFeeTypeValue = (item) => {
-    switch(item){
+    switch (item) {
       case "Percentage":
-          return "PERCENT";          
+        return "PERCENT";
       case "Flat Rate":
-          return "FLAT-RATE";
-      default: 
-          return "INVALID FEE TYPE";
+        return "FLAT-RATE";
+      default:
+        return "INVALID FEE TYPE";
     }
-  }
+  };
 
   // useEffect(() => {
   //   //console.log("paymentMethods - ", paymentMethods);
@@ -237,7 +236,7 @@ const closeDialog = () => {
   // useEffect(() => {
   //   //console.log("modifiedData - ", modifiedData);
   // }, [modifiedData]);
-  
+
   const updateModifiedData = (updatedItem) => {
     setModifiedData((prev) => {
       const existingKeyIndex = prev.findIndex((item) => item.key === updatedItem.key);
@@ -254,7 +253,7 @@ const closeDialog = () => {
     updateModifiedData({ key: "business_name", value: event.target.value });
   };
 
-  const handleBusinessAddressSelect = (address) => {    
+  const handleBusinessAddressSelect = (address) => {
     setAddress(address.street ? address.street : "");
     updateModifiedData({ key: "business_address", value: address.street ? address.street : "" });
     setCity(address.city ? address.city : "");
@@ -284,20 +283,19 @@ const closeDialog = () => {
     // let value = event.target.value;
     if (value?.length > 11) return;
 
-    let updatedTaxID = ""
-    if(taxIDType === "EIN"){
-      updatedTaxID = formatEIN(value)      
+    let updatedTaxID = "";
+    if (taxIDType === "EIN") {
+      updatedTaxID = formatEIN(value);
     } else {
-      updatedTaxID = formatSSN(value)      
+      updatedTaxID = formatSSN(value);
     }
     setEin(updatedTaxID);
-    
-    // updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
-    if(onchangeflag) {
-      updateModifiedData({ key: "business_ein_number", value: AES.encrypt(updatedTaxID, process.env.REACT_APP_ENKEY).toString() });
-  }
-};
 
+    // updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
+    if (onchangeflag) {
+      updateModifiedData({ key: "business_ein_number", value: AES.encrypt(updatedTaxID, process.env.REACT_APP_ENKEY).toString() });
+    }
+  };
 
   const handleEmpFirstNameChange = (event) => {
     setEmpFirstName(event.target.value);
@@ -374,7 +372,7 @@ const closeDialog = () => {
         const locationsWithId = parsedLocations?.map((loc, index) => ({
           ...loc,
           id: index,
-        }));        
+        }));
         setLocations(locationsWithId);
       }
 
@@ -467,12 +465,12 @@ const closeDialog = () => {
 
     const maxSize = 2.5 * 1024 * 1024; // 2.5 MB in bytes
     const isLarge = file.file.size > maxSize;
-    const fileSizeMB = (file.file.size / 1024 / 1024).toFixed(1); 
-  
+    const fileSizeMB = (file.file.size / 1024 / 1024).toFixed(1);
+
     // Check file format
     const allowedFormats = ["image/jpeg", "image/png"];
     const isInvalidFormat = !allowedFormats.includes(file.file.type);
-  
+
     if (isLarge || isInvalidFormat) {
       let errorMessage = "";
       if (isLarge) {
@@ -481,7 +479,7 @@ const closeDialog = () => {
       if (isInvalidFormat) {
         errorMessage += `Invalid file format. Only JPEG and PNG formats are allowed.`;
       }
-  
+
       openDialog("Alert", errorMessage, "info");
       return;
     }
@@ -515,12 +513,12 @@ const closeDialog = () => {
 
     const maxSize = 2.5 * 1024 * 1024; // 2.5 MB in bytes
     const isLarge = file.file.size > maxSize;
-    const fileSizeMB = (file.file.size / 1024 / 1024).toFixed(1); 
-  
+    const fileSizeMB = (file.file.size / 1024 / 1024).toFixed(1);
+
     // Check file format
     const allowedFormats = ["image/jpeg", "image/png"];
     const isInvalidFormat = !allowedFormats.includes(file.file.type);
-  
+
     if (isLarge || isInvalidFormat) {
       let errorMessage = "";
       if (isLarge) {
@@ -529,14 +527,13 @@ const closeDialog = () => {
       if (isInvalidFormat) {
         errorMessage += `Invalid file format. Only JPEG and PNG formats are allowed.`;
       }
-  
+
       openDialog("Alert", errorMessage, "info");
       return;
     }
 
     await readEmpImage(file);
     await updateModifiedData({ key: "employee_photo_url", value: e.target.files[0] });
-    
   };
 
   const addFeeRow = () => {
@@ -600,204 +597,186 @@ const closeDialog = () => {
 
   const renderManagementFees = () => {
     return fees?.map((row, index) => (
-      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id} overflowX={"auto"} minWidth = {isMobile ? "650px" : "0px"} width="100%">
-          <Grid item xs={3} md={3}>
-            <Stack spacing={isMobile ? 1 : -2} m={2}>
-              <Typography
-                sx={{
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.primary.fontWeight,
-                }}
-              >
-                {"Fee Name"}
-              </Typography>
-              <TextField
-                name='fee_name'
-                value={row.fee_name}
-                variant='filled'
-                fullWidth
-                placeholder='Service Charge'
-                className={classes.root}
-                // onChange={(e) => handleFeeChange(e, row.id)}
-                onChange={(e) => handleFeeChange(e, row.id)}
-              />
-            </Stack>
-          </Grid>
-          <Grid item xs={2.5}>
-            <Stack spacing={isMobile ? 1 : -2} m={2}>
-              <Typography
-                sx={{
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.primary.fontWeight,
-                }}
-              >
-                {"Fee Type"}
-              </Typography>
-              <StyledSelect 
-                name='fee_type'
-                value={row.fee_type}
-                size='small'
-                fullWidth
-                onChange={(e) => handleFeeChange(e, row.id)}
-                placeholder='Select Type' 
-                // sx={{
-                //   "& .MuiOutlinedInput-notchedOutline": {
-                //     borderColor: "rgba(0, 0, 0, 0.1)", 
-                //   },
-                //   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                //     borderColor: "rgba(0, 0, 0, 0.1)", 
-                //   },
-                //   "&:hover .MuiOutlinedInput-notchedOutline": {
-                //     borderColor: "rgba(0, 0, 0, 0.1)", 
-                //   },
-                // }}          
-              >
-                {/* <MenuItem value='PERCENT'>Percentage</MenuItem>
-                <MenuItem value='FLAT-RATE'>Flat-Rate</MenuItem> */}
-                {
-                  feeTypes?.map( type => (
-                    <MenuItem key={type.list_uid} value={getFeeTypeValue(type.list_item)}>{type.list_item}</MenuItem>
-                  ))
-                }
-              </StyledSelect>
-            </Stack>
-          </Grid>
-          <Grid item xs={2}>
-            <Stack spacing={isMobile ? 1 : -2} m={2}>
-              <Typography
-                sx={{
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.primary.fontWeight,
-                }}
-              >
-                {"Frequency"}
-              </Typography>
-              <StyledSelect
-                name='frequency'
-                value={row.frequency}
-                size='small'
-                fullWidth
-                onChange={(e) => handleFeeChange(e, row.id)}
-                placeholder='Select frequency'
-                className={classes.select}
-              >
-                {
-									feeFrequencies?.map( (freq, index) => (
-										<MenuItem key={index} value={freq.list_item}>{freq.list_item}</MenuItem>
-									) )
-								}
-              </StyledSelect>
-            </Stack>
-          </Grid>
-          {row.fee_type === "PERCENT" && (
-            <>
-              <Grid item xs={1.5}>
-                <Stack spacing={isMobile ? 1 : -2} m={2}>
-                  <Typography
-                    sx={{
-                      color: theme.typography.common.blue,
-                      fontWeight: theme.typography.primary.fontWeight,
-                    }}
-                  >
-                    {"Percent"}
-                  </Typography>
-                  <TextField
-                    name='charge'
-                    value={row.charge}
-                    variant='filled'
-                    fullWidth
-                    // placeholder='15'
-                    className={classes.root}
-                    onChange={(e) => handleFeeChange(e, row.id)}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment 
-                          position='end'
-                          sx={{
-                            marginTop: '15px',
-                          }} 
-                        >
-                          %
-                        </InputAdornment>
-                      ),
-                      sx: {
-                        height: '30px',
-                      }
-                    }}
-                  />
-                </Stack>
-              </Grid>
-              <Grid item xs={2}>
-                <Stack spacing={isMobile ? 1 : -2} m={2}>
-                  <Typography
-                    sx={{
-                      color: theme.typography.common.blue,
-                      fontWeight: theme.typography.primary.fontWeight,
-                    }}
-                  >
-                    {"Of"}
-                  </Typography>
-                  {/* <TextField name='of' value={row.of} variant='filled' fullWidth placeholder='Rent' className={classes.root} onChange={(e) => handleFeeChange(e, row.id)} /> */}
-                  <StyledSelect 
-                    name='of'
-                    value={row.of}
-                    size='small'
-                    fullWidth
-                    onChange={(e) => handleFeeChange(e, row.id)}
-                    placeholder='Select Basis'
-                    className={classes.select}                
-                  >
-                    {
-                      feeBases?.map( basis => (
-                        <MenuItem value={basis.list_item}>{basis.list_item}</MenuItem>    
-                      ))
-                    }                    
-                  </StyledSelect>
-                </Stack>
-              </Grid>
-            </>
-          )}
-          {row.fee_type === "FLAT-RATE" && (
-            <>
-              <Grid item xs={1.5}>
-                <Stack spacing={isMobile ? 1 : -2} m={2}>
-                  <Typography
-                    sx={{
-                      color: theme.typography.common.blue,
-                      fontWeight: theme.typography.primary.fontWeight,
-                    }}
-                  >
-                    {"Amount"}
-                  </Typography>
-                  <TextField name='charge' value={row.charge} variant='filled' fullWidth placeholder='Rent' className={classes.root} onChange={(e) => handleFeeChange(e, row.id)} />
-                </Stack>
-              </Grid>
-              <Grid item xs={2}></Grid>
-            </>
-          )}
-          <Grid container justifyContent='center' alignContent='center' item xs={1}>
-            <Button
-              aria-label='delete'
+      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id} overflowX={"auto"} minWidth={isMobile ? "650px" : "0px"} width='100%'>
+        <Grid item xs={3} md={3}>
+          <Stack spacing={isMobile ? 1 : -2} m={2}>
+            <Typography
               sx={{
-                marginTop: '10px',
-                color: "#000000",
-                fontWeight: "bold",
-                "&:hover": {
-                  color: "#FFFFFF",
-                },
+                color: theme.typography.common.blue,
+                fontWeight: theme.typography.primary.fontWeight,
               }}
-              onClick={() => removeFeeRow(row.id)}
             >
-              <DeleteIcon sx={{ fontSize: 19, color: "#3D5CAC" }} />
-            </Button>
-          </Grid>
-
-          {index !== 0 && (
-            <IconButton aria-label='delete' sx={{ position: "absolute", top: 0, right: 0 }} onClick={() => removeFeeRow(row.id)}>
-              <CloseIcon />
-            </IconButton>
-          )}
+              {"Fee Name"}
+            </Typography>
+            <TextField
+              name='fee_name'
+              value={row.fee_name}
+              variant='filled'
+              fullWidth
+              placeholder='Service Charge'
+              className={classes.root}
+              // onChange={(e) => handleFeeChange(e, row.id)}
+              onChange={(e) => handleFeeChange(e, row.id)}
+            />
+          </Stack>
         </Grid>
+        <Grid item xs={2.5}>
+          <Stack spacing={isMobile ? 1 : -2} m={2}>
+            <Typography
+              sx={{
+                color: theme.typography.common.blue,
+                fontWeight: theme.typography.primary.fontWeight,
+              }}
+            >
+              {"Fee Type"}
+            </Typography>
+            <StyledSelect
+              name='fee_type'
+              value={row.fee_type}
+              size='small'
+              fullWidth
+              onChange={(e) => handleFeeChange(e, row.id)}
+              placeholder='Select Type'
+              // sx={{
+              //   "& .MuiOutlinedInput-notchedOutline": {
+              //     borderColor: "rgba(0, 0, 0, 0.1)",
+              //   },
+              //   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              //     borderColor: "rgba(0, 0, 0, 0.1)",
+              //   },
+              //   "&:hover .MuiOutlinedInput-notchedOutline": {
+              //     borderColor: "rgba(0, 0, 0, 0.1)",
+              //   },
+              // }}
+            >
+              {/* <MenuItem value='PERCENT'>Percentage</MenuItem>
+                <MenuItem value='FLAT-RATE'>Flat-Rate</MenuItem> */}
+              {feeTypes?.map((type) => (
+                <MenuItem key={type.list_uid} value={getFeeTypeValue(type.list_item)}>
+                  {type.list_item}
+                </MenuItem>
+              ))}
+            </StyledSelect>
+          </Stack>
+        </Grid>
+        <Grid item xs={2}>
+          <Stack spacing={isMobile ? 1 : -2} m={2}>
+            <Typography
+              sx={{
+                color: theme.typography.common.blue,
+                fontWeight: theme.typography.primary.fontWeight,
+              }}
+            >
+              {"Frequency"}
+            </Typography>
+            <StyledSelect name='frequency' value={row.frequency} size='small' fullWidth onChange={(e) => handleFeeChange(e, row.id)} placeholder='Select frequency' className={classes.select}>
+              {feeFrequencies?.map((freq, index) => (
+                <MenuItem key={index} value={freq.list_item}>
+                  {freq.list_item}
+                </MenuItem>
+              ))}
+            </StyledSelect>
+          </Stack>
+        </Grid>
+        {row.fee_type === "PERCENT" && (
+          <>
+            <Grid item xs={1.5}>
+              <Stack spacing={isMobile ? 1 : -2} m={2}>
+                <Typography
+                  sx={{
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.primary.fontWeight,
+                  }}
+                >
+                  {"Percent"}
+                </Typography>
+                <TextField
+                  name='charge'
+                  value={row.charge}
+                  variant='filled'
+                  fullWidth
+                  // placeholder='15'
+                  className={classes.root}
+                  onChange={(e) => handleFeeChange(e, row.id)}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment
+                        position='end'
+                        sx={{
+                          marginTop: "15px",
+                        }}
+                      >
+                        %
+                      </InputAdornment>
+                    ),
+                    sx: {
+                      height: "30px",
+                    },
+                  }}
+                />
+              </Stack>
+            </Grid>
+            <Grid item xs={2}>
+              <Stack spacing={isMobile ? 1 : -2} m={2}>
+                <Typography
+                  sx={{
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.primary.fontWeight,
+                  }}
+                >
+                  {"Of"}
+                </Typography>
+                {/* <TextField name='of' value={row.of} variant='filled' fullWidth placeholder='Rent' className={classes.root} onChange={(e) => handleFeeChange(e, row.id)} /> */}
+                <StyledSelect name='of' value={row.of} size='small' fullWidth onChange={(e) => handleFeeChange(e, row.id)} placeholder='Select Basis' className={classes.select}>
+                  {feeBases?.map((basis) => (
+                    <MenuItem value={basis.list_item}>{basis.list_item}</MenuItem>
+                  ))}
+                </StyledSelect>
+              </Stack>
+            </Grid>
+          </>
+        )}
+        {row.fee_type === "FLAT-RATE" && (
+          <>
+            <Grid item xs={1.5}>
+              <Stack spacing={isMobile ? 1 : -2} m={2}>
+                <Typography
+                  sx={{
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.primary.fontWeight,
+                  }}
+                >
+                  {"Amount"}
+                </Typography>
+                <TextField name='charge' value={row.charge} variant='filled' fullWidth placeholder='Rent' className={classes.root} onChange={(e) => handleFeeChange(e, row.id)} />
+              </Stack>
+            </Grid>
+            <Grid item xs={2}></Grid>
+          </>
+        )}
+        <Grid container justifyContent='center' alignContent='center' item xs={1}>
+          <Button
+            aria-label='delete'
+            sx={{
+              marginTop: "10px",
+              color: "#000000",
+              fontWeight: "bold",
+              "&:hover": {
+                color: "#FFFFFF",
+              },
+            }}
+            onClick={() => removeFeeRow(row.id)}
+          >
+            <DeleteIcon sx={{ fontSize: 19, color: "#3D5CAC" }} />
+          </Button>
+        </Grid>
+
+        {index !== 0 && (
+          <IconButton aria-label='delete' sx={{ position: "absolute", top: 0, right: 0 }} onClick={() => removeFeeRow(row.id)}>
+            <CloseIcon />
+          </IconButton>
+        )}
+      </Grid>
     ));
   };
 
@@ -816,10 +795,10 @@ const closeDialog = () => {
     setLocations(updatedLocations);
 
     updateModifiedData({ key: "business_locations", value: JSON.stringify(updatedLocations) });
-  }
+  };
 
   const addServiceLocationRow = () => {
-    const updatedLocations = [...locations, { id: locations.length + 1, address: "", unit: "", city: "", state: "", miles: "" }];    
+    const updatedLocations = [...locations, { id: locations.length + 1, address: "", unit: "", city: "", state: "", miles: "" }];
 
     setLocations(updatedLocations);
 
@@ -832,15 +811,15 @@ const closeDialog = () => {
 
     updateModifiedData({ key: "business_locations", value: JSON.stringify(updatedLocations) });
   };
-  
-  const handleServiceLocationAddressSelect = (id, address) => {      
+
+  const handleServiceLocationAddressSelect = (id, address) => {
     const updatedLocations = locations?.map((loc) => {
       if (loc.id === id) {
-        const updatedLoc = { 
+        const updatedLoc = {
           ...loc,
-          ['address']: address.street ? address.street : "",
-          ['city']: address.city ? address.city : "",
-          ['state']: address.state ? address.state : ""
+          ["address"]: address.street ? address.street : "",
+          ["city"]: address.city ? address.city : "",
+          ["state"]: address.state ? address.state : "",
         };
         return updatedLoc;
       }
@@ -851,24 +830,22 @@ const closeDialog = () => {
     setLocations(updatedLocations);
 
     updateModifiedData({ key: "business_locations", value: JSON.stringify(updatedLocations) });
-
-
   };
 
   const renderServiceLocations = () => {
     return locations?.map((row, index) => (
-      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id} overflowX={"auto"} minWidth = {isMobile ? "650px" : "0px"}>
-          <Grid item xs={4}>
-            <Stack spacing={-2} m={2}>
-              <Typography
-                sx={{
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.primary.fontWeight,
-                }}
-              >
-                {"Address"}
-              </Typography>
-              {/* <TextField
+      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={row.id} overflowX={"auto"} minWidth={isMobile ? "650px" : "0px"}>
+        <Grid item xs={4}>
+          <Stack spacing={-2} m={2}>
+            <Typography
+              sx={{
+                color: theme.typography.common.blue,
+                fontWeight: theme.typography.primary.fontWeight,
+              }}
+            >
+              {"Address"}
+            </Typography>
+            {/* <TextField
                 name='address'
                 value={row.address}
                 variant='filled'
@@ -878,138 +855,138 @@ const closeDialog = () => {
                 // onChange={(e) => handleFeeChange(e, row.id)}
                 onChange={(e) => handleServiceLocationChange(e, row.id)}
               /> */}
-              <Grid item xs={12} sx={{ paddingTop: '10px',}}>
-                <AddressAutocompleteInput onAddressSelect={handleServiceLocationAddressSelect} gray={true} defaultValue={row.address} rowID={row.id}/>
-              </Grid>
-            </Stack>
-          </Grid>
-          <Grid container item xs={1.5}>
-            <Grid item xs={12}>
-              <Typography
-                sx={{
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.primary.fontWeight,
-                  width: "100%",
-                }}
-              >
-                {"Unit"}
-              </Typography>
+            <Grid item xs={12} sx={{ paddingTop: "10px" }}>
+              <AddressAutocompleteInput onAddressSelect={handleServiceLocationAddressSelect} gray={true} defaultValue={row.address} rowID={row.id} />
             </Grid>
-            <Grid item xs={12}>
-              <TextField 
-                name='unit'
-                value={row.unit}
-                onChange={(e) => handleServiceLocationChange(e, row.id)}
-                variant='filled'
-                // placeholder='3'
-                className={classes.root}                        
-              ></TextField>
-            </Grid>
-          </Grid>
-
-          <Grid item xs={2.5}>
-            <Stack spacing={-2} m={2}>
-              <Typography
-                sx={{
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.primary.fontWeight,
-                }}
-              >
-                {"City"}
-              </Typography>
-              <TextField
-                disabled
-                name='city'
-                value={row.city}
-                variant='filled'
-                fullWidth
-                placeholder='City'
-                className={classes.root}
-                // onChange={(e) => handleFeeChange(e, row.id)}
-                onChange={(e) => handleServiceLocationChange(e, row.id)}
-              />
-            </Stack>
-          </Grid>
-
-          <Grid item xs={1}>
-            <Stack spacing={-2} m={2}>
-              <Typography
-                sx={{
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.primary.fontWeight,
-                }}
-              >
-                {"State"}
-              </Typography>
-              <TextField
-                disabled
-                name='state'
-                value={row.state}
-                variant='filled'
-                fullWidth
-                placeholder='State'
-                className={classes.root}
-                // onChange={(e) => handleFeeChange(e, row.id)}
-                onChange={(e) => handleServiceLocationChange(e, row.id)}
-              />
-            </Stack>
-          </Grid>
-
-          <Grid item xs={2}>
-            <Stack spacing={-2} m={2}>
-              <Typography
-                sx={{
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.primary.fontWeight,
-                }}
-              >
-                {"Miles"}
-              </Typography>
-              <TextField
-                name='miles'
-                value={row.miles}
-                variant='filled'
-                fullWidth
-                placeholder='Miles'
-                className={classes.root}
-                // onChange={(e) => handleFeeChange(e, row.id)}
-                onChange={(e) => handleServiceLocationChange(e, row.id)}
-              />
-            </Stack>
-          </Grid>
-                            
-          <Grid container justifyContent='center' alignContent='center' item xs={1}>
-            <Button
-              aria-label='delete'
-              sx={{
-                color: "#000000",
-                fontWeight: "bold",
-                "&:hover": {
-                  color: "#FFFFFF",
-                },
-              }}
-              onClick={() => removeServiceLocationRow(row.id)}
-            >
-              <DeleteIcon sx={{ fontSize: 19, color: "#3D5CAC" }} />
-            </Button>
-          </Grid>
-
-          {index !== 0 && (
-            <IconButton aria-label='delete' sx={{ position: "absolute", top: 0, right: 0 }} onClick={() => removeServiceLocationRow(row.id)}>
-              <CloseIcon />
-            </IconButton>
-          )}
+          </Stack>
         </Grid>
+        <Grid container item xs={1.5}>
+          <Grid item xs={12}>
+            <Typography
+              sx={{
+                color: theme.typography.common.blue,
+                fontWeight: theme.typography.primary.fontWeight,
+                width: "100%",
+              }}
+            >
+              {"Unit"}
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              name='unit'
+              value={row.unit}
+              onChange={(e) => handleServiceLocationChange(e, row.id)}
+              variant='filled'
+              // placeholder='3'
+              className={classes.root}
+            ></TextField>
+          </Grid>
+        </Grid>
+
+        <Grid item xs={2.5}>
+          <Stack spacing={-2} m={2}>
+            <Typography
+              sx={{
+                color: theme.typography.common.blue,
+                fontWeight: theme.typography.primary.fontWeight,
+              }}
+            >
+              {"City"}
+            </Typography>
+            <TextField
+              disabled
+              name='city'
+              value={row.city}
+              variant='filled'
+              fullWidth
+              placeholder='City'
+              className={classes.root}
+              // onChange={(e) => handleFeeChange(e, row.id)}
+              onChange={(e) => handleServiceLocationChange(e, row.id)}
+            />
+          </Stack>
+        </Grid>
+
+        <Grid item xs={1}>
+          <Stack spacing={-2} m={2}>
+            <Typography
+              sx={{
+                color: theme.typography.common.blue,
+                fontWeight: theme.typography.primary.fontWeight,
+              }}
+            >
+              {"State"}
+            </Typography>
+            <TextField
+              disabled
+              name='state'
+              value={row.state}
+              variant='filled'
+              fullWidth
+              placeholder='State'
+              className={classes.root}
+              // onChange={(e) => handleFeeChange(e, row.id)}
+              onChange={(e) => handleServiceLocationChange(e, row.id)}
+            />
+          </Stack>
+        </Grid>
+
+        <Grid item xs={2}>
+          <Stack spacing={-2} m={2}>
+            <Typography
+              sx={{
+                color: theme.typography.common.blue,
+                fontWeight: theme.typography.primary.fontWeight,
+              }}
+            >
+              {"Miles"}
+            </Typography>
+            <TextField
+              name='miles'
+              value={row.miles}
+              variant='filled'
+              fullWidth
+              placeholder='Miles'
+              className={classes.root}
+              // onChange={(e) => handleFeeChange(e, row.id)}
+              onChange={(e) => handleServiceLocationChange(e, row.id)}
+            />
+          </Stack>
+        </Grid>
+
+        <Grid container justifyContent='center' alignContent='center' item xs={1}>
+          <Button
+            aria-label='delete'
+            sx={{
+              color: "#000000",
+              fontWeight: "bold",
+              "&:hover": {
+                color: "#FFFFFF",
+              },
+            }}
+            onClick={() => removeServiceLocationRow(row.id)}
+          >
+            <DeleteIcon sx={{ fontSize: 19, color: "#3D5CAC" }} />
+          </Button>
+        </Grid>
+
+        {index !== 0 && (
+          <IconButton aria-label='delete' sx={{ position: "absolute", top: 0, right: 0 }} onClick={() => removeServiceLocationRow(row.id)}>
+            <CloseIcon />
+          </IconButton>
+        )}
+      </Grid>
     ));
   };
 
   const paymentTypes = [
-    { type: 'paypal', name: 'PayPal', icon: PayPal },
-    { type: 'zelle', name: 'Zelle', icon: ZelleIcon },
-    { type: 'venmo', name: 'Venmo', icon: VenmoIcon },
-    { type: 'stripe', name: 'Stripe', icon: Stripe },
-    { type: 'apple_pay', name: 'Apple Pay', icon: ApplePay },
-    { type: 'bank_account', name: 'Bank Account', icon: ChaseIcon },
+    { type: "paypal", name: "PayPal", icon: PayPal },
+    { type: "zelle", name: "Zelle", icon: ZelleIcon },
+    { type: "venmo", name: "Venmo", icon: VenmoIcon },
+    { type: "stripe", name: "Stripe", icon: Stripe },
+    { type: "apple_pay", name: "Apple Pay", icon: ApplePay },
+    { type: "bank_account", name: "Bank Account", icon: ChaseIcon },
   ];
 
   const [modifiedPayment, setModifiedPayment] = useState(false);
@@ -1020,13 +997,13 @@ const closeDialog = () => {
     setShowSpinner(true);
     setIsSave(false);
 
-    setProfileData();   
+    setProfileData();
 
     if (profileData?.paymentMethods) {
       try {
         const methods = JSON.parse(profileData.paymentMethods).map((method) => ({
           ...method,
-          checked: method.paymentMethod_status === "Active", 
+          checked: method.paymentMethod_status === "Active",
         }));
         setParsedPaymentMethods(methods);
       } catch (error) {
@@ -1034,17 +1011,12 @@ const closeDialog = () => {
       }
     }
 
-    setShowSpinner(false);  
+    setShowSpinner(false);
   }, [profileData]);
 
   const renderPaymentMethods = () => {
     return parsedPaymentMethods.map((method, index) => (
-      <Grid
-        container
-        rowSpacing={1}
-        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-        key={method.paymentMethod_uid || index}
-      >
+      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={method.paymentMethod_uid || index}>
         <Grid item xs={1.3} sm={1}>
           <Checkbox
             name={`${method.paymentMethod_type}_${method.paymentMethod_uid}`}
@@ -1052,41 +1024,39 @@ const closeDialog = () => {
             onChange={(e) => handleChangeChecked(e, method.paymentMethod_uid)}
           />
         </Grid>
-  
-        <Grid container alignContent="center" item xs={1.3} sm={1}>
-          {method.paymentMethod_type ? (
-            <img src={getIconForMethod(method.paymentMethod_type)} alt={method.paymentMethod_type} />
-          ) : null}
+
+        <Grid container alignContent='center' item xs={1.3} sm={1}>
+          {method.paymentMethod_type ? <img src={getIconForMethod(method.paymentMethod_type)} alt={method.paymentMethod_type} /> : null}
         </Grid>
-  
+
         {!method.paymentMethod_type ? (
-          <Grid item xs={3} sx={{alignContent: "center"}}>
-          <Select
-            value={method.paymentMethod_type || ""}
-            onChange={(e) => handleChangeValue(e, method.paymentMethod_uid, "type")}
-            displayEmpty
-            fullWidth
-            variant="filled"
-            className={classes.root}
-            sx={{
-              '.MuiSelect-select': {
-                padding: '4px 8px', 
-              },
-              '.MuiOutlinedInput-root': {
-                minHeight: '30px', 
-              },
-            }}
-          >
-            <MenuItem 
-              value="" 
-              disabled 
+          <Grid item xs={3} sx={{ alignContent: "center" }}>
+            <Select
+              value={method.paymentMethod_type || ""}
+              onChange={(e) => handleChangeValue(e, method.paymentMethod_uid, "type")}
+              displayEmpty
+              fullWidth
+              variant='filled'
+              className={classes.root}
               sx={{
-                padding: '4px 8px',
-                minHeight: 'auto',
+                ".MuiSelect-select": {
+                  padding: "4px 8px",
+                },
+                ".MuiOutlinedInput-root": {
+                  minHeight: "30px",
+                },
               }}
             >
-              Select Payment Method
-            </MenuItem>
+              <MenuItem
+                value=''
+                disabled
+                sx={{
+                  padding: "4px 8px",
+                  minHeight: "auto",
+                }}
+              >
+                Select Payment Method
+              </MenuItem>
               {paymentTypes.map((payment) => (
                 <MenuItem key={payment.type} value={payment.type}>
                   <img src={payment.icon} alt={payment.name} style={{ width: 20, marginRight: 10 }} />
@@ -1104,9 +1074,9 @@ const closeDialog = () => {
                     name={`account_${method.paymentMethod_uid}`}
                     value={method.paymentMethod_acct || ""}
                     onChange={(e) => handleChangeValue(e, method.paymentMethod_uid, "acct")}
-                    variant="filled"
+                    variant='filled'
                     fullWidth
-                    placeholder="Enter Your Bank Account Number"
+                    placeholder='Enter Your Bank Account Number'
                     disabled={!method.checked} // Use checked state for disabled
                     className={classes.root}
                   />
@@ -1116,9 +1086,9 @@ const closeDialog = () => {
                     name={`routing_${method.paymentMethod_uid}`}
                     value={method.paymentMethod_routing_number || ""}
                     onChange={(e) => handleChangeValue(e, method.paymentMethod_uid, "routing_number")}
-                    variant="filled"
+                    variant='filled'
                     fullWidth
-                    placeholder="Enter Your Bank Routing Number"
+                    placeholder='Enter Your Bank Routing Number'
                     disabled={!method.checked} // Use checked state for disabled
                     className={classes.root}
                   />
@@ -1130,7 +1100,7 @@ const closeDialog = () => {
                   name={`${method.paymentMethod_type}_${method.paymentMethod_uid}`}
                   value={method.paymentMethod_name || ""}
                   onChange={(e) => handleChangeValue(e, method.paymentMethod_uid, "name")}
-                  variant="filled"
+                  variant='filled'
                   fullWidth
                   placeholder={`Enter ${capitalizeFirstLetter(method.paymentMethod_type)}`}
                   disabled={!method.checked} // Use checked state for disabled
@@ -1140,10 +1110,10 @@ const closeDialog = () => {
             )}
           </>
         )}
-  
-        {method.paymentMethod_uid && !method.paymentMethod_uid.startsWith('new_') && (
+
+        {method.paymentMethod_uid && !method.paymentMethod_uid.startsWith("new_") && (
           <Grid item xs={1}>
-            <IconButton onClick={() => handleDeletePaymentMethod(method.paymentMethod_uid)} aria-label="delete">
+            <IconButton onClick={() => handleDeletePaymentMethod(method.paymentMethod_uid)} aria-label='delete'>
               <DeleteIcon />
             </IconButton>
           </Grid>
@@ -1152,23 +1122,16 @@ const closeDialog = () => {
     ));
   };
 
-
   const handleChangeChecked = (e, uid) => {
     const { checked } = e.target;
-    const updatedMethods = parsedPaymentMethods.map((method) =>
-      method.paymentMethod_uid === uid ? { ...method, checked, paymentMethod_status: checked ? "Active" : "Inactive" } : method
-    );
+    const updatedMethods = parsedPaymentMethods.map((method) => (method.paymentMethod_uid === uid ? { ...method, checked, paymentMethod_status: checked ? "Active" : "Inactive" } : method));
     setParsedPaymentMethods(updatedMethods);
     setModifiedPayment(true);
   };
 
   const handleChangeValue = (e, uid, field) => {
     const { value } = e.target;
-    const updatedMethods = parsedPaymentMethods.map((method) =>
-      method.paymentMethod_uid === uid
-        ? { ...method, [`paymentMethod_${field}`]: value }
-        : method
-    );
+    const updatedMethods = parsedPaymentMethods.map((method) => (method.paymentMethod_uid === uid ? { ...method, [`paymentMethod_${field}`]: value } : method));
     setParsedPaymentMethods(updatedMethods);
     setModifiedPayment(true);
   };
@@ -1177,10 +1140,10 @@ const closeDialog = () => {
     // //console.log("check", event)
     event.stopPropagation();
     const newPaymentMethod = {
-      paymentMethod_uid: `new_${Date.now()}`, 
-      paymentMethod_type: "", 
-      paymentMethod_name: "", 
-      paymentMethod_status: "Inactive", 
+      paymentMethod_uid: `new_${Date.now()}`,
+      paymentMethod_type: "",
+      paymentMethod_name: "",
+      paymentMethod_status: "Inactive",
       checked: false,
     };
     setParsedPaymentMethods([...parsedPaymentMethods, newPaymentMethod]);
@@ -1189,30 +1152,23 @@ const closeDialog = () => {
 
   const handlePaymentStep = async (validPaymentMethods = []) => {
     setShowSpinner(true);
-    const existingMethods = profileData.paymentMethods
-      ? JSON.parse(profileData.paymentMethods)
-      : [];
-  
+    const existingMethods = profileData.paymentMethods ? JSON.parse(profileData.paymentMethods) : [];
+
     const putPayload = [];
     const postPayload = [];
-  
+
     validPaymentMethods.forEach((method) => {
-      if (method.paymentMethod_uid && !method.paymentMethod_uid.startsWith('new_')) {
+      if (method.paymentMethod_uid && !method.paymentMethod_uid.startsWith("new_")) {
         // Existing payment method (UID exists and doesn't start with 'new_')
-        const existingMethod = existingMethods.find(
-          (m) => m.paymentMethod_uid === method.paymentMethod_uid
-        );
-  
+        const existingMethod = existingMethods.find((m) => m.paymentMethod_uid === method.paymentMethod_uid);
+
         if (existingMethod) {
           const hasChanged =
             method.paymentMethod_name !== existingMethod.paymentMethod_name ||
             method.paymentMethod_status !== existingMethod.paymentMethod_status ||
             (method.paymentMethod_type === "bank_account" &&
-              (method.paymentMethod_routing_number !==
-                existingMethod.paymentMethod_routing_number ||
-                method.paymentMethod_account_number !==
-                  existingMethod.paymentMethod_account_number));
-  
+              (method.paymentMethod_routing_number !== existingMethod.paymentMethod_routing_number || method.paymentMethod_account_number !== existingMethod.paymentMethod_account_number));
+
           if (hasChanged) {
             putPayload.push({
               paymentMethod_uid: method.paymentMethod_uid,
@@ -1237,28 +1193,20 @@ const closeDialog = () => {
         });
       }
     });
-  
+
     try {
       // Make PUT request if there are modified existing payment methods
       if (putPayload.length > 0) {
-        await axios.put(
-          `${APIConfig.baseURL.dev}/paymentMethod`,
-          putPayload,
-          { headers: { "Content-Type": "application/json" } }
-        );
+        await axios.put(`${APIConfig.baseURL.dev}/paymentMethod`, putPayload, { headers: { "Content-Type": "application/json" } });
       }
-  
+
       // Make POST request if there are new payment methods
       if (postPayload.length > 0) {
-        await axios.post(
-          `${APIConfig.baseURL.dev}/paymentMethod`,
-          postPayload,
-          { headers: { "Content-Type": "application/json" } }
-        );
+        await axios.post(`${APIConfig.baseURL.dev}/paymentMethod`, postPayload, { headers: { "Content-Type": "application/json" } });
       }
-  
+
       setCookie("default_form_vals", { ...cookiesData, paymentMethods });
-      if(modifiedData.length === 0 && modifiedPayment === true){
+      if (modifiedData.length === 0 && modifiedPayment === true) {
         openDialog("Success", "Your profile has been successfully updated for payments.", "success");
       }
     } catch (error) {
@@ -1273,19 +1221,17 @@ const closeDialog = () => {
       const tenantUid = getProfileId();
       //console.log("paymentmethoduid", paymentMethodUid);
       const url = `${APIConfig.baseURL.dev}/paymentMethod/${tenantUid}/${paymentMethodUid}`;
-  
-      setShowSpinner(true); 
-  
+
+      setShowSpinner(true);
+
       await axios.delete(url, {
         headers: { "Content-Type": "application/json" },
       });
-  
-      setParsedPaymentMethods((prevMethods) =>
-        prevMethods.filter((method) => method.paymentMethod_uid !== paymentMethodUid)
-      );
-  
+
+      setParsedPaymentMethods((prevMethods) => prevMethods.filter((method) => method.paymentMethod_uid !== paymentMethodUid));
+
       setShowSpinner(false);
-  
+
       openDialog("Success", "Payment method deleted successfully.", "success");
     } catch (error) {
       setShowSpinner(false);
@@ -1298,16 +1244,16 @@ const closeDialog = () => {
     // setShowSpinner(true);
 
     const newErrors = {};
-    
-    let isAddingPaymentMethod = parsedPaymentMethods.some(method => method.paymentMethod_uid.startsWith('new_') || modifiedPayment);
-  
+
+    let isAddingPaymentMethod = parsedPaymentMethods.some((method) => method.paymentMethod_uid.startsWith("new_") || modifiedPayment);
+
     // Payment method validation
     let paymentMethodsError = false;
     let atLeastOneActive = false;
-  
+
     const validPaymentMethods = parsedPaymentMethods.filter((method) => method.paymentMethod_type !== "");
     //console.log("payment methods valid", validPaymentMethods);
-  
+
     validPaymentMethods.forEach((method) => {
       if (method.checked && method.paymentMethod_name === "") {
         paymentMethodsError = true;
@@ -1316,19 +1262,19 @@ const closeDialog = () => {
         atLeastOneActive = true;
       }
     });
-  
+
     if (!atLeastOneActive) {
       newErrors.paymentMethods = "At least one active payment method is required";
       openDialog("Alert", "At least one active payment method is required", "info");
       return;
     }
-  
+
     if (paymentMethodsError) {
       newErrors.paymentMethods = "Please check payment method details";
       openDialog("Alert", "Please check payment method details", "info");
       return;
     }
-  
+
     // Business information validation (only if not just adding a payment method)
     if (!isAddingPaymentMethod) {
       // if (!firstName) newErrors.firstName = "First name is required";
@@ -1338,52 +1284,51 @@ const closeDialog = () => {
       if (!email) newErrors.email = "Email is required";
       if (!phoneNumber) newErrors.phoneNumber = "Phone Number is required";
       if (!ein) newErrors.ein = "Tax ID is required";
-  
+
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
         openDialog("Alert", "Please correct the errors", "info");
         return;
       }
-  
+
       // Additional validation for business information fields
       if (!DataValidator.email_validate(email)) {
         openDialog("Alert", "Please enter a valid email", "info");
         return false;
       }
-  
+
       if (!DataValidator.phone_validate(phoneNumber)) {
         openDialog("Alert", "Please enter a valid phone number", "info");
         return false;
       }
-  
+
       if (!DataValidator.zipCode_validate(zip)) {
         openDialog("Alert", "Please enter a valid zip code", "info");
         return false;
       }
-        
+
       if ((taxIDType === "EIN" && !DataValidator.ein_validate(ein)) || (taxIDType === "SSN" && !DataValidator.ssn_validate(ein))) {
         openDialog("Alert", "Please enter a valid Tax ID", "info");
         return false;
       }
     }
-  
+
     setErrors({}); // Clear any previous errors
-  
+
     setCookie("default_form_vals", { ...cookiesData, firstName, lastName });
-  
+
     // Save the profile
     await saveProfile();
-  
+
     // Handle payment step if payment is modified
     if (modifiedPayment) {
       await handlePaymentStep(validPaymentMethods);
-      setModifiedPayment(false)
+      setModifiedPayment(false);
     }
-  
+
     setShowSpinner(false);
     return;
   };
-  
 
   const showSnackbar = (message, severity) => {
     //console.log("Inside show snackbar");
@@ -1401,7 +1346,6 @@ const closeDialog = () => {
     // console.log("handleUpdate called");
     setIsSave(true);
   };
-  
 
   const saveProfile = async () => {
     // //console.log("inside saveProfile", modifiedData);
@@ -1428,10 +1372,10 @@ const closeDialog = () => {
 
         modifiedData.forEach((item) => {
           //console.log(`Key: ${item.key}`);
-          if(hasBusinessFields === false && item.key.startsWith("business")) hasBusinessFields = true;
-          if(hasEmployeeFields === false && item.key.startsWith("employee")) hasEmployeeFields = true;
+          if (hasBusinessFields === false && item.key.startsWith("business")) hasBusinessFields = true;
+          if (hasEmployeeFields === false && item.key.startsWith("employee")) hasEmployeeFields = true;
           profileFormData.append(item.key, item.value);
-        });                
+        });
         if (hasBusinessFields) {
           profileFormData.append("business_uid", profileData.business_uid);
         }
@@ -1450,9 +1394,9 @@ const closeDialog = () => {
           })
           .catch((error) => {
             setShowSpinner(false);
-            if(error.code === "ERR_NETWORK"){
+            if (error.code === "ERR_NETWORK") {
               openDialog("Error", "Image is too large. Please try again", "error");
-            }else{
+            } else {
               openDialog("Error", "Cannot update your profile. Please try again", "error");
             }
 
@@ -1460,14 +1404,13 @@ const closeDialog = () => {
             //   console.log(error.response.data);
             // }
           });
-        
-        setShowSpinner(false);
 
+        setShowSpinner(false);
       } else if (modifiedData.length === 0 && modifiedPayment === false) {
         openDialog("Warning", "You haven't made any changes to the form. Please save after changing the data.", "error");
-      } 
+      }
     } catch (error) {
-      openDialog("Error", "Cannot update the lease. Please try again", "error");
+      openDialog("Error", "Cannot update the profile. Please try again", "error");
       //console.log("Cannot Update the lease", error);
       setShowSpinner(false);
     }
@@ -1475,29 +1418,421 @@ const closeDialog = () => {
 
   const [showMasked, setShowMasked] = useState(true);
   const displaySsn = showMasked ? newmaskNumber(ein) : formatSSN(ein);
-  const [showSSNEIN, setshowSSNEIN] = useState(ein?.length > 0 ? false : true); 
-  const [showEmpSsn, setshowEmpSsn] = useState(empSsn?.length > 0 ? false: true); 
+  const [showSSNEIN, setshowSSNEIN] = useState(ein?.length > 0 ? false : true);
+  const [showEmpSsn, setshowEmpSsn] = useState(empSsn?.length > 0 ? false : true);
 
   return (
     <>
-    {showSpinner ? (
+      {showSpinner ? (
         <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
           <CircularProgress color='inherit' />
         </Backdrop>
       ) : (
         <>
           <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", cursor: "pointer", marginBottom: "10px", padding: "10px" }}>
-          <Grid item xs={12}>
-            <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
-              Property Manager Profile Information
+            <Grid item xs={12}>
+              <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>
+                Property Manager Profile Information
+              </Typography>
+              <Grid container item xs={12}>
+                <Grid container alignContent='center' item xs={12} md={3}>
+                  <Grid container justifyContent='center' item xs={12}>
+                    {photo && photo.image ? (
+                      <img
+                        key={Date.now()}
+                        src={photo.image}
+                        style={{
+                          width: "121px",
+                          height: "121px",
+                          objectFit: "cover",
+                          borderRadius: "50%",
+                        }}
+                        alt='profile'
+                      />
+                    ) : (
+                      <img src={DefaultProfileImg} alt='default' style={{ width: "121px", height: "121px", borderRadius: "50%" }} />
+                    )}
+                  </Grid>
+                  <Grid container justifyContent='center' item xs={12}>
+                    <Button
+                      component='label'
+                      variant='contained'
+                      sx={{
+                        backgroundColor: "#3D5CAC",
+                        width: "193px",
+                        height: "35px",
+                        color: "#FFFFFF",
+                        fontWeight: "bold",
+                        textTransform: "none",
+                        marginTop: "10px",
+                      }}
+                    >
+                      {" "}
+                      Add Profile Pic
+                      <input type='file' hidden accept='image/*' onChange={handlePhotoChange} />
+                    </Button>
+                  </Grid>
+                </Grid>
+                <Grid item xs={12} md={9} marginTop={isMobile ? "20px" : "0px"}>
+                  <Grid item xs={12}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.common.blue,
+                        fontWeight: theme.typography.primary.fontWeight,
+                        width: "100%",
+                      }}
+                    >
+                      {"Business Name"}
+                    </Typography>
+                  </Grid>
+                  <Grid container item xs={12} columnSpacing={2}>
+                    <Grid item xs={12}>
+                      <TextField
+                        name='businessName'
+                        value={businessName}
+                        onChange={(e) => handleBusinessNameChange(e)}
+                        variant='filled'
+                        fullWidth
+                        placeholder='Business name'
+                        className={classes.root}
+                        InputProps={{
+                          className: errors.businessName || !businessName ? classes.errorBorder : "",
+                        }}
+                        required
+                      />
+                    </Grid>
+                  </Grid>
+                  <Grid container item xs={12} columnSpacing={4}>
+                    <Grid container item xs={5} md={5.5}>
+                      <Grid item xs={12}>
+                        <Typography
+                          sx={{
+                            color: theme.typography.common.blue,
+                            fontWeight: theme.typography.primary.fontWeight,
+                            width: "100%",
+                          }}
+                        >
+                          {"Business Address"}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <AddressAutocompleteInput onAddressSelect={handleBusinessAddressSelect} gray={true} defaultValue={address} isRequired={true} />
+                      </Grid>
+                    </Grid>
+                    <Grid container item xs={1.5} md={2}>
+                      <Grid item xs={12}>
+                        <Typography
+                          sx={{
+                            color: theme.typography.common.blue,
+                            fontWeight: theme.typography.primary.fontWeight,
+                            width: "100%",
+                          }}
+                        >
+                          {"Unit"}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <TextField value={unit} onChange={handleBusinessUnitChange} variant='filled' placeholder='3' className={classes.root}></TextField>
+                      </Grid>
+                    </Grid>
+                    <Grid container item xs={2}>
+                      <Grid item xs={12}>
+                        <Typography
+                          sx={{
+                            color: theme.typography.common.blue,
+                            fontWeight: theme.typography.primary.fontWeight,
+                            width: "100%",
+                          }}
+                        >
+                          {"City"}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <TextField disabled name='City' value={city} onChange={(e) => setCity(e.target.value)} variant='filled' placeholder='City' className={classes.root} />
+                      </Grid>
+                    </Grid>
+
+                    <Grid container item xs={1.5} md={1}>
+                      <Grid item xs={12}>
+                        <Typography
+                          sx={{
+                            color: theme.typography.common.blue,
+                            fontWeight: theme.typography.primary.fontWeight,
+                            width: "100%",
+                          }}
+                        >
+                          {"State"}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <TextField disabled name='State' value={state} onChange={(e) => setState(e.target.value)} variant='filled' placeholder='State' className={classes.root} />
+                      </Grid>
+                    </Grid>
+
+                    <Grid container item xs={2} md={1.5}>
+                      <Grid item xs={12}>
+                        <Typography
+                          sx={{
+                            color: theme.typography.common.blue,
+                            fontWeight: theme.typography.primary.fontWeight,
+                            width: "100%",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {isMobile ? "Zip" : "Zip Code"}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <TextField disabled name='Zip' value={zip} onChange={(e) => setZip(e.target.value)} variant='filled' placeholder='Zip' className={classes.root} />
+                      </Grid>
+                    </Grid>
+                  </Grid>
+
+                  <Grid container item xs={12} columnSpacing={4}>
+                    <Grid container item xs={6}>
+                      <Grid item xs={12}>
+                        <Typography
+                          sx={{
+                            color: theme.typography.common.blue,
+                            fontWeight: theme.typography.primary.fontWeight,
+                            width: "100%",
+                          }}
+                        >
+                          {"Business Email"}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <TextField
+                          fullWidth
+                          value={email}
+                          onChange={handleBusinessEmailChange}
+                          variant='filled'
+                          placeholder='Business Email'
+                          className={classes.root}
+                          InputProps={{
+                            className: errors.email || !email ? classes.errorBorder : "",
+                          }}
+                          required
+                        ></TextField>
+                      </Grid>
+                    </Grid>
+                    <Grid container item xs={6}>
+                      <Grid item xs={12}>
+                        <Typography
+                          sx={{
+                            color: theme.typography.common.blue,
+                            fontWeight: theme.typography.primary.fontWeight,
+                            width: "100%",
+                          }}
+                        >
+                          {"Business Phone Number"}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <TextField
+                          fullWidth
+                          value={phoneNumber}
+                          onChange={handleBusinessPhoneNumberChange}
+                          variant='filled'
+                          placeholder='Business Phone Number'
+                          className={classes.root}
+                          InputProps={{
+                            className: errors.phoneNumber || !phoneNumber ? classes.errorBorder : "",
+                          }}
+                          required
+                        ></TextField>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+
+                  <Grid container item xs={12} columnSpacing={4}>
+                    <Grid container item xs={7.5} sm={6}>
+                      <Grid item xs={4} sm={6}>
+                        <Typography
+                          sx={{
+                            color: theme.typography.common.blue,
+                            fontWeight: theme.typography.primary.fontWeight,
+                            width: "100%",
+                          }}
+                        >
+                          {"Tax ID (EIN or SSN)"}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={8} sm={6}>
+                        <RadioGroup aria-label='taxIDType' name='announctax_id_typeementType' value={taxIDType} onChange={(e) => setTaxIDType(e.target.value)} row>
+                          <FormControlLabel
+                            value='SSN'
+                            control={
+                              <Radio
+                                sx={{
+                                  color: "defaultColor",
+                                  "&.Mui-checked": {
+                                    color: "#3D5CAC",
+                                  },
+                                }}
+                              />
+                            }
+                            label='SSN'
+                          />
+                          <FormControlLabel
+                            value='EIN'
+                            control={
+                              <Radio
+                                sx={{
+                                  color: "defaultColor",
+                                  "&.Mui-checked": {
+                                    color: "#3D5CAC",
+                                  },
+                                }}
+                              />
+                            }
+                            label='EIN'
+                          />
+                        </RadioGroup>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <TextField
+                          fullWidth
+                          // value={mask}
+                          value={ein?.length > 0 ? (showSSNEIN ? ein : "***-**-****") : ""}
+                          // onChange={(e) => setSsn(e.target.value)}
+                          onChange={(e) => handleTaxIDChange(e.target.value, true)}
+                          variant='filled'
+                          placeholder='Enter numbers only'
+                          className={classes.root}
+                          InputProps={{
+                            className: errors.ein || !ein ? classes.errorBorder : "",
+                            endAdornment: (
+                              <InputAdornment position='end' style={{ marginRight: "8px", marginTop: "10px" }}>
+                                <IconButton aria-label='toggle password visibility' onClick={() => setshowSSNEIN((show) => !show)} edge='end'>
+                                  {showSSNEIN ? <VisibilityOff style={{ fontSize: "20px" }} /> : <Visibility style={{ fontSize: "20px" }} />}
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                          }}
+                          required
+                        ></TextField>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
+            <Grid container item xs={12} sx={{ marginBottom: "10px" }}>
+              <Grid item xs={1}></Grid>
+              <Grid container justifyContent='center' alignItems='center' item xs={10}>
+                <Typography sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>Management Fees</Typography>
+              </Grid>
+              <Grid container justifyContent='center' alignItems='center' item xs={1}>
+                <Button
+                  onClick={() => addFeeRow()}
+                  sx={{
+                    color: "#1f1f1f",
+                    "&:hover": {
+                      color: "#FFFFFF",
+                    },
+                  }}
+                >
+                  <Typography sx={{ fontSize: "24px", fontWeight: "bold" }}>+</Typography>
+                </Button>
+              </Grid>
+            </Grid>
+            <Grid container item xs={12}>
+              <Box
+                sx={{
+                  overflowX: "auto",
+                  width: "100%",
+                }}
+              >
+                {renderManagementFees()}
+              </Box>
+            </Grid>
+          </Grid>
+
+          <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
+            <Grid container item xs={12} sx={{ marginBottom: "10px" }}>
+              <Grid item xs={1}></Grid>
+              <Grid container justifyContent='center' alignItems='center' item xs={10}>
+                <Typography sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>Service Locations</Typography>
+              </Grid>
+              <Grid container justifyContent='center' alignItems='center' item xs={1}>
+                <Button
+                  onClick={() => addServiceLocationRow()}
+                  sx={{
+                    color: "#1f1f1f",
+                    "&:hover": {
+                      color: "#FFFFFF",
+                    },
+                  }}
+                >
+                  <Typography sx={{ fontSize: "24px", fontWeight: "bold" }}>+</Typography>
+                </Button>
+              </Grid>
+            </Grid>
+            <Grid container item xs={12}>
+              <Box
+                sx={{
+                  overflowX: "auto",
+                }}
+              >
+                {renderServiceLocations()}
+              </Box>
+            </Grid>
+          </Grid>
+
+          <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+            <Grid item xs={12}>
+              <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={paymentExpanded} onChange={() => setPaymentExpanded((prevState) => !prevState)}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='payment-content' id='payment-header'>
+                  <Grid container justifyContent='center'>
+                    <Grid item md={11.5}>
+                      <Typography
+                        sx={{
+                          color: "#160449",
+                          fontWeight: theme.typography.primary.fontWeight,
+                          fontSize: "24px",
+                          textAlign: "center",
+                          paddingBottom: "10px",
+                          paddingTop: "5px",
+                          flexGrow: 1,
+                          paddingLeft: "50px",
+                        }}
+                        paddingTop='5px'
+                        paddingBottom='10px'
+                      >
+                        Business Payment Information
+                      </Typography>
+                    </Grid>
+                    <Grid item md={0.5}>
+                      <IconButton onClick={handleAddPaymentMethod} aria-label='Add Payment Method'>
+                        <AddIcon />
+                      </IconButton>
+                    </Grid>
+                  </Grid>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Grid container item xs={12}>
+                    {renderPaymentMethods()}
+                  </Grid>
+                </AccordionDetails>
+              </Accordion>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={12} sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
+            <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }} paddingTop='5px' paddingBottom='10px'>
+              Property Manager Personal Information
             </Typography>
             <Grid container item xs={12}>
               <Grid container alignContent='center' item xs={12} md={3}>
                 <Grid container justifyContent='center' item xs={12}>
-                  {photo && photo.image ? (
+                  {employeePhoto && employeePhoto.image ? (
                     <img
                       key={Date.now()}
-                      src={photo.image}
+                      src={employeePhoto.image}
                       style={{
                         width: "121px",
                         height: "121px",
@@ -1526,11 +1861,11 @@ const closeDialog = () => {
                   >
                     {" "}
                     Add Profile Pic
-                    <input type='file' hidden accept='image/*' onChange={handlePhotoChange} />
+                    <input type='file' hidden accept='image/*' onChange={handleEmpPhotoChange} />
                   </Button>
                 </Grid>
               </Grid>
-              <Grid item xs={12} md={9} marginTop={isMobile? "20px" : "0px"}>
+              <Grid item xs={12} md={9} marginTop={isMobile ? "20px" : "0px"}>
                 <Grid item xs={12}>
                   <Typography
                     sx={{
@@ -1539,21 +1874,37 @@ const closeDialog = () => {
                       width: "100%",
                     }}
                   >
-                    {"Business Name"}
+                    {"Display Name"}
                   </Typography>
                 </Grid>
                 <Grid container item xs={12} columnSpacing={2}>
-                  <Grid item xs={12}>
+                  <Grid item xs={6}>
                     <TextField
-                      name='businessName'
-                      value={businessName}
-                      onChange={(e) => handleBusinessNameChange(e)}
+                      name='emp_first_name'
+                      value={empFirstName}
+                      onChange={(e) => handleEmpFirstNameChange(e)}
                       variant='filled'
                       fullWidth
-                      placeholder='Business name'
+                      placeholder='First name'
+                      className={classes.root}
+                      // className={`${classes.root} ${errors.empFirstName ? classes.requiredField : ''}`}
+                      InputProps={{
+                        className: errors.empFirstName || !empFirstName ? classes.errorBorder : "",
+                      }}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      name='emp_last_name'
+                      value={empLastName}
+                      variant='filled'
+                      onChange={handleEmpLastNameChange}
+                      fullWidth
+                      placeholder='Last name'
                       className={classes.root}
                       InputProps={{
-                        className: errors.businessName || !businessName ? classes.errorBorder : '',
+                        className: errors.empLastName || !empLastName ? classes.errorBorder : "",
                       }}
                       required
                     />
@@ -1569,16 +1920,11 @@ const closeDialog = () => {
                           width: "100%",
                         }}
                       >
-                        {"Business Address"}
+                        {"Personal Address"}
                       </Typography>
                     </Grid>
                     <Grid item xs={12}>
-                      <AddressAutocompleteInput 
-                        onAddressSelect={handleBusinessAddressSelect}
-                        gray={true}
-                        defaultValue={address}                                           
-                        isRequired={true}
-                      />
+                      <AddressAutocompleteInput onAddressSelect={handlePersonalAddressSelect} gray={true} defaultValue={empAddress} />
                     </Grid>
                   </Grid>
                   <Grid container item xs={1.5} md={2}>
@@ -1594,13 +1940,7 @@ const closeDialog = () => {
                       </Typography>
                     </Grid>
                     <Grid item xs={12}>
-                      <TextField 
-                        value={unit}
-                        onChange={handleBusinessUnitChange}
-                        variant='filled'
-                        placeholder='3'
-                        className={classes.root}                        
-                      ></TextField>
+                      <TextField value={empUnit} onChange={handleEmpUnitChange} variant='filled' placeholder='3' className={classes.root}></TextField>
                     </Grid>
                   </Grid>
                   <Grid container item xs={2}>
@@ -1616,7 +1956,7 @@ const closeDialog = () => {
                       </Typography>
                     </Grid>
                     <Grid item xs={12}>
-                      <TextField disabled name='City' value={city} onChange={(e) => setCity(e.target.value)} variant='filled' placeholder='City' className={classes.root} />
+                      <TextField disabled name='City' value={empCity} onChange={(e) => setCity(e.target.value)} variant='filled' placeholder='City' className={classes.root} />
                     </Grid>
                   </Grid>
 
@@ -1633,7 +1973,7 @@ const closeDialog = () => {
                       </Typography>
                     </Grid>
                     <Grid item xs={12}>
-                      <TextField disabled name='State' value={state} onChange={(e) => setState(e.target.value)} variant='filled' placeholder='State' className={classes.root} />
+                      <TextField disabled name='State' value={empState} onChange={(e) => setState(e.target.value)} variant='filled' placeholder='State' className={classes.root} />
                     </Grid>
                   </Grid>
 
@@ -1644,14 +1984,13 @@ const closeDialog = () => {
                           color: theme.typography.common.blue,
                           fontWeight: theme.typography.primary.fontWeight,
                           width: "100%",
-                          whiteSpace:'nowrap',
                         }}
                       >
                         {isMobile ? "Zip" : "Zip Code"}
                       </Typography>
                     </Grid>
                     <Grid item xs={12}>
-                      <TextField disabled name='Zip' value={zip} onChange={(e) => setZip(e.target.value)} variant='filled' placeholder='Zip' className={classes.root} />
+                      <TextField disabled name='Zip' value={empZip} onChange={(e) => setZip(e.target.value)} variant='filled' placeholder='Zip' className={classes.root} />
                     </Grid>
                   </Grid>
                 </Grid>
@@ -1666,56 +2005,26 @@ const closeDialog = () => {
                           width: "100%",
                         }}
                       >
-                        {"Business Email"}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField 
-                        fullWidth
-                        value={email}
-                        onChange={handleBusinessEmailChange}
-                        variant='filled'
-                        placeholder='Business Email'
-                        className={classes.root}
-                        InputProps={{
-                          className: errors.email || !email ? classes.errorBorder : '',
-                        }}
-                        required
-                      ></TextField>
-                    </Grid>
-                  </Grid>
-                  <Grid container item xs={6}>
-                    <Grid item xs={12}>
-                      <Typography
-                        sx={{
-                          color: theme.typography.common.blue,
-                          fontWeight: theme.typography.primary.fontWeight,
-                          width: "100%",
-                        }}
-                      >
-                        {"Business Phone Number"}
+                        {"Personal Email"}
                       </Typography>
                     </Grid>
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
-                        value={phoneNumber}
-                        onChange={handleBusinessPhoneNumberChange}
+                        value={empEmail}
+                        onChange={handleEmpEmailChange}
                         variant='filled'
-                        placeholder='Business Phone Number'
+                        placeholder='Email'
                         className={classes.root}
-                        InputProps={{
-                          className: errors.phoneNumber || !phoneNumber ? classes.errorBorder : '',
-                        }}
-                        required
+                        // InputProps={{
+                        //   className: errors.empEmail ? classes.errorBorder : '',
+                        // }}
+                        // required
                       ></TextField>
                     </Grid>
                   </Grid>
-                </Grid>
-
-                <Grid container item xs={12} columnSpacing={4}>
-                  <Grid container item xs={7.5} sm={6}>
-                    <Grid item xs={4} sm={6}>
+                  <Grid container item xs={6}>
+                    <Grid item xs={12}>
                       <Typography
                         sx={{
                           color: theme.typography.common.blue,
@@ -1723,64 +2032,59 @@ const closeDialog = () => {
                           width: "100%",
                         }}
                       >
-                        {"Tax ID (EIN or SSN)"}
+                        {"Personal Phone Number"}
                       </Typography>
                     </Grid>
-                    <Grid item xs={8} sm={6}>                    
-                    <RadioGroup aria-label='taxIDType' name='announctax_id_typeementType' value={taxIDType} onChange={(e) => setTaxIDType(e.target.value)} row>
-                      <FormControlLabel 
-                        value='SSN'
-                        control={
-                          <Radio
-                            sx={{
-                              color: 'defaultColor', 
-                              '&.Mui-checked': {
-                                color: '#3D5CAC',
-                              },
-                            }}
-                          />
-                        }
-                        label='SSN' />
-                      <FormControlLabel
-                        value='EIN'
-                        control={
-                          <Radio
-                            sx={{
-                              color: 'defaultColor', 
-                              '&.Mui-checked': {
-                                color: '#3D5CAC', 
-                              },
-                            }}
-                          />
-                        }
-                        label='EIN' />                    
-                    </RadioGroup>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        value={empPhoneNumber}
+                        onChange={handleEmpPhoneNumberChange}
+                        variant='filled'
+                        placeholder='Phone Number'
+                        className={classes.root}
+                        // InputProps={{
+                        //   className: errors.empPhoneNumber ? classes.errorBorder : '',
+                        // }}
+                        // required
+                      ></TextField>
+                    </Grid>
+                  </Grid>
+                </Grid>
+
+                <Grid container item xs={12} columnSpacing={4}>
+                  <Grid container item xs={6}>
+                    <Grid item xs={12}>
+                      <Typography
+                        sx={{
+                          color: theme.typography.common.blue,
+                          fontWeight: theme.typography.primary.fontWeight,
+                          width: "100%",
+                        }}
+                      >
+                        {"SSN"}
+                      </Typography>
                     </Grid>
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
                         // value={mask}
-                        value={ein?.length > 0? showSSNEIN? ein : "***-**-****" : ""} 
+                        value={empSsn?.length > 0 ? (showEmpSsn ? empSsn : "***-**-****") : ""}
                         // onChange={(e) => setSsn(e.target.value)}
-                        onChange={(e) => handleTaxIDChange(e.target.value, true)} 
+                        onChange={handleEmpSSNChange}
                         variant='filled'
-                        placeholder='Enter numbers only'
+                        placeholder='SSN'
                         className={classes.root}
                         InputProps={{
-                          className: errors.ein || !ein ? classes.errorBorder : '',
                           endAdornment: (
-                            <InputAdornment position='end' style={{ marginRight: "8px", marginTop: "10px" }} >
-                              <IconButton
-                                aria-label='toggle password visibility'
-                                onClick={() => setshowSSNEIN((show) => !show)}
-                                edge='end'
-                              >
-                                {showSSNEIN ? <VisibilityOff style={{ fontSize: "20px"}}/> : <Visibility style={{ fontSize: "20px"  }}/>}
+                            <InputAdornment position='end' style={{ marginRight: "8px", marginTop: "10px" }}>
+                              <IconButton aria-label='toggle password visibility' onClick={() => setshowEmpSsn((show) => !show)} edge='end'>
+                                {showEmpSsn ? <VisibilityOff style={{ fontSize: "20px" }} /> : <Visibility style={{ fontSize: "20px" }} />}
                               </IconButton>
                             </InputAdornment>
                           ),
                         }}
-                        required
+                        // required
                       ></TextField>
                     </Grid>
                   </Grid>
@@ -1788,411 +2092,27 @@ const closeDialog = () => {
               </Grid>
             </Grid>
           </Grid>
-        </Grid>
 
-        <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
-          <Grid container item xs={12} sx={{ marginBottom: "10px" }}>
-            <Grid item xs={1}></Grid>
-            <Grid container justifyContent='center' alignItems='center' item xs={10}>
-              <Typography sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>Management Fees</Typography>
-            </Grid>
-            <Grid container justifyContent='center' alignItems='center' item xs={1}>
-              <Button
-                onClick={() => addFeeRow()}
-                sx={{
-                  color: "#1f1f1f",
-                  "&:hover": {
-                    color: "#FFFFFF",
-                  },
-                }}
-              >
-                <Typography sx={{ fontSize: '24px', fontWeight: "bold" }}>+</Typography>
-              </Button>
-            </Grid>
+          <Grid container justifyContent='center' item xs={12} sx={{ backgroundColor: "#F2F2F2", borderRadius: "10px" }} paddingTop='10px' paddingBottom='10px'>
+            <Button variant='contained' color='primary' onClick={handleNextStep} disabled={nextStepDisabled} sx={{ mb: 2, backgroundColor: "#3D5CAC" }}>
+              <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Save</Typography>
+            </Button>
           </Grid>
-          <Grid container item xs={12}>
-            <Box
-              sx={{
-                overflowX: "auto",
-                width: "100%",
-              }}
-            >
-              {renderManagementFees()}
-            </Box>
 
-          </Grid>
-        </Grid>
-
-        <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
-          <Grid container item xs={12} sx={{ marginBottom: "10px" }}>
-            <Grid item xs={1}></Grid>
-            <Grid container justifyContent='center' alignItems='center' item xs={10}>
-              <Typography sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }}>Service Locations</Typography>
-            </Grid>
-            <Grid container justifyContent='center' alignItems='center' item xs={1}>
-              <Button
-                onClick={() => addServiceLocationRow()}
-                sx={{
-                  color: "#1f1f1f",
-                  "&:hover": {
-                    color: "#FFFFFF",
-                  },
-                }}
-              >
-                <Typography sx={{  fontSize: '24px', fontWeight: "bold" }}>+</Typography>
-              </Button>
-            </Grid>
-          </Grid>
-          <Grid container item xs={12}>
-            <Box
-              sx={{
-                overflowX : "auto"
-              }}
-            >
-              {renderServiceLocations()}
-            </Box>
-          </Grid>
-        </Grid>
-
-        <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
-        <Grid item xs={12}>
-          <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={paymentExpanded} onChange={() => setPaymentExpanded(prevState => !prevState)}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='payment-content' id='payment-header'>
-              <Grid container justifyContent='center'>
-                <Grid item md={11.5}>
-                  <Typography
-                    sx={{
-                      color: "#160449",
-                      fontWeight: theme.typography.primary.fontWeight,
-                      fontSize: "24px",
-                      textAlign: "center",
-                      paddingBottom: "10px",
-                      paddingTop: "5px",
-                      flexGrow: 1,
-                      paddingLeft: "50px",
-                    }}
-                    paddingTop='5px'
-                    paddingBottom='10px'
-                  >
-                    Business Payment Information
-                  </Typography>
-                </Grid>
-                <Grid item md={0.5}>
-                  <IconButton onClick={handleAddPaymentMethod} aria-label="Add Payment Method">
-                    <AddIcon />
-                  </IconButton>
-                </Grid>
-              </Grid>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Grid container item xs={12}>
-                {renderPaymentMethods()}
-              </Grid>
-            </AccordionDetails>
-          </Accordion>
-        </Grid>
-      </Grid>
-
-        <Grid item xs={12} sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", marginBottom: "10px", padding: "10px" }}>
-          <Typography align='center' gutterBottom sx={{ fontSize: "24px", fontWeight: "bold", color: "#1f1f1f" }} 
-                    paddingTop='5px'
-                    paddingBottom='10px'>
-            Property Manager Personal Information
-          </Typography>
-          <Grid container item xs={12}>
-            <Grid container alignContent='center' item xs={12} md={3}>
-              <Grid container justifyContent='center' item xs={12}>
-                {employeePhoto && employeePhoto.image ? (
-                  <img
-                    key={Date.now()}
-                    src={employeePhoto.image}
-                    style={{
-                      width: "121px",
-                      height: "121px",
-                      objectFit: "cover",
-                      borderRadius: "50%",
-                    }}
-                    alt='profile'
-                  />
-                ) : (
-                  <img src={DefaultProfileImg} alt='default' style={{ width: "121px", height: "121px", borderRadius: "50%" }} />
-                )}
-              </Grid>
-              <Grid container justifyContent='center' item xs={12}>
-                <Button
-                  component='label'
-                  variant='contained'
-                  sx={{
-                    backgroundColor: "#3D5CAC",
-                    width: "193px",
-                    height: "35px",
-                    color: "#FFFFFF",
-                    fontWeight: "bold",
-                    textTransform: "none",
-                    marginTop: "10px",
-                  }}
-                >
-                  {" "}
-                  Add Profile Pic
-                  <input type='file' hidden accept='image/*' onChange={handleEmpPhotoChange} />
-                </Button>
-              </Grid>
-            </Grid>
-            <Grid item xs={12} md={9} marginTop={isMobile? "20px" : "0px"}>
-              <Grid item xs={12}>
-                <Typography
-                  sx={{
-                    color: theme.typography.common.blue,
-                    fontWeight: theme.typography.primary.fontWeight,
-                    width: "100%",
-                  }}
-                >
-                  {"Display Name"}
-                </Typography>
-              </Grid>
-              <Grid container item xs={12} columnSpacing={2}>
-                <Grid item xs={6}>
-                  <TextField
-                    name='emp_first_name'
-                    value={empFirstName}
-                    onChange={(e) => handleEmpFirstNameChange(e)}
-                    variant='filled'
-                    fullWidth
-                    placeholder='First name'
-                    className={classes.root}
-                    // className={`${classes.root} ${errors.empFirstName ? classes.requiredField : ''}`}
-                    InputProps={{
-                      className: errors.empFirstName || !empFirstName ? classes.errorBorder : '',
-                    }}
-                    required
-                  />                
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    name='emp_last_name'
-                    value={empLastName}
-                    variant='filled'
-                    onChange={handleEmpLastNameChange}
-                    fullWidth
-                    placeholder='Last name'
-                    className={classes.root}
-                    InputProps={{
-                      className: errors.empLastName || !empLastName ? classes.errorBorder : '',
-                    }}                  
-                    required
-                  />
-                </Grid>
-              </Grid>
-              <Grid container item xs={12} columnSpacing={4}>
-                <Grid container item xs={5} md={5.5}>
-                  <Grid item xs={12}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        width: "100%",
-                      }}
-                    >
-                      {"Personal Address"}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <AddressAutocompleteInput onAddressSelect={handlePersonalAddressSelect} gray={true} defaultValue={empAddress} />
-                  </Grid>
-                </Grid>
-                <Grid container item xs={1.5} md={2}>
-                  <Grid item xs={12}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        width: "100%",
-                      }}
-                    >
-                      {"Unit"}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField value={empUnit} onChange={handleEmpUnitChange} variant='filled' placeholder='3' className={classes.root}></TextField>
-                  </Grid>
-                </Grid>
-                <Grid container item xs={2}>
-                  <Grid item xs={12}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        width: "100%",
-                      }}
-                    >
-                      {"City"}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField disabled name='City' value={empCity} onChange={(e) => setCity(e.target.value)} variant='filled' placeholder='City' className={classes.root} />
-                  </Grid>
-                </Grid>
-
-                <Grid container item xs={1.5} md={1}>
-                  <Grid item xs={12}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        width: "100%",
-                      }}
-                    >
-                      {"State"}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField disabled name='State' value={empState} onChange={(e) => setState(e.target.value)} variant='filled' placeholder='State' className={classes.root} />
-                  </Grid>
-                </Grid>
-
-                <Grid container item xs={2} md={1.5}>
-                  <Grid item xs={12}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        width: "100%",
-                      }}
-                    >
-                      {isMobile ? "Zip" : "Zip Code"}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField disabled name='Zip' value={empZip} onChange={(e) => setZip(e.target.value)} variant='filled' placeholder='Zip' className={classes.root} />
-                  </Grid>
-                </Grid>
-              </Grid>
-
-              <Grid container item xs={12} columnSpacing={4}>
-                <Grid container item xs={6}>
-                  <Grid item xs={12}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        width: "100%",
-                      }}
-                    >
-                      {"Personal Email"}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField 
-                      fullWidth
-                      value={empEmail}
-                      onChange={handleEmpEmailChange}
-                      variant='filled'
-                      placeholder='Email'
-                      className={classes.root}
-                      // InputProps={{
-                      //   className: errors.empEmail ? classes.errorBorder : '',
-                      // }}
-                      // required
-                    ></TextField>
-                  </Grid>
-                </Grid>
-                <Grid container item xs={6}>
-                  <Grid item xs={12}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        width: "100%",
-                      }}
-                    >
-                      {"Personal Phone Number"}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      value={empPhoneNumber}
-                      onChange={handleEmpPhoneNumberChange}
-                      variant='filled'
-                      placeholder='Phone Number'
-                      className={classes.root}
-                      // InputProps={{
-                      //   className: errors.empPhoneNumber ? classes.errorBorder : '',
-                      // }}
-                      // required
-                    ></TextField>
-                  </Grid>
-                </Grid>
-              </Grid>
-
-              <Grid container item xs={12} columnSpacing={4}>
-                <Grid container item xs={6}>
-                  <Grid item xs={12}>
-                    <Typography
-                      sx={{
-                        color: theme.typography.common.blue,
-                        fontWeight: theme.typography.primary.fontWeight,
-                        width: "100%",
-                      }}
-                    >
-                      {"SSN"}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      // value={mask}
-                      value={empSsn?.length > 0 ? showEmpSsn? empSsn : "***-**-****" : ""}
-                      // onChange={(e) => setSsn(e.target.value)}
-                      onChange={handleEmpSSNChange}
-                      variant='filled'
-                      placeholder='SSN'
-                      className={classes.root}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position='end' style={{ marginRight: "8px", marginTop: "10px" }} >
-                            <IconButton
-                              aria-label='toggle password visibility'
-                              onClick={() => setshowEmpSsn((show) => !show)}
-                              edge='end'
-                            >
-                              {showEmpSsn ? <VisibilityOff style={{ fontSize: "20px"}}/> : <Visibility style={{ fontSize: "20px"  }}/>}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                      // required
-                    ></TextField>
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-
-        <Grid container justifyContent='center' item xs={12} sx= {{ backgroundColor:"#F2F2F2", borderRadius: "10px",}} 
-                    paddingTop='10px'
-                    paddingBottom='10px'>
-          <Button variant='contained' color='primary' onClick={handleNextStep} disabled={nextStepDisabled} sx={{ mb: 2, backgroundColor: "#3D5CAC" }}>
-            <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }} >Save</Typography>
-          </Button>
-        </Grid>
-
-
-        <GenericDialog
-          isOpen={isDialogOpen}
-          title={dialogTitle}
-          contextText={dialogMessage}
-          actions={[
-            {
-              label: "OK",
-              onClick: closeDialog,
-            }
-          ]}
-          severity={dialogSeverity}
-        />
+          <GenericDialog
+            isOpen={isDialogOpen}
+            title={dialogTitle}
+            contextText={dialogMessage}
+            actions={[
+              {
+                label: "OK",
+                onClick: closeDialog,
+              },
+            ]}
+            severity={dialogSeverity}
+          />
         </>
-    )}
+      )}
     </>
   );
 }

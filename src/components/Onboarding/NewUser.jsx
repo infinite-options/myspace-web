@@ -33,7 +33,7 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import ConstructionOutlinedIcon from "@mui/icons-material/ConstructionOutlined";
-import PersonIcon from '@mui/icons-material/Person';
+import PersonIcon from "@mui/icons-material/Person";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { useUser } from "../../contexts/UserContext";
 import Visibility from "@mui/icons-material/Visibility";
@@ -54,17 +54,16 @@ const NewUser = () => {
   const [showEmailSignup, setShowEmailSignup] = useState(false);
   const { setAuthData, selectRole, setLoggedIn } = useUser();
   const [cookies, setCookie] = useCookies(["user"]);
-  const [showPassword, setShowPassword] = useState(false);  
+  const [showPassword, setShowPassword] = useState(false);
   const [googleInfoAvailable, setGoogleInfoAvailable] = useState(false);
-  const { fetchLists, } = useContext(ListsContext)
+  const { fetchLists } = useContext(ListsContext);
   const [user, setUser] = useState(location.state?.user ? location.state?.user : null);
 
   useEffect(() => {
-    if(user){
+    if (user) {
       setGoogleInfoAvailable(true);
     }
   }, [user]);
-  
 
   //console.log("ROHIT - user - ", user);
 
@@ -74,13 +73,13 @@ const NewUser = () => {
 
   const [businesses, setBusinesses] = useState([]);
   const [selectedBusiness, setSelectedBusiness] = useState();
-  const [userExists, setUserExists] = useState(false)
+  const [userExists, setUserExists] = useState(false);
 
   const onSignupModal = () => {
-    setUserExists(false)
-    setPassword("")
-    setConfirmPassword("")
-  }
+    setUserExists(false);
+    setPassword("");
+    setConfirmPassword("");
+  };
 
   // useEffect(() => {
   //   //console.log("role -  ", role);
@@ -96,10 +95,10 @@ const NewUser = () => {
 
   useEffect(() => {
     // //console.log("selectedBusiness -  ", selectedBusiness);
-    if( selectedBusiness?.business_type === "MANAGEMENT"){
-      setRole("PM_EMPLOYEE")
-    } else if( selectedBusiness?.business_type === "MAINTENANCE"){
-      setRole("MAINT_EMPLOYEE")
+    if (selectedBusiness?.business_type === "MANAGEMENT") {
+      setRole("PM_EMPLOYEE");
+    } else if (selectedBusiness?.business_type === "MAINTENANCE") {
+      setRole("MAINT_EMPLOYEE");
     }
   }, [selectedBusiness]);
 
@@ -117,14 +116,14 @@ const NewUser = () => {
     // //console.log("handleRoleChange - newRole - ", newRole);
     if (newRole !== null) {
       setRole(newRole);
-      if( newRole === "EMPLOYEE"){
+      if (newRole === "EMPLOYEE") {
         fetchBusinesses();
       }
     }
   };
 
   const validate_form = () => {
-    if(googleInfoAvailable){
+    if (googleInfoAvailable) {
       return true;
     }
     if (email === "" || password === "" || confirmPassword === "") {
@@ -142,19 +141,19 @@ const NewUser = () => {
       return false;
     }
 
-    if (role === "EMPLOYEE" || (selectedBusiness == null && (role === "PM_EMPLOYEE" || role === "MAINT_EMPLOYEE"))) { 
+    if (role === "EMPLOYEE" || (selectedBusiness == null && (role === "PM_EMPLOYEE" || role === "MAINT_EMPLOYEE"))) {
       alert("Please select the business that you are an employee of.");
       return false;
     }
   };
 
   const checkIfUserExists = async (email) => {
-    if(email) {
+    if (email) {
       try {
         const response = await axios.get(`${APIConfig.baseURL.dev}/userInfo/${email}`);
-        if(response){
+        if (response) {
           return response;
-        }else{
+        } else {
           return null;
         }
       } catch (error) {
@@ -164,12 +163,12 @@ const NewUser = () => {
           throw error;
         }
       }
-    } else if(user?.email){
+    } else if (user?.email) {
       try {
         const response = await axios.get(`${APIConfig.baseURL.dev}/userInfo/${user.email}`);
-        if(response){
+        if (response) {
           return response;
-        }else{
+        } else {
           return null;
         }
       } catch (error) {
@@ -239,25 +238,24 @@ const NewUser = () => {
                     if (message === "Incorrect password") {
                       // alert(response.data.message);
                       // alert("User already exist")
-                      setUserExists(true)
+                      setUserExists(true);
                       // navigate("/userLogin", { state: { user_email: email } });
                       // setShowSpinner(false);
                     } else if (message === "Email doesn't exist") {
                       //setUserDoesntExist(true);
                       // setShowSpinner(false);
                     } else if (message === "Login successful") {
-                      localStorage.removeItem('hasRedirected');
-                      sessionStorage.setItem('authToken', result.access_token);
-                      sessionStorage.setItem('refreshToken', result.refresh_token)
+                      localStorage.removeItem("hasRedirected");
+                      sessionStorage.setItem("authToken", result.access_token);
+                      sessionStorage.setItem("refreshToken", result.refresh_token);
                       //console.log("Login successfull moving to dashboard");
-                      
+
                       await fetchLists();
                       const { role } = result.user;
 
                       const existingRoles = role.split(",");
                       // //console.log("----dhyey---- exisiting role for current user - ", existingRoles)
 
-                      
                       setLoggedIn(true);
                       // Check if the new role already exists
                       if (!existingRoles.includes(newRole)) {
@@ -277,7 +275,7 @@ const NewUser = () => {
                           //setCookie("user", { ...cookies.user, role: updatedRole }, { path: "/" });
                           // //console.log("----dhyey---- before navigating addNewRole updateduser- ", updatedUser, " --- user_id - ", result.user.user_uid, " -- newRole - ", newRole)
                           alert("Role updated successfully");
-                          navigate("/addNewRole", { state: { user_uid: result.user.user_uid, newRole : newRole } });
+                          navigate("/addNewRole", { state: { user_uid: result.user.user_uid, newRole: newRole } });
                           return;
                         } else {
                           alert("An error occurred while updating the role.");
@@ -287,8 +285,8 @@ const NewUser = () => {
                       selectRole(openingRole);
                       setAuthData(result);
                       // setTimeout(() => {
-                        //   setAuthData(result); // Delay the context update to avoid the rendering issue
-                        // }, 0);
+                      //   setAuthData(result); // Delay the context update to avoid the rendering issue
+                      // }, 0);
                       setLoggedIn(true);
                       const { dashboardUrl } = roleMap[openingRole];
                       // //console.log("---after if condition of exisitingRole Login successfull moving to dashboard ", dashboardUrl);
@@ -314,21 +312,21 @@ const NewUser = () => {
   const handleSignup = async () => {
     //console.log("signup clicked");
     //confirmPassword password
-    if(confirmPassword != password){
+    if (confirmPassword != password) {
       alert("Passwords don't match. Please check and try again!");
-      return ;
+      return;
     }
     const userExists = await checkIfUserExists(email);
     let userObject = null;
 
-    if(googleInfoAvailable){
+    if (googleInfoAvailable) {
       userObject = {
         ...user,
         role: role,
         // isEmailSignup: false,
       };
     } else {
-      userObject = {      
+      userObject = {
         email: email,
         password: password,
         role: role,
@@ -336,14 +334,14 @@ const NewUser = () => {
       };
     }
 
-    
     // console.log("user Exists", userExists);
-    //console.log("Current User Info: ", user);
+    console.log("Prashant Current User Info: ", user);
+    console.log("Prashant Current Business Info: ", selectedBusiness);
     if (userExists != null) {
       handleLogin();
     } else {
       if (validate_form() === false) return;
-      navigate(`/createProfile`, { state: { user: userObject, selectedBusiness:  selectedBusiness,} });
+      navigate(`/createProfile`, { state: { user: userObject, selectedBusiness: selectedBusiness } });
     }
   };
 
@@ -390,27 +388,23 @@ const NewUser = () => {
                 </Box>
               </ToggleButton>
             </ToggleButtonGroup>
-          </Grid>          
-          {
-            (role != null && (role === "EMPLOYEE" || role === "PM_EMPLOYEE" || role === "MAINT_EMPLOYEE")) && (              
-              <>
+          </Grid>
+          {role != null && (role === "EMPLOYEE" || role === "PM_EMPLOYEE" || role === "MAINT_EMPLOYEE") && (
+            <>
               <Grid container item xs={12} justifyContent='center' sx={{ marginTop: "40px" }}>
-              <Grid container item xs={12} justifyContent='center'>
-                <Typography sx={{ fontSize: "20px", color: "#3D5CAC", fontWeight: "bold", marginTop: "20px" }}>
-                  Please select a Business
-                </Typography>
+                <Grid container item xs={12} justifyContent='center'>
+                  <Typography sx={{ fontSize: "20px", color: "#3D5CAC", fontWeight: "bold", marginTop: "20px" }}>Please select a Business</Typography>
+                </Grid>
+                <Grid container item xs={7.25} justifyContent='center' sx={{ marginTop: "10px" }}>
+                  <Select value={selectedBusiness} onChange={(e) => setSelectedBusiness(e.target.value)} size='small' fullWidth>
+                    {businesses?.map((row) => (
+                      <MenuItem value={row}>{row.business_name}</MenuItem>
+                    ))}
+                  </Select>
+                </Grid>
               </Grid>
-              <Grid container item xs={7.25} justifyContent='center' sx={{ marginTop: "10px" }}>
-                <Select value={selectedBusiness} onChange={(e) => setSelectedBusiness(e.target.value)} size='small' fullWidth>
-                  {businesses?.map((row) => (
-                    <MenuItem value={row}>{row.business_name}</MenuItem>
-                  ))}
-                </Select>              
-              </Grid>
-              </Grid>
-              </>
-            )
-          }
+            </>
+          )}
           {role != null && (user == null || user.google_auth_token == null) && (
             <>
               <Grid container item xs={12} justifyContent='center' sx={{ marginTop: "50px" }}>
@@ -517,38 +511,36 @@ const NewUser = () => {
             </>
           )}
 
-          {role != null && user != null && user.google_auth_token != null  && (
+          {role != null && user != null && user.google_auth_token != null && (
             <>
-              <Grid container direction='row' justifyContent="center" item xs={12} sx={{  }}>
-                  <Grid item xs={4}>
-                  </Grid>
-                  <Grid item xs={4}>
-                    <Button
-                      onClick={handleSignup}
-                      sx={{
-                        // margin: 'auto',
-                        width: "100%",
-                        height: "57px",
-                        borderRadius: "15px",
-                        fontSize: "20px",
+              <Grid container direction='row' justifyContent='center' item xs={12} sx={{}}>
+                <Grid item xs={4}></Grid>
+                <Grid item xs={4}>
+                  <Button
+                    onClick={handleSignup}
+                    sx={{
+                      // margin: 'auto',
+                      width: "100%",
+                      height: "57px",
+                      borderRadius: "15px",
+                      fontSize: "20px",
+                      backgroundColor: "#F2F2F2",
+                      textTransform: "none",
+                      color: "grey",
+                      fontWeight: "bold",
+                      "&:hover": {
                         backgroundColor: "#F2F2F2",
-                        textTransform: "none",
-                        color: "grey",
-                        fontWeight: "bold",
-                        "&:hover": {
-                          backgroundColor: "#F2F2F2",
-                          color: "#160449",
-                        },
-                        boxShadow: 1,
-                        justifyContent: "space-evenly",
-                      }}
-                    >
-                      Continue 
-                    </Button>
-                  </Grid>
-                  <Grid item xs={4}>
-                  </Grid>
+                        color: "#160449",
+                      },
+                      boxShadow: 1,
+                      justifyContent: "space-evenly",
+                    }}
+                  >
+                    Continue
+                  </Button>
                 </Grid>
+                <Grid item xs={4}></Grid>
+              </Grid>
             </>
           )}
 

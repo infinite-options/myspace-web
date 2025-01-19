@@ -251,11 +251,7 @@ function Header(props) {
             </AppBar>
             {isMenuOpen && (
               <Box sx={{ position: "absolute", top: "64px", right: "10px", backgroundColor: "white", borderRadius: "4px", boxShadow: "0 2px 8px rgba(0,0,0,0.1)", zIndex: "1000" }}>
-                <Button
-                  variant='outlined'
-                  sx={{ display: "block", width: "100%", fontWeight: "bold", color: "#000000", "&:hover": { color: "#FFFFFF" } }}
-                  onClick={() => navigate("/")}
-                >
+                <Button variant='outlined' sx={{ display: "block", width: "100%", fontWeight: "bold", color: "#000000", "&:hover": { color: "#FFFFFF" } }} onClick={() => navigate("/")}>
                   Login
                 </Button>
                 <Button variant='outlined' sx={{ width: "100%", color: "#000000", fontWeight: "bold", "&:hover": { color: "#FFFFFF" } }} onClick={() => navigate("/newUser")}>

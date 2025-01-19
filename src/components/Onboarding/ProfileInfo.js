@@ -274,7 +274,7 @@ const ProfileInfo = () => {
           business_user_id: user.user_uid,
           business_type: "MAINTENANCE",
           business_name: businessName,
-          business_photo: photo,
+          business_photo_url: photo,
           business_phone_number: phoneNumber,
           business_email: email,
           business_ein_number: AES.encrypt(ein, process.env.REACT_APP_ENKEY).toString(),
@@ -477,7 +477,7 @@ const ProfileInfo = () => {
   return (
     <ThemeProvider theme={theme}>
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
-        <CircularProgress color="inherit" />
+        <CircularProgress color='inherit' />
       </Backdrop>
       <Box
         sx={{
@@ -497,18 +497,18 @@ const ProfileInfo = () => {
             width: "85%",
           }}
         >
-          <Box component="span" display="flex" justifyContent="center" alignItems="center" position="relative" flexDirection="column">
+          <Box component='span' display='flex' justifyContent='center' alignItems='center' position='relative' flexDirection='column'>
             <>
-              <Stack direction="row" justifyContent="center">
+              <Stack direction='row' justifyContent='center'>
                 <Box
                   sx={{
                     paddingTop: "5%",
                   }}
                 >
-                  <img src={statusImg} alt="status" />
+                  <img src={statusImg} alt='status' />
                 </Box>
               </Stack>
-              <Stack direction="row" justifyContent="center">
+              <Stack direction='row' justifyContent='center'>
                 <Typography
                   sx={{
                     color: theme.typography.propertyPage.color,
@@ -532,7 +532,7 @@ const ProfileInfo = () => {
             >
               {`${isBusiness() ? "Business" : ""} Email Address`}
             </Typography>
-            <TextField value={email} onChange={handleEmailChange} placeholder="email@site.com" variant="filled" fullWidth className={classes.root}></TextField>
+            <TextField value={email} onChange={handleEmailChange} placeholder='email@site.com' variant='filled' fullWidth className={classes.root}></TextField>
           </Stack>
 
           <Stack spacing={-2} m={5}>
@@ -546,11 +546,11 @@ const ProfileInfo = () => {
             </Typography>
             <TextField
               value={phoneNumber}
-              type="tel"
-              pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+              type='tel'
+              pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}'
               onChange={handlePhoneNumberChange}
-              placeholder="(000)000-0000"
-              variant="filled"
+              placeholder='(000)000-0000'
+              variant='filled'
               fullWidth
               className={classes.root}
             ></TextField>
@@ -586,7 +586,7 @@ const ProfileInfo = () => {
                 >
                   {"Unit #"}
                 </Typography>
-                <TextField value={unit} onChange={handleUnitChange} variant="filled" fullWidth placeholder="3" className={classes.root}></TextField>
+                <TextField value={unit} onChange={handleUnitChange} variant='filled' fullWidth placeholder='3' className={classes.root}></TextField>
               </Stack>
             </Grid>
 
@@ -600,7 +600,7 @@ const ProfileInfo = () => {
                 >
                   {"Zip Code"}
                 </Typography>
-                <TextField value={zip} onChange={handleZipChange} variant="filled" fullWidth placeholder="90234" className={classes.root}></TextField>
+                <TextField value={zip} onChange={handleZipChange} variant='filled' fullWidth placeholder='90234' className={classes.root}></TextField>
               </Stack>
             </Grid>
           </Grid>
@@ -632,11 +632,11 @@ const ProfileInfo = () => {
                               {"Fee Name"}
                             </Typography>
                             <TextField
-                              name="fee_name"
+                              name='fee_name'
                               value={row.fee_name}
-                              variant="filled"
+                              variant='filled'
                               fullWidth
-                              placeholder="Service Charge"
+                              placeholder='Service Charge'
                               className={classes.root}
                               onChange={(e) => handleFeeChange(e, row.id)}
                             />
@@ -653,20 +653,13 @@ const ProfileInfo = () => {
                             >
                               {"Frequency"}
                             </Typography>
-                            <Select
-                              value={row.frequency}
-                              size="small"
-                              fullWidth
-                              onChange={(e) => handleFrequencyChange(e, row.id)}
-                              placeholder="Select frequency"
-                              className={classes.select}
-                            >
-                              <MenuItem value="Hourly">Hourly</MenuItem>
-                              <MenuItem value="Daily">Daily</MenuItem>
-                              <MenuItem value="Weekly">Weekly</MenuItem>
-                              <MenuItem value="Biweekly">Biweekly</MenuItem>
-                              <MenuItem value="Monthly">Monthly</MenuItem>
-                              <MenuItem value="Annually">Annually</MenuItem>
+                            <Select value={row.frequency} size='small' fullWidth onChange={(e) => handleFrequencyChange(e, row.id)} placeholder='Select frequency' className={classes.select}>
+                              <MenuItem value='Hourly'>Hourly</MenuItem>
+                              <MenuItem value='Daily'>Daily</MenuItem>
+                              <MenuItem value='Weekly'>Weekly</MenuItem>
+                              <MenuItem value='Biweekly'>Biweekly</MenuItem>
+                              <MenuItem value='Monthly'>Monthly</MenuItem>
+                              <MenuItem value='Annually'>Annually</MenuItem>
                             </Select>
                           </Stack>
                         </Grid>
@@ -680,15 +673,7 @@ const ProfileInfo = () => {
                             >
                               {"Set Charge"}
                             </Typography>
-                            <TextField
-                              name="charge"
-                              value={row.charge}
-                              variant="filled"
-                              fullWidth
-                              placeholder="15%"
-                              className={classes.root}
-                              onChange={(e) => handleFeeChange(e, row.id)}
-                            />
+                            <TextField name='charge' value={row.charge} variant='filled' fullWidth placeholder='15%' className={classes.root} onChange={(e) => handleFeeChange(e, row.id)} />
                           </Stack>
                         </Grid>
                         <Grid item xs={6}>
@@ -701,28 +686,20 @@ const ProfileInfo = () => {
                             >
                               {"Percentage Of"}
                             </Typography>
-                            <TextField
-                              name="of"
-                              value={row.of}
-                              variant="filled"
-                              fullWidth
-                              placeholder="Rent"
-                              className={classes.root}
-                              onChange={(e) => handleFeeChange(e, row.id)}
-                            />
+                            <TextField name='of' value={row.of} variant='filled' fullWidth placeholder='Rent' className={classes.root} onChange={(e) => handleFeeChange(e, row.id)} />
                           </Stack>
                         </Grid>
                       </Grid>
                       {row.id === fees.length ? (
                         <Stack
-                          direction="row"
+                          direction='row'
                           sx={{
                             display: "flex",
                             justifyContent: "right",
                           }}
                         >
                           <div onClick={addFeeRow} style={{ cursor: "pointer" }}>
-                            <img src={AddFeeRowImg} alt="add fee text" />
+                            <img src={AddFeeRowImg} alt='add fee text' />
                           </div>
                         </Stack>
                       ) : (
@@ -743,14 +720,7 @@ const ProfileInfo = () => {
                             >
                               {"Service Name"}
                             </Typography>
-                            <TextField
-                              name="service_name"
-                              value={row.service_name}
-                              variant="filled"
-                              fullWidth
-                              className={classes.root}
-                              onChange={(e) => handleServiceChange(e, row.id)}
-                            />
+                            <TextField name='service_name' value={row.service_name} variant='filled' fullWidth className={classes.root} onChange={(e) => handleServiceChange(e, row.id)} />
                           </Stack>
                         </Grid>
                         <Grid item xs={4}>
@@ -763,7 +733,7 @@ const ProfileInfo = () => {
                             >
                               {"# of Hours"}
                             </Typography>
-                            <TextField name="hours" value={row.hours} variant="filled" fullWidth className={classes.root} onChange={(e) => handleServiceChange(e, row.id)} />
+                            <TextField name='hours' value={row.hours} variant='filled' fullWidth className={classes.root} onChange={(e) => handleServiceChange(e, row.id)} />
                           </Stack>
                         </Grid>
                         <Grid item xs={4}>
@@ -776,7 +746,7 @@ const ProfileInfo = () => {
                             >
                               {"Charge/Hr."}
                             </Typography>
-                            <TextField name="charge" value={row.charge} variant="filled" fullWidth className={classes.root} onChange={(e) => handleServiceChange(e, row.id)} />
+                            <TextField name='charge' value={row.charge} variant='filled' fullWidth className={classes.root} onChange={(e) => handleServiceChange(e, row.id)} />
                           </Stack>
                         </Grid>
                         <Grid item xs={4}>
@@ -789,27 +759,20 @@ const ProfileInfo = () => {
                             >
                               {"Total Cost"}
                             </Typography>
-                            <TextField
-                              name="total_cost"
-                              value={row.total_cost}
-                              variant="filled"
-                              fullWidth
-                              className={classes.root}
-                              onChange={(e) => handleServiceChange(e, row.id)}
-                            />
+                            <TextField name='total_cost' value={row.total_cost} variant='filled' fullWidth className={classes.root} onChange={(e) => handleServiceChange(e, row.id)} />
                           </Stack>
                         </Grid>
                       </Grid>
                       {row.id === services.length ? (
                         <Stack
-                          direction="row"
+                          direction='row'
                           sx={{
                             display: "flex",
                             justifyContent: "right",
                           }}
                         >
                           <div onClick={addServiceRow} style={{ cursor: "pointer" }}>
-                            <img src={AddFeeRowImg} alt="add service" />
+                            <img src={AddFeeRowImg} alt='add service' />
                           </div>
                         </Stack>
                       ) : (
@@ -842,7 +805,7 @@ const ProfileInfo = () => {
                         >
                           {"Location"}
                         </Typography>
-                        <TextField name="location" value={row.location} variant="filled" fullWidth className={classes.root} onChange={(e) => handleLocationChange(e, row.id)} />
+                        <TextField name='location' value={row.location} variant='filled' fullWidth className={classes.root} onChange={(e) => handleLocationChange(e, row.id)} />
                       </Stack>
                     </Grid>
                     <Grid item xs={4}>
@@ -855,7 +818,7 @@ const ProfileInfo = () => {
                         >
                           {"City"}
                         </Typography>
-                        <TextField name="city" value={row.city} variant="filled" fullWidth className={classes.root} onChange={(e) => handleLocationChange(e, row.id)} />
+                        <TextField name='city' value={row.city} variant='filled' fullWidth className={classes.root} onChange={(e) => handleLocationChange(e, row.id)} />
                       </Stack>
                     </Grid>
                     <Grid item xs={4}>
@@ -868,7 +831,7 @@ const ProfileInfo = () => {
                         >
                           {"State"}
                         </Typography>
-                        <TextField name="state" value={row.state} variant="filled" fullWidth className={classes.root} onChange={(e) => handleLocationChange(e, row.id)} />
+                        <TextField name='state' value={row.state} variant='filled' fullWidth className={classes.root} onChange={(e) => handleLocationChange(e, row.id)} />
                       </Stack>
                     </Grid>
                     <Grid item xs={4}>
@@ -881,20 +844,20 @@ const ProfileInfo = () => {
                         >
                           {"Miles"}
                         </Typography>
-                        <TextField name="miles" value={row.miles} variant="filled" fullWidth className={classes.root} onChange={(e) => handleLocationChange(e, row.id)} />
+                        <TextField name='miles' value={row.miles} variant='filled' fullWidth className={classes.root} onChange={(e) => handleLocationChange(e, row.id)} />
                       </Stack>
                     </Grid>
                   </Grid>
                   {row.id === locations.length ? (
                     <Stack
-                      direction="row"
+                      direction='row'
                       sx={{
                         display: "flex",
                         justifyContent: "right",
                       }}
                     >
                       <div onClick={addLocationRow} style={{ cursor: "pointer" }}>
-                        <img src={AddLocationRowImg} alt="add location" />
+                        <img src={AddLocationRowImg} alt='add location' />
                       </div>
                     </Stack>
                   ) : (
@@ -917,7 +880,7 @@ const ProfileInfo = () => {
                   >
                     {"EIN/SSN"}
                   </Typography>
-                  <TextField name="ein" value={ein_mask} onChange={handleEinChange} variant="filled" fullWidth placeholder="**-*******" className={classes.root}></TextField>
+                  <TextField name='ein' value={ein_mask} onChange={handleEinChange} variant='filled' fullWidth placeholder='**-*******' className={classes.root}></TextField>
                 </Stack>
               </Grid>
             ) : (
@@ -932,7 +895,7 @@ const ProfileInfo = () => {
                     >
                       {"EIN"}
                     </Typography>
-                    <TextField value={ein} onChange={handleEinChange} variant="filled" fullWidth placeholder="Enter EIN" className={classes.root}></TextField>
+                    <TextField value={ein} onChange={handleEinChange} variant='filled' fullWidth placeholder='Enter EIN' className={classes.root}></TextField>
                   </Stack>
                 </Grid>
                 <Grid item xs={6}>
@@ -945,14 +908,14 @@ const ProfileInfo = () => {
                     >
                       {"SSN"}
                     </Typography>
-                    <TextField value={mask} onChange={handleSsnChange} variant="filled" fullWidth placeholder="Enter SSN" className={classes.root}></TextField>
+                    <TextField value={mask} onChange={handleSsnChange} variant='filled' fullWidth placeholder='Enter SSN' className={classes.root}></TextField>
                   </Stack>
                 </Grid>
               </>
             )}
           </Grid>
           <Button
-            variant="contained"
+            variant='contained'
             sx={{
               background: "#3D5CAC",
               color: theme.palette.background.default,

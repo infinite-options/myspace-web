@@ -42,10 +42,10 @@ import ListsContext from "../../contexts/ListsContext";
 const CreateProfile = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { fetchLists, } = useContext(ListsContext)
+  const { fetchLists } = useContext(ListsContext);
 
   const { user: userFromHook, setAuthData, onboardingState, setOnboardingState, updateProfileUid, updateEmployeeProfileUid, selectRole, setLoggedIn } = useUser();
-  const { user, selectedBusiness} = location.state;
+  const { user, selectedBusiness } = location.state;
   //console.log("In CreateProfile user - ", user);
   const [cookie, setCookie] = useCookies(["default_form_vals"]);
   const cookiesData = cookie["default_form_vals"];
@@ -59,14 +59,14 @@ const CreateProfile = () => {
   const [businessPhoneNumber, setBusinessPhoneNumber] = useState("");
 
   const validate_form = () => {
-    if ((user.role === "TENANT" || user.role === "OWNER" || user.role === "PM_EMPLOYEE" || user.role === "MAINT_EMPLOYEE") && (firstName === "" || lastName === "" || phoneNumber === "" || email === "")) {
+    if (
+      (user.role === "TENANT" || user.role === "OWNER" || user.role === "PM_EMPLOYEE" || user.role === "MAINT_EMPLOYEE") &&
+      (firstName === "" || lastName === "" || phoneNumber === "" || email === "")
+    ) {
       alert("Please fill out all fields");
       return false;
     }
-    if (
-      (user.role === "MANAGER" || user.role === "MAINTENANCE") &&
-      (firstName === "" || lastName === "" || businessName === "" || businessPhoneNumber === "" || businessEmail === "")
-    ) {
+    if ((user.role === "MANAGER" || user.role === "MAINTENANCE") && (firstName === "" || lastName === "" || businessName === "" || businessPhoneNumber === "" || businessEmail === "")) {
       alert("Please fill out all fields");
       return false;
     }
@@ -99,15 +99,15 @@ const CreateProfile = () => {
           business_phone_number: businessPhoneNumber,
           business_email: businessEmail,
         };
-      case "PM_EMPLOYEE": 
+      case "PM_EMPLOYEE":
         return {
-            employee_user_id: userUID,            
-            employee_business_id: selectedBusiness?.business_uid,
-            employee_first_name: firstName,
-            employee_last_name: lastName,
-            employee_phone_number: phoneNumber,
-            employee_email: email,
-            employee_role: "EMPLOYEE",            
+          employee_user_id: userUID,
+          employee_business_id: selectedBusiness?.business_uid,
+          employee_first_name: firstName,
+          employee_last_name: lastName,
+          employee_phone_number: phoneNumber,
+          employee_email: email,
+          employee_role: "EMPLOYEE",
         };
       case "MAINTENANCE":
         return {
@@ -117,16 +117,16 @@ const CreateProfile = () => {
           business_phone_number: businessPhoneNumber,
           business_email: businessEmail,
         };
-      case "MAINT_EMPLOYEE": 
+      case "MAINT_EMPLOYEE":
         return {
-            employee_user_id: userUID,            
-            employee_business_id: selectedBusiness?.business_uid,
-            employee_first_name: firstName,
-            employee_last_name: lastName,
-            employee_phone_number: phoneNumber,
-            employee_email: email,
-            employee_role: "EMPLOYEE",            
-        }
+          employee_user_id: userUID,
+          employee_business_id: selectedBusiness?.business_uid,
+          employee_first_name: firstName,
+          employee_last_name: lastName,
+          employee_phone_number: phoneNumber,
+          employee_email: email,
+          employee_role: "EMPLOYEE",
+        };
       case "OWNER":
         return {
           owner_user_id: userUID,
@@ -156,12 +156,18 @@ const CreateProfile = () => {
   };
 
   const createProfile = async (form, type) => {
+    console.log("Prashant createProfile: ", form, type);
+    console.log("Prashant createProfile: ", roleMap[type]);
+
     const { profileApi } = roleMap[type];
+    console.log("Prashant Profile API: ", profileApi);
+    console.log("Prashant endpoint: ", `${APIConfig.baseURL.dev}${profileApi}`);
     const { data } = await axios.post(`${APIConfig.baseURL.dev}${profileApi}`, form, headers);
+    console.log("Prashant API Return: ", data);
     return data;
   };
 
-  const handleUpdateProfileUid = async (data) => {    
+  const handleUpdateProfileUid = async (data) => {
     if (data.owner_uid) {
       await updateProfileUid({ owner_id: data.owner_uid });
     }
@@ -173,7 +179,7 @@ const CreateProfile = () => {
       await updateProfileUid({ business_owner_id: data.employee_uid });
     }
     if (data.employee_uid) {
-      // //console.log("data.employee_uid - ", data.employee_uid);      
+      // //console.log("data.employee_uid - ", data.employee_uid);
       await updateEmployeeProfileUid({ business_uid: selectedBusiness?.business_uid, business_employee_id: data.employee_uid }, user.role);
       // updateProfileUid({ business_uid: selectedBusiness.business_uid });
       // updateProfileUid({ business_employee_id: data.employee_uid });
@@ -181,17 +187,16 @@ const CreateProfile = () => {
   };
 
   const createUserProfile = async (userUID, userData) => {
-    //console.log("createUserProfile - USER UID - ", userUID);
-    //console.log("createUserProfile - userData - ", userData);
-    // //console.log("createUserProfile - user.role -",  user.role)
+    console.log("Prashant createUserProfile - USER UID - ", userUID);
+    console.log("Prashant createUserProfile - userData - ", userData);
+    console.log("Prashant createUserProfile - user.role -", user.role);
     selectRole(user.role);
     const payload = getPayload(user.role, userUID);
     const form = encodeForm(payload);
-    const data = await createProfile(form, user.role);        
-    
+    const data = await createProfile(form, user.role);
+
     const resp = await handleUpdateProfileUid(data);
     setCookie("default_form_vals", { ...cookiesData, phoneNumber, email });
-    
 
     //console.log("userFromHook - ", userFromHook);
     let role_id = {};
@@ -200,6 +205,8 @@ const CreateProfile = () => {
     if (user.role === "TENANT") role_id = { tenant_id: data.tenant_uid };
 
     if (user.role === "MANAGER") {
+      console.log("Prashant user.role = Manager: ", userData.businesses);
+      console.log("Prashant user.role = Manager: ", data);
       let businesses = userData.businesses;
       businesses["MANAGEMENT"].business_uid = data.business_uid;
       businesses["MANAGEMENT"].business_owner_id = data.employee_uid;
@@ -298,8 +305,8 @@ const CreateProfile = () => {
                       //setUserDoesntExist(true);
                       // setShowSpinner(false);
                     } else if (message === "Login successful") {
-                      sessionStorage.setItem('authToken', result.access_token);
-                      sessionStorage.setItem('refreshToken', result.refresh_token)
+                      sessionStorage.setItem("authToken", result.access_token);
+                      sessionStorage.setItem("refreshToken", result.refresh_token);
                       setAuthData(result);
                       const { role } = result.user;
                       const openingRole = role.split(",")[0];
@@ -331,8 +338,9 @@ const CreateProfile = () => {
     if (validate_form() === false) return;
 
     setCookie("default_form_vals", { ...cookiesData, firstName, lastName, phoneNumber, email });
-    
+
     if (user.isEmailSignup) {
+      console.log("Prashant This should happen for all Roles");
       const url = "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/CreateAccount/MYSPACE";
       const data = {
         ...user,
@@ -340,6 +348,7 @@ const CreateProfile = () => {
         last_name: lastName,
         phone_number: phoneNumber || businessPhoneNumber,
       };
+      console.log("Prashant Create Account Data: ", data);
       fetch(url, {
         method: "POST",
         headers: {
@@ -363,9 +372,10 @@ const CreateProfile = () => {
           } else {
             setAuthData(responseJSON.result);
             setLoggedIn(true);
-            localStorage.removeItem('hasRedirected');
-            sessionStorage.setItem('authToken', responseJSON.result.access_token);
-            sessionStorage.setItem('refreshToken', responseJSON.result.refresh_token)
+            localStorage.removeItem("hasRedirected");
+            sessionStorage.setItem("authToken", responseJSON.result.access_token);
+            sessionStorage.setItem("refreshToken", responseJSON.result.refresh_token);
+            console.log("Prashant inputs: ", responseJSON.result.user.user_uid, responseJSON.result.user);
             createUserProfile(responseJSON.result.user.user_uid, responseJSON.result.user);
             // setShowSpinner(false);
             // navigate(`/onboardingRouter`, { state: { isPrivate:false } });
@@ -403,9 +413,9 @@ const CreateProfile = () => {
             return;
           } else {
             setAuthData(responseJSON.result);
-            localStorage.removeItem('hasRedirected');
-            sessionStorage.setItem('authToken', responseJSON.result.access_token);
-            sessionStorage.setItem('refreshToken', responseJSON.result.refresh_token)
+            localStorage.removeItem("hasRedirected");
+            sessionStorage.setItem("authToken", responseJSON.result.access_token);
+            sessionStorage.setItem("refreshToken", responseJSON.result.refresh_token);
             createUserProfile(responseJSON.result.user.user_uid, responseJSON.result.user);
             // setShowSpinner(false);
             // navigate(`/onboardingRouter`, { state: { isPrivate:false } });
@@ -473,9 +483,7 @@ const CreateProfile = () => {
           <Grid container justifyContent='center' rowGap={20}>
             <Grid container item xs={10} justifyContent='center' spacing={20}>
               <Grid item xs={12}>
-                <Typography sx={{ fontSize: "28px", color: "#160449", fontWeight: "bold" }}>
-                  {user?.role ? user.role.charAt(0) + user.role.slice(1).toLowerCase() : ""} Profile
-                </Typography>
+                <Typography sx={{ fontSize: "28px", color: "#160449", fontWeight: "bold" }}>{user?.role ? user.role.charAt(0) + user.role.slice(1).toLowerCase() : ""} Profile</Typography>
               </Grid>
               <Grid item xs={6}>
                 <Typography sx={{ fontSize: "25px", color: "#160449" }}>First Name</Typography>
@@ -489,13 +497,7 @@ const CreateProfile = () => {
               </Grid>
               <Grid item xs={6}>
                 <Typography sx={{ fontSize: "25px", color: "#160449" }}>Last Name</Typography>
-                <OutlinedInput
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  id='filled-basic'
-                  variant='filled'
-                  sx={{ marginTop: "5px", width: "100%", backgroundColor: "#F2F2F2" }}
-                />
+                <OutlinedInput value={lastName} onChange={(e) => setLastName(e.target.value)} id='filled-basic' variant='filled' sx={{ marginTop: "5px", width: "100%", backgroundColor: "#F2F2F2" }} />
               </Grid>
             </Grid>
 
