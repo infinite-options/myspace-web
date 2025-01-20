@@ -123,7 +123,7 @@ const getApiUrl = (url) => {
   if (isDebug && url.startsWith(targetDomain) && url.includes(searchString)) {
     return url.replace(searchString, replaceString);
   }
-
+  console.log('url is', url);
   return url;
 };
 

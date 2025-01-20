@@ -2686,7 +2686,7 @@ const PropertyMaintenanceRequests = ({ maintenanceStatus, selectedProperty, prop
       case "High":
         return "#FF0000";
       default:
-        return "#FFFFFF";
+        return "#FFFF00";
     }
   };
 
