@@ -116,7 +116,7 @@ function GoogleLogin({buttonStyle, buttonText, }) {
                     )
                     .then(async ({ data }) => {
                       if (
-                        data["message"] === "Email ID doesnt exist"
+                        data["message"] === "Email ID does not exist"
                       ) {
                         const navigateToNewUser = async () => {
                           const user = {

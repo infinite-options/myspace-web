@@ -1,8 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import axios from "axios";
+import { fetchMiddleware, axiosMiddleware} from "../../utils/httpMiddleware";
 import googleImg from "../../images/ContinueWithGoogle.svg";
+import APIConfig from "../../utils/APIConfig";
+import ListsContext from "../../contexts/ListsContext";
+import { roleMap } from "./helper";
+import { useUser } from "../../contexts/UserContext";
+
 
 
 let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
@@ -15,14 +21,150 @@ const GoogleSignup = (props) => {
   const { isReferral } = props;
   const { userID } = props || {};
   const { role } = props;
+  const newRole = role;
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [socialId, setSocialId] = useState("");
   const [refreshToken, setRefreshToken] = useState("");
   const [accessToken, setAccessToken] = useState("");
   const [accessExpiresIn, setAccessExpiresIn] = useState("");
+  const { fetchLists, } = useContext(ListsContext)
+   const { setAuthData, setLoggedIn, selectRole } = useUser();
+
   // let google=null;
   let codeClient = {};
+
+  const checkIfUserExists = async (email) => {
+    if (email) {
+      try {
+        const response = await axiosMiddleware.get(`${APIConfig.baseURL.dev}/userInfo/${email}`);
+        if (response) {
+          return response;
+        } else {
+          return null;
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 404 && error.response.data.message === "User not found") {
+          return null;
+        } else {
+          throw error;
+        }
+      }
+    } 
+  };
+
+  const handleLogin = async (e, fn, ln, at, rt, si, ax) => {
+    axiosMiddleware
+      .get(
+        `https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserSocialLogin/MYSPACE/${e}`
+      )
+      .then(async (response) => {
+        // console.log("----dhyey---- response from social login - ", response);
+        const data = response.data;
+        if (
+          data["message"] === "Email ID does not exist"
+        ) {
+          const navigateToNewUser = async () => {
+            const user = {
+              email: e,
+              password: GOOGLE_LOGIN,
+              first_name: fn,
+              last_name: ln,
+              google_auth_token: at,
+              google_refresh_token: rt,
+              social_id: si,
+              phone_number: "",
+              // access_expires_in: ax,
+              access_expires_in: String(ax),
+            };
+            // navigate("/createProfile", {
+            //   state: {
+            //     user: user,
+            //   },
+            // });
+            navigate("/newUser", {
+              state: {
+                user: user,
+              },
+            });
+          };                        
+          navigateToNewUser();
+          return;
+        } else if (
+          data["message"] === "Login with email"
+        ) {
+          alert(data["message"]);
+        } else {
+          // console.log("----dhyey---- data from social login - ", data);
+          let user = data.result;
+          let user_id = data.result.user.user_uid;
+          setAccessToken(at);
+          localStorage.removeItem('hasRedirected');
+          sessionStorage.setItem('authToken', user.access_token);
+          sessionStorage.setItem('refreshToken', user.refresh_token)
+          await fetchLists();
+
+          let url = `https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateAccessToken/MYSPACE/${user_id}`;
+          axiosMiddleware
+            .post(url, {
+              google_auth_token: at,
+            })
+            .then(async (response) => {
+              // socialGoogle(email, user);
+              // setShowSpinner(true);
+              
+              const { role } = user.user;
+
+              const existingRoles = role.split(",");
+              // //console.log("----dhyey---- exisiting role for current user - ", existingRoles)
+
+              setLoggedIn(true);
+              // Check if the new role already exists
+              if (!existingRoles.includes(newRole)) {
+                // Add the new role
+                existingRoles.push(newRole);
+                const updatedRole = existingRoles.join(",");
+                // Send the update request to the server
+                const response = await axiosMiddleware.put("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateUserByUID/MYSPACE", {
+                  user_uid: user.user.user_uid,
+                  role: updatedRole,
+                });
+                // Check if the response is successful
+                if (response.status === 200) {
+                  let updatedUser = data.result;
+                  updatedUser.user.role = updatedRole;
+                  setAuthData(updatedUser);
+                  //setCookie("user", { ...cookies.user, role: updatedRole }, { path: "/" });
+                  // //console.log("----dhyey---- before navigating addNewRole updateduser- ", updatedUser, " --- user_id - ", result.user.user_uid, " -- newRole - ", newRole)
+                  alert("Role updated successfully");
+                  navigate("/addNewRole", { state: { user_uid: user.user.user_uid, newRole: newRole } });
+                  return;
+                } else {
+                  alert("An error occurred while updating the role.");
+                }
+              }
+              const openingRole = role.split(",")[0];
+              selectRole(openingRole);
+              setAuthData(user);
+              setLoggedIn(true);
+              const { dashboardUrl } = roleMap[openingRole];
+              // //console.log("---after if condition of exisitingRole Login successfull moving to dashboard ", dashboardUrl);
+              navigate(dashboardUrl);
+
+              // const openingRole = role.split(",")[0];
+              // selectRole(openingRole);
+              // setLoggedIn(true);
+              // const { dashboardUrl } = roleMap[openingRole];
+              // navigate(dashboardUrl);
+              // setShowSpinner(false);
+            })
+            .catch((err) => {
+              //console.log(err);
+            });
+          return accessToken;
+        }
+      });
+  }
 
   //   run onclick for authorization and eventually sign up
   function getAuthorizationCode() {
@@ -67,6 +209,7 @@ const GoogleSignup = (props) => {
               body: formBody,
             })
               .then((response) => {
+                console.log(response);
                 return response.json();
               })
 
@@ -87,6 +230,8 @@ const GoogleSignup = (props) => {
 
                     let e = data["email"];
                     let si = data["id"];
+                    let fn = data["given_name"];
+                    let ln = data["family_name"];
 
                     setEmail(e);
 
@@ -112,22 +257,33 @@ const GoogleSignup = (props) => {
                         //     user: user,
                         //   },
                         // });
-                        navigate("/createProfile", {
-                          state: {
-                            user: user,
-                          },
-                        });
+
+                        console.log(e)
+
+                        const userExist = await checkIfUserExists(e);
+
+                        if (userExist != null) {
+                          handleLogin(e, fn, ln, at, rt, si, ax);
+                        } else {
+                          navigate("/createProfile", {
+                            state: {
+                              user: user,
+                              selectedBusiness: role
+                            },
+                          });  
+                        }
+                        
                       }
                     };
                     socialGoogle();
                   })
                   .catch((error) => {
-                    //console.log(error);
+                    console.log(error);
                   });
                 return accessToken, refreshToken, accessExpiresIn, email, socialId;
               })
               .catch((err) => {
-                //console.log(err);
+                console.log(err);
               });
           }
         },
