@@ -209,6 +209,7 @@ export default function PMQuotesRequested(props) {
         {contracts?.length > 0 ? activeContractsIds?.length !== contracts?.length ?(
           contracts.map((contract) => {
             const manager = displayed_managers.find((m) => m.business_uid === contract.contract_business_id);
+            // console.log("manager - ", manager);
             if (contract.contract_status === "SENT" || contract.contract_status === "REFUSED"  || contract.contract_status === "WITHDRAW" || contract.contract_status === "REJECTED") {
               return (
                 <div key={contract.contract_uid}>
@@ -1141,7 +1142,7 @@ export default function PMQuotesRequested(props) {
 function DocumentCard(props) {
   const data = props.data;
   const manager = props.manager;
-  // console.log("data -", data, manager);
+  // console.log("data -", manager);
 
   const [fees, setFees] = useState(JSON.parse(data.contract_fees) ? JSON.parse(data.contract_fees) : []);
   const [locations, setLocations] = useState(manager?.business_locations ? JSON.parse(manager?.business_locations) : []);
@@ -1174,7 +1175,14 @@ function DocumentCard(props) {
     if (data.contract_status === "NEW") {
       getBusinessProfileFees(data);
     }
+
   }, []);
+
+  useEffect(() => {
+    if (manager && locations.length === 0) {
+      setLocations(manager.business_locations ? JSON.parse(manager.business_locations) : []);
+    }
+  }, [manager])
 
   const textStyle = {
     textTransform: "none",

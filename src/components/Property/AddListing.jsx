@@ -57,6 +57,7 @@ import APIConfig from "../../utils/APIConfig";
 import PropertiesContext from "../../contexts/PropertiesContext";
 import ListsContext from "../../contexts/ListsContext";
 import ManagementContractContext from '../../contexts/ManagementContractContext';
+import GenericDialog from "../GenericDialog";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 
 
@@ -66,6 +67,27 @@ export default function AddListing(props) {
   const { getProfileId } = useUser();
   const { dataLoaded, getList } = useContext(ListsContext);
   const { state } = useLocation();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState("");
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [dialogSeverity, setDialogSeverity] = useState("info");
+
+  const openDialog = (title, message, severity) => {
+    setDialogTitle(title); // Set custom title
+    setDialogMessage(message); // Set custom message
+    setDialogSeverity(severity); // Can use this if needed to control styles
+    setIsDialogOpen(true);
+  };
+
+  const closeDialog = () => {
+    setIsDialogOpen(false);
+    navigate("/properties", { state: { isBack: true } });
+    onBackClick();
+  };
+
+  const discardChange = () => {
+    setIsDialogOpen(false);
+  }
   // const { propertyList, fetchProperties, allContracts, fetchContracts, returnIndex,  } = useContext(PropertiesContext);
 
   const propertiesContext = useContext(PropertiesContext);
@@ -434,14 +456,17 @@ export default function AddListing(props) {
     // });
 
     if (hasPropertyChanges) {
-      const confirmSave = window.confirm("You have unsaved changes. Do you want to save them before leaving?");
+      // const confirmSave = window.confirm("You have unsaved changes. Do you want to save them before leaving?");
 
-      if (confirmSave) {
-        saveChanges(true);
-      } else {
-        navigate("/properties", { state: { isBack: true } });
-        onBackClick();
-      }
+      // if (confirmSave) {
+      //   saveChanges(true);
+      // } else {
+      //   navigate("/properties", { state: { isBack: true } });
+      //   onBackClick();
+      // }
+
+      openDialog("Unsaved Changes", "You have unsaved changes", "warning");
+      
     } else {
       navigate("/properties", { state: { isBack: true } });
       onBackClick();
@@ -1492,6 +1517,22 @@ export default function AddListing(props) {
           </Box>
         </Stack>
       </Stack>
+      <GenericDialog
+        isOpen={isDialogOpen}
+        title={dialogTitle}
+        contextText={dialogMessage}
+        actions={[
+          {
+            label: "Discard Changes",
+            onClick: closeDialog,
+          },
+          {
+            label: "Return To Edit",
+            onClick: discardChange,
+          }
+        ]}
+        severity={dialogSeverity}
+      />
     </ThemeProvider>
   );
 }
