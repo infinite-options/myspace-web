@@ -34,7 +34,25 @@ export default function MaintenanceWidget({ maintenanceData, onMaintenanceClick 
       }
     }
 
-    setMaintenanceRequestCounts((prevData) => ({ ...prevData, ...dataObject }));
+    const processData = (data) => {
+      return data.reduce((acc, item) => {
+        let key = item.maintenance_status;
+        if (key === "INFO TENANT" || key === "INFO OWNER") {
+          key = "INFO REQUESTED";
+        }
+        acc[key] = (acc[key] || 0) + item.num; // Sum `num` for the same status
+        return acc;
+      }, {});
+    };
+
+    const newObj = processData(maintenanceData);
+
+    setMaintenanceRequestCounts((prevData) => ({
+      ...prevData,
+      ...newObj,
+    }));
+
+    // setMaintenanceRequestCounts((prevData) => ({ ...prevData, ...dataObject }));
   }, [maintenanceData]);
 
   // function routingWithSelectedRole() {

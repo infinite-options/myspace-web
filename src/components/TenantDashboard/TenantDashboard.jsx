@@ -2510,7 +2510,7 @@ const MaintenanceDetails = ({ maintenanceRequests, onPropertyClick, selectedProp
   // //console.log("Maintenance Requests:", maintenanceRequests);
   const maintenanceStatusCounts = {
     "New Requests": maintenanceRequests?.filter((item) => item.maintenance_status.trim().toUpperCase() === "NEW REQUEST").reduce((sum, item) => sum + (item.num || 0), 0), // Sum `num` values
-    "Info Requested": maintenanceRequests?.filter((item) => item.maintenance_status.trim().toUpperCase() === "INFO REQUESTED").reduce((sum, item) => sum + (item.num || 0), 0),
+    "Info Requested": maintenanceRequests?.filter((item) => item.maintenance_status.trim().toUpperCase() === "INFO TENANT" || item.maintenance_status.trim().toUpperCase() === "INFO OWNER").reduce((sum, item) => sum + (item.num || 0), 0),
     Processing: maintenanceRequests?.filter((item) => item.maintenance_status.trim().toUpperCase() === "PROCESSING").reduce((sum, item) => sum + (item.num || 0), 0),
     Scheduled: maintenanceRequests?.filter((item) => item.maintenance_status.trim().toUpperCase() === "SCHEDULED").reduce((sum, item) => sum + (item.num || 0), 0),
     Completed: maintenanceRequests?.filter((item) => item.maintenance_status.trim().toUpperCase() === "COMPLETED").reduce((sum, item) => sum + (item.num || 0), 0),
