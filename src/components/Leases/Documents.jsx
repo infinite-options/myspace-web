@@ -625,8 +625,8 @@ setSelectedDocument({
                       fontWeight: theme.typography.primary.fontWeight,
                       fontSize: "18px",
                       paddingBottom: "5px",
-                      paddingTop: "5px",
-                      marginTop: "10px"
+                      // paddingTop: "5px",
+                      // marginTop: "10px"
                     }}
                   >
                     {customUploadingName ? customUploadingName : "Uploading Documents:"}
