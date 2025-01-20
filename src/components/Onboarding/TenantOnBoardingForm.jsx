@@ -8,7 +8,7 @@ import theme from "../../theme/theme";
 import { useUser } from "../../contexts/UserContext";
 import DefaultProfileImg from "../../images/defaultProfileImg.svg";
 import AddressAutocompleteInput from "../Property/AddressAutocompleteInput";
-import AddIcon from '@mui/icons-material/Add'; 
+import AddIcon from '@mui/icons-material/Add';
 import DataValidator from "../DataValidator";
 import { formatPhoneNumber, formatSSN, formatEIN, identifyTaxIdType, headers, maskNumber, maskEin, roleMap, photoFields } from "./helper";
 import { useOnboardingContext } from "../../contexts/OnboardingContext";
@@ -96,7 +96,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
   //console.log("In TenenatOnBoardingForm  - profileData", profileData);
 
   const { getList, } = useContext(ListsContext)
-  const salaryFrequencies = getList("frequency");	
+  const salaryFrequencies = getList("frequency");
   const classes = useStyles();
   const [cookies, setCookie] = useCookies(["default_form_vals"]);
   const cookiesData = cookies["default_form_vals"];
@@ -109,31 +109,31 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
   const { firstName, setFirstName, lastName, setLastName, email, setEmail, phoneNumber, setPhoneNumber, businessName, setBusinessName, photo, setPhoto } = useOnboardingContext();
   const { ein, setEin, ssn, setSsn, mask, setMask, address, setAddress, unit, setUnit, city, setCity, state, setState, zip, setZip } = useOnboardingContext();
 
-  const [ taxIDType, setTaxIDType ] = useState("SSN");  
-  useEffect(()=> {    
-    if(ssn && identifyTaxIdType(ssn) === "EIN") setTaxIDType("EIN");
+  const [taxIDType, setTaxIDType] = useState("SSN");
+  useEffect(() => {
+    if (ssn && identifyTaxIdType(ssn) === "EIN") setTaxIDType("EIN");
   }, [ssn])
 
-  useEffect(()=> {        
-    handleTaxIDChange(ssn, false);    
+  useEffect(() => {
+    handleTaxIDChange(ssn, false);
   }, [taxIDType])
 
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-const [dialogTitle, setDialogTitle] = useState("");
-const [dialogMessage, setDialogMessage] = useState("");
-const [dialogSeverity, setDialogSeverity] = useState("info");
+  const [dialogTitle, setDialogTitle] = useState("");
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [dialogSeverity, setDialogSeverity] = useState("info");
 
-const openDialog = (title, message, severity) => {
-  setDialogTitle(title); // Set custom title
-  setDialogMessage(message); // Set custom message
-  setDialogSeverity(severity); // Can use this if needed to control styles
-  setIsDialogOpen(true);
-};
+  const openDialog = (title, message, severity) => {
+    setDialogTitle(title); // Set custom title
+    setDialogMessage(message); // Set custom message
+    setDialogSeverity(severity); // Can use this if needed to control styles
+    setIsDialogOpen(true);
+  };
 
-const closeDialog = () => {
-  setIsDialogOpen(false);
-};
+  const closeDialog = () => {
+    setIsDialogOpen(false);
+  };
 
 
 
@@ -185,22 +185,22 @@ const closeDialog = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
-  const [ errors, setErrors ] = useState({});
+  const [errors, setErrors] = useState({});
 
-  const [ occupancyExpanded, setOccupancyExpanded ] = useState(true);
-  const [ empinfoExpanded, setEmpinfoExpanded ] = useState(true);
-  const [ paymentExpanded, setPaymentExpanded ] = useState(true);
-  const [ documentsExpanded, setDocumentsExpanded] = useState(true);
+  const [occupancyExpanded, setOccupancyExpanded] = useState(true);
+  const [empinfoExpanded, setEmpinfoExpanded] = useState(true);
+  const [paymentExpanded, setPaymentExpanded] = useState(true);
+  const [documentsExpanded, setDocumentsExpanded] = useState(true);
 
-  const getListDetails = () => {    
+  const getListDetails = () => {
     const relationships = getList("relationships");
     const states = getList("states");
     setRelationships(relationships);
-    setStates(states);    		
+    setStates(states);
   };
 
   const [employmentList, setEmploymentList] = useState([
-    {id: Date.now(), jobTitle: "", companyName: "", salary: "", frequency: "" }
+    { id: Date.now(), jobTitle: "", companyName: "", salary: "", frequency: "" }
   ]);
 
   // useEffect(() => {
@@ -221,7 +221,7 @@ const closeDialog = () => {
       setEmploymentList(employmentData);
     }
   }, [profileData]);
-  
+
   // useEffect(() => {
   //   //console.log("adults - ", adults);
   // }, [adults]);
@@ -237,7 +237,7 @@ const closeDialog = () => {
   // useEffect(() => {
   //   //console.log("148 - ssn - ", ssn);
   //   //console.log("148 - profileData.tenant_ssn - ", profileData.tenant_ssn);
-    
+
   // }, [ssn]);
 
 
@@ -315,16 +315,16 @@ const closeDialog = () => {
     if (value?.length > 11) return;
 
     let updatedTaxID = ""
-    if(taxIDType === "EIN"){
-      updatedTaxID = formatEIN(value)      
+    if (taxIDType === "EIN") {
+      updatedTaxID = formatEIN(value)
     } else {
-      updatedTaxID = formatSSN(value)      
+      updatedTaxID = formatSSN(value)
     }
     setSsn(updatedTaxID);
-    if(onchangeflag){
-  // updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
-  updateModifiedData({ key: "tenant_ssn", value: AES.encrypt(updatedTaxID, process.env.REACT_APP_ENKEY).toString() });
-  
+    if (onchangeflag) {
+      // updateModifiedData({ key: "business_ein_number", value: AES.encrypt(event.target.value, process.env.REACT_APP_ENKEY).toString() });
+      updateModifiedData({ key: "tenant_ssn", value: AES.encrypt(updatedTaxID, process.env.REACT_APP_ENKEY).toString() });
+
     }
   };
 
@@ -382,7 +382,7 @@ const closeDialog = () => {
           id: index + 1,
         }
       }));
-      
+
       // setChildren(JSON.parse(profileData.tenant_children_occupants) || []);
       const parsedChildren = JSON.parse(profileData.tenant_children_occupants) || [];
       setChildren(parsedChildren?.map((child, index) => {
@@ -391,7 +391,7 @@ const closeDialog = () => {
           id: index + 1,
         }
       }));
-      
+
       // setPets(JSON.parse(profileData.tenant_pet_occupants) || []);
       const parsedPets = JSON.parse(profileData.tenant_pet_occupants) || [];
       setPets(parsedPets?.map((pet, index) => {
@@ -497,12 +497,12 @@ const closeDialog = () => {
 
     const maxSize = 2.5 * 1024 * 1024; // 2.5 MB in bytes
     const isLarge = file.file.size > maxSize;
-    const fileSizeMB = (file.file.size / 1024 / 1024).toFixed(1); 
-  
+    const fileSizeMB = (file.file.size / 1024 / 1024).toFixed(1);
+
     // Check file format
     const allowedFormats = ["image/jpeg", "image/png"];
     const isInvalidFormat = !allowedFormats.includes(file.file.type);
-  
+
     if (isLarge || isInvalidFormat) {
       let errorMessage = "";
       if (isLarge) {
@@ -511,11 +511,11 @@ const closeDialog = () => {
       if (isInvalidFormat) {
         errorMessage += `Invalid file format. Only JPEG and PNG formats are allowed.`;
       }
-  
+
       openDialog("Alert", errorMessage, "info");
       return;
     }
-    
+
     updateModifiedData({ key: "tenant_photo_url", value: e.target.files[0] });
     readImage(file);
   };
@@ -527,7 +527,7 @@ const closeDialog = () => {
       try {
         const methods = JSON.parse(profileData.paymentMethods).map((method) => ({
           ...method,
-          checked: method.paymentMethod_status === "Active", 
+          checked: method.paymentMethod_status === "Active",
         }));
         setParsedPaymentMethods(methods);
       } catch (error) {
@@ -551,19 +551,19 @@ const closeDialog = () => {
     try {
       const tenantUid = getProfileId();
       const url = `${APIConfig.baseURL.dev}/paymentMethod/${tenantUid}/${paymentMethodUid}`;
-  
-      setShowSpinner(true); 
-  
+
+      setShowSpinner(true);
+
       await axios.delete(url, {
         headers: { "Content-Type": "application/json" },
       });
-  
+
       setParsedPaymentMethods((prevMethods) =>
         prevMethods.filter((method) => method.paymentMethod_uid !== paymentMethodUid)
       );
-  
+
       setShowSpinner(false);
-  
+
       openDialog("Success", "Payment method deleted successfully.", "success");
     } catch (error) {
       setShowSpinner(false);
@@ -571,7 +571,7 @@ const closeDialog = () => {
       console.error("Error deleting payment method:", error);
     }
   };
-  
+
   const renderPaymentMethods = () => {
     return parsedPaymentMethods.map((method, index) => (
       <Grid
@@ -587,41 +587,41 @@ const closeDialog = () => {
             onChange={(e) => handleChangeChecked(e, method.paymentMethod_uid)}
           />
         </Grid>
-  
+
         <Grid container alignContent="center" item xs={1.3} sm={1}>
           {method.paymentMethod_type ? (
             <img src={getIconForMethod(method.paymentMethod_type)} alt={method.paymentMethod_type} />
           ) : null}
         </Grid>
-  
+
         {!method.paymentMethod_type ? (
-          <Grid item xs={3} sx={{alignContent: "center"}}>
-          <Select
-            value={method.paymentMethod_type || ""}
-            onChange={(e) => handleChangeValue(e, method.paymentMethod_uid, "type")}
-            displayEmpty
-            fullWidth
-            variant="filled"
-            className={classes.root}
-            sx={{
-              '.MuiSelect-select': {
-                padding: '4px 8px', 
-              },
-              '.MuiOutlinedInput-root': {
-                minHeight: '30px', 
-              },
-            }}
-          >
-            <MenuItem 
-              value="" 
-              disabled 
+          <Grid item xs={3} sx={{ alignContent: "center" }}>
+            <Select
+              value={method.paymentMethod_type || ""}
+              onChange={(e) => handleChangeValue(e, method.paymentMethod_uid, "type")}
+              displayEmpty
+              fullWidth
+              variant="filled"
+              className={classes.root}
               sx={{
-                padding: '4px 8px',
-                minHeight: 'auto',
+                '.MuiSelect-select': {
+                  padding: '4px 8px',
+                },
+                '.MuiOutlinedInput-root': {
+                  minHeight: '30px',
+                },
               }}
             >
-              Select Payment Method
-            </MenuItem>
+              <MenuItem
+                value=""
+                disabled
+                sx={{
+                  padding: '4px 8px',
+                  minHeight: 'auto',
+                }}
+              >
+                Select Payment Method
+              </MenuItem>
               {paymentTypes.map((payment) => (
                 <MenuItem key={payment.type} value={payment.type}>
                   <img src={payment.icon} alt={payment.name} style={{ width: 20, marginRight: 10 }} />
@@ -675,7 +675,7 @@ const closeDialog = () => {
             )}
           </>
         )}
-  
+
         {method.paymentMethod_uid && !method.paymentMethod_uid.startsWith('new_') && (
           <Grid item xs={1}>
             <IconButton onClick={() => handleDeletePaymentMethod(method.paymentMethod_uid)} aria-label="delete">
@@ -818,10 +818,10 @@ const closeDialog = () => {
   const handleAddPaymentMethod = (event) => {
     event.stopPropagation();
     const newPaymentMethod = {
-      paymentMethod_uid: `new_${Date.now()}`, 
-      paymentMethod_type: "", 
-      paymentMethod_name: "", 
-      paymentMethod_status: "Inactive", 
+      paymentMethod_uid: `new_${Date.now()}`,
+      paymentMethod_type: "",
+      paymentMethod_name: "",
+      paymentMethod_status: "Inactive",
       checked: false,
     };
     setParsedPaymentMethods([...parsedPaymentMethods, newPaymentMethod]);
@@ -832,15 +832,15 @@ const closeDialog = () => {
     const existingMethods = profileData.paymentMethods
       ? JSON.parse(profileData.paymentMethods)
       : [];
-  
+
     const putPayload = [];
     const postPayload = [];
-  
+
     validPaymentMethods.forEach((method) => {
       const existingMethod = existingMethods.find(
         (m) => m.paymentMethod_uid === method.paymentMethod_uid
       );
-  
+
       if (existingMethod) {
         const hasChanged =
           method.paymentMethod_name !== existingMethod.paymentMethod_name ||
@@ -849,8 +849,8 @@ const closeDialog = () => {
             (method.paymentMethod_routing_number !==
               existingMethod.paymentMethod_routing_number ||
               method.paymentMethod_account_number !==
-                existingMethod.paymentMethod_account_number));
-  
+              existingMethod.paymentMethod_account_number));
+
         if (hasChanged) {
           // Only send the required fields along with paymentMethod_uid
           putPayload.push({
@@ -875,7 +875,7 @@ const closeDialog = () => {
         });
       }
     });
-  
+
     try {
       // Make PUT request if there are modified payment methods
       if (putPayload.length > 0) {
@@ -885,7 +885,7 @@ const closeDialog = () => {
           { headers: { "Content-Type": "application/json" } }
         );
       }
-  
+
       // Make POST request if there are new payment methods
       if (postPayload.length > 0) {
         await axios.post(
@@ -894,7 +894,7 @@ const closeDialog = () => {
           { headers: { "Content-Type": "application/json" } }
         );
       }
-  
+
       setCookie("default_form_vals", { ...cookiesData, paymentMethods });
     } catch (error) {
       console.error("Error handling payment methods:", error);
@@ -902,30 +902,30 @@ const closeDialog = () => {
       setShowSpinner(false);
     }
   };
-  
+
   const handleNextStep = async () => {
     const newErrors = {};
-    if (!firstName) newErrors.firstName = 'First name is required';    
-    if (!lastName) newErrors.lastName = 'Last name is required';   
-    if (!address) newErrors.address = 'Address is required';        
+    if (!firstName) newErrors.firstName = 'First name is required';
+    if (!lastName) newErrors.lastName = 'Last name is required';
+    if (!address) newErrors.address = 'Address is required';
     if (!email) newErrors.email = 'Email is required';
     if (!phoneNumber) newErrors.phoneNumber = 'Phone Number is required';
-    if (!ssn) newErrors.ssn = 'SSN is required';    
-  
+    if (!ssn) newErrors.ssn = 'SSN is required';
+
     let paymentMethodsError = false;
     let atLeastOneActive = false;
 
-  const validPaymentMethods = parsedPaymentMethods.filter((method) => method.paymentMethod_type !== "");
+    const validPaymentMethods = parsedPaymentMethods.filter((method) => method.paymentMethod_type !== "");
 
-  validPaymentMethods.forEach(method => {
-    if (method.checked && method.paymentMethod_name === '') {
-      paymentMethodsError = true;
-    }
-    if (method.checked) {
-      atLeastOneActive = true; // Found at least one active
-    }
-  });
-  
+    validPaymentMethods.forEach(method => {
+      if (method.checked && method.paymentMethod_name === '') {
+        paymentMethodsError = true;
+      }
+      if (method.checked) {
+        atLeastOneActive = true; // Found at least one active
+      }
+    });
+
     if (!atLeastOneActive) {
       newErrors.paymentMethods = 'Atleast one active payment method is required';
       openDialog(
@@ -935,61 +935,61 @@ const closeDialog = () => {
       );
       return;
     }
-  
-    if (paymentMethodsError){
+
+    if (paymentMethodsError) {
       newErrors.paymentMethods = 'Please check payment method details';
-      openDialog("Alert",'Please check payment method details',"info");
+      openDialog("Alert", 'Please check payment method details', "info");
       return;
     }
-  
+
     if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors); 
-      openDialog("Alert","Please enter all required fields","info");
+      setErrors(newErrors);
+      openDialog("Alert", "Please enter all required fields", "info");
       return;
     }
-  
+
     setErrors({}); // Clear any previous errors
-  
+
     if (!DataValidator.email_validate(email)) {
-      openDialog("Alert","Please enter a valid email","info");
+      openDialog("Alert", "Please enter a valid email", "info");
       return false;
     }
-  
+
     if (!DataValidator.phone_validate(phoneNumber)) {
-      openDialog("Alert","Please enter a valid phone number","info");
+      openDialog("Alert", "Please enter a valid phone number", "info");
       return false;
     }
-  
+
     if (!DataValidator.zipCode_validate(zip)) {
-      openDialog("Alert","Please enter a valid zip code","info");
+      openDialog("Alert", "Please enter a valid zip code", "info");
       return false;
     }
-  
+
     // if (!DataValidator.ssn_validate(ssn)) {
     //   alert("Please enter a valid SSN");
     //   return false;
     // }
 
-    if((taxIDType === "EIN" && !DataValidator.ein_validate(ssn)) || (taxIDType === "SSN" && !DataValidator.ssn_validate(ssn))){
+    if ((taxIDType === "EIN" && !DataValidator.ein_validate(ssn)) || (taxIDType === "SSN" && !DataValidator.ssn_validate(ssn))) {
       openDialog("Alert", "Please enter a valid Tax ID", "info");
       return false;
     }
-  
+
     setCookie("default_form_vals", { ...cookiesData, firstName, lastName });
-  
+
     // const payload = getPayload();
     // const form = encodeForm(payload);
     // const data = await saveProfile(form);
 
     saveProfile();
-    
+
     if (modifiedPayment) {
       await handlePaymentStep(validPaymentMethods);
     }
     setShowSpinner(false);
     return;
   };
-  
+
   const showSnackbar = (message, severity) => {
     //console.log("Inside show snackbar");
     setSnackbarMessage(message);
@@ -1044,12 +1044,12 @@ const closeDialog = () => {
           //     profileFormData.append("tenant_documents_details", JSON.stringify(documentsDetails));
           //   }
           // } else {
-          if(item.key !== "tenant_income_1" && item.key !== "tenant_employment" && item.key !== 'tenant_adult_occupants' &&
-          item.key !== 'tenant_children_occupants' &&
-          item.key !== 'tenant_pet_occupants' &&
-          item.key !== 'tenant_vehicle_info'){
+          if (item.key !== "tenant_income_1" && item.key !== "tenant_employment" && item.key !== 'tenant_adult_occupants' &&
+            item.key !== 'tenant_children_occupants' &&
+            item.key !== 'tenant_pet_occupants' &&
+            item.key !== 'tenant_vehicle_info') {
             profileFormData.append(item.key, item.value);
-          }else{
+          } else {
             profileFormData.append(item.key, JSON.stringify(item.value));
           }
           // }
@@ -1085,41 +1085,41 @@ const closeDialog = () => {
     try {
       if (modifiedData.length > 0 || isPreviousFileChange || deletedFiles?.length > 0 || uploadedFiles?.length > 0) {
         setShowSpinner(true);
-  
+
         const headers = {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Methods": "*",
           "Access-Control-Allow-Headers": "*",
           "Access-Control-Allow-Credentials": "*",
         };
-  
+
         const profileFormData = new FormData();
-  
+
         // Append modified data only
         modifiedData.forEach((item) => {
           // Ensure tenant_employment is appended only once and avoid appending tenant_income_1
           if (item.key !== "tenant_income_1" && item.key !== "tenant_employment" && item.key !== 'tenant_adult_occupants' &&
-          item.key !== 'tenant_children_occupants' &&
-          item.key !== 'tenant_pet_occupants' &&
-          item.key !== 'tenant_vehicle_info') {
+            item.key !== 'tenant_children_occupants' &&
+            item.key !== 'tenant_pet_occupants' &&
+            item.key !== 'tenant_vehicle_info') {
             profileFormData.append(item.key, item.value);
           }
         });
-  
+
         // If employment data has changed, append tenant_employment only once
         // if (employmentList && employmentList.length > 0) {
         //   profileFormData.append("tenant_employment", JSON.stringify(employmentList));
         // }
-  
+
         // Handle documents, files, and tenant_uid as before
         if (isPreviousFileChange) {
           profileFormData.append("tenant_documents", JSON.stringify(documents));
         }
-  
+
         if (deletedFiles && deletedFiles?.length !== 0) {
           profileFormData.append("delete_documents", JSON.stringify(deletedFiles));
         }
-  
+
         if (uploadedFiles && uploadedFiles?.length) {
           const documentsDetails = [];
           [...uploadedFiles].forEach((file, i) => {
@@ -1134,9 +1134,9 @@ const closeDialog = () => {
           });
           profileFormData.append("tenant_documents_details", JSON.stringify(documentsDetails));
         }
-  
+
         profileFormData.append("tenant_uid", profileData.tenant_uid);
-  
+
         // Send the API request
         await axios.put(`${APIConfig.baseURL.dev}/profile`, profileFormData, { headers });
 
@@ -1162,30 +1162,30 @@ const closeDialog = () => {
       setDialogSeverity("error");
     }
   };
-  
+
   const handleIncomeChange = (event, index, field) => {
     const updatedList = [...employmentList];
     updatedList[index][field] = event.target.value;
     setEmploymentList(updatedList);
-  
+
     // Check for changes and update modifiedData
-    const hasChanges = employmentList.some((emp, i) => 
+    const hasChanges = employmentList.some((emp, i) =>
       emp.jobTitle !== updatedList[i].jobTitle ||
       emp.companyName !== updatedList[i].companyName ||
       emp.salary !== updatedList[i].salary ||
       emp.frequency !== updatedList[i].frequency
     );
-  
+
     if (hasChanges) {
       updateModifiedData({ key: "tenant_employment", value: updatedList });
     }
   };
-  
+
   const handleAddIncome = () => {
     const newIncome = { jobTitle: "", companyName: "", salary: "", frequency: "" };
     const updatedList = [...employmentList, newIncome];
     setEmploymentList(updatedList);
-  
+
     // Update tenant_employment in modifiedData
     updateModifiedData({ key: "tenant_employment", value: updatedList });
   };
@@ -1193,12 +1193,12 @@ const closeDialog = () => {
   const handleRemoveIncome = (index) => {
     const updatedList = employmentList.filter((_, i) => i !== index);
     setEmploymentList(updatedList);
-  
+
     // Update tenant_employment in modifiedData
     updateModifiedData({ key: "tenant_employment", value: updatedList });
   };
   const [showSsn, setShowSsn] = useState(ssn?.length > 0 ? false : true);
-  
+
   return (
     <>
       <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", cursor: "pointer", marginBottom: "10px", padding: "10px" }}>
@@ -1244,7 +1244,7 @@ const closeDialog = () => {
                 </Button>
               </Grid>
             </Grid>
-            <Grid item xs={12} md={9} marginTop={isMobile? "20px" : "0px"}>
+            <Grid item xs={12} md={9} marginTop={isMobile ? "20px" : "0px"}>
               <Grid item xs={12}>
                 <Typography
                   sx={{
@@ -1280,7 +1280,7 @@ const closeDialog = () => {
                     onChange={handleLastNameChange}
                     fullWidth
                     placeholder='Last name'
-                    className={classes.root} 
+                    className={classes.root}
                     InputProps={{
                       className: errors.lastName || !lastName ? classes.errorBorder : '',
                     }}
@@ -1302,10 +1302,10 @@ const closeDialog = () => {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <AddressAutocompleteInput 
+                    <AddressAutocompleteInput
                       onAddressSelect={handleAddressSelect}
                       gray={true}
-                      defaultValue={address} 
+                      defaultValue={address}
                       isRequired={true}
                     />
                   </Grid>
@@ -1328,7 +1328,7 @@ const closeDialog = () => {
                       onChange={handleUnitChange}
                       variant='filled'
                       placeholder='3'
-                      className={classes.root}                      
+                      className={classes.root}
                     ></TextField>
                   </Grid>
                 </Grid>
@@ -1507,39 +1507,39 @@ const closeDialog = () => {
                     </Typography>
                   </Grid>
                   <Grid item xs={8} sm={6}>
-                  {/* <Select name='tax_id_type' value={taxIDType} size='small' fullWidth onChange={(e) => setTaxIDType(e.target.value)} placeholder='Select Tax ID Type' className={classes.select}>
+                    {/* <Select name='tax_id_type' value={taxIDType} size='small' fullWidth onChange={(e) => setTaxIDType(e.target.value)} placeholder='Select Tax ID Type' className={classes.select}>
                     <MenuItem value='SSN'>SSN</MenuItem>
                     <MenuItem value='EIN'>EIN</MenuItem>
                   </Select> */}
 
-                  <RadioGroup aria-label='taxIDType' name='announctax_id_typeementType' value={taxIDType} onChange={(e) => setTaxIDType(e.target.value)} row>
-                    <FormControlLabel 
-                      value='SSN'
-                      control={
-                        <Radio
-                          sx={{
-                            color: 'defaultColor', 
-                            '&.Mui-checked': {
-                              color: '#3D5CAC',
-                            },
-                          }}
-                        />
-                      }
-                      label='SSN' />
-                    <FormControlLabel
-                      value='EIN'
-                      control={
-                        <Radio
-                          sx={{
-                            color: 'defaultColor', 
-                            '&.Mui-checked': {
-                              color: '#3D5CAC', 
-                            },
-                          }}
-                        />
-                      }
-                      label='EIN' />                    
-                  </RadioGroup>
+                    <RadioGroup aria-label='taxIDType' name='announctax_id_typeementType' value={taxIDType} onChange={(e) => setTaxIDType(e.target.value)} row>
+                      <FormControlLabel
+                        value='SSN'
+                        control={
+                          <Radio
+                            sx={{
+                              color: 'defaultColor',
+                              '&.Mui-checked': {
+                                color: '#3D5CAC',
+                              },
+                            }}
+                          />
+                        }
+                        label='SSN' />
+                      <FormControlLabel
+                        value='EIN'
+                        control={
+                          <Radio
+                            sx={{
+                              color: 'defaultColor',
+                              '&.Mui-checked': {
+                                color: '#3D5CAC',
+                              },
+                            }}
+                          />
+                        }
+                        label='EIN' />
+                    </RadioGroup>
                   </Grid>
                   <Grid item xs={12}>
                     <TextField
@@ -1561,7 +1561,7 @@ const closeDialog = () => {
                               onClick={() => setShowSsn((show) => !show)}
                               edge='end'
                             >
-                              {showSsn ? <VisibilityOff style={{ fontSize: "20px"}}/> : <Visibility style={{ fontSize: "20px"  }}/>}
+                              {showSsn ? <VisibilityOff style={{ fontSize: "20px" }} /> : <Visibility style={{ fontSize: "20px" }} />}
                             </IconButton>
                           </InputAdornment>
                         ),
@@ -1577,46 +1577,46 @@ const closeDialog = () => {
       </Grid>
 
       <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
-  <Grid item xs={12}>
-    <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={paymentExpanded} onChange={() => setPaymentExpanded(prevState => !prevState)}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='payment-content' id='payment-header'>
-        <Grid container justifyContent='center'>
-          <Grid item md={11.5}>
-            <Typography
-              sx={{
-                color: "#160449",
-                fontWeight: theme.typography.primary.fontWeight,
-                fontSize: "24px",
-                textAlign: "center",
-                paddingBottom: "10px",
-                paddingTop: "5px",
-                flexGrow: 1,
-                paddingLeft: "50px",
-              }}
-              paddingTop='5px'
-              paddingBottom='10px'
-            >
-              Payment Information
-            </Typography>
-          </Grid>
-          <Grid item md={0.5}>
-            <IconButton onClick={handleAddPaymentMethod} aria-label="Add Payment Method">
-              <AddIcon />
-            </IconButton>
-          </Grid>
+        <Grid item xs={12}>
+          <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={paymentExpanded} onChange={() => setPaymentExpanded(prevState => !prevState)}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='payment-content' id='payment-header'>
+              <Grid container justifyContent='center'>
+                <Grid item md={11.5}>
+                  <Typography
+                    sx={{
+                      color: "#160449",
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: "24px",
+                      textAlign: "center",
+                      paddingBottom: "10px",
+                      paddingTop: "5px",
+                      flexGrow: 1,
+                      paddingLeft: "50px",
+                    }}
+                    paddingTop='5px'
+                    paddingBottom='10px'
+                  >
+                    Payment Information
+                  </Typography>
+                </Grid>
+                <Grid item md={0.5}>
+                  <IconButton onClick={handleAddPaymentMethod} aria-label="Add Payment Method">
+                    <AddIcon />
+                  </IconButton>
+                </Grid>
+              </Grid>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Grid container item xs={12}>
+                {renderPaymentMethods()}
+              </Grid>
+            </AccordionDetails>
+          </Accordion>
         </Grid>
-      </AccordionSummary>
-      <AccordionDetails>
-        <Grid container item xs={12}>
-          {renderPaymentMethods()}
-        </Grid>
-      </AccordionDetails>
-    </Accordion>
-  </Grid>
       </Grid>
 
 
-    {/* <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+      {/* <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
       <Grid item xs={12}>
          <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={empinfoExpanded} onChange={() => setEmpinfoExpanded(prevState => !prevState)}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='occupants-content' id='occupants-header'>
@@ -1740,7 +1740,7 @@ const closeDialog = () => {
           </Grid>
           </Grid> */}
 
-        {/* <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+      {/* <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
           <Grid item xs={12}>
             <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={empinfoExpanded} onChange={() => setEmpinfoExpanded(prevState => !prevState)}>
               <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='employment-content' id='employment-header'>
@@ -1765,25 +1765,25 @@ const closeDialog = () => {
         <Grid item xs={12}>
           <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={empinfoExpanded} onChange={() => setEmpinfoExpanded(prevState => !prevState)}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='income-details-content' id='income-details-header'>
-            <Grid container justifyContent='center'>
-            <Grid item md={11.5}>
-              <Typography
-                sx={{
-                  color: "#160449",
-                  fontWeight: theme.typography.primary.fontWeight,
-                  fontSize: "24px",
-                  textAlign: "center",
-                  paddingBottom: "10px",
-                  paddingTop: "5px",
-                  flexGrow: 1,
-                }}
-                paddingTop='5px'
-                paddingBottom='10px'
-              >
-                Income Details
-              </Typography>
-            </Grid>
-            </Grid>
+              <Grid container justifyContent='center'>
+                <Grid item md={11.5}>
+                  <Typography
+                    sx={{
+                      color: "#160449",
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: "24px",
+                      textAlign: "center",
+                      paddingBottom: "10px",
+                      paddingTop: "5px",
+                      flexGrow: 1,
+                    }}
+                    paddingTop='5px'
+                    paddingBottom='10px'
+                  >
+                    Income Details
+                  </Typography>
+                </Grid>
+              </Grid>
             </AccordionSummary>
             <AccordionDetails>
               <IncomeDetails
@@ -1867,7 +1867,7 @@ const closeDialog = () => {
               )}
               {vehicles && (
                 <VehiclesOccupant
-                  leaseVehicles={vehicles}                  
+                  leaseVehicles={vehicles}
                   setLeaseVehicles={setVehicles}
                   states={states}
                   editOrUpdateLease={editOrUpdateTenant}
@@ -1885,67 +1885,71 @@ const closeDialog = () => {
       </Grid>
 
       <Grid container justifyContent='center' sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
-  <Grid item xs={12}>
-    <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={documentsExpanded} onChange={() => setDocumentsExpanded(prevState => !prevState)}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='documents-content' id='documents-header'>
-        <Grid container justifyContent='center'>
-          <Grid item md={11.5}>
-            <Typography
-              sx={{
-                color: "#160449",
-                fontWeight: theme.typography.primary.fontWeight,
-                fontSize: "24px",
-                textAlign: "center",
-                paddingBottom: "10px",
-                paddingTop: "5px",
-                flexGrow: 1,
-                paddingLeft: "50px",
-              }}
-              paddingTop='5px'
-              paddingBottom='10px'
-            >
-              Documents
-            </Typography>
-          </Grid>
+        <Grid item xs={12}>
+          <Accordion sx={{ backgroundColor: "#F0F0F0", boxShadow: "none" }} expanded={documentsExpanded} onChange={() => setDocumentsExpanded(prevState => !prevState)}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='documents-content' id='documents-header'>
+              <Grid container justifyContent='center'>
+                <Grid item md={11.5}>
+                  <Typography
+                    sx={{
+                      color: "#160449",
+                      fontWeight: theme.typography.primary.fontWeight,
+                      fontSize: "24px",
+                      textAlign: "center",
+                      // paddingBottom: "10px",
+                      paddingTop: "5px",
+                      flexGrow: 1,
+                      paddingLeft: "50px",
+                    }}
+                    paddingTop='5px'
+                    // paddingBottom='10px'
+                  >
+                    Documents
+                  </Typography>
+                </Grid>
+              </Grid>
+            </AccordionSummary>
+            <AccordionDetails>
+              {/* <Typography>Tenant Documents</Typography> */}
+              <Typography sx={{ fontSize: '14px', fontWeight: 'bold', color: '#3D5CAC', marginLeft: '5px' }}>
+                Tenant Documents
+              </Typography>
+              <Documents
+                documents={documents}
+                setDocuments={setDocuments}
+                setContractFiles={setuploadedFiles}
+                setDeleteDocsUrl={setDeletedFiles}
+                isAccord={true}
+                contractFiles={uploadedFiles}
+                contractFileTypes={uploadedFileTypes}
+                setContractFileTypes={setUploadedFileTypes}
+                setIsPreviousFileChange={setIsPreviousFileChange}
+              />
+            </AccordionDetails>
+          </Accordion>
         </Grid>
-      </AccordionSummary>
-      <AccordionDetails>
-          <Documents
-            documents={documents}
-            setDocuments={setDocuments}
-            setContractFiles={setuploadedFiles}
-            setDeleteDocsUrl={setDeletedFiles}
-            isAccord={true}
-            contractFiles={uploadedFiles}
-            contractFileTypes={uploadedFileTypes}
-            setContractFileTypes={setUploadedFileTypes}
-            setIsPreviousFileChange={setIsPreviousFileChange}
-          />
-      </AccordionDetails>
-    </Accordion>
-  </Grid>
       </Grid>
 
 
-      <Grid container justifyContent='center' item xs={12} sx= {{ backgroundColor:"#F2F2F2", borderRadius: "10px",}} paddingTop='10px'
-                    paddingBottom='10px'>
+      <Grid container justifyContent='center' item xs={12} sx={{ backgroundColor: "#F2F2F2", borderRadius: "10px", }} paddingTop='10px'
+        paddingBottom='10px'>
         <Button variant='contained' color='primary' onClick={handleNextStep} disabled={nextStepDisabled} sx={{ mb: 2, backgroundColor: "#3D5CAC" }}>
           <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Save</Typography>
         </Button>
       </Grid>
 
       <GenericDialog
-      isOpen={isDialogOpen}
-      title={dialogTitle}
-      contextText={dialogMessage}
-      actions={[
-        {
-          label: "OK",
-          onClick: closeDialog,
-        }
-      ]}
-      severity={dialogSeverity}
-    />
+        isOpen={isDialogOpen}
+        title={dialogTitle}
+        contextText={dialogMessage}
+        actions={[
+          {
+            label: "OK",
+            onClick: closeDialog,
+          }
+        ]}
+        severity={dialogSeverity}
+      />
     </>
   );
 }

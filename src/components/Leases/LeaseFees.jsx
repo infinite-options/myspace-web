@@ -689,14 +689,14 @@ const LeaseFees = ({ leaseFees, titleFontSize, isEditable, setLeaseFees, setDele
             </Typography>
             <Button
               onClick={handleClose}
-              sx={{
-                ml: "auto",
-                "&:hover": {
-                  "& svg": {
-                    color: "#ffffff",
-                  },
-                },
-              }}
+              // sx={{
+              //   ml: "auto",
+              //   "&:hover": {
+              //     "& svg": {
+              //       color: "#ffffff",
+              //     },
+              //   },
+              // }}
             >
               <Close
                 sx={{
