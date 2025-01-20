@@ -526,11 +526,11 @@ const NewUser = () => {
                       fontSize: "20px",
                       backgroundColor: "#F2F2F2",
                       textTransform: "none",
-                      color: "grey",
+                      color: "#160449",
                       fontWeight: "bold",
                       "&:hover": {
                         backgroundColor: "#F2F2F2",
-                        color: "#160449",
+                        color: "#3d5cac"
                       },
                       boxShadow: 1,
                       justifyContent: "space-evenly",

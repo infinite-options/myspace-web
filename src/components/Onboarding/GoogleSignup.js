@@ -258,7 +258,7 @@ const GoogleSignup = (props) => {
                         //   },
                         // });
 
-                        console.log(e)
+                        // console.log(e)
 
                         const userExist = await checkIfUserExists(e);
 

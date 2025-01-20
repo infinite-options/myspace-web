@@ -415,6 +415,7 @@ const CreateProfile = () => {
             return;
           } else {
             setAuthData(responseJSON.result);
+            setLoggedIn(true);
             localStorage.removeItem("hasRedirected");
             sessionStorage.setItem("authToken", responseJSON.result.access_token);
             sessionStorage.setItem("refreshToken", responseJSON.result.refresh_token);
