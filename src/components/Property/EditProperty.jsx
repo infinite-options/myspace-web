@@ -775,7 +775,7 @@ function EditProperty(props) {
 				response.data.propertyDetails.livingArea && setSquareFootage(response.data.propertyDetails.livingArea);
 				response.data.propertyDetails.bathrooms && setBathrooms(response.data.propertyDetails.bathrooms);
 				response.data.propertyDetails.bedrooms && setBedrooms(response.data.propertyDetails.bedrooms);
-				response.data.propertyDetails.price && setPropertyValue(response.data.propertyDetails.price);
+				response.data.propertyDetails.zestimate && setPropertyValue(response.data.propertyDetails.zestimate);
 
 				response.data.propertyDetails.parcelId && setParcelId(response.data.propertyDetails.parcelId);
 				response.data.propertyDetails.zestimate && setZestimate(response.data.propertyDetails.zestimate);
