@@ -26,7 +26,7 @@ import {
 } from "@mui/material";
 // import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
-import { useEffect, useState, Fragment, useContext } from "react";
+import { useEffect, useState, Fragment, useContext, useRef } from "react";
 import { useUser } from "../../../contexts/UserContext";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Backdrop from "@mui/material/Backdrop";
@@ -45,6 +45,7 @@ import VehiclesOccupant from "../VehiclesOccupant";
 import { getDateAdornmentString } from "../../../utils/dates";
 import LeaseFees from "../LeaseFees";
 import GenericDialog from "../../GenericDialog";
+import SignatureCanvas from "react-signature-canvas";
 import ListsContext from "../../../contexts/ListsContext";
 import TenantEndLeaseButton from "../../TenantDashboard/TenantEndLeaseButton";
 import EndRenewedLeaseDialog from "../EndRenewedLeaseDialog";
@@ -93,6 +94,48 @@ function TenantLeases(props) {
   const [dialogSeverity, setDialogSeverity] = useState("info");
   const [showEarlyTerminationDialog, setShowEarlyTerminationDialog] = useState(false);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const sigCanvas = useRef(null);
+
+  // Clear the signature canvas
+  const clearSignature = () => {
+    sigCanvas.current.clear();
+  };
+
+  // Save the signature
+  const saveSignature = () => {
+    if (sigCanvas.current.isEmpty()) {
+      alert("Please provide a signature");
+      return;
+    }
+    const signatureDataURL = sigCanvas.current.toDataURL(); // Store signature as image
+    console.log(" signature image ", typeof signatureDataURL);
+    // setSignature(signatureDataURL); 
+    return signatureDataURL;
+  };
+
+  //Convert the signature to a Binary or blob
+  const getSignatureAsPNG = () => {
+    // Get the base64 PNG data from the signature canvas
+    const signatureDataURL = sigCanvas.current.toDataURL("image/png");
+  
+    // Convert base64 to binary data
+    const byteString = atob(signatureDataURL.split(',')[1]);
+  
+    // Create a byte array from the binary data
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const uintArray = new Uint8Array(arrayBuffer);
+  
+    // Convert the byte string into the byte array
+    for (let i = 0; i < byteString.length; i++) {
+      uintArray[i] = byteString.charCodeAt(i);
+    }
+  
+    // Create a Blob from the byte array
+    const blob = new Blob([uintArray], { type: "image/png" });
+  
+    // Return the PNG Blob
+    return blob;
+  };
 
   const openDialog = (title, message, severity) => {
     setDialogTitle(title); // Set custom title
@@ -408,6 +451,14 @@ function TenantLeases(props) {
     // //console.log("Data we have4: ", pets);
     // //console.log("Lease Application Data1: ", leaseApplicationFormData);
     // //console.log("In handle Accept: ", detailed_property?.lease_effective_date);
+    if (sigCanvas.current.isEmpty()) {
+      alert("Please provide a signature");
+      return;
+    }
+
+    const signatureDataURL = getSignatureAsPNG();
+    console.log(" signature image ", typeof signatureDataURL);
+
     const leaseApplicationFormData = new FormData();
     leaseApplicationFormData.append("lease_uid", lease.lease_uid);
     //console.log("Lease Application Data2: ", leaseApplicationFormData);
@@ -490,6 +541,7 @@ function TenantLeases(props) {
       }
       //console.log("Status: ", status);
       leaseApplicationFormData.append("lease_status", lease_status);
+      leaseApplicationFormData.append("img_0", signatureDataURL, "signature.png");
       const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "PUT",
         body: leaseApplicationFormData,
@@ -1089,6 +1141,78 @@ function TenantLeases(props) {
               </Accordion>
             </Grid>
           </Grid>
+          
+          {/* Signature  */}
+          <Grid
+            container
+            direction="column"
+            sx={{
+              backgroundColor: "#f0f0f0",
+              borderRadius: "10px",
+              padding: "10px",
+              marginBottom: "30px",
+              maxWidth: "100%",
+            }}
+          >
+            {/* Label */}
+            <Typography
+              sx={{
+                fontWeight: theme.typography.medium.fontWeight,
+                color: theme.typography.primary.blue,
+                marginBottom: "10px",
+              }}
+            >
+              Signature
+            </Typography>
+
+            {/* Signature Canvas */}
+            <Grid
+              container
+              justifyContent={"center"}
+              sx={{
+                position: "relative",
+                width: 700,
+                height: 150,
+              }}
+            >
+              <SignatureCanvas
+                ref={sigCanvas}
+                penColor="black"
+                canvasProps={{
+                  width: 700,
+                  height: 150,
+                  className: "signatureCanvas",
+                  style: {
+                    border: "1px solid black",
+                    backgroundColor: "#ffffff",
+                    borderRadius: "4px",
+                  },
+                }}
+              />
+
+              {/* Clear Button Inside Canvas */}
+              <Button
+                variant="outlined"
+                color="info"
+                onClick={clearSignature}
+                sx={{
+                  position: "absolute", 
+                  bottom: "5%", 
+                  right: "1%",
+                  textTransform: "none",
+                }}
+              >
+                Clear Signature
+              </Button>
+            </Grid>
+
+          </Grid>
+          {/* {signature && (
+            <div>
+              <h4>Signature Preview:</h4>
+              <img src={signature} alt="signature" style={{ border: "1px solid black", width: "100%" }} />
+            </div>
+          )} */}
 
           {/* Accept and reject lease button */}
           {lease.lease_status !== "APPROVED" && (
