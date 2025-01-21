@@ -239,7 +239,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 				setSquareFootage(response.data.propertyDetails.livingArea || '');
 				setBathrooms(response.data.propertyDetails.bathrooms || '');
 				setBedrooms(response.data.propertyDetails.bedrooms || '');
-				setCost(response.data.propertyDetails.price || '');
+				setCost(response.data.propertyDetails.zestimate || '');
 				setRentZestimate(response.data.propertyDetails.rentZestimate || '');
 				setYearBuilt(response.data.propertyDetails.yearBuilt || '');
 				setZestimate(response.data.propertyDetails.zestimate || '');

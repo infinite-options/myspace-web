@@ -287,7 +287,7 @@ export default function OwnerPropertyRentWidget(props) {
                   // y={isMediumScreen ? 105 : 157}
                   y={tspanY}
                 >
-                  properties 98
+                  properties
                 </tspan>
               </text>
             </PieChart>

@@ -53,6 +53,7 @@ const TenantAccountBalance = ({
   // //console.log("lease", leaseDetails);
   // //console.log("propertydata", propertyData);
   // //console.log("leasedetaisldata", leaseDetailsData);
+  // console.log('selectedProperty?.property_images', selectedProperty);
 
   // useEffect(() => {
   //   if (selectedProperty) {
@@ -270,7 +271,10 @@ const TenantAccountBalance = ({
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
           {/* Property Image */}
           <Box sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
-            <CardMedia component='img' image={selectedProperty?.property_favorite_image || defaultHouseImage} alt='property image' sx={{ width: "100%", height: "auto", maxHeight: "150px" }} />
+            <CardMedia component='img' image={
+            selectedProperty?.property_favorite_image ?  (selectedProperty?.property_favorite_image) :
+            (selectedProperty?.property_images ? JSON.parse(selectedProperty.property_images)[0] : defaultHouseImage)
+          } alt='property image' sx={{ width: "100%", height: "auto", maxHeight: "150px" }} />
           </Box>
           <Typography variant='h6' sx={{ fontWeight: "bold", color: "#160449" }}>
             No Property Selected
@@ -310,7 +314,10 @@ const TenantAccountBalance = ({
 
         {/* Property Image */}
         <Box sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
-          <CardMedia component='img' image={selectedProperty?.property_favorite_image || defaultHouseImage} alt='property image' sx={{ width: "100%", height: "auto", maxHeight: "150px" }} />
+          <CardMedia component='img' image={
+            selectedProperty?.property_favorite_image ?  (selectedProperty?.property_favorite_image) :
+            (selectedProperty?.property_images ? JSON.parse(selectedProperty.property_images)[0] : defaultHouseImage)
+          } alt='property image' sx={{ width: "100%", height: "auto", maxHeight: "150px" }} />
         </Box>
 
         {/* Property Address */}
@@ -432,10 +439,10 @@ const TenantAccountBalance = ({
               {leaseDetails?.lease_status === "NEW"
                 ? `Applied ${leaseDetails?.lease_application_date?.split(" ")[0]}`
                 : leaseDetails?.lease_status === "PROCESSING"
-                ? `Approved ${leaseDetails?.lease_application_date?.split(" ")[0]}`
-                : balanceDetails?.length > 0
-                ? "Make a Payment"
-                : "No Payment Due"}
+                  ? `Approved ${leaseDetails?.lease_application_date?.split(" ")[0]}`
+                  : balanceDetails?.length > 0
+                    ? "Make a Payment"
+                    : "No Payment Due"}
             </Button>
           </Box>
         )}
