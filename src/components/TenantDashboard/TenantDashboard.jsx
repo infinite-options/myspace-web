@@ -124,6 +124,7 @@ const TenantDashboard = () => {
     if (isMobile) {
       setViewRHS(false);
     }
+    // console.log(" == ok loading")
     setRightPane("");
   }, [location]);
   // const fetchCashflowDetails = async () => {
@@ -140,7 +141,7 @@ const TenantDashboard = () => {
   // }, [user])
 
   useEffect(() => {
-    //console.log("=== ok success - ", location?.state?.selectedProperty);
+    console.log("=== ok success - ", location?.state?.selectedProperty);
     if (location?.state?.selectedProperty) {
       setSelectedProperty(location?.state?.selectedProperty);
       // handleSelectProperty(location?.state?.selectedProperty)
@@ -270,6 +271,7 @@ const TenantDashboard = () => {
         setReload(false);
       } finally {
         // setLoading(false);
+        setReload(false);
       }
     };
     if (reload === true) {
@@ -559,7 +561,7 @@ const TenantDashboard = () => {
         case "paymentHistory":
           return <TenantPaymentHistoryTable data={rightPane.state.data} setRightPane={setRightPane} onBack={handleBack} isMobile={isMobile} />;
         case "listings":
-          return <PropertyListings setRightPane={setRightPane} isMobile={isMobile} setViewRHS={setViewRHS} setListingsData={setListingsData} />;
+          return <PropertyListings {...rightPane.state} setRightPane={setRightPane} isMobile={isMobile} setViewRHS={setViewRHS} setListingsData={setListingsData} />;
         case "propertyInfo":
           return <PropertyInfo {...rightPane.state} setRightPane={setRightPane} setFirstPage={setFirstPage} handleSelectProperty={handleSelectProperty} />;
         case "tenantApplication":
@@ -775,7 +777,7 @@ const TenantDashboard = () => {
               {/* Bottom Section: Flexible Space */}
               <Grid container spacing={8} rowGap={2} sx={{ flex: 1, display: "flex", flexDirection: isMobile ? "column" : "row", height: "100%" }}>
                 {rightPane?.type ? (
-                  <Grid item xs={12} md={12} sx={{ display: "flex", flexDirection: "column", flex: 1 }} ref={rightPaneRef} marginBottom={isMobile ? "40px" : "0px"}>
+                  <Grid item xs={12} md={12} sx={{ display: "flex", flexDirection: "column", flex: 1, height: "100%" }} ref={rightPaneRef} marginBottom={isMobile ? "40px" : "0px"}>
                     {renderRightPane()}
                   </Grid>
                 ) : (
@@ -3394,56 +3396,56 @@ function DocumentPreview({ file, onClose }) {
   };
 
   return (
-    <Box
-      sx={{
-        width: "100%",
-        height: "220%",
-        backgroundColor: "white",
-        boxShadow: 3,
-        borderRadius: 2, // Rounded edges for the outer box
-        overflow: "hidden", // Ensures rounded corners are applied to content
-      }}
-      onMouseDown={handleMouseDown}
-    >
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "10px",
-          backgroundColor: "#f0f0f0",
-        }}
-      >
-        <Typography variant='h6'>{file?.filename || "File Preview"}</Typography>
-        <IconButton onClick={onClose}>
-          <CloseIcon />
-        </IconButton>
-      </Box>
-      <Box
-        sx={{
-          height: "100%",
           width: "100%",
-          overflowY: "auto",
-          // padding: "1px",
+          height: "220%",
+          backgroundColor: "white",
+          boxShadow: 3,
+          borderRadius: 2, // Rounded edges for the outer box
+          overflow: "hidden", // Ensures rounded corners are applied to content
         }}
+        onMouseDown={handleMouseDown}
       >
-        {file ? (
-          <iframe
-            src={file.link}
-            width='100%'
-            height='100%'
-            title='File Preview'
-            style={{
-              border: "none",
-              borderBottomLeftRadius: 8, // Rounded bottom left corner
-              borderBottomRightRadius: 8, // Rounded bottom right corner
-            }}
-          />
-        ) : (
-          <Typography>No file selected</Typography>
-        )}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "10px",
+            backgroundColor: "#f0f0f0",
+          }}
+        >
+          <Typography variant='h6'>{file?.filename || "File Preview"}</Typography>
+          <IconButton onClick={onClose}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <Box
+          sx={{
+            height: "100%",
+            width: "100%",
+            overflowY: "auto",
+            // padding: "1px",
+          }}
+        >
+          {file ? (
+            <iframe
+              src={file.link}
+              width='100%'
+              height='100%'
+              title='File Preview'
+              style={{
+                border: "none",
+                borderBottomLeftRadius: 8, // Rounded bottom left corner
+                borderBottomRightRadius: 8, // Rounded bottom right corner
+              }}
+            />
+          ) : (
+            <Typography>No file selected</Typography>
+          )}
+        </Box>
       </Box>
-    </Box>
   );
 }
 

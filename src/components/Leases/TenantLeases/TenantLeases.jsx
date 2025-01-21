@@ -52,6 +52,7 @@ import EndRenewedLeaseDialog from "../EndRenewedLeaseDialog";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
+import { Warning } from "@mui/icons-material";
 
 function TenantLeases(props) {
   // //console.log("In Tenant Leases", props);
@@ -92,9 +93,18 @@ function TenantLeases(props) {
   const [dialogTitle, setDialogTitle] = useState("");
   const [dialogMessage, setDialogMessage] = useState("");
   const [dialogSeverity, setDialogSeverity] = useState("info");
+  const [isDialog2Open, setIsDialog2Open] = useState(false);
+  const [dialog2Title, setDialog2Title] = useState("");
+  const [dialog2Message, setDialog2Message] = useState("");
+  const [dialog2Severity, setDialog2Severity] = useState("info");
+  const [isLeaseAccepted, setIsLeaseAccepted] = useState(false);
   const [showEarlyTerminationDialog, setShowEarlyTerminationDialog] = useState(false);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const sigCanvas = useRef(null);
+
+  const handleCheckboxChange = (event) => {
+    setIsLeaseAccepted(event.target.checked);
+  };
 
   // Clear the signature canvas
   const clearSignature = () => {
@@ -142,6 +152,17 @@ function TenantLeases(props) {
     setDialogMessage(message); // Set custom message
     setDialogSeverity(severity); // Can use this if needed to control styles
     setIsDialogOpen(true);
+  };
+
+  const openRejectLeaseDialog = (title, message, severity) => {
+    setDialog2Title(title); // Set custom title
+    setDialog2Message(message); // Set custom message
+    setDialog2Severity(severity); // Can use this if needed to control styles
+    setIsDialog2Open(true);
+  };
+
+  const closeRejectLeaseDialog = () => {
+    setIsDialog2Open(false);
   };
 
   const closeDialog = () => {
@@ -327,6 +348,7 @@ function TenantLeases(props) {
   }
 
   async function handleTenantRefuse() {
+
     const leaseApplicationFormData = new FormData();
 
     leaseApplicationFormData.append("lease_uid", lease.lease_uid);
@@ -452,7 +474,7 @@ function TenantLeases(props) {
     // //console.log("Lease Application Data1: ", leaseApplicationFormData);
     // //console.log("In handle Accept: ", detailed_property?.lease_effective_date);
     if (sigCanvas.current.isEmpty()) {
-      alert("Please provide a signature");
+      openDialog("Warning", `Please provide a signature`, "warning");
       return;
     }
 
@@ -542,6 +564,8 @@ function TenantLeases(props) {
       //console.log("Status: ", status);
       leaseApplicationFormData.append("lease_status", lease_status);
       leaseApplicationFormData.append("img_0", signatureDataURL, "signature.png");
+      leaseApplicationFormData.append("lease_accepted", 1);
+      
       const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "PUT",
         body: leaseApplicationFormData,
@@ -1142,8 +1166,22 @@ function TenantLeases(props) {
             </Grid>
           </Grid>
           
+          {/* Lease Acceptance */}
+          <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px"}}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={isLeaseAccepted}
+                  onChange={handleCheckboxChange}
+                  color="primary"
+                />
+              }
+              label="Accept current lease"
+            />
+          </Grid>
+          
           {/* Signature  */}
-          <Grid
+          {isLeaseAccepted && <Grid
             container
             direction="column"
             sx={{
@@ -1171,21 +1209,21 @@ function TenantLeases(props) {
               justifyContent={"center"}
               sx={{
                 position: "relative",
-                width: 700,
-                height: 150,
+                width: "100%",
               }}
             >
               <SignatureCanvas
                 ref={sigCanvas}
                 penColor="black"
                 canvasProps={{
-                  width: 700,
-                  height: 150,
                   className: "signatureCanvas",
                   style: {
+                    aspectRatio: "auto 100 / 100",
                     border: "1px solid black",
                     backgroundColor: "#ffffff",
                     borderRadius: "4px",
+                    width: "100%",
+                    height: "100%",
                   },
                 }}
               />
@@ -1206,7 +1244,8 @@ function TenantLeases(props) {
               </Button>
             </Grid>
 
-          </Grid>
+          </Grid>}
+
           {/* {signature && (
             <div>
               <h4>Signature Preview:</h4>
@@ -1237,7 +1276,7 @@ function TenantLeases(props) {
                         backgroundColor: "#A75A5A",
                       },
                     }}
-                    onClick={() => handleTenantRefuse()}
+                    onClick={() => {openRejectLeaseDialog("Warning", "Are you sure you want to reject the lease?","warning") }}
                   >
                     Reject Lease
                   </Button>
@@ -1246,6 +1285,7 @@ function TenantLeases(props) {
               <Grid item xs={6}>
                 <CenteringBox>
                   <Button
+                    disabled={!isLeaseAccepted}
                     sx={{
                       display: "flex",
                       justifyContent: "center",
@@ -1506,6 +1546,7 @@ function TenantLeases(props) {
         </Paper>
       </Box>
 
+      {/* for lease accept */}
       <GenericDialog
         isOpen={isDialogOpen}
         title={dialogTitle}
@@ -1518,6 +1559,25 @@ function TenantLeases(props) {
         ]}
         severity={dialogSeverity}
       />
+
+      {/* for lease reject */}
+      <GenericDialog
+        isOpen={isDialog2Open}
+        title={dialog2Title}
+        contextText={dialog2Message}
+        actions={[
+          {
+            label: "Yes",
+            onClick: handleTenantRefuse,
+          },
+          {
+            label: "No",
+            onClick: closeRejectLeaseDialog,
+          },
+        ]}
+        severity={dialog2Severity}
+      />
+
       <Dialog open={showEarlyTerminationDialog} onClose={() => setShowEarlyTerminationDialog(false)} maxWidth='md' fullWidth>
         <EndRenewedLeaseDialog
           leaseDetails={lease}
