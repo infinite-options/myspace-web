@@ -17,6 +17,11 @@ import {
   TableBody,
   TableCell,
   TableContainer,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  IconButton,
   FormControlLabel,
   Checkbox,
   Radio,
@@ -45,6 +50,8 @@ import VehiclesOccupant from "../VehiclesOccupant";
 import { getDateAdornmentString } from "../../../utils/dates";
 import LeaseFees from "../LeaseFees";
 import GenericDialog from "../../GenericDialog";
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from "@mui/icons-material/Add";
 import SignatureCanvas from "react-signature-canvas";
 import ListsContext from "../../../contexts/ListsContext";
 import TenantEndLeaseButton from "../../TenantDashboard/TenantEndLeaseButton";
@@ -59,7 +66,9 @@ function TenantLeases(props) {
   const location = useLocation();
   const navigate = useNavigate();
   const { getProfileId } = useUser();
-  const { getList } = useContext(ListsContext);
+  const { getList } = useContext(ListsContext);	
+  
+  const contentTypes = getList("content");
   const [tenantLeases, setTenantLeases] = useState([]);
   const [showSpinner, setShowSpinner] = useState(false);
   const [property, setProperty] = useState(props.property);
@@ -99,6 +108,9 @@ function TenantLeases(props) {
   const [dialog2Severity, setDialog2Severity] = useState("info");
   const [isLeaseAccepted, setIsLeaseAccepted] = useState(false);
   const [signature, setSignature] = useState(null);
+  const [isSignatureProvided, setIsSignatureProvided] = useState(false);
+  const [signedDocuments, setSignedDocuments] = useState([]);
+  // const [signedDocumentsType, setSignedDocumentsType] = useState([]);
 
   const [showEarlyTerminationDialog, setShowEarlyTerminationDialog] = useState(false);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -111,6 +123,7 @@ function TenantLeases(props) {
   // Clear the signature canvas
   const clearSignature = () => {
     sigCanvas.current.clear();
+    setIsSignatureProvided(false);
   };
 
   // Save the signature
@@ -124,6 +137,23 @@ function TenantLeases(props) {
     // setSignature(signatureDataURL); 
     return signatureDataURL;
   };
+
+  const handleEndSignature = () => {
+    setIsSignatureProvided(!sigCanvas.current.isEmpty());
+  };
+
+  useEffect(() => {
+    if (isLeaseAccepted && sigCanvas.current) {
+      const canvas = sigCanvas.current.getCanvas();
+      canvas.addEventListener('mouseup', handleEndSignature);
+      canvas.addEventListener('touchend', handleEndSignature);
+
+      return () => {
+        canvas.removeEventListener('mouseup', handleEndSignature);
+        canvas.removeEventListener('touchend', handleEndSignature);
+      };
+    }
+  }, [isLeaseAccepted]);
 
   //Convert the signature to a Binary or blob
   const getSignatureAsPNG = () => {
@@ -568,6 +598,22 @@ function TenantLeases(props) {
       leaseApplicationFormData.append("lease_status", lease_status);
       leaseApplicationFormData.append("img_0", signatureDataURL, "signature.png");
       leaseApplicationFormData.append("lease_accepted", 1);
+
+      if (signedDocuments.length > 0) {
+        const documentsDetails = [];
+        [...signedDocuments].forEach((file, i) => {
+          leaseApplicationFormData.append(`file_${i}`, file, file.name);
+          const fileType = "Signed Lease";
+          const documentObject = {
+            // file: file,
+            fileIndex: i, //may not need fileIndex - will files be appended in the same order?
+            fileName: file.name, //may not need filename
+            contentType: fileType,
+          };
+          documentsDetails.push(documentObject);
+        });
+        leaseApplicationFormData.append("lease_documents_details", JSON.stringify(documentsDetails));
+      }
       
       const response = await fetch(`${APIConfig.baseURL.dev}/leaseApplication`, {
         method: "PUT",
@@ -646,6 +692,60 @@ function TenantLeases(props) {
     const formattedUtility = utility.replace(/_/g, " ");
     return formattedUtility.charAt(0).toUpperCase() + formattedUtility.slice(1);
   };
+
+  const handleRemoveFile = (index) => {
+
+    setSignedDocuments((prevFiles) => {
+      const filesArray = Array.from(prevFiles);
+      filesArray.splice(index, 1);
+      return filesArray;
+    });
+  };
+
+  let uploadRowsWithId = []
+
+  if(signedDocuments && signedDocuments?.length !== 0){
+    uploadRowsWithId = signedDocuments.map((row, index) => ({
+      name: row.name,
+      fileType: row.type,
+      id: row.id ? index : index,
+    }));
+
+    // setUploadRowsWithId(temp);
+  }
+
+  const uploadDocsColumns = [
+    {
+      field: "name",
+      headerName: "Filename",
+      flex: 2,
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "contentType",
+      headerName: "Content Type",
+      flex: 2,
+      renderCell: (params) => (
+        "Signed Lease"
+      ),
+      renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+    },
+    {
+      field: "deleteactions",
+      headerName: "",
+      flex: 0.5,
+      renderCell: (params) => (
+        <Box>
+          <IconButton onClick={() => {
+              handleRemoveFile(params.row.id)
+          }}>
+            <DeleteIcon sx={{ fontSize: '19px', color: '#3D5CAC'}} />
+          </IconButton>
+        </Box>
+      ),
+    },
+
+  ];
 
   return (
     <Paper sx={{ marginTop: "7px", backgroundColor: theme.palette.primary.main, borderRadius: "5px", boxShadow: "0px 2px 4px #00000040" }}>
@@ -1179,10 +1279,84 @@ function TenantLeases(props) {
                   color="primary"
                 />
               }
-              label="Accept current lease"
+              label="Accept New Lease (in lieu of digital signature)"
             />
           </Grid>}
           
+          {/* Uplaod signed lease document */}
+          {isLeaseAccepted && <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              fontWeight: 'bold',
+              color: '#3D5CAC',
+              marginLeft: "10px",
+              marginBottom: "10px",
+              paddingRight: '10px',
+            }}
+          >
+            <Typography
+              sx={{
+                fontWeight: theme.typography.medium.fontWeight,
+                color: theme.typography.primary.blue,
+                paddingBottom: "5px",
+                paddingTop: "5px",
+                marginTop:"10px",
+              }}
+            >
+              {" Upload Signed Lease: "}
+            </Typography>         
+            <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  fontWeight: 'bold',
+                  paddingTop: '5px',
+                  marginTop:"10px",
+                  color: '#3D5CAC',
+                }}
+            >
+                <label htmlFor="file-upload" style={{ cursor: 'pointer' }}>
+                  <AddIcon sx={{ fontSize: 20, color: '#3D5CAC' }} />
+                </label>
+                <input
+                  id="file-upload"
+                  type="file"
+                  accept=".doc,.docx,.txt,.pdf"
+                  hidden
+                  // onChange={(e) => setContractFiles(e.target.files)}
+                  onChange={(e) => {
+                    // //console.log("inside contract file upload --- dhyey")
+                    setSignedDocuments((prevFiles) => [...prevFiles, ...e.target.files])}
+                  }
+                  multiple
+                />
+            </Box>
+          </Box>}
+
+          {isLeaseAccepted && signedDocuments?.length ? (
+            <DataGrid
+              rows={uploadRowsWithId}
+              // columns={uploadDocsColumns}
+              columns={isMobile ? uploadDocsColumns.map(column => ({ ...column, minWidth: 150 })) : uploadDocsColumns}
+              sx={{
+                // minHeight:"100px",
+                // height:"100px",
+                // maxHeight:"100%",
+                marginTop: "10px",
+                marginBottom: "10px",
+                marginLeft: "10px",
+                width: "98%",
+              }}
+              autoHeight
+              rowHeight={50} 
+              hideFooter={true}
+            />
+          ) : (
+            <></>
+          )}
+
           {/* Signature  */}
           {isLeaseAccepted && <Grid
             container
@@ -1296,7 +1470,7 @@ function TenantLeases(props) {
               <Grid item xs={6}>
                 <CenteringBox>
                   <Button
-                    disabled={!isLeaseAccepted}
+                    disabled={!isLeaseAccepted || !isSignatureProvided}
                     sx={{
                       display: "flex",
                       justifyContent: "center",
