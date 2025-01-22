@@ -115,9 +115,10 @@ const TenantDashboard = () => {
 
   const [view, setView] = useState("dashboard");
 
-  // useEffect(() => {
-  //   //console.log("Listing Data: ", listingsData);
-  // }, [listingsData]);
+  useEffect(() => {
+    //console.log("Listing Data: ", listingsData);
+    console.log(" == lease details == ", leaseDetails)
+  }, [listingsData]);
 
   useEffect(() => {
     // Whenever this component is mounted or navigated to, reset the right pane
@@ -141,7 +142,6 @@ const TenantDashboard = () => {
   // }, [user])
 
   useEffect(() => {
-    console.log("=== ok success - ", location?.state?.selectedProperty);
     if (location?.state?.selectedProperty) {
       setSelectedProperty(location?.state?.selectedProperty);
       // handleSelectProperty(location?.state?.selectedProperty)
@@ -274,6 +274,7 @@ const TenantDashboard = () => {
         setReload(false);
       }
     };
+
     if (reload === true) {
       fetchData();
 
@@ -345,8 +346,9 @@ const TenantDashboard = () => {
 
   const handleSelectProperty = (property) => {
     if (property === null) {
-      setLeaseDetails(null);
-      setRelatedLease(null);
+      // setSelectedProperty(null);
+      // setLeaseDetails(null);
+      // setRelatedLease(null);
       return;
     }
     setSelectedProperty(property);
@@ -561,7 +563,7 @@ const TenantDashboard = () => {
         case "paymentHistory":
           return <TenantPaymentHistoryTable data={rightPane.state.data} setRightPane={setRightPane} onBack={handleBack} isMobile={isMobile} />;
         case "listings":
-          return <PropertyListings {...rightPane.state} setRightPane={setRightPane} isMobile={isMobile} setViewRHS={setViewRHS} setListingsData={setListingsData} />;
+          return <PropertyListings {...rightPane.state} setRightPane={setRightPane} isMobile={isMobile} setViewRHS={setViewRHS} setListingsData={setListingsData}/>;
         case "propertyInfo":
           return <PropertyInfo {...rightPane.state} setRightPane={setRightPane} setFirstPage={setFirstPage} handleSelectProperty={handleSelectProperty} />;
         case "tenantApplication":
@@ -666,7 +668,7 @@ const TenantDashboard = () => {
                       setViewRHS(true);
                     }
                     setRightPane({ type: "listings" });
-                    handleSelectProperty(null);
+                    // handleSelectProperty(null);
                   }}
                 >
                   <SearchIcon />
@@ -3399,11 +3401,12 @@ function DocumentPreview({ file, onClose }) {
       <Box
         sx={{
           width: "100%",
-          height: "220%",
+          height: "850px",
           backgroundColor: "white",
           boxShadow: 3,
           borderRadius: 2, // Rounded edges for the outer box
           overflow: "hidden", // Ensures rounded corners are applied to content
+          // overflowY: "auto"
         }}
         onMouseDown={handleMouseDown}
       >
@@ -3425,7 +3428,7 @@ function DocumentPreview({ file, onClose }) {
           sx={{
             height: "100%",
             width: "100%",
-            overflowY: "auto",
+            // overflowY: "auto",
             // padding: "1px",
           }}
         >
@@ -3433,7 +3436,7 @@ function DocumentPreview({ file, onClose }) {
             <iframe
               src={file.link}
               width='100%'
-              height='100%'
+              height="100%"
               title='File Preview'
               style={{
                 border: "none",

@@ -266,6 +266,7 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex, setVi
         <Paper
           elevation={0}
           style={{
+              flex:1,
               // margin: '50p', // Add margin here
               borderRadius: "10px",
               backgroundColor: "#F2F2F2",
@@ -280,8 +281,7 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex, setVi
               padding: '0px',
           }}
         >
-          <Container disableGutters maxWidth="lg" sx={{height: "100%", width: '100%', }}>     
-            <Grid container justifyContent='center' sx={{padding: '10px 10px', width: '100%'}}>
+          <Grid container justifyContent='center' sx={{padding: '10px 10px', width: '100%'}}>
               <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", paddingBottom: "15px"}}>
                 {isMobile && (<Box position={"absolute"} left={0}>
                     <Button onClick={() => {navigate(-1)}}>
@@ -381,7 +381,7 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex, setVi
               </Grid>   
               
               {/* height: '669px' */}
-              <Grid container item xs={12} justifyContent="center" sx={{ height: '65dvh', overflowY: 'auto', paddingBottom: '10px', backgroundColor: '#FFFFFF',borderRadius: '0px 0px 10px 10px', }}>                                                  
+              <Grid container item xs={12} justifyContent="center" sx={{ height: '100%', overflowY: 'auto', paddingBottom: '10px', backgroundColor: '#FFFFFF',borderRadius: '0px 0px 10px 10px', }}>                                                  
                 <Grid item xs={12}>
                   {contactsTab === "Owner" && displayedOwnersData?.map((owner, index) => (
                     <OwnerContactsCard data={owner} key={index} index={index} selected={handleSetSelectedCard} />
@@ -401,7 +401,9 @@ const ContactsList = ({ data, tab,  setTab, currentIndex, setCurrentIndex, setVi
                 </Grid>            
               </Grid>
             </Grid>
-          </Container>
+          {/* <Container disableGutters maxWidth="lg" sx={{height: "100%", width: '100%', }}>     
+            
+          </Container> */}
         </Paper>
       </>
     )

@@ -98,6 +98,8 @@ function TenantLeases(props) {
   const [dialog2Message, setDialog2Message] = useState("");
   const [dialog2Severity, setDialog2Severity] = useState("info");
   const [isLeaseAccepted, setIsLeaseAccepted] = useState(false);
+  const [signature, setSignature] = useState(null);
+
   const [showEarlyTerminationDialog, setShowEarlyTerminationDialog] = useState(false);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const sigCanvas = useRef(null);
@@ -255,6 +257,7 @@ function TenantLeases(props) {
         setAdultOccupants(detailed_property.lease_adults ? JSON.parse(detailed_property?.lease_adults) : []);
         setChildrenOccupants(detailed_property.lease_children ? JSON.parse(detailed_property?.lease_children) : []);
         setFees(detailed_property?.lease_fees ? JSON.parse(detailed_property.lease_fees) : []);
+        setSignature(detailed_property?.lease_signature ? JSON.parse(detailed_property.lease_signature) : null);
         setStatus(detailed_property?.lease_effective_date ?? null);
         setLeaseUtilities(JSON.parse(lease?.lease_utilities));
 
@@ -1167,7 +1170,7 @@ function TenantLeases(props) {
           </Grid>
           
           {/* Lease Acceptance */}
-          <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px"}}>
+          {lease.lease_status !== "APPROVED" && <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px"}}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -1178,7 +1181,7 @@ function TenantLeases(props) {
               }
               label="Accept current lease"
             />
-          </Grid>
+          </Grid>}
           
           {/* Signature  */}
           {isLeaseAccepted && <Grid
@@ -1246,12 +1249,20 @@ function TenantLeases(props) {
 
           </Grid>}
 
-          {/* {signature && (
-            <div>
-              <h4>Signature Preview:</h4>
-              <img src={signature} alt="signature" style={{ border: "1px solid black", width: "100%" }} />
-            </div>
-          )} */}
+          {lease.lease_status === "APPROVED" && signature?.length > 0 && (
+            <Grid container sx={{ backgroundColor: "#f0f0f0", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+              <Typography
+                sx={{
+                  fontWeight: theme.typography.medium.fontWeight,
+                  color: theme.typography.primary.blue,
+                  marginBottom: "10px",
+                }}
+              >
+                Signature Preview: 
+              </Typography>
+              <img src={signature[0]} alt="signature" style={{ border: "1px solid black", width: "100%" }} />
+            </Grid>
+          )}
 
           {/* Accept and reject lease button */}
           {lease.lease_status !== "APPROVED" && (

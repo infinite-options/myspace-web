@@ -112,7 +112,7 @@ const TenantContactDetail = ({ data, currentIndex, setCurrentIndex, propertyInde
 				backgroundColor: theme.palette.primary.main,
 				borderRadius: '10px',
 				padding: '10px',
-				height: '85dvh',
+				height: '100%',
 				overflow: 'auto',
 			}}
 		>

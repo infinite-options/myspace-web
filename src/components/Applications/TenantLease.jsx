@@ -1760,7 +1760,8 @@ const TenantLease = () => {
         } else {
           return "Renewed";
         }
-
+      default:
+        return "Renewal";
     }
   }
 
