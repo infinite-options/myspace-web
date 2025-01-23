@@ -29,6 +29,7 @@ function GoogleLogin({buttonStyle, buttonText, }) {
   const { setAuthData, setLoggedIn, selectRole } = useUser();
   let codeClient = {};
   function getAuthorizationCode() {
+    console.log('in getAuthorizationCode')
     // Request authorization code and obtain user consent,  method of the code client to trigger the user flow
     codeClient.requestCode();
   }
@@ -47,16 +48,19 @@ function GoogleLogin({buttonStyle, buttonText, }) {
 
   useEffect(() => {
     /* global google */
+    console.log('global google before', google);
     if(google) {
+    console.log('global google', google);
     codeClient = google.accounts.oauth2.initCodeClient({
       client_id: CLIENT_ID,
       scope: SCOPES,
       callback: (tokenResponse) => {
         // gets back authorization code
+        console.log('in call back', tokenResponse)
         if (tokenResponse && tokenResponse.code) {
           let auth_code = tokenResponse.code;
           let authorization_url = "https://accounts.google.com/o/oauth2/token";
-
+          console.log('https://accounts.google.com/o/oauth2/token called')
           var details = {
             code: auth_code,
             client_id: CLIENT_ID,
@@ -71,6 +75,7 @@ function GoogleLogin({buttonStyle, buttonText, }) {
             formBody.push(encodedKey + "=" + encodedValue);
           }
           formBody = formBody.join("&");
+          console.log('form body', formBody)
           // use authorization code, send it to google endpoint to get back ACCESS TOKEN n REFRESH TOKEN
           fetch(authorization_url, {
             method: "POST",
@@ -100,7 +105,7 @@ function GoogleLogin({buttonStyle, buttonText, }) {
                 )
                 .then((response) => {
                   let data = response.data;                  
-
+                  console.log('https://www.googleapis.com/oauth2/v2/userinfo called', response)
                   let e = data["email"];
                   let si = data["id"];
                   let fn = data["given_name"];
@@ -115,9 +120,11 @@ function GoogleLogin({buttonStyle, buttonText, }) {
                       `https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserSocialLogin/MYSPACE/${e}`
                     )
                     .then(async ({ data }) => {
+                      console.log('data is------', data["message"])
                       if (
                         data["message"] === "Email ID does not exist"
                       ) {
+                        console.log('hereeeeeee')
                         const navigateToNewUser = async () => {
                           const user = {
                             email: e,
