@@ -4,18 +4,17 @@ import { fetchMiddleware as fetchMiddleware, axiosMiddleware as axios } from "..
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 import ListsContext from "../../contexts/ListsContext";
-import { roleMap } from './helper';
+import { roleMap } from "./helper";
 import googleImg from "../../images/ContinueWithGoogle.svg";
-import GoogleIcon from '@mui/icons-material/Google';
+import GoogleIcon from "@mui/icons-material/Google";
 import { Box, Stack, ThemeProvider, Button, Typography, Grid, Paper, Container, Toolbar, OutlinedInput } from "@mui/material";
 
 const CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
 const GOOGLE_LOGIN = process.env.REACT_APP_GOOGLE_LOGIN;
-let SCOPES =
-  "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/userinfo.profile ";
+let SCOPES = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/userinfo.profile ";
 
-function GoogleLogin({buttonStyle, buttonText, }) {
+function GoogleLogin({ buttonStyle, buttonText }) {
   const navigate = useNavigate();
   // let google=null;
   const [email, setEmail] = useState("");
@@ -25,11 +24,11 @@ function GoogleLogin({buttonStyle, buttonText, }) {
   const [socialId, setSocialId] = useState("");
   const [refreshToken, setRefreshToken] = useState("");
   const [accessExpiresIn, setAccessExpiresIn] = useState("");
-  const { fetchLists, } = useContext(ListsContext)
+  const { fetchLists } = useContext(ListsContext);
   const { setAuthData, setLoggedIn, selectRole } = useUser();
   let codeClient = {};
   function getAuthorizationCode() {
-    console.log('in getAuthorizationCode')
+    console.log("in getAuthorizationCode");
     // Request authorization code and obtain user consent,  method of the code client to trigger the user flow
     codeClient.requestCode();
   }
@@ -48,83 +47,74 @@ function GoogleLogin({buttonStyle, buttonText, }) {
 
   useEffect(() => {
     /* global google */
-    console.log('global google before', google);
-    if(google) {
-    console.log('global google', google);
-    codeClient = google.accounts.oauth2.initCodeClient({
-      client_id: CLIENT_ID,
-      scope: SCOPES,
-      callback: (tokenResponse) => {
-        // gets back authorization code
-        console.log('in call back', tokenResponse)
-        if (tokenResponse && tokenResponse.code) {
-          let auth_code = tokenResponse.code;
-          let authorization_url = "https://accounts.google.com/o/oauth2/token";
-          console.log('https://accounts.google.com/o/oauth2/token called')
-          var details = {
-            code: auth_code,
-            client_id: CLIENT_ID,
-            client_secret: CLIENT_SECRET,
-            redirectUri: "postmessage",
-            grant_type: "authorization_code",
-          };
-          var formBody = [];
-          for (var property in details) {
-            var encodedKey = encodeURIComponent(property);
-            var encodedValue = encodeURIComponent(details[property]);
-            formBody.push(encodedKey + "=" + encodedValue);
-          }
-          formBody = formBody.join("&");
-          console.log('form body', formBody)
-          // use authorization code, send it to google endpoint to get back ACCESS TOKEN n REFRESH TOKEN
-          fetch(authorization_url, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-            },
-            body: formBody,
-          })
-            .then((response) => {
-              return response.json();
+    console.log("global google before", google);
+    if (google) {
+      console.log("global google", google);
+      codeClient = google.accounts.oauth2.initCodeClient({
+        client_id: CLIENT_ID,
+        scope: SCOPES,
+        callback: (tokenResponse) => {
+          // gets back authorization code
+          console.log("in call back", tokenResponse);
+          if (tokenResponse && tokenResponse.code) {
+            let auth_code = tokenResponse.code;
+            let authorization_url = "https://accounts.google.com/o/oauth2/token";
+            console.log("https://accounts.google.com/o/oauth2/token called");
+            var details = {
+              code: auth_code,
+              client_id: CLIENT_ID,
+              client_secret: CLIENT_SECRET,
+              redirectUri: "postmessage",
+              grant_type: "authorization_code",
+            };
+            var formBody = [];
+            for (var property in details) {
+              var encodedKey = encodeURIComponent(property);
+              var encodedValue = encodeURIComponent(details[property]);
+              formBody.push(encodedKey + "=" + encodedValue);
+            }
+            formBody = formBody.join("&");
+            console.log("form body", formBody);
+            // use authorization code, send it to google endpoint to get back ACCESS TOKEN n REFRESH TOKEN
+            fetch(authorization_url, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+              },
+              body: formBody,
             })
+              .then((response) => {
+                return response.json();
+              })
 
-            .then((data) => {
-              let at = data["access_token"];
-              let rt = data["refresh_token"];
-              let ax = data["expires_in"];
-              //  expires every 1 hr
-              setAccessToken(at);
-              // stays the same and used to refresh ACCESS token
-              setRefreshToken(rt);
-              setAccessExpiresIn(ax);
-              //  use ACCESS token, to get email and other account info
-              axios
-                .get(
-                  "https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=" +
-                    at
-                )
-                .then((response) => {
-                  let data = response.data;                  
-                  console.log('https://www.googleapis.com/oauth2/v2/userinfo called', response)
-                  let e = data["email"];
-                  let si = data["id"];
-                  let fn = data["given_name"];
-                  let ln = data["family_name"];
+              .then((data) => {
+                let at = data["access_token"];
+                let rt = data["refresh_token"];
+                let ax = data["expires_in"];
+                //  expires every 1 hr
+                setAccessToken(at);
+                // stays the same and used to refresh ACCESS token
+                setRefreshToken(rt);
+                setAccessExpiresIn(ax);
+                //  use ACCESS token, to get email and other account info
+                axios
+                  .get("https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=" + at)
+                  .then((response) => {
+                    let data = response.data;
+                    console.log("https://www.googleapis.com/oauth2/v2/userinfo called", response);
+                    let e = data["email"];
+                    let si = data["id"];
+                    let fn = data["given_name"];
+                    let ln = data["family_name"];
 
-                  setEmail(e);
+                    setEmail(e);
 
-                  setSocialId(si);
+                    setSocialId(si);
 
-                  axios
-                    .get(
-                      `https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserSocialLogin/MYSPACE/${e}`
-                    )
-                    .then(async ({ data }) => {
-                      console.log('data is------', data["message"])
-                      if (
-                        data["message"] === "Email ID does not exist"
-                      ) {
-                        console.log('hereeeeeee')
+                    axios.get(`https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserSocialLogin/MYSPACE/${e}`).then(async ({ data }) => {
+                      console.log("data is------", data["message"]);
+                      if (data["message"] === "User email does not exist") {
+                        console.log("hereeeeeee");
                         const navigateToNewUser = async () => {
                           const user = {
                             email: e,
@@ -148,20 +138,18 @@ function GoogleLogin({buttonStyle, buttonText, }) {
                               user: user,
                             },
                           });
-                        };                        
+                        };
                         navigateToNewUser();
                         return;
-                      } else if (
-                        data["message"] === "Login with email"
-                      ) {
+                      } else if (data["message"] === "Login with email") {
                         alert(data["message"]);
                       } else {
                         let user = data.result;
                         let user_id = data.result.user.user_uid;
                         setAccessToken(at);
-                        localStorage.removeItem('hasRedirected');
-                        sessionStorage.setItem('authToken', user.access_token);
-                        sessionStorage.setItem('refreshToken', user.refresh_token)
+                        localStorage.removeItem("hasRedirected");
+                        sessionStorage.setItem("authToken", user.access_token);
+                        sessionStorage.setItem("refreshToken", user.refresh_token);
                         await fetchLists();
 
                         let url = `https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateAccessToken/MYSPACE/${user_id}`;
@@ -178,20 +166,18 @@ function GoogleLogin({buttonStyle, buttonText, }) {
                         return accessToken;
                       }
                     });
-                })
-                .catch((error) => {
-                  //console.log(error);
-                });
-              return (
-                accessToken, refreshToken, accessExpiresIn, email, socialId
-              );
-            })
-            .catch((err) => {
-              //console.log(err);
-            });
-        }
-      },
-    });
+                  })
+                  .catch((error) => {
+                    //console.log(error);
+                  });
+                return accessToken, refreshToken, accessExpiresIn, email, socialId;
+              })
+              .catch((err) => {
+                //console.log(err);
+              });
+          }
+        },
+      });
     }
   }, [getAuthorizationCode]);
   const onCancelModal = () => {
@@ -246,14 +232,14 @@ function GoogleLogin({buttonStyle, buttonText, }) {
         alignItems: "center",
         // paddingTop: "5%",
       }}
-    >                      
+    >
       <Button
         onClick={() => getAuthorizationCode()}
-        role="button"
+        role='button'
         // sx={{
         //   marginTop: "10px",
         //   width: '100%',
-        //   height: '39px',         
+        //   height: '39px',
         //   textTransform: "none",
         //   // "&:hover, &:focus, &:active": {
         //   //   backgroundColor: "white",
@@ -272,10 +258,10 @@ function GoogleLogin({buttonStyle, buttonText, }) {
         sx={buttonStyle}
       >
         <GoogleIcon />
-        <Box sx={{ marginLeft: '10px', }}>
-          <Typography sx={{fontWeight: "bold",}}>{buttonText}</Typography>
+        <Box sx={{ marginLeft: "10px" }}>
+          <Typography sx={{ fontWeight: "bold" }}>{buttonText}</Typography>
         </Box>
-        
+
         {/* <img
           style={{
             // width: "100%",
@@ -284,7 +270,7 @@ function GoogleLogin({buttonStyle, buttonText, }) {
           alt="Google sign-up"
           src={googleImg}
         /> */}
-      </Button>                
+      </Button>
     </div>
   );
 }
