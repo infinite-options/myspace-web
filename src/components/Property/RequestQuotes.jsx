@@ -74,6 +74,7 @@ const RequestQuotes = (props) => {
       const response = await fetch(`${APIConfig.baseURL.dev}/properties/${profileId}`);
       const propertyData = await response.json();
       setProperties([...propertyData["Property"].result]);
+      // console.log("RequestQuotes - properties - ", properties);
     };
     fetchData();
   }, [profileId]);
@@ -352,7 +353,7 @@ const RequestQuotes = (props) => {
                         }}
                       >
                         <Checkbox sx={{ color: theme.typography.common.blue }} name={property.property_uid} onChange={handlePropertyCheck} checked={determineChecked(property)} />
-                        <Typography sx={{ paddingTop: "2%" }}>{property.property_address}</Typography>
+                        <Typography sx={{ paddingTop: "2%" }}>{property.property_address}{property.property_unit ? `, #${property.property_unit}` : ""}</Typography>
                       </Box>
                     </Box>
                   ))}

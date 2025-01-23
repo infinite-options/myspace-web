@@ -433,7 +433,12 @@ function ContractCard(props) {
 </Grid>
       <Grid item xs={12}>
         <Typography sx={{ color: "#160449", fontSize: "14px" }}>
-          <span style={{ fontWeight: "bold" }}>Address:</span> {contract.property_address} {contract.property_city} {contract.property_state} {contract.property_zip}
+          <span style={{ fontWeight: "bold" }}>Address:</span> {contract.property_address}{contract.property_unit ? `, #${contract.property_unit}` : ""}
+        </Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <Typography sx={{ color: "#160449", fontSize: "14px" }}>
+          <span style={{ fontWeight: "bold" }}>City:</span> {contract.property_city} {contract.property_state} {contract.property_zip}
         </Typography>
       </Grid>
       <Grid item xs={12}>
