@@ -160,7 +160,7 @@ export default function ReferralSignupPassword({}) {
                     if (message === "Incorrect password") {
                       alert(response.data.message);
                       setShowSpinner(false);
-                    } else if (message === "Email doesn't exist") {
+                    } else if (message === "User email does not exist") {
                       // setUserDoesntExist(true);
                       setShowSpinner(false);
                     } else if (message === "Login successful") {

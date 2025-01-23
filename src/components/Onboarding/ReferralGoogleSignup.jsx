@@ -209,7 +209,7 @@ export default function ReferralGoogleSignup({}) {
                     )
                     .then(({ data }) => {
                       if (
-                        data["message"] === "Email ID doesnt exist"
+                        data["message"] === "User email does not exist"
                       ) {
                         const socialGoogle = async () => {
                           const user = {
@@ -599,7 +599,7 @@ export default function ReferralGoogleSignup({}) {
                     if (message === "Incorrect password") {
                       alert(response.data.message);
                       setShowSpinner(false);
-                    } else if (message === "Email doesn't exist") {
+                    } else if (message === "User email does not exist") {
                       // setUserDoesntExist(true);
                       setShowSpinner(false);
                     } else if (message === "Login successful") {

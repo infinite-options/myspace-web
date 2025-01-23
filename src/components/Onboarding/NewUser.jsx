@@ -241,7 +241,7 @@ const NewUser = () => {
                       setUserExists(true);
                       // navigate("/userLogin", { state: { user_email: email } });
                       // setShowSpinner(false);
-                    } else if (message === "Email doesn't exist") {
+                    } else if (message === "User email does not exist") {
                       //setUserDoesntExist(true);
                       // setShowSpinner(false);
                     } else if (message === "Login successful") {

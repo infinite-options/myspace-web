@@ -302,7 +302,7 @@ const CreateProfile = () => {
                       alert(response.data.message);
                       navigate("/userLogin", { state: { user_emai: user.email } });
                       // setShowSpinner(false);
-                    } else if (message === "Email doesn't exist") {
+                    } else if (message === "User email does not exist") {
                       //setUserDoesntExist(true);
                       // setShowSpinner(false);
                     } else if (message === "Login successful") {
