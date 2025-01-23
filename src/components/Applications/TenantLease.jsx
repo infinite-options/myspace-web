@@ -1206,6 +1206,7 @@ const TenantLease = () => {
 
       if (hasMissingType) {
         setShowMissingFileTypePrompt(true);
+        openDialog("Error", `Please check File Type.`, "error");
         setShowSpinner(false);
         return;
       }
@@ -1301,6 +1302,7 @@ const TenantLease = () => {
         openDialog("Error", `Please check lease fees.`, "error");
         return;
       }
+
       setShowSpinner(true);
 
       const leaseApplicationFormData = new FormData();
@@ -1349,6 +1351,7 @@ const TenantLease = () => {
 
       if (hasMissingType) {
         setShowMissingFileTypePrompt(true);
+        openDialog("Error", `Please check file type`, "error");
         setShowSpinner(false);
         return;
       }
@@ -1562,6 +1565,7 @@ const TenantLease = () => {
       if (hasMissingType) {
         // //console.log('inside hasMissingType');
         setShowMissingFileTypePrompt(true);
+        openDialog("Error", `Please check File Type.`, "error");
         setShowSpinner(false);
         return;
       }
@@ -1756,7 +1760,8 @@ const TenantLease = () => {
         } else {
           return "Renewed";
         }
-
+      default:
+        return "Renewal";
     }
   }
 

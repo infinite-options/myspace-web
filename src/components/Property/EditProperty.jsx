@@ -61,6 +61,7 @@ import ListsContext from '../../contexts/ListsContext';
 import { fetchMiddleware as fetch, axiosMiddleware } from "../../utils/httpMiddleware";
 import axios from 'axios';
 import RapidAPIIcon from "../../images/RapidAPIIcon.png";
+import GenericDialog from '../GenericDialog';
 
 function EditProperty(props) {
 	// //console.log("In Edit Property");
@@ -82,6 +83,28 @@ function EditProperty(props) {
 	const fetchProperties = fetchPropertiesFromContext;
 	const allRentStatus = allRentStatusFromContext || [];
 	const returnIndex = returnIndexFromContext || 0;
+
+	const [isDialogOpen, setIsDialogOpen] = useState(false);
+	const [dialogTitle, setDialogTitle] = useState("");
+	const [dialogMessage, setDialogMessage] = useState("");
+	const [dialogSeverity, setDialogSeverity] = useState("info");
+
+	const openDialog = (title, message, severity) => {
+	setDialogTitle(title); // Set custom title
+	setDialogMessage(message); // Set custom message
+	setDialogSeverity(severity); // Can use this if needed to control styles
+	setIsDialogOpen(true);
+	};
+
+	const closeDialog = () => {
+	setIsDialogOpen(false);
+	onBackClick();
+	};
+
+	const discardChange = () => {
+	setIsDialogOpen(false);
+	}
+
 
 	// Check with Laysa
 	// replaced with line below
@@ -366,7 +389,12 @@ function EditProperty(props) {
 	const handleBackButton = (e) => {
 		//console.log('close clicked');
 		e.preventDefault();
-		onBackClick();
+		
+		if (hasChanges){
+			openDialog("Unsaved Changes", "You have unsaved changes", "warning");
+		}else{
+			onBackClick();
+		}
 	};
 
 	const handleListedChange = (event) => {
@@ -1593,6 +1621,22 @@ function EditProperty(props) {
 					</Stack>
 				</Box>
 			</Paper>
+			<GenericDialog
+				isOpen={isDialogOpen}
+				title={dialogTitle}
+				contextText={dialogMessage}
+				actions={[
+					{
+					label: "Discard Changes",
+					onClick: closeDialog,
+					},
+					{
+					label: "Return To Edit",
+					onClick: discardChange,
+					}
+				]}
+				severity={dialogSeverity}
+			/>
 		</ThemeProvider>
 	);
 }

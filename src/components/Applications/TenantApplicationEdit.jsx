@@ -941,7 +941,7 @@ export default function TenantApplicationEdit(props) {
         const currentLease = props.currentLease;
         let announcement_title = "";
         let announcement_msg = "";
-        if(status === "NEW"){
+        if(status === "NEW" || status === ""){
             announcement_title = "New Tenant Application";
             announcement_msg = "You have a new tenant application for your property"
         } else {
@@ -955,14 +955,14 @@ export default function TenantApplicationEdit(props) {
         }
         try {
             let date = new Date();
-            // const receiverPropertyMapping = {
-            //     [props.data.contract_business_id]: [props.data.contract_property_id],
-            // };
-
             const receiverPropertyMapping = {
-                [props.data.business_uid]: [props.data.lease_property_id],
+                [props.data.contract_business_id]: [props.data.contract_property_id],
             };
-            console.log('checking Announcements', property, receiverPropertyMapping)
+
+            // const receiverPropertyMapping = {
+            //     [props.data.business_uid]: [props.data.lease_property_id],
+            // };
+            console.log('checking Announcements', property, props)
 
             const leaseApplicationData = new FormData();
             // leaseApplicationData.append("lease_property_id", property.property_uid != null ? property.property_uid : lease[0].lease_property_id);
@@ -1147,7 +1147,7 @@ export default function TenantApplicationEdit(props) {
                         announcement_date: date.toDateString(),
                         announcement_properties: JSON.stringify(receiverPropertyMapping),
                         announcement_mode: "LEASE",
-                        announcement_receiver: [props.data.business_uid],
+                        announcement_receiver: [props.data.contract_business_id],
                         announcement_type: ["Email", "Text"],
                     }),
                 });

@@ -143,16 +143,12 @@ const ContactsPM = () => {
 
   return (
     <Container disableGutters maxWidth='lg'>
-      <Grid container>
-      {(!isMobile || !viewRHS) && (<Grid container item xs={12} md={4}>
-          <Grid item xs={12} sx={{ padding: "5px", height: "100%" }}>
-            <ContactsList data={contactsData} tab={contactsTab} setTab={setContactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} setViewRHS={setViewRHS}/>
-          </Grid>
+      <Grid container sx={{ alignItems: "stretch"}}>
+      {(!isMobile || !viewRHS) && (<Grid item xs={12} md={4} sx={{ display: "flex", flexDirection: "column", flex: 1, padding: "5px", height: "100%" }}>
+          <ContactsList data={contactsData} tab={contactsTab} setTab={setContactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} setViewRHS={setViewRHS}/>
         </Grid>)}
-        {(!isMobile || viewRHS) && (<Grid container item xs={12} md={8}>
-          <Grid item xs={12} sx={{ padding: "5px" }}>
-            {renderContactDetail()}
-          </Grid>
+        {(!isMobile || viewRHS) && (<Grid item xs={12} md={8} sx={{ display: "flex", flexDirection: "column", flex: 1, padding: "5px", height: "100%" }}>
+          {renderContactDetail()}
         </Grid>)}
       </Grid>
     </Container>

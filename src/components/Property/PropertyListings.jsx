@@ -279,7 +279,7 @@ const FilterButtons = ({ propertyList, filteredItems, setFilteredItems, ...props
   );
 };
 
-const PropertyListings = ({ setRightPane, isMobile, setViewRHS, setListingsData, }) => {
+const PropertyListings = ({ setRightPane, isMobile, setViewRHS, setListingsData }) => {
   const [propertyData, setPropertyData] = useState([]);
   const [userLeases, setUserLeases] = useState([]);
   const [tenantLeaseDetails, setTenantLeaseDetails] = useState([]);

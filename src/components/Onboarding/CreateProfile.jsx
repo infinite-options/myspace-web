@@ -243,6 +243,7 @@ const CreateProfile = () => {
   };
 
   const handleLogin = async () => {
+    let newRole = selectedBusiness;
     let email = user.email;
     let password = user.password;
     if (email === "" || password === "") {
@@ -308,11 +309,12 @@ const CreateProfile = () => {
                       sessionStorage.setItem("authToken", result.access_token);
                       sessionStorage.setItem("refreshToken", result.refresh_token);
                       setAuthData(result);
+                      await fetchLists();
                       const { role } = result.user;
+
                       const openingRole = role.split(",")[0];
                       selectRole(openingRole);
                       setLoggedIn(true);
-                      await fetchLists();
 
                       const { dashboardUrl } = roleMap[openingRole];
                       navigate(dashboardUrl);
@@ -413,6 +415,7 @@ const CreateProfile = () => {
             return;
           } else {
             setAuthData(responseJSON.result);
+            setLoggedIn(true);
             localStorage.removeItem("hasRedirected");
             sessionStorage.setItem("authToken", responseJSON.result.access_token);
             sessionStorage.setItem("refreshToken", responseJSON.result.refresh_token);
