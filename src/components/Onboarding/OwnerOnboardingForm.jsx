@@ -513,7 +513,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
                 </Grid>
               </>
             ) : (
-              <Grid item xs={8} sm={9}>
+              <Grid item xs={8} sm={8}>
                 <TextField
                   name={`${method.paymentMethod_type}_${method.paymentMethod_uid}`}
                   value={method.paymentMethod_name || ""}
@@ -529,13 +529,18 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
           </>
         )}
   
-        {method.paymentMethod_uid && !method.paymentMethod_uid.startsWith('new_') && (
+        {/* {method.paymentMethod_uid && !method.paymentMethod_uid.startsWith('new_') && (
           <Grid item xs={1}>
             <IconButton onClick={() => handleDeletePaymentMethod(method.paymentMethod_uid)} aria-label="delete">
               <DeleteIcon />
             </IconButton>
           </Grid>
-        )}
+        )} */}
+        <Grid item xs={1}>
+          <IconButton onClick={() => handleDeletePaymentMethod(method?.paymentMethod_uid)} aria-label="delete">
+            <DeleteIcon />
+          </IconButton>
+        </Grid>
       </Grid>
     ));
   };
@@ -584,8 +589,8 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
             (method.paymentMethod_type === "bank_account" &&
               (method.paymentMethod_routing_number !==
                 existingMethod.paymentMethod_routing_number ||
-                method.paymentMethod_account_number !==
-                  existingMethod.paymentMethod_account_number));
+                method.paymentMethod_acct !==
+                  existingMethod.paymentMethod_acct));
   
           if (hasChanged) {
             putPayload.push({
@@ -594,6 +599,10 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
               paymentMethod_profile_id: getProfileId(),
               paymentMethod_status: method.paymentMethod_status,
               paymentMethod_type: method.paymentMethod_type,
+              ...(method.paymentMethod_type === "bank_account" && {
+                paymentMethod_routing_number: method.paymentMethod_routing_number,
+                paymentMethod_acct: method.paymentMethod_acct,
+              }),
             });
           }
         }
@@ -606,7 +615,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
           paymentMethod_profile_id: getProfileId(),
           ...(method.paymentMethod_type === "bank_account" && {
             paymentMethod_routing_number: method.paymentMethod_routing_number,
-            paymentMethod_account_number: method.paymentMethod_account_number,
+            paymentMethod_acct: method.paymentMethod_acct,
           }),
         });
       }
@@ -629,6 +638,10 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
           postPayload,
           { headers: { "Content-Type": "application/json" } }
         );
+      }
+
+      if(putPayload.length > 0 || postPayload.length > 0){
+        handleUpdate();
       }
   
       setCookie("default_form_vals", { ...cookiesData, paymentMethods });
@@ -664,7 +677,10 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
     const validPaymentMethods = parsedPaymentMethods.filter((method) => method.paymentMethod_type !== "");
 
     validPaymentMethods.forEach(method => {
-      if (method.checked && method.paymentMethod_name === '') {
+      // if (method.checked && method.paymentMethod_name === '') {
+      //   paymentMethodsError = true;
+      // }
+      if ((method.paymentMethod_type !== "bank_account" && method.paymentMethod_name === '') || (method.paymentMethod_type === "bank_account" && (method.paymentMethod_acct === '' || method.paymentMethod_routing_number === ''))) {
         paymentMethodsError = true;
       }
       if (method.checked) {
@@ -727,6 +743,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
     if (modifiedPayment) {
       await handlePaymentStep(validPaymentMethods);
     }
+
     setShowSpinner(false);
     return;
   };
@@ -868,6 +885,7 @@ export default function OwnerOnboardingForm({ profileData, setIsSave }) {
         ? { ...method, [`paymentMethod_${field}`]: value }
         : method
     );
+    console.log(" == update payment == ", updatedMethods)
     setParsedPaymentMethods(updatedMethods);
     setModifiedPayment(true);
   };

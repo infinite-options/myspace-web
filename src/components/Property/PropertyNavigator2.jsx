@@ -1132,7 +1132,14 @@ export default function PropertyNavigator2({
 
   const applnColumns = [
     // { field: "appliance_uid", headerName: "UID", width: 80 },
-    { field: "appliance_item", headerName: "Appliance", flex: 1 },
+    {
+      field: "appliance_item",
+      headerName: "Appliance",
+      flex: 1,
+      renderCell: (params) => {
+        return params.value === "other" ? params.row.appliance_desc : params.value;
+      },
+    },
     {
       field: "avatar",
       headerName: "",
@@ -2070,6 +2077,23 @@ export default function PropertyNavigator2({
                               color: 'black', // Focused state
                           },}}
                           />
+                          <TextField
+                            margin='dense'
+                            label='Notes'
+                            fullWidth
+                            variant='outlined'
+                            rows={3}
+                            multiline
+                            disabled={isReadOnly}
+                            value={currentApplRow?.appliance_notes || ""}
+                            onChange={(e) => setcurrentApplRow({ ...currentApplRow, appliance_notes: e.target.value })}
+                            sx={{ '& .MuiInputLabel-root': {
+                              color: 'black', // Normal state
+                            },
+                            '& .MuiInputLabel-root.Mui-focused': {
+                                color: 'black', // Focused state
+                            },}}
+                          />
                         </DialogContent>
                         <DialogActions sx={{ alignContent: "center", justifyContent: "center" }}>
                           {isReadOnly ? (
@@ -2115,9 +2139,9 @@ export default function PropertyNavigator2({
                             </>
                           )}
                         </DialogActions>
-                      </Dialog>
-                      {<ReferTenantDialog open={showReferTenantDialog} onClose={() => setShowReferTenantDialog(false)} setShowSpinner={setShowSpinner} property={property} />}
-                    </Box>
+                </Dialog>
+                {<ReferTenantDialog open={showReferTenantDialog} onClose={() => setShowReferTenantDialog(false)} setShowSpinner={setShowSpinner} property={property} />}
+              </Box>
           </Card>
         </Box>
         </CustomTabPanel>

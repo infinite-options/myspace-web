@@ -1077,7 +1077,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
     // const form = encodeForm(payload);
     // const data = await saveProfile(form);
 
-    saveProfile();
+    await saveProfile();
 
     if (modifiedPayment) {
       const paymentSetup = await handlePaymentStep();
