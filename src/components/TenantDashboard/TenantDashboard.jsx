@@ -73,6 +73,7 @@ import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy } from "../../utils/
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import { ListsProvider } from "../../contexts/ListsContext";
 import dayjs from "dayjs";
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -114,6 +115,7 @@ const TenantDashboard = () => {
   const [firstPage, setFirstPage] = useState(false);
 
   const [view, setView] = useState("dashboard");
+  dayjs.extend(customParseFormat);
 
   useEffect(() => {
     //console.log("Listing Data: ", listingsData);
