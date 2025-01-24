@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
-import { Container, Grid } from "@mui/material";
+import { Container, Grid, ThemeProvider } from "@mui/material";
 // import axios from "axios";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import { useUser } from "../../contexts/UserContext";
@@ -12,6 +12,8 @@ import MaintenanceContactDetail from "./ContactDetail/MaintenanceContactDetail";
 import EmployeeContactDetail from "./ContactDetail/EmployeeContactDetail";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import theme from "../../theme/theme";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 import ManagerContactDetail from "./ContactDetail/ManagerContactDetail";
 
 const ContactsPM = () => {
@@ -21,6 +23,7 @@ const ContactsPM = () => {
   const [contactsTab, setContactsTab] = useState(location.state?.contactsTab);
   const prevContactsTabRef = useRef(location.state?.contactsTab);
   const [contactsData, setContactsData] = useState([]);
+  const [showSpinner, setShowSpinner] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [viewRHS, setViewRHS] = useState(false)
@@ -29,6 +32,8 @@ const ContactsPM = () => {
   const [managerId, setManagerId] = useState(null);
 
   const fetchData = async () => {
+    
+    setShowSpinner(true);
     const url = `${APIConfig.baseURL.dev}/contacts/${getProfileId()}`;
     const response = await axios.get(url);
 
@@ -64,6 +69,7 @@ const ContactsPM = () => {
     }
 
     setContactsData(data);
+    setShowSpinner(false);
   };
 
   useEffect(() => {
@@ -142,16 +148,24 @@ const ContactsPM = () => {
   };
 
   return (
-    <Container disableGutters maxWidth='lg'>
-      <Grid container sx={{ alignItems: "stretch"}}>
-      {(!isMobile || !viewRHS) && (<Grid item xs={12} md={4} sx={{ display: "flex", flexDirection: "column", flex: 1, padding: "5px", height: "100%" }}>
-          <ContactsList data={contactsData} tab={contactsTab} setTab={setContactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} setViewRHS={setViewRHS}/>
-        </Grid>)}
-        {(!isMobile || viewRHS) && (<Grid item xs={12} md={8} sx={{ display: "flex", flexDirection: "column", flex: 1, padding: "5px", height: "100%" }}>
-          {renderContactDetail()}
-        </Grid>)}
-      </Grid>
-    </Container>
+    <ThemeProvider theme={theme}>
+      {showSpinner ? (
+        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+          <CircularProgress color='inherit' />
+        </Backdrop>
+      ) : (
+        <Container disableGutters maxWidth='lg'>
+          <Grid container sx={{ alignItems: "stretch"}}>
+          {(!isMobile || !viewRHS) && (<Grid item xs={12} md={4} sx={{ display: "flex", flexDirection: "column", flex: 1, padding: "5px", height: "100%" }}>
+              <ContactsList data={contactsData} tab={contactsTab} setTab={setContactsTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} setViewRHS={setViewRHS}/>
+            </Grid>)}
+            {(!isMobile || viewRHS) && (<Grid item xs={12} md={8} sx={{ display: "flex", flexDirection: "column", flex: 1, padding: "5px", height: "100%" }}>
+              {renderContactDetail()}
+            </Grid>)}
+          </Grid>
+        </Container>
+      )}
+    </ThemeProvider>
   );
 };
 

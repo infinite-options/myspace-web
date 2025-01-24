@@ -862,7 +862,7 @@ const PropertyCard = (props) => {
   const navigate = useNavigate();
 //   const { getProfileId } = useUser();
   const { getProfileId, selectedRole } = useUser();
-  const { defaultContractFees, allContracts, currentContractUID, currentContractPropertyUID, isChange, setIsChange, fetchDefaultContractFees} = useContext(ManagementContractContext);  
+  const { defaultContractFees, allContracts, currentContractUID, currentContractPropertyUID, isChange, setIsChange, fetchDefaultContractFees, dataLoaded} = useContext(ManagementContractContext);  
 //   //console.log("PropertyCard - props - ", props);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -931,6 +931,7 @@ const PropertyCard = (props) => {
 
   const setDefaultContractFees = async () => {
 	await fetchDefaultContractFees();
+	// setLoading(false);
   };
 
   useEffect(() => {
@@ -1025,21 +1026,24 @@ const PropertyCard = (props) => {
 
 	//debug
 	const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
-	// //console.log("946 - contractData - ", contractData);
+	// console.log("946 - contractData - ", contractData);
 	
 
   }, [currentContractUID, allContracts, defaultContractFees]);
 
   useEffect(() => {
+	// setLoading(true);
 	const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
 		  // //console.log("setData - CONTRACT - ", contractData);
 		  // setContractUID(contractData["contract_uid"]? contractData["contract_uid"] : "");
 	if (contractData) {
 		setContractEndDate(contractData["contract_end_date"] ? dayjs(contractData["contract_end_date"]) : contractStartDate.add(1, "year").subtract(1, "day"));
 	}
+	// setLoading(false);
   }, [contractStartDate]);
 
   useEffect(() => {
+	setLoading(true);
     setPropertyData(props.data);
   }, [props.data]);
 
@@ -1072,6 +1076,7 @@ const PropertyCard = (props) => {
 
 
 
+
 //   useEffect(() => {
     // //console.log("DEFAULT CONTRACT FEES - ", defaultContractFees);
     // let JSONstring = JSON.stringify(defaultContractFees);
@@ -1085,11 +1090,13 @@ const PropertyCard = (props) => {
 //   }, [defaultContractFees, currentContractUID]);
 
   useEffect(() => {
+	// setLoading(true);
 	setImages(
 		propertyData.property_images && JSON.parse(propertyData.property_images).length > 0
 			? JSON.parse(propertyData.property_images)
 			: [defaultHouseImage]
 	)
+	setLoading(false);
   }, [propertyData]); 
 
   const saveContacts = async () => {    

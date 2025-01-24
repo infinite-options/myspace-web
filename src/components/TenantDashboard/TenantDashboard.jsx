@@ -940,25 +940,27 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
           <Grid item xs={0.5} md={1} />
         </Grid>
         {data && data.length > 0 ? (
-          <DataGrid
-            rows={data}
-            columns={columns}
-            pageSizeOptions={[15, 25, 100]}
-            initialState={{
-              pagination: {
-                paginationModel: { pageSize: 15, page: 0 },
-              },
-              sorting: {
-                sortModel: [{ field: "payment_date", sort: "desc" }], // Default sorting by date
-              },
-            }}
-            getRowId={(row) => row.payment_uid} // Use payment_uid as the unique identifier
-            sx={{
-              width: "100%",
-              minWidth: "700px",
-              backgroundColor: "#f0f0f0",
-            }}
-          />
+          <Grid sx={{overflowX: "auto", width: "100%"}}>
+            <DataGrid
+              rows={data}
+              columns={columns}
+              pageSizeOptions={[15, 25, 100]}
+              initialState={{
+                pagination: {
+                  paginationModel: { pageSize: 15, page: 0 },
+                },
+                sorting: {
+                  sortModel: [{ field: "payment_date", sort: "desc" }], // Default sorting by date
+                },
+              }}
+              getRowId={(row) => row.payment_uid} // Use payment_uid as the unique identifier
+              sx={{
+                width: "100%",
+                minWidth: "700px",
+                backgroundColor: "#f0f0f0",
+              }}
+            />
+          </Grid>
         ) : (
           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "200px" }}>
             <Typography sx={{ fontSize: "16px" }}>No Payment History Available</Typography>

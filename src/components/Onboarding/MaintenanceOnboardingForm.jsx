@@ -1395,7 +1395,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField value={unit} onChange={handleBusinessUnitChange} variant='filled' placeholder='3' className={classes.root}></TextField>
+                    <TextField value={unit} onChange={handleBusinessUnitChange} variant='filled' placeholder='Unit' className={classes.root}></TextField>
                   </Grid>
                 </Grid>
                 <Grid container item xs={2}>
@@ -1411,7 +1411,13 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField disabled name='City' value={city} onChange={(e) => setCity(e.target.value)} variant='filled' placeholder='City' className={classes.root} />
+                    <TextField disabled name='City' value={city} onChange={(e) => setCity(e.target.value)} variant='filled' placeholder='City' className={classes.root} 
+                      sx={{
+                        '& .MuiInputBase-input.Mui-disabled': {
+                        color: 'black',
+                        '-webkit-text-fill-color': 'black !important',
+                      },
+                    }}/>
                   </Grid>
                 </Grid>
 
@@ -1428,7 +1434,13 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField disabled name='State' value={state} onChange={(e) => setState(e.target.value)} variant='filled' placeholder='State' className={classes.root} />
+                    <TextField disabled name='State' value={state} onChange={(e) => setState(e.target.value)} variant='filled' placeholder='State' className={classes.root} 
+                      sx={{
+                        '& .MuiInputBase-input.Mui-disabled': {
+                        color: 'black',
+                        '-webkit-text-fill-color': 'black !important',
+                      },
+                    }}/>
                   </Grid>
                 </Grid>
 
@@ -1446,7 +1458,13 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField disabled name='Zip' value={zip} onChange={(e) => setZip(e.target.value)} variant='filled' placeholder='Zip' className={classes.root} />
+                    <TextField disabled name='Zip' value={zip} onChange={(e) => setZip(e.target.value)} variant='filled' placeholder='Zip' className={classes.root} 
+                      sx={{
+                        '& .MuiInputBase-input.Mui-disabled': {
+                        color: 'black',
+                        '-webkit-text-fill-color': 'black !important',
+                      },
+                    }}/>
                   </Grid>
                 </Grid>
               </Grid>
@@ -1790,7 +1808,7 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField value={unit} onChange={handleEmpUnitChange} variant='filled' placeholder='3' className={classes.root}></TextField>
+                  <TextField value={unit} onChange={handleEmpUnitChange} variant='filled' placeholder='Unit' className={classes.root}></TextField>
                 </Grid>
               </Grid>
               <Grid container item xs={2}>
@@ -1806,7 +1824,13 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField disabled name='City' value={city} onChange={(e) => setCity(e.target.value)} variant='filled' placeholder='City' className={classes.root} />
+                  <TextField disabled name='City' value={city} onChange={(e) => setCity(e.target.value)} variant='filled' placeholder='City' className={classes.root} 
+                    sx={{
+                      '& .MuiInputBase-input.Mui-disabled': {
+                      color: 'black',
+                      '-webkit-text-fill-color': 'black !important',
+                    },
+                  }}/>
                 </Grid>
               </Grid>
 
@@ -1823,7 +1847,13 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField disabled name='State' value={state} onChange={(e) => setState(e.target.value)} variant='filled' placeholder='State' className={classes.root} />
+                  <TextField disabled name='State' value={state} onChange={(e) => setState(e.target.value)} variant='filled' placeholder='State' className={classes.root} 
+                    sx={{
+                      '& .MuiInputBase-input.Mui-disabled': {
+                      color: 'black',
+                      '-webkit-text-fill-color': 'black !important',
+                    },
+                  }}/>
                 </Grid>
               </Grid>
 
@@ -1840,7 +1870,13 @@ export default function MaintenanceOnboardingForm({ profileData, setIsSave }) {
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField disabled name='Zip' value={zip} onChange={(e) => setZip(e.target.value)} variant='filled' placeholder='Zip' className={classes.root} />
+                  <TextField disabled name='Zip' value={zip} onChange={(e) => setZip(e.target.value)} variant='filled' placeholder='Zip' className={classes.root} 
+                    sx={{
+                      '& .MuiInputBase-input.Mui-disabled': {
+                      color: 'black',
+                      '-webkit-text-fill-color': 'black !important',
+                    },
+                  }}/>
                 </Grid>
               </Grid>
             </Grid>

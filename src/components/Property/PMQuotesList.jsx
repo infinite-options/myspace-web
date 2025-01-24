@@ -330,6 +330,10 @@ function ContractCard(props) {
 
   return (
     <>
+      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={!contract}>
+        <CircularProgress color='inherit' />
+      </Backdrop>
+
       <Grid
         container
         item
