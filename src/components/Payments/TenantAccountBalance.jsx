@@ -27,6 +27,7 @@ import {
 } from "@mui/material";
 import defaultHouseImage from "../Property/defaultHouseImage.png";
 import { FirstPage } from "@mui/icons-material";
+import dayjs from "dayjs";
 
 const TenantAccountBalance = ({
   propertyData,
@@ -489,7 +490,8 @@ const TenantAccountBalance = ({
                         ${detail.amountDue.toFixed(2)}
                       </TableCell>
                       <TableCell sx={{ padding: "8px" }}>{detail.description}</TableCell>
-                      <TableCell sx={{ padding: "8px" }}>{new Date(detail.dueDate).toLocaleDateString()}</TableCell>
+                      {/* <TableCell sx={{ padding: "8px" }}>{new Date(detail.dueDate).toLocaleDateString()}</TableCell> */}
+                      <TableCell sx={{ padding: "8px" }}>  {dayjs(detail.dueDate).format("MM-DD-YYYY")}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
