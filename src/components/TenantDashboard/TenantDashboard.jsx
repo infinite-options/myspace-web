@@ -888,6 +888,15 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
       },
     },
     {
+      field: "payment_date_sorting",
+      headerName: "Payment Date Sorting",
+      hide: true, 
+      valueGetter: (params) => {
+        return dayjs(params.value).toDate(); 
+      },
+      sortComparator: (v1, v2) => v1 - v2,
+    },
+    {
       field: "pay_amount",
       headerName: "Total",
       flex: 1,
@@ -953,7 +962,7 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
                   paginationModel: { pageSize: 15, page: 0 },
                 },
                 sorting: {
-                  sortModel: [{ field: "payment_date", sort: "desc" }], // Default sorting by date
+                  sortModel: [{ field: "payment_date_sorting", sort: "desc" }], // Default sorting by date
                 },
               }}
               getRowId={(row) => row.payment_uid} // Use payment_uid as the unique identifier
@@ -3217,6 +3226,7 @@ function TenantBalanceTablePM(props) {
           // due_date_formatted: dayjs(item.dueDate).format("MM-DD-YYYY"),
           due_date_formatted: dayjs(item.dueDate, "MM/DD/YYYY").isValid() ? dayjs(item.dueDate, "MM/DD/YYYY").format("MM-DD-YYYY")
             : "-",
+          due_date_sorting:  dayjs(item.dueDate).toDate(),
         }))
       );
     }
@@ -3348,6 +3358,12 @@ function TenantBalanceTablePM(props) {
         return <Box sx={{ fontWeight: "bold", textAlign: "right", width: "100%" }}>${parseFloat(params.row.amountDue).toFixed(2)}</Box>;
       },
     },
+    {
+      field: "due_date_sorting",
+      headerName: "Due Date Sorting",
+      hide: true, 
+      sortComparator: (v1, v2) => v1 - v2,
+    }
   ];
 
   return (
@@ -3372,7 +3388,7 @@ function TenantBalanceTablePM(props) {
               paginationModel: { pageSize: 15, page: 0 },
             },
             sorting: {
-              sortModel: [{ field: "due_date_formatted", sort: "desc" }],
+              sortModel: [{ field: "due_date_sorting", sort: "desc" }],
             },
           }}
         />
