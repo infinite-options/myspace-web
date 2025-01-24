@@ -878,7 +878,7 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
       flex: 1,
       renderCell: (params) => {
         // const date = dayjs(params.value).format("MM-DD-YYYY");
-        const date = dayjs(params.value, "MM/DD/YYYY").isValid() ? params.value.format("MM-DD-YYYY") : "-";
+        const date = dayjs(params.value, "MM/DD/YYYY").isValid() ? dayjs(params.value, "MM/DD/YYYY").format("MM-DD-YYYY") : "-";
         return <Box sx={{ fontWeight: "bold" }}>{date}</Box>;
       },
       sortComparator: (v1, v2) => new Date(v1) - new Date(v2),
@@ -3211,7 +3211,8 @@ function TenantBalanceTablePM(props) {
           ...item,
           pur_amount_due: parseFloat(item.amountDue),
           // due_date_formatted: dayjs(item.dueDate).format("MM-DD-YYYY"),
-          due_date_formatted : dayjs(item.dueDate, "MM/DD/YYYY").isValid() ? item.dueDate.format("MM-DD-YYYY") : "-",
+          due_date_formatted : dayjs(item.dueDate, "MM/DD/YYYY").isValid() ? dayjs(item.dueDate, "MM/DD/YYYY").format("MM-DD-YYYY")
+          : "-",
         }))
       );
     }

@@ -494,8 +494,7 @@ const TenantAccountBalance = ({
                       <TableCell sx={{ padding: "8px" }}>{detail.description}</TableCell>
                       {/* <TableCell sx={{ padding: "8px" }}>{new Date(detail.dueDate).toLocaleDateString()}</TableCell> */}
                       <TableCell sx={{ padding: "8px" }}>{detail.dueDate && dayjs(detail.dueDate, "MM/DD/YYYY").isValid()
-                        ? dayjs(detail.dueDate, "MM/DD/YYYY").format(!isMobile ? "MM-DD-YYYY" : "MM-DD-YY")
-                        : "-"}</TableCell>
+                        ? dayjs(detail.dueDate, "MM/DD/YYYY").format(!isMobile ? "MM-DD-YYYY" : "MM-DD-YY") : "-"}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
