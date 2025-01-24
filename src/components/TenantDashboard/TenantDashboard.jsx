@@ -3226,7 +3226,8 @@ function TenantBalanceTablePM(props) {
           // due_date_formatted: dayjs(item.dueDate).format("MM-DD-YYYY"),
           due_date_formatted: dayjs(item.dueDate, "MM/DD/YYYY").isValid() ? dayjs(item.dueDate, "MM/DD/YYYY").format("MM-DD-YYYY")
             : "-",
-          due_date_sorting:  dayjs(item.dueDate).toDate(),
+          // due_date_sorting:  dayjs(item.dueDate).toDate(),
+          due_date_sorting:  dayjs(item.dueDate, "MM/DD/YYYY").isValid() ? dayjs(item.dueDate).toDate() : new Date(0),
         }))
       );
     }
