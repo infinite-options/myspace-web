@@ -409,15 +409,15 @@ export default function PropertyNavigator2({
           newContractCount++;
         }
       });
-      // //console.log("PropertyNavigator - Active contract - ", active);
+      // console.log("PropertyNavigator - Active contract - ", active);
       setContractsNewSent(count);
       setContractsData(allContracts);
       setActiveContracts(active);
       setNewContractCount(newContractCount);
       setSentContractCount(sentContractCount);
 
-      const rentDetails = getRentStatus();
-      // //console.log("rentDetails - ", rentDetails);
+      const rentDetails = getRentStatus(active?.length > 0);
+      // console.log("PropertyNavigator - rentDetails - ", rentDetails);
       setpropertyRentStatus(rentDetails);
 
       if (property.lease_fees !== null) {
@@ -562,7 +562,7 @@ export default function PropertyNavigator2({
     // setTenantAppNavState(state);
   };
 
-  const getRentStatus = () => {
+  const getRentStatus = (isManagerAssigned) => {
     try {
       const rentStatus = allRentStatus.filter((data) => data.property_uid == currentId && data?.rent_status != "VACANT");
       const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -585,9 +585,9 @@ export default function PropertyNavigator2({
       
       };
 
-      // //console.log("getRentStatus - rentStatus - ", rentStatus);
-      // //console.log("getRentStatus - propertyRentStatus - ", propertyRentStatus);
-      const formattedData = propertyRentStatus ? formatData(rentStatus) : [];
+      // console.log("getRentStatus - activecontract - ", activeContracts);
+      // console.log("getRentStatus - propertyRentStatus - ", propertyRentStatus);
+      const formattedData = propertyRentStatus?.length > 0 ? formatData(rentStatus) : !isManagerAssigned ? [{ rent_status: "NO MANAGER", rent_detail_index: 1 }] : [{ rent_status: "VACANT", rent_detail_index: 1 }];
       // console.log("getRentStatus - formattedData - ", formattedData);
       return formattedData;
     } catch (error) {
@@ -596,7 +596,7 @@ export default function PropertyNavigator2({
   };
 
   const paymentStatusColorMap = (value) => {
-    if (value === "PAID") {
+    if (value === "PAID" || value === "VACANT") {
       return theme.palette.priority.clear;
     } else if (value === "UNPAID") {
       return theme.palette.priority.high;
@@ -713,7 +713,7 @@ export default function PropertyNavigator2({
       flex: 0.7,
       minWidth: 90,
       renderCell: (params) => {
-        return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.value}</Box>;
+        return <Box sx={{ width: "100%", color: "#3D5CAC" }}>{params.row.rent_status === "NO MANAGER" ? "" : params.value}</Box>;
       },
       sortComparator: (v1, v2) => new Date(v1) - new Date(v2),
     },

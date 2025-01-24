@@ -3,7 +3,7 @@ import { useEffect, useState, useContext } from "react";
 // import axios from "axios";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../../utils/httpMiddleware";
 // import { useUser } from "../../../contexts/UserContext";
-// import Backdrop from "@mui/material/Backdrop";
+import Backdrop from "@mui/material/Backdrop";
 import { ThemeProvider, Box, Stack, Typography, Button, Grid, Container } from "@mui/material";
 import theme from "../../../theme/theme";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -24,6 +24,7 @@ function ManagementContractDetails(props) {
     currentContractPropertyUID,
     contractRequests: contractRequestsFromContext,
     allContracts: allContractsFromContext,
+    dataLoaded
   } = useContext(ManagementContractContext);
   const [contractRequests, setContractRequests] = useState([]);
 
@@ -39,6 +40,10 @@ function ManagementContractDetails(props) {
     // //console.log("ROHIT - contractRequests - ", contractRequests);
   }, [contractRequests]);
 
+  useEffect(() => {
+    setIsLoading(!dataLoaded);
+  }, [dataLoaded]);
+
   const [isLoading, setIsLoading] = useState(true);
   const [filteredPropertiesData, setFilteredPropertiesData] = useState([]); // filter out the properties that aren't included in announcement_properties
 
@@ -51,7 +56,7 @@ function ManagementContractDetails(props) {
   //console.log("ManagementContractDetails - currentContractPropertyID - ", currentContractPropertyUID);
 
   useEffect(() => {
-    //console.log("ManagementContractDetails - currentContractPropertyUID changed - ", currentContractPropertyUID);
+    console.log("ManagementContractDetails - currentContractPropertyUID changed - ", currentContractPropertyUID);
     fetchData();
   }, [currentContractUID, currentContractPropertyUID, contractRequests]);
 
@@ -118,11 +123,11 @@ function ManagementContractDetails(props) {
     }
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
   return (
     <ThemeProvider theme={theme}>
+      {isLoading ? (<Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+        <CircularProgress color='inherit' />
+      </Backdrop>):(
       <Grid
         container item xs={12}
         sx={{
@@ -270,7 +275,7 @@ function ManagementContractDetails(props) {
         </Stack>
               
         <PropertyCard data={filteredPropertiesData[index] ? filteredPropertiesData[index] : []} navigatingFrom={props.navigatingFrom} handleBackBtn={handleBackBtn} fetchContracts={props.fetchContracts}/>
-      </Grid>
+      </Grid>)}
       {/* <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={showSpinner}>
           <CircularProgress color='inherit' />
         </Backdrop> */}

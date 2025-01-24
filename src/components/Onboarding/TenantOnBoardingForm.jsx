@@ -1337,7 +1337,7 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                       value={unit}
                       onChange={handleUnitChange}
                       variant='filled'
-                      placeholder='3'
+                      placeholder='Unit'
                       className={classes.root}
                     ></TextField>
                   </Grid>
@@ -1355,7 +1355,13 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField disabled name='City' value={city} onChange={(e) => setCity(e.target.value)} variant='filled' placeholder='City' className={classes.root} />
+                    <TextField disabled name='City' value={city} onChange={(e) => setCity(e.target.value)} variant='filled' placeholder='City' className={classes.root} 
+                      sx={{
+                        '& .MuiInputBase-input.Mui-disabled': {
+                        color: 'black',
+                        '-webkit-text-fill-color': 'black !important',
+                      },
+                    }}/>
                   </Grid>
                 </Grid>
 
@@ -1372,7 +1378,13 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField disabled name='State' value={state} onChange={(e) => setState(e.target.value)} variant='filled' placeholder='State' className={classes.root} />
+                    <TextField disabled name='State' value={state} onChange={(e) => setState(e.target.value)} variant='filled' placeholder='State' className={classes.root} 
+                      sx={{
+                        '& .MuiInputBase-input.Mui-disabled': {
+                        color: 'black',
+                        '-webkit-text-fill-color': 'black !important',
+                      },
+                    }}/>
                   </Grid>
                 </Grid>
 
@@ -1390,7 +1402,13 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField disabled name='Zip' value={zip} onChange={(e) => setZip(e.target.value)} variant='filled' placeholder='Zip' className={classes.root} />
+                    <TextField disabled name='Zip' value={zip} onChange={(e) => setZip(e.target.value)} variant='filled' placeholder='Zip' className={classes.root} 
+                      sx={{
+                        '& .MuiInputBase-input.Mui-disabled': {
+                        color: 'black',
+                        '-webkit-text-fill-color': 'black !important',
+                      },
+                    }}/>
                   </Grid>
                 </Grid>
               </Grid>
