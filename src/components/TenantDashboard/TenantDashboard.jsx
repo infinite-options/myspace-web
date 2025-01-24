@@ -881,7 +881,11 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
         const date = dayjs(params.value, "MM/DD/YYYY").isValid() ? dayjs(params.value, "MM/DD/YYYY").format("MM-DD-YYYY") : "-";
         return <Box sx={{ fontWeight: "bold" }}>{date}</Box>;
       },
-      sortComparator: (v1, v2) => new Date(v1) - new Date(v2),
+      sortComparator: (v1, v2) => {
+        const date1 = dayjs(v1).isValid() ? dayjs(v1).toDate() : new Date(0);
+        const date2 = dayjs(v2).isValid() ? dayjs(v2).toDate() : new Date(0);
+        return date1 - date2;
+      },
     },
     {
       field: "pay_amount",
@@ -939,7 +943,7 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
           <Grid item xs={0.5} md={1} />
         </Grid>
         {data && data.length > 0 ? (
-          <Grid sx={{overflowX: "auto", width: "100%"}}>
+          <Grid sx={{ overflowX: "auto", width: "100%" }}>
             <DataGrid
               rows={data}
               columns={columns}
@@ -3211,8 +3215,8 @@ function TenantBalanceTablePM(props) {
           ...item,
           pur_amount_due: parseFloat(item.amountDue),
           // due_date_formatted: dayjs(item.dueDate).format("MM-DD-YYYY"),
-          due_date_formatted : dayjs(item.dueDate, "MM/DD/YYYY").isValid() ? dayjs(item.dueDate, "MM/DD/YYYY").format("MM-DD-YYYY")
-          : "-",
+          due_date_formatted: dayjs(item.dueDate, "MM/DD/YYYY").isValid() ? dayjs(item.dueDate, "MM/DD/YYYY").format("MM-DD-YYYY")
+            : "-",
         }))
       );
     }
@@ -3310,7 +3314,12 @@ function TenantBalanceTablePM(props) {
       headerName: "Due Date",
       flex: 1,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-      sortComparator: (v1, v2) => new Date(v1) - new Date(v2),
+      // sortComparator: (v1, v2) => new Date(v1) - new Date(v2),
+      sortComparator: (v1, v2) => {
+        const date1 = dayjs(v1).isValid() ? dayjs(v1).toDate() : new Date(0);
+        const date2 = dayjs(v2).isValid() ? dayjs(v2).toDate() : new Date(0);
+        return date1 - date2;
+      },
     },
     {
       field: "totalPaid",
