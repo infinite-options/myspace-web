@@ -117,7 +117,7 @@ const TenantDashboard = () => {
 
   useEffect(() => {
     //console.log("Listing Data: ", listingsData);
-    console.log(" == lease details == ", leaseDetails)
+    console.log(" == lease details == ", leaseDetails);
   }, [listingsData]);
 
   useEffect(() => {
@@ -216,7 +216,7 @@ const TenantDashboard = () => {
     // console.log('Main useeffect called', reload)
     const fetchData = async () => {
       setLoading(true);
-  
+
       try {
         // Set loading to true before fetching data
         const profileId = getProfileId();
@@ -224,14 +224,14 @@ const TenantDashboard = () => {
         // console.log("profile id is", profileId)
         // console.log("user is", user)
         if (!profileId) return;
-  
+
         const dashboardResponse = await fetch(`${APIConfig.baseURL.dev}/dashboard/${profileId}`);
         const dashboardData = await dashboardResponse.json();
-  
+
         if (dashboardData) {
           // //console.log("Dashboard inside check", dashboardData.property?.result);
           setPropertyListingData(dashboardData.property?.result);
-  
+
           setLeaseDetailsData(dashboardData.leaseDetails?.result);
           setMaintenanceRequestsNew(dashboardData.maintenanceRequests?.result);
           setMaintenanceStatus(dashboardData.maintenanceStatus?.result);
@@ -239,7 +239,7 @@ const TenantDashboard = () => {
           setPaymentHistory(dashboardData.tenantPayments?.result);
           setAnnouncementRecvData(dashboardData.announcementsReceived?.result || []);
           setAnnouncementSentData(dashboardData.announcementsSent?.result || []);
-  
+
           // Set first property as selected, if available
           // const firstProperty = dashboardData.property?.result[0];
           // //console.log("property", firstProperty.property_uid);
@@ -261,7 +261,7 @@ const TenantDashboard = () => {
             pur_cf_type: payment.pur_cf_type,
             pur_receiver: payment.pur_receiver,
           }));
-  
+
           // Save all balance details to state
           setAllBalanceDetails(allBalanceDetails);
         }
@@ -563,7 +563,7 @@ const TenantDashboard = () => {
         case "paymentHistory":
           return <TenantPaymentHistoryTable data={rightPane.state.data} setRightPane={setRightPane} onBack={handleBack} isMobile={isMobile} />;
         case "listings":
-          return <PropertyListings {...rightPane.state} setRightPane={setRightPane} isMobile={isMobile} setViewRHS={setViewRHS} setListingsData={setListingsData}/>;
+          return <PropertyListings {...rightPane.state} setRightPane={setRightPane} isMobile={isMobile} setViewRHS={setViewRHS} setListingsData={setListingsData} />;
         case "propertyInfo":
           return <PropertyInfo {...rightPane.state} setRightPane={setRightPane} setFirstPage={setFirstPage} handleSelectProperty={handleSelectProperty} />;
         case "tenantApplication":
@@ -767,10 +767,10 @@ const TenantDashboard = () => {
                         alignContent: "center",
                         justifyContent: "center",
                         minHeight: "100px",
-                        backgroundColor:"#F0EFED",
+                        backgroundColor: "#F0EFED",
                       }}
                     >
-                      <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" }, textAlign:"center" }}>No Announcements</Typography>
+                      <Typography sx={{ fontSize: { xs: "18px", sm: "18px", md: "20px", lg: "24px" }, textAlign: "center" }}>No Announcements</Typography>
                     </Box>
                   )}
                 </Grid>
@@ -875,12 +875,8 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
       headerName: "Date",
       flex: 1,
       renderCell: (params) => {
-        const date = dayjs(params.value).format('MM-DD-YYYY');
-        return (
-          <Box sx={{ fontWeight: "bold" }}>
-            {date}
-          </Box>
-        );
+        const date = dayjs(params.value).format("MM-DD-YYYY");
+        return <Box sx={{ fontWeight: "bold" }}>{date}</Box>;
       },
       sortComparator: (v1, v2) => new Date(v1) - new Date(v2),
     },
@@ -1442,7 +1438,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           {leaseDetails?.lease_renew_status &&
                             (leaseDetails?.lease_renew_status === "PM RENEW REQUESTED" ||
                               leaseDetails?.lease_renew_status.includes("RENEW REQUESTED") ||
-                              leaseDetails?.lease_renew_status.includes("RENEW PROCESSING") || 
+                              leaseDetails?.lease_renew_status.includes("RENEW PROCESSING") ||
                               leaseDetails?.lease_renew_status === "RENEWED" ||
                               leaseDetails?.lease_renew_status === "RENEW REJECTED" ||
                               leaseDetails?.lease_renew_status === "EARLY TERMINATION" ||
@@ -1645,7 +1641,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
               </Grid>
 
               <Grid item xs={3} md={3}>
-                <Grid container item spacing={4} sx={{display: "flex", flexDirection: "column " , alignItems:"center", justifyContent:"center", width:"100%"}}>
+                <Grid container item spacing={4} sx={{ display: "flex", flexDirection: "column ", alignItems: "center", justifyContent: "center", width: "100%" }}>
                   {/* <Grid container item spacing={2} sx={{ marginTop: "3px", marginBottom: "5px", marginRight: "10px", }}>
                 {relatedLease?.lease_status === "RENEW PROCESSING" &&
                   <Grid
@@ -1698,7 +1694,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                         justifyContent: "center",
                         alignItems: "center",
                         height: "100%",
-                        width:"100%",
+                        width: "100%",
                       }}
                     >
                       <Button
@@ -1714,7 +1710,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           textTransform: "none",
                           // maxWidth: "120px", // Fixed width for the button
                           maxHeight: "100%",
-                          width:"150px"
+                          width: "150px",
                         }}
                         size='medium'
                       >
@@ -1758,7 +1754,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           textTransform: "none",
                           maxWidth: "200px", // Fixed width for the button
                           maxHeight: "100%",
-                          width:"150px"
+                          width: "150px",
                         }}
                         size='medium'
                       >
@@ -1799,9 +1795,9 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           cursor: "pointer",
                           paddingX: "10px",
                           textTransform: "none",
-                          width: "160px", // Fixed width for the button
+                          // width: "160px", // Fixed width for the button
                           maxHeight: "100%",
-                          width:"150px"
+                          width: "150px",
                         }}
                         size='medium'
                       >
@@ -1846,7 +1842,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           textTransform: "none",
                           // maxWidth: "120px", // Fixed width for the button
                           maxHeight: "100%",
-                          width:"150px"
+                          width: "150px",
                         }}
                         size='medium'
                       >
@@ -1892,7 +1888,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                             justifyContent: "center",
                             alignItems: "center",
                             height: "100%",
-                            width:"100%"
+                            width: "100%",
                           }}
                         >
                           <Button
@@ -1908,7 +1904,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                               textTransform: "none",
                               maxWidth: "100%", // Fixed width for the button
                               maxHeight: "100%",
-                              width:"150px"
+                              width: "150px",
                             }}
                             size='medium'
                           >
@@ -1964,9 +1960,9 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                                 cursor: "pointer",
                                 paddingX: "10px",
                                 textTransform: "none",
-                                width: "100%", // Fixed width for the button
+                                // width: "100%", // Fixed width for the button
                                 maxHeight: "100%",
-                                width:"150px"
+                                width: "150px",
                               }}
                               size='medium'
                             >
@@ -2025,7 +2021,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                           cursor: "pointer",
                           paddingX: "10px",
                           textTransform: "none",
-                          width:"150px"
+                          width: "150px",
                           // maxWidth: "130px", // Fixed width for the button
                           // maxHeight: "100%",
                         }}
@@ -2053,7 +2049,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
 
               {/* Lease Fees */}
               {leaseDetails && (
-                <Grid container item spacing={2} sx={{mt:5}}>
+                <Grid container item spacing={2} sx={{ mt: 5 }}>
                   <Grid item xs={6}>
                     <Typography
                       sx={{
@@ -2069,7 +2065,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
               )}
 
               {leaseDetails && (
-                <Grid container item spacing={2} sx={{mt:"5"}}>
+                <Grid container item spacing={2} sx={{ mt: "5" }}>
                   {leaseDetails?.lease_fees ? (
                     <FeesSmallDataGrid data={JSON.parse(leaseDetails?.lease_fees)} isMobile={isMobile} />
                   ) : (
@@ -2101,7 +2097,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
 
               {/* Lease Documents */}
               {leaseDetails && (
-                <Grid container item spacing={2} sx={{mt:5}}>
+                <Grid container item spacing={2} sx={{ mt: 5 }}>
                   <Grid item xs={6}>
                     <Typography
                       sx={{
@@ -2514,7 +2510,9 @@ const MaintenanceDetails = ({ maintenanceRequests, onPropertyClick, selectedProp
   // //console.log("Maintenance Requests:", maintenanceRequests);
   const maintenanceStatusCounts = {
     "New Requests": maintenanceRequests?.filter((item) => item.maintenance_status.trim().toUpperCase() === "NEW REQUEST").reduce((sum, item) => sum + (item.num || 0), 0), // Sum `num` values
-    "Info Requested": maintenanceRequests?.filter((item) => item.maintenance_status.trim().toUpperCase() === "INFO TENANT" || item.maintenance_status.trim().toUpperCase() === "INFO OWNER").reduce((sum, item) => sum + (item.num || 0), 0),
+    "Info Requested": maintenanceRequests
+      ?.filter((item) => item.maintenance_status.trim().toUpperCase() === "INFO TENANT" || item.maintenance_status.trim().toUpperCase() === "INFO OWNER")
+      .reduce((sum, item) => sum + (item.num || 0), 0),
     Processing: maintenanceRequests?.filter((item) => item.maintenance_status.trim().toUpperCase() === "PROCESSING").reduce((sum, item) => sum + (item.num || 0), 0),
     Scheduled: maintenanceRequests?.filter((item) => item.maintenance_status.trim().toUpperCase() === "SCHEDULED").reduce((sum, item) => sum + (item.num || 0), 0),
     Completed: maintenanceRequests?.filter((item) => item.maintenance_status.trim().toUpperCase() === "COMPLETED").reduce((sum, item) => sum + (item.num || 0), 0),
@@ -3207,7 +3205,7 @@ function TenantBalanceTablePM(props) {
         data.map((item) => ({
           ...item,
           pur_amount_due: parseFloat(item.amountDue),
-          due_date_formatted: dayjs(item.dueDate).format('MM-DD-YYYY')
+          due_date_formatted: dayjs(item.dueDate).format("MM-DD-YYYY"),
         }))
       );
     }
@@ -3398,57 +3396,57 @@ function DocumentPreview({ file, onClose }) {
   };
 
   return (
+    <Box
+      sx={{
+        width: "100%",
+        height: "850px",
+        backgroundColor: "white",
+        boxShadow: 3,
+        borderRadius: 2, // Rounded edges for the outer box
+        overflow: "hidden", // Ensures rounded corners are applied to content
+        // overflowY: "auto"
+      }}
+      onMouseDown={handleMouseDown}
+    >
       <Box
         sx={{
-          width: "100%",
-          height: "850px",
-          backgroundColor: "white",
-          boxShadow: 3,
-          borderRadius: 2, // Rounded edges for the outer box
-          overflow: "hidden", // Ensures rounded corners are applied to content
-          // overflowY: "auto"
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "10px",
+          backgroundColor: "#f0f0f0",
         }}
-        onMouseDown={handleMouseDown}
       >
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "10px",
-            backgroundColor: "#f0f0f0",
-          }}
-        >
-          <Typography variant='h6'>{file?.filename || "File Preview"}</Typography>
-          <IconButton onClick={onClose}>
-            <CloseIcon />
-          </IconButton>
-        </Box>
-        <Box
-          sx={{
-            height: "100%",
-            width: "100%",
-            // overflowY: "auto",
-            // padding: "1px",
-          }}
-        >
-          {file ? (
-            <iframe
-              src={file.link}
-              width='100%'
-              height="100%"
-              title='File Preview'
-              style={{
-                border: "none",
-                borderBottomLeftRadius: 8, // Rounded bottom left corner
-                borderBottomRightRadius: 8, // Rounded bottom right corner
-              }}
-            />
-          ) : (
-            <Typography>No file selected</Typography>
-          )}
-        </Box>
+        <Typography variant='h6'>{file?.filename || "File Preview"}</Typography>
+        <IconButton onClick={onClose}>
+          <CloseIcon />
+        </IconButton>
       </Box>
+      <Box
+        sx={{
+          height: "100%",
+          width: "100%",
+          // overflowY: "auto",
+          // padding: "1px",
+        }}
+      >
+        {file ? (
+          <iframe
+            src={file.link}
+            width='100%'
+            height='100%'
+            title='File Preview'
+            style={{
+              border: "none",
+              borderBottomLeftRadius: 8, // Rounded bottom left corner
+              borderBottomRightRadius: 8, // Rounded bottom right corner
+            }}
+          />
+        ) : (
+          <Typography>No file selected</Typography>
+        )}
+      </Box>
+    </Box>
   );
 }
 
