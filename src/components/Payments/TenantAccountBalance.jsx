@@ -28,6 +28,7 @@ import {
 import defaultHouseImage from "../Property/defaultHouseImage.png";
 import { FirstPage } from "@mui/icons-material";
 import dayjs from "dayjs";
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 const TenantAccountBalance = ({
   propertyData,
@@ -52,6 +53,7 @@ const TenantAccountBalance = ({
   const navigate = useNavigate();
   const open = Boolean(anchorEl);
   const balanceDue = parseFloat(balanceDetails[0]?.amountDue || 0);
+  dayjs.extend(customParseFormat);
   // // //console.log()
   // //console.log("lease", leaseDetails);
   // //console.log("propertydata", propertyData);
@@ -491,7 +493,9 @@ const TenantAccountBalance = ({
                       </TableCell>
                       <TableCell sx={{ padding: "8px" }}>{detail.description}</TableCell>
                       {/* <TableCell sx={{ padding: "8px" }}>{new Date(detail.dueDate).toLocaleDateString()}</TableCell> */}
-                      <TableCell sx={{ padding: "8px" }}>  {dayjs(detail.dueDate).format("MM-DD-YYYY")}</TableCell>
+                      <TableCell sx={{ padding: "8px" }}>{detail.dueDate && dayjs(detail.dueDate, "MM/DD/YYYY").isValid()
+                        ? dayjs(detail.dueDate, "MM/DD/YYYY").format("MM-DD-YYYY")
+                        : "-"}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
