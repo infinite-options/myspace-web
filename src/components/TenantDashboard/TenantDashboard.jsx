@@ -73,7 +73,7 @@ import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy } from "../../utils/
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import { ListsProvider } from "../../contexts/ListsContext";
 import dayjs from "dayjs";
-import customParseFormat from 'dayjs/plugin/customParseFormat';
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -881,20 +881,20 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
         const date = dayjs(params.value, "MM/DD/YYYY").isValid() ? dayjs(params.value, "MM/DD/YYYY").format("MM-DD-YYYY") : "-";
         return <Box sx={{ fontWeight: "bold" }}>{date}</Box>;
       },
-      sortComparator: (v1, v2) => {
-        const date1 = dayjs(v1).isValid() ? dayjs(v1).toDate() : new Date(0);
-        const date2 = dayjs(v2).isValid() ? dayjs(v2).toDate() : new Date(0);
-        return date1 - date2;
-      },
+      // sortComparator: (v1, v2) => {
+      //   const date1 = dayjs(v1).isValid() ? dayjs(v1).toDate() : new Date(0);
+      //   const date2 = dayjs(v2).isValid() ? dayjs(v2).toDate() : new Date(0);
+      //   return date1 - date2;
+      // },
     },
     {
       field: "payment_date_sorting",
       headerName: "Payment Date Sorting",
-      hide: true, 
+      hide: true,
       valueGetter: (params) => {
-        return dayjs(params.value).toDate(); 
+        return dayjs(params.value).toDate();
       },
-      sortComparator: (v1, v2) => v1 - v2,
+      // sortComparator: (v1, v2) => v1 - v2,
     },
     {
       field: "pay_amount",
@@ -961,9 +961,9 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
                 pagination: {
                   paginationModel: { pageSize: 15, page: 0 },
                 },
-                sorting: {
-                  sortModel: [{ field: "payment_date_sorting", sort: "desc" }], // Default sorting by date
-                },
+                // sorting: {
+                //   sortModel: [{ field: "payment_date_sorting", sort: "desc" }], // Default sorting by date
+                // },
               }}
               getRowId={(row) => row.payment_uid} // Use payment_uid as the unique identifier
               sx={{
@@ -3224,10 +3224,12 @@ function TenantBalanceTablePM(props) {
           ...item,
           pur_amount_due: parseFloat(item.amountDue),
           // due_date_formatted: dayjs(item.dueDate).format("MM-DD-YYYY"),
-          due_date_formatted: dayjs(item.dueDate, "MM/DD/YYYY").isValid() ? dayjs(item.dueDate, "MM/DD/YYYY").format("MM-DD-YYYY")
-            : "-",
+          // due_date_formatted: item.dueDate,
+          // due_date_formatted: dayjs(item.dueDate, "MM/DD/YYYY").isValid() ? dayjs(item.dueDate, "MM/DD/YYYY").format("MM-DD-YYYY") : "-",
           // due_date_sorting:  dayjs(item.dueDate).toDate(),
-          due_date_sorting:  dayjs(item.dueDate, "MM/DD/YYYY").isValid() ? dayjs(item.dueDate).toDate() : new Date(0),
+          // due_date_sorting:  dayjs(item.dueDate, "MM/DD/YYYY").isValid() ? dayjs(item.dueDate).toDate() : new Date(0),
+          due_date_sorting: dayjs(item.dueDate, "MM-DD-YYYY HH:mm").isValid() ? dayjs(item.dueDate, "MM-DD-YYYY HH:mm").toDate() : "-",
+          due_date_formatted: dayjs(item.dueDate, "MM-DD-YYYY HH:mm").isValid() ? dayjs(dayjs(item.dueDate, "MM-DD-YYYY HH:mm").toDate()).format("MM-DD-YYYY") : "-",
         }))
       );
     }
@@ -3299,72 +3301,81 @@ function TenantBalanceTablePM(props) {
   };
 
   const columnsList = [
+    // {
+    //   field: "description",
+    //   headerName: "Description",
+    //   flex: 2,
+    //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    // },
+    // {
+    //   field: "pur_amount_due",
+    //   headerName: "Total",
+    //   flex: 1,
+    //   renderCell: (params) => {
+    //     const total = parseFloat(params.row.pur_amount_due) + parseFloat(params.row.totalPaid);
+    //     return <Box sx={{ fontWeight: "bold", textAlign: "right", width: "100%" }}>${total.toFixed(2)}</Box>;
+    //   },
+    // },
+    // {
+    //   field: "purchaseStatus",
+    //   headerName: "Status",
+    //   flex: 1,
+    //   renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+    // },
     {
-      field: "description",
-      headerName: "Description",
-      flex: 2,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-    },
-    {
-      field: "pur_amount_due",
-      headerName: "Total",
-      flex: 1,
-      renderCell: (params) => {
-        const total = parseFloat(params.row.pur_amount_due) + parseFloat(params.row.totalPaid);
-        return <Box sx={{ fontWeight: "bold", textAlign: "right", width: "100%" }}>${total.toFixed(2)}</Box>;
-      },
-    },
-    {
-      field: "purchaseStatus",
-      headerName: "Status",
-      flex: 1,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
+      field: "due_date_sorting",
+      headerName: "Due Date Sorting",
+      // flex: 1,
+      width: "150px",
+      // hide: true,
+      // sortComparator: (v1, v2) => v1 - v2,
     },
     {
       field: "due_date_formatted",
       headerName: "Due Date",
-      flex: 1,
+      // flex: 1,
+      width: "150px",
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
       // sortComparator: (v1, v2) => new Date(v1) - new Date(v2),
-      sortComparator: (v1, v2) => {
-        const date1 = dayjs(v1).isValid() ? dayjs(v1).toDate() : new Date(0);
-        const date2 = dayjs(v2).isValid() ? dayjs(v2).toDate() : new Date(0);
-        return date1 - date2;
-      },
+      // sortComparator: (v1, v2) => {
+      //   const date1 = dayjs(v1).isValid() ? dayjs(v1).toDate() : new Date(0);
+      //   const date2 = dayjs(v2).isValid() ? dayjs(v2).toDate() : new Date(0);
+      // return date1 - date2;
+      // },
     },
-    {
-      field: "totalPaid",
-      headerName: "Amount Paid",
-      flex: 1,
-      renderCell: (params) => (
-        <Box
-          sx={{
-            fontWeight: "bold",
-            width: "100%",
-            display: "flex",
-            textAlign: "right",
-            flexDirection: "row",
-            justifyContent: "flex-end",
-          }}
-        >
-          {params.row.pur_cf_type === "revenue" ? `$ ${parseFloat(params.value).toFixed(2)}` : `($ ${parseFloat(params.value).toFixed(2)})`}
-        </Box>
-      ),
-    },
-    {
-      field: "amount_due",
-      headerName: "Amount Due",
-      flex: 1,
-      renderCell: (params) => {
-        return <Box sx={{ fontWeight: "bold", textAlign: "right", width: "100%" }}>${parseFloat(params.row.amountDue).toFixed(2)}</Box>;
-      },
-    },
-    {
-      field: "due_date_sorting",
-      headerName: "Due Date Sorting",
-      hide: true, 
-      sortComparator: (v1, v2) => v1 - v2,
-    }
+    // {
+    //   field: "totalPaid",
+    //   headerName: "Amount Paid",
+    //   flex: 1,
+    //   renderCell: (params) => (
+    //     <Box
+    //       sx={{
+    //         fontWeight: "bold",
+    //         width: "100%",
+    //         display: "flex",
+    //         textAlign: "right",
+    //         flexDirection: "row",
+    //         justifyContent: "flex-end",
+    //       }}
+    //     >
+    //       {params.row.pur_cf_type === "revenue" ? `$ ${parseFloat(params.value).toFixed(2)}` : `($ ${parseFloat(params.value).toFixed(2)})`}
+    //     </Box>
+    //   ),
+    // },
+    // {
+    //   field: "amount_due",
+    //   headerName: "Amount Due",
+    //   flex: 1,
+    //   renderCell: (params) => {
+    //     return <Box sx={{ fontWeight: "bold", textAlign: "right", width: "100%" }}>${parseFloat(params.row.amountDue).toFixed(2)}</Box>;
+    //   },
+    // },
+    // {
+    //   field: "due_date_sorting",
+    //   headerName: "Due Date Sorting",
+    //   hide: true,
+    //   sortComparator: (v1, v2) => v1 - v2,
+    // },
   ];
 
   return (
@@ -3388,9 +3399,9 @@ function TenantBalanceTablePM(props) {
             pagination: {
               paginationModel: { pageSize: 15, page: 0 },
             },
-            sorting: {
-              sortModel: [{ field: "due_date_sorting", sort: "desc" }],
-            },
+            // sorting: {
+            //   sortModel: [{ field: "due_date_sorting", sort: "desc" }],
+            // },
           }}
         />
       )}
