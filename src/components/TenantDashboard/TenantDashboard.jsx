@@ -875,10 +875,16 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
       headerName: "Date",
       flex: 1,
       renderCell: (params) => {
-        const date = dayjs(params.value).format("MM-DD-YYYY");
+        // const date = dayjs(params.value).format("MM-DD-YYYY");
+        // const date = dayjs(params.value).isValid() ? dayjs(params.value).format("MM-DD-YYYY") : "No";
+        const date = params.value ? dayjs(params.value, 'MM-DD-YYYY').format("MM-DD-YYYY") : "No Date";
         return <Box sx={{ fontWeight: "bold" }}>{date}</Box>;
       },
-      sortComparator: (v1, v2) => new Date(v1) - new Date(v2),
+      sortComparator: (v1, v2) => {
+        const date1 = dayjs(v1, 'MM-DD-YYYY').toDate();
+        const date2 = dayjs(v2, 'MM-DD-YYYY').toDate();
+        return date1 - date2;
+      },
     },
     {
       field: "pay_amount",
@@ -3207,7 +3213,7 @@ function TenantBalanceTablePM(props) {
         data.map((item) => ({
           ...item,
           pur_amount_due: parseFloat(item.amountDue),
-          due_date_formatted: dayjs(item.dueDate).format("MM-DD-YYYY"),
+          due_date_formatted: dayjs(item.dueDate, "MM-DD-YYYY").format("MM-DD-YYYY"),
         }))
       );
     }
@@ -3305,7 +3311,11 @@ function TenantBalanceTablePM(props) {
       headerName: "Due Date",
       flex: 1,
       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value}</Box>,
-      sortComparator: (v1, v2) => new Date(v1) - new Date(v2),
+      sortComparator: (v1, v2) => {
+        const date1 = dayjs(v1, 'MM-DD-YYYY').toDate();
+        const date2 = dayjs(v2, 'MM-DD-YYYY').toDate();
+        return date1 - date2;
+      },
     },
     {
       field: "totalPaid",

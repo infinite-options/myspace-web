@@ -100,6 +100,7 @@ export default function LandingPage() {
               const encoder = new TextEncoder();
               const data = encoder.encode(saltedPassword);
               //Hash salted password
+              // console.log("== ", crypto)
               crypto.subtle.digest(hashAlg, data).then((res) => {
                 let hash = res;
                 // Decode hash with hex digest
