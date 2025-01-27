@@ -73,6 +73,7 @@ import { getFeesDueBy, getFeesAvailableToPay, getFeesLateBy } from "../../utils/
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
 import { ListsProvider } from "../../contexts/ListsContext";
 import dayjs from "dayjs";
+import { get } from "../utils/api";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -117,7 +118,7 @@ const TenantDashboard = () => {
 
   useEffect(() => {
     //console.log("Listing Data: ", listingsData);
-    console.log(" == lease details == ", leaseDetails);
+    // console.log(" == lease details == ", leaseDetails);
   }, [listingsData]);
 
   useEffect(() => {
@@ -483,7 +484,7 @@ const TenantDashboard = () => {
       setViewRHS(true);
     }
     const paymentHistoryForProperty = paymentHistory.filter((detail) => detail.pur_property_id === selectedProperty.property_uid);
-    // //console.log("testing", paymentHistoryForProperty);
+    // console.log("testing", paymentHistoryForProperty);
     setRightPane({ type: "paymentHistory", state: { data: paymentHistoryForProperty } });
   };
 
@@ -830,99 +831,250 @@ const TenantDashboard = () => {
   );
 };
 
+// function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
+//   console.log("data for table", data);
+
+//   const columns = [
+//     {
+//       field: "pur_description",
+//       headerName: "Description",
+//       flex: 1.5,
+//       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value || "-"}</Box>,
+//     },
+//     {
+//       field: "purchase_type",
+//       headerName: "Type",
+//       flex: 1,
+//       renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value || "-"}</Box>,
+//     },
+//     {
+//       field: "purchase_status",
+//       headerName: "Status",
+//       flex: 1.5,
+//       renderCell: (params) => (
+//         <Box
+//           sx={{
+//             backgroundColor: params.value === "PAID" ? "#76B148" : "#A52A2A",
+//             textTransform: "none",
+//             fontWeight: "bold",
+//             height: "20px",
+//             width: "120px",
+//             borderRadius: "4px",
+//             alignItems: "center",
+//             textAlign: "center",
+//             color: "#FFFFFF",
+//             overflow: "hidden",
+//             whiteSpace: "nowrap",
+//           }}
+//         >
+//           {params.value || "-"}
+//         </Box>
+//       ),
+//     },
+//     {
+//       field: "payment_date",
+//       headerName: "Date",
+//       flex: 1,
+//       renderCell: (params) => {
+//         // const date = dayjs(params.value).format("MM-DD-YYYY");
+//         // const date = dayjs(params.value).isValid() ? dayjs(params.value).format("MM-DD-YYYY") : "No";
+//         const date = params.value ? dayjs(params.value, 'MM-DD-YYYY').format("MM-DD-YYYY") : "No Date";
+//         return <Box sx={{ fontWeight: "bold" }}>{date}</Box>;
+//       },
+//       sortComparator: (v1, v2) => {
+//         const date1 = dayjs(v1, 'MM-DD-YYYY').toDate();
+//         const date2 = dayjs(v2, 'MM-DD-YYYY').toDate();
+//         return date1 - date2;
+//       },
+//     },
+//     {
+//       field: "pay_amount",
+//       headerName: "Total",
+//       flex: 1,
+//       renderCell: (params) => {
+//         const amountToDisplay = params.row.purchase_status === "UNPAID" || params.row.purchase_status === "PARTIALLY PAID" ? params.row.pay_amount : params.row.pay_amount;
+
+//         return (
+//           <Box
+//             sx={{
+//               fontWeight: "bold",
+//               display: "flex",
+//               flexDirection: "row",
+//             }}
+//           >
+//             ${amountToDisplay ? parseFloat(amountToDisplay).toFixed(2) : "0.00"}
+//           </Box>
+//         );
+//       },
+//     },
+//   ];
+
+//   return (
+//     <Grid container sx={{ flex: 1, width: "100%" }}>
+//       <Paper
+//         component={Stack}
+//         sx={{
+//           padding: isMobile ? "0px" : "20px",
+//           backgroundColor: "#f0f0f0",
+//           borderRadius: "8px",
+//           width: "100%",
+//           // height: "100%",
+//           // overflowX: "auto",
+//           marginBottom: isMobile ? "10px" : "0px",
+//         }}
+//       >
+//         <Grid Container sx={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
+//           <Grid item xs={0.5} md={1}>
+//             <Button onClick={onBack}>
+//               <ArrowBackIcon
+//                 sx={{
+//                   color: "#160449",
+//                   fontSize: "25px",
+//                   margin: "5px",
+//                 }}
+//               />
+//             </Button>
+//           </Grid>
+//           <Grid item xs={11} md={10}>
+//             <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont, textAlign: "center" }}>
+//               Payment History
+//             </Typography>
+//           </Grid>
+//           <Grid item xs={0.5} md={1} />
+//         </Grid>
+//         {data && data.length > 0 ? (
+//           <Grid sx={{overflowX: "auto", width: "100%"}}>
+//             <DataGrid
+//               rows={data}
+//               columns={columns}
+//               pageSizeOptions={[15, 25, 100]}
+//               initialState={{
+//                 pagination: {
+//                   paginationModel: { pageSize: 15, page: 0 },
+//                 },
+//                 sorting: {
+//                   sortModel: [{ field: "payment_date", sort: "desc" }], // Default sorting by date
+//                 },
+//               }}
+//               getRowId={(row) => row.payment_uid} // Use payment_uid as the unique identifier
+//               sx={{
+//                 width: "100%",
+//                 minWidth: "700px",
+//                 backgroundColor: "#f0f0f0",
+//               }}
+//             />
+//           </Grid>
+//         ) : (
+//           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "200px" }}>
+//             <Typography sx={{ fontSize: "16px" }}>No Payment History Available</Typography>
+//           </Box>
+//         )}
+//       </Paper>
+//     </Grid>
+//   );
+// }
+
 function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
-  //console.log("data for table", data);
+
+  const groupPaymentsByDate = (data) => {
+    const grouped = data.reduce((acc, payment) => {
+      const date = dayjs(payment.payment_date, "MM-DD-YYYY").format("MM-DD-YYYY"); // Normalize the date format
+      if (!acc[date]) {
+        acc[date] = {
+          payment_date: date,
+          total_paid: 0,
+          groupedPayments: [],
+        };
+      }
+      acc[date].total_paid += parseFloat(payment.pay_amount); // Add to total
+      acc[date].groupedPayments.push(payment);
+      return acc;
+    }, {});
+  
+    // Convert grouped object to an array
+    return Object.values(grouped).map((group) => ({
+      ...group,
+      groupedPayments: group.groupedPayments.map((payment, index) => ({
+        ...payment,
+        id: `${group.payment_date}-${index}`, // Unique row ID
+      })),
+    }));
+  };
+  
+  const groupedData = groupPaymentsByDate(data);
 
   const columns = [
     {
-      field: "pur_description",
-      headerName: "Description",
-      flex: 1.5,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value || "-"}</Box>,
-    },
-    {
-      field: "purchase_type",
-      headerName: "Type",
+      field: "payment_date",
+      headerName: "Payment Date",
       flex: 1,
-      renderCell: (params) => <Box sx={{ fontWeight: "bold" }}>{params.value || "-"}</Box>,
+      renderCell: (params) => (
+        <Box sx={{ fontWeight: "bold" }}>{params.value || "N/A"}</Box>
+      ),
     },
     {
-      field: "purchase_status",
-      headerName: "Status",
-      flex: 1.5,
+      field: "total_paid",
+      headerName: "Total Paid",
+      flex: 1,
       renderCell: (params) => (
-        <Box
-          sx={{
-            backgroundColor: params.value === "PAID" ? "#76B148" : "#A52A2A",
-            textTransform: "none",
-            fontWeight: "bold",
-            height: "20px",
-            width: "120px",
-            borderRadius: "4px",
-            alignItems: "center",
-            textAlign: "center",
-            color: "#FFFFFF",
-            overflow: "hidden",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {params.value || "-"}
+        <Box sx={{ fontWeight: "bold", color: "#4caf50" }}>
+          ${parseFloat(params.value).toFixed(2)}
         </Box>
       ),
     },
     {
-      field: "payment_date",
-      headerName: "Date",
-      flex: 1,
-      renderCell: (params) => {
-        // const date = dayjs(params.value).format("MM-DD-YYYY");
-        // const date = dayjs(params.value).isValid() ? dayjs(params.value).format("MM-DD-YYYY") : "No";
-        const date = params.value ? dayjs(params.value, 'MM-DD-YYYY').format("MM-DD-YYYY") : "No Date";
-        return <Box sx={{ fontWeight: "bold" }}>{date}</Box>;
-      },
-      sortComparator: (v1, v2) => {
-        const date1 = dayjs(v1, 'MM-DD-YYYY').toDate();
-        const date2 = dayjs(v2, 'MM-DD-YYYY').toDate();
-        return date1 - date2;
-      },
-    },
-    {
-      field: "pay_amount",
-      headerName: "Total",
-      flex: 1,
-      renderCell: (params) => {
-        const amountToDisplay = params.row.purchase_status === "UNPAID" || params.row.purchase_status === "PARTIALLY PAID" ? params.row.pay_amount : params.row.pay_amount;
-
-        return (
-          <Box
-            sx={{
-              fontWeight: "bold",
-              display: "flex",
-              flexDirection: "row",
-            }}
-          >
-            ${amountToDisplay ? parseFloat(amountToDisplay).toFixed(2) : "0.00"}
-          </Box>
-        );
-      },
+      field: "groupedPayments",
+      headerName: "Details",
+      flex: 3,
+      renderCell: (params) => (
+        <Box>
+          {params.value.map((payment) => (
+            <Box key={payment.payment_uid} sx={{ marginBottom: "5px" }}>
+              <Typography sx={{ fontWeight: "bold" }}>
+                {payment.pur_description} - ${payment.pay_amount}
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "0.85rem",
+                  color:
+                    payment.purchase_status === "PAID"
+                      ? "#76B148"
+                      : payment.purchase_status === "UNPAID"
+                      ? "#A52A2A"
+                      : payment.purchase_status === "PARTIALLY PAID"
+                      ? "#FFA500"
+                      : "#A52A2A", 
+                  fontWeight: "bold",
+                }}
+              >
+                Status: {payment.purchase_status}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
+      ),
     },
   ];
 
+  const calculateRowHeight = (groupedPayments) => {
+    const rows = groupedPayments.length;
+    const rowHeight = 50; // Base height for each row
+    return rowHeight + rows * 40; // Increase height based on the number of transactions
+  };
+  
   return (
-    <Grid container sx={{ flex: 1 }}>
+    <Grid container sx={{ flex: 1, width: "100%" }}>
       <Paper
         component={Stack}
         sx={{
-          padding: isMobile ? "10px" : "20px",
+          padding: isMobile ? "0px" : "20px",
           backgroundColor: "#f0f0f0",
           borderRadius: "8px",
           width: "100%",
-          // height: "100%",
-          // overflowX: "auto",
           marginBottom: isMobile ? "10px" : "0px",
         }}
       >
-        <Grid Container sx={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
+        <Grid container sx={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
           <Grid item xs={0.5} md={1}>
             <Button onClick={onBack}>
               <ArrowBackIcon
@@ -935,27 +1087,35 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
             </Button>
           </Grid>
           <Grid item xs={11} md={10}>
-            <Typography sx={{ color: theme.typography.primary.black, fontWeight: theme.typography.primary.fontWeight, fontSize: theme.typography.largeFont, textAlign: "center" }}>
+            <Typography
+              sx={{
+                color: theme.typography.primary.black,
+                fontWeight: theme.typography.primary.fontWeight,
+                fontSize: theme.typography.largeFont,
+                textAlign: "center",
+              }}
+            >
               Payment History
             </Typography>
           </Grid>
           <Grid item xs={0.5} md={1} />
         </Grid>
-        {data && data.length > 0 ? (
-          <Grid sx={{overflowX: "auto", width: "100%"}}>
+        {groupedData.length > 0 ? (
+          <Grid sx={{ overflowX: "auto", width: "100%" }}>
             <DataGrid
-              rows={data}
+              rows={groupedData}
               columns={columns}
-              pageSizeOptions={[15, 25, 100]}
+              pageSizeOptions={[5, 10, 20]}
               initialState={{
                 pagination: {
-                  paginationModel: { pageSize: 15, page: 0 },
+                  paginationModel: { pageSize: 5, page: 0 },
                 },
                 sorting: {
                   sortModel: [{ field: "payment_date", sort: "desc" }], // Default sorting by date
                 },
               }}
-              getRowId={(row) => row.payment_uid} // Use payment_uid as the unique identifier
+              getRowId={(row) => row.payment_date}
+              getRowHeight={(params) => calculateRowHeight(params.model.groupedPayments)}
               sx={{
                 width: "100%",
                 minWidth: "700px",
@@ -971,6 +1131,7 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
       </Paper>
     </Grid>
   );
+
 }
 
 const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty, relatedLease, isMobile, setViewRHS, setReload, handleViewTenantApplication }) => {
@@ -1955,6 +2116,7 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                               justifyContent: "center",
                               alignItems: "center",
                               height: "100%",
+                              width: "100%",
                             }}
                           >
                             <Button
@@ -1970,9 +2132,9 @@ const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty,
                                 textTransform: "none",
                                 // width: "100%", // Fixed width for the button
                                 maxHeight: "100%",
-                                width: "150px",
+                                width: isMobile? "50px" : "150px",
                               }}
-                              size='medium'
+                              size={isMobile? "small" : 'medium'}
                             >
                               <Typography
                                 sx={{
@@ -2632,7 +2794,38 @@ const MaintenanceDetails = ({ maintenanceRequests, onPropertyClick, selectedProp
 };
 
 const ManagementDetails = ({ leaseDetails }) => {
-  const { business_name, business_email, business_phone_number } = leaseDetails || {};
+
+  const { business_name, business_email, business_phone_number, business_uid } = leaseDetails || {};
+  const [paymentMethods, setPaymentMethods] = useState([]);
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        const response = await fetch(`${APIConfig.baseURL.dev}/profile/${business_uid}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch profile data");
+        }
+        const profileData = await response.json();
+
+        // Initialize an array to hold all parsed payment methods
+        let allPaymentMethods = [];
+
+        // Iterate over each object in the result array
+        profileData.profile.result.forEach((item) => {
+          // Parse the paymentMethods string in each object and add to the array
+          const parsedMethods = JSON.parse(item.paymentMethods);
+          allPaymentMethods = [...allPaymentMethods, ...parsedMethods];
+        });
+
+        // Set the combined payment methods array
+        setPaymentMethods(allPaymentMethods);
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+      }
+    };
+
+    fetchProfileData();
+  }, [business_uid]);
 
   return (
     <Paper
@@ -2669,6 +2862,20 @@ const ManagementDetails = ({ leaseDetails }) => {
           <Typography>Emergency Phone:</Typography>
           <Typography>{business_phone_number || "N/A"}</Typography>
         </Stack>
+
+        {/* paymentMethods */}
+        {paymentMethods?.length > 0 && paymentMethods
+        .filter((payment) => payment.paymentMethod_status === "Active") // Filter active payment methods
+        .map((payment, index) => (
+          <Stack direction="row" justifyContent="space-between" key={index}>
+            <Typography>{payment.paymentMethod_type.charAt(0).toUpperCase() + payment.paymentMethod_type.slice(1)}:</Typography>
+            <Typography>
+              {payment.paymentMethod_type === "bank_account"
+                ? payment.paymentMethod_acct || "N/A"
+                : payment.paymentMethod_name || "N/A"}
+            </Typography>
+          </Stack>
+        ))}
       </Stack>
     </Paper>
   );

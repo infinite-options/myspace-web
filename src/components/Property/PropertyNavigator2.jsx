@@ -829,7 +829,7 @@ export default function PropertyNavigator2({
   };
 
   const addAppliance = async (appliance) => {
-    // //console.log("inside editOrUpdateAppliance", appliance);
+    console.log("inside editOrUpdateAppliance", appliance);
     try {
       setShowSpinner(true);
       const headers = {
@@ -986,21 +986,22 @@ export default function PropertyNavigator2({
 
       axios
         .put(`${APIConfig.baseURL.dev}/appliances`, applianceFormData, headers)
-        .then((response) => {
-          if (selectedImageList.length === 0 && imagesTobeDeleted.length === 0) {
-            setAppliances((prevAppliances) => {
-              const index = prevAppliances.findIndex((item) => item.appliance_uid === appliance.appliance_uid);
-              if (index !== -1) {
-                const updatedAppliances = [...prevAppliances];
-                updatedAppliances[index] = { ...appliance, appliance_favorite_image: favImage };
-                return updatedAppliances;
-              } else {
-                return prevAppliances;
-              }
-            });
-          } else {
-            getAppliances();
-          }
+        .then(async (response) => {
+          // if (selectedImageList.length === 0 && imagesTobeDeleted.length === 0) {
+          //   setAppliances((prevAppliances) => {
+          //     const index = prevAppliances.findIndex((item) => item.appliance_uid === appliance.appliance_uid);
+          //     if (index !== -1) {
+          //       const updatedAppliances = [...prevAppliances];
+          //       updatedAppliances[index] = { ...appliance, appliance_favorite_image: favImage };
+          //       return updatedAppliances;
+          //     } else {
+          //       return prevAppliances;
+          //     }
+          //   });
+          // } else {
+          //   getAppliances();
+          // }
+          await getAppliances();
 
           setShowSpinner(false);
           setSelectedImageList([]);

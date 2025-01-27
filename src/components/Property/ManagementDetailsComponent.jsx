@@ -195,7 +195,7 @@ export default function ManagementDetailsComponent({
               {/* Property Manager */}
               {selectedRole === "OWNER" && (
                 <Grid container item spacing={2}>
-                  <Grid item xs={6}>
+                  <Grid item xs={4}>
                     <Typography
                       sx={{
                         color: theme.typography.primary.black,
@@ -206,7 +206,7 @@ export default function ManagementDetailsComponent({
                       Property Manager:
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={7}>
                     {activeContract ? (
                       <Box display='flex' justifyContent='space-between' alignItems='center'>
                         <Typography
@@ -254,7 +254,7 @@ export default function ManagementDetailsComponent({
               {/* Owner Info for Managers */}
               {selectedRole === "MANAGER" && (
                 <Grid container item spacing={2}>
-                  <Grid item xs={6}>
+                  <Grid item xs={4}>
                     <Typography
                       sx={{
                         color: theme.typography.primary.black,
@@ -265,7 +265,7 @@ export default function ManagementDetailsComponent({
                       Property Owner:
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={7}>
                     <Box display='flex' justifyContent='space-between' alignItems='center'>
                       <Typography
                         sx={{
@@ -296,7 +296,7 @@ export default function ManagementDetailsComponent({
 
               {/* Contract name */}
               <Grid container item spacing={2}>
-                <Grid item xs={6}>
+                <Grid item xs={4}>
                   <Typography
                     sx={{
                       color: theme.typography.primary.black,
@@ -307,7 +307,7 @@ export default function ManagementDetailsComponent({
                     Contract Name:
                   </Typography>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={7}>
                   <Box display='flex' alignItems='center' justifyContent={"space-between"}>
                     <Typography
                       sx={{
@@ -324,7 +324,7 @@ export default function ManagementDetailsComponent({
 
               {/* Contract Status */}
               <Grid container item spacing={2}>
-                <Grid item xs={6}>
+                <Grid item xs={4}>
                   <Typography
                     sx={{
                       color: theme.typography.primary.black,
@@ -335,7 +335,7 @@ export default function ManagementDetailsComponent({
                     Contract Status:
                   </Typography>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={7}>
                   <Box display='flex' alignItems='center' justifyContent={"space-between"}>
                     {activeContract?.contract_status === "ACTIVE" ? (
                       <>
@@ -421,7 +421,7 @@ export default function ManagementDetailsComponent({
               {/* Contract Term */}
               {activeContract && (
                 <Grid container item spacing={2}>
-                  <Grid item xs={6}>
+                  <Grid item xs={4}>
                     <Typography
                       sx={{
                         color: theme.typography.primary.black,
@@ -432,7 +432,7 @@ export default function ManagementDetailsComponent({
                       Contract Term:
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={7}>
                     <Typography
                       sx={{
                         color: theme.typography.primary.black,
@@ -450,7 +450,7 @@ export default function ManagementDetailsComponent({
 
               {/* contract end notice */}
               <Grid container item spacing={2}>
-                <Grid item xs={6}>
+                <Grid item xs={4}>
                   <Typography
                     sx={{
                       color: theme.typography.primary.black,
@@ -461,7 +461,7 @@ export default function ManagementDetailsComponent({
                     End Notice Period:
                   </Typography>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={7}>
                   <Box display='flex' alignItems='center' justifyContent={"space-between"}>
                     <Typography
                       sx={{
@@ -478,7 +478,7 @@ export default function ManagementDetailsComponent({
 
               {/* contract renew */}
               <Grid container item spacing={2}>
-                <Grid item xs={6}>
+                <Grid item xs={4}>
                   <Typography
                     sx={{
                       color: theme.typography.primary.black,

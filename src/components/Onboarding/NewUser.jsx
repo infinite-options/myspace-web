@@ -44,6 +44,7 @@ import { roleMap } from "./helper";
 import DataValidator from "../DataValidator";
 import UserExistsModal from "./UserExistsModal";
 import APIConfig from "../../utils/APIConfig";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import ListsContext from "../../contexts/ListsContext";
 
 const NewUser = () => {
@@ -74,6 +75,8 @@ const NewUser = () => {
   const [businesses, setBusinesses] = useState([]);
   const [selectedBusiness, setSelectedBusiness] = useState();
   const [userExists, setUserExists] = useState(false);
+
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const onSignupModal = () => {
     setUserExists(false);
@@ -352,8 +355,8 @@ const NewUser = () => {
           <Grid container item xs={12} justifyContent='center'>
             <Typography sx={{ fontSize: "35px", color: "#160449" }}>Select a Role</Typography>
           </Grid>
-          <Grid item xs={12}>
-            <ToggleButtonGroup value={role} exclusive onChange={handleRoleChange} aria-label='select role' sx={{ display: "flex", justifyContent: "center", gap: "10px" }}>
+          {/* <Grid item xs={12}>
+            <ToggleButtonGroup value={role} exclusive onChange={handleRoleChange} aria-label='select role' sx={{ display: "flex", justifyContent: "center", gap: "10px"}}>
               <ToggleButton value='OWNER' aria-label='owner' sx={{ backgroundColor: "#FFFFFF", color: "#000000", height: "150px", width: "200px" }}>
                 <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                   <HomeOutlinedIcon sx={{ height: "50%", width: "50%" }} />
@@ -388,7 +391,103 @@ const NewUser = () => {
                 </Box>
               </ToggleButton>
             </ToggleButtonGroup>
+          </Grid> */}
+
+          <Grid item xs={12} sx={{ marginTop: "20px" }}>
+            <ToggleButtonGroup
+              value={role}
+              exclusive
+              onChange={handleRoleChange}
+              aria-label="select role"
+              sx={{
+                display: "grid",
+                gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(auto-fit, minmax(200px, 1fr))",
+                gap: "10px",
+                justifyContent: "center",
+              }}
+            >
+              <ToggleButton
+                value="OWNER"
+                aria-label="owner"
+                sx={{
+                  backgroundColor: "#FFFFFF",
+                  color: "#000000",
+                  height: "150px",
+                  width: "200px",
+                }}
+              >
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <HomeOutlinedIcon sx={{ height: "50%", width: "50%" }} />
+                  <Typography sx={{ fontSize: "20px", fontWeight: "bold" }}>Owner</Typography>
+                </Box>
+              </ToggleButton>
+
+              <ToggleButton
+                value="MANAGER"
+                aria-label="manager"
+                sx={{
+                  backgroundColor: "#FFFFFF",
+                  color: "#000000",
+                  height: "150px",
+                  width: "200px",
+                }}
+              >
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <ManageAccountsOutlinedIcon sx={{ height: "50%", width: "50%" }} />
+                  <Typography sx={{ fontSize: "20px", fontWeight: "bold" }}>Manager</Typography>
+                </Box>
+              </ToggleButton>
+
+              <ToggleButton
+                value="TENANT"
+                aria-label="tenant"
+                sx={{
+                  backgroundColor: "#FFFFFF",
+                  color: "#000000",
+                  height: "150px",
+                  width: "200px",
+                }}
+              >
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <PersonOutlineOutlinedIcon sx={{ height: "50%", width: "50%" }} />
+                  <Typography sx={{ fontSize: "20px", fontWeight: "bold" }}>Tenant</Typography>
+                </Box>
+              </ToggleButton>
+
+              <ToggleButton
+                value="MAINTENANCE"
+                aria-label="maintenance"
+                sx={{
+                  backgroundColor: "#FFFFFF",
+                  color: "#000000",
+                  height: "150px",
+                  width: "200px",
+                }}
+              >
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <ConstructionOutlinedIcon sx={{ height: "50%", width: "50%" }} />
+                  <Typography sx={{ fontSize: "20px", fontWeight: "bold" }}>Maintenance</Typography>
+                </Box>
+              </ToggleButton>
+
+              <ToggleButton
+                value="EMPLOYEE"
+                aria-label="employee"
+                sx={{
+                  backgroundColor: "#FFFFFF",
+                  color: "#000000",
+                  height: "150px",
+                  width: "200px",
+                }}
+              >
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <PersonIcon sx={{ height: "50%", width: "50%" }} />
+                  <Typography sx={{ fontSize: "20px", fontWeight: "bold" }}>Employee</Typography>
+                </Box>
+              </ToggleButton>
+            </ToggleButtonGroup>
           </Grid>
+
           {role != null && (role === "EMPLOYEE" || role === "PM_EMPLOYEE" || role === "MAINT_EMPLOYEE") && (
             <>
               <Grid container item xs={12} justifyContent='center' sx={{ marginTop: "40px" }}>
@@ -405,7 +504,7 @@ const NewUser = () => {
               </Grid>
             </>
           )}
-          {role != null && (user == null || user.google_auth_token == null) && (
+          {/* {role != null && (user == null || user.google_auth_token == null) && (
             <>
               <Grid container item xs={12} justifyContent='center' sx={{ marginTop: "50px" }}>
                 <Grid container direction='column' item xs={4} alignItems='center'>
@@ -540,6 +639,160 @@ const NewUser = () => {
                   </Button>
                 </Grid>
                 <Grid item xs={4}></Grid>
+              </Grid>
+            </>
+          )} */}
+
+          {role != null && (user == null || user.google_auth_token == null) && (
+            <>
+              <Grid container item xs={12} justifyContent="center" sx={{ marginTop: "50px" }}>
+                <Grid container direction="column" item xs={isMobile ? 12 : 4} alignItems="center">
+                  <GoogleSignup role={role} />
+                  <Typography sx={{ fontSize: "20px", color: "#3D5CAC", fontWeight: "bold", marginTop: "20px" }}>
+                    Recommended
+                  </Typography>
+                  <List sx={{ listStyleType: "disc" }}>
+                    <ListItem sx={{ display: "list-item" }}>No Separate Password</ListItem>
+                    <ListItem sx={{ display: "list-item" }}>Makes Scheduling Easier</ListItem>
+                    <ListItem sx={{ display: "list-item" }}>Faster Setup Process</ListItem>
+                    <ListItem sx={{ display: "list-item" }}>Secured by Google</ListItem>
+                  </List>
+                </Grid>
+                <Grid container direction="row" item xs={isMobile ? 12 : 4} sx={{ padding: "7px" }}>
+                  <Grid item xs={12}>
+                    <Button
+                      onClick={() => setShowEmailSignup((prevState) => !prevState)}
+                      sx={{
+                        width: isMobile ? "100%" : "350px",
+                        height: "57px",
+                        borderRadius: "15px",
+                        fontSize: "20px",
+                        backgroundColor: "#F2F2F2",
+                        textTransform: "none",
+                        color: "grey",
+                        fontWeight: "bold",
+                        "&:hover": {
+                          backgroundColor: "#F2F2F2",
+                          color: "#160449",
+                        },
+                        boxShadow: 1,
+                        justifyContent: "space-evenly",
+                      }}
+                    >
+                      Signup with Email <KeyboardArrowDownIcon />
+                    </Button>
+                  </Grid>
+                  {showEmailSignup && (
+                    <Grid container direction="column" item xs={12} sx={{ marginTop: "30px" }}>
+                      <OutlinedInput
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Enter Email Address"
+                        sx={{
+                          marginTop: "5px",
+                          width: isMobile ? "100%" : "350px",
+                          backgroundColor: "#F2F2F2",
+                        }}
+                      />
+                      <OutlinedInput
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Enter Password"
+                        sx={{
+                          marginTop: "5px",
+                          width: isMobile ? "100%" : "350px",
+                          backgroundColor: "#F2F2F2",
+                        }}
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={() => setShowPassword((show) => !show)}
+                              edge="end"
+                            >
+                              {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        }
+                      />
+                      <OutlinedInput
+                        type={showPassword ? "text" : "password"}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Verify Password"
+                        sx={{
+                          marginTop: "5px",
+                          width: isMobile ? "100%" : "350px",
+                          backgroundColor: "#F2F2F2",
+                        }}
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={() => setShowPassword((show) => !show)}
+                              edge="end"
+                            >
+                              {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        }
+                      />
+                      <Button
+                        onClick={handleSignup}
+                        sx={{
+                          width: isMobile ? "100%" : "350px",
+                          height: "57px",
+                          borderRadius: "5px",
+                          fontSize: "16px",
+                          backgroundColor: "#3D5CAC",
+                          textTransform: "none",
+                          color: "#FFFFFF",
+                          fontWeight: "bold",
+                          "&:hover": {
+                            backgroundColor: "#160449",
+                            color: "#FFFFFF",
+                          },
+                          marginTop: "10px",
+                        }}
+                      >
+                        Sign Up
+                      </Button>
+                    </Grid>
+                  )}
+                </Grid>
+              </Grid>
+            </>
+          )}
+
+          {role != null && user != null && user.google_auth_token != null && (
+            <>
+              <Grid container direction="row" justifyContent="center" item xs={12}>
+                <Grid item xs={isMobile ? 12 : 4}></Grid>
+                <Grid item xs={isMobile ? 12 : 4}>
+                  <Button
+                    onClick={handleSignup}
+                    sx={{
+                      width: "100%",
+                      height: "57px",
+                      borderRadius: "15px",
+                      fontSize: "20px",
+                      backgroundColor: "#F2F2F2",
+                      textTransform: "none",
+                      color: "#160449",
+                      fontWeight: "bold",
+                      "&:hover": {
+                        backgroundColor: "#F2F2F2",
+                        color: "#3d5cac",
+                      },
+                      boxShadow: 1,
+                      justifyContent: "space-evenly",
+                    }}
+                  >
+                    Continue
+                  </Button>
+                </Grid>
+                <Grid item xs={isMobile ? 12 : 4}></Grid>
               </Grid>
             </>
           )}
