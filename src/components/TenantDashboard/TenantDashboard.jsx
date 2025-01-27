@@ -984,20 +984,34 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
           payment_intent: intent,
           total_paid: 0,
           payment_date: payment.payment_date,
-          groupedPayments: [],
+          payment_details: [],
+          payment_status: [],
+          payment_amount: [],
+
         };
       }
       acc[intent].total_paid += parseFloat(payment.pay_amount); // Add to total
-      acc[intent].groupedPayments.push(payment);
+      // acc[intent].groupedPayments.push(payment);
+      acc[intent].payment_details.push(payment);
+      acc[intent].payment_status.push(payment);
+      acc[intent].payment_amount.push(payment);
       return acc;
     }, {});
   
-    // Convert grouped object to an array
+   // Now, we map over the grouped object to add unique ids to each payment
     return Object.values(grouped).map((group) => ({
       ...group,
-      groupedPayments: group.groupedPayments.map((payment, index) => ({
+      payment_details: group.payment_details.map((payment, index) => ({
         ...payment,
-        id: `${group.payment_intent}-${index}`, // Unique row ID based on payment_intent
+        id: `${group.payment_intent}-${index}-details`, 
+      })),
+      payment_status: group.payment_status.map((payment, index) => ({
+        ...payment,
+        id: `${group.payment_intent}-${index}-status`, 
+      })),
+      payment_amount: group.payment_amount.map((payment, index) => ({
+        ...payment,
+        id: `${group.payment_intent}-${index}-amount`, 
       })),
     }));
   };
@@ -1030,16 +1044,29 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
       ),
     },
     {
-      field: "groupedPayments",
-      headerName: "Details",
-      flex: 3,
+      field: "payment_details",
+      headerName: "Payment Details",
+      flex: 2,
       renderCell: (params) => (
         <Box>
-          {params.value.map((payment) => (
-            <Box key={payment.payment_uid} sx={{ marginBottom: "5px" }}>
-              <Typography sx={{ fontWeight: "bold" }}>
-                {payment.pur_description} - ${payment.pay_amount}
+          {params.value?.map((payment, index) => (
+            <Box key={`payment-detail-${params.row.payment_intent}-${index}`} sx={{ marginBottom: "1px" }}>
+              <Typography sx={{}}>
+                {payment.pur_description}
               </Typography>
+            </Box>
+          ))}
+        </Box>
+      ),
+    },
+    {
+      field: "payment_status",
+      headerName: "Payment Status",
+      flex: 1,
+      renderCell: (params) => (
+        <Box>
+          {params.value?.map((payment, index) => (
+            <Box key={`payment-status-${params.row.payment_intent}-${index}`} sx={{ marginBottom: "1px" }}>
               <Typography
                 sx={{
                   fontSize: "0.85rem",
@@ -1050,11 +1077,27 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
                       ? "#A52A2A"
                       : payment.purchase_status === "PARTIALLY PAID"
                       ? "#FFA500"
-                      : "#A52A2A", 
+                      : "#A52A2A",
                   fontWeight: "bold",
                 }}
               >
-                Status: {payment.purchase_status}
+                {payment.purchase_status}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
+      ),
+    },
+    {
+      field: "payment_amount",
+      headerName: "Payment Amount",
+      flex: 1,
+      renderCell: (params) => (
+        <Box sx={{  width: "100%", textAlign: "right"}}>
+          {params.value?.map((payment, index) => (
+            <Box key={`payment-amount-${params.row.payment_intent}-${index}`} sx={{ marginBottom: "1px"  }}>
+              <Typography sx={{ fontWeight: "bold" }}>
+                ${parseFloat(payment.pay_amount).toFixed(2)}
               </Typography>
             </Box>
           ))}
@@ -1062,6 +1105,7 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
       ),
     },
   ];
+  
 
   const calculateRowHeight = (groupedPayments) => {
     const rows = groupedPayments.length;
@@ -1122,7 +1166,7 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
                 },
               }}
               getRowId={(row) => row.payment_intent}
-              getRowHeight={(params) => calculateRowHeight(params.model.groupedPayments)}
+              getRowHeight={(params) => calculateRowHeight(params.model.payment_details)}
               sx={{
                 width: "100%",
                 minWidth: "700px",
