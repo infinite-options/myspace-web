@@ -976,18 +976,19 @@ const TenantDashboard = () => {
 
 function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
 
-  const groupPaymentsByDate = (data) => {
+  const groupPaymentsByIntent = (data) => {
     const grouped = data.reduce((acc, payment) => {
-      const date = dayjs(payment.payment_date, "MM-DD-YYYY").format("MM-DD-YYYY"); // Normalize the date format
-      if (!acc[date]) {
-        acc[date] = {
-          payment_date: date,
+      const intent = payment.payment_intent; // Group by payment_intent
+      if (!acc[intent]) {
+        acc[intent] = {
+          payment_intent: intent,
           total_paid: 0,
+          payment_date: payment.payment_date,
           groupedPayments: [],
         };
       }
-      acc[date].total_paid += parseFloat(payment.pay_amount); // Add to total
-      acc[date].groupedPayments.push(payment);
+      acc[intent].total_paid += parseFloat(payment.pay_amount); // Add to total
+      acc[intent].groupedPayments.push(payment);
       return acc;
     }, {});
   
@@ -996,21 +997,27 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
       ...group,
       groupedPayments: group.groupedPayments.map((payment, index) => ({
         ...payment,
-        id: `${group.payment_date}-${index}`, // Unique row ID
+        id: `${group.payment_intent}-${index}`, // Unique row ID based on payment_intent
       })),
     }));
   };
   
-  const groupedData = groupPaymentsByDate(data);
+  const groupedData = groupPaymentsByIntent(data);
 
   const columns = [
     {
       field: "payment_date",
-      headerName: "Payment Date",
+      headerName: "Date",
       flex: 1,
-      renderCell: (params) => (
-        <Box sx={{ fontWeight: "bold" }}>{params.value || "N/A"}</Box>
-      ),
+      renderCell: (params) => {
+        const date = params.value ? dayjs(params.value, 'MM-DD-YYYY').format("MM-DD-YYYY") : "No Date";
+        return <Box sx={{ fontWeight: "bold" }}>{date}</Box>;
+      },
+      sortComparator: (v1, v2) => {
+        const date1 = dayjs(v1, 'MM-DD-YYYY').toDate();
+        const date2 = dayjs(v2, 'MM-DD-YYYY').toDate();
+        return date1 - date2;
+      },
     },
     {
       field: "total_paid",
@@ -1114,7 +1121,7 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
                   sortModel: [{ field: "payment_date", sort: "desc" }], // Default sorting by date
                 },
               }}
-              getRowId={(row) => row.payment_date}
+              getRowId={(row) => row.payment_intent}
               getRowHeight={(params) => calculateRowHeight(params.model.groupedPayments)}
               sx={{
                 width: "100%",
