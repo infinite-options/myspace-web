@@ -417,7 +417,7 @@ const PropertyListings = ({ setRightPane, isMobile, setViewRHS, setListingsData 
             <Stack>
               <FilterButtons propertyList={sortedProperties} filteredItems={displayProperties} setFilteredItems={setDisplayProperties} />
             </Stack>
-            <Stack direction='row' alignItems='center' justifyContent='space-between' sx={{ padding: "5px 15px" }}>
+            {/* <Stack direction='row' alignItems='center' justifyContent='space-between' sx={{ padding: "5px 15px" }}>
               <Box position='relative' left={0}>
                 <Typography
                   sx={{
@@ -450,7 +450,7 @@ const PropertyListings = ({ setRightPane, isMobile, setViewRHS, setListingsData 
                   />
                 </Typography>
               </Box>
-            </Stack>
+            </Stack> */}
             <Stack alignItems='flex-start' sx={{ padding: "10px 15px" }}>
               <Typography
                 sx={{
@@ -918,9 +918,9 @@ function PropertyCard({ data, status, leaseData, setRightPane, appliedData }) {
                 </Typography>
               </Stack>
             </Box>
-            <Box>
+            {/* <Box>
               <LocationOn /> <TurnedInNot />
-            </Box>
+            </Box> */}
           </Stack>
           <Stack>
             <Typography

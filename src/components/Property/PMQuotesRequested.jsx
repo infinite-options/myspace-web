@@ -1838,6 +1838,12 @@ export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee, handle
         sx={{
           minWidth: "600px",        
           marginTop: "10px",
+          "& .MuiDataGrid-row.Mui-selected": {
+            backgroundColor: "transparent !important", // Removes background color
+          },
+          "& .MuiDataGrid-cell:focus-within": {
+            outline: "none !important", // Removes the focus outline
+          },
         }}
         autoHeight
         rowHeight={50} 

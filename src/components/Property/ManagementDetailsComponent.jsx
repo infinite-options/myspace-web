@@ -595,7 +595,7 @@ export default function ManagementDetailsComponent({
                           //   marginLeft: "1%", // Adjusting margin for icon and text
                         }}
                       >
-                        {"End Contract"}
+                        {activeContract?.contract_renew_status === "EARLY TERMINATION" || activeContract?.contract_renew_status === "ENDING" ? "End Contract Requested": "End Contract"}
                       </Typography>
                     </Button>
                   </Grid>
@@ -1065,6 +1065,8 @@ export const DocumentSmallDataGrid = ({ data, handleFileClick }) => {
 const EndContractDialog = ({ open, handleClose, contract, fetchContracts, fetchProperties }) => {
   const ONE_DAY_MS = 1000 * 60 * 60 * 24;
 
+  console.log("contract - ", contract);
+
   const [contractEndDate, setContractEndDate] = useState(contract?.contract_end_date ? new Date(contract?.contract_end_date) : null);
   const today = new Date();
   const noticePeriod = contract?.contract_notice_period || 30;
@@ -1131,6 +1133,7 @@ const EndContractDialog = ({ open, handleClose, contract, fetchContracts, fetchP
       console.error(error);
     }
   };
+
 
   return (
     <form onSubmit={handleEndContract}>

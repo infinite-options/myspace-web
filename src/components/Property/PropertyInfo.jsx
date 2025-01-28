@@ -321,9 +321,9 @@ const PropertyInfo = (props) => {
               >
                 {formatAddress()}
               </Typography>
-              <Box>
+              {/* <Box>
                 <LocationOn /> <TurnedInNot />
-              </Box>
+              </Box> */}
             </Stack>
             <Typography
               sx={{

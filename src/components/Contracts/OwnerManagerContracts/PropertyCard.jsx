@@ -1196,13 +1196,13 @@ const PropertyCard = (props) => {
 
   const handleDeleteFee = (index, event) => {
     // //console.log("Contract Fees", contractFees);
+	event.stopPropagation();
 	setIsChange(true)
     setContractFees((prevFees) => {
       const feesArray = Array.from(prevFees);
       feesArray.splice(index, 1);
       return feesArray;
     });
-    event.stopPropagation();
   };
 
   const handleOpenAddFee = () => {

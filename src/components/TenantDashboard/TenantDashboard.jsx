@@ -25,6 +25,7 @@ import {
   RadioGroup,
   Card,
   CardContent,
+  Tabs, Tab,
   FormControlLabel,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -974,11 +975,252 @@ const TenantDashboard = () => {
 //   );
 // }
 
+// function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
+
+//   const groupPaymentsByIntent = (data) => {
+//     const grouped = data.reduce((acc, payment) => {
+//       const intent = payment.payment_intent; // Group by payment_intent
+//       if (!acc[intent]) {
+//         acc[intent] = {
+//           payment_intent: intent,
+//           total_paid: 0,
+//           payment_date: payment.payment_date,
+//           payment_details: [],
+//           payment_status: [],
+//           payment_amount: [],
+
+//         };
+//       }
+//       acc[intent].total_paid += parseFloat(payment.pay_amount); // Add to total
+//       // acc[intent].groupedPayments.push(payment);
+//       acc[intent].payment_details.push(payment);
+//       acc[intent].payment_status.push(payment);
+//       acc[intent].payment_amount.push(payment);
+//       return acc;
+//     }, {});
+  
+//    // Now, we map over the grouped object to add unique ids to each payment
+//     return Object.values(grouped).map((group) => ({
+//       ...group,
+//       payment_details: group.payment_details.map((payment, index) => ({
+//         ...payment,
+//         id: `${group.payment_intent}-${index}-details`, 
+//       })),
+//       payment_status: group.payment_status.map((payment, index) => ({
+//         ...payment,
+//         id: `${group.payment_intent}-${index}-status`, 
+//       })),
+//       payment_amount: group.payment_amount.map((payment, index) => ({
+//         ...payment,
+//         id: `${group.payment_intent}-${index}-amount`, 
+//       })),
+//     }));
+//   };
+  
+//   const groupedData = groupPaymentsByIntent(data);
+
+//   const columns = [
+//     {
+//       field: "payment_date",
+//       headerName: "Date",
+//       flex: 1,
+//       renderCell: (params) => {
+//         const date = params.value ? dayjs(params.value, 'MM-DD-YYYY').format("MM-DD-YYYY") : "No Date";
+//         return <Box sx={{ fontWeight: "bold" }}>{date}</Box>;
+//       },
+//       sortComparator: (v1, v2) => {
+//         const date1 = dayjs(v1, 'MM-DD-YYYY').toDate();
+//         const date2 = dayjs(v2, 'MM-DD-YYYY').toDate();
+//         return date1 - date2;
+//       },
+//     },
+//     {
+//       field: "total_paid",
+//       headerName: "Total Paid",
+//       flex: 1,
+//       renderCell: (params) => (
+//         <Box sx={{ fontWeight: "bold", color: "#4caf50" }}>
+//           ${parseFloat(params.value).toFixed(2)}
+//         </Box>
+//       ),
+//     },
+//     {
+//       field: "payment_details",
+//       headerName: "Payment Details",
+//       flex: 2,
+//       renderCell: (params) => (
+//         <Box>
+//           {params.value?.map((payment, index) => (
+//             <Box key={`payment-detail-${params.row.payment_intent}-${index}`} sx={{ marginBottom: "1px" }}>
+//               <Typography sx={{}}>
+//                 {payment.pur_description}
+//               </Typography>
+//             </Box>
+//           ))}
+//         </Box>
+//       ),
+//     },
+//     {
+//       field: "payment_status",
+//       headerName: "Payment Status",
+//       flex: 1,
+//       renderCell: (params) => (
+//         <Box>
+//           {params.value?.map((payment, index) => (
+//             <Box key={`payment-status-${params.row.payment_intent}-${index}`} sx={{ marginBottom: "1px" }}>
+//               <Typography
+//                 sx={{
+//                   fontSize: "0.85rem",
+//                   color:
+//                     payment.purchase_status === "PAID"
+//                       ? "#76B148"
+//                       : payment.purchase_status === "UNPAID"
+//                       ? "#A52A2A"
+//                       : payment.purchase_status === "PARTIALLY PAID"
+//                       ? "#FFA500"
+//                       : "#A52A2A",
+//                   fontWeight: "bold",
+//                 }}
+//               >
+//                 {payment.purchase_status}
+//               </Typography>
+//             </Box>
+//           ))}
+//         </Box>
+//       ),
+//     },
+//     {
+//       field: "payment_amount",
+//       headerName: "Payment Amount",
+//       flex: 1,
+//       renderCell: (params) => (
+//         <Box sx={{  width: "100%", textAlign: "right"}}>
+//           {params.value?.map((payment, index) => (
+//             <Box key={`payment-amount-${params.row.payment_intent}-${index}`} sx={{ marginBottom: "1px"  }}>
+//               <Typography sx={{ fontWeight: "bold" }}>
+//                 ${parseFloat(payment.pay_amount).toFixed(2)}
+//               </Typography>
+//             </Box>
+//           ))}
+//         </Box>
+//       ),
+//     },
+//   ];
+  
+
+//   const calculateRowHeight = (groupedPayments) => {
+//     const rows = groupedPayments.length;
+//     const rowHeight = 50; // Base height for each row
+//     return rowHeight + rows * 40; // Increase height based on the number of transactions
+//   };
+  
+//   return (
+//     <Grid container sx={{ flex: 1, width: "100%" }}>
+//       <Paper
+//         component={Stack}
+//         sx={{
+//           padding: isMobile ? "0px" : "20px",
+//           backgroundColor: "#f0f0f0",
+//           borderRadius: "8px",
+//           width: "100%",
+//           marginBottom: isMobile ? "10px" : "0px",
+//         }}
+//       >
+//         <Grid container sx={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
+//           <Grid item xs={0.5} md={1}>
+//             <Button onClick={onBack}>
+//               <ArrowBackIcon
+//                 sx={{
+//                   color: "#160449",
+//                   fontSize: "25px",
+//                   margin: "5px",
+//                 }}
+//               />
+//             </Button>
+//           </Grid>
+//           <Grid item xs={11} md={10}>
+//             <Typography
+//               sx={{
+//                 color: theme.typography.primary.black,
+//                 fontWeight: theme.typography.primary.fontWeight,
+//                 fontSize: theme.typography.largeFont,
+//                 textAlign: "center",
+//               }}
+//             >
+//               Payment History
+//             </Typography>
+//           </Grid>
+//           <Grid item xs={0.5} md={1} />
+//         </Grid>
+//         {groupedData.length > 0 ? (
+//           <Grid sx={{ overflowX: "auto", width: "100%" }}>
+//             <DataGrid
+//               rows={groupedData}
+//               columns={columns}
+//               pageSizeOptions={[5, 10, 20]}
+//               initialState={{
+//                 pagination: {
+//                   paginationModel: { pageSize: 5, page: 0 },
+//                 },
+//                 sorting: {
+//                   sortModel: [{ field: "payment_date", sort: "desc" }], // Default sorting by date
+//                 },
+//               }}
+//               getRowId={(row) => row.payment_intent}
+//               getRowHeight={(params) => calculateRowHeight(params.model.payment_details)}
+//               sx={{
+//                 width: "100%",
+//                 minWidth: "700px",
+//                 backgroundColor: "#f0f0f0",
+//               }}
+//             />
+//           </Grid>
+//         ) : (
+//           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "200px" }}>
+//             <Typography sx={{ fontSize: "16px" }}>No Payment History Available</Typography>
+//           </Box>
+//         )}
+//       </Paper>
+//     </Grid>
+//   );
+
+// }
+
 function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
+  const [selectedTab, setSelectedTab] = useState("By Payment");
+
+  const handleTabChange = (event, newValue) => {
+    setSelectedTab(newValue);
+  };
+
+  const handleSelectTab = (tab) => {
+    setSelectedTab(tab);
+  };
+
+  const groupPaymentsByPurchase = (data) => {
+    const grouped = data.reduce((acc, payment) => {
+      const description = payment.pur_description;
+      if (!acc[description]) {
+        acc[description] = {
+          description,
+          total_paid: 0,
+          payment_dates: [],
+          payment_statuses: [],
+          payment_amounts: [],
+        };
+      }
+      acc[description].total_paid += parseFloat(payment.pay_amount);
+      acc[description].payment_dates.push(payment.payment_date);
+      acc[description].payment_statuses.push(payment.purchase_status);
+      acc[description].payment_amounts.push(payment.pay_amount);
+      return acc;
+    }, {});
+    return Object.values(grouped);
+  };
 
   const groupPaymentsByIntent = (data) => {
     const grouped = data.reduce((acc, payment) => {
-      const intent = payment.payment_intent; // Group by payment_intent
+      const intent = payment.payment_intent;
       if (!acc[intent]) {
         acc[intent] = {
           payment_intent: intent,
@@ -987,38 +1229,96 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
           payment_details: [],
           payment_status: [],
           payment_amount: [],
-
         };
       }
-      acc[intent].total_paid += parseFloat(payment.pay_amount); // Add to total
-      // acc[intent].groupedPayments.push(payment);
+      acc[intent].total_paid += parseFloat(payment.pay_amount);
       acc[intent].payment_details.push(payment);
       acc[intent].payment_status.push(payment);
       acc[intent].payment_amount.push(payment);
       return acc;
     }, {});
-  
-   // Now, we map over the grouped object to add unique ids to each payment
-    return Object.values(grouped).map((group) => ({
-      ...group,
-      payment_details: group.payment_details.map((payment, index) => ({
-        ...payment,
-        id: `${group.payment_intent}-${index}-details`, 
-      })),
-      payment_status: group.payment_status.map((payment, index) => ({
-        ...payment,
-        id: `${group.payment_intent}-${index}-status`, 
-      })),
-      payment_amount: group.payment_amount.map((payment, index) => ({
-        ...payment,
-        id: `${group.payment_intent}-${index}-amount`, 
-      })),
-    }));
+    return Object.values(grouped);
   };
-  
-  const groupedData = groupPaymentsByIntent(data);
 
-  const columns = [
+  const groupedData = selectedTab === "By Purchase" ? groupPaymentsByPurchase(data) : groupPaymentsByIntent(data);
+
+  const columns = selectedTab === "By Purchase" ? [
+    {
+      field: "description",
+      headerName: "Description",
+      flex: 2,
+      renderCell: (params) => <Box>{params.value}</Box>,
+    },
+    {
+      field: "total_paid",
+      headerName: "Amount Paid",
+      flex: 1,
+      renderCell: (params) => (
+        <Box sx={{ fontWeight: "bold", color: "#4caf50" }}>
+          ${parseFloat(params.value).toFixed(2)}
+        </Box>
+      ),
+    },
+    {
+      field: "payment_statuses",
+      headerName: "Payment Status",
+      flex: 1,
+      renderCell: (params) => (
+        <Box>
+          {params.value?.map((status, index) => (
+            <Box key={`status-${index}`} sx={{ marginBottom: "1px" }}>
+              <Typography
+                sx={{
+                  fontSize: "0.85rem",
+                  color:
+                    status === "PAID"
+                      ? "#76B148"
+                      : status === "UNPAID"
+                      ? "#A52A2A"
+                      : status === "PARTIALLY PAID"
+                      ? "#FFA500"
+                      : "#A52A2A",
+                  fontWeight: "bold",
+                }}
+              >
+                {status}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
+      ),
+    },
+    {
+      field: "payment_dates",
+      headerName: "Payment Dates",
+      flex: 1,
+      renderCell: (params) => (
+        <Box>
+          {params.value?.map((date, index) => (
+            <Box key={`date-${index}`} sx={{ marginBottom: "1px" }}>
+              <Typography sx={{fontSize: "0.85rem"}}>{dayjs(date, 'MM-DD-YYYY').format("MM-DD-YYYY")}</Typography>
+            </Box>
+          ))}
+        </Box>
+      ),
+    },
+    {
+      field: "payment_amounts",
+      headerName: "Payment Amount",
+      flex: 1,
+      renderCell: (params) => (
+        <Box sx={{ width: "100%", textAlign: "right" }}>
+          {params.value?.map((amount, index) => (
+            <Box key={`amount-${index}`} sx={{ marginBottom: "1px" }}>
+              <Typography sx={{ fontWeight: "bold", fontSize: "0.85rem", }}>
+                ${parseFloat(amount).toFixed(2)}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
+      ),
+    },
+  ] : [
     {
       field: "payment_date",
       headerName: "Date",
@@ -1105,14 +1405,21 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
       ),
     },
   ];
-  
 
   const calculateRowHeight = (groupedPayments) => {
-    const rows = groupedPayments.length;
-    const rowHeight = 50; // Base height for each row
-    return rowHeight + rows * 40; // Increase height based on the number of transactions
+
+    let rows = 0;
+    
+    if(selectedTab === "By Purchase") {
+      rows = groupedPayments?.payment_amounts?.length;
+    }else{
+      rows = groupedPayments?.payment_details?.length;
+    }
+
+    const rowHeight = 50;
+    return rowHeight + rows * 40;
   };
-  
+
   return (
     <Grid container sx={{ flex: 1, width: "100%" }}>
       <Paper
@@ -1151,6 +1458,41 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
           </Grid>
           <Grid item xs={0.5} md={1} />
         </Grid>
+
+        {/* Tabs */}
+        <Box sx={{ display: "flex", justifyContent: "center", width: "100%", marginBottom: "20px", marginTop: "10px" }}>
+          <Button
+            sx={{
+              width: "150px",
+              backgroundColor: selectedTab === "By Purchase" ? "#3D5CAC" : "#9EAED6",
+              textTransform: "none",
+              "&:hover": {
+                backgroundColor: selectedTab === "By Purchase" ? "#3D5CAC" : "#9EAED6",
+              },
+            }}
+            onClick={() => handleSelectTab("By Purchase")}
+          >
+            <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>
+              By Purchase
+            </Typography>
+          </Button>
+          <Button
+            sx={{
+              width: "150px",
+              backgroundColor: selectedTab === "By Payment" ? "#3D5CAC" : "#9EAED6",
+              textTransform: "none",
+              "&:hover": {
+                backgroundColor: selectedTab === "By Payment" ? "#3D5CAC" : "#9EAED6",
+              },
+            }}
+            onClick={() => handleSelectTab("By Payment")}
+          >
+            <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>
+              By Payment
+            </Typography>
+          </Button>
+        </Box>
+
         {groupedData.length > 0 ? (
           <Grid sx={{ overflowX: "auto", width: "100%" }}>
             <DataGrid
@@ -1158,15 +1500,11 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
               columns={columns}
               pageSizeOptions={[5, 10, 20]}
               initialState={{
-                pagination: {
-                  paginationModel: { pageSize: 5, page: 0 },
-                },
-                sorting: {
-                  sortModel: [{ field: "payment_date", sort: "desc" }], // Default sorting by date
-                },
+                pagination: { paginationModel: { pageSize: 5, page: 0 } },
+                sorting: { sortModel: [{ field: "payment_date", sort: "desc" }] },
               }}
-              getRowId={(row) => row.payment_intent}
-              getRowHeight={(params) => calculateRowHeight(params.model.payment_details)}
+              getRowId={(row) => row.description || row.payment_intent}
+              getRowHeight={(params) => calculateRowHeight(params.model)}
               sx={{
                 width: "100%",
                 minWidth: "700px",
@@ -1182,8 +1520,8 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
       </Paper>
     </Grid>
   );
-
 }
+
 
 const LeaseDetails = ({ leaseDetails, rightPane, setRightPane, selectedProperty, relatedLease, isMobile, setViewRHS, setReload, handleViewTenantApplication }) => {
   // //console.log("Lease Details renewal", relatedLease);

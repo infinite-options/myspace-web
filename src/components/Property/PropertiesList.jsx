@@ -428,6 +428,24 @@ export default function PropertiesList(props) {
                 }}
               />
             )}
+
+            {(params.row.contract_renew_status === "RENEW REQUESTED" || params.row.contract_renew_status === "PM RENEW REQUESTED") && (
+              <Badge
+                overlap="circular"
+                color="warning"
+                badgeContent="R"
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+                style={{
+                  color: "#000000",
+                  // width: "100%",
+                  backgroundColor:"yellow",
+                  transform: 'translate(-70px, -17px)',
+                }}
+              />
+            )}
           </Box>
         );
       },
