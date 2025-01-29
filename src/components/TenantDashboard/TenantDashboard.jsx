@@ -1235,9 +1235,9 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
           description,
           total_paid: 0,
           payment_dates: [],
-          payment_statuses: [],
+          payment_Status: payment.purchase_status, 
           payment_amounts: [],
-          last_payment_date: payment.payment_date, // Initialize with first date
+          last_payment_date: payment.payment_date,
         };
       } else {
         if (new Date(payment.payment_date) > new Date(acc[description].last_payment_date)) {
@@ -1246,7 +1246,6 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
       }
       acc[description].total_paid += parseFloat(payment.pay_amount);
       acc[description].payment_dates.push(payment.payment_date);
-      acc[description].payment_statuses.push(payment.purchase_status);
       acc[description].payment_amounts.push(payment.pay_amount);
       return acc;
     }, {});
@@ -1309,31 +1308,27 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
       ),
     },
     {
-      field: "payment_statuses",
+      field: "payment_Status",
       headerName: "Payment Status",
       flex: 1,
       renderCell: (params) => (
         <Box>
-          {params.value?.map((status, index) => (
-            <Box key={`status-${index}`} sx={{ marginBottom: "1px" }}>
-              <Typography
-                sx={{
-                  fontSize: "0.85rem",
-                  color:
-                    status === "PAID"
-                      ? "#76B148"
-                      : status === "UNPAID"
-                      ? "#A52A2A"
-                      : status === "PARTIALLY PAID"
-                      ? "#FFA500"
-                      : "#A52A2A",
-                  fontWeight: "bold",
-                }}
-              >
-                {status}
-              </Typography>
-            </Box>
-          ))}
+          <Typography
+            sx={{
+              fontSize: "0.85rem",
+              color:
+                params.value === "PAID"
+                  ? "#76B148"
+                  : params.value === "UNPAID"
+                  ? "#A52A2A"
+                  : params.value === "PARTIALLY PAID"
+                  ? "#FFA500"
+                  : "#A52A2A",
+              fontWeight: "bold",
+            }}
+          >
+            {params.value}
+          </Typography>
         </Box>
       ),
     },
