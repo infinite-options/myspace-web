@@ -815,7 +815,7 @@ const ManagerProfitability = ({
             }}
           >
             <CalendarTodayIcon sx={{ color: "#160449", fontWeight: theme.typography.common.fontWeight, fontSize: "12px", margin: "5px" }} />
-            <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Select Month / Year</Typography>
+            <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: headerTab === "select_month_year"? "white": "#160449" }}>Select Month / Year</Typography>
           </Button>
           
           <Button
@@ -854,7 +854,7 @@ const ManagerProfitability = ({
               setHeaderTab("last_three_months");
             }}
           >
-            <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Last 3 Month</Typography>
+            <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: headerTab === "last_three_months"? "white": "#160449" }}>Last 3 Month</Typography>
           </Button>
 
           <Button
@@ -883,7 +883,7 @@ const ManagerProfitability = ({
               setHeaderTab("last_month");
             }}
           >
-            <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Last Month</Typography>
+            <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: headerTab === "last_month" ? "white" : "#160449" }}>Last Month</Typography>
           </Button>
           
           <Button
@@ -901,7 +901,7 @@ const ManagerProfitability = ({
               setYear([currentYear.toString()]);
             }}
           >
-            <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>{currentMonth}</Typography>
+            <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: headerTab === "current_month"? "white" : "#160449" }}>{currentMonth}</Typography>
           </Button>
 
           <Button
@@ -930,7 +930,7 @@ const ManagerProfitability = ({
               setHeaderTab("next_month");
             }}
           >
-            <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Next Month</Typography>
+            <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: headerTab === "next_month" ? "white" : "#160449" }}>Next Month</Typography>
           </Button>
         </Box>
 
@@ -1037,7 +1037,7 @@ const ManagerProfitability = ({
                   sx={{
                     fontSize: "12px",
                     fontWeight: "bold",
-                    color: "#160449",
+                    color: headerTab === "select_month_year" ? "white" : "#160449",
                   }}
                 >
                   Select Month / Year
@@ -1125,7 +1125,7 @@ const ManagerProfitability = ({
                   setHeaderTab("last_three_months");
                 }}
               >
-                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Last 3 Month</Typography>
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: headerTab === "last_three_months"? "white" : "#160449" }}>Last 3 Month</Typography>
               </Button>
 
               <Button
@@ -1154,7 +1154,7 @@ const ManagerProfitability = ({
                   setHeaderTab("last_month");
                 }}
               >
-                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Last Month</Typography>
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: headerTab === "last_month" ? "white" : "#160449" }}>Last Month</Typography>
               </Button>
               
               <Button
@@ -1172,7 +1172,7 @@ const ManagerProfitability = ({
                   setYear([currentYear.toString()]);
                 }}
               >
-                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>{currentMonth}</Typography>
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: headerTab === "current_month"? "white" : "#160449" }}>{currentMonth}</Typography>
               </Button>
 
               <Button
@@ -1201,7 +1201,7 @@ const ManagerProfitability = ({
                   setHeaderTab("next_month");
                 }}
               >
-                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Next Month</Typography>
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: headerTab === "next_month"? "white" : "#160449" }}>Next Month</Typography>
               </Button>
             </Box>
 
@@ -1233,7 +1233,7 @@ const ManagerProfitability = ({
                 }}
                 onClick={() => handleSelectTab("profit")}
               >
-                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: tab === "profit"? "whhite":"#160449" }}>
                   Profit By Property
                 </Typography>
               </Button>
@@ -1250,7 +1250,7 @@ const ManagerProfitability = ({
                 }}
                 onClick={() => handleSelectTab("by_sort")}
               >
-                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: tab === "by_sort"? "white" : "#160449" }}>
                   Profit By Type
                 </Typography>
               </Button>
@@ -1267,7 +1267,7 @@ const ManagerProfitability = ({
                 }}
                 onClick={() => handleSelectTab("by_cashflow")}
               >
-                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: tab === "by_cashflow" ? "white" : "#160449" }}>
                   Cashflow By Property
                 </Typography>
               </Button>
@@ -1284,7 +1284,7 @@ const ManagerProfitability = ({
                 }}
                 onClick={() => handleSelectTab("type")}
               >
-                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: tab === "type" ? "white" : "#160449" }}>
                   Cashflow By Type
                 </Typography>
               </Button>
@@ -1361,7 +1361,7 @@ const ManagerProfitability = ({
                 }}
                 onClick={() => {handleSelectTab("profit")}}
               >
-                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit By Property</Typography>
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: tab === "profit"? "white": "#160449" }}>Profit By Property</Typography>
               </Button>
             </Grid>
             <Grid container justifyContent='center' item xs={2.2} marginRight={4}>
@@ -1376,7 +1376,7 @@ const ManagerProfitability = ({
                 }}
                 onClick={() => {handleSelectTab("by_sort")}}
               >
-                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Profit By Type</Typography>
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: tab === "by_sort"? "white": "#160449" }}>Profit By Type</Typography>
               </Button>
             </Grid>
             <Grid container justifyContent='center' item xs={3.2} marginRight={4}>
@@ -1391,7 +1391,7 @@ const ManagerProfitability = ({
                 }}
                 onClick={() => {handleSelectTab("by_cashflow")}}
               >
-                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Cashflow By Property</Typography>
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: tab === "by_cashflow"? "white":"#160449" }}>Cashflow By Property</Typography>
               </Button>
             </Grid>
             <Grid container justifyContent='center' item xs={2.7} marginRight={4}>
@@ -1406,7 +1406,7 @@ const ManagerProfitability = ({
                 }}
                 onClick={() => handleSelectTab("type")}
               >
-                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>Cashflow By Type</Typography>
+                <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: tab === "type" ? "white" : "#160449" }}>Cashflow By Type</Typography>
               </Button>
             </Grid>
           </Grid>

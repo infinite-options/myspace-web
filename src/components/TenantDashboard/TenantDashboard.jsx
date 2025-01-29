@@ -1188,6 +1188,9 @@ const TenantDashboard = () => {
 
 function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
   const [selectedTab, setSelectedTab] = useState("By Payment");
+  const [sortModel, setSortModel] = useState([
+    { field: "payment_date", sort: "desc" },
+  ]);
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
@@ -1195,7 +1198,34 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
 
   const handleSelectTab = (tab) => {
     setSelectedTab(tab);
+    setSortModel([
+      {
+        field: tab === "By Purchase" ? "last_payment_date" : "payment_date",
+        sort: "desc",
+      },
+    ]);
   };
+
+  // const groupPaymentsByPurchase = (data) => {
+  //   const grouped = data.reduce((acc, payment) => {
+  //     const description = payment.pur_description;
+  //     if (!acc[description]) {
+  //       acc[description] = {
+  //         description,
+  //         total_paid: 0,
+  //         payment_dates: [],
+  //         payment_statuses: [],
+  //         payment_amounts: [],
+  //       };
+  //     }
+  //     acc[description].total_paid += parseFloat(payment.pay_amount);
+  //     acc[description].payment_dates.push(payment.payment_date);
+  //     acc[description].payment_statuses.push(payment.purchase_status);
+  //     acc[description].payment_amounts.push(payment.pay_amount);
+  //     return acc;
+  //   }, {});
+  //   return Object.values(grouped);
+  // };
 
   const groupPaymentsByPurchase = (data) => {
     const grouped = data.reduce((acc, payment) => {
@@ -1207,7 +1237,12 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
           payment_dates: [],
           payment_statuses: [],
           payment_amounts: [],
+          last_payment_date: payment.payment_date, // Initialize with first date
         };
+      } else {
+        if (new Date(payment.payment_date) > new Date(acc[description].last_payment_date)) {
+          acc[description].last_payment_date = payment.payment_date;
+        }
       }
       acc[description].total_paid += parseFloat(payment.pay_amount);
       acc[description].payment_dates.push(payment.payment_date);
@@ -1246,8 +1281,22 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
     {
       field: "description",
       headerName: "Description",
-      flex: 2,
+      flex: 1.5,
       renderCell: (params) => <Box>{params.value}</Box>,
+    },
+    {
+      field: "last_payment_date",
+      headerName: "Last Payment Date",
+      flex: 1,
+      renderCell: (params) => {
+        const date = params.value ? dayjs(params.value, 'MM-DD-YYYY').format("MM-DD-YYYY") : "No Date";
+        return <Box sx={{ fontWeight: "bold" }}>{date}</Box>;
+      },
+      sortComparator: (v1, v2) => {
+        const date1 = dayjs(v1, 'MM-DD-YYYY').toDate();
+        const date2 = dayjs(v2, 'MM-DD-YYYY').toDate();
+        return date1 - date2;
+      },
     },
     {
       field: "total_paid",
@@ -1464,6 +1513,7 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
           <Button
             sx={{
               width: "150px",
+              marginRight: "10px",
               backgroundColor: selectedTab === "By Purchase" ? "#3D5CAC" : "#9EAED6",
               textTransform: "none",
               "&:hover": {
@@ -1472,7 +1522,7 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
             }}
             onClick={() => handleSelectTab("By Purchase")}
           >
-            <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>
+            <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: selectedTab === "By Purchase"? "white" : "#160449" }}>
               By Purchase
             </Typography>
           </Button>
@@ -1487,7 +1537,7 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
             }}
             onClick={() => handleSelectTab("By Payment")}
           >
-            <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: "#160449" }}>
+            <Typography sx={{ fontSize: "12px", fontWeight: "bold", color: selectedTab === "By Payment"? "white" : "#160449" }}>
               By Payment
             </Typography>
           </Button>
@@ -1501,8 +1551,10 @@ function TenantPaymentHistoryTable({ data, setRightPane, onBack, isMobile }) {
               pageSizeOptions={[5, 10, 20]}
               initialState={{
                 pagination: { paginationModel: { pageSize: 5, page: 0 } },
-                sorting: { sortModel: [{ field: "payment_date", sort: "desc" }] },
+                // sorting: { sortModel: [{ field: selectedTab === "By Purchase" ? "last_payment_date" :"payment_date", sort: "desc" }] },
               }}
+              sortModel={sortModel} // Controlled sorting
+              onSortModelChange={(model) => setSortModel(model)}
               getRowId={(row) => row.description || row.payment_intent}
               getRowHeight={(params) => calculateRowHeight(params.model)}
               sx={{
