@@ -230,6 +230,33 @@ function ProfileEditor() {
     event.preventDefault();
   };
 
+  const handleChangeAcceptingNewClient = (event, value) => {
+    try {
+      const headers = {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "*",
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Credentials": "*",
+      };
+
+      const profileFormData = new FormData();
+
+      profileFormData.append(" business_new_client", value);
+
+      axios
+        .put(`${APIConfig.baseURL.dev}/profile`, profileFormData, headers)
+        .then((response) => {
+          console.log("Profile Updated", response.data);
+        })
+        .catch((error) => {
+          console.log("Cannot Update profile", error);
+        });
+    } catch (error) {
+      console.log("Cannot Update the lease", error);
+      // setShowSpinner(false);
+    }
+  };
+
   const getPasswordChangeForm = () => {
     if (profileData) {
       if (selectedRole === "OWNER") {
@@ -277,7 +304,7 @@ function ProfileEditor() {
         </Grid>
         <Grid container spacing={6}>
           <Grid item xs={12} md={3}>
-            <ApplicationSettings handleChangePasswordClick={handleChangePasswordClick} setRHS={setRHS} handleEditUserInfoClick={handleEditUserInfoClick}/>
+            <ApplicationSettings handleChangeAcceptingNewClient={handleChangeAcceptingNewClient} handleChangePasswordClick={handleChangePasswordClick} setRHS={setRHS} handleEditUserInfoClick={handleEditUserInfoClick}/>
           </Grid>
           {RHS === "form" && (
             <Grid item xs={12} md={9}>

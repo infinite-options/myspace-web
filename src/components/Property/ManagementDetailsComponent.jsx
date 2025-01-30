@@ -96,7 +96,7 @@ export default function ManagementDetailsComponent({
     setSelectedPreviewFile(null);
   };
 
-  const handleManagerEndContractClick = (endDate) => {
+  const handleManagerEndContractClick = (endDate, isAcceptRejectFlow = false) => {
     setShowSpinner(true);
     const formattedDate = endDate.format("MM-DD-YYYY");
     // //console.log("handleEndContractClick - formattedDate - ", formattedDate);
@@ -105,8 +105,31 @@ export default function ManagementDetailsComponent({
 
     // formData.append("contract_uid", currentContractUID);
     formData.append("contract_uid", activeContract?.contract_uid);
-    formData.append("contract_renew_status", "ENDING");
-    formData.append("contract_early_end_date", formattedDate);
+
+    if (isAcceptRejectFlow) {
+      // Acceptance logic
+      const contractEndDate = new Date(activeContract.contract_end_date);
+      const today = new Date();
+      
+      if (endDate.toDate() >= contractEndDate) {
+        if (today <= new Date(contractEndDate.getTime() - contractEndNotice * 86400000)) {
+          formData.append("contract_renew_status", "ENDING");
+        } else {
+          formData.append("contract_renew_status", "EARLY TERMINATION");
+          formData.append("contract_early_end_date", formattedDate);
+        }
+      } else {
+        formData.append("contract_renew_status", "EARLY TERMINATION");
+        formData.append("contract_early_end_date", formattedDate);
+      }
+    } else {
+      // Initial manager request
+      formData.append("contract_renew_status", "PM TERMINATION REQUESTED");
+      formData.append("contract_early_end_date", formattedDate);
+    }
+
+    // formData.append("contract_renew_status", "ENDING");
+    // formData.append("contract_early_end_date", formattedDate);
 
     const url = `${APIConfig.baseURL.dev}/contracts`;
     // const url = `http://localhost:4000/contracts`;
@@ -131,6 +154,22 @@ export default function ManagementDetailsComponent({
         console.error("There was a problem with the fetch operation:", error);
         setShowSpinner(false);
       });
+  };
+
+  const getEndContractButtonText = () => {
+    if (activeContract?.contract_renew_status === "PM TERMINATION REQUESTED") {
+      return "PM Termination Requested";
+    }
+    if (activeContract?.contract_renew_status === "TERMINATION REQUESTED") {
+      return "Owner Termination Requested";
+    }
+    if (activeContract?.contract_renew_status === "EARLY TERMINATION REJECTED") {
+      return "End Contract (Rejected)";
+    }
+    return activeContract?.contract_renew_status === "EARLY TERMINATION" || 
+           activeContract?.contract_renew_status === "ENDING" 
+           ? "End Contract Approved" 
+           : "End Contract";
   };
 
   return (
@@ -357,7 +396,7 @@ export default function ManagementDetailsComponent({
                                 fontSize: theme.typography.smallFont,
                               }}
                             >
-                              {activeContract?.contract_renew_status?.includes("RENEW") ? " RENEWING" : (activeContract?.contract_renew_status?.includes("EARLY") ? "EARLY END" : activeContract?.contract_renew_status)}
+                              {activeContract?.contract_renew_status?.includes("RENEW") ? " RENEWING" : (activeContract?.contract_renew_status?.includes("EARLY") && activeContract?.contract_renew_status !== "EARLY TERMINATION REJECTED" ? "EARLY END" : activeContract?.contract_renew_status)}
                             </Typography>
                           )
                         }
@@ -595,7 +634,7 @@ export default function ManagementDetailsComponent({
                           //   marginLeft: "1%", // Adjusting margin for icon and text
                         }}
                       >
-                        {activeContract?.contract_renew_status === "EARLY TERMINATION" || activeContract?.contract_renew_status === "ENDING" ? "End Contract Requested": "End Contract"}
+                        {getEndContractButtonText()}
                       </Typography>
                     </Button>
                   </Grid>
@@ -908,6 +947,7 @@ export default function ManagementDetailsComponent({
             onEndContract={handleManagerEndContractClick}
             noticePeriod={contractEndNotice}
             fetchContracts={fetchContracts}
+            fetchProperties={fetchProperties}
             contract={activeContract}
           />
         </Box>
@@ -1065,7 +1105,7 @@ export const DocumentSmallDataGrid = ({ data, handleFileClick }) => {
 const EndContractDialog = ({ open, handleClose, contract, fetchContracts, fetchProperties }) => {
   const ONE_DAY_MS = 1000 * 60 * 60 * 24;
 
-  console.log("contract - ", contract);
+  // console.log("contract - ", contract);
 
   const [contractEndDate, setContractEndDate] = useState(contract?.contract_end_date ? new Date(contract?.contract_end_date) : null);
   const today = new Date();
@@ -1076,6 +1116,15 @@ const EndContractDialog = ({ open, handleClose, contract, fetchContracts, fetchP
   const formattedMinEndDate = minEndDate.format("MM/DD/YYYY");
   // console.log('start is', contract.contract_start_date);
   const startDate = dayjs(contract?.contract_start_date);
+  const [isAcceptRejectMode, setIsAcceptRejectMode] = useState(false);
+  const [existingRequestDate, setExistingRequestDate] = useState(null);
+
+  useEffect(() => {
+    if (contract?.contract_renew_status === "PM TERMINATION REQUESTED") {
+      setIsAcceptRejectMode(true);
+      setExistingRequestDate(contract.contract_early_end_date);
+    }
+  }, [open, contract]);
 
   useEffect(() => {
     // //console.log("selectedEndDate - ", selectedEndDate);
@@ -1093,23 +1142,11 @@ const EndContractDialog = ({ open, handleClose, contract, fetchContracts, fetchP
   const handleEndContract = (event) => {
     event.preventDefault();
 
-    if (selectedEndDate.toDate() >= contractEndDate) {
-      if (today <= new Date(contractEndDate.getTime() - noticePeriod * ONE_DAY_MS)) {
-        contractRenewStatus = "ENDING";
-      } else {
-        contractRenewStatus = "EARLY TERMINATION";
-      }
-    } else {
-      contractRenewStatus = "EARLY TERMINATION";
-    }
-
     const formData = new FormData();
     formData.append("contract_uid", contract.contract_uid);
     // formData.append("contract_status", "ENDING");
-    formData.append("contract_renew_status", contractRenewStatus);
-    if (contractRenewStatus === "EARLY TERMINATION") {
-      formData.append("contract_early_end_date", selectedEndDate.format("MM-DD-YYYY"));
-    }
+    formData.append("contract_renew_status", "TERMINATION REQUESTED");
+    formData.append("contract_early_end_date", selectedEndDate.format("MM-DD-YYYY"));
 
     try {
       fetch(`${APIConfig.baseURL.dev}/contracts`, {
@@ -1134,9 +1171,40 @@ const EndContractDialog = ({ open, handleClose, contract, fetchContracts, fetchP
     }
   };
 
+  const handleResponse = async (accepted) => {
+    const formData = new FormData();
+    formData.append("contract_uid", contract.contract_uid);
+    
+    if (accepted) {
+      const contractEndDate = new Date(contract.contract_end_date);
+      const today = new Date();
+      const noticePeriod = contract.contract_end_notice_period || 30;
+      
+      if (today <= new Date(contractEndDate.getTime() - noticePeriod * 86400000)) {
+        formData.append("contract_renew_status", "ENDING");
+      } else {
+        formData.append("contract_renew_status", "EARLY TERMINATION");
+        formData.append("contract_early_end_date", existingRequestDate);
+      }
+    } else {
+      formData.append("contract_renew_status", "EARLY TERMINATION REJECTED");
+      formData.append("contract_early_end_date", "");
+    }
+
+    try {
+      await fetch(`${APIConfig.baseURL.dev}/contracts`, {
+        method: "PUT",
+        body: formData,
+      });
+      await fetchContracts();
+      await fetchProperties();
+      handleClose();
+    } catch (error) {
+      console.error("Error handling response:", error);
+    }
+  };
 
   return (
-    <form onSubmit={handleEndContract}>
       <Dialog
         open={open}
         onClose={handleClose}
@@ -1149,7 +1217,7 @@ const EndContractDialog = ({ open, handleClose, contract, fetchContracts, fetchP
         }}
       >
         <DialogTitle sx={{ justifyContent: "center" }}>
-          End Current Contract
+          {isAcceptRejectMode ? "Respond to PM Termination Request" : "End Current Contract"}
           <IconButton
             onClick={handleClose}
             sx={{
@@ -1163,84 +1231,127 @@ const EndContractDialog = ({ open, handleClose, contract, fetchContracts, fetchP
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <Grid container>
-            <Grid container item xs={12} sx={{ marginTop: "10px" }}>
-              <Grid item xs={12}>
-                <Typography sx={{ fontWeight: "bold", color: "#3D5CAC", mb: "10px" }}>This contract is scheduled to end on {contract?.contract_end_date}.</Typography>
-                {`The notice period to end this contract is ${noticePeriod} days. The earliest possible end date is ${formattedMinEndDate}.`}
+          {isAcceptRejectMode ? (
+            <Box sx={{ pt: 2 }}>
+              <Typography variant="body1" gutterBottom>
+                Property Manager requested termination with date: {existingRequestDate}
+              </Typography>
+            </Box>
+          ) : (
+            <>
+              <Grid container>
+                <Grid container item xs={12} sx={{ marginTop: "10px" }}>
+                  <Grid item xs={12}>
+                    <Typography sx={{ fontWeight: "bold", color: "#3D5CAC", mb: "10px" }}>This contract is scheduled to end on {contract?.contract_end_date}.</Typography>
+                    {`The notice period to end this contract is ${noticePeriod} days. The earliest possible end date is ${formattedMinEndDate}.`}
+                  </Grid>
+                </Grid>
+                <Grid item xs={12} sx={{ marginTop: "15px" }}>
+                  <Typography sx={{ width: "auto" }}>Please select the desired end date.</Typography>
+                </Grid>
               </Grid>
-            </Grid>
-            <Grid item xs={12} sx={{ marginTop: "15px" }}>
-              <Typography sx={{ width: "auto" }}>Please select the desired end date.</Typography>
-            </Grid>
-          </Grid>
-          <Grid container item xs={3} sx={{ marginTop: "10px" }}>
-            <Grid item xs={12}>
-              <Typography sx={{ fontWeight: "bold", color: "#3D5CAC" }}>End Date</Typography>
-            </Grid>
-            <Grid item xs={12}>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  // value={selectedEndDate}
-                  // // minDate={minEndDate}
-                  value={selectedEndDate}
-                  minDate={startDate}
-                  onChange={(v) => setSelectedEndDate(v)}
-                  slots={{
-                    openPickerIcon: CalendarIcon,
-                  }}
-                  slotProps={datePickerSlotProps}
-                />
-              </LocalizationProvider>
-            </Grid>
-          </Grid>
-          <Grid container>
-            <Grid container item xs={12} sx={{ marginTop: "10px" }}>
-              <Grid item xs={12}>
-                {/* <Typography sx={{fontWeight: 'bold', color: 'red'}}>
-                                    DEBUG - notice period is 30 days by default if not specified.
-                                </Typography> */}
-                <Typography sx={{ fontWeight: "bold", color: "red" }}>Contract UID - {contract?.contract_uid}</Typography>
+              <Grid container item xs={3} sx={{ marginTop: "10px" }}>
+                <Grid item xs={12}>
+                  <Typography sx={{ fontWeight: "bold", color: "#3D5CAC" }}>End Date</Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      // value={selectedEndDate}
+                      // // minDate={minEndDate}
+                      value={selectedEndDate}
+                      minDate={startDate}
+                      onChange={(v) => setSelectedEndDate(v)}
+                      slots={{
+                        openPickerIcon: CalendarIcon,
+                      }}
+                      slotProps={datePickerSlotProps}
+                    />
+                  </LocalizationProvider>
+                </Grid>
               </Grid>
-            </Grid>
-          </Grid>
+              <Grid container>
+                <Grid container item xs={12} sx={{ marginTop: "10px" }}>
+                  <Grid item xs={12}>
+                    {/* <Typography sx={{fontWeight: 'bold', color: 'red'}}>
+                                        DEBUG - notice period is 30 days by default if not specified.
+                                    </Typography> */}
+                    <Typography sx={{ fontWeight: "bold", color: "red" }}>Contract UID - {contract?.contract_uid}</Typography>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </>
+          )}
         </DialogContent>
 
         <DialogActions>
-          <Button
-            type='submit'
-            onClick={handleEndContract}
-            sx={{
-              "&:hover": {
-                backgroundColor: "#160449",
-              },
-              backgroundColor: "#3D5CAC",
-              color: "#FFFFFF",
-              fontWeight: "bold",
-            }}
-          >
-            End Contract
-          </Button>
-          <Button
-            onClick={handleClose}
-            sx={{
-              "&:hover": {
-                backgroundColor: "#160449",
-              },
-              backgroundColor: "#3D5CAC",
-              color: "#FFFFFF",
-              fontWeight: "bold",
-            }}
-          >
-            Keep Existing Contract
-          </Button>
+          {isAcceptRejectMode ? (
+            <>
+              <Button
+                  type='submit'
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: "#160449",
+                    },
+                    backgroundColor: "#3D5CAC",
+                    color: "#FFFFFF",
+                    fontWeight: "bold",
+                  }}
+                  onClick={() => handleResponse(true)}
+                >
+                  Accept
+              </Button>
+              <Button
+                onClick={() => handleResponse(false)}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "#160449",
+                  },
+                  backgroundColor: "#3D5CAC",
+                  color: "#FFFFFF",
+                  fontWeight: "bold",
+                }}
+              >
+                Reject
+              </Button>
+            </>
+          ):(
+            <>
+              <Button
+                type='submit'
+                onClick={handleEndContract}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "#160449",
+                  },
+                  backgroundColor: "#3D5CAC",
+                  color: "#FFFFFF",
+                  fontWeight: "bold",
+                }}
+              >
+                End Contract
+              </Button>
+              <Button
+                onClick={handleClose}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "#160449",
+                  },
+                  backgroundColor: "#3D5CAC",
+                  color: "#FFFFFF",
+                  fontWeight: "bold",
+                }}
+              >
+                Keep Existing Contract
+              </Button>
+            </>  
+          )}
         </DialogActions>
       </Dialog>
-    </form>
   );
 };
 
-function ManagerEndContractDialog({ open, handleClose, onEndContract, noticePeriod, contract }) {
+function ManagerEndContractDialog({ open, handleClose, onEndContract, noticePeriod, contract, fetchProperties, fetchContracts }) {
   const noticePeriodDays = parseInt(noticePeriod, 10);
   const minEndDate = dayjs().add(noticePeriodDays, "day");
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -1248,16 +1359,49 @@ function ManagerEndContractDialog({ open, handleClose, onEndContract, noticePeri
   const formattedMinEndDate = minEndDate.format("MM/DD/YYYY");
   const startDate = dayjs(contract?.contract_start_date);
   const [earlyEndDate, setEarlyEndDate] = useState(minEndDate);
+  const [isAcceptRejectMode, setIsAcceptRejectMode] = useState(false);
+  const [existingRequestDate, setExistingRequestDate] = useState(null);
 
-  const handleEndContract = (event) => {
+  useEffect(() => {
+    if (contract?.contract_renew_status === "TERMINATION REQUESTED") {
+      setIsAcceptRejectMode(true);
+      setExistingRequestDate(contract.contract_early_end_date);
+    }
+  }, [open, contract]);
+
+  const handleEndContract = (event, accepted) => {
     event.preventDefault();
 
+    // onEndContract(earlyEndDate);
+    // handleClose();
+
+    if (accepted) {
+      onEndContract(dayjs(existingRequestDate), true);
+    } else {
+      const formData = new FormData();
+      formData.append("contract_uid", contract.contract_uid);
+      formData.append("contract_renew_status", "EARLY TERMINATION REJECTED");
+      formData.append("contract_early_end_date", "");
+      
+      fetch(`${APIConfig.baseURL.dev}/contracts`, {
+        method: "PUT",
+        body: formData,
+      }).then(async(response) => {
+          const res = await fetchContracts();
+          await fetchProperties();
+      });
+    }
+
+    handleClose();
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
     onEndContract(earlyEndDate);
     handleClose();
   };
 
   return (
-    <form onSubmit={handleEndContract}>
       <Dialog
         open={open}
         onClose={handleClose}
@@ -1269,73 +1413,127 @@ function ManagerEndContractDialog({ open, handleClose, onEndContract, noticePeri
           },
         }}
       >
-        <DialogTitle sx={{ justifyContent: "center" }}>End Current Contract</DialogTitle>
+        <DialogTitle sx={{ justifyContent: "center" }}>
+          {isAcceptRejectMode ? "Respond to Termination Request" : "End Current Contract"}
+          <IconButton
+            onClick={handleClose}
+            sx={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+              color: "#3D5CAC",
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
         <DialogContent>
-          <Grid container>
-            <Grid item xs={12}>
-              {/* <Typography sx={{width: 'auto', color: 'red'}}>
-                {`DEBUG - Notice period is 30 days by default if not specified.`}
-            </Typography> */}
-              <Typography sx={{ fontWeight: "bold", color: "#3D5CAC", mb: "10px" }}>This contract is scheduled to end on {contract?.contract_end_date}.</Typography>
-              <Typography sx={{ width: "auto" }}>
-                {`The notice period to end this contract is ${noticePeriod} days. The earliest possible end date is ${formattedMinEndDate}.`}
+          {isAcceptRejectMode ? (
+            <Box sx={{ pt: 2 }}>
+              <Typography variant="body1" gutterBottom>
+                Owner requested termination with date: {existingRequestDate}
               </Typography>
-            </Grid>
-            <Grid container item xs={12} md={5} sx={{ marginTop: "10px" }}>
+            </Box>
+          ) : (
+            <Grid container>
               <Grid item xs={12}>
-                <Typography sx={{ fontWeight: "bold", color: "#3D5CAC" }}>Please select contract end date</Typography>
+                {/* <Typography sx={{width: 'auto', color: 'red'}}>
+                  {`DEBUG - Notice period is 30 days by default if not specified.`}
+              </Typography> */}
+                <Typography sx={{ fontWeight: "bold", color: "#3D5CAC", mb: "10px" }}>This contract is scheduled to end on {contract?.contract_end_date}.</Typography>
+                <Typography sx={{ width: "auto" }}>
+                  {`The notice period to end this contract is ${noticePeriod} days. The earliest possible end date is ${formattedMinEndDate}.`}
+                </Typography>
               </Grid>
-              <Grid item xs={12}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    value={earlyEndDate}
-                    minDate={startDate}
-                    onChange={(v) => setEarlyEndDate(v)}
-                    slots={{
-                      openPickerIcon: CalendarIcon,
-                    }}
-                    slotProps={datePickerSlotProps}
-                  />
-                </LocalizationProvider>
+              <Grid container item xs={12} md={5} sx={{ marginTop: "10px" }}>
+                <Grid item xs={12}>
+                  <Typography sx={{ fontWeight: "bold", color: "#3D5CAC" }}>Please select contract end date</Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      value={earlyEndDate}
+                      minDate={startDate}
+                      onChange={(v) => setEarlyEndDate(v)}
+                      slots={{
+                        openPickerIcon: CalendarIcon,
+                      }}
+                      slotProps={datePickerSlotProps}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+              </Grid>
+              <Grid item xs={12} sx={{ marginTop: "15px" }}>
+                <Typography sx={{ width: "auto" }}>{`Are you sure you want to end this contract?`}</Typography>
               </Grid>
             </Grid>
-            <Grid item xs={12} sx={{ marginTop: "15px" }}>
-              <Typography sx={{ width: "auto" }}>{`Are you sure you want to end this contract?`}</Typography>
-            </Grid>
-          </Grid>
+          )}
         </DialogContent>
 
         <DialogActions>
-          <Button
-            type='submit'
-            onClick={handleEndContract}
-            sx={{
-              "&:hover": {
-                backgroundColor: "#160449",
-              },
-              backgroundColor: "#3D5CAC",
-              color: "#FFFFFF",
-              fontWeight: "bold",
-            }}
-          >
-            End Contract
-          </Button>
-          <Button
-            onClick={handleClose}
-            sx={{
-              "&:hover": {
-                backgroundColor: "#160449",
-              },
-              backgroundColor: "#3D5CAC",
-              color: "#FFFFFF",
-              fontWeight: "bold",
-            }}
-          >
-            Keep Existing Contract
-          </Button>
+          {isAcceptRejectMode ? (
+            <>
+              <Button
+                  type="submit"
+                  onClick={(e) => handleEndContract(e, true)}
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: "#160449",
+                    },
+                    backgroundColor: "#3D5CAC",
+                    color: "#FFFFFF",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Accept
+                </Button>
+                <Button
+                  onClick={(e) => handleEndContract(e, false)}
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: "#160449",
+                    },
+                    backgroundColor: "#3D5CAC",
+                    color: "#FFFFFF",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Reject
+                </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                type='submit'
+                onClick={(e) => handleSubmit(e)}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "#160449",
+                  },
+                  backgroundColor: "#3D5CAC",
+                  color: "#FFFFFF",
+                  fontWeight: "bold",
+                }}
+              >
+                End Contract
+              </Button>
+              <Button
+                onClick={handleClose}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "#160449",
+                  },
+                  backgroundColor: "#3D5CAC",
+                  color: "#FFFFFF",
+                  fontWeight: "bold",
+                }}
+              >
+                Keep Existing Contract
+              </Button>
+            </>
+          )}
         </DialogActions>
       </Dialog>
-    </form>
   );
 }
 

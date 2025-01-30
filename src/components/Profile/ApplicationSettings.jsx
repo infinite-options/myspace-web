@@ -47,15 +47,16 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ApplicationSettings({ handleChangePasswordClick, setRHS, handleEditUserInfoClick }) {
+export default function ApplicationSettings({ handleChangeAcceptingNewClient, handleChangePasswordClick, setRHS, handleEditUserInfoClick }) {
   //console.log("In Application Settings Widget ");
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { getProfileId, user, logout, updateAppSettings } = useUser(); // Ensure user is destructured from useUser
+  const { getProfileId, user, logout, updateAppSettings, selectedRole } = useUser(); // Ensure user is destructured from useUser
   const [cookies, setCookie] = useCookies(["user"]);
   const classes = useStyles();
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState(user.notifications === "true");
   const [darkMode, setDarkMode] = useState(user.dark_mode === "true");
+  const [acceptNewClient, setAcceptNewClient] = useState(true);
   const [allowCookies, setAllowCookies] = useState(user.cookies === "true");
   const [settingsChanged, setSettingsChanged] = useState(false);
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
@@ -321,6 +322,19 @@ export default function ApplicationSettings({ handleChangePasswordClick, setRHS,
             }}
           />
         </Grid>
+        {selectedRole === "MANAGER" && (<Grid container justifyContent='space-between' alignContent='center' item xs={12}>
+          <Grid container item xs={9} alignContent= 'center'>
+            <Typography>Accepting New Clients</Typography>
+          </Grid>
+          <CustomSwitch
+            name="accepting_new_client"
+            checked={acceptNewClient}
+            onChange={(e) => {
+              setAcceptNewClient(e.target.checked);
+              handleChangeAcceptingNewClient(e, e.target.checked === true ? 1 : 0);
+            }}
+          />
+        </Grid>)}
         <Grid container justifyContent='space-between' alignContent='center' item xs={12} sx={{marginTop: '5px', }}>
           <Link href="#" underline="hover" sx={{ color: "#3D5CAC" }} onClick={() => {
                 //console.log('clicked privacypolicy');
