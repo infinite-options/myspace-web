@@ -32,7 +32,7 @@ const PropertyInfo = (props) => {
   const navigate = useNavigate();
   const index = props.index;
   const property = props.data;
-  // //console.log("PropertyInfo - property - ",property )
+  console.log("PropertyInfo - property - ",property )
   const status = props.status;
   const lease = props.lease;
   // const ppt_images = property.property_images.split(",");
@@ -147,7 +147,7 @@ const PropertyInfo = (props) => {
   }
 
   function navigateToCorrectPage() {
-    //console.log("ROHIT - 149 - status - ", status)
+    console.log("ROHIT - 149 - status - ", status, lease)
     if (status === "" || status === "NEW" || status === "WITHDRAWN" || status === "ENDED" || status === "RESCIND") {
       //navigate("/tenantApplication", { state: { property: property, status: status, lease: lease } });
       if (status === "" && props.handleSelectProperty != null) {

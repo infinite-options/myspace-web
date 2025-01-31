@@ -45,7 +45,8 @@ import dayjs from "dayjs";
 
 export default function TenantApplicationEdit(props) {
     const { getList } = useContext(ListsContext);
-    console.log("44 - props", props);
+    const currentLease = props?.currentLease?.lease_property_id === props?.data?.property_uid ? props?.currentLease : null;
+    console.log("44 - props", props, currentLease);
     // const [adults, setAdults] = useState(adultOccupants? adultOccupants : []);
     // const [children, setChildren] = useState(childOccupants? childOccupants : []);
     // const [pets, setPets] = useState(petOccupants? petOccupants : []);
@@ -805,8 +806,8 @@ export default function TenantApplicationEdit(props) {
             await updateLeaseData(); // Trigger the PUT request to save data
         } else if (status === "RENEW NEW" || status === "RENEW PROCESSING") {
             await updateLeaseData(); // Trigger the PUT request to save data Divya
-            console.log('props.currentLease.lease_uid', props.currentLease.lease_uid)
-            await handleOriginalLeaseUpdate( props.currentLease.lease_uid,"RENEW NEW")
+            console.log('currentLease.lease_uid', currentLease.lease_uid)
+            await handleOriginalLeaseUpdate( currentLease.lease_uid,"RENEW NEW")
         } else {
             // await updateLeaseData(); 
             alert("Invalid status");
@@ -862,7 +863,7 @@ export default function TenantApplicationEdit(props) {
 
         if (lease[0].lease_status === "RENEW NEW") {
             const withdrawCurrentLeaseData = new FormData();
-            withdrawCurrentLeaseData.append("lease_uid", props.currentLease.lease_uid);
+            withdrawCurrentLeaseData.append("lease_uid", currentLease.lease_uid);
             withdrawCurrentLeaseData.append("lease_renew_status", "WITHDRAWN");
 
             // withdrawLeaseData.forEach((value, key) => {
@@ -938,7 +939,6 @@ export default function TenantApplicationEdit(props) {
     }
 
     const handleApplicationSubmit = async () => {
-        const currentLease = props.currentLease;
         let announcement_title = "";
         let announcement_msg = "";
         if(status === "NEW" || status === ""){
@@ -962,7 +962,7 @@ export default function TenantApplicationEdit(props) {
             // const receiverPropertyMapping = {
             //     [props.data.business_uid]: [props.data.lease_property_id],
             // };
-            console.log('checking Announcements', property, props)
+            // console.log('checking Announcements', property, props)
 
             const leaseApplicationData = new FormData();
             // leaseApplicationData.append("lease_property_id", property.property_uid != null ? property.property_uid : lease[0].lease_property_id);
@@ -1026,7 +1026,7 @@ export default function TenantApplicationEdit(props) {
                 leaseApplicationData.append("lease_status", "NEW");
             }
 
-            console.log('In common')
+            // console.log('In common')
             leaseApplicationData.append("lease_assigned_contacts", JSON.stringify([getProfileId()]));
             leaseApplicationData.append("lease_income", JSON.stringify(selectedJobs));
 
