@@ -21,7 +21,7 @@ const encryptFormDataPayload = async (formData) => {
             fileData: fileData, // Base64 encoded data
         };
     } else {
-        formObject[key] = value.toString();
+      formObject[key] = value === null ? null : value.toString();
     }
   }
 
@@ -44,7 +44,8 @@ const fileToBase64 = (file) => {
 function encryptPayload(payload) {
   try {
     // Convert dictionary to JSON string
-    const jsonString = JSON.stringify(payload);
+    // const jsonString = JSON.stringify(payload);
+    const jsonString = JSON.stringify(payload, (key, value) => (value === "null" ? null : value));
 
     // Generate a random IV (16 bytes)
     const iv = CryptoJS.lib.WordArray.random(BLOCK_SIZE);

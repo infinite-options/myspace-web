@@ -1134,7 +1134,7 @@ export default function ManagerCashflow() {
       // const rentDataCurrentMonth = profitDatacurrentMonth?.filter((item) => item.pur_payer?.startsWith("350") && item.pur_receiver?.startsWith("600"));
       // Revenue 
       // const rentDataCurrentMonth = currentMonthData?.filter((item) => item.pur_receiver === profileId);
-      const rentDataCurrentMonth = currentMonthData?.filter((item) => item.pur_cf_type === "revenue" && item.purchase_type.toUpperCase() !== "DEPOSIT" && item.purchase_type.toUpperCase() !== "MANAGEMENT" && item.purchase_type.toUpperCase() !== "MAINTENANCE");
+      const rentDataCurrentMonth = currentMonthData?.filter((item) => item.pur_cf_type === "revenue" && item.purchase_type.toUpperCase() !== "DEPOSIT"  && item.purchase_type.toUpperCase() !== "MAINTENANCE");
       // const rentDataCurrentYear = currentYearData?.filter((item) => item.pur_receiver === profileId);
       const rentDataCurrentYear = currentYearData?.filter((item) => item.pur_cf_type === "revenue");
       
@@ -1143,7 +1143,7 @@ export default function ManagerCashflow() {
       // const payoutsCurrentMonth = currentMonthData?.filter((item) => item.pur_payer === profileId);
       // const payoutsCurrentYear = currentYearData?.filter((item) => item.pur_payer === profileId);
 
-      const payoutsCurrentMonth = currentMonthData?.filter((item) => item.pur_cf_type === "expense" || (item.pur_cf_type === "revenue" && item.purchase_type.toUpperCase() === "MANAGEMENT" ) || (item.pur_cf_type === "revenue" && item.purchase_type.toUpperCase() === "MAINTENANCE" ));
+      const payoutsCurrentMonth = currentMonthData?.filter((item) => item.pur_cf_type === "expense"  || (item.pur_cf_type === "revenue" && item.purchase_type.toUpperCase() === "MAINTENANCE" ));
       const payoutsCurrentYear = currentYearData?.filter((item) => item.pur_cf_type === "expense");
   
       const revenueDataForManager = currentMonthData?.filter((item) => item.purchase_type.toUpperCase() !== "DEPOSIT" && item.purchase_type.toUpperCase() !== "MAINTENANCE" && (item.pur_payer === profileId || item.pur_receiver === profileId));
@@ -2176,17 +2176,17 @@ export default function ManagerCashflow() {
     const profitDataByProperty = {};
     const allProfitItems = [];
     
-    Object.keys(payoutsByProperty).forEach((propertyUID) => {
-      const payoutData = payoutsByProperty[propertyUID];
+    Object.keys(rentsDataByProperty).forEach((propertyUID) => {
+      const payoutData = rentsDataByProperty[propertyUID];
     
-      if (!payoutData || !payoutData.payoutItems) return;
+      if (!payoutData || !payoutData.rentItems) return;
     
-      const profitPayoutItems = payoutData.payoutItems
+      const profitPayoutItems = payoutData.rentItems
         .filter((item) => item.purchase_type?.toUpperCase() === "MANAGEMENT")
         .map((item) => ({
           ...item,
-          pur_amount_due: (parseFloat(item.pur_amount_due || 0.0) || 0.0) * -1, // Convert expected to positive again because in payout it is negative
-          total_paid: (parseFloat(item.total_paid || 0.0) || 0.0) * -1, 
+          pur_amount_due: (parseFloat(item.pur_amount_due || 0.0) || 0.0), // Convert expected to positive again because in payout it is negative
+          total_paid: (parseFloat(item.total_paid || 0.0) || 0.0), 
         }));
     
       // Calculate total expected and actual profits for "management" items

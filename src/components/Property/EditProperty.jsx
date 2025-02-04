@@ -506,9 +506,16 @@ function EditProperty(props) {
 			formData.append('property_images', (propertyData.property_images && propertyData.property_images.length > 0) ? propertyData.property_images : defaultHouseImage);
 		}
 
-		if (favImage) {
+		// if (favImage) {
+		// 	formData.append('property_favorite_image', favImage);
+		// }
+
+		if (favImage && updatedImagesToBeDeleted.includes(favImage)) {
+			formData.append('property_favorite_image', null);
+		} else if (favImage) {
 			formData.append('property_favorite_image', favImage);
 		}
+
 		// const files = imageState;
 		if (isRapidImages === false) {
 			let i = 0;

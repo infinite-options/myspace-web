@@ -597,7 +597,7 @@ export default function PMQuotesRequested(props) {
 
   }
 
-  const acceptNewContract = (contract, status) => {
+  const acceptNewContract = async (contract, status) => {
     const formData = new FormData();
     formData.append("contract_uid", contract.contract_uid);
     formData.append("contract_status", status);
@@ -625,7 +625,7 @@ export default function PMQuotesRequested(props) {
     } 
   }
 
-  function handleAccept(obj) {          
+  async function handleAccept(obj){          
     
       const newContractStart = new Date(obj.contract_start_date);
       const newContractEnd = new Date(obj.contract_end_date);
@@ -637,7 +637,7 @@ export default function PMQuotesRequested(props) {
 
       if (existingContractIndex < 0){
         // //console.log("ERROR - existing contract not found.");
-        acceptNewContract(obj, "ACTIVE");
+        await acceptNewContract(obj, "ACTIVE");
         return;
       }
 
@@ -674,11 +674,11 @@ export default function PMQuotesRequested(props) {
           // const formattedarlyEndDate = `${String(earlyEndDate.getMonth() + 1).padStart(2, '0')}-${String(earlyEndDate.getDate()).padStart(2, '0')}-${earlyEndDate.getFullYear()}`;
           updateExistingContractStatus(existingContract, "ACTIVE", earlyEndDate);          
         }
-        acceptNewContract(obj, newContractStatus);   
+        await acceptNewContract(obj, newContractStatus);   
       }      
       
-      
-      setTabStatus(1);    
+      handleBackClick();
+      // setTabStatus(1);    
   }
 
   function handleDecline(obj) {        
@@ -693,6 +693,7 @@ export default function PMQuotesRequested(props) {
           //console.log("PUT result", response);
           sendAnnouncement("DECLINED", obj);
           refreshContracts();
+          handleBackClick();
         })
         .catch((error) => {
           console.error("There was a problem with the decline operation:", error);

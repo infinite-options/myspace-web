@@ -182,10 +182,22 @@ export default function AddListing(props) {
   //   //console.log("newUtilitiesPaidBy - ", newUtilitiesPaidBy);
   // }, [newUtilitiesPaidBy]);
 
-  const sortByFavImage = (favImage, imageList) => {
-    if (!favImage || !imageList || !imageList.includes(favImage)) return imageList;
+  // const sortByFavImage = (favImage, imageList) => {
+  //   if (!favImage || !imageList || !imageList.includes(favImage)) return imageList;
 
-    const sortedImages = [favImage, ...imageList.filter((img) => img !== favImage)];
+  //   const sortedImages = [favImage, ...imageList.filter((img) => img !== favImage)];
+  //   return sortedImages;
+  // };
+
+  const sortByFavImage = (favImage, imageList) => {
+    if (!favImage || !imageList || !imageList.includes(favImage)) {
+      return imageList.map((img) => ({ url: img, coverPhoto: false }));
+    }
+  
+    const sortedImages = [
+      { url: favImage, coverPhoto: true },
+      ...imageList.filter((img) => img !== favImage).map((img) => ({ url: img, coverPhoto: false })),
+    ];
     return sortedImages;
   };
 
@@ -193,7 +205,7 @@ export default function AddListing(props) {
 	const sortedByFavImgLst = sortByFavImage(favPropImage, JSON.parse(propertyData.property_images));
 
   const [selectedImageList, setSelectedImageList] = useState(sortedByFavImgLst);
-  const [favoriteIcons, setFavoriteIcons] = useState(sortedByFavImgLst.map((image) => image === propertyData.property_favorite_image));
+  const [favoriteIcons, setFavoriteIcons] = useState(sortedByFavImgLst.map((image) => image.url === propertyData.property_favorite_image));
   const maxSteps = selectedImageList.length;
 
   useEffect(() => {
@@ -393,7 +405,7 @@ export default function AddListing(props) {
 
   useEffect(() => {
     // //console.log("useEffect");
-    setCoverImage(selectedImageList[0] || coverImage);
+    setCoverImage(selectedImageList[0].url || coverImage);
   }, [selectedImageList]);
 
   useEffect(() => {
@@ -591,10 +603,19 @@ export default function AddListing(props) {
     }
     ////console.log("--debug selectedImageList--", selectedImageList, selectedImageList.length);
     formData.append("property_images", propertyData.property_images);
-    if (favImage !== propertyData.property_favorite_image) {
+    // if (favImage !== propertyData.property_favorite_image) {
+    //   formData.append("property_favorite_image", favImage);
+    //   hasPropertyChanges = true;
+    // }
+    // console.log("favImage", favImage, propertyData.property_favorite_image);
+    if (imagesTobeDeleted.includes(favImage)) {
+      formData.append("property_favorite_image", null);
+      hasPropertyChanges = true;
+    } else if (favImage !== propertyData.property_favorite_image) {
       formData.append("property_favorite_image", favImage);
       hasPropertyChanges = true;
     }
+
     let i = 0;
     for (const file of imageState) {
       let key = `img_${i++}`;
@@ -605,7 +626,7 @@ export default function AddListing(props) {
         formData.append(key, file.image);
         hasPropertyChanges = true;
       }
-      if (file.coverPhoto) {
+      if (file?.coverPhoto) {
         formData.set("property_favorite_image", key);
         hasPropertyChanges = true;
       }
@@ -768,7 +789,7 @@ export default function AddListing(props) {
     setDeletedIcons(updatedDeletedIcons);
 
     // const imageToDelete = JSON.parse(propertyData.property_images)[index];
-    const imageToDelete = sortedByFavImgLst[index];
+    const imageToDelete = sortedByFavImgLst[index].url;
     setImagesTobeDeleted((prev) => [...prev, imageToDelete]);
 
     // //console.log("Delete image at index:", JSON.stringify(deletedIcons));
@@ -779,8 +800,9 @@ export default function AddListing(props) {
     updatedFavoriteIcons[index] = true;
     setFavoriteIcons(updatedFavoriteIcons);
 
+    // console.log("Selected Image List: ", selectedImageList[index]);
     // const newFavImage = JSON.parse(propertyData.property_images)[index];
-    const newFavImage = selectedImageList[index];
+    const newFavImage = selectedImageList[index].url;
     setFavImage(newFavImage);
     setSelectedImageList((prevState) =>
       prevState.map((file, i) => ({
@@ -889,7 +911,7 @@ export default function AddListing(props) {
                             }}
                           >
                             <img
-                              src={image}
+                              src={image.url}
                               alt={`maintenance-${index}`}
                               style={{
                                 height: "150px",

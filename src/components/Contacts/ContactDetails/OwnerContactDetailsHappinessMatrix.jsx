@@ -1228,6 +1228,7 @@ const PropertiesInformation = ({ propertiesData, contractsData, ownerUID }) => {
 const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  console.log("data - ", data);
   // const paymentStatusColorMap = {
   //   "Paid On Time": theme.palette.priority.clear,
   //   "Partially Paid": theme.palette.priority.medium,
@@ -1238,12 +1239,13 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
   // };
 
   const paymentStatusColorMap = {
-    "Paid On Time": theme.palette.priority.clear,
+    "Paid": theme.palette.priority.clear,
     "Partially Paid": theme.palette.priority.medium,
     "Paid Late": theme.palette.priority.low,
     "Not Paid": theme.palette.priority.high,
-    Vacant: "#160449",
+    "Vacant": "#160449",
     "No Manager": "#626264",
+    "Unpaid": theme.palette.priority.high,
     // "Not Listed": theme.palette.priority.medium,
     "Not Listed": "#000000",
   };
@@ -1257,11 +1259,11 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
   //   "NO MANAGER": "No Manager",
   // };
   const paymentStatusMap = {
-    UNPAID: "Not Paid",
+    "UNPAID": "Unpaid",
     "PAID LATE": "Paid Late",
-    PAID: "Paid On Time",
-    Partial: "Partially Paid",
-    VACANT: "Vacant",
+    "PAID": "Paid",
+    "PARTIALLY PAID": "Partially Paid",
+    "VACANT": "Vacant",
     "NOT LISTED": "Not Listed",
     "NO MANAGER": "No Manager",
   };
@@ -1276,12 +1278,13 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
   // }
 
   function getPaymentStatusColor(paymentStatus, property) {
-    // //console.log("214 - property - ", property);
+    // console.log("214 - property - ", paymentStatus);
     if (
       (paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") &&
       property?.property_available_to_rent &&
       property?.property_available_to_rent === 1
     ) {
+      // console.log(" === ok here")
       return paymentStatusColorMap["Vacant"];
     } else if (
       (paymentStatus === null || paymentStatus === undefined || paymentStatus === "VACANT") &&
@@ -1344,7 +1347,7 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
       renderCell: (params) => (
         <Box
           sx={{
-            backgroundColor: getPaymentStatusColor(params.row.rent_status),
+            backgroundColor: getPaymentStatusColor(params.row.rent_status, params.row),
             width: "100%",
             height: "100%",
             display: "flex",
@@ -1370,7 +1373,7 @@ const PropertiesDataGrid = ({ data, maintenanceRequests }) => {
               textAlign: "center",
             }}
           >
-            {getPaymentStatus(params.row.rent_status)}
+            {getPaymentStatus(params.row.rent_status, params.row)}
             {/* {params.row.rent_status} */}
           </Typography>
         </Box>

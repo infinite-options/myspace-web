@@ -1858,6 +1858,16 @@ const TenantLease = () => {
                             borderRadius: "10px",
                           },
                         },
+                        leftArrowButton: {
+                          style: {
+                            marginRight: "8px", // Add margin to the right of the left arrow button
+                          },
+                        },
+                        rightArrowButton: {
+                          style: {
+                            marginLeft: "8px", // Add margin to the left of the right arrow button
+                          },
+                        },
                       }}
                     />
                   </LocalizationProvider>
