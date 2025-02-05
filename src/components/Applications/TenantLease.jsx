@@ -17,6 +17,7 @@ import Select from "@mui/material/Select";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers";
+import { DesktopDatePicker } from "@mui/x-date-pickers";
 import { ReactComponent as CalendarIcon } from "../../images/datetime.svg";
 import { calculateAge } from "../utils/helper";
 import { useUser } from "../../contexts/UserContext";
@@ -1840,7 +1841,7 @@ const TenantLease = () => {
                 <Grid item xs={6} sm={3}>
                   <Typography sx={{ fontSize: "14px", fontWeight: "bold", color: "#302A68" }}>Start Date</Typography>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
+                    <DesktopDatePicker 
                       value={startDate}
                       onChange={(newValue) => {
                         setDatesToggle("select");

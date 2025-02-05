@@ -46,11 +46,11 @@ const ProfitChart = (props) => {
     o.expected_rent
   ]);
 
-  const max = Math.max(...allValues);
-  const min = Math.min(...allValues);
-
-  // Conditional logic to set Y-axis domain
-  const domain = min < 0 ? [(min - 100) * 1.1, max * 1.1] : [0, max * 1.1];
+  const maxValue = Math.max(...allValues); //6179
+  // console.log("maxValue", maxValue);
+  const roundFactor = Math.pow(10, Math.floor(Math.log10(maxValue))); // e.g., 1000
+  const maxNiceValue = Math.ceil(maxValue / roundFactor) * roundFactor; // 7000
+  const tickInterval = roundFactor;
 
   return (
     <ThemeProvider theme={theme}>
@@ -61,17 +61,10 @@ const ProfitChart = (props) => {
           <YAxis 
             yAxisId="left" 
             axisLine={false} 
-            tickCount={10} 
-            domain={domain}  // Apply conditional domain here
-            tickFormatter={(value) => {
-              if (value >= 1000000) {
-                return `$${(value / 1000000).toFixed(2)}M`; // For millions
-              }
-              if (value >= 1000) {
-                return `$${(value / 1000).toFixed(2)}K`; // For thousands
-              }
-              return `$${value.toFixed(2)}`; 
-            }} 
+            domain={[0, maxNiceValue]}
+            tickCount={maxNiceValue / tickInterval + 1}
+            tickFormatter={tick => `$${tick}`}
+            interval={0}
             style={{ fontSize: "10px" }} 
           />
           <ReferenceLine yAxisId="left" y={0} stroke="#000000" strokeWidth={1} />

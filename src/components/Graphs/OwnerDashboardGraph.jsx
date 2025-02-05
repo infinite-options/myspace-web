@@ -36,16 +36,31 @@ const CustomLegend = (props) => {
 };
 
 const DashboardChart = (props) => {
+  // console.log("props - ", props);
   const data = props.revenueCashflowByMonth;
+  // console.log("data - ", data);
   const activeButton = props.activeButton;
 
-  const cashflowValues = data?.map((o) => o.cashflow);
+  // const cashflowValues = data?.map((o) => o.cashflow);
+  const allValues = data?.flatMap(o => [
+    o.cashflow, 
+    o.expected_cashflow, 
+    o.expense, 
+    o.expected_expense,
+    o.expected_revenue
 
-  const max = Math.max(...cashflowValues);
-  const min = Math.min(...cashflowValues);
+  ]);
+  console.log("cashflowValues", allValues);
 
-  // Conditional logic for Y-axis domain
-  const domain = min < 0 ? [(min - 1000) * 1.1, max * 2] : [0, max * 2];
+
+
+
+
+  const maxValue = Math.max(...allValues); //Max value from data, e.g., 6179
+  console.log("maxValue", maxValue);
+  const roundFactor = Math.pow(10, Math.floor(Math.log10(maxValue))); // e.g., 1000, 
+  const maxNiceValue = Math.ceil(maxValue / roundFactor) * roundFactor; // 7000
+  const tickInterval = roundFactor;
 
   return (
     <ThemeProvider theme={theme}>
@@ -56,13 +71,13 @@ const DashboardChart = (props) => {
           <YAxis
             yAxisId="left"
             axisLine={false}
-            tickCount={8}
-            domain={domain}  // Apply the conditional domain here
-            tickFormatter={(value) => `$${value}`}
+            domain={[0, maxNiceValue]}
+            tickCount={maxNiceValue / tickInterval + 1}
+            tickFormatter={tick => `$${tick}`}
+            interval={0}
             style={{ fontSize: "10px" }}
           />
           <ReferenceLine yAxisId="left" y={0} stroke="#000000" strokeWidth={1} />
-          <YAxis yAxisId="right" orientation="right" />
           <Tooltip
             formatter={(value, name, props) => `X: ${props.payload.monthYear}, Y: ${value.toFixed(2)}`}
             contentStyle={{
@@ -70,7 +85,7 @@ const DashboardChart = (props) => {
               opacity: 1
             }}
           />
-
+          <YAxis yAxisId="right" orientation="right" />
           <Legend content={CustomLegend} />
 
           <Line

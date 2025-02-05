@@ -4,6 +4,41 @@ import { Bar, Line, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Co
 import theme from "../../theme/theme";
 import { Stack, Typography } from "@mui/material";
 
+const CustomLegend = (props) => {
+  const { payload } = props;
+
+  const renderLegendItem = (entry, index) => {
+    if (entry.type === "line") {
+      return (
+        <div key={`item-${index}`} style={{ display: "flex", alignItems: "center", marginRight: 10 }}>
+          <svg width="10" height="10" style={{ marginRight: 5 }}>
+            <circle cx="5" cy="5" r="5" fill={entry.color} />
+          </svg>
+          <span style={{ color: entry.color }}>{entry.value}</span>
+        </div>
+      );
+    } else {
+      return (
+        <div key={`item-${index}`} style={{ display: "flex", alignItems: "center", marginRight: 10 }}>
+          <div style={{ width: 10, height: 10, backgroundColor: entry.color, marginRight: 5 }}></div>
+          <span style={{ color: entry.color }}>{entry.value}</span>
+        </div>
+      );
+    }
+  };
+
+  return (
+    <div>
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+        {payload.slice(0, 2).map(renderLegendItem)}
+      </div>
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: 5 }}>
+        {payload.slice(2).map(renderLegendItem)}
+      </div>
+    </div>
+  );
+};
+
 const MixedChart = (props) => {
   const data = props.revenueCashflowByMonth;
   const activeButton = props.activeButton;
@@ -18,47 +53,20 @@ const MixedChart = (props) => {
     return yearA - yearB;
   });
 
+
   // Find max and min of data for cashflow
-  const max = Math.max(...sortedData.map(o => o.cashflow));
-  const min = Math.min(...sortedData.map(o => o.cashflow));
+  const allValues = data?.flatMap(o => [
+    o.cashflow, 
+    o.expectedCashflow, 
+    o.revenue, 
+    o.expectedRevenue
+  ]);
 
-  // Conditional logic for Y-axis domain
-  const domain = min < 0 ? [(min - 100) * 1.1, max * 1.3] : [0, max * 1.3];
-
-  const CustomLegend = (props) => {
-    const { payload } = props;
-
-    const renderLegendItem = (entry, index) => {
-      if (entry.type === "line") {
-        return (
-          <div key={`item-${index}`} style={{ display: "flex", alignItems: "center", marginRight: 10 }}>
-            <svg width="10" height="10" style={{ marginRight: 5 }}>
-              <circle cx="5" cy="5" r="5" fill={entry.color} />
-            </svg>
-            <span style={{ color: entry.color }}>{entry.value}</span>
-          </div>
-        );
-      } else {
-        return (
-          <div key={`item-${index}`} style={{ display: "flex", alignItems: "center", marginRight: 10 }}>
-            <div style={{ width: 10, height: 10, backgroundColor: entry.color, marginRight: 5 }}></div>
-            <span style={{ color: entry.color }}>{entry.value}</span>
-          </div>
-        );
-      }
-    };
-
-    return (
-      <div>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-          {payload.slice(0, 2).map(renderLegendItem)}
-        </div>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: 5 }}>
-          {payload.slice(2).map(renderLegendItem)}
-        </div>
-      </div>
-    );
-  };
+  const maxValue = Math.max(...allValues); //Max value from data, e.g., 6179
+  // console.log("maxValue", maxValue);
+  const roundFactor = Math.pow(10, Math.floor(Math.log10(maxValue))); // e.g., 1000, 
+  const maxNiceValue = Math.ceil(maxValue / roundFactor) * roundFactor; // 7000
+  const tickInterval = roundFactor;
 
   return (
     <ThemeProvider theme={theme}>
@@ -69,9 +77,10 @@ const MixedChart = (props) => {
           <YAxis
             yAxisId="left"
             axisLine={false}
-            tickCount={8}
-            domain={domain} // Apply the conditional domain here
-            tickFormatter={(value) => `$${value}`}
+            domain={[0, maxNiceValue]}
+            tickCount={maxNiceValue / tickInterval + 1}
+            tickFormatter={tick => `$${tick}`}
+            interval={0}
             style={{ fontSize: "10px" }}
           />
           <ReferenceLine yAxisId="left" y={0} stroke="#000000" strokeWidth={1} />
