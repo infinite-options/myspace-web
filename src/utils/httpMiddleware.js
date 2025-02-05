@@ -210,6 +210,8 @@ const fetchMiddleware = async (url, options = {}) => {
           const refreshData = await refreshResponse.json();
           const refreshDataDecrypt = decryptPayload(refreshData.encrypted_data);
           const newAccessToken = refreshDataDecrypt.access_token;
+
+          console.log('after resrehs token: ', refreshDataDecrypt);
           
           // Update the token in sessionStorage
           sessionStorage.setItem('authToken', newAccessToken);
@@ -264,6 +266,12 @@ const axiosMiddleware = axios.create({});
 
 axiosMiddleware.interceptors.request.use(
   async (config) => {
+    if (config._retry) {
+      delete config._retry;  // Remove flag to keep request clean
+      // console.log(" == DEBUG == Retrying request: ", config);
+      return config;
+    }
+
     config.url = getApiUrl(config.url);
     const token = sessionStorage.getItem('authToken');
     // console.log(" == JUST FOR DEBUG URL == ", config)
@@ -326,8 +334,10 @@ axiosMiddleware.interceptors.response.use(
                     }
                 });
                 
+                // console.log('after resrehs token: ', refreshResponse.data, refreshResponse);
                 //Decrypt the payload to get new access token
                 const decryptedRefResp = decryptPayload(refreshResponse.data.encrypted_data);
+                // console.log('after resrehs token decrypt data: ', decryptedRefResp);
                 // const newAccessToken = refreshResponse.data.access_token;
                 const newAccessToken = decryptedRefResp.access_token;
 
@@ -337,6 +347,10 @@ axiosMiddleware.interceptors.response.use(
                 originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
 
                 // Retry the original request
+                // console.log(" == DEBUG == Decrypted response For : ", originalRequest.url, " Response: ", originalRequest.data, "error: ", error)
+                // originalRequest.data = decryptPayload(originalRequest.data.encrypted_data);
+                originalRequest._retry = true;
+
                 return axiosMiddleware(originalRequest);
             } catch (refreshError) {
                 console.error('Token refresh failed:', refreshError);

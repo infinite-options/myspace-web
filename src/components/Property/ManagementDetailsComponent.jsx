@@ -546,6 +546,52 @@ export default function ManagementDetailsComponent({
               </Grid>
             </Grid>
             <Grid container spacing={3} xs={3}>
+              {selectedRole === "OWNER" && sentContractCount > 0 && <Grid
+                item
+                xs={12}
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  // height: "100%",
+                }}
+              >
+                <Button
+                  onClick={() => {
+                    if (sentContractCount && sentContractCount > 0) {
+                      handleViewPMQuotesRequested(0);
+                    }
+                  }}
+                  variant='contained'
+                  sx={{
+                    backgroundColor: "#ed6c02",
+                    color: "#ffffff",
+                    cursor: "pointer",
+                    paddingX: "10px",
+                    textTransform: "none",
+                    width: "80%",
+                    maxHeight: "100%",
+                    "&:hover": {
+                      backgroundColor: "#ed6c02",
+                      color: "#ffffff",
+                    },
+                  }}
+                  size='small'
+                >
+                  <Typography
+                    sx={{
+                      textTransform: "none",
+                      fontWeight: theme.typography.secondary.fontWeight,
+                      fontSize: isMobile ? "10px" : "12px",
+                      whiteSpace: isMobile ? "normal" : "nowrap", // Allow wrapping on mobile, no wrapping on desktop
+                      wordWrap: isMobile ? "break-word" : "normal",
+                      //   marginLeft: "1%", // Adjusting margin for icon and text
+                    }}
+                  >
+                    {"View Applications"}
+                  </Typography>
+                </Button>
+              </Grid>}
               {(selectedRole === "OWNER" || selectedRole === "MANAGER") && activeContract && (
                 <Grid container item spacing={2} sx={{ marginTop: "3px", marginBottom: "5px" }}>
                   <Grid

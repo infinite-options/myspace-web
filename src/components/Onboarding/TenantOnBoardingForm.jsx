@@ -216,6 +216,23 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
   // }, [profileData]);
 
   useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      console.log(" ok im here in unload")
+      if (modifiedData) {
+        console.log("modifiedData - in unloaded", modifiedData);
+        const message = "You have unsaved changes. Are you sure you want to leave?";
+        event.returnValue = message; // Standard message for browsers
+        return message; // For modern browsers
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [modifiedData]);
+
+  useEffect(() => {
     if (profileData) {
       const employmentData = profileData.tenant_employment ? JSON.parse(profileData.tenant_employment) : [];
       setEmploymentList(employmentData);
@@ -239,7 +256,6 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
   //   //console.log("148 - profileData.tenant_ssn - ", profileData.tenant_ssn);
 
   // }, [ssn]);
-
 
   const updateModifiedData = (updatedItem) => {
     setModifiedData((prev) => {
@@ -991,11 +1007,12 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
     // const form = encodeForm(payload);
     // const data = await saveProfile(form);
 
-    await saveProfile();
-
     if (modifiedPayment) {
       await handlePaymentStep(validPaymentMethods);
     }
+
+    await saveProfile();
+
     setShowSpinner(false);
     return;
   };
@@ -1158,6 +1175,11 @@ export default function TenantOnBoardingForm({ profileData, setIsSave }) {
         setuploadedFiles([]);
         handleUpdate();
         setShowSpinner(false);
+      }else if(modifiedPayment){
+        setIsDialogOpen(true);
+        setDialogTitle("Success");
+        setDialogMessage("Your payment method has been successfully updated.");
+        setDialogSeverity("success");
       } else {
         setIsDialogOpen(true);
         setDialogTitle("Warning");

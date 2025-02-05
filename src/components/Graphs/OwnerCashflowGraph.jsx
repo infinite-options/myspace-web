@@ -5,11 +5,29 @@ import theme from "../../theme/theme";
 import { Stack, Typography } from "@mui/material";
 
 const MixedChart = (props) => {
-  // I want props.revenueCashflowByMonth to be sorted in order of month and year
+  const data = props.revenueCashflowByMonth;
+  const activeButton = props.activeButton;
+
+  // Sort the data by month and year (assuming monthYear is in the format "MM-YYYY")
+  const sortedData = [...data].sort((a, b) => {
+    const [monthA, yearA] = a.monthYear.split('-').map(Number);
+    const [monthB, yearB] = b.monthYear.split('-').map(Number);
+    if (yearA === yearB) {
+      return monthA - monthB;
+    }
+    return yearA - yearB;
+  });
+
+  // Find max and min of data for cashflow
+  const max = Math.max(...sortedData.map(o => o.cashflow));
+  const min = Math.min(...sortedData.map(o => o.cashflow));
+
+  // Conditional logic for Y-axis domain
+  const domain = min < 0 ? [(min - 100) * 1.1, max * 1.3] : [0, max * 1.3];
 
   const CustomLegend = (props) => {
     const { payload } = props;
-  
+
     const renderLegendItem = (entry, index) => {
       if (entry.type === "line") {
         return (
@@ -29,87 +47,45 @@ const MixedChart = (props) => {
         );
       }
     };
-  
+
     return (
       <div>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>{payload.slice(0, 2).map(renderLegendItem)}</div>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: 5 }}>{payload.slice(2).map(renderLegendItem)}</div>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+          {payload.slice(0, 2).map(renderLegendItem)}
+        </div>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: 5 }}>
+          {payload.slice(2).map(renderLegendItem)}
+        </div>
       </div>
     );
   };
-  
-  const data = props.revenueCashflowByMonth; // In the future Change <ComposedChart data={data1} --> <ComposedChart data={data}
-  const activeButton = props.activeButton;
-  const chart = props.showChart;
-  // //console.log("Input data to graph: ", data);
-  // //console.log("Active button: ", activeButton);
-
-  // const selectedProperty = props.selectedProperty;
-  // find max and min of data
-  const max = Math.max.apply(
-    Math,
-    data.map(function (o) {
-      // //console.log("max: ", o.cashflow);
-      return o.cashflow;
-    })
-  );
-  const min = Math.min.apply(
-    Math,
-    data.map(function (o) {
-      // //console.log("min: ", o.cashflow);
-      return o.cashflow;
-    })
-  );
 
   return (
     <ThemeProvider theme={theme}>
       <ResponsiveContainer>
-        <ComposedChart data={data} margin={{ top: 20, right: 0, left: 5, bottom: 5 }}>
-          {/* <CartesianGrid vertical={false} />
-          <XAxis
-            dataKey="monthYear"
-            axisLine={true}
-            type="category"
-            tickCount={12}
-            style={{
-              fontSize: "10px",
-            }}
-          />
+        <ComposedChart data={sortedData} margin={{ top: 20, right: 0, left: 5, bottom: 5 }}>
+          <CartesianGrid vertical={false} />
+          <XAxis dataKey="monthYear" axisLine={true} type="category" tickCount={12} style={{ fontSize: "10px" }} />
           <YAxis
             yAxisId="left"
             axisLine={false}
             tickCount={8}
-            domain={[(min - 1000) * 1.1, max * 2]}
+            domain={domain} // Apply the conditional domain here
             tickFormatter={(value) => `$${value}`}
-            style={{
-              fontSize: "10px",
-            }}
+            style={{ fontSize: "10px" }}
           />
           <ReferenceLine yAxisId="left" y={0} stroke="#000000" strokeWidth={1} />
-          <YAxis yAxisId="right" orientation="right" /> */}
-          <CartesianGrid vertical={false} />
-          <XAxis dataKey="monthYear" axisLine={true} type="category" tickCount={12} style={{ fontSize: "10px" }} />
-          <YAxis yAxisId="left" axisLine={false} tickCount={8} domain={[(min - 100) * 1.1, max * 1.3]} tickFormatter={(value) => `$${value}`} style={{ fontSize: "10px" }} />
-          <ReferenceLine yAxisId="left" y={0} stroke="#000000" strokeWidth={1} />
           <YAxis yAxisId="right" orientation="right" />
-          {/* <Tooltip
+          <Tooltip
             formatter={(value, name, props) => `X: ${props.payload.monthYear}, Y: ${value.toFixed(2)}`}
             contentStyle={{
               backgroundColor: '#ffffff',
               opacity: 1
             }}
-          /> */}
+          />
+
           <Legend content={CustomLegend} />
 
-          {/* <Line
-            yAxisId="left"
-            type="monotone"
-            dataKey="expected_revenue"
-            stroke={theme.palette.primary.mustardYellow}
-            strokeWidth={5}
-            name="Revenue"
-            dot={{ stroke: theme.palette.primary.mustardYellow }}
-          /> */}
           <Line
             yAxisId="left"
             type="monotone"
@@ -123,7 +99,7 @@ const MixedChart = (props) => {
           <Line yAxisId="left" type="monotone" dataKey="revenue" stroke="#000000" strokeWidth={5} name="Actual Revenue" dot={{ stroke: "#000000" }} />
 
           <Bar yAxisId="left" dataKey="expectedCashflow" fill={theme.palette.primary.mustardYellow} barCategoryGap={10} barSize={15} name="Expected Cashflow">
-            {data?.map((entry, index) => (
+            {sortedData?.map((entry, index) => (
               <Cell key={index} fill={entry.expected_cashflow < 0 ? theme.palette.custom.red : theme.palette.primary.mustardYellow} />
             ))}
           </Bar>
@@ -135,7 +111,7 @@ const MixedChart = (props) => {
             barSize={15}
             name="Actual Cashflow"
           >
-            {data.map((entry, index) => (
+            {sortedData.map((entry, index) => (
               <Cell
                 key={index}
                 fill={
@@ -146,33 +122,11 @@ const MixedChart = (props) => {
               />
             ))}
           </Bar>
-
-         
-
-          {/* <Line
-          yAxisId="left"
-          type="monotone"
-          dataKey="expected_cashflow"
-          stroke={theme.palette.primary.mustardYellow}
-          strokeWidth={5}
-          name="Expected Cashflow"
-          dot={{ stroke: theme.palette.primary.mustardYellow }}
-        />
-
-        <Line
-          yAxisId="left"
-          type="monotone"
-          dataKey="cashflow"
-          stroke={theme.typography.common.blue}
-          strokeWidth={5}
-          name="Actual Cashflow"
-          dot={{ stroke: theme.typography.common.blue }}
-        /> */}
-
         </ComposedChart>
       </ResponsiveContainer>
     </ThemeProvider>
   );
 };
+
 
 export default MixedChart;

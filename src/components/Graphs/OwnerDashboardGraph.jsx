@@ -39,18 +39,13 @@ const DashboardChart = (props) => {
   const data = props.revenueCashflowByMonth;
   const activeButton = props.activeButton;
 
-  const max = Math.max.apply(
-    Math,
-    data?.map(function (o) {
-      return o.cashflow;
-    })
-  );
-  const min = Math.min.apply(
-    Math,
-    data?.map(function (o) {
-      return o.cashflow;
-    })
-  );
+  const cashflowValues = data?.map((o) => o.cashflow);
+
+  const max = Math.max(...cashflowValues);
+  const min = Math.min(...cashflowValues);
+
+  // Conditional logic for Y-axis domain
+  const domain = min < 0 ? [(min - 1000) * 1.1, max * 2] : [0, max * 2];
 
   return (
     <ThemeProvider theme={theme}>
@@ -58,7 +53,14 @@ const DashboardChart = (props) => {
         <ComposedChart data={data} margin={{ top: 20, right: -45, left: -10, bottom: 5 }}>
           <CartesianGrid vertical={false} />
           <XAxis dataKey="monthYear" axisLine={true} type="category" tickCount={12} style={{ fontSize: "10px" }} />
-          <YAxis yAxisId="left" axisLine={false} tickCount={8} domain={[(min - 1000) * 1.1, max * 2]} tickFormatter={(value) => `$${value}`} style={{ fontSize: "10px" }} />
+          <YAxis
+            yAxisId="left"
+            axisLine={false}
+            tickCount={8}
+            domain={domain}  // Apply the conditional domain here
+            tickFormatter={(value) => `$${value}`}
+            style={{ fontSize: "10px" }}
+          />
           <ReferenceLine yAxisId="left" y={0} stroke="#000000" strokeWidth={1} />
           <YAxis yAxisId="right" orientation="right" />
           <Tooltip
@@ -81,11 +83,29 @@ const DashboardChart = (props) => {
             dot={{ stroke: theme.palette.custom.red }}
           />
 
-          <Line yAxisId="left" type="monotone" dataKey="revenue" stroke="#000000" strokeWidth={5} name="Actual Revenue" dot={{ stroke: "#000000" }} />
+          <Line
+            yAxisId="left"
+            type="monotone"
+            dataKey="revenue"
+            stroke="#000000"
+            strokeWidth={5}
+            name="Actual Revenue"
+            dot={{ stroke: "#000000" }}
+          />
 
-          <Bar yAxisId="left" dataKey="expected_cashflow" fill={theme.palette.primary.mustardYellow} barCategoryGap={10} barSize={15} name="Expected Cashflow">
+          <Bar
+            yAxisId="left"
+            dataKey="expected_cashflow"
+            fill={theme.palette.primary.mustardYellow}
+            barCategoryGap={10}
+            barSize={15}
+            name="Expected Cashflow"
+          >
             {data?.map((entry, index) => (
-              <Cell key={index} fill={entry.expected_cashflow < 0 ? theme.palette.custom.red : theme.palette.primary.mustardYellow} />
+              <Cell
+                key={index}
+                fill={entry.expected_cashflow < 0 ? theme.palette.custom.red : theme.palette.primary.mustardYellow}
+              />
             ))}
           </Bar>
 
@@ -101,7 +121,8 @@ const DashboardChart = (props) => {
               <Cell
                 key={index}
                 fill={
-                  (activeButton === "ExpectedCashflow" && entry.expected_cashflow < 0) || (activeButton === "Cashflow" && entry.cashflow < 0)
+                  (activeButton === "ExpectedCashflow" && entry.expected_cashflow < 0) || 
+                  (activeButton === "Cashflow" && entry.cashflow < 0)
                     ? theme.palette.custom.red
                     : theme.typography.common.blue
                 }
@@ -113,5 +134,6 @@ const DashboardChart = (props) => {
     </ThemeProvider>
   );
 };
+
 
 export default DashboardChart;

@@ -46,9 +46,11 @@ const ProfitChart = (props) => {
     o.expected_rent
   ]);
 
-
   const max = Math.max(...allValues);
   const min = Math.min(...allValues);
+
+  // Conditional logic to set Y-axis domain
+  const domain = min < 0 ? [(min - 100) * 1.1, max * 1.1] : [0, max * 1.1];
 
   return (
     <ThemeProvider theme={theme}>
@@ -56,7 +58,11 @@ const ProfitChart = (props) => {
         <ComposedChart data={data} margin={{ top: 20, right: 0, left: 0, bottom: 5 }}>
           <CartesianGrid vertical={false} />
           <XAxis dataKey="monthYear" axisLine={true} type="category" tickCount={12} style={{ fontSize: "10px" }} />
-          <YAxis yAxisId="left" axisLine={false} tickCount={10} domain={[(min - 100) * 1.1, max * 1.1]}
+          <YAxis 
+            yAxisId="left" 
+            axisLine={false} 
+            tickCount={10} 
+            domain={domain}  // Apply conditional domain here
             tickFormatter={(value) => {
               if (value >= 1000000) {
                 return `$${(value / 1000000).toFixed(2)}M`; // For millions
@@ -101,10 +107,9 @@ const ProfitChart = (props) => {
             {data?.map((entry, index) => (
               <Cell
                 key={index}
-                fill={
-                  (activeButton === "ExpectedCashflow" && entry.expectedCashflow < 0) || (activeButton === "Cashflow" && entry.cashflow < 0)
-                    ? theme.typography.common.blue
-                    : theme.typography.common.blue
+                fill={activeButton === "ExpectedCashflow" && entry.expectedCashflow < 0 || activeButton === "Cashflow" && entry.cashflow < 0
+                  ? theme.typography.common.blue
+                  : theme.typography.common.blue
                 }
               />
             ))}
@@ -114,5 +119,6 @@ const ProfitChart = (props) => {
     </ThemeProvider>
   );
 };
+
 
 export default ProfitChart;

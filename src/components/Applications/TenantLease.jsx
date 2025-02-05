@@ -10,6 +10,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Backdrop from "@mui/material/Backdrop";
+import { ArrowBack as ArrowBackIcon, ArrowForward as ArrowForwardIcon } from '@mui/icons-material';
 import CircularProgress from "@mui/material/CircularProgress";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
@@ -148,7 +149,7 @@ const initialFees = (property, application) => {
 };
 
 const TenantLease = () => {
-  //console.log("In Tenant Lease");
+  // console.log("In Tenant Lease");
   const classes = useStyles();
   const navigate = useNavigate();
   const { getProfileId } = useUser();
@@ -1271,8 +1272,8 @@ const TenantLease = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          announcement_title: "New Lease created",
-          announcement_msg: "You have a new lease to be approved for your property",
+          announcement_title: `New Lease created`,
+          announcement_msg: `New Lease created for ${property.property_address}${property.property_unit !== "" ? `, Unit -${property.property_unit}` : ''}.`,
           announcement_sender: getProfileId(),
           announcement_date: new Date().toDateString(),
           // announcement_properties: property.property_uid,
@@ -1405,7 +1406,7 @@ const TenantLease = () => {
         },
         body: JSON.stringify({
           announcement_title: "New Lease created",
-          announcement_msg: "You have a new lease to be approved for your property",
+          announcement_msg: `New Lease created for ${property.property_address}${property.property_unit !== "" ? `, Unit -${property.property_unit}` : ''}.`,
           announcement_sender: getProfileId(),
           announcement_date: new Date().toDateString(),
           // announcement_properties: property.property_uid,
@@ -1455,7 +1456,7 @@ const TenantLease = () => {
       },
       body: JSON.stringify({
         announcement_title: "New Lease created",
-        announcement_msg: "You have a new lease to be approved for your property",
+        announcement_msg: `You have a new lease to be approved for your property ${property.property_address}${property.property_unit !== "" ? `, Unit -${property.property_unit}` : ''}.`,
         announcement_sender: getProfileId(),
         announcement_date: new Date().toDateString(),
         // announcement_properties: property.property_uid,
@@ -1856,16 +1857,6 @@ const TenantLease = () => {
                             fontSize: 12,
                             backgroundColor: "#FFFFFF",
                             borderRadius: "10px",
-                          },
-                        },
-                        leftArrowButton: {
-                          style: {
-                            marginRight: "8px", // Add margin to the right of the left arrow button
-                          },
-                        },
-                        rightArrowButton: {
-                          style: {
-                            marginLeft: "8px", // Add margin to the left of the right arrow button
                           },
                         },
                       }}
