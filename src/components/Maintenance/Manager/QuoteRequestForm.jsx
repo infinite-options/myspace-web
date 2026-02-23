@@ -62,6 +62,12 @@ export default function QuoteRequestForm({ setRefresh }) {
 		  index === self.findIndex((q) => q.quote_business_id === quote.quote_business_id)
 	);
 
+	// ✅ CHANGE 1: Get list of already requested contact UIDs to prevent duplicate requests
+	// quote_business_id is the business_uid which matches contact_uid for maintenance businesses
+	const alreadyRequestedContactUids = new Set(
+		uniqueQuotes.map((quote) => quote.quote_business_id || quote.contact_uid || quote.maint_business_uid).filter(Boolean)
+	);
+
 	useEffect(() => {
 		// //console.log(alreadyRequestedQuotes);
 	}, []);
@@ -79,8 +85,18 @@ export default function QuoteRequestForm({ setRefresh }) {
 	const [showSpinner, setShowSpinner] = useState(false);
 
 	const handleMaintenanceChange = (event) => {
-		// //console.log("handleStateChange", event.target.value);
-		setMaintenanceContacts((prevContacts) => new Set([...prevContacts, event.target.value]));
+		// ✅ CHANGE 2: Prevent adding contacts that have already been requested
+		const selectedContact = event.target.value;
+		// Prevent adding contacts that have already been requested
+		if (alreadyRequestedContactUids.has(selectedContact.contact_uid)) {
+			alert(`${selectedContact.contact_first_name} has already been requested for a quote.`);
+			return;
+		}
+		// Prevent adding the same contact twice
+		if (maintenanceContacts.has(selectedContact)) {
+			return;
+		}
+		setMaintenanceContacts((prevContacts) => new Set([...prevContacts, selectedContact]));
 	};
 
 	function navigateToAddMaintenanceItem() {
@@ -128,6 +144,22 @@ export default function QuoteRequestForm({ setRefresh }) {
 	}
 
 	const handleSubmit = async () => {
+		// ✅ CHANGE 3: Validate that there are new contacts to request quotes from
+		if (maintenanceContacts.size === 0) {
+			alert('Please select at least one contact to request a quote from.');
+			return;
+		}
+
+		// Check if all selected contacts have already been requested
+		const newContacts = Array.from(maintenanceContacts).filter(
+			(contact) => !alreadyRequestedContactUids.has(contact.contact_uid)
+		);
+
+		if (newContacts.length === 0) {
+			alert('All selected contacts have already been requested for quotes. Please select different contacts.');
+			return;
+		}
+
 		// Change the maintenance request status to "PROCESSING"
 		const changeMaintenanceRequestStatus = async () => {
 		  setShowSpinner(true);
@@ -146,11 +178,19 @@ export default function QuoteRequestForm({ setRefresh }) {
 		  setShowSpinner(false);
 		};
 
-		// Creates a list of business_uids from the maintenanceContacts set.
+		// ✅ CHANGE 4: Creates a list of business_uids from the maintenanceContacts set, filtering out already requested contacts
 		let maintenanceContactIds = [];
 		for (let contact of maintenanceContacts) {
-			// //console.log("maintenanceContacts[i].maintenance_contact_uid", contact.business_uid);
-			maintenanceContactIds.push(contact.contact_uid);
+			// Only include contacts that haven't been requested yet
+			if (!alreadyRequestedContactUids.has(contact.contact_uid)) {
+				maintenanceContactIds.push(contact.contact_uid);
+			}
+		}
+
+		// Final check - if no new contacts after filtering, don't submit
+		if (maintenanceContactIds.length === 0) {
+			alert('No new contacts to request quotes from. All selected contacts have already been requested.');
+			return;
 		}
 	  
 		// Submit the quote request to vendors
@@ -171,7 +211,7 @@ export default function QuoteRequestForm({ setRefresh }) {
 			  method: 'POST',
 			  body: formData,
 			});
-	  
+	
 			if (response.status === 200) {
 			  //console.log("Quote request sent successfully");
 			  
@@ -265,7 +305,16 @@ export default function QuoteRequestForm({ setRefresh }) {
 		// //console.log("contactList length", contactList.length)
 		// //console.log("contactList", contactList)
 		if (contactList.length > 0) {
-			return contactList.map((contact, index) => (
+			// ✅ CHANGE 5: Filter out contacts that have already been requested
+			const availableContacts = contactList.filter(
+				(contact) => !alreadyRequestedContactUids.has(contact.contact_uid)
+			);
+			
+			if (availableContacts.length === 0) {
+				return <MenuItem disabled>All contacts have already been requested</MenuItem>;
+			}
+			
+			return availableContacts.map((contact, index) => (
 				<MenuItem key={index} value={contact}>
 					{' '}
 					{contact.contact_first_name}{' '}
@@ -291,16 +340,13 @@ export default function QuoteRequestForm({ setRefresh }) {
 
 			//console.log('workers', workers);
 			//workers.filter((worker) => worker.business_name != "DoLittle Maintenance")
-			// Get a list of maint_business_uid values from requestedQuotes
-			const requestedBusinessUids = requestedQuotes.map((quote) => quote.contact_uid);
+			// ✅ CHANGE 6: Get a list of business_uid values from requestedQuotes (quote_business_id is the business_uid)
+			const requestedBusinessUids = requestedQuotes.map((quote) => quote.quote_business_id || quote.contact_uid || quote.maint_business_uid).filter(Boolean);
 			//console.log('requestedBusinessUids', requestedBusinessUids);
 
-			// Filter out workers whose business_uid is in requestedBusinessUids
-
-			// const filteredWorkers = workers.filter(worker => !requestedBusinessUids.includes(worker.contact_uid));
-			// setContactList(filteredWorkers)
-
-			setContactList(workers);
+			// Filter out workers whose contact_uid (which is business_uid for maintenance businesses) is in requestedBusinessUids
+			const filteredWorkers = workers.filter(worker => !requestedBusinessUids.includes(worker.contact_uid));
+			setContactList(filteredWorkers);
 			setShowSpinner(false);
 		};
 
@@ -704,6 +750,13 @@ export default function QuoteRequestForm({ setRefresh }) {
 						<Grid item xs={12} sx={{ width: '90%', marginTop: "20px"}}>
 							<Button
 								variant="contained"
+								// ✅ CHANGE 7: Disable button when no new contacts are available
+								disabled={
+									maintenanceContacts.size === 0 ||
+									Array.from(maintenanceContacts).every(
+										(contact) => alreadyRequestedContactUids.has(contact.contact_uid)
+									)
+								}
 								sx={{
 									backgroundColor: '#9EAED6',
 									textTransform: 'none',
@@ -713,6 +766,11 @@ export default function QuoteRequestForm({ setRefresh }) {
 									width: '100%',
 									'&:hover': {
 										color: '#ffffff',
+									},
+									// ✅ CHANGE 7 (continued): Disabled button styling
+									'&:disabled': {
+										backgroundColor: '#cccccc',
+										color: '#666666',
 									},
 								}}
 								onClick={() => handleSubmit()}

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { PieChart, Pie, Legend, Cell } from "recharts";
 import { Chart } from "react-google-charts";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Box, Typography, Switch, Link, Button, Paper, Stack, Grid } from "@mui/material";
+// Added Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions to existing import (removed separate duplicate import)
+import { Box, Typography, Switch, Link, Button, Paper, Stack, Grid, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from "@mui/material";
 import { useUser } from "../../contexts/UserContext.jsx";
 import { useCookies } from "react-cookie";
 import { makeStyles } from "@material-ui/core";
@@ -69,6 +70,10 @@ export default function ApplicationSettings({ handleChangeAcceptingNewClient, ha
   const [dialogTitle, setDialogTitle] = useState("");
   const [dialogMessage, setDialogMessage] = useState("");
   const [dialogSeverity, setDialogSeverity] = useState("info");
+
+  // State for the confirmation dialog — tracks whether it's open and which role is pending confirmation
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [pendingRole, setPendingRole] = useState("");
 
   const handlePrimaryRoleLinkClick = () => {
     setShowPrimaryRoleDropdown(!showPrimaryRoleDropdown);
@@ -168,10 +173,29 @@ export default function ApplicationSettings({ handleChangeAcceptingNewClient, ha
     // setShowRoleDropdown(true);
   };
 
+  // Instead of immediately setting newRole (which triggers handleAddRole via useEffect),
+  // we now save the selection to pendingRole and open the confirmation dialog first.
+  // The actual role is only applied once the user clicks Confirm.
   const handleRoleSelect = (event) => {
-    setNewRole(event.target.value);
-    // Handle role selection logic here
-    //console.log("Selected role:", event.target.value);
+    const selected = event.target.value;
+    if (selected) {
+      setPendingRole(selected);
+      setConfirmDialogOpen(true);
+    }
+  };
+
+  // Called when user clicks Confirm in the dialog  applies the pending role
+  // by setting newRole, which triggers the useEffect below that calls handleAddRole
+  const handleConfirmAdd = () => {
+    setNewRole(pendingRole);
+    setConfirmDialogOpen(false);
+    setPendingRole("");
+  };
+
+  // Called when user clicks Cancel in the dialog — discards the selection without doing anything
+  const handleConfirmCancel = () => {
+    setConfirmDialogOpen(false);
+    setPendingRole("");
   };
 
   useEffect(() => {
@@ -352,23 +376,40 @@ export default function ApplicationSettings({ handleChangeAcceptingNewClient, ha
         </Grid>
 
         <Grid container alignItems="center" item xs={12} sx={{ marginTop: "15px" }}>
-        <Link href="#" underline="hover" onClick={handleAddRoleLinkClick} sx={{ color: "#3D5CAC", marginRight: "15px" }}>
-          Add Role
-        </Link>
-        {showRoleDropdown && (
-          <Box>
-            <select value={newRole} onChange={handleRoleSelect}>
-              <option value="">Select Role</option>
-              {allRoles
-                .filter((role) => !availableRoles.includes(role))
-                .map((role, index) => (
-                  <option key={index} value={role}>
-                    {role}
-                  </option>
-                ))}
-            </select>
-          </Box>
-        )}
+          <Link href="#" underline="hover" onClick={handleAddRoleLinkClick} sx={{ color: "#3D5CAC", marginRight: "15px" }}>
+            Add Role
+          </Link>
+          {showRoleDropdown && (
+            <Box>
+              <select value={newRole} onChange={handleRoleSelect}>
+                <option value="">Select Role</option>
+                {allRoles
+                  .filter((role) => !availableRoles.includes(role))
+                  .map((role, index) => (
+                    <option key={index} value={role}>
+                      {role}
+                    </option>
+                  ))}
+              </select>
+            </Box>
+          )}
+
+          {/* Confirmation dialog — pops up when user selects a role from the dropdown.
+              Shows the selected role name and waits for user to confirm or cancel before applying. */}
+          <Dialog open={confirmDialogOpen} onClose={handleConfirmCancel}>
+            <DialogTitle>Confirm Add Role</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                Are you sure you want to add the role <strong>{pendingRole}</strong>?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleConfirmCancel} color="inherit">Cancel</Button>
+              <Button onClick={handleConfirmAdd} variant="contained" sx={{ color: "#b7bed1",}}>
+                Confirm
+              </Button>
+            </DialogActions>
+          </Dialog>
         </Grid>
 
         <Grid container alignItems="center" item xs={12} sx={{ marginTop: "15px" }}>

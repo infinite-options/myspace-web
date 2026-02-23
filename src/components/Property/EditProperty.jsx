@@ -699,7 +699,8 @@ function EditProperty(props) {
 				...file,
 				coverPhoto: i === index,
 			}))
-		);
+		);  // this is for 
+
 
 		//console.log(`Favorite image at index: ${index}`);
 		setHasChanges(true);
