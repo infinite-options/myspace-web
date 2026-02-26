@@ -136,8 +136,8 @@ export default function AddListing(props) {
   const [favImage, setFavImage] = useState(propertyData.property_favorite_image);
   const [activeStep, setActiveStep] = useState(0);
   const [coverImage, setCoverImage] = useState(defaultHouseImage);
-  const [notes, setNotes] = useState(propertyData.property_notes);
-  const [unit, setUnit] = useState(propertyData.property_unit);
+  const [notes, setNotes] = useState(propertyData.property_notes || "");
+  const [unit, setUnit] = useState(propertyData.property_unit || "");
   const [propertyValue, setPropertyValue] = useState(propertyData.property_value);
   const [assessmentYear, setAssessmentYear] = useState(propertyData.property_value);
   const [deposit, setDeposit] = useState(propertyData.property_deposit);
@@ -774,23 +774,16 @@ export default function AddListing(props) {
     // //console.log("Delete image at index:", JSON.stringify(deletedIcons));
   };
 
-  const handleFavorite = (index) => {
-    const updatedFavoriteIcons = new Array(favoriteIcons.length).fill(false);
-    updatedFavoriteIcons[index] = true;
-    setFavoriteIcons(updatedFavoriteIcons);
+const handleFavorite = (index) => {
+  const updatedFavoriteIcons = new Array(selectedImageList.length).fill(false);
+  updatedFavoriteIcons[index] = true; // set the clicked image as favorite
+  setFavoriteIcons(updatedFavoriteIcons); // this will update the UI to reflect the favorite selection
+  const newFavImage = selectedImageList[index]; // this gets the image URL from the selectedImageList based on the index of the clicked favorite icon
+  setFavImage(newFavImage); // this will update the favImage state with the new favorite image URL
 
-    // const newFavImage = JSON.parse(propertyData.property_images)[index];
-    const newFavImage = selectedImageList[index];
-    setFavImage(newFavImage);
-    setSelectedImageList((prevState) =>
-      prevState.map((file, i) => ({
-        ...file,
-        coverPhoto: i === index,
-      }))
-    );
+ };
 
-    //console.log(`Favorite image at index: ${index}`);
-  };
+
 
   const handleUpdateFavoriteIcons = () => {
     setFavoriteIcons(new Array(favoriteIcons.length).fill(false));
@@ -962,7 +955,7 @@ export default function AddListing(props) {
                     borderRadius: "7px",
                   }}
                   placeholder={address}
-                  value={address}
+                  value={address || ""}
                   size='small'
                   fullWidth
                 />
@@ -978,7 +971,7 @@ export default function AddListing(props) {
                     borderRadius: "7px",
                   }}
                   placeholder={unit}
-                  value={unit}
+                  value={unit || ""}
                   size='small'
                   fullWidth
                 />
@@ -996,7 +989,7 @@ export default function AddListing(props) {
                   size='small'
                   fullWidth
                   placeholder={propertyData.property_city}
-                  value={city}
+                  value={city || ""}
                 />
               </Grid>
 
@@ -1011,7 +1004,7 @@ export default function AddListing(props) {
                   size='small'
                   fullWidth
                   onChange={(e) => setPropertyState(e.target.value)}
-                  value={propertyState}
+                  value={propertyState || ""}
                   renderValue={(value) => (value ? `${value}` : "")}
                 >
                   {statesList?.map((item) => {
@@ -1037,7 +1030,7 @@ export default function AddListing(props) {
                   }}
                   size='small'
                   onChange={(e) => setZip(e.target.value)}
-                  value={zip}
+                  value={zip || ""}
                 />
               </Grid>
 
@@ -1052,7 +1045,7 @@ export default function AddListing(props) {
                   size='small'
                   fullWidth
                   onChange={(e) => setPropertyType(e.target.value)}
-                  value={propertyType}
+                  value={propertyType || ""}
                 >
                   {propertyTypes?.map((type) => (
                     <MenuItem key={type.list_uid} value={type.list_item}>
@@ -1076,7 +1069,7 @@ export default function AddListing(props) {
                   size='small'
                   placeholder={squareFootage.toString()}
                   onChange={(e) => setSquareFootage(e.target.value)}
-                  value={squareFootage}
+                  value={squareFootage || ""}
                 />
               </Grid>
 
@@ -1092,9 +1085,9 @@ export default function AddListing(props) {
                     borderRadius: "7px",
                   }}
                   size='small'
-                  placeholder={bedrooms}
+                  placeholder={bedrooms.toString()} // and here
                   onChange={(e) => setBedrooms(e.target.value)}
-                  value={bedrooms}
+                  value={bedrooms || ""}
                 />
               </Grid>
 
@@ -1110,9 +1103,9 @@ export default function AddListing(props) {
                     borderRadius: "7px",
                   }}
                   size='small'
-                  placeholder={bathrooms}
+                  placeholder={bathrooms.toString()} // added here
                   onChange={(e) => setBathrooms(e.target.value)}
-                  value={bathrooms}
+                  value={bathrooms || ""}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -1130,7 +1123,7 @@ export default function AddListing(props) {
                   multiline={true}
                   placeholder={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  value={notes}
+                  value={notes || ""}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -1201,9 +1194,9 @@ export default function AddListing(props) {
             borderRadius: "7px",
           }}
           size='small'
-          value={activeDate}
+          value={activeDate || ""}
           onChange={(newDate) => setActiveDate(newDate)} // This will update the state with the selected date
-          renderInput={(params) => <TextField {...params} />}
+          // renderInput={(params) => <TextField {...params} />}
         />
       </LocalizationProvider>
                 </Grid>
@@ -1222,7 +1215,7 @@ export default function AddListing(props) {
                     InputProps={{
                       startAdornment: <InputAdornment position='start'>$</InputAdornment>,
                     }}
-                    value={deposit}
+                    value={deposit || ""}
                     onChange={(e) => setDeposit(e.target.value)}
                   />
                 </Grid>
@@ -1240,7 +1233,7 @@ export default function AddListing(props) {
                       startAdornment: <InputAdornment position='start'>$</InputAdornment>,
                     }}
                     onChange={(e) => setRent(e.target.value)}
-                    value={rent}
+                    value={rent || ""}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
@@ -1428,7 +1421,7 @@ export default function AddListing(props) {
                     multiline={true}
                     placeholder={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    value={description}
+                    value={description || ""}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -1446,7 +1439,7 @@ export default function AddListing(props) {
                     multiline={true}
                     placeholder={communityAmenities}
                     onChange={(e) => setCommunityAmenities(e.target.value)}
-                    value={communityAmenities}
+                    value={communityAmenities || ""}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -1464,7 +1457,7 @@ export default function AddListing(props) {
                     multiline={true}
                     placeholder={apartmentAmenities}
                     onChange={(e) => setApartmentAmenities(e.target.value)}
-                    value={apartmentAmenities}
+                    value={apartmentAmenities || ""}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -1482,7 +1475,7 @@ export default function AddListing(props) {
                     multiline={true}
                     placeholder={nearbyAmenities}
                     onChange={(e) => setNearbyAmenities(e.target.value)}
-                    value={nearbyAmenities}
+                    value={nearbyAmenities || ""}
                   />
                 </Grid>
               </Grid>
